@@ -28,12 +28,12 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class RelativeSlashPath
     extends AbstractRelativePathExpression {
 
-  protected RelativeSlashPath(@NotNull IExpression left, @NotNull IExpression right) {
+  protected RelativeSlashPath(@NonNull IExpression left, @NonNull IExpression right) {
     super(left, right);
   }
 
@@ -47,7 +47,7 @@ class RelativeSlashPath
     IExpression left = getLeft();
 
     @SuppressWarnings("unchecked")
-    @NotNull
+    @NonNull
     ISequence<? extends INodeItem> leftResult
         = (ISequence<? extends INodeItem>) left.accept(dynamicContext, context);
 

@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.schemagen;
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,8 +40,11 @@ import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public abstract class AbstractXmlDatatypeProvider implements IDatatypeProvider {
-  private Map<@NotNull String, IDatatypeContent> datatypes;
+  private Map<String, IDatatypeContent> datatypes;
 
   protected abstract InputStream getSchemaResource();
 
@@ -50,9 +52,10 @@ public abstract class AbstractXmlDatatypeProvider implements IDatatypeProvider {
     synchronized (this) {
       if (datatypes == null) {
         try (InputStream is = getSchemaResource()) {
+          assert is != null;
           JDom2XmlSchemaLoader loader = new JDom2XmlSchemaLoader(is);
 
-          List<@NotNull Element> elements = queryElements(loader);
+          List<Element> elements = queryElements(loader);
 
           datatypes = Collections.unmodifiableMap(handleResults(elements));
         } catch (JDOMException | IOException ex) {
@@ -62,23 +65,26 @@ public abstract class AbstractXmlDatatypeProvider implements IDatatypeProvider {
     }
   }
 
-  protected abstract List<@NotNull Element> queryElements(JDom2XmlSchemaLoader loader);
+  @NonNull
+  protected abstract List<Element> queryElements(JDom2XmlSchemaLoader loader);
 
-  @NotNull
-  protected abstract Map<@NotNull String, IDatatypeContent> handleResults(@NotNull List<@NotNull Element> items);
+  @NonNull
+  protected abstract Map<String, IDatatypeContent> handleResults(@NonNull List<Element> items);
 
   @Override
-  public Map<@NotNull String, IDatatypeContent> getDatatypes() {
+  @SuppressFBWarnings({ "IS2_INCONSISTENT_SYNC", "MT_CORRECTNESS", "EI_EXPOSE_REP" })
+  public Map<String, IDatatypeContent> getDatatypes() {
     initSchema();
+    assert datatypes != null;
     return datatypes;
   }
 
   @Override
-  public Set<@NotNull String> generateDatatypes(Set<@NotNull String> requiredTypes, @NotNull XMLStreamWriter2 writer)
+  public Set<String> generateDatatypes(Set<String> requiredTypes, @NonNull XMLStreamWriter2 writer)
       throws XMLStreamException {
-    Map<@NotNull String, IDatatypeContent> datatypes = getDatatypes();
+    Map<String, IDatatypeContent> datatypes = getDatatypes();
 
-    Set<@NotNull String> providedDatatypes = new LinkedHashSet<>();
+    Set<String> providedDatatypes = new LinkedHashSet<>();
     for (IDatatypeContent datatype : datatypes.values()) {
       String type = datatype.getTypeName();
       if (requiredTypes.contains(type)) {

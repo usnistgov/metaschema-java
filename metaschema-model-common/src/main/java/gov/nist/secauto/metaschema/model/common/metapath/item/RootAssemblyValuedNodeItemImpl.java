@@ -28,11 +28,11 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class RootAssemblyValuedNodeItemImpl
     extends AbstractModelNodeContext<
@@ -40,18 +40,18 @@ class RootAssemblyValuedNodeItemImpl
         IRequiredValueModelNodeItem,
         AbstractModelNodeContext.Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
     implements IRootAssemblyNodeItem {
-  @NotNull
+  @NonNull
   private final IRootAssemblyDefinition definition;
-  @NotNull
+  @NonNull
   private final IDocumentNodeItem parent;
-  @NotNull
+  @NonNull
   private final Object value;
 
   public RootAssemblyValuedNodeItemImpl(
-      @NotNull IRootAssemblyDefinition definition,
-      @NotNull IDocumentNodeItem parent,
-      @NotNull Object value,
-      @NotNull INodeItemFactory factory) {
+      @NonNull IRootAssemblyDefinition definition,
+      @NonNull IDocumentNodeItem parent,
+      @NonNull Object value,
+      @NonNull INodeItemFactory factory) {
     super(factory);
     this.definition = definition;
     this.parent = parent;
@@ -59,11 +59,11 @@ class RootAssemblyValuedNodeItemImpl
   }
 
   @Override
-  protected @NotNull Supplier<Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
-      newModelSupplier(@NotNull INodeItemFactory factory) {
+  protected @NonNull Supplier<Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
+      newModelSupplier(@NonNull INodeItemFactory factory) {
     return () -> {
-      Map<@NotNull String, IRequiredValueFlagNodeItem> flags = factory.generateFlagsWithValues(this);
-      Map<@NotNull String, List<@NotNull IRequiredValueModelNodeItem>> modelItems
+      Map<String, IRequiredValueFlagNodeItem> flags = factory.generateFlagsWithValues(this);
+      Map<String, List<IRequiredValueModelNodeItem>> modelItems
           = factory.generateModelItemsWithValues(this);
       return new AbstractModelNodeContext.Model<>(flags, modelItems);
     };
@@ -86,7 +86,7 @@ class RootAssemblyValuedNodeItemImpl
   }
 
   @Override
-  @NotNull
+  @NonNull
   public Object getValue() {
     return value;
   }

@@ -33,9 +33,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigInteger;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class IntegerAdapter
     extends AbstractIntegerAdapter<IIntegerItem> {
@@ -51,7 +51,7 @@ public class IntegerAdapter
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull Class<IIntegerItem> getItemClass() {
+  public @NonNull Class<IIntegerItem> getItemClass() {
     return IIntegerItem.class;
   }
 
@@ -62,7 +62,7 @@ public class IntegerAdapter
   }
 
   @Override
-  protected @NotNull IIntegerItem castInternal(@NotNull IAnyAtomicItem item)
+  protected @NonNull IIntegerItem castInternal(@NonNull IAnyAtomicItem item)
       throws InvalidValueForCastFunctionException {
     IIntegerItem retval;
     if (item instanceof INumericItem) {

@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides type information related to the value of a {@link IFieldDefinition}.
@@ -42,8 +42,8 @@ public interface IFieldValueTypeInfo extends ITypeInfo {
    *          the definition associated with the field value type info
    * @return the type info for the definition
    */
-  @NotNull
-  static IFieldValueTypeInfo newTypeInfo(@NotNull IFieldDefinitionTypeInfo parentDefinition) {
+  @NonNull
+  static IFieldValueTypeInfo newTypeInfo(@NonNull IFieldDefinitionTypeInfo parentDefinition) {
     return new FieldValueTypeInfoImpl(parentDefinition);
   }
 }

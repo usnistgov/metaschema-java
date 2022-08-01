@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IWritingContext<WRITER> {
   /**
@@ -34,6 +34,6 @@ public interface IWritingContext<WRITER> {
    * 
    * @return the writer
    */
-  @NotNull
+  @NonNull
   WRITER getWriter();
 }

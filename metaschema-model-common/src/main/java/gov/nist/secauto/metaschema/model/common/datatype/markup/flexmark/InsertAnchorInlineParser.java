@@ -41,14 +41,17 @@ public class InsertAnchorInlineParser implements InlineParserExtension {
   private static final Pattern PATTERN = Pattern.compile("\\{\\{\\s*insert:\\s*([^\\s]+),\\s*([^\\s]+)\\s*\\}\\}");
 
   public InsertAnchorInlineParser(@SuppressWarnings("unused") LightInlineParser inlineParser) {
+    // do nothing
   }
 
   @Override
   public void finalizeDocument(InlineParser inlineParser) {
+    // do nothing
   }
 
   @Override
   public void finalizeBlock(InlineParser inlineParser) {
+    // do nothing
   }
 
   @Override

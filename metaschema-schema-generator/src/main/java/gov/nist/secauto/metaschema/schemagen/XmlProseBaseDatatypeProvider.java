@@ -29,11 +29,12 @@ package gov.nist.secauto.metaschema.schemagen;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jdom2.Element;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class XmlProseBaseDatatypeProvider
     extends AbstractXmlDatatypeProvider {
@@ -46,14 +47,14 @@ public class XmlProseBaseDatatypeProvider
   }
 
   @Override
-  protected List<@NotNull Element> queryElements(JDom2XmlSchemaLoader loader) {
+  protected List<Element> queryElements(JDom2XmlSchemaLoader loader) {
     return loader.getContent(
         "/xs:schema/*",
         CollectionUtil.singletonMap("xs", JDom2XmlSchemaLoader.NS_XML_SCHEMA));
   }
 
   @Override
-  protected @NotNull Map<@NotNull String, IDatatypeContent> handleResults(@NotNull List<@NotNull Element> items) {
+  protected @NonNull Map<String, IDatatypeContent> handleResults(@NonNull List<Element> items) {
     return CollectionUtil.singletonMap(
         DATATYPE_NAME,
         new JDom2DatatypeContent(

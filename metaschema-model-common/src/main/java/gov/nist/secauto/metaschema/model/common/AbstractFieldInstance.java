@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractFieldInstance implements IFieldInstance {
-  @NotNull
+  @NonNull
   private final IAssemblyDefinition parent;
 
   /**
@@ -38,12 +38,12 @@ public abstract class AbstractFieldInstance implements IFieldInstance {
    * @param parent
    *          the parent assembly definition
    */
-  public AbstractFieldInstance(@NotNull IAssemblyDefinition parent) {
+  public AbstractFieldInstance(@NonNull IAssemblyDefinition parent) {
     this.parent = parent;
   }
 
   @Override
-  @NotNull
+  @NonNull
   public IAssemblyDefinition getContainingDefinition() {
     return parent;
   }

@@ -29,13 +29,13 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * a new {@link INodeItem} instance, that is orphaned from any parent nodes, supported by an
@@ -47,7 +47,7 @@ class AssemblyDefinitionNodeItemImpl
         IModelNodeItem,
         AbstractModelNodeContext.Model<IFlagNodeItem, IModelNodeItem>>
     implements IAssemblyNodeItem {
-  @NotNull
+  @NonNull
   private final IAssemblyDefinition definition;
 
   @Nullable
@@ -65,20 +65,20 @@ class AssemblyDefinitionNodeItemImpl
    *          the factory to use to instantiate new node items
    */
   public AssemblyDefinitionNodeItemImpl(
-      @NotNull IAssemblyDefinition definition,
+      @NonNull IAssemblyDefinition definition,
       @Nullable URI baseUri,
-      @NotNull INodeItemFactory factory) {
+      @NonNull INodeItemFactory factory) {
     super(factory);
     this.definition = definition;
     this.baseUri = baseUri;
   }
 
   @Override
-  protected @NotNull Supplier<Model<IFlagNodeItem, IModelNodeItem>>
-      newModelSupplier(@NotNull INodeItemFactory factory) {
+  protected @NonNull Supplier<Model<IFlagNodeItem, IModelNodeItem>>
+      newModelSupplier(@NonNull INodeItemFactory factory) {
     return () -> {
-      Map<@NotNull String, IFlagNodeItem> flags = factory.generateFlags(this);
-      Map<@NotNull String, List<@NotNull IModelNodeItem>> modelItems = factory.generateModelItems(this);
+      Map<String, IFlagNodeItem> flags = factory.generateFlags(this);
+      Map<String, List<IModelNodeItem>> modelItems = factory.generateModelItems(this);
       return new Model<>(flags, modelItems);
     };
   }

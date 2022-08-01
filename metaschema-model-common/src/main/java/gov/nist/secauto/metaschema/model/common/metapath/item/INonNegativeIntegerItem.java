@@ -29,36 +29,36 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigInteger;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface INonNegativeIntegerItem extends IIntegerItem {
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   public static final INonNegativeIntegerItem ONE = valueOf(BigInteger.ONE);
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   public static final INonNegativeIntegerItem ZERO = valueOf(BigInteger.ZERO);
 
-  @NotNull
-  public static INonNegativeIntegerItem valueOf(@NotNull IIntegerItem value) {
+  @NonNull
+  public static INonNegativeIntegerItem valueOf(@NonNull IIntegerItem value) {
     return valueOf(value.asInteger());
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   public static INonNegativeIntegerItem valueOf(long value) {
     return valueOf(BigInteger.valueOf(value));
   }
 
-  @NotNull
-  public static INonNegativeIntegerItem valueOf(@NotNull BigInteger value) {
+  @NonNull
+  public static INonNegativeIntegerItem valueOf(@NonNull BigInteger value) {
     return new NonNegativeIntegerItemImpl(value);
   }
 
-  @NotNull
-  public static INonNegativeIntegerItem valueOf(@NotNull String value) {
+  @NonNull
+  public static INonNegativeIntegerItem valueOf(@NonNull String value) {
     try {
       return valueOf(MetaschemaDataTypeProvider.NON_NEGATIVE_INTEGER.parse(value));
     } catch (IllegalArgumentException ex) {
@@ -67,8 +67,8 @@ public interface INonNegativeIntegerItem extends IIntegerItem {
     }
   }
 
-  @NotNull
-  public static INonNegativeIntegerItem cast(@NotNull IAnyAtomicItem item) {
+  @NonNull
+  public static INonNegativeIntegerItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.NON_NEGATIVE_INTEGER.cast(item);
   }
 }

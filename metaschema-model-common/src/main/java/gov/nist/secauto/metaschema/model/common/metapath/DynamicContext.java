@@ -34,8 +34,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -49,22 +47,25 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public class DynamicContext { // NOPMD - intentional data class
-  @NotNull
+  @NonNull
   private final StaticContext staticContext;
-  @NotNull
+  @NonNull
   private final ZoneId implicitTimeZone;
-  @NotNull
+  @NonNull
   private final ZonedDateTime currentDateTime;
-  @NotNull
-  private final Map<@NotNull URI, IDocumentNodeItem> availableDocuments;
-  private final Map<@NotNull CallingContext, ISequence<?>> functionResultCache;
+  @NonNull
+  private final Map<URI, IDocumentNodeItem> availableDocuments;
+  private final Map<CallingContext, ISequence<?>> functionResultCache;
   private CachingLoader documentLoader;
-  @NotNull
+  @NonNull
   private final IMutableConfiguration<MetapathEvaluationFeature> configuration;
 
   @SuppressWarnings("null")
-  public DynamicContext(@NotNull StaticContext staticContext) {
+  public DynamicContext(@NonNull StaticContext staticContext) {
     this.staticContext = staticContext;
 
     Clock clock = Clock.systemDefaultZone();
@@ -77,24 +78,24 @@ public class DynamicContext { // NOPMD - intentional data class
     this.configuration.enableFeature(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES);
   }
 
-  @NotNull
+  @NonNull
   public StaticContext getStaticContext() {
     return staticContext;
   }
 
-  @NotNull
+  @NonNull
   public ZoneId getImplicitTimeZone() {
     return implicitTimeZone;
   }
 
-  @NotNull
+  @NonNull
   public ZonedDateTime getCurrentDateTime() {
     return currentDateTime;
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  public Map<@NotNull URI, INodeItem> getAvailableDocuments() {
+  @NonNull
+  public Map<URI, INodeItem> getAvailableDocuments() {
     return Collections.unmodifiableMap(availableDocuments);
   }
 
@@ -102,35 +103,35 @@ public class DynamicContext { // NOPMD - intentional data class
     return documentLoader;
   }
 
-  public void setDocumentLoader(@NotNull IDocumentLoader documentLoader) {
+  public void setDocumentLoader(@NonNull IDocumentLoader documentLoader) {
     this.documentLoader = new CachingLoader(documentLoader);
   }
 
-  public ISequence<?> getCachedResult(@NotNull CallingContext callingContext) {
+  public ISequence<?> getCachedResult(@NonNull CallingContext callingContext) {
     return functionResultCache.get(callingContext);
   }
 
-  @NotNull
+  @NonNull
   public DynamicContext disablePredicateEvaluation() {
     this.configuration.disableFeature(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES);
     return this;
   }
 
-  @NotNull
+  @NonNull
   public IConfiguration<MetapathEvaluationFeature> getConfiguration() {
     return configuration;
   }
 
-  public void cacheResult(@NotNull CallingContext callingContext, @NotNull ISequence<?> result) {
+  public void cacheResult(@NonNull CallingContext callingContext, @NonNull ISequence<?> result) {
     ISequence<?> old = functionResultCache.put(callingContext, result);
     assert old == null;
   }
 
   private class CachingLoader implements IDocumentLoader {
-    @NotNull
+    @NonNull
     private final IDocumentLoader proxy;
 
-    public CachingLoader(@NotNull IDocumentLoader proxy) {
+    public CachingLoader(@NonNull IDocumentLoader proxy) {
       this.proxy = proxy;
     }
 
@@ -140,7 +141,7 @@ public class DynamicContext { // NOPMD - intentional data class
     }
 
     @Override
-    public void setEntityResolver(@NotNull EntityResolver resolver) {
+    public void setEntityResolver(@NonNull EntityResolver resolver) {
       // we delegate to the document loader proxy, so the resolver should be set there
       throw new UnsupportedOperationException("Set the resolver on the proxy");
     }
@@ -150,7 +151,7 @@ public class DynamicContext { // NOPMD - intentional data class
     }
 
     @Override
-    public @NotNull IDocumentNodeItem loadAsNodeItem(@NotNull InputSource source) throws IOException {
+    public @NonNull IDocumentNodeItem loadAsNodeItem(@NonNull InputSource source) throws IOException {
       String systemId = source.getSystemId();
       URI uri = ObjectUtils.notNull(URI.create(systemId));
       IDocumentNodeItem retval = availableDocuments.get(uri);

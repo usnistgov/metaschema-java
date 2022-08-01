@@ -29,10 +29,10 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Map;
 import java.util.function.Supplier;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A {@link INodeItem} supported by a {@link IFieldInstance}, that must have an associated value.
@@ -44,7 +44,7 @@ class RequiredValueFieldInstanceNodeItemImpl
         AbstractNodeContext.Flags<IRequiredValueFlagNodeItem>>
     implements IRequiredValueFieldNodeItem {
 
-  @NotNull
+  @NonNull
   private final Object value;
   /**
    * Used to cache this object as an atomic item.
@@ -52,39 +52,39 @@ class RequiredValueFieldInstanceNodeItemImpl
   private IAnyAtomicItem atomicItem;
 
   public RequiredValueFieldInstanceNodeItemImpl(
-      @NotNull IFieldInstance instance,
-      @NotNull IRequiredValueAssemblyNodeItem parent,
+      @NonNull IFieldInstance instance,
+      @NonNull IRequiredValueAssemblyNodeItem parent,
       int position,
-      @NotNull Object value,
-      @NotNull INodeItemFactory factory) {
+      @NonNull Object value,
+      @NonNull INodeItemFactory factory) {
     super(instance, parent, position, factory);
     this.value = value;
   }
 
   @Override
-  protected @NotNull Supplier<Flags<IRequiredValueFlagNodeItem>>
-      newModelSupplier(@NotNull INodeItemFactory factory) {
+  protected @NonNull Supplier<Flags<IRequiredValueFlagNodeItem>>
+      newModelSupplier(@NonNull INodeItemFactory factory) {
     return () -> {
-      Map<@NotNull String, IRequiredValueFlagNodeItem> flags = factory.generateFlagsWithValues(this);
+      Map<String, IRequiredValueFlagNodeItem> flags = factory.generateFlagsWithValues(this);
       return new Flags<>(flags);
     };
   }
 
   @Override
-  @NotNull
+  @NonNull
   public Object getValue() {
     return value;
   }
 
   @Override
-  @NotNull
+  @NonNull
   public IAnyAtomicItem toAtomicItem() {
     synchronized (this) {
       if (atomicItem == null) {
         atomicItem = getInstance().getDefinition().getJavaTypeAdapter().newItem(
-            getDefinition().getFieldValue(getValue()));
+            ObjectUtils.requireNonNull(getDefinition().getFieldValue(getValue())));
       }
+      return ObjectUtils.notNull(atomicItem);
     }
-    return ObjectUtils.notNull(atomicItem);
   }
 }

@@ -43,8 +43,6 @@ import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.codehaus.stax2.ri.evt.MergedNsContext;
 import org.codehaus.stax2.ri.evt.NamespaceEventImpl;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.OutputStream;
 import java.util.List;
@@ -52,6 +50,8 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 
@@ -59,7 +59,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     implements IMarkupText, ICustomJavaDataType<TYPE> {
   private static final String DEFAULT_HTML_NS = "http://www.w3.org/1999/xhtml";
   private static final String DEFAULT_HTML_PREFIX = "";
-  @NotNull
+  @NonNull
   private final Document document;
 
   //
@@ -67,7 +67,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   // this(null);
   // }
 
-  public AbstractMarkupString(@NotNull Document document) {
+  public AbstractMarkupString(@NonNull Document document) {
     this.document = document;
   }
 
@@ -77,7 +77,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   }
 
   @Override
-  public void writeHtml(@NotNull XMLStreamWriter2 xmlStreamWriter, @NotNull String namespace)
+  public void writeHtml(@NonNull XMLStreamWriter2 xmlStreamWriter, @NonNull String namespace)
       throws XMLStreamException {
     MarkupXmlStreamWriter writingVisitor
         = new MarkupXmlStreamWriter(namespace, this instanceof MarkupMultiline);
@@ -86,7 +86,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   }
 
   @Override
-  public void writeHtml(@NotNull OutputStream os, @Nullable String namespace, @Nullable String prefix)
+  public void writeHtml(@NonNull OutputStream os, @Nullable String namespace, @Nullable String prefix)
       throws XMLStreamException {
     XMLOutputFactory2 factory = (XMLOutputFactory2) WstxOutputFactory.newInstance();
     factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
@@ -106,7 +106,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     return toHTML(FlexmarkFactory.instance().getHtmlRenderer());
   }
 
-  @NotNull
+  @NonNull
   protected String toHTML(HtmlRenderer renderer) {
     return renderer.render(getDocument());
   }
@@ -116,7 +116,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     return toMarkdown(FlexmarkFactory.instance().getFormatter());
   }
 
-  @NotNull
+  @NonNull
   @Override
   public String toMarkdown(Formatter formatter) {
     return formatter.render(getDocument());
@@ -127,7 +127,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     return toMarkdownYaml(FlexmarkFactory.instance().getFormatter());
   }
 
-  @NotNull
+  @NonNull
   protected String toMarkdownYaml(Formatter formatter) {
     return formatter.render(getDocument());
   }
@@ -141,7 +141,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
 
   @Override
   public List<InsertAnchorNode> getInserts(
-      @NotNull Predicate<InsertAnchorNode> filter) {
+      @NonNull Predicate<InsertAnchorNode> filter) {
     InsertVisitor visitor = new InsertVisitor(filter);
     visitor.visitChildren(getDocument());
     return visitor.getInserts();

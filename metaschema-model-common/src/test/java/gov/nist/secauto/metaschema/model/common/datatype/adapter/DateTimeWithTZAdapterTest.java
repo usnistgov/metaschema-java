@@ -28,18 +28,19 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.ZonedDateTime;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DateTimeWithTZAdapterTest {
   private DateTimeWithTZAdapter adapter = new DateTimeWithTZAdapter();
 
   @ParameterizedTest
   @ValueSource(strings = { "2020-12-20T14:47:48.623-05:00" })
-  void testParse(@NotNull String value) {
+  void testParse(@NonNull String value) {
     ZonedDateTime obj = adapter.parse(value);
     assertNotNull(obj);
   }

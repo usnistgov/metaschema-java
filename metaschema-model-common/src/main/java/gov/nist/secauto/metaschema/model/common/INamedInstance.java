@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model.common;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 
-import org.jetbrains.annotations.NotNull;
-
 import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * This marker interface indicates that the instance has a flag, field, or assembly name associated
@@ -44,7 +44,7 @@ public interface INamedInstance extends IInstance, INamedModelElement {
    * 
    * @return the corresponding definition
    */
-  @NotNull
+  @NonNull
   IDefinition getDefinition();
 
   /**
@@ -73,7 +73,7 @@ public interface INamedInstance extends IInstance, INamedModelElement {
    *          the object associated with the definition containing this property
    * @return the value if available, or {@code null} otherwise
    */
-  Object getValue(@NotNull Object parentInstance);
+  Object getValue(@NonNull Object parentInstance);
 
   /**
    * Generates a "coordinate" string for the provided information element instance.

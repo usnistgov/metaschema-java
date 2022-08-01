@@ -28,42 +28,44 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.Objects;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IArgument {
-  @NotNull
+  @NonNull
   String getName();
 
-  @NotNull
+  @NonNull
   ISequenceType getSequenceType();
 
   boolean isSupported(IExpression expression);
 
-  @NotNull
+  @NonNull
   String toSignature();
 
-  @NotNull
-  public static Builder newBuilder() {
+  @NonNull
+  static Builder newBuilder() {
     return new Builder();
   }
 
-  public static class Builder {
+  class Builder {
     private String name;
     private Class<? extends IItem> type = IItem.class;
     private Occurrence occurrence = Occurrence.ONE;
 
     public Builder() {
+      // construct a new non-initialized builder
     }
 
-    public Builder(@NotNull String name) {
+    public Builder(@NonNull String name) {
       this.name = name;
     }
 
-    @NotNull
-    public Builder name(@NotNull String name) {
+    @NonNull
+    public Builder name(@NonNull String name) {
       Objects.requireNonNull(name, "name");
       if (name.isBlank()) {
         throw new IllegalArgumentException("the name must be non-blank");
@@ -72,51 +74,45 @@ public interface IArgument {
       return this;
     }
 
-    @NotNull
-    public Builder type(@NotNull Class<? extends IItem> type) {
+    @NonNull
+    public Builder type(@NonNull Class<? extends IItem> type) {
       Objects.requireNonNull(type, "type");
       this.type = type;
       return this;
     }
 
-    @NotNull
+    @NonNull
     public Builder zeroOrOne() {
       return occurrence(Occurrence.ZERO_OR_ONE);
     }
 
-    @NotNull
+    @NonNull
     public Builder one() {
       return occurrence(Occurrence.ONE);
     }
 
-    @NotNull
+    @NonNull
     public Builder zeroOrMore() {
       return occurrence(Occurrence.ZERO_OR_MORE);
     }
 
-    @NotNull
+    @NonNull
     public Builder oneOrMore() {
       return occurrence(Occurrence.ONE_OR_MORE);
     }
 
-    @NotNull
-    public Builder occurrence(@NotNull Occurrence occurrence) {
+    @NonNull
+    public Builder occurrence(@NonNull Occurrence occurrence) {
       Objects.requireNonNull(occurrence, "occurrence");
       this.occurrence = occurrence;
       return this;
     }
 
-    protected void validate() throws IllegalStateException {
-      if (name == null) {
-        throw new IllegalStateException("the name must not be null");
-      }
-    }
-
-    @SuppressWarnings("null")
-    @NotNull
-    public IArgument build() throws IllegalStateException {
-      validate();
-      return new ArgumentImpl(name, new SequenceTypeImpl(type, occurrence));
+    @NonNull
+    public IArgument build() {
+      return new ArgumentImpl(
+          ObjectUtils.requireNonNull(name, "the name must not be null"),
+          new SequenceTypeImpl(type, occurrence));
     }
 
   }

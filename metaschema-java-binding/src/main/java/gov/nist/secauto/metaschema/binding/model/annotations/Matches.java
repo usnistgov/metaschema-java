@@ -33,12 +33,12 @@ import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.regex.Pattern;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * This annotation defines a rule that requires matching patterns and/or data types among the target
@@ -53,7 +53,7 @@ public @interface Matches {
    * 
    * @return the identifier if provided or an empty string otherwise
    */
-  @NotNull
+  @NonNull
   String id() default "";
 
   /**
@@ -61,7 +61,7 @@ public @interface Matches {
    * 
    * @return the level
    */
-  @NotNull
+  @NonNull
   Level level() default IConstraint.Level.ERROR;
 
   /**
@@ -74,7 +74,7 @@ public @interface Matches {
    * 
    * @return the target metapath
    */
-  @NotNull
+  @NonNull
   String target() default ".";
 
   /**
@@ -83,7 +83,7 @@ public @interface Matches {
    * 
    * @return a pattern string or an empty string if no pattern is provided
    */
-  @NotNull
+  @NonNull
   String pattern() default "";
 
   /**
@@ -91,7 +91,7 @@ public @interface Matches {
    * 
    * @return the data type adapter or a {@link NullJavaTypeAdapter} if none is provided
    */
-  @NotNull
+  @NonNull
   Class<? extends IDataTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
 
   /**
@@ -99,7 +99,7 @@ public @interface Matches {
    * 
    * @return the message or an empty string otherwise
    */
-  @NotNull
+  @NonNull
   String message() default "";
 
   /**
@@ -107,6 +107,6 @@ public @interface Matches {
    * 
    * @return an encoded markdown string or an empty string if no remarks are provided
    */
-  @NotNull
+  @NonNull
   String remarks() default "";
 }

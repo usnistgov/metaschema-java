@@ -28,9 +28,7 @@ package gov.nist.secauto.metaschema.model.common;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.net.URI;
 import java.util.Collection;
@@ -40,6 +38,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * The API for accessing information about a given Metaschema.
@@ -62,16 +63,30 @@ import javax.xml.namespace.QName;
  * {@link #getFlagDefinitions()}, along with similarly named accessors.
  */
 public interface IMetaschema {
-  static String METASCHEMA_XML_NS = "http://csrc.nist.gov/ns/oscal/metaschema/1.0";
+  String METASCHEMA_XML_NS = "http://csrc.nist.gov/ns/oscal/metaschema/1.0";
 
-  static <DEF extends IDefinition> Predicate<@NotNull DEF> allNonLocalDefinitions() {
+  /**
+   * Get a filter that will match all definitions that are not locally defined.
+   * 
+   * @param <DEF>
+   *          the type of definition
+   * @return a predicate implementing the filter
+   */
+  static <DEF extends IDefinition> Predicate<DEF> allNonLocalDefinitions() {
     return definition -> {
       return ModuleScopeEnum.INHERITED.equals(definition.getModuleScope())
           || ModelType.ASSEMBLY.equals(definition.getModelType()) && ((IAssemblyDefinition) definition).isRoot();
     };
   }
 
-  static <DEF extends IDefinition> Predicate<@NotNull DEF> allRootAssemblyDefinitions() {
+  /**
+   * Get a filter that will match all definitions that are root assemblies.
+   * 
+   * @param <DEF>
+   *          the type of definition
+   * @return a predicate implementing the filter
+   */
+  static <DEF extends IDefinition> Predicate<DEF> allRootAssemblyDefinitions() {
     return definition -> {
       return ModelType.ASSEMBLY.equals(definition.getModelType()) && ((IAssemblyDefinition) definition).isRoot();
     };
@@ -89,7 +104,7 @@ public interface IMetaschema {
    * 
    * @return the name
    */
-  @NotNull
+  @NonNull
   MarkupLine getName();
 
   /**
@@ -97,7 +112,7 @@ public interface IMetaschema {
    * 
    * @return the revision
    */
-  @NotNull
+  @NonNull
   String getVersion();
 
   /**
@@ -114,7 +129,7 @@ public interface IMetaschema {
    * 
    * @return the short name
    */
-  @NotNull
+  @NonNull
   String getShortName();
 
   /**
@@ -122,7 +137,7 @@ public interface IMetaschema {
    * 
    * @return a namespace
    */
-  @NotNull
+  @NonNull
   URI getXmlNamespace();
 
   /**
@@ -130,7 +145,7 @@ public interface IMetaschema {
    * 
    * @return the base URI
    */
-  @NotNull
+  @NonNull
   URI getJsonBaseUri();
 
   /**
@@ -147,8 +162,8 @@ public interface IMetaschema {
    * 
    * @return a list of imported Metaschema
    */
-  @NotNull
-  List<@NotNull ? extends IMetaschema> getImportedMetaschemas();
+  @NonNull
+  List<? extends IMetaschema> getImportedMetaschemas();
 
   /**
    * Retrieve the imported Metaschema with the specified name, if it exists.
@@ -165,8 +180,8 @@ public interface IMetaschema {
    * 
    * @return the collection of assembly definitions
    */
-  @NotNull
-  Collection<@NotNull ? extends IAssemblyDefinition> getAssemblyDefinitions();
+  @NonNull
+  Collection<? extends IAssemblyDefinition> getAssemblyDefinitions();
 
   /**
    * Retrieves the top-level assembly definition in this Metaschema with the matching name, if it
@@ -178,15 +193,15 @@ public interface IMetaschema {
    * @return the matching assembly definition, or {@code null} if none match
    */
   @Nullable
-  IAssemblyDefinition getAssemblyDefinitionByName(@NotNull String name);
+  IAssemblyDefinition getAssemblyDefinitionByName(@NonNull String name);
 
   /**
    * Retrieves the top-level field definitions in this Metaschema.
    * 
    * @return the collection of field definitions
    */
-  @NotNull
-  Collection<@NotNull ? extends IFieldDefinition> getFieldDefinitions();
+  @NonNull
+  Collection<? extends IFieldDefinition> getFieldDefinitions();
 
   /**
    * Retrieves the top-level field definition in this Metaschema with the matching name, if it exists.
@@ -197,18 +212,18 @@ public interface IMetaschema {
    * @return the matching field definition, or {@code null} if none match
    */
   @Nullable
-  IFieldDefinition getFieldDefinitionByName(@NotNull String name);
+  IFieldDefinition getFieldDefinitionByName(@NonNull String name);
 
   /**
    * Retrieves the top-level assembly and field definitions in this Metaschema.
    * 
    * @return a listing of assembly and field definitions
    */
-  @SuppressWarnings("null")
-  @NotNull
-  default List<@NotNull ? extends IModelDefinition> getAssemblyAndFieldDefinitions() {
-    return Stream.concat(getAssemblyDefinitions().stream(), getFieldDefinitions().stream())
-        .collect(Collectors.toList());
+  @NonNull
+  default List<? extends IModelDefinition> getAssemblyAndFieldDefinitions() {
+    return ObjectUtils.notNull(
+        Stream.concat(getAssemblyDefinitions().stream(), getFieldDefinitions().stream())
+            .collect(Collectors.toList()));
   }
 
   /**
@@ -216,8 +231,8 @@ public interface IMetaschema {
    * 
    * @return the collection of flag definitions
    */
-  @NotNull
-  Collection<@NotNull ? extends IFlagDefinition> getFlagDefinitions();
+  @NonNull
+  Collection<? extends IFlagDefinition> getFlagDefinitions();
 
   /**
    * Retrieves the top-level flag definition in this Metaschema with the matching name, if it exists.
@@ -228,17 +243,17 @@ public interface IMetaschema {
    * @return the matching flag definition, or {@code null} if none match
    */
   @Nullable
-  IFlagDefinition getFlagDefinitionByName(@NotNull String name);
+  IFlagDefinition getFlagDefinitionByName(@NonNull String name);
 
-//  /**
-//   * Retrieves the information elements matching the path.
-//   * 
-//   * @param path
-//   *          a MetaPath expression
-//   * @return the matching information elements or an empty collection
-//   */
-//  @NotNull
-//  Collection<@NotNull ? extends IModelElement> getInfoElementsByMetapath(@NotNull String path);
+  // /**
+  // * Retrieves the information elements matching the path.
+  // *
+  // * @param path
+  // * a MetaPath expression
+  // * @return the matching information elements or an empty collection
+  // */
+  // @NonNull
+  // Collection<@NonNull ? extends IModelElement> getInfoElementsByMetapath(@NonNull String path);
 
   /**
    * Retrieves the assembly definition with a matching name from either: 1) the top-level assembly
@@ -250,7 +265,7 @@ public interface IMetaschema {
    * @return the assembly definition
    */
   @Nullable
-  default IAssemblyDefinition getScopedAssemblyDefinitionByName(@NotNull String name) {
+  default IAssemblyDefinition getScopedAssemblyDefinitionByName(@NonNull String name) {
     // first try local/global top-level definitions from current metaschema
     IAssemblyDefinition retval = getAssemblyDefinitionByName(name);
     if (retval == null) {
@@ -270,7 +285,7 @@ public interface IMetaschema {
    * @return the field definition
    */
   @Nullable
-  default IFieldDefinition getScopedFieldDefinitionByName(@NotNull String name) {
+  default IFieldDefinition getScopedFieldDefinitionByName(@NonNull String name) {
     // first try local/global top-level definitions from current metaschema
     IFieldDefinition retval = getFieldDefinitionByName(name);
     if (retval == null) {
@@ -290,7 +305,7 @@ public interface IMetaschema {
    * @return the flag definition
    */
   @Nullable
-  default IFlagDefinition getScopedFlagDefinitionByName(@NotNull String name) {
+  default IFlagDefinition getScopedFlagDefinitionByName(@NonNull String name) {
     // first try local/global top-level definitions from current metaschema
     IFlagDefinition retval = getFlagDefinitionByName(name);
     if (retval == null) {
@@ -306,12 +321,11 @@ public interface IMetaschema {
    * 
    * @return a listing of assembly definitions marked as root
    */
-  @SuppressWarnings("null")
-  @NotNull
-  default Collection<@NotNull ? extends IAssemblyDefinition> getRootAssemblyDefinitions() {
-    return getExportedAssemblyDefinitions().stream()
+  @NonNull
+  default Collection<? extends IAssemblyDefinition> getRootAssemblyDefinitions() {
+    return ObjectUtils.notNull(getExportedAssemblyDefinitions().stream()
         .filter(allRootAssemblyDefinitions())
-        .collect(Collectors.toList());
+        .collect(Collectors.toList()));
   }
 
   /**
@@ -323,8 +337,8 @@ public interface IMetaschema {
    * 
    * @return the collection of exported flag definitions
    */
-  @NotNull
-  Collection<@NotNull ? extends IFlagDefinition> getExportedFlagDefinitions();
+  @NonNull
+  Collection<? extends IFlagDefinition> getExportedFlagDefinitions();
 
   /**
    * Retrieves the exported named flag definition, if it exists.
@@ -348,8 +362,8 @@ public interface IMetaschema {
    * 
    * @return the collection of exported field definitions
    */
-  @NotNull
-  Collection<@NotNull ? extends IFieldDefinition> getExportedFieldDefinitions();
+  @NonNull
+  Collection<? extends IFieldDefinition> getExportedFieldDefinitions();
 
   /**
    * Retrieves the exported named field definition, if it exists.
@@ -374,8 +388,8 @@ public interface IMetaschema {
    * 
    * @return the collection of exported assembly definitions
    */
-  @NotNull
-  Collection<@NotNull ? extends IAssemblyDefinition> getExportedAssemblyDefinitions();
+  @NonNull
+  Collection<? extends IAssemblyDefinition> getExportedAssemblyDefinitions();
 
   /**
    * Retrieves the exported named assembly definition, if it exists.

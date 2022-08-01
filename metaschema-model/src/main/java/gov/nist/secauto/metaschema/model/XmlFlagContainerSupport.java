@@ -40,16 +40,17 @@ import gov.nist.secauto.metaschema.model.xmlbeans.InlineFlagDefinitionType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class XmlFlagContainerSupport {
 
-  @NotNull
-  private final Map<@NotNull String, IFlagInstance> flagInstances;
+  @NonNull
+  private final Map<String, IFlagInstance> flagInstances;
 
   /**
    * Generate a set of constraints from the provided XMLBeans instance.
@@ -60,8 +61,8 @@ class XmlFlagContainerSupport {
    *          the field containing the flag
    */
   public XmlFlagContainerSupport(
-      @NotNull GlobalFieldDefinitionType xmlField,
-      @NotNull IFieldDefinition container) {
+      @NonNull GlobalFieldDefinitionType xmlField,
+      @NonNull IFieldDefinition container) {
     // handle flags
     if (xmlField.getFlagList().size() > 0 || xmlField.getDefineFlagList().size() > 0) {
       this.flagInstances = parseLocalFlags(xmlField, container);
@@ -79,8 +80,8 @@ class XmlFlagContainerSupport {
    *          the field containing the flag
    */
   public XmlFlagContainerSupport(
-      @NotNull InlineFieldDefinitionType xmlField,
-      @NotNull IFieldDefinition container) {
+      @NonNull InlineFieldDefinitionType xmlField,
+      @NonNull IFieldDefinition container) {
     // handle flags
     if (xmlField.getFlagList().size() > 0 || xmlField.getDefineFlagList().size() > 0) {
       this.flagInstances = parseLocalFlags(xmlField, container);
@@ -98,8 +99,8 @@ class XmlFlagContainerSupport {
    *          the assembly containing the flag
    */
   public XmlFlagContainerSupport(
-      @NotNull GlobalAssemblyDefinitionType xmlAssembly,
-      @NotNull IAssemblyDefinition container) {
+      @NonNull GlobalAssemblyDefinitionType xmlAssembly,
+      @NonNull IAssemblyDefinition container) {
     // handle flags
     if (xmlAssembly.getFlagList().size() > 0 || xmlAssembly.getDefineFlagList().size() > 0) {
       this.flagInstances = parseLocalFlags(xmlAssembly, container);
@@ -117,8 +118,8 @@ class XmlFlagContainerSupport {
    *          the assembly containing the flag
    */
   public XmlFlagContainerSupport(
-      @NotNull InlineAssemblyDefinitionType xmlAssembly,
-      @NotNull IAssemblyDefinition container) {
+      @NonNull InlineAssemblyDefinitionType xmlAssembly,
+      @NonNull IAssemblyDefinition container) {
     // handle flags
     if (xmlAssembly.getFlagList().size() > 0 || xmlAssembly.getDefineFlagList().size() > 0) {
       this.flagInstances = parseLocalFlags(xmlAssembly, container);
@@ -132,20 +133,20 @@ class XmlFlagContainerSupport {
    * 
    * @return the mapping of flag effective name to flag instance
    */
-  @NotNull
-  public Map<@NotNull String, ? extends IFlagInstance> getFlagInstanceMap() {
+  @NonNull
+  public Map<String, ? extends IFlagInstance> getFlagInstanceMap() {
     return flagInstances;
   }
 
-  @NotNull
-  private static Map<@NotNull String, IFlagInstance> parseLocalFlags(@NotNull XmlObject xmlObject,
-      @NotNull IModelDefinition parent) {
+  @NonNull
+  private static Map<String, IFlagInstance> parseLocalFlags(@NonNull XmlObject xmlObject,
+      @NonNull IModelDefinition parent) {
     // handle flags
     XmlCursor cursor = xmlObject.newCursor();
     cursor.selectPath(
         "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';" + "$this/m:flag|$this/m:define-flag");
 
-    Map<@NotNull String, IFlagInstance> flagInstances = new LinkedHashMap<>(); // NOPMD - intentional
+    Map<String, IFlagInstance> flagInstances = new LinkedHashMap<>(); // NOPMD - intentional
     while (cursor.toNextSelection()) {
       XmlObject obj = cursor.getObject();
       if (obj instanceof FlagReferenceType) {
@@ -159,8 +160,8 @@ class XmlFlagContainerSupport {
     }
 
     @SuppressWarnings("null")
-    @NotNull
-    Map<@NotNull String, IFlagInstance> retval
+    @NonNull
+    Map<String, IFlagInstance> retval
         = flagInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagInstances);
     return retval;
   }

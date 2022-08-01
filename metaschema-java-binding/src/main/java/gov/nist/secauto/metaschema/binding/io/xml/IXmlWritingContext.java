@@ -31,4 +31,5 @@ import gov.nist.secauto.metaschema.binding.io.IWritingContext;
 import org.codehaus.stax2.XMLStreamWriter2;
 
 public interface IXmlWritingContext extends IWritingContext<XMLStreamWriter2> {
+  // no extra methods
 }

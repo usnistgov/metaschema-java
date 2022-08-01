@@ -35,22 +35,23 @@ import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.xmlbeans.ChoiceType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class XmlModelContainerSupport {
 
-  @NotNull
-  private final List<@NotNull ? extends IModelInstance> modelInstances;
-  @NotNull
-  private final Map<@NotNull String, ? extends INamedModelInstance> namedModelInstances;
-  @NotNull
-  private final Map<@NotNull String, ? extends IFieldInstance> fieldInstances;
-  @NotNull
-  private final Map<@NotNull String, ? extends IAssemblyInstance> assemblyInstances;
+  @NonNull
+  private final List<? extends IModelInstance> modelInstances;
+  @NonNull
+  private final Map<String, ? extends INamedModelInstance> namedModelInstances;
+  @NonNull
+  private final Map<String, ? extends IFieldInstance> fieldInstances;
+  @NonNull
+  private final Map<String, ? extends IAssemblyInstance> assemblyInstances;
 
   /**
    * Construct a new model container.
@@ -60,7 +61,7 @@ class XmlModelContainerSupport {
    * @param containingAssembly
    *          the assembly containing this model
    */
-  public XmlModelContainerSupport(@NotNull XmlObject xmlContent, @NotNull IAssemblyDefinition containingAssembly) {
+  public XmlModelContainerSupport(@NonNull XmlObject xmlContent, @NonNull IAssemblyDefinition containingAssembly) {
     XmlModelParser parser = new XmlModelParser();
     if (xmlContent instanceof ChoiceType) {
       parser.parseChoice(xmlContent, containingAssembly);
@@ -78,8 +79,8 @@ class XmlModelContainerSupport {
    * 
    * @return the listing
    */
-  @NotNull
-  public List<@NotNull ? extends IModelInstance> getModelInstances() {
+  @NonNull
+  public List<? extends IModelInstance> getModelInstances() {
     return modelInstances;
   }
 
@@ -88,8 +89,8 @@ class XmlModelContainerSupport {
    * 
    * @return the mapping
    */
-  @NotNull
-  public Map<@NotNull String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
+  @NonNull
+  public Map<String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
     return namedModelInstances;
   }
 
@@ -98,8 +99,8 @@ class XmlModelContainerSupport {
    * 
    * @return the mapping
    */
-  @NotNull
-  public Map<@NotNull String, ? extends IFieldInstance> getFieldInstanceMap() {
+  @NonNull
+  public Map<String, ? extends IFieldInstance> getFieldInstanceMap() {
     return fieldInstances;
   }
 
@@ -108,8 +109,8 @@ class XmlModelContainerSupport {
    * 
    * @return the mapping
    */
-  @NotNull
-  public Map<@NotNull String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
+  @NonNull
+  public Map<String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
     return assemblyInstances;
   }
 
@@ -119,8 +120,8 @@ class XmlModelContainerSupport {
    * @return the listing
    */
   @SuppressWarnings("null")
-  @NotNull
-  public List<@NotNull ? extends IChoiceInstance> getChoiceInstances() {
+  @NonNull
+  public List<? extends IChoiceInstance> getChoiceInstances() {
     // this shouldn't get called all that often, so this is better than allocating memory
     return getModelInstances().stream()
         .filter(obj -> obj instanceof IChoiceInstance)

@@ -38,8 +38,6 @@ import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -48,13 +46,15 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class ClassDataTypeHandler implements IDataTypeHandler {
-  @NotNull
+  @NonNull
   private final IBoundNamedModelInstance property;
-  @NotNull
+  @NonNull
   private final IClassBinding classBinding;
 
-  public ClassDataTypeHandler(@NotNull IClassBinding classBinding, @NotNull IBoundNamedModelInstance property) {
+  public ClassDataTypeHandler(@NonNull IClassBinding classBinding, @NonNull IBoundNamedModelInstance property) {
     this.classBinding = ObjectUtils.requireNonNull(classBinding, "classBinding");
     this.property = ObjectUtils.requireNonNull(property, "property");
   }
@@ -111,14 +111,14 @@ class ClassDataTypeHandler implements IDataTypeHandler {
   }
 
   @Override
-  public void writeItems(Collection<@NotNull ? extends Object> items, boolean writeObjectWrapper,
+  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper,
       IJsonWritingContext context)
       throws IOException {
     classBinding.writeItems(items, writeObjectWrapper, context);
   }
 
   @Override
-  public Object copyItem(@NotNull Object fromItem, Object parentInstance) throws BindingException {
+  public Object copyItem(@NonNull Object fromItem, Object parentInstance) throws BindingException {
     return classBinding.copyBoundObject(fromItem, parentInstance);
   }
 }

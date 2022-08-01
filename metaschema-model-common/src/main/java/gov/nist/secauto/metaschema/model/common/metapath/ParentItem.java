@@ -28,17 +28,17 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collections;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 final class ParentItem
     extends AbstractPathExpression<INodeItem> {
-  @NotNull
+  @NonNull
   private static final ParentItem SINGLETON = new ParentItem();
 
-  @NotNull
+  @NonNull
   public static ParentItem instance() {
     return SINGLETON;
   }
@@ -48,18 +48,18 @@ final class ParentItem
   }
 
   @Override
-  public Class<@NotNull INodeItem> getBaseResultType() {
+  public Class<INodeItem> getBaseResultType() {
     return INodeItem.class;
   }
 
   @Override
-  public Class<@NotNull ? extends INodeItem> getStaticResultType() {
+  public Class<? extends INodeItem> getStaticResultType() {
     return getBaseResultType();
   }
 
   @SuppressWarnings("null")
   @Override
-  public List<@NotNull ? extends IExpression> getChildren() {
+  public List<? extends IExpression> getChildren() {
     return Collections.emptyList();
   }
 

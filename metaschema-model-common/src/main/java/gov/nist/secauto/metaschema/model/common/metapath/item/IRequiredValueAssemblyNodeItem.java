@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IRequiredValueAssemblyNodeItem extends IAssemblyNodeItem, IRequiredValueModelNodeItem {
 
@@ -41,7 +41,7 @@ public interface IRequiredValueAssemblyNodeItem extends IAssemblyNodeItem, IRequ
   IRequiredValueAssemblyNodeItem getParentContentNodeItem();
 
   @Override
-  default @NotNull String format(@NotNull IPathFormatter formatter) {
+  default @NonNull String format(@NonNull IPathFormatter formatter) {
     return formatter.formatAssembly(this);
   }
 }

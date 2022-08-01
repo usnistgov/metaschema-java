@@ -35,7 +35,6 @@ import gov.nist.secauto.metaschema.model.xmlbeans.METASCHEMADocument;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.jetbrains.annotations.NotNull;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -57,6 +56,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 /**
  * Provides methods to load a Metaschema expressed in XML.
  * <p>
@@ -67,19 +68,19 @@ public class MetaschemaLoader
     extends AbstractLoader<IMetaschema> {
   private boolean resolveEntities; // = false;
 
-  @NotNull
-  private final Set<@NotNull IConstraintSet> registeredConstraintSets;
+  @NonNull
+  private final Set<IConstraintSet> registeredConstraintSets;
 
   public MetaschemaLoader() {
     this(CollectionUtil.emptySet());
   }
 
-  public MetaschemaLoader(@NotNull Set<@NotNull IConstraintSet> additionalConstraintSets) {
+  public MetaschemaLoader(@NonNull Set<IConstraintSet> additionalConstraintSets) {
     this.registeredConstraintSets = CollectionUtil.unmodifiableSet(additionalConstraintSets);
   }
 
-  @NotNull
-  protected Set<@NotNull IConstraintSet> getRegisteredConstraintSets() {
+  @NonNull
+  protected Set<IConstraintSet> getRegisteredConstraintSets() {
     return registeredConstraintSets;
   }
 
@@ -93,9 +94,9 @@ public class MetaschemaLoader
   }
 
   protected IMetaschema newXmlMetaschema(
-      @NotNull URI resource,
-      @NotNull METASCHEMADocument xmlObject,
-      @NotNull List<@NotNull IMetaschema> importedMetaschemas) throws MetaschemaException {
+      @NonNull URI resource,
+      @NonNull METASCHEMADocument xmlObject,
+      @NonNull List<IMetaschema> importedMetaschemas) throws MetaschemaException {
     IMetaschema retval = new XmlMetaschema(resource, xmlObject, importedMetaschemas);
 
     IConstraintSet.applyConstraintSetToMetaschema(getRegisteredConstraintSets(), retval);
@@ -104,15 +105,15 @@ public class MetaschemaLoader
   }
 
   @Override
-  protected IMetaschema parseResource(@NotNull URI resource, @NotNull Stack<@NotNull URI> visitedResources)
+  protected IMetaschema parseResource(@NonNull URI resource, @NonNull Stack<URI> visitedResources)
       throws IOException {
     // parse this metaschema
     METASCHEMADocument xmlObject = parseMetaschema(resource);
 
     // now check if this Metaschema imports other metaschema
     int size = xmlObject.getMETASCHEMA().sizeOfImportArray();
-    @NotNull
-    Map<@NotNull URI, IMetaschema> importedMetaschema;
+    @NonNull
+    Map<URI, IMetaschema> importedMetaschema;
     if (size == 0) {
       importedMetaschema = ObjectUtils.notNull(Collections.emptyMap());
     } else {
@@ -129,8 +130,7 @@ public class MetaschemaLoader
     }
 
     // now create this metaschema
-    @SuppressWarnings("null")
-    Collection<@NotNull IMetaschema> values = importedMetaschema.values();
+    Collection<IMetaschema> values = importedMetaschema.values();
     try {
       return newXmlMetaschema(resource, xmlObject, new ArrayList<>(values));
     } catch (MetaschemaException ex) {
@@ -147,7 +147,7 @@ public class MetaschemaLoader
    * @throws IOException
    *           if a parsing error occurred
    */
-  protected METASCHEMADocument parseMetaschema(@NotNull URI resource) throws IOException {
+  protected METASCHEMADocument parseMetaschema(@NonNull URI resource) throws IOException {
     METASCHEMADocument metaschemaXml;
     try {
       XmlOptions options = new XmlOptions();

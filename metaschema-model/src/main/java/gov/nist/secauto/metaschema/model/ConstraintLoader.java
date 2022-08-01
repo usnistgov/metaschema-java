@@ -45,7 +45,6 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URI;
@@ -58,6 +57,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 /**
  * Provides methods to load a constraint set expressed in XML.
  * <p>
@@ -68,7 +69,7 @@ public class ConstraintLoader
     extends AbstractLoader<IConstraintSet> {
 
   @Override
-  protected IConstraintSet parseResource(@NotNull URI resource, @NotNull Stack<@NotNull URI> visitedResources)
+  protected IConstraintSet parseResource(@NonNull URI resource, @NonNull Stack<URI> visitedResources)
       throws IOException {
 
     // parse this metaschema
@@ -76,8 +77,8 @@ public class ConstraintLoader
 
     // now check if this constraint set imports other constraint sets
     int size = xmlObject.getMETASCHEMACONSTRAINTS().sizeOfImportArray();
-    @NotNull
-    Map<@NotNull URI, IConstraintSet> importedMetaschema;
+    @NonNull
+    Map<URI, IConstraintSet> importedMetaschema;
     if (size == 0) {
       importedMetaschema = ObjectUtils.notNull(Collections.emptyMap());
     } else {
@@ -95,8 +96,7 @@ public class ConstraintLoader
     }
 
     // now create this metaschema
-    @SuppressWarnings("null")
-    Collection<@NotNull IConstraintSet> values = importedMetaschema.values();
+    Collection<IConstraintSet> values = importedMetaschema.values();
     return new DefaultConstraintSet(resource, parseScopedConstraints(xmlObject, resource), new LinkedHashSet<>(values));
   }
 
@@ -109,8 +109,8 @@ public class ConstraintLoader
    * @throws IOException
    *           if a parsing error occurred
    */
-  @NotNull
-  protected METASCHEMACONSTRAINTSDocument parseConstraintSet(@NotNull URI resource) throws IOException {
+  @NonNull
+  protected METASCHEMACONSTRAINTSDocument parseConstraintSet(@NonNull URI resource) throws IOException {
     try {
       XmlOptions options = new XmlOptions();
       options.setBaseURI(resource);
@@ -130,11 +130,11 @@ public class ConstraintLoader
    *          the source of the constraint content
    * @return the scoped constraint definitions
    */
-  @NotNull
-  protected List<@NotNull IScopedContraints> parseScopedConstraints(
-      @NotNull METASCHEMACONSTRAINTSDocument xmlObject,
-      @NotNull URI source) {
-    List<@NotNull IScopedContraints> scopedConstraints = new LinkedList<>();
+  @NonNull
+  protected List<IScopedContraints> parseScopedConstraints(
+      @NonNull METASCHEMACONSTRAINTSDocument xmlObject,
+      @NonNull URI source) {
+    List<IScopedContraints> scopedConstraints = new LinkedList<>();
     ISource constraintSource = ExternalSource.instance(source);
 
     for (Scope scope : xmlObject.getMETASCHEMACONSTRAINTS().getScopeList()) {
@@ -145,26 +145,26 @@ public class ConstraintLoader
       cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
           + "$this/m:assembly|$this/m:field|$this/m:flag");
 
-      List<@NotNull ITargetedConstaints> targetedConstraints = new LinkedList<>(); // NOPMD - intentional
+      List<ITargetedConstaints> targetedConstraints = new LinkedList<>(); // NOPMD - intentional
       while (cursor.toNextSelection()) {
         XmlObject obj = cursor.getObject();
         if (obj instanceof Scope.Assembly) {
           Scope.Assembly assembly = (Scope.Assembly) obj;
           MetapathExpression expression = ObjectUtils.requireNonNull(assembly.getTarget());
-          AssemblyConstraintSupport constraints // NOPMD - intentional
-              = new AssemblyConstraintSupport(assembly, constraintSource);
+          AssemblyConstraintSupport constraints
+              = new AssemblyConstraintSupport(assembly, constraintSource); // NOPMD - intentional
           targetedConstraints.add(new AssemblyTargetedConstraints(expression, constraints));
         } else if (obj instanceof Scope.Field) {
           Scope.Field field = (Scope.Field) obj;
           MetapathExpression expression = ObjectUtils.requireNonNull(field.getTarget());
-          ValueConstraintSupport constraints // NOPMD - intentional
-              = new ValueConstraintSupport(field, constraintSource);
+          ValueConstraintSupport constraints
+              = new ValueConstraintSupport(field, constraintSource); // NOPMD - intentional
           targetedConstraints.add(new FieldTargetedConstraints(expression, constraints));
         } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
           Scope.Flag flag = (Scope.Flag) obj;
           MetapathExpression expression = ObjectUtils.requireNonNull(flag.getTarget());
-          ValueConstraintSupport constraints // NOPMD - intentional
-              = new ValueConstraintSupport(flag, constraintSource);
+          ValueConstraintSupport constraints
+              = new ValueConstraintSupport(flag, constraintSource); // NOPMD - intentional
           targetedConstraints.add(new FlagTargetedConstraints(expression, constraints));
         }
       }

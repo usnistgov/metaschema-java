@@ -28,12 +28,12 @@ package gov.nist.secauto.metaschema.model.common;
 
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * This model walker can be used to gather metaschema definitions that are defined globally.
@@ -54,11 +54,12 @@ public class UsedDefinitionModelWalker
    *          a collection of definitions to generate used definitions from
    * @return the collection of used definitions
    */
-  @NotNull
-  public static Collection<@NotNull ? extends IDefinition>
-      collectUsedDefinitions(Collection<@NotNull ? extends IAssemblyDefinition> definitions) {
+  @NonNull
+  public static Collection<? extends IDefinition>
+      collectUsedDefinitions(Collection<? extends IAssemblyDefinition> definitions) {
     UsedDefinitionModelWalker walker = new UsedDefinitionModelWalker();
     for (IAssemblyDefinition definition : definitions) {
+      assert definition != null;
       walker.walk(definition);
     }
     return walker.getDefinitions();
@@ -72,10 +73,10 @@ public class UsedDefinitionModelWalker
    *          the metaschemas to analyze
    * @return a collection of matching definitions
    */
-  @NotNull
-  public static Collection<@NotNull ? extends IDefinition>
-      collectUsedDefinitionsFromMetaschema(@NotNull Collection<@NotNull ? extends IMetaschema> metaschemas) {
-    Set<@NotNull IAssemblyDefinition> definitions = new HashSet<>();
+  @NonNull
+  public static Collection<? extends IDefinition>
+      collectUsedDefinitionsFromMetaschema(@NonNull Collection<? extends IMetaschema> metaschemas) {
+    Set<IAssemblyDefinition> definitions = new HashSet<>();
     for (IMetaschema metaschema : metaschemas) {
       // get local roots in case they are scope=local
       for (IAssemblyDefinition rootDef : metaschema.getRootAssemblyDefinitions()) {
@@ -100,9 +101,9 @@ public class UsedDefinitionModelWalker
    *          the metaschema to analyze
    * @return a collection of matching definitions
    */
-  @NotNull
-  public static Collection<@NotNull ? extends IDefinition>
-      collectUsedDefinitionsFromMetaschema(@NotNull IMetaschema metaschema) {
+  @NonNull
+  public static Collection<? extends IDefinition>
+      collectUsedDefinitionsFromMetaschema(@NonNull IMetaschema metaschema) {
     return collectUsedDefinitionsFromMetaschema(CollectionUtil.singleton(metaschema));
   }
 

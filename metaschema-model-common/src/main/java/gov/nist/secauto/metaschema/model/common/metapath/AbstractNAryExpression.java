@@ -26,18 +26,18 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Objects;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * An immutable expression that has a number of sub-expression children.
  */
 abstract class AbstractNAryExpression
     extends AbstractExpression {
-  @NotNull
-  private final List<@NotNull IExpression> children;
+  @NonNull
+  private final List<IExpression> children;
 
   /**
    * Construct a new n-ary expression.
@@ -46,12 +46,12 @@ abstract class AbstractNAryExpression
    *          the sub-expression children
    */
   @SuppressWarnings("null")
-  public AbstractNAryExpression(@NotNull List<@NotNull IExpression> children) {
+  public AbstractNAryExpression(@NonNull List<IExpression> children) {
     this.children = Objects.requireNonNull(children);
   }
 
   @Override
-  public List<@NotNull IExpression> getChildren() {
+  public List<IExpression> getChildren() {
     return children;
   }
 }

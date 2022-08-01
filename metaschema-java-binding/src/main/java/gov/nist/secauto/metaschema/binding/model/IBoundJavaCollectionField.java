@@ -28,16 +28,16 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 interface IBoundJavaCollectionField extends IBoundJavaField, IBoundNamedModelInstance {
   @Override
-  @NotNull
+  @NonNull
   default IModelPropertyInfo newPropertyInfo() { // NOPMD - cyclomatic complexity is unavoidable
     // create the property info
     Type type = getField().getGenericType();
@@ -95,11 +95,11 @@ interface IBoundJavaCollectionField extends IBoundJavaField, IBoundNamedModelIns
   }
 
   @Override
-  @NotNull
+  @NonNull
   IModelPropertyInfo getPropertyInfo();
 
   @Override
-  default @NotNull Class<?> getItemType() {
+  default @NonNull Class<?> getItemType() {
     return getPropertyInfo().getItemType();
   }
 }

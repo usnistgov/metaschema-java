@@ -33,20 +33,20 @@ import gov.nist.secauto.metaschema.binding.model.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IJsonBindingSupplier;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.Map;
 
-public interface IJsonProblemHandler extends IProblemHandler {
-  boolean handleUnknownRootProperty(@NotNull IAssemblyClassBinding classBinding, @NotNull String fieldName,
-      @NotNull IJsonParsingContext parsingContext) throws IOException;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-  boolean canHandleUnknownProperty(@NotNull IClassBinding classBinding, @NotNull String propertyName,
-      @NotNull IJsonParsingContext parsingContext)
+public interface IJsonProblemHandler extends IProblemHandler {
+  boolean handleUnknownRootProperty(@NonNull IAssemblyClassBinding classBinding, @NonNull String fieldName,
+      @NonNull IJsonParsingContext parsingContext) throws IOException;
+
+  boolean canHandleUnknownProperty(@NonNull IClassBinding classBinding, @NonNull String propertyName,
+      @NonNull IJsonParsingContext parsingContext)
       throws IOException;
 
-  boolean handleUnknownProperty(@NotNull IClassBinding classBinding, @NotNull String propertyName,
+  boolean handleUnknownProperty(@NonNull IClassBinding classBinding, @NonNull String propertyName,
       IJsonParsingContext parsingContext) throws IOException;
 
   /**
@@ -65,7 +65,7 @@ public interface IJsonProblemHandler extends IProblemHandler {
    * @throws BindingException
    *           if an unhandled binding error has occurred for any reason
    */
-  Map<IBoundNamedInstance, IJsonBindingSupplier> handleMissingFields(@NotNull IClassBinding classBinding,
-      @NotNull Map<String, IBoundNamedInstance> missingPropertyBindings, @NotNull IJsonParsingContext context)
+  Map<IBoundNamedInstance, IJsonBindingSupplier> handleMissingFields(@NonNull IClassBinding classBinding,
+      @NonNull Map<String, IBoundNamedInstance> missingPropertyBindings, @NonNull IJsonParsingContext context)
       throws BindingException;
 }

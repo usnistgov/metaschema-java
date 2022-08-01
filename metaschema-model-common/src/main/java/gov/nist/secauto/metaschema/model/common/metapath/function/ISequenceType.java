@@ -28,7 +28,10 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface ISequenceType {
+  @NonNull
   ISequenceType EMPTY = new ISequenceType() {
     @Override
     public boolean isEmpty() {

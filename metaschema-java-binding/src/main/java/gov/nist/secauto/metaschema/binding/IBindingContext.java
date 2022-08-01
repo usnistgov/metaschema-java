@@ -39,14 +39,14 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.math.BigInteger;
 import java.net.URI;
 import java.time.ZonedDateTime;
 
 import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Provides information supporting a binding between a set of Metaschema models and corresponding
@@ -60,7 +60,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    * 
    * @return a new binding context
    */
-  @NotNull
+  @NonNull
   static IBindingContext instance() {
     return DefaultBindingContext.instance();
   }
@@ -71,7 +71,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    * @param matcher
    *          the matcher implementation
    */
-  void registerBindingMatcher(@NotNull IBindingMatcher matcher);
+  void registerBindingMatcher(@NonNull IBindingMatcher matcher);
 
   /**
    * Determine the bound class for the provided XML {@link QName}.
@@ -82,7 +82,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    * @see IBindingContext#registerBindingMatcher(IBindingMatcher)
    */
   @Nullable
-  Class<?> getBoundClassForXmlQName(@NotNull QName rootQName);
+  Class<?> getBoundClassForXmlQName(@NonNull QName rootQName);
 
   /**
    * Determine the bound class for the provided JSON/YAML property/item name using any registered
@@ -94,7 +94,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    * @see IBindingContext#registerBindingMatcher(IBindingMatcher)
    */
   @Nullable
-  Class<?> getBoundClassForJsonName(@NotNull String rootName);
+  Class<?> getBoundClassForJsonName(@NonNull String rootName);
 
   /**
    * Get's the {@link IDataTypeAdapter} associated with the specified Java class, which is used to
@@ -110,11 +110,11 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    * @return the adapter instance or {@code null} if the provided class is not bound
    */
   @Nullable
-  <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz);
+  <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NonNull Class<TYPE> clazz);
 
   // boolean hasClassBinding(Class<?> clazz) throws BindingException;
 
-  // <TYPE> void registerSubclassType(@NotNull Class<TYPE> originalClass, @NotNull Class<? extends
+  // <TYPE> void registerSubclassType(@NonNull Class<TYPE> originalClass, @NonNull Class<? extends
   // TYPE> replacementClass);
 
   /**
@@ -138,8 +138,8 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    *           if the requested format is not supported by the implementation
    * @see #getClassBinding(Class)
    */
-  @NotNull
-  <CLASS> ISerializer<CLASS> newSerializer(@NotNull Format format, @NotNull Class<CLASS> clazz);
+  @NonNull
+  <CLASS> ISerializer<CLASS> newSerializer(@NonNull Format format, @NonNull Class<CLASS> clazz);
 
   /**
    * Gets a data {@link IDeserializer} which can be used to read Java instance data for the provided
@@ -162,15 +162,15 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    *           if the requested format is not supported by the implementation
    * @see #getClassBinding(Class)
    */
-  @NotNull
-  <CLASS> IDeserializer<CLASS> newDeserializer(@NotNull Format format, @NotNull Class<CLASS> clazz);
+  @NonNull
+  <CLASS> IDeserializer<CLASS> newDeserializer(@NonNull Format format, @NonNull Class<CLASS> clazz);
 
   /**
    * Get a new {@link IBoundLoader} instance.
    * 
    * @return the instance
    */
-  @NotNull
+  @NonNull
   IBoundLoader newBoundLoader();
 
   /**
@@ -190,8 +190,8 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    * @throws IllegalArgumentException
    *           if the provided class is not bound to a Metaschema assembly or field
    */
-  @NotNull
-  <CLASS> CLASS copyBoundObject(@NotNull CLASS other, Object parentInstance) throws BindingException;
+  @NonNull
+  <CLASS> CLASS copyBoundObject(@NonNull CLASS other, Object parentInstance) throws BindingException;
 
   /**
    * Wraps a bound object in an {@link INodeItem} for use in the Metapath engine.
@@ -206,7 +206,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    * @see MetapathExpression
    */
   // TODO: add method to IAssemblyInstance, etc to do this instead
-  default INodeItem toNodeItem(@NotNull Object boundObject, @NotNull URI baseUri) {
+  default INodeItem toNodeItem(@NonNull Object boundObject, @NonNull URI baseUri) {
     return toNodeItem(boundObject, baseUri, false);
   }
 
@@ -224,7 +224,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    *           if the provided class is not bound to a Metaschema assembly or field
    * @see MetapathExpression
    */
-  INodeItem toNodeItem(@NotNull Object boundObject, @NotNull URI baseUri, boolean rootNode);
+  INodeItem toNodeItem(@NonNull Object boundObject, @NonNull URI baseUri, boolean rootNode);
 
   /**
    * Perform constraint validation on the provided bound object represented as an {@link INodeItem}.
@@ -236,6 +236,6 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    * @throws IllegalArgumentException
    *           if the provided class is not bound to a Metaschema assembly or field
    */
-  IValidationResult validate(@NotNull INodeItem nodeItem);
+  IValidationResult validate(@NonNull INodeItem nodeItem);
 
 }

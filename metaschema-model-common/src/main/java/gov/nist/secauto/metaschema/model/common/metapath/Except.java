@@ -28,26 +28,26 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class Except
     extends AbstractFilterExpression {
 
-  protected Except(@NotNull IExpression left, @NotNull IExpression right) {
+  protected Except(@NonNull IExpression left, @NonNull IExpression right) {
     super(left, right);
   }
 
   @SuppressWarnings("null")
   @Override
-  protected ISequence<?> applyFilterTo(@NotNull ISequence<?> result, @NotNull List<@NotNull ? extends IItem> items) {
+  protected ISequence<?> applyFilterTo(@NonNull ISequence<?> result, @NonNull List<? extends IItem> items) {
     return ISequence.of(result.asStream()
         .filter(item -> !items.contains(item)));
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(@NotNull IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+  public <RESULT, CONTEXT> RESULT accept(@NonNull IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitExcept(this, context);
   }
 }

@@ -42,8 +42,7 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.commons.lang3.builder.MultilineRecursiveToStringStyle;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -56,17 +55,19 @@ import java.util.stream.Collectors;
 
 import javax.lang.model.element.Modifier;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
     extends AbstractDefinitionTypeInfo<DEF>
     implements IModelDefinitionTypeInfo {
-  @NotNull
+  @NonNull
   private final ClassName className;
   @Nullable
   private final ClassName baseClassName;
-  private Map<@NotNull String, IFlagInstanceTypeInfo> flagTypeInfos;
+  private Map<String, IFlagInstanceTypeInfo> flagTypeInfos;
 
-  public AbstractModelDefinitionTypeInfo(@NotNull DEF definition,
-      @NotNull ITypeResolver typeResolver) {
+  public AbstractModelDefinitionTypeInfo(@NonNull DEF definition,
+      @NonNull ITypeResolver typeResolver) {
     super(definition, typeResolver);
     this.className = typeResolver.getClassName(definition);
     this.baseClassName = typeResolver.getBaseClassName(definition);
@@ -90,6 +91,7 @@ class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
         // create Java properties for the definition's flags
         flagTypeInfos = getDefinition().getFlagInstances().stream()
             .map(instance -> {
+              assert instance != null;
               return newFlagTypeInfo(instance);
             })
             .collect(Collectors.toUnmodifiableMap(IFlagInstanceTypeInfo::getPropertyName, Function.identity()));
@@ -102,19 +104,19 @@ class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
   }
 
   @Override
-  public IFlagInstanceTypeInfo getFlagInstanceTypeInfo(@NotNull IFlagInstance instance) {
+  public IFlagInstanceTypeInfo getFlagInstanceTypeInfo(@NonNull IFlagInstance instance) {
     initInstanceTypeInfos();
     return (IFlagInstanceTypeInfo) getInstanceTypeInfo(instance);
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull IFlagInstanceTypeInfo> getFlagInstanceTypeInfos() {
+  public Collection<IFlagInstanceTypeInfo> getFlagInstanceTypeInfos() {
     initInstanceTypeInfos();
     return flagTypeInfos.values();
   }
 
-  protected IFlagInstanceTypeInfo newFlagTypeInfo(@NotNull IFlagInstance instance) {
+  protected IFlagInstanceTypeInfo newFlagTypeInfo(@NonNull IFlagInstance instance) {
     IFlagInstanceTypeInfo retval = new FlagInstanceTypeInfoImpl(instance, this);
     addPropertyTypeInfo(retval);
     return retval;
@@ -125,7 +127,7 @@ class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
     return generateClass(getClassName(), true);
   }
 
-  protected void buildCommonProperties(@NotNull AnnotationSpec.Builder annotation) {
+  protected void buildCommonProperties(@NonNull AnnotationSpec.Builder annotation) {
     IDefinition definition = getDefinition();
 
     if (definition.getFormalName() != null) {
@@ -141,7 +143,7 @@ class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
     annotation.addMember("metaschema", "$T.class", getTypeResolver().getClassName(metaschema));
   }
 
-  protected void buildConstraints(@NotNull AnnotationSpec.Builder annotation) {
+  protected void buildConstraints(@NonNull AnnotationSpec.Builder annotation) {
     IModelDefinition definition = getDefinition();
     AnnotationUtils.applyAllowedValuesConstraints(annotation, definition.getAllowedValuesConstraints());
     AnnotationUtils.applyIndexHasKeyConstraints(annotation, definition.getIndexHasKeyConstraints());
@@ -172,10 +174,11 @@ class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
    * @throws IOException
    *           if a building error occurred while generating the Java class
    */
-  @NotNull
-  protected TypeSpec generateClass(@NotNull ClassName className, boolean isChild) throws IOException {
+  @NonNull
+  protected TypeSpec generateClass(@NonNull ClassName className, boolean isChild) throws IOException {
     // create the class
     TypeSpec.Builder builder = TypeSpec.classBuilder(className).addModifiers(Modifier.PUBLIC);
+    assert builder != null;
     if (isChild) {
       builder.addModifiers(Modifier.STATIC);
     }
@@ -185,11 +188,12 @@ class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
       builder.superclass(baseClassName);
     }
 
-    Set<@NotNull IModelDefinition> additionalChildClasses = buildClass(builder, className);
+    Set<IModelDefinition> additionalChildClasses = buildClass(builder, className);
 
     ITypeResolver typeResolver = getTypeResolver();
 
     for (IModelDefinition definition : additionalChildClasses) {
+      assert definition != null;
       IModelDefinitionTypeInfo typeInfo = typeResolver.getTypeInfo(definition);
       TypeSpec childClass = typeInfo.generateChildClass();
       builder.addType(childClass);
@@ -208,16 +212,16 @@ class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
    * @throws IOException
    *           if an error occurred while building the class
    */
-  @NotNull
-  protected Set<@NotNull IModelDefinition> buildClass(@NotNull TypeSpec.Builder builder,
-      @NotNull ClassName className)
+  @NonNull
+  protected Set<IModelDefinition> buildClass(@NonNull TypeSpec.Builder builder,
+      @NonNull ClassName className)
       throws IOException {
     MarkupLine description = getDefinition().getDescription();
     if (description != null) {
       builder.addJavadoc(description.toHtml());
     }
 
-    Set<@NotNull IModelDefinition> additionalChildClasses = new HashSet<>();
+    Set<IModelDefinition> additionalChildClasses = new HashSet<>();
 
     // generate a no-arg constructor
     builder.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC).build());

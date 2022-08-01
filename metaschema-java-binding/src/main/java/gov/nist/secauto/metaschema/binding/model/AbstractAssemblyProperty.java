@@ -33,21 +33,23 @@ import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Locale;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractAssemblyProperty
     extends AbstractNamedModelProperty
     implements IBoundAssemblyInstance {
 
-  public AbstractAssemblyProperty(@NotNull IAssemblyClassBinding parentClassBinding) {
+  public AbstractAssemblyProperty(@NonNull IAssemblyClassBinding parentClassBinding) {
     super(parentClassBinding);
   }
 
@@ -77,7 +79,7 @@ abstract class AbstractAssemblyProperty
       retval = getDataTypeHandler().get(parentInstance, propertyStartElement, context);
 
       // consume the end element
-      XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.END_ELEMENT, propertyStartElement.getName());
+      XmlEventUtil.consumeAndAssert(eventReader, XMLStreamConstants.END_ELEMENT, propertyStartElement.getName());
     }
     return retval;
   }

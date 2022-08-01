@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.binding.io;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * The base class of all format-specific serializers.
@@ -49,8 +49,7 @@ public abstract class AbstractSerializer<CLASS>
    * @param classBinding
    *          the bound class information for the Java type this serializer is operating on
    */
-  @SuppressWarnings("null")
-  public AbstractSerializer(@NotNull IBindingContext bindingContext, @NotNull IAssemblyClassBinding classBinding) {
+  public AbstractSerializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding, SerializationFeature.class);
   }
 }

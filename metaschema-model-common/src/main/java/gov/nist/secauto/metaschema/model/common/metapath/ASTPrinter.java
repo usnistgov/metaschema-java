@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.ASTPrinter.State;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 final class ASTPrinter
-    extends AbstractExpressionVisitor<String, @NotNull State> {
+    extends AbstractExpressionVisitor<String, State> {
 
   private static final ASTPrinter SINGLETON = new ASTPrinter();
 
@@ -85,6 +85,7 @@ final class ASTPrinter
    *          the output context state
    * @return the string representation of the node tree for the current node and its children
    */
+  @SuppressWarnings("static-method")
   protected String appendNode(IExpression expr, String childResult, State context) {
     StringBuilder buffer = new StringBuilder();
     buffer.append(context.getIndentation())
@@ -149,7 +150,7 @@ final class ASTPrinter
   }
 
   @Override
-  public String visitExcept(@NotNull Except expr, State context) {
+  public String visitExcept(@NonNull Except expr, State context) {
     return appendNode(expr, super.visitExcept(expr, context), context);
   }
 
@@ -174,7 +175,7 @@ final class ASTPrinter
   }
 
   @Override
-  public String visitIntersect(@NotNull Intersect expr, State context) {
+  public String visitIntersect(@NonNull Intersect expr, State context) {
     return appendNode(expr, super.visitIntersect(expr, context), context);
   }
 
@@ -219,7 +220,7 @@ final class ASTPrinter
   }
 
   @Override
-  public String visitPredicate(@NotNull Predicate expr, State context) {
+  public String visitPredicate(@NonNull Predicate expr, State context) {
     return appendNode(expr, super.visitPredicate(expr, context), context);
   }
 

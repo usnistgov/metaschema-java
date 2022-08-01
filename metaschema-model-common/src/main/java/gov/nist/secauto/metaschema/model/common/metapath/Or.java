@@ -29,13 +29,19 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnBoolean;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 
-import org.jetbrains.annotations.NotNull;
-
+import java.util.Arrays;
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class Or // NOPMD - intentional name
     extends AbstractNAryExpression
     implements IBooleanLogicExpression {
+
+  @SuppressWarnings("null")
+  protected Or(@NonNull IExpression... expressions) {
+    this(Arrays.asList(expressions));
+  }
 
   /**
    * Determines the logical disjunction of the result of evaluating a list of expressions. The boolean
@@ -45,7 +51,7 @@ class Or // NOPMD - intentional name
    * @param expressions
    *          the list of expressions
    */
-  protected Or(@NotNull List<@NotNull IExpression> expressions) {
+  protected Or(@NonNull List<IExpression> expressions) {
     super(expressions);
   }
 

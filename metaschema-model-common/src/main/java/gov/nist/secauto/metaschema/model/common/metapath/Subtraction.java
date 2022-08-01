@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationIt
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class Subtraction
     extends AbstractBasicArithmeticExpression {
@@ -48,7 +48,7 @@ class Subtraction
    * @param subtrahend
    *          an expression whose result is the value being subtracted
    */
-  protected Subtraction(@NotNull IExpression minuend, @NotNull IExpression subtrahend) {
+  protected Subtraction(@NonNull IExpression minuend, @NonNull IExpression subtrahend) {
     super(minuend, subtrahend);
   }
 
@@ -67,8 +67,8 @@ class Subtraction
    * @return the difference of the items or an empty {@link ISequence} if either item is {@code null}
    */
   @Override
-  @NotNull
-  protected IAnyAtomicItem operation(@NotNull IAnyAtomicItem minuend, @NotNull IAnyAtomicItem subtrahend) {
+  @NonNull
+  protected IAnyAtomicItem operation(@NonNull IAnyAtomicItem minuend, @NonNull IAnyAtomicItem subtrahend) {
     return subtract(minuend, subtrahend);
   }
 
@@ -81,9 +81,9 @@ class Subtraction
    *          the item being subtracted
    * @return the difference of the items
    */
-  @NotNull
-  public static IAnyAtomicItem subtract(@NotNull IAnyAtomicItem minuend, // NOPMD - intentional
-      @NotNull IAnyAtomicItem subtrahend) {
+  @NonNull
+  public static IAnyAtomicItem subtract(@NonNull IAnyAtomicItem minuend, // NOPMD - intentional
+      @NonNull IAnyAtomicItem subtrahend) {
 
     IAnyAtomicItem retval = null;
     if (minuend instanceof IDateItem) {

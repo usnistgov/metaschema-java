@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * An immutable binary expression that supports arithmetic evaluation. The result type is determined
@@ -43,7 +43,7 @@ import java.util.List;
 abstract class AbstractArithmeticExpression<RESULT_TYPE extends IAnyAtomicItem>
     extends AbstractBinaryExpression<IExpression, IExpression> {
 
-  @NotNull
+  @NonNull
   private final Class<? extends RESULT_TYPE> staticResultType;
 
   /**
@@ -57,8 +57,8 @@ abstract class AbstractArithmeticExpression<RESULT_TYPE extends IAnyAtomicItem>
    *          the base result type of the expression result
    */
   @SuppressWarnings("null")
-  public AbstractArithmeticExpression(@NotNull IExpression left, @NotNull IExpression right,
-      @NotNull Class<@NotNull RESULT_TYPE> baseType) {
+  public AbstractArithmeticExpression(@NonNull IExpression left, @NonNull IExpression right,
+      @NonNull Class<RESULT_TYPE> baseType) {
     super(left, right);
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(baseType, List.of(left, right));
   }

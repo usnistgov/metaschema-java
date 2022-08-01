@@ -34,61 +34,64 @@ import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ModelWalker;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
 
-  @NotNull
-  protected IInlineStrategy newInlineStrategy(@NotNull IConfiguration<SchemaGenerationFeature> configuration,
-      @NotNull Collection<@NotNull ? extends IDefinition> definitions) {
+  @NonNull
+  protected IInlineStrategy newInlineStrategy(@NonNull IConfiguration<SchemaGenerationFeature> configuration,
+      @NonNull Collection<? extends IDefinition> definitions) {
     IInlineStrategy retval;
-    if (!configuration.isFeatureEnabled(SchemaGenerationFeature.INLINE_DEFINITIONS)) {
-      retval = IInlineStrategy.NONE_INLINE;
-    } else if (configuration.isFeatureEnabled(SchemaGenerationFeature.INLINE_CHOICE_DEFINITIONS)) {
-      retval = IInlineStrategy.DEFINED_AS_INLINE;
+    if (configuration.isFeatureEnabled(SchemaGenerationFeature.INLINE_DEFINITIONS)) {
+      if (configuration.isFeatureEnabled(SchemaGenerationFeature.INLINE_CHOICE_DEFINITIONS)) {
+        retval = IInlineStrategy.DEFINED_AS_INLINE;
+      } else {
+        retval = new ChoiceInlineStrategy(definitions);
+      }
     } else {
-      retval = new ChoiceInlineStrategy(definitions);
+      retval = IInlineStrategy.NONE_INLINE;
     }
     return retval;
   }
 
   private static class ChoiceInlineStrategy implements IInlineStrategy {
-    @NotNull
+    @NonNull
     private final Map<IDefinition, Boolean> definitionInlinedMap;
 
-    public ChoiceInlineStrategy(@NotNull Collection<@NotNull ? extends IDefinition> definitions) {
+    public ChoiceInlineStrategy(@NonNull Collection<? extends IDefinition> definitions) {
       ChoiceModelWalker walker = new ChoiceModelWalker();
       for (IDefinition definition : definitions) {
+        assert definition != null;
         walker.walkDefinition(definition);
       }
       definitionInlinedMap = walker.getDefinitionInlinedMap();
     }
 
     @Override
-    public boolean isInline(@NotNull IDefinition definition) {
+    public boolean isInline(@NonNull IDefinition definition) {
       Boolean inlined = definitionInlinedMap.get(definition);
       return inlined != null && inlined;
     }
   }
 
   private static class ChoiceModelWalker
-      extends ModelWalker<@NotNull Integer> {
-    @NotNull
+      extends ModelWalker<Integer> {
+    @NonNull
     private final Map<IDefinition, Boolean> definitionInlinedMap = new HashMap<>(); // NOPMD - intentional
     private final Stack<IDefinition> visitStack = new Stack<>();
 
-    @NotNull
+    @NonNull
     protected Map<IDefinition, Boolean> getDefinitionInlinedMap() {
       return CollectionUtil.unmodifiableMap(definitionInlinedMap);
     }
@@ -105,7 +108,7 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
      * @param inline
      *          the status to update to
      */
-    protected void updateInlineStatus(@NotNull IDefinition definition, boolean inline) {
+    protected void updateInlineStatus(@NonNull IDefinition definition, boolean inline) {
       Boolean value = definitionInlinedMap.get(definition);
 
       if (value == null || (value && value != inline)) { // NOPMD - readability
@@ -118,14 +121,14 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
       return 0;
     }
 
-    private boolean isChoiceSibling(@NotNull INamedInstance instance) {
+    private static boolean isChoiceSibling(@NonNull INamedInstance instance) {
       IModelDefinition containingDefinition = instance.getContainingDefinition();
       return containingDefinition instanceof IAssemblyDefinition
           && !((IAssemblyDefinition) containingDefinition).getChoiceInstances().isEmpty();
     }
 
     @Override
-    protected boolean visit(@NotNull IFlagInstance instance, @NotNull Integer data) {
+    protected boolean visit(@NonNull IFlagInstance instance, Integer data) {
       if (isChoiceSibling(instance)) {
         // choice siblings must not be inline
         updateInlineStatus(instance.getDefinition(), false);
@@ -134,7 +137,7 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
     }
 
     @Override
-    protected boolean visit(@NotNull IFieldInstance instance, @NotNull Integer data) {
+    protected boolean visit(@NonNull IFieldInstance instance, Integer data) {
       if (isChoiceSibling(instance)) {
         // choice siblings must not be inline
         updateInlineStatus(instance.getDefinition(), false);
@@ -143,7 +146,7 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
     }
 
     @Override
-    protected boolean visit(@NotNull IAssemblyInstance instance, @NotNull Integer data) {
+    protected boolean visit(@NonNull IAssemblyInstance instance, Integer data) {
       if (isChoiceSibling(instance)) {
         // choice siblings must not be inline
         updateInlineStatus(instance.getDefinition(), false);
@@ -152,26 +155,26 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
     }
 
     @Override
-    protected void visit(@NotNull IFlagDefinition def, @NotNull Integer choiceDepth) {
+    protected void visit(@NonNull IFlagDefinition def, Integer choiceDepth) {
       updateInlineStatus(def, def.isInline());
     }
 
     @Override
-    protected boolean visit(@NotNull IFieldDefinition def, @NotNull Integer choiceDepth) {
+    protected boolean visit(@NonNull IFieldDefinition def, Integer choiceDepth) {
       boolean inline = def.isInline() && choiceDepth == 0;
       updateInlineStatus(def, inline);
       return true;
     }
 
     @Override
-    protected boolean visit(@NotNull IAssemblyDefinition def, @NotNull Integer choiceDepth) {
+    protected boolean visit(@NonNull IAssemblyDefinition def, Integer choiceDepth) {
       boolean inline = def.isInline() && choiceDepth == 0;
       updateInlineStatus(def, inline);
       return true;
     }
 
     @Override
-    public void walk(@NotNull IAssemblyDefinition def, @NotNull Integer choiceDepth) {
+    public void walk(@NonNull IAssemblyDefinition def, Integer choiceDepth) {
       if (!visitStack.contains(def)) {
         visitStack.push(def);
         // ignore depth on children, since they can make their own decision
@@ -181,7 +184,7 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
     }
 
     @Override
-    public void walk(@NotNull IChoiceInstance instance, @NotNull Integer choiceDepth) {
+    public void walk(@NonNull IChoiceInstance instance, Integer choiceDepth) {
       int newDepth = choiceDepth.intValue() + 1;
       super.walk(instance, newDepth);
     }

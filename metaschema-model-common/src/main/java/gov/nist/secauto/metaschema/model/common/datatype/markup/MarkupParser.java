@@ -53,6 +53,7 @@ import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.apache.logging.log4j.LogManager;
@@ -61,6 +62,7 @@ import org.codehaus.stax2.XMLEventReader2;
 
 import java.util.regex.Pattern;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
@@ -78,45 +80,28 @@ public class MarkupParser {
     StringBuilder buffer = new StringBuilder();
     parseContents(reader, null, buffer);
     String html = buffer.toString().trim();
-    // LOGGER.debug(html);
-    MarkupLine retval;
-    if (html.isEmpty()) {
-      retval = null;
-    } else {
-      retval = MarkupLine.fromHtml(html);
-      // LOGGER.debug(retval.toMarkdown());
-    }
-    return retval;
+    return html.isEmpty() ? null : MarkupLine.fromHtml(html);
   }
 
   public MarkupMultiline parseMarkupMultiline(XMLEventReader2 reader) throws XMLStreamException {
     StringBuilder buffer = new StringBuilder();
     parseToString(reader, buffer);
     String html = buffer.toString().trim();
-    // LOGGER.debug(html);
-    MarkupMultiline retval;
-    if (html.isEmpty()) {
-      retval = null;
-    } else {
-      retval = MarkupMultiline.fromHtml(html);
-      // LOGGER.debug(retval.toMarkdown());
-    }
-    return retval;
+    return html.isEmpty() ? null : MarkupMultiline.fromHtml(html);
   }
 
   protected void parseToString(XMLEventReader2 reader, StringBuilder buffer) throws XMLStreamException {
-    XMLEvent nextEvent = reader.peek();
-    if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("parseToString(enter): {}", XmlEventUtil.toString(nextEvent));
-    }
+    // if (LOGGER.isDebugEnabled()) {
+    // LOGGER.debug("parseToString(enter): {}", XmlEventUtil.toString(reader.peek()));
+    // }
 
-    outer: while (reader.hasNextEvent() && !(nextEvent = reader.peek()).isEndElement()) {
+    outer: while (reader.hasNextEvent() && !reader.peek().isEndElement()) {
       // skip whitespace before the next block element
-      nextEvent = XmlEventUtil.skipWhitespace(reader);
+      XMLEvent nextEvent = XmlEventUtil.skipWhitespace(reader);
 
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("parseToString: {}", XmlEventUtil.toString(nextEvent));
-      }
+      // if (LOGGER.isDebugEnabled()) {
+      // LOGGER.debug("parseToString: {}", XmlEventUtil.toString(nextEvent));
+      // }
 
       if (nextEvent.isStartElement()) {
         StartElement start = nextEvent.asStartElement();
@@ -157,9 +142,10 @@ public class MarkupParser {
       XmlEventUtil.skipWhitespace(reader);
     }
 
-    if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("parseToString(exit): {}", reader.peek() != null ? XmlEventUtil.toString(reader.peek()) : "");
-    }
+    // if (LOGGER.isDebugEnabled()) {
+    // LOGGER.debug("parseToString(exit): {}", reader.peek() != null ?
+    // XmlEventUtil.toString(reader.peek()) : "");
+    // }
   }
 
   private void parseStartElement(XMLEventReader2 reader, StartElement start, StringBuilder buffer)
@@ -172,8 +158,8 @@ public class MarkupParser {
     reader.nextEvent();
 
     QName name = start.getName();
-    buffer.append('<');
-    buffer.append(name.getLocalPart());
+    buffer.append('<')
+        .append(name.getLocalPart());
     for (Attribute attribute : CollectionUtil.toIterable(start.getAttributes())) {
       buffer.append(' ');
       buffer.append(attribute.getName().getLocalPart());
@@ -193,9 +179,9 @@ public class MarkupParser {
       // parse until the start's END_ELEMENT is reached
       parseContents(reader, start, buffer);
 
-      buffer.append("</");
-      buffer.append(name.getLocalPart());
-      buffer.append('>');
+      buffer.append("</")
+          .append(name.getLocalPart())
+          .append('>');
 
       // the next event should be the start's END_ELEMENT
       assert XmlEventUtil.isNextEventEndElement(reader, name) : XmlEventUtil.toString(next);
@@ -211,27 +197,27 @@ public class MarkupParser {
 
   private void parseContents(XMLEventReader2 reader, StartElement start, StringBuilder buffer)
       throws XMLStreamException {
-    if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("parseContents(enter): {}", XmlEventUtil.toString(reader.peek()));
-    }
+    // if (LOGGER.isDebugEnabled()) {
+    // LOGGER.debug("parseContents(enter): {}", XmlEventUtil.toString(reader.peek()));
+    // }
 
     XMLEvent event;
     while (reader.hasNextEvent() && !(event = reader.peek()).isEndElement()) {
       // // skip whitespace before the next list item
       // event = XmlEventUtil.skipWhitespace(reader);
 
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("parseContents(before): {}", XmlEventUtil.toString(event));
-      }
+      // if (LOGGER.isDebugEnabled()) {
+      // LOGGER.debug("parseContents(before): {}", XmlEventUtil.toString(event));
+      // }
 
       if (event.isStartElement()) {
         StartElement nextStart = event.asStartElement();
         // QName nextName = nextStart.getName();
         parseStartElement(reader, nextStart, buffer);
 
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("parseContents(after): {}", XmlEventUtil.toString(reader.peek()));
-        }
+        // if (LOGGER.isDebugEnabled()) {
+        // LOGGER.debug("parseContents(after): {}", XmlEventUtil.toString(reader.peek()));
+        // }
 
         // assert XmlEventUtil.isNextEventEndElement(reader, nextName) :
         // XmlEventUtil.toString(reader.peek());
@@ -244,12 +230,13 @@ public class MarkupParser {
       }
     }
 
-    assert start == null || XmlEventUtil.isNextEventEndElement(reader, start.getName()) : XmlEventUtil
-        .toString(reader.peek());
+    assert start == null || XmlEventUtil.isNextEventEndElement(reader,
+        ObjectUtils.notNull(start.getName())) : XmlEventUtil.toString(reader.peek());
 
-    if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("parseContents(exit): {}", reader.peek() != null ? XmlEventUtil.toString(reader.peek()) : "");
-    }
+    // if (LOGGER.isDebugEnabled()) {
+    // LOGGER.debug("parseContents(exit): {}", reader.peek() != null ?
+    // XmlEventUtil.toString(reader.peek()) : "");
+    // }
   }
 
   /**
@@ -269,22 +256,23 @@ public class MarkupParser {
    * @throws IllegalStateException
    *           if unexpected content is encountered
    */
+  @NonNull
   protected MarkupMultiline parseMarkupMultilineAsAST(XMLEventReader2 reader) throws XMLStreamException {
     MutableDataSet options = new MutableDataSet();
-    Document document = new Document(options, BasedSequence.EMPTY);
+    @NonNull
+    final Document document = new Document(options, BasedSequence.EMPTY);
 
-    XMLEvent event = reader.peek();
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("enter: {}", XmlEventUtil.toString(event));
-    }
+    // if (LOGGER.isTraceEnabled()) {
+    // LOGGER.trace("parseMarkupMultilineAsAST(enter): {}", XmlEventUtil.toString(reader.peek()));
+    // }
 
-    outer: while (reader.hasNextEvent() && !(event = reader.peek()).isEndElement()) {
+    outer: while (reader.hasNextEvent() && !reader.peek().isEndElement()) {
       // skip whitespace before the next block element
-      event = XmlEventUtil.skipWhitespace(reader);
+      XMLEvent event = XmlEventUtil.skipWhitespace(reader);
 
-      if (LOGGER.isTraceEnabled()) {
-        LOGGER.trace("event: {}", XmlEventUtil.toString(event));
-      }
+      // if (LOGGER.isTraceEnabled()) {
+      // LOGGER.trace("parseMarkupMultilineAsAST(event): {}", XmlEventUtil.toString(event));
+      // }
 
       if (event.isStartElement()) {
         StartElement start = event.asStartElement();
@@ -339,16 +327,15 @@ public class MarkupParser {
       reader.nextEvent();
 
       // skip whitespace before the next block element
-      event = XmlEventUtil.skipWhitespace(reader);
+      XmlEventUtil.skipWhitespace(reader);
     }
 
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("exit: {}", reader.peek() != null ? XmlEventUtil.toString(reader.peek()) : "");
-    }
+    // if (LOGGER.isTraceEnabled()) {
+    // LOGGER.trace("parseMarkupMultilineAsAST(exit): {}",
+    // reader.peek() != null ? XmlEventUtil.toString(reader.peek()) : "");
+    // }
 
-    MarkupMultiline retval = new MarkupMultiline(document);
-    // System.out.println(retval.toMarkdown());
-    return retval;
+    return new MarkupMultiline(document);
   }
 
   /**
@@ -368,8 +355,10 @@ public class MarkupParser {
    * @throws IllegalStateException
    *           if unexpected content is encountered
    */
-  private Paragraph processBlockParagraph(XMLEventReader2 reader, StartElement start) throws XMLStreamException {
-    QName name = start.getName();
+  @NonNull
+  private Paragraph processBlockParagraph(@NonNull XMLEventReader2 reader, @NonNull StartElement start)
+      throws XMLStreamException {
+    QName name = ObjectUtils.notNull(start.getName());
 
     Paragraph paragraph = new Paragraph();
     // Note: the following method is expected to consume the current element
@@ -397,34 +386,36 @@ public class MarkupParser {
    * @throws IllegalStateException
    *           if unexpected content is encountered
    */
-  private void handleBlockContentsWithAnchorsAndInserts(Node blockNode, XMLEventReader2 reader, StartElement start)
+  private void handleBlockContentsWithAnchorsAndInserts(@NonNull Node blockNode, @NonNull XMLEventReader2 reader,
+      @NonNull StartElement start)
       throws XMLStreamException {
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("enter: {}", XmlEventUtil.toString(start));
-    }
+    // if (LOGGER.isTraceEnabled()) {
+    // LOGGER.trace("enter: {}", XmlEventUtil.toString(start));
+    // }
 
     // consume the containing block
-    XMLEvent event = reader.nextEvent();
+    reader.nextEvent();
 
     boolean firstEvent = true;
-    while (reader.hasNextEvent() && !(event = reader.peek()).isEndElement()) {
+    while (reader.hasNextEvent() && !reader.peek().isEndElement()) {
       // skip whitespace before the next list item
-      event = XmlEventUtil.skipWhitespace(reader);
+      XmlEventUtil.skipWhitespace(reader);
 
-      if (LOGGER.isTraceEnabled()) {
-        LOGGER.trace("event: {}", XmlEventUtil.toString(event));
-      }
+      // if (LOGGER.isTraceEnabled()) {
+      // LOGGER.trace("event: {}", XmlEventUtil.toString(reader.peek()));
+      // }
 
       // Note: the following method is expected to consume the current element
       handleInlineAndAnchorsAndInsert(blockNode, reader, firstEvent);
       firstEvent = false;
     }
 
-    assert XmlEventUtil.isNextEventEndElement(reader, start.getName()) : XmlEventUtil.toString(reader.peek());
+    assert XmlEventUtil.isNextEventEndElement(reader, ObjectUtils.notNull(start.getName())) : XmlEventUtil
+        .toString(reader.peek());
 
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("exit: {}", XmlEventUtil.toString(reader.peek()));
-    }
+    // if (LOGGER.isTraceEnabled()) {
+    // LOGGER.trace("exit: {}", XmlEventUtil.toString(reader.peek()));
+    // }
   }
 
   /**
@@ -444,7 +435,9 @@ public class MarkupParser {
    * @throws IllegalStateException
    *           if unexpected content is encountered
    */
-  private BulletList processBlockUnorderedList(XMLEventReader2 reader, StartElement start) throws XMLStreamException {
+  @NonNull
+  private BulletList processBlockUnorderedList(@NonNull XMLEventReader2 reader, @NonNull StartElement start)
+      throws XMLStreamException {
     BulletList retval = new BulletList();
     // Note: the following method is expected to consume the current element
     handleListContents(retval, reader, start);
@@ -468,7 +461,9 @@ public class MarkupParser {
    * @throws IllegalStateException
    *           if unexpected content is encountered
    */
-  private OrderedList processBlockOrderedList(XMLEventReader2 reader, StartElement start) throws XMLStreamException {
+  @NonNull
+  private OrderedList processBlockOrderedList(@NonNull XMLEventReader2 reader, @NonNull StartElement start)
+      throws XMLStreamException {
     OrderedList retval = new OrderedList();
     // Note: the following method is expected to consume the current element
     handleListContents(retval, reader, start);
@@ -492,21 +487,21 @@ public class MarkupParser {
    * @throws IllegalStateException
    *           if unexpected content is encountered
    */
-  private void handleListContents(ListBlock list, XMLEventReader2 reader, StartElement start)
+  private void handleListContents(@NonNull ListBlock list, @NonNull XMLEventReader2 reader, @NonNull StartElement start)
       throws XMLStreamException {
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("enter: {}", XmlEventUtil.toString(start));
-    }
+    // if (LOGGER.isTraceEnabled()) {
+    // LOGGER.trace("handleListContents(enter): {}", XmlEventUtil.toString(start));
+    // }
     // consume the containing list block
-    XMLEvent event = reader.nextEvent();
+    reader.nextEvent();
 
-    while (reader.hasNextEvent() && !(event = reader.peek()).isEndElement()) {
+    while (reader.hasNextEvent() && !reader.peek().isEndElement()) {
       // skip whitespace before the next list item
-      event = XmlEventUtil.skipWhitespace(reader);
+      XMLEvent event = XmlEventUtil.skipWhitespace(reader);
 
-      if (LOGGER.isTraceEnabled()) {
-        LOGGER.trace("event: {}", XmlEventUtil.toString(event));
-      }
+      // if (LOGGER.isTraceEnabled()) {
+      // LOGGER.trace("handleListContents(event): {}", XmlEventUtil.toString(event));
+      // }
 
       boolean handled = false;
       if (event.isStartElement()) {
@@ -516,9 +511,9 @@ public class MarkupParser {
         if ("li".equals(nextName.getLocalPart())) {
           ListItem listItem;
           if (list instanceof OrderedList) {
-            listItem = new OrderedListItem();
+            listItem = new OrderedListItem(); // NOPMD - intentional
           } else {
-            listItem = new BulletListItem();
+            listItem = new BulletListItem(); // NOPMD - intentional
           }
           // Note: the following method is expected to consume the current element
           handleListItemContents(listItem, reader, nextStart);
@@ -541,11 +536,12 @@ public class MarkupParser {
       }
     }
 
-    assert XmlEventUtil.isNextEventEndElement(reader, start.getName()) : XmlEventUtil.toString(reader.peek());
+    assert XmlEventUtil.isNextEventEndElement(reader, ObjectUtils.notNull(start.getName())) : XmlEventUtil
+        .toString(reader.peek());
 
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("exit: {}", XmlEventUtil.toString(reader.peek()));
-    }
+    // if (LOGGER.isTraceEnabled()) {
+    // LOGGER.trace("handleListContents(exit): {}", XmlEventUtil.toString(reader.peek()));
+    // }
   }
 
   /**
@@ -565,23 +561,23 @@ public class MarkupParser {
    * @throws IllegalStateException
    *           if unexpected content is encountered
    */
-  private void handleListItemContents(ListItem listItem, XMLEventReader2 reader, StartElement start)
+  private void handleListItemContents(@NonNull ListItem listItem, @NonNull XMLEventReader2 reader,
+      @NonNull StartElement start)
       throws XMLStreamException {
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("enter: {}", XmlEventUtil.toString(start));
-    }
-    QName name = start.getName();
-
+    // if (LOGGER.isTraceEnabled()) {
+    // LOGGER.trace("handleListItemContents(enter): {}", XmlEventUtil.toString(start));
+    // }
     // consume next START_ELEMENT event as the starting point for parse
-    XMLEvent event = reader.nextEvent();
+    reader.nextEvent();
 
     boolean firstEvent = true;
+    XMLEvent event;
     // parse until the containing element's END_ELEMENT is reached
     while (reader.hasNextEvent() && !(event = reader.peek()).isEndElement()) {
 
-      if (LOGGER.isTraceEnabled()) {
-        LOGGER.trace("event: {}", XmlEventUtil.toString(event));
-      }
+      // if (LOGGER.isTraceEnabled()) {
+      // LOGGER.trace("handleListItemContents(event): {}", XmlEventUtil.toString(event));
+      // }
 
       boolean handled = false;
       if (event.isStartElement()) {
@@ -622,11 +618,12 @@ public class MarkupParser {
       }
     }
 
-    assert XmlEventUtil.isNextEventEndElement(reader, name) : XmlEventUtil.toString(reader.peek());
+    assert XmlEventUtil.isNextEventEndElement(reader, ObjectUtils.notNull(start.getName())) : XmlEventUtil
+        .toString(reader.peek());
 
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("exit: {}", XmlEventUtil.toString(reader.peek()));
-    }
+    // if (LOGGER.isTraceEnabled()) {
+    // LOGGER.trace("handleListItemContents(exit): {}", XmlEventUtil.toString(reader.peek()));
+    // }
   }
 
   /**
@@ -649,18 +646,18 @@ public class MarkupParser {
    * @throws IllegalStateException
    *           if unexpected content is encountered
    */
-  private void handleInlineAndAnchorsAndInsert(Node node, XMLEventReader2 reader, boolean firstEvent)
+  private void handleInlineAndAnchorsAndInsert(@NonNull Node node, @NonNull XMLEventReader2 reader, boolean firstEvent)
       throws XMLStreamException {
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("enter: {}", XmlEventUtil.toString(reader.peek()));
-    }
+    // if (LOGGER.isTraceEnabled()) {
+    // LOGGER.trace("handleInlineAndAnchorsAndInsert(enter): {}", XmlEventUtil.toString(reader.peek()));
+    // }
 
     // consume next START_ELEMENT event as the starting point for parse
     XMLEvent event = reader.peek();
 
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("event: {}", XmlEventUtil.toString(event));
-    }
+    // if (LOGGER.isTraceEnabled()) {
+    // LOGGER.trace("handleInlineAndAnchorsAndInsert(event): {}", XmlEventUtil.toString(event));
+    // }
 
     if (event.isStartElement()) {
       StartElement nextStart = event.asStartElement();
@@ -681,65 +678,73 @@ public class MarkupParser {
       reader.nextEvent();
     } else {
       throw new IllegalStateException(String.format("Unknown content '%s' at location '%s'.",
-          XmlEventUtil.toString(event), XmlEventUtil.toString(event.getLocation())));
+          XmlEventUtil.toString(event), XmlEventUtil.toString(ObjectUtils.notNull(event.getLocation()))));
     }
 
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("exit: {}", XmlEventUtil.toString(reader.peek()));
-    }
+    // if (LOGGER.isTraceEnabled()) {
+    // LOGGER.trace("handleInlineAndAnchorsAndInsert(exit): {}", XmlEventUtil.toString(reader.peek()));
+    // }
   }
 
-  private Node processBlockPreformattedText(XMLEventReader2 reader, StartElement start) throws XMLStreamException {
-    QName name = start.getName();
-
+  private Node processBlockPreformattedText(@NonNull XMLEventReader2 reader, @NonNull StartElement start)
+      throws XMLStreamException {
     FencedCodeBlock retval = new FencedCodeBlock();
-    // Note: the following method is expected to consume the current element
+    // the following method is expected to consume the current element
     handleBlockContentsWithAnchors(retval, reader, start);
 
-    assert XmlEventUtil.isNextEventEndElement(reader, name) : XmlEventUtil.toString(reader.peek());
+    assert XmlEventUtil.isNextEventEndElement(reader, ObjectUtils.notNull(start.getName())) : XmlEventUtil
+        .toString(reader.peek());
     return retval;
   }
 
-  private Node processBlockTable(@SuppressWarnings("unused") XMLEventReader2 reader,
-      @SuppressWarnings("unused") StartElement start) {
-    TableBlock table = new TableBlock();
+  private static TableBlock processBlockTable(
+      @SuppressWarnings("unused") @NonNull XMLEventReader2 reader,
+      @SuppressWarnings("unused") @NonNull StartElement start) {
+    // TableBlock table = new TableBlock();
     // TODO: handle rows
-    return table;
+    throw new UnsupportedOperationException();
+    // return table;
   }
 
-  private Heading processBlockH1(XMLEventReader2 reader, StartElement start) throws XMLStreamException {
+  private Heading processBlockH1(@NonNull XMLEventReader2 reader, @NonNull StartElement start)
+      throws XMLStreamException {
     return processBlockHeadings(1, reader, start);
   }
 
-  private Heading processBlockH2(XMLEventReader2 reader, StartElement start) throws XMLStreamException {
+  private Heading processBlockH2(@NonNull XMLEventReader2 reader, @NonNull StartElement start)
+      throws XMLStreamException {
     return processBlockHeadings(2, reader, start);
   }
 
-  private Heading processBlockH3(XMLEventReader2 reader, StartElement start) throws XMLStreamException {
+  private Heading processBlockH3(@NonNull XMLEventReader2 reader, @NonNull StartElement start)
+      throws XMLStreamException {
     return processBlockHeadings(3, reader, start);
   }
 
-  private Heading processBlockH4(XMLEventReader2 reader, StartElement start) throws XMLStreamException {
+  private Heading processBlockH4(@NonNull XMLEventReader2 reader, @NonNull StartElement start)
+      throws XMLStreamException {
     return processBlockHeadings(4, reader, start);
   }
 
-  private Heading processBlockH5(XMLEventReader2 reader, StartElement start) throws XMLStreamException {
+  private Heading processBlockH5(@NonNull XMLEventReader2 reader, @NonNull StartElement start)
+      throws XMLStreamException {
     return processBlockHeadings(5, reader, start);
   }
 
-  private Heading processBlockH6(XMLEventReader2 reader, StartElement start) throws XMLStreamException {
+  private Heading processBlockH6(@NonNull XMLEventReader2 reader, @NonNull StartElement start)
+      throws XMLStreamException {
     return processBlockHeadings(6, reader, start);
   }
 
-  private Heading processBlockHeadings(int level, XMLEventReader2 reader, StartElement start)
+  private Heading processBlockHeadings(int level, @NonNull XMLEventReader2 reader, @NonNull StartElement start)
       throws XMLStreamException {
-    QName name = start.getName();
     Heading node = new Heading();
     node.setLevel(level);
     // Note: the following method is expected to consume the current element
     handleBlockContents(node, reader, start);
 
-    assert XmlEventUtil.isNextEventEndElement(reader, name) : XmlEventUtil.toString(reader.peek());
+    assert XmlEventUtil.isNextEventEndElement(reader, ObjectUtils.notNull(start.getName())) : XmlEventUtil
+        .toString(reader.peek());
 
     return node;
   }
@@ -762,23 +767,24 @@ public class MarkupParser {
    * @throws IllegalStateException
    *           if unexpected content is encountered
    */
-  private void handleBlockContentsWithAnchors(Node node, XMLEventReader2 reader, StartElement start)
+  private void handleBlockContentsWithAnchors(@NonNull Node node, @NonNull XMLEventReader2 reader,
+      @NonNull StartElement start)
       throws XMLStreamException {
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("enter: {}", XmlEventUtil.toString(start));
-    }
+    // if (LOGGER.isTraceEnabled()) {
+    // LOGGER.trace("handleBlockContentsWithAnchors(enter): {}", XmlEventUtil.toString(start));
+    // }
 
     // consume the containing block
-    XMLEvent event = reader.nextEvent();
+    reader.nextEvent();
 
     boolean firstEvent = true;
-    while (reader.hasNextEvent() && !(event = reader.peek()).isEndElement()) {
+    while (reader.hasNextEvent() && !reader.peek().isEndElement()) {
       // skip whitespace before the next list item
-      event = XmlEventUtil.skipWhitespace(reader);
+      XMLEvent event = XmlEventUtil.skipWhitespace(reader);
 
-      if (LOGGER.isTraceEnabled()) {
-        LOGGER.trace("event: {}", XmlEventUtil.toString(event));
-      }
+      // if (LOGGER.isTraceEnabled()) {
+      // LOGGER.trace("handleBlockContentsWithAnchors(event): {}", XmlEventUtil.toString(event));
+      // }
 
       boolean handled = false;
       if (event.isStartElement()) {
@@ -800,14 +806,15 @@ public class MarkupParser {
       }
     }
 
-    assert XmlEventUtil.isNextEventEndElement(reader, start.getName()) : XmlEventUtil.toString(reader.peek());
+    assert XmlEventUtil.isNextEventEndElement(reader, ObjectUtils.notNull(start.getName())) : XmlEventUtil
+        .toString(reader.peek());
 
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("exit: {}", XmlEventUtil.toString(reader.peek()));
-    }
+    // if (LOGGER.isTraceEnabled()) {
+    // LOGGER.trace("handleBlockContentsWithAnchors(exit): {}", XmlEventUtil.toString(reader.peek()));
+    // }
   }
 
-  private String processInlineCharacters(Characters characters, boolean stripLeadingWhitespace,
+  private static String processInlineCharacters(@NonNull Characters characters, boolean stripLeadingWhitespace,
       boolean stripTrailingWhitespace) {
     String text = characters.getData();
 
@@ -822,7 +829,8 @@ public class MarkupParser {
   }
 
   // expected to consume the element
-  private void processInlineAnchor(Node node, XMLEventReader2 reader, StartElement start) throws XMLStreamException {
+  private void processInlineAnchor(@NonNull Node node, @NonNull XMLEventReader2 reader, @NonNull StartElement start)
+      throws XMLStreamException {
     Attribute href = start.getAttributeByName(new QName("href"));
     Link link = new Link();
     if (href != null) {
@@ -835,24 +843,30 @@ public class MarkupParser {
       handleBlockContents(link, reader, start);
     }
     node.appendChild(link);
-    assert XmlEventUtil.isNextEventEndElement(reader, start.getName()) : XmlEventUtil.toString(reader.peek());
+    assert XmlEventUtil.isNextEventEndElement(reader, ObjectUtils.notNull(start.getName())) : XmlEventUtil
+        .toString(reader.peek());
   }
 
-  private void handleInlineInsert(Node node, XMLEventReader2 reader, StartElement start) throws XMLStreamException {
+  private static void handleInlineInsert(@NonNull Node node, @NonNull XMLEventReader2 reader,
+      @NonNull StartElement start)
+      throws XMLStreamException {
     Attribute type = start.getAttributeByName(new QName("type"));
     Attribute idReference = start.getAttributeByName(new QName("id-ref"));
     if (type == null || idReference == null) {
       throw new IllegalStateException("type and id-ref are required on an insert element");
     }
+    @SuppressWarnings("null")
     InsertAnchorNode insert = new InsertAnchorNode(type.getValue(), idReference.getValue());
     node.appendChild(insert);
 
     // consume this element
     reader.nextEvent();
-    assert XmlEventUtil.isNextEventEndElement(reader, start.getName()) : XmlEventUtil.toString(reader.peek());
+    assert XmlEventUtil.isNextEventEndElement(reader, ObjectUtils.notNull(start.getName())) : XmlEventUtil
+        .toString(reader.peek());
   }
 
-  private void handleInlineImage(Node node, XMLEventReader2 reader, StartElement start) throws XMLStreamException {
+  private static void handleInlineImage(@NonNull Node node, @NonNull XMLEventReader2 reader,
+      @NonNull StartElement start) throws XMLStreamException {
     Attribute alt = start.getAttributeByName(new QName("alt"));
     Attribute src = start.getAttributeByName(new QName("src"));
     Image image = new Image();
@@ -865,14 +879,16 @@ public class MarkupParser {
     node.appendChild(image);
     // consume this element
     reader.nextEvent();
-    assert XmlEventUtil.isNextEventEndElement(reader, start.getName()) : XmlEventUtil.toString(reader.peek());
+    assert XmlEventUtil.isNextEventEndElement(reader, ObjectUtils.notNull(start.getName())) : XmlEventUtil
+        .toString(reader.peek());
   }
 
-  private void handleInlineContent(Node node, XMLEventReader2 reader, XMLEvent start, boolean firstEvent)
+  private void handleInlineContent(@NonNull Node node, @NonNull XMLEventReader2 reader, @NonNull XMLEvent start,
+      boolean firstEvent)
       throws XMLStreamException {
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("enter: {}", XmlEventUtil.toString(start));
-    }
+    // if (LOGGER.isTraceEnabled()) {
+    // LOGGER.trace("handleInlineContent(enter): {}", XmlEventUtil.toString(start));
+    // }
 
     XMLEvent event = start;
 
@@ -940,7 +956,7 @@ public class MarkupParser {
         break;
       default:
         throw new IllegalStateException(String.format("Unknown content '%s' at location '%s'.",
-            XmlEventUtil.toString(event), XmlEventUtil.toString(event.getLocation())));
+            XmlEventUtil.toString(event), XmlEventUtil.toString(ObjectUtils.notNull(event.getLocation()))));
       }
       assert XmlEventUtil.isNextEventEndElement(reader, name) : XmlEventUtil.toString(reader.peek());
       node.appendChild(node);
@@ -948,9 +964,9 @@ public class MarkupParser {
       // event = reader.nextEvent();
     }
 
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("exit: {}", XmlEventUtil.toString(reader.peek()));
-    }
+    // if (LOGGER.isTraceEnabled()) {
+    // LOGGER.trace("handleInlineContent(exit): {}", XmlEventUtil.toString(reader.peek()));
+    // }
   }
 
   /**
@@ -971,33 +987,35 @@ public class MarkupParser {
    * @throws IllegalStateException
    *           if unexpected content is encountered
    */
-  private void handleBlockContents(Node node, XMLEventReader2 reader, StartElement start) throws XMLStreamException {
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("enter: {}", XmlEventUtil.toString(start));
-    }
+  private void handleBlockContents(@NonNull Node node, @NonNull XMLEventReader2 reader, @NonNull StartElement start)
+      throws XMLStreamException {
+    // if (LOGGER.isTraceEnabled()) {
+    // LOGGER.trace("handleBlockContents(enter): {}", XmlEventUtil.toString(start));
+    // }
 
     // consume the containing block
-    XMLEvent event = reader.nextEvent();
+    reader.nextEvent();
 
     boolean firstEvent = true;
-    while (reader.hasNextEvent() && !(event = reader.peek()).isEndElement()) {
+    while (reader.hasNextEvent() && !reader.peek().isEndElement()) {
       // skip whitespace before the next list item
-      event = XmlEventUtil.skipWhitespace(reader);
+      XMLEvent event = XmlEventUtil.skipWhitespace(reader);
 
-      if (LOGGER.isTraceEnabled()) {
-        LOGGER.trace("event: {}", XmlEventUtil.toString(event));
-      }
+      // if (LOGGER.isTraceEnabled()) {
+      // LOGGER.trace("handleBlockContents(event): {}", XmlEventUtil.toString(event));
+      // }
 
       // Note: the following method is expected to consume the current element
       handleInlineContent(node, reader, event, firstEvent);
       firstEvent = false;
     }
 
-    assert XmlEventUtil.isNextEventEndElement(reader, start.getName()) : XmlEventUtil.toString(reader.peek());
+    assert XmlEventUtil.isNextEventEndElement(reader, ObjectUtils.notNull(start.getName())) : XmlEventUtil
+        .toString(reader.peek());
 
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("exit: {}", XmlEventUtil.toString(reader.peek()));
-    }
+    // if (LOGGER.isTraceEnabled()) {
+    // LOGGER.trace("handleBlockContents(exit): {}", XmlEventUtil.toString(reader.peek()));
+    // }
   }
 
 }

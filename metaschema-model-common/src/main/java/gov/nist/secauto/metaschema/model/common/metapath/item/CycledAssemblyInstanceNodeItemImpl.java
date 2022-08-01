@@ -29,24 +29,34 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public class CycledAssemblyInstanceNodeItemImpl implements ICycledAssemblyNodeItem {
-  @NotNull
+  @NonNull
   private final IAssemblyInstance instance;
-  @NotNull
+  @NonNull
   private final IAssemblyNodeItem parent;
-  @NotNull
+  @NonNull
   private final IAssemblyNodeItem cycledNodeItem;
 
+  /**
+   * Construct a new assembly node item that represents a loop back to a previously declared item.
+   * 
+   * @param instance
+   *          the instance in the parent's model
+   * @param parent
+   *          the parent containing the instance
+   * @param cycledNodeItem
+   *          the original node item at the start of the loop
+   */
   public CycledAssemblyInstanceNodeItemImpl(
-      @NotNull IAssemblyInstance instance,
-      @NotNull IAssemblyNodeItem parent,
-      @NotNull IAssemblyNodeItem cycledNodeItem) {
+      @NonNull IAssemblyInstance instance,
+      @NonNull IAssemblyNodeItem parent,
+      @NonNull IAssemblyNodeItem cycledNodeItem) {
     this.instance = instance;
     this.parent = parent;
     this.cycledNodeItem = cycledNodeItem;
@@ -74,22 +84,22 @@ public class CycledAssemblyInstanceNodeItemImpl implements ICycledAssemblyNodeIt
   }
 
   @Override
-  public Collection<@NotNull ? extends IFlagNodeItem> getFlags() {
+  public Collection<? extends IFlagNodeItem> getFlags() {
     return getCycledNodeItem().getFlags();
   }
 
   @Override
-  public IFlagNodeItem getFlagByName(@NotNull String name) {
+  public IFlagNodeItem getFlagByName(@NonNull String name) {
     return getCycledNodeItem().getFlagByName(name);
   }
 
   @Override
-  public Collection<@NotNull ? extends List<@NotNull ? extends IModelNodeItem>> getModelItems() {
+  public Collection<? extends List<? extends IModelNodeItem>> getModelItems() {
     return getCycledNodeItem().getModelItems();
   }
 
   @Override
-  public List<@NotNull ? extends IModelNodeItem> getModelItemsByName(String name) {
+  public List<? extends IModelNodeItem> getModelItemsByName(String name) {
     return getCycledNodeItem().getModelItemsByName(name);
   }
 

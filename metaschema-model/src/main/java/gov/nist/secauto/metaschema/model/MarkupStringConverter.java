@@ -34,10 +34,11 @@ import gov.nist.secauto.metaschema.model.xmlbeans.MarkupMultilineDatatype;
 
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlTokenSource;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.StringWriter;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 // TODO: is this needed, or can we use methods on the markup implementations?
 final class MarkupStringConverter {
@@ -54,8 +55,8 @@ final class MarkupStringConverter {
    * @throws IllegalArgumentException
    *           if the {@code content} argument contains malformed markup
    */
-  @NotNull
-  public static MarkupLine toMarkupString(@NotNull MarkupLineDatatype content) {
+  @NonNull
+  public static MarkupLine toMarkupString(@NonNull MarkupLineDatatype content) {
     String html = processHTML(content);
     return MarkupLine.fromHtml(html);
   }
@@ -69,8 +70,8 @@ final class MarkupStringConverter {
    * @throws IllegalArgumentException
    *           if the {@code content} argument contains malformed markup
    */
-  @NotNull
-  public static MarkupMultiline toMarkupString(@NotNull MarkupMultilineDatatype content) {
+  @NonNull
+  public static MarkupMultiline toMarkupString(@NonNull MarkupMultilineDatatype content) {
     String html = processHTML(content);
     return MarkupMultiline.fromHtml(html);
   }
@@ -84,7 +85,7 @@ final class MarkupStringConverter {
    * @throws IllegalArgumentException
    *           if the {@code content} argument contains malformed markup
    */
-  @NotNull
+  @NonNull
   private static String processHTML(XmlTokenSource content) {
     XmlOptions options = new XmlOptions();
     options.setSaveInner();

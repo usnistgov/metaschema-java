@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A common interface used for constraints oriented around key-based indexes.
@@ -39,7 +39,6 @@ public interface IKeyConstraint extends IConstraint {
    * 
    * @return one or more keys
    */
-  @NotNull
-  List<@NotNull ? extends IKeyField> getKeyFields();
-
+  @NonNull
+  List<? extends IKeyField> getKeyFields();
 }

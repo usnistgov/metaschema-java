@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class DefaultCardinalityConstraint
     extends AbstractConstraint
@@ -62,9 +62,9 @@ public class DefaultCardinalityConstraint
    */
   public DefaultCardinalityConstraint(
       @Nullable String id,
-      @NotNull ISource source,
-      @NotNull Level level,
-      @NotNull MetapathExpression target,
+      @NonNull ISource source,
+      @NonNull Level level,
+      @NonNull MetapathExpression target,
       @Nullable Integer minOccurs,
       @Nullable Integer maxOccurs,
       MarkupMultiline remarks) {

@@ -29,19 +29,19 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Objects;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 abstract class AbstractConstraint implements IConstraint { // NOPMD - intentional data class
   @Nullable
   private final String id;
   @Nullable
   private final ISource source;
-  @NotNull
+  @NonNull
   private final Level level;
-  @NotNull
+  @NonNull
   private final MetapathExpression target;
   @Nullable
   private final MarkupMultiline remarks;
@@ -63,9 +63,9 @@ abstract class AbstractConstraint implements IConstraint { // NOPMD - intentiona
   @SuppressWarnings("null")
   public AbstractConstraint(
       @Nullable String id,
-      @NotNull ISource source,
-      @NotNull Level level,
-      @NotNull MetapathExpression target,
+      @NonNull ISource source,
+      @NonNull Level level,
+      @NonNull MetapathExpression target,
       @Nullable MarkupMultiline remarks) {
     Objects.requireNonNull(target);
     this.id = id;
@@ -86,7 +86,7 @@ abstract class AbstractConstraint implements IConstraint { // NOPMD - intentiona
   }
 
   @Override
-  @NotNull
+  @NonNull
   public Level getLevel() {
     return level;
   }

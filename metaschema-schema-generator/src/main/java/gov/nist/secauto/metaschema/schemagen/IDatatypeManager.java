@@ -29,14 +29,14 @@ package gov.nist.secauto.metaschema.schemagen;
 import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Set;
 
-public interface IDatatypeManager {
-  String getTypeNameForDatatype(@NotNull IDataTypeAdapter<?> datatype);
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-  String getTypeNameForDefinition(@NotNull IDefinition definition, @NotNull IGenerationState<?, ?> state);
+public interface IDatatypeManager {
+  String getTypeNameForDatatype(@NonNull IDataTypeAdapter<?> datatype);
+
+  String getTypeNameForDefinition(@NonNull IDefinition definition, @NonNull IGenerationState<?, ?> state);
 
   Set<String> getUsedTypes();
 }

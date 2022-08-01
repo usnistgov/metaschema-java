@@ -28,12 +28,12 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DefaultAllowedValue implements IAllowedValue {
-  @NotNull
+  @NonNull
   private final String value;
-  @NotNull
+  @NonNull
   private final MarkupLine description;
 
   /**
@@ -44,7 +44,7 @@ public class DefaultAllowedValue implements IAllowedValue {
    * @param description
    *          a textual description of the value
    */
-  public DefaultAllowedValue(@NotNull String value, @NotNull MarkupLine description) {
+  public DefaultAllowedValue(@NonNull String value, @NonNull MarkupLine description) {
     this.value = value;
     this.description = description;
   }

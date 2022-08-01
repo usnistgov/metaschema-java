@@ -27,10 +27,8 @@
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
 import java.util.List;
 
 class RootSlashOnlyPath
@@ -40,13 +38,11 @@ class RootSlashOnlyPath
     // reduce visibility
   }
 
-  @SuppressWarnings("null")
   @Override
-  public List<@NotNull ? extends IExpression> getChildren() {
-    return Collections.emptyList();
+  public List<? extends IExpression> getChildren() {
+    return CollectionUtil.emptyList();
   }
 
-  @SuppressWarnings("null")
   @Override
   public Class<IDocumentNodeItem> getBaseResultType() {
     return IDocumentNodeItem.class;

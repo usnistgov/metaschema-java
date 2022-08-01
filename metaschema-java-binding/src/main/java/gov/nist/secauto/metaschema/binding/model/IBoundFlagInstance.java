@@ -30,21 +30,21 @@ import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.function.Supplier;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IBoundFlagInstance extends IBoundNamedInstance, IFlagInstance {
 
-  @NotNull
-  Object readValueFromString(@NotNull String value) throws IOException;
+  @NonNull
+  Object readValueFromString(@NonNull String value) throws IOException;
 
-  @NotNull
-  Supplier<?> readValueAndSupply(@NotNull String value) throws IOException;
+  @NonNull
+  Supplier<?> readValueAndSupply(@NonNull String value) throws IOException;
 
-  @NotNull
-  Supplier<?> readValueAndSupply(@NotNull IJsonParsingContext context) throws IOException;
+  @NonNull
+  Supplier<?> readValueAndSupply(@NonNull IJsonParsingContext context) throws IOException;
 
   /**
    * Given a bound flag value, get that value as a {@link String}.
@@ -65,5 +65,5 @@ public interface IBoundFlagInstance extends IBoundNamedInstance, IFlagInstance {
    * @throws IOException
    *           if an error occured while writing
    */
-  void writeValue(@NotNull Object value, @NotNull IJsonWritingContext context) throws IOException;
+  void writeValue(@NonNull Object value, @NonNull IJsonWritingContext context) throws IOException;
 }

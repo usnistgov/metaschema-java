@@ -28,11 +28,11 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A {@link INodeItem} supported by a {@link IFieldInstance}, that does not have an associated
@@ -45,18 +45,18 @@ class FieldInstanceNodeItemImpl
         AbstractNodeContext.Flags<IFlagNodeItem>> {
 
   public FieldInstanceNodeItemImpl(
-      @NotNull IFieldInstance instance,
-      @NotNull IAssemblyNodeItem parent,
+      @NonNull IFieldInstance instance,
+      @NonNull IAssemblyNodeItem parent,
       int position,
-      @NotNull INodeItemFactory factory) {
+      @NonNull INodeItemFactory factory) {
     super(instance, parent, position, factory);
   }
 
   @Override
-  protected @NotNull Supplier<Flags<IFlagNodeItem>>
-      newModelSupplier(@NotNull INodeItemFactory factory) {
+  protected @NonNull Supplier<Flags<IFlagNodeItem>>
+      newModelSupplier(@NonNull INodeItemFactory factory) {
     return () -> {
-      Map<@NotNull String, IFlagNodeItem> flags = factory.generateFlags(this);
+      Map<String, IFlagNodeItem> flags = factory.generateFlags(this);
       return new Flags<>(flags);
     };
   }

@@ -29,13 +29,13 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.NcNameAdapter;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class NcNameItemImpl
     extends AbstractStringItem
     implements INcNameItem {
 
-  public NcNameItemImpl(@NotNull String value) {
+  public NcNameItemImpl(@NonNull String value) {
     super(value);
   }
 

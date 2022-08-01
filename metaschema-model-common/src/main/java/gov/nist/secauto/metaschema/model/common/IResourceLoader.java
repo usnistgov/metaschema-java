@@ -28,18 +28,24 @@ package gov.nist.secauto.metaschema.model.common;
 
 import gov.nist.secauto.metaschema.model.common.util.InputSourceUtils;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
 import java.io.IOException;
 import java.net.URI;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 /**
  * A common interface for implementation classes that load data resources.
  */
 public interface IResourceLoader {
+  /**
+   * Get the entity resolver associated with this loader.
+   * 
+   * @return the entity resolver
+   */
   @Nullable
   default EntityResolver getEntityResolver() {
     // by default, do not support an entity resolver extension mechanism
@@ -47,8 +53,17 @@ public interface IResourceLoader {
     return null;
   }
 
-  @NotNull
-  default InputSource toInputSource(@NotNull URI uri) throws IOException {
+  /**
+   * Create a new input source based on the provided URI.
+   * 
+   * @param uri
+   *          the resource to use as input
+   * @return the created input source
+   * @throws IOException
+   *           if an error occurred while accessing the resource identified by the URI
+   */
+  @NonNull
+  default InputSource toInputSource(@NonNull URI uri) throws IOException {
     return InputSourceUtils.toInputSource(uri, getEntityResolver());
   }
 }

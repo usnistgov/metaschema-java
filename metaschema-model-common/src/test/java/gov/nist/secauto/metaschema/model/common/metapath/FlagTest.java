@@ -36,6 +36,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.NodeItemType;
 import org.jmock.Expectations;
 import org.junit.jupiter.api.Test;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class FlagTest
     extends AbstractExpressionTest {
   @Test
@@ -43,16 +45,15 @@ class FlagTest
     DynamicContext dynamicContext = newDynamicContext();
 
     @SuppressWarnings("null")
+    @NonNull
     IRequiredValueModelNodeItem nodeContext = context.mock(IRequiredValueModelNodeItem.class);
-    @SuppressWarnings("null")
     IFlagInstance instance = context.mock(IFlagInstance.class);
-    @SuppressWarnings("null")
     IRequiredValueFlagNodeItem flagNode = context.mock(IRequiredValueFlagNodeItem.class);
 
     String flagName = "test";
 
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         allowing(nodeContext).getNodeItem();
         will(returnValue(nodeContext));
         allowing(nodeContext).getNodeItemType();
@@ -72,6 +73,6 @@ class FlagTest
     Flag expr = new Flag(new Name(flagName));
 
     ISequence<?> result = expr.accept(dynamicContext, nodeContext);
-    assertEquals(ISequence.of(flagNode), result);
+    assertEquals(ISequence.of(flagNode), result, "Sequence does not match");
   }
 }

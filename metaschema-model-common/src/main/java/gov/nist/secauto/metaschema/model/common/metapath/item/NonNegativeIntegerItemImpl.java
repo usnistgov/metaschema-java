@@ -29,15 +29,15 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.NonNegativeIntegerAdapter;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigInteger;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class NonNegativeIntegerItemImpl
     extends AbstractIntegerItem
     implements INonNegativeIntegerItem {
 
-  protected NonNegativeIntegerItemImpl(@NotNull BigInteger value) {
+  protected NonNegativeIntegerItemImpl(@NonNull BigInteger value) {
     super(value);
   }
 

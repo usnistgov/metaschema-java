@@ -32,8 +32,7 @@ import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,10 +41,12 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class SingletonPropertyInfo
     extends AbstractModelPropertyInfo {
 
-  public SingletonPropertyInfo(@NotNull IBoundNamedModelInstance property) {
+  public SingletonPropertyInfo(@NonNull IBoundNamedModelInstance property) {
     super(property);
   }
 
@@ -69,7 +70,7 @@ class SingletonPropertyInfo
     // JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
     // }
 
-    List<@NotNull Object> values = property.readItem(parentInstance, false, context);
+    List<Object> values = property.readItem(parentInstance, false, context);
     collector.addAll(values);
 
     // if (isObject) {
@@ -90,6 +91,7 @@ class SingletonPropertyInfo
     return handled;
   }
 
+  @SuppressWarnings({ "null", "cast" })
   @Override
   public Class<?> getItemType() {
     return (Class<?>) getProperty().getRawType();
@@ -101,7 +103,7 @@ class SingletonPropertyInfo
   }
 
   @Override
-  public void writeValue(@NotNull Object value, QName parentName, IXmlWritingContext context)
+  public void writeValue(@NonNull Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     getProperty().writeItem(value, parentName, context);
   }
@@ -109,7 +111,8 @@ class SingletonPropertyInfo
   @Override
   public void writeValue(Object parentInstance, IJsonWritingContext context) throws IOException {
     IBoundNamedModelInstance property = getProperty();
-    getProperty().getDataTypeHandler().writeItems(CollectionUtil.singleton(property.getValue(parentInstance)), true,
+    getProperty().getDataTypeHandler().writeItems(
+        CollectionUtil.singleton(ObjectUtils.requireNonNull(property.getValue(parentInstance))), true,
         context);
   }
 
@@ -119,13 +122,13 @@ class SingletonPropertyInfo
   }
 
   @Override
-  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull IPropertyCollector collector)
+  public void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
       throws BindingException {
     IBoundNamedModelInstance property = getProperty();
 
     Object value = property.getValue(fromInstance);
 
-    Object copiedValue = property.copyItem(value, toInstance);
+    Object copiedValue = property.copyItem(ObjectUtils.requireNonNull(value), toInstance);
 
     collector.add(copiedValue);
   }

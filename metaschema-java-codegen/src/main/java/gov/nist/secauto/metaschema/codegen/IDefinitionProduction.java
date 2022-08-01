@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Information about a Java class generated for a specific definition.
@@ -40,7 +40,7 @@ public interface IDefinitionProduction {
    * 
    * @return the definition
    */
-  @NotNull
+  @NonNull
   IModelDefinition getDefinition();
 
   /**
@@ -48,7 +48,7 @@ public interface IDefinitionProduction {
    * 
    * @return the class information
    */
-  @NotNull
+  @NonNull
   IGeneratedDefinitionClass getGeneratedClass();
 
 }

@@ -28,11 +28,11 @@ package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IGeneratedDefinitionClass extends IGeneratedClass {
 
-  @NotNull
+  @NonNull
   IModelDefinition getDefinition();
 
   /**

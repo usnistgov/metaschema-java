@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model;
+package gov.nist.secauto.metaschema.model; // NOPMD - intentional
 
 import gov.nist.secauto.metaschema.model.common.AbstractFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
@@ -51,8 +51,7 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.util.Collection;
@@ -63,11 +62,13 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class XmlInlineFieldDefinition
     extends AbstractFieldInstance {
-  @NotNull
+  @NonNull
   private final InlineFieldDefinitionType xmlField;
-  @NotNull
+  @NonNull
   private final InternalFieldDefinition fieldDefinition;
 
   /**
@@ -78,7 +79,7 @@ class XmlInlineFieldDefinition
    * @param parent
    *          the parent assembly definition
    */
-  public XmlInlineFieldDefinition(@NotNull InlineFieldDefinitionType xmlField, @NotNull IAssemblyDefinition parent) {
+  public XmlInlineFieldDefinition(@NonNull InlineFieldDefinitionType xmlField, @NonNull IAssemblyDefinition parent) {
     super(parent);
     this.xmlField = xmlField;
     this.fieldDefinition = new InternalFieldDefinition();
@@ -89,7 +90,7 @@ class XmlInlineFieldDefinition
    * 
    * @return the XML model
    */
-  @NotNull
+  @NonNull
   protected InlineFieldDefinitionType getXmlField() {
     return xmlField;
   }
@@ -132,9 +133,8 @@ class XmlInlineFieldDefinition
         : null;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+  public Map<QName, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlField().getPropList()));
   }
 
@@ -203,14 +203,14 @@ class XmlInlineFieldDefinition
   }
 
   @Override
-  public Object getValue(@NotNull Object parentValue) {
+  public Object getValue(@NonNull Object parentValue) {
     // there is no value
     return null;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ?> getItemValues(Object instanceValue) {
+  public Collection<?> getItemValues(Object instanceValue) {
     // there are no item values
     return Collections.emptyList();
   }
@@ -243,7 +243,7 @@ class XmlInlineFieldDefinition
     }
 
     @Override
-    public @NotNull Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+    public @NonNull Map<QName, Set<String>> getProperties() {
       return XmlInlineFieldDefinition.this.getProperties();
     }
 
@@ -316,8 +316,8 @@ class XmlInlineFieldDefinition
       }
     }
 
-    @NotNull
-    private Map<@NotNull String, ? extends IFlagInstance> getFlagInstanceMap() {
+    @NonNull
+    private Map<String, ? extends IFlagInstance> getFlagInstanceMap() {
       return initFlagContainer().getFlagInstanceMap();
     }
 
@@ -328,7 +328,7 @@ class XmlInlineFieldDefinition
 
     @SuppressWarnings("null")
     @Override
-    public @NotNull Collection<@NotNull ? extends IFlagInstance> getFlagInstances() {
+    public @NonNull Collection<? extends IFlagInstance> getFlagInstances() {
       return getFlagInstanceMap().values();
     }
 
@@ -353,7 +353,7 @@ class XmlInlineFieldDefinition
      * @return the constraints instance
      */
     @SuppressWarnings("null")
-    @NotNull
+    @NonNull
     protected IValueConstraintSupport initModelConstraints() {
       synchronized (this) {
         if (constraints == null) {
@@ -371,47 +371,47 @@ class XmlInlineFieldDefinition
     }
 
     @Override
-    public List<@NotNull ? extends IConstraint> getConstraints() {
+    public List<? extends IConstraint> getConstraints() {
       return initModelConstraints().getConstraints();
     }
 
     @Override
-    public List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
+    public List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
       return initModelConstraints().getAllowedValuesConstraints();
     }
 
     @Override
-    public List<@NotNull ? extends IMatchesConstraint> getMatchesConstraints() {
+    public List<? extends IMatchesConstraint> getMatchesConstraints() {
       return initModelConstraints().getMatchesConstraints();
     }
 
     @Override
-    public List<@NotNull ? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+    public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
       return initModelConstraints().getIndexHasKeyConstraints();
     }
 
     @Override
-    public List<@NotNull ? extends IExpectConstraint> getExpectConstraints() {
+    public List<? extends IExpectConstraint> getExpectConstraints() {
       return initModelConstraints().getExpectConstraints();
     }
 
     @Override
-    public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+    public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
       initModelConstraints().addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull IMatchesConstraint constraint) {
+    public void addConstraint(@NonNull IMatchesConstraint constraint) {
       initModelConstraints().addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+    public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
       initModelConstraints().addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull IExpectConstraint constraint) {
+    public void addConstraint(@NonNull IExpectConstraint constraint) {
       initModelConstraints().addConstraint(constraint);
     }
 
@@ -426,7 +426,7 @@ class XmlInlineFieldDefinition
     }
 
     @Override
-    public Object getFieldValue(@NotNull Object parentFieldValue) {
+    public Object getFieldValue(@NonNull Object parentFieldValue) {
       // there is no value
       return null;
     }

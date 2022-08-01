@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.IExpression;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IFunctionLibrary {
 
@@ -40,7 +40,8 @@ public interface IFunctionLibrary {
    * 
    * @return a stream of function signatures
    */
-  Stream<@NotNull IFunction> getFunctionsAsStream();
+  @NonNull
+  Stream<IFunction> getFunctionsAsStream();
 
   /**
    * Determine if there is a function with the provided name that supports the signature of the
@@ -52,7 +53,7 @@ public interface IFunctionLibrary {
    *          a list of argument expressions for use in determining an argument signature match
    * @return {@code true} if a function signature matches or {@code false} otherwise
    */
-  boolean hasFunction(@NotNull String name, @NotNull List<@NotNull IExpression> arguments);
+  boolean hasFunction(@NonNull String name, @NonNull List<IExpression> arguments);
 
   /**
    * Retrieve the function with the provided name that supports the signature of the provided methods,
@@ -64,5 +65,5 @@ public interface IFunctionLibrary {
    *          a list of argument expressions for use in determining an argument signature match
    * @return the matching function or {@code null} if no match exists
    */
-  IFunction getFunction(@NotNull String name, @NotNull List<@NotNull IExpression> arguments);
+  IFunction getFunction(@NonNull String name, @NonNull List<IExpression> arguments);
 }

@@ -50,26 +50,25 @@ class ExpressionUtilsTest {
   Mockery context = new JUnit5Mockery();
 
   @Mock
-  private IFlagNodeItem flagNodeItem1;
+  private IFlagNodeItem flagNodeItem1; // NOPMD - it's injected
   @Mock
-  private IFlagNodeItem flagNodeItem2;
+  private IFlagNodeItem flagNodeItem2; // NOPMD - it's injected
 
   @Mock
-  private IExpression basicFlagExpr1;
+  private IExpression basicFlagExpr1; // NOPMD - it's injected
   @Mock
-  private IExpression basicFlagExpr2;
+  private IExpression basicFlagExpr2; // NOPMD - it's injected
   @Mock
-  private IExpression basicAssemblyExpr;
+  private IExpression basicAssemblyExpr; // NOPMD - it's injected
   @Mock
-  private IExpression basicFieldExpr;
+  private IExpression basicFieldExpr; // NOPMD - it's injected
 
   @Test
   void testTwoFlags() {
-    @SuppressWarnings("null")
     Class<INodeItem> baseType = INodeItem.class;
 
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         allowing(basicFlagExpr1).getStaticResultType();
         will(returnValue(IFlagNodeItem.class));
         allowing(basicFlagExpr2).getStaticResultType();
@@ -84,11 +83,10 @@ class ExpressionUtilsTest {
 
   @Test
   void testFlagAndAssembly() {
-    @SuppressWarnings("null")
     Class<INodeItem> baseType = INodeItem.class;
 
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         allowing(basicFlagExpr1).getStaticResultType();
         will(returnValue(IFlagNodeItem.class));
         allowing(basicAssemblyExpr).getStaticResultType();
@@ -103,11 +101,10 @@ class ExpressionUtilsTest {
 
   @Test
   void testFieldAndAssembly() {
-    @SuppressWarnings("null")
     Class<INodeItem> baseType = INodeItem.class;
 
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         allowing(basicFieldExpr).getStaticResultType();
         will(returnValue(IFieldNodeItem.class));
         allowing(basicAssemblyExpr).getStaticResultType();

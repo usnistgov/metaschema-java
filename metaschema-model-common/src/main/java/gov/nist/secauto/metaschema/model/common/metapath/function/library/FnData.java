@@ -33,14 +33,15 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAtomicValuedItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAtomicValuedItem;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Since a node doesn't have a base URI in Metaschema, this is an alias for the document-uri
@@ -48,7 +49,7 @@ import java.util.stream.Stream;
  */
 public final class FnData {
 
-  @NotNull
+  @NonNull
   static final IFunction SIGNATURE_NO_ARG = IFunction.builder()
       .name("data")
       .deterministic()
@@ -59,7 +60,7 @@ public final class FnData {
       .functionHandler(FnData::executeNoArg)
       .build();
 
-  @NotNull
+  @NonNull
   static final IFunction SIGNATURE_ONE_ARG = IFunction.builder()
       .name("data")
       .deterministic()
@@ -80,10 +81,10 @@ public final class FnData {
   }
 
   @SuppressWarnings("unused")
-  @NotNull
-  private static ISequence<IAnyAtomicItem> executeNoArg(@NotNull IFunction function,
-      @NotNull List<@NotNull ISequence<?>> arguments,
-      @NotNull DynamicContext dynamicContext,
+  @NonNull
+  private static ISequence<IAnyAtomicItem> executeNoArg(@NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
       INodeItem focus) {
 
     INodeItem item = focus;
@@ -99,13 +100,13 @@ public final class FnData {
   }
 
   @SuppressWarnings("unused")
-  @NotNull
-  private static ISequence<IAnyAtomicItem> executeOneArg(@NotNull IFunction function,
-      @NotNull List<@NotNull ISequence<?>> arguments,
-      @NotNull DynamicContext dynamicContext,
+  @NonNull
+  private static ISequence<IAnyAtomicItem> executeOneArg(@NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
       INodeItem focus) {
 
-    ISequence<?> sequence = FunctionUtils.asType(arguments.get(0));
+    ISequence<?> sequence = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
     return fnData(sequence);
   }
 
@@ -119,9 +120,9 @@ public final class FnData {
    * @return the atomized result
    */
   @SuppressWarnings("null")
-  @NotNull
-  public static ISequence<IAnyAtomicItem> fnData(@NotNull ISequence<?> sequence) {
-    @NotNull
+  @NonNull
+  public static ISequence<IAnyAtomicItem> fnData(@NonNull ISequence<?> sequence) {
+    @NonNull
     Stream<? extends IItem> stream = sequence.asStream();
     return ISequence.of(stream.flatMap(x -> {
       return Stream.of(fnDataItem(x));
@@ -136,8 +137,8 @@ public final class FnData {
    *          the item to atomize
    * @return the atomized result
    */
-  @NotNull
-  public static IAnyAtomicItem fnDataItem(@NotNull IItem item) {
+  @NonNull
+  public static IAnyAtomicItem fnDataItem(@NonNull IItem item) {
     IAnyAtomicItem retval = null;
     if (item instanceof IAnyAtomicItem) {
       retval = (IAnyAtomicItem) item;

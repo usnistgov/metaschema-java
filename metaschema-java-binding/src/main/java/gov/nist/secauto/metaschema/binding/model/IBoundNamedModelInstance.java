@@ -34,8 +34,7 @@ import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -45,6 +44,8 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * This marker interface provides common methods for interacting with bound object values.
@@ -57,13 +58,13 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
   @Override
   IBoundModelDefinition getDefinition();
 
-  @NotNull
+  @NonNull
   IModelPropertyInfo newPropertyInfo();
 
-  @NotNull
+  @NonNull
   IModelPropertyInfo getPropertyInfo();
 
-  @NotNull
+  @NonNull
   IDataTypeHandler getDataTypeHandler();
 
   /**
@@ -74,8 +75,8 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
    * @return the ordered collection of values
    */
   @Override
-  @NotNull
-  Collection<@NotNull ? extends Object> getItemValues(Object value);
+  @NonNull
+  Collection<? extends Object> getItemValues(Object value);
 
   /**
    * Reads an individual XML item from the XML stream.
@@ -92,7 +93,7 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
    * @throws IOException
    *           if an error occurred reading the underlying XML file
    */
-  Object readItem(@Nullable Object parentInstance, @NotNull StartElement start, @NotNull IXmlParsingContext context)
+  Object readItem(@Nullable Object parentInstance, @NonNull StartElement start, @NonNull IXmlParsingContext context)
       throws XMLStreamException, IOException;
 
   /**
@@ -110,15 +111,15 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
    * @throws IOException
    *           if an error occurred reading the underlying XML file
    */
-  @NotNull
-  List<@NotNull Object> readItem(@Nullable Object parentInstance, boolean requiresJsonKey,
-      @NotNull IJsonParsingContext context) throws IOException;
+  @NonNull
+  List<Object> readItem(@Nullable Object parentInstance, boolean requiresJsonKey,
+      @NonNull IJsonParsingContext context) throws IOException;
 
-  void writeItem(@NotNull Object itemValue, @NotNull QName parentName, @NotNull IXmlWritingContext context)
+  void writeItem(@NonNull Object itemValue, @NonNull QName parentName, @NonNull IXmlWritingContext context)
       throws XMLStreamException, IOException;
 
-  @NotNull
-  Object copyItem(@NotNull Object fromItem, @NotNull Object toInstance) throws BindingException;
+  @NonNull
+  Object copyItem(@NonNull Object fromItem, @NonNull Object toInstance) throws BindingException;
 
   // void writeItems(List<? extends WritableItem> items, IJsonWritingContext context);
 

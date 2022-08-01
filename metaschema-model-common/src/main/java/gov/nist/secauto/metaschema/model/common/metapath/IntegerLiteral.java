@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigInteger;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class IntegerLiteral
     extends AbstractLiteralExpression<IIntegerItem, BigInteger> {
@@ -41,12 +41,12 @@ class IntegerLiteral
    * @param value
    *          the literal value
    */
-  protected IntegerLiteral(@NotNull BigInteger value) {
+  protected IntegerLiteral(@NonNull BigInteger value) {
     super(value);
   }
 
   @Override
-  public Class<@NotNull IIntegerItem> getBaseResultType() {
+  public Class<IIntegerItem> getBaseResultType() {
     return IIntegerItem.class;
   }
 

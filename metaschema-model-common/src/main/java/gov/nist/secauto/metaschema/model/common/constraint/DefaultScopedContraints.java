@@ -26,21 +26,21 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
 import java.util.List;
 
-public class DefaultScopedContraints implements IScopedContraints {
-  @NotNull
-  private final URI namespace;
-  @NotNull
-  private final String shortName;
-  @NotNull
-  private final List<@NotNull ITargetedConstaints> targetedConstraints;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-  public DefaultScopedContraints(@NotNull URI namespace, @NotNull String shortName,
-      @NotNull List<@NotNull ITargetedConstaints> targetedConstraints) {
+public class DefaultScopedContraints implements IScopedContraints {
+  @NonNull
+  private final URI namespace;
+  @NonNull
+  private final String shortName;
+  @NonNull
+  private final List<ITargetedConstaints> targetedConstraints;
+
+  public DefaultScopedContraints(@NonNull URI namespace, @NonNull String shortName,
+      @NonNull List<ITargetedConstaints> targetedConstraints) {
     this.namespace = namespace;
     this.shortName = shortName;
     this.targetedConstraints = targetedConstraints;
@@ -57,7 +57,7 @@ public class DefaultScopedContraints implements IScopedContraints {
   }
 
   @Override
-  public List<@NotNull ITargetedConstaints> getTargetedContraints() {
+  public List<ITargetedConstaints> getTargetedContraints() {
     return targetedConstraints;
   }
 

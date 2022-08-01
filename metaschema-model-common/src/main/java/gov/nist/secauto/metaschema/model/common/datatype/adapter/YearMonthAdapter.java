@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.Period;
 import java.time.format.DateTimeParseException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class YearMonthAdapter
     extends AbstractDataTypeAdapter<Period, IYearMonthDurationItem> {
@@ -64,7 +64,7 @@ public class YearMonthAdapter
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull Class<IYearMonthDurationItem> getItemClass() {
+  public @NonNull Class<IYearMonthDurationItem> getItemClass() {
     return IYearMonthDurationItem.class;
   }
 

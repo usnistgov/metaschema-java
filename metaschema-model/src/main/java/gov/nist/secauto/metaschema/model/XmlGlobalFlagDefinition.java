@@ -46,18 +46,18 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFlagDefinitionType;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class XmlGlobalFlagDefinition implements IFlagDefinition {
-  @NotNull
+  @NonNull
   private final GlobalFlagDefinitionType xmlFlag;
-  @NotNull
+  @NonNull
   private final IMetaschema metaschema;
   private IValueConstraintSupport constraints;
 
@@ -69,7 +69,7 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
    * @param metaschema
    *          the containing Metaschema
    */
-  public XmlGlobalFlagDefinition(@NotNull GlobalFlagDefinitionType xmlFlag, @NotNull IMetaschema metaschema) {
+  public XmlGlobalFlagDefinition(@NonNull GlobalFlagDefinitionType xmlFlag, @NonNull IMetaschema metaschema) {
     this.xmlFlag = xmlFlag;
     this.metaschema = metaschema;
   }
@@ -136,22 +136,22 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   }
 
   @Override
-  public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+  public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
     initModelConstraints().addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IMatchesConstraint constraint) {
+  public void addConstraint(@NonNull IMatchesConstraint constraint) {
     initModelConstraints().addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+  public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
     initModelConstraints().addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IExpectConstraint constraint) {
+  public void addConstraint(@NonNull IExpectConstraint constraint) {
     initModelConstraints().addConstraint(constraint);
   }
 
@@ -197,9 +197,8 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
     return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription()) : null;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+  public Map<QName, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlFlag().getPropList()));
   }
 

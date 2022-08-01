@@ -28,17 +28,17 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.temporal.TemporalAmount;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IDurationItem extends IAnyAtomicItem {
 
   @Override
   TemporalAmount getValue();
 
-  @NotNull
-  public static IDurationItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  @NonNull
+  public static IDurationItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     IDurationItem retval;
     if (item instanceof IDurationItem) {
       retval = (IDurationItem) item;

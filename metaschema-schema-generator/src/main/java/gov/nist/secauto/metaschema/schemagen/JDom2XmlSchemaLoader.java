@@ -34,7 +34,6 @@ import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,24 +43,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public class JDom2XmlSchemaLoader {
-  @NotNull
+  @NonNull
   public static final String NS_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
 
-  @NotNull
+  @NonNull
   private final Document document;
 
   @SuppressWarnings("null")
-  public JDom2XmlSchemaLoader(@NotNull Path path) throws JDOMException, IOException {
+  public JDom2XmlSchemaLoader(@NonNull Path path) throws JDOMException, IOException {
     this(new SAXBuilder().build(path.toFile()));
   }
 
   @SuppressWarnings("null")
-  public JDom2XmlSchemaLoader(@NotNull InputStream is) throws JDOMException, IOException {
+  public JDom2XmlSchemaLoader(@NonNull InputStream is) throws JDOMException, IOException {
     this(new SAXBuilder().build(is));
   }
 
-  public JDom2XmlSchemaLoader(@NotNull Document document) {
+  @SuppressFBWarnings("EI_EXPOSE_REP2")
+  public JDom2XmlSchemaLoader(@NonNull Document document) {
     this.document = document;
   }
 
@@ -70,10 +73,10 @@ public class JDom2XmlSchemaLoader {
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  public List<@NotNull Element> getContent(
-      @NotNull String path,
-      @NotNull Map<@NotNull String, String> prefixToNamespaceMap) {
+  @NonNull
+  public List<Element> getContent(
+      @NonNull String path,
+      @NonNull Map<String, String> prefixToNamespaceMap) {
 
     Collection<Namespace> namespaces = prefixToNamespaceMap.entrySet().stream()
         .map(entry -> Namespace.getNamespace(entry.getKey(), entry.getValue()))

@@ -46,8 +46,6 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Locale;
@@ -56,15 +54,17 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class DefaultFlagProperty
     extends AbstractFlagProperty
     implements IBoundJavaField {
   // private static final Logger logger = LogManager.getLogger(DefaultFlagProperty.class);
-  @NotNull
+  @NonNull
   private final Field field;
-  @NotNull
+  @NonNull
   private final BoundFlag flag;
-  @NotNull
+  @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   private InternalFlagDefinition definition;
   private IValueConstraintSupport constraints;
@@ -78,8 +78,7 @@ class DefaultFlagProperty
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */
-  @SuppressWarnings("null")
-  public DefaultFlagProperty(@NotNull Field field, @NotNull IClassBinding parentClassBinding) {
+  public DefaultFlagProperty(@NonNull Field field, @NonNull IClassBinding parentClassBinding) {
     super(parentClassBinding);
     this.field = ObjectUtils.requireNonNull(field, "field");
     this.flag = ObjectUtils.requireNonNull(field.getAnnotation(BoundFlag.class));
@@ -94,11 +93,12 @@ class DefaultFlagProperty
   }
 
   @Override
-  public @NotNull Field getField() {
+  @NonNull
+  public Field getField() {
     return field;
   }
 
-  @NotNull
+  @NonNull
   protected BoundFlag getFlagAnnotation() {
     return flag;
   }
@@ -118,7 +118,7 @@ class DefaultFlagProperty
     return getFlagAnnotation().required();
   }
 
-  @NotNull
+  @NonNull
   protected IDataTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
@@ -155,8 +155,8 @@ class DefaultFlagProperty
       if (definition == null) {
         definition = new InternalFlagDefinition();
       }
+      return definition;
     }
-    return definition;
   }
 
   @SuppressWarnings("null")
@@ -193,7 +193,7 @@ class DefaultFlagProperty
     }
 
     @Override
-    public @NotNull Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+    public @NonNull Map<QName, Set<String>> getProperties() {
       // TODO: implement
       throw new UnsupportedOperationException();
     }
@@ -264,31 +264,31 @@ class DefaultFlagProperty
     }
 
     @Override
-    public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+    public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
       checkModelConstraints();
       constraints.addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull IMatchesConstraint constraint) {
+    public void addConstraint(@NonNull IMatchesConstraint constraint) {
       checkModelConstraints();
       constraints.addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+    public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
       checkModelConstraints();
       constraints.addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull IExpectConstraint constraint) {
+    public void addConstraint(@NonNull IExpectConstraint constraint) {
       checkModelConstraints();
       constraints.addConstraint(constraint);
     }
 
     @Override
-    public @NotNull ModuleScopeEnum getModuleScope() {
+    public @NonNull ModuleScopeEnum getModuleScope() {
       // TODO: is this the right value?
       return ModuleScopeEnum.INHERITED;
     }

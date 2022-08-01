@@ -56,8 +56,7 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.util.Collection;
@@ -68,14 +67,16 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 /**
  * Represents a Metaschema assembly definition declared locally as an instance.
  */
 class XmlInlineAssemblyDefinition
     extends AbstractAssemblyInstance {
-  @NotNull
+  @NonNull
   private final InlineAssemblyDefinitionType xmlAssembly;
-  @NotNull
+  @NonNull
   private final InternalAssemblyDefinition assemblyDefinition;
 
   /**
@@ -87,8 +88,8 @@ class XmlInlineAssemblyDefinition
    *          the parent assembly definition
    */
   public XmlInlineAssemblyDefinition(
-      @NotNull InlineAssemblyDefinitionType xmlAssembly,
-      @NotNull IAssemblyDefinition parent) {
+      @NonNull InlineAssemblyDefinitionType xmlAssembly,
+      @NonNull IAssemblyDefinition parent) {
     super(parent);
     this.xmlAssembly = xmlAssembly;
     this.assemblyDefinition = new InternalAssemblyDefinition();
@@ -121,9 +122,8 @@ class XmlInlineAssemblyDefinition
         : null;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+  public Map<QName, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlAssembly().getPropList()));
   }
 
@@ -192,14 +192,14 @@ class XmlInlineAssemblyDefinition
   }
 
   @Override
-  public Object getValue(@NotNull Object parentValue) {
+  public Object getValue(@NonNull Object parentValue) {
     // there is no value
     return null;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ?> getItemValues(Object instanceValue) {
+  public Collection<?> getItemValues(Object instanceValue) {
     // there are no item values
     return Collections.emptyList();
   }
@@ -234,7 +234,7 @@ class XmlInlineAssemblyDefinition
     }
 
     @Override
-    public @NotNull Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+    public @NonNull Map<QName, Set<String>> getProperties() {
       return XmlInlineAssemblyDefinition.this.getProperties();
     }
 
@@ -293,8 +293,8 @@ class XmlInlineAssemblyDefinition
       }
     }
 
-    @NotNull
-    private Map<@NotNull String, ? extends IFlagInstance> getFlagInstanceMap() {
+    @NonNull
+    private Map<String, ? extends IFlagInstance> getFlagInstanceMap() {
       return initFlagContainer().getFlagInstanceMap();
     }
 
@@ -305,7 +305,7 @@ class XmlInlineAssemblyDefinition
 
     @SuppressWarnings("null")
     @Override
-    public Collection<@NotNull ? extends IFlagInstance> getFlagInstances() {
+    public Collection<? extends IFlagInstance> getFlagInstances() {
       return getFlagInstanceMap().values();
     }
 
@@ -324,7 +324,7 @@ class XmlInlineAssemblyDefinition
       }
     }
 
-    private Map<@NotNull String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
+    private Map<String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
       return initModelContainer().getNamedModelInstanceMap();
     }
 
@@ -335,11 +335,11 @@ class XmlInlineAssemblyDefinition
 
     @SuppressWarnings("null")
     @Override
-    public @NotNull Collection<@NotNull ? extends INamedModelInstance> getNamedModelInstances() {
+    public @NonNull Collection<? extends INamedModelInstance> getNamedModelInstances() {
       return getNamedModelInstanceMap().values();
     }
 
-    private Map<@NotNull String, ? extends IFieldInstance> getFieldInstanceMap() {
+    private Map<String, ? extends IFieldInstance> getFieldInstanceMap() {
       return initModelContainer().getFieldInstanceMap();
     }
 
@@ -350,11 +350,11 @@ class XmlInlineAssemblyDefinition
 
     @SuppressWarnings("null")
     @Override
-    public Collection<@NotNull ? extends IFieldInstance> getFieldInstances() {
+    public Collection<? extends IFieldInstance> getFieldInstances() {
       return getFieldInstanceMap().values();
     }
 
-    private Map<@NotNull String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
+    private Map<String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
       return initModelContainer().getAssemblyInstanceMap();
     }
 
@@ -365,17 +365,17 @@ class XmlInlineAssemblyDefinition
 
     @SuppressWarnings("null")
     @Override
-    public Collection<@NotNull ? extends IAssemblyInstance> getAssemblyInstances() {
+    public Collection<? extends IAssemblyInstance> getAssemblyInstances() {
       return getAssemblyInstanceMap().values();
     }
 
     @Override
-    public List<@NotNull ? extends IChoiceInstance> getChoiceInstances() {
+    public List<? extends IChoiceInstance> getChoiceInstances() {
       return initModelContainer().getChoiceInstances();
     }
 
     @Override
-    public List<@NotNull ? extends IModelInstance> getModelInstances() {
+    public List<? extends IModelInstance> getModelInstances() {
       return initModelContainer().getModelInstances();
     }
 
@@ -442,37 +442,37 @@ class XmlInlineAssemblyDefinition
     }
 
     @Override
-    public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+    public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
       initModelConstraints().addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull IMatchesConstraint constraint) {
+    public void addConstraint(@NonNull IMatchesConstraint constraint) {
       initModelConstraints().addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+    public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
       initModelConstraints().addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull IExpectConstraint constraint) {
+    public void addConstraint(@NonNull IExpectConstraint constraint) {
       initModelConstraints().addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull IIndexConstraint constraint) {
+    public void addConstraint(@NonNull IIndexConstraint constraint) {
       initModelConstraints().addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull IUniqueConstraint constraint) {
+    public void addConstraint(@NonNull IUniqueConstraint constraint) {
       initModelConstraints().addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull ICardinalityConstraint constraint) {
+    public void addConstraint(@NonNull ICardinalityConstraint constraint) {
       initModelConstraints().addConstraint(constraint);
     }
 

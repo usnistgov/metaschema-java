@@ -26,12 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class RootDoubleSlashPath
     extends AbstractRootPathExpression {
 
-  protected RootDoubleSlashPath(@NotNull IExpression node) {
+  protected RootDoubleSlashPath(@NonNull IExpression node) {
     super(node);
   }
 

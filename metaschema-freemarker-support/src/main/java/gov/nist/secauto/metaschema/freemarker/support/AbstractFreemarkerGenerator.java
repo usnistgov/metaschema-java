@@ -28,13 +28,12 @@ package gov.nist.secauto.metaschema.freemarker.support;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.core.ParseException;
 import freemarker.ext.beans.BeansWrapper;
@@ -83,7 +82,7 @@ public abstract class AbstractFreemarkerGenerator implements IFreemarkerGenerato
   }
 
   @Override
-  public void generateFromMetaschema(@NotNull IMetaschema metaschema, Writer out)
+  public void generateFromMetaschema(@NonNull IMetaschema metaschema, Writer out)
       throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException {
 
     Configuration cfg = newConfiguration();
@@ -114,5 +113,6 @@ public abstract class AbstractFreemarkerGenerator implements IFreemarkerGenerato
   protected abstract Template getTemplate(Configuration cfg)
       throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException;
 
-  protected abstract void buildModel(@NotNull Configuration cfg, @NotNull Map<String, Object> root, @NotNull IMetaschema metaschema) throws IOException, TemplateException;
+  protected abstract void buildModel(@NonNull Configuration cfg, @NonNull Map<String, Object> root,
+      @NonNull IMetaschema metaschema) throws IOException, TemplateException;
 }

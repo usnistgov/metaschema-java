@@ -26,18 +26,20 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import java.util.Objects;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class AbstractParsingContext<READER, PROBLEM_HANDLER extends IProblemHandler>
     implements IParsingContext<READER, PROBLEM_HANDLER> {
+  @NonNull
   private final READER parser;
+  @NonNull
   private final PROBLEM_HANDLER problemHandler;
 
-  public AbstractParsingContext(READER parser, PROBLEM_HANDLER problemHandler) {
-    Objects.requireNonNull(parser, "parser");
-    Objects.requireNonNull(problemHandler, "problemHandler");
-    this.parser = parser;
-    this.problemHandler = problemHandler;
+  public AbstractParsingContext(@NonNull READER parser, @NonNull PROBLEM_HANDLER problemHandler) {
+    this.parser = ObjectUtils.requireNonNull(parser, "parser");
+    this.problemHandler = ObjectUtils.requireNonNull(problemHandler, "problemHandler");
   }
 
   @Override

@@ -29,28 +29,28 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigDecimal;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IDecimalItem extends INumericItem {
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   IDecimalItem ZERO = valueOf(BigDecimal.ZERO);
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   static IDecimalItem valueOf(long value) {
     return valueOf(BigDecimal.valueOf(value));
   }
 
-  @NotNull
-  static IDecimalItem valueOf(@NotNull BigDecimal value) {
+  @NonNull
+  static IDecimalItem valueOf(@NonNull BigDecimal value) {
     return new DecimalItemImpl(value);
   }
 
-  @NotNull
-  static IDecimalItem valueOf(@NotNull String value) {
+  @NonNull
+  static IDecimalItem valueOf(@NonNull String value) {
     try {
       return valueOf(MetaschemaDataTypeProvider.DECIMAL.parse(value));
     } catch (IllegalArgumentException ex) {
@@ -59,7 +59,7 @@ public interface IDecimalItem extends INumericItem {
     }
   }
 
-  static @NotNull IDecimalItem cast(@NotNull IAnyAtomicItem item)
+  static @NonNull IDecimalItem cast(@NonNull IAnyAtomicItem item)
       throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.DECIMAL.cast(item);
   }

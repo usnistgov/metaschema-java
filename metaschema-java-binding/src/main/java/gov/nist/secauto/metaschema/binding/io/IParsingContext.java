@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides objects used for parsing data associated with a specific format.
@@ -42,7 +42,7 @@ public interface IParsingContext<READER, PROBLEM_HANDLER extends IProblemHandler
    * 
    * @return the parser
    */
-  @NotNull
+  @NonNull
   READER getReader();
 
   /**
@@ -50,6 +50,6 @@ public interface IParsingContext<READER, PROBLEM_HANDLER extends IProblemHandler
    * 
    * @return the configured handler
    */
-  @NotNull
+  @NonNull
   PROBLEM_HANDLER getProblemHandler();
 }

@@ -26,14 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import com.google.re2j.Pattern;
+
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUuidItem;
 
 import java.util.UUID;
 
 public class UuidAdapter
     extends AbstractDataTypeAdapter<UUID, IUuidItem> {
+  public static final Pattern UUID_PATTERN = Pattern.compile("^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[45][0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$");
 
-  @SuppressWarnings("null")
   UuidAdapter() {
     super(UUID.class);
   }
@@ -55,7 +57,6 @@ public class UuidAdapter
     return (UUID) obj;
   }
 
-  @SuppressWarnings("null")
   @Override
   public Class<IUuidItem> getItemClass() {
     return IUuidItem.class;

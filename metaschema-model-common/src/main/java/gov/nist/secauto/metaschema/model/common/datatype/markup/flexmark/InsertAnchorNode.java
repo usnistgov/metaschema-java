@@ -30,44 +30,44 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.sequence.BasedSequence;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class InsertAnchorNode
     extends Node {
 
-  @NotNull
+  @NonNull
   private BasedSequence type;
-  @NotNull
+  @NonNull
   private BasedSequence idReference;
 
   @SuppressWarnings("null")
-  public InsertAnchorNode(@NotNull String type, @NotNull String idReference) {
+  public InsertAnchorNode(@NonNull String type, @NonNull String idReference) {
     this(CharSubSequence.of(type), CharSubSequence.of(idReference));
   }
 
-  public InsertAnchorNode(@NotNull BasedSequence type, @NotNull BasedSequence idReference) {
+  public InsertAnchorNode(@NonNull BasedSequence type, @NonNull BasedSequence idReference) {
     this.type = type;
     this.idReference = idReference;
   }
 
-  @NotNull
+  @NonNull
   public BasedSequence getType() {
     return type;
   }
 
-  @NotNull
+  @NonNull
   public BasedSequence getIdReference() {
     return idReference;
   }
 
-  public void setIdReference(@NotNull BasedSequence value) {
+  public void setIdReference(@NonNull BasedSequence value) {
     this.idReference = value;
   }
 
   @Override
-  @NotNull
+  @NonNull
   public BasedSequence[] getSegments() {
-    @NotNull
+    @NonNull
     BasedSequence[] retval = { getType(), getIdReference() };
     return retval;
   }

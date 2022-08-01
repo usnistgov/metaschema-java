@@ -27,13 +27,13 @@
 package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.util.LinkedHashMap;
@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class XmlCoreDatatypeProvider
     extends AbstractXmlDatatypeProvider {
@@ -54,7 +56,7 @@ public class XmlCoreDatatypeProvider
   //
   // @SuppressWarnings("null")
   // @Override
-  // protected List<@NotNull IDatatypeContent> handleResults(@NotNull List<Element> items) {
+  // protected List<@NonNull IDatatypeContent> handleResults(@NonNull List<Element> items) {
   // return items.stream()
   // .map(element -> {
   // return new JDom2DatatypeContent(element.getAttributeValue("name"), items,
@@ -62,31 +64,31 @@ public class XmlCoreDatatypeProvider
   // }).collect(Collectors.toList());
   // }
   @Override
-  protected List<@NotNull Element> queryElements(JDom2XmlSchemaLoader loader) {
+  protected List<Element> queryElements(JDom2XmlSchemaLoader loader) {
     return loader.getContent(
         "/xs:schema/xs:simpleType",
         CollectionUtil.singletonMap("xs", JDom2XmlSchemaLoader.NS_XML_SCHEMA));
   }
 
-  @SuppressWarnings("null")
-  @NotNull
-  private static List<@NotNull String> analyzeDependencies(@NotNull Element element) {
+  @NonNull
+  private static List<String> analyzeDependencies(@NonNull Element element) {
     XPathExpression<Attribute> xpath = XPathFactory.instance().compile(".//@base", Filters.attribute());
-    return xpath.evaluate(element).stream()
+    return ObjectUtils.notNull(xpath.evaluate(element).stream()
         .map(attr -> attr.getValue())
         .filter(type -> !type.startsWith("xs:"))
         .distinct()
-        .collect(Collectors.toList());
+        .collect(Collectors.toList()));
   }
 
   @Override
-  protected @NotNull Map<@NotNull String, IDatatypeContent> handleResults(
-      @NotNull List<@NotNull Element> items) {
-    return items.stream()
+  protected @NonNull Map<String, IDatatypeContent> handleResults(
+      @NonNull List<Element> items) {
+    return ObjectUtils.notNull(items.stream()
         .map(element -> {
-          return new JDom2DatatypeContent(element.getAttributeValue("name"), CollectionUtil.singletonList(element),
+          return (IDatatypeContent) new JDom2DatatypeContent(ObjectUtils.requireNonNull(element.getAttributeValue("name")),
+              CollectionUtil.singletonList(element),
               analyzeDependencies(element));
         }).collect(Collectors.toMap(content -> content.getTypeName(), Function.identity(), (e1, e2) -> e2,
-            LinkedHashMap::new));
+            LinkedHashMap::new)));
   }
 }

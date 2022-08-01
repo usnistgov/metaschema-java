@@ -28,38 +28,36 @@ package gov.nist.secauto.metaschema.model.common.datatype;
 
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
+import java.util.concurrent.ConcurrentHashMap;
+
+import nl.talsmasoftware.lazy4j.Lazy;
 
 /**
  * This class provides a singleton service to allow data types to be discovered within the system
  * based on an SPI provided by {@link IDataTypeProvider}.
  */
 public class DataTypeService {
-  private static DataTypeService instance;
-
-  public static synchronized DataTypeService getInstance() {
-    if (instance == null) {
-      instance = new DataTypeService();
-    }
-    return instance;
-  }
+  private static Lazy<DataTypeService> lazyInstance = Lazy.lazy(() -> new DataTypeService());
 
   private Map<String, IDataTypeAdapter<?>> libraryByName;
-  @SuppressWarnings("rawtypes")
-  private Map<Class<? extends IDataTypeAdapter>, IDataTypeAdapter<?>> libraryByClass;
+  private Map<Class<? extends IDataTypeAdapter<?>>, IDataTypeAdapter<?>> libraryByClass;
+
+  public static DataTypeService getInstance() {
+    return lazyInstance.get();
+  }
 
   public DataTypeService() {
     load();
   }
 
-  public synchronized IDataTypeAdapter<?> getJavaTypeAdapterByName(String name) {
+  public IDataTypeAdapter<?> getJavaTypeAdapterByName(String name) {
     return libraryByName.get(name);
   }
 
-  public synchronized IDataTypeAdapter<?>
+  public IDataTypeAdapter<?>
       getJavaTypeAdapterByClass(@SuppressWarnings("rawtypes") Class<? extends IDataTypeAdapter> clazz) {
     return libraryByClass.get(clazz);
   }
@@ -70,22 +68,19 @@ public class DataTypeService {
    * @throws IllegalStateException
    *           if there are two adapters with the same name
    */
-  private synchronized void load() throws IllegalStateException {
-    Map<String, IDataTypeAdapter<?>> libraryByName = new HashMap<>();
-    @SuppressWarnings("rawtypes")
-    Map<Class<? extends IDataTypeAdapter>, IDataTypeAdapter<?>> libraryByClass
-        = new HashMap<>();
+  private void load() {
+    Map<String, IDataTypeAdapter<?>> libraryByName = new ConcurrentHashMap<>();
+    Map<Class<? extends IDataTypeAdapter<?>>, IDataTypeAdapter<?>> libraryByClass = new ConcurrentHashMap<>();
     ServiceLoader.load(IDataTypeProvider.class).stream()
         .map(Provider<IDataTypeProvider>::get)
         .flatMap(provider -> {
           return provider.getJavaTypeAdapters().entrySet().stream();
         }).forEach(entry -> {
           String datatypeName = entry.getKey();
-          @SuppressWarnings("null")
           IDataTypeAdapter<?> adapter = entry.getValue();
           libraryByName.put(datatypeName, adapter);
-          @SuppressWarnings("rawtypes")
-          Class<? extends IDataTypeAdapter> clazz = adapter.getClass();
+          @SuppressWarnings("unchecked")
+          Class<? extends IDataTypeAdapter<?>> clazz = (Class<? extends IDataTypeAdapter<?>>) adapter.getClass();
           libraryByClass.putIfAbsent(clazz, adapter);
         });
     this.libraryByName = libraryByName;

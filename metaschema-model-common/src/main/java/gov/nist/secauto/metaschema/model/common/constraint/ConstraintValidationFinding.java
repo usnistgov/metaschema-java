@@ -31,32 +31,32 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationFinding;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
 import java.util.Comparator;
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Represents an individual constraint validation issue.
  */
 public class ConstraintValidationFinding implements IValidationFinding { // NOPMD - intentional
-  @NotNull
-  private final List<@NotNull ? extends IConstraint> constraints;
-  @NotNull
+  @NonNull
+  private final List<? extends IConstraint> constraints;
+  @NonNull
   private final CharSequence message;
-  @NotNull
+  @NonNull
   private final INodeItem node;
-  @NotNull
-  private final List<@NotNull ? extends INodeItem> targets;
+  @NonNull
+  private final List<? extends INodeItem> targets;
   private final Throwable cause;
 
   public ConstraintValidationFinding(
-      @NotNull IConstraint constraint,
-      @NotNull CharSequence message,
+      @NonNull IConstraint constraint,
+      @NonNull CharSequence message,
       Throwable cause,
-      @NotNull INodeItem node,
-      @NotNull List<@NotNull ? extends INodeItem> targets) {
+      @NonNull INodeItem node,
+      @NonNull List<? extends INodeItem> targets) {
     this(
         CollectionUtil.singletonList(constraint),
         message,
@@ -66,11 +66,11 @@ public class ConstraintValidationFinding implements IValidationFinding { // NOPM
   }
 
   public ConstraintValidationFinding(
-      @NotNull List<@NotNull ? extends IConstraint> constraints,
-      @NotNull CharSequence message,
+      @NonNull List<? extends IConstraint> constraints,
+      @NonNull CharSequence message,
       Throwable cause,
-      @NotNull INodeItem node,
-      @NotNull List<@NotNull ? extends INodeItem> targets) {
+      @NonNull INodeItem node,
+      @NonNull List<? extends INodeItem> targets) {
     this.constraints = constraints;
     this.message = message;
     this.cause = cause;
@@ -78,7 +78,7 @@ public class ConstraintValidationFinding implements IValidationFinding { // NOPM
     this.targets = targets;
   }
 
-  public List<@NotNull ? extends IConstraint> getConstraints() {
+  public List<? extends IConstraint> getConstraints() {
     return constraints;
   }
 
@@ -91,7 +91,7 @@ public class ConstraintValidationFinding implements IValidationFinding { // NOPM
     return node;
   }
 
-  public List<@NotNull ? extends INodeItem> getTargets() {
+  public List<? extends INodeItem> getTargets() {
     return targets;
   }
 
@@ -111,7 +111,7 @@ public class ConstraintValidationFinding implements IValidationFinding { // NOPM
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull URI getDocumentUri() {
+  public @NonNull URI getDocumentUri() {
     return getNode().getBaseUri();
   }
 }

@@ -31,17 +31,17 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface INumericItem extends IAnyAtomicItem {
 
-  @NotNull
-  public static INumericItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  @NonNull
+  public static INumericItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     INumericItem retval;
     if (item instanceof INumericItem) {
       retval = (INumericItem) item;
@@ -55,10 +55,10 @@ public interface INumericItem extends IAnyAtomicItem {
     return retval;
   }
 
-  @NotNull
+  @NonNull
   BigDecimal asDecimal();
 
-  @NotNull
+  @NonNull
   BigInteger asInteger();
 
   boolean toEffectiveBoolean();
@@ -68,7 +68,7 @@ public interface INumericItem extends IAnyAtomicItem {
    * 
    * @return this item negated if this item is negative, or the item otherwise
    */
-  @NotNull
+  @NonNull
   INumericItem abs();
 
   /**
@@ -76,7 +76,7 @@ public interface INumericItem extends IAnyAtomicItem {
    * 
    * @return the rounded value
    */
-  @NotNull
+  @NonNull
   IIntegerItem ceiling();
 
   /**
@@ -84,16 +84,16 @@ public interface INumericItem extends IAnyAtomicItem {
    * 
    * @return the rounded value
    */
-  @NotNull
+  @NonNull
   IIntegerItem floor();
 
-  @NotNull
+  @NonNull
   default INumericItem round() {
     return round(IIntegerItem.ZERO);
   }
 
-  @NotNull
-  default INumericItem round(@NotNull IIntegerItem precisionItem) {
+  @NonNull
+  default INumericItem round(@NonNull IIntegerItem precisionItem) {
     int precision;
     try {
       precision = FunctionUtils.asInteger(precisionItem);
@@ -119,12 +119,12 @@ public interface INumericItem extends IAnyAtomicItem {
                   value.round(new MathContext(precision + value.precision() - value.scale(), RoundingMode.HALF_UP))));
         }
       }
-    } else if (precision < 0) {
+    } else {
       // round to a power of 10
       BigInteger value = this.asInteger();
       BigInteger divisor = BigInteger.TEN.pow(0 - precision);
 
-      @NotNull
+      @NonNull
       BigInteger result;
       if (divisor.compareTo(value.abs()) > 0) {
         result = ObjectUtils.notNull(BigInteger.ZERO);
@@ -136,15 +136,6 @@ public interface INumericItem extends IAnyAtomicItem {
             remainder.compareTo(halfDivisor) >= 0 ? lessRemainder.add(divisor) : lessRemainder);
       }
       retval = IIntegerItem.valueOf(result);
-    } else {
-      // precision == 0
-      if (this instanceof IIntegerItem) {
-        retval = this;
-      } else {
-        BigDecimal value = this.asDecimal();
-        retval = IDecimalItem.valueOf(
-            ObjectUtils.notNull(value.round(new MathContext(1, RoundingMode.CEILING))));
-      }
     }
     return retval;
   }

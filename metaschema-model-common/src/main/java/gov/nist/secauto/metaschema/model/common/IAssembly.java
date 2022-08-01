@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A marker interface for an information element that is an assembly model type.
@@ -39,7 +39,7 @@ public interface IAssembly extends INamedModelElement {
    * @return the model type
    */
   @Override
-  @NotNull
+  @NonNull
   default ModelType getModelType() {
     return ModelType.ASSEMBLY;
   }

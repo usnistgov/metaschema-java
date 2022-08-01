@@ -34,5 +34,5 @@ package gov.nist.secauto.metaschema.model.common.constraint;
  * constraint type does not persist a named index.
  */
 public interface IUniqueConstraint extends IKeyConstraint {
-
+  // this interface has no additional methods
 }

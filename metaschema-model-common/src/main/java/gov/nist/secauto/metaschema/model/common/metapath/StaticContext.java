@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.net.URI;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class StaticContext {
   @Nullable
@@ -58,7 +58,7 @@ public class StaticContext {
    * @param baseUri
    *          the base URI to use
    */
-  public void setBaseUri(@NotNull URI baseUri) {
+  public void setBaseUri(@NonNull URI baseUri) {
     synchronized (this) {
       this.baseUri = ObjectUtils.requireNonNull(baseUri, "baseUri");
     }
@@ -69,7 +69,7 @@ public class StaticContext {
    * 
    * @return the generated dynamic context
    */
-  @NotNull
+  @NonNull
   public DynamicContext newDynamicContext() {
     return new DynamicContext(this);
   }

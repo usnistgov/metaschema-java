@@ -26,12 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * This marker interface indicates that the {@link IFlagNodeItem} must have a value to exist.
  */
-public interface IRequiredValueFlagNodeItem extends IFlagNodeItem, IRequiredValueDefinitionNodeItem {
+public interface IRequiredValueFlagNodeItem extends IFlagNodeItem, IRequiredValueNodeItem {
 
   @Override
   default IRequiredValueFlagNodeItem getNodeItem() {
@@ -47,6 +47,6 @@ public interface IRequiredValueFlagNodeItem extends IFlagNodeItem, IRequiredValu
   }
 
   @Override
-  @NotNull
+  @NonNull
   IAnyAtomicItem toAtomicItem();
 }

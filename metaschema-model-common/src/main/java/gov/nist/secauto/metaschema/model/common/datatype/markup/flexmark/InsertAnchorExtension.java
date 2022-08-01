@@ -50,10 +50,12 @@ public class InsertAnchorExtension
 
   @Override
   public void parserOptions(MutableDataHolder options) {
+    // do nothing
   }
 
   @Override
   public void rendererOptions(MutableDataHolder options) {
+    // do nothing
   }
 
   @Override

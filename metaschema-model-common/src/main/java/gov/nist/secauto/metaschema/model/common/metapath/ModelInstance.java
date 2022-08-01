@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class ModelInstance
     extends AbstractNamedInstanceExpression<IModelNodeItem> {
@@ -43,12 +43,12 @@ class ModelInstance
    * @param test
    *          the test to use to match
    */
-  protected ModelInstance(@NotNull IExpression test) {
+  protected ModelInstance(@NonNull IExpression test) {
     super(test);
   }
 
   @Override
-  public Class<@NotNull IModelNodeItem> getBaseResultType() {
+  public Class<IModelNodeItem> getBaseResultType() {
     return IModelNodeItem.class;
   }
 
@@ -70,8 +70,8 @@ class ModelInstance
    * @return the stream of matching node items
    */
   @SuppressWarnings("null")
-  @NotNull
-  protected Stream<? extends IModelNodeItem> matchModelInstance(@NotNull INodeContext context) {
+  @NonNull
+  protected Stream<? extends IModelNodeItem> matchModelInstance(@NonNull INodeContext context) {
     Stream<? extends IModelNodeItem> retval;
     if (getTest() instanceof Name) {
       String name = ((Name) getTest()).getValue();

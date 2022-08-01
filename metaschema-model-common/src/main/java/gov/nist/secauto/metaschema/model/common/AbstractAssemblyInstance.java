@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractAssemblyInstance implements IAssemblyInstance {
-  @NotNull
+  @NonNull
   private final IAssemblyDefinition parent;
 
   /**
@@ -38,12 +38,12 @@ public abstract class AbstractAssemblyInstance implements IAssemblyInstance {
    * @param parent
    *          the parent assembly definition
    */
-  public AbstractAssemblyInstance(@NotNull IAssemblyDefinition parent) {
+  public AbstractAssemblyInstance(@NonNull IAssemblyDefinition parent) {
     this.parent = parent;
   }
 
   @Override
-  @NotNull
+  @NonNull
   public IAssemblyDefinition getContainingDefinition() {
     return parent;
   }

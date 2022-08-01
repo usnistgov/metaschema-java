@@ -39,28 +39,28 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFac
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DefaultJsonDeserializer<CLASS>
     extends AbstractDeserializer<CLASS> {
   private JsonFactory jsonFactory;
 
-  public DefaultJsonDeserializer(@NotNull IBindingContext bindingContext, @NotNull IAssemblyClassBinding classBinding) {
+  public DefaultJsonDeserializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   protected JsonFactory getJsonFactoryInstance() {
     return JsonFactoryFactory.instance();
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   protected JsonFactory getJsonFactory() {
     synchronized (this) {
       if (jsonFactory == null) {
@@ -70,14 +70,14 @@ public class DefaultJsonDeserializer<CLASS>
     }
   }
 
-  protected void setJsonFactory(@NotNull JsonFactory jsonFactory) {
+  protected void setJsonFactory(@NonNull JsonFactory jsonFactory) {
     synchronized (this) {
       this.jsonFactory = jsonFactory;
     }
   }
 
-  @NotNull
-  protected JsonParser newJsonParser(@NotNull Reader reader) throws IOException {
+  @NonNull
+  protected JsonParser newJsonParser(@NonNull Reader reader) throws IOException {
     JsonParser retval = getJsonFactory().createParser(reader);
     retval.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
     return retval;
@@ -86,7 +86,7 @@ public class DefaultJsonDeserializer<CLASS>
 
   @SuppressWarnings("null")
   @Override
-  protected INodeItem deserializeToNodeItemInternal(@NotNull Reader reader, @NotNull URI documentUri)
+  protected INodeItem deserializeToNodeItemInternal(@NonNull Reader reader, @NonNull URI documentUri)
       throws IOException {
     INodeItem retval;
     try (JsonParser parser = newJsonParser(reader)) {

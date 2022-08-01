@@ -26,17 +26,17 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Objects;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * An immutable expression with a single sub-expression.
  */
 abstract class AbstractUnaryExpression
     extends AbstractExpression {
-  @NotNull
+  @NonNull
   private final IExpression expr;
 
   /**
@@ -46,7 +46,7 @@ abstract class AbstractUnaryExpression
    *          the single sub-expression
    */
   @SuppressWarnings("null")
-  public AbstractUnaryExpression(@NotNull IExpression expr) {
+  public AbstractUnaryExpression(@NonNull IExpression expr) {
     this.expr = Objects.requireNonNull(expr, "expr");
   }
 
@@ -55,14 +55,14 @@ abstract class AbstractUnaryExpression
    * 
    * @return the sub-expression
    */
-  @NotNull
+  @NonNull
   public IExpression getChild() {
     return expr;
   }
 
   @SuppressWarnings("null")
   @Override
-  public List<@NotNull ? extends IExpression> getChildren() {
+  public List<? extends IExpression> getChildren() {
     return List.of(expr);
   }
 }

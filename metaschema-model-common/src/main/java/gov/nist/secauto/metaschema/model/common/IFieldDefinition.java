@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IFieldDefinition extends IValuedDefinition, IModelDefinition, IField {
   @Override
@@ -71,7 +71,7 @@ public interface IFieldDefinition extends IValuedDefinition, IModelDefinition, I
    * 
    * @return the value key label
    */
-  @NotNull
+  @NonNull
   String getJsonValueKeyName();
 
   /**
@@ -91,5 +91,5 @@ public interface IFieldDefinition extends IValuedDefinition, IModelDefinition, I
    *          the field item
    * @return the field's value or {@code null} if it has no value
    */
-  Object getFieldValue(@NotNull Object item);
+  Object getFieldValue(@NonNull Object item);
 }

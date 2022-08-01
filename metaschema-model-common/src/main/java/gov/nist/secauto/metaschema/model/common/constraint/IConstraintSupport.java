@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * This marker interface is used to indicate the implementation class is a provider of constraints.
@@ -39,6 +39,6 @@ public interface IConstraintSupport {
    * 
    * @return the constraints or an empty list
    */
-  @NotNull
-  List<@NotNull ? extends IConstraint> getConstraints();
+  @NonNull
+  List<? extends IConstraint> getConstraints();
 }

@@ -28,11 +28,11 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A {@link INodeItem} supported by a {@link IAssemblyInstance}, that does not have an associated
@@ -46,25 +46,25 @@ class AssemblyInstanceNodeItemImpl
         AbstractModelNodeContext.Model<IFlagNodeItem, IModelNodeItem>> {
 
   public AssemblyInstanceNodeItemImpl(
-      @NotNull IAssemblyInstance instance,
-      @NotNull IAssemblyNodeItem parent,
+      @NonNull IAssemblyInstance instance,
+      @NonNull IAssemblyNodeItem parent,
       int position,
-      @NotNull INodeItemFactory factory) {
+      @NonNull INodeItemFactory factory) {
     super(instance, parent, position, factory);
   }
 
   @Override
-  protected @NotNull Supplier<Model<IFlagNodeItem, IModelNodeItem>>
-      newModelSupplier(@NotNull INodeItemFactory factory) {
+  protected @NonNull Supplier<Model<IFlagNodeItem, IModelNodeItem>>
+      newModelSupplier(@NonNull INodeItemFactory factory) {
     return () -> {
-      Map<@NotNull String, IFlagNodeItem> flags = factory.generateFlags(this);
-      Map<@NotNull String, List<@NotNull IModelNodeItem>> modelItems = factory.generateModelItems(this);
+      Map<String, IFlagNodeItem> flags = factory.generateFlags(this);
+      Map<String, List<IModelNodeItem>> modelItems = factory.generateModelItems(this);
       return new AbstractModelNodeContext.Model<>(flags, modelItems);
     };
   }
 
   @Override
-  @NotNull
+  @NonNull
   public IAssemblyNodeItem getParentContentNodeItem() {
     return getParentNodeItem();
   }

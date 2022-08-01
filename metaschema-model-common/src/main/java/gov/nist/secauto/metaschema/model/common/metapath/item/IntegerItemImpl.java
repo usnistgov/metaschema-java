@@ -29,14 +29,14 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IntegerAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigInteger;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class IntegerItemImpl
     extends AbstractIntegerItem {
 
-  protected IntegerItemImpl(@NotNull BigInteger value) {
+  protected IntegerItemImpl(@NonNull BigInteger value) {
     super(value);
   }
 

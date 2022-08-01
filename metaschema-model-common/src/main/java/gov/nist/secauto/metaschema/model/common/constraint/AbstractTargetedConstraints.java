@@ -32,10 +32,10 @@ import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Locale;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides an base implementation for a set of external constraints that target a given definition
@@ -45,12 +45,12 @@ import java.util.Locale;
  *          the type of the constraint container
  */
 public abstract class AbstractTargetedConstraints<T extends IValueConstraintSupport> implements ITargetedConstaints {
-  @NotNull
+  @NonNull
   private final MetapathExpression targetExpression;
-  @NotNull
+  @NonNull
   private final T constraints;
 
-  public AbstractTargetedConstraints(@NotNull MetapathExpression targetExpression, @NotNull T constraints) {
+  public AbstractTargetedConstraints(@NonNull MetapathExpression targetExpression, @NonNull T constraints) {
     this.targetExpression = targetExpression;
     this.constraints = constraints;
   }
@@ -60,57 +60,58 @@ public abstract class AbstractTargetedConstraints<T extends IValueConstraintSupp
     return targetExpression;
   }
 
-  @NotNull
+  @NonNull
   protected T getConstraintSupport() {
     return constraints;
   }
 
   @Override
-  public List<@NotNull ? extends IConstraint> getConstraints() {
+  public List<? extends IConstraint> getConstraints() {
     return getConstraintSupport().getConstraints();
   }
 
   @Override
-  public List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
+  public List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
     return getConstraintSupport().getAllowedValuesConstraints();
   }
 
   @Override
-  public List<@NotNull ? extends IMatchesConstraint> getMatchesConstraints() {
+  public List<? extends IMatchesConstraint> getMatchesConstraints() {
     return getConstraintSupport().getMatchesConstraints();
   }
 
   @Override
-  public List<@NotNull ? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
     return getConstraintSupport().getIndexHasKeyConstraints();
   }
 
   @Override
-  public List<@NotNull ? extends IExpectConstraint> getExpectConstraints() {
+  public List<? extends IExpectConstraint> getExpectConstraints() {
     return getConstraintSupport().getExpectConstraints();
   }
 
   @Override
-  public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+  public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
     getConstraintSupport().addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IMatchesConstraint constraint) {
+  public void addConstraint(@NonNull IMatchesConstraint constraint) {
     getConstraintSupport().addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+  public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
     getConstraintSupport().addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IExpectConstraint constraint) {
+  public void addConstraint(@NonNull IExpectConstraint constraint) {
     getConstraintSupport().addConstraint(constraint);
   }
 
-  protected void applyTo(@NotNull IDefinition definition) {
+  @SuppressWarnings("null")
+  protected void applyTo(@NonNull IDefinition definition) {
     getAllowedValuesConstraints().forEach(constraint -> definition.addConstraint(constraint));
     getMatchesConstraints().forEach(constraint -> definition.addConstraint(constraint));
     getIndexHasKeyConstraints().forEach(constraint -> definition.addConstraint(constraint));
@@ -118,7 +119,7 @@ public abstract class AbstractTargetedConstraints<T extends IValueConstraintSupp
   }
 
   @Override
-  public void target(@NotNull IFlagDefinition definition) {
+  public void target(@NonNull IFlagDefinition definition) {
     throw new IllegalStateException(
         String.format("The targeted definition '%s' from metaschema '%s' is not a %s definition.",
             definition.getEffectiveName(),
@@ -127,7 +128,7 @@ public abstract class AbstractTargetedConstraints<T extends IValueConstraintSupp
   }
 
   @Override
-  public void target(@NotNull IFieldDefinition definition) {
+  public void target(@NonNull IFieldDefinition definition) {
     throw new IllegalStateException(
         String.format("The targeted definition '%s' from metaschema '%s' is not a %s definition.",
             definition.getEffectiveName(),
@@ -136,7 +137,7 @@ public abstract class AbstractTargetedConstraints<T extends IValueConstraintSupp
   }
 
   @Override
-  public void target(@NotNull IAssemblyDefinition definition) {
+  public void target(@NonNull IAssemblyDefinition definition) {
     throw new IllegalStateException(
         String.format("The targeted definition '%s' from metaschema '%s' is not a %s definition.",
             definition.getEffectiveName(),

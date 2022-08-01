@@ -37,14 +37,14 @@ import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Wraps an {@link IAssemblyDefinition} that is a {@link IRootAssemblyDefinition}.
@@ -53,10 +53,17 @@ import javax.xml.namespace.QName;
  *          the type of the wrapped definition
  */
 public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implements IRootAssemblyDefinition {
-  @NotNull
+  @NonNull
   private final T rootDefinition;
 
-  public RootAssemblyDefinitionWrapper(@NotNull T rootDefinition) {
+  /**
+   * Construct a new wrapper that delgates method calls to the underlying definition implementing root
+   * semantics.
+   * 
+   * @param rootDefinition
+   *          the definition to wrap
+   */
+  public RootAssemblyDefinitionWrapper(@NonNull T rootDefinition) {
     if (!rootDefinition.isRoot()) {
       throw new IllegalArgumentException(
           "Provided definition is not a root assembly: " + rootDefinition.toCoordinates());
@@ -65,7 +72,12 @@ public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implem
 
   }
 
-  @NotNull
+  /**
+   * Get the associated definition.
+   * 
+   * @return the definition
+   */
+  @NonNull
   protected T getRootDefinition() {
     return rootDefinition;
   }
@@ -81,7 +93,7 @@ public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implem
   }
 
   @Override
-  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+  public Map<QName, Set<String>> getProperties() {
     return getRootDefinition().getProperties();
   }
 
@@ -153,17 +165,17 @@ public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implem
   }
 
   @Override
-  public Collection<@NotNull ? extends IFlagInstance> getFlagInstances() {
+  public Collection<? extends IFlagInstance> getFlagInstances() {
     return getRootDefinition().getFlagInstances();
   }
 
   @Override
-  public Collection<@NotNull ? extends IModelInstance> getModelInstances() {
+  public Collection<? extends IModelInstance> getModelInstances() {
     return getRootDefinition().getModelInstances();
   }
 
   @Override
-  public Collection<@NotNull ? extends INamedModelInstance> getNamedModelInstances() {
+  public Collection<? extends INamedModelInstance> getNamedModelInstances() {
     return getRootDefinition().getNamedModelInstances();
   }
 
@@ -173,7 +185,7 @@ public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implem
   }
 
   @Override
-  public Collection<@NotNull ? extends IFieldInstance> getFieldInstances() {
+  public Collection<? extends IFieldInstance> getFieldInstances() {
     return getRootDefinition().getFieldInstances();
   }
 
@@ -183,7 +195,7 @@ public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implem
   }
 
   @Override
-  public Collection<@NotNull ? extends IAssemblyInstance> getAssemblyInstances() {
+  public Collection<? extends IAssemblyInstance> getAssemblyInstances() {
     return getRootDefinition().getAssemblyInstances();
   }
 
@@ -193,82 +205,82 @@ public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implem
   }
 
   @Override
-  public List<@NotNull ? extends IChoiceInstance> getChoiceInstances() {
+  public List<? extends IChoiceInstance> getChoiceInstances() {
     return getRootDefinition().getChoiceInstances();
   }
 
   @Override
-  public List<@NotNull ? extends IConstraint> getConstraints() {
+  public List<? extends IConstraint> getConstraints() {
     return getRootDefinition().getConstraints();
   }
 
   @Override
-  public List<@NotNull ? extends IIndexConstraint> getIndexConstraints() {
+  public List<? extends IIndexConstraint> getIndexConstraints() {
     return getRootDefinition().getIndexConstraints();
   }
 
   @Override
-  public List<@NotNull ? extends IUniqueConstraint> getUniqueConstraints() {
+  public List<? extends IUniqueConstraint> getUniqueConstraints() {
     return getRootDefinition().getUniqueConstraints();
   }
 
   @Override
-  public List<@NotNull ? extends ICardinalityConstraint> getHasCardinalityConstraints() {
+  public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
     return getRootDefinition().getHasCardinalityConstraints();
   }
 
   @Override
-  public List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
+  public List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
     return getRootDefinition().getAllowedValuesConstraints();
   }
 
   @Override
-  public List<@NotNull ? extends IMatchesConstraint> getMatchesConstraints() {
+  public List<? extends IMatchesConstraint> getMatchesConstraints() {
     return getRootDefinition().getMatchesConstraints();
   }
 
   @Override
-  public List<@NotNull ? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
     return getRootDefinition().getIndexHasKeyConstraints();
   }
 
   @Override
-  public List<@NotNull ? extends IExpectConstraint> getExpectConstraints() {
+  public List<? extends IExpectConstraint> getExpectConstraints() {
     return getRootDefinition().getExpectConstraints();
   }
 
   @Override
-  public void addConstraint(@NotNull IIndexConstraint constraint) {
+  public void addConstraint(@NonNull IIndexConstraint constraint) {
     getRootDefinition().addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IUniqueConstraint constraint) {
+  public void addConstraint(@NonNull IUniqueConstraint constraint) {
     getRootDefinition().addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull ICardinalityConstraint constraint) {
+  public void addConstraint(@NonNull ICardinalityConstraint constraint) {
     getRootDefinition().addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+  public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
     getRootDefinition().addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IMatchesConstraint constraint) {
+  public void addConstraint(@NonNull IMatchesConstraint constraint) {
     getRootDefinition().addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+  public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
     getRootDefinition().addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IExpectConstraint constraint) {
+  public void addConstraint(@NonNull IExpectConstraint constraint) {
     getRootDefinition().addConstraint(constraint);
   }
 }

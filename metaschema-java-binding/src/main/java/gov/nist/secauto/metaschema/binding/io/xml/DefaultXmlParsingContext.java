@@ -30,6 +30,8 @@ import gov.nist.secauto.metaschema.binding.io.AbstractParsingContext;
 
 import org.codehaus.stax2.XMLEventReader2;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public class DefaultXmlParsingContext
     extends AbstractParsingContext<XMLEventReader2, IXmlProblemHandler>
     implements IXmlParsingContext {
@@ -38,8 +40,8 @@ public class DefaultXmlParsingContext
   // this(eventReader, new DefaultXmlProblemHandler());
   // }
 
-  public DefaultXmlParsingContext(XMLEventReader2 eventReader,
-      IXmlProblemHandler problemHandler) {
+  public DefaultXmlParsingContext(@NonNull XMLEventReader2 eventReader,
+      @NonNull IXmlProblemHandler problemHandler) {
     super(eventReader, problemHandler);
   }
 }

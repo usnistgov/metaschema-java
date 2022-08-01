@@ -31,8 +31,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 abstract class AbstractExpression implements IExpression {
   /**
@@ -49,7 +49,7 @@ abstract class AbstractExpression implements IExpression {
    *           the data item cannot be cast
    */
   @Nullable
-  public static IAnyAtomicItem getFirstDataItem(@NotNull ISequence<?> sequence,
+  public static IAnyAtomicItem getFirstDataItem(@NonNull ISequence<?> sequence,
       boolean requireSingleton) {
     IItem item = FunctionUtils.getFirstItem(sequence, requireSingleton);
 

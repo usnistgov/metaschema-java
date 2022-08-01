@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A trait indicating that the implementation is a localized definition that is declared in-line as
@@ -48,6 +48,6 @@ public interface IInlineDefinition<INSTANCE extends INamedInstance> extends IDef
    * @return the associated instance
    */
   @Override
-  @NotNull
+  @NonNull
   INSTANCE getInlineInstance();
 }

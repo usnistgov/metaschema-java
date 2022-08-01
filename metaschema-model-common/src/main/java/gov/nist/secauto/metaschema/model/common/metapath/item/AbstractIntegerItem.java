@@ -26,16 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public abstract class AbstractIntegerItem
     extends AbstractNumericItem<BigInteger>
     implements IIntegerItem {
-  protected AbstractIntegerItem(@NotNull BigInteger value) {
+  protected AbstractIntegerItem(@NonNull BigInteger value) {
     super(value);
   }
 

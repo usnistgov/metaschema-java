@@ -29,12 +29,12 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Lexer;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * An immutable expression that combines the evaluation of a sub-expression, with the evaluation of
@@ -61,12 +61,12 @@ class Step implements IExpression { // NOPMD - intentional
     }
   }
 
-  @NotNull
+  @NonNull
   private final Axis axis;
-  @NotNull
+  @NonNull
   private final IExpression stepExpression;
-  @NotNull
-  private final Class<@NotNull ? extends IItem> staticResultType;
+  @NonNull
+  private final Class<? extends IItem> staticResultType;
 
   /**
    * Construct a new stepExpression expression.
@@ -77,13 +77,13 @@ class Step implements IExpression { // NOPMD - intentional
    *          the sub-expression to evaluate before filtering with the predicates
    */
   @SuppressWarnings("null")
-  protected Step(@NotNull Axis axis, @NotNull IExpression step) {
+  protected Step(@NonNull Axis axis, @NonNull IExpression step) {
     this.axis = axis;
     this.stepExpression = step;
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, List.of(step));
   }
 
-  @NotNull
+  @NonNull
   public Axis getAxis() {
     return axis;
   }
@@ -93,20 +93,19 @@ class Step implements IExpression { // NOPMD - intentional
    * 
    * @return the sub-expression
    */
-  @NotNull
+  @NonNull
   public IExpression getStep() {
     return stepExpression;
   }
 
   @Override
-  public Class<@NotNull ? extends IItem> getStaticResultType() {
+  public Class<? extends IItem> getStaticResultType() {
     return staticResultType;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public List<@NotNull ? extends IExpression> getChildren() {
-    return Collections.singletonList(getStep());
+  public List<? extends IExpression> getChildren() {
+    return CollectionUtil.singletonList(getStep());
   }
 
   @Override
@@ -114,10 +113,9 @@ class Step implements IExpression { // NOPMD - intentional
     return visitor.visitStep(this, context);
   }
 
-  @SuppressWarnings("null")
   @Override
   public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
-    Stream<@NotNull ? extends INodeItem> items;
+    Stream<? extends INodeItem> items;
     switch (getAxis()) {
     case SELF:
       items = Stream.of(context.getNodeItem());
@@ -147,6 +145,7 @@ class Step implements IExpression { // NOPMD - intentional
     IExpression step = getStep();
 
     return ISequence.of(items.flatMap(item -> {
+      assert item != null;
       ISequence<?> result = step.accept(dynamicContext, item);
       return result.asStream();
     }));

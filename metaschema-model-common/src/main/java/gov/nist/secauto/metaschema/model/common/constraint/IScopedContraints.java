@@ -26,18 +26,18 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IScopedContraints {
-  @NotNull
+  @NonNull
   URI getMetaschemaNamespace();
 
-  @NotNull
+  @NonNull
   String getMetaschemaShortName();
 
-  @NotNull
-  List<@NotNull ITargetedConstaints> getTargetedContraints();
+  @NonNull
+  List<ITargetedConstaints> getTargetedContraints();
 }

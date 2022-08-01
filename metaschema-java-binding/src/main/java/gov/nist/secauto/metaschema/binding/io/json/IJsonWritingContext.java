@@ -31,4 +31,5 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import gov.nist.secauto.metaschema.binding.io.IWritingContext;
 
 public interface IJsonWritingContext extends IWritingContext<JsonGenerator> {
+  // no extra methods
 }

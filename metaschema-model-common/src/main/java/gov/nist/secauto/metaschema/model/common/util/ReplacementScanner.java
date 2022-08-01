@@ -26,11 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public final class ReplacementScanner {
   private ReplacementScanner() {
@@ -49,7 +49,7 @@ public final class ReplacementScanner {
    *          a function that will provided the replacement text
    * @return the resulting text after replacing matching occurrences in {@code text}
    */
-  public static CharSequence replaceTokens(@NotNull CharSequence text, @NotNull Pattern pattern,
+  public static CharSequence replaceTokens(@NonNull CharSequence text, @NonNull Pattern pattern,
       Function<Matcher, CharSequence> replacementFunction) {
     int lastIndex = 0;
     StringBuilder retval = new StringBuilder();

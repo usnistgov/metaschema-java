@@ -27,23 +27,24 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.net.URI;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class DocumentNodeItemImpl
     implements IDocumentNodeItem {
-  @NotNull
+  @NonNull
   private final IRootAssemblyNodeItem root;
-  @NotNull
+  @NonNull
   private final URI documentUri;
 
   public DocumentNodeItemImpl(
-      @NotNull IRootAssemblyDefinition root,
-      @NotNull Object rootValue,
-      @NotNull URI documentUri,
-      @NotNull INodeItemFactory factory) {
+      @NonNull IRootAssemblyDefinition root,
+      @NonNull Object rootValue,
+      @NonNull URI documentUri,
+      @NonNull INodeItemFactory factory) {
     this.root = new RootAssemblyValuedNodeItemImpl(root, this, rootValue, factory);
     this.documentUri = documentUri;
   }
@@ -54,13 +55,13 @@ class DocumentNodeItemImpl
   }
 
   @Override
-  public @NotNull URI getDocumentUri() {
+  public @NonNull URI getDocumentUri() {
     return documentUri;
   }
 
   @Override
-  @NotNull
+  @NonNull
   public Object getValue() {
-    return getRootAssemblyNodeItem().getValue();
+    return ObjectUtils.requireNonNull(getRootAssemblyNodeItem().getValue());
   }
 }

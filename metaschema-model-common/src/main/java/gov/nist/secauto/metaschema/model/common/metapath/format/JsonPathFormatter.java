@@ -31,7 +31,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 // public JsonPathFormatter() {
 // }
 //
-// @NotNull
+// @NonNull
 // protected String getEffectiveName(IDefinitionPathSegment segment) {
 // return segment.getInstance().getJsonName();
 // }
@@ -45,7 +45,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 // }
 //
 // @Override
-// public @NotNull String formatPathSegment(@NotNull IDocumentPathSegment segment) {
+// public @NonNull String formatPathSegment(@NonNull IDocumentPathSegment segment) {
 // return "$";
 // }
 //
@@ -104,7 +104,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 // }
 //
 // @SuppressWarnings("null")
-// @NotNull
+// @NonNull
 // protected String formatModelPathSegment(IModelPositionalPathSegment segment) {
 // StringBuilder builder = new StringBuilder(getEffectiveName(segment));
 // builder.append('[');

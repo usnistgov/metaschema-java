@@ -30,15 +30,15 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.DateTimeAdapter
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.object.DateTime;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.ZonedDateTime;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DateTimeWithoutTimeZoneItemImpl
     extends AbstractAnyAtomicItem<DateTime>
     implements IDateTimeItem {
 
-  public DateTimeWithoutTimeZoneItemImpl(@NotNull DateTime value) {
+  public DateTimeWithoutTimeZoneItemImpl(@NonNull DateTime value) {
     super(value);
   }
 

@@ -27,19 +27,20 @@
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class StreamSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> {
   private Stream<ITEM_TYPE> stream;
   private List<ITEM_TYPE> list;
 
-  public StreamSequenceImpl(@NotNull Stream<ITEM_TYPE> stream) {
+  public StreamSequenceImpl(@NonNull Stream<ITEM_TYPE> stream) {
     Objects.requireNonNull(stream, "stream");
     this.stream = stream;
   }
@@ -49,31 +50,31 @@ class StreamSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE
     return asList().isEmpty();
   }
 
-  @SuppressWarnings("null")
   @Override
-  public List<@NotNull ITEM_TYPE> asList() {
+  public List<ITEM_TYPE> asList() {
     synchronized (this) {
       if (list == null) {
         list = asStream().collect(Collectors.toUnmodifiableList());
       }
+      assert list != null;
       return list;
     }
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Stream<@NotNull ITEM_TYPE> asStream() {
-    @NotNull
-    Stream<@NotNull ITEM_TYPE> retval;
+  public Stream<ITEM_TYPE> asStream() {
+    @NonNull
+    Stream<ITEM_TYPE> retval;
     synchronized (this) {
       if (list == null) {
         if (stream == null) {
           throw new IllegalStateException("stream is already consumed");
         }
+        assert stream != null;
         retval = stream;
         stream = null; // NOPMD - readability
       } else {
-        retval = list.stream();
+        retval = ObjectUtils.notNull(list.stream());
       }
     }
     return retval;

@@ -28,11 +28,12 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 @FunctionalInterface
 public interface IJsonBindingSupplier {
@@ -49,7 +50,7 @@ public interface IJsonBindingSupplier {
    * @throws IOException
    *           if an error occurred while parsing
    */
-  @NotNull
-  List<Object> get(@Nullable Object parentInstance, boolean requiresJsonKey, @NotNull IJsonParsingContext context)
+  @NonNull
+  List<Object> get(@Nullable Object parentInstance, boolean requiresJsonKey, @NonNull IJsonParsingContext context)
       throws IOException;
 }

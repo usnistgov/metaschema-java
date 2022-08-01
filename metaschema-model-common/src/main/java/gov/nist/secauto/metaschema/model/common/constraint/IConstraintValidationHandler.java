@@ -31,60 +31,60 @@ import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IConstraintValidationHandler {
 
   void handleCardinalityMinimumViolation(
-      @NotNull ICardinalityConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull ISequence<? extends INodeItem> targets);
+      @NonNull ICardinalityConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull ISequence<? extends INodeItem> targets);
 
   void handleCardinalityMaximumViolation(
-      @NotNull ICardinalityConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull ISequence<? extends INodeItem> targets);
+      @NonNull ICardinalityConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull ISequence<? extends INodeItem> targets);
 
   void handleIndexDuplicateKeyViolation(
-      @NotNull IIndexConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem oldItem,
-      @NotNull INodeItem target);
+      @NonNull IIndexConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem oldItem,
+      @NonNull INodeItem target);
 
   void handleUniqueKeyViolation(
-      @NotNull IUniqueConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem oldItem,
-      @NotNull INodeItem target);
+      @NonNull IUniqueConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem oldItem,
+      @NonNull INodeItem target);
 
   void handleMatchPatternViolation(
-      @NotNull IMatchesConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem target,
-      @NotNull String value);
+      @NonNull IMatchesConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull String value);
 
   void handleMatchDatatypeViolation(
-      @NotNull IMatchesConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem target,
-      @NotNull String value,
-      @NotNull IllegalArgumentException cause);
+      @NonNull IMatchesConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull String value,
+      @NonNull IllegalArgumentException cause);
 
   void handleExpectViolation(
-      @NotNull IExpectConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem target,
-      @NotNull DynamicContext metapathContext);
+      @NonNull IExpectConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull DynamicContext metapathContext);
 
   void handleKeyMatchError(
-      @NotNull IKeyConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem target,
-      @NotNull MetapathException ex);
+      @NonNull IKeyConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull MetapathException ex);
 
   void handleAllowedValuesViolation(
-      @NotNull List<@NotNull IAllowedValuesConstraint> failedConstraints,
-      @NotNull INodeItem target);
+      @NonNull List<IAllowedValuesConstraint> failedConstraints,
+      @NonNull INodeItem target);
 }

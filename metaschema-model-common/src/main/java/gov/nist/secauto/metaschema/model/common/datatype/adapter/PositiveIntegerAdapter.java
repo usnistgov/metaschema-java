@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IPositiveIntegerItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigInteger;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class PositiveIntegerAdapter
     extends AbstractIntegerAdapter<IPositiveIntegerItem> {
@@ -46,7 +46,7 @@ public class PositiveIntegerAdapter
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull Class<IPositiveIntegerItem> getItemClass() {
+  public @NonNull Class<IPositiveIntegerItem> getItemClass() {
     return IPositiveIntegerItem.class;
   }
 

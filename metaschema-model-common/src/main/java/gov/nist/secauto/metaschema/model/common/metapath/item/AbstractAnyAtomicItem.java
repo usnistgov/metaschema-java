@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides a common implementation for all atomic types.
@@ -38,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
  *          the Java type associated with the atomic type.
  */
 public abstract class AbstractAnyAtomicItem<TYPE> implements IAnyAtomicItem {
-  @NotNull
+  @NonNull
   private final TYPE value;
 
   /**
@@ -47,18 +47,18 @@ public abstract class AbstractAnyAtomicItem<TYPE> implements IAnyAtomicItem {
    * @param value
    *          the value to assign to this atomic item
    */
-  public AbstractAnyAtomicItem(@NotNull TYPE value) {
+  public AbstractAnyAtomicItem(@NonNull TYPE value) {
     this.value = ObjectUtils.requireNonNull(value, "value");
   }
 
   @Override
-  @NotNull
+  @NonNull
   public TYPE getValue() {
     return value;
   }
 
   @Override
-  @NotNull
+  @NonNull
   public abstract IDataTypeAdapter<TYPE> getJavaTypeAdapter();
 
   @Override

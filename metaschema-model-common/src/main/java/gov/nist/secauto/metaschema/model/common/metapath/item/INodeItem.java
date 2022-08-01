@@ -29,11 +29,13 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.net.URI;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemVisitable {
   /**
@@ -56,7 +58,7 @@ public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemV
    * 
    * @return the node item's type
    */
-  @NotNull
+  @NonNull
   NodeItemType getNodeItemType();
 
   /**
@@ -79,62 +81,56 @@ public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemV
    * 
    * @return the Metapath
    */
-  @NotNull
+  @NonNull
   default String getMetapath() {
     return toPath(IPathFormatter.METAPATH_PATH_FORMATER);
   }
 
-  @SuppressWarnings("null")
   @Override
-  default Stream<@NotNull ? extends INodeItem> getPathStream() {
+  default Stream<? extends INodeItem> getPathStream() {
     INodeItem parent = getParentNodeItem();
-    return parent == null ? Stream.of(this) : Stream.concat(getParentNodeItem().getPathStream(), Stream.of(this));
+    return ObjectUtils.notNull(
+        parent == null ? Stream.of(this) : Stream.concat(getParentNodeItem().getPathStream(), Stream.of(this)));
   }
 
   @Override
+  @Nullable
   Object getValue();
 
-  default Stream<@NotNull ? extends INodeItem> ancestor() {
+  @NonNull
+  default Stream<? extends INodeItem> ancestor() {
     return ancestorsOf(this);
   }
 
-  @SuppressWarnings("null")
-  default Stream<@NotNull ? extends INodeItem> ancestorOrSelf() {
-    return Stream.concat(
-        Stream.of(this),
-        ancestor());
+  @NonNull
+  default Stream<? extends INodeItem> ancestorOrSelf() {
+    return ObjectUtils.notNull(Stream.concat(Stream.of(this), ancestor()));
   }
 
-  @SuppressWarnings("null")
-  static Stream<@NotNull ? extends INodeItem> ancestorsOf(@NotNull INodeItem nodeItem) {
+  @NonNull
+  static Stream<? extends INodeItem> ancestorsOf(@NonNull INodeItem nodeItem) {
     INodeItem parent = nodeItem.getParentNodeItem();
-
-    Stream<@NotNull ? extends INodeItem> retval;
-    if (parent == null) {
-      retval = Stream.empty();
-    } else {
-      retval = Stream.concat(Stream.of(parent), ancestorsOf(parent));
-    }
-    return retval;
+    return ObjectUtils.notNull(parent == null ? Stream.empty() : Stream.concat(Stream.of(parent), ancestorsOf(parent)));
   }
 
-  default Stream<@NotNull ? extends INodeItem> descendant() {
+  @NonNull
+  default Stream<? extends INodeItem> descendant() {
     return decendantsOf(this);
   }
 
-  static Stream<@NotNull ? extends INodeItem> decendantsOf(@NotNull INodeItem nodeItem) {
-    Stream<@NotNull ? extends INodeItem> children = nodeItem.modelItems();
+  @NonNull
+  static Stream<? extends INodeItem> decendantsOf(@NonNull INodeItem nodeItem) {
+    Stream<? extends INodeItem> children = nodeItem.modelItems();
 
-    return children.flatMap(child -> {
+    return ObjectUtils.notNull(children.flatMap(child -> {
+      assert child != null;
       return Stream.concat(Stream.of(child), decendantsOf(child));
-    });
+    }));
   }
 
-  @SuppressWarnings("null")
-  default Stream<@NotNull ? extends INodeItem> descendantOrSelf() {
-    return Stream.concat(
-        Stream.of(this),
-        descendant());
+  @NonNull
+  default Stream<? extends INodeItem> descendantOrSelf() {
+    return ObjectUtils.notNull(Stream.concat(Stream.of(this), descendant()));
   }
 
 }

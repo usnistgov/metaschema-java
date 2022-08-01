@@ -36,7 +36,6 @@ import gov.nist.secauto.metaschema.model.common.UsedDefinitionModelWalker;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +54,7 @@ class UsedDefinitionModelWalkerTest {
     IMetaschema metaschema = loader.load(new URL(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
 
-    Collection<@NotNull ? extends IDefinition> definitions
+    Collection<? extends IDefinition> definitions
         = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
     assertFalse(definitions.isEmpty(), "no definitions found");
 

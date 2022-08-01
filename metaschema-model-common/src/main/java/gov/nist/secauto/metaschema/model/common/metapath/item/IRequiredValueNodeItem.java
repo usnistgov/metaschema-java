@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IRequiredValueNodeItem extends INodeItem {
 
@@ -42,6 +42,6 @@ public interface IRequiredValueNodeItem extends INodeItem {
   IRequiredValueModelNodeItem getParentContentNodeItem();
 
   @Override
-  @NotNull
+  @NonNull
   Object getValue();
 }

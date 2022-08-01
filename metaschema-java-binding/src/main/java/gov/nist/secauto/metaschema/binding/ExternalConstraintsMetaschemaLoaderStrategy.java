@@ -26,37 +26,36 @@
 
 package gov.nist.secauto.metaschema.binding;
 
-import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintSet;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.HashSet;
 import java.util.Set;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class ExternalConstraintsMetaschemaLoaderStrategy
     extends AbstractMetaschemaLoaderStrategy {
-  @NotNull
-  private final Set<@NotNull IConstraintSet> externalConstraintSets;
+  @NonNull
+  private final Set<IConstraintSet> externalConstraintSets;
   private final Set<IMetaschema> resolvedMetaschemas = new HashSet<>();
 
   protected ExternalConstraintsMetaschemaLoaderStrategy(
-      @NotNull IBindingContext bindingContext,
-      @NotNull Set<@NotNull IConstraintSet> externalConstraintSets) {
+      @NonNull IBindingContext bindingContext,
+      @NonNull Set<IConstraintSet> externalConstraintSets) {
     super(bindingContext);
     this.externalConstraintSets = externalConstraintSets;
   }
 
-  @NotNull
-  protected Set<@NotNull IConstraintSet> getExternalConstraintSets() {
+  @NonNull
+  protected Set<IConstraintSet> getExternalConstraintSets() {
     return externalConstraintSets;
   }
 
   @Override
-  public @NotNull IClassBinding getClassBinding(@NotNull Class<?> clazz) {
+  public @NonNull IClassBinding getClassBinding(@NonNull Class<?> clazz) {
     IClassBinding retval = super.getClassBinding(clazz);
     // force loading of metaschema information to apply constraints
     IMetaschema metaschema = retval.getContainingMetaschema();
@@ -71,12 +70,6 @@ class ExternalConstraintsMetaschemaLoaderStrategy
         }
       }
     }
-    return retval;
-  }
-
-  @Override
-  public @NotNull IMetaschema getMetaschemaInstanceByClass(@NotNull Class<? extends AbstractBoundMetaschema> clazz) {
-    IMetaschema retval = super.getMetaschemaInstanceByClass(clazz);
     return retval;
   }
 }

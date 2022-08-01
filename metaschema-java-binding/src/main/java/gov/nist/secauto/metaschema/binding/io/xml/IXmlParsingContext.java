@@ -31,4 +31,5 @@ import gov.nist.secauto.metaschema.binding.io.IParsingContext;
 import org.codehaus.stax2.XMLEventReader2;
 
 public interface IXmlParsingContext extends IParsingContext<XMLEventReader2, IXmlProblemHandler> {
+  // no extra methods
 }

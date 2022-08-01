@@ -26,48 +26,48 @@
 
 package gov.nist.secauto.metaschema.codegen;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 
-class PackageMetadata {
-  @NotNull
-  private final String packageName;
-  @NotNull
-  private final URI xmlNamespace;
-  @NotNull
-  private final List<@NotNull IMetaschemaProduction> metaschemaProductions = new LinkedList<>();
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-  public PackageMetadata(@NotNull IMetaschemaProduction metaschemaProduction) {
+class PackageMetadata {
+  @NonNull
+  private final String packageName;
+  @NonNull
+  private final URI xmlNamespace;
+  @NonNull
+  private final List<IMetaschemaProduction> metaschemaProductions = new LinkedList<>();
+
+  public PackageMetadata(@NonNull IMetaschemaProduction metaschemaProduction) {
     packageName = metaschemaProduction.getPackageName();
     xmlNamespace = metaschemaProduction.getMetaschema().getXmlNamespace();
     metaschemaProductions.add(metaschemaProduction);
   }
 
-  @NotNull
+  @NonNull
   protected String getPackageName() {
     return packageName;
   }
 
-  @NotNull
+  @NonNull
   protected URI getXmlNamespace() {
     return xmlNamespace;
   }
 
-  @NotNull
-  protected List<@NotNull IMetaschemaProduction> getMetaschemaProductions() {
+  @NonNull
+  protected List<IMetaschemaProduction> getMetaschemaProductions() {
     return metaschemaProductions;
   }
 
-  public void addMetaschema(@NotNull IMetaschemaProduction metaschemaProduction) {
+  public void addMetaschema(@NonNull IMetaschemaProduction metaschemaProduction) {
     URI nextXmlNamespace = metaschemaProduction.getMetaschema().getXmlNamespace();
     if (!xmlNamespace.equals(nextXmlNamespace)) {
-      String.format(
+      throw new IllegalStateException(String.format(
           "The package %s is associated with the XML namespaces '%s' and '%s'."
               + " A package must be associated with a single XML namespace.",
-          getPackageName(), getXmlNamespace().toASCIIString(), nextXmlNamespace.toASCIIString());
+          getPackageName(), getXmlNamespace().toASCIIString(), nextXmlNamespace.toASCIIString()));
     }
     metaschemaProductions.add(metaschemaProduction);
   }

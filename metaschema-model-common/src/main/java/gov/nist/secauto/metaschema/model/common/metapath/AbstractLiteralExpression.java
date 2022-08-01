@@ -28,12 +28,12 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractLiteralExpression<RESULT_TYPE extends IAnyAtomicItem, VALUE>
     extends AbstractExpression
     implements ILiteralExpression<RESULT_TYPE, VALUE> {
-  @NotNull
+  @NonNull
   private final VALUE value;
 
   /**
@@ -42,7 +42,7 @@ abstract class AbstractLiteralExpression<RESULT_TYPE extends IAnyAtomicItem, VAL
    * @param value
    *          the literal value
    */
-  public AbstractLiteralExpression(@NotNull VALUE value) {
+  public AbstractLiteralExpression(@NonNull VALUE value) {
     this.value = value;
   }
 

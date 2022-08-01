@@ -29,16 +29,16 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class BooleanItemImpl implements IBooleanItem {
-  @NotNull
+  @NonNull
   private static final String TRUE_STRING = "true";
-  @NotNull
+  @NonNull
   private static final String FALSE_STRING = "false";
-  @NotNull
+  @NonNull
   private static final IStringItem TRUE_STRING_ITEM = IStringItem.valueOf(TRUE_STRING);
-  @NotNull
+  @NonNull
   private static final IStringItem FALSE_STRING_ITEM = IStringItem.valueOf(FALSE_STRING);
 
   private final boolean booleanValue;

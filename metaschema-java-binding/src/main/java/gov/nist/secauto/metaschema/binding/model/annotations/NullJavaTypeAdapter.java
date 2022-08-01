@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.AbstractDataTyp
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Used to mark a Java type that has no configured adapter.
@@ -47,13 +47,13 @@ public class NullJavaTypeAdapter
    * @param clazz
    *          the class to adapt
    */
-  public NullJavaTypeAdapter(@NotNull Class<Void> clazz) {
+  public NullJavaTypeAdapter(@NonNull Class<Void> clazz) {
     super(clazz);
     throw new UnsupportedOperationException(NOT_VALID);
   }
 
   @Override
-  public @NotNull Void copy(@NotNull Object obj) {
+  public @NonNull Void copy(@NonNull Object obj) {
     throw new UnsupportedOperationException(NOT_VALID);
   }
 
@@ -73,7 +73,7 @@ public class NullJavaTypeAdapter
   }
 
   @Override
-  public @NotNull Class<VoidItem> getItemClass() {
+  public @NonNull Class<VoidItem> getItemClass() {
     throw new UnsupportedOperationException(NOT_VALID);
   }
 
@@ -88,12 +88,12 @@ public class NullJavaTypeAdapter
     }
 
     @Override
-    public @NotNull IAnyAtomicItem toAtomicItem() {
+    public @NonNull IAnyAtomicItem toAtomicItem() {
       throw new UnsupportedOperationException(NOT_VALID);
     }
 
     @Override
-    public @NotNull String asString() {
+    public @NonNull String asString() {
       throw new UnsupportedOperationException(NOT_VALID);
     }
 

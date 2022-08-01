@@ -32,11 +32,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * This annotation defines a rule that requires that the target contents of the assembly,
@@ -53,7 +53,7 @@ public @interface IndexHasKey {
    * 
    * @return the identifier if provided or an empty string otherwise
    */
-  @NotNull
+  @NonNull
   String id() default "";
 
   /**
@@ -61,7 +61,7 @@ public @interface IndexHasKey {
    * 
    * @return the level
    */
-  @NotNull
+  @NonNull
   Level level() default IConstraint.Level.ERROR;
 
   /**
@@ -74,7 +74,7 @@ public @interface IndexHasKey {
    * 
    * @return the target metapath
    */
-  @NotNull
+  @NonNull
   String target() default ".";
 
   /**
@@ -82,7 +82,7 @@ public @interface IndexHasKey {
    * 
    * @return the index name
    */
-  @NotNull
+  @NonNull
   String indexName();
 
   /**
@@ -90,7 +90,7 @@ public @interface IndexHasKey {
    * 
    * @return one or more keys
    */
-  @NotNull
+  @NonNull
   KeyField[] keyFields();
 
   /**
@@ -98,7 +98,7 @@ public @interface IndexHasKey {
    * 
    * @return the message or an empty string otherwise
    */
-  @NotNull
+  @NonNull
   String message() default "";
 
   /**
@@ -106,6 +106,6 @@ public @interface IndexHasKey {
    * 
    * @return an encoded markdown string or an empty string if no remarks are provided
    */
-  @NotNull
+  @NonNull
   String remarks() default "";
 }

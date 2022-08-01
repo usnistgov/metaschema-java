@@ -41,9 +41,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Locale;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A common base class for all comparison nodes, which consist of two expressions representing the
@@ -53,7 +53,7 @@ abstract class AbstractComparison // NOPMD - unavoidable
     extends AbstractBinaryExpression<IExpression, IExpression>
     implements IComparison {
 
-  @NotNull
+  @NonNull
   private final Operator operator;
 
   /**
@@ -67,7 +67,7 @@ abstract class AbstractComparison // NOPMD - unavoidable
    * @param right
    *          the expression to compare with
    */
-  public AbstractComparison(@NotNull IExpression left, @NotNull Operator operator, @NotNull IExpression right) {
+  public AbstractComparison(@NonNull IExpression left, @NonNull Operator operator, @NonNull IExpression right) {
     super(left, right);
     this.operator = ObjectUtils.requireNonNull(operator, "operator");
   }
@@ -77,7 +77,7 @@ abstract class AbstractComparison // NOPMD - unavoidable
    * 
    * @return the operator
    */
-  @NotNull
+  @NonNull
   public Operator getOperator() {
     return operator;
   }
@@ -99,12 +99,12 @@ abstract class AbstractComparison // NOPMD - unavoidable
    *          the value to compare with
    * @return the comparison result
    */
-  @NotNull
+  @NonNull
   protected IBooleanItem compare( // NOPMD - unavoidable
-      @NotNull IAnyAtomicItem left,
-      @NotNull Operator operator,
-      @NotNull IAnyAtomicItem right) {
-    @NotNull
+      @NonNull IAnyAtomicItem left,
+      @NonNull Operator operator,
+      @NonNull IAnyAtomicItem right) {
+    @NonNull
     IBooleanItem retval;
     if (left instanceof IStringItem || right instanceof IStringItem) {
       retval = stringCompare(IStringItem.cast(left), operator, IStringItem.cast(right));
@@ -141,9 +141,9 @@ abstract class AbstractComparison // NOPMD - unavoidable
    *          the value to compare with
    * @return the comparison result
    */
-  @NotNull
-  public static IBooleanItem stringCompare(@NotNull IStringItem left, @NotNull Operator operator,
-      @NotNull IStringItem right) {
+  @NonNull
+  public static IBooleanItem stringCompare(@NonNull IStringItem left, @NonNull Operator operator,
+      @NonNull IStringItem right) {
     IBooleanItem retval;
     switch (operator) {
     case EQ:
@@ -183,9 +183,9 @@ abstract class AbstractComparison // NOPMD - unavoidable
    *          the value to compare with
    * @return the comparison result
    */
-  @NotNull
-  public static IBooleanItem numericCompare(@NotNull INumericItem left, @NotNull Operator operator,
-      @NotNull INumericItem right) {
+  @NonNull
+  public static IBooleanItem numericCompare(@NonNull INumericItem left, @NonNull Operator operator,
+      @NonNull INumericItem right) {
     IBooleanItem retval;
     switch (operator) {
     case EQ:
@@ -230,9 +230,9 @@ abstract class AbstractComparison // NOPMD - unavoidable
    *          the value to compare with
    * @return the comparison result
    */
-  @NotNull
-  public static IBooleanItem booleanCompare(@NotNull IBooleanItem left, @NotNull Operator operator,
-      @NotNull IBooleanItem right) {
+  @NonNull
+  public static IBooleanItem booleanCompare(@NonNull IBooleanItem left, @NonNull Operator operator,
+      @NonNull IBooleanItem right) {
     IBooleanItem retval;
     switch (operator) {
     case EQ:
@@ -277,9 +277,9 @@ abstract class AbstractComparison // NOPMD - unavoidable
    *          the value to compare with
    * @return the comparison result
    */
-  @NotNull
-  public static IBooleanItem dateTimeCompare(@NotNull IDateTimeItem left, @NotNull Operator operator,
-      @NotNull IDateTimeItem right) {
+  @NonNull
+  public static IBooleanItem dateTimeCompare(@NonNull IDateTimeItem left, @NonNull Operator operator,
+      @NonNull IDateTimeItem right) {
     IBooleanItem retval;
     switch (operator) {
     case EQ:
@@ -324,9 +324,9 @@ abstract class AbstractComparison // NOPMD - unavoidable
    *          the value to compare with
    * @return the comparison result
    */
-  @NotNull
-  public static IBooleanItem dateCompare(@NotNull IDateItem left, @NotNull Operator operator,
-      @NotNull IDateItem right) {
+  @NonNull
+  public static IBooleanItem dateCompare(@NonNull IDateItem left, @NonNull Operator operator,
+      @NonNull IDateItem right) {
     IBooleanItem retval;
     switch (operator) {
     case EQ:
@@ -371,11 +371,11 @@ abstract class AbstractComparison // NOPMD - unavoidable
    *          the value to compare with
    * @return the comparison result
    */
-  @NotNull
+  @NonNull
   public static IBooleanItem durationCompare( // NOPMD - unavoidable
-      @NotNull IDurationItem left,
-      @NotNull Operator operator,
-      @NotNull IDurationItem right) {
+      @NonNull IDurationItem left,
+      @NonNull Operator operator,
+      @NonNull IDurationItem right) {
     IBooleanItem retval = null;
     switch (operator) {
     case EQ:
@@ -462,9 +462,9 @@ abstract class AbstractComparison // NOPMD - unavoidable
    *          the value to compare with
    * @return the comparison result
    */
-  @NotNull
-  public static IBooleanItem binaryCompare(@NotNull IBase64BinaryItem left, @NotNull Operator operator,
-      @NotNull IBase64BinaryItem right) {
+  @NonNull
+  public static IBooleanItem binaryCompare(@NonNull IBase64BinaryItem left, @NonNull Operator operator,
+      @NonNull IBase64BinaryItem right) {
     IBooleanItem retval;
     switch (operator) {
     case EQ:

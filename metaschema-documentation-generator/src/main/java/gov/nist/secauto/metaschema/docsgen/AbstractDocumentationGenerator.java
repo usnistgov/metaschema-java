@@ -32,8 +32,6 @@ import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.UsedDefinitionModelWalker;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -41,6 +39,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
 
@@ -51,12 +50,12 @@ public abstract class AbstractDocumentationGenerator
 
   @Override
   protected void buildModel(
-      @NotNull Configuration cfg,
-      @NotNull Map<String, Object> root,
-      @NotNull IMetaschema metaschema)
+      @NonNull Configuration cfg,
+      @NonNull Map<String, Object> root,
+      @NonNull IMetaschema metaschema)
       throws IOException, TemplateException {
 
-    Collection<@NotNull ? extends IDefinition> definitions
+    Collection<? extends IDefinition> definitions
         = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
     Objects.requireNonNull(definitions, "definitions");
     Set<IMetaschema> metaschemas = new LinkedHashSet<>();
@@ -74,11 +73,11 @@ public abstract class AbstractDocumentationGenerator
         }
       }
     }
-    
+
     root.put("metaschema", metaschema);
     root.put("metaschemas", metaschemas);
     root.put("definitions", definitions);
     root.put("root-definitions", rootAssemblies);
   }
-  
+
 }

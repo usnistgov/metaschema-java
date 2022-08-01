@@ -29,26 +29,26 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBooleanItem extends IAnyAtomicItem {
-  @NotNull
+  @NonNull
   public static final IBooleanItem TRUE = new BooleanItemImpl(true);
-  @NotNull
+  @NonNull
   public static final IBooleanItem FALSE = new BooleanItemImpl(false);
 
-  @NotNull
+  @NonNull
   public static IBooleanItem valueOf(boolean value) {
     return value ? TRUE : FALSE;
   }
 
-  @NotNull
-  public static IBooleanItem valueOf(@NotNull Boolean value) {
+  @NonNull
+  public static IBooleanItem valueOf(@NonNull Boolean value) {
     return value ? TRUE : FALSE;
   }
 
-  @NotNull
-  public static IBooleanItem valueOf(@NotNull String value) {
+  @NonNull
+  public static IBooleanItem valueOf(@NonNull String value) {
     IBooleanItem retval;
     if ("1".equals(value)) {
       retval = IBooleanItem.TRUE;
@@ -64,14 +64,14 @@ public interface IBooleanItem extends IAnyAtomicItem {
     return retval;
   }
 
-  @NotNull
-  public static IBooleanItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  @NonNull
+  public static IBooleanItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.BOOLEAN.cast(item);
   }
 
   public boolean toBoolean();
 
-  @NotNull
+  @NonNull
   default IBooleanItem negate() {
     return this.toBoolean() ? FALSE : TRUE;
   }

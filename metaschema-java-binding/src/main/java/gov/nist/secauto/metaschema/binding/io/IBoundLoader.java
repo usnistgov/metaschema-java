@@ -29,9 +29,9 @@ package gov.nist.secauto.metaschema.binding.io;
 import gov.nist.secauto.metaschema.binding.DefaultBindingContext;
 import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.model.common.metapath.IDocumentLoader;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
 import org.xml.sax.InputSource;
 
 import java.io.File;
@@ -42,6 +42,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A common interface for loading Metaschema based instance resources.
@@ -58,8 +60,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @throws URISyntaxException
    *           if the provided {@code url} is malformed
    */
-  @NotNull
-  default Format detectFormat(@NotNull URL url) throws IOException, URISyntaxException {
+  @NonNull
+  default Format detectFormat(@NonNull URL url) throws IOException, URISyntaxException {
     return detectFormat(toInputSource(ObjectUtils.notNull(url.toURI())));
   }
 
@@ -72,8 +74,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @throws IOException
    *           if an error occurred while reading the resource
    */
-  @NotNull
-  default Format detectFormat(@NotNull Path path) throws IOException {
+  @NonNull
+  default Format detectFormat(@NonNull Path path) throws IOException {
     return detectFormat(toInputSource(ObjectUtils.notNull(path.toUri())));
   }
 
@@ -86,8 +88,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @throws IOException
    *           if an error occurred while reading the resource
    */
-  @NotNull
-  default Format detectFormat(@NotNull File file) throws IOException {
+  @NonNull
+  default Format detectFormat(@NonNull File file) throws IOException {
     return detectFormat(ObjectUtils.notNull(file.toPath()));
   }
 
@@ -106,8 +108,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @throws IOException
    *           if an error occurred while reading the resource
    */
-  @NotNull
-  default Format detectFormat(@NotNull InputStream is) throws IOException {
+  @NonNull
+  default Format detectFormat(@NonNull InputStream is) throws IOException {
     return detectFormat(new InputSource(is));
   }
 
@@ -127,8 +129,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @throws IOException
    *           if an error occurred while reading the resource
    */
-  @NotNull
-  Format detectFormat(@NotNull InputSource source) throws IOException;
+  @NonNull
+  Format detectFormat(@NonNull InputSource source) throws IOException;
 
   /**
    * Load data from the provided resource into a bound object.
@@ -147,8 +149,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @see #detectFormat(URL)
    */
   @SuppressWarnings("unchecked")
-  @NotNull
-  default <CLASS> CLASS load(@NotNull URL url) throws IOException, URISyntaxException {
+  @NonNull
+  default <CLASS> CLASS load(@NonNull URL url) throws IOException, URISyntaxException {
     return (CLASS) loadAsNodeItem(url).getValue();
   }
 
@@ -167,8 +169,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @see #detectFormat(File)
    */
   @SuppressWarnings("unchecked")
-  @NotNull
-  default <CLASS> CLASS load(@NotNull Path path) throws IOException {
+  @NonNull
+  default <CLASS> CLASS load(@NonNull Path path) throws IOException {
     return (CLASS) loadAsNodeItem(path).getValue();
   }
 
@@ -187,8 +189,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @see #detectFormat(File)
    */
   @SuppressWarnings("unchecked")
-  @NotNull
-  default <CLASS> CLASS load(@NotNull File file) throws IOException {
+  @NonNull
+  default <CLASS> CLASS load(@NonNull File file) throws IOException {
     return (CLASS) loadAsNodeItem(file).getValue();
   }
 
@@ -211,8 +213,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @see #detectFormat(InputStream)
    */
   @SuppressWarnings("unchecked")
-  @NotNull
-  default <CLASS> CLASS load(@NotNull InputStream is, @NotNull URI documentUri) throws IOException {
+  @NonNull
+  default <CLASS> CLASS load(@NonNull InputStream is, @NonNull URI documentUri) throws IOException {
     return (CLASS) loadAsNodeItem(is, documentUri).getValue();
   }
 
@@ -234,8 +236,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @see #detectFormat(InputSource)
    */
   @SuppressWarnings("unchecked")
-  @NotNull
-  default <CLASS> CLASS load(@NotNull InputSource source) throws IOException {
+  @NonNull
+  default <CLASS> CLASS load(@NonNull InputSource source) throws IOException {
     return (CLASS) loadAsNodeItem(source).getValue();
   }
 
@@ -253,8 +255,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @throws IOException
    *           if an error occurred while loading the data in the specified file
    */
-  @NotNull
-  default <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull Path path) throws IOException {
+  @NonNull
+  default <CLASS> CLASS load(@NonNull Class<CLASS> clazz, @NonNull Path path) throws IOException {
     try (InputStream is = Files.newInputStream(path)) {
       return load(clazz, toInputSource(ObjectUtils.notNull(path.toUri())));
     }
@@ -274,8 +276,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @throws IOException
    *           if an error occurred while loading the data in the specified file
    */
-  @NotNull
-  default <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull File file) throws IOException {
+  @NonNull
+  default <CLASS> CLASS load(@NonNull Class<CLASS> clazz, @NonNull File file) throws IOException {
     return load(clazz, ObjectUtils.notNull(file.toPath()));
   }
 
@@ -295,8 +297,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @throws URISyntaxException
    *           if the provided {@code url} is malformed
    */
-  @NotNull
-  default <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull URL url) throws IOException, URISyntaxException {
+  @NonNull
+  default <CLASS> CLASS load(@NonNull Class<CLASS> clazz, @NonNull URL url) throws IOException, URISyntaxException {
     return load(clazz, toInputSource(ObjectUtils.notNull(url.toURI())));
   }
 
@@ -322,6 +324,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @throws IOException
    *           if an error occurred while loading the data in the specified file
    */
-  @NotNull
-  <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull InputSource source) throws IOException;
+  @NonNull
+  <CLASS> CLASS load(@NonNull Class<CLASS> clazz, @NonNull InputSource source) throws IOException;
+
+  IDocumentNodeItem loadAsNodeItem(@NonNull Format format, @NonNull InputSource source) throws IOException;
 }

@@ -32,13 +32,16 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IRequiredValueAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import org.jetbrains.annotations.NotNull;
 import org.jmock.Expectations;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
 class PredicateTest
     extends AbstractExpressionTest {
 
@@ -47,16 +50,18 @@ class PredicateTest
     DynamicContext dynamicContext = newDynamicContext();
 
     @SuppressWarnings("null")
+    @NonNull
     IExpression stepExpr = context.mock(IExpression.class);
-    @SuppressWarnings("null")
     ISequence<?> stepResult = context.mock(ISequence.class, "stepResult");
     @SuppressWarnings("null")
+    @NonNull
     IRequiredValueAssemblyNodeItem item = context.mock(IRequiredValueAssemblyNodeItem.class);
-    @SuppressWarnings({ "null", "unchecked" })
-    List<@NotNull IExpression> predicates = context.mock(List.class, "predicates");
+    @SuppressWarnings({ "unchecked", "null" })
+    @NonNull
+    List<IExpression> predicates = context.mock(List.class, "predicates");
 
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         allowing(stepExpr).getStaticResultType();
         will(returnValue(IRequiredValueAssemblyNodeItem.class));
         oneOf(stepExpr).accept(dynamicContext, item);
@@ -80,7 +85,7 @@ class PredicateTest
     Predicate expr = new Predicate(stepExpr, predicates);
 
     ISequence<?> result = expr.accept(dynamicContext, item);
-    assertEquals(ISequence.of(item), result);
+    assertEquals(ISequence.of(item), result, "Sequence does not match");
   }
 
   @Test
@@ -88,17 +93,18 @@ class PredicateTest
     DynamicContext dynamicContext = newDynamicContext().disablePredicateEvaluation();
 
     @SuppressWarnings("null")
+    @NonNull
     IExpression stepExpr = context.mock(IExpression.class);
-    @SuppressWarnings("null")
     ISequence<?> stepResult = context.mock(ISequence.class, "stepResult");
     @SuppressWarnings("null")
+    @NonNull
     IAssemblyNodeItem item = context.mock(IAssemblyNodeItem.class);
-    @SuppressWarnings({ "null", "unchecked" })
-    List<@NotNull IExpression> predicates
-        = context.mock(List.class, "predicates");
+    @SuppressWarnings({ "unchecked", "null" })
+    @NonNull
+    List<IExpression> predicates = context.mock(List.class, "predicates");
 
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         allowing(stepExpr).getStaticResultType();
         will(returnValue(IRequiredValueAssemblyNodeItem.class));
         oneOf(stepExpr).accept(dynamicContext, item);
@@ -120,6 +126,6 @@ class PredicateTest
     Predicate expr = new Predicate(stepExpr, predicates);
 
     ISequence<?> result = expr.accept(dynamicContext, item);
-    assertEquals(ISequence.of(item), result);
+    assertEquals(ISequence.of(item), result, "Sequence does not match");
   }
 }

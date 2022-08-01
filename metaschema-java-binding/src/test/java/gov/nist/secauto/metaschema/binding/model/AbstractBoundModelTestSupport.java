@@ -46,7 +46,6 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapte
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 
 import org.codehaus.stax2.XMLEventReader2;
-import org.jetbrains.annotations.NotNull;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.junit5.JUnit5Mockery;
@@ -55,6 +54,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import java.io.IOException;
 import java.io.Reader;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 
@@ -65,12 +65,12 @@ public class AbstractBoundModelTestSupport {
   @Mock
   private IBindingContext bindingContext; // NOPMD - auto mocked
 
-  @NotNull
+  @NonNull
   protected JUnit5Mockery getJUnit5Mockery() {
     return context;
   }
 
-  protected void registerDatatype(@NotNull IDataTypeAdapter<?> adapter) {
+  protected void registerDatatype(@NonNull IDataTypeAdapter<?> adapter) {
     context.checking(new Expectations() {
       { // NOPMD - intentional
         allowing(bindingContext).getJavaTypeAdapterInstance(adapter.getClass());
@@ -79,8 +79,8 @@ public class AbstractBoundModelTestSupport {
     });
   }
 
-  @NotNull
-  protected IFieldClassBinding registerFieldBinding(@NotNull Class<?> clazz) {
+  @NonNull
+  protected IFieldClassBinding registerFieldBinding(@NonNull Class<?> clazz) {
     IFieldClassBinding retval = DefaultFieldClassBinding.createInstance(clazz, bindingContext);
     context.checking(new Expectations() {
       { // NOPMD - intentional
@@ -91,8 +91,8 @@ public class AbstractBoundModelTestSupport {
     return retval;
   }
 
-  @NotNull
-  protected IAssemblyClassBinding registerAssemblyBinding(@NotNull Class<?> clazz) {
+  @NonNull
+  protected IAssemblyClassBinding registerAssemblyBinding(@NonNull Class<?> clazz) {
     IAssemblyClassBinding retval = DefaultAssemblyClassBinding.createInstance(clazz, bindingContext);
     context.checking(new Expectations() {
       { // NOPMD - intentional
@@ -103,8 +103,8 @@ public class AbstractBoundModelTestSupport {
     return retval;
   }
 
-  @NotNull
-  protected IMetaschema registerMetaschema(@NotNull Class<? extends AbstractBoundMetaschema> clazz) {
+  @NonNull
+  protected IMetaschema registerMetaschema(@NonNull Class<? extends AbstractBoundMetaschema> clazz) {
     IMetaschema retval = AbstractBoundMetaschema.createInstance(clazz, bindingContext);
     context.checking(new Expectations() {
       { // NOPMD - intentional
@@ -115,7 +115,7 @@ public class AbstractBoundModelTestSupport {
     return retval;
   }
 
-  @NotNull
+  @NonNull
   protected IAssemblyClassBinding getRootAssemblyClassBinding() {
     /**
      * Setup data types
@@ -137,10 +137,11 @@ public class AbstractBoundModelTestSupport {
     return registerAssemblyBinding(RootBoundAssembly.class);
   }
 
-  @NotNull
+  @NonNull
   protected IXmlParsingContext newXmlParsingContext(Reader reader) throws XMLStreamException {
 
-    XMLInputFactory factory = WstxInputFactory.newInstance();
+    XMLInputFactory factory = XMLInputFactory.newInstance();
+    assert factory instanceof WstxInputFactory;
     XMLEventReader2 parser = (XMLEventReader2) factory.createXMLEventReader(reader);
 
     IXmlParsingContext retval = context.mock(IXmlParsingContext.class);
@@ -154,7 +155,7 @@ public class AbstractBoundModelTestSupport {
     return retval;
   }
 
-  @NotNull
+  @NonNull
   protected IJsonParsingContext newJsonParsingContext(Reader reader) throws JsonParseException, IOException {
     JsonFactory factory = new JsonFactory();
     JsonParser jsonParser = factory.createParser(reader); // NOPMD - reader not owned by this method

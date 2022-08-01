@@ -30,17 +30,17 @@ import com.squareup.javapoet.ClassName;
 
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.nio.file.Path;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Contains information about a generated class.
  */
 class DefaultGeneratedClass implements IGeneratedClass {
-  @NotNull
+  @NonNull
   private final Path classFile;
-  @NotNull
+  @NonNull
   private final ClassName className;
 
   /**
@@ -51,19 +51,19 @@ class DefaultGeneratedClass implements IGeneratedClass {
    * @param className
    *          the type info for the class
    */
-  public DefaultGeneratedClass(@NotNull Path classFile, @NotNull ClassName className) {
+  public DefaultGeneratedClass(@NonNull Path classFile, @NonNull ClassName className) {
     this.classFile = ObjectUtils.requireNonNull(classFile, "classFile");
     this.className = ObjectUtils.requireNonNull(className, "className");
   }
 
   @Override
-  @NotNull
+  @NonNull
   public Path getClassFile() {
     return classFile;
   }
 
   @Override
-  @NotNull
+  @NonNull
   public ClassName getClassName() {
     return className;
   }

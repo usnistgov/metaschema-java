@@ -33,9 +33,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IRootAssemblyNodeItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * This interface provides an implementation contract for all path formatters. When
@@ -49,7 +49,7 @@ public interface IPathFormatter {
   /**
    * A path formatter that produces Metapath-based paths.
    */
-  @NotNull
+  @NonNull
   IPathFormatter METAPATH_PATH_FORMATER = new MetapathFormatter();
 
   /**
@@ -64,8 +64,8 @@ public interface IPathFormatter {
    * @see IPathSegment#getPath()
    */
   @SuppressWarnings("null")
-  @NotNull
-  default String format(@NotNull IPathSegment segment) {
+  @NonNull
+  default String format(@NonNull IPathSegment segment) {
     return segment.getPathStream().map(pathSegment -> {
       return pathSegment.format(this);
     }).collect(Collectors.joining("/"));
@@ -78,8 +78,8 @@ public interface IPathFormatter {
    *          the node to format
    * @return the formatted text for the segment
    */
-  @NotNull
-  String formatFlag(@NotNull IFlagNodeItem flag);
+  @NonNull
+  String formatFlag(@NonNull IFlagNodeItem flag);
 
   /**
    * This visitor callback is used to format an individual field path segment.
@@ -88,8 +88,8 @@ public interface IPathFormatter {
    *          the node to format
    * @return the formatted text for the segment
    */
-  @NotNull
-  String formatField(@NotNull IFieldNodeItem field);
+  @NonNull
+  String formatField(@NonNull IFieldNodeItem field);
 
   /**
    * This visitor callback is used to format an individual assembly path segment.
@@ -98,8 +98,8 @@ public interface IPathFormatter {
    *          the node to format
    * @return the formatted text for the segment
    */
-  @NotNull
-  String formatAssembly(@NotNull IAssemblyNodeItem assembly);
+  @NonNull
+  String formatAssembly(@NonNull IAssemblyNodeItem assembly);
 
   /**
    * This visitor callback is used to format a root assembly path segment.
@@ -108,8 +108,8 @@ public interface IPathFormatter {
    *          the node to format
    * @return the formatted text for the segment
    */
-  @NotNull
-  String formatRootAssembly(@NotNull IRootAssemblyNodeItem root);
+  @NonNull
+  String formatRootAssembly(@NonNull IRootAssemblyNodeItem root);
 
   /**
    * This visitor callback is used to format an individual document path segment.
@@ -118,9 +118,9 @@ public interface IPathFormatter {
    *          the node to format
    * @return the formatted text for the segment
    */
-  @NotNull
-  String formatDocument(@NotNull IDocumentNodeItem document);
+  @NonNull
+  String formatDocument(@NonNull IDocumentNodeItem document);
 
-  @NotNull
-  String formatMetaschema(@NotNull IMetaschemaNodeItem metaschema);
+  @NonNull
+  String formatMetaschema(@NonNull IMetaschemaNodeItem metaschema);
 }

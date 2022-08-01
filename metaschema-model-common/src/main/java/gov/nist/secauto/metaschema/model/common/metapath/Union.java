@@ -29,15 +29,15 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class Union
     extends AbstractNAryExpression {
 
-  @NotNull
+  @NonNull
   private final Class<? extends IItem> staticResultType;
 
   /**
@@ -47,7 +47,7 @@ class Union
    * @param expressions
    *          the expressions to evaluate
    */
-  protected Union(@NotNull List<@NotNull IExpression> expressions) {
+  protected Union(@NonNull List<IExpression> expressions) {
     super(expressions);
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, expressions);
   }
@@ -64,8 +64,8 @@ class Union
 
   @Override
   public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
-    @NotNull
-    Stream<@NotNull ? extends IItem> retval = ObjectUtils.notNull(getChildren().stream()
+    @NonNull
+    Stream<? extends IItem> retval = ObjectUtils.notNull(getChildren().stream()
         .flatMap(child -> {
           ISequence<?> result = child.accept(dynamicContext, context);
           return result.asStream();

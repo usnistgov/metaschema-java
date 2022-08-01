@@ -32,13 +32,14 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintStream;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class CSTPrinter {
-  @NotNull
+  @NonNull
   private final PrintStream outputStream;
   private boolean ignoringWrappers = true;
 
@@ -48,7 +49,7 @@ class CSTPrinter {
    * @param outputStream
    *          the stream to print to
    */
-  public CSTPrinter(@NotNull PrintStream outputStream) {
+  public CSTPrinter(@NonNull PrintStream outputStream) {
     this.outputStream = ObjectUtils.requireNonNull(outputStream, "outputStream");
   }
 
@@ -68,7 +69,7 @@ class CSTPrinter {
    * @param ctx
    *          the CST node
    */
-  public void print(@NotNull RuleContext ctx) {
+  public void print(@NonNull RuleContext ctx) {
     explore(ctx, 0);
   }
 

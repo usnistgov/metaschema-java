@@ -51,10 +51,11 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLEventReader2;
-import org.jetbrains.annotations.NotNull;
 import org.jmock.Expectations;
+import org.jmock.auto.Mock;
 import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -67,18 +68,26 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 class DefaultFieldPropertyTest {
   @RegisterExtension
   JUnit5Mockery context = new JUnit5Mockery();
 
-  private final IAssemblyClassBinding classBinding = context.mock(IAssemblyClassBinding.class);
-  private final IBindingContext bindingContext = context.mock(IBindingContext.class);
-  private final IJsonParsingContext jsonParsingContext = context.mock(IJsonParsingContext.class);
-  private final IXmlParsingContext xmlParsingContext = context.mock(IXmlParsingContext.class);
+  @Mock
+  private IAssemblyClassBinding classBinding; // NOPMD - it's injected
+  @Mock
+  private IBindingContext bindingContext; // NOPMD - it's injected
+  @Mock
+  private IJsonParsingContext jsonParsingContext; // NOPMD - it's injected
+  @Mock
+  private IXmlParsingContext xmlParsingContext; // NOPMD - it's injected
 
   @Test
   void testJsonRead()
@@ -103,10 +112,12 @@ class DefaultFieldPropertyTest {
       }
     });
 
-    java.lang.reflect.Field field1 = theClass.getDeclaredField("field1");
-    DefaultFieldProperty field1Property = DefaultFieldProperty.createInstance(classBinding, field1);
-    java.lang.reflect.Field field2 = theClass.getDeclaredField("_field2");
-    DefaultFieldProperty field2Property = DefaultFieldProperty.createInstance(classBinding, field2);
+    java.lang.reflect.Field field1 = ObjectUtils.requireNonNull(theClass.getDeclaredField("field1"));
+    DefaultFieldProperty field1Property = DefaultFieldProperty.createInstance(
+        ObjectUtils.notNull(classBinding), field1);
+    java.lang.reflect.Field field2 = ObjectUtils.requireNonNull(theClass.getDeclaredField("_field2"));
+    DefaultFieldProperty field2Property = DefaultFieldProperty.createInstance(
+        ObjectUtils.notNull(classBinding), field2);
 
     TestField obj = new TestField();
 
@@ -131,7 +142,8 @@ class DefaultFieldPropertyTest {
   @Test
   void testXmlRead() throws JsonParseException, IOException, NoSuchFieldException, XMLStreamException {
     String xml = "<test xmlns='http://example.com/ns'>" + "  <field1>field1value</field1>" + "</test>";
-    XMLInputFactory factory = WstxInputFactory.newInstance();
+    XMLInputFactory factory = XMLInputFactory.newInstance();
+    assert factory instanceof WstxInputFactory;
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
     Class<?> theClass = TestField.class;
 
@@ -155,19 +167,24 @@ class DefaultFieldPropertyTest {
     });
 
     java.lang.reflect.Field field1 = theClass.getDeclaredField("field1");
-    DefaultFieldProperty field1Property = DefaultFieldProperty.createInstance(classBinding, field1);
+    DefaultFieldProperty field1Property = DefaultFieldProperty.createInstance(
+        ObjectUtils.notNull(classBinding), ObjectUtils.notNull(field1));
     java.lang.reflect.Field field2 = theClass.getDeclaredField("_field2");
-    DefaultFieldProperty field2Property = DefaultFieldProperty.createInstance(classBinding, field2);
+    DefaultFieldProperty field2Property = DefaultFieldProperty.createInstance(
+        ObjectUtils.notNull(classBinding), ObjectUtils.notNull(field2));
 
     TestField obj = new TestField();
 
-    assertEquals(XMLEvent.START_DOCUMENT, eventReader.nextEvent().getEventType());
+    assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
     XMLEvent event = eventReader.nextEvent();
-    assertEquals(XMLEvent.START_ELEMENT, event.getEventType());
+    assertEquals(XMLStreamConstants.START_ELEMENT, event.getEventType());
     StartElement start = event.asStartElement();
     // assertEquals("test", jsonParser.nextFieldName());
     // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
     // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
+
+    assert start != null;
+    assert xmlParsingContext != null;
 
     assertTrue(field1Property.read(obj, start, xmlParsingContext));
     assertFalse(field2Property.read(obj, start, xmlParsingContext));
@@ -180,7 +197,8 @@ class DefaultFieldPropertyTest {
   void testXmlReadNoFieldValue() throws JsonParseException, IOException, NoSuchFieldException, XMLStreamException {
     String xml = "<test xmlns='http://example.com/ns'>\n" + "  <fields2>\n" + "    <field2>field2value</field2>\n"
         + "  </fields2>\n" + "</test>";
-    XMLInputFactory factory = WstxInputFactory.newInstance();
+    XMLInputFactory factory = XMLInputFactory.newInstance();
+    assert factory instanceof WstxInputFactory;
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
     Class<?> theClass = TestField.class;
 
@@ -204,19 +222,24 @@ class DefaultFieldPropertyTest {
     });
 
     java.lang.reflect.Field field1 = theClass.getDeclaredField("field1");
-    DefaultFieldProperty field1Property = DefaultFieldProperty.createInstance(classBinding, field1);
+    DefaultFieldProperty field1Property = DefaultFieldProperty.createInstance(
+        ObjectUtils.notNull(classBinding), field1);
     java.lang.reflect.Field field2 = theClass.getDeclaredField("_field2");
-    DefaultFieldProperty field2Property = DefaultFieldProperty.createInstance(classBinding, field2);
+    DefaultFieldProperty field2Property = DefaultFieldProperty.createInstance(
+        ObjectUtils.notNull(classBinding), field2);
 
     TestField obj = new TestField();
 
-    assertEquals(XMLEvent.START_DOCUMENT, eventReader.nextEvent().getEventType());
+    assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
     XMLEvent event = eventReader.nextEvent();
-    assertEquals(XMLEvent.START_ELEMENT, event.getEventType());
+    assertEquals(XMLStreamConstants.START_ELEMENT, event.getEventType());
     StartElement start = event.asStartElement();
     // assertEquals("test", jsonParser.nextFieldName());
     // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
     // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
+
+    assert start != null;
+    assert xmlParsingContext != null;
 
     assertFalse(field1Property.read(obj, start, xmlParsingContext));
     assertTrue(field2Property.read(obj, start, xmlParsingContext));
@@ -249,9 +272,11 @@ class DefaultFieldPropertyTest {
     });
 
     java.lang.reflect.Field field1 = theClass.getDeclaredField("field1");
-    DefaultFieldProperty field1Property = DefaultFieldProperty.createInstance(classBinding, field1);
+    DefaultFieldProperty field1Property = DefaultFieldProperty.createInstance(
+        ObjectUtils.notNull(classBinding), field1);
     java.lang.reflect.Field field2 = theClass.getDeclaredField("_field2");
-    DefaultFieldProperty field2Property = DefaultFieldProperty.createInstance(classBinding, field2);
+    DefaultFieldProperty field2Property = DefaultFieldProperty.createInstance(
+        ObjectUtils.notNull(classBinding), field2);
 
     TestField obj = new TestField();
 
@@ -278,8 +303,8 @@ class DefaultFieldPropertyTest {
   public static class TestMetaschema
       extends AbstractBoundMetaschema {
 
-    public TestMetaschema(@NotNull List<@NotNull ? extends IMetaschema> importedMetaschema,
-        @NotNull IBindingContext bindingContext) {
+    public TestMetaschema(@NonNull List<? extends IMetaschema> importedMetaschema,
+        @NonNull IBindingContext bindingContext) {
       super(importedMetaschema, bindingContext);
     }
 
@@ -299,18 +324,18 @@ class DefaultFieldPropertyTest {
     }
 
     @Override
-    public @NotNull String getShortName() {
+    public String getShortName() {
       return "test-metaschema";
     }
 
     @Override
-    public @NotNull URI getXmlNamespace() {
-      return URI.create("http://example.com/ns");
+    public URI getXmlNamespace() {
+      return ObjectUtils.notNull(URI.create("http://example.com/ns"));
     }
 
     @Override
-    public @NotNull URI getJsonBaseUri() {
-      return URI.create("https://csrc.nist.gov/ns/test/json");
+    public URI getJsonBaseUri() {
+      return ObjectUtils.notNull(URI.create("https://csrc.nist.gov/ns/test/json"));
     }
 
   }
@@ -333,6 +358,7 @@ class DefaultFieldPropertyTest {
       return field1;
     }
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "this is a data holder")
     public List<String> getField2() {
       return _field2;
     }

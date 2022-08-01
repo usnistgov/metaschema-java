@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import org.jetbrains.annotations.Nullable;
-
 import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * This marker interface is used to identify a field or assembly instance that is a member of an

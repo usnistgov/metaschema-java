@@ -37,6 +37,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
+import gov.nist.secauto.metaschema.binding.io.json.JsonFactoryFactory;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.model.common.configuration.DefaultConfiguration;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
@@ -47,8 +48,7 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
@@ -63,24 +63,27 @@ import java.nio.charset.Charset;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A default implementation of an {@link IBoundLoader}.
  */
 public class DefaultBoundLoader implements IBoundLoader {
   public static final int LOOK_AHEAD_BYTES = 32_768;
-  @NotNull
+  @NonNull
   private static final JsonFactory JSON_FACTORY = new JsonFactory();
-  @NotNull
+  @NonNull
   private static final XmlFactory XML_FACTORY = new XmlFactory();
-  @NotNull
+  @NonNull
   private static final YAMLFactory YAML_FACTORY = new YAMLFactory();
 
-  @NotNull
+  @NonNull
   private final IBindingContext bindingContext;
-  @NotNull
+  @NonNull
   private final IMutableConfiguration<DeserializationFeature> configuration;
 
   /**
@@ -95,8 +98,7 @@ public class DefaultBoundLoader implements IBoundLoader {
    * @param bindingContext
    *          the Metaschema binding context to use to load Java types
    */
-  @SuppressWarnings("null")
-  public DefaultBoundLoader(@NotNull IBindingContext bindingContext) {
+  public DefaultBoundLoader(@NonNull IBindingContext bindingContext) {
     this.bindingContext = bindingContext;
     this.configuration = new DefaultConfiguration<>(DeserializationFeature.class);
   }
@@ -117,17 +119,17 @@ public class DefaultBoundLoader implements IBoundLoader {
   }
 
   @Override
-  public Set<@NotNull DeserializationFeature> getFeatureSet() {
+  public Set<DeserializationFeature> getFeatureSet() {
     return configuration.getFeatureSet();
   }
 
   @Override
   public IMutableConfiguration<DeserializationFeature>
-      applyConfiguration(@NotNull IConfiguration<DeserializationFeature> other) {
+      applyConfiguration(@NonNull IConfiguration<DeserializationFeature> other) {
     return configuration.applyConfiguration(other);
   }
 
-  @NotNull
+  @NonNull
   protected IMutableConfiguration<DeserializationFeature> getConfiguration() {
     return configuration;
   }
@@ -147,7 +149,7 @@ public class DefaultBoundLoader implements IBoundLoader {
   }
 
   @Override
-  public void setEntityResolver(@NotNull EntityResolver resolver) {
+  public void setEntityResolver(@NonNull EntityResolver resolver) {
     this.entityResolver = resolver;
   }
 
@@ -170,19 +172,19 @@ public class DefaultBoundLoader implements IBoundLoader {
     return retval;
   }
 
-  @NotNull
-  protected Format detectFormatInternal(@NotNull InputStream is) throws IOException {
+  @NonNull
+  protected Format detectFormatInternal(@NonNull InputStream is) throws IOException {
     return detectFormatInternal(is, LOOK_AHEAD_BYTES - 1);
   }
 
-  @NotNull
-  protected Format detectFormatInternal(@NotNull InputStream is, int lookAheadBytes) throws IOException {
+  @NonNull
+  protected Format detectFormatInternal(@NonNull InputStream is, int lookAheadBytes) throws IOException {
     DataFormatMatcher matcher = matchFormat(is, lookAheadBytes);
     return formatFromMatcher(matcher);
   }
 
-  @NotNull
-  protected DataFormatMatcher matchFormat(@NotNull InputStream is, int lookAheadBytes) throws IOException {
+  @NonNull
+  protected DataFormatMatcher matchFormat(@NonNull InputStream is, int lookAheadBytes) throws IOException {
     DataFormatDetector det = new DataFormatDetector(new JsonFactory[] { YAML_FACTORY, JSON_FACTORY, XML_FACTORY });
     det = det.withMinimalMatch(MatchStrength.INCONCLUSIVE).withOptimalMatch(MatchStrength.SOLID_MATCH)
         .withMaxInputLookahead(lookAheadBytes);
@@ -200,8 +202,8 @@ public class DefaultBoundLoader implements IBoundLoader {
     }
   }
 
-  @NotNull
-  protected Format formatFromMatcher(@NotNull DataFormatMatcher matcher) {
+  @NonNull
+  protected Format formatFromMatcher(@NonNull DataFormatMatcher matcher) {
     Format retval;
     String formatName = matcher.getMatchedFormatName();
     if (YAMLFactory.FORMAT_NAME_YAML.equals(formatName)) {
@@ -216,39 +218,69 @@ public class DefaultBoundLoader implements IBoundLoader {
     return retval;
   }
 
+  @NonNull
+  private static BufferedInputStream toBufferedInputStream(@NonNull InputStream is) {
+    BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES); // NOPMD - stream not owned
+    bis.mark(LOOK_AHEAD_BYTES);
+    return bis;
+  }
+  
   @Override
   public IDocumentNodeItem loadAsNodeItem(InputSource source) throws IOException {
     URI uri = ObjectUtils.notNull(URI.create(source.getSystemId()));
 
     IDocumentNodeItem retval;
-    if (source.getCharacterStream() != null) {
-      throw new UnsupportedOperationException("Character streams are not supported");
-    } else if (source.getByteStream() != null) {
+    if (source.getByteStream() != null) {
       // attempt to use a provided byte stream stream
-      BufferedInputStream bis = new BufferedInputStream( // NOPMD - stream not owned
-          source.getByteStream(), LOOK_AHEAD_BYTES);
-      bis.mark(LOOK_AHEAD_BYTES);
+      BufferedInputStream bis = toBufferedInputStream(source.getByteStream());
       retval = loadAsNodeItemInternal(bis, uri);
     } else {
       // fall back to a URL-based connection
       URL url = uri.toURL();
       try (InputStream is = url.openStream()) {
-        BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES); // NOPMD - stream not owned
-        bis.mark(LOOK_AHEAD_BYTES);
+        BufferedInputStream bis = toBufferedInputStream(is);
         retval = loadAsNodeItemInternal(bis, uri);
       }
     }
     return retval;
   }
 
-  @NotNull
-  protected IDocumentNodeItem loadAsNodeItemInternal(@NotNull BufferedInputStream bis, @NotNull URI documentUri)
+  @Override
+  public IDocumentNodeItem loadAsNodeItem(@NonNull Format format, @NonNull InputSource source)
+      throws IOException {
+    URI uri = ObjectUtils.notNull(URI.create(source.getSystemId()));
+
+    IDocumentNodeItem retval;
+    if (source.getByteStream() != null) {
+      // attempt to use a provided byte stream stream
+      BufferedInputStream bis = toBufferedInputStream(source.getByteStream());
+      Class<?> clazz = detectModel(bis, format); // NOPMD - must be called before reset
+      retval = deserializeToNodeItem(clazz, format, bis, uri);
+    } else {
+      // fall back to a URL-based connection
+      URL url = uri.toURL();
+      try (InputStream is = url.openStream()) {
+        BufferedInputStream bis = toBufferedInputStream(is);
+        Class<?> clazz = detectModel(bis, format); // NOPMD - must be called before reset
+        retval = deserializeToNodeItem(clazz, format, bis, uri);
+      }
+    }
+    return retval;
+  }
+
+  @NonNull
+  protected IDocumentNodeItem loadAsNodeItemInternal(@NonNull BufferedInputStream bis, @NonNull URI documentUri)
       throws IOException {
     DataFormatMatcher matcher = matchFormat(bis, LOOK_AHEAD_BYTES - 1);
     Format format = formatFromMatcher(matcher);
-
     Class<?> clazz = detectModel(matcher, format); // NOPMD - must be called before reset
+    return deserializeToNodeItem(clazz, format, bis, documentUri);
+  }
 
+
+  @NonNull
+  protected IDocumentNodeItem deserializeToNodeItem(@NonNull Class<?> clazz, @NonNull Format format,
+      @NonNull BufferedInputStream bis, @NonNull URI documentUri) throws IOException {
     try {
       bis.reset();
     } catch (IOException ex) {
@@ -259,8 +291,37 @@ public class DefaultBoundLoader implements IBoundLoader {
     return (IDocumentNodeItem) deserializer.deserializeToNodeItem(bis, documentUri);
   }
 
-  @NotNull
-  protected Class<?> detectModel(@NotNull DataFormatMatcher matcher, @NotNull Format format)
+  @NonNull
+  protected Class<?> detectModel(@NonNull BufferedInputStream bis, @NonNull Format format)
+      throws IOException {
+    Class<?> clazz;
+    switch (format) {
+    case JSON:
+    case YAML:
+      clazz = detectModelJsonClass(ObjectUtils.notNull(JsonFactoryFactory.instance().createParser(bis)));
+      if (clazz == null) {
+        throw new IllegalStateException(
+            String.format("Detected format '%s', but unable to detect the bound data type", format.name()));
+      }
+      break;
+    case XML:
+      clazz = detectModelXmlClass(ObjectUtils.notNull(bis));
+      break;
+    default:
+      throw new UnsupportedOperationException(
+          String.format("The format '%s' is not supported", format));
+    }
+
+    try {
+      bis.reset();
+    } catch (IOException ex) {
+      throw new IOException("Unable to reset input stream before parsing", ex);
+    }
+    return clazz;
+  }
+
+  @NonNull
+  protected Class<?> detectModel(@NonNull DataFormatMatcher matcher, @NonNull Format format)
       throws IOException {
     Class<?> clazz;
     switch (format) {
@@ -282,14 +343,15 @@ public class DefaultBoundLoader implements IBoundLoader {
     return clazz;
   }
 
-  @NotNull
-  protected Class<?> detectModelXmlClass(@NotNull InputStream is) throws IOException {
+  @NonNull
+  protected Class<?> detectModelXmlClass(@NonNull InputStream is) throws IOException {
 
     QName startElementQName;
     try {
-      XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) WstxInputFactory.newInstance();
+      XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
+      assert xmlInputFactory instanceof WstxInputFactory;
       xmlInputFactory.configureForXmlConformance();
-      xmlInputFactory.setProperty(XMLInputFactory2.IS_COALESCING, false);
+      xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, false);
 
       Reader reader = new InputStreamReader(is, Charset.forName("UTF8"));
       XMLEventReader2 eventReader = (XMLEventReader2) xmlInputFactory.createXMLEventReader(reader);
@@ -317,23 +379,21 @@ public class DefaultBoundLoader implements IBoundLoader {
     return clazz;
   }
 
-  protected Class<?> getBoundClassForXmlQName(@NotNull QName rootQName) {
+  protected Class<?> getBoundClassForXmlQName(@NonNull QName rootQName) {
     return getBindingContext().getBoundClassForXmlQName(rootQName);
   }
 
   @Nullable
-  protected Class<?> detectModelJsonClass(@NotNull JsonParser parser) throws IOException {
+  protected Class<?> detectModelJsonClass(@NonNull JsonParser parser) throws IOException {
     Class<?> retval = null;
     JsonUtil.advanceAndAssert(parser, JsonToken.START_OBJECT);
     outer: while (JsonToken.FIELD_NAME.equals(parser.nextToken())) {
-      String name = parser.getCurrentName();
-      switch (name) {
-      case "$schema":
+      String name = ObjectUtils.notNull(parser.getCurrentName());
+      if ("$schema".equals(name)) {
         // do nothing
         parser.nextToken();
         // JsonUtil.skipNextValue(parser);
-        break;
-      default:
+      } else {
         retval = getBoundClassForJsonName(name);
         break outer;
       }
@@ -341,7 +401,7 @@ public class DefaultBoundLoader implements IBoundLoader {
     return retval;
   }
 
-  protected Class<?> getBoundClassForJsonName(@NotNull String rootName) {
+  protected Class<?> getBoundClassForJsonName(@NonNull String rootName) {
     return getBindingContext().getBoundClassForJsonName(rootName);
   }
 
@@ -354,23 +414,25 @@ public class DefaultBoundLoader implements IBoundLoader {
       throw new UnsupportedOperationException("Character streams are not supported");
     } else if (source.getByteStream() != null) {
       // attempt to use a provided byte stream stream
-      BufferedInputStream bis = new BufferedInputStream(source.getByteStream(), LOOK_AHEAD_BYTES);
-      retval = loadInternal(clazz, bis, uri);
+      try (BufferedInputStream bis = new BufferedInputStream(source.getByteStream(), LOOK_AHEAD_BYTES)) {
+        retval = loadInternal(clazz, bis, uri);
+      }
     } else {
       // fall back to a URL-based connection
       URL url = uri.toURL();
       try (InputStream is = url.openStream()) {
-        BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES);
-        retval = loadInternal(clazz, bis, uri);
+        try (BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES)) {
+          retval = loadInternal(clazz, bis, uri);
+        }
       }
     }
     return retval;
   }
 
-  @SuppressWarnings({ "unchecked", "null" })
-  @NotNull
-  protected <CLASS> CLASS loadInternal(@NotNull Class<CLASS> clazz, @NotNull BufferedInputStream bis,
-      @NotNull URI documentUri) throws IOException {
+  @SuppressWarnings("unchecked")
+  @NonNull
+  protected <CLASS> CLASS loadInternal(@NonNull Class<CLASS> clazz, @NonNull BufferedInputStream bis,
+      @NonNull URI documentUri) throws IOException {
     // we cannot close this stream, since it will cause the underlying stream to be closed
     bis.mark(LOOK_AHEAD_BYTES);
 
@@ -379,12 +441,12 @@ public class DefaultBoundLoader implements IBoundLoader {
 
     IDeserializer<CLASS> deserializer = getDeserializer(clazz, format, getConfiguration());
     INodeItem nodeItem = deserializer.deserializeToNodeItem(bis, documentUri);
-    return (CLASS) nodeItem.getValue();
+    return (CLASS) ObjectUtils.requireNonNull(nodeItem.getValue());
   }
 
-  @NotNull
-  protected <CLASS> IDeserializer<CLASS> getDeserializer(@NotNull Class<CLASS> clazz, @NotNull Format format,
-      @NotNull IConfiguration<DeserializationFeature> config) {
+  @NonNull
+  protected <CLASS> IDeserializer<CLASS> getDeserializer(@NonNull Class<CLASS> clazz, @NonNull Format format,
+      @NonNull IConfiguration<DeserializationFeature> config) {
     IDeserializer<CLASS> retval = getBindingContext().newDeserializer(format, clazz);
     retval.applyConfiguration(config);
     return retval;

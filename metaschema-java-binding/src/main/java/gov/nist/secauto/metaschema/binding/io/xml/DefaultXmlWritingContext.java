@@ -30,15 +30,21 @@ import org.codehaus.stax2.XMLStreamWriter2;
 
 import java.util.Objects;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public class DefaultXmlWritingContext implements IXmlWritingContext {
+  @NonNull
   private final XMLStreamWriter2 writer;
 
-  public DefaultXmlWritingContext(XMLStreamWriter2 writer) {
+  @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "this is a data holder")
+  public DefaultXmlWritingContext(@NonNull XMLStreamWriter2 writer) {
     Objects.requireNonNull(writer, "writer");
     this.writer = writer;
   }
 
   @Override
+  @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "this is a data holder")
   public XMLStreamWriter2 getWriter() {
     return writer;
   }

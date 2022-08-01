@@ -31,11 +31,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * This annotation indicates that the target class represents a Metaschema assembly.
@@ -51,8 +51,8 @@ public @interface MetaschemaAssembly {
    * 
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
-  @NotNull
-  String formalName() default "##none";
+  @NonNull
+  String formalName() default Constants.NO_STRING_VALUE;
 
   /**
    * Get the documentary description of the assembly.
@@ -61,8 +61,8 @@ public @interface MetaschemaAssembly {
    * 
    * @return a markdown string or {@code "##none"} if no description is provided
    */
-  @NotNull
-  String description() default "##none";
+  @NonNull
+  String description() default Constants.NO_STRING_VALUE;
 
   /**
    * Get the metaschema class that "owns" this assembly, which is the concrete implementation of the
@@ -70,7 +70,7 @@ public @interface MetaschemaAssembly {
    * 
    * @return the metaschema class
    */
-  @NotNull
+  @NonNull
   Class<? extends AbstractBoundMetaschema> metaschema();
 
   /**
@@ -78,7 +78,7 @@ public @interface MetaschemaAssembly {
    * 
    * @return the name
    */
-  @NotNull
+  @NonNull
   String name();
 
   /**
@@ -88,8 +88,8 @@ public @interface MetaschemaAssembly {
    * 
    * @return the name
    */
-  @NotNull
-  String rootName() default "##none";
+  @NonNull
+  String rootName() default Constants.NO_STRING_VALUE;
 
   /**
    * XML target namespace of the XML element.
@@ -99,15 +99,15 @@ public @interface MetaschemaAssembly {
    * 
    * @return the namespace
    */
-  @NotNull
-  String rootNamespace() default "##default";
+  @NonNull
+  String rootNamespace() default Constants.DEFAULT_STRING_VALUE;
 
   /**
    * Get the allowed value constraints for this assembly.
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
-  @NotNull
+  @NonNull
   AllowedValues[] allowedValues() default {};
 
   /**
@@ -115,7 +115,7 @@ public @interface MetaschemaAssembly {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
-  @NotNull
+  @NonNull
   Matches[] matches() default {};
 
   /**
@@ -123,7 +123,7 @@ public @interface MetaschemaAssembly {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
-  @NotNull
+  @NonNull
   IndexHasKey[] indexHasKey() default {};
 
   /**
@@ -131,7 +131,7 @@ public @interface MetaschemaAssembly {
    * 
    * @return the expected constraints or an empty array if no expected constraints are defined
    */
-  @NotNull
+  @NonNull
   Expect[] expect() default {};
 
   /**
@@ -139,7 +139,7 @@ public @interface MetaschemaAssembly {
    * 
    * @return the index constraints or an empty array if no index constraints are defined
    */
-  @NotNull
+  @NonNull
   Index[] index() default {};
 
   /**
@@ -147,7 +147,7 @@ public @interface MetaschemaAssembly {
    * 
    * @return the unique constraints or an empty array if no unique constraints are defined
    */
-  @NotNull
+  @NonNull
   IsUnique[] isUnique() default {};
 
   /**
@@ -155,7 +155,7 @@ public @interface MetaschemaAssembly {
    * 
    * @return the cardinality constraints or an empty array if no cardinality constraints are defined
    */
-  @NotNull
+  @NonNull
   HasCardinality[] hasCardinality() default {};
 
   /**
@@ -163,6 +163,6 @@ public @interface MetaschemaAssembly {
    * 
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
-  @NotNull
-  String remarks() default "##none";
+  @NonNull
+  String remarks() default Constants.NO_STRING_VALUE;
 }

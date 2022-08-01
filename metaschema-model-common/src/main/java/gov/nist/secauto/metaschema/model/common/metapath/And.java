@@ -29,9 +29,9 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnBoolean;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class And // NOPMD - intentional name
     extends AbstractNAryExpression
@@ -45,7 +45,7 @@ class And // NOPMD - intentional name
    * @param expressions
    *          the list of expressions
    */
-  protected And(@NotNull List<@NotNull IExpression> expressions) {
+  protected And(@NonNull List<IExpression> expressions) {
     super(expressions);
   }
 

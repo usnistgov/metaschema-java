@@ -28,27 +28,27 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class Intersect
     extends AbstractFilterExpression {
 
-  protected Intersect(@NotNull IExpression left, @NotNull IExpression right) {
+  protected Intersect(@NonNull IExpression left, @NonNull IExpression right) {
     super(left, right);
   }
 
   @SuppressWarnings("null")
   @Override
-  protected ISequence<?> applyFilterTo(@NotNull ISequence<?> result, @NotNull List<@NotNull ? extends IItem> items) {
+  protected ISequence<?> applyFilterTo(@NonNull ISequence<?> result, @NonNull List<? extends IItem> items) {
     return ISequence.of(result.asStream()
         .distinct()
         .filter(items::contains));
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(@NotNull IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+  public <RESULT, CONTEXT> RESULT accept(@NonNull IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitIntersect(this, context);
   }
 }

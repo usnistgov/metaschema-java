@@ -28,14 +28,14 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractFilterExpression
     extends AbstractBinaryExpression<IExpression, IExpression> {
 
-  @NotNull
+  @NonNull
   private final Class<? extends IItem> staticResultType;
 
   /**
@@ -47,7 +47,7 @@ abstract class AbstractFilterExpression
    *          an expression indicating the items to use as the filter
    */
   @SuppressWarnings("null")
-  public AbstractFilterExpression(@NotNull IExpression left, @NotNull IExpression right) {
+  public AbstractFilterExpression(@NonNull IExpression left, @NonNull IExpression right) {
     super(left, right);
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, List.of(left, right));
   }
@@ -58,12 +58,12 @@ abstract class AbstractFilterExpression
   }
 
   @Override
-  public ISequence<? extends IItem> accept(@NotNull DynamicContext dynamicContext,
-      @NotNull INodeContext context) {
+  public ISequence<? extends IItem> accept(@NonNull DynamicContext dynamicContext,
+      @NonNull INodeContext context) {
 
     ISequence<?> left = getLeft().accept(dynamicContext, context);
     ISequence<?> right = getRight().accept(dynamicContext, context);
-    List<@NotNull ? extends IItem> rightList = right.asList();
+    List<? extends IItem> rightList = right.asList();
 
     return applyFilterTo(left, rightList);
   }
@@ -77,7 +77,7 @@ abstract class AbstractFilterExpression
    *          a list of items to filter with
    * @return the filtered result set
    */
-  @NotNull
-  protected abstract ISequence<?> applyFilterTo(@NotNull ISequence<?> result,
-      @NotNull List<@NotNull ? extends IItem> items);
+  @NonNull
+  protected abstract ISequence<?> applyFilterTo(@NonNull ISequence<?> result,
+      @NonNull List<? extends IItem> items);
 }

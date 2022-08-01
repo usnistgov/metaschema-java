@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.object;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.ZonedDateTime;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DateTime
     extends AbstractAmbiguousTemporal<DateTime> {
@@ -43,7 +43,7 @@ public class DateTime
    *          {@code true} if the date/time is intended to have an associated time zone or
    *          {@code false} otherwise
    */
-  public DateTime(@NotNull ZonedDateTime value, boolean hasTimeZone) {
+  public DateTime(@NonNull ZonedDateTime value, boolean hasTimeZone) {
     super(value, hasTimeZone);
   }
 

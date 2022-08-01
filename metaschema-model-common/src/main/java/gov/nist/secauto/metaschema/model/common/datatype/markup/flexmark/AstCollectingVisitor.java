@@ -29,18 +29,18 @@ package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeVisitorBase;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class AstCollectingVisitor
     extends NodeVisitorBase {
   public static final String EOL = "\n";
-  @NotNull
+  @NonNull
   protected StringBuilder output = new StringBuilder(); // NOPMD - intentional
   protected int indent; // 0;
   protected boolean eolPending; // false;
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   protected String getAst() {
     return output.toString();
   }
@@ -69,18 +69,18 @@ public class AstCollectingVisitor
     }
   }
 
-  @NotNull
-  public String collectAndGetAstText(@NotNull Node node) {
+  @NonNull
+  public String collectAndGetAstText(@NonNull Node node) {
     visit(node);
     return getAst();
   }
 
-  public void collect(@NotNull Node node) {
+  public void collect(@NonNull Node node) {
     visit(node);
   }
 
   @Override
-  protected void visit(@NotNull Node node) {
+  protected void visit(@NonNull Node node) {
     appendIndent();
     node.astString(output, true);
     output.append(EOL);

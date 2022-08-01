@@ -26,10 +26,11 @@
 
 package gov.nist.secauto.metaschema.codegen.binding.config;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.Collection;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 interface IDefinitionBindingConfiguration {
   /**
@@ -53,6 +54,6 @@ interface IDefinitionBindingConfiguration {
    * 
    * @return a list of fully qualified type names for interfaces
    */
-  @NotNull
-  Collection<@NotNull String> getInterfacesToImplement();
+  @NonNull
+  Collection<String> getInterfacesToImplement();
 }

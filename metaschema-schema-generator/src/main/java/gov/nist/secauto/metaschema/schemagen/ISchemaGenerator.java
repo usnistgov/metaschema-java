@@ -29,12 +29,12 @@ package gov.nist.secauto.metaschema.schemagen;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.io.Writer;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface ISchemaGenerator {
-  void generateFromMetaschema(@NotNull IMetaschema metaschema, @NotNull Writer outconfiguration,
-      @NotNull IConfiguration<SchemaGenerationFeature> configuration) throws IOException;
+  void generateFromMetaschema(@NonNull IMetaschema metaschema, @NonNull Writer outconfiguration,
+      @NonNull IConfiguration<SchemaGenerationFeature> configuration) throws IOException;
 }

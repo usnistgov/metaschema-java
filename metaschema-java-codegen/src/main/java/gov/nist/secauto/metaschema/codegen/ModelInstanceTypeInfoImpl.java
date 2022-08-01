@@ -53,7 +53,6 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -62,6 +61,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.lang.model.element.Modifier;
 
 class ModelInstanceTypeInfoImpl
@@ -69,13 +69,13 @@ class ModelInstanceTypeInfoImpl
     implements IModelInstanceTypeInfo {
   private static final Logger LOGGER = LogManager.getLogger(ModelInstanceTypeInfoImpl.class);
 
-  public ModelInstanceTypeInfoImpl(@NotNull INamedModelInstance instance,
-      @NotNull IAssemblyDefinitionTypeInfo parentDefinition) {
+  public ModelInstanceTypeInfoImpl(@NonNull INamedModelInstance instance,
+      @NonNull IAssemblyDefinitionTypeInfo parentDefinition) {
     super(instance, parentDefinition);
   }
 
   @Override
-  public @NotNull String getBaseName() {
+  public @NonNull String getBaseName() {
     INamedModelInstance modelInstance = getInstance();
     String retval;
     if (modelInstance.getMaxOccurs() == -1 || modelInstance.getMaxOccurs() > 1) {
@@ -92,7 +92,7 @@ class ModelInstanceTypeInfoImpl
   }
 
   @Override
-  public @NotNull TypeName getJavaItemType() {
+  public @NonNull TypeName getJavaItemType() {
     INamedModelInstance instance = getInstance();
 
     TypeName retval;
@@ -117,10 +117,10 @@ class ModelInstanceTypeInfoImpl
   }
 
   @Override
-  public @NotNull TypeName getJavaFieldType() {
+  public @NonNull TypeName getJavaFieldType() {
     TypeName item = getJavaItemType();
 
-    @NotNull
+    @NonNull
     TypeName retval;
     INamedModelInstance instance = getInstance();
     int maxOccurance = instance.getMaxOccurs();
@@ -162,7 +162,7 @@ class ModelInstanceTypeInfoImpl
     if (modelInstance.getDescription() != null) {
       fieldAnnoation.addMember("description", "$S", modelInstance.getDescription().toMarkdown());
     }
-    
+
     fieldAnnoation.addMember("useName", "$S", modelInstance.getEffectiveName());
 
     IModelDefinition definition = modelInstance.getDefinition();
@@ -231,7 +231,7 @@ class ModelInstanceTypeInfoImpl
       fieldAnnoation.addMember("inXml", "$T.$L",
           XmlGroupAsBehavior.class, xmlGroupAsBehavior.toString());
     }
-    
+
     MarkupMultiline remarks = modelInstance.getRemarks();
     if (remarks != null) {
       fieldAnnoation.addMember("remarks", "$S", remarks.toMarkdown());
@@ -242,8 +242,8 @@ class ModelInstanceTypeInfoImpl
   }
 
   @Override
-  public void buildExtraMethods(@NotNull TypeSpec.Builder builder, @NotNull FieldSpec valueField,
-      @NotNull ITypeResolver typeResolver) {
+  public void buildExtraMethods(@NonNull TypeSpec.Builder builder, @NonNull FieldSpec valueField,
+      @NonNull ITypeResolver typeResolver) {
     INamedModelInstance instance = getInstance();
     int maxOccurance = instance.getMaxOccurs();
     if (maxOccurance == -1 || maxOccurance > 1) {

@@ -30,19 +30,37 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 @Retention(RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Metaschema {
+  /**
+   * Get the classes representing the global fields defined on this Metaschema.
+   * 
+   * @return an array of field classes
+   */
+  @NonNull
   Class<?>[] fields() default {};
 
+  /**
+   * Get the classes representing the global assemblies defined on this Metaschema.
+   * 
+   * @return an array of assembly classes
+   */
+  @NonNull
   Class<?>[] assemblies() default {};
 
+  /**
+   * Get the classes representing the Metaschemas imported by this Metaschema.
+   * 
+   * @return an array of imported Metaschemas
+   */
+  @NonNull
   Class<? extends AbstractBoundMetaschema>[] imports() default {};
 
   /**
@@ -50,6 +68,6 @@ public @interface Metaschema {
    * 
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
-  @NotNull
-  String remarks() default "##none";
+  @NonNull
+  String remarks() default Constants.NO_STRING_VALUE;
 }

@@ -26,12 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IRequiredValueFieldNodeItem extends IFieldNodeItem, IRequiredValueModelNodeItem {
 
@@ -49,7 +49,7 @@ public interface IRequiredValueFieldNodeItem extends IFieldNodeItem, IRequiredVa
   }
 
   @Override
-  @NotNull
+  @NonNull
   IAnyAtomicItem toAtomicItem();
 
   /**
@@ -57,7 +57,7 @@ public interface IRequiredValueFieldNodeItem extends IFieldNodeItem, IRequiredVa
    */
   @SuppressWarnings("null")
   @Override
-  default Collection<@NotNull ? extends List<@NotNull ? extends IRequiredValueModelNodeItem>> getModelItems() {
+  default Collection<? extends List<? extends IRequiredValueModelNodeItem>> getModelItems() {
     // a field does not have model items
     return Collections.emptyList();
   }
@@ -67,7 +67,7 @@ public interface IRequiredValueFieldNodeItem extends IFieldNodeItem, IRequiredVa
    */
   @SuppressWarnings("null")
   @Override
-  default List<@NotNull ? extends IRequiredValueModelNodeItem> getModelItemsByName(String name) {
+  default List<? extends IRequiredValueModelNodeItem> getModelItemsByName(String name) {
     // a field does not have model items
     return Collections.emptyList();
   }
@@ -76,9 +76,9 @@ public interface IRequiredValueFieldNodeItem extends IFieldNodeItem, IRequiredVa
    * Fields do not have model items. This call should return an empty stream.
    */
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   @Override
-  default Stream<@NotNull ? extends IRequiredValueModelNodeItem> modelItems() {
+  default Stream<? extends IRequiredValueModelNodeItem> modelItems() {
     return Stream.empty();
   }
 }

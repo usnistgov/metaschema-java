@@ -34,15 +34,16 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.net.URI;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public final class FnDocumentUri {
 
-  @NotNull
+  @NonNull
   static final IFunction SIGNATURE_NO_ARG = IFunction.builder()
       .name("document-uri")
       .deterministic()
@@ -53,7 +54,7 @@ public final class FnDocumentUri {
       .functionHandler(FnDocumentUri::executeNoArg)
       .build();
 
-  @NotNull
+  @NonNull
   static final IFunction SIGNATURE_ONE_ARG = IFunction.builder()
       .name("document-uri")
       .deterministic()
@@ -74,10 +75,10 @@ public final class FnDocumentUri {
   }
 
   @SuppressWarnings("unused")
-  @NotNull
-  private static ISequence<IAnyUriItem> executeNoArg(@NotNull IFunction function,
-      @NotNull List<@NotNull ISequence<?>> arguments,
-      @NotNull DynamicContext dynamicContext,
+  @NonNull
+  private static ISequence<IAnyUriItem> executeNoArg(@NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
       INodeItem focus) {
 
     INodeItem item = focus;
@@ -93,13 +94,13 @@ public final class FnDocumentUri {
   }
 
   @SuppressWarnings("unused")
-  @NotNull
-  private static ISequence<IAnyUriItem> executeOneArg(@NotNull IFunction function,
-      @NotNull List<@NotNull ISequence<?>> arguments,
-      @NotNull DynamicContext dynamicContext,
+  @NonNull
+  private static ISequence<IAnyUriItem> executeOneArg(@NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
       INodeItem focus) {
 
-    ISequence<? extends INodeItem> arg = FunctionUtils.asType(arguments.get(0));
+    ISequence<? extends INodeItem> arg = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
 
     INodeItem item = FunctionUtils.getFirstItem(arg, true);
 
@@ -126,8 +127,8 @@ public final class FnDocumentUri {
    *          the document to get the URI for
    * @return the URI of the document
    */
-  @NotNull
-  public static IAnyUriItem fnDocumentUri(@NotNull IDocumentNodeItem document) {
+  @NonNull
+  public static IAnyUriItem fnDocumentUri(@NonNull IDocumentNodeItem document) {
     URI documentUri = document.getDocumentUri();
     return IAnyUriItem.valueOf(documentUri);
   }

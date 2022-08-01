@@ -33,11 +33,11 @@ import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstra
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * This annotation defines a set of values permitted to be used in the context of the containing
@@ -52,7 +52,7 @@ public @interface AllowedValues {
    * 
    * @return the identifier if provided or an empty string otherwise
    */
-  @NotNull
+  @NonNull
   String id() default "";
 
   /**
@@ -60,7 +60,7 @@ public @interface AllowedValues {
    * 
    * @return the level
    */
-  @NotNull
+  @NonNull
   Level level() default IConstraint.Level.ERROR;
 
   /**
@@ -73,7 +73,7 @@ public @interface AllowedValues {
    * 
    * @return the target metapath
    */
-  @NotNull
+  @NonNull
   String target() default IConstraint.DEFAULT_TARGET_METAPATH;
 
   /**
@@ -81,7 +81,7 @@ public @interface AllowedValues {
    * 
    * @return an array of allowed value enumerations
    */
-  @NotNull
+  @NonNull
   AllowedValue[] values();
 
   /**
@@ -91,7 +91,12 @@ public @interface AllowedValues {
    */
   boolean allowOthers() default IAllowedValuesConstraint.DEFAULT_ALLOW_OTHER;
 
-  @NotNull
+  /**
+   * Indicates if the constraint can be extended by other constraints.
+   * 
+   * @return the extension mode
+   */
+  @NonNull
   IAllowedValuesConstraint.Extensible extensible() default IAllowedValuesConstraint.Extensible.MODEL;
 
   /**
@@ -99,7 +104,7 @@ public @interface AllowedValues {
    * 
    * @return the message or an empty string otherwise
    */
-  @NotNull
+  @NonNull
   String message() default "";
 
   /**
@@ -107,7 +112,7 @@ public @interface AllowedValues {
    * 
    * @return an encoded markdown string or an empty string if no remarks are provided
    */
-  @NotNull
+  @NonNull
   String remarks() default "";
 
 }

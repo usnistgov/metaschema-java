@@ -33,13 +33,14 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public final class FnNot {
-  @NotNull
+  @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("not")
       .deterministic()
@@ -60,14 +61,13 @@ public final class FnNot {
   }
 
   @SuppressWarnings("unused")
-  @NotNull
-  private static ISequence<IBooleanItem> execute(@NotNull IFunction function,
-      @NotNull List<@NotNull ISequence<?>> arguments,
-      @NotNull DynamicContext dynamicContext,
+  @NonNull
+  private static ISequence<IBooleanItem> execute(@NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
       INodeItem focus) {
 
-    @SuppressWarnings("null")
-    ISequence<?> items = arguments.iterator().next();
+    ISequence<?> items = ObjectUtils.requireNonNull(arguments.iterator().next());
 
     IBooleanItem result = fnNot(items);
     return ISequence.of(result);
@@ -83,8 +83,8 @@ public final class FnNot {
    *          the item to get the negated, effective boolean value for
    * @return the negated boolean value
    */
-  @NotNull
-  public static IBooleanItem fnNot(@NotNull IItem item) {
+  @NonNull
+  public static IBooleanItem fnNot(@NonNull IItem item) {
     return IBooleanItem.valueOf(!FnBoolean.fnBooleanAsPrimitive(item));
   }
 
@@ -98,7 +98,7 @@ public final class FnNot {
    *          the sequence to get the negated, effective boolean value for
    * @return the negated boolean value
    */
-  @NotNull
+  @NonNull
   public static IBooleanItem fnNot(ISequence<?> sequence) {
     return FnBoolean.fnBoolean(sequence).negate();
   }

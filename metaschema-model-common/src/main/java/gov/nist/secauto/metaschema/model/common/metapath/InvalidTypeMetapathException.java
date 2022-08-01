@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class InvalidTypeMetapathException
     extends TypeMetapathException {
@@ -42,18 +42,18 @@ public class InvalidTypeMetapathException
   @Nullable
   private final IItem item;
 
-  public InvalidTypeMetapathException(@NotNull IItem item, @NotNull Throwable cause) {
+  public InvalidTypeMetapathException(@NonNull IItem item, @NonNull Throwable cause) {
     super(TypeMetapathException.INVALID_TYPE_ERROR, String.format("Invalid data type '%s'", item.getClass().getName()),
         cause);
     this.item = item;
   }
 
-  public InvalidTypeMetapathException(@NotNull IItem item) {
+  public InvalidTypeMetapathException(@NonNull IItem item) {
     super(TypeMetapathException.INVALID_TYPE_ERROR, String.format("Invalid data type '%s'", item.getClass().getName()));
     this.item = item;
   }
 
-  public InvalidTypeMetapathException(@Nullable IItem item, @Nullable String message, @NotNull Throwable cause) {
+  public InvalidTypeMetapathException(@Nullable IItem item, @Nullable String message, @NonNull Throwable cause) {
     super(TypeMetapathException.INVALID_TYPE_ERROR, message, cause);
     this.item = item;
   }

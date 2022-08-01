@@ -34,21 +34,21 @@ import gov.nist.secauto.metaschema.model.common.configuration.IConfigurationFeat
 import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Set;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractSerializationBase<T extends Enum<T> & IConfigurationFeature>
     implements IMutableConfiguration<T> {
-  @NotNull
+  @NonNull
   private final IBindingContext bindingContext;
-  @NotNull
+  @NonNull
   private final IAssemblyClassBinding classBinding;
-  @NotNull
+  @NonNull
   private final DefaultConfiguration<T> configuration;
 
-  protected AbstractSerializationBase(@NotNull IBindingContext bindingContext,
-      @NotNull IAssemblyClassBinding classBinding, @NotNull Class<T> configurationEnum) {
+  protected AbstractSerializationBase(@NonNull IBindingContext bindingContext,
+      @NonNull IAssemblyClassBinding classBinding, @NonNull Class<T> configurationEnum) {
     this.bindingContext = ObjectUtils.requireNonNull(bindingContext, "bindingContext");
     this.classBinding = ObjectUtils.requireNonNull(classBinding, "classBinding");
     this.configuration = new DefaultConfiguration<>(configurationEnum);
@@ -59,7 +59,7 @@ abstract class AbstractSerializationBase<T extends Enum<T> & IConfigurationFeatu
    * 
    * @return the binding context
    */
-  @NotNull
+  @NonNull
   protected IBindingContext getBindingContext() {
     return bindingContext;
   }
@@ -70,7 +70,7 @@ abstract class AbstractSerializationBase<T extends Enum<T> & IConfigurationFeatu
    * 
    * @return the class binding for the Metaschema assembly
    */
-  @NotNull
+  @NonNull
   protected IAssemblyClassBinding getClassBinding() {
     return classBinding;
   }
@@ -80,7 +80,7 @@ abstract class AbstractSerializationBase<T extends Enum<T> & IConfigurationFeatu
    * 
    * @return the configuration
    */
-  @NotNull
+  @NonNull
   protected IConfiguration<T> getConfiguration() {
     return configuration;
   }
@@ -101,13 +101,13 @@ abstract class AbstractSerializationBase<T extends Enum<T> & IConfigurationFeatu
   }
 
   @Override
-  public Set<@NotNull T> getFeatureSet() {
+  public Set<T> getFeatureSet() {
     return configuration.getFeatureSet();
   }
 
   @Override
   public IMutableConfiguration<T>
-      applyConfiguration(@NotNull IConfiguration<T> other) {
+      applyConfiguration(@NonNull IConfiguration<T> other) {
     return configuration.applyConfiguration(other);
   }
 }

@@ -33,18 +33,18 @@ import com.vladsch.flexmark.util.ast.Node;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
 
 import org.codehaus.stax2.XMLStreamWriter2;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.OutputStream;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.xml.stream.XMLStreamException;
 
 public interface IMarkupText {
-  @NotNull
+  @NonNull
   Document getDocument();
 
   /**
@@ -57,7 +57,7 @@ public interface IMarkupText {
    * @throws XMLStreamException
    *           if an error occurred while writing
    */
-  void writeHtml(@NotNull XMLStreamWriter2 writer, @NotNull String namespace) throws XMLStreamException;
+  void writeHtml(@NonNull XMLStreamWriter2 writer, @NonNull String namespace) throws XMLStreamException;
 
   /**
    * Write HTML content to the provided {@code outputStream} using the provided {@code namespace}.
@@ -71,18 +71,18 @@ public interface IMarkupText {
    * @throws XMLStreamException
    *           if an error occurred while writing
    */
-  void writeHtml(@NotNull OutputStream outputStream, @Nullable String namespace, @Nullable String prefix)
+  void writeHtml(@NonNull OutputStream outputStream, @Nullable String namespace, @Nullable String prefix)
       throws XMLStreamException;
 
-  @NotNull
+  @NonNull
   String toHtml();
 
-  @NotNull
+  @NonNull
   String toMarkdown();
 
   String toMarkdown(Formatter formatter);
 
-  @NotNull
+  @NonNull
   String toMarkdownYaml();
 
   /**
@@ -90,10 +90,10 @@ public interface IMarkupText {
    * 
    * @return a depth first stream
    */
-  @NotNull
+  @NonNull
   Stream<Node> getNodesAsStream();
 
-  @NotNull
+  @NonNull
   default List<InsertAnchorNode> getInserts() {
     return getInserts(insert -> true);
   }
@@ -106,7 +106,7 @@ public interface IMarkupText {
    *          a filter used to identify matching insert statements
    * @return the matching insert statements
    */
-  @NotNull
+  @NonNull
   List<InsertAnchorNode> getInserts(
-      @NotNull Predicate<InsertAnchorNode> filter);
+      @NonNull Predicate<InsertAnchorNode> filter);
 }

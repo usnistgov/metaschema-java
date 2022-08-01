@@ -28,14 +28,14 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A {@link INodeItem} supported by a {@link IFlagInstance}, that does not have an associated value.
  */
 class FlagInstanceNodeItemImpl
     extends AbstractFlagInstanceNodeItem<IModelNodeItem> {
-  public FlagInstanceNodeItemImpl(@NotNull IFlagInstance instance, @NotNull IModelNodeItem parent) {
+  public FlagInstanceNodeItemImpl(@NonNull IFlagInstance instance, @NonNull IModelNodeItem parent) {
     super(instance, parent);
   }
 

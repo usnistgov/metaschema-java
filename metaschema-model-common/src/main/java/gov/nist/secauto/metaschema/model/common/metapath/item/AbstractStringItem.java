@@ -26,13 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractStringItem
     extends AbstractAnyAtomicItem<String>
     implements IStringItem {
 
-  public AbstractStringItem(@NotNull String value) {
+  public AbstractStringItem(@NonNull String value) {
     super(value);
   }
 

@@ -28,17 +28,17 @@ package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DefinitionProductionImpl implements IDefinitionProduction {
 
-  @NotNull
+  @NonNull
   private final IModelDefinition definition;
-  @NotNull
+  @NonNull
   private final DefaultGeneratedDefinitionClass generatedClass;
 
-  public DefinitionProductionImpl(@NotNull IModelDefinition definition,
-      @NotNull DefaultGeneratedDefinitionClass generatedClass) {
+  public DefinitionProductionImpl(@NonNull IModelDefinition definition,
+      @NonNull DefaultGeneratedDefinitionClass generatedClass) {
     this.definition = definition;
     this.generatedClass = generatedClass;
   }

@@ -26,30 +26,39 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import org.jetbrains.annotations.NotNull;
-
 import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IRootAssemblyDefinition extends IAssemblyDefinition {
 
-  @NotNull
-  static <T extends IAssemblyDefinition> IRootAssemblyDefinition toRootAssemblyDefinition(@NotNull T rootDefinition) {
+  /**
+   * Create a root assembly definition from a qualified assembly with root characteristics.
+   * 
+   * @param <T>
+   *          the definition type
+   * @param rootDefinition
+   *          the definition to create a root defintion from
+   * @return the root definition
+   */
+  @NonNull
+  static <T extends IAssemblyDefinition> IRootAssemblyDefinition toRootAssemblyDefinition(@NonNull T rootDefinition) {
     return new RootAssemblyDefinitionWrapper<IAssemblyDefinition>(rootDefinition);
   }
 
-  @NotNull
+  @NonNull
   @Override
   String getRootName();
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   @Override
   default QName getRootXmlQName() {
     return IAssemblyDefinition.super.getRootXmlQName();
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   @Override
   default String getRootJsonName() {
     return IAssemblyDefinition.super.getRootJsonName();

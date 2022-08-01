@@ -28,15 +28,15 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractRootPathExpression
     extends AbstractPathExpression<INodeItem> {
-  @NotNull
+  @NonNull
   private final IExpression expression;
-  @NotNull
+  @NonNull
   private final Class<? extends INodeItem> staticResultType;
 
   /**
@@ -46,7 +46,7 @@ abstract class AbstractRootPathExpression
    *          the path expression to evaluate from the root
    */
   @SuppressWarnings("null")
-  public AbstractRootPathExpression(@NotNull IExpression expression) {
+  public AbstractRootPathExpression(@NonNull IExpression expression) {
     this.expression = expression;
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(INodeItem.class, List.of(expression));
   }
@@ -56,7 +56,7 @@ abstract class AbstractRootPathExpression
    * 
    * @return the expression
    */
-  @NotNull
+  @NonNull
   public IExpression getExpression() {
     return expression;
   }

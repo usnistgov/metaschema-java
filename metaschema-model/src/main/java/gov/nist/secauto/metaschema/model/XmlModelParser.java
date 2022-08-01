@@ -40,7 +40,6 @@ import gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -50,14 +49,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class XmlModelParser {
-  private Map<@NotNull String, INamedModelInstance> namedModelInstances;
-  private Map<@NotNull String, IFieldInstance> fieldInstances;
-  private Map<@NotNull String, IAssemblyInstance> assemblyInstances;
-  private List<@NotNull ? extends IModelInstance> modelInstances;
+  private Map<String, INamedModelInstance> namedModelInstances;
+  private Map<String, IFieldInstance> fieldInstances;
+  private Map<String, IAssemblyInstance> assemblyInstances;
+  private List<? extends IModelInstance> modelInstances;
 
   // TODO: move back to calling location
-  void parseChoice(XmlObject xmlObject, @NotNull IAssemblyDefinition parent) {
+  void parseChoice(XmlObject xmlObject, @NonNull IAssemblyDefinition parent) {
     XmlCursor cursor = xmlObject.newCursor();
     cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
         + "$this/m:assembly|$this/m:define-assembly|$this/m:field"
@@ -66,7 +67,7 @@ class XmlModelParser {
   }
 
   // TODO: move back to calling location
-  void parseModel(XmlObject xmlObject, @NotNull IAssemblyDefinition parent) {
+  void parseModel(XmlObject xmlObject, @NonNull IAssemblyDefinition parent) {
     // handle the model
     XmlCursor cursor = xmlObject.newCursor();
     cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
@@ -77,14 +78,14 @@ class XmlModelParser {
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  protected <S> Stream<S> append(@NotNull Stream<S> original, @NotNull S item) {
+  @NonNull
+  protected <S> Stream<S> append(@NonNull Stream<S> original, @NonNull S item) {
     Stream<S> newStream = Stream.of(item).sequential();
     return Stream.concat(original, newStream);
   }
 
   @SuppressWarnings("null")
-  private void parseInternal(XmlCursor cursor, @NotNull IAssemblyDefinition parent) {
+  private void parseInternal(XmlCursor cursor, @NonNull IAssemblyDefinition parent) {
 
     // ensure the streams are treated as sequential, since concatenated streams will only be sequential
     // if both streams are sequential
@@ -146,26 +147,26 @@ class XmlModelParser {
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  public Map<@NotNull String, ? extends IFieldInstance> getFieldInstances() {
+  @NonNull
+  public Map<String, ? extends IFieldInstance> getFieldInstances() {
     return fieldInstances == null ? Collections.emptyMap() : fieldInstances;
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  public Map<@NotNull String, ? extends IAssemblyInstance> getAssemblyInstances() {
+  @NonNull
+  public Map<String, ? extends IAssemblyInstance> getAssemblyInstances() {
     return assemblyInstances == null ? Collections.emptyMap() : assemblyInstances;
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  public Map<@NotNull String, ? extends INamedModelInstance> getNamedModelInstances() {
+  @NonNull
+  public Map<String, ? extends INamedModelInstance> getNamedModelInstances() {
     return namedModelInstances == null ? Collections.emptyMap() : namedModelInstances;
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  protected List<@NotNull ? extends IModelInstance> getModelInstances() {
+  @NonNull
+  protected List<? extends IModelInstance> getModelInstances() {
     return modelInstances == null ? Collections.emptyList() : modelInstances;
   }
 }

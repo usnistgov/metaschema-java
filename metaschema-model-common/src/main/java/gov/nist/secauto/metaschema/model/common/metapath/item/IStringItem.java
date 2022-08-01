@@ -29,11 +29,11 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IStringItem extends IAnyAtomicItem {
-  @NotNull
-  public static IStringItem valueOf(@NotNull String value) {
+  @NonNull
+  public static IStringItem valueOf(@NonNull String value) {
     try {
       return new StringItemImpl(MetaschemaDataTypeProvider.STRING.parse(value));
     } catch (IllegalArgumentException ex) {
@@ -42,8 +42,8 @@ public interface IStringItem extends IAnyAtomicItem {
     }
   }
 
-  @NotNull
-  public static IStringItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  @NonNull
+  public static IStringItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.STRING.cast(item);
   }
 
@@ -52,8 +52,8 @@ public interface IStringItem extends IAnyAtomicItem {
     return this;
   }
 
-  @NotNull
-  default IIntegerItem compare(@NotNull IStringItem other) {
+  @NonNull
+  default IIntegerItem compare(@NonNull IStringItem other) {
     String leftString = this.asString();
     String rightString = other.asString();
     return IIntegerItem.valueOf(leftString.compareTo(rightString));

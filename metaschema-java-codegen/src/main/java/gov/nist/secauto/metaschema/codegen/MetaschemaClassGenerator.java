@@ -45,42 +45,41 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.lang.model.element.Modifier;
 
 class MetaschemaClassGenerator {
-  @NotNull
+  @NonNull
   private final IMetaschema metaschema;
-  @NotNull
+  @NonNull
   private final ITypeResolver typeResolver;
 
-  public MetaschemaClassGenerator(@NotNull IMetaschema metaschema, @NotNull ITypeResolver typeResolver) {
+  public MetaschemaClassGenerator(@NonNull IMetaschema metaschema, @NonNull ITypeResolver typeResolver) {
     this.metaschema = ObjectUtils.requireNonNull(metaschema, "metaschema");
     this.typeResolver = ObjectUtils.requireNonNull(typeResolver, "typeResolver");
   }
 
-  @NotNull
+  @NonNull
   protected IMetaschema getMetaschema() {
     return metaschema;
   }
 
-  @NotNull
+  @NonNull
   protected ITypeResolver getTypeResolver() {
     return typeResolver;
   }
 
-  @NotNull
+  @NonNull
   public ClassName getClassName() {
     return getTypeResolver().getClassName(getMetaschema());
   }
 
-  @NotNull
+  @NonNull
   public IGeneratedClass generateClass(Path outputDir) throws IOException {
     ClassName className = getClassName();
 
@@ -92,8 +91,8 @@ class MetaschemaClassGenerator {
     return new DefaultGeneratedClass(classFile, className);
   }
 
-  @NotNull
-  protected TypeSpec.Builder generateClass(@NotNull ClassName className) { // NOPMD - long, but readable
+  @NonNull
+  protected TypeSpec.Builder generateClass(@NonNull ClassName className) { // NOPMD - long, but readable
     // create the class
     TypeSpec.Builder builder = TypeSpec.classBuilder(className).addModifiers(Modifier.PUBLIC, Modifier.FINAL);
 

@@ -29,14 +29,14 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DefaultIndexHasKeyConstraint
     extends AbstractKeyConstraint
     implements IIndexHasKeyConstraint {
-  @NotNull
+  @NonNull
   private final String indexName;
 
   /**
@@ -60,11 +60,11 @@ public class DefaultIndexHasKeyConstraint
    */
   public DefaultIndexHasKeyConstraint(
       String id,
-      @NotNull ISource source,
-      @NotNull Level level,
-      @NotNull MetapathExpression target,
+      @NonNull ISource source,
+      @NonNull Level level,
+      @NonNull MetapathExpression target,
       String indexName,
-      @NotNull List<@NotNull DefaultKeyField> keyFields,
+      @NonNull List<DefaultKeyField> keyFields,
       MarkupMultiline remarks) {
     super(id, source, level, target, keyFields, remarks);
     if (indexName.isBlank()) {

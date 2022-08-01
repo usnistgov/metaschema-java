@@ -29,25 +29,25 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.Period;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IYearMonthDurationItem extends IDurationItem {
 
-  @NotNull
-  public static IYearMonthDurationItem valueOf(@NotNull Period value) {
+  @NonNull
+  public static IYearMonthDurationItem valueOf(@NonNull Period value) {
     return new YearMonthDurationItemImpl(value);
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   public static IYearMonthDurationItem valueOf(int years, int months, int days) {
     return valueOf(Period.of(years, months, days));
   }
 
-  @NotNull
-  public static IYearMonthDurationItem valueOf(@NotNull String value) {
+  @NonNull
+  public static IYearMonthDurationItem valueOf(@NonNull String value) {
     try {
       Period period = MetaschemaDataTypeProvider.YEAR_MONTH_DURATION.parse(value);
       return valueOf(period);
@@ -57,8 +57,8 @@ public interface IYearMonthDurationItem extends IDurationItem {
     }
   }
 
-  @NotNull
-  public static IYearMonthDurationItem cast(@NotNull IAnyAtomicItem item) {
+  @NonNull
+  public static IYearMonthDurationItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.YEAR_MONTH_DURATION.cast(item);
   }
 

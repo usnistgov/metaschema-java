@@ -32,7 +32,6 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -43,6 +42,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Provides a common, abstract implementation of a {@link IMetaschema}.
  */
@@ -50,23 +52,30 @@ public abstract class AbstractMetaschema
     implements IMetaschema {
   private static final Logger LOGGER = LogManager.getLogger(AbstractMetaschema.class);
 
-  @NotNull
-  private final List<@NotNull ? extends IMetaschema> importedMetaschemas;
-  private Map<@NotNull String, IFlagDefinition> exportedFlagDefinitions;
-  private Map<@NotNull String, IFieldDefinition> exportedFieldDefinitions;
-  private Map<@NotNull String, IAssemblyDefinition> exportedAssemblyDefinitions;
+  @NonNull
+  private final List<? extends IMetaschema> importedMetaschemas;
+  private Map<String, IFlagDefinition> exportedFlagDefinitions;
+  private Map<String, IFieldDefinition> exportedFieldDefinitions;
+  private Map<String, IAssemblyDefinition> exportedAssemblyDefinitions;
 
-  public AbstractMetaschema(@NotNull List<@NotNull ? extends IMetaschema> importedMetaschemas) {
+  /**
+   * Construct a new Metaschema object.
+   * 
+   * @param importedMetaschemas
+   *          the collection of Metaschema objects this Metaschema imports
+   */
+  public AbstractMetaschema(@NonNull List<? extends IMetaschema> importedMetaschemas) {
     this.importedMetaschemas
         = CollectionUtil.unmodifiableList(ObjectUtils.requireNonNull(importedMetaschemas, "importedMetaschema"));
   }
 
   @Override
-  public @NotNull List<@NotNull ? extends IMetaschema> getImportedMetaschemas() {
+  @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "interface doesn't allow modification")
+  public List<? extends IMetaschema> getImportedMetaschemas() {
     return importedMetaschemas;
   }
 
-  protected Map<@NotNull String, ? extends IMetaschema> getImportedMetaschemaByShortNames() {
+  private Map<String, ? extends IMetaschema> getImportedMetaschemaByShortNames() {
     return importedMetaschemas.stream().collect(Collectors.toMap(IMetaschema::getShortName, Function.identity()));
   }
 
@@ -77,7 +86,7 @@ public abstract class AbstractMetaschema
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IFlagDefinition> getExportedFlagDefinitions() {
+  public Collection<? extends IFlagDefinition> getExportedFlagDefinitions() {
     return getExportedFlagDefinitionMap().values();
   }
 
@@ -86,14 +95,14 @@ public abstract class AbstractMetaschema
     return getExportedFlagDefinitionMap().get(name);
   }
 
-  protected Map<@NotNull String, ? extends IFlagDefinition> getExportedFlagDefinitionMap() {
+  private Map<String, ? extends IFlagDefinition> getExportedFlagDefinitionMap() {
     initExports();
     return exportedFlagDefinitions;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IFieldDefinition> getExportedFieldDefinitions() {
+  public Collection<? extends IFieldDefinition> getExportedFieldDefinitions() {
     return getExportedFieldDefinitionMap().values();
   }
 
@@ -102,14 +111,14 @@ public abstract class AbstractMetaschema
     return getExportedFieldDefinitionMap().get(name);
   }
 
-  protected Map<@NotNull String, ? extends IFieldDefinition> getExportedFieldDefinitionMap() {
+  private Map<String, ? extends IFieldDefinition> getExportedFieldDefinitionMap() {
     initExports();
     return exportedFieldDefinitions;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IAssemblyDefinition> getExportedAssemblyDefinitions() {
+  public Collection<? extends IAssemblyDefinition> getExportedAssemblyDefinitions() {
     return getExportedAssemblyDefinitionMap().values();
   }
 
@@ -118,7 +127,7 @@ public abstract class AbstractMetaschema
     return getExportedAssemblyDefinitionMap().get(name);
   }
 
-  protected Map<@NotNull String, ? extends IAssemblyDefinition> getExportedAssemblyDefinitionMap() {
+  private Map<String, ? extends IAssemblyDefinition> getExportedAssemblyDefinitionMap() {
     initExports();
     return exportedAssemblyDefinitions;
   }
@@ -131,22 +140,19 @@ public abstract class AbstractMetaschema
     synchronized (this) {
       if (exportedFlagDefinitions == null) {
         // Populate the stream with the definitions from this metaschema
-        Predicate<@NotNull IDefinition> filter = IMetaschema.allNonLocalDefinitions();
-        Stream<@NotNull ? extends IFlagDefinition> flags = getFlagDefinitions().stream()
+        Predicate<IDefinition> filter = IMetaschema.allNonLocalDefinitions();
+        Stream<? extends IFlagDefinition> flags = getFlagDefinitions().stream()
             .filter(filter);
-        Stream<@NotNull ? extends IFieldDefinition> fields = getFieldDefinitions().stream()
+        Stream<? extends IFieldDefinition> fields = getFieldDefinitions().stream()
             .filter(filter);
-        Stream<@NotNull ? extends IAssemblyDefinition> assemblies = getAssemblyDefinitions().stream()
+        Stream<? extends IAssemblyDefinition> assemblies = getAssemblyDefinitions().stream()
             .filter(filter);
 
         // handle definitions from any included metaschema
         if (!getImportedMetaschemas().isEmpty()) {
-          @SuppressWarnings("null")
-          Stream<@NotNull ? extends IFlagDefinition> importedFlags = Stream.empty();
-          @SuppressWarnings("null")
-          Stream<@NotNull ? extends IFieldDefinition> importedFields = Stream.empty();
-          @SuppressWarnings("null")
-          Stream<@NotNull ? extends IAssemblyDefinition> importedAssemblies = Stream.empty();
+          Stream<? extends IFlagDefinition> importedFlags = Stream.empty();
+          Stream<? extends IFieldDefinition> importedFields = Stream.empty();
+          Stream<? extends IAssemblyDefinition> importedAssemblies = Stream.empty();
 
           for (IMetaschema metaschema : getImportedMetaschemas()) {
             importedFlags = Stream.concat(importedFlags, metaschema.getExportedFlagDefinitions().stream());
@@ -162,23 +168,20 @@ public abstract class AbstractMetaschema
 
         // Build the maps. Definitions from this Metaschema will take priority, with shadowing being
         // reported when a definition from this Metaschema has the same name as an imported one
-        @SuppressWarnings("null")
-        Map<@NotNull String, IFlagDefinition> exportedFlagDefinitions = flags.collect(
+        Map<String, IFlagDefinition> exportedFlagDefinitions = flags.collect(
             CustomCollectors.toMap(
                 IFlagDefinition::getName,
-                Function.identity(),
+                CustomCollectors.identity(),
                 AbstractMetaschema::handleShadowedDefinitions));
-        @SuppressWarnings("null")
-        Map<@NotNull String, IFieldDefinition> exportedFieldDefinitions = fields.collect(
+        Map<String, IFieldDefinition> exportedFieldDefinitions = fields.collect(
             CustomCollectors.toMap(
                 IFieldDefinition::getName,
-                Function.identity(),
+                CustomCollectors.identity(),
                 AbstractMetaschema::handleShadowedDefinitions));
-        @SuppressWarnings("null")
-        Map<@NotNull String, IAssemblyDefinition> exportedAssemblyDefinitions = assemblies.collect(
+        Map<String, IAssemblyDefinition> exportedAssemblyDefinitions = assemblies.collect(
             CustomCollectors.toMap(
                 IAssemblyDefinition::getName,
-                Function.identity(),
+                CustomCollectors.identity(),
                 AbstractMetaschema::handleShadowedDefinitions));
 
         this.exportedFlagDefinitions = exportedFlagDefinitions.isEmpty()
@@ -195,7 +198,7 @@ public abstract class AbstractMetaschema
   }
 
   private static <DEF extends IDefinition> DEF handleShadowedDefinitions(
-      @SuppressWarnings("unused") @NotNull String key, @NotNull DEF oldDef, @NotNull DEF newDef) {
+      @SuppressWarnings("unused") @NonNull String key, @NonNull DEF oldDef, @NonNull DEF newDef) {
     if (oldDef != newDef && LOGGER.isWarnEnabled()) {
       LOGGER.warn("The {} '{}' from metaschema '{}' is shadowing '{}' from metaschema '{}'",
           newDef.getModelType().name().toLowerCase(Locale.ROOT),

@@ -34,22 +34,20 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionExecutor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides a generic implementation of methods defined by
  * <a href="https://www.w3.org/TR/xpath-functions-31/#numeric-value-functions">XPath 3.1 Functions
  * on numeric values</a>.
  */
-public class NumericFunction implements IFunctionExecutor {
-  @NotNull
-  private final INumericExecutor executor;
-
-  @NotNull
-  public static IFunction signature(@NotNull String name, @NotNull INumericExecutor executor) {
+public final class NumericFunction implements IFunctionExecutor {
+  @NonNull
+  static IFunction signature(@NonNull String name, @NonNull INumericExecutor executor) {
     return IFunction.builder()
         .name(name)
         .argument(IArgument.newBuilder()
@@ -63,29 +61,33 @@ public class NumericFunction implements IFunctionExecutor {
         .build();
   }
 
-  @NotNull
-  public static NumericFunction newFunctionHandler(@NotNull INumericExecutor executor) {
+  @NonNull
+  private final INumericExecutor executor;
+
+  @NonNull
+  private static NumericFunction newFunctionHandler(@NonNull INumericExecutor executor) {
     return new NumericFunction(executor);
   }
 
-  public NumericFunction(@NotNull INumericExecutor executor) {
+  private NumericFunction(@NonNull INumericExecutor executor) {
     this.executor = executor;
   }
 
   @Override
-  public ISequence<INumericItem> execute(@NotNull IFunction function,
-      @NotNull List<@NotNull ISequence<?>> arguments,
-      @NotNull DynamicContext dynamicContext,
+  public ISequence<INumericItem> execute(@NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
       INodeItem focus) {
 
-    ISequence<? extends INumericItem> sequence = FunctionUtils.asType(arguments.get(0));
+    ISequence<? extends INumericItem> sequence = FunctionUtils.asType(
+        ObjectUtils.requireNonNull(arguments.get(0)));
     if (sequence.isEmpty()) {
-      return ISequence.empty();
+      return ISequence.empty(); // NOPMD - readability
     }
 
     INumericItem item = FunctionUtils.getFirstItem(sequence, true);
     if (item == null) {
-      return ISequence.empty();
+      return ISequence.empty(); // NOPMD - readability
     }
 
     INumericItem result = executor.execute(item);
@@ -94,7 +96,14 @@ public class NumericFunction implements IFunctionExecutor {
 
   @FunctionalInterface
   public interface INumericExecutor {
-    @NotNull
-    INumericItem execute(@NotNull INumericItem item);
+    /**
+     * Perform the execution using the provided {@code item}.
+     * 
+     * @param item
+     *          the item to operate on
+     * @return the numeric result from the execution
+     */
+    @NonNull
+    INumericItem execute(@NonNull INumericItem item);
   }
 }

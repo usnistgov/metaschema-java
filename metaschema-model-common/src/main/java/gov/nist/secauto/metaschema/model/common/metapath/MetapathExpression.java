@@ -43,13 +43,15 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class MetapathExpression {
 
@@ -63,11 +65,11 @@ public class MetapathExpression {
 
   private static final Logger LOGGER = LogManager.getLogger(MetapathExpression.class);
 
-  @NotNull
+  @NonNull
   public static final MetapathExpression CONTEXT_NODE = new MetapathExpression(".", ContextItem.instance());
 
   private final String path;
-  @NotNull
+  @NonNull
   private final IExpression node;
 
   /**
@@ -79,9 +81,9 @@ public class MetapathExpression {
    * @throws MetapathException
    *           if an error occurred while compiling the Metapath expression
    */
-  @NotNull
-  public static MetapathExpression compile(@NotNull String path) {
-    @NotNull
+  @NonNull
+  public static MetapathExpression compile(@NonNull String path) {
+    @NonNull
     MetapathExpression retval;
     if (".".equals(path)) {
       retval = MetapathExpression.CONTEXT_NODE;
@@ -96,13 +98,13 @@ public class MetapathExpression {
         ParseTree tree = ObjectUtils.notNull(parser.expr());
 
         if (LOGGER.isDebugEnabled()) {
-          try (OutputStream os = new ByteArrayOutputStream()) {
-            try (PrintStream ps = new PrintStream(os, true)) {
+          try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            try (PrintStream ps = new PrintStream(os, true, StandardCharsets.UTF_8)) {
               CSTPrinter printer = new CSTPrinter(ps);
               printer.print(tree, Arrays.asList(metapath10Parser.ruleNames));
               ps.flush();
-              LOGGER.atDebug().log(String.format("Metapath CST:%n%s", os.toString()));
             }
+            LOGGER.atDebug().log(String.format("Metapath CST:%n%s", os.toString(StandardCharsets.UTF_8)));
           } catch (IOException ex) {
             LOGGER.atError().withThrowable(ex).log("An unexpected error occured while closing the steam.");
           }
@@ -131,7 +133,7 @@ public class MetapathExpression {
    * @param expr
    *          the Metapath as a compiled abstract syntax tree (AST)
    */
-  protected MetapathExpression(@NotNull String path, @NotNull IExpression expr) {
+  protected MetapathExpression(@NonNull String path, @NonNull IExpression expr) {
     this.path = path;
     this.node = expr;
   }
@@ -150,7 +152,7 @@ public class MetapathExpression {
    * 
    * @return the Metapath AST
    */
-  @NotNull
+  @NonNull
   protected IExpression getASTNode() {
     return node;
   }
@@ -178,7 +180,7 @@ public class MetapathExpression {
    *           if an error occurred during evaluation
    * @see #toResultType(ISequence, ResultType)
    */
-  public <T> T evaluateAs(@NotNull INodeContext nodeContext, @NotNull ResultType resultType) {
+  public <T> T evaluateAs(@NonNull INodeContext nodeContext, @NonNull ResultType resultType) {
     ISequence<?> result = evaluate(nodeContext);
     return toResultType(result, resultType);
   }
@@ -205,8 +207,8 @@ public class MetapathExpression {
    *           if an error occurred during evaluation
    * @see #toResultType(ISequence, ResultType)
    */
-  public <T> T evaluateAs(@NotNull INodeContext nodeContext, @NotNull ResultType resultType,
-      @NotNull DynamicContext dynamicContext) {
+  public <T> T evaluateAs(@NonNull INodeContext nodeContext, @NonNull ResultType resultType,
+      @NonNull DynamicContext dynamicContext) {
     ISequence<?> result = evaluate(nodeContext, dynamicContext);
     return toResultType(result, resultType);
   }
@@ -236,7 +238,8 @@ public class MetapathExpression {
    * @throws TypeMetapathException
    *           if the provided sequence is incompatible with the requested result type
    */
-  protected <T> T toResultType(@NotNull ISequence<?> sequence, @NotNull ResultType resultType) {
+  @Nullable
+  protected <T> T toResultType(@NonNull ISequence<?> sequence, @NonNull ResultType resultType) {
     Object result;
     switch (resultType) {
     case BOOLEAN:
@@ -278,9 +281,9 @@ public class MetapathExpression {
    *           if an error occurred during evaluation
    */
   @SuppressWarnings("unchecked")
-  @NotNull
-  public <T extends IItem> ISequence<? extends T> evaluate(@NotNull INodeContext nodeContext) {
-    return (ISequence<? extends T>) evaluate(nodeContext, new StaticContext().newDynamicContext());
+  @NonNull
+  public <T extends IItem> ISequence<T> evaluate(@NonNull INodeContext nodeContext) {
+    return (ISequence<T>) evaluate(nodeContext, new StaticContext().newDynamicContext());
   }
 
   /**
@@ -300,13 +303,13 @@ public class MetapathExpression {
    *           if an error occurred during evaluation
    */
   @SuppressWarnings("unchecked")
-  @NotNull
-  public <T extends IItem> ISequence<? extends T> evaluate(@NotNull INodeContext nodeContext,
-      @NotNull DynamicContext dynamicContext) {
+  @NonNull
+  public <T extends IItem> ISequence<T> evaluate(@NonNull INodeContext nodeContext,
+      @NonNull DynamicContext dynamicContext) {
     try {
       return (ISequence<T>) getASTNode().accept(dynamicContext,
           nodeContext);
-    } catch (MetapathException ex) {
+    } catch (MetapathException ex) { // NOPMD - intentional
       throw new MetapathException(String.format("An error occurred while evaluating the expression '%s'.", ex));
     }
   }

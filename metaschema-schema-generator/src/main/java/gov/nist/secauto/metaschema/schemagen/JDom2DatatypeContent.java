@@ -26,36 +26,40 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.StAXStreamOutputter;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public class JDom2DatatypeContent
     extends AbstractDatatypeContent {
 
-  @NotNull
-  private final List<@NotNull Element> content;
+  @NonNull
+  private final List<Element> content;
 
   public JDom2DatatypeContent(
-      @NotNull String typeName,
-      @NotNull List<@NotNull Element> content,
-      @NotNull List<@NotNull String> dependencies) {
+      @NonNull String typeName,
+      @NonNull List<Element> content,
+      @NonNull List<String> dependencies) {
     super(typeName, dependencies);
-    this.content = content;
+    this.content = CollectionUtil.unmodifiableList(new ArrayList<>(content));
   }
 
-  protected List<@NotNull Element> getContent() {
+  protected List<Element> getContent() {
     return content;
   }
 
   @Override
-  public void write(@NotNull XMLStreamWriter writer) throws XMLStreamException {
+  public void write(@NonNull XMLStreamWriter writer) throws XMLStreamException {
     Format format = Format.getRawFormat();
     format.setOmitDeclaration(true);
 

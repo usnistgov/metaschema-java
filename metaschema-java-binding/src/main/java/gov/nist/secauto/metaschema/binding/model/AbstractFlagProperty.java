@@ -37,7 +37,6 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapte
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLStreamWriter2;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -48,11 +47,13 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 abstract class AbstractFlagProperty
     extends AbstractNamedProperty<IClassBinding>
     implements IBoundFlagInstance {
 
-  public AbstractFlagProperty(@NotNull IClassBinding parentClassBinding) {
+  public AbstractFlagProperty(@NonNull IClassBinding parentClassBinding) {
     super(parentClassBinding);
   }
 
@@ -152,7 +153,7 @@ abstract class AbstractFlagProperty
   }
 
   @Override
-  public void writeValue(@NotNull Object value, IJsonWritingContext context) throws IOException {
+  public void writeValue(@NonNull Object value, IJsonWritingContext context) throws IOException {
     getDefinition().getJavaTypeAdapter().writeJsonValue(value, context.getWriter());
   }
 

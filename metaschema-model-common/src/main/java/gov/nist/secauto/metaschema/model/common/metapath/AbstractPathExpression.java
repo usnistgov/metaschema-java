@@ -31,9 +31,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
     extends AbstractExpression
@@ -60,9 +60,9 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
    *         expression
    */
   @SuppressWarnings("null")
-  @NotNull
-  protected ISequence<?> evaluateInNodeContext(@NotNull IExpression expression, @NotNull DynamicContext dynamicContext,
-      @NotNull ISequence<? extends INodeItem> contextItems) {
+  @NonNull
+  protected ISequence<?> evaluateInNodeContext(@NonNull IExpression expression, @NonNull DynamicContext dynamicContext,
+      @NonNull ISequence<? extends INodeItem> contextItems) {
     ISequence<?> retval;
     if (contextItems.isEmpty()) {
       retval = ISequence.empty();
@@ -87,9 +87,9 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
    *          the current context node
    * @return the matching nodes
    */
-  @NotNull
-  protected Stream<? extends INodeItem> searchExpression(@NotNull IExpression expression,
-      @NotNull DynamicContext dynamicContext, @NotNull INodeContext nodeContext) {
+  @NonNull
+  protected Stream<? extends INodeItem> searchExpression(@NonNull IExpression expression,
+      @NonNull DynamicContext dynamicContext, @NonNull INodeContext nodeContext) {
 
     // check the current node
     @SuppressWarnings("unchecked")
@@ -112,7 +112,7 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
     }
 
     @SuppressWarnings("null")
-    @NotNull
+    @NonNull
     Stream<? extends INodeItem> result = Stream.concat(nodeMatches, childMatches);
     return result;
   }
@@ -129,9 +129,9 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
    *          the current context node
    * @return the matching nodes
    */
-  @NotNull
-  protected Stream<? extends INodeItem> search(@NotNull IExpression expression, @NotNull DynamicContext dynamicContext,
-      @NotNull INodeContext nodeContext) {
+  @NonNull
+  protected Stream<? extends INodeItem> search(@NonNull IExpression expression, @NonNull DynamicContext dynamicContext,
+      @NonNull INodeContext nodeContext) {
     // Stream<? extends INodeItem> retval;
     // if (expr instanceof Flag) {
     // // check instances as a flag
@@ -161,10 +161,10 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
   // * the current node context
   // * @return a stream of matching model node items
   // */
-  // @NotNull
-  // protected Stream<? extends IModelNodeItem> searchModelInstances(@NotNull ModelInstance
+  // @NonNull
+  // protected Stream<? extends IModelNodeItem> searchModelInstances(@NonNull ModelInstance
   // modelInstance,
-  // @NotNull INodeContext context) {
+  // @NonNull INodeContext context) {
   //
   // // check if the current node context matches the expression
   // Stream<? extends IModelNodeItem> nodeMatches = matchModelInstance(modelInstance, context);
@@ -179,7 +179,7 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
   //
   // // combine the results
   // @SuppressWarnings("null")
-  // @NotNull
+  // @NonNull
   // Stream<? extends IModelNodeItem> retval = Stream.concat(nodeMatches, childMatches);
   // return retval;
   // }
@@ -195,7 +195,7 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
   // * the current node context
   // * @return a stream of matching flag node items
   // */
-  // @NotNull
+  // @NonNull
   // private Stream<? extends IRequiredValueFlagNodeItem> searchFlags(Flag expr, INodeContext context)
   // {
   //

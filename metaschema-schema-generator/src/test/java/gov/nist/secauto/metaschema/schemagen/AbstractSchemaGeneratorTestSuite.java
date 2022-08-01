@@ -35,12 +35,12 @@ import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.configuration.DefaultConfiguration;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.XmlSchemaContentValidator;
 import gov.nist.secauto.metaschema.model.testing.AbstractTestSuite;
 import gov.nist.secauto.metaschema.model.testing.DynamicBindingContext;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.platform.commons.JUnitException;
 import org.xml.sax.SAXException;
 
@@ -58,35 +58,37 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 public abstract class AbstractSchemaGeneratorTestSuite
     extends AbstractTestSuite {
-  @NotNull
+  @NonNull
   protected static final ISchemaGenerator XML_SCHEMA_GENERATOR = new XmlSchemaGenerator();
-  @NotNull
+  @NonNull
   protected static final ISchemaGenerator JSON_SCHEMA_GENERATOR = new JsonSchemaGenerator();
-  @NotNull
+  @NonNull
   protected static final IConfiguration<SchemaGenerationFeature> SCHEMA_GENERATION_CONFIG;
-  @NotNull
-  protected static final BiFunction<@NotNull IMetaschema, @NotNull Writer, Void> XML_SCHEMA_PROVIDER;
-  @NotNull
-  protected static final BiFunction<@NotNull IMetaschema, @NotNull Writer, Void> JSON_SCHEMA_PROVIDER;
-  @NotNull
+  @NonNull
+  protected static final BiFunction<IMetaschema, Writer, Void> XML_SCHEMA_PROVIDER;
+  @NonNull
+  protected static final BiFunction<IMetaschema, Writer, Void> JSON_SCHEMA_PROVIDER;
+  @NonNull
   protected static final JsonSchemaContentValidator JSON_SCHEMA_VALIDATOR;
-  @NotNull
-  protected static final Function<@NotNull Path, @NotNull JsonSchemaContentValidator> JSON_CONTENT_VALIDATOR_PROVIDER;
-  @NotNull
-  protected static final Function<@NotNull Path, @NotNull XmlSchemaContentValidator> XML_CONTENT_VALIDATOR_PROVIDER;
+  @NonNull
+  protected static final Function<Path, JsonSchemaContentValidator> JSON_CONTENT_VALIDATOR_PROVIDER;
+  @NonNull
+  protected static final Function<Path, XmlSchemaContentValidator> XML_CONTENT_VALIDATOR_PROVIDER;
 
   static {
-    @SuppressWarnings("null")
     IMutableConfiguration<SchemaGenerationFeature> features = new DefaultConfiguration<>(SchemaGenerationFeature.class)
         .enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     SCHEMA_GENERATION_CONFIG = features;
 
-    BiFunction<@NotNull IMetaschema, @NotNull Writer, Void> xmlProvider = (metaschema, writer) -> {
+    BiFunction<IMetaschema, Writer, Void> xmlProvider = (metaschema, writer) -> {
+      assert metaschema != null;
+      assert writer != null;
       try {
         XML_SCHEMA_GENERATOR.generateFromMetaschema(metaschema, writer, SCHEMA_GENERATION_CONFIG);
       } catch (IOException ex) {
@@ -96,7 +98,9 @@ public abstract class AbstractSchemaGeneratorTestSuite
     };
     XML_SCHEMA_PROVIDER = xmlProvider;
 
-    BiFunction<@NotNull IMetaschema, @NotNull Writer, Void> jsonProvider = (metaschema, writer) -> {
+    BiFunction<IMetaschema, Writer, Void> jsonProvider = (metaschema, writer) -> {
+      assert metaschema != null;
+      assert writer != null;
       try {
         JSON_SCHEMA_GENERATOR.generateFromMetaschema(metaschema, writer, SCHEMA_GENERATION_CONFIG);
       } catch (IOException ex) {
@@ -107,7 +111,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
     JSON_SCHEMA_PROVIDER = jsonProvider;
 
     try (InputStream is = MetaschemaLoader.class.getClassLoader().getResourceAsStream("schema/json/json-schema.json")) {
-      @SuppressWarnings("null")
+      assert is != null;
       JsonSchemaContentValidator schemaValidator = new JsonSchemaContentValidator(is);
       JSON_SCHEMA_VALIDATOR = schemaValidator;
     } catch (IOException ex) {
@@ -115,8 +119,8 @@ public abstract class AbstractSchemaGeneratorTestSuite
     }
 
     @SuppressWarnings("null")
-    @NotNull
-    Function<@NotNull Path, @NotNull XmlSchemaContentValidator> xmlContentValidatorProvider = (path) -> {
+    @NonNull
+    Function<Path, XmlSchemaContentValidator> xmlContentValidatorProvider = (path) -> {
       try {
         URL schemaResource = path.toUri().toURL();
         List<? extends Source> schemaSources = Collections.singletonList(
@@ -128,46 +132,45 @@ public abstract class AbstractSchemaGeneratorTestSuite
     };
     XML_CONTENT_VALIDATOR_PROVIDER = xmlContentValidatorProvider;
 
-    @SuppressWarnings("null")
-    @NotNull
-    Function<@NotNull Path, @NotNull JsonSchemaContentValidator> jsonContentValidatorProvider = (path) -> {
+    @NonNull
+    Function<Path, JsonSchemaContentValidator> jsonContentValidatorProvider = (path) -> {
       try (InputStream is = Files.newInputStream(path, StandardOpenOption.READ)) {
+        assert is != null;
         return new JsonSchemaContentValidator(is);
-      } catch (Exception ex) {
+      } catch (IOException ex) {
         throw new JUnitException("Failed to create content validator for schema: " + path.toString(), ex);
       }
     };
     JSON_CONTENT_VALIDATOR_PROVIDER = jsonContentValidatorProvider;
   }
 
-  @SuppressWarnings("null")
   @Override
   protected URI getTestSuiteURI() {
-    return Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/unit-tests.xml").toUri();
+    return ObjectUtils
+        .notNull(Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/unit-tests.xml").toUri());
   }
 
-  @SuppressWarnings("null")
   @Override
   protected Path getGenerationPath() {
-    return Paths.get("test-schemagen");
+    return ObjectUtils.notNull(Paths.get("test-schemagen"));
   }
 
-  protected Path produceXmlSchema(@NotNull IMetaschema metaschema, @NotNull Path schemaPath) throws IOException {
+  protected Path produceXmlSchema(@NonNull IMetaschema metaschema, @NonNull Path schemaPath) throws IOException {
     produceSchema(metaschema, schemaPath, XML_SCHEMA_PROVIDER);
     return schemaPath;
   }
 
-  protected Path produceJsonSchema(@NotNull IMetaschema metaschema, @NotNull Path schemaPath) throws IOException {
+  protected Path produceJsonSchema(@NonNull IMetaschema metaschema, @NonNull Path schemaPath) throws IOException {
     produceSchema(metaschema, schemaPath, JSON_SCHEMA_PROVIDER);
     return schemaPath;
   }
 
   @SuppressWarnings("null")
   protected void doTest(
-      @NotNull String collectionName,
-      @NotNull String metaschemaName,
-      @NotNull String generatedSchemaName,
-      @NotNull ContentCase... contentCases) throws IOException, MetaschemaException {
+      @NonNull String collectionName,
+      @NonNull String metaschemaName,
+      @NonNull String generatedSchemaName,
+      @NonNull ContentCase... contentCases) throws IOException, MetaschemaException {
     Path generationDir = getGenerationPath();
 
     Path testSuite = Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/");
@@ -178,7 +181,8 @@ public abstract class AbstractSchemaGeneratorTestSuite
     IMetaschema metaschema = loader.load(metaschemaPath);
 
     Path jsonSchema = produceJsonSchema(metaschema, generationDir.resolve(generatedSchemaName + ".json"));
-    assertEquals(true, validate(JSON_SCHEMA_VALIDATOR, jsonSchema));
+    assertEquals(true, validate(JSON_SCHEMA_VALIDATOR, jsonSchema),
+        String.format("JSON schema '%s' was invalid", jsonSchema.toString()));
     Path xmlSchema = produceXmlSchema(metaschema, generationDir.resolve(generatedSchemaName + ".xsd"));
 
     Path schemaPath;
@@ -208,30 +212,30 @@ public abstract class AbstractSchemaGeneratorTestSuite
     }
   }
 
-  @NotNull
-  protected ContentCase contentCase(@NotNull Format actualFormat, @NotNull String contentName, boolean valid) {
+  @NonNull
+  protected ContentCase contentCase(@NonNull Format actualFormat, @NonNull String contentName, boolean valid) {
     return new ContentCase(contentName, actualFormat, valid);
   }
 
   protected static class ContentCase {
-    @NotNull
+    @NonNull
     private final String name;
-    @NotNull
+    @NonNull
     private final Format actualFormat;
     private final boolean valid;
 
-    public ContentCase(@NotNull String name, @NotNull Format actualFormat, boolean valid) {
+    public ContentCase(@NonNull String name, @NonNull Format actualFormat, boolean valid) {
       this.name = name;
       this.actualFormat = actualFormat;
       this.valid = valid;
     }
 
-    @NotNull
+    @NonNull
     public String getName() {
       return name;
     }
 
-    @NotNull
+    @NonNull
     public Format getActualFormat() {
       return actualFormat;
     }

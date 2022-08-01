@@ -28,11 +28,11 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A {@link INodeItem} supported by a {@link IAssemblyInstance}, that must have an associated value.
@@ -45,25 +45,25 @@ class RequiredValueAssemblyInstanceNodeItemImpl
         IRequiredValueAssemblyNodeItem,
         AbstractModelNodeContext.Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
     implements IRequiredValueAssemblyNodeItem {
-  @NotNull
+  @NonNull
   private final Object value;
 
   public RequiredValueAssemblyInstanceNodeItemImpl(
-      @NotNull IAssemblyInstance instance,
-      @NotNull IRequiredValueAssemblyNodeItem parent,
+      @NonNull IAssemblyInstance instance,
+      @NonNull IRequiredValueAssemblyNodeItem parent,
       int position,
-      @NotNull Object value,
-      @NotNull INodeItemFactory factory) {
+      @NonNull Object value,
+      @NonNull INodeItemFactory factory) {
     super(instance, parent, position, factory);
     this.value = value;
   }
 
   @Override
-  protected @NotNull Supplier<Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
-      newModelSupplier(@NotNull INodeItemFactory factory) {
+  protected @NonNull Supplier<Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
+      newModelSupplier(@NonNull INodeItemFactory factory) {
     return () -> {
-      Map<@NotNull String, IRequiredValueFlagNodeItem> flags = factory.generateFlagsWithValues(this);
-      Map<@NotNull String, List<@NotNull IRequiredValueModelNodeItem>> modelItems
+      Map<String, IRequiredValueFlagNodeItem> flags = factory.generateFlagsWithValues(this);
+      Map<String, List<IRequiredValueModelNodeItem>> modelItems
           = factory.generateModelItemsWithValues(this);
       return new AbstractModelNodeContext.Model<>(flags, modelItems);
     };
@@ -75,7 +75,7 @@ class RequiredValueAssemblyInstanceNodeItemImpl
   }
 
   @Override
-  @NotNull
+  @NonNull
   public Object getValue() {
     return value;
   }

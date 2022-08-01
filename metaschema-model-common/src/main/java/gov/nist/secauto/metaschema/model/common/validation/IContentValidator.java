@@ -29,13 +29,14 @@ package gov.nist.secauto.metaschema.model.common.validation;
 import gov.nist.secauto.metaschema.model.common.IResourceLoader;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
 import org.xml.sax.InputSource;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A common interface for Metaschema related content validators.
@@ -50,8 +51,8 @@ public interface IContentValidator extends IResourceLoader {
    * @throws IOException
    *           if an error occurred while performing validation
    */
-  @NotNull
-  default IValidationResult validate(@NotNull Path path) throws IOException {
+  @NonNull
+  default IValidationResult validate(@NonNull Path path) throws IOException {
     return validate(toInputSource(ObjectUtils.notNull(path.toUri())));
   }
 
@@ -66,8 +67,8 @@ public interface IContentValidator extends IResourceLoader {
    * @throws URISyntaxException
    *           if there is a problem with the provided {@code url}
    */
-  @NotNull
-  default IValidationResult validate(@NotNull URL url) throws IOException, URISyntaxException {
+  @NonNull
+  default IValidationResult validate(@NonNull URL url) throws IOException, URISyntaxException {
     return validate(toInputSource(ObjectUtils.notNull(url.toURI())));
   }
 
@@ -80,6 +81,6 @@ public interface IContentValidator extends IResourceLoader {
    * @throws IOException
    *           if an error occurred while performing validation
    */
-  @NotNull
-  IValidationResult validate(@NotNull InputSource source) throws IOException;
+  @NonNull
+  IValidationResult validate(@NonNull InputSource source) throws IOException;
 }

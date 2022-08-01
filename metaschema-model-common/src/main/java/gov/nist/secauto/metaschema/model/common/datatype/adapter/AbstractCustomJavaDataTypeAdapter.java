@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 import gov.nist.secauto.metaschema.model.common.datatype.ICustomJavaDataType;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides a Java type adapter implementation for data types that are based on
@@ -50,7 +50,7 @@ public abstract class AbstractCustomJavaDataTypeAdapter<TYPE extends ICustomJava
    * @param clazz
    *          a data type class based on {@link ICustomJavaDataType}
    */
-  public AbstractCustomJavaDataTypeAdapter(@NotNull Class<TYPE> clazz) {
+  public AbstractCustomJavaDataTypeAdapter(@NonNull Class<TYPE> clazz) {
     super(clazz);
   }
 

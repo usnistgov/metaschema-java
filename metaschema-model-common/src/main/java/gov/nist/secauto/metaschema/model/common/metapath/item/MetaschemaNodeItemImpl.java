@@ -28,10 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -41,34 +38,36 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class MetaschemaNodeItemImpl
     extends AbstractMetaschemaNodeItem {
 
-  public MetaschemaNodeItemImpl(@NotNull IMetaschema metaschema, @NotNull INodeItemFactory factory) {
+  public MetaschemaNodeItemImpl(@NonNull IMetaschema metaschema, @NonNull INodeItemFactory factory) {
     super(metaschema, factory);
   }
 
   @Override
-  protected @NotNull Supplier<Model<IFlagNodeItem, IModelNodeItem>>
-      newModelSupplier(@NotNull INodeItemFactory factory) {
+  protected @NonNull Supplier<Model<IFlagNodeItem, IModelNodeItem>>
+      newModelSupplier(@NonNull INodeItemFactory factory) {
     return () -> {
       // build flags from Metaschema definitions
-      Map<@NotNull String, IFlagNodeItem> flags
-          = CollectionUtil.unmodifiableMap(getMetaschema().getFlagDefinitions().stream()
+      Map<String, IFlagNodeItem> flags = ObjectUtils.notNull(
+          Collections.unmodifiableMap(getMetaschema().getFlagDefinitions().stream()
               .collect(
                   Collectors.toMap(
                       IFlagDefinition::getEffectiveName,
-                      def -> factory.newFlagNodeItem(def, getBaseUri()),
+                      def -> factory.newFlagNodeItem(ObjectUtils.notNull(def), getBaseUri()),
                       (v1, v2) -> v2,
-                      LinkedHashMap::new)));
+                      LinkedHashMap::new))));
 
       // build model items from Metaschema definitions
-      Stream<@NotNull IFieldNodeItem> fieldStream = getMetaschema().getFieldDefinitions().stream()
-          .map(def -> factory.newFieldNodeItem(def, getBaseUri()));
-      Stream<@NotNull IAssemblyNodeItem> assemblyStream = getMetaschema().getAssemblyDefinitions().stream()
-          .map(def -> factory.newAssemblyNodeItem(def, getBaseUri()));
+      Stream<IFieldNodeItem> fieldStream = getMetaschema().getFieldDefinitions().stream()
+          .map(def -> factory.newFieldNodeItem(ObjectUtils.notNull(def), getBaseUri()));
+      Stream<IAssemblyNodeItem> assemblyStream = getMetaschema().getAssemblyDefinitions().stream()
+          .map(def -> factory.newAssemblyNodeItem(ObjectUtils.notNull(def), getBaseUri()));
 
-      Map<@NotNull String, List<@NotNull IModelNodeItem>> modelItems
+      Map<String, List<IModelNodeItem>> modelItems
           = ObjectUtils.notNull(Stream.concat(fieldStream, assemblyStream)
               .collect(
                   Collectors.collectingAndThen(

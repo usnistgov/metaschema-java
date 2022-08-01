@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class ValueComparison
     extends AbstractComparison {
@@ -45,7 +45,7 @@ class ValueComparison
    * @param right
    *          the expression to compare with
    */
-  protected ValueComparison(@NotNull IExpression left, @NotNull Operator operator, @NotNull IExpression right) {
+  protected ValueComparison(@NonNull IExpression left, @NonNull Operator operator, @NonNull IExpression right) {
     super(left, operator, right);
   }
 
@@ -71,7 +71,7 @@ class ValueComparison
    *          the second item to compare
    * @return a or an empty {@link ISequence} if either item is {@code null}
    */
-  @NotNull
+  @NonNull
   protected ISequence<? extends IBooleanItem> resultOrEmpty(@Nullable IAnyAtomicItem leftItem,
       @Nullable IAnyAtomicItem rightItem) {
     ISequence<? extends IBooleanItem> retval;
@@ -95,9 +95,9 @@ class ValueComparison
    *          the second item to compare
    * @return the result of the comparison
    */
-  @NotNull
-  protected IBooleanItem valueCompairison(@NotNull IAnyAtomicItem leftItem, @NotNull Operator operator,
-      @NotNull IAnyAtomicItem rightItem) {
+  @NonNull
+  protected IBooleanItem valueCompairison(@NonNull IAnyAtomicItem leftItem, @NonNull Operator operator,
+      @NonNull IAnyAtomicItem rightItem) {
     return compare(leftItem, operator, rightItem);
   }
 }

@@ -30,24 +30,24 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataT
 import gov.nist.secauto.metaschema.model.common.datatype.object.Date;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.ZonedDateTime;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IDateItem extends IAnyAtomicItem {
 
-  @NotNull
-  public static IDateItem valueOf(@NotNull Date value) {
+  @NonNull
+  public static IDateItem valueOf(@NonNull Date value) {
     return new DateWithoutTimeZoneItemImpl(value);
   }
 
-  @NotNull
-  public static IDateItem valueOf(@NotNull ZonedDateTime value) {
+  @NonNull
+  public static IDateItem valueOf(@NonNull ZonedDateTime value) {
     return new DateWithTimeZoneItemImpl(value);
   }
 
-  @NotNull
-  public static IDateItem valueOf(@NotNull String value) {
+  @NonNull
+  public static IDateItem valueOf(@NonNull String value) {
     try {
       return valueOf(MetaschemaDataTypeProvider.DATE.parse(value));
     } catch (IllegalArgumentException ex) {
@@ -55,11 +55,11 @@ public interface IDateItem extends IAnyAtomicItem {
     }
   }
 
-  @NotNull
-  public static IDateItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  @NonNull
+  public static IDateItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.DATE.cast(item);
   }
 
-  @NotNull
+  @NonNull
   ZonedDateTime asZonedDateTime();
 }

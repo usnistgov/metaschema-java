@@ -27,5 +27,5 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 public interface IUntypedAtomicItem extends IAnyAtomicItem {
-
+  // this interface has no additional methods
 }

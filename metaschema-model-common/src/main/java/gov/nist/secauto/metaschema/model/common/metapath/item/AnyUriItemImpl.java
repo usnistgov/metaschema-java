@@ -29,15 +29,15 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.UriAdapter;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class AnyUriItemImpl
     extends AbstractAnyAtomicItem<URI>
     implements IAnyUriItem {
 
-  public AnyUriItemImpl(@NotNull URI value) {
+  public AnyUriItemImpl(@NonNull URI value) {
     super(value);
   }
 

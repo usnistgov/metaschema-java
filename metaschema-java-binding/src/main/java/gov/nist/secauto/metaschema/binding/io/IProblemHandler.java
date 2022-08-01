@@ -26,5 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
+// TODO: consider what methods can be defined here
 public interface IProblemHandler {
+  // no extra methods
 }

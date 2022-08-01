@@ -31,5 +31,5 @@ import com.fasterxml.jackson.core.JsonParser;
 import gov.nist.secauto.metaschema.binding.io.IParsingContext;
 
 public interface IJsonParsingContext extends IParsingContext<JsonParser, IJsonProblemHandler> {
-
+  // no extra methods
 }

@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationIt
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class Multiplication
     extends AbstractBasicArithmeticExpression {
@@ -46,7 +46,7 @@ class Multiplication
    * @param right
    *          the item to divide by
    */
-  protected Multiplication(@NotNull IExpression left, @NotNull IExpression right) {
+  protected Multiplication(@NonNull IExpression left, @NonNull IExpression right) {
     super(left, right);
   }
 
@@ -65,8 +65,8 @@ class Multiplication
    * @return the product of both items or an empty {@link ISequence} if either item is {@code null}
    */
   @Override
-  @NotNull
-  protected IAnyAtomicItem operation(@NotNull IAnyAtomicItem left, @NotNull IAnyAtomicItem right) {
+  @NonNull
+  protected IAnyAtomicItem operation(@NonNull IAnyAtomicItem left, @NonNull IAnyAtomicItem right) {
     return multiply(left, right);
   }
 
@@ -79,9 +79,9 @@ class Multiplication
    *          the second item to multiply
    * @return the product of both items
    */
-  @NotNull
-  public static IAnyAtomicItem multiply(@NotNull IAnyAtomicItem leftItem, // NOPMD - intentional
-      @NotNull IAnyAtomicItem rightItem) {
+  @NonNull
+  public static IAnyAtomicItem multiply(@NonNull IAnyAtomicItem leftItem, // NOPMD - intentional
+      @NonNull IAnyAtomicItem rightItem) {
     IAnyAtomicItem retval = null;
     if (leftItem instanceof IYearMonthDurationItem) {
       IYearMonthDurationItem left = (IYearMonthDurationItem) leftItem;

@@ -37,27 +37,27 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 /**
  * Support for constraints on valued objects (i.e., fields and flags).
  */
 class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - intentional data class
-  @NotNull
-  private final List<@NotNull IConstraint> constraints;
-  @NotNull
-  private final List<@NotNull IAllowedValuesConstraint> allowedValuesConstraints;
-  @NotNull
-  private final List<@NotNull IMatchesConstraint> matchesConstraints;
-  @NotNull
-  private final List<@NotNull IIndexHasKeyConstraint> indexHasKeyConstraints;
-  @NotNull
-  private final List<@NotNull IExpectConstraint> expectConstraints;
+  @NonNull
+  private final List<IConstraint> constraints;
+  @NonNull
+  private final List<IAllowedValuesConstraint> allowedValuesConstraints;
+  @NonNull
+  private final List<IMatchesConstraint> matchesConstraints;
+  @NonNull
+  private final List<IIndexHasKeyConstraint> indexHasKeyConstraints;
+  @NonNull
+  private final List<IExpectConstraint> expectConstraints;
 
   public ValueConstraintSupport() {
     this.constraints = new LinkedList<>();
@@ -77,8 +77,8 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
    */
   @SuppressWarnings("null")
   public ValueConstraintSupport( // NOPMD - intentional
-      @NotNull BoundFlag propertyAnnotation,
-      @NotNull ISource source) {
+      @NonNull BoundFlag propertyAnnotation,
+      @NonNull ISource source) {
     allowedValuesConstraints = Arrays.stream(propertyAnnotation.allowedValues())
         .map(annotation -> ConstraintFactory.newAllowedValuesConstraint(annotation, source))
         .collect(Collectors.toCollection(LinkedList::new));
@@ -112,8 +112,8 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
    */
   @SuppressWarnings("null")
   public ValueConstraintSupport( // NOPMD - intentional
-      @NotNull BoundField propertyAnnotation,
-      @NotNull ISource source) {
+      @NonNull BoundField propertyAnnotation,
+      @NonNull ISource source) {
     allowedValuesConstraints = Arrays.stream(propertyAnnotation.allowedValues())
         .map(annotation -> ConstraintFactory.newAllowedValuesConstraint(annotation, source))
         .collect(Collectors.toCollection(LinkedList::new));
@@ -147,8 +147,8 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
    */
   @SuppressWarnings("null")
   public ValueConstraintSupport( // NOPMD - intentional
-      @NotNull MetaschemaField classAnnotation,
-      @NotNull ISource source) {
+      @NonNull MetaschemaField classAnnotation,
+      @NonNull ISource source) {
     allowedValuesConstraints = Arrays.stream(classAnnotation.allowedValues())
         .map(annotation -> ConstraintFactory.newAllowedValuesConstraint(annotation, source))
         .collect(Collectors.toCollection(LinkedList::new));
@@ -173,50 +173,50 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
   }
 
   @Override
-  public List<@NotNull IConstraint> getConstraints() {
+  public List<IConstraint> getConstraints() {
     return constraints;
   }
 
   @Override
-  public List<@NotNull IAllowedValuesConstraint> getAllowedValuesConstraints() {
+  public List<IAllowedValuesConstraint> getAllowedValuesConstraints() {
     return allowedValuesConstraints;
   }
 
   @Override
-  public List<@NotNull IMatchesConstraint> getMatchesConstraints() {
+  public List<IMatchesConstraint> getMatchesConstraints() {
     return matchesConstraints;
   }
 
   @Override
-  public List<@NotNull IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+  public List<IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
     return indexHasKeyConstraints;
   }
 
   @Override
-  public List<@NotNull IExpectConstraint> getExpectConstraints() {
+  public List<IExpectConstraint> getExpectConstraints() {
     return expectConstraints;
   }
 
   @Override
-  public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+  public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
     constraints.add(constraint);
     allowedValuesConstraints.add(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IMatchesConstraint constraint) {
+  public void addConstraint(@NonNull IMatchesConstraint constraint) {
     constraints.add(constraint);
     matchesConstraints.add(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+  public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
     constraints.add(constraint);
     indexHasKeyConstraints.add(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IExpectConstraint constraint) {
+  public void addConstraint(@NonNull IExpectConstraint constraint) {
     constraints.add(constraint);
     expectConstraints.add(constraint);
   }

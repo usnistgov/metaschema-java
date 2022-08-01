@@ -29,13 +29,13 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * A {@link INodeItem} supported by a {@link IAssemblyInstance}, that must have an associated value.
@@ -46,18 +46,18 @@ class RequiredValueAssemblyDefinitionNodeItemImpl
         IRequiredValueModelNodeItem,
         AbstractModelNodeContext.Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
     implements IRequiredValueAssemblyNodeItem {
-  @NotNull
+  @NonNull
   private final IAssemblyDefinition definition;
   @Nullable
   private final URI baseUri;
-  @NotNull
+  @NonNull
   private final Object value;
 
   public RequiredValueAssemblyDefinitionNodeItemImpl(
-      @NotNull IAssemblyDefinition definition,
-      @NotNull Object value,
+      @NonNull IAssemblyDefinition definition,
+      @NonNull Object value,
       @Nullable URI baseUri,
-      @NotNull INodeItemFactory factory) {
+      @NonNull INodeItemFactory factory) {
     super(factory);
     this.definition = definition;
     this.value = value;
@@ -65,11 +65,11 @@ class RequiredValueAssemblyDefinitionNodeItemImpl
   }
 
   @Override
-  protected @NotNull Supplier<Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
-      newModelSupplier(@NotNull INodeItemFactory factory) {
+  protected @NonNull Supplier<Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
+      newModelSupplier(@NonNull INodeItemFactory factory) {
     return () -> {
-      Map<@NotNull String, IRequiredValueFlagNodeItem> flags = factory.generateFlagsWithValues(this);
-      Map<@NotNull String, List<@NotNull IRequiredValueModelNodeItem>> modelItems
+      Map<String, IRequiredValueFlagNodeItem> flags = factory.generateFlagsWithValues(this);
+      Map<String, List<IRequiredValueModelNodeItem>> modelItems
           = factory.generateModelItemsWithValues(this);
       return new AbstractModelNodeContext.Model<>(flags, modelItems);
     };
@@ -88,7 +88,7 @@ class RequiredValueAssemblyDefinitionNodeItemImpl
   }
 
   @Override
-  @NotNull
+  @NonNull
   public Object getValue() {
     return value;
   }

@@ -34,23 +34,23 @@ import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.IModelContainer;
-import gov.nist.secauto.metaschema.model.common.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class AssemblyDefinitionTypeInfoImpl
     extends AbstractModelDefinitionTypeInfo<IAssemblyDefinition>
     implements IAssemblyDefinitionTypeInfo {
 
-  public AssemblyDefinitionTypeInfoImpl(@NotNull IAssemblyDefinition definition, @NotNull ITypeResolver typeResolver) {
+  public AssemblyDefinitionTypeInfoImpl(@NonNull IAssemblyDefinition definition, @NonNull ITypeResolver typeResolver) {
     super(definition, typeResolver);
   }
 
@@ -87,8 +87,8 @@ class AssemblyDefinitionTypeInfoImpl
    *          the model instance to generate the property for
    * @return the new property generator
    */
-  @NotNull
-  protected IModelInstanceTypeInfo newObjectModelInstance(@NotNull INamedModelInstance instance) {
+  @NonNull
+  protected IModelInstanceTypeInfo newObjectModelInstance(@NonNull INamedModelInstance instance) {
     IModelInstanceTypeInfo retval = new ModelInstanceTypeInfoImpl(instance, this);
     addPropertyTypeInfo(retval);
     return retval;

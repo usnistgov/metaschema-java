@@ -28,34 +28,31 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticMetapathException;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
-import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 public final class FunctionService {
-  private static FunctionService functionService;
+  private static Lazy<FunctionService> lazyFunctionService = Lazy.lazy(() -> new FunctionService());
+  @NonNull
+  private final ServiceLoader<IFunctionLibrary> loader;
+  @NonNull
+  private IFunctionLibrary library;
 
   /**
    * Get the singleton instance of the function service.
    * 
    * @return the service instance
    */
-  public static synchronized FunctionService getInstance() {
-    if (functionService == null) {
-      functionService = new FunctionService();
-    }
-    return functionService;
+  public static FunctionService getInstance() {
+    return lazyFunctionService.get();
   }
-
-  @NotNull
-  private final ServiceLoader<@NotNull IFunctionLibrary> loader;
-  @NotNull
-  private LoadedFunctionsLibrary library;
 
   /**
    * Construct a new function service.
@@ -71,18 +68,22 @@ public final class FunctionService {
    * 
    * @return the function library
    */
-  @NotNull
-  public final synchronized LoadedFunctionsLibrary load() {
-    ServiceLoader<@NotNull IFunctionLibrary> loader = getLoader();
-    @SuppressWarnings("null")
-    Stream<@NotNull IFunctionLibrary> libraryStream = loader.stream().map(Provider<IFunctionLibrary>::get);
-    Stream<@NotNull IFunction> functions = libraryStream.flatMap(library -> {
-      return library.getFunctionsAsStream();
-    });
+  @NonNull
+  public IFunctionLibrary load() {
+    ServiceLoader<IFunctionLibrary> loader = getLoader();
 
-    this.library = new LoadedFunctionsLibrary();
-    functions.forEachOrdered(function -> this.library.registerFunction(function));
-    return this.library;
+    FunctionLibrary functionLibrary = new FunctionLibrary();
+    loader.stream()
+        .map(Provider<IFunctionLibrary>::get)
+        .flatMap(library -> {
+          return library.getFunctionsAsStream();
+        })
+        .forEachOrdered(function -> functionLibrary.registerFunction(ObjectUtils.requireNonNull(function)));
+
+    synchronized (this) {
+      this.library = functionLibrary;
+    }
+    return functionLibrary;
   }
 
   /**
@@ -90,8 +91,8 @@ public final class FunctionService {
    * 
    * @return the service loader instance.
    */
-  @NotNull
-  protected ServiceLoader<@NotNull IFunctionLibrary> getLoader() {
+  @NonNull
+  private ServiceLoader<IFunctionLibrary> getLoader() {
     return loader;
   }
 
@@ -108,7 +109,7 @@ public final class FunctionService {
    *           if a matching function was not found
    */
   @SuppressWarnings("null")
-  public IFunction getFunction(@NotNull String name, @NotNull IExpression... arguments) {
+  public IFunction getFunction(@NonNull String name, @NonNull IExpression... arguments) {
     return getFunction(name, Arrays.asList(arguments));
   }
 
@@ -124,8 +125,12 @@ public final class FunctionService {
    * @throws StaticMetapathException
    *           if a matching function was not found
    */
-  public synchronized IFunction getFunction(@NotNull String name, @NotNull List<@NotNull IExpression> arguments) {
-    IFunction retval = library.getFunction(name, arguments);
+  public IFunction getFunction(@NonNull String name, @NonNull List<IExpression> arguments) {
+    IFunction retval;
+    synchronized (this) {
+      retval = library.getFunction(name, arguments);
+    }
+
     if (retval == null) {
       throw new StaticMetapathException(StaticMetapathException.NO_FUNCTION_MATCH,
           String.format("unable to find function with name '%s' having arity '%d'", name, arguments.size()));

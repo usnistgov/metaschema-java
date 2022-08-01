@@ -51,8 +51,7 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -61,11 +60,13 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - intentional
 
-  @NotNull
+  @NonNull
   private final GlobalAssemblyDefinitionType xmlAssembly;
-  @NotNull
+  @NonNull
   private final XmlMetaschema metaschema;
   private XmlFlagContainerSupport flagContainer;
   private XmlModelContainerSupport modelContainer;
@@ -80,8 +81,8 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
    *          the containing Metaschema
    */
   public XmlGlobalAssemblyDefinition(
-      @NotNull GlobalAssemblyDefinitionType xmlAssembly,
-      @NotNull XmlMetaschema metaschema) {
+      @NonNull GlobalAssemblyDefinitionType xmlAssembly,
+      @NonNull XmlMetaschema metaschema) {
     this.xmlAssembly = xmlAssembly;
     this.metaschema = metaschema;
   }
@@ -91,7 +92,7 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
    * 
    * @return the underlying XML data
    */
-  @NotNull
+  @NonNull
   protected GlobalAssemblyDefinitionType getXmlAssembly() {
     return xmlAssembly;
   }
@@ -115,8 +116,8 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
     }
   }
 
-  @NotNull
-  private Map<@NotNull String, ? extends IFlagInstance> getFlagInstanceMap() {
+  @NonNull
+  private Map<String, ? extends IFlagInstance> getFlagInstanceMap() {
     return initFlagContainer().getFlagInstanceMap();
   }
 
@@ -127,7 +128,7 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IFlagInstance> getFlagInstances() {
+  public Collection<? extends IFlagInstance> getFlagInstances() {
     return getFlagInstanceMap().values();
   }
 
@@ -142,7 +143,7 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
     }
   }
 
-  private Map<@NotNull String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
+  private Map<String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
     initModelContainer();
     return modelContainer.getNamedModelInstanceMap();
   }
@@ -154,11 +155,11 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull Collection<@NotNull ? extends INamedModelInstance> getNamedModelInstances() {
+  public @NonNull Collection<? extends INamedModelInstance> getNamedModelInstances() {
     return getNamedModelInstanceMap().values();
   }
 
-  private Map<@NotNull String, ? extends IFieldInstance> getFieldInstanceMap() {
+  private Map<String, ? extends IFieldInstance> getFieldInstanceMap() {
     initModelContainer();
     return modelContainer.getFieldInstanceMap();
   }
@@ -170,11 +171,11 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IFieldInstance> getFieldInstances() {
+  public Collection<? extends IFieldInstance> getFieldInstances() {
     return getFieldInstanceMap().values();
   }
 
-  private Map<@NotNull String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
+  private Map<String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
     initModelContainer();
     return modelContainer.getAssemblyInstanceMap();
   }
@@ -186,18 +187,18 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IAssemblyInstance> getAssemblyInstances() {
+  public Collection<? extends IAssemblyInstance> getAssemblyInstances() {
     return getAssemblyInstanceMap().values();
   }
 
   @Override
-  public List<@NotNull ? extends IChoiceInstance> getChoiceInstances() {
+  public List<? extends IChoiceInstance> getChoiceInstances() {
     initModelContainer();
     return modelContainer.getChoiceInstances();
   }
 
   @Override
-  public List<@NotNull ? extends IModelInstance> getModelInstances() {
+  public List<? extends IModelInstance> getModelInstances() {
     initModelContainer();
     return modelContainer.getModelInstances();
   }
@@ -269,43 +270,43 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
   }
 
   @Override
-  public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+  public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IMatchesConstraint constraint) {
+  public void addConstraint(@NonNull IMatchesConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+  public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IExpectConstraint constraint) {
+  public void addConstraint(@NonNull IExpectConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IIndexConstraint constraint) {
+  public void addConstraint(@NonNull IIndexConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IUniqueConstraint constraint) {
+  public void addConstraint(@NonNull IUniqueConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull ICardinalityConstraint constraint) {
+  public void addConstraint(@NonNull ICardinalityConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
@@ -343,9 +344,8 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
         : null;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+  public Map<QName, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlAssembly().getPropList()));
   }
 

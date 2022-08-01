@@ -35,50 +35,50 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public class FindingCollectingConstraintValidationHandler
     extends AbstractConstraintValidationHandler
     implements IValidationResult {
-  @NotNull
-  private final List<@NotNull ConstraintValidationFinding> findings = new LinkedList<>();
-  @NotNull
+  @NonNull
+  private final List<ConstraintValidationFinding> findings = new LinkedList<>();
+  @NonNull
   private IPathFormatter pathFormatter = IPathFormatter.METAPATH_PATH_FORMATER;
-  @NotNull
+  @NonNull
   private Level highestLevel = IConstraint.Level.INFORMATIONAL;
 
   @Override
-  @NotNull
+  @NonNull
   public IPathFormatter getPathFormatter() {
     return pathFormatter;
   }
 
   @SuppressWarnings("null")
-  public void setPathFormatter(@NotNull IPathFormatter pathFormatter) {
+  public void setPathFormatter(@NonNull IPathFormatter pathFormatter) {
     this.pathFormatter = Objects.requireNonNull(pathFormatter, "pathFormatter");
   }
 
   @Override
-  @NotNull
-  public List<@NotNull ConstraintValidationFinding> getFindings() {
+  @NonNull
+  public List<ConstraintValidationFinding> getFindings() {
     return CollectionUtil.unmodifiableList(findings);
   }
 
   @Override
-  @NotNull
+  @NonNull
   public Level getHighestSeverity() {
     return highestLevel;
   }
 
   protected void newFinding(
-      @NotNull IConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull List<@NotNull ? extends INodeItem> targets,
-      @NotNull CharSequence message,
+      @NonNull IConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull List<? extends INodeItem> targets,
+      @NonNull CharSequence message,
       Throwable cause) {
     newFinding(
         CollectionUtil.singletonList(constraint),
@@ -89,10 +89,10 @@ public class FindingCollectingConstraintValidationHandler
   }
 
   protected void newFinding(
-      @NotNull List<@NotNull ? extends IConstraint> constraints,
-      @NotNull INodeItem node,
-      @NotNull List<@NotNull ? extends INodeItem> targets,
-      @NotNull CharSequence message,
+      @NonNull List<? extends IConstraint> constraints,
+      @NonNull INodeItem node,
+      @NonNull List<? extends INodeItem> targets,
+      @NonNull CharSequence message,
       Throwable cause) {
 
     ConstraintValidationFinding finding = new ConstraintValidationFinding(constraints, message, cause, node, targets);
@@ -106,38 +106,38 @@ public class FindingCollectingConstraintValidationHandler
 
   @Override
   public void handleCardinalityMinimumViolation(
-      @NotNull ICardinalityConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull ISequence<? extends INodeItem> targets) {
+      @NonNull ICardinalityConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull ISequence<? extends INodeItem> targets) {
     newFinding(constraint, node, CollectionUtil.unmodifiableList(targets.asList()),
         newCardinalityMinimumViolationMessage(constraint, node, targets), null);
   }
 
   @Override
   public void handleCardinalityMaximumViolation(
-      @NotNull ICardinalityConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull ISequence<? extends INodeItem> targets) {
+      @NonNull ICardinalityConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull ISequence<? extends INodeItem> targets) {
     newFinding(constraint, node, CollectionUtil.unmodifiableList(targets.asList()),
         newCardinalityMaximumViolationMessage(constraint, node, targets), null);
   }
 
   @Override
   public void handleIndexDuplicateKeyViolation(
-      @NotNull IIndexConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem oldItem,
-      @NotNull INodeItem target) {
+      @NonNull IIndexConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem oldItem,
+      @NonNull INodeItem target) {
     newFinding(constraint, node, CollectionUtil.singletonList(target),
         newIndexDuplicateKeyViolationMessage(constraint, node, oldItem, target), null);
   }
 
   @Override
   public void handleUniqueKeyViolation(
-      @NotNull IUniqueConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem oldItem,
-      @NotNull INodeItem target) {
+      @NonNull IUniqueConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem oldItem,
+      @NonNull INodeItem target) {
     newFinding(constraint, node, CollectionUtil.singletonList(target),
         newUniqueKeyViolationMessage(constraint, node, oldItem, target), null);
   }
@@ -145,47 +145,47 @@ public class FindingCollectingConstraintValidationHandler
   @SuppressWarnings("null")
   @Override
   public void handleKeyMatchError(
-      @NotNull IKeyConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem target,
-      @NotNull MetapathException cause) {
+      @NonNull IKeyConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull MetapathException cause) {
     newFinding(constraint, node, CollectionUtil.singletonList(target), cause.getLocalizedMessage(), cause);
   }
 
   @Override
   public void handleMatchPatternViolation(
-      @NotNull IMatchesConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem target,
-      @NotNull String value) {
+      @NonNull IMatchesConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull String value) {
     newFinding(constraint, node, CollectionUtil.singletonList(target),
         newMatchPatternViolationMessage(constraint, node, target, value), null);
   }
 
   @Override
   public void handleMatchDatatypeViolation(
-      @NotNull IMatchesConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem target,
-      @NotNull String value,
-      @NotNull IllegalArgumentException cause) {
+      @NonNull IMatchesConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull String value,
+      @NonNull IllegalArgumentException cause) {
     newFinding(constraint, node, CollectionUtil.singletonList(target),
         newMatchDatatypeViolationMessage(constraint, node, target, value), cause);
   }
 
   @Override
   public void handleExpectViolation(
-      @NotNull IExpectConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem target,
-      @NotNull DynamicContext dynamicContext) {
+      @NonNull IExpectConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull DynamicContext dynamicContext) {
     newFinding(constraint, node, CollectionUtil.singletonList(target),
         newExpectViolationMessage(constraint, node, target, dynamicContext), null);
   }
 
   @Override
-  public void handleAllowedValuesViolation(@NotNull List<@NotNull IAllowedValuesConstraint> failedConstraints,
-      @NotNull INodeItem target) {
+  public void handleAllowedValuesViolation(@NonNull List<IAllowedValuesConstraint> failedConstraints,
+      @NonNull INodeItem target) {
     newFinding(failedConstraints, target, CollectionUtil.singletonList(target),
         newAllowedValuesViolationMessage(failedConstraints, target), null);
   }

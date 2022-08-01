@@ -40,17 +40,19 @@ import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractNamedModelProperty // NOPMD - intentional
     extends AbstractNamedProperty<IAssemblyClassBinding>
@@ -67,7 +69,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */
-  protected AbstractNamedModelProperty(@NotNull IAssemblyClassBinding parentClassBinding) {
+  protected AbstractNamedModelProperty(@NonNull IAssemblyClassBinding parentClassBinding) {
     super(parentClassBinding);
   }
   //
@@ -102,14 +104,14 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
    */
   @SuppressWarnings("null")
   @Override
-  @NotNull
+  @NonNull
   public IModelPropertyInfo getPropertyInfo() {
     synchronized (this) {
       if (propertyInfo == null) {
         propertyInfo = newPropertyInfo();
       }
+      return propertyInfo;
     }
-    return propertyInfo;
   }
 
   @Override
@@ -125,11 +127,11 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
       if (dataTypeHandler == null) {
         dataTypeHandler = newDataTypeHandler();
       }
+      return ObjectUtils.notNull(dataTypeHandler);
     }
-    return ObjectUtils.notNull(dataTypeHandler);
   }
 
-  public boolean isNextProperty(@NotNull IXmlParsingContext context) throws XMLStreamException {
+  public boolean isNextProperty(@NonNull IXmlParsingContext context) throws XMLStreamException {
     XMLEventReader2 eventReader = context.getReader();
 
     XmlEventUtil.skipWhitespace(eventReader);
@@ -184,8 +186,8 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
     return collector.getValue();
   }
 
-  protected Object readInternal(@Nullable Object parentInstance, @NotNull StartElement start,
-      @NotNull IXmlParsingContext context)
+  protected Object readInternal(@Nullable Object parentInstance, @NonNull StartElement start,
+      @NonNull IXmlParsingContext context)
       throws IOException, XMLStreamException {
     XMLEventReader2 eventReader = context.getReader();
 
@@ -196,7 +198,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
     QName groupQName = getXmlGroupAsQName();
     if (groupQName != null) {
       // we are to parse the grouping element, if the next token matches
-      XMLEvent groupEvent = XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.START_ELEMENT, groupQName);
+      XMLEvent groupEvent = XmlEventUtil.consumeAndAssert(eventReader, XMLStreamConstants.START_ELEMENT, groupQName);
       currentStart = ObjectUtils.notNull(groupEvent.asStartElement());
     }
 
@@ -211,7 +213,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
 
     if (groupQName != null) {
       // consume the end of the group
-      XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.END_ELEMENT, groupQName);
+      XmlEventUtil.consumeAndAssert(eventReader, XMLStreamConstants.END_ELEMENT, groupQName);
     }
 
     return value;
@@ -279,7 +281,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
   }
 
   @Override
-  public void copyBoundObject(@NotNull Object fromInstance, @NotNull Object toInstance) throws BindingException {
+  public void copyBoundObject(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException {
     Object value = getValue(fromInstance);
     if (value != null) {
       IModelPropertyInfo propertyInfo = getPropertyInfo();

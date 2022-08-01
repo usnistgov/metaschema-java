@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationIt
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class Addition
     extends AbstractBasicArithmeticExpression {
@@ -48,7 +48,7 @@ class Addition
    * @param right
    *          an expression whose result is summed
    */
-  protected Addition(@NotNull IExpression left, @NotNull IExpression right) {
+  protected Addition(@NonNull IExpression left, @NonNull IExpression right) {
     super(left, right);
   }
 
@@ -67,7 +67,7 @@ class Addition
    * @return the sum of both items or an empty {@link ISequence} if either item is {@code null}
    */
   @Override
-  protected IAnyAtomicItem operation(@NotNull IAnyAtomicItem left, @NotNull IAnyAtomicItem right) {
+  protected IAnyAtomicItem operation(@NonNull IAnyAtomicItem left, @NonNull IAnyAtomicItem right) {
     return sum(left, right);
   }
 
@@ -80,9 +80,9 @@ class Addition
    *          the second item to sum
    * @return the sum of both items
    */
-  @NotNull
-  public static IAnyAtomicItem sum(@NotNull IAnyAtomicItem leftItem, // NOPMD - intentional
-      @NotNull IAnyAtomicItem rightItem) {
+  @NonNull
+  public static IAnyAtomicItem sum(@NonNull IAnyAtomicItem leftItem, // NOPMD - intentional
+      @NonNull IAnyAtomicItem rightItem) {
     IAnyAtomicItem retval = null;
     if (leftItem instanceof IDateItem) {
       IDateItem left = (IDateItem) leftItem;

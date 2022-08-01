@@ -29,15 +29,15 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.YearMonthAdapter;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.Period;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class YearMonthDurationItemImpl
     extends AbstractAnyAtomicItem<Period>
     implements IYearMonthDurationItem {
 
-  public YearMonthDurationItemImpl(@NotNull Period value) {
+  public YearMonthDurationItemImpl(@NonNull Period value) {
     super(value);
   }
 

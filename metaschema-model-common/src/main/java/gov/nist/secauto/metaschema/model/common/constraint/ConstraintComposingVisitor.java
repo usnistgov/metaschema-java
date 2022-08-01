@@ -33,36 +33,36 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItemVisitor;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class ConstraintComposingVisitor
-    implements INodeItemVisitor<Void, @NotNull ITargetedConstaints> {
+    implements INodeItemVisitor<Void, ITargetedConstaints> {
 
   @Override
-  public Void visitDocument(@NotNull IDocumentNodeItem item, @NotNull ITargetedConstaints context) {
+  public Void visitDocument(@NonNull IDocumentNodeItem item, ITargetedConstaints context) {
     throw new UnsupportedOperationException("constraints can only apply to an assembly, field, or flag definition");
   }
 
   @Override
-  public Void visitFlag(@NotNull IFlagNodeItem item, @NotNull ITargetedConstaints context) {
+  public Void visitFlag(@NonNull IFlagNodeItem item, ITargetedConstaints context) {
     context.target(item.getDefinition());
     return null;
   }
 
   @Override
-  public Void visitField(@NotNull IFieldNodeItem item, @NotNull ITargetedConstaints context) {
+  public Void visitField(@NonNull IFieldNodeItem item, ITargetedConstaints context) {
     context.target(item.getDefinition());
     return null;
   }
 
   @Override
-  public Void visitAssembly(@NotNull IAssemblyNodeItem item, @NotNull ITargetedConstaints context) {
+  public Void visitAssembly(@NonNull IAssemblyNodeItem item, ITargetedConstaints context) {
     context.target(item.getDefinition());
     return null;
   }
 
   @Override
-  public Void visitMetaschema(@NotNull IMetaschemaNodeItem item, @NotNull ITargetedConstaints context) {
+  public Void visitMetaschema(@NonNull IMetaschemaNodeItem item, ITargetedConstaints context) {
     throw new UnsupportedOperationException("constraints can only apply to an assembly, field, or flag definition");
   }
 

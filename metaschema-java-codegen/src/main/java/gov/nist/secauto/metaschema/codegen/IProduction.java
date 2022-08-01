@@ -29,8 +29,7 @@ package gov.nist.secauto.metaschema.codegen;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -39,34 +38,41 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 /**
  * Information about Java classes generated for definitions from a collection of Metaschema.
  */
 public interface IProduction {
 
-  @NotNull
-  Collection<@NotNull IMetaschemaProduction> getMetaschemaProductions();
+  @NonNull
+  Collection<IMetaschemaProduction> getMetaschemaProductions();
 
   @Nullable
-  IMetaschemaProduction getMetaschemaProduction(@NotNull IMetaschema metaschema);
+  IMetaschemaProduction getMetaschemaProduction(@NonNull IMetaschema metaschema);
 
-  @NotNull
-  Stream<@NotNull IDefinitionProduction> getDefinitionProductionsAsStream();
+  @NonNull
+  Stream<IDefinitionProduction> getDefinitionProductionsAsStream();
 
-  @NotNull
-  Stream<@NotNull IGeneratedClass> getGeneratedClasses();
+  @NonNull
+  Stream<IGeneratedClass> getGeneratedClasses();
 
-  @NotNull
-  static IProduction of(@NotNull IMetaschema metaschema, @NotNull ITypeResolver typeResolver,
-      @NotNull Path targetDirectory) throws IOException {
+  @NonNull
+  static IProduction of( // NOPMD - intentional
+      @NonNull IMetaschema metaschema,
+      @NonNull ITypeResolver typeResolver,
+      @NonNull Path targetDirectory) throws IOException {
     return of(CollectionUtil.singleton(metaschema), typeResolver, targetDirectory);
   }
 
-  @NotNull
-  static IProduction of(@NotNull Collection<@NotNull ? extends IMetaschema> metaschemas,
-      @NotNull ITypeResolver typeResolver, @NotNull Path targetDirectory) throws IOException {
+  @NonNull
+  static IProduction of( // NOPMD - intentional
+      @NonNull Collection<? extends IMetaschema> metaschemas,
+      @NonNull ITypeResolver typeResolver,
+      @NonNull Path targetDirectory) throws IOException {
     ProductionImpl retval = new ProductionImpl();
     for (IMetaschema metaschema : metaschemas) {
+      assert metaschema != null;
       retval.processMetaschema(metaschema, typeResolver, targetDirectory);
     }
 

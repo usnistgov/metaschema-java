@@ -27,9 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,29 +40,34 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public interface ISequence<ITEM_TYPE extends IItem> {
   @SuppressWarnings("rawtypes")
-  public static final ISequence EMPTY = new EmptyListImpl<>();
+  ISequence EMPTY = new EmptyListImpl<>();
 
-  @SuppressWarnings("unchecked")
-  @NotNull
-  public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> empty() {
-    return (@NotNull ISequence<ITEM_TYPE>) EMPTY;
+  @SuppressWarnings({ "unchecked", "null" })
+  @NonNull
+  static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> empty() {
+    return EMPTY;
   }
 
-  @NotNull
-  public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of(@Nullable ITEM_TYPE item) {
+  @NonNull
+  public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
+      @Nullable ITEM_TYPE item) {
     ISequence<ITEM_TYPE> retval;
     if (item == null) {
       retval = empty();
     } else {
-      retval = new SingletonSequenceImpl<ITEM_TYPE>(item);
+      retval = new SingletonSequenceImpl<>(item);
     }
     return retval;
   }
 
-  @NotNull
-  public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of(@NotNull List<@NotNull ITEM_TYPE> items) {
+  @NonNull
+  public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
+      @NonNull List<ITEM_TYPE> items) {
     ISequence<ITEM_TYPE> retval;
     if (items.isEmpty()) {
       retval = empty();
@@ -74,24 +77,25 @@ public interface ISequence<ITEM_TYPE extends IItem> {
     return retval;
   }
 
-  @NotNull
-  public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of(@NotNull Stream<ITEM_TYPE> items) {
+  @NonNull
+  public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
+      @NonNull Stream<ITEM_TYPE> items) {
     return new StreamSequenceImpl<ITEM_TYPE>(items);
   }
 
-  @NotNull
-  List<@NotNull ITEM_TYPE> asList();
+  @NonNull
+  List<ITEM_TYPE> asList();
 
   // TODO: rename to "stream"
-  @NotNull
-  Stream<@NotNull ITEM_TYPE> asStream();
+  @NonNull
+  Stream<ITEM_TYPE> asStream();
 
   boolean isEmpty();
 
   int size();
 
-  @NotNull
-  public static <ITEM_TYPE extends IItem> Collector<ITEM_TYPE, ?, ISequence<ITEM_TYPE>> toSequence() {
+  @NonNull
+  static <ITEM_TYPE extends IItem> Collector<ITEM_TYPE, ?, ISequence<ITEM_TYPE>> toSequence() {
 
     return new Collector<ITEM_TYPE, List<ITEM_TYPE>, ISequence<ITEM_TYPE>>() {
 
@@ -113,7 +117,6 @@ public interface ISequence<ITEM_TYPE extends IItem> {
         };
       }
 
-      @SuppressWarnings("null")
       @Override
       public Function<List<ITEM_TYPE>, ISequence<ITEM_TYPE>> finisher() {
         return list -> {
@@ -121,9 +124,9 @@ public interface ISequence<ITEM_TYPE extends IItem> {
           if (list.isEmpty()) {
             retval = ISequence.empty();
           } else if (list.size() == 1) {
-            retval = new SingletonSequenceImpl<ITEM_TYPE>(list.iterator().next());
+            retval = new SingletonSequenceImpl<>(ObjectUtils.notNull(list.iterator().next()));
           } else {
-            retval = new ListSequenceImpl<ITEM_TYPE>(list, false);
+            retval = new ListSequenceImpl<>(list, false);
           }
           return retval;
         };

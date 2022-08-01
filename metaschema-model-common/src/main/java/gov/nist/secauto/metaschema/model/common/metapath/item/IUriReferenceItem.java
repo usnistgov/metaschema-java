@@ -29,18 +29,18 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IUriReferenceItem extends IAnyUriItem {
-  @NotNull
-  public static IUriReferenceItem valueOf(@NotNull URI value) {
+  @NonNull
+  public static IUriReferenceItem valueOf(@NonNull URI value) {
     return new UriReferenceItemImpl(value);
   }
 
-  @NotNull
-  public static IUriReferenceItem cast(@NotNull IAnyAtomicItem item)
+  @NonNull
+  public static IUriReferenceItem cast(@NonNull IAnyAtomicItem item)
       throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.URI_REFERENCE.cast(item);
   }

@@ -45,7 +45,6 @@ import gov.nist.secauto.metaschema.model.xmlbeans.METASCHEMADocument.METASCHEMA;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.xmlbeans.XmlCursor;
-import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 import java.util.Collection;
@@ -53,21 +52,24 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class XmlMetaschema
     extends AbstractMetaschema {
   private static final Logger LOGGER = LogManager.getLogger(XmlMetaschema.class);
 
-  @NotNull
+  @NonNull
   private final URI location;
-  @NotNull
+  @NonNull
   private final METASCHEMADocument metaschema;
-  private final Map<@NotNull String, ? extends IFlagDefinition> flagDefinitions;
-  private final Map<@NotNull String, ? extends IFieldDefinition> fieldDefinitions;
-  private final Map<@NotNull String, ? extends IAssemblyDefinition> assemblyDefinitions;
-  private final Map<@NotNull String, ? extends IAssemblyDefinition> rootAssemblyDefinitions;
+  private final Map<String, ? extends IFlagDefinition> flagDefinitions;
+  private final Map<String, ? extends IFieldDefinition> fieldDefinitions;
+  private final Map<String, ? extends IAssemblyDefinition> assemblyDefinitions;
+  private final Map<String, ? extends IAssemblyDefinition> rootAssemblyDefinitions;
 
   /**
    * Constructs a new Metaschema instance.
@@ -82,11 +84,12 @@ class XmlMetaschema
    *           if a processing error occurs
    */
   XmlMetaschema( // NOPMD - unavoidable
-      @NotNull URI resource,
-      @NotNull METASCHEMADocument metaschemaXml,
-      @NotNull List<@NotNull IMetaschema> importedMetaschema) throws MetaschemaException {
+      @NonNull URI resource,
+      @NonNull METASCHEMADocument metaschemaXml,
+      @NonNull List<IMetaschema> importedMetaschema) throws MetaschemaException {
     super(importedMetaschema);
     this.location = ObjectUtils.requireNonNull(resource, "resource");
+    Objects.requireNonNull(metaschemaXml.getMETASCHEMA());
     this.metaschema = metaschemaXml;
 
     METASCHEMA metaschemaNode = metaschema.getMETASCHEMA();
@@ -97,7 +100,7 @@ class XmlMetaschema
       XmlCursor cursor = metaschemaNode.newCursor();
       cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';$this/m:define-flag");
 
-      Map<@NotNull String, IFlagDefinition> flagDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
+      Map<String, IFlagDefinition> flagDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
       while (cursor.toNextSelection()) {
         GlobalFlagDefinitionType obj = ObjectUtils.notNull((GlobalFlagDefinitionType) cursor.getObject());
         XmlGlobalFlagDefinition flag = new XmlGlobalFlagDefinition(obj, this); // NOPMD - intentional
@@ -115,7 +118,7 @@ class XmlMetaschema
       XmlCursor cursor = metaschemaNode.newCursor();
       cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';$this/m:define-field");
 
-      Map<@NotNull String, IFieldDefinition> fieldDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
+      Map<String, IFieldDefinition> fieldDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
       while (cursor.toNextSelection()) {
         GlobalFieldDefinitionType obj = ObjectUtils.notNull((GlobalFieldDefinitionType) cursor.getObject());
         XmlGlobalFieldDefinition field = new XmlGlobalFieldDefinition(obj, this); // NOPMD - intentional
@@ -130,8 +133,8 @@ class XmlMetaschema
 
     {
       // finally assembly definitions
-      Map<@NotNull String, IAssemblyDefinition> assemblyDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
-      Map<@NotNull String, IAssemblyDefinition> rootAssemblyDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
+      Map<String, IAssemblyDefinition> assemblyDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
+      Map<String, IAssemblyDefinition> rootAssemblyDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
 
       XmlCursor cursor = metaschemaNode.newCursor();
       cursor.selectPath(
@@ -156,7 +159,7 @@ class XmlMetaschema
     }
   }
 
-  @NotNull
+  @NonNull
   @Override
   public URI getLocation() {
     return location;
@@ -167,9 +170,9 @@ class XmlMetaschema
    * 
    * @return the XMLBean for the Metaschema
    */
-  @NotNull
+  @NonNull
   protected METASCHEMADocument.METASCHEMA getXmlMetaschema() {
-    return metaschema.getMETASCHEMA();
+    return ObjectUtils.notNull(metaschema.getMETASCHEMA());
   }
 
   @SuppressWarnings("null")
@@ -209,65 +212,65 @@ class XmlMetaschema
     return URI.create(getXmlMetaschema().getJsonBaseUri());
   }
 
-  private Map<@NotNull String, ? extends IAssemblyDefinition> getAssemblyDefinitionMap() {
+  private Map<String, ? extends IAssemblyDefinition> getAssemblyDefinitionMap() {
     return assemblyDefinitions;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IAssemblyDefinition> getAssemblyDefinitions() {
+  public Collection<? extends IAssemblyDefinition> getAssemblyDefinitions() {
     return getAssemblyDefinitionMap().values();
   }
 
   @Override
-  public IAssemblyDefinition getAssemblyDefinitionByName(@NotNull String name) {
+  public IAssemblyDefinition getAssemblyDefinitionByName(@NonNull String name) {
     return getAssemblyDefinitionMap().get(name);
   }
 
-  private Map<@NotNull String, ? extends IFieldDefinition> getFieldDefinitionMap() {
+  private Map<String, ? extends IFieldDefinition> getFieldDefinitionMap() {
     return fieldDefinitions;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IFieldDefinition> getFieldDefinitions() {
+  public Collection<? extends IFieldDefinition> getFieldDefinitions() {
     return getFieldDefinitionMap().values();
   }
 
   @Override
-  public IFieldDefinition getFieldDefinitionByName(@NotNull String name) {
+  public IFieldDefinition getFieldDefinitionByName(@NonNull String name) {
     return getFieldDefinitionMap().get(name);
   }
 
   @SuppressWarnings("null")
   @Override
-  public List<@NotNull ? extends IModelDefinition> getAssemblyAndFieldDefinitions() {
+  public List<? extends IModelDefinition> getAssemblyAndFieldDefinitions() {
     return Stream.concat(getAssemblyDefinitions().stream(), getFieldDefinitions().stream())
         .collect(Collectors.toList());
   }
 
-  private Map<@NotNull String, ? extends IFlagDefinition> getFlagDefinitionMap() {
+  private Map<String, ? extends IFlagDefinition> getFlagDefinitionMap() {
     return flagDefinitions;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IFlagDefinition> getFlagDefinitions() {
+  public Collection<? extends IFlagDefinition> getFlagDefinitions() {
     return getFlagDefinitionMap().values();
   }
 
   @Override
-  public IFlagDefinition getFlagDefinitionByName(@NotNull String name) {
+  public IFlagDefinition getFlagDefinitionByName(@NonNull String name) {
     return getFlagDefinitionMap().get(name);
   }
 
-  private Map<@NotNull String, ? extends IAssemblyDefinition> getRootAssemblyDefinitionMap() {
+  private Map<String, ? extends IAssemblyDefinition> getRootAssemblyDefinitionMap() {
     return rootAssemblyDefinitions;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IAssemblyDefinition> getRootAssemblyDefinitions() {
+  public Collection<? extends IAssemblyDefinition> getRootAssemblyDefinitions() {
     return getRootAssemblyDefinitionMap().values();
   }
 }

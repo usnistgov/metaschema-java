@@ -30,7 +30,6 @@ import gov.nist.secauto.metaschema.model.common.IResourceLoader;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
@@ -42,32 +41,34 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 
-public interface IDocumentLoader extends IResourceLoader {
-  void setEntityResolver(@NotNull EntityResolver resolver);
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-  @NotNull
-  default IDocumentNodeItem loadAsNodeItem(@NotNull URL url) throws IOException, URISyntaxException {
+public interface IDocumentLoader extends IResourceLoader {
+  void setEntityResolver(@NonNull EntityResolver resolver);
+
+  @NonNull
+  default IDocumentNodeItem loadAsNodeItem(@NonNull URL url) throws IOException, URISyntaxException {
     return loadAsNodeItem(toInputSource(ObjectUtils.notNull(url.toURI())));
   }
 
-  @NotNull
-  default IDocumentNodeItem loadAsNodeItem(@NotNull Path path) throws IOException {
+  @NonNull
+  default IDocumentNodeItem loadAsNodeItem(@NonNull Path path) throws IOException {
     return loadAsNodeItem(toInputSource(ObjectUtils.notNull(path.toUri())));
   }
 
-  @NotNull
-  default IDocumentNodeItem loadAsNodeItem(@NotNull File file) throws IOException {
+  @NonNull
+  default IDocumentNodeItem loadAsNodeItem(@NonNull File file) throws IOException {
     return loadAsNodeItem(toInputSource(ObjectUtils.notNull(file.toPath().toUri())));
   }
 
-  @NotNull
-  default IDocumentNodeItem loadAsNodeItem(@NotNull InputStream is, @NotNull URI documentUri) throws IOException {
+  @NonNull
+  default IDocumentNodeItem loadAsNodeItem(@NonNull InputStream is, @NonNull URI documentUri) throws IOException {
     InputSource source = toInputSource(documentUri);
     source.setByteStream(is);
     // TODO: deal with charset?
     return loadAsNodeItem(source);
   }
 
-  @NotNull
-  IDocumentNodeItem loadAsNodeItem(@NotNull InputSource source) throws IOException;
+  @NonNull
+  IDocumentNodeItem loadAsNodeItem(@NonNull InputSource source) throws IOException;
 }

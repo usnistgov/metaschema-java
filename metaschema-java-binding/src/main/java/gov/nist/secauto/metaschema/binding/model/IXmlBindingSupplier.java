@@ -28,16 +28,17 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 @FunctionalInterface
 interface IXmlBindingSupplier {
-  Object get(@Nullable Object parentInstance, @NotNull StartElement start, @NotNull IXmlParsingContext context)
+  Object get(@Nullable Object parentInstance, @NonNull StartElement start, @NonNull IXmlParsingContext context)
       throws IOException, XMLStreamException;
 }

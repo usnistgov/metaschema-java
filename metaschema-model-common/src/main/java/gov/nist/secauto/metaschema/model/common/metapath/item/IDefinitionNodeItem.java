@@ -29,11 +29,11 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IDefinitionNodeItem extends INodeItem {
 
-  @NotNull
+  @NonNull
   default String getName() {
     INamedInstance instance = getInstance();
     return instance == null ? getDefinition().getEffectiveName() : instance.getEffectiveName();
@@ -44,7 +44,7 @@ public interface IDefinitionNodeItem extends INodeItem {
    * 
    * @return the definition
    */
-  @NotNull
+  @NonNull
   IDefinition getDefinition();
 
   /**

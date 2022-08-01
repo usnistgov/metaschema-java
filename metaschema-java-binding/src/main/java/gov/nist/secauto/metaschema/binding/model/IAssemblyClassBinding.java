@@ -31,10 +31,10 @@ import com.fasterxml.jackson.core.JsonToken;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.Collection;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Represents a Metaschema assembly bound to a Java plain old java object (POJO) class.
@@ -42,19 +42,19 @@ import java.util.Collection;
 public interface IAssemblyClassBinding extends IClassBinding, IAssemblyDefinition {
 
   @Override
-  Collection<@NotNull ? extends IBoundNamedModelInstance> getModelInstances();
+  Collection<? extends IBoundNamedModelInstance> getModelInstances();
 
   @Override
-  Collection<@NotNull ? extends IBoundNamedModelInstance> getNamedModelInstances();
+  Collection<? extends IBoundNamedModelInstance> getNamedModelInstances();
 
   @Override
-  Collection<@NotNull ? extends IBoundFieldInstance> getFieldInstances();
+  Collection<? extends IBoundFieldInstance> getFieldInstances();
 
   @Override
   IBoundFieldInstance getFieldInstanceByName(String name);
 
   @Override
-  Collection<@NotNull ? extends IBoundAssemblyInstance> getAssemblyInstances();
+  Collection<? extends IBoundAssemblyInstance> getAssemblyInstances();
 
   @Override
   IBoundAssemblyInstance getAssemblyInstanceByName(String name);
@@ -81,6 +81,6 @@ public interface IAssemblyClassBinding extends IClassBinding, IAssemblyDefinitio
    * @throws IOException
    *           if an error occurred while reading the JSON
    */
-  @NotNull
-  Object readObject(@NotNull IJsonParsingContext context) throws IOException;
+  @NonNull
+  Object readObject(@NonNull IJsonParsingContext context) throws IOException;
 }

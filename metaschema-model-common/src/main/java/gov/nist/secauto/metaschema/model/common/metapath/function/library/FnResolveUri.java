@@ -36,15 +36,16 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.UriFunctionExc
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.net.URI;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public final class FnResolveUri {
-  @NotNull
+  @NonNull
   static final IFunction SIGNATURE_ONE_ARG = IFunction.builder()
       .name("resolve-uri")
       .deterministic()
@@ -60,7 +61,7 @@ public final class FnResolveUri {
       .functionHandler(FnResolveUri::executeOneArg)
       .build();
 
-  @NotNull
+  @NonNull
   static final IFunction SIGNATURE_TWO_ARG = IFunction.builder()
       .name("resolve-uri")
       .deterministic()
@@ -86,24 +87,26 @@ public final class FnResolveUri {
   }
 
   @SuppressWarnings("unused")
-  @NotNull
-  private static ISequence<IAnyUriItem> executeOneArg(@NotNull IFunction function,
-      @NotNull List<@NotNull ISequence<?>> arguments,
-      @NotNull DynamicContext dynamicContext,
+  @NonNull
+  private static ISequence<IAnyUriItem> executeOneArg(
+      @NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
       INodeItem focus) {
 
-    ISequence<? extends IStringItem> relativeSequence = FunctionUtils.asType(arguments.get(0));
+    ISequence<? extends IStringItem> relativeSequence
+        = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
     if (relativeSequence.isEmpty()) {
-      return ISequence.empty();
+      return ISequence.empty(); // NOPMD - readability
     }
-
-    IStringItem relativeString = FunctionUtils.getFirstItem(relativeSequence, true);
 
     IAnyUriItem baseUri = FnStaticBaseUri.fnStaticBaseUri(dynamicContext);
     if (baseUri == null) {
       throw new UriFunctionException(UriFunctionException.BASE_URI_NOT_DEFINED_IN_STATIC_CONTEXT,
           "The base-uri is not defined in the static context");
     }
+
+    IStringItem relativeString = FunctionUtils.getFirstItem(relativeSequence, true);
 
     IAnyUriItem resolvedUri = fnResolveUri(relativeString, baseUri);
     return resolvedUri == null ? ISequence.empty() : ISequence.of(resolvedUri);
@@ -124,25 +127,23 @@ public final class FnResolveUri {
    * @return a sequence containing the resolved URI or and empty sequence if either the base or
    *         relative URI is {@code null}
    */
-  @NotNull
+  @NonNull
   private static ISequence<IAnyUriItem> executeTwoArg(
-      @NotNull IFunction function,
-      @NotNull List<@NotNull ISequence<?>> arguments,
-      @NotNull DynamicContext dynamicContext,
-      INodeItem focus) {
+      @NonNull IFunction function, // NOPMD - ok
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext, // NOPMD - ok
+      INodeItem focus) { // NOPMD - ok
 
     /* there will always be two arguments */
     assert arguments.size() == 2;
 
-    ISequence<? extends IStringItem> relativeSequence = FunctionUtils.asType(arguments.get(0));
+    ISequence<? extends IStringItem> relativeSequence = FunctionUtils.asType(
+        ObjectUtils.requireNonNull(arguments.get(0)));
     if (relativeSequence.isEmpty()) {
-      return ISequence.empty();
+      return ISequence.empty(); // NOPMD - readability
     }
 
-    IStringItem relativeString = FunctionUtils.getFirstItem(relativeSequence, true);
-
-    ISequence<? extends IStringItem> baseSequence = FunctionUtils.asType(arguments.get(1));
-
+    ISequence<? extends IStringItem> baseSequence = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1)));
     IStringItem baseString = FunctionUtils.getFirstItem(baseSequence, true);
 
     if (baseString == null) {
@@ -151,6 +152,8 @@ public final class FnResolveUri {
           "Invalid argument to fn:resolve-uri().");
     }
     IAnyUriItem baseUri = IAnyUriItem.cast(baseString);
+
+    IStringItem relativeString = FunctionUtils.getFirstItem(relativeSequence, true);
 
     IAnyUriItem resolvedUri = fnResolveUri(relativeString, baseUri);
     return resolvedUri == null ? ISequence.empty() : ISequence.of(resolvedUri);
@@ -166,7 +169,7 @@ public final class FnResolveUri {
    * @return the resolved URI or {@code null} if the {@code relative} URI in {@code null}
    */
   @Nullable
-  public static IAnyUriItem fnResolveUri(@Nullable IStringItem relative, @NotNull IAnyUriItem base) {
+  public static IAnyUriItem fnResolveUri(@Nullable IStringItem relative, @NonNull IAnyUriItem base) {
     IAnyUriItem relativeUri = relative == null ? null : IAnyUriItem.cast(relative);
 
     return fnResolveUri(relativeUri, base);
@@ -182,13 +185,13 @@ public final class FnResolveUri {
    * @return the resolved URI or {@code null} if the {@code relative} URI in {@code null}
    */
   @Nullable
-  public static IAnyUriItem fnResolveUri(@Nullable IAnyUriItem relative, @NotNull IAnyUriItem base) {
+  public static IAnyUriItem fnResolveUri(@Nullable IAnyUriItem relative, @NonNull IAnyUriItem base) {
     if (relative == null) {
-      return null;
+      return null; // NOPMD - readability
     }
 
     @SuppressWarnings("null")
-    @NotNull
+    @NonNull
     URI resolvedUri = base.getValue().resolve(relative.getValue());
     return IAnyUriItem.valueOf(resolvedUri);
   }

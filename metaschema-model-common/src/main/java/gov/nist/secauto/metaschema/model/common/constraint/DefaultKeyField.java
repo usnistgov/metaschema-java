@@ -29,16 +29,16 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.regex.Pattern;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class DefaultKeyField implements IKeyField {
 
   @Nullable
   private final Pattern pattern;
-  @NotNull
+  @NonNull
   private final MetapathExpression target;
   @Nullable
   private final MarkupMultiline remarks;
@@ -55,7 +55,7 @@ public class DefaultKeyField implements IKeyField {
    *          optional remarks describing the intent of the constraint
    */
   public DefaultKeyField(
-      @NotNull MetapathExpression target,
+      @NonNull MetapathExpression target,
       @Nullable Pattern pattern,
       @Nullable MarkupMultiline remarks) {
     this.pattern = pattern;

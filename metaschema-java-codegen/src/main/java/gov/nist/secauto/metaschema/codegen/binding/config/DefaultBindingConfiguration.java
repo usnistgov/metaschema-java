@@ -41,8 +41,7 @@ import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.xmlbeans.XmlException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,15 +50,17 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DefaultBindingConfiguration implements IBindingConfiguration {
-  private final Map<String, String> namespaceToPackageNameMap = new HashMap<>();
+  private final Map<String, String> namespaceToPackageNameMap = new ConcurrentHashMap<>();
   // metaschema location -> ModelType -> Definition Name -> IBindingConfiguration
   private final Map<String, MetaschemaBindingConfiguration> metaschemaUrlToMetaschemaBindingConfigurationMap
-      = new HashMap<>();
+      = new ConcurrentHashMap<>();
 
   @Override
   public String getPackageNameForMetaschema(IMetaschema metaschema) {
@@ -76,7 +77,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
    */
   @Nullable
   public IDefinitionBindingConfiguration
-      getBindingConfigurationForDefinition(@NotNull IModelDefinition definition) {
+      getBindingConfigurationForDefinition(@NonNull IModelDefinition definition) {
     String metaschemaUri = ObjectUtils.notNull(definition.getContainingMetaschema().getLocation().toString());
     String definitionName = definition.getName();
 
@@ -126,7 +127,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   }
 
   @Override
-  public @NotNull String getClassName(@NotNull IMetaschema metaschema) {
+  public @NonNull String getClassName(@NonNull IMetaschema metaschema) {
     // TODO: make this configurable
     return ClassUtils.toClassName(metaschema.getShortName() + "Metaschema");
   }
@@ -166,8 +167,8 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
    *          the namespace to generate a Java package name for
    * @return a Java package name
    */
-  @NotNull
-  protected String getPackageNameForNamespace(@NotNull String namespace) {
+  @NonNull
+  protected String getPackageNameForNamespace(@NonNull String namespace) {
     String packageName = namespaceToPackageNameMap.get(namespace);
     if (packageName == null) {
       packageName = ClassUtils.toPackageName(namespace);
@@ -182,7 +183,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
    *          the Metaschema
    * @return the configuration for the Metaschema or {@code null} if there is no configuration
    */
-  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(@NotNull IMetaschema metaschema) {
+  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(@NonNull IMetaschema metaschema) {
     String metaschemaUri = ObjectUtils.notNull(metaschema.getLocation().toString());
     return getMetaschemaBindingConfiguration(metaschemaUri);
 
@@ -196,7 +197,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
    * @return the configuration for the Metaschema or {@code null} if there is no configuration
    */
   @Nullable
-  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(@NotNull String metaschemaUri) {
+  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(@NonNull String metaschemaUri) {
     return metaschemaUrlToMetaschemaBindingConfigurationMap.get(metaschemaUri);
   }
 
@@ -210,8 +211,8 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
    * @return the old configuration for the Metaschema or {@code null} if there was no previous
    *         configuration
    */
-  public MetaschemaBindingConfiguration addMetaschemaBindingConfiguration(@NotNull String metaschemaUri,
-      @NotNull MetaschemaBindingConfiguration config) {
+  public MetaschemaBindingConfiguration addMetaschemaBindingConfiguration(@NonNull String metaschemaUri,
+      @NonNull MetaschemaBindingConfiguration config) {
     Objects.requireNonNull(metaschemaUri, "metaschemaUri");
     Objects.requireNonNull(config, "config");
     return metaschemaUrlToMetaschemaBindingConfigurationMap.put(metaschemaUri, config);
@@ -311,10 +312,10 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
     }
   }
 
-  @NotNull
-  private IMutableDefinitionBindingConfiguration processDefinitionBindingConfiguration(
+  @NonNull
+  private static IMutableDefinitionBindingConfiguration processDefinitionBindingConfiguration(
       @Nullable IDefinitionBindingConfiguration oldConfig,
-      @NotNull ObjectDefinitionBindingType objectDefinitionBinding) {
+      @NonNull ObjectDefinitionBindingType objectDefinitionBinding) {
     IMutableDefinitionBindingConfiguration config;
     if (oldConfig != null) {
       config = new DefaultDefinitionBindingConfiguration(oldConfig);
@@ -339,9 +340,9 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
     return config;
   }
 
-  public class MetaschemaBindingConfiguration {
-    private final Map<String, IDefinitionBindingConfiguration> assemblyBindingConfigs = new HashMap<>();
-    private final Map<String, IDefinitionBindingConfiguration> fieldBindingConfigs = new HashMap<>();
+  public static class MetaschemaBindingConfiguration {
+    private final Map<String, IDefinitionBindingConfiguration> assemblyBindingConfigs = new ConcurrentHashMap<>();
+    private final Map<String, IDefinitionBindingConfiguration> fieldBindingConfigs = new ConcurrentHashMap<>();
 
     private MetaschemaBindingConfiguration() {
     }
@@ -354,7 +355,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
      * @return the definition's binding configuration or {@code null} if no configuration is provided
      */
     @Nullable
-    public IDefinitionBindingConfiguration getAssemblyDefinitionBindingConfig(@NotNull String name) {
+    public IDefinitionBindingConfiguration getAssemblyDefinitionBindingConfig(@NonNull String name) {
       return assemblyBindingConfigs.get(name);
     }
 
@@ -366,7 +367,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
      * @return the definition's binding configuration or {@code null} if no configuration is provided
      */
     @Nullable
-    public IDefinitionBindingConfiguration getFieldDefinitionBindingConfig(@NotNull String name) {
+    public IDefinitionBindingConfiguration getFieldDefinitionBindingConfig(@NonNull String name) {
       return fieldBindingConfigs.get(name);
     }
 
@@ -381,8 +382,8 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
      *         previously provided
      */
     @Nullable
-    public IDefinitionBindingConfiguration addAssemblyDefinitionBindingConfig(@NotNull String name,
-        @NotNull IDefinitionBindingConfiguration config) {
+    public IDefinitionBindingConfiguration addAssemblyDefinitionBindingConfig(@NonNull String name,
+        @NonNull IDefinitionBindingConfiguration config) {
       return assemblyBindingConfigs.put(name, config);
     }
 
@@ -397,8 +398,8 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
      *         previously provided
      */
     @Nullable
-    public IDefinitionBindingConfiguration addFieldDefinitionBindingConfig(@NotNull String name,
-        @NotNull IDefinitionBindingConfiguration config) {
+    public IDefinitionBindingConfiguration addFieldDefinitionBindingConfig(@NonNull String name,
+        @NonNull IDefinitionBindingConfiguration config) {
       return fieldBindingConfigs.put(name, config);
     }
   }

@@ -29,20 +29,20 @@ package gov.nist.secauto.metaschema.schemagen;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public final class FlagInstanceFilter {
   private FlagInstanceFilter() {
     // disable construction
   }
 
-  @NotNull
-  public static Collection<@NotNull ? extends IFlagInstance> filterFlags(
-      @NotNull Collection<@NotNull ? extends IFlagInstance> flags,
+  @NonNull
+  public static Collection<? extends IFlagInstance> filterFlags(
+      @NonNull Collection<? extends IFlagInstance> flags,
       IFlagInstance jsonKeyFlag) {
     Predicate<IFlagInstance> filter = null;
 
@@ -53,9 +53,9 @@ public final class FlagInstanceFilter {
     return applyFilter(flags, filter);
   }
 
-  @NotNull
-  public static Collection<@NotNull ? extends IFlagInstance> filterFlags(
-      @NotNull Collection<@NotNull ? extends IFlagInstance> flags,
+  @NonNull
+  public static Collection<? extends IFlagInstance> filterFlags(
+      @NonNull Collection<? extends IFlagInstance> flags,
       IFlagInstance jsonKeyFlag,
       IFlagInstance jsonValueKeyFlag) {
     Predicate<IFlagInstance> filter = null;
@@ -79,17 +79,17 @@ public final class FlagInstanceFilter {
     return applyFilter(flags, filter);
   }
 
-  @NotNull
-  protected static Predicate<IFlagInstance>
-      filterFlag(@NotNull IFlagInstance flagToFilter) {
+  @NonNull
+  private static Predicate<IFlagInstance>
+      filterFlag(@NonNull IFlagInstance flagToFilter) {
     return flag -> flag != flagToFilter;
   }
 
-  @NotNull
-  protected static Collection<@NotNull ? extends IFlagInstance> applyFilter(
-      @NotNull Collection<@NotNull ? extends IFlagInstance> flags,
+  @NonNull
+  private static Collection<? extends IFlagInstance> applyFilter(
+      @NonNull Collection<? extends IFlagInstance> flags,
       Predicate<IFlagInstance> filter) {
-    Collection<@NotNull ? extends IFlagInstance> retval;
+    Collection<? extends IFlagInstance> retval;
     if (filter == null) {
       retval = flags;
     } else {

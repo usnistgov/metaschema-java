@@ -48,7 +48,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.MockItemFactory;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.jetbrains.annotations.NotNull;
 import org.jmock.Mockery;
 import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
@@ -57,12 +56,14 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import java.net.URI;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class BuildAstVisitorTest {
   @RegisterExtension
   Mockery context = new JUnit5Mockery();
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   private IDocumentNodeItem newTestDocument() {
     MockItemFactory factory = new MockItemFactory(context);
     return factory.document(URI.create("http://example.com/content"), "root",
@@ -70,16 +71,16 @@ class BuildAstVisitorTest {
             factory.flag("uuid", IUuidItem.random())),
         List.of(
             factory.field("field1", IStringItem.valueOf("field1")),
-            factory.field("field2", IStringItem.valueOf("field2"),
+            factory.field("field2", IStringItem.valueOf("field2"), // NOPMD
                 List.of(factory.flag("flag", IStringItem.valueOf("field2-flag"))))));
   }
 
-  @NotNull
+  @NonNull
   private static DynamicContext newDynamicContext() {
     return new StaticContext().newDynamicContext();
   }
 
-  private static IExpression parseExpression(@NotNull String path) {
+  private static IExpression parseExpression(@NonNull String path) {
 
     metapath10Lexer lexer = new metapath10Lexer(CharStreams.fromString(path));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -108,7 +109,7 @@ class BuildAstVisitorTest {
     assertThat(result.asList(), contains(
         allOf(
             instanceOf(IFieldNodeItem.class),
-            hasProperty("name", equalTo("field2")))));
+            hasProperty("name", equalTo("field2"))))); // NOPMD
   }
 
   @Test
@@ -126,7 +127,7 @@ class BuildAstVisitorTest {
     assertThat(result.asList(), contains(
         allOf(
             instanceOf(IRootAssemblyNodeItem.class),
-            hasProperty("name", equalTo("root")))));
+            hasProperty("name", equalTo("root"))))); // NOPMD
   }
 
   @Test
@@ -205,10 +206,10 @@ class BuildAstVisitorTest {
     assertThat(result.asList(), contains(
         allOf(
             instanceOf(IFieldNodeItem.class),
-            hasProperty("name", equalTo("field1"))),
+            hasProperty("name", equalTo("field1"))), // NOPMD
         allOf(
             instanceOf(IFieldNodeItem.class),
-            hasProperty("name", equalTo("field2")))));
+            hasProperty("name", equalTo("field2"))))); // NOPMD
   }
 
 }

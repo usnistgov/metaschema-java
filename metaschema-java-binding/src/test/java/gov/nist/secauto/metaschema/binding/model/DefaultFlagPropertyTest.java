@@ -47,9 +47,9 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataT
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLEventReader2;
-import org.jetbrains.annotations.NotNull;
 import org.jmock.Expectations;
 import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
@@ -62,7 +62,11 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
@@ -77,8 +81,9 @@ class DefaultFlagPropertyTest {
   private final IXmlParsingContext xmlParsingContext = context.mock(IXmlParsingContext.class);
 
   @Test
+  @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
   void testJsonRead()
-      throws JsonParseException, IOException, NoSuchFieldException, SecurityException {
+      throws JsonParseException, IOException, NoSuchFieldException {
     String json = "{ \"test\": { \"id\": \"theId\", \"number\": 1 } }";
     JsonFactory factory = new JsonFactory();
     JsonParser jsonParser = factory.createParser(json);
@@ -116,10 +121,12 @@ class DefaultFlagPropertyTest {
   }
 
   @Test
+  @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
   void testXmlRead()
-      throws JsonParseException, IOException, NoSuchFieldException, SecurityException, XMLStreamException {
+      throws JsonParseException, IOException, NoSuchFieldException, XMLStreamException {
     String xml = "<test xmlns='http://example.com/ns' id='theId' number='1'/>";
-    XMLInputFactory factory = WstxInputFactory.newInstance();
+    XMLInputFactory factory = XMLInputFactory.newInstance();
+    assert factory instanceof WstxInputFactory;
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
 
     Field field = SimpleAssembly.class.getDeclaredField("_id");
@@ -141,15 +148,17 @@ class DefaultFlagPropertyTest {
 
     DefaultFlagProperty idProperty = new DefaultFlagProperty(field, classBinding);
 
-    assertEquals(XMLEvent.START_DOCUMENT, eventReader.nextEvent().getEventType());
+    assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
     XMLEvent event = eventReader.nextEvent();
-    assertEquals(XMLEvent.START_ELEMENT, event.getEventType());
+    assertEquals(XMLStreamConstants.START_ELEMENT, event.getEventType());
     StartElement start = event.asStartElement();
     // assertEquals("test", jsonParser.nextFieldName());
     // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
     // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
 
     SimpleAssembly obj = new SimpleAssembly();
+    assert start != null;
+    assert xmlParsingContext != null;
     assertTrue(idProperty.read(obj, start, xmlParsingContext));
 
     assertEquals("theId", obj.getId());
@@ -159,8 +168,8 @@ class DefaultFlagPropertyTest {
   public static class TestMetaschema
       extends AbstractBoundMetaschema {
 
-    public TestMetaschema(@NotNull List<@NotNull ? extends IMetaschema> importedMetaschema,
-        @NotNull IBindingContext bindingContext) {
+    public TestMetaschema(@NonNull List<? extends IMetaschema> importedMetaschema,
+        @NonNull IBindingContext bindingContext) {
       super(importedMetaschema, bindingContext);
     }
 
@@ -180,18 +189,18 @@ class DefaultFlagPropertyTest {
     }
 
     @Override
-    public @NotNull String getShortName() {
+    public String getShortName() {
       return "test-metaschema";
     }
 
     @Override
-    public @NotNull URI getXmlNamespace() {
-      return URI.create("https://csrc.nist.gov/ns/test/xml");
+    public URI getXmlNamespace() {
+      return ObjectUtils.notNull(URI.create("https://csrc.nist.gov/ns/test/xml"));
     }
 
     @Override
-    public @NotNull URI getJsonBaseUri() {
-      return URI.create("https://csrc.nist.gov/ns/test/json");
+    public URI getJsonBaseUri() {
+      return ObjectUtils.notNull(URI.create("https://csrc.nist.gov/ns/test/json"));
     }
 
   }

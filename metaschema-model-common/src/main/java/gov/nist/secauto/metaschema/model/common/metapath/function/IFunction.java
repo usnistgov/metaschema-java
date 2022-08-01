@@ -31,8 +31,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -40,6 +39,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IFunction {
   enum FunctionProperty {
@@ -76,7 +77,7 @@ public interface IFunction {
    * 
    * @return the function's name
    */
-  @NotNull
+  @NonNull
   String getName();
 
   /**
@@ -84,7 +85,7 @@ public interface IFunction {
    * 
    * @return the set of properties or an empty set
    */
-  @NotNull
+  @NonNull
   Set<FunctionProperty> getProperties();
 
   /**
@@ -92,7 +93,7 @@ public interface IFunction {
    * 
    * @return the function arguments or an empty list if there are none
    */
-  @NotNull
+  @NonNull
   List<IArgument> getArguments();
 
   /**
@@ -149,7 +150,7 @@ public interface IFunction {
    * 
    * @return the function result sequence type
    */
-  @NotNull
+  @NonNull
   ISequenceType getResult();
 
   // /**
@@ -161,9 +162,9 @@ public interface IFunction {
   // */
   // boolean isSupported(List<IExpression<?>> arguments);
 
-  @NotNull
-  ISequence<?> execute(@NotNull List<@NotNull ISequence<?>> arguments, @NotNull DynamicContext dynamicContext,
-      @NotNull INodeContext focus) throws MetapathException;
+  @NonNull
+  ISequence<?> execute(@NonNull List<ISequence<?>> arguments, @NonNull DynamicContext dynamicContext,
+      @NonNull INodeContext focus) throws MetapathException;
 
   /**
    * Get the signature of the function as a string.
@@ -172,7 +173,7 @@ public interface IFunction {
    */
   String toSignature();
 
-  @NotNull
+  @NonNull
   static Builder builder() {
     return new Builder();
   }
@@ -180,16 +181,16 @@ public interface IFunction {
   class Builder {
     private String name;
     @SuppressWarnings("null")
-    @NotNull
+    @NonNull
     private final EnumSet<FunctionProperty> properties = EnumSet.noneOf(FunctionProperty.class);
-    @NotNull
-    private final List<@NotNull IArgument> arguments = new LinkedList<>();
+    @NonNull
+    private final List<IArgument> arguments = new LinkedList<>();
     private Class<? extends IItem> returnType = IItem.class;
     private Occurrence returnOccurrence = Occurrence.ONE;
     private IFunctionExecutor functionHandler;
 
-    @NotNull
-    public Builder name(@NotNull String name) {
+    @NonNull
+    public Builder name(@NonNull String name) {
       Objects.requireNonNull(name, "name");
       if (name.isBlank()) {
         throw new IllegalArgumentException("the name must be non-blank");
@@ -198,43 +199,43 @@ public interface IFunction {
       return this;
     }
 
-    @NotNull
+    @NonNull
     public Builder deterministic() {
       properties.add(FunctionProperty.DETERMINISTIC);
       return this;
     }
 
-    @NotNull
+    @NonNull
     public Builder nonDeterministic() {
       properties.remove(FunctionProperty.DETERMINISTIC);
       return this;
     }
 
-    @NotNull
+    @NonNull
     public Builder contextDependent() {
       properties.add(FunctionProperty.CONTEXT_DEPENDENT);
       return this;
     }
 
-    @NotNull
+    @NonNull
     public Builder contextIndependent() {
       properties.remove(FunctionProperty.CONTEXT_DEPENDENT);
       return this;
     }
 
-    @NotNull
+    @NonNull
     public Builder focusDependent() {
       properties.add(FunctionProperty.FOCUS_DEPENDENT);
       return this;
     }
 
-    @NotNull
+    @NonNull
     public Builder focusIndependent() {
       properties.remove(FunctionProperty.FOCUS_DEPENDENT);
       return this;
     }
 
-    @NotNull
+    @NonNull
     public Builder allowUnboundedArity(boolean allow) {
       if (allow) {
         properties.add(FunctionProperty.UNBOUNDED_ARITY);
@@ -244,95 +245,80 @@ public interface IFunction {
       return this;
     }
 
-    @NotNull
-    public Builder returnType(@NotNull Class<? extends IItem> type) {
+    @NonNull
+    public Builder returnType(@NonNull Class<? extends IItem> type) {
       Objects.requireNonNull(type, "type");
       this.returnType = type;
       return this;
     }
 
-    @NotNull
+    @NonNull
     public Builder returnZeroOrOne() {
       return returnOccurrence(Occurrence.ZERO_OR_ONE);
     }
 
-    @NotNull
+    @NonNull
     public Builder returnOne() {
       return returnOccurrence(Occurrence.ONE);
     }
 
-    @NotNull
+    @NonNull
     public Builder returnZeroOrMore() {
       return returnOccurrence(Occurrence.ZERO_OR_MORE);
     }
 
-    @NotNull
+    @NonNull
     public Builder returnOneOrMore() {
       return returnOccurrence(Occurrence.ONE_OR_MORE);
     }
 
-    @NotNull
-    public Builder returnOccurrence(@NotNull Occurrence occurrence) {
+    @NonNull
+    public Builder returnOccurrence(@NonNull Occurrence occurrence) {
       Objects.requireNonNull(occurrence, "occurrence");
       this.returnOccurrence = occurrence;
       return this;
     }
 
-    @NotNull
-    public Builder argument(@NotNull IArgument.Builder builder) {
+    @NonNull
+    public Builder argument(@NonNull IArgument.Builder builder) {
       return argument(builder.build());
     }
 
-    @NotNull
-    public Builder argument(@NotNull IArgument argument) {
+    @NonNull
+    public Builder argument(@NonNull IArgument argument) {
       Objects.requireNonNull(argument, "argument");
       this.arguments.add(argument);
       return this;
     }
 
-    @NotNull
-    public Builder functionHandler(@NotNull IFunctionExecutor handler) {
+    @NonNull
+    public Builder functionHandler(@NonNull IFunctionExecutor handler) {
       Objects.requireNonNull(handler, "handler");
       this.functionHandler = handler;
       return this;
     }
 
-    protected void validate() throws IllegalStateException {
-      if (name == null) {
-        throw new IllegalStateException("the name must not be null");
-      }
-
+    @NonNull
+    public IFunction build() {
+      ISequenceType sequenceType;
       if (returnType == null) {
-        throw new IllegalStateException("the return type must not be null");
-      }
-
-      if (returnOccurrence == null) {
-        throw new IllegalStateException("the return occurrence must not be null");
+        sequenceType = ISequenceType.EMPTY;
+      } else {
+        sequenceType = new SequenceTypeImpl(
+            returnType,
+            ObjectUtils.requireNonNull(returnOccurrence, "the return occurrence must not be null"));
       }
 
       if (properties.contains(FunctionProperty.UNBOUNDED_ARITY) && arguments.isEmpty()) {
         throw new IllegalStateException("to allow unbounded arity, at least one argument must be provided");
       }
 
-      if (functionHandler == null) {
-        throw new IllegalStateException("the function handler must not be null");
-      }
-    }
-
-    @NotNull
-    public IFunction build() throws IllegalStateException {
-      validate();
-      ISequenceType sequenceType;
-      if (returnType == null) {
-        sequenceType = ISequenceType.EMPTY;
-      } else {
-        sequenceType = new SequenceTypeImpl(returnType, returnOccurrence);
-      }
-
-      @SuppressWarnings("null")
-      IFunction retval
-          = new DefaultFunction(name, properties, new ArrayList<>(arguments), sequenceType, functionHandler);
-      return retval;
+      return new DefaultFunction(
+          ObjectUtils.requireNonNull(name, "the name must not be null"),
+          properties,
+          new ArrayList<>(arguments),
+          sequenceType,
+          ObjectUtils.requireNonNull(functionHandler, "the function handler must not be null"));
     }
   }
 }

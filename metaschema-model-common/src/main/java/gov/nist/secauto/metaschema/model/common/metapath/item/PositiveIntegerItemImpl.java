@@ -29,15 +29,15 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.PositiveIntegerAdapter;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigInteger;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class PositiveIntegerItemImpl
     extends AbstractIntegerItem
     implements IPositiveIntegerItem {
 
-  protected PositiveIntegerItemImpl(@NotNull BigInteger value) {
+  protected PositiveIntegerItemImpl(@NonNull BigInteger value) {
     super(value);
   }
 

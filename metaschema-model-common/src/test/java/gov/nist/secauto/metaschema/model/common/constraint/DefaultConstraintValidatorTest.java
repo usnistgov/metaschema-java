@@ -32,6 +32,7 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
@@ -48,7 +49,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.MockItemFactory;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import org.jetbrains.annotations.NotNull;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.api.Invocation;
@@ -63,6 +63,7 @@ class DefaultConstraintValidatorTest {
   @RegisterExtension
   Mockery context = new JUnit5Mockery();
 
+  @SuppressWarnings("null")
   @Test
   void testAllowedValuesAllowOther() {
     MockItemFactory itemFactory = new MockItemFactory(context);
@@ -111,6 +112,7 @@ class DefaultConstraintValidatorTest {
     assertTrue(handler.isPassing());
   }
 
+  @SuppressWarnings("null")
   @Test
   void testAllowedValuesMultipleAllowOther() {
     MockItemFactory itemFactory = new MockItemFactory(context);
@@ -140,7 +142,7 @@ class DefaultConstraintValidatorTest {
         Extensible.MODEL,
         null);
 
-    List<@NotNull ? extends IAllowedValuesConstraint> allowedValuesConstraints
+    List<? extends IAllowedValuesConstraint> allowedValuesConstraints
         = List.of(allowedValues1, allowedValues2);
 
     context.checking(new Expectations() {
@@ -202,7 +204,7 @@ class DefaultConstraintValidatorTest {
         Extensible.MODEL,
         null);
 
-    List<@NotNull ? extends IAllowedValuesConstraint> allowedValuesConstraints
+    List<? extends IAllowedValuesConstraint> allowedValuesConstraints
         = List.of(allowedValues1, allowedValues2);
 
     context.checking(new Expectations() {
@@ -239,12 +241,12 @@ class DefaultConstraintValidatorTest {
     validator.validate(flag2);
     validator.finalizeValidation();
     assertAll(
-        () -> assertTrue(!handler.isPassing()),
+        () -> assertFalse(handler.isPassing()),
         () -> assertThat(handler.getFindings(), hasSize(1)),
         () -> assertThat(handler.getFindings(), hasItem(hasProperty("node", is(flag1)))));
   }
 
-  private class FlagVisitorAction
+  private static class FlagVisitorAction
       extends CustomAction {
 
     public FlagVisitorAction() {
@@ -252,7 +254,7 @@ class DefaultConstraintValidatorTest {
     }
 
     @Override
-    public Object invoke(Invocation invocation) throws Throwable {
+    public Object invoke(Invocation invocation) {
       IFlagNodeItem thisFlag = (IFlagNodeItem) invocation.getInvokedObject();
       DefaultConstraintValidator.Visitor visitor = (DefaultConstraintValidator.Visitor) invocation.getParameter(0);
       return visitor.visitFlag(thisFlag, null);

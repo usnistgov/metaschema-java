@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IRootAssemblyNodeItem;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * An {@link IPathFormatter} that produces a Metapath expression for the path to a given
@@ -44,7 +44,7 @@ import org.jetbrains.annotations.NotNull;
 public class MetapathFormatter implements IPathFormatter {
 
   @Override
-  public @NotNull String formatMetaschema(@NotNull IMetaschemaNodeItem metaschema) {
+  public @NonNull String formatMetaschema(@NonNull IMetaschemaNodeItem metaschema) {
     // this will result in a slash being generated using the join in the format method
     return "";
   }
@@ -56,12 +56,12 @@ public class MetapathFormatter implements IPathFormatter {
   }
 
   @Override
-  public String formatRootAssembly(@NotNull IRootAssemblyNodeItem root) {
+  public String formatRootAssembly(@NonNull IRootAssemblyNodeItem root) {
     return root.getName();
   }
 
   @Override
-  public String formatAssembly(@NotNull IAssemblyNodeItem assembly) {
+  public String formatAssembly(@NonNull IAssemblyNodeItem assembly) {
     // TODO: does it make sense to use this for an intermediate that has no parent?
     return formatModelPathSegment(assembly);
   }
@@ -77,7 +77,7 @@ public class MetapathFormatter implements IPathFormatter {
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   protected String formatModelPathSegment(IModelNodeItem item) {
     StringBuilder builder = new StringBuilder(item.getName())
         .append('[')

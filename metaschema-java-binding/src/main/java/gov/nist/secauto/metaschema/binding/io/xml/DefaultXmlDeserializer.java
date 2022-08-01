@@ -39,7 +39,6 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -47,13 +46,16 @@ import java.net.URI;
 
 import javax.xml.stream.EventFilter;
 import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DefaultXmlDeserializer<CLASS>
     extends AbstractDeserializer<CLASS> {
   private XMLInputFactory2 xmlInputFactory;
 
-  public DefaultXmlDeserializer(@NotNull IBindingContext bindingContext, @NotNull IAssemblyClassBinding classBinding) {
+  public DefaultXmlDeserializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 
@@ -62,27 +64,28 @@ public class DefaultXmlDeserializer<CLASS>
   // return Format.XML;
   // }
 
-  @NotNull
+  @NonNull
   protected XMLInputFactory2 getXMLInputFactory() {
     synchronized (this) {
       if (xmlInputFactory == null) {
-        xmlInputFactory = (XMLInputFactory2) WstxInputFactory.newInstance();
+        xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
+        assert xmlInputFactory instanceof WstxInputFactory;
         xmlInputFactory.configureForXmlConformance();
-        xmlInputFactory.setProperty(XMLInputFactory2.IS_COALESCING, false);
+        xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, false);
         // xmlInputFactory.configureForSpeed();
       }
       return ObjectUtils.notNull(xmlInputFactory);
     }
   }
 
-  protected void setXMLInputFactory(@NotNull XMLInputFactory2 factory) {
+  protected void setXMLInputFactory(@NonNull XMLInputFactory2 factory) {
     synchronized (this) {
       this.xmlInputFactory = factory;
     }
   }
 
-  @NotNull
-  protected XMLEventReader2 newXMLEventReader2(@NotNull Reader reader) throws XMLStreamException {
+  @NonNull
+  protected XMLEventReader2 newXMLEventReader2(@NonNull Reader reader) throws XMLStreamException {
     XMLEventReader eventReader = getXMLInputFactory().createXMLEventReader(reader);
     EventFilter filter = new CommentFilter();
     return ObjectUtils.notNull((XMLEventReader2) getXMLInputFactory().createFilteredReader(eventReader, filter));
@@ -98,8 +101,8 @@ public class DefaultXmlDeserializer<CLASS>
     }
   }
 
-  @NotNull
-  protected IDocumentNodeItem parseXmlInternal(XMLEventReader2 reader, @NotNull URI documentUri)
+  @NonNull
+  protected IDocumentNodeItem parseXmlInternal(@NonNull XMLEventReader2 reader, @NonNull URI documentUri)
       throws IOException, XMLStreamException {
 
     IAssemblyClassBinding classBinding = getClassBinding();

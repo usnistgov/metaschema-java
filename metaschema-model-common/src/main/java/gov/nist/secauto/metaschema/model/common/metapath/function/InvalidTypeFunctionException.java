@@ -30,9 +30,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.AbstractCodedMetapathEx
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Locale;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class InvalidTypeFunctionException
     extends AbstractCodedMetapathException {
@@ -43,15 +43,15 @@ public class InvalidTypeFunctionException
    */
   private static final long serialVersionUID = 1L;
 
-  public InvalidTypeFunctionException(int code, @NotNull IItem item) {
+  public InvalidTypeFunctionException(int code, @NonNull IItem item) {
     super(code, generateMessage(item));
   }
 
-  public InvalidTypeFunctionException(int code, @NotNull IItem item, Throwable cause) {
+  public InvalidTypeFunctionException(int code, @NonNull IItem item, Throwable cause) {
     super(code, generateMessage(item), cause);
   }
 
-  protected static String generateMessage(@NotNull IItem item) {
+  protected static String generateMessage(@NonNull IItem item) {
     String retval;
     if (item instanceof INodeItem) {
       INodeItem nodeItem = (INodeItem) item;

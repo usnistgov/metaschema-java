@@ -48,8 +48,6 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFieldDefinitionType;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -57,10 +55,12 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class XmlGlobalFieldDefinition implements IFieldDefinition {
-  @NotNull
+  @NonNull
   private final GlobalFieldDefinitionType xmlField;
-  @NotNull
+  @NonNull
   private final IMetaschema metaschema;
   private XmlFlagContainerSupport flagContainer;
 
@@ -74,7 +74,7 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
    * @param metaschema
    *          the containing Metaschema
    */
-  public XmlGlobalFieldDefinition(@NotNull GlobalFieldDefinitionType xmlField, @NotNull IMetaschema metaschema) {
+  public XmlGlobalFieldDefinition(@NonNull GlobalFieldDefinitionType xmlField, @NonNull IMetaschema metaschema) {
     this.xmlField = xmlField;
     this.metaschema = metaschema;
   }
@@ -84,7 +84,7 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
    * 
    * @return the underlying XML data
    */
-  @NotNull
+  @NonNull
   protected GlobalFieldDefinitionType getXmlField() {
     return xmlField;
   }
@@ -142,22 +142,22 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
   }
 
   @Override
-  public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+  public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
     initModelConstraints().addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IMatchesConstraint constraint) {
+  public void addConstraint(@NonNull IMatchesConstraint constraint) {
     initModelConstraints().addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+  public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
     initModelConstraints().addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IExpectConstraint constraint) {
+  public void addConstraint(@NonNull IExpectConstraint constraint) {
     initModelConstraints().addConstraint(constraint);
   }
 
@@ -194,9 +194,8 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
         : null;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+  public Map<QName, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlField().getPropList()));
   }
 
@@ -214,8 +213,8 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
     }
   }
 
-  @NotNull
-  private Map<@NotNull String, ? extends IFlagInstance> getFlagInstanceMap() {
+  @NonNull
+  private Map<String, ? extends IFlagInstance> getFlagInstanceMap() {
     return initFlagContainer().getFlagInstanceMap();
   }
 
@@ -226,7 +225,7 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IFlagInstance> getFlagInstances() {
+  public Collection<? extends IFlagInstance> getFlagInstances() {
     return getFlagInstanceMap().values();
   }
 
@@ -297,7 +296,7 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
   }
 
   @Override
-  public Object getFieldValue(@NotNull Object parentFieldValue) {
+  public Object getFieldValue(@NonNull Object parentFieldValue) {
     // there is no value
     return null;
   }

@@ -26,13 +26,15 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
+import gov.nist.secauto.metaschema.binding.model.annotations.Constants;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public final class ModelUtil {
   private ModelUtil() {
@@ -52,9 +54,9 @@ public final class ModelUtil {
    */
   public static String resolveLocalName(String value, String defaultValue) {
     String retval;
-    if (value == null || "##default".equals(value)) {
+    if (value == null || Constants.DEFAULT_STRING_VALUE.equals(value)) {
       retval = defaultValue;
-    } else if ("##none".equals(value)) {
+    } else if (Constants.NO_STRING_VALUE.equals(value)) {
       retval = null; // NOPMD - intentional
     } else {
       retval = value;
@@ -67,7 +69,7 @@ public final class ModelUtil {
     return resolveNamespace(annotationValue, classBinding, true);
   }
 
-  @NotNull
+  @NonNull
   public static String resolveNamespace(String annotationValue, IClassBinding classBinding) {
     return ObjectUtils.notNull(resolveNamespace(annotationValue, classBinding, false));
   }
@@ -87,10 +89,10 @@ public final class ModelUtil {
    */
   private static String resolveNamespace(String value, IClassBinding classBinding, boolean allowNone) {
     String retval;
-    if (value == null || "##default".equals(value)) {
+    if (value == null || Constants.DEFAULT_STRING_VALUE.equals(value)) {
       // get namespace from the metaschema
       retval = classBinding.getContainingMetaschema().getXmlNamespace().toASCIIString();
-    } else if (allowNone && "##none".equals(value)) {
+    } else if (allowNone && Constants.NO_STRING_VALUE.equals(value)) {
       retval = null; // NOPMD - intentional
     } else {
       retval = value;
@@ -106,10 +108,9 @@ public final class ModelUtil {
    * @return the markup line content or {@code null} if no markup content was provided
    */
   @Nullable
-  public static MarkupLine resolveToMarkupLine(@NotNull String annotationValue) {
-    return "##none".equals(annotationValue) ? null : MarkupLine.fromMarkdown(annotationValue);
+  public static MarkupLine resolveToMarkupLine(@NonNull String annotationValue) {
+    return Constants.NO_STRING_VALUE.equals(annotationValue) ? null : MarkupLine.fromMarkdown(annotationValue);
   }
-  
 
   /**
    * Get the markup value of a markdown string.
@@ -119,8 +120,8 @@ public final class ModelUtil {
    * @return the markup line content or {@code null} if no markup content was provided
    */
   @Nullable
-  public static MarkupMultiline resolveToMarkupMultiline(@NotNull String annotationValue) {
-    return "##none".equals(annotationValue) ? null : MarkupMultiline.fromMarkdown(annotationValue);
+  public static MarkupMultiline resolveToMarkupMultiline(@NonNull String annotationValue) {
+    return Constants.NO_STRING_VALUE.equals(annotationValue) ? null : MarkupMultiline.fromMarkdown(annotationValue);
   }
 
   /**
@@ -130,7 +131,7 @@ public final class ModelUtil {
    *          text or {@code "##none"} if no text is provided
    * @return the string content or {@code null} if no string content was provided
    */
-  public static String resolveToString(@NotNull String annotationValue) {
-    return "##none".equals(annotationValue) ? null : annotationValue;
+  public static String resolveToString(@NonNull String annotationValue) {
+    return Constants.NO_STRING_VALUE.equals(annotationValue) ? null : annotationValue;
   }
 }

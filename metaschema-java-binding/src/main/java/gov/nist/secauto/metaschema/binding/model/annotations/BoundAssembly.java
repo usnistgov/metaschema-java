@@ -33,11 +33,11 @@ import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Identifies that the annotation target is a bound property that references a Metaschema assembly.
@@ -59,8 +59,8 @@ public @interface BoundAssembly {
    * 
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
-  @NotNull
-  String formalName() default "##none";
+  @NonNull
+  String formalName() default Constants.NO_STRING_VALUE;
 
   /**
    * Get the documentary description of the assembly.
@@ -69,8 +69,8 @@ public @interface BoundAssembly {
    * 
    * @return a markdown string or {@code "##none"} if no description is provided
    */
-  @NotNull
-  String description() default "##none";
+  @NonNull
+  String description() default Constants.NO_STRING_VALUE;
 
   /**
    * The model name to use for singleton values. This name will be used for associated XML elements.
@@ -79,7 +79,7 @@ public @interface BoundAssembly {
    * 
    * @return the name
    */
-  String useName() default "##default";
+  String useName() default Constants.DEFAULT_STRING_VALUE;
 
   /**
    * The namespace to use for associated XML elements.
@@ -89,14 +89,14 @@ public @interface BoundAssembly {
    * 
    * @return the namespace
    */
-  String namespace() default "##default";
+  String namespace() default Constants.DEFAULT_STRING_VALUE;
 
   /**
    * The name to use for an XML element wrapper or a JSON/YAML property.
    * 
    * @return the name
    */
-  String groupName() default "##none";
+  String groupName() default Constants.NO_STRING_VALUE;
 
   /**
    * XML target namespace of the XML Schema element.
@@ -106,7 +106,7 @@ public @interface BoundAssembly {
    * 
    * @return the namespace
    */
-  String groupNamespace() default "##default";
+  String groupNamespace() default Constants.DEFAULT_STRING_VALUE;
 
   /**
    * A non-negative number that indicates the minimum occurrence of the element.
@@ -141,6 +141,6 @@ public @interface BoundAssembly {
    * 
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
-  @NotNull
-  String remarks() default "##none";
+  @NonNull
+  String remarks() default Constants.NO_STRING_VALUE;
 }

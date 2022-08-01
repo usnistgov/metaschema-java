@@ -34,17 +34,16 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public class DateTimeAdapter
     extends AbstractCustomJavaDataTypeAdapter<DateTime, IDateTimeItem> {
 
-  @SuppressWarnings("null")
   DateTimeAdapter() {
     super(DateTime.class);
   }
@@ -56,15 +55,17 @@ public class DateTimeAdapter
 
   @SuppressWarnings("null")
   @Override
-  public DateTime parse(String value) throws IllegalArgumentException {
+  public DateTime parse(String value) {
     try {
-      return new DateTime(ZonedDateTime.from(DateFormats.DATE_TIME_WITH_TZ.parse(value)), true);
+      return new DateTime(ZonedDateTime.from(DateFormats.DATE_TIME_WITH_TZ.parse(value)), true); // NOPMD - readability
     } catch (DateTimeParseException ex) {
       try {
         LocalDateTime dateTime = LocalDateTime.from(DateFormats.DATE_TIME_WITHOUT_TZ.parse(value));
         return new DateTime(ZonedDateTime.of(dateTime, ZoneOffset.UTC), false);
       } catch (DateTimeParseException ex2) {
-        throw new IllegalArgumentException(ex2.getLocalizedMessage(), ex2);
+        IllegalArgumentException newEx = new IllegalArgumentException(ex2.getLocalizedMessage(), ex2);
+        newEx.addSuppressed(ex);
+        throw newEx; // NOPMD - it's ok
       }
     }
   }
@@ -75,21 +76,20 @@ public class DateTimeAdapter
     String retval;
     if (value.hasTimeZone()) {
       @SuppressWarnings("null")
-      @NotNull
+      @NonNull
       String formatted = DateFormats.DATE_TIME_WITH_TZ.format(value.getValue());
       retval = formatted;
     } else {
       @SuppressWarnings("null")
-      @NotNull
+      @NonNull
       String formatted = DateFormats.DATE_TIME_WITHOUT_TZ.format(value.getValue());
       retval = formatted;
     }
     return retval;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public @NotNull Class<IDateTimeItem> getItemClass() {
+  public @NonNull Class<IDateTimeItem> getItemClass() {
     return IDateTimeItem.class;
   }
 
@@ -100,7 +100,7 @@ public class DateTimeAdapter
   }
 
   @Override
-  protected @NotNull IDateTimeItem castInternal(@NotNull IAnyAtomicItem item) {
+  protected @NonNull IDateTimeItem castInternal(@NonNull IAnyAtomicItem item) {
     // TODO: bring up to spec
     IDateTimeItem retval;
     if (item instanceof IDateItem) {

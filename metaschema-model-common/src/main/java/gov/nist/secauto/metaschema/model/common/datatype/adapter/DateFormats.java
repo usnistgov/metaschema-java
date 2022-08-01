@@ -31,9 +31,6 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 
 public final class DateFormats {
-  private DateFormats() {
-    // disable construction
-  }
 
   // public static final DateTimeFormatter dateWithOptionalTZ;
   public static final DateTimeFormatter DATE_WITH_TZ;
@@ -63,5 +60,9 @@ public final class DateFormats {
         .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
         .optionalEnd()
         .toFormatter();
+  }
+
+  private DateFormats() {
+    // disable construction
   }
 }

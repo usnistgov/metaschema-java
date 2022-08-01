@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A {@link INodeItem} supported by a {@link IFieldInstance}.
@@ -43,17 +43,17 @@ abstract class AbstractFieldInstanceNodeItem<F extends IFlagNodeItem, P extends 
     F>>
     extends AbstractNodeContext<F, L>
     implements IFieldNodeItem {
-  @NotNull
+  @NonNull
   private final IFieldInstance instance;
   private final int position;
-  @NotNull
+  @NonNull
   private final P parent;
 
   public AbstractFieldInstanceNodeItem(
-      @NotNull IFieldInstance instance,
-      @NotNull P parent,
+      @NonNull IFieldInstance instance,
+      @NonNull P parent,
       int position,
-      @NotNull INodeItemFactory factory) {
+      @NonNull INodeItemFactory factory) {
     super(factory);
     this.instance = instance;
     this.parent = parent;
@@ -64,13 +64,13 @@ abstract class AbstractFieldInstanceNodeItem<F extends IFlagNodeItem, P extends 
   }
 
   @Override
-  @NotNull
+  @NonNull
   public P getParentContentNodeItem() {
     return getParentNodeItem();
   }
 
   @Override
-  @NotNull
+  @NonNull
   public P getParentNodeItem() {
     return parent;
   }
@@ -81,7 +81,7 @@ abstract class AbstractFieldInstanceNodeItem<F extends IFlagNodeItem, P extends 
   }
 
   @Override
-  @NotNull
+  @NonNull
   public IFieldInstance getInstance() {
     return instance;
   }

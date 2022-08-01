@@ -34,9 +34,10 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractNamedProperty<CLASS_BINDING extends IClassBinding>
     extends AbstractProperty<CLASS_BINDING> {
@@ -49,7 +50,7 @@ abstract class AbstractNamedProperty<CLASS_BINDING extends IClassBinding>
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */
-  public AbstractNamedProperty(@NotNull CLASS_BINDING parentClassBinding) {
+  public AbstractNamedProperty(@NonNull CLASS_BINDING parentClassBinding) {
     super(parentClassBinding);
   }
 

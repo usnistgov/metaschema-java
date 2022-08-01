@@ -34,18 +34,19 @@ import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
 
-  @NotNull
-  static IModelDefinitionTypeInfo newTypeInfo(@NotNull IModelDefinition definition,
-      @NotNull ITypeResolver typeResolver) {
+  @NonNull
+  static IModelDefinitionTypeInfo newTypeInfo(@NonNull IModelDefinition definition,
+      @NonNull ITypeResolver typeResolver) {
     IModelDefinitionTypeInfo retval;
     switch (definition.getModelType()) {
     case ASSEMBLY:
@@ -79,13 +80,13 @@ public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
    * 
    * @return the class's type information
    */
-  @NotNull
+  @NonNull
   ClassName getClassName();
 
   @Nullable
-  IFlagInstanceTypeInfo getFlagInstanceTypeInfo(@NotNull IFlagInstance instance);
+  IFlagInstanceTypeInfo getFlagInstanceTypeInfo(@NonNull IFlagInstance instance);
 
-  @NotNull
+  @NonNull
   Collection<IFlagInstanceTypeInfo> getFlagInstanceTypeInfos();
 
   /**
@@ -97,8 +98,8 @@ public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
    * @throws IOException
    *           if a build error occurred while generating the class
    */
-  @NotNull
-  DefaultGeneratedDefinitionClass generateClass(@NotNull Path dir) throws IOException;
+  @NonNull
+  DefaultGeneratedDefinitionClass generateClass(@NonNull Path dir) throws IOException;
 
   /**
    * This method is responsible for generating the Java class using a builder that is returned for
@@ -108,6 +109,6 @@ public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
    * @throws IOException
    *           if a build error occurred while generating the class
    */
-  @NotNull
+  @NonNull
   TypeSpec generateChildClass() throws IOException;
 }

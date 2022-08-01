@@ -30,13 +30,13 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.MarkupLineAdapt
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class MarkupLineItemImpl
     extends AbstractAnyAtomicItem<MarkupLine>
     implements IMarkupItem {
 
-  public MarkupLineItemImpl(@NotNull MarkupLine value) {
+  public MarkupLineItemImpl(@NonNull MarkupLine value) {
     super(value);
   }
 

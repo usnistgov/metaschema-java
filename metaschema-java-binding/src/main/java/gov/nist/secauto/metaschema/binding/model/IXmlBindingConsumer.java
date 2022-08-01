@@ -28,15 +28,15 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 @FunctionalInterface
 interface IXmlBindingConsumer {
-  void accept(@NotNull Object value, @NotNull QName currentParentName, @NotNull IXmlWritingContext context)
+  void accept(@NonNull Object value, @NonNull QName currentParentName, @NonNull IXmlWritingContext context)
       throws IOException, XMLStreamException;
 }

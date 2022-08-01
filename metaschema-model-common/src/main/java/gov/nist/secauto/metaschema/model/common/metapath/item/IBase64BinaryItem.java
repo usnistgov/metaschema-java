@@ -29,24 +29,24 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.nio.ByteBuffer;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBase64BinaryItem extends IAnyAtomicItem {
 
-  @NotNull
-  public static IBase64BinaryItem valueOf(@NotNull String value) {
+  @NonNull
+  public static IBase64BinaryItem valueOf(@NonNull String value) {
     return IBase64BinaryItem.cast(IStringItem.valueOf(value));
   }
 
-  @NotNull
-  public static IBase64BinaryItem valueOf(@NotNull ByteBuffer value) {
+  @NonNull
+  public static IBase64BinaryItem valueOf(@NonNull ByteBuffer value) {
     return new Base64BinaryItemImpl(value);
   }
 
-  @NotNull
-  public static IBase64BinaryItem cast(@NotNull IAnyAtomicItem item)
+  @NonNull
+  public static IBase64BinaryItem cast(@NonNull IAnyAtomicItem item)
       throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.BASE64.cast(item);
   }

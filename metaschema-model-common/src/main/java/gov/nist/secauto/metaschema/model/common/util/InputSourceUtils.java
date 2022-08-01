@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.util;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -35,13 +33,16 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.net.URI;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public final class InputSourceUtils {
   private InputSourceUtils() {
     // disable construction
   }
 
-  @NotNull
-  public static InputSource toInputSource(@NotNull URI uri, @Nullable EntityResolver entityResolver)
+  @NonNull
+  public static InputSource toInputSource(@NonNull URI uri, @Nullable EntityResolver entityResolver)
       throws IOException {
     InputSource retval = null;
     if (entityResolver != null) {

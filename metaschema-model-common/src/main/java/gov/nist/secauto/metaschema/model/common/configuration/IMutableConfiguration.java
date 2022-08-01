@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.configuration;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IMutableConfiguration<T extends Enum<T> & IConfigurationFeature> extends IConfiguration<T> {
   /**
@@ -36,8 +36,8 @@ public interface IMutableConfiguration<T extends Enum<T> & IConfigurationFeature
    *          the feature to turn on
    * @return the updated configuration
    */
-  @NotNull
-  IMutableConfiguration<T> enableFeature(@NotNull T feature);
+  @NonNull
+  IMutableConfiguration<T> enableFeature(@NonNull T feature);
 
   /**
    * Turn off the provided feature.
@@ -46,8 +46,8 @@ public interface IMutableConfiguration<T extends Enum<T> & IConfigurationFeature
    *          the feature to turn off
    * @return the updated configuration
    */
-  @NotNull
-  IMutableConfiguration<T> disableFeature(@NotNull T feature);
+  @NonNull
+  IMutableConfiguration<T> disableFeature(@NonNull T feature);
 
   /**
    * Replace this configuration with the {@code other} configuration.
@@ -56,6 +56,6 @@ public interface IMutableConfiguration<T extends Enum<T> & IConfigurationFeature
    *          the new configuration
    * @return the updated configuration
    */
-  @NotNull
-  IMutableConfiguration<T> applyConfiguration(@NotNull IConfiguration<T> other);
+  @NonNull
+  IMutableConfiguration<T> applyConfiguration(@NonNull IConfiguration<T> other);
 }

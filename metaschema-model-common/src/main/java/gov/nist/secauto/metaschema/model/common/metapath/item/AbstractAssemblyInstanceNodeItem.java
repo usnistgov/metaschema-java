@@ -29,17 +29,17 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractAssemblyInstanceNodeItem<F extends IFlagNodeItem, M extends IModelNodeItem, P extends INodeItem, L extends AbstractModelNodeContext.Model<
     F, M>>
     extends AbstractModelNodeContext<F, M, L>
     implements IAssemblyNodeItem {
 
-  @NotNull
+  @NonNull
   private final IAssemblyInstance instance;
   private final int position;
-  @NotNull
+  @NonNull
   private final P parent;
 
   /**
@@ -56,10 +56,10 @@ public abstract class AbstractAssemblyInstanceNodeItem<F extends IFlagNodeItem, 
    *          the factory to use to instantiate new node items
    */
   protected AbstractAssemblyInstanceNodeItem(
-      @NotNull IAssemblyInstance instance,
-      @NotNull P parent,
+      @NonNull IAssemblyInstance instance,
+      @NonNull P parent,
       int position,
-      @NotNull INodeItemFactory factory) {
+      @NonNull INodeItemFactory factory) {
     super(factory);
     this.instance = instance;
     this.position = position;
@@ -67,7 +67,7 @@ public abstract class AbstractAssemblyInstanceNodeItem<F extends IFlagNodeItem, 
   }
 
   @Override
-  @NotNull
+  @NonNull
   public P getParentNodeItem() {
     return parent;
   }
@@ -78,7 +78,7 @@ public abstract class AbstractAssemblyInstanceNodeItem<F extends IFlagNodeItem, 
   }
 
   @Override
-  @NotNull
+  @NonNull
   public IAssemblyInstance getInstance() {
     return instance;
   }

@@ -35,8 +35,6 @@ import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -47,6 +45,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class JsonDatatypeManager
     extends AbstractDatatypeManager {
@@ -82,7 +82,7 @@ public class JsonDatatypeManager
     return JSON_DATA;
   }
 
-  private static Stream<String> getDependencies(@NotNull JsonNode node) {
+  private static Stream<String> getDependencies(@NonNull JsonNode node) {
     Stream<String> retval = Stream.empty();
     for (Map.Entry<String, JsonNode> entry : CollectionUtil.toIterable(node.fields())) {
       JsonNode value = entry.getValue();
@@ -93,9 +93,10 @@ public class JsonDatatypeManager
           retval = Stream.concat(retval, Stream.of(dependency));
         }
       }
-      
+
       if (value.isArray()) {
         for (JsonNode child : CollectionUtil.toIterable(value.elements())) {
+          assert child != null;
           retval = Stream.concat(retval, getDependencies(child));
         }
       }
@@ -103,7 +104,7 @@ public class JsonDatatypeManager
     return retval;
   }
 
-  public void generateDatatypes(@NotNull ObjectNode definitionsObject) throws IOException {
+  public void generateDatatypes(@NonNull ObjectNode definitionsObject) throws IOException {
     Set<String> requiredJsonDatatypes = getUsedTypes();
     // resolve dependencies
     for (String datatype : CollectionUtil.toIterable(requiredJsonDatatypes.stream()
@@ -129,9 +130,9 @@ public class JsonDatatypeManager
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  protected String getJsonDefinitionRefForDefinition(@NotNull IDefinition definition,
-      @NotNull IGenerationState<?, ?> state) {
+  @NonNull
+  protected String getJsonDefinitionRefForDefinition(@NonNull IDefinition definition,
+      @NonNull IGenerationState<?, ?> state) {
     return new StringBuilder()
         .append("#/definitions/")
         .append(getTypeNameForDefinition(definition, state))
@@ -139,8 +140,8 @@ public class JsonDatatypeManager
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  protected String getJsonDefinitionRefForDatatype(@NotNull IDataTypeAdapter<?> datatype) {
+  @NonNull
+  protected String getJsonDefinitionRefForDatatype(@NonNull IDataTypeAdapter<?> datatype) {
     return new StringBuilder()
         .append("#/definitions/")
         .append(getTypeNameForDatatype(datatype))

@@ -32,11 +32,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * This annotation defines a unqiue index over the contents of the assembly represented by the
@@ -51,7 +51,7 @@ public @interface Index {
    * 
    * @return the identifier if provided or an empty string otherwise
    */
-  @NotNull
+  @NonNull
   String id() default "";
 
   /**
@@ -59,7 +59,7 @@ public @interface Index {
    * 
    * @return the level
    */
-  @NotNull
+  @NonNull
   Level level() default IConstraint.Level.ERROR;
 
   /**
@@ -72,7 +72,7 @@ public @interface Index {
    * 
    * @return the target metapath
    */
-  @NotNull
+  @NonNull
   String target() default ".";
 
   /**
@@ -80,7 +80,7 @@ public @interface Index {
    * 
    * @return the index name
    */
-  @NotNull
+  @NonNull
   String name();
 
   /**
@@ -88,7 +88,7 @@ public @interface Index {
    * 
    * @return one or more keys
    */
-  @NotNull
+  @NonNull
   KeyField[] keyFields();
 
   /**
@@ -96,7 +96,7 @@ public @interface Index {
    * 
    * @return the message or an empty string otherwise
    */
-  @NotNull
+  @NonNull
   String message() default "";
 
   /**
@@ -104,6 +104,6 @@ public @interface Index {
    * 
    * @return an encoded markdown string or an empty string if no remarks are provided
    */
-  @NotNull
+  @NonNull
   String remarks() default "";
 }

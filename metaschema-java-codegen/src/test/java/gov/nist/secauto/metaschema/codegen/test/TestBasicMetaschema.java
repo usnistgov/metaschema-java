@@ -33,8 +33,7 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ReflectionUtils;
@@ -44,16 +43,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class TestBasicMetaschema {
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+class TestBasicMetaschema {
   private static final MetaschemaLoader LOADER = new MetaschemaLoader();
 
-  @NotNull
-  private static IMetaschema loadMetaschema(@NotNull Path metaschemaFile) throws MetaschemaException, IOException {
+  // @TempDir
+  // Path generationDir;
+  Path generationDir = Paths.get("target/generated-test-sources/metaschema");
+
+  @NonNull
+  private static IMetaschema loadMetaschema(@NonNull Path metaschemaFile) throws MetaschemaException, IOException {
     return LOADER.load(metaschemaFile);
   }
 
-  public static Class<?> compileMetaschema(@NotNull Path metaschemaFile, @Nullable Path bindingFile,
-      @NotNull String rootClassName, @NotNull Path classDir)
+  public static Class<?> compileMetaschema(@NonNull Path metaschemaFile, @Nullable Path bindingFile,
+      @NonNull String rootClassName, @NonNull Path classDir)
       throws IOException, ClassNotFoundException, MetaschemaException {
     IMetaschema metaschema = loadMetaschema(metaschemaFile);
 
@@ -116,24 +121,23 @@ public class TestBasicMetaschema {
   // context.newSerializer(Format.YAML, clazz, null).serialize(rootObject, writer);
   // }
 
-  private void runTests(@NotNull String testPath, @NotNull String rootClassName, @NotNull Path classDir)
+  private void runTests(@NonNull String testPath, @NonNull String rootClassName, @NonNull Path classDir)
       throws ClassNotFoundException, IOException, MetaschemaException {
     runTests(testPath, rootClassName, classDir, null);
   }
 
   private void runTests(
-      @NotNull String testPath,
-      @NotNull String rootClassName,
-      @NotNull Path classDir,
+      @NonNull String testPath,
+      @NonNull String rootClassName,
+      @NonNull Path classDir,
       java.util.function.Consumer<Object> assertions)
       throws ClassNotFoundException, IOException, MetaschemaException {
-    @SuppressWarnings("unused")
-    Class<?> rootClass
-        = compileMetaschema(
-            ObjectUtils.notNull(Paths.get(String.format("src/test/resources/metaschema/%s/metaschema.xml", testPath))),
-            Paths.get(String.format("src/test/resources/metaschema/%s/binding.xml", testPath)),
-            rootClassName,
-            classDir);
+    // Class<?> rootClass =
+    compileMetaschema(
+        ObjectUtils.notNull(Paths.get(String.format("src/test/resources/metaschema/%s/metaschema.xml", testPath))),
+        Paths.get(String.format("src/test/resources/metaschema/%s/binding.xml", testPath)),
+        rootClassName,
+        classDir);
 
     // File xmlExample = new File(String.format("src/test/resources/metaschema/%s/example.xml",
     // testPath));
@@ -163,10 +167,6 @@ public class TestBasicMetaschema {
     // // }
     // }
   }
-
-  // @TempDir
-  // Path generationDir;
-  Path generationDir = Paths.get("target/generated-test-sources/metaschema");
 
   @Test
   void testSimpleMetaschema() throws MetaschemaException, IOException, ClassNotFoundException {

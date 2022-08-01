@@ -15,7 +15,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeIte
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -39,34 +39,35 @@ class ExplosionVisitorTest {
         .newDynamicContext()
         .disablePredicateEvaluation();
 
-    List<@NotNull ? extends IAssemblyModelElement> rootAssemblies = metaschema.getExportedAssemblyDefinitions().stream()
+    List<? extends IAssemblyModelElement> rootAssemblies = metaschema.getExportedAssemblyDefinitions().stream()
         .filter(modelItem -> modelItem.isRoot())
         .map(root -> factory.newAssemblyNodeItem(root, metaschema.getLocation()))
         .map(rootItem -> (IAssemblyModelElement) visitor.visit(rootItem, dynamicContext))
         .collect(Collectors.toUnmodifiableList());
-    
+
     Visitor outputVisitor = new Visitor();
     rootAssemblies.forEach(root -> outputVisitor.visitAssembly(root, 0));
     fail("Not yet implemented");
   }
 
-  private class Visitor implements IModelElementVisitor<Void, @NotNull Integer> {
-    void visitFlags(@NotNull IModelElement element, Integer depth) {
-      int newDepth = ++depth;
+  private static class Visitor implements IModelElementVisitor<Void, Integer> {
+    void visitFlags(@NonNull IModelElement element, @NonNull Integer depth) {
+      int newDepth = depth + 1;
       for (IModelElement flag : element.getFlags()) {
         flag.accept(this, newDepth);
       }
     }
 
-    void visitModelItems(@NotNull IModelElement element, Integer depth) {
-      int newDepth = ++depth;
+    void visitModelItems(@NonNull IModelElement element, @NonNull Integer depth) {
+      int newDepth = depth + 1;
       for (IModelElement flag : element.getModelItems()) {
         flag.accept(this, newDepth);
       }
     }
 
     @Override
-    public Void visitAssembly(@NotNull IAssemblyModelElement element, Integer depth) {
+    public Void visitAssembly(@NonNull IAssemblyModelElement element, Integer depth) {
+      assert depth != null;
       outputNode("assembly", element, depth);
       visitFlags(element, depth);
       visitModelItems(element, depth);
@@ -74,25 +75,27 @@ class ExplosionVisitorTest {
     }
 
     @Override
-    public Void visitField(@NotNull IFieldModelElement element, Integer depth) {
+    public Void visitField(@NonNull IFieldModelElement element, Integer depth) {
+      assert depth != null;
       outputNode("field", element, depth);
       visitFlags(element, depth);
       return null;
     }
 
     @Override
-    public Void visitFlag(@NotNull IFlagModelElement element, Integer depth) {
+    public Void visitFlag(@NonNull IFlagModelElement element, Integer depth) {
+      assert depth != null;
       outputNode("flag", element, depth);
       return null;
     }
 
-    private void outputNode(@NotNull String type, @NotNull IModelElement element, @NotNull Integer depth) {
+    private static void outputNode(@NonNull String type, @NonNull IModelElement element, @NonNull Integer depth) {
       IDefinitionNodeItem nodeItem = element.getNodeItem();
       StringBuffer buffer = new StringBuffer();
       buffer
           .append("  ".repeat(depth))
           .append(type);
-      
+
       if (element.getNodeItem() instanceof ICycledAssemblyNodeItem) {
         buffer.append(" (cycle}");
       }
@@ -100,14 +103,14 @@ class ExplosionVisitorTest {
       buffer
           .append(": ")
           .append(nodeItem.getName());
-//          .append(' ')
-//          .append(Objects.hashCode(nodeItem.getInstance()))
-//          .append(' ')
-//          .append(Objects.hashCode(nodeItem.getDefinition()));
-      
+      // .append(' ')
+      // .append(Objects.hashCode(nodeItem.getInstance()))
+      // .append(' ')
+      // .append(Objects.hashCode(nodeItem.getDefinition()));
+
       String values = element.getConstraints().stream()
           .filter(constraint -> (constraint instanceof IAllowedValuesConstraint))
-          .map(constraint -> (IAllowedValuesConstraint)constraint)
+          .map(constraint -> (IAllowedValuesConstraint) constraint)
           .flatMap(constraint -> constraint.getAllowedValues().values().stream())
           .map(IAllowedValue::getValue)
           .sorted()
@@ -115,8 +118,8 @@ class ExplosionVisitorTest {
           .collect(CustomCollectors.joiningWithOxfordComma("or"));
       if (!values.isBlank()) {
         buffer
-          .append(" values: ")
-          .append(values);
+            .append(" values: ")
+            .append(values);
       }
       System.out.println(buffer);
     }

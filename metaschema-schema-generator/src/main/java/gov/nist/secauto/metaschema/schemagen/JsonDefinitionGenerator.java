@@ -42,17 +42,17 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.JsonSchemaGenerator.GenerationState;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.Collection;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public final class JsonDefinitionGenerator {
   private JsonDefinitionGenerator() {
     // disable construction
   }
 
-  public static void generateDescription(@NotNull IDefinition definition, @NotNull ObjectNode parentNode) {
+  public static void generateDescription(@NonNull IDefinition definition, @NonNull ObjectNode parentNode) {
     MarkupLine description = definition.getDescription();
 
     StringBuilder retval = null;
@@ -74,15 +74,15 @@ public final class JsonDefinitionGenerator {
     }
   }
 
-  public static void generateTitle(@NotNull IDefinition definition, @NotNull ObjectNode parentNode) {
+  public static void generateTitle(@NonNull IDefinition definition, @NonNull ObjectNode parentNode) {
     String formalName = definition.getFormalName();
     if (formalName != null) {
       parentNode.put("title", formalName);
     }
   }
 
-  public static void generateDefinition(@NotNull IDefinition definition, @NotNull ObjectNode parentNode,
-      @NotNull GenerationState state)
+  public static void generateDefinition(@NonNull IDefinition definition, @NonNull ObjectNode parentNode,
+      @NonNull GenerationState state)
       throws IOException {
     JsonDatatypeManager datatypeManager = state.getDatatypeManager();
 
@@ -120,30 +120,32 @@ public final class JsonDefinitionGenerator {
   }
 
   public static void generateAssemblyDefinition(
-      @NotNull IAssemblyDefinition definition,
-      @NotNull ObjectNode definitionNode,
-      @NotNull GenerationState state) throws IOException {
+      @NonNull IAssemblyDefinition definition,
+      @NonNull ObjectNode definitionNode,
+      @NonNull GenerationState state) throws IOException {
 
     definitionNode.put("type", "object");
 
     // determine the flag instances to generate
     IFlagInstance jsonKeyFlag = definition.getJsonKeyFlagInstance();
-    Collection<@NotNull ? extends IFlagInstance> flags
+    Collection<? extends IFlagInstance> flags
         = FlagInstanceFilter.filterFlags(definition.getFlagInstances(), jsonKeyFlag);
 
     JsonPropertyGenerator.InstanceProperties properties = new JsonPropertyGenerator.InstanceProperties();
 
     // generate flag properties
     for (IFlagInstance flag : flags) {
+      assert flag != null;
       JsonPropertyGenerator.generateFlagProperty(flag, properties, state);
     }
     // generate model properties
-    Collection<@NotNull ? extends INamedModelInstance> instances = definition.getNamedModelInstances();
+    Collection<? extends INamedModelInstance> instances = definition.getNamedModelInstances();
     for (INamedModelInstance instance : instances) {
+      assert instance != null;
       JsonPropertyGenerator.generateInstanceProperty(instance, properties, state);
     }
 
-    Collection<@NotNull ? extends IChoiceInstance> choices = definition.getChoiceInstances();
+    Collection<? extends IChoiceInstance> choices = definition.getChoiceInstances();
     if (choices.isEmpty()) {
       properties.generate(definitionNode);
 
@@ -154,12 +156,12 @@ public final class JsonDefinitionGenerator {
   }
 
   public static void generateFieldDefinition( // NOPMD - ok
-      @NotNull IFieldDefinition definition,
-      @NotNull ObjectNode definitionNode,
-      @NotNull GenerationState state) throws IOException {
+      @NonNull IFieldDefinition definition,
+      @NonNull ObjectNode definitionNode,
+      @NonNull GenerationState state) throws IOException {
     JsonDatatypeManager datatypeManager = state.getDatatypeManager();
 
-    Collection<@NotNull ? extends IFlagInstance> flags = definition.getFlagInstances();
+    Collection<? extends IFlagInstance> flags = definition.getFlagInstances();
     IFlagInstance jsonKeyFlag = definition.getJsonKeyFlagInstance();
     if (flags.isEmpty() || (jsonKeyFlag != null && flags.size() == 1)) { // NOPMD - readability
       // field is a simple value if there are no flags or if the only flag is a JSON key
@@ -176,6 +178,7 @@ public final class JsonDefinitionGenerator {
 
       // generate flag properties
       for (IFlagInstance flag : flags) {
+        assert flag != null;
         JsonPropertyGenerator.generateFlagProperty(flag, properties, state);
       }
 
@@ -217,9 +220,9 @@ public final class JsonDefinitionGenerator {
   }
 
   public static void generateFlagDefinition(
-      @NotNull IFlagDefinition definition,
-      @NotNull ObjectNode definitionNode,
-      @NotNull GenerationState state) {
+      @NonNull IFlagDefinition definition,
+      @NonNull ObjectNode definitionNode,
+      @NonNull GenerationState state) {
     definitionNode.put("$ref",
         state.getDatatypeManager().getJsonDefinitionRefForDatatype(definition.getJavaTypeAdapter()));
   }

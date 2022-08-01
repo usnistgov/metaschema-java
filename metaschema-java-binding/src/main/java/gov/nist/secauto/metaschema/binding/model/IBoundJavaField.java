@@ -26,11 +26,11 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 interface IBoundJavaField extends IBoundNamedInstance {
   /**
@@ -38,11 +38,11 @@ interface IBoundJavaField extends IBoundNamedInstance {
    * 
    * @return the Java field
    */
-  @NotNull
+  @NonNull
   Field getField();
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   default String getJavaPropertyName() {
     return getField().getName();
   }
@@ -60,7 +60,7 @@ interface IBoundJavaField extends IBoundNamedInstance {
    */
   @Override
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   default Type getType() {
     return getField().getGenericType();
   }
@@ -72,7 +72,7 @@ interface IBoundJavaField extends IBoundNamedInstance {
    */
   @Override
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   default Class<?> getRawType() {
     Type type = getType();
     return (Class<?>) (type instanceof ParameterizedType ? ((ParameterizedType) type).getRawType() : type);
@@ -85,7 +85,7 @@ interface IBoundJavaField extends IBoundNamedInstance {
    * @return the item type of the bound object
    */
   @Override
-  @NotNull
+  @NonNull
   default Class<?> getItemType() {
     return (Class<?>) getType();
   }
@@ -99,7 +99,7 @@ interface IBoundJavaField extends IBoundNamedInstance {
    * @return the value if available, or {@code null} otherwise
    */
   @Override
-  default Object getValue(@NotNull Object parentInstance) {
+  default Object getValue(@NonNull Object parentInstance) {
     Field field = getField();
     boolean accessable = field.canAccess(parentInstance);
     field.setAccessible(true); // NOPMD - intentional

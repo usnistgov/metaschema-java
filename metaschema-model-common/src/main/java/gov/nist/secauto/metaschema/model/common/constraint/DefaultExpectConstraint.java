@@ -33,20 +33,20 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ReplacementScanner;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Objects;
 import java.util.regex.Pattern;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class DefaultExpectConstraint
     extends AbstractConstraint
     implements IExpectConstraint {
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   private static final Pattern METAPATH_VALUE_TEMPLATE_PATTERN
       = Pattern.compile("(?<!\\\\)(\\{\\s*((?:(?:\\\\})|[^}])*)\\s*\\})");
-  @NotNull
+  @NonNull
   private final MetapathExpression test;
   private final String message;
 
@@ -73,11 +73,11 @@ public class DefaultExpectConstraint
   @SuppressWarnings("null")
   public DefaultExpectConstraint(
       @Nullable String id,
-      @NotNull ISource source,
-      @NotNull Level level,
+      @NonNull ISource source,
+      @NonNull Level level,
       String message,
-      @NotNull MetapathExpression target,
-      @NotNull MetapathExpression test,
+      @NonNull MetapathExpression target,
+      @NonNull MetapathExpression test,
       MarkupMultiline remarks) {
     super(id, source, level, target, remarks);
     this.test = Objects.requireNonNull(test);
@@ -95,13 +95,13 @@ public class DefaultExpectConstraint
   }
 
   @Override
-  public CharSequence generateMessage(@NotNull INodeItem item, @NotNull DynamicContext context) {
+  public CharSequence generateMessage(@NonNull INodeItem item, @NonNull DynamicContext context) {
     String message = getMessage();
 
     return message == null ? null
         : ReplacementScanner.replaceTokens(message, METAPATH_VALUE_TEMPLATE_PATTERN, match -> {
           @SuppressWarnings("null")
-          @NotNull
+          @NonNull
           String metapath = match.group(2);
           MetapathExpression expr = MetapathExpression.compile(metapath);
           return expr.evaluateAs(item, MetapathExpression.ResultType.STRING, context);

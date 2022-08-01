@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Represents an individual enumerated value associated with an {@link IAllowedValuesConstraint}.
@@ -39,7 +39,7 @@ public interface IAllowedValue {
    * 
    * @return the value
    */
-  @NotNull
+  @NonNull
   String getValue();
 
   /**
@@ -47,6 +47,6 @@ public interface IAllowedValue {
    * 
    * @return the description
    */
-  @NotNull
+  @NonNull
   MarkupLine getDescription();
 }

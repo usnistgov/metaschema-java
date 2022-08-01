@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Java class type information for an {@link IFieldDefinition} used for generating a Java class for
@@ -45,9 +45,9 @@ public interface IFieldDefinitionTypeInfo extends IModelDefinitionTypeInfo {
    *          a resolver used to look up related type information
    * @return the type info for the definition
    */
-  @NotNull
-  static IFieldDefinitionTypeInfo newTypeInfo(@NotNull IFieldDefinition definition,
-      @NotNull ITypeResolver typeResolver) {
+  @NonNull
+  static IFieldDefinitionTypeInfo newTypeInfo(@NonNull IFieldDefinition definition,
+      @NonNull ITypeResolver typeResolver) {
     return new FieldDefinitionTypeInfoImpl(definition, typeResolver);
   }
 

@@ -28,13 +28,12 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 abstract class AbstractNodeContext<F extends IFlagNodeItem, L extends AbstractNodeContext.Flags<F>>
@@ -42,26 +41,26 @@ abstract class AbstractNodeContext<F extends IFlagNodeItem, L extends AbstractNo
 
   private final Lazy<L> model;
 
-  protected AbstractNodeContext(@NotNull INodeItemFactory factory) {
+  protected AbstractNodeContext(@NonNull INodeItemFactory factory) {
     this.model = Lazy.lazy(newModelSupplier(factory));
   }
 
-  @NotNull
-  protected abstract Supplier<L> newModelSupplier(@NotNull INodeItemFactory factory);
+  @NonNull
+  protected abstract Supplier<L> newModelSupplier(@NonNull INodeItemFactory factory);
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   protected L getModel() {
     return model.get();
   }
 
   @Override
-  public Collection<@NotNull F> getFlags() {
+  public Collection<F> getFlags() {
     return getModel().getFlags();
   }
 
   @Override
-  public F getFlagByName(@NotNull String name) {
+  public F getFlagByName(@NonNull String name) {
     return getModel().getFlagByName(name);
   }
 
@@ -72,20 +71,20 @@ abstract class AbstractNodeContext<F extends IFlagNodeItem, L extends AbstractNo
    *          the type of the flag items
    */
   protected static class Flags<F extends IFlagNodeItem> {
-    private final Map<@NotNull String, F> flags;
+    private final Map<String, F> flags;
 
-    protected Flags(@NotNull Map<@NotNull String, F> flags) {
+    protected Flags(@NonNull Map<String, F> flags) {
       this.flags = flags;
     }
 
     @Nullable
-    public F getFlagByName(@NotNull String name) {
+    public F getFlagByName(@NonNull String name) {
       return flags.get(name);
     }
 
-    @NotNull
+    @NonNull
     @SuppressWarnings("null")
-    public Collection<@NotNull F> getFlags() {
+    public Collection<F> getFlags() {
       return flags.values();
     }
   }

@@ -39,9 +39,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -51,15 +48,18 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public class DefaultFunction
     extends AbstractFunction {
   // private static final Logger logger = LogManager.getLogger(AbstractFunction.class);
 
-  @NotNull
+  @NonNull
   private final Set<FunctionProperty> properties;
-  @NotNull
+  @NonNull
   private final ISequenceType result;
-  @NotNull
+  @NonNull
   private final IFunctionExecutor handler;
 
   /**
@@ -78,11 +78,11 @@ public class DefaultFunction
    */
   @SuppressWarnings("null")
   DefaultFunction(
-      @NotNull String name,
-      @NotNull EnumSet<FunctionProperty> properties,
-      @NotNull List<IArgument> arguments,
-      @NotNull ISequenceType result,
-      @NotNull IFunctionExecutor handler) {
+      @NonNull String name,
+      @NonNull EnumSet<FunctionProperty> properties,
+      @NonNull List<IArgument> arguments,
+      @NonNull ISequenceType result,
+      @NonNull IFunctionExecutor handler) {
     super(name, arguments);
     this.properties = Collections.unmodifiableSet(properties);
     this.result = result;
@@ -168,26 +168,28 @@ public class DefaultFunction
    *          the argument parameters
    * @return the converted argument list
    */
-  @NotNull
-  public static List<@NotNull ISequence<?>> convertArguments(@NotNull IFunction function,
-      @NotNull List<@NotNull ISequence<?>> parameters) {
-    @NotNull
-    List<@NotNull ISequence<?>> retval = new ArrayList<>(parameters.size());
+  @NonNull
+  public static List<ISequence<?>> convertArguments(@NonNull IFunction function,
+      @NonNull List<ISequence<?>> parameters) {
+    @NonNull
+    List<ISequence<?>> retval = new ArrayList<>(parameters.size());
 
     Iterator<IArgument> argumentIterator = function.getArguments().iterator();
-    Iterator<@NotNull ISequence<?>> parametersIterator = parameters.iterator();
+    Iterator<ISequence<?>> parametersIterator = parameters.iterator();
 
     IArgument argument = null;
     while (parametersIterator.hasNext()) {
       argument = argumentIterator.hasNext() ? argumentIterator.next() : function.isArityUnbounded() ? argument : null;
-
-      if (argument == null) {
+      if (argumentIterator.hasNext()) {
+        argument = argumentIterator.next();
+      } else if (!function.isArityUnbounded()) {
         throw new InvalidTypeMetapathException(
             null,
             String.format("argument signature doesn't match '%d'", function.toSignature()));
       }
 
-      @SuppressWarnings("null")
+      assert argument != null;
+
       ISequence<?> parameter = parametersIterator.next();
 
       int size = parameter.size();
@@ -264,9 +266,9 @@ public class DefaultFunction
    *          the sequence to convert
    * @return the converted sequence
    */
-  @NotNull
-  protected static ISequence<?> convertSequence(@NotNull IArgument argument, @NotNull ISequence<?> sequence) {
-    @NotNull
+  @NonNull
+  protected static ISequence<?> convertSequence(@NonNull IArgument argument, @NonNull ISequence<?> sequence) {
+    @NonNull
     ISequence<?> retval;
     if (sequence.isEmpty()) {
       retval = ISequence.empty();
@@ -274,21 +276,22 @@ public class DefaultFunction
       ISequenceType requiredSequenceType = argument.getSequenceType();
       Class<? extends IItem> requiredSequenceTypeClass = requiredSequenceType.getType();
 
-      List<@NotNull IItem> result = new ArrayList<>(sequence.size());
+      List<IItem> result = new ArrayList<>(sequence.size());
 
       boolean atomize = IAnyAtomicItem.class.isAssignableFrom(requiredSequenceTypeClass);
 
       for (IItem item : sequence.asList()) {
+        assert item != null;
         if (atomize) {
-          item = FnData.fnDataItem(item);
+          item = FnData.fnDataItem(item); // NOPMD - intentional
 
-          if (IUntypedAtomicItem.class.isInstance(item)) { // NOPMD
-            // TODO: apply cast to atomic type
-          }
+          // if (IUntypedAtomicItem.class.isInstance(item)) { // NOPMD
+          // // TODO: apply cast to atomic type
+          // }
 
           // promote URIs to strings if a string is required
           if (IStringItem.class.equals(requiredSequenceTypeClass) && IAnyUriItem.class.isInstance(item)) {
-            item = IStringItem.cast((IAnyUriItem) item);
+            item = IStringItem.cast((IAnyUriItem) item); // NOPMD - intentional
           }
         }
 
@@ -307,10 +310,10 @@ public class DefaultFunction
   }
 
   @Override
-  public ISequence<?> execute(@NotNull List<@NotNull ISequence<?>> arguments, @NotNull DynamicContext dynamicContext,
+  public ISequence<?> execute(@NonNull List<ISequence<?>> arguments, @NonNull DynamicContext dynamicContext,
       INodeContext focus) {
     try {
-      List<@NotNull ISequence<?>> convertedArguments = convertArguments(this, arguments);
+      List<ISequence<?>> convertedArguments = convertArguments(this, arguments);
 
       CallingContext callingContext;
       ISequence<?> result;
@@ -351,13 +354,13 @@ public class DefaultFunction
   @Override
   public boolean equals(Object obj) {
     if (this == obj) {
-      return true;
+      return true; // NOPMD - readability
     }
     if (obj == null) {
-      return false;
+      return false; // NOPMD - readability
     }
     if (getClass() != obj.getClass()) {
-      return false;
+      return false; // NOPMD - readability
     }
     DefaultFunction other = (DefaultFunction) obj;
     return Objects.equals(getArguments(), other.getArguments()) && Objects.equals(handler, other.handler)
@@ -402,18 +405,18 @@ public class DefaultFunction
    *          the current node context
    * @return the calling context
    */
-  @NotNull
-  public CallingContext newCallingContext(@NotNull List<@NotNull ISequence<?>> arguments, @NotNull INodeContext focus) {
+  @NonNull
+  public CallingContext newCallingContext(@NonNull List<ISequence<?>> arguments, @NonNull INodeContext focus) {
     return new CallingContext(arguments, focus);
   }
 
   public class CallingContext {
     @Nullable
     private final INodeItem contextNodeItem;
-    @NotNull
-    private final List<@NotNull ISequence<?>> arguments;
+    @NonNull
+    private final List<ISequence<?>> arguments;
 
-    private CallingContext(@NotNull List<@NotNull ISequence<?>> arguments, @NotNull INodeContext focus) {
+    private CallingContext(@NonNull List<ISequence<?>> arguments, @NonNull INodeContext focus) {
       if (isFocusDepenent()) {
         contextNodeItem = focus.getNodeItem();
       } else {
@@ -427,7 +430,7 @@ public class DefaultFunction
      * 
      * @return the function instance
      */
-    @NotNull
+    @NonNull
     protected DefaultFunction getFunction() {
       return DefaultFunction.this;
     }
@@ -447,8 +450,8 @@ public class DefaultFunction
      * 
      * @return the arguments
      */
-    @NotNull
-    public List<@NotNull ISequence<?>> getArguments() {
+    @NonNull
+    public List<ISequence<?>> getArguments() {
       return arguments;
     }
 
@@ -464,17 +467,17 @@ public class DefaultFunction
     @Override
     public boolean equals(Object obj) {
       if (this == obj) {
-        return true;
+        return true; // NOPMD - readability
       }
       if (obj == null) {
-        return false;
+        return false; // NOPMD - readability
       }
       if (getClass() != obj.getClass()) {
-        return false;
+        return false; // NOPMD - readability
       }
       CallingContext other = (CallingContext) obj;
       if (!getFunction().equals(other.getFunction())) {
-        return false;
+        return false; // NOPMD - readability
       }
       return Objects.equals(arguments, other.arguments) && Objects.equals(contextNodeItem, other.contextNodeItem);
     }

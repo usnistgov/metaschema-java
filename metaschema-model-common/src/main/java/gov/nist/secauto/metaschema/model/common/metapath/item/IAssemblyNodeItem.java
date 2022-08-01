@@ -30,10 +30,10 @@ import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.net.URI;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IAssemblyNodeItem extends IModelNodeItem {
   @Override
@@ -66,12 +66,12 @@ public interface IAssemblyNodeItem extends IModelNodeItem {
   }
 
   @Override
-  default @NotNull String format(@NotNull IPathFormatter formatter) {
+  default @NonNull String format(@NonNull IPathFormatter formatter) {
     return formatter.formatAssembly(this);
   }
 
   @Override
-  default <RESULT, CONTEXT> RESULT accept(@NotNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+  default <RESULT, CONTEXT> RESULT accept(@NonNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitAssembly(this, context);
   }
 }

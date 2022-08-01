@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model.common.datatype.object;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractCustomJavaDataType;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.ZonedDateTime;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Metaschema has a need to represent dates and times that allow for an ambiguous time zone. This is
@@ -57,7 +57,7 @@ public abstract class AbstractAmbiguousTemporal<TYPE extends AbstractAmbiguousTe
    *          {@code true} if the date is intended to have an associated time zone or {@code false}
    *          otherwise
    */
-  public AbstractAmbiguousTemporal(@NotNull ZonedDateTime value, boolean hasTimeZone) {
+  public AbstractAmbiguousTemporal(@NonNull ZonedDateTime value, boolean hasTimeZone) {
     super(value);
     this.timeZone = hasTimeZone;
   }

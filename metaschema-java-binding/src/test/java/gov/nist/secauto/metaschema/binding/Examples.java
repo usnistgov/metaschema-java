@@ -60,7 +60,7 @@ class Examples { // NOPMD
   // File("src/test/resources/test-content/bound-class-simple.json"));
   //
   // // create a serializer to write the object
-  // ISerializer<@NotNull BoundClass> serializer = bindingContext.newSerializer(Format.XML,
+  // ISerializer<@NonNull BoundClass> serializer = bindingContext.newSerializer(Format.XML,
   // BoundClass.class);
   // serializer.serialize(object, new File("target/bound-class-simple.xml"));
   // }

@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.model;
 
 import gov.nist.secauto.metaschema.model.common.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
@@ -37,18 +36,17 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.AssemblyReferenceType;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.xmlbeans.DescriptionType;
 
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class XmlAssemblyInstance
     extends AbstractAssemblyInstance {
@@ -65,7 +63,7 @@ class XmlAssemblyInstance
    * @param parent
    *          the assembly definition this object is an instance of
    */
-  public XmlAssemblyInstance(@NotNull AssemblyReferenceType xmlAssembly, @NotNull IAssemblyDefinition parent) {
+  public XmlAssemblyInstance(@NonNull AssemblyReferenceType xmlAssembly, @NonNull IAssemblyDefinition parent) {
     super(parent);
     this.xmlAssembly = xmlAssembly;
   }
@@ -91,15 +89,20 @@ class XmlAssemblyInstance
     return getXmlAssembly().isSetFormalName() ? getXmlAssembly().getFormalName() : null;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+  public Map<QName, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlAssembly().getPropList()));
   }
 
   @Override
   public MarkupLine getDescription() {
-    return getXmlAssembly().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription()) : null;
+    MarkupLine retval = null;
+    if (getXmlAssembly().isSetDescription()) {
+      DescriptionType description = getXmlAssembly().getDescription();
+      assert description != null;
+      retval = MarkupStringConverter.toMarkupString(description);
+    }
+    return retval;
   }
 
   @SuppressWarnings("null")
@@ -167,14 +170,14 @@ class XmlAssemblyInstance
   }
 
   @Override
-  public Object getValue(@NotNull Object parentInstance) {
+  public Object getValue(@NonNull Object parentInstance) {
     // there is no value
     return null;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ?> getItemValues(Object instanceValue) {
+  public Collection<?> getItemValues(Object instanceValue) {
     // there are no item values
     return Collections.emptyList();
   }

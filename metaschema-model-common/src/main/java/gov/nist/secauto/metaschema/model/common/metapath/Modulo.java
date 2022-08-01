@@ -30,8 +30,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class Modulo
     extends AbstractArithmeticExpression<INumericItem> {
@@ -45,12 +45,12 @@ class Modulo
    * @param divisor
    *          the item to divide by
    */
-  protected Modulo(@NotNull IExpression dividend, @NotNull IExpression divisor) {
+  protected Modulo(@NonNull IExpression dividend, @NonNull IExpression divisor) {
     super(dividend, divisor, INumericItem.class);
   }
 
   @Override
-  public Class<@NotNull INumericItem> getBaseResultType() {
+  public Class<INumericItem> getBaseResultType() {
     return INumericItem.class;
   }
 
@@ -75,7 +75,7 @@ class Modulo
    *          the item to divide by
    * @return the remainder or an empty {@link ISequence} if either item is {@code null}
    */
-  @NotNull
+  @NonNull
   protected static ISequence<? extends INumericItem> resultOrEmpty(@Nullable INumericItem dividend,
       @Nullable INumericItem divisor) {
     ISequence<? extends INumericItem> retval;

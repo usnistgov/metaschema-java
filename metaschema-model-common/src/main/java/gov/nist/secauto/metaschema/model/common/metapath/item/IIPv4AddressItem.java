@@ -29,19 +29,18 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
-import org.jetbrains.annotations.NotNull;
-
+import edu.umd.cs.findbugs.annotations.NonNull;
 import inet.ipaddr.ipv4.IPv4Address;
 
 public interface IIPv4AddressItem extends IIPAddressItem {
 
-  @NotNull
-  public static IIPv4AddressItem valueOf(@NotNull IPv4Address value) {
+  @NonNull
+  public static IIPv4AddressItem valueOf(@NonNull IPv4Address value) {
     return new IPv4AddressItemImpl(value);
   }
 
-  @NotNull
-  public static IIPv4AddressItem cast(@NotNull IAnyAtomicItem item)
+  @NonNull
+  public static IIPv4AddressItem cast(@NonNull IAnyAtomicItem item)
       throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.IP_V4_ADDRESS.cast(item);
   }

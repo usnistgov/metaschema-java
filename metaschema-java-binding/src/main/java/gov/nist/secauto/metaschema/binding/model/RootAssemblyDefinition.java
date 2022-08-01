@@ -47,7 +47,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -60,19 +59,20 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class RootAssemblyDefinition
     extends RootAssemblyDefinitionWrapper<IAssemblyClassBinding>
     implements IRootAssemblyClassBinding {
   private static final Logger LOGGER = LogManager.getLogger(RootAssemblyDefinition.class);
 
-  public RootAssemblyDefinition(@NotNull IAssemblyClassBinding rootDefinition) {
+  public RootAssemblyDefinition(@NonNull IAssemblyClassBinding rootDefinition) {
     super(rootDefinition);
   }
 
   @Override
-  public Object readObject(@NotNull IJsonParsingContext context) throws IOException {
+  public Object readObject(@NonNull IJsonParsingContext context) throws IOException {
     return getRootDefinition().readObject(context);
   }
 
@@ -93,13 +93,13 @@ public class RootAssemblyDefinition
   }
 
   @Override
-  public Map<@NotNull String, ? extends IBoundNamedInstance>
+  public Map<String, ? extends IBoundNamedInstance>
       getNamedInstances(Predicate<IBoundFlagInstance> flagFilter) {
     return getRootDefinition().getNamedInstances(flagFilter);
   }
 
   @Override
-  public List<@NotNull Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
+  public List<Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
       throws IOException {
     return getRootDefinition().readItem(parentInstance, requiresJsonKey, context);
   }
@@ -117,7 +117,7 @@ public class RootAssemblyDefinition
   }
 
   @Override
-  public void writeItems(Collection<@NotNull ? extends Object> items, boolean writeObjectWrapper,
+  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper,
       IJsonWritingContext context) throws IOException {
     getRootDefinition().writeItems(items, writeObjectWrapper, context);
   }
@@ -133,17 +133,17 @@ public class RootAssemblyDefinition
   }
 
   @Override
-  public Collection<@NotNull ? extends IBoundFlagInstance> getFlagInstances() {
+  public Collection<? extends IBoundFlagInstance> getFlagInstances() {
     return getRootDefinition().getFlagInstances();
   }
 
   @Override
-  public Collection<@NotNull ? extends IBoundNamedModelInstance> getModelInstances() {
+  public Collection<? extends IBoundNamedModelInstance> getModelInstances() {
     return getRootDefinition().getModelInstances();
   }
 
   @Override
-  public Collection<@NotNull ? extends IBoundNamedModelInstance> getNamedModelInstances() {
+  public Collection<? extends IBoundNamedModelInstance> getNamedModelInstances() {
     return getRootDefinition().getNamedModelInstances();
   }
 
@@ -153,7 +153,7 @@ public class RootAssemblyDefinition
   }
 
   @Override
-  public Collection<@NotNull ? extends IBoundFieldInstance> getFieldInstances() {
+  public Collection<? extends IBoundFieldInstance> getFieldInstances() {
     return getRootDefinition().getFieldInstances();
   }
 
@@ -163,7 +163,7 @@ public class RootAssemblyDefinition
   }
 
   @Override
-  public Collection<@NotNull ? extends IBoundAssemblyInstance> getAssemblyInstances() {
+  public Collection<? extends IBoundAssemblyInstance> getAssemblyInstances() {
     return getRootDefinition().getAssemblyInstances();
   }
 
@@ -180,7 +180,7 @@ public class RootAssemblyDefinition
 
     // we may be at the START_DOCUMENT
     if (reader.peek().isStartDocument()) {
-      XmlEventUtil.consumeAndAssert(reader, XMLEvent.START_DOCUMENT);
+      XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.START_DOCUMENT);
     }
 
     XmlEventUtil.skipEvents(reader, XMLStreamConstants.CHARACTERS, XMLStreamConstants.PROCESSING_INSTRUCTION);
@@ -193,12 +193,12 @@ public class RootAssemblyDefinition
               XmlEventUtil.toString(reader.peek())));
     }
 
-    XmlEventUtil.assertNext(reader, XMLEvent.START_ELEMENT, rootQName);
+    XmlEventUtil.assertNext(reader, XMLStreamConstants.START_ELEMENT, rootQName);
 
     StartElement start = ObjectUtils.notNull(reader.nextEvent().asStartElement());
     Object result = ObjectUtils.requireNonNull(readItem(null, start, context));
 
-    XmlEventUtil.consumeAndAssert(reader, XMLEvent.END_ELEMENT, rootQName);
+    XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, rootQName);
 
     // if (reader.hasNext() && LOGGER.isDebugEnabled()) {
     // LOGGER.debug("After Parse: {}", XmlEventUtil.toString(reader.peek()));
