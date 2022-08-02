@@ -46,7 +46,7 @@ class BooleanAdapterTest {
   private JsonParser parser;
 
   @BeforeEach
-  private void initParser() throws JsonParseException, IOException { // NOPMD
+  void initParser() throws JsonParseException, IOException { // NOPMD
     adapter = new BooleanAdapter();
     JsonFactory factory = new JsonFactory();
     parser = factory.createParser(TEST_JSON);
