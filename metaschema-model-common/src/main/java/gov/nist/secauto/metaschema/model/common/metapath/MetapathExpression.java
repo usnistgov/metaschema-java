@@ -310,7 +310,7 @@ public class MetapathExpression {
       return (ISequence<T>) getASTNode().accept(dynamicContext,
           nodeContext);
     } catch (MetapathException ex) { // NOPMD - intentional
-      throw new MetapathException(String.format("An error occurred while evaluating the expression '%s'.", ex));
+      throw new MetapathException(String.format("An error occurred while evaluating the expression '%s'.",getPath()), ex);
     }
   }
 }

@@ -179,13 +179,12 @@ public class DefaultFunction
 
     IArgument argument = null;
     while (parametersIterator.hasNext()) {
-      argument = argumentIterator.hasNext() ? argumentIterator.next() : function.isArityUnbounded() ? argument : null;
       if (argumentIterator.hasNext()) {
         argument = argumentIterator.next();
       } else if (!function.isArityUnbounded()) {
         throw new InvalidTypeMetapathException(
             null,
-            String.format("argument signature doesn't match '%d'", function.toSignature()));
+            String.format("argument signature doesn't match '%s'", function.toSignature()));
       }
 
       assert argument != null;
