@@ -37,6 +37,8 @@ import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
+import gov.nist.secauto.metaschema.binding.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
@@ -46,7 +48,8 @@ import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -61,8 +64,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.lang.model.element.Modifier;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class ModelInstanceTypeInfoImpl
     extends AbstractInstanceTypeInfo<INamedModelInstance, IAssemblyDefinitionTypeInfo>
@@ -178,29 +182,6 @@ class ModelInstanceTypeInfoImpl
       fieldAnnoation.addMember("namespace", "$S", namespace);
     } // otherwise use the ##default
 
-    if (modelInstance instanceof IFieldInstance) {
-      IFieldInstance fieldInstance = (IFieldInstance) modelInstance;
-      IFieldDefinition fieldDefinition = (IFieldDefinition) definition;
-
-      IDataTypeAdapter<?> valueDataType = fieldDefinition.getJavaTypeAdapter();
-
-      if (MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != fieldInstance.isInXmlWrapped()) {
-        fieldAnnoation.addMember("inXmlWrapped", "$L", fieldInstance.isInXmlWrapped());
-      }
-      if (fieldInstance.isSimple()) {
-        // this is a simple field, without flags
-        // we need to add the BoundFieldValue annotation to the property
-        // fieldAnnoation.addMember("valueName", "$S", fieldDefinition.getJsonValueKeyName());
-
-        fieldAnnoation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
-
-        AnnotationUtils.applyAllowedValuesConstraints(fieldAnnoation, fieldDefinition.getAllowedValuesConstraints());
-        AnnotationUtils.applyIndexHasKeyConstraints(fieldAnnoation, fieldDefinition.getIndexHasKeyConstraints());
-        AnnotationUtils.applyMatchesConstraints(fieldAnnoation, fieldDefinition.getMatchesConstraints());
-        AnnotationUtils.applyExpectConstraints(fieldAnnoation, fieldDefinition.getExpectConstraints());
-      }
-    }
-
     int minOccurs = modelInstance.getMinOccurs();
     if (minOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
       fieldAnnoation.addMember("minOccurs", "$L", minOccurs);
@@ -211,33 +192,80 @@ class ModelInstanceTypeInfoImpl
       fieldAnnoation.addMember("maxOccurs", "$L", maxOccurs);
     }
 
-    if (maxOccurs == -1 || maxOccurs > 1) {
-      fieldAnnoation.addMember("groupName", "$S", modelInstance.getGroupAsName());
-
-      String groupAsNamespace = modelInstance.getGroupAsXmlNamespace();
-      if (groupAsNamespace == null) {
-        fieldAnnoation.addMember("groupNamespace", "$S", "##none");
-      } else if (!modelInstance.getContainingMetaschema().getXmlNamespace().toASCIIString().equals(groupAsNamespace)) {
-        fieldAnnoation.addMember("groupNamespace", "$S", groupAsNamespace);
-      } // otherwise use the ##default
-
-      JsonGroupAsBehavior jsonGroupAsBehavior = modelInstance.getJsonGroupAsBehavior();
-      assert jsonGroupAsBehavior != null;
-      fieldAnnoation.addMember("inJson", "$T.$L",
-          JsonGroupAsBehavior.class, jsonGroupAsBehavior.toString());
-
-      XmlGroupAsBehavior xmlGroupAsBehavior = modelInstance.getXmlGroupAsBehavior();
-      assert xmlGroupAsBehavior != null;
-      fieldAnnoation.addMember("inXml", "$T.$L",
-          XmlGroupAsBehavior.class, xmlGroupAsBehavior.toString());
-    }
-
     MarkupMultiline remarks = modelInstance.getRemarks();
     if (remarks != null) {
       fieldAnnoation.addMember("remarks", "$S", remarks.toMarkdown());
     }
 
+    if (modelInstance instanceof IFieldInstance) {
+      IFieldInstance fieldInstance = (IFieldInstance) modelInstance;
+
+      if (MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != fieldInstance.isInXmlWrapped()) {
+        fieldAnnoation.addMember("inXmlWrapped", "$L", fieldInstance.isInXmlWrapped());
+      }
+    }
+
     builder.addAnnotation(fieldAnnoation.build());
+
+    if (modelInstance instanceof IFieldInstance) {
+      IFieldInstance fieldInstance = (IFieldInstance) modelInstance;
+      if (fieldInstance.isSimple()) {
+        // this is a simple field, without flags
+        // we need to add the BoundFieldValue annotation to the property
+        // fieldAnnoation.addMember("valueName", "$S", fieldDefinition.getJsonValueKeyName());
+        IFieldDefinition fieldDefinition = (IFieldDefinition) definition;
+        IDataTypeAdapter<?> valueDataType = fieldDefinition.getJavaTypeAdapter();
+
+
+        Object defaultValue = fieldDefinition.getDefaultValue();
+        
+        if (!MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType) || defaultValue != null) {
+          AnnotationSpec.Builder boundFieldValueAnnotation = AnnotationSpec.builder(BoundFieldValue.class);
+
+          if (!MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType)) {
+            boundFieldValueAnnotation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
+          }
+
+          if (defaultValue != null) {
+            boundFieldValueAnnotation.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
+          }
+          builder.addAnnotation(boundFieldValueAnnotation.build());
+        }
+
+        AnnotationUtils.buildValueConstraints(builder, fieldDefinition);
+      }
+    }
+
+    if (maxOccurs == -1 || maxOccurs > 1) {
+      AnnotationSpec.Builder groupAsAnnoation = AnnotationSpec.builder(GroupAs.class);
+      
+      groupAsAnnoation.addMember("name", "$S",
+          ObjectUtils.requireNonNull(modelInstance.getGroupAsName(), "The grouping name must be non-null"));
+
+      String groupAsNamespace = modelInstance.getGroupAsXmlNamespace();
+      if (groupAsNamespace == null) {
+        groupAsAnnoation.addMember("namespace", "$S", "##none");
+      } else if (!modelInstance.getContainingMetaschema().getXmlNamespace().toASCIIString().equals(groupAsNamespace)) {
+        groupAsAnnoation.addMember("namespace", "$S", groupAsNamespace);
+      } // otherwise use the ##default
+
+      JsonGroupAsBehavior jsonGroupAsBehavior = modelInstance.getJsonGroupAsBehavior();
+      assert jsonGroupAsBehavior != null;
+      if (!MetaschemaModelConstants.DEFAULT_JSON_GROUP_AS_BEHAVIOR.equals(jsonGroupAsBehavior)) {
+        groupAsAnnoation.addMember("inJson", "$T.$L",
+            JsonGroupAsBehavior.class, jsonGroupAsBehavior.toString());
+      }
+
+      XmlGroupAsBehavior xmlGroupAsBehavior = modelInstance.getXmlGroupAsBehavior();
+      assert xmlGroupAsBehavior != null;
+      if (!MetaschemaModelConstants.DEFAULT_XML_GROUP_AS_BEHAVIOR.equals(xmlGroupAsBehavior)) {
+        groupAsAnnoation.addMember("inXml", "$T.$L",
+            XmlGroupAsBehavior.class, xmlGroupAsBehavior.toString());
+      }
+      
+      builder.addAnnotation(groupAsAnnoation.build());
+    }
+    
     return retval.isEmpty() ? CollectionUtil.emptySet() : CollectionUtil.unmodifiableSet(retval);
   }
 

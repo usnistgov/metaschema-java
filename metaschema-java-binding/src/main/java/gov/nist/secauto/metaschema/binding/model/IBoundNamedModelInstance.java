@@ -33,12 +33,16 @@ import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
-
-import edu.umd.cs.findbugs.annotations.Nullable;
+import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -46,11 +50,37 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * This marker interface provides common methods for interacting with bound object values.
  */
 public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedModelInstance {
+  
+  @NonNull
+  static Class<?> getItemType(@NonNull Field field) {
+    Type fieldType = field.getGenericType();
+    Class<?> rawType = ObjectUtils.notNull(
+        (Class<?>) (fieldType instanceof ParameterizedType ? ((ParameterizedType) fieldType).getRawType() : fieldType));
+
+    Class<?> itemType;
+    if (Map.class.isAssignableFrom(rawType)) {
+      // this is a Map so the second generic type is the value
+      itemType = ObjectUtils.notNull((Class<?>) ((ParameterizedType) fieldType).getActualTypeArguments()[1]);
+    } else if (List.class.isAssignableFrom(rawType)) {
+      // this is a List so there is only a single generic type
+      itemType = ObjectUtils.notNull((Class<?>) ((ParameterizedType) fieldType).getActualTypeArguments()[0]);
+    } else {
+      // non-collection
+      itemType = rawType;
+    }
+    return itemType;
+  }
+
+  @Override
+  default Class<?> getItemType() {
+    return getPropertyInfo().getItemType();
+  }
 
   @Override
   IAssemblyClassBinding getParentClassBinding();
@@ -59,14 +89,73 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
   IBoundModelDefinition getDefinition();
 
   @NonNull
-  IModelPropertyInfo newPropertyInfo();
+  default IModelPropertyInfo newPropertyInfo() { // NOPMD - cyclomatic complexity is unavoidable
+    // create the property info
+    Type type = getType();
+
+    IModelPropertyInfo retval;
+    if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
+      // collection case
+      // expect a ParameterizedType
+      if (!(type instanceof ParameterizedType)) {
+        switch (getJsonGroupAsBehavior()) {
+        case KEYED:
+          throw new IllegalStateException(
+              String.format("The field '%s' on class '%s' has data type of '%s'," + " but should have a type of '%s'.",
+                  getField().getName(), getParentClassBinding().getBoundClass().getName(),
+                  getField().getType().getName(), Map.class.getName()));
+        case LIST:
+        case SINGLETON_OR_LIST:
+          throw new IllegalStateException(
+              String.format("The field '%s' on class '%s' has data type of '%s'," + " but should have a type of '%s'.",
+                  getField().getName(), getParentClassBinding().getBoundClass().getName(),
+                  getField().getType().getName(), List.class.getName()));
+        default:
+          // this should not occur
+          throw new IllegalStateException(getJsonGroupAsBehavior().name());
+        }
+      }
+
+      // collection case
+      Class<?> rawType = ObjectUtils.notNull(
+          (Class<?>) (type instanceof ParameterizedType ? ((ParameterizedType) type).getRawType() : type));
+      if (JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())) {
+        if (!Map.class.isAssignableFrom(rawType)) {
+          throw new IllegalArgumentException(String.format(
+              "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
+              getField().getName(), getParentClassBinding().getBoundClass().getName(),
+              getField().getType().getName(), Map.class.getName()));
+        }
+        retval = new MapPropertyInfo(this);
+      } else {
+        if (!List.class.isAssignableFrom(rawType)) {
+          throw new IllegalArgumentException(String.format(
+              "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
+              getField().getName(), getParentClassBinding().getBoundClass().getName(),
+              getField().getType().getName(), List.class.getName()));
+        }
+        retval = new ListPropertyInfo(this);
+      }
+    } else {
+      // single value case
+      if (type instanceof ParameterizedType) {
+        throw new IllegalStateException(String.format(
+            "The field '%s' on class '%s' has a data parmeterized type of '%s',"
+                + " but the occurance is not multi-valued.",
+            getField().getName(), getParentClassBinding().getBoundClass().getName(), getField().getType().getName()));
+      }
+      retval = new SingletonPropertyInfo(this);
+    }
+    return retval;
+  }
+
 
   @NonNull
   IModelPropertyInfo getPropertyInfo();
 
   @NonNull
   IDataTypeHandler getDataTypeHandler();
-
+  
   /**
    * Get the item values associated with the provided value.
    * 

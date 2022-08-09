@@ -27,7 +27,8 @@
 package gov.nist.secauto.metaschema.model.xmlbeans.handler;
 
 import gov.nist.secauto.metaschema.model.common.datatype.DataTypeService;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.xmlbeans.SimpleValue;
 
@@ -38,7 +39,7 @@ public final class DatatypesHandler {
 
   /**
    * Given an XMLBeans value, return the {@link IDataTypeAdapter} instance with the given name, as
-   * determined by {@link IDataTypeAdapter#getName()}.
+   * determined by matching {@link IDataTypeAdapter#getNames()}.
    * 
    * @param value
    *          the name of the data type
@@ -49,8 +50,8 @@ public final class DatatypesHandler {
   }
 
   /**
-   * Given a data type instance, set the name of the data type, as determined by
-   * {@link IDataTypeAdapter#getName()}, in the provided target XMLBeans value.
+   * Given a data type instance, set the name of the data type, as determined by matching
+   * {@link IDataTypeAdapter#getNames()}, in the provided target XMLBeans value.
    * 
    * @param datatype
    *          the data type instance
@@ -63,7 +64,7 @@ public final class DatatypesHandler {
 
   /**
    * Given an XMLBeans value, return the {@link IDataTypeAdapter} instance with the given name, as
-   * determined by {@link IDataTypeAdapter#getName()}.
+   * determined by matching {@link IDataTypeAdapter#getNames()}.
    * 
    * @param value
    *          the name of the data type
@@ -74,8 +75,8 @@ public final class DatatypesHandler {
   }
 
   /**
-   * Given a data type instance, set the name of the data type, as determined by
-   * {@link IDataTypeAdapter#getName()}, in the provided target XMLBeans value.
+   * Given a data type instance, set the name of the data type, as determined by matching
+   * {@link IDataTypeAdapter#getNames()}, in the provided target XMLBeans value.
    * 
    * @param datatype
    *          the data type instance
@@ -87,7 +88,7 @@ public final class DatatypesHandler {
   }
 
   private static IDataTypeAdapter<?> decode(SimpleValue target) {
-    String name = target.getStringValue();
+    String name = ObjectUtils.requireNonNull(target.getStringValue());
     IDataTypeAdapter<?> retval = DataTypeService.getInstance().getJavaTypeAdapterByName(name);
     if (retval == null) {
       throw new IllegalStateException("Unable to find data type: " + name);
@@ -97,7 +98,7 @@ public final class DatatypesHandler {
 
   private static void encode(IDataTypeAdapter<?> datatype, SimpleValue target) {
     if (datatype != null) {
-      target.setStringValue(datatype.getName());
+      target.setStringValue(datatype.getPreferredName());
     }
   }
 

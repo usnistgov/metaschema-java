@@ -28,16 +28,19 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
+import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -48,15 +51,17 @@ public class DecimalAdapter
   private static final BigDecimal DECIMAL_BOOLEAN_TRUE = new BigDecimal("1.0");
   @NonNull
   private static final BigDecimal DECIMAL_BOOLEAN_FALSE = new BigDecimal("0.0");
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of("decimal"));
 
-  @SuppressWarnings("null")
   DecimalAdapter() {
     super(BigDecimal.class);
   }
 
   @Override
-  public String getName() {
-    return "decimal";
+  public List<String> getNames() {
+    return NAMES;
   }
 
   @Override
@@ -79,9 +84,8 @@ public class DecimalAdapter
     return (BigDecimal) obj;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public @NonNull Class<IDecimalItem> getItemClass() {
+  public Class<IDecimalItem> getItemClass() {
     return IDecimalItem.class;
   }
 
@@ -92,7 +96,7 @@ public class DecimalAdapter
   }
 
   @Override
-  protected @NonNull IDecimalItem castInternal(@NonNull IAnyAtomicItem item)
+  protected IDecimalItem castInternal(@NonNull IAnyAtomicItem item)
       throws InvalidValueForCastFunctionException {
     IDecimalItem retval;
     if (item instanceof INumericItem) {

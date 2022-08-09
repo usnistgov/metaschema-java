@@ -26,40 +26,74 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 /**
  * This class provides a singleton service to allow data types to be discovered within the system
  * based on an SPI provided by {@link IDataTypeProvider}.
  */
-public class DataTypeService {
-  private static Lazy<DataTypeService> lazyInstance = Lazy.lazy(() -> new DataTypeService());
+public final class DataTypeService {
+  private static final Logger LOGGER = LogManager.getLogger(DataTypeService.class);
+  private static final Lazy<DataTypeService> INSTANCE = Lazy.lazy(() -> new DataTypeService());
 
   private Map<String, IDataTypeAdapter<?>> libraryByName;
   private Map<Class<? extends IDataTypeAdapter<?>>, IDataTypeAdapter<?>> libraryByClass;
 
+  /**
+   * Get the singleton service instance, which will be lazy constructed on first access.
+   * 
+   * @return the service instance
+   */
+  @SuppressWarnings("null")
+  @NonNull
   public static DataTypeService getInstance() {
-    return lazyInstance.get();
+    return INSTANCE.get();
   }
 
-  public DataTypeService() {
+  private DataTypeService() {
     load();
   }
 
-  public IDataTypeAdapter<?> getJavaTypeAdapterByName(String name) {
+  /**
+   * Lookup a specific {@link IDataTypeAdapter} instance by its name.
+   * 
+   * @param name
+   *          the data type name of data type adapter to get the instance for
+   * @return the instance or {@code null} if the instance is unknown to the type system
+   */
+  @Nullable
+  public IDataTypeAdapter<?> getJavaTypeAdapterByName(@NonNull String name) {
     return libraryByName.get(name);
   }
 
-  public IDataTypeAdapter<?>
-      getJavaTypeAdapterByClass(@SuppressWarnings("rawtypes") Class<? extends IDataTypeAdapter> clazz) {
-    return libraryByClass.get(clazz);
+  /**
+   * Lookup a specific {@link IDataTypeAdapter} instance by its class.
+   * 
+   * @param clazz
+   *          the adapter class to get the instance for
+   * @param <TYPE>
+   *          the type of the requested adapter
+   * @return the instance or {@code null} if the instance is unknown to the type system
+   */
+  @SuppressWarnings("unchecked")
+  @Nullable
+  public <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterByClass(@NonNull Class<TYPE> clazz) {
+    return (TYPE) libraryByClass.get(clazz);
   }
 
   /**
@@ -69,21 +103,46 @@ public class DataTypeService {
    *           if there are two adapters with the same name
    */
   private void load() {
-    Map<String, IDataTypeAdapter<?>> libraryByName = new ConcurrentHashMap<>();
-    Map<Class<? extends IDataTypeAdapter<?>>, IDataTypeAdapter<?>> libraryByClass = new ConcurrentHashMap<>();
-    ServiceLoader.load(IDataTypeProvider.class).stream()
+    ServiceLoader<IDataTypeProvider> loader = ServiceLoader.load(IDataTypeProvider.class);
+    List<IDataTypeAdapter<?>> dataTypes = loader.stream()
         .map(Provider<IDataTypeProvider>::get)
-        .flatMap(provider -> {
-          return provider.getJavaTypeAdapters().entrySet().stream();
-        }).forEach(entry -> {
-          String datatypeName = entry.getKey();
-          IDataTypeAdapter<?> adapter = entry.getValue();
-          libraryByName.put(datatypeName, adapter);
-          @SuppressWarnings("unchecked")
-          Class<? extends IDataTypeAdapter<?>> clazz = (Class<? extends IDataTypeAdapter<?>>) adapter.getClass();
-          libraryByClass.putIfAbsent(clazz, adapter);
-        });
-    this.libraryByName = libraryByName;
-    this.libraryByClass = libraryByClass;
+        .flatMap(provider -> provider.getJavaTypeAdapters().stream())
+        .collect(Collectors.toList());
+
+    Map<String, IDataTypeAdapter<?>> libraryByName = dataTypes.stream()
+        .flatMap(dataType -> dataType.getNames().stream()
+            .map(name -> Map.entry(name, dataType)))
+        .collect(CustomCollectors.toMap(
+            Map.Entry::getKey,
+            (entry) -> entry.getValue(),
+            (key, v1, v2) -> {
+              if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("Data types '{}' and '{}' have duplicate name '{}'. Using the first.",
+                    v1.getClass().getName(),
+                    v2.getClass().getName(),
+                    key);
+              }
+              return v1;
+            },
+            ConcurrentHashMap::new));
+
+    @SuppressWarnings({ "unchecked", "null" })
+    Map<Class<? extends IDataTypeAdapter<?>>, IDataTypeAdapter<?>> libraryByClass = dataTypes.stream()
+        .collect(CustomCollectors.toMap(
+            dataType -> (Class<? extends IDataTypeAdapter<?>>) dataType.getClass(),
+            Function.identity(),
+            (key, v1, v2) -> {
+              if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("Duplicate data type class '{}'. Using the first.",
+                    key.getClass().getName());
+              }
+              return v1;
+            },
+            ConcurrentHashMap::new));
+
+    synchronized (this) {
+      this.libraryByName = libraryByName;
+      this.libraryByClass = libraryByClass;
+    }
   }
 }

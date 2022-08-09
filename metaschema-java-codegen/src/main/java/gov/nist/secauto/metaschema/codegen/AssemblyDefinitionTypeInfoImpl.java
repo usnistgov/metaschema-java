@@ -69,6 +69,8 @@ class AssemblyDefinitionTypeInfoImpl
   private void processModel(IModelContainer model) {
     // create model instances for the model
     for (IModelInstance instance : model.getModelInstances()) {
+      assert instance != null;
+      
       if (instance instanceof IChoiceInstance) {
         processModel((IChoiceInstance) instance);
         continue;
@@ -95,16 +97,11 @@ class AssemblyDefinitionTypeInfoImpl
   }
 
   @Override
-  protected void buildConstraints(AnnotationSpec.Builder annotation) {
-    super.buildConstraints(annotation);
+  protected void buildConstraints(@NonNull TypeSpec.Builder builder) {
+    super.buildConstraints(builder);
 
     IAssemblyDefinition definition = getDefinition();
-
-    AnnotationUtils.applyIndexConstraints(annotation, definition.getIndexConstraints());
-    AnnotationUtils.applyUniqueConstraints(annotation, definition.getUniqueConstraints());
-    AnnotationUtils.applyHasCardinalityConstraints(definition, annotation,
-        definition.getHasCardinalityConstraints());
-
+    AnnotationUtils.buildAssemblyConstraints(builder, definition);
   }
 
   @Override
@@ -120,7 +117,6 @@ class AssemblyDefinitionTypeInfoImpl
     if (definition.isRoot()) {
       metaschemaAssembly.addMember("rootName", "$S", definition.getRootName());
     }
-    buildConstraints(metaschemaAssembly);
 
     MarkupMultiline remarks = definition.getRemarks();
     if (remarks != null) {
@@ -128,7 +124,7 @@ class AssemblyDefinitionTypeInfoImpl
     }
 
     builder.addAnnotation(metaschemaAssembly.build());
-
+    buildConstraints(builder);
     return retval;
   }
 }

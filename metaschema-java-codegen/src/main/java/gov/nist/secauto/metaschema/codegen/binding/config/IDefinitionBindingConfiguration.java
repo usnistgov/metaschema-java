@@ -26,11 +26,10 @@
 
 package gov.nist.secauto.metaschema.codegen.binding.config;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 interface IDefinitionBindingConfiguration {
   /**

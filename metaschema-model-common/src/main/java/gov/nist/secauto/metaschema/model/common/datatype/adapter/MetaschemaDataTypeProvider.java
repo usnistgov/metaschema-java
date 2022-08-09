@@ -34,10 +34,10 @@ import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeProvider;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides for runtime discovery of all built-in implementations of the core Metaschema data types.
+ * Provides for runtime discovery of built-in implementations of the core Metaschema data types.
  */
 @AutoService(IDataTypeProvider.class)
-public class MetaschemaDataTypeProvider // NOPMD - Used for service initialization
+public final class MetaschemaDataTypeProvider // NOPMD - Used for service initialization
     extends AbstractDataTypeProvider {
   @NonNull
   public static final Base64Adapter BASE64 = new Base64Adapter();
@@ -88,14 +88,17 @@ public class MetaschemaDataTypeProvider // NOPMD - Used for service initializati
   public static final TokenAdapter TOKEN = new TokenAdapter();
 
   @NonNull
-  public static final MarkupLineAdapter MARKUP_LINE = new MarkupLineAdapter();
-  @NonNull
-  public static final MarkupMultilineAdapter MARKUP_MULTILINE = new MarkupMultilineAdapter();
-
-  @NonNull
   public static final StringAdapter DEFAULT_DATA_TYPE = STRING;
 
+  /**
+   * Initialize the built-in data types.
+   */
   public MetaschemaDataTypeProvider() {
+    // The data type "string" must be first since this is the default data type for the {@link String}
+    // Java type. This ensures that when a data type is resolved that this data type is matched first
+    // before other String-based data types.
+    registerDatatype(STRING);
+
     registerDatatype(BASE64);
     registerDatatype(BOOLEAN);
     registerDatatype(DATE);
@@ -109,23 +112,13 @@ public class MetaschemaDataTypeProvider // NOPMD - Used for service initializati
     registerDatatype(INTEGER);
     registerDatatype(IP_V4_ADDRESS);
     registerDatatype(IP_V6_ADDRESS);
-    registerDatatype(MARKUP_LINE);
-    registerDatatype(MARKUP_MULTILINE);
+
     registerDatatype(NON_NEGATIVE_INTEGER);
     registerDatatype(POSITIVE_INTEGER);
-    registerDatatype(STRING);
     registerDatatype(TOKEN);
     registerDatatype(URI);
     registerDatatype(URI_REFERENCE);
     registerDatatype(UUID);
     registerDatatype(YEAR_MONTH_DURATION);
-    // aliases for legacy type names
-    registerDatatypeByName("base64Binary", BASE64);
-    registerDatatypeByName("dateTime", DATE_TIME);
-    registerDatatypeByName("dateTime-with-timezone", DATE_TIME_WITH_TZ);
-    registerDatatypeByName("email", EMAIL_ADDRESS);
-    registerDatatypeByName("nonNegativeInteger", NON_NEGATIVE_INTEGER);
-    registerDatatypeByName("positiveInteger", POSITIVE_INTEGER);
-
   }
 }

@@ -29,8 +29,6 @@ package gov.nist.secauto.metaschema.codegen;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -39,6 +37,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Information about Java classes generated for definitions from a collection of Metaschema.

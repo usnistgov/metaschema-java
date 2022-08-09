@@ -30,6 +30,7 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
+import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -39,6 +40,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * This annotation indicates that the target class represents a Metaschema field.
+ * <p>
+ * Classes with this annotation must have a field with the {@link MetaschemaFieldValue} annotation.
  */
 @Documented
 @Retention(RUNTIME)
@@ -52,7 +55,7 @@ public @interface MetaschemaField {
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
   @NonNull
-  String formalName() default "##none";
+  String formalName() default Constants.NO_STRING_VALUE;
 
   /**
    * Get the documentary description of the field.
@@ -62,7 +65,7 @@ public @interface MetaschemaField {
    * @return a markdown string or {@code "##none"} if no description is provided
    */
   @NonNull
-  String description() default "##none";
+  String description() default Constants.NO_STRING_VALUE;
 
   /**
    * Name of the field.
@@ -72,6 +75,9 @@ public @interface MetaschemaField {
   @NonNull
   String name();
 
+  @NonNull
+  String useName() default Constants.NO_STRING_VALUE;
+  
   /**
    * Get the metaschema class that "owns" this assembly, which is the concrete implementation of the
    * metaschema containing the assembly.
@@ -80,6 +86,14 @@ public @interface MetaschemaField {
    */
   @NonNull
   Class<? extends AbstractBoundMetaschema> metaschema();
+
+  /**
+   * If the data type allows it, determines if the field's value must be wrapped with an XML element
+   * whose name is the specified {@link #name()} and namespace is derived from the namespace of the instance.
+   *
+   * @return {@code true} if the field must be wrapped, or {@code false} otherwise
+   */
+  boolean inXmlWrapped() default MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
 
   /**
    * Defines if the annotated class representing a Metaschema BoundField is collapsible, meaning
@@ -94,42 +108,10 @@ public @interface MetaschemaField {
   boolean isCollapsible() default false;
 
   /**
-   * Get the allowed value constraints for this field.
-   * 
-   * @return the allowed values or an empty array if no allowed values constraints are defined
-   */
-  @NonNull
-  AllowedValues[] allowedValues() default {};
-
-  /**
-   * Get the matches constraints for this field.
-   * 
-   * @return the allowed values or an empty array if no allowed values constraints are defined
-   */
-  @NonNull
-  Matches[] matches() default {};
-
-  /**
-   * Get the index-has-key constraints for this field.
-   * 
-   * @return the allowed values or an empty array if no allowed values constraints are defined
-   */
-  @NonNull
-  IndexHasKey[] indexHasKey() default {};
-
-  /**
-   * Get the expect constraints for this field.
-   * 
-   * @return the expected constraints or an empty array if no expected constraints are defined
-   */
-  @NonNull
-  Expect[] expect() default {};
-
-  /**
    * Get any remarks for this field.
    * 
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
   @NonNull
-  String remarks() default "##none";
+  String remarks() default Constants.NO_STRING_VALUE;
 }

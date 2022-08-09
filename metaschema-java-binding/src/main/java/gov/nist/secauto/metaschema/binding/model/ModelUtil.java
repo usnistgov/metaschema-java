@@ -26,15 +26,18 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
+import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.model.annotations.Constants;
+import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public final class ModelUtil {
   private ModelUtil() {
@@ -131,7 +134,29 @@ public final class ModelUtil {
    *          text or {@code "##none"} if no text is provided
    * @return the string content or {@code null} if no string content was provided
    */
+  @Nullable
   public static String resolveToString(@NonNull String annotationValue) {
     return Constants.NO_STRING_VALUE.equals(annotationValue) ? null : annotationValue;
+  }
+
+  @NonNull
+  public static IDataTypeAdapter<?> getDataTypeAdapter(@NonNull Class<? extends IDataTypeAdapter<?>> adapterClass,
+      IBindingContext bindingContext) {
+    IDataTypeAdapter<?> retval;
+    if (NullJavaTypeAdapter.class.equals(adapterClass)) {
+      retval = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
+    } else {
+      retval = ObjectUtils.requireNonNull(bindingContext.getJavaTypeAdapterInstance(adapterClass));
+    }
+    return retval;
+  }
+
+  @Nullable
+  public static Object resolveDefaultValue(String defaultValue, IDataTypeAdapter<?> adapter) {
+    Object retval = null;
+    if (!Constants.NULL_VALUE.equals(defaultValue)) {
+      retval = adapter.parse(defaultValue);
+    }
+    return retval;
   }
 }

@@ -92,7 +92,7 @@ class DefaultFlagPropertyTest {
 
     context.checking(new Expectations() {
       { // NOPMD - intentional
-        oneOf(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
+        atMost(1).of(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
         will(returnValue(MetaschemaDataTypeProvider.STRING));
 
         allowing(classBinding).getBoundClass();
@@ -133,7 +133,7 @@ class DefaultFlagPropertyTest {
 
     context.checking(new Expectations() {
       { // NOPMD - intentional
-        oneOf(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
+        atMost(1).of(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
         will(returnValue(MetaschemaDataTypeProvider.STRING));
 
         allowing(classBinding).getBoundClass();
@@ -209,7 +209,7 @@ class DefaultFlagPropertyTest {
   @MetaschemaAssembly(name = "simple-assembly", metaschema = TestMetaschema.class, rootName = "test",
       rootNamespace = "http://example.com/ns")
   private static class SimpleAssembly {
-    @BoundFlag(useName = "id", typeAdapter = StringAdapter.class)
+    @BoundFlag(useName = "id")
     private String _id;
 
     @BoundFlag(useName = "number", typeAdapter = IntegerAdapter.class)

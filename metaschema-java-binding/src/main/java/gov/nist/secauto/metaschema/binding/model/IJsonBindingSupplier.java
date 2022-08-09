@@ -28,12 +28,11 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 import java.io.IOException;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 @FunctionalInterface
 public interface IJsonBindingSupplier {

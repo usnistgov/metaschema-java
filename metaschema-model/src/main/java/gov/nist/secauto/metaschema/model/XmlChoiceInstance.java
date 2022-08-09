@@ -36,13 +36,12 @@ import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.xmlbeans.ChoiceType;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class XmlChoiceInstance
     extends AbstractChoiceInstance {

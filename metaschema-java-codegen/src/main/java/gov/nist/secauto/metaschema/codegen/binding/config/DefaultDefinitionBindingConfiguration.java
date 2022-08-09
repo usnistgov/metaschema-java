@@ -28,13 +28,12 @@ package gov.nist.secauto.metaschema.codegen.binding.config;
 
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class DefaultDefinitionBindingConfiguration implements IMutableDefinitionBindingConfiguration {
   @Nullable

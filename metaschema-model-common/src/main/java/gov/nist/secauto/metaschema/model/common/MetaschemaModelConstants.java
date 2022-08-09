@@ -30,7 +30,9 @@ public final class MetaschemaModelConstants {
   public static final boolean DEFAULT_FLAG_REQUIRED = false;
   public static final boolean DEFAULT_FIELD_IN_XML_WRAPPED = true;
   public static final boolean DEFAULT_FIELD_COLLAPSIBLE = false;
+  // TODO: rename to DEFAULT_MIN_OCCURS
   public static final int DEFAULT_GROUP_AS_MIN_OCCURS = 0;
+  // TODO: rename to DEFAULT_MAX_OCCURS
   public static final int DEFAULT_GROUP_AS_MAX_OCCURS = 1;
   public static final JsonGroupAsBehavior DEFAULT_JSON_GROUP_AS_BEHAVIOR = JsonGroupAsBehavior.SINGLETON_OR_LIST;
   public static final XmlGroupAsBehavior DEFAULT_XML_GROUP_AS_BEHAVIOR = XmlGroupAsBehavior.UNGROUPED;

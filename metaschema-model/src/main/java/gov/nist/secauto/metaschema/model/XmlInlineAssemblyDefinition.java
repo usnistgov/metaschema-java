@@ -56,8 +56,6 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
@@ -68,6 +66,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Represents a Metaschema assembly definition declared locally as an instance.

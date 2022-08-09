@@ -38,7 +38,6 @@ import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.codehaus.stax2.XMLStreamReader2;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -53,6 +52,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IClassBinding extends IBoundModelDefinition {
   @NonNull

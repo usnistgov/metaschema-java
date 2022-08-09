@@ -27,22 +27,30 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IEmailAddressItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class EmailAddressAdapter
     extends AbstractStringAdapter<IEmailAddressItem> {
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of(
+          "email-address",
+          // for backwards compatibility with original type name
+          "email"));
 
   EmailAddressAdapter() {
     // avoid general construction
   }
 
   @Override
-  public String getName() {
-    return "email-address";
+  public List<String> getNames() {
+    return NAMES;
   }
 
-  @SuppressWarnings("null")
   @Override
   public @NonNull Class<IEmailAddressItem> getItemClass() {
     return IEmailAddressItem.class;

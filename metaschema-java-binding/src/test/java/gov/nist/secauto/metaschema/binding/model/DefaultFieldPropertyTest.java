@@ -41,6 +41,7 @@ import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.binding.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.binding.model.annotations.Metaschema;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
@@ -101,6 +102,8 @@ class DefaultFieldPropertyTest {
       { // NOPMD - intentional
         allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
         will(returnValue(MetaschemaDataTypeProvider.STRING));
+        allowing(bindingContext).getClassBinding(String.class);
+        will(returnValue(null));
 
         allowing(classBinding).getBoundClass();
         will(returnValue(theClass));
@@ -113,11 +116,14 @@ class DefaultFieldPropertyTest {
     });
 
     java.lang.reflect.Field field1 = ObjectUtils.requireNonNull(theClass.getDeclaredField("field1"));
-    DefaultFieldProperty field1Property = DefaultFieldProperty.createInstance(
-        ObjectUtils.notNull(classBinding), field1);
+    IBoundFieldInstance field1Property = IBoundFieldInstance.newInstance(
+        field1,
+        ObjectUtils.notNull(classBinding));
+
     java.lang.reflect.Field field2 = ObjectUtils.requireNonNull(theClass.getDeclaredField("_field2"));
-    DefaultFieldProperty field2Property = DefaultFieldProperty.createInstance(
-        ObjectUtils.notNull(classBinding), field2);
+    IBoundFieldInstance field2Property = IBoundFieldInstance.newInstance(
+        field2,
+        ObjectUtils.notNull(classBinding));
 
     TestField obj = new TestField();
 
@@ -153,6 +159,8 @@ class DefaultFieldPropertyTest {
       { // NOPMD - intentional
         allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
         will(returnValue(MetaschemaDataTypeProvider.STRING));
+        allowing(bindingContext).getClassBinding(String.class);
+        will(returnValue(null));
 
         allowing(classBinding).getBoundClass();
         will(returnValue(theClass));
@@ -167,11 +175,13 @@ class DefaultFieldPropertyTest {
     });
 
     java.lang.reflect.Field field1 = theClass.getDeclaredField("field1");
-    DefaultFieldProperty field1Property = DefaultFieldProperty.createInstance(
-        ObjectUtils.notNull(classBinding), ObjectUtils.notNull(field1));
+    IBoundFieldInstance field1Property = IBoundFieldInstance.newInstance(
+        field1,
+        ObjectUtils.notNull(classBinding));
     java.lang.reflect.Field field2 = theClass.getDeclaredField("_field2");
-    DefaultFieldProperty field2Property = DefaultFieldProperty.createInstance(
-        ObjectUtils.notNull(classBinding), ObjectUtils.notNull(field2));
+    IBoundFieldInstance field2Property = IBoundFieldInstance.newInstance(
+        field2,
+        ObjectUtils.notNull(classBinding));
 
     TestField obj = new TestField();
 
@@ -208,6 +218,8 @@ class DefaultFieldPropertyTest {
       { // NOPMD - intentional
         allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
         will(returnValue(MetaschemaDataTypeProvider.STRING));
+        allowing(bindingContext).getClassBinding(String.class);
+        will(returnValue(null));
 
         allowing(classBinding).getBoundClass();
         will(returnValue(theClass));
@@ -222,11 +234,13 @@ class DefaultFieldPropertyTest {
     });
 
     java.lang.reflect.Field field1 = theClass.getDeclaredField("field1");
-    DefaultFieldProperty field1Property = DefaultFieldProperty.createInstance(
-        ObjectUtils.notNull(classBinding), field1);
+    IBoundFieldInstance field1Property = IBoundFieldInstance.newInstance(
+        field1,
+        ObjectUtils.notNull(classBinding));
     java.lang.reflect.Field field2 = theClass.getDeclaredField("_field2");
-    DefaultFieldProperty field2Property = DefaultFieldProperty.createInstance(
-        ObjectUtils.notNull(classBinding), field2);
+    IBoundFieldInstance field2Property = IBoundFieldInstance.newInstance(
+        field2,
+        ObjectUtils.notNull(classBinding));
 
     TestField obj = new TestField();
 
@@ -260,6 +274,8 @@ class DefaultFieldPropertyTest {
       { // NOPMD - intentional
         allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
         will(returnValue(MetaschemaDataTypeProvider.STRING));
+        allowing(bindingContext).getClassBinding(String.class);
+        will(returnValue(null));
 
         allowing(classBinding).getBoundClass();
         will(returnValue(theClass));
@@ -272,11 +288,13 @@ class DefaultFieldPropertyTest {
     });
 
     java.lang.reflect.Field field1 = theClass.getDeclaredField("field1");
-    DefaultFieldProperty field1Property = DefaultFieldProperty.createInstance(
-        ObjectUtils.notNull(classBinding), field1);
+    IBoundFieldInstance field1Property = IBoundFieldInstance.newInstance(
+        field1,
+        ObjectUtils.notNull(classBinding));
     java.lang.reflect.Field field2 = theClass.getDeclaredField("_field2");
-    DefaultFieldProperty field2Property = DefaultFieldProperty.createInstance(
-        ObjectUtils.notNull(classBinding), field2);
+    IBoundFieldInstance field2Property = IBoundFieldInstance.newInstance(
+        field2,
+        ObjectUtils.notNull(classBinding));
 
     TestField obj = new TestField();
 
@@ -343,12 +361,14 @@ class DefaultFieldPropertyTest {
   @SuppressWarnings("PMD")
   @MetaschemaAssembly(name = "test-field", metaschema = TestMetaschema.class)
   public static class TestField {
-    @BoundField(typeAdapter = StringAdapter.class, inJson = JsonGroupAsBehavior.NONE,
-        inXml = XmlGroupAsBehavior.UNGROUPED)
+    @BoundField
     private String field1;
 
-    @BoundField(useName = "field2", groupName = "fields2", maxOccurs = -1, inXml = XmlGroupAsBehavior.GROUPED,
-        inJson = JsonGroupAsBehavior.LIST, typeAdapter = StringAdapter.class)
+    @BoundField(useName = "field2",
+        maxOccurs = -1)
+    @GroupAs(name = "fields2",
+        inXml = XmlGroupAsBehavior.GROUPED,
+        inJson = JsonGroupAsBehavior.LIST)
     private List<String> _field2;
 
     public TestField() {

@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.datatype.AbstractCustomJavaDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.object.Date;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
@@ -41,6 +42,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,6 +50,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DateAdapter
     extends AbstractCustomJavaDataTypeAdapter<Date, IDateItem> {
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of("date"));
   private static final Pattern DATE_TIMEZONE = Pattern.compile("^("
       + "^(?:(?:2000|2400|2800|(?:19|2[0-9](?:0[48]|[2468][048]|[13579][26])))-02-29)"
       + "|(?:(?:(?:19|2[0-9])[0-9]{2})-02-(?:0[1-9]|1[0-9]|2[0-8]))"
@@ -61,8 +66,8 @@ public class DateAdapter
   }
 
   @Override
-  public String getName() {
-    return "date";
+  public List<String> getNames() {
+    return NAMES;
   }
 
   @Override
@@ -76,7 +81,7 @@ public class DateAdapter
         = String.format("%sT00:00:00%s", matcher.group(1), matcher.group(2) == null ? "" : matcher.group(2));
     try {
       TemporalAccessor accessor = DateFormats.DATE_TIME_WITH_TZ.parse(parseValue);
-      return new Date(ObjectUtils.notNull(ZonedDateTime.from(accessor)), true);
+      return new Date(ObjectUtils.notNull(ZonedDateTime.from(accessor)), true); // NOPMD - readability
     } catch (DateTimeParseException ex) {
       try {
         TemporalAccessor accessor = DateFormats.DATE_TIME_WITHOUT_TZ.parse(parseValue);
@@ -109,7 +114,7 @@ public class DateAdapter
   }
 
   @Override
-  public @NonNull Class<IDateItem> getItemClass() {
+  public Class<IDateItem> getItemClass() {
     return IDateItem.class;
   }
 

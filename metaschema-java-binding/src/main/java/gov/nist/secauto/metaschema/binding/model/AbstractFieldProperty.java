@@ -28,8 +28,10 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
@@ -37,6 +39,7 @@ import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Locale;
 
 import javax.xml.namespace.QName;
@@ -47,27 +50,77 @@ import javax.xml.stream.events.XMLEvent;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-abstract class AbstractFieldProperty
+public abstract class AbstractFieldProperty
     extends AbstractNamedModelProperty
     implements IBoundFieldInstance {
+  @NonNull
+  private final BoundField fieldAnnotation;
 
-  public AbstractFieldProperty(@NonNull IAssemblyClassBinding parentClassBinding) {
-    super(parentClassBinding);
+  public AbstractFieldProperty(@NonNull Field field, @NonNull IAssemblyClassBinding parentClassBinding) {
+    super(field, parentClassBinding);
+
+    BoundField fieldAnnotation = field.getAnnotation(BoundField.class);
+    if (fieldAnnotation == null) {
+      throw new IllegalStateException(String.format("Field '%s' on class '%s' is missing the '%s' annotation.",
+          field.getName(), parentClassBinding.getBoundClass().getName(), BoundField.class.getName()));
+    }
+    this.fieldAnnotation = fieldAnnotation;
+  }
+
+  @NonNull
+  protected BoundField getFieldAnnotation() {
+    return fieldAnnotation;
+  }
+
+  //
+  // @Override
+  // protected IDataTypeHandler newDataTypeHandler() {
+  // Class<?> itemClass = getItemType();
+  //
+  // IDataTypeHandler retval;
+  // if (itemClass.isAnnotationPresent(MetaschemaField.class)) {
+  // IClassBinding classBinding
+  // = getParentClassBinding().getBindingContext().getClassBinding(getPropertyInfo().getItemType());
+  // retval = new ClassDataTypeHandler(classBinding, this);
+  // } else {
+  // retval = new JavaTypeAdapterDataTypeHandler(this);
+  // }
+  // return retval;
+  // }
+
+  @Override
+  public String getFormalName() {
+    return ModelUtil.resolveToString(getFieldAnnotation().formalName());
   }
 
   @Override
-  protected IDataTypeHandler newDataTypeHandler() {
-    Class<?> itemClass = getItemType();
+  public MarkupLine getDescription() {
+    return ModelUtil.resolveToMarkupLine(getFieldAnnotation().description());
+  }
 
-    IDataTypeHandler retval;
-    if (itemClass.isAnnotationPresent(MetaschemaField.class)) {
-      IClassBinding classBinding
-          = getParentClassBinding().getBindingContext().getClassBinding(getPropertyInfo().getItemType());
-      retval = new ClassDataTypeHandler(classBinding, this);
-    } else {
-      retval = new JavaTypeAdapterDataTypeHandler(this);
-    }
-    return retval;
+  @Override
+  public String getUseName() {
+    return ModelUtil.resolveToString(getFieldAnnotation().useName());
+  }
+
+  @Override
+  public boolean isInXmlWrapped() {
+    return getFieldAnnotation().inXmlWrapped();
+  }
+
+  @Override
+  public int getMinOccurs() {
+    return getFieldAnnotation().minOccurs();
+  }
+
+  @Override
+  public int getMaxOccurs() {
+    return getFieldAnnotation().maxOccurs();
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    return ModelUtil.resolveToMarkupMultiline(getFieldAnnotation().remarks());
   }
 
   @Override

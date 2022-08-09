@@ -46,25 +46,30 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class CollapseKeyBuilder {
+  @NonNull 
   private final IFieldClassBinding classBinding;
+  @NonNull 
   private final List<IBoundFlagInstance> flagProperties;
+  @NonNull 
   private final Map<CollapseKey, List<Object>> keyToValuesMap;
 
-  public CollapseKeyBuilder(IFieldClassBinding classBinding) {
+  public CollapseKeyBuilder(@NonNull IFieldClassBinding classBinding) {
     this.classBinding = classBinding;
     this.flagProperties = new ArrayList<>(classBinding.getFlagInstances());
     this.keyToValuesMap = new LinkedHashMap<>();
   }
 
+  @NonNull 
   protected IFieldClassBinding getClassBinding() {
     return classBinding;
   }
 
+  @NonNull 
   protected List<IBoundFlagInstance> getFlagProperties() {
     return flagProperties;
   }
 
-  public void addAll(Collection<? extends Object> instances) {
+  public void addAll(@NonNull Collection<? extends Object> instances) {
     for (Object instance : instances) {
       add(instance);
     }

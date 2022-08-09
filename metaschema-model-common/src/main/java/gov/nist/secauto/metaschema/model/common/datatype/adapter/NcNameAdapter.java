@@ -27,24 +27,31 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.INcNameItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class NcNameAdapter
     extends AbstractStringAdapter<INcNameItem> {
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of("ncname",
+          // for backwards compatibility with original type name
+          "NCName"));
 
   NcNameAdapter() {
     // avoid general construction
   }
 
   @Override
-  public String getName() {
-    return "NCName";
+  public List<String> getNames() {
+    return NAMES;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public @NonNull Class<INcNameItem> getItemClass() {
+  public Class<INcNameItem> getItemClass() {
     return INcNameItem.class;
   }
 

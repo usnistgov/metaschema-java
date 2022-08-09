@@ -31,7 +31,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -67,7 +67,7 @@ public @interface Matches {
   /**
    * An optional metapath that points to the target flag or field value that the constraint applies
    * to. If omitted the target will be ".", which means the target is the value of the
-   * {@link BoundFlag}, {@link BoundField} or {@link BoundFieldValue} annotation the constraint
+   * {@link BoundFlag}, {@link BoundField} or {@link MetaschemaFieldValue} annotation the constraint
    * appears on. In the prior case, this annotation may only appear on a {@link BoundField} if the
    * field has no flags, which results in a {@link BoundField} annotation on a field instance with a
    * scalar, data type value.

@@ -26,24 +26,29 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.time.Duration;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DayTimeAdapter
     extends AbstractDataTypeAdapter<Duration, IDayTimeDurationItem> {
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of("day-time-duration"));
 
-  @SuppressWarnings("null")
   DayTimeAdapter() {
     super(Duration.class);
   }
 
   @Override
-  public String getName() {
-    return "day-time-duration";
+  public List<String> getNames() {
+    return NAMES;
   }
 
   @Override
@@ -62,9 +67,8 @@ public class DayTimeAdapter
     }
   }
 
-  @SuppressWarnings("null")
   @Override
-  public @NonNull Class<IDayTimeDurationItem> getItemClass() {
+  public Class<IDayTimeDurationItem> getItemClass() {
     return IDayTimeDurationItem.class;
   }
 

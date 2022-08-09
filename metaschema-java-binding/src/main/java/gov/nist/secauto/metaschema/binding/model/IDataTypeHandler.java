@@ -28,14 +28,13 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
-
-import edu.umd.cs.findbugs.annotations.Nullable;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 
 import java.io.IOException;
 import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 // TODO: get rid of functional interfaces
 interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSupplier, IXmlBindingConsumer {

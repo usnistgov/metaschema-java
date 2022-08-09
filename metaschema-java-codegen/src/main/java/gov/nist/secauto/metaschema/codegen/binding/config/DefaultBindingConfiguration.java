@@ -41,7 +41,6 @@ import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.xmlbeans.XmlException;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,6 +54,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class DefaultBindingConfiguration implements IBindingConfiguration {
   private final Map<String, String> namespaceToPackageNameMap = new ConcurrentHashMap<>();

@@ -27,8 +27,6 @@
 package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
-import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -38,33 +36,25 @@ import java.lang.reflect.Field;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DefaultAssemblyProperty
-    extends AbstractAssemblyProperty
-    implements IBoundJavaCollectionField {
+    extends AbstractAssemblyProperty {
 
-  @NonNull
-  private final Field field;
   @NonNull
   private final BoundAssembly assembly;
+  @NonNull
+  private final IAssemblyClassBinding definition;
 
-  public static DefaultAssemblyProperty createInstance(@NonNull IAssemblyClassBinding parentClassBinding,
-      @NonNull Field field) {
-    return new DefaultAssemblyProperty(parentClassBinding, field);
-  }
-
-  protected DefaultAssemblyProperty(@NonNull IAssemblyClassBinding parentClassBinding, @NonNull Field field) {
-    super(parentClassBinding);
-    this.field = ObjectUtils.requireNonNull(field, "field");
+  protected DefaultAssemblyProperty(
+      @NonNull Field field,
+      @NonNull IAssemblyClassBinding definition,
+      @NonNull IAssemblyClassBinding parentClassBinding) {
+    super(field, parentClassBinding);
     if (field.isAnnotationPresent(BoundAssembly.class)) {
       this.assembly = ObjectUtils.notNull(field.getAnnotation(BoundAssembly.class));
     } else {
       throw new IllegalArgumentException(String.format("BoundField '%s' on class '%s' is missing the '%s' annotation.",
           field.getName(), parentClassBinding.getBoundClass().getName(), BoundAssembly.class.getName()));
     }
-  }
-
-  @Override
-  public Field getField() {
-    return field;
+    this.definition = definition;
   }
 
   protected BoundAssembly getAssemblyAnnotation() {
@@ -73,8 +63,7 @@ class DefaultAssemblyProperty
 
   @Override
   public IAssemblyClassBinding getDefinition() {
-    Class<?> itemType = getItemType();
-    return (IAssemblyClassBinding) getParentClassBinding().getBindingContext().getClassBinding(itemType);
+    return definition;
   }
 
   @Override
@@ -112,25 +101,4 @@ class DefaultAssemblyProperty
   public int getMaxOccurs() {
     return getAssemblyAnnotation().maxOccurs();
   }
-
-  @Override
-  public String getGroupAsName() {
-    return ModelUtil.resolveLocalName(getAssemblyAnnotation().groupName(), null);
-  }
-
-  @Override
-  public String getGroupAsXmlNamespace() {
-    return ModelUtil.resolveNamespace(getAssemblyAnnotation().groupNamespace(), getParentClassBinding());
-  }
-
-  @Override
-  public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-    return getAssemblyAnnotation().inJson();
-  }
-
-  @Override
-  public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    return getAssemblyAnnotation().inXml();
-  }
-
 }

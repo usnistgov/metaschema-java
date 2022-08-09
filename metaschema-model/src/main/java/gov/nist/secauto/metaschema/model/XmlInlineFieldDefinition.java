@@ -43,15 +43,14 @@ import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType;
-
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.util.Collection;
@@ -63,6 +62,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class XmlInlineFieldDefinition
     extends AbstractFieldInstance {
@@ -108,7 +108,7 @@ class XmlInlineFieldDefinition
   @Override
   public boolean isInXmlWrapped() {
     boolean retval;
-    if (MetaschemaDataTypeProvider.MARKUP_MULTILINE.equals(getDefinition().getJavaTypeAdapter())) {
+    if (MarkupDataTypeProvider.MARKUP_MULTILINE.equals(getDefinition().getJavaTypeAdapter())) {
       // default value
       retval = MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
       if (getXmlField().isSetInXml()) {
@@ -219,8 +219,21 @@ class XmlInlineFieldDefinition
    * The corresponding definition for the local flag instance.
    */
   public class InternalFieldDefinition implements IFieldDefinition, IInlineDefinition<XmlInlineFieldDefinition> {
+    @Nullable
+    private final Object defaultValue;
     private XmlFlagContainerSupport flagContainer;
     private IValueConstraintSupport constraints;
+
+    private InternalFieldDefinition() {
+      this.defaultValue = getXmlField().isSetDefault()
+          ? getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(getXmlField().getDefault()))
+          : null;
+    }
+
+    @Override
+    public Object getDefaultValue() {
+      return defaultValue;
+    }
 
     @Override
     public boolean isInline() {

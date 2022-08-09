@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 interface IMetaschemaLoaderStrategy {
   /**
@@ -55,11 +56,9 @@ interface IMetaschemaLoaderStrategy {
    * 
    * @param clazz
    *          the class binding to load
-   * @return the associated class binding instance
-   * @throws IllegalArgumentException
-   *           if the provided class is not bound to a Metaschema assembly or field
+   * @return the associated class binding instance or {@code null} if the class is not bound
    */
-  @NonNull
+  @Nullable
   IClassBinding getClassBinding(@NonNull Class<?> clazz);
 
   @NonNull

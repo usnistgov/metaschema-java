@@ -27,23 +27,29 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class StringAdapter
     extends AbstractStringAdapter<IStringItem> {
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of("string"));
+
   StringAdapter() {
     // avoid general construction
   }
 
   @Override
-  public String getName() {
-    return "string";
+  public List<String> getNames() {
+    return NAMES;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public @NonNull Class<IStringItem> getItemClass() {
+  public Class<IStringItem> getItemClass() {
     return IStringItem.class;
   }
 

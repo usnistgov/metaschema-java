@@ -91,10 +91,9 @@ class SingletonPropertyInfo
     return handled;
   }
 
-  @SuppressWarnings({ "null", "cast" })
   @Override
   public Class<?> getItemType() {
-    return (Class<?>) getProperty().getRawType();
+    return (Class<?>) getProperty().getType();
   }
 
   @Override

@@ -31,13 +31,13 @@ import gov.nist.secauto.metaschema.model.common.INamedInstance;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 abstract class AbstractDefinitionTypeInfo<DEF extends IDefinition> implements IDefinitionTypeInfo {
   private static final Logger LOGGER = LogManager.getLogger(AbstractDefinitionTypeInfo.class);

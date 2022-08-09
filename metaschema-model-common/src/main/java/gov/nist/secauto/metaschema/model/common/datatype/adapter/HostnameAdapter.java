@@ -27,22 +27,27 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IHostnameItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class HostnameAdapter
     extends AbstractStringAdapter<IHostnameItem> {
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of("hostname"));
 
   HostnameAdapter() {
     // avoid general construction
   }
 
   @Override
-  public String getName() {
-    return "hostname";
+  public List<String> getNames() {
+    return NAMES;
   }
 
-  @SuppressWarnings("null")
   @Override
   public @NonNull Class<IHostnameItem> getItemClass() {
     return IHostnameItem.class;

@@ -26,22 +26,28 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.net.URI;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class UriAdapter
     extends AbstractDataTypeAdapter<URI, IAnyUriItem> {
-  @SuppressWarnings("null")
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of("uri"));
+
   UriAdapter() {
     super(URI.class);
   }
 
   @Override
-  public String getName() {
-    return "uri";
+  public List<String> getNames() {
+    return NAMES;
   }
 
   @SuppressWarnings("null")
@@ -56,9 +62,8 @@ public class UriAdapter
     return (URI) obj;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public @NonNull Class<IAnyUriItem> getItemClass() {
+  public Class<IAnyUriItem> getItemClass() {
     return IAnyUriItem.class;
   }
 

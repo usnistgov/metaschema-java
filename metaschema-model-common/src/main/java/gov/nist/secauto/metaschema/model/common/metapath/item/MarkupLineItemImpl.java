@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.MarkupLineAdapter;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLineAdapter;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -42,6 +42,6 @@ class MarkupLineItemImpl
 
   @Override
   public MarkupLineAdapter getJavaTypeAdapter() {
-    return MetaschemaDataTypeProvider.MARKUP_LINE;
+    return MarkupDataTypeProvider.MARKUP_LINE;
   }
 }

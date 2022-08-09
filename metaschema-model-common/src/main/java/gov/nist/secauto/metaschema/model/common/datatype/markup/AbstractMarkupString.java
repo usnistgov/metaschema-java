@@ -50,10 +50,12 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.stream.XMLStreamException;
 
 public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYPE>>
     implements IMarkupText, ICustomJavaDataType<TYPE> {
@@ -88,7 +90,8 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   @Override
   public void writeHtml(@NonNull OutputStream os, @Nullable String namespace, @Nullable String prefix)
       throws XMLStreamException {
-    XMLOutputFactory2 factory = (XMLOutputFactory2) WstxOutputFactory.newInstance();
+    XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
+    assert factory instanceof WstxOutputFactory;
     factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
     XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
 

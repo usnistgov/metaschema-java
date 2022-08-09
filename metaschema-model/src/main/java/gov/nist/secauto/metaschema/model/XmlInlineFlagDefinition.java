@@ -40,7 +40,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -55,6 +55,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class XmlInlineFlagDefinition
     extends AbstractFlagInstance {
@@ -170,6 +171,19 @@ class XmlInlineFlagDefinition
    * The corresponding definition for the local flag instance.
    */
   public class InternalFlagDefinition implements IFlagDefinition, IInlineDefinition<XmlInlineFlagDefinition> {
+    @Nullable
+    private final Object defaultValue;
+
+    private InternalFlagDefinition() {
+      this.defaultValue
+          = xmlFlag.isSetDefault() ? getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlFlag.getDefault()))
+              : null;
+    }
+
+    @Override
+    public Object getDefaultValue() {
+      return defaultValue;
+    }
 
     @Override
     public boolean isInline() {

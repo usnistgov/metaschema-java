@@ -28,11 +28,12 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 
 import java.io.IOException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IBoundFieldValueInstance extends IBoundNamedInstance {
 
@@ -52,4 +53,7 @@ public interface IBoundFieldValueInstance extends IBoundNamedInstance {
       throws IOException;
 
   void writeValue(Object value, @NonNull IJsonWritingContext context) throws IOException;
+
+  @Nullable
+  Object getDefaultValue();
 }

@@ -26,24 +26,32 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DateTimeWithTZAdapter
     extends AbstractDataTypeAdapter<ZonedDateTime, IDateTimeItem> {
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of(
+          "date-time-with-timezone",
+          // for backwards compatibility with original type name
+          "dateTime-with-timezone"));
 
-  @SuppressWarnings("null")
   DateTimeWithTZAdapter() {
     super(ZonedDateTime.class);
   }
 
   @Override
-  public String getName() {
-    return "date-time-with-timezone";
+  public List<String> getNames() {
+    return NAMES;
   }
 
   @SuppressWarnings("null")
@@ -68,9 +76,8 @@ public class DateTimeWithTZAdapter
     return ZonedDateTime.from((ZonedDateTime) obj);
   }
 
-  @SuppressWarnings("null")
   @Override
-  public @NonNull Class<IDateTimeItem> getItemClass() {
+  public Class<IDateTimeItem> getItemClass() {
     return IDateTimeItem.class;
   }
 

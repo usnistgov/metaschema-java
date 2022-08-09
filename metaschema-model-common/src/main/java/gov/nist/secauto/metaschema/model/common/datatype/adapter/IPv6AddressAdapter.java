@@ -26,7 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIPv6AddressItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import inet.ipaddr.AddressStringException;
@@ -37,6 +41,9 @@ import inet.ipaddr.ipv6.IPv6Address;
 
 public class IPv6AddressAdapter
     extends AbstractDataTypeAdapter<IPv6Address, IIPv6AddressItem> {
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of("ip-v6-address"));
   private static final IPAddressStringParameters IP_V_6;
 
   static {
@@ -45,14 +52,13 @@ public class IPv6AddressAdapter
         .allowPrefixesBeyondAddressSize(false).getParentBuilder().toParams();
   }
 
-  @SuppressWarnings("null")
   IPv6AddressAdapter() {
     super(IPv6Address.class);
   }
 
   @Override
-  public String getName() {
-    return "ip-v6-address";
+  public List<String> getNames() {
+    return NAMES;
   }
 
   @SuppressWarnings("null")
@@ -71,9 +77,8 @@ public class IPv6AddressAdapter
     return (IPv6Address) obj;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public @NonNull Class<IIPv6AddressItem> getItemClass() {
+  public Class<IIPv6AddressItem> getItemClass() {
     return IIPv6AddressItem.class;
   }
 

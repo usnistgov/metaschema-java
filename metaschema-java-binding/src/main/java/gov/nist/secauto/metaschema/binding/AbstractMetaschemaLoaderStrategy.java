@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class AbstractMetaschemaLoaderStrategy implements IMetaschemaLoaderStrategy {
   @NonNull
@@ -83,24 +84,26 @@ class AbstractMetaschemaLoaderStrategy implements IMetaschemaLoaderStrategy {
       retval = classBindingsByClass.get(clazz);
       if (retval == null) {
         retval = newClassBinding(clazz);
-        classBindingsByClass.put(clazz, retval);
+        if (retval != null) {
+          classBindingsByClass.put(clazz, retval);
+        }
       }
     }
-    return ObjectUtils.notNull(retval);
+    return retval;
   }
 
-  @NonNull
+  @Nullable
   protected IClassBinding newClassBinding(@NonNull Class<?> clazz) {
-    IClassBinding retval;
+    IClassBinding retval = null;
     if (clazz.isAnnotationPresent(MetaschemaAssembly.class)) {
       retval = DefaultAssemblyClassBinding.createInstance(clazz, getBindingContext());
     } else if (clazz.isAnnotationPresent(MetaschemaField.class)) {
       retval = DefaultFieldClassBinding.createInstance(clazz, getBindingContext());
-    } else {
-      throw new IllegalArgumentException(String.format(
-          "Class '%s' does not represent a Metaschema definition"
-              + " since it is missing a '%s' or '%s' annotation.",
-          clazz.getName(), MetaschemaAssembly.class.getName(), MetaschemaField.class.getName()));
+//    } else {
+//      throw new IllegalArgumentException(String.format(
+//          "Class '%s' does not represent a Metaschema definition"
+//              + " since it is missing a '%s' or '%s' annotation.",
+//          clazz.getName(), MetaschemaAssembly.class.getName(), MetaschemaField.class.getName()));
     }
     return retval;
   }

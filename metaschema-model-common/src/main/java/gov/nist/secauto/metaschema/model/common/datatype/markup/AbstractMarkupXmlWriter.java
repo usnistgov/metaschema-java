@@ -69,7 +69,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
-public abstract class AbstractMarkupXmlWriter<WRITER> {
+public abstract class AbstractMarkupXmlWriter<WRITER> { // NOPMD - acceptable
   private static final Pattern ENTITY_PATTERN = Pattern.compile("^&([^;]+);$");
   private static final Map<String, String> ENTITY_MAP;
 
@@ -132,7 +132,7 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
 
   protected abstract void writeHtmlEntity(WRITER writer, String entityText) throws XMLStreamException;
 
-  protected boolean processInlineElements(Node node, WRITER writer) throws XMLStreamException {
+  protected boolean processInlineElements(Node node, WRITER writer) throws XMLStreamException { // NOPMD - acceptable
     boolean retval = false;
     if (node instanceof Text) {
       writeText(writer, node.getChars().toString());

@@ -48,7 +48,6 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
@@ -68,6 +67,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * A default implementation of an {@link IBoundLoader}.
@@ -224,7 +224,7 @@ public class DefaultBoundLoader implements IBoundLoader {
     bis.mark(LOOK_AHEAD_BYTES);
     return bis;
   }
-  
+
   @Override
   public IDocumentNodeItem loadAsNodeItem(InputSource source) throws IOException {
     URI uri = ObjectUtils.notNull(URI.create(source.getSystemId()));
@@ -232,14 +232,16 @@ public class DefaultBoundLoader implements IBoundLoader {
     IDocumentNodeItem retval;
     if (source.getByteStream() != null) {
       // attempt to use a provided byte stream stream
-      BufferedInputStream bis = toBufferedInputStream(source.getByteStream());
-      retval = loadAsNodeItemInternal(bis, uri);
+      try (BufferedInputStream bis = toBufferedInputStream(source.getByteStream())) {
+        retval = loadAsNodeItemInternal(bis, uri);
+      }
     } else {
       // fall back to a URL-based connection
       URL url = uri.toURL();
       try (InputStream is = url.openStream()) {
-        BufferedInputStream bis = toBufferedInputStream(is);
-        retval = loadAsNodeItemInternal(bis, uri);
+        try (BufferedInputStream bis = toBufferedInputStream(is)) {
+          retval = loadAsNodeItemInternal(bis, uri);
+        }
       }
     }
     return retval;
@@ -253,16 +255,18 @@ public class DefaultBoundLoader implements IBoundLoader {
     IDocumentNodeItem retval;
     if (source.getByteStream() != null) {
       // attempt to use a provided byte stream stream
-      BufferedInputStream bis = toBufferedInputStream(source.getByteStream());
-      Class<?> clazz = detectModel(bis, format); // NOPMD - must be called before reset
-      retval = deserializeToNodeItem(clazz, format, bis, uri);
+      try (BufferedInputStream bis = toBufferedInputStream(source.getByteStream())) {
+        Class<?> clazz = detectModel(bis, format); // NOPMD - must be called before reset
+        retval = deserializeToNodeItem(clazz, format, bis, uri);
+      }
     } else {
       // fall back to a URL-based connection
       URL url = uri.toURL();
       try (InputStream is = url.openStream()) {
-        BufferedInputStream bis = toBufferedInputStream(is);
-        Class<?> clazz = detectModel(bis, format); // NOPMD - must be called before reset
-        retval = deserializeToNodeItem(clazz, format, bis, uri);
+        try (BufferedInputStream bis = toBufferedInputStream(is)) {
+          Class<?> clazz = detectModel(bis, format); // NOPMD - must be called before reset
+          retval = deserializeToNodeItem(clazz, format, bis, uri);
+        }
       }
     }
     return retval;
@@ -276,7 +280,6 @@ public class DefaultBoundLoader implements IBoundLoader {
     Class<?> clazz = detectModel(matcher, format); // NOPMD - must be called before reset
     return deserializeToNodeItem(clazz, format, bis, documentUri);
   }
-
 
   @NonNull
   protected IDocumentNodeItem deserializeToNodeItem(@NonNull Class<?> clazz, @NonNull Format format,

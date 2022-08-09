@@ -29,11 +29,10 @@ package gov.nist.secauto.metaschema.codegen;
 import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IDefinitionTypeInfo {
   @NonNull

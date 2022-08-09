@@ -24,9 +24,8 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype.adapter;
+package gov.nist.secauto.metaschema.model.common.datatype;
 
-import gov.nist.secauto.metaschema.model.common.datatype.ICustomJavaDataType;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
 import edu.umd.cs.findbugs.annotations.NonNull;

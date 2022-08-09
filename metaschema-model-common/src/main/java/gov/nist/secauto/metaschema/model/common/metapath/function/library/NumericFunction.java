@@ -46,6 +46,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * on numeric values</a>.
  */
 public final class NumericFunction implements IFunctionExecutor {
+
+  @NonNull
+  private final INumericExecutor executor;
+
   @NonNull
   static IFunction signature(@NonNull String name, @NonNull INumericExecutor executor) {
     return IFunction.builder()
@@ -60,9 +64,6 @@ public final class NumericFunction implements IFunctionExecutor {
         .functionHandler(NumericFunction.newFunctionHandler(executor))
         .build();
   }
-
-  @NonNull
-  private final INumericExecutor executor;
 
   @NonNull
   private static NumericFunction newFunctionHandler(@NonNull INumericExecutor executor) {

@@ -27,24 +27,29 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.ITokenItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class TokenAdapter
     extends AbstractStringAdapter<ITokenItem> {
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of("token"));
 
   TokenAdapter() {
     // avoid general construction
   }
 
   @Override
-  public String getName() {
-    return "token";
+  public List<String> getNames() {
+    return NAMES;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public @NonNull Class<ITokenItem> getItemClass() {
+  public Class<ITokenItem> getItemClass() {
     return ITokenItem.class;
   }
 

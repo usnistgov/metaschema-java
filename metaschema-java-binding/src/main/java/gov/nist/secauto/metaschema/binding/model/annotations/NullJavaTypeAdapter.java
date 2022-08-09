@@ -27,9 +27,11 @@
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter.VoidItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.AbstractDataTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -53,7 +55,7 @@ public class NullJavaTypeAdapter
   }
 
   @Override
-  public @NonNull Void copy(@NonNull Object obj) {
+  public Void copy(@NonNull Object obj) {
     throw new UnsupportedOperationException(NOT_VALID);
   }
 
@@ -68,12 +70,12 @@ public class NullJavaTypeAdapter
   }
 
   @Override
-  public String getName() {
+  public List<String> getNames() {
     throw new UnsupportedOperationException(NOT_VALID);
   }
 
   @Override
-  public @NonNull Class<VoidItem> getItemClass() {
+  public Class<VoidItem> getItemClass() {
     throw new UnsupportedOperationException(NOT_VALID);
   }
 

@@ -37,21 +37,16 @@ import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.annotations.AssemblyConstraints;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
+import gov.nist.secauto.metaschema.binding.model.annotations.ValueConstraints;
 import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
-import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
-import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
-import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
@@ -60,7 +55,6 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -81,16 +75,18 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
 
-public class DefaultAssemblyClassBinding
+public class DefaultAssemblyClassBinding // NOPMD - ok
     extends AbstractClassBinding
-    implements IAssemblyClassBinding {
+    implements IAssemblyClassBinding, IAssemblyConstraintFeature {
   private static final Logger LOGGER = LogManager.getLogger(DefaultAssemblyClassBinding.class);
 
   private final MetaschemaAssembly metaschemaAssembly;
   private Map<String, IBoundNamedModelInstance> modelInstances;
   private final QName xmlRootQName;
-  private IAssemblyConstraintSupport constraints;
+  private final Lazy<IAssemblyConstraintSupport> constraints;
 
   /**
    * Create a new {@link IClassBinding} for a Java bean annotated with the {@link BoundAssembly}
@@ -131,6 +127,11 @@ public class DefaultAssemblyClassBinding
     String localName = ModelUtil.resolveLocalName(this.metaschemaAssembly.rootName(), null);
 
     this.xmlRootQName = localName == null ? null : new QName(namespace, localName);
+
+    this.constraints = Lazy.lazy(() -> new AssemblyConstraintSupport(
+        clazz.getAnnotation(ValueConstraints.class),
+        clazz.getAnnotation(AssemblyConstraints.class),
+        InternalModelSource.instance()));
   }
 
   /**
@@ -191,8 +192,7 @@ public class DefaultAssemblyClassBinding
     return xmlRootQName;
   }
 
-  protected Stream<IBoundNamedModelInstance>
-      getModelInstanceFieldStream(Class<?> clazz) {
+  protected Stream<IBoundNamedModelInstance> getModelInstanceFieldStream(Class<?> clazz) {
     Stream<IBoundNamedModelInstance> superInstances;
     Class<?> superClass = clazz.getSuperclass();
     if (superClass == null) {
@@ -205,22 +205,25 @@ public class DefaultAssemblyClassBinding
     return Stream.concat(superInstances, Arrays.stream(clazz.getDeclaredFields())
         // skip this field, since it is ignored
         .filter(field -> !field.isAnnotationPresent(Ignore.class))
+        // skip fields that aren't a Metaschema field or assembly instance
+        .filter(field -> !field.isAnnotationPresent(BoundFlag.class))
         .map(field -> {
           assert field != null;
-          return newModelInstance(field);
+          return newModelInstance(clazz, field);
         })
-        // skip fields that aren't a field or assembly instance
         .filter(Objects::nonNull)
         .map(ObjectUtils::notNull));
   }
 
-  protected IBoundNamedModelInstance newModelInstance(@NonNull java.lang.reflect.Field field) {
-    IBoundNamedModelInstance retval = null;
-    if (field.isAnnotationPresent(BoundAssembly.class)) {
-      retval = DefaultAssemblyProperty.createInstance(this, field);
+  protected IBoundNamedModelInstance newModelInstance(@NonNull Class<?> clazz, @NonNull java.lang.reflect.Field field) {
+    IBoundNamedModelInstance retval;
+    if (field.isAnnotationPresent(BoundAssembly.class) && getBindingContext().getClassBinding(IBoundNamedModelInstance.getItemType(field)) != null) {
+      retval = IBoundAssemblyInstance.newInstance(field, this);
     } else if (field.isAnnotationPresent(BoundField.class)) {
-      retval = DefaultFieldProperty.createInstance(this, field);
-      // modelInstances.put(instance.getEffectiveName(), instance);
+      retval = IBoundFieldInstance.newInstance(field, this);
+    } else {
+      throw new IllegalStateException(
+          String.format("The field '%s' on class '%s' is not bound", field.getName(), clazz.getName()));
     }
     // TODO: handle choice
     return retval;
@@ -325,106 +328,9 @@ public class DefaultAssemblyClassBinding
     return CollectionUtil.emptyList();
   }
 
-  /**
-   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
-   * first accessed.
-   */
-  protected void checkModelConstraints() {
-    synchronized (this) {
-      if (constraints == null) {
-        constraints = new AssemblyConstraintSupport(this, InternalModelSource.instance());
-      }
-    }
-  }
-
   @Override
-  public List<? extends IConstraint> getConstraints() {
-    checkModelConstraints();
-    return constraints.getConstraints();
-  }
-
-  @Override
-  public List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
-    checkModelConstraints();
-    return constraints.getAllowedValuesConstraints();
-  }
-
-  @Override
-  public List<? extends IMatchesConstraint> getMatchesConstraints() {
-    checkModelConstraints();
-    return constraints.getMatchesConstraints();
-  }
-
-  @Override
-  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-    checkModelConstraints();
-    return constraints.getIndexHasKeyConstraints();
-  }
-
-  @Override
-  public List<? extends IExpectConstraint> getExpectConstraints() {
-    checkModelConstraints();
-    return constraints.getExpectConstraints();
-  }
-
-  @Override
-  public List<? extends IIndexConstraint> getIndexConstraints() {
-    checkModelConstraints();
-    return constraints.getIndexConstraints();
-  }
-
-  @Override
-  public List<? extends IUniqueConstraint> getUniqueConstraints() {
-    checkModelConstraints();
-    return constraints.getUniqueConstraints();
-  }
-
-  @Override
-  public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
-    checkModelConstraints();
-    return constraints.getHasCardinalityConstraints();
-  }
-
-  @Override
-  public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IMatchesConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IExpectConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IIndexConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IUniqueConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull ICardinalityConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
+  public IAssemblyConstraintSupport getConstraintSupport() {
+    return constraints.get();
   }
 
   @Override
@@ -497,7 +403,9 @@ public class DefaultAssemblyClassBinding
    * @throws IOException
    *           if an error occurred while reading the JSON
    */
-  protected void readInternal(@NonNull Object instance, @Nullable Object parentInstance,
+  protected void readInternal( // NOPMD - ok
+      @NonNull Object instance,
+      @Nullable Object parentInstance,
       @NonNull IJsonParsingContext context) throws IOException {
     JsonParser parser = context.getReader(); // NOPMD - intentional
 

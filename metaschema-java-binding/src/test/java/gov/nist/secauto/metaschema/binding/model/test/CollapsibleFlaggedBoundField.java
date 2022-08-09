@@ -28,11 +28,10 @@ package gov.nist.secauto.metaschema.binding.model.test;
 
 import com.fasterxml.jackson.annotation.JsonKey;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
+import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaFieldValue;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.BooleanAdapter;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.TokenAdapter;
 
 @MetaschemaField(name = "collapsible-flagged-bound-field", isCollapsible = true, metaschema = TestMetaschema.class)
@@ -44,6 +43,6 @@ public class CollapsibleFlaggedBoundField {
   @BoundFlag(useName = "field-other-flag", typeAdapter = BooleanAdapter.class)
   private String other; // NOPMD - intentional
 
-  @BoundFieldValue(name = "field-value", typeAdapter = StringAdapter.class)
+  @MetaschemaFieldValue(valueKeyName = "field-value")
   private String _value; // NOPMD - intentional
 }

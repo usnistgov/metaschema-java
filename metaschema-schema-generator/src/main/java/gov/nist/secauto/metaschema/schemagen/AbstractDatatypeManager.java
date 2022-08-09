@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,7 +44,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractDatatypeManager implements IDatatypeManager {
   @NonNull
-  private static final Map<String, String> DATATYPE_TRANSLATION_MAP = new LinkedHashMap<>();
+  private static final Map<String, String> DATATYPE_TRANSLATION_MAP // NOPMD - intentional
+      = new LinkedHashMap<>();
 
   static {
     DATATYPE_TRANSLATION_MAP.put("base64", "Base64Datatype");
@@ -73,11 +74,9 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
   }
 
   @NonNull
-  private final Map<IDataTypeAdapter<?>,
-      String> datatypeToTypeMap = new HashMap<>();
+  private final Map<IDataTypeAdapter<?>, String> datatypeToTypeMap = new HashMap<>(); // NOPMD - intentional
   @NonNull
-  private final Map<IDefinition, String> definitionToNameMap
-      = new HashMap<>();
+  private final Map<IDefinition, String> definitionToNameMap = new HashMap<>(); // NOPMD - intentional
 
   @SuppressWarnings("null")
   @NonNull
@@ -97,7 +96,7 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
     synchronized (this) {
       String name = datatypeToTypeMap.get(datatype);
       if (name == null) {
-        name = getDatatypeTranslationMap().get(datatype.getName());
+        name = getDatatypeTranslationMap().get(datatype.getPreferredName());
         datatypeToTypeMap.put(datatype, name);
       }
       return name;

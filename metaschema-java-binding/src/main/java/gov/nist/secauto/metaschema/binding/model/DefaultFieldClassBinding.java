@@ -39,17 +39,13 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
-import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaFieldValue;
+import gov.nist.secauto.metaschema.binding.model.annotations.ValueConstraints;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
-import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
@@ -58,7 +54,6 @@ import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -77,18 +72,20 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 public class DefaultFieldClassBinding
     extends AbstractClassBinding
-    implements IFieldClassBinding {
+    implements IFieldClassBinding, IValueConstraintFeature {
   private static final Logger LOGGER = LogManager.getLogger(DefaultFieldClassBinding.class);
 
   @NonNull
   private final MetaschemaField metaschemaField;
   private IBoundFieldValueInstance fieldValue;
   private IBoundFlagInstance jsonValueKeyFlagInstance;
-  private IValueConstraintSupport constraints;
+  private final Lazy<IValueConstraintSupport> constraints;
 
   /**
    * Create a new {@link IClassBinding} for a Java bean annotated with the {@link BoundField}
@@ -106,7 +103,9 @@ public class DefaultFieldClassBinding
     Objects.requireNonNull(clazz, "clazz");
     if (!clazz.isAnnotationPresent(MetaschemaField.class)) {
       throw new IllegalArgumentException(
-          String.format("Class '%s' is missing the '%' annotation.", clazz.getName(), MetaschemaField.class.getName()));
+          String.format("Class '%s' is missing the '%s' annotation.",
+              clazz.getName(),
+              MetaschemaField.class.getName()));
     }
     return new DefaultFieldClassBinding(clazz, bindingContext);
   }
@@ -123,11 +122,19 @@ public class DefaultFieldClassBinding
   protected DefaultFieldClassBinding(@NonNull Class<?> clazz, @NonNull IBindingContext bindingContext) {
     super(clazz, bindingContext);
     this.metaschemaField = ObjectUtils.notNull(clazz.getAnnotation(MetaschemaField.class));
+    this.constraints = Lazy.lazy(() -> new ValueConstraintSupport(
+        clazz.getAnnotation(ValueConstraints.class),
+        InternalModelSource.instance()));
   }
 
   @NonNull
   public MetaschemaField getMetaschemaFieldAnnotation() {
     return metaschemaField;
+  }
+
+  @Override
+  public IValueConstraintSupport getConstraintSupport() {
+    return constraints.get();
   }
 
   @Override
@@ -150,6 +157,11 @@ public class DefaultFieldClassBinding
     return getMetaschemaFieldAnnotation().name();
   }
 
+  @Override
+  public Object getDefaultValue() {
+    return getFieldValueInstance().getDefaultValue();
+  }
+
   /**
    * Collect all fields that are part of the model for this class.
    * 
@@ -170,7 +182,7 @@ public class DefaultFieldClassBinding
 
     if (retval == null) {
       for (java.lang.reflect.Field field : fields) {
-        if (!field.isAnnotationPresent(BoundFieldValue.class)) {
+        if (!field.isAnnotationPresent(MetaschemaFieldValue.class)) {
           // skip fields that aren't a field or assembly instance
           continue;
         }
@@ -198,7 +210,7 @@ public class DefaultFieldClassBinding
           throw new IllegalArgumentException(
               String.format("Class '%s' is missing the '%s' annotation on one of its fields.",
                   getBoundClass().getName(),
-                  BoundFieldValue.class.getName()));
+                  MetaschemaFieldValue.class.getName()));
         }
 
         this.fieldValue = new DefaultFieldValueProperty(this, field);
@@ -779,72 +791,6 @@ public class DefaultFieldClassBinding
   @Override
   public IDataTypeAdapter<?> getJavaTypeAdapter() {
     return getFieldValueInstance().getJavaTypeAdapter();
-  }
-
-  /**
-   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
-   * first accessed.
-   */
-  protected void checkModelConstraints() {
-    synchronized (this) {
-      if (constraints == null) {
-        constraints = new ValueConstraintSupport(this.getMetaschemaFieldAnnotation(), InternalModelSource.instance());
-      }
-    }
-  }
-
-  @Override
-  public List<? extends IConstraint> getConstraints() {
-    checkModelConstraints();
-    return constraints.getConstraints();
-  }
-
-  @Override
-  public List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
-    checkModelConstraints();
-    return constraints.getAllowedValuesConstraints();
-  }
-
-  @Override
-  public List<? extends IMatchesConstraint> getMatchesConstraints() {
-    checkModelConstraints();
-    return constraints.getMatchesConstraints();
-  }
-
-  @Override
-  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-    checkModelConstraints();
-    return constraints.getIndexHasKeyConstraints();
-  }
-
-  @Override
-  public List<? extends IExpectConstraint> getExpectConstraints() {
-    checkModelConstraints();
-    return constraints.getExpectConstraints();
-  }
-
-  @Override
-  public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IMatchesConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IExpectConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
   }
 
   @Override

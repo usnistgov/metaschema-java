@@ -47,13 +47,11 @@ import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstra
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.ISource;
 import gov.nist.secauto.metaschema.model.common.datatype.DataTypeService;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -62,6 +60,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 final class ConstraintFactory {
   private ConstraintFactory() {

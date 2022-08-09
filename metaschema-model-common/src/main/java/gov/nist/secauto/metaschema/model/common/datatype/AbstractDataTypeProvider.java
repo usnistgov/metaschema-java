@@ -26,12 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -43,29 +42,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * provide new data types.
  */
 public abstract class AbstractDataTypeProvider implements IDataTypeProvider {
-  private final Map<String, IDataTypeAdapter<?>> library = new HashMap<>(); // NOPMD - synchronized
-  private final Map<Class<? extends IDataTypeAdapter<?>>, // NOPMD - synchronized
-      IDataTypeAdapter<?>> libraryByClass = new HashMap<>();
+  private final List<IDataTypeAdapter<?>> library = new LinkedList<>();
 
   @SuppressWarnings("null")
   @Override
-  public Map<String, ? extends IDataTypeAdapter<?>> getJavaTypeAdapters() {
+  public List<? extends IDataTypeAdapter<?>> getJavaTypeAdapters() {
     synchronized (this) {
-      return Collections.unmodifiableMap(library);
-    }
-  }
-
-  public Map<Class<? extends IDataTypeAdapter<?>>, IDataTypeAdapter<?>> getJavaTypeAdaptersByClass() {
-    synchronized (this) {
-      return Collections.unmodifiableMap(libraryByClass);
-    }
-  }
-
-  @Override
-  @SuppressWarnings("unchecked")
-  public <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NonNull Class<TYPE> clazz) {
-    synchronized (this) {
-      return (TYPE) libraryByClass.get(clazz);
+      return Collections.unmodifiableList(library);
     }
   }
 
@@ -75,34 +58,14 @@ public abstract class AbstractDataTypeProvider implements IDataTypeProvider {
    * @param adapter
    *          the adapter to register
    * @throws IllegalArgumentException
-   *           if another type adapter is already bound to the same name
+   *           if another type adapter has no name
    */
   protected void registerDatatype(@NonNull IDataTypeAdapter<?> adapter) {
-    String name = adapter.getName();
-
-    registerDatatypeByName(name, adapter);
-  }
-
-  /**
-   * Register the provided {@code adapter} with the type system using the provided {@code name}.
-   * 
-   * @param name
-   *          the type name to register
-   * @param adapter
-   *          the adapter to register
-   * @throws IllegalArgumentException
-   *           if another type adapter is already bound to the same name
-   */
-  protected void registerDatatypeByName(@NonNull String name, @NonNull IDataTypeAdapter<?> adapter) {
-    IDataTypeAdapter<?> duplicate;
-    synchronized (this) {
-      duplicate = library.put(name, adapter);
-      @SuppressWarnings("unchecked")
-      Class<? extends IDataTypeAdapter<?>> clazz = (Class<? extends IDataTypeAdapter<?>>) adapter.getClass();
-      libraryByClass.put(clazz, adapter);
+    if (adapter.getNames().size() == 0) {
+      throw new IllegalArgumentException("The adapter has no name: " + adapter.getClass().getName());
     }
-    if (duplicate != null) {
-      throw new IllegalArgumentException(String.format("Another adapter was registered with the name '%s'", name));
+    synchronized (this) {
+      library.add(adapter);
     }
   }
 }

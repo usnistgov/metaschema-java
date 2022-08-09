@@ -26,9 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
-
-import java.util.Map;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -41,8 +39,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * {@link DataTypeService}.
  */
 public interface IDataTypeProvider {
+  /**
+   * Get the {@link IDataTypeAdapter} instances associated with this provider.
+   * 
+   * @return the sequence of adapters in match priority order
+   */
   @NonNull
-  Map<String, ? extends IDataTypeAdapter<?>> getJavaTypeAdapters();
-
-  <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NonNull Class<TYPE> clazz);
+  List<? extends IDataTypeAdapter<?>> getJavaTypeAdapters();
 }

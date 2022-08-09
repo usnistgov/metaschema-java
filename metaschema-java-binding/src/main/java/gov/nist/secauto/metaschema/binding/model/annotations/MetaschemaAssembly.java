@@ -103,62 +103,6 @@ public @interface MetaschemaAssembly {
   String rootNamespace() default Constants.DEFAULT_STRING_VALUE;
 
   /**
-   * Get the allowed value constraints for this assembly.
-   * 
-   * @return the allowed values or an empty array if no allowed values constraints are defined
-   */
-  @NonNull
-  AllowedValues[] allowedValues() default {};
-
-  /**
-   * Get the matches constraints for this assembly.
-   * 
-   * @return the allowed values or an empty array if no allowed values constraints are defined
-   */
-  @NonNull
-  Matches[] matches() default {};
-
-  /**
-   * Get the index-has-key constraints for this assembly.
-   * 
-   * @return the allowed values or an empty array if no allowed values constraints are defined
-   */
-  @NonNull
-  IndexHasKey[] indexHasKey() default {};
-
-  /**
-   * Get the expect constraints for this assembly.
-   * 
-   * @return the expected constraints or an empty array if no expected constraints are defined
-   */
-  @NonNull
-  Expect[] expect() default {};
-
-  /**
-   * Get the index constraints for this assembly.
-   * 
-   * @return the index constraints or an empty array if no index constraints are defined
-   */
-  @NonNull
-  Index[] index() default {};
-
-  /**
-   * Get the unique constraints for this assembly.
-   * 
-   * @return the unique constraints or an empty array if no unique constraints are defined
-   */
-  @NonNull
-  IsUnique[] isUnique() default {};
-
-  /**
-   * Get the cardinality constraints for this assembly.
-   * 
-   * @return the cardinality constraints or an empty array if no cardinality constraints are defined
-   */
-  @NonNull
-  HasCardinality[] hasCardinality() default {};
-
-  /**
    * Get any remarks for this assembly.
    * 
    * @return a markdown string or {@code "##none"} if no remarks are provided

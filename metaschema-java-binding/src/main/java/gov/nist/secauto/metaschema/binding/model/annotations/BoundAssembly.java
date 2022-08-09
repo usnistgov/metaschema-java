@@ -29,9 +29,7 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
-import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -92,49 +90,18 @@ public @interface BoundAssembly {
   String namespace() default Constants.DEFAULT_STRING_VALUE;
 
   /**
-   * The name to use for an XML element wrapper or a JSON/YAML property.
-   * 
-   * @return the name
-   */
-  String groupName() default Constants.NO_STRING_VALUE;
-
-  /**
-   * XML target namespace of the XML Schema element.
-   * <p>
-   * If the value is "##default", then element name is derived from the namespace provided in the
-   * package-info.
-   * 
-   * @return the namespace
-   */
-  String groupNamespace() default Constants.DEFAULT_STRING_VALUE;
-
-  /**
-   * A non-negative number that indicates the minimum occurrence of the element.
+   * A non-negative number that indicates the minimum occurrence of the model instance.
    * 
    * @return a non-negative number
    */
   int minOccurs() default MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
 
   /**
-   * A number that indicates the maximum occurrence of the element.
+   * A number that indicates the maximum occurrence of the model instance.
    * 
    * @return a positive number or {@code -1} to indicate "unbounded"
    */
   int maxOccurs() default MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
-
-  /**
-   * Describes how to handle collections in JSON/YAML.
-   * 
-   * @return the JSON collection strategy
-   */
-  JsonGroupAsBehavior inJson() default JsonGroupAsBehavior.NONE;
-
-  /**
-   * Describes how to handle collections in XML.
-   * 
-   * @return the XML collection strategy
-   */
-  XmlGroupAsBehavior inXml() default XmlGroupAsBehavior.UNGROUPED;
 
   /**
    * Get any remarks for this field.

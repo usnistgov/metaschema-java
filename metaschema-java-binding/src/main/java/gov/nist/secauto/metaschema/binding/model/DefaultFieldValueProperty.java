@@ -34,11 +34,9 @@ import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
-import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
+import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaFieldValue;
 import gov.nist.secauto.metaschema.model.common.ModelType;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -54,31 +52,37 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class DefaultFieldValueProperty
     extends AbstractProperty<IFieldClassBinding>
-    implements IBoundFieldValueInstance, IBoundJavaField {
+    implements IBoundFieldValueInstance {
   private static final Logger LOGGER = LogManager.getLogger(DefaultFieldValueProperty.class);
 
   @NonNull
   private final Field field;
   @NonNull
-  private final BoundFieldValue fieldValue;
+  private final MetaschemaFieldValue fieldValue;
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
+  @Nullable
+  private final Object defaultValue;
 
   public DefaultFieldValueProperty(@NonNull IFieldClassBinding fieldClassBinding, @NonNull Field field) {
     super(fieldClassBinding);
     this.field = ObjectUtils.requireNonNull(field, "field");
-    this.fieldValue = ObjectUtils.requireNonNull(field.getAnnotation(BoundFieldValue.class));
+    MetaschemaFieldValue valueAnnotation = field.getAnnotation(MetaschemaFieldValue.class);
+    if (valueAnnotation == null) {
+      throw new IllegalArgumentException(
+          String.format("Class '%s' is missing the '%s' annotation.",
+              fieldClassBinding.getBoundClass().getName(),
+              MetaschemaFieldValue.class.getName()));
+    }
+    this.fieldValue = valueAnnotation;
 
     Class<? extends IDataTypeAdapter<?>> adapterClass = ObjectUtils.notNull(fieldValue.typeAdapter());
-    if (NullJavaTypeAdapter.class.equals(adapterClass)) {
-      this.javaTypeAdapter = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
-    } else {
-      this.javaTypeAdapter = ObjectUtils.requireNonNull(
-          fieldClassBinding.getBindingContext().getJavaTypeAdapterInstance(adapterClass));
-    }
+    this.javaTypeAdapter = ModelUtil.getDataTypeAdapter(adapterClass, fieldClassBinding.getBindingContext());
+    this.defaultValue = ModelUtil.resolveDefaultValue(getFieldValueAnnotation().defaultValue(), this.javaTypeAdapter);
   }
 
   @Override
@@ -86,7 +90,12 @@ class DefaultFieldValueProperty
     return field;
   }
 
-  protected BoundFieldValue getFieldValueAnnotation() {
+  @Override
+  public Object getDefaultValue() {
+    return defaultValue;
+  }
+
+  protected MetaschemaFieldValue getFieldValueAnnotation() {
     return fieldValue;
   }
 
@@ -97,8 +106,8 @@ class DefaultFieldValueProperty
 
   @Override
   public String getJsonValueKeyName() {
-    String name = getFieldValueAnnotation().name();
-    if (name == null || "##none".equals(name)) {
+    String name = ModelUtil.resolveToString(getFieldValueAnnotation().valueKeyName());
+    if (name == null) {
       name = getJavaTypeAdapter().getDefaultJsonValueKey();
     }
     return name;
