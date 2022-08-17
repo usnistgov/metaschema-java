@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -23,21 +22,11 @@
 
 	<description>A simple metaschema-model-common.</description>
 
-	<!-- <repositories> -->
-	<!-- <repository> -->
-	<!-- <snapshots> -->
-	<!-- <enabled>false</enabled> -->
-	<!-- </snapshots> -->
-	<!-- <id>central</id> -->
-	<!-- <name>bintray</name> -->
-	<!-- <url>https://jcenter.bintray.com</url> -->
-	<!-- </repository> -->
-	<!-- </repositories> -->
-
 	<dependencies>
 		<dependency>
 			<groupId>com.google.auto.service</groupId>
 			<artifactId>auto-service</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.antlr</groupId>
@@ -55,10 +44,7 @@
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-yaml</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.dataformat</groupId>
-			<artifactId>jackson-dataformat-xml</artifactId>
-		</dependency>
+
 		<dependency>
 			<groupId>com.github.erosb</groupId>
 			<artifactId>everit-json-schema</artifactId>
@@ -88,10 +74,6 @@
 			<groupId>com.vladsch.flexmark</groupId>
 			<artifactId>flexmark-ext-typographic</artifactId>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>com.vladsch.flexmark</groupId> -->
-		<!-- <artifactId>flexmark-formatter</artifactId> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>com.vladsch.flexmark</groupId>
 			<artifactId>flexmark-html2md-converter</artifactId>
@@ -110,28 +92,30 @@
 
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-jul</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-slf4j-impl</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-collections4</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>io.hosuaby</groupId>
-			<artifactId>inject-resources-core</artifactId>
-			<version>0.3.2</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.logging.log4j</groupId> -->
+		<!-- <artifactId>log4j-jul</artifactId> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.logging.log4j</groupId> -->
+		<!-- <artifactId>log4j-slf4j-impl</artifactId> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
+
+<!-- 		<dependency> -->
+<!-- 			<groupId>io.hosuaby</groupId> -->
+<!-- 			<artifactId>inject-resources-core</artifactId> -->
+<!-- 			<version>0.3.2</version> -->
+<!-- 			<scope>test</scope> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>io.hosuaby</groupId>
 			<artifactId>inject-resources-junit-jupiter</artifactId>
@@ -154,12 +138,12 @@
 			<artifactId>jmock-junit5</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-library</artifactId>
-			<version>2.2</version>
-			<scope>test</scope>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.hamcrest</groupId> -->
+		<!-- <artifactId>hamcrest-library</artifactId> -->
+		<!-- <version>2.2</version> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
 	</dependencies>
 
 	<build>
@@ -237,11 +221,21 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 			</plugin>
-			<!-- <plugin> <groupId>com.khubla.antlr</groupId> <artifactId>antlr4test-maven-plugin</artifactId> 
-				<configuration> <verbose>false</verbose> <showTree>false</showTree> <entryPoint>auxilary</entryPoint> 
-				<grammarName>metapath10</grammarName> <packageName /> <exampleFiles>examples/</exampleFiles> 
-				</configuration> <executions> <execution> <goals> <goal>test</goal> </goals> 
-				</execution> </executions> </plugin> -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<ignoredDependencies>
+						<ignoredDependency>com.google.auto.service:auto-service</ignoredDependency>
+					</ignoredDependencies>
+					<usedDependencies>
+						<usedDependency>org.apache.logging.log4j:log4j-core</usedDependency>
+					</usedDependencies>
+				</configuration>
+			</plugin>
+			<!-- <plugin> <groupId>com.khubla.antlr</groupId> <artifactId>antlr4test-maven-plugin</artifactId> <configuration> <verbose>false</verbose> 
+				<showTree>false</showTree> <entryPoint>auxilary</entryPoint> <grammarName>metapath10</grammarName> <packageName /> <exampleFiles>examples/</exampleFiles> 
+				</configuration> <executions> <execution> <goals> <goal>test</goal> </goals> </execution> </executions> </plugin> -->
 		</plugins>
 	</build>
 </project>

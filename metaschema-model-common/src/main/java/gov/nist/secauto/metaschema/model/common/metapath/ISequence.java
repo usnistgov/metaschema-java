@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
@@ -47,6 +48,11 @@ public interface ISequence<ITEM_TYPE extends IItem> {
   @SuppressWarnings("rawtypes")
   ISequence EMPTY = new EmptyListImpl<>();
 
+  /**
+   * Get an empty sequence
+   * @param <ITEM_TYPE> the item type
+   * @return the empty sequence
+   */
   @SuppressWarnings({ "unchecked", "null" })
   @NonNull
   static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> empty() {
@@ -93,6 +99,8 @@ public interface ISequence<ITEM_TYPE extends IItem> {
   boolean isEmpty();
 
   int size();
+  
+  void forEach(Consumer<? super ITEM_TYPE> action);
 
   @NonNull
   static <ITEM_TYPE extends IItem> Collector<ITEM_TYPE, ?, ISequence<ITEM_TYPE>> toSequence() {

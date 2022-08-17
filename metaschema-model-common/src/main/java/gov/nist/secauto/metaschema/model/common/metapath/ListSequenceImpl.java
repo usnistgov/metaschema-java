@@ -27,11 +27,13 @@
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -45,17 +47,17 @@ class ListSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> 
   }
 
   public ListSequenceImpl(@NonNull List<ITEM_TYPE> items, boolean copy) {
-    this.items = copy ? new ArrayList<>(items) : items;
+    this.items = CollectionUtil.unmodifiableList(copy ? new ArrayList<>(items) : items);
   }
 
   @Override
   public List<ITEM_TYPE> asList() {
-    return Collections.unmodifiableList(items);
+    return items;
   }
 
   @Override
   public Stream<ITEM_TYPE> asStream() {
-    return items.stream();
+    return ObjectUtils.notNull(items.stream());
   }
 
   @Override
@@ -71,6 +73,11 @@ class ListSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> 
   @Override
   public int size() {
     return items.size();
+  }
+
+  @Override
+  public void forEach(Consumer<? super ITEM_TYPE> action) {
+    items.forEach(action);
   }
 
   @Override

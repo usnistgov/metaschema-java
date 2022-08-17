@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common;
 
 public enum ModuleScopeEnum {
+  // TODO: consider naming these PRIVATE and PUBLIC in a 2.0
   /**
    * The definition is scoped to only the defining module.
    */

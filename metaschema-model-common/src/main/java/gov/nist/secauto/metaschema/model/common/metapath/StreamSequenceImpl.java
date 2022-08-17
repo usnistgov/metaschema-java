@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -78,6 +79,11 @@ class StreamSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE
       }
     }
     return retval;
+  }
+
+  @Override
+  public void forEach(Consumer<? super ITEM_TYPE> action) {
+    asStream().forEachOrdered(action);
   }
 
   @Override

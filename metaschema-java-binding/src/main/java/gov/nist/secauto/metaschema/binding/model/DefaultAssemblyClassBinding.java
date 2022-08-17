@@ -206,7 +206,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
         // skip this field, since it is ignored
         .filter(field -> !field.isAnnotationPresent(Ignore.class))
         // skip fields that aren't a Metaschema field or assembly instance
-        .filter(field -> !field.isAnnotationPresent(BoundFlag.class))
+        .filter(field -> field.isAnnotationPresent(BoundField.class) || field.isAnnotationPresent(BoundAssembly.class))
         .map(field -> {
           assert field != null;
           return newModelInstance(clazz, field);

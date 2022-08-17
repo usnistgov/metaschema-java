@@ -33,6 +33,7 @@ import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.AllowedValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.AllowedValues;
+import gov.nist.secauto.metaschema.binding.model.annotations.AssemblyConstraints;
 import gov.nist.secauto.metaschema.binding.model.annotations.Expect;
 import gov.nist.secauto.metaschema.binding.model.annotations.HasCardinality;
 import gov.nist.secauto.metaschema.binding.model.annotations.Index;
@@ -160,7 +161,7 @@ final class AnnotationUtils {
     List<? extends ICardinalityConstraint> cardinality = definition.getHasCardinalityConstraints();
     
     if (!index.isEmpty() || !unique.isEmpty() || !cardinality.isEmpty()) {
-      AnnotationSpec.Builder annotation = AnnotationSpec.builder(ValueConstraints.class);
+      AnnotationSpec.Builder annotation = AnnotationSpec.builder(AssemblyConstraints.class);
 
       applyIndexConstraints(annotation, index);
       applyUniqueConstraints(annotation, unique);
