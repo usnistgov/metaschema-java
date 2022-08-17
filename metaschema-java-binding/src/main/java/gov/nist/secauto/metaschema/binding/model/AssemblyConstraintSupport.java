@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
+import gov.nist.secauto.metaschema.binding.model.annotations.AssemblyConstraints;
+import gov.nist.secauto.metaschema.binding.model.annotations.ValueConstraints;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
@@ -44,6 +45,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Support for constraints on Metaschema assembly bound objects.
@@ -78,36 +80,50 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
   }
 
   @SuppressWarnings("null")
-  public AssemblyConstraintSupport(DefaultAssemblyClassBinding classBinding, @NonNull ISource source) {
-    MetaschemaAssembly classAnnotation = classBinding.getMetaschemaAssemblyAnnotation();
+  public AssemblyConstraintSupport(
+      @Nullable ValueConstraints valueAnnotation,
+      @Nullable AssemblyConstraints assemblyAnnotation,
+      @NonNull ISource source) {
+    if (valueAnnotation == null) {
+      this.allowedValuesConstraints = new LinkedList<>();
+      this.matchesConstraints = new LinkedList<>();
+      this.indexHasKeyConstraints = new LinkedList<>();
+      this.expectConstraints = new LinkedList<>();
+    } else {
+      allowedValuesConstraints = Arrays.stream(valueAnnotation.allowedValues())
+          .map(annotation -> ConstraintFactory.newAllowedValuesConstraint(annotation, source))
+          .collect(Collectors.toCollection(LinkedList::new));
 
-    allowedValuesConstraints = Arrays.stream(classAnnotation.allowedValues())
-        .map(annotation -> ConstraintFactory.newAllowedValuesConstraint(annotation, source))
-        .collect(Collectors.toCollection(LinkedList::new));
+      matchesConstraints = Arrays.stream(valueAnnotation.matches())
+          .map(annotation -> ConstraintFactory.newMatchesConstraint(annotation, source))
+          .collect(Collectors.toCollection(LinkedList::new));
 
-    matchesConstraints = Arrays.stream(classAnnotation.matches())
-        .map(annotation -> ConstraintFactory.newMatchesConstraint(annotation, source))
-        .collect(Collectors.toCollection(LinkedList::new));
+      indexHasKeyConstraints = Arrays.stream(valueAnnotation.indexHasKey())
+          .map(annotation -> ConstraintFactory.newIndexHasKeyConstraint(annotation, source))
+          .collect(Collectors.toCollection(LinkedList::new));
 
-    indexHasKeyConstraints = Arrays.stream(classAnnotation.indexHasKey())
-        .map(annotation -> ConstraintFactory.newIndexHasKeyConstraint(annotation, source))
-        .collect(Collectors.toCollection(LinkedList::new));
+      expectConstraints = Arrays.stream(valueAnnotation.expect())
+          .map(annotation -> ConstraintFactory.newExpectConstraint(annotation, source))
+          .collect(Collectors.toCollection(LinkedList::new));
+    }
 
-    expectConstraints = Arrays.stream(classAnnotation.expect())
-        .map(annotation -> ConstraintFactory.newExpectConstraint(annotation, source))
-        .collect(Collectors.toCollection(LinkedList::new));
+    if (assemblyAnnotation == null) {
+      this.indexConstraints = new LinkedList<>();
+      this.uniqueConstraints = new LinkedList<>();
+      this.cardinalityConstraints = new LinkedList<>();
+    } else {
+      indexConstraints = Arrays.stream(assemblyAnnotation.index())
+          .map(annotation -> ConstraintFactory.newIndexConstraint(annotation, source))
+          .collect(Collectors.toCollection(LinkedList::new));
 
-    indexConstraints = Arrays.stream(classAnnotation.index())
-        .map(annotation -> ConstraintFactory.newIndexConstraint(annotation, source))
-        .collect(Collectors.toCollection(LinkedList::new));
+      uniqueConstraints = Arrays.stream(assemblyAnnotation.isUnique())
+          .map(annotation -> ConstraintFactory.newUniqueConstraint(annotation, source))
+          .collect(Collectors.toCollection(LinkedList::new));
 
-    uniqueConstraints = Arrays.stream(classAnnotation.isUnique())
-        .map(annotation -> ConstraintFactory.newUniqueConstraint(annotation, source))
-        .collect(Collectors.toCollection(LinkedList::new));
-
-    cardinalityConstraints = Arrays.stream(classAnnotation.hasCardinality())
-        .map(annotation -> ConstraintFactory.newCardinalityConstraint(annotation, source))
-        .collect(Collectors.toCollection(LinkedList::new));
+      cardinalityConstraints = Arrays.stream(assemblyAnnotation.hasCardinality())
+          .map(annotation -> ConstraintFactory.newCardinalityConstraint(annotation, source))
+          .collect(Collectors.toCollection(LinkedList::new));
+    }
 
     constraints = new LinkedList<>();
     constraints.addAll(allowedValuesConstraints);

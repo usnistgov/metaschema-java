@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype.adapter;
+package gov.nist.secauto.metaschema.model.common.datatype;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -39,13 +39,14 @@ import org.codehaus.stax2.evt.XMLEventFactory2;
 
 import java.io.IOException;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides a basic Java type adapter implementation. This implementation should be the parent class

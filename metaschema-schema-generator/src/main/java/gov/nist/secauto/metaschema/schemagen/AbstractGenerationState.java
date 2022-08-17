@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.IDefinition;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 

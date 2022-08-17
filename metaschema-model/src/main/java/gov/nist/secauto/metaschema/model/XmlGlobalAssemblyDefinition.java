@@ -51,8 +51,6 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +59,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - intentional
 

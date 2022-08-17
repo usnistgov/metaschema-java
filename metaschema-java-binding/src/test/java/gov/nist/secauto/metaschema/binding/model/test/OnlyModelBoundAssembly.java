@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.binding.model.test;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.binding.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 
 import java.util.List;
 import java.util.Map;
@@ -44,15 +44,13 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
   /**
    * An optional singleton simple field.
    */
-  @BoundField(useName = "simple-singleton-field",
-      typeAdapter = StringAdapter.class)
+  @BoundField(useName = "simple-singleton-field")
   private String simpleSingletonField;
 
   /**
    * A required singleton simple field.
    */
   @BoundField(useName = "simple-required-singleton-field",
-      typeAdapter = StringAdapter.class,
       minOccurs = 1)
   private String simpleRequiredSingletonField;
 
@@ -60,9 +58,8 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
    * An optional array field.
    */
   @BoundField(useName = "simple-array-field",
-      typeAdapter = StringAdapter.class,
-      maxOccurs = -1,
-      groupName = "simple-array-field-items",
+      maxOccurs = -1)
+  @GroupAs(name = "simple-array-field-items",
       inJson = JsonGroupAsBehavior.LIST)
   private List<String> simpleArrayField;
 
@@ -70,10 +67,9 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
    * An required array field.
    */
   @BoundField(useName = "simple-required-array-field",
-      typeAdapter = StringAdapter.class,
       minOccurs = 1,
-      maxOccurs = -1,
-      groupName = "simple-required-array-field-items",
+      maxOccurs = -1)
+  @GroupAs(name = "simple-required-array-field-items",
       inJson = JsonGroupAsBehavior.LIST)
   private List<String> simpleRequiredArrayField;
 
@@ -81,9 +77,8 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
    * An optional singleton or array field.
    */
   @BoundField(useName = "simple-singleton-or-array-field",
-      typeAdapter = StringAdapter.class,
-      maxOccurs = -1,
-      groupName = "simple-singleton-or-array-field-items",
+      maxOccurs = -1)
+  @GroupAs(name = "simple-singleton-or-array-field-items",
       inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST)
   private List<String> simpleSingletonOrArrayField;
 
@@ -107,8 +102,8 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
    * An optional array flagged field.
    */
   @BoundField(useName = "flagged-array-field",
-      maxOccurs = -1,
-      groupName = "flagged-array-field-items",
+      maxOccurs = -1)
+  @GroupAs(name = "flagged-array-field-items",
       inJson = JsonGroupAsBehavior.LIST)
   private List<FlaggedBoundField> flaggedArrayField;
 
@@ -117,8 +112,8 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
    */
   @BoundField(useName = "flagged-required-array-field",
       minOccurs = 1,
-      maxOccurs = -1,
-      groupName = "flagged-required-array-field-items",
+      maxOccurs = -1)
+  @GroupAs(name = "flagged-required-array-field-items",
       inJson = JsonGroupAsBehavior.LIST)
   private List<FlaggedBoundField> flaggedRequiredArrayField;
 
@@ -126,8 +121,8 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
    * An optional singleton or array flagged field.
    */
   @BoundField(useName = "flagged-singleton-or-array-field",
-      maxOccurs = -1,
-      groupName = "flagged-singleton-or-array-field-items",
+      maxOccurs = -1)
+  @GroupAs(name = "flagged-singleton-or-array-field-items",
       inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST)
   private List<FlaggedBoundField> flaggedSingletonOrArrayField;
 
@@ -151,8 +146,8 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
    * An optional array flagged field.
    */
   @BoundField(useName = "collapsible-array-field",
-      maxOccurs = -1,
-      groupName = "collapsible-array-field-items",
+      maxOccurs = -1)
+  @GroupAs(name = "collapsible-array-field-items",
       inJson = JsonGroupAsBehavior.LIST)
   private List<CollapsibleFlaggedBoundField> collapsibleArrayField;
 
@@ -161,8 +156,8 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
    */
   @BoundField(useName = "collapsible-required-array-field",
       minOccurs = 1,
-      maxOccurs = -1,
-      groupName = "collapsible-required-array-field-items",
+      maxOccurs = -1)
+  @GroupAs(name = "collapsible-required-array-field-items",
       inJson = JsonGroupAsBehavior.LIST)
   private List<CollapsibleFlaggedBoundField> collapsibleRequiredArrayField;
 
@@ -170,8 +165,8 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
    * An optional singleton or array flagged field.
    */
   @BoundField(useName = "collapsible-singleton-or-array-field",
-      maxOccurs = -1,
-      groupName = "collapsible-singleton-or-array-field-items",
+      maxOccurs = -1)
+  @GroupAs(name = "collapsible-singleton-or-array-field-items",
       inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST)
   private List<CollapsibleFlaggedBoundField> collapsibleSingletonOrArrayField;
 
@@ -188,8 +183,8 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
    * An optional array assembly.
    */
   @BoundAssembly(useName = "array-assembly",
-      maxOccurs = -1,
-      groupName = "array-assembly-items",
+      maxOccurs = -1)
+  @GroupAs(name = "array-assembly-items",
       inJson = JsonGroupAsBehavior.LIST)
   private List<OnlyModelBoundAssembly> arrayAssembly;
 
@@ -197,16 +192,16 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
    * An optional singleton or array assembly.
    */
   @BoundAssembly(useName = "singleton-or-array-assembly",
-      maxOccurs = -1,
-      groupName = "singleton-or-array-assembly-items",
+      maxOccurs = -1)
+  @GroupAs(name = "singleton-or-array-assembly-items",
       inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST)
   private List<OnlyModelBoundAssembly> singletonOrArrayAssembly;
   /**
    * An optional keyed assembly.
    */
   @BoundAssembly(useName = "keyed-assembly",
-      maxOccurs = -1,
-      groupName = "keyed-assembly-items",
+      maxOccurs = -1)
+  @GroupAs(name = "keyed-assembly-items",
       inJson = JsonGroupAsBehavior.KEYED)
   private Map<String, FlaggedBoundAssembly> keyedAssembly;
 }

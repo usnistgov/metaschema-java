@@ -28,9 +28,12 @@ package gov.nist.secauto.metaschema.codegen;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.AnnotationSpec.Builder;
+import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.AllowedValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.AllowedValues;
+import gov.nist.secauto.metaschema.binding.model.annotations.AssemblyConstraints;
 import gov.nist.secauto.metaschema.binding.model.annotations.Expect;
 import gov.nist.secauto.metaschema.binding.model.annotations.HasCardinality;
 import gov.nist.secauto.metaschema.binding.model.annotations.Index;
@@ -38,9 +41,12 @@ import gov.nist.secauto.metaschema.binding.model.annotations.IndexHasKey;
 import gov.nist.secauto.metaschema.binding.model.annotations.IsUnique;
 import gov.nist.secauto.metaschema.binding.model.annotations.KeyField;
 import gov.nist.secauto.metaschema.binding.model.annotations.Matches;
+import gov.nist.secauto.metaschema.binding.model.annotations.ValueConstraints;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.IValuedDefinition;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
@@ -51,7 +57,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IKeyField;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
@@ -110,7 +116,62 @@ final class AnnotationUtils {
     }
   }
 
-  public static void applyAllowedValuesConstraints(AnnotationSpec.Builder annotation,
+  public static void buildValueConstraints(
+      @NonNull FieldSpec.Builder builder,
+      @NonNull IValuedDefinition definition) {
+    if (!definition.getConstraints().isEmpty()) {
+      AnnotationSpec.Builder valueConstraintsAnnotation = AnnotationSpec.builder(ValueConstraints.class);
+    
+      applyAllowedValuesConstraints(valueConstraintsAnnotation, definition.getAllowedValuesConstraints());
+      applyIndexHasKeyConstraints(valueConstraintsAnnotation, definition.getIndexHasKeyConstraints());
+      applyMatchesConstraints(valueConstraintsAnnotation, definition.getMatchesConstraints());
+      applyExpectConstraints(valueConstraintsAnnotation, definition.getExpectConstraints());
+
+      builder.addAnnotation(valueConstraintsAnnotation.build());
+    }
+  }
+
+  public static void buildValueConstraints(
+      @NonNull TypeSpec.Builder builder,
+      @NonNull IModelDefinition definition) {
+
+    List<? extends IAllowedValuesConstraint> allowedValues = definition.getAllowedValuesConstraints();
+    List<? extends IIndexHasKeyConstraint> indexHasKey = definition.getIndexHasKeyConstraints();
+    List<? extends IMatchesConstraint> matches = definition.getMatchesConstraints();
+    List<? extends IExpectConstraint> expects = definition.getExpectConstraints();
+    
+    if (!allowedValues.isEmpty() || !indexHasKey.isEmpty() || !matches.isEmpty() || !expects.isEmpty()) {
+      AnnotationSpec.Builder annotation = AnnotationSpec.builder(ValueConstraints.class);
+
+      applyAllowedValuesConstraints(annotation, allowedValues);
+      applyIndexHasKeyConstraints(annotation, indexHasKey);
+      applyMatchesConstraints(annotation, matches);
+      applyExpectConstraints(annotation, expects);
+
+      builder.addAnnotation(annotation.build());
+    }
+  }
+
+  public static void buildAssemblyConstraints(
+      @NonNull TypeSpec.Builder builder,
+      @NonNull IAssemblyDefinition definition) {
+    
+    List<? extends IIndexConstraint> index = definition.getIndexConstraints();
+    List<? extends IUniqueConstraint> unique = definition.getUniqueConstraints();
+    List<? extends ICardinalityConstraint> cardinality = definition.getHasCardinalityConstraints();
+    
+    if (!index.isEmpty() || !unique.isEmpty() || !cardinality.isEmpty()) {
+      AnnotationSpec.Builder annotation = AnnotationSpec.builder(AssemblyConstraints.class);
+
+      applyIndexConstraints(annotation, index);
+      applyUniqueConstraints(annotation, unique);
+      applyHasCardinalityConstraints(definition, annotation, cardinality);
+
+      builder.addAnnotation(annotation.build());
+    }
+  }
+
+  private static void applyAllowedValuesConstraints(AnnotationSpec.Builder annotation,
       List<? extends IAllowedValuesConstraint> constraints) {
     for (IAllowedValuesConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(AllowedValues.class);
@@ -133,7 +194,7 @@ final class AnnotationUtils {
     }
   }
 
-  public static void applyIndexHasKeyConstraints(AnnotationSpec.Builder annotation,
+  private static void applyIndexHasKeyConstraints(AnnotationSpec.Builder annotation,
       List<? extends IIndexHasKeyConstraint> constraints) {
     for (IIndexHasKeyConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(IndexHasKey.class);
@@ -172,7 +233,7 @@ final class AnnotationUtils {
     }
   }
 
-  public static void applyMatchesConstraints(AnnotationSpec.Builder annotation,
+  private static void applyMatchesConstraints(AnnotationSpec.Builder annotation,
       List<? extends IMatchesConstraint> constraints) {
     for (IMatchesConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(Matches.class);
@@ -191,7 +252,7 @@ final class AnnotationUtils {
     }
   }
 
-  public static void applyExpectConstraints(AnnotationSpec.Builder annotation,
+  private static void applyExpectConstraints(AnnotationSpec.Builder annotation,
       List<? extends IExpectConstraint> constraints) {
     for (IExpectConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(Expect.class);
@@ -209,7 +270,7 @@ final class AnnotationUtils {
     }
   }
 
-  public static void applyIndexConstraints(AnnotationSpec.Builder annotation,
+  private static void applyIndexConstraints(AnnotationSpec.Builder annotation,
       List<? extends IIndexConstraint> constraints) {
     for (IIndexConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(Index.class);
@@ -224,7 +285,7 @@ final class AnnotationUtils {
     }
   }
 
-  public static void applyUniqueConstraints(AnnotationSpec.Builder annotation,
+  private static void applyUniqueConstraints(AnnotationSpec.Builder annotation,
       List<? extends IUniqueConstraint> constraints) {
     for (IUniqueConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = ObjectUtils.notNull(AnnotationSpec.builder(IsUnique.class));
@@ -237,7 +298,7 @@ final class AnnotationUtils {
     }
   }
 
-  public static void applyHasCardinalityConstraints(
+  private static void applyHasCardinalityConstraints(
       @NonNull IAssemblyDefinition definition,
       @NonNull AnnotationSpec.Builder annotation,
       @NonNull List<? extends ICardinalityConstraint> constraints) {

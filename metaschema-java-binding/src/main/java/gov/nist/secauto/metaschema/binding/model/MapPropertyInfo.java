@@ -40,7 +40,6 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -55,6 +54,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 class MapPropertyInfo

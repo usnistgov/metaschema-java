@@ -27,26 +27,33 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.INonNegativeIntegerItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class NonNegativeIntegerAdapter
     extends AbstractIntegerAdapter<INonNegativeIntegerItem> {
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of(
+          "non-negative-integer",
+          // for backwards compatibility with original type name
+          "nonNegativeInteger"));
 
   NonNegativeIntegerAdapter() {
     // avoid general construction
   }
 
   @Override
-  public String getName() {
-    return "non-negative-integer";
+  public List<String> getNames() {
+    return NAMES;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public @NonNull Class<INonNegativeIntegerItem> getItemClass() {
+  public Class<INonNegativeIntegerItem> getItemClass() {
     return INonNegativeIntegerItem.class;
   }
 

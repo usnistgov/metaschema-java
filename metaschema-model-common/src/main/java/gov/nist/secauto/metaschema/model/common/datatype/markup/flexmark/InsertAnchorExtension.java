@@ -45,9 +45,6 @@ public class InsertAnchorExtension
     return new InsertAnchorExtension();
   }
 
-  public InsertAnchorExtension() {
-  }
-
   @Override
   public void parserOptions(MutableDataHolder options) {
     // do nothing

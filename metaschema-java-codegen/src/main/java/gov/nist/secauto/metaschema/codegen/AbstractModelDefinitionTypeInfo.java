@@ -42,7 +42,6 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.commons.lang3.builder.MultilineRecursiveToStringStyle;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -56,6 +55,7 @@ import java.util.stream.Collectors;
 import javax.lang.model.element.Modifier;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
     extends AbstractDefinitionTypeInfo<DEF>
@@ -143,12 +143,9 @@ class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
     annotation.addMember("metaschema", "$T.class", getTypeResolver().getClassName(metaschema));
   }
 
-  protected void buildConstraints(@NonNull AnnotationSpec.Builder annotation) {
+  protected void buildConstraints(@NonNull TypeSpec.Builder builder) {
     IModelDefinition definition = getDefinition();
-    AnnotationUtils.applyAllowedValuesConstraints(annotation, definition.getAllowedValuesConstraints());
-    AnnotationUtils.applyIndexHasKeyConstraints(annotation, definition.getIndexHasKeyConstraints());
-    AnnotationUtils.applyMatchesConstraints(annotation, definition.getMatchesConstraints());
-    AnnotationUtils.applyExpectConstraints(annotation, definition.getExpectConstraints());
+    AnnotationUtils.buildValueConstraints(builder, definition);
   }
 
   @Override

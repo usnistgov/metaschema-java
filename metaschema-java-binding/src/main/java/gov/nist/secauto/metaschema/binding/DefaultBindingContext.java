@@ -45,8 +45,8 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.model.common.constraint.FindingCollectingConstraintValidationHandler;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintSet;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.model.common.datatype.DataTypeService;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFactory;
@@ -83,8 +83,6 @@ public class DefaultBindingContext implements IBindingContext {
   private static DefaultBindingContext singleton;
   @NonNull
   private final IMetaschemaLoaderStrategy metaschemaLoaderStrategy;
-  @NonNull
-  private final MetaschemaDataTypeProvider dataTypeProvider = new MetaschemaDataTypeProvider();
   @NonNull
   private final List<IBindingMatcher> bindingMatchers = new LinkedList<>();
 
@@ -133,9 +131,8 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public <TYPE extends IDataTypeAdapter<?>> TYPE
-      getJavaTypeAdapterInstance(@NonNull Class<TYPE> clazz) {
-    return dataTypeProvider.getJavaTypeAdapterInstance(clazz);
+  public <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NonNull Class<TYPE> clazz) {
+    return DataTypeService.getInstance().getJavaTypeAdapterByClass(clazz);
   }
 
   /**
@@ -146,9 +143,10 @@ public class DefaultBindingContext implements IBindingContext {
   @Override
   public <CLASS> ISerializer<CLASS> newSerializer(@NonNull Format format, @NonNull Class<CLASS> clazz) {
     Objects.requireNonNull(format, "format");
-    @NonNull
     IAssemblyClassBinding classBinding = (IAssemblyClassBinding) getClassBinding(clazz);
-
+    if (classBinding == null) {
+      throw new IllegalStateException(String.format("Class '%s' is not bound", clazz.getClass().getName()));
+    }
     ISerializer<CLASS> retval;
     switch (format) {
     case JSON:
@@ -174,7 +172,9 @@ public class DefaultBindingContext implements IBindingContext {
   @Override
   public <CLASS> IDeserializer<CLASS> newDeserializer(@NonNull Format format, @NonNull Class<CLASS> clazz) {
     IAssemblyClassBinding classBinding = (IAssemblyClassBinding) getClassBinding(clazz);
-
+    if (classBinding == null) {
+      throw new IllegalStateException(String.format("Class '%s' is not bound", clazz.getClass().getName()));
+    }
     IDeserializer<CLASS> retval;
     switch (format) {
     case JSON:
@@ -205,10 +205,6 @@ public class DefaultBindingContext implements IBindingContext {
     synchronized (this) {
       return CollectionUtil.unmodifiableList(bindingMatchers);
     }
-  }
-
-  public Map<Class<? extends IDataTypeAdapter<?>>, IDataTypeAdapter<?>> getJavaTypeAdaptersByClass() {
-    return dataTypeProvider.getJavaTypeAdaptersByClass();
   }
 
   @Override
@@ -243,6 +239,9 @@ public class DefaultBindingContext implements IBindingContext {
   @Override
   public <CLASS> CLASS copyBoundObject(@NonNull CLASS other, Object parentInstance) throws BindingException {
     IClassBinding classBinding = getClassBinding(other.getClass());
+    if (classBinding == null) {
+      throw new IllegalStateException(String.format("Class '%s' is not bound", other.getClass().getName()));
+    }
     @SuppressWarnings("unchecked")
     CLASS retval = (CLASS) classBinding.copyBoundObject(other, parentInstance);
     return retval;
@@ -251,6 +250,9 @@ public class DefaultBindingContext implements IBindingContext {
   @Override
   public INodeItem toNodeItem(@NonNull Object boundObject, URI baseUri, boolean rootNode) {
     IClassBinding classBinding = getClassBinding(boundObject.getClass());
+    if (classBinding == null) {
+      throw new IllegalStateException(String.format("Class '%s' is not bound", boundObject.getClass().getName()));
+    }
     return DefaultNodeItemFactory.instance().newNodeItem(classBinding, boundObject, baseUri, rootNode);
   }
 

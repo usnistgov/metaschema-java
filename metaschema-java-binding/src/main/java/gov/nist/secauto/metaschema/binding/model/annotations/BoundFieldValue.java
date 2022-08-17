@@ -29,15 +29,17 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 /**
  * Identifies that the annotation target is a bound property that represents a Metaschema field
- * value.
+ * value with no flags.
  */
 @Documented
 @Retention(RUNTIME)
@@ -48,24 +50,16 @@ public @interface BoundFieldValue {
    * 
    * @return the data type adapter
    */
-  Class<? extends IDataTypeAdapter<?>> typeAdapter();
+  @NonNull
+  Class<? extends IDataTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
 
   /**
-   * The name of the JSON property that contains the field's value. If this value is provided, the the
-   * name will be used as the property name. Otherwise, the property name will default to a value
-   * defined by the data type.
+   * The default value of the flag represented as a string.
    * <p>
-   * Use of this annotation is mutually exclusive with the {@link JsonFieldValueKeyFlag} annotation.
-   * 
-   * @return the name
+   * The value {@link Constants#NULL_VALUE} is used to indicate if no default value is provided.
+   *
+   * @return the default value
    */
-  String name() default "##none";
-  //
-  // /**
-  // * If the data type allows it, determines if the field's value must be wrapped with an element
-  // * having the specified {@link #name()}.
-  // *
-  // * @return {@code true} if the field must be wrapped, or {@code false} otherwise
-  // */
-  // boolean inXmlWrapped() default Defaults.DEFAULT_FIELD_IN_XML_WRAPPED;
+  @NonNull
+  String defaultValue() default Constants.NULL_VALUE;
 }

@@ -59,10 +59,9 @@ public abstract class AbstractLoader<T> {
    * 
    * @return the set of loaded resources
    */
-  @SuppressWarnings("null")
   @NonNull
-  public Collection<T> getLoadedConstraintSets() {
-    return CollectionUtil.unmodifiableCollection(cache.values());
+  public Collection<T> getLoadedResources() {
+    return CollectionUtil.unmodifiableCollection(ObjectUtils.notNull(cache.values()));
   }
 
   /**
@@ -198,6 +197,18 @@ public abstract class AbstractLoader<T> {
     return ObjectUtils.notNull(retval);
   }
 
+  /**
+   * Parse the provided {@code resource}.
+   * 
+   * @param resource
+   *          the resource to parse
+   * @param visitedResources
+   *          a stack representing previously parsed resources imported by the provided
+   *          {@code resource}
+   * @return the parsed resource
+   * @throws IOException
+   *           if an error occurred while parsing the resource
+   */
   protected abstract T parseResource(@NonNull URI resource, @NonNull Stack<URI> visitedResources)
       throws IOException;
 

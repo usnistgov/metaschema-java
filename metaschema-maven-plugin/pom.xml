@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto.metaschema</groupId>
@@ -84,23 +85,21 @@
 			<artifactId>plexus-build-api</artifactId>
 			<version>${dependency.plexus-build-api.version}</version>
 		</dependency>
-		<!-- 
+		<!-- <dependency> <groupId>org.apache.maven</groupId> <artifactId>maven-project</artifactId> <version>2.2.1</version> </dependency> -->
 		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-project</artifactId>
-			<version>2.2.1</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
 		</dependency>
--->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<scope>test</scope>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.junit.jupiter</groupId> -->
+		<!-- <artifactId>junit-jupiter-engine</artifactId> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
 	</dependencies>
 
 	<build>
@@ -116,8 +115,7 @@
 						</sourceDirectories>
 					</configuration>
 				</plugin>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -154,36 +152,48 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<ignoredDependencies>
+						<ignoredDependency>com.google.auto.service:auto-service</ignoredDependency>
+					</ignoredDependencies>
+					<usedDependencies>
+						<usedDependency>org.apache.logging.log4j:log4j-core</usedDependency>
+					</usedDependencies>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-plugin-plugin</artifactId>
 				<executions>
 					<execution>
-					  <id>default-addPluginArtifactMetadata</id>
-					  <phase>package</phase>
-					  <goals>
-						<goal>addPluginArtifactMetadata</goal>
-					  </goals>
+						<id>default-addPluginArtifactMetadata</id>
+						<phase>package</phase>
+						<goals>
+							<goal>addPluginArtifactMetadata</goal>
+						</goals>
 					</execution>
 					<execution>
-					  <id>default-descriptor</id>
-					  <phase>process-classes</phase>
-					  <goals>
-						<goal>descriptor</goal>
-					  </goals>
-					  <configuration>
-						<goalPrefix>metaschema</goalPrefix>
-						<skipErrorNoDescriptorsFound>false</skipErrorNoDescriptorsFound>
-					  </configuration>
+						<id>default-descriptor</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>descriptor</goal>
+						</goals>
+						<configuration>
+							<goalPrefix>metaschema</goalPrefix>
+							<skipErrorNoDescriptorsFound>false</skipErrorNoDescriptorsFound>
+						</configuration>
 					</execution>
 					<execution>
-					  <id>help-mojo</id>
-					  <goals>
-						<goal>helpmojo</goal>
-					  </goals>
-					  <configuration>
-						<skipErrorNoDescriptorsFound>false</skipErrorNoDescriptorsFound>
-					  </configuration>
+						<id>help-mojo</id>
+						<goals>
+							<goal>helpmojo</goal>
+						</goals>
+						<configuration>
+							<skipErrorNoDescriptorsFound>false</skipErrorNoDescriptorsFound>
+						</configuration>
 					</execution>
-				  </executions>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

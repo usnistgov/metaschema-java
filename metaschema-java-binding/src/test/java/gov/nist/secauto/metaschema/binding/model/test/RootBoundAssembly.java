@@ -29,9 +29,9 @@ package gov.nist.secauto.metaschema.binding.model.test;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
+import gov.nist.secauto.metaschema.binding.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.UuidAdapter;
 
 import java.util.List;
@@ -46,8 +46,7 @@ public class RootBoundAssembly {
   /**
    * An optional singleton simple field.
    */
-  @BoundField(useName = "simple-singleton-field",
-      typeAdapter = StringAdapter.class)
+  @BoundField(useName = "simple-singleton-field")
   private String simpleSingletonField; // NOPMD - intentional
 
   /**
@@ -55,8 +54,8 @@ public class RootBoundAssembly {
    */
   @BoundField(useName = "keyed-field",
       minOccurs = 1,
-      maxOccurs = -1,
-      groupName = "keyed-field-items",
+      maxOccurs = -1)
+  @GroupAs(name = "keyed-field-items",
       inJson = JsonGroupAsBehavior.KEYED)
   private Map<String, FlaggedBoundField> keyedField; // NOPMD - intentional
 
@@ -65,8 +64,8 @@ public class RootBoundAssembly {
    */
   @BoundAssembly(useName = "singleton-or-array-assembly",
       minOccurs = 1,
-      maxOccurs = -1,
-      groupName = "singleton-or-array-assembly-items",
+      maxOccurs = -1)
+  @GroupAs(name = "singleton-or-array-assembly-items",
       inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST)
   private List<OnlyModelBoundAssembly> singletonOrArrayAssembly; // NOPMD - intentional
 }

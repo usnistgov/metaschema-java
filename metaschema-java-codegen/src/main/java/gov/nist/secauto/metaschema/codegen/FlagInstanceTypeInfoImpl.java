@@ -38,7 +38,7 @@ import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -90,17 +90,14 @@ class FlagInstanceTypeInfoImpl
     IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
     annotation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
 
-    AnnotationUtils.applyAllowedValuesConstraints(annotation, definition.getAllowedValuesConstraints());
-    AnnotationUtils.applyIndexHasKeyConstraints(annotation, definition.getIndexHasKeyConstraints());
-    AnnotationUtils.applyMatchesConstraints(annotation, definition.getMatchesConstraints());
-    AnnotationUtils.applyExpectConstraints(annotation, definition.getExpectConstraints());
-
     MarkupMultiline remarks = instance.getRemarks();
     if (remarks != null) {
       annotation.addMember("remarks", "$S", remarks.toMarkdown());
     }
 
     builder.addAnnotation(annotation.build());
+    
+    AnnotationUtils.buildValueConstraints(builder, definition);
 
     IModelDefinition parent = instance.getContainingDefinition();
     if (parent != null && parent.hasJsonKey() && instance.equals(parent.getJsonKeyFlagInstance())) {

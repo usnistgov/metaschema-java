@@ -34,13 +34,12 @@ import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
 

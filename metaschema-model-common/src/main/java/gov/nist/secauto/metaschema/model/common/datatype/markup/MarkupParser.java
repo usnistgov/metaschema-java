@@ -70,13 +70,13 @@ import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public class MarkupParser {
+public class MarkupParser { // NOPMD - acceptable
   private static final Logger LOGGER = LogManager.getLogger(MarkupParser.class);
 
   private static final Pattern LEADING_WHITESPACE = Pattern.compile("^\\s+");
   private static final Pattern TRAILING_WHITESPACE = Pattern.compile("\\s+$");
 
-  public MarkupLine parseMarkupline(XMLEventReader2 reader) throws XMLStreamException {
+  public MarkupLine parseMarkupline(XMLEventReader2 reader) throws XMLStreamException { // NOPMD - acceptable
     StringBuilder buffer = new StringBuilder();
     parseContents(reader, null, buffer);
     String html = buffer.toString().trim();
@@ -90,7 +90,8 @@ public class MarkupParser {
     return html.isEmpty() ? null : MarkupMultiline.fromHtml(html);
   }
 
-  protected void parseToString(XMLEventReader2 reader, StringBuilder buffer) throws XMLStreamException {
+  protected void parseToString(XMLEventReader2 reader, StringBuilder buffer) // NOPMD - acceptable
+      throws XMLStreamException {
     // if (LOGGER.isDebugEnabled()) {
     // LOGGER.debug("parseToString(enter): {}", XmlEventUtil.toString(reader.peek()));
     // }
@@ -257,7 +258,8 @@ public class MarkupParser {
    *           if unexpected content is encountered
    */
   @NonNull
-  protected MarkupMultiline parseMarkupMultilineAsAST(XMLEventReader2 reader) throws XMLStreamException {
+  protected MarkupMultiline parseMarkupMultilineAsAST(XMLEventReader2 reader) // NOPMD - acceptable
+      throws XMLStreamException {
     MutableDataSet options = new MutableDataSet();
     @NonNull
     final Document document = new Document(options, BasedSequence.EMPTY);
@@ -883,9 +885,11 @@ public class MarkupParser {
         .toString(reader.peek());
   }
 
-  private void handleInlineContent(@NonNull Node node, @NonNull XMLEventReader2 reader, @NonNull XMLEvent start,
-      boolean firstEvent)
-      throws XMLStreamException {
+  private void handleInlineContent( // NOPMD - acceptable
+      @NonNull Node node,
+      @NonNull XMLEventReader2 reader,
+      @NonNull XMLEvent start,
+      boolean firstEvent) throws XMLStreamException {
     // if (LOGGER.isTraceEnabled()) {
     // LOGGER.trace("handleInlineContent(enter): {}", XmlEventUtil.toString(start));
     // }

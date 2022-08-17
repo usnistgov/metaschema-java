@@ -31,10 +31,11 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeName;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
+import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaFieldValue;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import java.util.Set;
@@ -64,17 +65,24 @@ class FieldValueTypeInfoImpl
   @Override
   protected Set<IModelDefinition> buildField(FieldSpec.Builder builder) {
     IFieldDefinition definition = getParentDefinitionTypeInfo().getDefinition();
-    AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(BoundFieldValue.class);
+    AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(MetaschemaFieldValue.class);
 
     IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
 
     // a field object always has a single value
     if (!definition.hasJsonValueKeyFlagInstance()) {
-      fieldValue.addMember("name", "$S", definition.getJsonValueKeyName());
+      fieldValue.addMember("valueKeyName", "$S", definition.getJsonValueKeyName());
     } // else do nothing, the annotation will be on the flag
 
-    fieldValue.addMember("typeAdapter", "$T.class", valueDataType.getClass());
+    if (!MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType)) {
+      fieldValue.addMember("typeAdapter", "$T.class", valueDataType.getClass());
+    }
 
+    Object defaultValue = definition.getDefaultValue();
+    if (defaultValue != null) {
+      fieldValue.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
+    }
+    
     builder.addAnnotation(fieldValue.build());
     return CollectionUtil.emptySet();
   }

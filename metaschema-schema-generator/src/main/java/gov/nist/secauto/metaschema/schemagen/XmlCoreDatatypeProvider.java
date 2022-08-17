@@ -85,7 +85,8 @@ public class XmlCoreDatatypeProvider
       @NonNull List<Element> items) {
     return ObjectUtils.notNull(items.stream()
         .map(element -> {
-          return (IDatatypeContent) new JDom2DatatypeContent(ObjectUtils.requireNonNull(element.getAttributeValue("name")),
+          return (IDatatypeContent) new JDom2DatatypeContent(
+              ObjectUtils.requireNonNull(element.getAttributeValue("name")),
               CollectionUtil.singletonList(element),
               analyzeDependencies(element));
         }).collect(Collectors.toMap(content -> content.getTypeName(), Function.identity(), (e1, e2) -> e2,

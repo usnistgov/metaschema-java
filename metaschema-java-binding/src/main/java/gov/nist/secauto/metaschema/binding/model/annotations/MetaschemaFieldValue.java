@@ -24,40 +24,53 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype.adapter;
+package gov.nist.secauto.metaschema.binding.model.annotations;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.AbstractMarkupString;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupParser;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IMarkupItem;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractMarkupAdapter<TYPE extends AbstractMarkupString<TYPE>>
-    extends AbstractCustomJavaDataTypeAdapter<TYPE, IMarkupItem> {
-
-  private static final MarkupParser MARKUP_PARSER = new MarkupParser();
+/**
+ * Identifies a field on a class annotated with the {@link MetaschemaField} annotation as the
+ * Metaschema field's value.
+ */
+@Documented
+@Retention(RUNTIME)
+@Target({ FIELD })
+public @interface MetaschemaFieldValue {
+  /**
+   * The Metaschema data type adapter for the field's value.
+   * 
+   * @return the data type adapter
+   */
+  Class<? extends IDataTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
 
   /**
-   * Gets the markup parser used to read and write markup.
-   * 
-   * @return the parser
+   * The default value of the flag represented as a string.
+   * <p>
+   * The value {@link Constants#NULL_VALUE} is used to indicate if no default value is provided.
+   *
+   * @return the default value
    */
-  protected static MarkupParser getMarkupParser() {
-    return MARKUP_PARSER;
-  }
+  @NonNull
+  String defaultValue() default Constants.NULL_VALUE;
 
   /**
-   * Construct a new adapter.
+   * The name of the JSON property that contains the field's value. If this value is provided, the the
+   * name will be used as the property name. Otherwise, the property name will default to a value
+   * defined by the data type.
+   * <p>
+   * Use of this annotation is mutually exclusive with the {@link JsonFieldValueKeyFlag} annotation.
    * 
-   * @param clazz
-   *          the markup type class
+   * @return the name
    */
-  protected AbstractMarkupAdapter(@NonNull Class<TYPE> clazz) {
-    super(clazz);
-  }
-
-  @Override
-  public boolean isXmlMixed() {
-    return true;
-  }
+  @NonNull
+  String valueKeyName() default Constants.NO_STRING_VALUE;
 }

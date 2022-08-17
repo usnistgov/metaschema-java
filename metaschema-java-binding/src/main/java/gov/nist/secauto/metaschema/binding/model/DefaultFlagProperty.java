@@ -27,27 +27,23 @@
 package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
+import gov.nist.secauto.metaschema.binding.model.annotations.Constants;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
+import gov.nist.secauto.metaschema.binding.model.annotations.ValueConstraints;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
-import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
-import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.lang.reflect.Field;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -55,10 +51,11 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 class DefaultFlagProperty
-    extends AbstractFlagProperty
-    implements IBoundJavaField {
+    extends AbstractFlagProperty {
   // private static final Logger logger = LogManager.getLogger(DefaultFlagProperty.class);
   @NonNull
   private final Field field;
@@ -66,8 +63,9 @@ class DefaultFlagProperty
   private final BoundFlag flag;
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
+  @Nullable
+  private final Object defaultValue;
   private InternalFlagDefinition definition;
-  private IValueConstraintSupport constraints;
 
   /**
    * Construct a new bound flag instance based on a Java property. The name of the property is bound
@@ -90,6 +88,9 @@ class DefaultFlagProperty
       this.javaTypeAdapter = ObjectUtils.requireNonNull(
           parentClassBinding.getBindingContext().getJavaTypeAdapterInstance(adapterClass));
     }
+
+    String defaultString = this.flag.defaultValue();
+    this.defaultValue = Constants.NULL_VALUE.equals(defaultString) ? null : getJavaTypeAdapter().parse(defaultString);
   }
 
   @Override
@@ -101,6 +102,10 @@ class DefaultFlagProperty
   @NonNull
   protected BoundFlag getFlagAnnotation() {
     return flag;
+  }
+
+  public Object getDefaultValue() {
+    return this.defaultValue;
   }
 
   @Override
@@ -135,7 +140,7 @@ class DefaultFlagProperty
 
   @Override
   public String getUseName() {
-    return ModelUtil.resolveLocalName(getFlagAnnotation().useName(), getJavaPropertyName());
+    return ModelUtil.resolveToString(getFlagAnnotation().useName());
   }
 
   @Override
@@ -169,19 +174,21 @@ class DefaultFlagProperty
         getField().getName());
   }
 
-  /**
-   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
-   * first accessed.
-   */
-  protected void checkModelConstraints() {
-    synchronized (this) {
-      if (constraints == null) {
-        constraints = new ValueConstraintSupport(getFlagAnnotation(), InternalModelSource.instance());
-      }
-    }
-  }
+  private class InternalFlagDefinition implements IFlagDefinition, IValueConstraintFeature {
+    private final Lazy<IValueConstraintSupport> constraints;
 
-  private class InternalFlagDefinition implements IFlagDefinition {
+
+    private InternalFlagDefinition() {
+      this.constraints = Lazy.lazy(() -> new ValueConstraintSupport(
+          getField().getAnnotation(ValueConstraints.class),
+          InternalModelSource.instance()));
+    }
+
+    @Override
+    public IValueConstraintSupport getConstraintSupport() {
+      return constraints.get();
+    }
+
     @Override
     public String getFormalName() {
       return DefaultFlagProperty.this.getFormalName();
@@ -204,6 +211,11 @@ class DefaultFlagProperty
     }
 
     @Override
+    public Object getDefaultValue() {
+      return DefaultFlagProperty.this.getDefaultValue();
+    }
+
+    @Override
     public boolean isInline() {
       return true;
     }
@@ -215,7 +227,7 @@ class DefaultFlagProperty
 
     @Override
     public String getName() {
-      return DefaultFlagProperty.this.getName();
+      return getJavaFieldName();
     }
 
     @Override
@@ -234,60 +246,6 @@ class DefaultFlagProperty
     }
 
     @Override
-    public List<? extends IConstraint> getConstraints() {
-      checkModelConstraints();
-      return constraints.getConstraints();
-    }
-
-    @Override
-    public List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
-      checkModelConstraints();
-      return constraints.getAllowedValuesConstraints();
-    }
-
-    @Override
-    public List<? extends IMatchesConstraint> getMatchesConstraints() {
-      checkModelConstraints();
-      return constraints.getMatchesConstraints();
-    }
-
-    @Override
-    public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-      checkModelConstraints();
-      return constraints.getIndexHasKeyConstraints();
-    }
-
-    @Override
-    public List<? extends IExpectConstraint> getExpectConstraints() {
-      checkModelConstraints();
-      return constraints.getExpectConstraints();
-    }
-
-    @Override
-    public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
-      checkModelConstraints();
-      constraints.addConstraint(constraint);
-    }
-
-    @Override
-    public void addConstraint(@NonNull IMatchesConstraint constraint) {
-      checkModelConstraints();
-      constraints.addConstraint(constraint);
-    }
-
-    @Override
-    public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
-      checkModelConstraints();
-      constraints.addConstraint(constraint);
-    }
-
-    @Override
-    public void addConstraint(@NonNull IExpectConstraint constraint) {
-      checkModelConstraints();
-      constraints.addConstraint(constraint);
-    }
-
-    @Override
     public @NonNull ModuleScopeEnum getModuleScope() {
       // TODO: is this the right value?
       return ModuleScopeEnum.INHERITED;
@@ -298,5 +256,4 @@ class DefaultFlagProperty
       return DefaultFlagProperty.this.getContainingMetaschema();
     }
   }
-
 }

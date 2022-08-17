@@ -60,8 +60,6 @@ import gov.nist.secauto.metaschema.model.xmlbeans.ScopedIndexHasKeyConstraintTyp
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedKeyConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedMatchesConstraintType;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -72,6 +70,7 @@ import java.util.stream.Collectors;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 final class ModelFactory {
   private ModelFactory() {

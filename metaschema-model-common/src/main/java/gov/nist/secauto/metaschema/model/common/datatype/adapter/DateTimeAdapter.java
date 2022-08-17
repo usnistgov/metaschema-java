@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.datatype.AbstractCustomJavaDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.object.DateTime;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
@@ -33,24 +34,32 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DateTimeAdapter
     extends AbstractCustomJavaDataTypeAdapter<DateTime, IDateTimeItem> {
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of(
+          "date-time",
+          // for backwards compatibility with original type name
+          "dateTime"));
 
   DateTimeAdapter() {
     super(DateTime.class);
   }
 
   @Override
-  public String getName() {
-    return "date-time";
+  public List<String> getNames() {
+    return NAMES;
   }
 
   @SuppressWarnings("null")
@@ -89,7 +98,7 @@ public class DateTimeAdapter
   }
 
   @Override
-  public @NonNull Class<IDateTimeItem> getItemClass() {
+  public Class<IDateTimeItem> getItemClass() {
     return IDateTimeItem.class;
   }
 
@@ -100,7 +109,7 @@ public class DateTimeAdapter
   }
 
   @Override
-  protected @NonNull IDateTimeItem castInternal(@NonNull IAnyAtomicItem item) {
+  protected IDateTimeItem castInternal(@NonNull IAnyAtomicItem item) {
     // TODO: bring up to spec
     IDateTimeItem retval;
     if (item instanceof IDateItem) {

@@ -55,18 +55,20 @@ class ExternalConstraintsMetaschemaLoaderStrategy
   }
 
   @Override
-  public @NonNull IClassBinding getClassBinding(@NonNull Class<?> clazz) {
+  public IClassBinding getClassBinding(@NonNull Class<?> clazz) {
     IClassBinding retval = super.getClassBinding(clazz);
-    // force loading of metaschema information to apply constraints
-    IMetaschema metaschema = retval.getContainingMetaschema();
-    synchronized (resolvedMetaschemas) {
-      if (!resolvedMetaschemas.contains(metaschema)) {
-        // add first, to avoid loops
-        resolvedMetaschemas.add(metaschema);
-        try {
-          IConstraintSet.applyConstraintSetToMetaschema(getExternalConstraintSets(), metaschema);
-        } catch (MetaschemaException ex) {
-          throw new IllegalStateException(ex);
+    if (retval != null) {
+      // force loading of metaschema information to apply constraints
+      IMetaschema metaschema = retval.getContainingMetaschema();
+      synchronized (resolvedMetaschemas) {
+        if (!resolvedMetaschemas.contains(metaschema)) {
+          // add first, to avoid loops
+          resolvedMetaschemas.add(metaschema);
+          try {
+            IConstraintSet.applyConstraintSetToMetaschema(getExternalConstraintSets(), metaschema);
+          } catch (MetaschemaException ex) {
+            throw new IllegalStateException(ex);
+          }
         }
       }
     }

@@ -28,11 +28,10 @@ package gov.nist.secauto.metaschema.binding.model.test;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 
 @MetaschemaAssembly(name = "flagged-assembly", metaschema = TestMetaschema.class)
 public class FlaggedAssembly {
-  @BoundFlag(useName = "id", typeAdapter = StringAdapter.class)
+  @BoundFlag(useName = "id")
   private String id;
 
   protected String getId() {

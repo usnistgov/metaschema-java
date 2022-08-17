@@ -33,7 +33,6 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ReflectionUtils;
@@ -44,6 +43,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class TestBasicMetaschema {
   private static final MetaschemaLoader LOADER = new MetaschemaLoader();
@@ -121,12 +121,13 @@ class TestBasicMetaschema {
   // context.newSerializer(Format.YAML, clazz, null).serialize(rootObject, writer);
   // }
 
-  private void runTests(@NonNull String testPath, @NonNull String rootClassName, @NonNull Path classDir)
+  private static void runTests(@NonNull String testPath, @NonNull String rootClassName, @NonNull Path classDir)
       throws ClassNotFoundException, IOException, MetaschemaException {
     runTests(testPath, rootClassName, classDir, null);
   }
 
-  private void runTests(
+  @SuppressWarnings("unused")
+  private static void runTests(
       @NonNull String testPath,
       @NonNull String rootClassName,
       @NonNull Path classDir,

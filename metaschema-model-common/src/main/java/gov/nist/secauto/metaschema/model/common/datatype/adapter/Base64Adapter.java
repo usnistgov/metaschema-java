@@ -26,21 +26,32 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBase64BinaryItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.nio.ByteBuffer;
 import java.util.Base64;
+import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class Base64Adapter
     extends AbstractDataTypeAdapter<ByteBuffer, IBase64BinaryItem> {
-  @SuppressWarnings("null")
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of(
+          "base64",
+          // for backwards compatibility with original type name
+          "base64Binary"));
+
   Base64Adapter() {
     super(ByteBuffer.class);
   }
 
   @Override
-  public String getName() {
-    return "base64";
+  public List<String> getNames() {
+    return NAMES;
   }
 
   @SuppressWarnings("null")
@@ -69,7 +80,6 @@ public class Base64Adapter
     return encoder.encodeToString(((ByteBuffer) value).array());
   }
 
-  @SuppressWarnings("null")
   @Override
   public Class<IBase64BinaryItem> getItemClass() {
     return IBase64BinaryItem.class;

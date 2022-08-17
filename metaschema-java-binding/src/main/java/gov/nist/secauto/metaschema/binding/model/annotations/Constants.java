@@ -27,8 +27,16 @@
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
 public final class Constants {
+  // TODO: replace NO_STRING_VALUE with NULL_VALUE where possible. URIs will not allow NULL_VALUE.
   public static final String NO_STRING_VALUE = "##none";
   public static final String DEFAULT_STRING_VALUE = "##default";
+  /**
+   * A placeholder for a {@code null} value for use in annotations, which cannot be null by default.
+   * <p>
+   * Use of {@code "\u0000"} simple substitute for {@code null} to allow implementations to recognize
+   * the "no default value" state.
+   */
+  public static final String NULL_VALUE = "\u0000";
 
   private Constants() {
     // disable construction

@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -71,6 +72,11 @@ class SingletonSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_T
   @Override
   public int size() {
     return 1;
+  }
+
+  @Override
+  public void forEach(Consumer<? super ITEM_TYPE> action) {
+    action.accept(item);
   }
 
   @Override

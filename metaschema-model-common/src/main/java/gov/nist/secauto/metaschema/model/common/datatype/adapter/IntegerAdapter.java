@@ -32,24 +32,28 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class IntegerAdapter
     extends AbstractIntegerAdapter<IIntegerItem> {
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of("integer"));
 
   IntegerAdapter() {
     // avoid general construction
   }
 
   @Override
-  public String getName() {
-    return "integer";
+  public List<String> getNames() {
+    return NAMES;
   }
 
-  @SuppressWarnings("null")
   @Override
   public @NonNull Class<IIntegerItem> getItemClass() {
     return IIntegerItem.class;
@@ -62,7 +66,7 @@ public class IntegerAdapter
   }
 
   @Override
-  protected @NonNull IIntegerItem castInternal(@NonNull IAnyAtomicItem item)
+  protected IIntegerItem castInternal(@NonNull IAnyAtomicItem item)
       throws InvalidValueForCastFunctionException {
     IIntegerItem retval;
     if (item instanceof INumericItem) {

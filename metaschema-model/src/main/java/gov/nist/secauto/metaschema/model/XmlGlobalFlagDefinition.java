@@ -38,7 +38,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -53,12 +53,15 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class XmlGlobalFlagDefinition implements IFlagDefinition {
   @NonNull
   private final GlobalFlagDefinitionType xmlFlag;
   @NonNull
   private final IMetaschema metaschema;
+  @Nullable
+  private final Object defaultValue;
   private IValueConstraintSupport constraints;
 
   /**
@@ -72,11 +75,8 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   public XmlGlobalFlagDefinition(@NonNull GlobalFlagDefinitionType xmlFlag, @NonNull IMetaschema metaschema) {
     this.xmlFlag = xmlFlag;
     this.metaschema = metaschema;
-  }
-
-  @Override
-  public IMetaschema getContainingMetaschema() {
-    return metaschema;
+    this.defaultValue
+        = xmlFlag.isSetDefault() ? getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlFlag.getDefault())) : null;
   }
 
   /**
@@ -86,6 +86,16 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
    */
   protected GlobalFlagDefinitionType getXmlFlag() {
     return xmlFlag;
+  }
+
+  @Override
+  public IMetaschema getContainingMetaschema() {
+    return metaschema;
+  }
+
+  @Override
+  public Object getDefaultValue() {
+    return defaultValue;
   }
 
   /**

@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 class EmptyListImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> {
@@ -54,6 +55,11 @@ class EmptyListImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> {
   @Override
   public int size() {
     return 0;
+  }
+
+  @Override
+  public void forEach(Consumer<? super ITEM_TYPE> action) {
+    // do nothing
   }
 
   @Override

@@ -151,7 +151,7 @@ public abstract class AbstractBoundMetaschema
         this.assemblyDefinitions = Arrays.stream(getAssemblyClasses())
             .map(clazz -> {
               assert clazz != null;
-              return (IAssemblyClassBinding) bindingContext.getClassBinding(clazz);
+              return (IAssemblyClassBinding) ObjectUtils.requireNonNull(bindingContext.getClassBinding(clazz));
             })
             .collect(Collectors.toUnmodifiableMap(
                 IAssemblyClassBinding::getName,
@@ -159,7 +159,7 @@ public abstract class AbstractBoundMetaschema
         this.fieldDefinitions = Arrays.stream(getFieldClasses())
             .map(clazz -> {
               assert clazz != null;
-              return (IFieldClassBinding) bindingContext.getClassBinding(clazz);
+              return (IFieldClassBinding) ObjectUtils.requireNonNull(bindingContext.getClassBinding(clazz));
             })
             .collect(Collectors.toUnmodifiableMap(
                 IFieldClassBinding::getName,

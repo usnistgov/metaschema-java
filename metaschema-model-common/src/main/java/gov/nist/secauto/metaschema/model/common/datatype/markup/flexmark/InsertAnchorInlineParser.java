@@ -63,7 +63,7 @@ public class InsertAnchorInlineParser implements InlineParserExtension {
         BasedSequence type = input.subSequence(matcher.start(1), matcher.end(1));
         BasedSequence idReference = input.subSequence(matcher.start(2), matcher.end(2));
         inlineParser.appendNode(new InsertAnchorNode(type, idReference));
-        return true;
+        return true; // NOPMD - readability
       }
     }
     return false;

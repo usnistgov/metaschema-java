@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupText;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
@@ -51,6 +51,6 @@ public interface IMarkupItem extends IUntypedAtomicItem {
 
   @NonNull
   static IMarkupItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
-    return MetaschemaDataTypeProvider.MARKUP_MULTILINE.cast(item);
+    return MarkupDataTypeProvider.MARKUP_MULTILINE.cast(item);
   }
 }

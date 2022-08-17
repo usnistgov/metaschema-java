@@ -28,21 +28,30 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import com.google.re2j.Pattern;
 
+import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUuidItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
+import java.util.List;
 import java.util.UUID;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class UuidAdapter
     extends AbstractDataTypeAdapter<UUID, IUuidItem> {
-  public static final Pattern UUID_PATTERN = Pattern.compile("^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[45][0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$");
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of("uuid"));
+  public static final Pattern UUID_PATTERN
+      = Pattern.compile("^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[45][0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$");
 
   UuidAdapter() {
     super(UUID.class);
   }
 
   @Override
-  public String getName() {
-    return "uuid";
+  public List<String> getNames() {
+    return NAMES;
   }
 
   @SuppressWarnings("null")

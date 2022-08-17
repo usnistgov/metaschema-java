@@ -32,9 +32,7 @@ import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 
-import java.security.AccessController;
 import org.apache.logging.log4j.LogManager;
-import java.security.PrivilegedAction;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
@@ -42,6 +40,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;

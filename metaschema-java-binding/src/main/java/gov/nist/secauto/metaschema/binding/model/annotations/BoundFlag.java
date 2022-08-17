@@ -30,7 +30,7 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -74,7 +74,7 @@ public @interface BoundFlag {
    * @return the name
    */
   @NonNull
-  String useName() default Constants.DEFAULT_STRING_VALUE;
+  String useName() default Constants.NO_STRING_VALUE;
 
   /**
    * XML target namespace of the XML Schema element.
@@ -88,22 +88,14 @@ public @interface BoundFlag {
   String namespace() default Constants.NO_STRING_VALUE;
 
   /**
-   * Default value of this element.
-   *
+   * The default value of the flag represented as a string.
    * <p>
-   * The
-   * 
-   * <pre>
-   * '\u0000'
-   * </pre>
-   * 
-   * value specified as a default of this annotation element is used as a poor-man's substitute for
-   * null to allow implementations to recognize the 'no default value' state.
-   * 
+   * The value {@link Constants#NULL_VALUE} is used to indicate if no default value is provided.
+   *
    * @return the default value
    */
   @NonNull
-  String defaultValue() default "\u0000";
+  String defaultValue() default Constants.NULL_VALUE;
 
   /**
    * Specifies if the XML Schema attribute is optional or required. If true, then the JavaBean
@@ -120,39 +112,7 @@ public @interface BoundFlag {
    * @return the data type adapter
    */
   @NonNull
-  Class<? extends IDataTypeAdapter<?>> typeAdapter();
-
-  /**
-   * Get the allowed value constraints for this flag.
-   * 
-   * @return the allowed values or an empty array if no allowed values constraints are defined
-   */
-  @NonNull
-  AllowedValues[] allowedValues() default {};
-
-  /**
-   * Get the matches constraints for this flag.
-   * 
-   * @return the allowed values or an empty array if no allowed values constraints are defined
-   */
-  @NonNull
-  Matches[] matches() default {};
-
-  /**
-   * Get the index-has-key constraints for this flag.
-   * 
-   * @return the allowed values or an empty array if no allowed values constraints are defined
-   */
-  @NonNull
-  IndexHasKey[] indexHasKey() default {};
-
-  /**
-   * Get the expect constraints for this flag.
-   * 
-   * @return the expected constraints or an empty array if no expected constraints are defined
-   */
-  @NonNull
-  Expect[] expect() default {};
+  Class<? extends IDataTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
 
   /**
    * Get any remarks for this flag.

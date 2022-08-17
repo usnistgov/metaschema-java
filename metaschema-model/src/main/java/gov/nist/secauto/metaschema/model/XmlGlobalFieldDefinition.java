@@ -40,7 +40,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -56,14 +56,16 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class XmlGlobalFieldDefinition implements IFieldDefinition {
   @NonNull
   private final GlobalFieldDefinitionType xmlField;
   @NonNull
   private final IMetaschema metaschema;
+  @Nullable
+  private final Object defaultValue;
   private XmlFlagContainerSupport flagContainer;
-
   private IValueConstraintSupport constraints;
 
   /**
@@ -77,6 +79,9 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
   public XmlGlobalFieldDefinition(@NonNull GlobalFieldDefinitionType xmlField, @NonNull IMetaschema metaschema) {
     this.xmlField = xmlField;
     this.metaschema = metaschema;
+    this.defaultValue
+        = xmlField.isSetDefault() ? getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlField.getDefault()))
+            : null;
   }
 
   /**
@@ -92,6 +97,11 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
   @Override
   public IMetaschema getContainingMetaschema() {
     return metaschema;
+  }
+
+  @Override
+  public Object getDefaultValue() {
+    return defaultValue;
   }
 
   /**

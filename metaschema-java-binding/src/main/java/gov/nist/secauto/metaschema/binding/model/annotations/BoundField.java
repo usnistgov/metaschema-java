@@ -29,10 +29,7 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
-import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -48,6 +45,14 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * <p>
  * For JSON and YAML serializations, the {@link #useName()} identifies the property/item name to
  * use.
+ * <p>
+ * The field must be either:
+ * <ol>
+ * <li>A Metaschema data type or a collection whose item value is Metaschema data type, with a
+ * {@link BoundFieldValue} annotation on the field.
+ * <li>A type or a collection whose item value is a type based on a class with a
+ * {@link MetaschemaField} annotation.</li>
+ * </ol>
  */
 @Documented
 @Retention(RUNTIME)
@@ -74,17 +79,16 @@ public @interface BoundField {
   String description() default Constants.NO_STRING_VALUE;
 
   /**
-   * The model name to use for singleton values. This name will be used for associated XML elements.
+   * The model name to use for JSON/YAML singleton values and associated XML elements.
    * <p>
-   * If the value is "##default", then element name is derived from the JavaBean property name.
+   * If the value is "##none", then the use name will be provided by the definition or by the field
+   * name if the item value class is missing the {@link MetaschemaField} annotation.
    * 
    * @return the name
    */
   @NonNull
-  String useName() default Constants.DEFAULT_STRING_VALUE;
+  String useName() default Constants.NO_STRING_VALUE;
 
-  /**
-   */
   /**
    * The namespace to use for associated XML elements.
    * <p>
@@ -93,113 +97,28 @@ public @interface BoundField {
    * 
    * @return the namespace
    */
-  @NonNull
   String namespace() default Constants.DEFAULT_STRING_VALUE;
 
   /**
-   * If the data type allows it, determines if the field's value must be wrapped with an element
-   * having the specified {@link #useName()} and {@link #namespace()}.
-   * 
+   * If the data type allows it, determines if the field's value must be wrapped with an XML element.
+   *
    * @return {@code true} if the field must be wrapped, or {@code false} otherwise
    */
   boolean inXmlWrapped() default MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
 
   /**
-   * The Metaschema data type adapter for the field's value.
-   * 
-   * @return the data type adapter
-   */
-  Class<? extends IDataTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
-  //
-  // /**
-  // * The name of the JSON property that contains the field's value. If this value is provided, the
-  // * name will be used as the property name. Use of this annotation is mutually exclusive with the
-  // * {@link JsonFieldValueKeyFlag} annotation.
-  // *
-  // * @return the name
-  // */
-  // String valueName() default "##none";
-
-  /**
-   * The name to use for an XML element wrapper or a JSON/YAML property.
-   * 
-   * @return the name
-   */
-  @NonNull
-  String groupName() default Constants.NO_STRING_VALUE;
-
-  /**
-   * XML target namespace of the XML Schema element.
-   * <p>
-   * If the value is "##default", then element name is derived from the namespace provided in the
-   * package-info.
-   * 
-   * @return the namespace
-   */
-  @NonNull
-  String groupNamespace() default Constants.DEFAULT_STRING_VALUE;
-
-  /**
-   * A non-negative number that indicates the minimum occurrence of the element.
+   * A non-negative number that indicates the minimum occurrence of the model instance.
    * 
    * @return a non-negative number
    */
   int minOccurs() default MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
 
   /**
-   * A number that indicates the maximum occurrence of the element.
+   * A number that indicates the maximum occurrence of the model instance.
    * 
    * @return a positive number or {@code -1} to indicate "unbounded"
    */
   int maxOccurs() default MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
-
-  /**
-   * Describes how to handle collections in JSON/YAML.
-   * 
-   * @return the JSON collection strategy
-   */
-  @NonNull
-  JsonGroupAsBehavior inJson() default JsonGroupAsBehavior.NONE;
-
-  /**
-   * Describes how to handle collections in XML.
-   * 
-   * @return the XML collection strategy
-   */
-  @NonNull
-  XmlGroupAsBehavior inXml() default XmlGroupAsBehavior.UNGROUPED;
-
-  /**
-   * Get the allowed value constraints for this field.
-   * 
-   * @return the allowed values or an empty array if no allowed values constraints are defined
-   */
-  @NonNull
-  AllowedValues[] allowedValues() default {};
-
-  /**
-   * Get the matches constraints for this field.
-   * 
-   * @return the allowed values or an empty array if no allowed values constraints are defined
-   */
-  @NonNull
-  Matches[] matches() default {};
-
-  /**
-   * Get the index-has-key constraints for this field.
-   * 
-   * @return the allowed values or an empty array if no allowed values constraints are defined
-   */
-  @NonNull
-  IndexHasKey[] indexHasKey() default {};
-
-  /**
-   * Get the expect constraints for this field.
-   * 
-   * @return the expected constraints or an empty array if no expected constraints are defined
-   */
-  @NonNull
-  Expect[] expect() default {};
 
   /**
    * Get any remarks for this field.

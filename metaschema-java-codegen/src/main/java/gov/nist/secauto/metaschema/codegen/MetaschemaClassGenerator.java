@@ -50,8 +50,9 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.lang.model.element.Modifier;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class MetaschemaClassGenerator {
   @NonNull

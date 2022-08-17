@@ -34,8 +34,10 @@ import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -49,6 +51,12 @@ import javax.xml.stream.events.XMLEvent;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundNamedInstance extends INamedInstance {
+
+  @Override
+  default String getName() {
+    // delegate to the definition
+    return getDefinition().getEffectiveName();
+  }
 
   @Override
   default @NonNull Map<QName, Set<String>> getProperties() {
@@ -65,28 +73,42 @@ public interface IBoundNamedInstance extends INamedInstance {
   IClassBinding getParentClassBinding();
 
   /**
-   * Get the actual Java type of the underlying bound object.
+   * Gets the bound Java field associated with this property.
    * 
-   * @return the Java type of the bound object
+   * @return the Java field
    */
-  Type getType();
+  @NonNull
+  Field getField();
+
+  @NonNull
+  default String getJavaFieldName() {
+    return ObjectUtils.notNull(getField().getName());
+  }
 
   /**
-   * Get the type of the bound object. This may be the same as the what is returned by
-   * {@link #getItemType()}, or may be a Java collection class.
+   * Get the actual Java type of the underlying bound object.
+   * <p>
+   * This may be the same as the what is returned by {@link #getItemType()}, or may be a Java
+   * collection class.
    * 
    * @return the raw type of the bound object
    */
-  Class<?> getRawType();
+  @SuppressWarnings("null")
+  @NonNull
+  default Type getType() {
+    return getField().getGenericType();
+  }
 
   /**
-   * Get the item type of the bound object. An item type is the primative or specialized type that
+   * Get the item type of the bound object. An item type is the primitive or specialized type that
    * represents that data associated with this binding.
    * 
    * @return the item type of the bound object
    */
   @NonNull
-  Class<?> getItemType();
+  default Class<?> getItemType() {
+    return (Class<?>) getType();
+  }
 
   /**
    * Get the current value from the provided {@code parentInstance} object. The provided object must
@@ -97,7 +119,24 @@ public interface IBoundNamedInstance extends INamedInstance {
    * @return the value if available, or {@code null} otherwise
    */
   @Override
-  Object getValue(@NonNull Object parentInstance);
+  default Object getValue(@NonNull Object parentInstance) {
+    Field field = getField();
+    boolean accessable = field.canAccess(parentInstance);
+    field.setAccessible(true); // NOPMD - intentional
+    Object retval;
+    try {
+      Object result = field.get(parentInstance);
+      retval = result;
+    } catch (IllegalArgumentException | IllegalAccessException ex) {
+      throw new IllegalArgumentException(
+          String.format("Unable to get the value of field '%s' in class '%s'.", field.getName(),
+              field.getDeclaringClass().getName()),
+          ex);
+    } finally {
+      field.setAccessible(accessable); // NOPMD - intentional
+    }
+    return retval;
+  }
 
   /**
    * Set the provided value on the provided object. The provided object must be of the item's type
@@ -109,7 +148,21 @@ public interface IBoundNamedInstance extends INamedInstance {
    *          a value, which may be a simple {@link Type} or a {@link ParameterizedType} for a
    *          collection
    */
-  void setValue(@NonNull Object parentInstance, Object value);
+  default void setValue(@NonNull Object parentInstance, Object value) {
+    Field field = getField();
+    boolean accessable = field.canAccess(parentInstance);
+    field.setAccessible(true); // NOPMD - intentional
+    try {
+      field.set(parentInstance, value);
+    } catch (IllegalArgumentException | IllegalAccessException ex) {
+      throw new IllegalArgumentException(
+          String.format("Unable to set the value of field '%s' in class '%s'.", field.getName(),
+              field.getDeclaringClass().getName()),
+          ex);
+    } finally {
+      field.setAccessible(accessable); // NOPMD - intentional
+    }
+  }
 
   @NonNull
   IPropertyCollector newPropertyCollector();

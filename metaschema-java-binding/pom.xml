@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto.metaschema</groupId>
@@ -34,50 +35,54 @@
 		<dependency>
 			<groupId>com.google.auto.service</groupId>
 			<artifactId>auto-service</artifactId>
+			<optional>true</optional>
 		</dependency>
 
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
 		<!-- <dependency> -->
-		<!-- <groupId>com.sun.xml.bind</groupId> -->
-		<!-- <artifactId>jaxb-core</artifactId> -->
+		<!-- <groupId>org.apache.commons</groupId> -->
+		<!-- <artifactId>commons-lang3</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>commons-io</groupId> -->
+		<!-- <artifactId>commons-io</artifactId> -->
 		<!-- </dependency> -->
 
 		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-jul</artifactId>
-		</dependency>
-		<!-- Binding for Log4J -->
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-slf4j-impl</artifactId>
-		</dependency>
+
 		<!-- Log4j API and Core implementation required for binding -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Binding for Log4J -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.logging.log4j</groupId> -->
+		<!-- <artifactId>log4j-jul</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.logging.log4j</groupId> -->
+		<!-- <artifactId>log4j-slf4j-impl</artifactId> -->
+		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>org.jmock</groupId>
 			<artifactId>jmock-junit5</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-params</artifactId>
-			<scope>test</scope>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.junit.jupiter</groupId> -->
+		<!-- <artifactId>junit-jupiter-params</artifactId> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
 	</dependencies>
 	<build>
 		<plugins>
@@ -93,6 +98,18 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<configuration>
 					<argLine>--illegal-access=permit</argLine>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<ignoredDependencies>
+						<ignoredDependency>com.google.auto.service:auto-service</ignoredDependency>
+					</ignoredDependencies>
+					<usedDependencies>
+						<usedDependency>org.apache.logging.log4j:log4j-core</usedDependency>
+					</usedDependencies>
 				</configuration>
 			</plugin>
 		</plugins>

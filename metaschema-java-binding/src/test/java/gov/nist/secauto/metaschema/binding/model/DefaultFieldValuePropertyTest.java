@@ -37,9 +37,9 @@ import com.fasterxml.jackson.core.JsonToken;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
-import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.Metaschema;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
+import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaFieldValue;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
@@ -59,12 +59,13 @@ import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.List;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DefaultFieldValuePropertyTest {
   @RegisterExtension
@@ -87,7 +88,7 @@ class DefaultFieldValuePropertyTest {
 
     context.checking(new Expectations() {
       { // NOPMD - intentional
-        oneOf(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
+        atMost(1).of(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
         will(returnValue(MetaschemaDataTypeProvider.STRING));
 
         allowing(classBinding).getBoundClass();
@@ -132,7 +133,7 @@ class DefaultFieldValuePropertyTest {
 
     context.checking(new Expectations() {
       { // NOPMD - intentional
-        oneOf(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
+        atMost(1).of(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
         will(returnValue(MetaschemaDataTypeProvider.STRING));
 
         allowing(classBinding).getBoundClass();
@@ -210,9 +211,7 @@ class DefaultFieldValuePropertyTest {
       metaschema = TestMetaschema.class,
       isCollapsible = true)
   public static class SimpleField {
-    @BoundFieldValue(
-        name = "a-value",
-        typeAdapter = StringAdapter.class)
+    @MetaschemaFieldValue(valueKeyName = "a-value")
     private String _value;
 
     public SimpleField() {
@@ -234,7 +233,7 @@ class DefaultFieldValuePropertyTest {
 
     context.checking(new Expectations() {
       { // NOPMD - intentional
-        oneOf(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
+        atMost(1).of(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
         will(returnValue(MetaschemaDataTypeProvider.STRING));
 
         allowing(classBinding).getBoundClass();
@@ -279,7 +278,7 @@ class DefaultFieldValuePropertyTest {
 
     context.checking(new Expectations() {
       { // NOPMD - intentional
-        oneOf(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
+        atMost(1).of(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
         will(returnValue(MetaschemaDataTypeProvider.STRING));
 
         allowing(classBinding).getBoundClass();
@@ -316,8 +315,7 @@ class DefaultFieldValuePropertyTest {
       metaschema = TestMetaschema.class,
       isCollapsible = true)
   public static class SimpleField2 {
-    @BoundFieldValue(
-        typeAdapter = StringAdapter.class)
+    @MetaschemaFieldValue
     private String _value;
 
     public SimpleField2() {

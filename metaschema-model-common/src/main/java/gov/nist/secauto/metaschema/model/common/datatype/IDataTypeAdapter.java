@@ -24,13 +24,14 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype.adapter;
+package gov.nist.secauto.metaschema.model.common.datatype;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -38,25 +39,38 @@ import org.codehaus.stax2.evt.XMLEventFactory2;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.function.Supplier;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IDataTypeAdapter<TYPE> {
 
   /**
-   * Get the metaschema type name associated with this adapter. This name must be unique with respect
+   * Get the metaschema type names associated with this adapter. This name must be unique with respect
    * to all other metaschema types.
+   * <p>
+   * At least one name must be provided, with the first name being the most preferred name.
    * 
    * @return the name
    */
   @NonNull
-  String getName();
+  List<String> getNames();
+
+  /**
+   * Get the most preferred name for this data type.
+   * @return the name
+   */
+  @NonNull
+  default String getPreferredName() {
+    return ObjectUtils.notNull(getNames().iterator().next());
+  }
 
   /**
    * Get the Java class supported by this adapter.

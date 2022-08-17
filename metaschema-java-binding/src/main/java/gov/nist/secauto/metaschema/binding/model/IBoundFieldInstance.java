@@ -26,9 +26,30 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
+import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 
+import java.lang.reflect.Field;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IBoundFieldInstance extends IBoundNamedModelInstance, IFieldInstance {
+
+  static IBoundFieldInstance newInstance(
+      @NonNull Field field,
+      @NonNull IAssemblyClassBinding parentDefinition) {
+    Class<?> itemType = IBoundNamedModelInstance.getItemType(field);
+    IBindingContext bindingContext = parentDefinition.getBindingContext();
+    IClassBinding classBinding = bindingContext.getClassBinding(itemType);
+
+    IBoundFieldInstance retval;
+    if (classBinding == null) {
+      retval = new SimpleFieldProperty(field, parentDefinition);
+    } else {
+      retval = new ClassBindingFieldProperty(field, (IFieldClassBinding) classBinding, parentDefinition);
+    }
+    return retval;
+  }
 
   @Override
   IBoundFieldDefinition getDefinition();

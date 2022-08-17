@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.model.common;
 
 import javax.xml.namespace.QName;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
@@ -51,6 +52,7 @@ public interface IModelInstance extends IInstance {
    * @return the groupAs QName or {@code null} if no name is configured, such as when
    *         {@link #getMaxOccurs()} = 1.
    */
+  @Nullable
   default QName getXmlGroupAsQName() {
     QName retval = null;
     if (XmlGroupAsBehavior.GROUPED.equals(getXmlGroupAsBehavior())) {
@@ -95,6 +97,7 @@ public interface IModelInstance extends IInstance {
    * 
    * @return the XML namespace or {@code null} if no namespace is used
    */
+  @Nullable
   String getGroupAsXmlNamespace();
 
   /**
@@ -104,6 +107,7 @@ public interface IModelInstance extends IInstance {
    * @return the JSON group-as strategy, or {@code JsonGroupAsBehavior#NONE} if
    *         {@link #getMaxOccurs()} = 1
    */
+  @NonNull
   JsonGroupAsBehavior getJsonGroupAsBehavior();
 
   /**
@@ -113,5 +117,6 @@ public interface IModelInstance extends IInstance {
    * @return the JSON group-as strategy, or {@code XmlGroupAsBehavior#UNGROUPED} if
    *         {@link #getMaxOccurs()} = 1
    */
+  @NonNull
   XmlGroupAsBehavior getXmlGroupAsBehavior();
 }

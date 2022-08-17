@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
+import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 
 import java.io.IOException;
@@ -45,9 +46,8 @@ public abstract class AbstractIntegerAdapter<ITEM_TYPE extends IIntegerItem>
     extends AbstractDataTypeAdapter<BigInteger, ITEM_TYPE> {
 
   /**
-   * Construct a new integer adapter.
+   * Construct a new integer-based adapter.
    */
-  @SuppressWarnings("null")
   protected AbstractIntegerAdapter() {
     super(BigInteger.class);
   }

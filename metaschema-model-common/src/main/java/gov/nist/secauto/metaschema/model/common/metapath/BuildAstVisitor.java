@@ -77,7 +77,7 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class BuildAstVisitor
+class BuildAstVisitor // NOPMD - this visitor has many methods
     extends AbstractAstVisitor<IExpression> {
 
   @SuppressWarnings("null")
@@ -198,10 +198,8 @@ class BuildAstVisitor
       @NonNull ITriFunction<CONTEXT, Integer, IExpression, IExpression> parser) {
     int numChildren = context.getChildCount();
 
-    IExpression retval;
-    if (numChildren == 0) {
-      retval = null;
-    } else {
+    IExpression retval = null;
+    if (numChildren > 0) {
       ParseTree leftTree = context.getChild(0);
       IExpression result = ObjectUtils.notNull(leftTree.accept(this));
 
@@ -229,10 +227,10 @@ class BuildAstVisitor
   }
 
   @Override
-  protected IExpression handleComparisonexpr(ComparisonexprContext ctx) {
+  protected IExpression handleComparisonexpr(ComparisonexprContext ctx) { // NOPMD - ok
     int numChildren = ctx.getChildCount();
     if (numChildren == 1) {
-      return super.visitComparisonexpr(ctx);
+      return super.visitComparisonexpr(ctx); // NOPMD - readability
     } else if (numChildren != 3) {
       throw new UnsupportedOperationException();
     }

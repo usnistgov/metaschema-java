@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
 /**
@@ -37,7 +38,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 public abstract class AbstractStringAdapter<ITEM_TYPE extends IStringItem>
     extends AbstractDataTypeAdapter<String, ITEM_TYPE> {
 
-  @SuppressWarnings("null")
+  /**
+   * Construct a new string-based adapter.
+   */
   protected AbstractStringAdapter() {
     super(String.class);
   }

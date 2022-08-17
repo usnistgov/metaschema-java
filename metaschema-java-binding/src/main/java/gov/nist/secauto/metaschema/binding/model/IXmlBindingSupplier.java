@@ -28,14 +28,13 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 @FunctionalInterface
 interface IXmlBindingSupplier {

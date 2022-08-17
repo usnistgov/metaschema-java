@@ -39,7 +39,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public final class FunctionService {
-  private static Lazy<FunctionService> lazyFunctionService = Lazy.lazy(() -> new FunctionService());
+  private static final Lazy<FunctionService> INSTANCE = Lazy.lazy(() -> new FunctionService());
   @NonNull
   private final ServiceLoader<IFunctionLibrary> loader;
   @NonNull
@@ -51,7 +51,7 @@ public final class FunctionService {
    * @return the service instance
    */
   public static FunctionService getInstance() {
-    return lazyFunctionService.get();
+    return INSTANCE.get();
   }
 
   /**

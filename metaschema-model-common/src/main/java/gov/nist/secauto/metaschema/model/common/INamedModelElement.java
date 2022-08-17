@@ -45,21 +45,23 @@ public interface INamedModelElement extends IModelElement {
   /**
    * The formal display name.
    * 
-   * @return the formal name
+   * @return the formal name or {@code null} if not defined
    */
+  @Nullable
   String getFormalName();
 
   /**
    * The resolved formal display name, which allows an instance to override a definition's name.
    * 
-   * @return the formal name
+   * @return the formal name or {@code null} if not defined
    */
+  @Nullable
   String getEffectiveFormalName();
 
   /**
    * Get the text that describes the basic use of the element.
    * 
-   * @return a line of markup text
+   * @return a line of markup text or {@code null} if not defined
    */
   MarkupLine getDescription();
 
@@ -67,7 +69,7 @@ public interface INamedModelElement extends IModelElement {
    * Get the text that describes the basic use of the element, which allows an instance to override a
    * definition's description.
    * 
-   * @return a line of markup text
+   * @return a line of markup text or {@code null} if not defined
    */
   MarkupLine getEffectiveDescription();
 

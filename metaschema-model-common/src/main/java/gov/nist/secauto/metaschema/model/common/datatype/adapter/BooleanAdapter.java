@@ -29,27 +29,32 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 
+import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.io.IOException;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class BooleanAdapter
     extends AbstractDataTypeAdapter<Boolean, IBooleanItem> {
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of("boolean"));
 
-  @SuppressWarnings("null")
   BooleanAdapter() {
     super(Boolean.class);
   }
 
   @Override
-  public String getName() {
-    return "boolean";
+  public List<String> getNames() {
+    return NAMES;
   }
 
   @SuppressWarnings("null")
@@ -82,7 +87,6 @@ public class BooleanAdapter
     return (Boolean) obj;
   }
 
-  @SuppressWarnings("null")
   @Override
   public Class<IBooleanItem> getItemClass() {
     return IBooleanItem.class;
@@ -95,7 +99,7 @@ public class BooleanAdapter
   }
 
   @Override
-  protected @NonNull IBooleanItem castInternal(@NonNull IAnyAtomicItem item) {
+  protected IBooleanItem castInternal(@NonNull IAnyAtomicItem item) {
     IBooleanItem retval;
     if (item instanceof INumericItem) {
       retval = castToBoolean((INumericItem) item);
@@ -107,11 +111,28 @@ public class BooleanAdapter
     return retval;
   }
 
+  /**
+   * Cast the provided numeric value to a boolean. Any non-zero value will be {@code true}, or
+   * {@code false} otherwise.
+   * 
+   * @param item
+   *          the item to cast
+   * @return {@code true} if the item value is non-zero, or {@code false} otherwise
+   */
   @NonNull
   protected IBooleanItem castToBoolean(@NonNull INumericItem item) {
     return IBooleanItem.valueOf(item.toEffectiveBoolean());
   }
 
+  /**
+   * If the string is a numeric value, treat it as so. Otherwise parse the value as a boolean string.
+   * 
+   * @param item
+   *          the item to cast
+   * @return the effective boolean value of the string
+   * @throws InvalidValueForCastFunctionException
+   *           if the provided item cannot be cast to a boolean value by any means
+   */
   @NonNull
   protected IBooleanItem castToBoolean(@NonNull IStringItem item) throws InvalidValueForCastFunctionException {
     IBooleanItem retval;

@@ -71,14 +71,29 @@ public class MetaschemaLoader
   @NonNull
   private final Set<IConstraintSet> registeredConstraintSets;
 
+  /**
+   * Construct a new Metaschema loader.
+   */
   public MetaschemaLoader() {
     this(CollectionUtil.emptySet());
   }
 
+  /**
+   * Construct a new Metaschema loader, which will incorporate the additional provided constraints
+   * into matching loaded definitions.
+   * 
+   * @param additionalConstraintSets
+   *          additional constraints to associate with loaded definitions
+   */
   public MetaschemaLoader(@NonNull Set<IConstraintSet> additionalConstraintSets) {
     this.registeredConstraintSets = CollectionUtil.unmodifiableSet(additionalConstraintSets);
   }
 
+  /**
+   * Get the set of additional constraints associated with this loader.
+   * 
+   * @return the set of constraints
+   */
   @NonNull
   protected Set<IConstraintSet> getRegisteredConstraintSets() {
     return registeredConstraintSets;
@@ -93,6 +108,19 @@ public class MetaschemaLoader
     resolveEntities = true;
   }
 
+  /**
+   * Parse the {@code resource} based on the provided {@code xmlObject}.
+   * 
+   * @param resource
+   *          the URI of the resource being parsed
+   * @param xmlObject
+   *          the XML beans object to parse
+   * @param importedMetaschemas
+   *          previously parsed Metaschema resources imported by the provided {@code resource}
+   * @return the parsed resource as a Metaschema instance
+   * @throws MetaschemaException
+   *           if an error occurred while parsing the XML beans object
+   */
   protected IMetaschema newXmlMetaschema(
       @NonNull URI resource,
       @NonNull METASCHEMADocument xmlObject,

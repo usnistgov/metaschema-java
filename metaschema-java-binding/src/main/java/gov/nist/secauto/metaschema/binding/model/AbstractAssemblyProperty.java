@@ -35,6 +35,7 @@ import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Locale;
 
 import javax.xml.namespace.QName;
@@ -49,14 +50,18 @@ abstract class AbstractAssemblyProperty
     extends AbstractNamedModelProperty
     implements IBoundAssemblyInstance {
 
-  public AbstractAssemblyProperty(@NonNull IAssemblyClassBinding parentClassBinding) {
-    super(parentClassBinding);
+  public AbstractAssemblyProperty(@NonNull Field field, @NonNull IAssemblyClassBinding parentClassBinding) {
+    super(field, parentClassBinding);
   }
 
   @Override
   protected IDataTypeHandler newDataTypeHandler() {
     IClassBinding classBinding
         = getParentClassBinding().getBindingContext().getClassBinding(getPropertyInfo().getItemType());
+    if (classBinding == null) {
+      throw new IllegalStateException(
+          String.format("Class '%s' is not bound", getPropertyInfo().getItemType().getClass().getName()));
+    }
     return new ClassDataTypeHandler(classBinding, this);
   }
 

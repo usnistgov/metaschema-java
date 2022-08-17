@@ -61,9 +61,9 @@ class FieldDefinitionTypeInfoImpl
     buildCommonProperties(metaschemaField);
 
     metaschemaField.addMember("isCollapsible", "$L", getDefinition().isCollapsible());
-    buildConstraints(metaschemaField);
 
     builder.addAnnotation(metaschemaField.build());
+    buildConstraints(builder);
     return retval;
   }
 }

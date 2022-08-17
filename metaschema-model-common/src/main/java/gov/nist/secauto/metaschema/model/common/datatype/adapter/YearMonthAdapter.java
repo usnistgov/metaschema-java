@@ -26,24 +26,29 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.time.Period;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class YearMonthAdapter
     extends AbstractDataTypeAdapter<Period, IYearMonthDurationItem> {
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of("year-month-duration"));
 
-  @SuppressWarnings("null")
   YearMonthAdapter() {
     super(Period.class);
   }
 
   @Override
-  public String getName() {
-    return "year-month-duration";
+  public List<String> getNames() {
+    return NAMES;
   }
 
   @Override
@@ -62,9 +67,8 @@ public class YearMonthAdapter
     }
   }
 
-  @SuppressWarnings("null")
   @Override
-  public @NonNull Class<IYearMonthDurationItem> getItemClass() {
+  public Class<IYearMonthDurationItem> getItemClass() {
     return IYearMonthDurationItem.class;
   }
 

@@ -26,7 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIPv4AddressItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import inet.ipaddr.AddressStringException;
@@ -37,6 +41,9 @@ import inet.ipaddr.ipv4.IPv4Address;
 
 public class IPv4AddressAdapter
     extends AbstractDataTypeAdapter<IPv4Address, IIPv4AddressItem> {
+  @NonNull
+  private static final List<String> NAMES = ObjectUtils.notNull(
+      List.of("ip-v4-address"));
   private static final IPAddressStringParameters IP_V_4;
 
   static {
@@ -45,14 +52,13 @@ public class IPv4AddressAdapter
         .allowPrefixesBeyondAddressSize(false).getParentBuilder().toParams();
   }
 
-  @SuppressWarnings("null")
   IPv4AddressAdapter() {
     super(IPv4Address.class);
   }
 
   @Override
-  public String getName() {
-    return "ip-v4-address";
+  public List<String> getNames() {
+    return NAMES;
   }
 
   @SuppressWarnings("null")
@@ -71,9 +77,8 @@ public class IPv4AddressAdapter
     return (IPv4Address) obj;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public @NonNull Class<IIPv4AddressItem> getItemClass() {
+  public Class<IIPv4AddressItem> getItemClass() {
     return IIPv4AddressItem.class;
   }
 
