@@ -39,6 +39,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonFactoryFactory;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
+import gov.nist.secauto.metaschema.binding.io.yaml.YamlFactoryFactory;
 import gov.nist.secauto.metaschema.model.common.configuration.DefaultConfiguration;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
@@ -300,8 +301,14 @@ public class DefaultBoundLoader implements IBoundLoader {
     Class<?> clazz;
     switch (format) {
     case JSON:
-    case YAML:
       clazz = detectModelJsonClass(ObjectUtils.notNull(JsonFactoryFactory.instance().createParser(bis)));
+      if (clazz == null) {
+        throw new IllegalStateException(
+            String.format("Detected format '%s', but unable to detect the bound data type", format.name()));
+      }
+      break;
+    case YAML:
+      clazz = detectModelJsonClass(ObjectUtils.notNull(YamlFactoryFactory.instance().createParser(bis)));
       if (clazz == null) {
         throw new IllegalStateException(
             String.format("Detected format '%s', but unable to detect the bound data type", format.name()));
