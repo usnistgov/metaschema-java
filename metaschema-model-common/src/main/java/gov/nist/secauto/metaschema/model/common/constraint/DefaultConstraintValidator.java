@@ -345,24 +345,6 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
 
     KeyRef keyRef = new KeyRef(constraint, node, new ArrayList<>(targets.asList()));
     keyRefItems.add(keyRef);
-    // for (IItem target : ) {
-    // assert target != null;
-    // INodeItem item = (INodeItem) target;
-    // try {
-    // String key = buildKey(constraint.getKeyFields(), item);
-    //
-    // // LOGGER.info("key-ref: {} {}", key, item);
-    // //
-    // List<INodeItem> items = keyRefItems.get(key);
-    // if (items == null) {
-    // items = new LinkedList<>(); // NOPMD - intentional
-    // keyRefItems.put(key, items);
-    // }
-    // items.add(item);
-    // } catch (MetapathException ex) {
-    // rethrowConstraintError(constraint, item, ex);
-    // }
-    // }
   }
 
   protected void validateExpect(@NonNull List<? extends IExpectConstraint> constraints,
@@ -484,11 +466,9 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
 
             if (referencedItem == null) {
               getConstraintValidationHandler().handleIndexMiss(constraint, keyRef.getNode(), item);
-//              LOGGER.atError().log();
             }
           } catch (MetapathException ex) {
             getConstraintValidationHandler().handleKeyMatchError(constraint, keyRef.getNode(), item, ex);
-//            rethrowConstraintError(constraint, item, ex);
           }
         }
       }
