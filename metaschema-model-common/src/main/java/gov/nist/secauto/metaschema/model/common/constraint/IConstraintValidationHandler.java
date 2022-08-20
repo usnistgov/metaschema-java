@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IConstraintValidationHandler {
 
@@ -46,6 +47,10 @@ public interface IConstraintValidationHandler {
       @NonNull ICardinalityConstraint constraint,
       @NonNull INodeItem node,
       @NonNull ISequence<? extends INodeItem> targets);
+
+  void handleIndexDuplicateViolation(
+      @NonNull IIndexConstraint constraint,
+      @NonNull INodeItem node);
 
   void handleIndexDuplicateKeyViolation(
       @NonNull IIndexConstraint constraint,
@@ -83,6 +88,11 @@ public interface IConstraintValidationHandler {
       @NonNull INodeItem node,
       @NonNull INodeItem target,
       @NonNull MetapathException ex);
+
+  void handleIndexMiss(
+      @NonNull IIndexHasKeyConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target);
 
   void handleAllowedValuesViolation(
       @NonNull List<IAllowedValuesConstraint> failedConstraints,

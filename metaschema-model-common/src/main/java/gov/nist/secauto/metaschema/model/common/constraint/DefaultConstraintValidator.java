@@ -32,10 +32,8 @@ import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression.ResultType;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnBoolean;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.model.common.metapath.item.AbstractNodeItemVisitor;
@@ -44,22 +42,20 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeIte
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -76,10 +72,9 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
   @NonNull
   private final Map<INodeItem, ValueStatus> valueMap = new LinkedHashMap<>(); // NOPMD - intentional
   @NonNull
-  private final Map<String, Map<String, INodeItem>> indexToKeyToItemMap = new LinkedHashMap<>(); // NOPMD - intentional
+  private final Map<String, IIndex> indexNameToIndexMap = new ConcurrentHashMap<>();
   @NonNull
-  private final Map<String, Map<String, List<INodeItem>>> indexToKeyRefToItemMap // NOPMD - intentional
-      = new LinkedHashMap<>();
+  private final Map<String, List<KeyRef>> indexNameToKeyRefMap = new ConcurrentHashMap<>();
   @NonNull
   private final DynamicContext metapathContext;
   @NonNull
@@ -220,33 +215,31 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
   protected void validateIndex(@NonNull IIndexConstraint constraint, @NonNull IAssemblyNodeItem node,
       @NonNull ISequence<? extends INodeItem> targets) {
     String indexName = constraint.getName();
-    if (indexToKeyToItemMap.containsKey(indexName)) {
-      String msg = String.format("Duplicate index named '%s' found at path '%s'", indexName,
-          node.getMetapath());
-      LOGGER.atError().log(msg);
-      throw new MetapathException(msg);
+    if (indexNameToIndexMap.containsKey(indexName)) {
+      getConstraintValidationHandler().handleIndexDuplicateViolation(constraint, node);
+      return; // NOPMD - readability
+//      String msg = String.format("Duplicate index named '%s' found at path '%s'", indexName,
+//          node.getMetapath());
+//      LOGGER.atError().log(msg);
+//      throw new MetapathException(msg);
     }
 
-    Map<String, INodeItem> indexItems = new HashMap<>(); // NOPMD - not multithreaded
+    IIndex index = IIndex.newInstance(constraint.getKeyFields());
     targets.asStream()
         .forEachOrdered(item -> {
           assert item != null;
-          @NonNull
-          String key;
+
           try {
-            key = buildKey(constraint.getKeyFields(), item);
+            INodeItem oldItem = index.put(item, metapathContext);
+            if (oldItem != null) {
+              getConstraintValidationHandler().handleIndexDuplicateKeyViolation(constraint, node, oldItem, item);
+            }
           } catch (MetapathException ex) {
             getConstraintValidationHandler().handleKeyMatchError(constraint, node, item, ex);
-            throw ex;
-          }
-
-          // LOGGER.info("key: {} {}", key, item);
-          INodeItem oldItem = indexItems.put(key, item);
-          if (oldItem != null) {
-            getConstraintValidationHandler().handleIndexDuplicateKeyViolation(constraint, node, oldItem, item);
+//            throw ex;
           }
         });
-    indexToKeyToItemMap.put(indexName, indexItems);
+    indexNameToIndexMap.put(indexName, index);
   }
 
   protected void validateUnique(@NonNull List<? extends IUniqueConstraint> constraints,
@@ -272,25 +265,18 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
 
   protected void validateUnique(@NonNull IUniqueConstraint constraint,
       @NonNull IAssemblyNodeItem node, @NonNull ISequence<? extends INodeItem> targets) {
-    Map<String, INodeItem> keyToItemMap = new HashMap<>(); // NOPMD - not multithreaded
-
+    IIndex index = IIndex.newInstance(constraint.getKeyFields());
     targets.asStream()
         .forEachOrdered(item -> {
           assert item != null;
-          @NonNull
-          String key;
           try {
-            key = buildKey(constraint.getKeyFields(), item);
+            INodeItem oldItem = index.put(item, metapathContext);
+            if (oldItem != null) {
+              getConstraintValidationHandler().handleUniqueKeyViolation(constraint, node, oldItem, item);
+            }
           } catch (MetapathException ex) {
             getConstraintValidationHandler().handleKeyMatchError(constraint, node, item, ex);
             throw ex;
-          }
-
-          if (keyToItemMap.containsKey(key)) {
-            INodeItem oldItem = ObjectUtils.notNull(keyToItemMap.get(key));
-            getConstraintValidationHandler().handleUniqueKeyViolation(constraint, node, oldItem, item);
-          } else {
-            keyToItemMap.put(key, item);
           }
         });
   }
@@ -335,43 +321,48 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
         });
   }
 
-  protected void validateIndexHasKey(@NonNull List<? extends IIndexHasKeyConstraint> constraints,
-      @NonNull IDefinitionNodeItem item) {
+  protected void validateIndexHasKey(
+      @NonNull List<? extends IIndexHasKeyConstraint> constraints,
+      @NonNull IDefinitionNodeItem node) {
 
     for (IIndexHasKeyConstraint constraint : constraints) {
-      ISequence<? extends IDefinitionNodeItem> targets = constraint.matchTargets(item, getMetapathContext());
-      validateIndexHasKey(constraint, targets);
+      ISequence<? extends IDefinitionNodeItem> targets = constraint.matchTargets(node, getMetapathContext());
+      validateIndexHasKey(constraint, node, targets);
     }
   }
 
-  protected void validateIndexHasKey(@NonNull IIndexHasKeyConstraint constraint,
+  protected void validateIndexHasKey(
+      @NonNull IIndexHasKeyConstraint constraint,
+      @NonNull IDefinitionNodeItem node,
       @NonNull ISequence<? extends INodeItem> targets) {
     String indexName = constraint.getIndexName();
 
-    Map<String, List<INodeItem>> keyRefItems = indexToKeyRefToItemMap.get(indexName);
+    List<KeyRef> keyRefItems = indexNameToKeyRefMap.get(indexName);
     if (keyRefItems == null) {
-      keyRefItems = new LinkedHashMap<>();
-      indexToKeyRefToItemMap.put(indexName, keyRefItems);
+      keyRefItems = new LinkedList<>();
+      indexNameToKeyRefMap.put(indexName, keyRefItems);
     }
 
-    for (IItem target : targets.asList()) {
-      assert target != null;
-      INodeItem item = (INodeItem) target;
-      try {
-        String key = buildKey(constraint.getKeyFields(), item);
-
-        // LOGGER.info("key-ref: {} {}", key, item);
-        //
-        List<INodeItem> items = keyRefItems.get(key);
-        if (items == null) {
-          items = new LinkedList<>(); // NOPMD - intentional
-          keyRefItems.put(key, items);
-        }
-        items.add(item);
-      } catch (MetapathException ex) {
-        rethrowConstraintError(constraint, item, ex);
-      }
-    }
+    KeyRef keyRef = new KeyRef(constraint, node, new ArrayList<>(targets.asList()));
+    keyRefItems.add(keyRef);
+    // for (IItem target : ) {
+    // assert target != null;
+    // INodeItem item = (INodeItem) target;
+    // try {
+    // String key = buildKey(constraint.getKeyFields(), item);
+    //
+    // // LOGGER.info("key-ref: {} {}", key, item);
+    // //
+    // List<INodeItem> items = keyRefItems.get(key);
+    // if (items == null) {
+    // items = new LinkedList<>(); // NOPMD - intentional
+    // keyRefItems.put(key, items);
+    // }
+    // items.add(item);
+    // } catch (MetapathException ex) {
+    // rethrowConstraintError(constraint, item, ex);
+    // }
+    // }
   }
 
   protected void validateExpect(@NonNull List<? extends IExpectConstraint> constraints,
@@ -474,87 +465,30 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     }
   }
 
-  @NonNull
-  protected String buildKey(@NonNull List<? extends IKeyField> keyFields, @NonNull INodeItem item) {
-    StringBuilder key = new StringBuilder();
-    for (IKeyField keyField : keyFields) {
-      MetapathExpression keyPath = keyField.getTarget();
-
-      INodeItem keyItem;
-      try {
-        keyItem = keyPath.evaluateAs(item, ResultType.NODE, getMetapathContext());
-      } catch (InvalidTypeMetapathException ex) {
-        throw new MetapathException("Key path did not result in a single node", ex);
-      }
-
-      String keyValue = null;
-      if (keyItem != null) {
-        keyValue = FnData.fnDataItem(keyItem).asString();
-        keyValue = applyPattern(keyItem, keyField, keyValue);
-      } // empty key
-
-      if (keyValue != null) {
-        key.append(keyValue);
-      }
-      key.append("|||");
-    }
-    @SuppressWarnings("null")
-    @NonNull
-    String retval = key.toString();
-    return retval;
-  }
-
-  /**
-   * Apply the key value pattern, if configured, to generate the final key value.
-   * 
-   * @param keyItem
-   *          the node item used to form the key field
-   * @param keyField
-   *          the key field configuration from the constraint
-   * @param keyValue
-   *          the current key value
-   * @return the final key value
-   */
-  protected String applyPattern(@NonNull INodeItem keyItem, @NonNull IKeyField keyField, @NonNull String keyValue) {
-    String retval = keyValue;
-    Pattern pattern = keyField.getPattern();
-    if (pattern != null) {
-      Matcher matcher = pattern.matcher(keyValue);
-      if (!matcher.matches()) {
-        throw new MetapathException(
-            String.format("Key field declares the pattern '%s' which does not match the value '%s' of node '%s'",
-                pattern.pattern(), keyValue, keyItem.getMetapath()));
-      }
-
-      if (matcher.groupCount() != 1) {
-        throw new MetapathException(String.format(
-            "The first group was not a match for value '%s' of node '%s' for key field pattern '%s'",
-            keyValue, keyItem.getMetapath(), pattern.pattern()));
-      }
-      retval = matcher.group(1);
-    }
-    return retval;
-  }
-
   @Override
   public void finalizeValidation() {
     // key references
-    for (Map.Entry<String, Map<String, List<INodeItem>>> entry : indexToKeyRefToItemMap
-        .entrySet()) {
+    for (Map.Entry<String, List<KeyRef>> entry : indexNameToKeyRefMap.entrySet()) {
       String indexName = entry.getKey();
-      Map<String, List<INodeItem>> keyRefToItemMap = entry.getValue();
+      IIndex index = indexNameToIndexMap.get(indexName);
 
-      Map<String, INodeItem> indexItems = indexToKeyToItemMap.get(indexName);
+      List<KeyRef> keyRefs = entry.getValue();
 
-      for (Map.Entry<String, List<INodeItem>> keyRefEntry : keyRefToItemMap
-          .entrySet()) {
-        String key = keyRefEntry.getKey();
-        List<INodeItem> items = keyRefEntry.getValue();
+      for (KeyRef keyRef : keyRefs) {
+        IIndexHasKeyConstraint constraint = keyRef.getConstraint();
+        for (INodeItem item : keyRef.getTargets()) {
+          assert item != null;
 
-        if (!indexItems.containsKey(key)) {
-          for (INodeItem item : items) {
-            LOGGER.atError().log(String.format("Key reference not found in index '%s' for item at path '%s'", indexName,
-                item.getMetapath()));
+          try {
+            INodeItem referencedItem = index.get(item, constraint.getKeyFields(), getMetapathContext());
+
+            if (referencedItem == null) {
+              getConstraintValidationHandler().handleIndexMiss(constraint, keyRef.getNode(), item);
+//              LOGGER.atError().log();
+            }
+          } catch (MetapathException ex) {
+            getConstraintValidationHandler().handleKeyMatchError(constraint, keyRef.getNode(), item, ex);
+//            rethrowConstraintError(constraint, item, ex);
           }
         }
       }
@@ -668,6 +602,39 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     protected Void defaultResult() {
       // no result value
       return null;
+    }
+  }
+
+  private static class KeyRef {
+    @NonNull
+    private final IIndexHasKeyConstraint constraint;
+    @NonNull
+    private final INodeItem node;
+    @NonNull
+    private final List<INodeItem> targets;
+
+    public KeyRef(
+        @NonNull IIndexHasKeyConstraint constraint,
+        @NonNull INodeItem node,
+        @NonNull List<INodeItem> targets) {
+      this.node = node;
+      this.constraint = constraint;
+      this.targets = targets;
+    }
+
+    @NonNull
+    public IIndexHasKeyConstraint getConstraint() {
+      return constraint;
+    }
+
+    @NonNull
+    protected INodeItem getNode() {
+      return node;
+    }
+
+    @NonNull
+    public List<INodeItem> getTargets() {
+      return targets;
     }
   }
 }

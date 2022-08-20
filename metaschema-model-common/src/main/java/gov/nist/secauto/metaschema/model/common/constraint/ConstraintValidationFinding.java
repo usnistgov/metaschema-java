@@ -32,10 +32,12 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationFinding;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Represents an individual constraint validation issue.
@@ -50,32 +52,21 @@ public class ConstraintValidationFinding implements IValidationFinding { // NOPM
   @NonNull
   private final List<? extends INodeItem> targets;
   private final Throwable cause;
+  private final Level severity;
 
-  public ConstraintValidationFinding(
-      @NonNull IConstraint constraint,
-      @NonNull CharSequence message,
-      Throwable cause,
-      @NonNull INodeItem node,
-      @NonNull List<? extends INodeItem> targets) {
-    this(
-        CollectionUtil.singletonList(constraint),
-        message,
-        cause,
-        node,
-        targets);
-  }
-
-  public ConstraintValidationFinding(
+  private ConstraintValidationFinding(
       @NonNull List<? extends IConstraint> constraints,
-      @NonNull CharSequence message,
-      Throwable cause,
       @NonNull INodeItem node,
-      @NonNull List<? extends INodeItem> targets) {
+      @NonNull CharSequence message,
+      @NonNull List<? extends INodeItem> targets,
+      @NonNull Level severity,
+      @Nullable Throwable cause) {
     this.constraints = constraints;
-    this.message = message;
-    this.cause = cause;
     this.node = node;
+    this.message = message;
     this.targets = targets;
+    this.severity = severity;
+    this.cause = cause;
   }
 
   public List<? extends IConstraint> getConstraints() {
@@ -103,15 +94,94 @@ public class ConstraintValidationFinding implements IValidationFinding { // NOPM
   @SuppressWarnings("null")
   @Override
   public Level getSeverity() {
-    return getConstraints().stream()
-        .map(IConstraint::getLevel)
-        .max(Comparator.comparing(Level::ordinal))
-        .get();
+    return severity;
   }
 
   @SuppressWarnings("null")
   @Override
   public @NonNull URI getDocumentUri() {
     return getNode().getBaseUri();
+  }
+
+  @NonNull
+  public static Builder builder(@NonNull List<? extends IConstraint> constraints, @NonNull INodeItem node) {
+    return new Builder(constraints, node);
+  }
+
+  @NonNull
+  public static Builder builder(@NonNull IConstraint constraint, @NonNull INodeItem node) {
+    return new Builder(CollectionUtil.singletonList(constraint), node);
+  }
+
+  public static class Builder {
+    @NonNull
+    private final List<? extends IConstraint> constraints;
+    @NonNull
+    private final INodeItem node;
+    private CharSequence message;
+    private List<? extends INodeItem> targets;
+    private Throwable cause;
+    private Level severity;
+
+    private Builder(@NonNull List<? extends IConstraint> constraints, @NonNull INodeItem node) {
+      this.constraints = constraints;
+      this.node = node;
+    }
+    
+    @NonNull
+    public Builder message(@NonNull CharSequence message) {
+      this.message = message;
+      return this;
+    }
+    
+    @NonNull
+    public Builder target(@NonNull INodeItem target) {
+      this.targets = Collections.singletonList(target);
+      return this;
+    }
+    
+    @NonNull
+    public Builder targets(@NonNull List<? extends INodeItem> targets) {
+      this.targets = CollectionUtil.unmodifiableList(targets);
+      return this;
+    }
+    
+    @NonNull
+    public Builder cause(@NonNull Throwable cause) {
+      this.cause = cause;
+      return this;
+    }
+    
+    @NonNull
+    public Builder severity(@NonNull Level severity) {
+      this.severity = severity;
+      return this;
+    }
+
+    @NonNull
+    public ConstraintValidationFinding build() {
+      if (message == null) {
+        throw new IllegalStateException("Missing message");
+      }
+      
+      Level severity = this.severity == null ? constraints.stream()
+          .map(IConstraint::getLevel)
+          .max(Comparator.comparing(Level::ordinal))
+          .get() : this.severity;
+      
+      List<? extends INodeItem> targets = this.targets == null ? CollectionUtil.emptyList() : this.targets;
+
+      assert message != null;
+      assert targets != null;
+      assert severity != null;
+      
+      return new ConstraintValidationFinding(
+          constraints,
+          node,
+          message,
+          targets,
+          severity,
+          cause);
+    }
   }
 }

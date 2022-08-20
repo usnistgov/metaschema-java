@@ -74,28 +74,7 @@ public class FindingCollectingConstraintValidationHandler
     return highestLevel;
   }
 
-  protected void newFinding(
-      @NonNull IConstraint constraint,
-      @NonNull INodeItem node,
-      @NonNull List<? extends INodeItem> targets,
-      @NonNull CharSequence message,
-      Throwable cause) {
-    newFinding(
-        CollectionUtil.singletonList(constraint),
-        node,
-        targets,
-        message,
-        cause);
-  }
-
-  protected void newFinding(
-      @NonNull List<? extends IConstraint> constraints,
-      @NonNull INodeItem node,
-      @NonNull List<? extends INodeItem> targets,
-      @NonNull CharSequence message,
-      Throwable cause) {
-
-    ConstraintValidationFinding finding = new ConstraintValidationFinding(constraints, message, cause, node, targets);
+  protected void addFinding(@NonNull ConstraintValidationFinding finding) {
     findings.add(finding);
 
     Level severity = finding.getSeverity();
@@ -109,8 +88,10 @@ public class FindingCollectingConstraintValidationHandler
       @NonNull ICardinalityConstraint constraint,
       @NonNull INodeItem node,
       @NonNull ISequence<? extends INodeItem> targets) {
-    newFinding(constraint, node, CollectionUtil.unmodifiableList(targets.asList()),
-        newCardinalityMinimumViolationMessage(constraint, node, targets), null);
+    addFinding(ConstraintValidationFinding.builder(constraint, node)
+        .targets(targets.asList())
+        .message(newCardinalityMinimumViolationMessage(constraint, node, targets))
+        .build());
   }
 
   @Override
@@ -118,8 +99,10 @@ public class FindingCollectingConstraintValidationHandler
       @NonNull ICardinalityConstraint constraint,
       @NonNull INodeItem node,
       @NonNull ISequence<? extends INodeItem> targets) {
-    newFinding(constraint, node, CollectionUtil.unmodifiableList(targets.asList()),
-        newCardinalityMaximumViolationMessage(constraint, node, targets), null);
+    addFinding(ConstraintValidationFinding.builder(constraint, node)
+        .targets(targets.asList())
+        .message(newCardinalityMaximumViolationMessage(constraint, node, targets))
+        .build());
   }
 
   @Override
@@ -128,8 +111,10 @@ public class FindingCollectingConstraintValidationHandler
       @NonNull INodeItem node,
       @NonNull INodeItem oldItem,
       @NonNull INodeItem target) {
-    newFinding(constraint, node, CollectionUtil.singletonList(target),
-        newIndexDuplicateKeyViolationMessage(constraint, node, oldItem, target), null);
+    addFinding(ConstraintValidationFinding.builder(constraint, node)
+        .target(target)
+        .message(newIndexDuplicateKeyViolationMessage(constraint, node, oldItem, target))
+        .build());
   }
 
   @Override
@@ -138,8 +123,10 @@ public class FindingCollectingConstraintValidationHandler
       @NonNull INodeItem node,
       @NonNull INodeItem oldItem,
       @NonNull INodeItem target) {
-    newFinding(constraint, node, CollectionUtil.singletonList(target),
-        newUniqueKeyViolationMessage(constraint, node, oldItem, target), null);
+    addFinding(ConstraintValidationFinding.builder(constraint, node)
+        .target(target)
+        .message(newUniqueKeyViolationMessage(constraint, node, oldItem, target))
+        .build());
   }
 
   @SuppressWarnings("null")
@@ -149,7 +136,11 @@ public class FindingCollectingConstraintValidationHandler
       @NonNull INodeItem node,
       @NonNull INodeItem target,
       @NonNull MetapathException cause) {
-    newFinding(constraint, node, CollectionUtil.singletonList(target), cause.getLocalizedMessage(), cause);
+    addFinding(ConstraintValidationFinding.builder(constraint, node)
+        .target(target)
+        .message(cause.getLocalizedMessage())
+        .cause(cause)
+        .build());
   }
 
   @Override
@@ -158,8 +149,10 @@ public class FindingCollectingConstraintValidationHandler
       @NonNull INodeItem node,
       @NonNull INodeItem target,
       @NonNull String value) {
-    newFinding(constraint, node, CollectionUtil.singletonList(target),
-        newMatchPatternViolationMessage(constraint, node, target, value), null);
+    addFinding(ConstraintValidationFinding.builder(constraint, node)
+        .target(target)
+        .message(newMatchPatternViolationMessage(constraint, node, target, value))
+        .build());
   }
 
   @Override
@@ -169,9 +162,12 @@ public class FindingCollectingConstraintValidationHandler
       @NonNull INodeItem target,
       @NonNull String value,
       @NonNull IllegalArgumentException cause) {
-    newFinding(constraint, node, CollectionUtil.singletonList(target),
-        newMatchDatatypeViolationMessage(constraint, node, target, value), cause);
-  }
+    addFinding(ConstraintValidationFinding.builder(constraint, node)
+        .target(target)
+        .message(newMatchDatatypeViolationMessage(constraint, node, target, value))
+        .cause(cause)
+        .build());
+    }
 
   @Override
   public void handleExpectViolation(
@@ -179,15 +175,34 @@ public class FindingCollectingConstraintValidationHandler
       @NonNull INodeItem node,
       @NonNull INodeItem target,
       @NonNull DynamicContext dynamicContext) {
-    newFinding(constraint, node, CollectionUtil.singletonList(target),
-        newExpectViolationMessage(constraint, node, target, dynamicContext), null);
+    addFinding(ConstraintValidationFinding.builder(constraint, node)
+        .target(target)
+        .message(newExpectViolationMessage(constraint, node, target, dynamicContext))
+        .build());
   }
 
   @Override
   public void handleAllowedValuesViolation(@NonNull List<IAllowedValuesConstraint> failedConstraints,
       @NonNull INodeItem target) {
-    newFinding(failedConstraints, target, CollectionUtil.singletonList(target),
-        newAllowedValuesViolationMessage(failedConstraints, target), null);
+    addFinding(ConstraintValidationFinding.builder(failedConstraints, target)
+        .target(target)
+        .message(newAllowedValuesViolationMessage(failedConstraints, target))
+        .build());
+    }
+
+  @Override
+  public void handleIndexDuplicateViolation(IIndexConstraint constraint, INodeItem node) {
+    addFinding(ConstraintValidationFinding.builder(constraint, node)
+        .message(newIndexDuplicateViolationMessage(constraint, node))
+        .severity(Level.CRITICAL)
+        .build());
+  }
+
+  @Override
+  public void handleIndexMiss(IIndexHasKeyConstraint constraint, INodeItem node, INodeItem target) {
+    addFinding(ConstraintValidationFinding.builder(constraint, node)
+        .message(newIndexMissMessage(constraint, node, target))
+        .build());
   }
 
 }
