@@ -26,22 +26,32 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+
+import java.util.List;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-/**
- * Represents a rule that generates a key-based index containing references to data items found in a
- * Metaschema data instance.
- * <p>
- * The generated index can be used to check cross-references between Metaschema data objects using
- * the {@link IIndexHasKeyConstraint}.
- */
-public interface IIndexConstraint extends IKeyConstraint {
-  /**
-   * Get the name of the index, which is used to refer to the index by an
-   * {@link IIndexHasKeyConstraint}.
-   * 
-   * @return the name of the index
-   */
+public interface IIndex {
+
+  static IIndex newInstance(@NonNull List<? extends IKeyField> keyFields) {
+    return new DefaultIndex(keyFields);
+  }
+
+  INodeItem put(@NonNull INodeItem item, @NonNull DynamicContext dynamicContext);
+
+  INodeItem get(@NonNull List<String> key);
+
+  default INodeItem get(
+      @NonNull INodeItem item,
+      @NonNull List<? extends IKeyField> keyFields,
+      @NonNull DynamicContext dynamicContext) {
+    List<String> key = toKey(item, keyFields, dynamicContext);
+    return get(key);
+  }
+
   @NonNull
-  String getName();
+  List<String> toKey(@NonNull INodeItem item, @NonNull List<? extends IKeyField> keyFields,
+      @NonNull DynamicContext dynamicContext);
 }

@@ -155,4 +155,26 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
         allowedValues,
         toPath(target));
   }
+
+  @SuppressWarnings("null")
+  @NonNull
+  protected CharSequence newIndexDuplicateViolationMessage(
+      @NonNull IIndexConstraint constraint,
+      @NonNull INodeItem node) {
+    return String.format("Duplicate index named '%s' found at path '%s'",
+        constraint.getName(),
+        node.getMetapath());
+  }
+
+  @SuppressWarnings("null")
+  @NonNull
+  protected CharSequence newIndexMissMessage(
+      @NonNull IIndexHasKeyConstraint constraint,
+      @SuppressWarnings("unused") @NonNull INodeItem node,
+      @NonNull INodeItem target) {
+    return String.format("Key reference not found in index '%s' for item at path '%s'",
+        constraint.getIndexName(),
+        target.getMetapath());
+  }
+
 }

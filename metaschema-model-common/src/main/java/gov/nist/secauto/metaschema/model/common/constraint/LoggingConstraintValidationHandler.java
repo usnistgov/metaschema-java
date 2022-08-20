@@ -231,4 +231,20 @@ public class LoggingConstraintValidationHandler
     }
   }
 
+  @Override
+  public void handleIndexDuplicateViolation(IIndexConstraint constraint, INodeItem node) {
+    Level level = Level.CRITICAL;
+    if (isLogged(level)) {
+      logConstraint(level, node, newIndexDuplicateViolationMessage(constraint, node), null);
+    }
+  }
+
+  @Override
+  public void handleIndexMiss(IIndexHasKeyConstraint constraint, INodeItem node, INodeItem target) {
+    Level level = constraint.getLevel();
+    if (isLogged(level)) {
+      logConstraint(level, node, newIndexMissMessage(constraint, node, target), null);
+    }
+  }
+
 }
