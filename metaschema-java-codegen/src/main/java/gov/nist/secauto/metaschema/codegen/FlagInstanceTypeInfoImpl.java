@@ -96,7 +96,7 @@ class FlagInstanceTypeInfoImpl
     }
 
     builder.addAnnotation(annotation.build());
-    
+
     AnnotationUtils.buildValueConstraints(builder, definition);
 
     IModelDefinition parent = instance.getContainingDefinition();

@@ -216,9 +216,8 @@ class ModelInstanceTypeInfoImpl
         IFieldDefinition fieldDefinition = (IFieldDefinition) definition;
         IDataTypeAdapter<?> valueDataType = fieldDefinition.getJavaTypeAdapter();
 
-
         Object defaultValue = fieldDefinition.getDefaultValue();
-        
+
         if (!MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType) || defaultValue != null) {
           AnnotationSpec.Builder boundFieldValueAnnotation = AnnotationSpec.builder(BoundFieldValue.class);
 
@@ -238,7 +237,7 @@ class ModelInstanceTypeInfoImpl
 
     if (maxOccurs == -1 || maxOccurs > 1) {
       AnnotationSpec.Builder groupAsAnnoation = AnnotationSpec.builder(GroupAs.class);
-      
+
       groupAsAnnoation.addMember("name", "$S",
           ObjectUtils.requireNonNull(modelInstance.getGroupAsName(), "The grouping name must be non-null"));
 
@@ -262,10 +261,10 @@ class ModelInstanceTypeInfoImpl
         groupAsAnnoation.addMember("inXml", "$T.$L",
             XmlGroupAsBehavior.class, xmlGroupAsBehavior.toString());
       }
-      
+
       builder.addAnnotation(groupAsAnnoation.build());
     }
-    
+
     return retval.isEmpty() ? CollectionUtil.emptySet() : CollectionUtil.unmodifiableSet(retval);
   }
 

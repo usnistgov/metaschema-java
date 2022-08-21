@@ -82,7 +82,7 @@ class FieldValueTypeInfoImpl
     if (defaultValue != null) {
       fieldValue.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
     }
-    
+
     builder.addAnnotation(fieldValue.build());
     return CollectionUtil.emptySet();
   }

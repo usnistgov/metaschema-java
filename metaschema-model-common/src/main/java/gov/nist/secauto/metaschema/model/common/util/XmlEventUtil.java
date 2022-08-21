@@ -148,10 +148,11 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   @SuppressWarnings("null")
   @NonNull
   public static CharSequence toString(@Nullable Location location) {
-    return location == null ? "unknown" : new StringBuilder()
-        .append(location.getLineNumber())
-        .append(':')
-        .append(location.getColumnNumber());
+    return location == null ? "unknown"
+        : new StringBuilder()
+            .append(location.getLineNumber())
+            .append(':')
+            .append(location.getColumnNumber());
   }
 
   /**

@@ -127,31 +127,31 @@ public class ConstraintValidationFinding implements IValidationFinding { // NOPM
       this.constraints = constraints;
       this.node = node;
     }
-    
+
     @NonNull
     public Builder message(@NonNull CharSequence message) {
       this.message = message;
       return this;
     }
-    
+
     @NonNull
     public Builder target(@NonNull INodeItem target) {
       this.targets = Collections.singletonList(target);
       return this;
     }
-    
+
     @NonNull
     public Builder targets(@NonNull List<? extends INodeItem> targets) {
       this.targets = CollectionUtil.unmodifiableList(targets);
       return this;
     }
-    
+
     @NonNull
     public Builder cause(@NonNull Throwable cause) {
       this.cause = cause;
       return this;
     }
-    
+
     @NonNull
     public Builder severity(@NonNull Level severity) {
       this.severity = severity;
@@ -163,18 +163,18 @@ public class ConstraintValidationFinding implements IValidationFinding { // NOPM
       if (message == null) {
         throw new IllegalStateException("Missing message");
       }
-      
+
       Level severity = this.severity == null ? constraints.stream()
           .map(IConstraint::getLevel)
           .max(Comparator.comparing(Level::ordinal))
           .get() : this.severity;
-      
+
       List<? extends INodeItem> targets = this.targets == null ? CollectionUtil.emptyList() : this.targets;
 
       assert message != null;
       assert targets != null;
       assert severity != null;
-      
+
       return new ConstraintValidationFinding(
           constraints,
           node,

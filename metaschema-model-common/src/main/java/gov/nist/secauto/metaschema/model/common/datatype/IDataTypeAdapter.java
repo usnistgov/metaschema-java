@@ -65,6 +65,7 @@ public interface IDataTypeAdapter<TYPE> {
 
   /**
    * Get the most preferred name for this data type.
+   * 
    * @return the name
    */
   @NonNull

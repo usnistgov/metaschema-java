@@ -43,7 +43,7 @@ public interface IValuedDefinition extends IDefinition {
    */
   @NonNull
   IDataTypeAdapter<?> getJavaTypeAdapter();
-  
+
   @Nullable
   Object getDefaultValue();
 }

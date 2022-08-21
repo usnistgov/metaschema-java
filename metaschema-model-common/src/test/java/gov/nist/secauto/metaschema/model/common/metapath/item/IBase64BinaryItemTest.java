@@ -40,7 +40,6 @@ class IBase64BinaryItemTest {
   private static final long MIN_LONG = -9_223_372_036_854_775_808L;
   private static final long MAX_LONG = 9_223_372_036_854_775_807L;
   private static final String BASE_64 = "gAAAAAAAAAB//////////w==";
-  
 
   @Test
   void testValueOf() {

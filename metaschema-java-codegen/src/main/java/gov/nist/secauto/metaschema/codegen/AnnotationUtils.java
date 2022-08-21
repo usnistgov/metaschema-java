@@ -121,7 +121,7 @@ final class AnnotationUtils {
       @NonNull IValuedDefinition definition) {
     if (!definition.getConstraints().isEmpty()) {
       AnnotationSpec.Builder valueConstraintsAnnotation = AnnotationSpec.builder(ValueConstraints.class);
-    
+
       applyAllowedValuesConstraints(valueConstraintsAnnotation, definition.getAllowedValuesConstraints());
       applyIndexHasKeyConstraints(valueConstraintsAnnotation, definition.getIndexHasKeyConstraints());
       applyMatchesConstraints(valueConstraintsAnnotation, definition.getMatchesConstraints());
@@ -139,7 +139,7 @@ final class AnnotationUtils {
     List<? extends IIndexHasKeyConstraint> indexHasKey = definition.getIndexHasKeyConstraints();
     List<? extends IMatchesConstraint> matches = definition.getMatchesConstraints();
     List<? extends IExpectConstraint> expects = definition.getExpectConstraints();
-    
+
     if (!allowedValues.isEmpty() || !indexHasKey.isEmpty() || !matches.isEmpty() || !expects.isEmpty()) {
       AnnotationSpec.Builder annotation = AnnotationSpec.builder(ValueConstraints.class);
 
@@ -155,11 +155,11 @@ final class AnnotationUtils {
   public static void buildAssemblyConstraints(
       @NonNull TypeSpec.Builder builder,
       @NonNull IAssemblyDefinition definition) {
-    
+
     List<? extends IIndexConstraint> index = definition.getIndexConstraints();
     List<? extends IUniqueConstraint> unique = definition.getUniqueConstraints();
     List<? extends ICardinalityConstraint> cardinality = definition.getHasCardinalityConstraints();
-    
+
     if (!index.isEmpty() || !unique.isEmpty() || !cardinality.isEmpty()) {
       AnnotationSpec.Builder annotation = AnnotationSpec.builder(AssemblyConstraints.class);
 

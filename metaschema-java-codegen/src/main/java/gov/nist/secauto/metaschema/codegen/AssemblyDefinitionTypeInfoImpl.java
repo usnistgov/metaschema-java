@@ -70,7 +70,7 @@ class AssemblyDefinitionTypeInfoImpl
     // create model instances for the model
     for (IModelInstance instance : model.getModelInstances()) {
       assert instance != null;
-      
+
       if (instance instanceof IChoiceInstance) {
         processModel((IChoiceInstance) instance);
         continue;
