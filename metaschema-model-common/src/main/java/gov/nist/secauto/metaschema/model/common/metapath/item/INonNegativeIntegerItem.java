@@ -36,29 +36,29 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface INonNegativeIntegerItem extends IIntegerItem {
   @SuppressWarnings("null")
   @NonNull
-  public static final INonNegativeIntegerItem ONE = valueOf(BigInteger.ONE);
+  INonNegativeIntegerItem ONE = valueOf(BigInteger.ONE);
   @SuppressWarnings("null")
   @NonNull
-  public static final INonNegativeIntegerItem ZERO = valueOf(BigInteger.ZERO);
+  INonNegativeIntegerItem ZERO = valueOf(BigInteger.ZERO);
 
   @NonNull
-  public static INonNegativeIntegerItem valueOf(@NonNull IIntegerItem value) {
+  static INonNegativeIntegerItem valueOf(@NonNull IIntegerItem value) {
     return valueOf(value.asInteger());
   }
 
   @SuppressWarnings("null")
   @NonNull
-  public static INonNegativeIntegerItem valueOf(long value) {
+  static INonNegativeIntegerItem valueOf(long value) {
     return valueOf(BigInteger.valueOf(value));
   }
 
   @NonNull
-  public static INonNegativeIntegerItem valueOf(@NonNull BigInteger value) {
+  static INonNegativeIntegerItem valueOf(@NonNull BigInteger value) {
     return new NonNegativeIntegerItemImpl(value);
   }
 
   @NonNull
-  public static INonNegativeIntegerItem valueOf(@NonNull String value) {
+  static INonNegativeIntegerItem valueOf(@NonNull String value) {
     try {
       return valueOf(MetaschemaDataTypeProvider.NON_NEGATIVE_INTEGER.parse(value));
     } catch (IllegalArgumentException ex) {
@@ -68,7 +68,7 @@ public interface INonNegativeIntegerItem extends IIntegerItem {
   }
 
   @NonNull
-  public static INonNegativeIntegerItem cast(@NonNull IAnyAtomicItem item) {
+  static INonNegativeIntegerItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.NON_NEGATIVE_INTEGER.cast(item);
   }
 }

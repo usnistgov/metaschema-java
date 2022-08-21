@@ -33,7 +33,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IStringItem extends IAnyAtomicItem {
   @NonNull
-  public static IStringItem valueOf(@NonNull String value) {
+  static IStringItem valueOf(@NonNull String value) {
     try {
       return new StringItemImpl(MetaschemaDataTypeProvider.STRING.parse(value));
     } catch (IllegalArgumentException ex) {
@@ -43,7 +43,7 @@ public interface IStringItem extends IAnyAtomicItem {
   }
 
   @NonNull
-  public static IStringItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  static IStringItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.STRING.cast(item);
   }
 

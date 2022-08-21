@@ -36,17 +36,17 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IBase64BinaryItem extends IAnyAtomicItem {
 
   @NonNull
-  public static IBase64BinaryItem valueOf(@NonNull String value) {
+  static IBase64BinaryItem valueOf(@NonNull String value) {
     return IBase64BinaryItem.cast(IStringItem.valueOf(value));
   }
 
   @NonNull
-  public static IBase64BinaryItem valueOf(@NonNull ByteBuffer value) {
+  static IBase64BinaryItem valueOf(@NonNull ByteBuffer value) {
     return new Base64BinaryItemImpl(value);
   }
 
   @NonNull
-  public static IBase64BinaryItem cast(@NonNull IAnyAtomicItem item)
+  static IBase64BinaryItem cast(@NonNull IAnyAtomicItem item)
       throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.BASE64.cast(item);
   }

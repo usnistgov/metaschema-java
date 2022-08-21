@@ -64,9 +64,6 @@ class NonNegativeIntegerItemImpl
       return false;
     }
     NonNegativeIntegerItemImpl other = (NonNegativeIntegerItemImpl) obj;
-    if (!getValue().equals(other.getValue())) {
-      return false;
-    }
-    return true;
+    return getValue().equals(other.getValue());
   }
 }

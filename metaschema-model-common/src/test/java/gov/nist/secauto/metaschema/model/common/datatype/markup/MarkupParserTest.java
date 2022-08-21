@@ -37,6 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
 
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 
 class MarkupParserTest {
@@ -44,25 +45,28 @@ class MarkupParserTest {
   @Disabled
   @Test
   void test() throws XMLStreamException {
-    String html = "<node>\n";
-    html = html + "  <p> some text </p>\n";
-    html = html + "  <p><q>text</q></p>\n";
-    html = html + "  <p>some <b>text</b> <insert param-id=\"param-id\"/>.</p>\n";
-    html = html + "  <h1>Example</h1>\n";
-    html = html + "  <p><a href=\"link\">text</a></p>\n";
-    html = html + "  <ul>\n";
-    html = html + "    <li>a <strong>list item</strong></li>\n";
-    html = html + "    <li>another <i>list item</i></li>\n";
-    html = html + "  </ul>\n";
-    // html = html + " <table>\n";
-    // html = html + " <tr><th>Heading 1</th></tr>\n";
-    // html = html + " <tr><td><q>data1</q> <insert param-id=\"insert\" /></td></tr>\n";
-    // html = html + " </table>\n";
-    html = html + "  <p>Some <em>more</em> <strong>text</strong><img alt=\"alt\" src=\"src\"/></p>";
-    html = html + "</node>\n";
-    XMLInputFactory2 factory = (XMLInputFactory2) WstxInputFactory.newInstance();
+    String html = new StringBuilder()
+        .append("<node>\n")
+        .append("  <p> some text </p>\n")
+        .append("  <p><q>text</q></p>\n")
+        .append("  <p>some <b>text</b> <insert param-id=\"param-id\"/>.</p>\n")
+        .append("  <h1>Example</h1>\n")
+        .append("  <p><a href=\"link\">text</a></p>\n")
+        .append("  <ul>\n")
+        .append("    <li>a <strong>list item</strong></li>\n")
+        .append("    <li>another <i>list item</i></li>\n")
+        .append("  </ul>\n")
+        // .append(" <table>\n")
+        // .append(" <tr><th>Heading 1</th></tr>\n")
+        // .append(" <tr><td><q>data1</q> <insert param-id=\"insert\" /></td></tr>\n")
+        // .append(" </table>\n")
+        .append("  <p>Some <em>more</em> <strong>text</strong><img alt=\"alt\" src=\"src\"/></p>\n")
+        .append("</node>\n")
+        .toString();
+    XMLInputFactory2 factory = (XMLInputFactory2) XMLInputFactory.newInstance();
+    assert factory instanceof WstxInputFactory;
     factory.configureForXmlConformance();
-    factory.setProperty(XMLInputFactory2.IS_COALESCING, true);
+    factory.setProperty(XMLInputFactory.IS_COALESCING, true);
     XMLEventReader2 reader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(html));
     // System.out.println("Start: " + XmlEventUtil.toString(reader.nextEvent()));
     // System.out.println("Start: " + XmlEventUtil.toString(reader.nextEvent()));

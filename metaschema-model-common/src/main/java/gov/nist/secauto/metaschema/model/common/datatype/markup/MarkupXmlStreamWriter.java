@@ -38,10 +38,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.NodeVisitor;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class MarkupXmlStreamWriter
     extends AbstractMarkupXmlWriter<XMLStreamWriter> {

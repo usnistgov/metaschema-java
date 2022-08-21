@@ -36,26 +36,26 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IPositiveIntegerItem extends IIntegerItem {
   @SuppressWarnings("null")
   @NonNull
-  public static final IPositiveIntegerItem ONE = valueOf(BigInteger.ONE);
+  IPositiveIntegerItem ONE = valueOf(BigInteger.ONE);
 
   @NonNull
-  public static IPositiveIntegerItem valueOf(@NonNull IIntegerItem value) {
+  static IPositiveIntegerItem valueOf(@NonNull IIntegerItem value) {
     return valueOf(value.asInteger());
   }
 
   @SuppressWarnings("null")
   @NonNull
-  public static IPositiveIntegerItem valueOf(long value) {
+  static IPositiveIntegerItem valueOf(long value) {
     return valueOf(BigInteger.valueOf(value));
   }
 
   @NonNull
-  public static IPositiveIntegerItem valueOf(@NonNull BigInteger value) {
+  static IPositiveIntegerItem valueOf(@NonNull BigInteger value) {
     return new PositiveIntegerItemImpl(value);
   }
 
   @NonNull
-  public static IPositiveIntegerItem valueOf(@NonNull String value) {
+  static IPositiveIntegerItem valueOf(@NonNull String value) {
     try {
       return valueOf(MetaschemaDataTypeProvider.POSITIVE_INTEGER.parse(value));
     } catch (IllegalArgumentException ex) {
@@ -65,7 +65,7 @@ public interface IPositiveIntegerItem extends IIntegerItem {
   }
 
   @NonNull
-  public static IPositiveIntegerItem cast(@NonNull IAnyAtomicItem item) {
+  static IPositiveIntegerItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.POSITIVE_INTEGER.cast(item);
   }
 }

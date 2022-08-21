@@ -62,13 +62,14 @@ import org.codehaus.stax2.XMLEventReader2;
 
 import java.util.regex.Pattern;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class MarkupParser { // NOPMD - acceptable
   private static final Logger LOGGER = LogManager.getLogger(MarkupParser.class);

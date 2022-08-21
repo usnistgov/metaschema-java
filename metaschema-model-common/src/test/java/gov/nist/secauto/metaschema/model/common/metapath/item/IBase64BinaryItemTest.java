@@ -37,18 +37,22 @@ import org.junit.jupiter.api.Test;
 import java.nio.ByteBuffer;
 
 class IBase64BinaryItemTest {
+  private static final long MIN_LONG = -9_223_372_036_854_775_808L;
+  private static final long MAX_LONG = 9_223_372_036_854_775_807L;
+  private static final String BASE_64 = "gAAAAAAAAAB//////////w==";
+  
 
   @Test
   void testValueOf() {
     IBase64BinaryItem item = IBase64BinaryItem.valueOf(ObjectUtils.notNull(
-        ByteBuffer.allocate(16).putLong(-9223372036854775808L).putLong(9223372036854775807L)));
-    assertEquals("gAAAAAAAAAB//////////w==", item.asString());
+        ByteBuffer.allocate(16).putLong(MIN_LONG).putLong(MAX_LONG)));
+    assertEquals(BASE_64, item.asString());
   }
 
   @Test
   void testCastSame() {
     ByteBuffer buf
-        = ObjectUtils.notNull(ByteBuffer.allocate(16).putLong(-9223372036854775808L).putLong(9223372036854775807L));
+        = ObjectUtils.notNull(ByteBuffer.allocate(16).putLong(MIN_LONG).putLong(MAX_LONG));
     IBase64BinaryItem item = IBase64BinaryItem.valueOf(buf);
     assertEquals(IBase64BinaryItem.cast(item), item);
   }
@@ -56,9 +60,9 @@ class IBase64BinaryItemTest {
   @Test
   void testCastString() {
     ByteBuffer buf
-        = ObjectUtils.notNull(ByteBuffer.allocate(16).putLong(-9223372036854775808L).putLong(9223372036854775807L));
+        = ObjectUtils.notNull(ByteBuffer.allocate(16).putLong(MIN_LONG).putLong(MAX_LONG));
     IBase64BinaryItem expected = IBase64BinaryItem.valueOf(buf);
-    IBase64BinaryItem actual = IBase64BinaryItem.cast(IStringItem.valueOf("gAAAAAAAAAB//////////w=="));
+    IBase64BinaryItem actual = IBase64BinaryItem.cast(IStringItem.valueOf(BASE_64));
     Assertions.assertAll(
         () -> assertArrayEquals(actual.getValue().array(), expected.getValue().array()),
         () -> assertEquals(actual.asString(), expected.asString()));

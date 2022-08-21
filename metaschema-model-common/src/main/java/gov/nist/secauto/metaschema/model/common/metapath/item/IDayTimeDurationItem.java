@@ -35,12 +35,12 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IDayTimeDurationItem extends IDurationItem {
   @NonNull
-  public static IDayTimeDurationItem valueOf(@NonNull Duration value) {
+  static IDayTimeDurationItem valueOf(@NonNull Duration value) {
     return new DayTimeDurationItemImpl(value);
   }
 
   @NonNull
-  public static IDayTimeDurationItem valueOf(@NonNull String value) {
+  static IDayTimeDurationItem valueOf(@NonNull String value) {
     try {
       return valueOf(MetaschemaDataTypeProvider.DAY_TIME_DURATION.parse(value));
     } catch (IllegalArgumentException ex) {
@@ -50,7 +50,7 @@ public interface IDayTimeDurationItem extends IDurationItem {
   }
 
   @NonNull
-  public static IDayTimeDurationItem cast(@NonNull IAnyAtomicItem item)
+  static IDayTimeDurationItem cast(@NonNull IAnyAtomicItem item)
       throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.DAY_TIME_DURATION.cast(item);
   }

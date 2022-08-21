@@ -166,7 +166,6 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
       List<EXPRESSION> children = new ArrayList<>(numChildren - 1 / step);
       children.add(leftResult);
       for (int i = 1; i < numChildren; i = i + step) {
-        @SuppressWarnings("null")
         EXPRESSION result = parser.apply(context, i);
         children.add(result);
       }
@@ -395,12 +394,13 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
       // the next child is "=>"
       assert "=>".equals(ctx.getChild(idx).getText());
 
-      @SuppressWarnings("null")
       FunctioncallContext fcCtx = ctx.getChild(FunctioncallContext.class, idx + 1);
       String name = fcCtx.eqname().getText();
+      assert name != null;
 
       Stream<IExpression> args = parseArgumentList(fcCtx.argumentlist());
       args = Stream.concat(Stream.of(left), args);
+      assert args != null;
 
       return new FunctionCall(name, args.collect(Collectors.toUnmodifiableList()));
     });

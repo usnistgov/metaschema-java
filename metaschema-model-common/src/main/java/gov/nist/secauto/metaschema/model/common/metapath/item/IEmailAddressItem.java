@@ -33,7 +33,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IEmailAddressItem extends IStringItem {
   @NonNull
-  public static IEmailAddressItem valueOf(@NonNull String value) {
+  static IEmailAddressItem valueOf(@NonNull String value) {
     try {
       return new EmailAddressItemImpl(MetaschemaDataTypeProvider.EMAIL_ADDRESS.parse(value));
     } catch (IllegalArgumentException ex) {
@@ -43,7 +43,7 @@ public interface IEmailAddressItem extends IStringItem {
   }
 
   @NonNull
-  public static IEmailAddressItem cast(@NonNull IAnyAtomicItem item)
+  static IEmailAddressItem cast(@NonNull IAnyAtomicItem item)
       throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.EMAIL_ADDRESS.cast(item);
   }

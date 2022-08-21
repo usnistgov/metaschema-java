@@ -42,13 +42,14 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class XmlSchemaContentValidator implements IContentValidator {
   private final Schema schema;

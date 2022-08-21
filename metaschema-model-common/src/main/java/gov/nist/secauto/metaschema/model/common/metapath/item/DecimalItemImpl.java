@@ -107,10 +107,7 @@ class DecimalItemImpl
       return false;
     }
     DecimalItemImpl other = (DecimalItemImpl) obj;
-    if (!getValue().equals(other.getValue())) {
-      return false;
-    }
-    return true;
+    return getValue().equals(other.getValue());
   }
 
 }

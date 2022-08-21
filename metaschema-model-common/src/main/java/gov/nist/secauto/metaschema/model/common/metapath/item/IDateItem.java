@@ -37,17 +37,17 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IDateItem extends IAnyAtomicItem {
 
   @NonNull
-  public static IDateItem valueOf(@NonNull Date value) {
+  static IDateItem valueOf(@NonNull Date value) {
     return new DateWithoutTimeZoneItemImpl(value);
   }
 
   @NonNull
-  public static IDateItem valueOf(@NonNull ZonedDateTime value) {
+  static IDateItem valueOf(@NonNull ZonedDateTime value) {
     return new DateWithTimeZoneItemImpl(value);
   }
 
   @NonNull
-  public static IDateItem valueOf(@NonNull String value) {
+  static IDateItem valueOf(@NonNull String value) {
     try {
       return valueOf(MetaschemaDataTypeProvider.DATE.parse(value));
     } catch (IllegalArgumentException ex) {
@@ -56,7 +56,7 @@ public interface IDateItem extends IAnyAtomicItem {
   }
 
   @NonNull
-  public static IDateItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  static IDateItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.DATE.cast(item);
   }
 

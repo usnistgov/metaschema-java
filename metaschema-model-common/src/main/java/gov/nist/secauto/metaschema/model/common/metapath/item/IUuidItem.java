@@ -36,18 +36,18 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IUuidItem extends IAnyAtomicItem {
 
   @NonNull
-  public static IUuidItem valueOf(@NonNull UUID value) {
+  static IUuidItem valueOf(@NonNull UUID value) {
     return new UuidItemImpl(value);
   }
 
   @SuppressWarnings("null")
   @NonNull
-  public static IUuidItem random() {
+  static IUuidItem random() {
     return valueOf(UUID.randomUUID());
   }
 
   @NonNull
-  public static IUuidItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  static IUuidItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.UUID.cast(item);
   }
 

@@ -44,13 +44,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class MarkupXmlEventWriter
     extends AbstractMarkupXmlWriter<XMLEventWriter> {

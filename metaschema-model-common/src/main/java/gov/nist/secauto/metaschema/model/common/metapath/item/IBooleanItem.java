@@ -33,22 +33,22 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBooleanItem extends IAnyAtomicItem {
   @NonNull
-  public static final IBooleanItem TRUE = new BooleanItemImpl(true);
+  IBooleanItem TRUE = new BooleanItemImpl(true);
   @NonNull
-  public static final IBooleanItem FALSE = new BooleanItemImpl(false);
+  IBooleanItem FALSE = new BooleanItemImpl(false);
 
   @NonNull
-  public static IBooleanItem valueOf(boolean value) {
+  static IBooleanItem valueOf(boolean value) {
     return value ? TRUE : FALSE;
   }
 
   @NonNull
-  public static IBooleanItem valueOf(@NonNull Boolean value) {
+  static IBooleanItem valueOf(@NonNull Boolean value) {
     return value ? TRUE : FALSE;
   }
 
   @NonNull
-  public static IBooleanItem valueOf(@NonNull String value) {
+  static IBooleanItem valueOf(@NonNull String value) {
     IBooleanItem retval;
     if ("1".equals(value)) {
       retval = IBooleanItem.TRUE;
@@ -65,11 +65,11 @@ public interface IBooleanItem extends IAnyAtomicItem {
   }
 
   @NonNull
-  public static IBooleanItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  static IBooleanItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.BOOLEAN.cast(item);
   }
 
-  public boolean toBoolean();
+  boolean toBoolean();
 
   @NonNull
   default IBooleanItem negate() {

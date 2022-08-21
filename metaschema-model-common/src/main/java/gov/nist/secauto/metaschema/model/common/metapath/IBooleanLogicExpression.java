@@ -30,7 +30,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 
 interface IBooleanLogicExpression extends IExpression {
   @Override
-  @SuppressWarnings("null")
   default Class<IBooleanItem> getBaseResultType() {
     return IBooleanItem.class;
   }

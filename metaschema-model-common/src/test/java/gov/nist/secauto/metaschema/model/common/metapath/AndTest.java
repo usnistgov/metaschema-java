@@ -41,7 +41,7 @@ import java.util.stream.Stream;
 class AndTest
     extends AbstractExpressionTest {
 
-  private static Stream<Arguments> testAnd() {
+  private static Stream<Arguments> testAnd() { // NOPMD - false positive
     return Stream.of(
         Arguments.of(IBooleanItem.TRUE, IBooleanItem.TRUE, IBooleanItem.TRUE),
         Arguments.of(IBooleanItem.TRUE, IBooleanItem.FALSE, IBooleanItem.FALSE),

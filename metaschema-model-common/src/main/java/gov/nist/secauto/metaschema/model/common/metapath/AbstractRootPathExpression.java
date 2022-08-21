@@ -61,7 +61,6 @@ abstract class AbstractRootPathExpression
     return expression;
   }
 
-  @SuppressWarnings("null")
   @Override
   public Class<INodeItem> getBaseResultType() {
     return INodeItem.class;

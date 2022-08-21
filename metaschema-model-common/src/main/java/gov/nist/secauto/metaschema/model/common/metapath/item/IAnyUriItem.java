@@ -34,7 +34,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IAnyUriItem extends IAnyAtomicItem {
   @NonNull
-  public static IAnyUriItem valueOf(@NonNull URI value) {
+  static IAnyUriItem valueOf(@NonNull URI value) {
     IAnyUriItem retval;
     if (value.isAbsolute() || value.isOpaque()) {
       retval = new AnyUriItemImpl(value);
@@ -45,7 +45,7 @@ public interface IAnyUriItem extends IAnyAtomicItem {
   }
 
   @NonNull
-  public static IAnyUriItem cast(@NonNull IAnyAtomicItem item) {
+  static IAnyUriItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.URI.cast(item);
   }
 

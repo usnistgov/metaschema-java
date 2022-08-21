@@ -94,18 +94,18 @@ class INumericItemTest {
         Arguments.of(integer(-100), integer(-3), integer(0)),
         Arguments.of(integer(-153), integer(-2), integer(-200)),
         Arguments.of(integer(-153), integer(-1), integer(-150)),
-        Arguments.of(integer(654321), integer(-6), integer(0)),
-        Arguments.of(integer(654321), integer(-5), integer(700000)),
-        Arguments.of(integer(654321), integer(-4), integer(650000)),
-        Arguments.of(integer(654321), integer(0), integer(654321)),
-        Arguments.of(integer(654321), integer(2), integer(654321)),
+        Arguments.of(integer(654_321), integer(-6), integer(0)),
+        Arguments.of(integer(654_321), integer(-5), integer(700_000)),
+        Arguments.of(integer(654_321), integer(-4), integer(650_000)),
+        Arguments.of(integer(654_321), integer(0), integer(654_321)),
+        Arguments.of(integer(654_321), integer(2), integer(654_321)),
         Arguments.of(decimal("2.5"), integer(0), decimal("3")),
         Arguments.of(decimal("2.4999"), integer(0), decimal("2")),
         Arguments.of(decimal("-2.5"), integer(0), decimal("-2")),
         Arguments.of(decimal("2.4999"), integer(1), decimal("2.5")),
         Arguments.of(decimal("-2.5"), integer(1), decimal("-2.5")),
         Arguments.of(decimal("1.125"), integer(2), decimal("1.13")),
-        Arguments.of(integer(8452), integer(-2), integer(8500)),
+        Arguments.of(integer(8_452), integer(-2), integer(8_500)),
         Arguments.of(decimal("3.1415e0"), integer(2), decimal("3.14")),
         Arguments.of(decimal("35.425e0"), integer(2), decimal("35.43")));
   }
@@ -120,7 +120,7 @@ class INumericItemTest {
   private static Stream<Arguments> provideValuesForCast() {
     return Stream.of(
         Arguments.of(integer(-100), integer(-100)),
-        Arguments.of(integer(654321), integer(654321)),
+        Arguments.of(integer(654_321), integer(654_321)),
         Arguments.of(decimal("2.4999"), decimal("2.4999")), // NOPMD
         Arguments.of(decimal("3.1415e0"), decimal("3.1415e0")), // NOPMD
         Arguments.of(string("-100"), decimal("-100")),

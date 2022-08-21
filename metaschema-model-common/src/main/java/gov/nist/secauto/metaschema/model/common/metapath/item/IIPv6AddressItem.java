@@ -35,12 +35,12 @@ import inet.ipaddr.ipv6.IPv6Address;
 public interface IIPv6AddressItem extends IIPAddressItem {
 
   @NonNull
-  public static IIPv6AddressItem valueOf(@NonNull IPv6Address value) {
+  static IIPv6AddressItem valueOf(@NonNull IPv6Address value) {
     return new IPv6AddressItemImpl(value);
   }
 
   @NonNull
-  public static IIPv6AddressItem cast(@NonNull IAnyAtomicItem item)
+  static IIPv6AddressItem cast(@NonNull IAnyAtomicItem item)
       throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.IP_V6_ADDRESS.cast(item);
   }

@@ -35,12 +35,12 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IUriReferenceItem extends IAnyUriItem {
   @NonNull
-  public static IUriReferenceItem valueOf(@NonNull URI value) {
+  static IUriReferenceItem valueOf(@NonNull URI value) {
     return new UriReferenceItemImpl(value);
   }
 
   @NonNull
-  public static IUriReferenceItem cast(@NonNull IAnyAtomicItem item)
+  static IUriReferenceItem cast(@NonNull IAnyAtomicItem item)
       throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.URI_REFERENCE.cast(item);
   }

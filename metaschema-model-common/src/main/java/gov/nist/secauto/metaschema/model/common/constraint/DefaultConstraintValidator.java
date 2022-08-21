@@ -218,10 +218,6 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     if (indexNameToIndexMap.containsKey(indexName)) {
       getConstraintValidationHandler().handleIndexDuplicateViolation(constraint, node);
       return; // NOPMD - readability
-//      String msg = String.format("Duplicate index named '%s' found at path '%s'", indexName,
-//          node.getMetapath());
-//      LOGGER.atError().log(msg);
-//      throw new MetapathException(msg);
     }
 
     IIndex index = IIndex.newInstance(constraint.getKeyFields());
@@ -236,7 +232,6 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
             }
           } catch (MetapathException ex) {
             getConstraintValidationHandler().handleKeyMatchError(constraint, node, item, ex);
-//            throw ex;
           }
         });
     indexNameToIndexMap.put(indexName, index);

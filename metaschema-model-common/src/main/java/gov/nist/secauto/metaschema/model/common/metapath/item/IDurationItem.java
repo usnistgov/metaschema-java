@@ -38,7 +38,7 @@ public interface IDurationItem extends IAnyAtomicItem {
   TemporalAmount getValue();
 
   @NonNull
-  public static IDurationItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  static IDurationItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     IDurationItem retval;
     if (item instanceof IDurationItem) {
       retval = (IDurationItem) item;
@@ -49,7 +49,9 @@ public interface IDurationItem extends IAnyAtomicItem {
         try {
           retval = IYearMonthDurationItem.valueOf(item.asString());
         } catch (IllegalArgumentException ex2) {
-          throw new InvalidValueForCastFunctionException(ex2);
+          InvalidValueForCastFunctionException newEx = new InvalidValueForCastFunctionException(ex2);
+          newEx.addSuppressed(ex);
+          throw newEx;
         }
       }
     }

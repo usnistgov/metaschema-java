@@ -62,10 +62,7 @@ class HostnameItemImpl
       return false;
     }
     HostnameItemImpl other = (HostnameItemImpl) obj;
-    if (!getValue().equals(other.getValue())) {
-      return false;
-    }
-    return true;
+    return getValue().equals(other.getValue());
   }
 
 }

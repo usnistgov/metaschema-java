@@ -64,10 +64,7 @@ class UriReferenceItemImpl
       return false;
     }
     UriReferenceItemImpl other = (UriReferenceItemImpl) obj;
-    if (!getValue().equals(other.getValue())) {
-      return false;
-    }
-    return true;
+    return getValue().equals(other.getValue());
   }
 
 }

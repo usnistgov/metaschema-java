@@ -40,7 +40,6 @@ class RootSlashOnlyTest
   void testRootSlashOnlyPathUsingDocument() {
     DynamicContext dynamicContext = newDynamicContext();
 
-    @SuppressWarnings("null")
     IDocumentNodeItem nodeContext = context.mock(IDocumentNodeItem.class);
 
     RootSlashOnlyPath expr = new RootSlashOnlyPath();
@@ -53,7 +52,6 @@ class RootSlashOnlyTest
   void testRootSlashOnlyPathUsingNonDocument() {
     DynamicContext dynamicContext = newDynamicContext();
 
-    @SuppressWarnings("null")
     INodeItem nodeContext = context.mock(INodeItem.class);
 
     RootSlashOnlyPath expr = new RootSlashOnlyPath();

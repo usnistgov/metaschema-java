@@ -82,7 +82,6 @@ abstract class AbstractRelativePathExpression
     return List.of(left, right);
   }
 
-  @SuppressWarnings("null")
   @Override
   public final @NonNull Class<INodeItem> getBaseResultType() {
     return INodeItem.class;

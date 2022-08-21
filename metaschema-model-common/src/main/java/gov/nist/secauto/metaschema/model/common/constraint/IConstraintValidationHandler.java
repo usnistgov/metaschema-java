@@ -34,7 +34,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IConstraintValidationHandler {
 

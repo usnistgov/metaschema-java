@@ -62,10 +62,7 @@ class EmailAddressItemImpl
       return false;
     }
     EmailAddressItemImpl other = (EmailAddressItemImpl) obj;
-    if (!getValue().equals(other.getValue())) {
-      return false;
-    }
-    return true;
+    return getValue().equals(other.getValue());
   }
 
 }

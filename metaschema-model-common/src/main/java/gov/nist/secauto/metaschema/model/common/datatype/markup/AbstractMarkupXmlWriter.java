@@ -65,9 +65,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractMarkupXmlWriter<WRITER> { // NOPMD - acceptable
   private static final Pattern ENTITY_PATTERN = Pattern.compile("^&([^;]+);$");

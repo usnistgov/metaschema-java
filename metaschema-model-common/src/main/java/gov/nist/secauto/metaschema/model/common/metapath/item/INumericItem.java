@@ -41,7 +41,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface INumericItem extends IAnyAtomicItem {
 
   @NonNull
-  public static INumericItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  static INumericItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     INumericItem retval;
     if (item instanceof INumericItem) {
       retval = (INumericItem) item;

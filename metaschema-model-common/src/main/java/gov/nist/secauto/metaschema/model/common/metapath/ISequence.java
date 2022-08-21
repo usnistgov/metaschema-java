@@ -49,8 +49,10 @@ public interface ISequence<ITEM_TYPE extends IItem> {
   ISequence EMPTY = new EmptyListImpl<>();
 
   /**
-   * Get an empty sequence
-   * @param <ITEM_TYPE> the item type
+   * Get an empty sequence.
+   * 
+   * @param <ITEM_TYPE>
+   *          the item type
    * @return the empty sequence
    */
   @SuppressWarnings({ "unchecked", "null" })
@@ -99,7 +101,7 @@ public interface ISequence<ITEM_TYPE extends IItem> {
   boolean isEmpty();
 
   int size();
-  
+
   void forEach(Consumer<? super ITEM_TYPE> action);
 
   @NonNull

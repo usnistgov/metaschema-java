@@ -55,6 +55,7 @@ import java.io.StringWriter;
 import java.util.List;
 
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 class MarkupStringTest {
@@ -66,7 +67,8 @@ class MarkupStringTest {
   }
 
   XMLStreamWriter2 newXmlStreamWriter(StringWriter stringWriter) throws XMLStreamException {
-    XMLOutputFactory2 factory = (XMLOutputFactory2) WstxOutputFactory.newInstance();
+    XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
+    assert factory instanceof WstxOutputFactory;
     factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
     XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(stringWriter);
     NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),

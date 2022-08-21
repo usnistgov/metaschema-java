@@ -40,7 +40,6 @@ import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.annotations.AssemblyConstraints;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
-import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.ValueConstraints;
@@ -217,7 +216,8 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
 
   protected IBoundNamedModelInstance newModelInstance(@NonNull Class<?> clazz, @NonNull java.lang.reflect.Field field) {
     IBoundNamedModelInstance retval;
-    if (field.isAnnotationPresent(BoundAssembly.class) && getBindingContext().getClassBinding(IBoundNamedModelInstance.getItemType(field)) != null) {
+    if (field.isAnnotationPresent(BoundAssembly.class)
+        && getBindingContext().getClassBinding(IBoundNamedModelInstance.getItemType(field)) != null) {
       retval = IBoundAssemblyInstance.newInstance(field, this);
     } else if (field.isAnnotationPresent(BoundField.class)) {
       retval = IBoundFieldInstance.newInstance(field, this);

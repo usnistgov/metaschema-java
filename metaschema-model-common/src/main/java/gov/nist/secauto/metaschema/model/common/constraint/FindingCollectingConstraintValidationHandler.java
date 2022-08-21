@@ -167,7 +167,7 @@ public class FindingCollectingConstraintValidationHandler
         .message(newMatchDatatypeViolationMessage(constraint, node, target, value))
         .cause(cause)
         .build());
-    }
+  }
 
   @Override
   public void handleExpectViolation(
@@ -188,7 +188,7 @@ public class FindingCollectingConstraintValidationHandler
         .target(target)
         .message(newAllowedValuesViolationMessage(failedConstraints, target))
         .build());
-    }
+  }
 
   @Override
   public void handleIndexDuplicateViolation(IIndexConstraint constraint, INodeItem node) {

@@ -36,18 +36,18 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IYearMonthDurationItem extends IDurationItem {
 
   @NonNull
-  public static IYearMonthDurationItem valueOf(@NonNull Period value) {
+  static IYearMonthDurationItem valueOf(@NonNull Period value) {
     return new YearMonthDurationItemImpl(value);
   }
 
   @SuppressWarnings("null")
   @NonNull
-  public static IYearMonthDurationItem valueOf(int years, int months, int days) {
+  static IYearMonthDurationItem valueOf(int years, int months, int days) {
     return valueOf(Period.of(years, months, days));
   }
 
   @NonNull
-  public static IYearMonthDurationItem valueOf(@NonNull String value) {
+  static IYearMonthDurationItem valueOf(@NonNull String value) {
     try {
       Period period = MetaschemaDataTypeProvider.YEAR_MONTH_DURATION.parse(value);
       return valueOf(period);
@@ -58,7 +58,7 @@ public interface IYearMonthDurationItem extends IDurationItem {
   }
 
   @NonNull
-  public static IYearMonthDurationItem cast(@NonNull IAnyAtomicItem item) {
+  static IYearMonthDurationItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.YEAR_MONTH_DURATION.cast(item);
   }
 

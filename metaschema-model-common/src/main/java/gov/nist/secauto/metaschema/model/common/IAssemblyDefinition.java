@@ -28,8 +28,6 @@ package gov.nist.secauto.metaschema.model.common;
 
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 
-import java.net.URI;
-
 import javax.xml.namespace.QName;
 
 public interface IAssemblyDefinition

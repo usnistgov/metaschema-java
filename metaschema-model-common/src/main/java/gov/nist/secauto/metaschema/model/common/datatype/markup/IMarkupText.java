@@ -39,9 +39,10 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import javax.xml.stream.XMLStreamException;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import javax.xml.stream.XMLStreamException;
 
 public interface IMarkupText {
   @NonNull

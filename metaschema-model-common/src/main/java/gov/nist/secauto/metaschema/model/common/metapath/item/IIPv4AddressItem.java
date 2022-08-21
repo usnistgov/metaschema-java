@@ -35,12 +35,12 @@ import inet.ipaddr.ipv4.IPv4Address;
 public interface IIPv4AddressItem extends IIPAddressItem {
 
   @NonNull
-  public static IIPv4AddressItem valueOf(@NonNull IPv4Address value) {
+  static IIPv4AddressItem valueOf(@NonNull IPv4Address value) {
     return new IPv4AddressItemImpl(value);
   }
 
   @NonNull
-  public static IIPv4AddressItem cast(@NonNull IAnyAtomicItem item)
+  static IIPv4AddressItem cast(@NonNull IAnyAtomicItem item)
       throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.IP_V4_ADDRESS.cast(item);
   }
