@@ -46,11 +46,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class CollapseKeyBuilder {
-  @NonNull 
+  @NonNull
   private final IFieldClassBinding classBinding;
-  @NonNull 
+  @NonNull
   private final List<IBoundFlagInstance> flagProperties;
-  @NonNull 
+  @NonNull
   private final Map<CollapseKey, List<Object>> keyToValuesMap;
 
   public CollapseKeyBuilder(@NonNull IFieldClassBinding classBinding) {
@@ -59,12 +59,12 @@ public class CollapseKeyBuilder {
     this.keyToValuesMap = new LinkedHashMap<>();
   }
 
-  @NonNull 
+  @NonNull
   protected IFieldClassBinding getClassBinding() {
     return classBinding;
   }
 
-  @NonNull 
+  @NonNull
   protected List<IBoundFlagInstance> getFlagProperties() {
     return flagProperties;
   }

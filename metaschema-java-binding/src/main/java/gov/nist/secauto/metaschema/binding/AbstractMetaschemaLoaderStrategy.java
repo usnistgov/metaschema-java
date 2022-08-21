@@ -99,11 +99,11 @@ class AbstractMetaschemaLoaderStrategy implements IMetaschemaLoaderStrategy {
       retval = DefaultAssemblyClassBinding.createInstance(clazz, getBindingContext());
     } else if (clazz.isAnnotationPresent(MetaschemaField.class)) {
       retval = DefaultFieldClassBinding.createInstance(clazz, getBindingContext());
-//    } else {
-//      throw new IllegalArgumentException(String.format(
-//          "Class '%s' does not represent a Metaschema definition"
-//              + " since it is missing a '%s' or '%s' annotation.",
-//          clazz.getName(), MetaschemaAssembly.class.getName(), MetaschemaField.class.getName()));
+      // } else {
+      // throw new IllegalArgumentException(String.format(
+      // "Class '%s' does not represent a Metaschema definition"
+      // + " since it is missing a '%s' or '%s' annotation.",
+      // clazz.getName(), MetaschemaAssembly.class.getName(), MetaschemaField.class.getName()));
     }
     return retval;
   }

@@ -56,7 +56,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * This marker interface provides common methods for interacting with bound object values.
  */
 public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedModelInstance {
-  
+
   @NonNull
   static Class<?> getItemType(@NonNull Field field) {
     Type fieldType = field.getGenericType();
@@ -148,13 +148,12 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
     return retval;
   }
 
-
   @NonNull
   IModelPropertyInfo getPropertyInfo();
 
   @NonNull
   IDataTypeHandler getDataTypeHandler();
-  
+
   /**
    * Get the item values associated with the provided value.
    * 

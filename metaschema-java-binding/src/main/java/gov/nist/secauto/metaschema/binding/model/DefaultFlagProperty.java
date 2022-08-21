@@ -177,7 +177,6 @@ class DefaultFlagProperty
   private class InternalFlagDefinition implements IFlagDefinition, IValueConstraintFeature {
     private final Lazy<IValueConstraintSupport> constraints;
 
-
     private InternalFlagDefinition() {
       this.constraints = Lazy.lazy(() -> new ValueConstraintSupport(
           getField().getAnnotation(ValueConstraints.class),

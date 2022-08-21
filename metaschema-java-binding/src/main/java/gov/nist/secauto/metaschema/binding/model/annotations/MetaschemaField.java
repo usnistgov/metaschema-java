@@ -77,7 +77,7 @@ public @interface MetaschemaField {
 
   @NonNull
   String useName() default Constants.NO_STRING_VALUE;
-  
+
   /**
    * Get the metaschema class that "owns" this assembly, which is the concrete implementation of the
    * metaschema containing the assembly.
@@ -89,7 +89,8 @@ public @interface MetaschemaField {
 
   /**
    * If the data type allows it, determines if the field's value must be wrapped with an XML element
-   * whose name is the specified {@link #name()} and namespace is derived from the namespace of the instance.
+   * whose name is the specified {@link #name()} and namespace is derived from the namespace of the
+   * instance.
    *
    * @return {@code true} if the field must be wrapped, or {@code false} otherwise
    */
