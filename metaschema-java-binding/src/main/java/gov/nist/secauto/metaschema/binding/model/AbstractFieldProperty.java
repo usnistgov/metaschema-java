@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
+import org.apache.logging.log4j.LogManager;
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
@@ -169,18 +170,16 @@ public abstract class AbstractFieldProperty
                 XmlEventUtil.consumeAndAssert(eventReader, XMLStreamConstants.START_ELEMENT, getXmlQName())
                     .asStartElement());
       } else {
-        parse = false;
+        throw new IOException(String.format("Did not find expected element '%s'.", getXmlQName()));
       }
     }
 
-    if (parse) {
-      // consume the value
-      retval = supplier.get(parentInstance, currentStart, context);
+    // consume the value
+    retval = supplier.get(parentInstance, currentStart, context);
 
-      if (parseWrapper) {
-        // consume the end element
-        XmlEventUtil.consumeAndAssert(context.getReader(), XMLStreamConstants.END_ELEMENT, currentStart.getName());
-      }
+    if (parseWrapper) {
+      // consume the end element
+      XmlEventUtil.consumeAndAssert(context.getReader(), XMLStreamConstants.END_ELEMENT, currentStart.getName());
     }
 
     return retval;

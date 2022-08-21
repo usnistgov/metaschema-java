@@ -117,8 +117,7 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
       }
 
       // collection case
-      Class<?> rawType = ObjectUtils.notNull(
-          (Class<?>) (type instanceof ParameterizedType ? ((ParameterizedType) type).getRawType() : type));
+      Class<?> rawType = (Class<?>) ((ParameterizedType) type).getRawType();
       if (JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())) {
         if (!Map.class.isAssignableFrom(rawType)) {
           throw new IllegalArgumentException(String.format(
