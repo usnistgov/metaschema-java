@@ -135,7 +135,7 @@
 		<dependency.junit5.version>5.9.0</dependency.junit5.version>
 		<dependency.junit5-platform-launcher.version>1.9.0</dependency.junit5-platform-launcher.version>
 		<dependency.log4j2.version>2.18.0</dependency.log4j2.version>
-		<dependency.moxy.version>3.0.2</dependency.moxy.version>
+		<dependency.moxy.version>3.0.3</dependency.moxy.version>
 		<dependency.saxon.version>11.4</dependency.saxon.version>
 		<dependency.spotbugs-annotations.version>4.7.1</dependency.spotbugs-annotations.version>
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
