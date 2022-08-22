@@ -37,16 +37,16 @@
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.Nullable;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> java.util.regex.Pattern;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> java.util.regex.Pattern;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.Nullable;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="DefaultKeyField" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultKeyField.html#DefaultKeyField">DefaultKeyField</a> <strong class="jxr_keyword">implements</strong> <a name="IKeyField" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IKeyField.html#IKeyField">IKeyField</a> {
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>    @Nullable
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Pattern pattern;
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>    @NotNull
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>    @NonNull
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> target;
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>    @Nullable
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="MarkupMultiline" href="../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/MarkupMultiline.html#MarkupMultiline">MarkupMultiline</a> remarks;
@@ -63,7 +63,7 @@
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">   *          optional remarks describing the intent of the constraint</em>
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>    <strong class="jxr_keyword">public</strong> <a name="DefaultKeyField" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultKeyField.html#DefaultKeyField">DefaultKeyField</a>(
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>        @NotNull <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> target,
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>        @NonNull <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> target,
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>        @Nullable Pattern pattern,
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>        @Nullable <a name="MarkupMultiline" href="../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/MarkupMultiline.html#MarkupMultiline">MarkupMultiline</a> remarks) {
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">this</strong>.pattern = pattern;

@@ -35,34 +35,33 @@
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.codegen;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IMetaschema;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IModelDefinition;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> java.util.stream.Stream;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> java.util.stream.Stream;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="IMetaschemaProduction" href="../../../../../gov/nist/secauto/metaschema/codegen/IMetaschemaProduction.html#IMetaschemaProduction">IMetaschemaProduction</a> {
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>    @NotNull
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>    @NonNull
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>    <a name="IMetaschema" href="../../../../../gov/nist/secauto/metaschema/model/common/IMetaschema.html#IMetaschema">IMetaschema</a> getMetaschema();
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>    @NotNull
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>    @NonNull
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>    <a name="IGeneratedClass" href="../../../../../gov/nist/secauto/metaschema/codegen/IGeneratedClass.html#IGeneratedClass">IGeneratedClass</a> getGeneratedMetaschema();
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>    @NotNull
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>    Collection&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> INamedModelDefinition&gt; getGlobalDefinitions();
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>    @NonNull
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>    Collection&lt;? <strong class="jxr_keyword">extends</strong> IModelDefinition&gt; getGlobalDefinitions();
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>    @NotNull
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>    Collection&lt;@NotNull IDefinitionProduction&gt; getDefinitionProductions();
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>    @NonNull
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>    Collection&lt;IDefinitionProduction&gt; getDefinitionProductions();
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>    @NotNull
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>    @NonNull
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>    String getPackageName();
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>    @NotNull
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>    Stream&lt;@NotNull IGeneratedClass&gt; getGeneratedClasses();
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>  
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>  }
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>    @NonNull
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>    Stream&lt;IGeneratedClass&gt; getGeneratedClasses();
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

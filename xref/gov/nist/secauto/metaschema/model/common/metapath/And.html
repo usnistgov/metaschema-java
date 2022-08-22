@@ -37,9 +37,9 @@
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.function.library.FnBoolean;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> java.util.List;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">class</strong> <a name="And" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/And.html#And">And</a> <em class="jxr_comment">// NOPMD - intentional name</em>
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">extends</strong> <a name="AbstractNAryExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/AbstractNAryExpression.html#AbstractNAryExpression">AbstractNAryExpression</a>
@@ -53,7 +53,7 @@
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">   * @param expressions</em>
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment">   *          the list of expressions</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>    <strong class="jxr_keyword">protected</strong> <a name="And" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/And.html#And">And</a>(@NotNull List&lt;@NotNull IExpression&gt; expressions) {
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>    <strong class="jxr_keyword">protected</strong> <a name="And" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/And.html#And">And</a>(@NonNull List&lt;IExpression&gt; expressions) {
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">super</strong>(expressions);
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>    }
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  

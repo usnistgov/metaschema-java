@@ -37,9 +37,9 @@
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.GroupAs;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.adapter.UuidAdapter;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> java.util.List;
@@ -54,30 +54,29 @@
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">   * An optional singleton simple field.</em>
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>    @BoundField(useName = <span class="jxr_string">"simple-singleton-field"</span>,
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>        typeAdapter = StringAdapter.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>    <strong class="jxr_keyword">private</strong> String simpleSingletonField; <em class="jxr_comment">// NOPMD - intentional</em>
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>  
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>    <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment">   * A required keyed assembly.</em>
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>    @BoundField(useName = <span class="jxr_string">"keyed-field"</span>,
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>        minOccurs = 1,
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>        maxOccurs = -1,
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>        groupName = <span class="jxr_string">"keyed-field-items"</span>,
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>        inJson = JsonGroupAsBehavior.KEYED)
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>    <strong class="jxr_keyword">private</strong> Map&lt;String, FlaggedBoundField&gt; keyedField; <em class="jxr_comment">// NOPMD - intentional</em>
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>  
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>    <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment">   * A required singleton or array assembly.</em>
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>    @BoundAssembly(useName = <span class="jxr_string">"singleton-or-array-assembly"</span>,
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>        minOccurs = 1,
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>        maxOccurs = -1,
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>        groupName = <span class="jxr_string">"singleton-or-array-assembly-items"</span>,
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>        inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST)
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>    <strong class="jxr_keyword">private</strong> List&lt;OnlyModelBoundAssembly&gt; singletonOrArrayAssembly; <em class="jxr_comment">// NOPMD - intentional</em>
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>  }
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>    @BoundField(useName = <span class="jxr_string">"simple-singleton-field"</span>)
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>    <strong class="jxr_keyword">private</strong> String simpleSingletonField; <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>    <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment">   * A required keyed assembly.</em>
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>    @BoundField(useName = <span class="jxr_string">"keyed-field"</span>,
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>        minOccurs = 1,
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>        maxOccurs = -1)
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>    @GroupAs(name = <span class="jxr_string">"keyed-field-items"</span>,
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>        inJson = JsonGroupAsBehavior.KEYED)
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>    <strong class="jxr_keyword">private</strong> Map&lt;String, FlaggedBoundField&gt; keyedField; <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>    <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">   * A required singleton or array assembly.</em>
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>    @BoundAssembly(useName = <span class="jxr_string">"singleton-or-array-assembly"</span>,
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>        minOccurs = 1,
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>        maxOccurs = -1)
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>    @GroupAs(name = <span class="jxr_string">"singleton-or-array-assembly-items"</span>,
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>        inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST)
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>    <strong class="jxr_keyword">private</strong> List&lt;OnlyModelBoundAssembly&gt; singletonOrArrayAssembly; <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

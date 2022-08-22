@@ -34,7 +34,7 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.model.common.metapath;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment"> * Provides base support for processing a Metapath expression based on the visitor pattern.</em>
@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">   *          used to pass additional state</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">   * @return the aggegated result</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>    <strong class="jxr_keyword">protected</strong> RESULT visitChildren(@NotNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> expr, CONTEXT context) {
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>    <strong class="jxr_keyword">protected</strong> RESULT visitChildren(@NonNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> expr, CONTEXT context) {
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      RESULT result = defaultResult();
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">for</strong> (<a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> childExpr : expr.getChildren()) {
@@ -96,7 +96,7 @@
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">   *          additional state to pass between nodes visited</em>
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">   * @return {@code true} if the child should be visited, or {@code false} otherwise</em>
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> shouldVisitNextChild(@NotNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> parent, @NotNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> child, RESULT result,
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> shouldVisitNextChild(@NonNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> parent, @NonNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> child, RESULT result,
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>        CONTEXT context) {
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>      <em class="jxr_comment">// allow visitation of the child</em>
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>      <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
@@ -163,7 +163,7 @@
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>   }
 <a class="jxr_linenumber" name="L156" href="#L156">156</a> 
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>   @Override
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>   <strong class="jxr_keyword">public</strong> RESULT visitExcept(@NotNull <a name="Except" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/Except.html#Except">Except</a> expr, CONTEXT context) {
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>   <strong class="jxr_keyword">public</strong> RESULT visitExcept(@NonNull <a name="Except" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/Except.html#Except">Except</a> expr, CONTEXT context) {
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>     <strong class="jxr_keyword">return</strong> visitChildren(expr, context);
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>   }
 <a class="jxr_linenumber" name="L161" href="#L161">161</a> 
@@ -188,7 +188,7 @@
 <a class="jxr_linenumber" name="L180" href="#L180">180</a>   }
 <a class="jxr_linenumber" name="L181" href="#L181">181</a> 
 <a class="jxr_linenumber" name="L182" href="#L182">182</a>   @Override
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>   <strong class="jxr_keyword">public</strong> RESULT visitIntersect(@NotNull <a name="Intersect" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/Intersect.html#Intersect">Intersect</a> expr, CONTEXT context) {
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>   <strong class="jxr_keyword">public</strong> RESULT visitIntersect(@NonNull <a name="Intersect" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/Intersect.html#Intersect">Intersect</a> expr, CONTEXT context) {
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>     <strong class="jxr_keyword">return</strong> visitChildren(expr, context);
 <a class="jxr_linenumber" name="L185" href="#L185">185</a>   }
 <a class="jxr_linenumber" name="L186" href="#L186">186</a> 

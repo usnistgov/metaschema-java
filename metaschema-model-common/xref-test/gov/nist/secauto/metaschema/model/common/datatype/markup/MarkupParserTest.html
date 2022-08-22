@@ -45,45 +45,49 @@
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> java.io.StringReader;
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> javax.xml.stream.XMLStreamException;
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">class</strong> <a name="MarkupParserTest" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/MarkupParserTest.html#MarkupParserTest">MarkupParserTest</a> {
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>    @Disabled
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>    @Test
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>    <strong class="jxr_keyword">void</strong> test() <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>      String html = <span class="jxr_string">"&lt;node&gt;\n"</span>;
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>      html = html + <span class="jxr_string">"  &lt;p&gt; some text &lt;/p&gt;\n"</span>;
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>      html = html + <span class="jxr_string">"  &lt;p&gt;&lt;q&gt;text&lt;/q&gt;&lt;/p&gt;\n"</span>;
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>      html = html + <span class="jxr_string">"  &lt;p&gt;some &lt;b&gt;text&lt;/b&gt; &lt;insert param-id=\&quot;param-id\&quot;/&gt;.&lt;/p&gt;\n"</span>;
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>      html = html + <span class="jxr_string">"  &lt;h1&gt;Example&lt;/h1&gt;\n"</span>;
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>      html = html + <span class="jxr_string">"  &lt;p&gt;&lt;a href=\&quot;link\&quot;&gt;text&lt;/a&gt;&lt;/p&gt;\n"</span>;
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>      html = html + <span class="jxr_string">"  &lt;ul&gt;\n"</span>;
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>      html = html + <span class="jxr_string">"    &lt;li&gt;a &lt;strong&gt;list item&lt;/strong&gt;&lt;/li&gt;\n"</span>;
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>      html = html + <span class="jxr_string">"    &lt;li&gt;another &lt;i&gt;list item&lt;/i&gt;&lt;/li&gt;\n"</span>;
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>      html = html + <span class="jxr_string">"  &lt;/ul&gt;\n"</span>;
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <em class="jxr_comment">// html = html + " &lt;table&gt;\n";</em>
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>      <em class="jxr_comment">// html = html + " &lt;tr&gt;&lt;th&gt;Heading 1&lt;/th&gt;&lt;/tr&gt;\n";</em>
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>      <em class="jxr_comment">// html = html + " &lt;tr&gt;&lt;td&gt;&lt;q&gt;data1&lt;/q&gt; &lt;insert param-id=\&quot;insert\&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;\n";</em>
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>      <em class="jxr_comment">// html = html + " &lt;/table&gt;\n";</em>
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>      html = html + <span class="jxr_string">"  &lt;p&gt;Some &lt;em&gt;more&lt;/em&gt; &lt;strong&gt;text&lt;/strong&gt;&lt;img alt=\&quot;alt\&quot; src=\&quot;src\&quot;/&gt;&lt;/p&gt;"</span>;
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>      html = html + <span class="jxr_string">"&lt;/node&gt;\n"</span>;
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>      XMLInputFactory2 factory = (XMLInputFactory2) WstxInputFactory.newInstance();
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      factory.configureForXmlConformance();
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      factory.setProperty(XMLInputFactory2.IS_COALESCING, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>      XMLEventReader2 reader = (XMLEventReader2) factory.createXMLEventReader(<strong class="jxr_keyword">new</strong> StringReader(html));
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>      <em class="jxr_comment">// System.out.println("Start: " + XmlEventUtil.toString(reader.nextEvent()));</em>
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>      <em class="jxr_comment">// System.out.println("Start: " + XmlEventUtil.toString(reader.nextEvent()));</em>
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>      MarkupParser parser = <strong class="jxr_keyword">new</strong> MarkupParser();
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>      MarkupMultiline markupString = parser.parseMarkupMultiline(reader);
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>      AstCollectingVisitor visitor = <strong class="jxr_keyword">new</strong> AstCollectingVisitor();
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>      visitor.collect(markupString.getDocument());
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>      <em class="jxr_comment">// System.out.println(html);</em>
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>      <em class="jxr_comment">// System.out.println(visitor.getAst());</em>
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>      <em class="jxr_comment">// System.out.println(markupString.toMarkdown());</em>
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>    }
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>  
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>  }
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> javax.xml.stream.XMLInputFactory;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> javax.xml.stream.XMLStreamException;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">class</strong> <a name="MarkupParserTest" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/MarkupParserTest.html#MarkupParserTest">MarkupParserTest</a> {
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>    @Disabled
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>    @Test
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>    <strong class="jxr_keyword">void</strong> test() <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>      String html = <strong class="jxr_keyword">new</strong> StringBuilder()
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>          .append(<span class="jxr_string">"&lt;node&gt;\n"</span>)
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>          .append(<span class="jxr_string">"  &lt;p&gt; some text &lt;/p&gt;\n"</span>)
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>          .append(<span class="jxr_string">"  &lt;p&gt;&lt;q&gt;text&lt;/q&gt;&lt;/p&gt;\n"</span>)
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>          .append(<span class="jxr_string">"  &lt;p&gt;some &lt;b&gt;text&lt;/b&gt; &lt;insert param-id=\&quot;param-id\&quot;/&gt;.&lt;/p&gt;\n"</span>)
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>          .append(<span class="jxr_string">"  &lt;h1&gt;Example&lt;/h1&gt;\n"</span>)
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>          .append(<span class="jxr_string">"  &lt;p&gt;&lt;a href=\&quot;link\&quot;&gt;text&lt;/a&gt;&lt;/p&gt;\n"</span>)
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>          .append(<span class="jxr_string">"  &lt;ul&gt;\n"</span>)
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>          .append(<span class="jxr_string">"    &lt;li&gt;a &lt;strong&gt;list item&lt;/strong&gt;&lt;/li&gt;\n"</span>)
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>          .append(<span class="jxr_string">"    &lt;li&gt;another &lt;i&gt;list item&lt;/i&gt;&lt;/li&gt;\n"</span>)
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>          .append(<span class="jxr_string">"  &lt;/ul&gt;\n"</span>)
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>          <em class="jxr_comment">// .append(" &lt;table&gt;\n")</em>
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>          <em class="jxr_comment">// .append(" &lt;tr&gt;&lt;th&gt;Heading 1&lt;/th&gt;&lt;/tr&gt;\n")</em>
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>          <em class="jxr_comment">// .append(" &lt;tr&gt;&lt;td&gt;&lt;q&gt;data1&lt;/q&gt; &lt;insert param-id=\&quot;insert\&quot; /&gt;&lt;/td&gt;&lt;/tr&gt;\n")</em>
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>          <em class="jxr_comment">// .append(" &lt;/table&gt;\n")</em>
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>          .append(<span class="jxr_string">"  &lt;p&gt;Some &lt;em&gt;more&lt;/em&gt; &lt;strong&gt;text&lt;/strong&gt;&lt;img alt=\&quot;alt\&quot; src=\&quot;src\&quot;/&gt;&lt;/p&gt;\n"</span>)
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>          .append(<span class="jxr_string">"&lt;/node&gt;\n"</span>)
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>          .toString();
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>      XMLInputFactory2 factory = (XMLInputFactory2) XMLInputFactory.newInstance();
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>      assert factory instanceof WstxInputFactory;
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      factory.configureForXmlConformance();
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>      factory.setProperty(XMLInputFactory.IS_COALESCING, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>      XMLEventReader2 reader = (XMLEventReader2) factory.createXMLEventReader(<strong class="jxr_keyword">new</strong> StringReader(html));
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>      <em class="jxr_comment">// System.out.println("Start: " + XmlEventUtil.toString(reader.nextEvent()));</em>
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <em class="jxr_comment">// System.out.println("Start: " + XmlEventUtil.toString(reader.nextEvent()));</em>
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>      MarkupParser parser = <strong class="jxr_keyword">new</strong> MarkupParser();
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>      MarkupMultiline markupString = parser.parseMarkupMultiline(reader);
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>      AstCollectingVisitor visitor = <strong class="jxr_keyword">new</strong> AstCollectingVisitor();
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>      visitor.collect(markupString.getDocument());
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <em class="jxr_comment">// System.out.println(html);</em>
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>      <em class="jxr_comment">// System.out.println(visitor.getAst());</em>
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>      <em class="jxr_comment">// System.out.println(markupString.toMarkdown());</em>
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>    }
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>  
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

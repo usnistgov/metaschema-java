@@ -36,12 +36,12 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">class</strong> <a name="RelativeSlashPath" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/RelativeSlashPath.html#RelativeSlashPath">RelativeSlashPath</a>
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>      <strong class="jxr_keyword">extends</strong> <a name="AbstractRelativePathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/AbstractRelativePathExpression.html#AbstractRelativePathExpression">AbstractRelativePathExpression</a> {
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>    <strong class="jxr_keyword">protected</strong> <a name="RelativeSlashPath" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/RelativeSlashPath.html#RelativeSlashPath">RelativeSlashPath</a>(@NotNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> left, @NotNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> right) {
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>    <strong class="jxr_keyword">protected</strong> <a name="RelativeSlashPath" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/RelativeSlashPath.html#RelativeSlashPath">RelativeSlashPath</a>(@NonNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> left, @NonNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> right) {
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">super</strong>(left, right);
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>    }
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
@@ -55,7 +55,7 @@
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> left = getLeft();
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>      @NotNull
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>      @NonNull
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      ISequence&lt;? <strong class="jxr_keyword">extends</strong> INodeItem&gt; leftResult
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>          = (ISequence&lt;? <strong class="jxr_keyword">extends</strong> INodeItem&gt;) left.accept(dynamicContext, context);
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  

@@ -36,13 +36,13 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.io.BindingException;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.Nullable;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.Nullable;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_comment">// TODO: get rid of functional interfaces</em>
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">interface</strong> <a name="IDataTypeHandler" href="../../../../../../gov/nist/secauto/metaschema/binding/model/IDataTypeHandler.html#IDataTypeHandler">IDataTypeHandler</a> <strong class="jxr_keyword">extends</strong> IJsonBindingSupplier, IXmlBindingSupplier, <a name="IXmlBindingConsumer" href="../../../../../../gov/nist/secauto/metaschema/binding/model/IXmlBindingConsumer.html#IXmlBindingConsumer">IXmlBindingConsumer</a> {
@@ -51,7 +51,7 @@
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment">   * </em>
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment">   * @return the model instance</em>
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>    @NotNull
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>    @NonNull
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>    <a name="IBoundNamedModelInstance" href="../../../../../../gov/nist/secauto/metaschema/binding/model/IBoundNamedModelInstance.html#IBoundNamedModelInstance">IBoundNamedModelInstance</a> getProperty();
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>    <em class="jxr_javadoccomment">/**</em>
@@ -96,8 +96,8 @@
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">   * @throws IOException</em>
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">   *           if an error occurred while writing</em>
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>    <strong class="jxr_keyword">void</strong> writeItems(@NotNull Collection&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> Object&gt; items, <strong class="jxr_keyword">boolean</strong> writeObjectWrapper,
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>        @NotNull <a name="IJsonWritingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonWritingContext.html#IJsonWritingContext">IJsonWritingContext</a> context)
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>    <strong class="jxr_keyword">void</strong> writeItems(@NonNull Collection&lt;? <strong class="jxr_keyword">extends</strong> Object&gt; items, <strong class="jxr_keyword">boolean</strong> writeObjectWrapper,
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>        @NonNull <a name="IJsonWritingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonWritingContext.html#IJsonWritingContext">IJsonWritingContext</a> context)
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>        <strong class="jxr_keyword">throws</strong> IOException;
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>  
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>    <em class="jxr_javadoccomment">/**</em>
@@ -111,8 +111,8 @@
 <a class="jxr_linenumber" name="L103" href="#L103">103</a> <em class="jxr_javadoccomment">   * @throws BindingException</em>
 <a class="jxr_linenumber" name="L104" href="#L104">104</a> <em class="jxr_javadoccomment">   *           if an error occurred while analyzing the bound objects</em>
 <a class="jxr_linenumber" name="L105" href="#L105">105</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>   @NotNull
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>   Object copyItem(@NotNull Object item, @Nullable Object parentInstance) <strong class="jxr_keyword">throws</strong> BindingException;
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>   @NonNull
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>   Object copyItem(@NonNull Object item, @Nullable Object parentInstance) <strong class="jxr_keyword">throws</strong> BindingException;
 <a class="jxr_linenumber" name="L108" href="#L108">108</a> }
 </pre>
 <hr/>

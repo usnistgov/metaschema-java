@@ -39,23 +39,23 @@
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> java.util.List;
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> javax.xml.namespace.QName;
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> javax.xml.stream.XMLStreamException;
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> javax.xml.stream.events.StartElement;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> javax.xml.namespace.QName;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> javax.xml.stream.XMLStreamException;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> javax.xml.stream.events.StartElement;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_comment">// TODO: implement can handle QName for XML parsing</em>
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">class</strong> <a name="JavaTypeAdapterDataTypeHandler" href="../../../../../../gov/nist/secauto/metaschema/binding/model/JavaTypeAdapterDataTypeHandler.html#JavaTypeAdapterDataTypeHandler">JavaTypeAdapterDataTypeHandler</a> <strong class="jxr_keyword">implements</strong> <a name="IDataTypeHandler" href="../../../../../../gov/nist/secauto/metaschema/binding/model/IDataTypeHandler.html#IDataTypeHandler">IDataTypeHandler</a> {
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>    @NotNull
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>    @NonNull
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="AbstractFieldProperty" href="../../../../../../gov/nist/secauto/metaschema/binding/model/AbstractFieldProperty.html#AbstractFieldProperty">AbstractFieldProperty</a> property;
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>    <strong class="jxr_keyword">public</strong> <a name="JavaTypeAdapterDataTypeHandler" href="../../../../../../gov/nist/secauto/metaschema/binding/model/JavaTypeAdapterDataTypeHandler.html#JavaTypeAdapterDataTypeHandler">JavaTypeAdapterDataTypeHandler</a>(<a name="AbstractFieldProperty" href="../../../../../../gov/nist/secauto/metaschema/binding/model/AbstractFieldProperty.html#AbstractFieldProperty">AbstractFieldProperty</a> property) {
@@ -84,7 +84,7 @@
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>    }
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>    @Override
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>    <strong class="jxr_keyword">public</strong> List&lt;@NotNull Object&gt; get(Object parentInstance, <strong class="jxr_keyword">boolean</strong> requiresJsonKey, <a name="IJsonParsingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonParsingContext.html#IJsonParsingContext">IJsonParsingContext</a> context)
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>    <strong class="jxr_keyword">public</strong> List&lt;Object&gt; get(Object parentInstance, <strong class="jxr_keyword">boolean</strong> requiresJsonKey, <a name="IJsonParsingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonParsingContext.html#IJsonParsingContext">IJsonParsingContext</a> context)
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>        <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>      <strong class="jxr_keyword">if</strong> (requiresJsonKey) {
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>        <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IOException(<span class="jxr_string">"A scalar datatype cannot have a JSON key."</span>);
@@ -107,16 +107,16 @@
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>   @Override
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> writeItems(
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>       Collection&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> Object&gt; items,
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>       Collection&lt;? <strong class="jxr_keyword">extends</strong> Object&gt; items,
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>       <strong class="jxr_keyword">boolean</strong> writeObjectWrapper,
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>       <a name="IJsonWritingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonWritingContext.html#IJsonWritingContext">IJsonWritingContext</a> context) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>     <strong class="jxr_keyword">for</strong> (Object item : items) {
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>       getJavaTypeAdapter().writeJsonValue(item, context.getWriter());
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>       getJavaTypeAdapter().writeJsonValue(ObjectUtils.requireNonNull(item), context.getWriter());
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>     }
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>   }
 <a class="jxr_linenumber" name="L109" href="#L109">109</a> 
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>   @Override
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>   <strong class="jxr_keyword">public</strong> Object copyItem(@NotNull Object fromItem, Object parentInstance) <strong class="jxr_keyword">throws</strong> <a name="BindingException" href="../../../../../../gov/nist/secauto/metaschema/binding/io/BindingException.html#BindingException">BindingException</a> {
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>   <strong class="jxr_keyword">public</strong> Object copyItem(@NonNull Object fromItem, Object parentInstance) <strong class="jxr_keyword">throws</strong> <a name="BindingException" href="../../../../../../gov/nist/secauto/metaschema/binding/io/BindingException.html#BindingException">BindingException</a> {
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>     <strong class="jxr_keyword">return</strong> getJavaTypeAdapter().copy(fromItem);
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>   }
 <a class="jxr_linenumber" name="L114" href="#L114">114</a> }

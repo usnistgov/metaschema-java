@@ -44,7 +44,7 @@
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">class</strong> <a name="GeneralComparison" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/GeneralComparison.html#GeneralComparison">GeneralComparison</a>
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">extends</strong> <a name="AbstractComparison" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/AbstractComparison.html#AbstractComparison">AbstractComparison</a> {
@@ -59,7 +59,7 @@
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  <em class="jxr_javadoccomment">   * @param right</em>
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  <em class="jxr_javadoccomment">   *          the expression to compare with</em>
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>    <strong class="jxr_keyword">protected</strong> <a name="GeneralComparison" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/GeneralComparison.html#GeneralComparison">GeneralComparison</a>(@NotNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> left, @NotNull Operator <strong class="jxr_keyword">operator</strong>, @NotNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> right) {
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>    <strong class="jxr_keyword">protected</strong> <a name="GeneralComparison" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/GeneralComparison.html#GeneralComparison">GeneralComparison</a>(@NonNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> left, @NonNull Operator <strong class="jxr_keyword">operator</strong>, @NonNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> right) {
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">super</strong>(left, <strong class="jxr_keyword">operator</strong>, right);
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>    }
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  
@@ -86,16 +86,16 @@
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment">   *          the second set of items to compare</em>
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">   * @return a or an empty {@link ISequence} if either item is {@code null}</em>
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>    @NotNull
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>    @NonNull
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>    <strong class="jxr_keyword">protected</strong> <a name="IBooleanItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IBooleanItem.html#IBooleanItem">IBooleanItem</a> valueCompairison( <em class="jxr_comment">// NOPMD - acceptable complexity</em>
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>        @NotNull ISequence&lt;? <strong class="jxr_keyword">extends</strong> IAnyAtomicItem&gt; leftItems,
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>        @NotNull Operator <strong class="jxr_keyword">operator</strong>,
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>        @NotNull ISequence&lt;? <strong class="jxr_keyword">extends</strong> IAnyAtomicItem&gt; rightItems) {
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>        @NonNull ISequence&lt;? <strong class="jxr_keyword">extends</strong> IAnyAtomicItem&gt; leftItems,
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>        @NonNull Operator <strong class="jxr_keyword">operator</strong>,
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>        @NonNull ISequence&lt;? <strong class="jxr_keyword">extends</strong> IAnyAtomicItem&gt; rightItems) {
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>      <a name="IBooleanItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IBooleanItem.html#IBooleanItem">IBooleanItem</a> retval = IBooleanItem.FALSE;
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>      <strong class="jxr_keyword">for</strong> (<a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> left : leftItems.asList()) {
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>        <strong class="jxr_keyword">for</strong> (<a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> right : rightItems.asList()) {
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>          @NotNull
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>          @NonNull
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>          <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> leftCast;
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>          <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> rightCast;
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          <strong class="jxr_keyword">if</strong> (left instanceof <a name="IUntypedAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IUntypedAtomicItem.html#IUntypedAtomicItem">IUntypedAtomicItem</a>) {
@@ -132,8 +132,8 @@
 <a class="jxr_linenumber" name="L124" href="#L124">124</a> <em class="jxr_javadoccomment">   *          the item to cast</em>
 <a class="jxr_linenumber" name="L125" href="#L125">125</a> <em class="jxr_javadoccomment">   * @return the casted item</em>
 <a class="jxr_linenumber" name="L126" href="#L126">126</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>   @NotNull
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>   <strong class="jxr_keyword">protected</strong> <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> applyGeneralComparisonCast(@NotNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> item, @NotNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> other) {
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>   @NonNull
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>   <strong class="jxr_keyword">protected</strong> <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> applyGeneralComparisonCast(@NonNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> item, @NonNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> other) {
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>     <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> retval;
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>     <strong class="jxr_keyword">if</strong> (item instanceof <a name="INumericItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INumericItem.html#INumericItem">INumericItem</a>) {
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>       retval = IDecimalItem.<strong class="jxr_keyword">cast</strong>(other);

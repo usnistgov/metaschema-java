@@ -34,11 +34,11 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.model.common;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.Nullable;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> java.util.List;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.Nullable;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment"> * Indicates that the Metaschema definition type has a complex model that can contain flags, field,</em>
@@ -61,16 +61,16 @@
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment">   * </em>
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment">   * @return an ordered mapping of use name to model instance</em>
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>    @NotNull
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>    Collection&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> INamedModelInstance&gt; getNamedModelInstances();
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>    @NonNull
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>    Collection&lt;? <strong class="jxr_keyword">extends</strong> INamedModelInstance&gt; getNamedModelInstances();
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">   * Get all field instances within the container.</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">   * </em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">   * @return a mapping of use name to field instance</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>    @NotNull
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>    Collection&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> IFieldInstance&gt; getFieldInstances();
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>    @NonNull
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>    Collection&lt;? <strong class="jxr_keyword">extends</strong> IFieldInstance&gt; getFieldInstances();
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment">   * Get the field instance contained within the model with the associated use name.</em>
@@ -88,8 +88,8 @@
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_javadoccomment">   * </em>
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  <em class="jxr_javadoccomment">   * @return a mapping of use name to assembly instance</em>
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>    @NotNull
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>    Collection&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> IAssemblyInstance&gt; getAssemblyInstances();
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>    @NonNull
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>    Collection&lt;? <strong class="jxr_keyword">extends</strong> IAssemblyInstance&gt; getAssemblyInstances();
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">   * Get the assembly instance contained within the model with the associated use name.</em>
@@ -107,16 +107,16 @@
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  <em class="jxr_javadoccomment">   * </em>
 <a class="jxr_linenumber" name="L100" href="#L100">100</a> <em class="jxr_javadoccomment">   * @return a list of choice instances</em>
 <a class="jxr_linenumber" name="L101" href="#L101">101</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>   @NotNull
-<a class="jxr_linenumber" name="L103" href="#L103">103</a>   List&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> IChoiceInstance&gt; getChoiceInstances();
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>   @NonNull
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>   List&lt;? <strong class="jxr_keyword">extends</strong> IChoiceInstance&gt; getChoiceInstances();
 <a class="jxr_linenumber" name="L104" href="#L104">104</a> 
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>   <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">   * Get all model instances within the container.</em>
 <a class="jxr_linenumber" name="L107" href="#L107">107</a> <em class="jxr_javadoccomment">   * </em>
 <a class="jxr_linenumber" name="L108" href="#L108">108</a> <em class="jxr_javadoccomment">   * @return an ordered collection of model instances</em>
 <a class="jxr_linenumber" name="L109" href="#L109">109</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>   @NotNull
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>   Collection&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> IModelInstance&gt; getModelInstances();
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>   @NonNull
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>   Collection&lt;? <strong class="jxr_keyword">extends</strong> IModelInstance&gt; getModelInstances();
 <a class="jxr_linenumber" name="L112" href="#L112">112</a> }
 </pre>
 <hr/>

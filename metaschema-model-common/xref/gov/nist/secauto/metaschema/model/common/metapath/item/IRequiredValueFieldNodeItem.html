@@ -34,12 +34,12 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.model.common.metapath.item;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> java.util.Collections;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> java.util.List;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> java.util.stream.Stream;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> java.util.Collections;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> java.util.stream.Stream;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="IRequiredValueFieldNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IRequiredValueFieldNodeItem.html#IRequiredValueFieldNodeItem">IRequiredValueFieldNodeItem</a> <strong class="jxr_keyword">extends</strong> IFieldNodeItem, <a name="IRequiredValueModelNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IRequiredValueModelNodeItem.html#IRequiredValueModelNodeItem">IRequiredValueModelNodeItem</a> {
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
@@ -57,7 +57,7 @@
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>    }
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>    @Override
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>    @NotNull
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>    @NonNull
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>    <a name="IAnyAtomicItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> toAtomicItem();
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>    <em class="jxr_javadoccomment">/**</em>
@@ -65,7 +65,7 @@
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>    @Override
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>    <strong class="jxr_keyword">default</strong> Collection&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> List&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> IRequiredValueModelNodeItem&gt;&gt; getModelItems() {
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>    <strong class="jxr_keyword">default</strong> Collection&lt;? <strong class="jxr_keyword">extends</strong> List&lt;? <strong class="jxr_keyword">extends</strong> IRequiredValueModelNodeItem&gt;&gt; getModelItems() {
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      <em class="jxr_comment">// a field does not have model items</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      <strong class="jxr_keyword">return</strong> Collections.emptyList();
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>    }
@@ -75,7 +75,7 @@
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>    @Override
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>    <strong class="jxr_keyword">default</strong> List&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> IRequiredValueModelNodeItem&gt; getModelItemsByName(String name) {
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>    <strong class="jxr_keyword">default</strong> List&lt;? <strong class="jxr_keyword">extends</strong> IRequiredValueModelNodeItem&gt; getModelItemsByName(String name) {
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      <em class="jxr_comment">// a field does not have model items</em>
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">return</strong> Collections.emptyList();
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>    }
@@ -84,9 +84,9 @@
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">   * Fields do not have model items. This call should return an empty stream.</em>
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>    @NotNull
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>    @NonNull
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>    @Override
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>    <strong class="jxr_keyword">default</strong> Stream&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> IRequiredValueModelNodeItem&gt; modelItems() {
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>    <strong class="jxr_keyword">default</strong> Stream&lt;? <strong class="jxr_keyword">extends</strong> IRequiredValueModelNodeItem&gt; modelItems() {
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      <strong class="jxr_keyword">return</strong> Stream.empty();
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>    }
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  }

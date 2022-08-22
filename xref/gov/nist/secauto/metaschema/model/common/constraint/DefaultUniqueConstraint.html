@@ -37,10 +37,10 @@
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.Nullable;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.Nullable;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="DefaultUniqueConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultUniqueConstraint.html#DefaultUniqueConstraint">DefaultUniqueConstraint</a>
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">extends</strong> <a name="AbstractKeyConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/AbstractKeyConstraint.html#AbstractKeyConstraint">AbstractKeyConstraint</a>
@@ -65,10 +65,10 @@
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>    <strong class="jxr_keyword">public</strong> <a name="DefaultUniqueConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultUniqueConstraint.html#DefaultUniqueConstraint">DefaultUniqueConstraint</a>(
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>        @Nullable String id,
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>        @NotNull ISource source,
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>        @NotNull Level level,
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>        @NotNull <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> target,
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>        @NotNull List&lt;@NotNull DefaultKeyField&gt; keyFields,
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>        @NonNull ISource source,
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>        @NonNull Level level,
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>        @NonNull <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> target,
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>        @NonNull List&lt;DefaultKeyField&gt; keyFields,
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>        @Nullable <a name="MarkupMultiline" href="../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/MarkupMultiline.html#MarkupMultiline">MarkupMultiline</a> remarks) {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">super</strong>(id, source, level, target, keyFields, remarks);
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>    }

@@ -44,9 +44,9 @@
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFlagInstance;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IModelInstance;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment"> * Walks a Metaschema model. The "visit" methods can be implemented by child classes to perform</em>
@@ -69,7 +69,7 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">   * @param flag</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">   *          the metaschema flag definition to walk</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NotNull <a name="IFlagDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFlagDefinition.html#IFlagDefinition">IFlagDefinition</a> flag) {
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NonNull <a name="IFlagDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFlagDefinition.html#IFlagDefinition">IFlagDefinition</a> flag) {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      walk(flag, getDefaultData());
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>    }
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  
@@ -81,7 +81,7 @@
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_javadoccomment">   * @param data</em>
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>  <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NotNull <a name="IFlagDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFlagDefinition.html#IFlagDefinition">IFlagDefinition</a> flag, DATA data) {
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NonNull <a name="IFlagDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFlagDefinition.html#IFlagDefinition">IFlagDefinition</a> flag, DATA data) {
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>      visit(flag, data);
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>    }
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  
@@ -91,7 +91,7 @@
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  <em class="jxr_javadoccomment">   * @param field</em>
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_javadoccomment">   *          the metaschema field definition to walk</em>
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NotNull <a name="IFieldDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFieldDefinition.html#IFieldDefinition">IFieldDefinition</a> field) {
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NonNull <a name="IFieldDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFieldDefinition.html#IFieldDefinition">IFieldDefinition</a> field) {
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>      walk(field, getDefaultData());
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>    }
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>  
@@ -103,7 +103,7 @@
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  <em class="jxr_javadoccomment">   * @param data</em>
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NotNull <a name="IFieldDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFieldDefinition.html#IFieldDefinition">IFieldDefinition</a> field, DATA data) {
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NonNull <a name="IFieldDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFieldDefinition.html#IFieldDefinition">IFieldDefinition</a> field, DATA data) {
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>      <strong class="jxr_keyword">if</strong> (visit(field, data)) {
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>       walkFlagInstances(field.getFlagInstances(), data);
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>     }
@@ -116,7 +116,7 @@
 <a class="jxr_linenumber" name="L108" href="#L108">108</a> <em class="jxr_javadoccomment">   * @param assembly</em>
 <a class="jxr_linenumber" name="L109" href="#L109">109</a> <em class="jxr_javadoccomment">   *          the metaschema assembly definition to walk</em>
 <a class="jxr_linenumber" name="L110" href="#L110">110</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NotNull <a name="IAssemblyDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyDefinition.html#IAssemblyDefinition">IAssemblyDefinition</a> assembly) {
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NonNull <a name="IAssemblyDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyDefinition.html#IAssemblyDefinition">IAssemblyDefinition</a> assembly) {
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>     walk(assembly, getDefaultData());
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>   }
 <a class="jxr_linenumber" name="L114" href="#L114">114</a> 
@@ -129,7 +129,7 @@
 <a class="jxr_linenumber" name="L121" href="#L121">121</a> <em class="jxr_javadoccomment">   * @param data</em>
 <a class="jxr_linenumber" name="L122" href="#L122">122</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
 <a class="jxr_linenumber" name="L123" href="#L123">123</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L124" href="#L124">124</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NotNull <a name="IAssemblyDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyDefinition.html#IAssemblyDefinition">IAssemblyDefinition</a> assembly, DATA data) {
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NonNull <a name="IAssemblyDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyDefinition.html#IAssemblyDefinition">IAssemblyDefinition</a> assembly, DATA data) {
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>     <strong class="jxr_keyword">if</strong> (visit(assembly, data)) {
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>       walkFlagInstances(assembly.getFlagInstances(), data);
 <a class="jxr_linenumber" name="L127" href="#L127">127</a>       walkModelInstances(assembly.getModelInstances(), data);
@@ -144,7 +144,7 @@
 <a class="jxr_linenumber" name="L136" href="#L136">136</a> <em class="jxr_javadoccomment">   * @param data</em>
 <a class="jxr_linenumber" name="L137" href="#L137">137</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
 <a class="jxr_linenumber" name="L138" href="#L138">138</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NotNull <a name="IFlagInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFlagInstance.html#IFlagInstance">IFlagInstance</a> instance, DATA data) {
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NonNull <a name="IFlagInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFlagInstance.html#IFlagInstance">IFlagInstance</a> instance, DATA data) {
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>     <strong class="jxr_keyword">if</strong> (visit(instance, data)) {
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>       walk(instance.getDefinition(), data);
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>     }
@@ -158,7 +158,7 @@
 <a class="jxr_linenumber" name="L150" href="#L150">150</a> <em class="jxr_javadoccomment">   * @param data</em>
 <a class="jxr_linenumber" name="L151" href="#L151">151</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
 <a class="jxr_linenumber" name="L152" href="#L152">152</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NotNull <a name="IFieldInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFieldInstance.html#IFieldInstance">IFieldInstance</a> instance, DATA data) {
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NonNull <a name="IFieldInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFieldInstance.html#IFieldInstance">IFieldInstance</a> instance, DATA data) {
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>     <strong class="jxr_keyword">if</strong> (visit(instance, data)) {
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>       walk(instance.getDefinition(), data);
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>     }
@@ -173,7 +173,7 @@
 <a class="jxr_linenumber" name="L165" href="#L165">165</a> <em class="jxr_javadoccomment">   * @param data</em>
 <a class="jxr_linenumber" name="L166" href="#L166">166</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
 <a class="jxr_linenumber" name="L167" href="#L167">167</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NotNull <a name="IAssemblyInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a> instance, DATA data) {
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NonNull <a name="IAssemblyInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a> instance, DATA data) {
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>     <strong class="jxr_keyword">if</strong> (visit(instance, data)) {
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>       walk(instance.getDefinition(), data);
 <a class="jxr_linenumber" name="L171" href="#L171">171</a>     }
@@ -188,7 +188,7 @@
 <a class="jxr_linenumber" name="L180" href="#L180">180</a> <em class="jxr_javadoccomment">   * @param data</em>
 <a class="jxr_linenumber" name="L181" href="#L181">181</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
 <a class="jxr_linenumber" name="L182" href="#L182">182</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NotNull <a name="IChoiceInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IChoiceInstance.html#IChoiceInstance">IChoiceInstance</a> instance, DATA data) {
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walk(@NonNull <a name="IChoiceInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IChoiceInstance.html#IChoiceInstance">IChoiceInstance</a> instance, DATA data) {
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>     <strong class="jxr_keyword">if</strong> (visit(instance, data)) {
 <a class="jxr_linenumber" name="L185" href="#L185">185</a>       walkModelInstances(instance.getModelInstances(), data);
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>     }
@@ -200,7 +200,7 @@
 <a class="jxr_linenumber" name="L192" href="#L192">192</a> <em class="jxr_javadoccomment">   * @param definition</em>
 <a class="jxr_linenumber" name="L193" href="#L193">193</a> <em class="jxr_javadoccomment">   *          the definition to walk</em>
 <a class="jxr_linenumber" name="L194" href="#L194">194</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L195" href="#L195">195</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walkDefinition(@NotNull <a name="IDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IDefinition.html#IDefinition">IDefinition</a> definition) {
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walkDefinition(@NonNull <a name="IDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IDefinition.html#IDefinition">IDefinition</a> definition) {
 <a class="jxr_linenumber" name="L196" href="#L196">196</a>     walkDefinition(definition, getDefaultData());
 <a class="jxr_linenumber" name="L197" href="#L197">197</a>   }
 <a class="jxr_linenumber" name="L198" href="#L198">198</a> 
@@ -212,7 +212,7 @@
 <a class="jxr_linenumber" name="L204" href="#L204">204</a> <em class="jxr_javadoccomment">   * @param data</em>
 <a class="jxr_linenumber" name="L205" href="#L205">205</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
 <a class="jxr_linenumber" name="L206" href="#L206">206</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L207" href="#L207">207</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walkDefinition(@NotNull <a name="IDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IDefinition.html#IDefinition">IDefinition</a> definition, DATA data) {
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> walkDefinition(@NonNull <a name="IDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IDefinition.html#IDefinition">IDefinition</a> definition, DATA data) {
 <a class="jxr_linenumber" name="L208" href="#L208">208</a>     <strong class="jxr_keyword">if</strong> (definition instanceof <a name="IAssemblyDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyDefinition.html#IAssemblyDefinition">IAssemblyDefinition</a>) {
 <a class="jxr_linenumber" name="L209" href="#L209">209</a>       walk((<a name="IAssemblyDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyDefinition.html#IAssemblyDefinition">IAssemblyDefinition</a>) definition, data);
 <a class="jxr_linenumber" name="L210" href="#L210">210</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (definition instanceof <a name="IFieldDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFieldDefinition.html#IFieldDefinition">IFieldDefinition</a>) {
@@ -230,139 +230,141 @@
 <a class="jxr_linenumber" name="L222" href="#L222">222</a> <em class="jxr_javadoccomment">   * @param data</em>
 <a class="jxr_linenumber" name="L223" href="#L223">223</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
 <a class="jxr_linenumber" name="L224" href="#L224">224</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L225" href="#L225">225</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> walkFlagInstances(@NotNull Collection&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> IFlagInstance&gt; instances, DATA data) {
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> walkFlagInstances(@NonNull Collection&lt;? <strong class="jxr_keyword">extends</strong> IFlagInstance&gt; instances, DATA data) {
 <a class="jxr_linenumber" name="L226" href="#L226">226</a>     <strong class="jxr_keyword">for</strong> (<a name="IFlagInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFlagInstance.html#IFlagInstance">IFlagInstance</a> instance : instances) {
-<a class="jxr_linenumber" name="L227" href="#L227">227</a>       walk(instance, data);
-<a class="jxr_linenumber" name="L228" href="#L228">228</a>     }
-<a class="jxr_linenumber" name="L229" href="#L229">229</a>   }
-<a class="jxr_linenumber" name="L230" href="#L230">230</a> 
-<a class="jxr_linenumber" name="L231" href="#L231">231</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L232" href="#L232">232</a> <em class="jxr_javadoccomment">   * Will walk each of the provided model instances.</em>
-<a class="jxr_linenumber" name="L233" href="#L233">233</a> <em class="jxr_javadoccomment">   * </em>
-<a class="jxr_linenumber" name="L234" href="#L234">234</a> <em class="jxr_javadoccomment">   * @param instances</em>
-<a class="jxr_linenumber" name="L235" href="#L235">235</a> <em class="jxr_javadoccomment">   *          a collection of model instances to visit</em>
-<a class="jxr_linenumber" name="L236" href="#L236">236</a> <em class="jxr_javadoccomment">   * @param data</em>
-<a class="jxr_linenumber" name="L237" href="#L237">237</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
-<a class="jxr_linenumber" name="L238" href="#L238">238</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L239" href="#L239">239</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> walkModelInstances(@NotNull Collection&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> IModelInstance&gt; instances, DATA data) {
-<a class="jxr_linenumber" name="L240" href="#L240">240</a>     <strong class="jxr_keyword">for</strong> (<a name="IModelInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IModelInstance.html#IModelInstance">IModelInstance</a> instance : instances) {
-<a class="jxr_linenumber" name="L241" href="#L241">241</a>       walkModelInstance(instance, data);
-<a class="jxr_linenumber" name="L242" href="#L242">242</a>     }
-<a class="jxr_linenumber" name="L243" href="#L243">243</a>   }
-<a class="jxr_linenumber" name="L244" href="#L244">244</a> 
-<a class="jxr_linenumber" name="L245" href="#L245">245</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L246" href="#L246">246</a> <em class="jxr_javadoccomment">   * Will walk the provided model instance.</em>
-<a class="jxr_linenumber" name="L247" href="#L247">247</a> <em class="jxr_javadoccomment">   * </em>
-<a class="jxr_linenumber" name="L248" href="#L248">248</a> <em class="jxr_javadoccomment">   * @param instance</em>
-<a class="jxr_linenumber" name="L249" href="#L249">249</a> <em class="jxr_javadoccomment">   *          the instance to walk</em>
-<a class="jxr_linenumber" name="L250" href="#L250">250</a> <em class="jxr_javadoccomment">   * @param data</em>
-<a class="jxr_linenumber" name="L251" href="#L251">251</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
-<a class="jxr_linenumber" name="L252" href="#L252">252</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L253" href="#L253">253</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> walkModelInstance(@NotNull <a name="IModelInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IModelInstance.html#IModelInstance">IModelInstance</a> instance, DATA data) {
-<a class="jxr_linenumber" name="L254" href="#L254">254</a>     <strong class="jxr_keyword">if</strong> (instance instanceof <a name="IAssemblyInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a>) {
-<a class="jxr_linenumber" name="L255" href="#L255">255</a>       walk((<a name="IAssemblyInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a>) instance, data);
-<a class="jxr_linenumber" name="L256" href="#L256">256</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (instance instanceof <a name="IFieldInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFieldInstance.html#IFieldInstance">IFieldInstance</a>) {
-<a class="jxr_linenumber" name="L257" href="#L257">257</a>       walk((<a name="IFieldInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFieldInstance.html#IFieldInstance">IFieldInstance</a>) instance, data);
-<a class="jxr_linenumber" name="L258" href="#L258">258</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (instance instanceof <a name="IChoiceInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IChoiceInstance.html#IChoiceInstance">IChoiceInstance</a>) {
-<a class="jxr_linenumber" name="L259" href="#L259">259</a>       walk((<a name="IChoiceInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IChoiceInstance.html#IChoiceInstance">IChoiceInstance</a>) instance, data);
-<a class="jxr_linenumber" name="L260" href="#L260">260</a>     }
-<a class="jxr_linenumber" name="L261" href="#L261">261</a>   }
-<a class="jxr_linenumber" name="L262" href="#L262">262</a> 
-<a class="jxr_linenumber" name="L263" href="#L263">263</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L264" href="#L264">264</a> <em class="jxr_javadoccomment">   * Called when the provided definition is walked. This can be overridden by child classes to enable</em>
-<a class="jxr_linenumber" name="L265" href="#L265">265</a> <em class="jxr_javadoccomment">   * processing of the visited definition.</em>
-<a class="jxr_linenumber" name="L266" href="#L266">266</a> <em class="jxr_javadoccomment">   * </em>
-<a class="jxr_linenumber" name="L267" href="#L267">267</a> <em class="jxr_javadoccomment">   * @param def</em>
-<a class="jxr_linenumber" name="L268" href="#L268">268</a> <em class="jxr_javadoccomment">   *          the definition that is visited</em>
-<a class="jxr_linenumber" name="L269" href="#L269">269</a> <em class="jxr_javadoccomment">   * @param data</em>
-<a class="jxr_linenumber" name="L270" href="#L270">270</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
-<a class="jxr_linenumber" name="L271" href="#L271">271</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L272" href="#L272">272</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> visit(@NotNull <a name="IFlagDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFlagDefinition.html#IFlagDefinition">IFlagDefinition</a> def, DATA data);
-<a class="jxr_linenumber" name="L273" href="#L273">273</a> 
-<a class="jxr_linenumber" name="L274" href="#L274">274</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L275" href="#L275">275</a> <em class="jxr_javadoccomment">   * Called when the provided definition is walked. This can be overridden by child classes to enable</em>
-<a class="jxr_linenumber" name="L276" href="#L276">276</a> <em class="jxr_javadoccomment">   * processing of the visited definition.</em>
-<a class="jxr_linenumber" name="L277" href="#L277">277</a> <em class="jxr_javadoccomment">   * </em>
-<a class="jxr_linenumber" name="L278" href="#L278">278</a> <em class="jxr_javadoccomment">   * @param def</em>
-<a class="jxr_linenumber" name="L279" href="#L279">279</a> <em class="jxr_javadoccomment">   *          the definition that is visited</em>
-<a class="jxr_linenumber" name="L280" href="#L280">280</a> <em class="jxr_javadoccomment">   * @param data</em>
-<a class="jxr_linenumber" name="L281" href="#L281">281</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
-<a class="jxr_linenumber" name="L282" href="#L282">282</a> <em class="jxr_javadoccomment">   * @return {@code true} if child instances are to be walked, or {@code false} otherwise</em>
-<a class="jxr_linenumber" name="L283" href="#L283">283</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L284" href="#L284">284</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> visit(@NotNull <a name="IFieldDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFieldDefinition.html#IFieldDefinition">IFieldDefinition</a> def, DATA data) {
-<a class="jxr_linenumber" name="L285" href="#L285">285</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>   }
-<a class="jxr_linenumber" name="L287" href="#L287">287</a> 
-<a class="jxr_linenumber" name="L288" href="#L288">288</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L289" href="#L289">289</a> <em class="jxr_javadoccomment">   * Called when the provided definition is walked. This can be overridden by child classes to enable</em>
-<a class="jxr_linenumber" name="L290" href="#L290">290</a> <em class="jxr_javadoccomment">   * processing of the visited definition.</em>
-<a class="jxr_linenumber" name="L291" href="#L291">291</a> <em class="jxr_javadoccomment">   * </em>
-<a class="jxr_linenumber" name="L292" href="#L292">292</a> <em class="jxr_javadoccomment">   * @param def</em>
-<a class="jxr_linenumber" name="L293" href="#L293">293</a> <em class="jxr_javadoccomment">   *          the definition that is visited</em>
-<a class="jxr_linenumber" name="L294" href="#L294">294</a> <em class="jxr_javadoccomment">   * @param data</em>
-<a class="jxr_linenumber" name="L295" href="#L295">295</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
-<a class="jxr_linenumber" name="L296" href="#L296">296</a> <em class="jxr_javadoccomment">   * @return {@code true} if child instances are to be walked, or {@code false} otherwise</em>
-<a class="jxr_linenumber" name="L297" href="#L297">297</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L298" href="#L298">298</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> visit(@NotNull <a name="IAssemblyDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyDefinition.html#IAssemblyDefinition">IAssemblyDefinition</a> def, DATA data) {
-<a class="jxr_linenumber" name="L299" href="#L299">299</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>   }
-<a class="jxr_linenumber" name="L301" href="#L301">301</a> 
-<a class="jxr_linenumber" name="L302" href="#L302">302</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L303" href="#L303">303</a> <em class="jxr_javadoccomment">   * Called when the provided instance is walked. This can be overridden by child classes to enable</em>
-<a class="jxr_linenumber" name="L304" href="#L304">304</a> <em class="jxr_javadoccomment">   * processing of the visited instance.</em>
-<a class="jxr_linenumber" name="L305" href="#L305">305</a> <em class="jxr_javadoccomment">   * </em>
-<a class="jxr_linenumber" name="L306" href="#L306">306</a> <em class="jxr_javadoccomment">   * @param instance</em>
-<a class="jxr_linenumber" name="L307" href="#L307">307</a> <em class="jxr_javadoccomment">   *          the instance that is visited</em>
-<a class="jxr_linenumber" name="L308" href="#L308">308</a> <em class="jxr_javadoccomment">   * @param data</em>
-<a class="jxr_linenumber" name="L309" href="#L309">309</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
-<a class="jxr_linenumber" name="L310" href="#L310">310</a> <em class="jxr_javadoccomment">   * @return {@code true} if the associated definition is to be walked, or {@code false} otherwise</em>
-<a class="jxr_linenumber" name="L311" href="#L311">311</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L312" href="#L312">312</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> visit(@NotNull <a name="IFlagInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFlagInstance.html#IFlagInstance">IFlagInstance</a> instance, DATA data) {
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L314" href="#L314">314</a>   }
-<a class="jxr_linenumber" name="L315" href="#L315">315</a> 
-<a class="jxr_linenumber" name="L316" href="#L316">316</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L317" href="#L317">317</a> <em class="jxr_javadoccomment">   * Called when the provided instance is walked. This can be overridden by child classes to enable</em>
-<a class="jxr_linenumber" name="L318" href="#L318">318</a> <em class="jxr_javadoccomment">   * processing of the visited instance.</em>
-<a class="jxr_linenumber" name="L319" href="#L319">319</a> <em class="jxr_javadoccomment">   * </em>
-<a class="jxr_linenumber" name="L320" href="#L320">320</a> <em class="jxr_javadoccomment">   * @param instance</em>
-<a class="jxr_linenumber" name="L321" href="#L321">321</a> <em class="jxr_javadoccomment">   *          the instance that is visited</em>
-<a class="jxr_linenumber" name="L322" href="#L322">322</a> <em class="jxr_javadoccomment">   * @param data</em>
-<a class="jxr_linenumber" name="L323" href="#L323">323</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
-<a class="jxr_linenumber" name="L324" href="#L324">324</a> <em class="jxr_javadoccomment">   * @return {@code true} if the associated definition is to be walked, or {@code false} otherwise</em>
-<a class="jxr_linenumber" name="L325" href="#L325">325</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L326" href="#L326">326</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> visit(@NotNull <a name="IFieldInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFieldInstance.html#IFieldInstance">IFieldInstance</a> instance, DATA data) {
-<a class="jxr_linenumber" name="L327" href="#L327">327</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L328" href="#L328">328</a>   }
-<a class="jxr_linenumber" name="L329" href="#L329">329</a> 
-<a class="jxr_linenumber" name="L330" href="#L330">330</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L331" href="#L331">331</a> <em class="jxr_javadoccomment">   * Called when the provided instance is walked. This can be overridden by child classes to enable</em>
-<a class="jxr_linenumber" name="L332" href="#L332">332</a> <em class="jxr_javadoccomment">   * processing of the visited instance.</em>
-<a class="jxr_linenumber" name="L333" href="#L333">333</a> <em class="jxr_javadoccomment">   * </em>
-<a class="jxr_linenumber" name="L334" href="#L334">334</a> <em class="jxr_javadoccomment">   * @param instance</em>
-<a class="jxr_linenumber" name="L335" href="#L335">335</a> <em class="jxr_javadoccomment">   *          the instance that is visited</em>
-<a class="jxr_linenumber" name="L336" href="#L336">336</a> <em class="jxr_javadoccomment">   * @param data</em>
-<a class="jxr_linenumber" name="L337" href="#L337">337</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
-<a class="jxr_linenumber" name="L338" href="#L338">338</a> <em class="jxr_javadoccomment">   * @return {@code true} if the associated definition is to be walked, or {@code false} otherwise</em>
-<a class="jxr_linenumber" name="L339" href="#L339">339</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L340" href="#L340">340</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> visit(@NotNull <a name="IAssemblyInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a> instance, DATA data) {
-<a class="jxr_linenumber" name="L341" href="#L341">341</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L342" href="#L342">342</a>   }
-<a class="jxr_linenumber" name="L343" href="#L343">343</a> 
-<a class="jxr_linenumber" name="L344" href="#L344">344</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L345" href="#L345">345</a> <em class="jxr_javadoccomment">   * Called when the provided instance is walked. This can be overridden by child classes to enable</em>
-<a class="jxr_linenumber" name="L346" href="#L346">346</a> <em class="jxr_javadoccomment">   * processing of the visited instance.</em>
-<a class="jxr_linenumber" name="L347" href="#L347">347</a> <em class="jxr_javadoccomment">   * </em>
-<a class="jxr_linenumber" name="L348" href="#L348">348</a> <em class="jxr_javadoccomment">   * @param instance</em>
-<a class="jxr_linenumber" name="L349" href="#L349">349</a> <em class="jxr_javadoccomment">   *          the instance that is visited</em>
-<a class="jxr_linenumber" name="L350" href="#L350">350</a> <em class="jxr_javadoccomment">   * @param data</em>
-<a class="jxr_linenumber" name="L351" href="#L351">351</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
-<a class="jxr_linenumber" name="L352" href="#L352">352</a> <em class="jxr_javadoccomment">   * @return {@code true} if the child instances are to be walked, or {@code false} otherwise</em>
-<a class="jxr_linenumber" name="L353" href="#L353">353</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L354" href="#L354">354</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> visit(@NotNull <a name="IChoiceInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IChoiceInstance.html#IChoiceInstance">IChoiceInstance</a> instance, DATA data) {
-<a class="jxr_linenumber" name="L355" href="#L355">355</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L356" href="#L356">356</a>   }
-<a class="jxr_linenumber" name="L357" href="#L357">357</a> }
+<a class="jxr_linenumber" name="L227" href="#L227">227</a>       assert instance != <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L228" href="#L228">228</a>       walk(instance, data);
+<a class="jxr_linenumber" name="L229" href="#L229">229</a>     }
+<a class="jxr_linenumber" name="L230" href="#L230">230</a>   }
+<a class="jxr_linenumber" name="L231" href="#L231">231</a> 
+<a class="jxr_linenumber" name="L232" href="#L232">232</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L233" href="#L233">233</a> <em class="jxr_javadoccomment">   * Will walk each of the provided model instances.</em>
+<a class="jxr_linenumber" name="L234" href="#L234">234</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L235" href="#L235">235</a> <em class="jxr_javadoccomment">   * @param instances</em>
+<a class="jxr_linenumber" name="L236" href="#L236">236</a> <em class="jxr_javadoccomment">   *          a collection of model instances to visit</em>
+<a class="jxr_linenumber" name="L237" href="#L237">237</a> <em class="jxr_javadoccomment">   * @param data</em>
+<a class="jxr_linenumber" name="L238" href="#L238">238</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
+<a class="jxr_linenumber" name="L239" href="#L239">239</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L240" href="#L240">240</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> walkModelInstances(@NonNull Collection&lt;? <strong class="jxr_keyword">extends</strong> IModelInstance&gt; instances, DATA data) {
+<a class="jxr_linenumber" name="L241" href="#L241">241</a>     <strong class="jxr_keyword">for</strong> (<a name="IModelInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IModelInstance.html#IModelInstance">IModelInstance</a> instance : instances) {
+<a class="jxr_linenumber" name="L242" href="#L242">242</a>       assert instance != <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L243" href="#L243">243</a>       walkModelInstance(instance, data);
+<a class="jxr_linenumber" name="L244" href="#L244">244</a>     }
+<a class="jxr_linenumber" name="L245" href="#L245">245</a>   }
+<a class="jxr_linenumber" name="L246" href="#L246">246</a> 
+<a class="jxr_linenumber" name="L247" href="#L247">247</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L248" href="#L248">248</a> <em class="jxr_javadoccomment">   * Will walk the provided model instance.</em>
+<a class="jxr_linenumber" name="L249" href="#L249">249</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L250" href="#L250">250</a> <em class="jxr_javadoccomment">   * @param instance</em>
+<a class="jxr_linenumber" name="L251" href="#L251">251</a> <em class="jxr_javadoccomment">   *          the instance to walk</em>
+<a class="jxr_linenumber" name="L252" href="#L252">252</a> <em class="jxr_javadoccomment">   * @param data</em>
+<a class="jxr_linenumber" name="L253" href="#L253">253</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
+<a class="jxr_linenumber" name="L254" href="#L254">254</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L255" href="#L255">255</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> walkModelInstance(@NonNull <a name="IModelInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IModelInstance.html#IModelInstance">IModelInstance</a> instance, DATA data) {
+<a class="jxr_linenumber" name="L256" href="#L256">256</a>     <strong class="jxr_keyword">if</strong> (instance instanceof <a name="IAssemblyInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a>) {
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>       walk((<a name="IAssemblyInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a>) instance, data);
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (instance instanceof <a name="IFieldInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFieldInstance.html#IFieldInstance">IFieldInstance</a>) {
+<a class="jxr_linenumber" name="L259" href="#L259">259</a>       walk((<a name="IFieldInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFieldInstance.html#IFieldInstance">IFieldInstance</a>) instance, data);
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (instance instanceof <a name="IChoiceInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IChoiceInstance.html#IChoiceInstance">IChoiceInstance</a>) {
+<a class="jxr_linenumber" name="L261" href="#L261">261</a>       walk((<a name="IChoiceInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IChoiceInstance.html#IChoiceInstance">IChoiceInstance</a>) instance, data);
+<a class="jxr_linenumber" name="L262" href="#L262">262</a>     }
+<a class="jxr_linenumber" name="L263" href="#L263">263</a>   }
+<a class="jxr_linenumber" name="L264" href="#L264">264</a> 
+<a class="jxr_linenumber" name="L265" href="#L265">265</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L266" href="#L266">266</a> <em class="jxr_javadoccomment">   * Called when the provided definition is walked. This can be overridden by child classes to enable</em>
+<a class="jxr_linenumber" name="L267" href="#L267">267</a> <em class="jxr_javadoccomment">   * processing of the visited definition.</em>
+<a class="jxr_linenumber" name="L268" href="#L268">268</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L269" href="#L269">269</a> <em class="jxr_javadoccomment">   * @param def</em>
+<a class="jxr_linenumber" name="L270" href="#L270">270</a> <em class="jxr_javadoccomment">   *          the definition that is visited</em>
+<a class="jxr_linenumber" name="L271" href="#L271">271</a> <em class="jxr_javadoccomment">   * @param data</em>
+<a class="jxr_linenumber" name="L272" href="#L272">272</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
+<a class="jxr_linenumber" name="L273" href="#L273">273</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L274" href="#L274">274</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> visit(@NonNull <a name="IFlagDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFlagDefinition.html#IFlagDefinition">IFlagDefinition</a> def, DATA data);
+<a class="jxr_linenumber" name="L275" href="#L275">275</a> 
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L277" href="#L277">277</a> <em class="jxr_javadoccomment">   * Called when the provided definition is walked. This can be overridden by child classes to enable</em>
+<a class="jxr_linenumber" name="L278" href="#L278">278</a> <em class="jxr_javadoccomment">   * processing of the visited definition.</em>
+<a class="jxr_linenumber" name="L279" href="#L279">279</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L280" href="#L280">280</a> <em class="jxr_javadoccomment">   * @param def</em>
+<a class="jxr_linenumber" name="L281" href="#L281">281</a> <em class="jxr_javadoccomment">   *          the definition that is visited</em>
+<a class="jxr_linenumber" name="L282" href="#L282">282</a> <em class="jxr_javadoccomment">   * @param data</em>
+<a class="jxr_linenumber" name="L283" href="#L283">283</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
+<a class="jxr_linenumber" name="L284" href="#L284">284</a> <em class="jxr_javadoccomment">   * @return {@code true} if child instances are to be walked, or {@code false} otherwise</em>
+<a class="jxr_linenumber" name="L285" href="#L285">285</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> visit(@NonNull <a name="IFieldDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFieldDefinition.html#IFieldDefinition">IFieldDefinition</a> def, DATA data) {
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>   }
+<a class="jxr_linenumber" name="L289" href="#L289">289</a> 
+<a class="jxr_linenumber" name="L290" href="#L290">290</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L291" href="#L291">291</a> <em class="jxr_javadoccomment">   * Called when the provided definition is walked. This can be overridden by child classes to enable</em>
+<a class="jxr_linenumber" name="L292" href="#L292">292</a> <em class="jxr_javadoccomment">   * processing of the visited definition.</em>
+<a class="jxr_linenumber" name="L293" href="#L293">293</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L294" href="#L294">294</a> <em class="jxr_javadoccomment">   * @param def</em>
+<a class="jxr_linenumber" name="L295" href="#L295">295</a> <em class="jxr_javadoccomment">   *          the definition that is visited</em>
+<a class="jxr_linenumber" name="L296" href="#L296">296</a> <em class="jxr_javadoccomment">   * @param data</em>
+<a class="jxr_linenumber" name="L297" href="#L297">297</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
+<a class="jxr_linenumber" name="L298" href="#L298">298</a> <em class="jxr_javadoccomment">   * @return {@code true} if child instances are to be walked, or {@code false} otherwise</em>
+<a class="jxr_linenumber" name="L299" href="#L299">299</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> visit(@NonNull <a name="IAssemblyDefinition" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyDefinition.html#IAssemblyDefinition">IAssemblyDefinition</a> def, DATA data) {
+<a class="jxr_linenumber" name="L301" href="#L301">301</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>   }
+<a class="jxr_linenumber" name="L303" href="#L303">303</a> 
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L305" href="#L305">305</a> <em class="jxr_javadoccomment">   * Called when the provided instance is walked. This can be overridden by child classes to enable</em>
+<a class="jxr_linenumber" name="L306" href="#L306">306</a> <em class="jxr_javadoccomment">   * processing of the visited instance.</em>
+<a class="jxr_linenumber" name="L307" href="#L307">307</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L308" href="#L308">308</a> <em class="jxr_javadoccomment">   * @param instance</em>
+<a class="jxr_linenumber" name="L309" href="#L309">309</a> <em class="jxr_javadoccomment">   *          the instance that is visited</em>
+<a class="jxr_linenumber" name="L310" href="#L310">310</a> <em class="jxr_javadoccomment">   * @param data</em>
+<a class="jxr_linenumber" name="L311" href="#L311">311</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
+<a class="jxr_linenumber" name="L312" href="#L312">312</a> <em class="jxr_javadoccomment">   * @return {@code true} if the associated definition is to be walked, or {@code false} otherwise</em>
+<a class="jxr_linenumber" name="L313" href="#L313">313</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L314" href="#L314">314</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> visit(@NonNull <a name="IFlagInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFlagInstance.html#IFlagInstance">IFlagInstance</a> instance, DATA data) {
+<a class="jxr_linenumber" name="L315" href="#L315">315</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L316" href="#L316">316</a>   }
+<a class="jxr_linenumber" name="L317" href="#L317">317</a> 
+<a class="jxr_linenumber" name="L318" href="#L318">318</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L319" href="#L319">319</a> <em class="jxr_javadoccomment">   * Called when the provided instance is walked. This can be overridden by child classes to enable</em>
+<a class="jxr_linenumber" name="L320" href="#L320">320</a> <em class="jxr_javadoccomment">   * processing of the visited instance.</em>
+<a class="jxr_linenumber" name="L321" href="#L321">321</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L322" href="#L322">322</a> <em class="jxr_javadoccomment">   * @param instance</em>
+<a class="jxr_linenumber" name="L323" href="#L323">323</a> <em class="jxr_javadoccomment">   *          the instance that is visited</em>
+<a class="jxr_linenumber" name="L324" href="#L324">324</a> <em class="jxr_javadoccomment">   * @param data</em>
+<a class="jxr_linenumber" name="L325" href="#L325">325</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
+<a class="jxr_linenumber" name="L326" href="#L326">326</a> <em class="jxr_javadoccomment">   * @return {@code true} if the associated definition is to be walked, or {@code false} otherwise</em>
+<a class="jxr_linenumber" name="L327" href="#L327">327</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> visit(@NonNull <a name="IFieldInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IFieldInstance.html#IFieldInstance">IFieldInstance</a> instance, DATA data) {
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L330" href="#L330">330</a>   }
+<a class="jxr_linenumber" name="L331" href="#L331">331</a> 
+<a class="jxr_linenumber" name="L332" href="#L332">332</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L333" href="#L333">333</a> <em class="jxr_javadoccomment">   * Called when the provided instance is walked. This can be overridden by child classes to enable</em>
+<a class="jxr_linenumber" name="L334" href="#L334">334</a> <em class="jxr_javadoccomment">   * processing of the visited instance.</em>
+<a class="jxr_linenumber" name="L335" href="#L335">335</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L336" href="#L336">336</a> <em class="jxr_javadoccomment">   * @param instance</em>
+<a class="jxr_linenumber" name="L337" href="#L337">337</a> <em class="jxr_javadoccomment">   *          the instance that is visited</em>
+<a class="jxr_linenumber" name="L338" href="#L338">338</a> <em class="jxr_javadoccomment">   * @param data</em>
+<a class="jxr_linenumber" name="L339" href="#L339">339</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
+<a class="jxr_linenumber" name="L340" href="#L340">340</a> <em class="jxr_javadoccomment">   * @return {@code true} if the associated definition is to be walked, or {@code false} otherwise</em>
+<a class="jxr_linenumber" name="L341" href="#L341">341</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L342" href="#L342">342</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> visit(@NonNull <a name="IAssemblyInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a> instance, DATA data) {
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L344" href="#L344">344</a>   }
+<a class="jxr_linenumber" name="L345" href="#L345">345</a> 
+<a class="jxr_linenumber" name="L346" href="#L346">346</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L347" href="#L347">347</a> <em class="jxr_javadoccomment">   * Called when the provided instance is walked. This can be overridden by child classes to enable</em>
+<a class="jxr_linenumber" name="L348" href="#L348">348</a> <em class="jxr_javadoccomment">   * processing of the visited instance.</em>
+<a class="jxr_linenumber" name="L349" href="#L349">349</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L350" href="#L350">350</a> <em class="jxr_javadoccomment">   * @param instance</em>
+<a class="jxr_linenumber" name="L351" href="#L351">351</a> <em class="jxr_javadoccomment">   *          the instance that is visited</em>
+<a class="jxr_linenumber" name="L352" href="#L352">352</a> <em class="jxr_javadoccomment">   * @param data</em>
+<a class="jxr_linenumber" name="L353" href="#L353">353</a> <em class="jxr_javadoccomment">   *          additional state information to operate on</em>
+<a class="jxr_linenumber" name="L354" href="#L354">354</a> <em class="jxr_javadoccomment">   * @return {@code true} if the child instances are to be walked, or {@code false} otherwise</em>
+<a class="jxr_linenumber" name="L355" href="#L355">355</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L356" href="#L356">356</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> visit(@NonNull <a name="IChoiceInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/IChoiceInstance.html#IChoiceInstance">IChoiceInstance</a> instance, DATA data) {
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>   }
+<a class="jxr_linenumber" name="L359" href="#L359">359</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

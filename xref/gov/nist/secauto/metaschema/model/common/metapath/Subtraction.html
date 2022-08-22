@@ -43,7 +43,7 @@
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">class</strong> <a name="Subtraction" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/Subtraction.html#Subtraction">Subtraction</a>
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>      <strong class="jxr_keyword">extends</strong> <a name="AbstractBasicArithmeticExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/AbstractBasicArithmeticExpression.html#AbstractBasicArithmeticExpression">AbstractBasicArithmeticExpression</a> {
@@ -56,7 +56,7 @@
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">   * @param subtrahend</em>
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment">   *          an expression whose result is the value being subtracted</em>
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>    <strong class="jxr_keyword">protected</strong> <a name="Subtraction" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/Subtraction.html#Subtraction">Subtraction</a>(@NotNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> minuend, @NotNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> subtrahend) {
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>    <strong class="jxr_keyword">protected</strong> <a name="Subtraction" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/Subtraction.html#Subtraction">Subtraction</a>(@NonNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> minuend, @NonNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> subtrahend) {
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">super</strong>(minuend, subtrahend);
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>    }
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  
@@ -75,8 +75,8 @@
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">   * @return the difference of the items or an empty {@link ISequence} if either item is {@code null}</em>
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>    @Override
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>    @NotNull
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>    <strong class="jxr_keyword">protected</strong> <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> operation(@NotNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> minuend, @NotNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> subtrahend) {
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>    @NonNull
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>    <strong class="jxr_keyword">protected</strong> <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> operation(@NonNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> minuend, @NonNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> subtrahend) {
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">return</strong> subtract(minuend, subtrahend);
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>    }
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>  
@@ -89,9 +89,9 @@
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  <em class="jxr_javadoccomment">   *          the item being subtracted</em>
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  <em class="jxr_javadoccomment">   * @return the difference of the items</em>
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>    @NotNull
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> subtract(@NotNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> minuend, <em class="jxr_comment">// NOPMD - intentional</em>
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>        @NotNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> subtrahend) {
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>    @NonNull
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> subtract(@NonNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> minuend, <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>        @NonNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> subtrahend) {
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>  
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>      <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> retval = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">if</strong> (minuend instanceof <a name="IDateItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IDateItem.html#IDateItem">IDateItem</a>) {
@@ -131,12 +131,13 @@
 <a class="jxr_linenumber" name="L123" href="#L123">123</a>     }
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>     <strong class="jxr_keyword">if</strong> (retval == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="InvalidTypeMetapathException" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/InvalidTypeMetapathException.html#InvalidTypeMetapathException">InvalidTypeMetapathException</a>(
-<a class="jxr_linenumber" name="L126" href="#L126">126</a>           String.format(<span class="jxr_string">"The expression '%s - %s' is not supported"</span>, minuend.getClass().getName(),
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>               subtrahend.getClass().getName()));
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>     }
-<a class="jxr_linenumber" name="L129" href="#L129">129</a>     <strong class="jxr_keyword">return</strong> retval;
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>   }
-<a class="jxr_linenumber" name="L131" href="#L131">131</a> }
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>           <strong class="jxr_keyword">null</strong>,
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>           String.format(<span class="jxr_string">"The expression '%s - %s' is not supported"</span>, minuend.getClass().getName(),
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>               subtrahend.getClass().getName()));
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>     }
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>     <strong class="jxr_keyword">return</strong> retval;
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>   }
+<a class="jxr_linenumber" name="L132" href="#L132">132</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

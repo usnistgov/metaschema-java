@@ -34,12 +34,12 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.model.common.metapath.item;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment"> * This marker interface indicates that the {@link IFlagNodeItem} must have a value to exist.</em>
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="IRequiredValueFlagNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IRequiredValueFlagNodeItem.html#IRequiredValueFlagNodeItem">IRequiredValueFlagNodeItem</a> <strong class="jxr_keyword">extends</strong> IFlagNodeItem, <a name="IRequiredValueDefinitionNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IRequiredValueDefinitionNodeItem.html#IRequiredValueDefinitionNodeItem">IRequiredValueDefinitionNodeItem</a> {
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="IRequiredValueFlagNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IRequiredValueFlagNodeItem.html#IRequiredValueFlagNodeItem">IRequiredValueFlagNodeItem</a> <strong class="jxr_keyword">extends</strong> IFlagNodeItem, <a name="IRequiredValueNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IRequiredValueNodeItem.html#IRequiredValueNodeItem">IRequiredValueNodeItem</a> {
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>    @Override
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>    <strong class="jxr_keyword">default</strong> <a name="IRequiredValueFlagNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IRequiredValueFlagNodeItem.html#IRequiredValueFlagNodeItem">IRequiredValueFlagNodeItem</a> getNodeItem() {
@@ -55,7 +55,7 @@
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>    }
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>    @Override
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>    @NotNull
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>    @NonNull
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>    <a name="IAnyAtomicItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> toAtomicItem();
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  }
 </pre>

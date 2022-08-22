@@ -34,11 +34,11 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.model.common;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a name="AbstractFlagInstance" href="../../../../../../gov/nist/secauto/metaschema/model/common/AbstractFlagInstance.html#AbstractFlagInstance">AbstractFlagInstance</a> <strong class="jxr_keyword">implements</strong> <a name="IFlagInstance" href="../../../../../../gov/nist/secauto/metaschema/model/common/IFlagInstance.html#IFlagInstance">IFlagInstance</a> {
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>    @NotNull
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="INamedModelDefinition" href="../../../../../../gov/nist/secauto/metaschema/model/common/INamedModelDefinition.html#INamedModelDefinition">INamedModelDefinition</a> parent;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>    @NonNull
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="IModelDefinition" href="../../../../../../gov/nist/secauto/metaschema/model/common/IModelDefinition.html#IModelDefinition">IModelDefinition</a> parent;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment">   * Create a new flag instance.</em>
@@ -46,12 +46,12 @@
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">   * @param parent</em>
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment">   *          the parent definition, which must be a definition type that can contain flags.</em>
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>    <strong class="jxr_keyword">public</strong> <a name="AbstractFlagInstance" href="../../../../../../gov/nist/secauto/metaschema/model/common/AbstractFlagInstance.html#AbstractFlagInstance">AbstractFlagInstance</a>(@NotNull <a name="INamedModelDefinition" href="../../../../../../gov/nist/secauto/metaschema/model/common/INamedModelDefinition.html#INamedModelDefinition">INamedModelDefinition</a> parent) {
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>    <strong class="jxr_keyword">public</strong> <a name="AbstractFlagInstance" href="../../../../../../gov/nist/secauto/metaschema/model/common/AbstractFlagInstance.html#AbstractFlagInstance">AbstractFlagInstance</a>(@NonNull <a name="IModelDefinition" href="../../../../../../gov/nist/secauto/metaschema/model/common/IModelDefinition.html#IModelDefinition">IModelDefinition</a> parent) {
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">this</strong>.parent = parent;
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>    }
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>    @Override
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>    <strong class="jxr_keyword">public</strong> <a name="INamedModelDefinition" href="../../../../../../gov/nist/secauto/metaschema/model/common/INamedModelDefinition.html#INamedModelDefinition">INamedModelDefinition</a> getContainingDefinition() {
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>    <strong class="jxr_keyword">public</strong> <a name="IModelDefinition" href="../../../../../../gov/nist/secauto/metaschema/model/common/IModelDefinition.html#IModelDefinition">IModelDefinition</a> getContainingDefinition() {
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">return</strong> parent;
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>    }
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  

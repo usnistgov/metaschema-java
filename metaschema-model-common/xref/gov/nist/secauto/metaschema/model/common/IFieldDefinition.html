@@ -34,10 +34,10 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.model.common;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.Nullable;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.Nullable;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="IFieldDefinition" href="../../../../../../gov/nist/secauto/metaschema/model/common/IFieldDefinition.html#IFieldDefinition">IFieldDefinition</a> <strong class="jxr_keyword">extends</strong> INamedValuedDefinition, INamedModelDefinition, <a name="IField" href="../../../../../../gov/nist/secauto/metaschema/model/common/IField.html#IField">IField</a> {
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="IFieldDefinition" href="../../../../../../gov/nist/secauto/metaschema/model/common/IFieldDefinition.html#IFieldDefinition">IFieldDefinition</a> <strong class="jxr_keyword">extends</strong> IValuedDefinition, IModelDefinition, <a name="IField" href="../../../../../../gov/nist/secauto/metaschema/model/common/IField.html#IField">IField</a> {
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>    @Override
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>    <a name="IFieldInstance" href="../../../../../../gov/nist/secauto/metaschema/model/common/IFieldInstance.html#IFieldInstance">IFieldInstance</a> getInlineInstance();
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
@@ -79,7 +79,7 @@
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">   * </em>
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  <em class="jxr_javadoccomment">   * @return the value key label</em>
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>    @NotNull
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>    @NonNull
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>    String getJsonValueKeyName();
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>    <em class="jxr_javadoccomment">/**</em>
@@ -99,7 +99,7 @@
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  <em class="jxr_javadoccomment">   *          the field item</em>
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">   * @return the field's value or {@code null} if it has no value</em>
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>    Object getFieldValue(@NotNull Object item);
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>    Object getFieldValue(@NonNull Object item);
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  }
 </pre>
 <hr/>

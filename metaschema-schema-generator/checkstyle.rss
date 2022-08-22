@@ -27,7 +27,7 @@ under the License.
     <item>
       <title>File: 23,
              Errors: 0,
-             Warnings: 87,
+             Warnings: 83,
              Infos: 0
       </title>
             <link>https://pages.nist.gov/metaschema-java/metaschema-schema-generator//checkstyle.html</link>
@@ -130,20 +130,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-schema-generator//checkstyle.html#gov.nist.secauto.metaschema.schemagen.JDom2DatatypeContent.java">gov/nist/secauto/metaschema/schemagen/JDom2DatatypeContent.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-schema-generator//checkstyle.html#gov.nist.secauto.metaschema.schemagen.JDom2XmlSchemaLoader.java">gov/nist/secauto/metaschema/schemagen/JDom2XmlSchemaLoader.java</a>
                 </td>
                 <td>
@@ -151,6 +137,20 @@ under the License.
                 </td>
                 <td>
                   5
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-schema-generator//checkstyle.html#gov.nist.secauto.metaschema.schemagen.JDom2DatatypeContent.java">gov/nist/secauto/metaschema/schemagen/JDom2DatatypeContent.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
                 </td>
                 <td>
                   0
@@ -200,27 +200,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-schema-generator//checkstyle.html#gov.nist.secauto.metaschema.schemagen.IInlineStrategy.java">gov/nist/secauto/metaschema/schemagen/IInlineStrategy.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-schema-generator//checkstyle.html#gov.nist.secauto.metaschema.schemagen.FlagInstanceFilter.java">gov/nist/secauto/metaschema/schemagen/FlagInstanceFilter.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  4
+                  2
                 </td>
                 <td>
                   0
@@ -234,7 +220,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  17
+                  16
                 </td>
                 <td>
                   0
@@ -242,13 +228,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-schema-generator//checkstyle.html#gov.nist.secauto.metaschema.schemagen.AbstractDatatypeManager.java">gov/nist/secauto/metaschema/schemagen/AbstractDatatypeManager.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-schema-generator//checkstyle.html#gov.nist.secauto.metaschema.schemagen.IInlineStrategy.java">gov/nist/secauto/metaschema/schemagen/IInlineStrategy.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  2
+                  1
                 </td>
                 <td>
                   0
@@ -270,13 +256,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-schema-generator//checkstyle.html#gov.nist.secauto.metaschema.schemagen.IDatatypeContent.java">gov/nist/secauto/metaschema/schemagen/IDatatypeContent.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-schema-generator//checkstyle.html#gov.nist.secauto.metaschema.schemagen.AbstractDatatypeManager.java">gov/nist/secauto/metaschema/schemagen/AbstractDatatypeManager.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  3
+                  2
                 </td>
                 <td>
                   0
@@ -284,13 +270,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-schema-generator//checkstyle.html#gov.nist.secauto.metaschema.schemagen.CompositeDatatypeProvider.java">gov/nist/secauto/metaschema/schemagen/CompositeDatatypeProvider.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-schema-generator//checkstyle.html#gov.nist.secauto.metaschema.schemagen.IDatatypeContent.java">gov/nist/secauto/metaschema/schemagen/IDatatypeContent.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  2
+                  3
                 </td>
                 <td>
                   0
@@ -312,13 +298,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-schema-generator//checkstyle.html#gov.nist.secauto.metaschema.schemagen.IGenerationState.java">gov/nist/secauto/metaschema/schemagen/IGenerationState.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-schema-generator//checkstyle.html#gov.nist.secauto.metaschema.schemagen.CompositeDatatypeProvider.java">gov/nist/secauto/metaschema/schemagen/CompositeDatatypeProvider.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  3
+                  2
                 </td>
                 <td>
                   0
@@ -332,7 +318,21 @@ under the License.
                   0
                 </td>
                 <td>
-                  12
+                  11
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-schema-generator//checkstyle.html#gov.nist.secauto.metaschema.schemagen.IGenerationState.java">gov/nist/secauto/metaschema/schemagen/IGenerationState.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
                 </td>
                 <td>
                   0

@@ -39,17 +39,17 @@
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> java.util.List;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> java.util.Objects;
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> java.util.stream.Collectors;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> java.util.Objects;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> java.util.stream.Collectors;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">class</strong> <a name="FunctionCall" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/FunctionCall.html#FunctionCall">FunctionCall</a> <strong class="jxr_keyword">implements</strong> <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> {
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>    @NotNull
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>    @NonNull
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String name;
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>    @NotNull
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> List&lt;@NotNull IExpression&gt; arguments;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>    @NonNull
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> List&lt;IExpression&gt; arguments;
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>    <strong class="jxr_keyword">private</strong> <a name="IFunction" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/IFunction.html#IFunction">IFunction</a> function;
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>    <em class="jxr_javadoccomment">/**</em>
@@ -61,7 +61,7 @@
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment">   *          the expressions used to provide arguments to the function call</em>
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>    <strong class="jxr_keyword">protected</strong> <a name="FunctionCall" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/FunctionCall.html#FunctionCall">FunctionCall</a>(@NotNull String name, @NotNull List&lt;@NotNull IExpression&gt; arguments) {
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>    <strong class="jxr_keyword">protected</strong> <a name="FunctionCall" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/FunctionCall.html#FunctionCall">FunctionCall</a>(@NonNull String name, @NonNull List&lt;IExpression&gt; arguments) {
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">this</strong>.name = Objects.requireNonNull(name, <span class="jxr_string">"name"</span>);
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">this</strong>.arguments = Objects.requireNonNull(arguments, <span class="jxr_string">"arguments"</span>);
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>    }
@@ -78,12 +78,12 @@
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>        <strong class="jxr_keyword">if</strong> (function == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>          function = FunctionService.getInstance().getFunction(name, arguments);
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>        }
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>      }
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">return</strong> function;
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>        <strong class="jxr_keyword">return</strong> function;
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>      }
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>    }
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>    @Override
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>    <strong class="jxr_keyword">public</strong> List&lt;@NotNull IExpression&gt; getChildren() {
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>    <strong class="jxr_keyword">public</strong> List&lt;IExpression&gt; getChildren() {
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">return</strong> arguments;
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>    }
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  
@@ -109,8 +109,8 @@
 <a class="jxr_linenumber" name="L101" href="#L101">101</a> 
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>   @Override
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>   <strong class="jxr_keyword">public</strong> ISequence&lt;?&gt; accept(<a name="DynamicContext" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/DynamicContext.html#DynamicContext">DynamicContext</a> dynamicContext, <a name="INodeContext" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/INodeContext.html#INodeContext">INodeContext</a> context) {
-<a class="jxr_linenumber" name="L104" href="#L104">104</a>     List&lt;@NotNull ISequence&lt;?&gt;&gt; arguments = ObjectUtils.notNull(getChildren().stream().map(expression -&gt; {
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>       @NotNull
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>     List&lt;ISequence&lt;?&gt;&gt; arguments = ObjectUtils.notNull(getChildren().stream().map(expression -&gt; {
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>       @NonNull
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>       ISequence&lt;?&gt; result = expression.accept(dynamicContext, context);
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>       <strong class="jxr_keyword">return</strong> result;
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>     }).collect(Collectors.toList()));

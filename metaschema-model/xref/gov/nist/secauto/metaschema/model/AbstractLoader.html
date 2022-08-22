@@ -40,36 +40,36 @@
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.LogManager;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.Logger;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> java.io.File;
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> java.net.MalformedURLException;
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> java.net.URI;
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> java.net.URISyntaxException;
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> java.net.URL;
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> java.nio.file.Path;
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> java.util.LinkedHashMap;
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> java.util.Stack;
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> java.util.stream.Collectors;
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>  
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> AbstractLoader&lt;T&gt; {
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Logger LOGGER = LogManager.getLogger(ConstraintLoader.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>  
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>    @NotNull
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;@NotNull URI, T&gt; cache = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;&gt;(); <em class="jxr_comment">// NOPMD - intentional</em>
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>  
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>    <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">   * Retrieve the set of loaded resources.</em>
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">   * </em>
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">   * @return the set of loaded resources</em>
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>    @NotNull
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>    <strong class="jxr_keyword">public</strong> Collection&lt;@NotNull T&gt; getLoadedConstraintSets() {
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">return</strong> CollectionUtil.unmodifiableCollection(cache.values());
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> java.io.File;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> java.net.MalformedURLException;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> java.net.URI;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> java.net.URISyntaxException;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> java.net.URL;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> java.nio.file.Path;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> java.util.LinkedHashMap;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> java.util.Stack;
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> java.util.stream.Collectors;
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> AbstractLoader&lt;T&gt; {
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Logger LOGGER = LogManager.getLogger(ConstraintLoader.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>    @NonNull
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;URI, T&gt; cache = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;&gt;(); <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>    <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">   * Retrieve the set of loaded resources.</em>
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">   * @return the set of loaded resources</em>
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>    @NonNull
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>    <strong class="jxr_keyword">public</strong> Collection&lt;T&gt; getLoadedResources() {
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">return</strong> CollectionUtil.unmodifiableCollection(ObjectUtils.notNull(cache.values()));
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>    }
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>    <em class="jxr_javadoccomment">/**</em>
@@ -77,8 +77,8 @@
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">   * </em>
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">   * @return the mapping</em>
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>    @NotNull
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>    <strong class="jxr_keyword">protected</strong> Map&lt;@NotNull URI, T&gt; getCachedEntries() {
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>    @NonNull
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>    <strong class="jxr_keyword">protected</strong> Map&lt;URI, T&gt; getCachedEntries() {
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">return</strong> CollectionUtil.unmodifiableMap(cache);
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>    }
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  
@@ -93,8 +93,8 @@
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  <em class="jxr_javadoccomment">   * @throws IOException</em>
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">   *           if an error occurred parsing the resource</em>
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>    @NotNull
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>    <strong class="jxr_keyword">public</strong> T load(@NotNull URI resource) <strong class="jxr_keyword">throws</strong> MetaschemaException, IOException {
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>    @NonNull
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>    <strong class="jxr_keyword">public</strong> T load(@NonNull URI resource) <strong class="jxr_keyword">throws</strong> MetaschemaException, IOException {
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>      <strong class="jxr_keyword">if</strong> (!resource.isAbsolute()) {
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>        <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(String.format(<span class="jxr_string">"The URI '%s' must be absolute."</span>, resource.toString()));
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>      }
@@ -112,8 +112,8 @@
 <a class="jxr_linenumber" name="L104" href="#L104">104</a> <em class="jxr_javadoccomment">   * @throws IOException</em>
 <a class="jxr_linenumber" name="L105" href="#L105">105</a> <em class="jxr_javadoccomment">   *           if an error occurred parsing the resource</em>
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>   @NotNull
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>   <strong class="jxr_keyword">public</strong> T load(@NotNull Path path) <strong class="jxr_keyword">throws</strong> MetaschemaException, IOException {
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>   @NonNull
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>   <strong class="jxr_keyword">public</strong> T load(@NonNull Path path) <strong class="jxr_keyword">throws</strong> MetaschemaException, IOException {
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>     <strong class="jxr_keyword">return</strong> loadInternal(ObjectUtils.notNull(path.toUri()), <strong class="jxr_keyword">new</strong> Stack&lt;&gt;());
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>   }
 <a class="jxr_linenumber" name="L111" href="#L111">111</a> 
@@ -128,8 +128,8 @@
 <a class="jxr_linenumber" name="L120" href="#L120">120</a> <em class="jxr_javadoccomment">   * @throws IOException</em>
 <a class="jxr_linenumber" name="L121" href="#L121">121</a> <em class="jxr_javadoccomment">   *           if an error occurred parsing the resource</em>
 <a class="jxr_linenumber" name="L122" href="#L122">122</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L123" href="#L123">123</a>   @NotNull
-<a class="jxr_linenumber" name="L124" href="#L124">124</a>   <strong class="jxr_keyword">public</strong> T load(@NotNull File file) <strong class="jxr_keyword">throws</strong> MetaschemaException, IOException {
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>   @NonNull
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>   <strong class="jxr_keyword">public</strong> T load(@NonNull File file) <strong class="jxr_keyword">throws</strong> MetaschemaException, IOException {
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>     <strong class="jxr_keyword">return</strong> loadInternal(ObjectUtils.notNull(file.toURI()), <strong class="jxr_keyword">new</strong> Stack&lt;&gt;());
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>   }
 <a class="jxr_linenumber" name="L127" href="#L127">127</a> 
@@ -144,8 +144,8 @@
 <a class="jxr_linenumber" name="L136" href="#L136">136</a> <em class="jxr_javadoccomment">   * @throws IOException</em>
 <a class="jxr_linenumber" name="L137" href="#L137">137</a> <em class="jxr_javadoccomment">   *           if an error occurred parsing the resource</em>
 <a class="jxr_linenumber" name="L138" href="#L138">138</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>   @NotNull
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>   <strong class="jxr_keyword">public</strong> T load(@NotNull URL url) <strong class="jxr_keyword">throws</strong> MetaschemaException, IOException {
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>   @NonNull
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>   <strong class="jxr_keyword">public</strong> T load(@NonNull URL url) <strong class="jxr_keyword">throws</strong> MetaschemaException, IOException {
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>     <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>       URI resource = url.toURI();
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>       <strong class="jxr_keyword">return</strong> loadInternal(ObjectUtils.notNull(resource), <strong class="jxr_keyword">new</strong> Stack&lt;&gt;());
@@ -177,8 +177,8 @@
 <a class="jxr_linenumber" name="L169" href="#L169">169</a> <em class="jxr_javadoccomment">   * @throws IOException</em>
 <a class="jxr_linenumber" name="L170" href="#L170">170</a> <em class="jxr_javadoccomment">   *           if an error occurred parsing the resource</em>
 <a class="jxr_linenumber" name="L171" href="#L171">171</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>   @NotNull
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>   <strong class="jxr_keyword">protected</strong> T loadInternal(@NotNull URI resource, @NotNull Stack&lt;@NotNull URI&gt; visitedResources)
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>   @NonNull
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>   <strong class="jxr_keyword">protected</strong> T loadInternal(@NonNull URI resource, @NonNull Stack&lt;URI&gt; visitedResources)
 <a class="jxr_linenumber" name="L174" href="#L174">174</a>       <strong class="jxr_keyword">throws</strong> MetaschemaException, MalformedURLException, IOException {
 <a class="jxr_linenumber" name="L175" href="#L175">175</a>     <em class="jxr_comment">// first check if the current resource has been visited to prevent cycles</em>
 <a class="jxr_linenumber" name="L176" href="#L176">176</a>     <strong class="jxr_keyword">if</strong> (visitedResources.contains(resource)) {
@@ -205,10 +205,22 @@
 <a class="jxr_linenumber" name="L197" href="#L197">197</a>     <strong class="jxr_keyword">return</strong> ObjectUtils.notNull(retval);
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>   }
 <a class="jxr_linenumber" name="L199" href="#L199">199</a> 
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> T parseResource(@NotNull URI resource, @NotNull Stack&lt;@NotNull URI&gt; visitedResources)
-<a class="jxr_linenumber" name="L201" href="#L201">201</a>       <strong class="jxr_keyword">throws</strong> IOException;
-<a class="jxr_linenumber" name="L202" href="#L202">202</a> 
-<a class="jxr_linenumber" name="L203" href="#L203">203</a> }
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L201" href="#L201">201</a> <em class="jxr_javadoccomment">   * Parse the provided {@code resource}.</em>
+<a class="jxr_linenumber" name="L202" href="#L202">202</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L203" href="#L203">203</a> <em class="jxr_javadoccomment">   * @param resource</em>
+<a class="jxr_linenumber" name="L204" href="#L204">204</a> <em class="jxr_javadoccomment">   *          the resource to parse</em>
+<a class="jxr_linenumber" name="L205" href="#L205">205</a> <em class="jxr_javadoccomment">   * @param visitedResources</em>
+<a class="jxr_linenumber" name="L206" href="#L206">206</a> <em class="jxr_javadoccomment">   *          a stack representing previously parsed resources imported by the provided</em>
+<a class="jxr_linenumber" name="L207" href="#L207">207</a> <em class="jxr_javadoccomment">   *          {@code resource}</em>
+<a class="jxr_linenumber" name="L208" href="#L208">208</a> <em class="jxr_javadoccomment">   * @return the parsed resource</em>
+<a class="jxr_linenumber" name="L209" href="#L209">209</a> <em class="jxr_javadoccomment">   * @throws IOException</em>
+<a class="jxr_linenumber" name="L210" href="#L210">210</a> <em class="jxr_javadoccomment">   *           if an error occurred while parsing the resource</em>
+<a class="jxr_linenumber" name="L211" href="#L211">211</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> T parseResource(@NonNull URI resource, @NonNull Stack&lt;URI&gt; visitedResources)
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>       <strong class="jxr_keyword">throws</strong> IOException;
+<a class="jxr_linenumber" name="L214" href="#L214">214</a> 
+<a class="jxr_linenumber" name="L215" href="#L215">215</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

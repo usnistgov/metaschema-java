@@ -39,19 +39,19 @@
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> java.io.File;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> java.io.InputStream;
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> java.io.InputStreamReader;
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> java.io.Reader;
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> java.net.URI;
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> java.net.URISyntaxException;
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> java.net.URL;
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> java.nio.charset.StandardCharsets;
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> java.nio.file.Files;
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> java.nio.file.Path;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> java.io.File;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> java.io.InputStream;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> java.io.InputStreamReader;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> java.io.Reader;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> java.net.URI;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> java.net.URISyntaxException;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> java.net.URL;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> java.nio.charset.StandardCharsets;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> java.nio.file.Files;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> java.nio.file.Path;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment"> * Implementations of this interface are able to read structured data into a bound object instance</em>
@@ -71,10 +71,10 @@
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">return</strong> isFeatureEnabled(DeserializationFeature.DESERIALIZE_VALIDATE_CONSTRAINTS);
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>    }
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>    @NotNull
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>    @NonNull
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>    <a name="IConstraintValidationHandler" href="../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IConstraintValidationHandler.html#IConstraintValidationHandler">IConstraintValidationHandler</a> getConstraintValidationHandler();
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>    <strong class="jxr_keyword">void</strong> setConstraintValidationHandler(@NotNull <a name="IConstraintValidationHandler" href="../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IConstraintValidationHandler.html#IConstraintValidationHandler">IConstraintValidationHandler</a> constraintValidationHandler);
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>    <strong class="jxr_keyword">void</strong> setConstraintValidationHandler(@NonNull <a name="IConstraintValidationHandler" href="../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IConstraintValidationHandler.html#IConstraintValidationHandler">IConstraintValidationHandler</a> constraintValidationHandler);
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  <em class="jxr_javadoccomment">   * Read data from the {@link InputStream} into a bound class instance.</em>
@@ -87,9 +87,9 @@
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">   * @throws IOException</em>
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_javadoccomment">   *           if an error occurred while reading data from the stream</em>
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>    @NotNull
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>    <strong class="jxr_keyword">default</strong> CLASS deserialize(@NotNull InputStream is, @NotNull URI documentUri) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>      <strong class="jxr_keyword">return</strong> deserialize(<strong class="jxr_keyword">new</strong> InputStreamReader(is), documentUri);
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>    @NonNull
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>    <strong class="jxr_keyword">default</strong> CLASS deserialize(@NonNull InputStream is, @NonNull URI documentUri) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>      <strong class="jxr_keyword">return</strong> deserialize(<strong class="jxr_keyword">new</strong> InputStreamReader(is, StandardCharsets.UTF_8), documentUri);
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>    }
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>    <em class="jxr_javadoccomment">/**</em>
@@ -102,8 +102,8 @@
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>  <em class="jxr_javadoccomment">   *           if an error occurred while writing data to the file indicated by the {@code path}</em>
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  <em class="jxr_javadoccomment">   *           parameter</em>
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>    @NotNull
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>    <strong class="jxr_keyword">default</strong> CLASS deserialize(@NotNull Path path) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>    @NonNull
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>    <strong class="jxr_keyword">default</strong> CLASS deserialize(@NonNull Path path) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>      <strong class="jxr_keyword">try</strong> (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>       <strong class="jxr_keyword">return</strong> deserialize(ObjectUtils.notNull(reader), ObjectUtils.notNull(path.toUri()));
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>     }
@@ -118,8 +118,8 @@
 <a class="jxr_linenumber" name="L110" href="#L110">110</a> <em class="jxr_javadoccomment">   * @throws IOException</em>
 <a class="jxr_linenumber" name="L111" href="#L111">111</a> <em class="jxr_javadoccomment">   *           if an error occurred while reading data from the stream</em>
 <a class="jxr_linenumber" name="L112" href="#L112">112</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>   @NotNull
-<a class="jxr_linenumber" name="L114" href="#L114">114</a>   <strong class="jxr_keyword">default</strong> CLASS deserialize(@NotNull File file) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>   @NonNull
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>   <strong class="jxr_keyword">default</strong> CLASS deserialize(@NonNull File file) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>     <strong class="jxr_keyword">return</strong> deserialize(ObjectUtils.notNull(file.toPath()));
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>   }
 <a class="jxr_linenumber" name="L117" href="#L117">117</a> 
@@ -136,8 +136,8 @@
 <a class="jxr_linenumber" name="L128" href="#L128">128</a> <em class="jxr_javadoccomment">   *           if the provided URL is not formatted strictly according to to RFC2396 and cannot be</em>
 <a class="jxr_linenumber" name="L129" href="#L129">129</a> <em class="jxr_javadoccomment">   *           converted to a URI.</em>
 <a class="jxr_linenumber" name="L130" href="#L130">130</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>   @NotNull
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>   <strong class="jxr_keyword">default</strong> CLASS deserialize(@NotNull URL url) <strong class="jxr_keyword">throws</strong> IOException, URISyntaxException {
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>   @NonNull
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>   <strong class="jxr_keyword">default</strong> CLASS deserialize(@NonNull URL url) <strong class="jxr_keyword">throws</strong> IOException, URISyntaxException {
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>     <strong class="jxr_keyword">try</strong> (InputStream in = url.openStream()) {
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>       <strong class="jxr_keyword">return</strong> deserialize(ObjectUtils.notNull(in), ObjectUtils.notNull(url.toURI()));
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>     }
@@ -155,11 +155,11 @@
 <a class="jxr_linenumber" name="L147" href="#L147">147</a> <em class="jxr_javadoccomment">   * @throws IOException</em>
 <a class="jxr_linenumber" name="L148" href="#L148">148</a> <em class="jxr_javadoccomment">   *           if an error occurred while reading data from the stream</em>
 <a class="jxr_linenumber" name="L149" href="#L149">149</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>   @SuppressWarnings({ <span class="jxr_string">"unchecked"</span>, <span class="jxr_string">"null"</span> })
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>   @NotNull
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>   <strong class="jxr_keyword">default</strong> CLASS deserialize(@NotNull Reader reader, @NotNull URI documentUri) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>   @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>   @NonNull
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>   <strong class="jxr_keyword">default</strong> CLASS deserialize(@NonNull Reader reader, @NonNull URI documentUri) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>     <a name="INodeItem" href="../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> nodeItem = deserializeToNodeItem(reader, documentUri);
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>     <strong class="jxr_keyword">return</strong> (CLASS) nodeItem.getValue();
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>     <strong class="jxr_keyword">return</strong> (CLASS) ObjectUtils.requireNonNull(nodeItem.getValue());
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>   }
 <a class="jxr_linenumber" name="L156" href="#L156">156</a> 
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>   <em class="jxr_javadoccomment">/**</em>
@@ -173,10 +173,10 @@
 <a class="jxr_linenumber" name="L165" href="#L165">165</a> <em class="jxr_javadoccomment">   * @throws IOException</em>
 <a class="jxr_linenumber" name="L166" href="#L166">166</a> <em class="jxr_javadoccomment">   *           if an error occurred while reading data from the stream</em>
 <a class="jxr_linenumber" name="L167" href="#L167">167</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>   @NotNull
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>   <strong class="jxr_keyword">default</strong> <a name="INodeItem" href="../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> deserializeToNodeItem(@NotNull InputStream is, @NotNull URI documentUri)
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>   @NonNull
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>   <strong class="jxr_keyword">default</strong> <a name="INodeItem" href="../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> deserializeToNodeItem(@NonNull InputStream is, @NonNull URI documentUri)
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>       <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>     <strong class="jxr_keyword">return</strong> deserializeToNodeItem(<strong class="jxr_keyword">new</strong> InputStreamReader(is), documentUri);
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>     <strong class="jxr_keyword">return</strong> deserializeToNodeItem(<strong class="jxr_keyword">new</strong> InputStreamReader(is, StandardCharsets.UTF_8), documentUri);
 <a class="jxr_linenumber" name="L172" href="#L172">172</a>   }
 <a class="jxr_linenumber" name="L173" href="#L173">173</a> 
 <a class="jxr_linenumber" name="L174" href="#L174">174</a>   <em class="jxr_javadoccomment">/**</em>
@@ -190,8 +190,8 @@
 <a class="jxr_linenumber" name="L182" href="#L182">182</a> <em class="jxr_javadoccomment">   * @throws IOException</em>
 <a class="jxr_linenumber" name="L183" href="#L183">183</a> <em class="jxr_javadoccomment">   *           if an error occurred while reading data from the stream</em>
 <a class="jxr_linenumber" name="L184" href="#L184">184</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>   @NotNull
-<a class="jxr_linenumber" name="L186" href="#L186">186</a>   <a name="INodeItem" href="../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> deserializeToNodeItem(@NotNull Reader reader, @NotNull URI documentUri) <strong class="jxr_keyword">throws</strong> IOException;
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>   @NonNull
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>   <a name="INodeItem" href="../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> deserializeToNodeItem(@NonNull Reader reader, @NonNull URI documentUri) <strong class="jxr_keyword">throws</strong> IOException;
 <a class="jxr_linenumber" name="L187" href="#L187">187</a> }
 </pre>
 <hr/>

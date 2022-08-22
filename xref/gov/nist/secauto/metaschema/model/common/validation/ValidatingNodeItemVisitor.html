@@ -41,7 +41,7 @@
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeItem;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="ValidatingNodeItemVisitor" href="../../../../../../../gov/nist/secauto/metaschema/model/common/validation/ValidatingNodeItemVisitor.html#ValidatingNodeItemVisitor">ValidatingNodeItemVisitor</a>
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">extends</strong> AbstractNodeItemVisitor&lt;Boolean, IConstraintValidator&gt; {
@@ -70,7 +70,7 @@
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>    }
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>    @Override
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>    <strong class="jxr_keyword">public</strong> Boolean visitMetaschema(@NotNull <a name="IMetaschemaNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IMetaschemaNodeItem.html#IMetaschemaNodeItem">IMetaschemaNodeItem</a> item, <a name="IConstraintValidator" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IConstraintValidator.html#IConstraintValidator">IConstraintValidator</a> context) {
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>    <strong class="jxr_keyword">public</strong> Boolean visitMetaschema(@NonNull <a name="IMetaschemaNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IMetaschemaNodeItem.html#IMetaschemaNodeItem">IMetaschemaNodeItem</a> item, <a name="IConstraintValidator" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IConstraintValidator.html#IConstraintValidator">IConstraintValidator</a> context) {
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException(<span class="jxr_string">"validation of a metaschema node item is not needed"</span>);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>    }
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  }

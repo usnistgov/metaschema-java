@@ -38,10 +38,10 @@
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.Nullable;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> java.net.URI;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> java.net.URI;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.Nullable;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="IAssemblyNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAssemblyNodeItem.html#IAssemblyNodeItem">IAssemblyNodeItem</a> <strong class="jxr_keyword">extends</strong> <a name="IModelNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IModelNodeItem.html#IModelNodeItem">IModelNodeItem</a> {
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>    @Override
@@ -74,12 +74,12 @@
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>    }
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>    @Override
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>    <strong class="jxr_keyword">default</strong> @NotNull String format(@NotNull <a name="IPathFormatter" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/format/IPathFormatter.html#IPathFormatter">IPathFormatter</a> formatter) {
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>    <strong class="jxr_keyword">default</strong> @NonNull String format(@NonNull <a name="IPathFormatter" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/format/IPathFormatter.html#IPathFormatter">IPathFormatter</a> formatter) {
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      <strong class="jxr_keyword">return</strong> formatter.formatAssembly(<strong class="jxr_keyword">this</strong>);
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>    }
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>    @Override
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>    <strong class="jxr_keyword">default</strong> &lt;RESULT, CONTEXT&gt; RESULT accept(@NotNull INodeItemVisitor&lt;RESULT, CONTEXT&gt; visitor, CONTEXT context) {
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>    <strong class="jxr_keyword">default</strong> &lt;RESULT, CONTEXT&gt; RESULT accept(@NonNull INodeItemVisitor&lt;RESULT, CONTEXT&gt; visitor, CONTEXT context) {
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>      <strong class="jxr_keyword">return</strong> visitor.visitAssembly(<strong class="jxr_keyword">this</strong>, context);
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>    }
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  }

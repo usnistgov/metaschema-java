@@ -68,17 +68,17 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.DoubleQuoteNode;
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>  
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>  <strong class="jxr_keyword">import</strong> java.util.HashMap;
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <strong class="jxr_keyword">import</strong> java.util.regex.Matcher;
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>  <strong class="jxr_keyword">import</strong> java.util.regex.Pattern;
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>  
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>  <strong class="jxr_keyword">import</strong> javax.xml.namespace.QName;
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>  <strong class="jxr_keyword">import</strong> javax.xml.stream.XMLStreamException;
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>  <strong class="jxr_keyword">import</strong> java.util.HashMap;
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  <strong class="jxr_keyword">import</strong> java.util.regex.Matcher;
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  <strong class="jxr_keyword">import</strong> java.util.regex.Pattern;
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>  <strong class="jxr_keyword">import</strong> javax.xml.namespace.QName;
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  <strong class="jxr_keyword">import</strong> javax.xml.stream.XMLStreamException;
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> AbstractMarkupXmlWriter&lt;WRITER&gt; {
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> AbstractMarkupXmlWriter&lt;WRITER&gt; { <em class="jxr_comment">// NOPMD - acceptable</em>
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Pattern ENTITY_PATTERN = Pattern.compile(<span class="jxr_string">"^&amp;([^;]+);$"</span>);
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; ENTITY_MAP;
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  
@@ -96,16 +96,16 @@
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>      ENTITY_MAP.put(<span class="jxr_string">"&amp;raquo;"</span>, <span class="jxr_string">"»"</span>);
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>    }
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>    @NotNull
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>    @NonNull
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String namespace;
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> handleBlockElements;
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>  
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>    <strong class="jxr_keyword">public</strong> <a name="AbstractMarkupXmlWriter" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/AbstractMarkupXmlWriter.html#AbstractMarkupXmlWriter">AbstractMarkupXmlWriter</a>(@NotNull String namespace, <strong class="jxr_keyword">boolean</strong> handleBlockElements) {
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>    <strong class="jxr_keyword">public</strong> <a name="AbstractMarkupXmlWriter" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/AbstractMarkupXmlWriter.html#AbstractMarkupXmlWriter">AbstractMarkupXmlWriter</a>(@NonNull String namespace, <strong class="jxr_keyword">boolean</strong> handleBlockElements) {
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>      <strong class="jxr_keyword">this</strong>.namespace = namespace;
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>      <strong class="jxr_keyword">this</strong>.handleBlockElements = handleBlockElements;
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>    }
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>   @NotNull
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>   @NonNull
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>   <strong class="jxr_keyword">protected</strong> String getNamespace() {
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>     <strong class="jxr_keyword">return</strong> namespace;
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>   }
@@ -141,7 +141,7 @@
 <a class="jxr_linenumber" name="L133" href="#L133">133</a> 
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> writeHtmlEntity(WRITER writer, String entityText) <strong class="jxr_keyword">throws</strong> XMLStreamException;
 <a class="jxr_linenumber" name="L135" href="#L135">135</a> 
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> processInlineElements(Node node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> processInlineElements(Node node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException { <em class="jxr_comment">// NOPMD - acceptable</em>
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>     <strong class="jxr_keyword">boolean</strong> retval = false;
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>     <strong class="jxr_keyword">if</strong> (node instanceof Text) {
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>       writeText(writer, node.getChars().toString());
@@ -328,7 +328,7 @@
 <a class="jxr_linenumber" name="L320" href="#L320">320</a>       <strong class="jxr_keyword">if</strong> (matcher.matches()) {
 <a class="jxr_linenumber" name="L321" href="#L321">321</a>         writeHtmlEntity(writer, matcher.group(1));
 <a class="jxr_linenumber" name="L322" href="#L322">322</a>       } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L323" href="#L323">323</a>         writeText(writer, replacement);
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>         writeText(writer, entityText);
 <a class="jxr_linenumber" name="L324" href="#L324">324</a>       }
 <a class="jxr_linenumber" name="L325" href="#L325">325</a>     }
 <a class="jxr_linenumber" name="L326" href="#L326">326</a>   }

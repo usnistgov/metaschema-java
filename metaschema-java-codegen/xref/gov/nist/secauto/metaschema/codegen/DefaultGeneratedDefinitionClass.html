@@ -37,11 +37,11 @@
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> com.squareup.javapoet.ClassName;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IModelDefinition;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> java.nio.file.Path;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> java.nio.file.Path;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment"> * Contains information about a generated class for a Metaschema definition.</em>
@@ -49,8 +49,8 @@
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">class</strong> <a name="DefaultGeneratedDefinitionClass" href="../../../../../gov/nist/secauto/metaschema/codegen/DefaultGeneratedDefinitionClass.html#DefaultGeneratedDefinitionClass">DefaultGeneratedDefinitionClass</a>
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">extends</strong> <a name="DefaultGeneratedClass" href="../../../../../gov/nist/secauto/metaschema/codegen/DefaultGeneratedClass.html#DefaultGeneratedClass">DefaultGeneratedClass</a>
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>      <strong class="jxr_keyword">implements</strong> <a name="IGeneratedDefinitionClass" href="../../../../../gov/nist/secauto/metaschema/codegen/IGeneratedDefinitionClass.html#IGeneratedDefinitionClass">IGeneratedDefinitionClass</a> {
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>    @NotNull
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> INamedModelDefinition definition;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>    @NonNull
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> IModelDefinition definition;
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">   * Construct a new class information object for a generated class.</em>
@@ -62,14 +62,14 @@
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment">   * @param definition</em>
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">   *          the definition on which the class was based</em>
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>    <strong class="jxr_keyword">public</strong> <a name="DefaultGeneratedDefinitionClass" href="../../../../../gov/nist/secauto/metaschema/codegen/DefaultGeneratedDefinitionClass.html#DefaultGeneratedDefinitionClass">DefaultGeneratedDefinitionClass</a>(@NotNull Path classFile, @NotNull ClassName className,
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>        @NotNull INamedModelDefinition definition) {
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>    <strong class="jxr_keyword">public</strong> <a name="DefaultGeneratedDefinitionClass" href="../../../../../gov/nist/secauto/metaschema/codegen/DefaultGeneratedDefinitionClass.html#DefaultGeneratedDefinitionClass">DefaultGeneratedDefinitionClass</a>(@NonNull Path classFile, @NonNull ClassName className,
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>        @NonNull IModelDefinition definition) {
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>      <strong class="jxr_keyword">super</strong>(classFile, className);
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      <strong class="jxr_keyword">this</strong>.definition = definition;
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>    }
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>    @Override
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>    <strong class="jxr_keyword">public</strong> INamedModelDefinition getDefinition() {
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>    <strong class="jxr_keyword">public</strong> IModelDefinition getDefinition() {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">return</strong> definition;
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>    }
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  

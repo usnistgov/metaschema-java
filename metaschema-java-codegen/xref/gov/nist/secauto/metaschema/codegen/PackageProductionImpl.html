@@ -45,26 +45,26 @@
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupText;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> java.io.PrintWriter;
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> java.net.URI;
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> java.nio.file.Files;
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> java.nio.file.Path;
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> java.nio.file.StandardOpenOption;
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> java.io.PrintWriter;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> java.net.URI;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> java.nio.file.Files;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> java.nio.file.Path;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> java.nio.file.StandardOpenOption;
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">class</strong> <a name="PackageProductionImpl" href="../../../../../gov/nist/secauto/metaschema/codegen/PackageProductionImpl.html#PackageProductionImpl">PackageProductionImpl</a> <strong class="jxr_keyword">implements</strong> <a name="IPackageProduction" href="../../../../../gov/nist/secauto/metaschema/codegen/IPackageProduction.html#IPackageProduction">IPackageProduction</a> {
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>    @NotNull
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>    @NonNull
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String javaPackage;
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>    @NotNull
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>    @NonNull
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> URI xmlNamespace;
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>    @NotNull
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>    @NonNull
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="DefaultGeneratedClass" href="../../../../../gov/nist/secauto/metaschema/codegen/DefaultGeneratedClass.html#DefaultGeneratedClass">DefaultGeneratedClass</a> packageInfoClass;
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>    <strong class="jxr_keyword">public</strong> <a name="PackageProductionImpl" href="../../../../../gov/nist/secauto/metaschema/codegen/PackageProductionImpl.html#PackageProductionImpl">PackageProductionImpl</a>(@NotNull String javaPackage, @NotNull URI xmlNamespace,
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>        @NotNull List&lt;@NotNull IMetaschemaProduction&gt; metaschemaProductions, @NotNull Path targetDirectory)
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>    <strong class="jxr_keyword">public</strong> <a name="PackageProductionImpl" href="../../../../../gov/nist/secauto/metaschema/codegen/PackageProductionImpl.html#PackageProductionImpl">PackageProductionImpl</a>(@NonNull String javaPackage, @NonNull URI xmlNamespace,
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>        @NonNull List&lt;IMetaschemaProduction&gt; metaschemaProductions, @NonNull Path targetDirectory)
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>        <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">this</strong>.javaPackage = javaPackage;
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      <strong class="jxr_keyword">this</strong>.xmlNamespace = xmlNamespace;
@@ -103,7 +103,7 @@
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>          = <strong class="jxr_keyword">new</strong> <a name="DefaultGeneratedClass" href="../../../../../gov/nist/secauto/metaschema/codegen/DefaultGeneratedClass.html#DefaultGeneratedClass">DefaultGeneratedClass</a>(packageInfo, ObjectUtils.notNull(ClassName.get(javaPackage, <span class="jxr_string">"package-info"</span>)));
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>    }
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>  
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> String formatMarkdown(@NotNull IMarkupText markup) {
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> String formatMarkdown(@NonNull IMarkupText markup) {
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>      Formatter.Builder builder = Formatter.builder();
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>     builder.set(ObjectUtils.notNull(Formatter.FORMAT_FLAGS), LineAppendable.F_WHITESPACE_REMOVAL);
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>     <em class="jxr_comment">// builder.set(Formatter.ESCAPE_SPECIAL_CHARS, false);</em>

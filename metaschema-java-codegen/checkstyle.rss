@@ -27,7 +27,7 @@ under the License.
     <item>
       <title>File: 12,
              Errors: 0,
-             Warnings: 37,
+             Warnings: 36,
              Infos: 0
       </title>
             <link>https://pages.nist.gov/metaschema-java/metaschema-java-codegen//checkstyle.html</link>
@@ -46,13 +46,13 @@ under the License.
           <tbody>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-codegen//checkstyle.html#gov.nist.secauto.metaschema.codegen.IMetaschemaProduction.java">gov/nist/secauto/metaschema/codegen/IMetaschemaProduction.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-codegen//checkstyle.html#gov.nist.secauto.metaschema.codegen.IDefinitionTypeInfo.java">gov/nist/secauto/metaschema/codegen/IDefinitionTypeInfo.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  6
+                  4
                 </td>
                 <td>
                   0
@@ -74,13 +74,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-codegen//checkstyle.html#gov.nist.secauto.metaschema.codegen.INamedDefinitionTypeInfo.java">gov/nist/secauto/metaschema/codegen/INamedDefinitionTypeInfo.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-codegen//checkstyle.html#gov.nist.secauto.metaschema.codegen.IMetaschemaProduction.java">gov/nist/secauto/metaschema/codegen/IMetaschemaProduction.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  4
+                  6
                 </td>
                 <td>
                   0
@@ -89,20 +89,6 @@ under the License.
                           <tr>
                 <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-java-codegen//checkstyle.html#gov.nist.secauto.metaschema.codegen.ITypeResolver.java">gov/nist/secauto/metaschema/codegen/ITypeResolver.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  3
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-codegen//checkstyle.html#gov.nist.secauto.metaschema.codegen.INamedModelDefinitionTypeInfo.java">gov/nist/secauto/metaschema/codegen/INamedModelDefinitionTypeInfo.java</a>
                 </td>
                 <td>
                   0
@@ -130,20 +116,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-codegen//checkstyle.html#gov.nist.secauto.metaschema.codegen.IProduction.java">gov/nist/secauto/metaschema/codegen/IProduction.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  6
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-java-codegen//checkstyle.html#gov.nist.secauto.metaschema.codegen.MetaschemaCompilerHelper.java">gov/nist/secauto/metaschema/codegen/MetaschemaCompilerHelper.java</a>
                 </td>
                 <td>
@@ -151,6 +123,34 @@ under the License.
                 </td>
                 <td>
                   5
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-codegen//checkstyle.html#gov.nist.secauto.metaschema.codegen.IModelDefinitionTypeInfo.java">gov/nist/secauto/metaschema/codegen/IModelDefinitionTypeInfo.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-codegen//checkstyle.html#gov.nist.secauto.metaschema.codegen.IProduction.java">gov/nist/secauto/metaschema/codegen/IProduction.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  6
                 </td>
                 <td>
                   0
@@ -178,7 +178,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  1
+                  0
                 </td>
                 <td>
                   0

@@ -36,10 +36,10 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> java.util.List;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> java.util.stream.Stream;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> java.util.stream.Stream;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">class</strong> <a name="ModelInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ModelInstance.html#ModelInstance">ModelInstance</a>
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">extends</strong> AbstractNamedInstanceExpression&lt;IModelNodeItem&gt; {
@@ -51,12 +51,12 @@
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment">   * @param test</em>
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment">   *          the test to use to match</em>
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>    <strong class="jxr_keyword">protected</strong> <a name="ModelInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ModelInstance.html#ModelInstance">ModelInstance</a>(@NotNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> test) {
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>    <strong class="jxr_keyword">protected</strong> <a name="ModelInstance" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ModelInstance.html#ModelInstance">ModelInstance</a>(@NonNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> test) {
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">super</strong>(test);
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>    }
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>    @Override
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>    <strong class="jxr_keyword">public</strong> Class&lt;@NotNull IModelNodeItem&gt; getBaseResultType() {
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>    <strong class="jxr_keyword">public</strong> Class&lt;IModelNodeItem&gt; getBaseResultType() {
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">return</strong> IModelNodeItem.<strong class="jxr_keyword">class</strong>;
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>    }
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  
@@ -78,8 +78,8 @@
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">   * @return the stream of matching node items</em>
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>    @NotNull
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>    <strong class="jxr_keyword">protected</strong> Stream&lt;? <strong class="jxr_keyword">extends</strong> IModelNodeItem&gt; matchModelInstance(@NotNull <a name="INodeContext" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/INodeContext.html#INodeContext">INodeContext</a> context) {
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>    @NonNull
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>    <strong class="jxr_keyword">protected</strong> Stream&lt;? <strong class="jxr_keyword">extends</strong> IModelNodeItem&gt; matchModelInstance(@NonNull <a name="INodeContext" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/INodeContext.html#INodeContext">INodeContext</a> context) {
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>      Stream&lt;? <strong class="jxr_keyword">extends</strong> IModelNodeItem&gt; retval;
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">if</strong> (getTest() instanceof <a name="Name" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/Name.html#Name">Name</a>) {
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>        String name = ((<a name="Name" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/Name.html#Name">Name</a>) getTest()).getValue();

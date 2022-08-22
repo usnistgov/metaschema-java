@@ -85,19 +85,20 @@
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>    @Test
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>    <strong class="jxr_keyword">void</strong> testConstraints() <strong class="jxr_keyword">throws</strong> MetaschemaException, IOException { <em class="jxr_comment">// NOPMD - intentional</em>
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>      ConstraintLoader constraintLoader = <strong class="jxr_keyword">new</strong> ConstraintLoader();
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>      IConstraintSet constraintSet = constraintLoader.load(Paths.get(<span class="jxr_string">"src/test/resources/content/oscal-constraints.xml"</span>));
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>  
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>      MetaschemaLoader loader = <strong class="jxr_keyword">new</strong> MetaschemaLoader(CollectionUtil.singleton(constraintSet));
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>      URI metaschemaUri = ObjectUtils.notNull(URI.create(
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>          <span class="jxr_string">"https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"</span>));
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>      IMetaschema metaschema = loader.load(metaschemaUri);
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>      IAssemblyDefinition catalog = metaschema.getExportedAssemblyDefinitionByName(<span class="jxr_string">"catalog"</span>);
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>  
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>      assertNotNull(catalog, <span class="jxr_string">"catalog not found"</span>);
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>      List&lt;? <strong class="jxr_keyword">extends</strong> IConstraint&gt; constraints = catalog.getConstraints();
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>      assertFalse(constraints.isEmpty(), <span class="jxr_string">"a constraint was expected"</span>);
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>    }
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>  }
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>      IConstraintSet constraintSet = constraintLoader.load(
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>          ObjectUtils.notNull(Paths.get(<span class="jxr_string">"src/test/resources/content/oscal-constraints.xml"</span>)));
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>      MetaschemaLoader loader = <strong class="jxr_keyword">new</strong> MetaschemaLoader(CollectionUtil.singleton(constraintSet));
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>      URI metaschemaUri = ObjectUtils.notNull(URI.create(
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>          <span class="jxr_string">"https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"</span>));
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>      IMetaschema metaschema = loader.load(metaschemaUri);
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>      IAssemblyDefinition catalog = metaschema.getExportedAssemblyDefinitionByName(<span class="jxr_string">"catalog"</span>);
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>  
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>      assertNotNull(catalog, <span class="jxr_string">"catalog not found"</span>);
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>      List&lt;? <strong class="jxr_keyword">extends</strong> IConstraint&gt; constraints = catalog.getConstraints();
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>      assertFalse(constraints.isEmpty(), <span class="jxr_string">"a constraint was expected"</span>);
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>    }
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

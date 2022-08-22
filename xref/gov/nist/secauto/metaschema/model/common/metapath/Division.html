@@ -41,7 +41,7 @@
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">class</strong> <a name="Division" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/Division.html#Division">Division</a>
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">extends</strong> <a name="AbstractBasicArithmeticExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/AbstractBasicArithmeticExpression.html#AbstractBasicArithmeticExpression">AbstractBasicArithmeticExpression</a> {
@@ -54,7 +54,7 @@
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment">   * @param divisor</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">   *          the expression whose result is to divide by</em>
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>    <strong class="jxr_keyword">protected</strong> <a name="Division" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/Division.html#Division">Division</a>(@NotNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> dividend, @NotNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> divisor) {
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>    <strong class="jxr_keyword">protected</strong> <a name="Division" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/Division.html#Division">Division</a>(@NonNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> dividend, @NonNull <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> divisor) {
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>      <strong class="jxr_keyword">super</strong>(dividend, divisor);
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>    }
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  
@@ -73,8 +73,8 @@
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  <em class="jxr_javadoccomment">   * @return the quotient result or an empty {@link ISequence} if either item is {@code null}</em>
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>    @Override
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>    @NotNull
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>    <strong class="jxr_keyword">protected</strong> <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> operation(@NotNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> dividend, @NotNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> divisor) {
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>    @NonNull
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>    <strong class="jxr_keyword">protected</strong> <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> operation(@NonNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> dividend, @NonNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> divisor) {
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      <strong class="jxr_keyword">return</strong> divide(dividend, divisor);
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>    }
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  
@@ -87,9 +87,9 @@
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">   *          the item to divide by</em>
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_javadoccomment">   * @return the quotient result</em>
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>    @NotNull
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> divide(@NotNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> dividend, <em class="jxr_comment">// NOPMD - intentional</em>
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>        @NotNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> divisor) {
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>    @NonNull
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> divide(@NonNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> dividend, <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>        @NonNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> divisor) {
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>      <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> retval = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>      <strong class="jxr_keyword">if</strong> (dividend instanceof <a name="IYearMonthDurationItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IYearMonthDurationItem.html#IYearMonthDurationItem">IYearMonthDurationItem</a>) {
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>        <a name="IYearMonthDurationItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IYearMonthDurationItem.html#IYearMonthDurationItem">IYearMonthDurationItem</a> left = (<a name="IYearMonthDurationItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IYearMonthDurationItem.html#IYearMonthDurationItem">IYearMonthDurationItem</a>) dividend;
@@ -120,12 +120,13 @@
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>     }
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>     <strong class="jxr_keyword">if</strong> (retval == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="InvalidTypeMetapathException" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/InvalidTypeMetapathException.html#InvalidTypeMetapathException">InvalidTypeMetapathException</a>(
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>           String.format(<span class="jxr_string">"The expression '%s / %s' is not supported"</span>, dividend.getClass().getName(),
-<a class="jxr_linenumber" name="L116" href="#L116">116</a>               divisor.getClass().getName()));
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>     }
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>     <strong class="jxr_keyword">return</strong> retval;
-<a class="jxr_linenumber" name="L119" href="#L119">119</a>   }
-<a class="jxr_linenumber" name="L120" href="#L120">120</a> }
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>           <strong class="jxr_keyword">null</strong>,
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>           String.format(<span class="jxr_string">"The expression '%s / %s' is not supported"</span>, dividend.getClass().getName(),
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>               divisor.getClass().getName()));
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>     }
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>     <strong class="jxr_keyword">return</strong> retval;
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>   }
+<a class="jxr_linenumber" name="L121" href="#L121">121</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

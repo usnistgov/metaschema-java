@@ -36,9 +36,9 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> java.util.List;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> {
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>    <em class="jxr_javadoccomment">/**</em>
@@ -46,8 +46,8 @@
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">   * </em>
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment">   * @return a list of expressions, which may be empty</em>
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>    @NotNull
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>    List&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> IExpression&gt; getChildren();
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>    @NonNull
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>    List&lt;? <strong class="jxr_keyword">extends</strong> IExpression&gt; getChildren();
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">   * The minimum expected result type to be produced when evaluating the expression. The result may be</em>
@@ -55,7 +55,7 @@
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">   * </em>
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">   * @return the base result type</em>
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>    @NotNull
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>    @NonNull
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>    <strong class="jxr_keyword">default</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> IItem&gt; getBaseResultType() {
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">return</strong> IItem.<strong class="jxr_keyword">class</strong>;
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>    }
@@ -69,7 +69,7 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">   * </em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">   * @return the result type</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>    @NotNull
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>    @NonNull
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>    <strong class="jxr_keyword">default</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> IItem&gt; getStaticResultType() {
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">return</strong> getBaseResultType();
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>    }
@@ -82,7 +82,7 @@
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>  <em class="jxr_javadoccomment">   * @return a string representing the data elements of the expression</em>
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>    @NotNull
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>    @NonNull
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>    <strong class="jxr_keyword">default</strong> String toASTString() {
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"%s[]"</span>, getClass().getName());
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>    }
@@ -96,8 +96,8 @@
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">   *          the initial focus node item</em>
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">   * @return the result of evaluation</em>
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>    @NotNull
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>    ISequence&lt;? <strong class="jxr_keyword">extends</strong> IItem&gt; accept(@NotNull <a name="DynamicContext" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/DynamicContext.html#DynamicContext">DynamicContext</a> dynamicContext, @NotNull <a name="INodeContext" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/INodeContext.html#INodeContext">INodeContext</a> context);
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>    @NonNull
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>    ISequence&lt;? <strong class="jxr_keyword">extends</strong> IItem&gt; accept(@NonNull <a name="DynamicContext" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/DynamicContext.html#DynamicContext">DynamicContext</a> dynamicContext, @NonNull <a name="INodeContext" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/INodeContext.html#INodeContext">INodeContext</a> context);
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>  
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  <em class="jxr_javadoccomment">   * Provides a double dispatch callback for visitor handling.</em>
@@ -112,7 +112,7 @@
 <a class="jxr_linenumber" name="L104" href="#L104">104</a> <em class="jxr_javadoccomment">   *          the visitor context</em>
 <a class="jxr_linenumber" name="L105" href="#L105">105</a> <em class="jxr_javadoccomment">   * @return the result of evaluation</em>
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>   &lt;RESULT, CONTEXT&gt; RESULT accept(@NotNull IExpressionVisitor&lt;RESULT, CONTEXT&gt; visitor, CONTEXT context);
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>   &lt;RESULT, CONTEXT&gt; RESULT accept(@NonNull IExpressionVisitor&lt;RESULT, CONTEXT&gt; visitor, CONTEXT context);
 <a class="jxr_linenumber" name="L108" href="#L108">108</a> }
 </pre>
 <hr/>

@@ -35,51 +35,53 @@
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.schemagen;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.jdom2.Element;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.jdom2.Element;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> java.io.InputStream;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> java.util.List;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> java.util.stream.Collectors;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a name="AbstractXmlMarkupDatatypeProvider" href="../../../../../gov/nist/secauto/metaschema/schemagen/AbstractXmlMarkupDatatypeProvider.html#AbstractXmlMarkupDatatypeProvider">AbstractXmlMarkupDatatypeProvider</a>
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">extends</strong> <a name="AbstractXmlDatatypeProvider" href="../../../../../gov/nist/secauto/metaschema/schemagen/AbstractXmlDatatypeProvider.html#AbstractXmlDatatypeProvider">AbstractXmlDatatypeProvider</a> {
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>    @Override
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>    <strong class="jxr_keyword">protected</strong> InputStream getSchemaResource() {
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>      <strong class="jxr_keyword">return</strong> JDom2XmlSchemaLoader.<strong class="jxr_keyword">class</strong>.getClassLoader()
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>          .getResourceAsStream(getSchemaResourcePath());
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>    }
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>  
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>    @NotNull
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> String getSchemaResourcePath();
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>  
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>    @Override
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>    <strong class="jxr_keyword">protected</strong> List&lt;@NotNull Element&gt; queryElements(<a name="JDom2XmlSchemaLoader" href="../../../../../gov/nist/secauto/metaschema/schemagen/JDom2XmlSchemaLoader.html#JDom2XmlSchemaLoader">JDom2XmlSchemaLoader</a> loader) {
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">return</strong> loader.getContent(
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>          <span class="jxr_string">"/xs:schema/*"</span>,
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>          CollectionUtil.singletonMap(<span class="jxr_string">"xs"</span>, JDom2XmlSchemaLoader.NS_XML_SCHEMA));
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>    }
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>  
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>    @NotNull
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> String getDataTypeName();
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>  
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>    @Override
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>    <strong class="jxr_keyword">protected</strong> @NotNull Map&lt;@NotNull String, IDatatypeContent&gt; handleResults(@NotNull List&lt;@NotNull Element&gt; items) {
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>      String dataTypeName = getDataTypeName();
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">return</strong> CollectionUtil.singletonMap(
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>          dataTypeName,
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">new</strong> <a name="JDom2DatatypeContent" href="../../../../../gov/nist/secauto/metaschema/schemagen/JDom2DatatypeContent.html#JDom2DatatypeContent">JDom2DatatypeContent</a>(
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>              dataTypeName,
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>              items.stream()
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>                  .filter(element -&gt; !(<span class="jxr_string">"include"</span>.equals(element.getName())))
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>                  .collect(Collectors.toList()),
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>              CollectionUtil.emptyList()));
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>    }
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>  
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>  }
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a name="AbstractXmlMarkupDatatypeProvider" href="../../../../../gov/nist/secauto/metaschema/schemagen/AbstractXmlMarkupDatatypeProvider.html#AbstractXmlMarkupDatatypeProvider">AbstractXmlMarkupDatatypeProvider</a>
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">extends</strong> <a name="AbstractXmlDatatypeProvider" href="../../../../../gov/nist/secauto/metaschema/schemagen/AbstractXmlDatatypeProvider.html#AbstractXmlDatatypeProvider">AbstractXmlDatatypeProvider</a> {
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>    @Override
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>    <strong class="jxr_keyword">protected</strong> InputStream getSchemaResource() {
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>      <strong class="jxr_keyword">return</strong> JDom2XmlSchemaLoader.<strong class="jxr_keyword">class</strong>.getClassLoader()
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>          .getResourceAsStream(getSchemaResourcePath());
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>    }
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>    @NonNull
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> String getSchemaResourcePath();
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>    @Override
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>    <strong class="jxr_keyword">protected</strong> List&lt;Element&gt; queryElements(<a name="JDom2XmlSchemaLoader" href="../../../../../gov/nist/secauto/metaschema/schemagen/JDom2XmlSchemaLoader.html#JDom2XmlSchemaLoader">JDom2XmlSchemaLoader</a> loader) {
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">return</strong> loader.getContent(
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>          <span class="jxr_string">"/xs:schema/*"</span>,
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>          CollectionUtil.singletonMap(<span class="jxr_string">"xs"</span>, JDom2XmlSchemaLoader.NS_XML_SCHEMA));
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>    }
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>    @NonNull
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> String getDataTypeName();
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>    @Override
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>    <strong class="jxr_keyword">protected</strong> Map&lt;String, IDatatypeContent&gt; handleResults(@NonNull List&lt;Element&gt; items) {
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      String dataTypeName = getDataTypeName();
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">return</strong> CollectionUtil.singletonMap(
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>          dataTypeName,
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">new</strong> <a name="JDom2DatatypeContent" href="../../../../../gov/nist/secauto/metaschema/schemagen/JDom2DatatypeContent.html#JDom2DatatypeContent">JDom2DatatypeContent</a>(
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>              dataTypeName,
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>              ObjectUtils.notNull(items.stream()
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>                  .filter(element -&gt; !(<span class="jxr_string">"include"</span>.equals(element.getName())))
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>                  .collect(Collectors.toList())),
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>              CollectionUtil.emptyList()));
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>    }
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>  
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

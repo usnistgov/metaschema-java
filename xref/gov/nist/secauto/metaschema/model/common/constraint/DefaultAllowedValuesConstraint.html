@@ -38,18 +38,18 @@
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.Nullable;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.Nullable;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="DefaultAllowedValuesConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultAllowedValuesConstraint.html#DefaultAllowedValuesConstraint">DefaultAllowedValuesConstraint</a>
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">extends</strong> <a name="AbstractConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/AbstractConstraint.html#AbstractConstraint">AbstractConstraint</a>
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">implements</strong> <a name="IAllowedValuesConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IAllowedValuesConstraint.html#IAllowedValuesConstraint">IAllowedValuesConstraint</a> {
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> allowedOther;
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Extensible extensible;
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>    @NotNull
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;@NotNull String, DefaultAllowedValue&gt; allowedValues;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>    @NonNull
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;String, DefaultAllowedValue&gt; allowedValues;
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">   * Construct a new allowed values constraint which ensures that a target instance's value match one</em>
@@ -79,12 +79,12 @@
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>    <strong class="jxr_keyword">public</strong> <a name="DefaultAllowedValuesConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultAllowedValuesConstraint.html#DefaultAllowedValuesConstraint">DefaultAllowedValuesConstraint</a>(
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>        @Nullable String id,
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>        @NotNull ISource source,
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>        @NotNull Level level,
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>        @NotNull <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> target,
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>        @NotNull Map&lt;@NotNull String, DefaultAllowedValue&gt; allowedValues,
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>        @NonNull ISource source,
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>        @NonNull Level level,
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>        @NonNull <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> target,
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>        @NonNull Map&lt;String, DefaultAllowedValue&gt; allowedValues,
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>        <strong class="jxr_keyword">boolean</strong> allowedOther,
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>        @NotNull Extensible extensible,
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>        @NonNull Extensible extensible,
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>        @Nullable <a name="MarkupMultiline" href="../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/MarkupMultiline.html#MarkupMultiline">MarkupMultiline</a> remarks) {
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>      <strong class="jxr_keyword">super</strong>(id, source, level, target, remarks);
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      <strong class="jxr_keyword">this</strong>.allowedValues = allowedValues;
@@ -93,7 +93,7 @@
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>    }
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>    @Override
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>    <strong class="jxr_keyword">public</strong> Map&lt;@NotNull String, DefaultAllowedValue&gt; getAllowedValues() {
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>    <strong class="jxr_keyword">public</strong> Map&lt;String, DefaultAllowedValue&gt; getAllowedValues() {
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">return</strong> allowedValues;
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>    }
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  

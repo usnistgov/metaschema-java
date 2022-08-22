@@ -41,36 +41,36 @@
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeItem;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.INodeItemVisitor;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">class</strong> <a name="ConstraintComposingVisitor" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/ConstraintComposingVisitor.html#ConstraintComposingVisitor">ConstraintComposingVisitor</a>
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">implements</strong> INodeItemVisitor&lt;Void, @NotNull ITargetedConstaints&gt; {
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">implements</strong> INodeItemVisitor&lt;Void, ITargetedConstaints&gt; {
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>    @Override
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>    <strong class="jxr_keyword">public</strong> Void visitDocument(@NotNull <a name="IDocumentNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IDocumentNodeItem.html#IDocumentNodeItem">IDocumentNodeItem</a> item, @NotNull <a name="ITargetedConstaints" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/ITargetedConstaints.html#ITargetedConstaints">ITargetedConstaints</a> context) {
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>    <strong class="jxr_keyword">public</strong> Void visitDocument(@NonNull <a name="IDocumentNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IDocumentNodeItem.html#IDocumentNodeItem">IDocumentNodeItem</a> item, <a name="ITargetedConstaints" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/ITargetedConstaints.html#ITargetedConstaints">ITargetedConstaints</a> context) {
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>      <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException(<span class="jxr_string">"constraints can only apply to an assembly, field, or flag definition"</span>);
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>    }
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>    @Override
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>    <strong class="jxr_keyword">public</strong> Void visitFlag(@NotNull <a name="IFlagNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IFlagNodeItem.html#IFlagNodeItem">IFlagNodeItem</a> item, @NotNull <a name="ITargetedConstaints" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/ITargetedConstaints.html#ITargetedConstaints">ITargetedConstaints</a> context) {
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>    <strong class="jxr_keyword">public</strong> Void visitFlag(@NonNull <a name="IFlagNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IFlagNodeItem.html#IFlagNodeItem">IFlagNodeItem</a> item, <a name="ITargetedConstaints" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/ITargetedConstaints.html#ITargetedConstaints">ITargetedConstaints</a> context) {
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>      context.target(item.getDefinition());
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>    }
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>    @Override
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>    <strong class="jxr_keyword">public</strong> Void visitField(@NotNull <a name="IFieldNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IFieldNodeItem.html#IFieldNodeItem">IFieldNodeItem</a> item, @NotNull <a name="ITargetedConstaints" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/ITargetedConstaints.html#ITargetedConstaints">ITargetedConstaints</a> context) {
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>    <strong class="jxr_keyword">public</strong> Void visitField(@NonNull <a name="IFieldNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IFieldNodeItem.html#IFieldNodeItem">IFieldNodeItem</a> item, <a name="ITargetedConstaints" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/ITargetedConstaints.html#ITargetedConstaints">ITargetedConstaints</a> context) {
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>      context.target(item.getDefinition());
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>    }
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>    @Override
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>    <strong class="jxr_keyword">public</strong> Void visitAssembly(@NotNull <a name="IAssemblyNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAssemblyNodeItem.html#IAssemblyNodeItem">IAssemblyNodeItem</a> item, @NotNull <a name="ITargetedConstaints" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/ITargetedConstaints.html#ITargetedConstaints">ITargetedConstaints</a> context) {
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>    <strong class="jxr_keyword">public</strong> Void visitAssembly(@NonNull <a name="IAssemblyNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAssemblyNodeItem.html#IAssemblyNodeItem">IAssemblyNodeItem</a> item, <a name="ITargetedConstaints" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/ITargetedConstaints.html#ITargetedConstaints">ITargetedConstaints</a> context) {
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      context.target(item.getDefinition());
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>    }
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>    @Override
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>    <strong class="jxr_keyword">public</strong> Void visitMetaschema(@NotNull <a name="IMetaschemaNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IMetaschemaNodeItem.html#IMetaschemaNodeItem">IMetaschemaNodeItem</a> item, @NotNull <a name="ITargetedConstaints" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/ITargetedConstaints.html#ITargetedConstaints">ITargetedConstaints</a> context) {
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>    <strong class="jxr_keyword">public</strong> Void visitMetaschema(@NonNull <a name="IMetaschemaNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IMetaschemaNodeItem.html#IMetaschemaNodeItem">IMetaschemaNodeItem</a> item, <a name="ITargetedConstaints" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/ITargetedConstaints.html#ITargetedConstaints">ITargetedConstaints</a> context) {
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException(<span class="jxr_string">"constraints can only apply to an assembly, field, or flag definition"</span>);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>    }
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  

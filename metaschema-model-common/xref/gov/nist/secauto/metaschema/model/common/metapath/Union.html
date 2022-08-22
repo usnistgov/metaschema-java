@@ -37,15 +37,15 @@
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> java.util.List;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> java.util.stream.Stream;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> java.util.stream.Stream;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">class</strong> <a name="Union" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/Union.html#Union">Union</a>
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">extends</strong> <a name="AbstractNAryExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/AbstractNAryExpression.html#AbstractNAryExpression">AbstractNAryExpression</a> {
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>    @NotNull
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>    @NonNull
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> IItem&gt; staticResultType;
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>    <em class="jxr_javadoccomment">/**</em>
@@ -55,7 +55,7 @@
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">   * @param expressions</em>
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">   *          the expressions to evaluate</em>
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>    <strong class="jxr_keyword">protected</strong> <a name="Union" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/Union.html#Union">Union</a>(@NotNull List&lt;@NotNull IExpression&gt; expressions) {
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>    <strong class="jxr_keyword">protected</strong> <a name="Union" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/Union.html#Union">Union</a>(@NonNull List&lt;IExpression&gt; expressions) {
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">super</strong>(expressions);
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">this</strong>.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.<strong class="jxr_keyword">class</strong>, expressions);
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>    }
@@ -72,8 +72,8 @@
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>    @Override
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>    <strong class="jxr_keyword">public</strong> ISequence&lt;?&gt; accept(<a name="DynamicContext" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/DynamicContext.html#DynamicContext">DynamicContext</a> dynamicContext, <a name="INodeContext" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/INodeContext.html#INodeContext">INodeContext</a> context) {
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>      @NotNull
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>      Stream&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> IItem&gt; retval = ObjectUtils.notNull(getChildren().stream()
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>      @NonNull
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      Stream&lt;? <strong class="jxr_keyword">extends</strong> IItem&gt; retval = ObjectUtils.notNull(getChildren().stream()
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>          .flatMap(child -&gt; {
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>            ISequence&lt;?&gt; result = child.accept(dynamicContext, context);
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>            <strong class="jxr_keyword">return</strong> result.asStream();

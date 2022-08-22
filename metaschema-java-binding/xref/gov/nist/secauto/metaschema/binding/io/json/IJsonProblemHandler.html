@@ -41,20 +41,20 @@
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.IClassBinding;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.IJsonBindingSupplier;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="IJsonProblemHandler" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonProblemHandler.html#IJsonProblemHandler">IJsonProblemHandler</a> <strong class="jxr_keyword">extends</strong> <a name="IProblemHandler" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/IProblemHandler.html#IProblemHandler">IProblemHandler</a> {
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>    <strong class="jxr_keyword">boolean</strong> handleUnknownRootProperty(@NotNull <a name="IAssemblyClassBinding" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IAssemblyClassBinding.html#IAssemblyClassBinding">IAssemblyClassBinding</a> classBinding, @NotNull String fieldName,
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>        @NotNull <a name="IJsonParsingContext" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonParsingContext.html#IJsonParsingContext">IJsonParsingContext</a> parsingContext) <strong class="jxr_keyword">throws</strong> IOException;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>    <strong class="jxr_keyword">boolean</strong> handleUnknownRootProperty(@NonNull <a name="IAssemblyClassBinding" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IAssemblyClassBinding.html#IAssemblyClassBinding">IAssemblyClassBinding</a> classBinding, @NonNull String fieldName,
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>        @NonNull <a name="IJsonParsingContext" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonParsingContext.html#IJsonParsingContext">IJsonParsingContext</a> parsingContext) <strong class="jxr_keyword">throws</strong> IOException;
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>    <strong class="jxr_keyword">boolean</strong> canHandleUnknownProperty(@NotNull <a name="IClassBinding" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IClassBinding.html#IClassBinding">IClassBinding</a> classBinding, @NotNull String propertyName,
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>        @NotNull <a name="IJsonParsingContext" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonParsingContext.html#IJsonParsingContext">IJsonParsingContext</a> parsingContext)
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>    <strong class="jxr_keyword">boolean</strong> canHandleUnknownProperty(@NonNull <a name="IClassBinding" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IClassBinding.html#IClassBinding">IClassBinding</a> classBinding, @NonNull String propertyName,
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>        @NonNull <a name="IJsonParsingContext" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonParsingContext.html#IJsonParsingContext">IJsonParsingContext</a> parsingContext)
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>        <strong class="jxr_keyword">throws</strong> IOException;
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>    <strong class="jxr_keyword">boolean</strong> handleUnknownProperty(@NotNull <a name="IClassBinding" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IClassBinding.html#IClassBinding">IClassBinding</a> classBinding, @NotNull String propertyName,
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>    <strong class="jxr_keyword">boolean</strong> handleUnknownProperty(@NonNull <a name="IClassBinding" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IClassBinding.html#IClassBinding">IClassBinding</a> classBinding, @NonNull String propertyName,
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>        <a name="IJsonParsingContext" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonParsingContext.html#IJsonParsingContext">IJsonParsingContext</a> parsingContext) <strong class="jxr_keyword">throws</strong> IOException;
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>    <em class="jxr_javadoccomment">/**</em>
@@ -73,8 +73,8 @@
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  <em class="jxr_javadoccomment">   * @throws BindingException</em>
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  <em class="jxr_javadoccomment">   *           if an unhandled binding error has occurred for any reason</em>
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>    Map&lt;IBoundNamedInstance, IJsonBindingSupplier&gt; handleMissingFields(@NotNull <a name="IClassBinding" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IClassBinding.html#IClassBinding">IClassBinding</a> classBinding,
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>        @NotNull Map&lt;String, IBoundNamedInstance&gt; missingPropertyBindings, @NotNull <a name="IJsonParsingContext" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonParsingContext.html#IJsonParsingContext">IJsonParsingContext</a> context)
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>    Map&lt;IBoundNamedInstance, IJsonBindingSupplier&gt; handleMissingFields(@NonNull <a name="IClassBinding" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IClassBinding.html#IClassBinding">IClassBinding</a> classBinding,
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>        @NonNull Map&lt;String, IBoundNamedInstance&gt; missingPropertyBindings, @NonNull <a name="IJsonParsingContext" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonParsingContext.html#IJsonParsingContext">IJsonParsingContext</a> context)
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>        <strong class="jxr_keyword">throws</strong> BindingException;
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  }
 </pre>

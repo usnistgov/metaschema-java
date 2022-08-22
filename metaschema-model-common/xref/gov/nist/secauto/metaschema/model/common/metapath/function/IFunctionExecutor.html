@@ -39,9 +39,9 @@
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> java.util.List;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment"> * This functional interface provides a dispatch method for executing a function call.</em>
@@ -63,9 +63,9 @@
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">   * @throws MetapathException</em>
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment">   *           if an error occurred while executing the function</em>
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>    @NotNull
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>    ISequence&lt;?&gt; execute(@NotNull <a name="IFunction" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/IFunction.html#IFunction">IFunction</a> function, @NotNull List&lt;@NotNull ISequence&lt;?&gt;&gt; arguments,
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>        @NotNull <a name="DynamicContext" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/DynamicContext.html#DynamicContext">DynamicContext</a> dynamicContext,
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>    @NonNull
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>    ISequence&lt;?&gt; execute(@NonNull <a name="IFunction" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/IFunction.html#IFunction">IFunction</a> function, @NonNull List&lt;ISequence&lt;?&gt;&gt; arguments,
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>        @NonNull <a name="DynamicContext" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/DynamicContext.html#DynamicContext">DynamicContext</a> dynamicContext,
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>        <a name="INodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> focus) <strong class="jxr_keyword">throws</strong> MetapathException;
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  }
 </pre>

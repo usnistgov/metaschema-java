@@ -36,13 +36,13 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment"> * Java class type information for an {@link IFieldDefinition} used for generating a Java class for</em>
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment"> * the definition.</em>
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="IFieldDefinitionTypeInfo" href="../../../../../gov/nist/secauto/metaschema/codegen/IFieldDefinitionTypeInfo.html#IFieldDefinitionTypeInfo">IFieldDefinitionTypeInfo</a> <strong class="jxr_keyword">extends</strong> <a name="INamedModelDefinitionTypeInfo" href="../../../../../gov/nist/secauto/metaschema/codegen/INamedModelDefinitionTypeInfo.html#INamedModelDefinitionTypeInfo">INamedModelDefinitionTypeInfo</a> {
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="IFieldDefinitionTypeInfo" href="../../../../../gov/nist/secauto/metaschema/codegen/IFieldDefinitionTypeInfo.html#IFieldDefinitionTypeInfo">IFieldDefinitionTypeInfo</a> <strong class="jxr_keyword">extends</strong> <a name="IModelDefinitionTypeInfo" href="../../../../../gov/nist/secauto/metaschema/codegen/IModelDefinitionTypeInfo.html#IModelDefinitionTypeInfo">IModelDefinitionTypeInfo</a> {
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment">   * Construct a new type info based on the provided definition.</em>
@@ -53,9 +53,9 @@
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">   *          a resolver used to look up related type information</em>
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment">   * @return the type info for the definition</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>    @NotNull
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>    <strong class="jxr_keyword">static</strong> <a name="IFieldDefinitionTypeInfo" href="../../../../../gov/nist/secauto/metaschema/codegen/IFieldDefinitionTypeInfo.html#IFieldDefinitionTypeInfo">IFieldDefinitionTypeInfo</a> newTypeInfo(@NotNull IFieldDefinition definition,
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>        @NotNull <a name="ITypeResolver" href="../../../../../gov/nist/secauto/metaschema/codegen/ITypeResolver.html#ITypeResolver">ITypeResolver</a> typeResolver) {
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>    @NonNull
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>    <strong class="jxr_keyword">static</strong> <a name="IFieldDefinitionTypeInfo" href="../../../../../gov/nist/secauto/metaschema/codegen/IFieldDefinitionTypeInfo.html#IFieldDefinitionTypeInfo">IFieldDefinitionTypeInfo</a> newTypeInfo(@NonNull IFieldDefinition definition,
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>        @NonNull <a name="ITypeResolver" href="../../../../../gov/nist/secauto/metaschema/codegen/ITypeResolver.html#ITypeResolver">ITypeResolver</a> typeResolver) {
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="FieldDefinitionTypeInfoImpl" href="../../../../../gov/nist/secauto/metaschema/codegen/FieldDefinitionTypeInfoImpl.html#FieldDefinitionTypeInfoImpl">FieldDefinitionTypeInfoImpl</a>(definition, typeResolver);
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>    }
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  
