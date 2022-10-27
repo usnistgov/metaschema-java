@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.LetexprContext;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
