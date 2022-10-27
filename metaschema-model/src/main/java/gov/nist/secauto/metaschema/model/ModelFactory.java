@@ -114,8 +114,7 @@ final class ModelFactory {
     Map<String, DefaultAllowedValue> allowedValues // NOPMD - intentional
         = new LinkedHashMap<>(xmlConstraint.sizeOfEnumArray());
     for (EnumType xmlEnum : xmlConstraint.getEnumList()) {
-      @SuppressWarnings("null")
-      DefaultAllowedValue allowedValue = new DefaultAllowedValue( // NOPMD - intentional
+      @SuppressWarnings("null") DefaultAllowedValue allowedValue = new DefaultAllowedValue( // NOPMD - intentional
           xmlEnum.getValue(),
           MarkupStringConverter.toMarkupString(xmlEnum));
       allowedValues.put(allowedValue.getValue(), allowedValue);
@@ -152,7 +151,7 @@ final class ModelFactory {
     builder.level(level(xmlConstraint.getLevel()));
     return builder;
   }
-  
+
   @NonNull
   static DefaultAllowedValuesConstraint newAllowedValuesConstraint(
       @NonNull AllowedValuesType xmlConstraint,
@@ -162,7 +161,7 @@ final class ModelFactory {
     DefaultAllowedValuesConstraint.Builder builder = DefaultAllowedValuesConstraint.builder();
 
     applyToBuilder(xmlConstraint, target, source, builder);
-    
+
     if (xmlConstraint.isSetRemarks()) {
       builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
     }
@@ -174,7 +173,7 @@ final class ModelFactory {
     if (xmlConstraint.isSetExtensible()) {
       builder.extensible(ObjectUtils.notNull(xmlConstraint.getExtensible()));
     }
-    
+
     return builder.build();
   }
 
@@ -200,7 +199,7 @@ final class ModelFactory {
     DefaultMatchesConstraint.Builder builder = DefaultMatchesConstraint.builder();
 
     applyToBuilder(xmlConstraint, target, source, builder);
-    
+
     if (xmlConstraint.isSetRemarks()) {
       builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
     }
@@ -211,7 +210,7 @@ final class ModelFactory {
     if (xmlConstraint.isSetDatatype()) {
       builder.datatype(ObjectUtils.notNull(xmlConstraint.getDatatype()));
     }
-    
+
     return builder.build();
   }
 
@@ -219,12 +218,11 @@ final class ModelFactory {
       @NonNull KeyConstraintType xmlConstraint,
       @NonNull AbstractKeyConstraintBuilder<?, ?> builder) {
     for (KeyConstraintType.KeyField xmlKeyField : xmlConstraint.getKeyFieldList()) {
-      @SuppressWarnings("null")
-      DefaultKeyField keyField
+      @SuppressWarnings("null") DefaultKeyField keyField
           = new DefaultKeyField( // NOPMD - intentional
               xmlKeyField.getTarget(),
               xmlKeyField.isSetPattern() ? xmlKeyField.getPattern() : null, // NOPMD - intentional
-              remarks(xmlKeyField.getRemarks()));
+              xmlKeyField.isSetRemarks() ? remarks(xmlKeyField.getRemarks()) : null);
       builder.keyField(keyField);
     }
   }
@@ -236,13 +234,13 @@ final class ModelFactory {
     DefaultUniqueConstraint.Builder builder = DefaultUniqueConstraint.builder();
 
     applyToBuilder(xmlConstraint, target(xmlConstraint.getTarget()), source, builder);
-    
+
     if (xmlConstraint.isSetRemarks()) {
       builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
     }
 
     buildKeyFields(xmlConstraint, builder);
-    
+
     return builder.build();
   }
 
@@ -253,14 +251,14 @@ final class ModelFactory {
     DefaultIndexConstraint.Builder builder = DefaultIndexConstraint.builder();
 
     applyToBuilder(xmlConstraint, target(xmlConstraint.getTarget()), source, builder);
-    
+
     if (xmlConstraint.isSetRemarks()) {
       builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
     }
 
     builder.name(ObjectUtils.requireNonNull(xmlConstraint.getName()));
     buildKeyFields(xmlConstraint, builder);
-    
+
     return builder.build();
   }
 
@@ -287,14 +285,14 @@ final class ModelFactory {
     DefaultIndexHasKeyConstraint.Builder builder = DefaultIndexHasKeyConstraint.builder();
 
     applyToBuilder(xmlConstraint, target, source, builder);
-    
+
     if (xmlConstraint.isSetRemarks()) {
       builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
     }
 
     builder.name(ObjectUtils.requireNonNull(xmlConstraint.getName()));
     buildKeyFields(xmlConstraint, builder);
-    
+
     return builder.build();
   }
 
@@ -317,11 +315,11 @@ final class ModelFactory {
       @NonNull ExpectConstraintType xmlConstraint,
       @NonNull MetapathExpression target,
       @NonNull ISource source) {
-    
+
     DefaultExpectConstraint.Builder builder = DefaultExpectConstraint.builder();
 
     applyToBuilder(xmlConstraint, target, source, builder);
-    
+
     if (xmlConstraint.isSetRemarks()) {
       builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
     }
@@ -331,7 +329,7 @@ final class ModelFactory {
     }
 
     builder.test(ObjectUtils.requireNonNull(xmlConstraint.getTest()));
-    
+
     return builder.build();
   }
 
@@ -339,11 +337,11 @@ final class ModelFactory {
   static DefaultCardinalityConstraint newCardinalityConstraint(
       @NonNull HasCardinalityConstraintType xmlConstraint,
       @NonNull ISource source) {
-    
+
     DefaultCardinalityConstraint.Builder builder = DefaultCardinalityConstraint.builder();
 
     applyToBuilder(xmlConstraint, target(xmlConstraint.getTarget()), source, builder);
-    
+
     if (xmlConstraint.isSetRemarks()) {
       builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
     }
@@ -355,7 +353,7 @@ final class ModelFactory {
     if (xmlConstraint.isSetMaxOccurs()) {
       builder.maxOccurs(xmlConstraint.getMaxOccurs().intValueExact());
     }
-    
+
     return builder.build();
   }
 }
