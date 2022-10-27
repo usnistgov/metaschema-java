@@ -23,33 +23,14 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
-package gov.nist.secauto.metaschema.model.common.metapath;
+import com.vladsch.flexmark.util.ast.Document;
 
-public class DynamicMetapathException
-    extends AbstractCodedMetapathException {
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-  /**
-   * the serial version UID.
-   */
-  private static final long serialVersionUID = 1L;
-  
-  public static final int INVALID_PATH_GRAMMAR = 3;
-
-  public DynamicMetapathException(int code, String message) {
-    super(code, message);
-  }
-
-  public DynamicMetapathException(int code, String message, Throwable cause) {
-    super(code, message, cause);
-  }
-
-  public DynamicMetapathException(int code, Throwable cause) {
-    super(code, cause);
-  }
-
-  @Override
-  protected String getCodePrefix() {
-    return "XPDY";
-  }
+@SuppressFBWarnings("THROWS_METHOD_THROWS_CLAUSE_THROWABLE")
+public interface IMarkupVisitor<T, E extends Throwable> {
+  void visitDocument(@NonNull Document document, T state) throws E;
 }

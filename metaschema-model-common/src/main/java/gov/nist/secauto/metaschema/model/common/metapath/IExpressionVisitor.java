@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.LetexprContext;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
@@ -105,4 +107,8 @@ interface IExpressionVisitor<RESULT, CONTEXT> {
   RESULT visitUnion(@NonNull Union expr, CONTEXT context);
 
   RESULT visitWildcard(@NonNull Wildcard expr, CONTEXT context);
+
+  RESULT visitLet(@NonNull Let expr, CONTEXT context);
+
+  RESULT visitVariableReference(@NonNull VariableReference expr, CONTEXT context);
 }

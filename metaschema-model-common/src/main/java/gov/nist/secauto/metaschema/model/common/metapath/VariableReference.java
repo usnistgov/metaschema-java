@@ -23,33 +23,48 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-public class DynamicMetapathException
-    extends AbstractCodedMetapathException {
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-  /**
-   * the serial version UID.
-   */
-  private static final long serialVersionUID = 1L;
-  
-  public static final int INVALID_PATH_GRAMMAR = 3;
+import java.util.List;
 
-  public DynamicMetapathException(int code, String message) {
-    super(code, message);
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public class VariableReference implements IExpression {
+  @NonNull
+  private final Name name;
+
+  public VariableReference(@NonNull Name name) {
+    this.name = name;
   }
 
-  public DynamicMetapathException(int code, String message, Throwable cause) {
-    super(code, message, cause);
-  }
-
-  public DynamicMetapathException(int code, Throwable cause) {
-    super(code, cause);
+  @NonNull
+  public Name getName() {
+    return name;
   }
 
   @Override
-  protected String getCodePrefix() {
-    return "XPDY";
+  public List<? extends IExpression> getChildren() {
+    return CollectionUtil.emptyList();
   }
+
+  @SuppressWarnings("null")
+  @Override
+  public String toASTString() {
+    return String.format("%s[name=%s]", getClass().getName(), getName().getValue());
+  }
+
+  @Override
+  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitVariableReference(this, context);
+  }
+
+  @Override
+  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    return dynamicContext.getVariableValue(ObjectUtils.notNull(getName().getValue()));
+  }
+
 }

@@ -48,7 +48,6 @@ import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
 
 import java.util.Collection;
@@ -60,6 +59,7 @@ import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - intentional
 
@@ -67,9 +67,9 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
   private final GlobalAssemblyDefinitionType xmlAssembly;
   @NonNull
   private final XmlMetaschema metaschema;
-  private XmlFlagContainerSupport flagContainer;
-  private XmlModelContainerSupport modelContainer;
-  private IAssemblyConstraintSupport constraints;
+  private Lazy<XmlFlagContainerSupport> flagContainer;
+  private Lazy<XmlModelContainerSupport> modelContainer;
+  private Lazy<AssemblyConstraintSupport> constraints;
 
   /**
    * Constructs a new Metaschema Assembly definition from an XML representation bound to Java objects.
@@ -84,6 +84,11 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
       @NonNull XmlMetaschema metaschema) {
     this.xmlAssembly = xmlAssembly;
     this.metaschema = metaschema;
+    this.flagContainer = Lazy.lazy(() -> new XmlFlagContainerSupport(xmlAssembly, this));
+    this.modelContainer = Lazy.lazy(() -> new XmlModelContainerSupport(xmlAssembly, this));
+    this.constraints = Lazy.lazy(() -> AssemblyConstraintSupport.newInstance(
+        xmlAssembly,
+        ExternalModelSource.instance(metaschema.getLocation())));
   }
 
   /**
@@ -101,23 +106,13 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
     return metaschema;
   }
 
-  /**
-   * Lazy initialize the flag instances associated with this definition.
-   * 
-   * @return the flag container
-   */
-  protected XmlFlagContainerSupport initFlagContainer() {
-    synchronized (this) {
-      if (flagContainer == null) {
-        flagContainer = new XmlFlagContainerSupport(getXmlAssembly(), this);
-      }
-      return flagContainer;
-    }
+  protected XmlFlagContainerSupport getFlagContainer() {
+    return flagContainer.get();
   }
 
   @NonNull
   private Map<String, ? extends IFlagInstance> getFlagInstanceMap() {
-    return initFlagContainer().getFlagInstanceMap();
+    return getFlagContainer().getFlagInstanceMap();
   }
 
   @Override
@@ -131,20 +126,12 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
     return getFlagInstanceMap().values();
   }
 
-  /**
-   * Lazy initialize the model instances associated with this definition.
-   */
-  protected void initModelContainer() {
-    synchronized (this) {
-      if (modelContainer == null) {
-        modelContainer = new XmlModelContainerSupport(getXmlAssembly(), this);
-      }
-    }
+  protected XmlModelContainerSupport getModelContainer() {
+    return modelContainer.get();
   }
 
   private Map<String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
-    initModelContainer();
-    return modelContainer.getNamedModelInstanceMap();
+    return getModelContainer().getNamedModelInstanceMap();
   }
 
   @Override
@@ -159,8 +146,7 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
   }
 
   private Map<String, ? extends IFieldInstance> getFieldInstanceMap() {
-    initModelContainer();
-    return modelContainer.getFieldInstanceMap();
+    return getModelContainer().getFieldInstanceMap();
   }
 
   @Override
@@ -175,8 +161,7 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
   }
 
   private Map<String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
-    initModelContainer();
-    return modelContainer.getAssemblyInstanceMap();
+    return getModelContainer().getAssemblyInstanceMap();
   }
 
   @Override
@@ -192,122 +177,90 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
 
   @Override
   public List<? extends IChoiceInstance> getChoiceInstances() {
-    initModelContainer();
-    return modelContainer.getChoiceInstances();
+    return getModelContainer().getChoiceInstances();
   }
 
   @Override
   public List<? extends IModelInstance> getModelInstances() {
-    initModelContainer();
-    return modelContainer.getModelInstances();
+    return getModelContainer().getModelInstances();
   }
 
-  /**
-   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
-   * first accessed.
-   */
-  protected void checkModelConstraints() {
-    synchronized (this) {
-      if (constraints == null) {
-        if (getXmlAssembly().isSetConstraint()) {
-          constraints = new AssemblyConstraintSupport(
-              ObjectUtils.notNull(getXmlAssembly().getConstraint()),
-              ExternalModelSource.instance(getContainingMetaschema().getLocation()));
-        } else {
-          constraints = new AssemblyConstraintSupport();
-        }
-      }
-    }
+  protected IAssemblyConstraintSupport getConstraintSupport() {
+    return constraints.get();
   }
-
   @Override
   public List<? extends IConstraint> getConstraints() {
-    checkModelConstraints();
-    return constraints.getConstraints();
+    return getConstraintSupport().getConstraints();
   }
 
   @Override
   public List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
-    checkModelConstraints();
-    return constraints.getAllowedValuesConstraints();
+    return getConstraintSupport().getAllowedValuesConstraints();
   }
 
   @Override
   public List<? extends IMatchesConstraint> getMatchesConstraints() {
-    checkModelConstraints();
-    return constraints.getMatchesConstraints();
+    return getConstraintSupport().getMatchesConstraints();
   }
 
   @Override
   public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-    checkModelConstraints();
-    return constraints.getIndexHasKeyConstraints();
+    return getConstraintSupport().getIndexHasKeyConstraints();
   }
 
   @Override
   public List<? extends IExpectConstraint> getExpectConstraints() {
-    checkModelConstraints();
-    return constraints.getExpectConstraints();
+    return getConstraintSupport().getExpectConstraints();
   }
 
   @Override
   public List<? extends IIndexConstraint> getIndexConstraints() {
-    checkModelConstraints();
-    return constraints.getIndexConstraints();
+    return getConstraintSupport().getIndexConstraints();
   }
 
   @Override
   public List<? extends IUniqueConstraint> getUniqueConstraints() {
-    checkModelConstraints();
-    return constraints.getUniqueConstraints();
+    return getConstraintSupport().getUniqueConstraints();
   }
 
   @Override
   public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
-    checkModelConstraints();
-    return constraints.getHasCardinalityConstraints();
+    return getConstraintSupport().getHasCardinalityConstraints();
   }
 
   @Override
   public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
+    getConstraintSupport().addConstraint(constraint);
   }
 
   @Override
   public void addConstraint(@NonNull IMatchesConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
+    getConstraintSupport().addConstraint(constraint);
   }
 
   @Override
   public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
+    getConstraintSupport().addConstraint(constraint);
   }
 
   @Override
   public void addConstraint(@NonNull IExpectConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
+    getConstraintSupport().addConstraint(constraint);
   }
 
   @Override
   public void addConstraint(@NonNull IIndexConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
+    getConstraintSupport().addConstraint(constraint);
   }
 
   @Override
   public void addConstraint(@NonNull IUniqueConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
+    getConstraintSupport().addConstraint(constraint);
   }
 
   @Override
   public void addConstraint(@NonNull ICardinalityConstraint constraint) {
-    checkModelConstraints();
-    constraints.addConstraint(constraint);
+    getConstraintSupport().addConstraint(constraint);
   }
 
   @Override

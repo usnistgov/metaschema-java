@@ -26,14 +26,21 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class DefaultIndexConstraint
+public final class DefaultIndexConstraint
     extends AbstractKeyConstraint
     implements IIndexConstraint {
   @NonNull
@@ -44,12 +51,18 @@ public class DefaultIndexConstraint
    * 
    * @param id
    *          the optional identifier for the constraint
+   * @param formalName
+   *          the constraint's formal name or {@code null} if not provided
+   * @param description
+   *          the constraint's semantic description or {@code null} if not provided
    * @param source
    *          information about the constraint source
    * @param level
    *          the significance of a violation of this constraint
    * @param target
    *          the Metapath expression identifying the nodes the constraint targets
+   * @param properties
+   *          a collection of associated properties
    * @param name
    *          the name of the index
    * @param keyFields
@@ -57,15 +70,18 @@ public class DefaultIndexConstraint
    * @param remarks
    *          optional remarks describing the intent of the constraint
    */
-  public DefaultIndexConstraint(
-      String id,
+  private DefaultIndexConstraint(
+      @Nullable String id,
+      @Nullable String formalName,
+      @Nullable MarkupLine description,
       @NonNull ISource source,
       @NonNull Level level,
       @NonNull MetapathExpression target,
-      String name,
+      @NonNull Map<QName, Set<String>> properties,
+      @NonNull String name,
       @NonNull List<DefaultKeyField> keyFields,
-      MarkupMultiline remarks) {
-    super(id, source, level, target, keyFields, remarks);
+      @Nullable MarkupMultiline remarks) {
+    super(id, formalName, description, source, level, target, properties, keyFields, remarks);
     if (name.isBlank()) {
       throw new IllegalArgumentException("The index name must be a non-blank string");
     }
@@ -75,5 +91,60 @@ public class DefaultIndexConstraint
   @Override
   public String getName() {
     return name;
+  }
+
+  @Override
+  public <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
+    return visitor.visitIndexConstraint(this, state);
+  }
+
+  @NonNull
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  public static class Builder
+      extends AbstractKeyConstraintBuilder<Builder, DefaultIndexConstraint> {
+    private String name;
+
+    private Builder() {
+      // disable construction
+    }
+
+    public Builder name(@NonNull String name) {
+      this.name = name;
+      return this;
+    }
+
+    @Override
+    protected Builder getThis() {
+      return this;
+    }
+
+    @Override
+    protected void validate() {
+      super.validate();
+      
+      ObjectUtils.requireNonNull(name);
+    }
+
+    protected String getName() {
+      return name;
+    }
+
+    @Override
+    protected DefaultIndexConstraint newInstance() {
+      return new DefaultIndexConstraint(
+          getId(),
+          getFormalName(),
+          getDescription(),
+          ObjectUtils.notNull(getSource()),
+          getLevel(),
+          getTarget(),
+          getProperties(),
+          getName(),
+          getKeyFields(),
+          getRemarks());
+    }
   }
 }

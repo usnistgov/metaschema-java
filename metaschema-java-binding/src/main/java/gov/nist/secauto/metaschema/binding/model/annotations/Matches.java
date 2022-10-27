@@ -57,6 +57,22 @@ public @interface Matches {
   String id() default "";
 
   /**
+   * An optional formal name for the constraint.
+   * 
+   * @return the formal name if provided or an empty string otherwise
+   */
+  @NonNull
+  String formalName() default "";
+
+  /**
+   * An optional description of the constraint.
+   * 
+   * @return the description if provided or an empty string otherwise
+   */
+  @NonNull
+  String description() default "";
+
+  /**
    * The significance of a violation of this constraint.
    * 
    * @return the level
@@ -76,6 +92,13 @@ public @interface Matches {
    */
   @NonNull
   String target() default ".";
+
+  /**
+   * An optional set of properties associated with these allowed values.
+   * 
+   * @return the properties or an empty array with no properties
+   */
+  Property[] properties() default {};
 
   /**
    * Retrieve an optional pattern that the associated value must match. This must be a pattern that

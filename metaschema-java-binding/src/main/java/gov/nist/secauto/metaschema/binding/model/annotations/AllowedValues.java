@@ -56,6 +56,22 @@ public @interface AllowedValues {
   String id() default "";
 
   /**
+   * An optional formal name for the constraint.
+   * 
+   * @return the formal name if provided or an empty string otherwise
+   */
+  @NonNull
+  String formalName() default "";
+
+  /**
+   * An optional description of the constraint.
+   * 
+   * @return the description if provided or an empty string otherwise
+   */
+  @NonNull
+  String description() default "";
+
+  /**
    * The significance of a violation of this constraint.
    * 
    * @return the level
@@ -75,6 +91,13 @@ public @interface AllowedValues {
    */
   @NonNull
   String target() default IConstraint.DEFAULT_TARGET_METAPATH;
+
+  /**
+   * An optional set of properties associated with these allowed values.
+   * 
+   * @return the properties or an empty array with no properties
+   */
+  Property[] properties() default {};
 
   /**
    * Get any allowed values for this constraint.

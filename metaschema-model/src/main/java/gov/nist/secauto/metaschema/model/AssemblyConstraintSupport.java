@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model;
 
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultCardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultExpectConstraint;
@@ -33,18 +34,31 @@ import gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultUniqueConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.ISource;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraintVisitor;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IKeyField;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.model.xmlbeans.ConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.DefineAssemblyConstraintsType;
+import gov.nist.secauto.metaschema.model.xmlbeans.EnumType;
+import gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.model.xmlbeans.HasCardinalityConstraintType;
+import gov.nist.secauto.metaschema.model.xmlbeans.KeyConstraintType.KeyField;
+import gov.nist.secauto.metaschema.model.xmlbeans.PropertyType;
+import gov.nist.secauto.metaschema.model.xmlbeans.RemarksType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedAllowedValuesType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedExpectConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedIndexConstraintType;
@@ -55,8 +69,14 @@ import gov.nist.secauto.metaschema.model.xmlbeans.ScopedMatchesConstraintType;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 
+import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -86,6 +106,18 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
   @NonNull
   private final List<ICardinalityConstraint> cardinalityConstraints = new LinkedList<>();
 
+  public static AssemblyConstraintSupport newInstance(
+      @NonNull GlobalAssemblyDefinitionType definition,
+      @NonNull ISource source) {
+    AssemblyConstraintSupport retval;
+    if (definition.isSetConstraint()) {
+      retval = new AssemblyConstraintSupport(ObjectUtils.notNull(definition.getConstraint()), source);
+    } else {
+      retval = new AssemblyConstraintSupport();
+    }
+    return retval;
+  }
+
   public AssemblyConstraintSupport() {
     // do nothing
   }
@@ -101,39 +133,40 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
   public AssemblyConstraintSupport( // NOPMD - unavoidable
       @NonNull DefineAssemblyConstraintsType xmlConstraints,
       @NonNull ISource source) {
-    XmlCursor cursor = xmlConstraints.newCursor();
-    cursor.selectPath(PATH);
+    try (XmlCursor cursor = xmlConstraints.newCursor()) {
+      cursor.selectPath(PATH);
 
-    while (cursor.toNextSelection()) {
-      XmlObject obj = cursor.getObject();
-      if (obj instanceof ScopedAllowedValuesType) {
-        DefaultAllowedValuesConstraint constraint
-            = ModelFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj, source);
-        addConstraint(constraint);
-      } else if (obj instanceof ScopedIndexConstraintType) {
-        DefaultIndexConstraint constraint
-            = ModelFactory.newIndexConstraint((ScopedIndexConstraintType) obj, source);
-        addConstraint(constraint);
-      } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
-        DefaultIndexHasKeyConstraint constraint
-            = ModelFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj, source);
-        addConstraint(constraint);
-      } else if (obj instanceof ScopedKeyConstraintType) {
-        DefaultUniqueConstraint constraint
-            = ModelFactory.newUniqueConstraint((ScopedKeyConstraintType) obj, source);
-        addConstraint(constraint);
-      } else if (obj instanceof HasCardinalityConstraintType) {
-        DefaultCardinalityConstraint constraint
-            = ModelFactory.newCardinalityConstraint((HasCardinalityConstraintType) obj, source);
-        addConstraint(constraint);
-      } else if (obj instanceof ScopedMatchesConstraintType) {
-        DefaultMatchesConstraint constraint
-            = ModelFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj, source);
-        addConstraint(constraint);
-      } else if (obj instanceof ScopedExpectConstraintType) {
-        DefaultExpectConstraint constraint
-            = ModelFactory.newExpectConstraint((ScopedExpectConstraintType) obj, source);
-        addConstraint(constraint);
+      while (cursor.toNextSelection()) {
+        XmlObject obj = cursor.getObject();
+        if (obj instanceof ScopedAllowedValuesType) {
+          DefaultAllowedValuesConstraint constraint
+              = ModelFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj, source);
+          addConstraint(constraint);
+        } else if (obj instanceof ScopedIndexConstraintType) {
+          DefaultIndexConstraint constraint
+              = ModelFactory.newIndexConstraint((ScopedIndexConstraintType) obj, source);
+          addConstraint(constraint);
+        } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
+          DefaultIndexHasKeyConstraint constraint
+              = ModelFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj, source);
+          addConstraint(constraint);
+        } else if (obj instanceof ScopedKeyConstraintType) {
+          DefaultUniqueConstraint constraint
+              = ModelFactory.newUniqueConstraint((ScopedKeyConstraintType) obj, source);
+          addConstraint(constraint);
+        } else if (obj instanceof HasCardinalityConstraintType) {
+          DefaultCardinalityConstraint constraint
+              = ModelFactory.newCardinalityConstraint((HasCardinalityConstraintType) obj, source);
+          addConstraint(constraint);
+        } else if (obj instanceof ScopedMatchesConstraintType) {
+          DefaultMatchesConstraint constraint
+              = ModelFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj, source);
+          addConstraint(constraint);
+        } else if (obj instanceof ScopedExpectConstraintType) {
+          DefaultExpectConstraint constraint
+              = ModelFactory.newExpectConstraint((ScopedExpectConstraintType) obj, source);
+          addConstraint(constraint);
+        }
       }
     }
   }
@@ -247,6 +280,238 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
     synchronized (this) {
       constraints.add(constraint);
       cardinalityConstraints.add(constraint);
+    }
+  }
+
+  public final DefineAssemblyConstraintsType generate() {
+    DefineAssemblyConstraintsType retval = DefineAssemblyConstraintsType.Factory.newInstance();
+
+    XmlbeanGeneratingVisitor visitor = new XmlbeanGeneratingVisitor();
+
+    for (IConstraint constraint : getConstraints()) {
+      constraint.accept(visitor, retval);
+    }
+    return retval;
+  }
+
+  private static class XmlbeanGeneratingVisitor implements IConstraintVisitor<DefineAssemblyConstraintsType, Void> {
+    //
+    // public DefineAssemblyConstraintsType visit(@NonNull List<IConstraint> constraints) {
+    // DefineAssemblyConstraintsType retval = DefineAssemblyConstraintsType.Factory.newInstance();
+    // for (IConstraint constraint : constraints) {
+    // constraint.accept(this, retval);
+    // }
+    // return retval;
+    // }
+
+    private static void applyCommonValues(@NonNull IConstraint constraint, @NonNull ConstraintType bean) {
+      MarkupLine description = constraint.getDescription();
+      if (description != null) {
+        bean.setDescription(MarkupStringConverter.toMarkupLineDatatype(description));
+      }
+      String formalName = constraint.getFormalName();
+      if (formalName != null) {
+        bean.setFormalName(formalName);
+      }
+
+      String id = constraint.getId();
+      if (id != null) {
+        bean.setId(constraint.getId());
+      }
+
+      IConstraint.Level level = constraint.getLevel();
+      if (!IConstraint.DEFAULT_LEVEL.equals(level)) {
+        bean.setLevel(level);
+      }
+
+      constraint.getProperties();
+      bean.setPropArray(null);
+
+      for (Map.Entry<QName, Set<String>> entry : constraint.getProperties().entrySet()) {
+        QName qname = entry.getKey();
+        Set<String> values = entry.getValue();
+        for (String value : values) {
+          PropertyType prop = bean.addNewProp();
+          prop.setName(qname.getLocalPart());
+
+          String namespace = qname.getNamespaceURI();
+          if (namespace != null && !namespace.isEmpty()) {
+            prop.setNamespace(namespace);
+          }
+          prop.setValue(value);
+        }
+      }
+    }
+
+    @Override
+    public Void visitAllowedValues(IAllowedValuesConstraint constraint, DefineAssemblyConstraintsType state) {
+      ScopedAllowedValuesType bean = state.addNewAllowedValues();
+      applyCommonValues(constraint, bean);
+
+      if (Boolean.compare(IAllowedValuesConstraint.DEFAULT_ALLOW_OTHER, constraint.isAllowedOther()) != 0) {
+        bean.setAllowOther(constraint.isAllowedOther());
+      }
+      bean.setTarget(constraint.getTarget());
+      bean.setExtensible(constraint.getExtensible());
+
+      for (Map.Entry<String, ? extends IAllowedValue> entry : constraint.getAllowedValues().entrySet()) {
+        String value = entry.getKey();
+        IAllowedValue allowedValue = entry.getValue();
+
+        assert value.equals(allowedValue.getValue());
+
+        MarkupLine description = allowedValue.getDescription();
+        EnumType enumType = bean.addNewEnum();
+        enumType.setValue(value);
+
+        XmlbeansMarkupVisitor.visit(description, IMetaschema.METASCHEMA_XML_NS, enumType);
+      }
+
+      MarkupMultiline remarks = constraint.getRemarks();
+      if (remarks != null) {
+        RemarksType remarksType = bean.addNewRemarks();
+        XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
+      }
+      return null;
+    }
+
+    @Override
+    public Void visitCardinalityConstraint(ICardinalityConstraint constraint, DefineAssemblyConstraintsType state) {
+      HasCardinalityConstraintType bean = state.addNewHasCardinality();
+      applyCommonValues(constraint, bean);
+
+      Integer minOccurs = constraint.getMinOccurs();
+      if (minOccurs != null) {
+        bean.setMinOccurs(BigInteger.valueOf(minOccurs));
+      }
+
+      Integer maxOccurs = constraint.getMaxOccurs();
+      if (maxOccurs != null) {
+        bean.setMaxOccurs(BigInteger.valueOf(maxOccurs));
+      }
+
+      MarkupMultiline remarks = constraint.getRemarks();
+      if (remarks != null) {
+        RemarksType remarksType = bean.addNewRemarks();
+        XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
+      }
+      return null;
+    }
+
+    @Override
+    public Void visitExpectConstraint(IExpectConstraint constraint, DefineAssemblyConstraintsType state) {
+      ScopedExpectConstraintType bean = state.addNewExpect();
+      applyCommonValues(constraint, bean);
+
+      bean.setTest(constraint.getTest());
+
+      String message = constraint.getMessage();
+      if (message != null) {
+        bean.setMessage(message);
+      }
+
+      MarkupMultiline remarks = constraint.getRemarks();
+      if (remarks != null) {
+        RemarksType remarksType = bean.addNewRemarks();
+        XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
+      }
+      return null;
+    }
+
+    @Override
+    public Void visitMatchesConstraint(IMatchesConstraint constraint, DefineAssemblyConstraintsType state) {
+      ScopedMatchesConstraintType bean = state.addNewMatches();
+      applyCommonValues(constraint, bean);
+
+      Pattern pattern = constraint.getPattern();
+      if (pattern != null) {
+        bean.setRegex(pattern);
+      }
+
+      IDataTypeAdapter<?> dataType = constraint.getDataType();
+      if (dataType != null) {
+        bean.setDatatype(dataType);
+      }
+
+      MarkupMultiline remarks = constraint.getRemarks();
+      if (remarks != null) {
+        RemarksType remarksType = bean.addNewRemarks();
+        XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
+      }
+      return null;
+    }
+
+    private static void applyKeyField(@NonNull IKeyField keyField, @NonNull KeyField bean) {
+      Pattern pattern = keyField.getPattern();
+      if (pattern != null) {
+        bean.setPattern(pattern);
+      }
+
+      bean.setTarget(keyField.getTarget());
+
+      MarkupMultiline remarks = keyField.getRemarks();
+      if (remarks != null) {
+        RemarksType remarksType = bean.addNewRemarks();
+        XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
+      }
+    }
+
+    @Override
+    public Void visitIndexConstraint(IIndexConstraint constraint, DefineAssemblyConstraintsType state) {
+      ScopedIndexConstraintType bean = state.addNewIndex();
+      applyCommonValues(constraint, bean);
+
+      bean.setName(constraint.getName());
+
+      for (IKeyField keyField : constraint.getKeyFields()) {
+        KeyField keyFieldBean = bean.addNewKeyField();
+        applyKeyField(keyField, keyFieldBean);
+      }
+
+      MarkupMultiline remarks = constraint.getRemarks();
+      if (remarks != null) {
+        RemarksType remarksType = bean.addNewRemarks();
+        XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
+      }
+      return null;
+    }
+
+    @Override
+    public Void visitIndexHasKeyConstraint(IIndexHasKeyConstraint constraint, DefineAssemblyConstraintsType state) {
+      ScopedIndexHasKeyConstraintType bean = state.addNewIndexHasKey();
+      applyCommonValues(constraint, bean);
+
+      bean.setName(constraint.getIndexName());
+
+      for (IKeyField keyField : constraint.getKeyFields()) {
+        KeyField keyFieldBean = bean.addNewKeyField();
+        applyKeyField(keyField, keyFieldBean);
+      }
+
+      MarkupMultiline remarks = constraint.getRemarks();
+      if (remarks != null) {
+        RemarksType remarksType = bean.addNewRemarks();
+        XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
+      }
+      return null;
+    }
+
+    @Override
+    public Void visitUniqueConstraint(IUniqueConstraint constraint, DefineAssemblyConstraintsType state) {
+      ScopedIndexHasKeyConstraintType bean = state.addNewIndexHasKey();
+      applyCommonValues(constraint, bean);
+
+      for (IKeyField keyField : constraint.getKeyFields()) {
+        KeyField keyFieldBean = bean.addNewKeyField();
+        applyKeyField(keyField, keyFieldBean);
+      }
+
+      MarkupMultiline remarks = constraint.getRemarks();
+      if (remarks != null) {
+        RemarksType remarksType = bean.addNewRemarks();
+        XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
+      }
+      return null;
     }
   }
 }

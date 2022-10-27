@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model;
 
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -59,6 +60,13 @@ final class MarkupStringConverter {
   public static MarkupLine toMarkupString(@NonNull MarkupLineDatatype content) {
     String html = processHTML(content);
     return MarkupLine.fromHtml(html);
+  }
+  
+  @NonNull
+  public static MarkupLineDatatype toMarkupLineDatatype(@NonNull MarkupLine markupLine) {
+    MarkupLineDatatype retval = ObjectUtils.notNull(MarkupLineDatatype.Factory.newInstance());
+    XmlbeansMarkupVisitor.visit(markupLine, IMetaschema.METASCHEMA_XML_NS, retval);
+    return retval;
   }
 
   /**

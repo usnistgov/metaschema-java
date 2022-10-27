@@ -6,8 +6,11 @@ grammar metapath10;
 metapath : expr EOF ;
 // [5]
 expr : exprsingle ( COMMA exprsingle)* ;
-exprsingle : orexpr ;
+exprsingle : letexpr | orexpr ;
 // [10]
+letexpr :    simpleletclause KW_RETURN exprsingle ;
+simpleletclause : KW_LET simpleletbinding ( COMMA simpleletbinding)* ;
+simpleletbinding : DOLLAR varname CEQ exprsingle ;
 // [15]
 orexpr : andexpr ( KW_OR andexpr )* ;
 andexpr : comparisonexpr ( KW_AND comparisonexpr )* ;
@@ -19,7 +22,7 @@ multiplicativeexpr : unionexpr ( (STAR | KW_DIV | KW_IDIV | KW_MOD) unionexpr )*
 unionexpr : intersectexceptexpr ( (KW_UNION | P) intersectexceptexpr )* ;
 intersectexceptexpr : arrowexpr ( ( KW_INTERSECT | KW_EXCEPT) arrowexpr )* ;
 // [25]
-arrowexpr : unaryexpr ( EG functioncall )* ;
+arrowexpr : unaryexpr ( EG arrowfunctionspecifier argumentlist )* ;
 // [30]
 unaryexpr : ( MINUS | PLUS)* valueexpr ;
 //valueexpr : simplemapexpr ;
@@ -48,10 +51,13 @@ argumentlist : OP (argument ( COMMA argument)*)? CP ;
 predicatelist : predicate* ;
 predicate : OB expr CB ;
 // [55]
-primaryexpr : literal | parenthesizedexpr | contextitemexpr | functioncall ;
+arrowfunctionspecifier : eqname | varref | parenthesizedexpr ;
+primaryexpr : literal | varref | parenthesizedexpr | contextitemexpr | functioncall ;
 literal : numericliteral | StringLiteral ;
 numericliteral : IntegerLiteral | DecimalLiteral | DoubleLiteral ;
+varref : DOLLAR varname ;
 // [60]
+varname : eqname ;
 parenthesizedexpr : OP expr? CP ;
 contextitemexpr : D ;
 functioncall : 
@@ -89,6 +95,7 @@ eqname : LocalName
  | KW_IDIV
  | KW_INTERSECT
  | KW_LE
+ | KW_LET
  | KW_LT
  | KW_MOD
  | KW_NE
@@ -96,6 +103,7 @@ eqname : LocalName
  | KW_PARENT
  | KW_PRECEDING
  | KW_PRECEDING_SIBLING
+ | KW_RETURN
  | KW_SELF
  | KW_UNION
  ;
@@ -159,6 +167,7 @@ KW_GT : 'gt' ;
 KW_IDIV : 'idiv' ;
 KW_INTERSECT : 'intersect' ;
 KW_LE : 'le' ;
+KW_LET : 'let' ;
 KW_LT : 'lt' ;
 KW_MOD : 'mod' ;
 KW_NE : 'ne' ;
@@ -166,6 +175,7 @@ KW_OR : 'or' ;
 KW_PARENT : 'parent' ;
 KW_PRECEDING : 'preceding' ;
 KW_PRECEDING_SIBLING : 'preceding-sibling' ;
+KW_RETURN : 'return' ;
 KW_SELF : 'self' ;
 KW_UNION : 'union' ;
 

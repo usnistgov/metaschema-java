@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
@@ -35,6 +36,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeIte
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -91,13 +95,21 @@ public interface IConstraint {
    * 
    * @return the identifier or {@code null} if no identifier is defined
    */
+  @Nullable
   String getId();
+
+  @Nullable
+  MarkupLine getDescription();
+
+  @Nullable
+  String getFormalName();
 
   /**
    * Get information about the source of the constraint.
    * 
    * @return the source information
    */
+  @NonNull
   ISource getSource();
 
   /**
@@ -108,6 +120,9 @@ public interface IConstraint {
   @NonNull
   Level getLevel();
 
+  @NonNull
+  Map<QName, Set<String>> getProperties();
+  
   /**
    * Retrieve the Metapath expression to use to query the targets of the constraint.
    * 
@@ -151,6 +166,8 @@ public interface IConstraint {
    * @return the remarks or {@code null} if no remarks are defined
    */
   MarkupMultiline getRemarks();
+
+  <T, R> R accept(@NonNull IConstraintVisitor<T, R> visitor, T state);
 
   interface ISource {
     enum SourceType {

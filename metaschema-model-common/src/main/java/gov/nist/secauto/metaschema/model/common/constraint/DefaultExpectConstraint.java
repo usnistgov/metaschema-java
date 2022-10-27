@@ -26,20 +26,26 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.ReplacementScanner;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Pattern;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class DefaultExpectConstraint
+public final class DefaultExpectConstraint
     extends AbstractConstraint
     implements IExpectConstraint {
   @SuppressWarnings("null")
@@ -56,30 +62,39 @@ public class DefaultExpectConstraint
    * 
    * @param id
    *          the optional identifier for the constraint
+   * @param formalName
+   *          the constraint's formal name or {@code null} if not provided
+   * @param description
+   *          the constraint's semantic description or {@code null} if not provided
    * @param source
    *          information about the constraint source
    * @param level
    *          the significance of a violation of this constraint
-   * @param message
-   *          an optional message to emit when the constraint is violated
    * @param target
    *          the Metapath expression identifying the nodes the constraint targets
+   * @param properties
+   *          a collection of associated properties
    * @param test
    *          a Metapath expression that is evaluated against the target node to determine if the
    *          constraint passes
+   * @param message
+   *          an optional message to emit when the constraint is violated
    * @param remarks
    *          optional remarks describing the intent of the constraint
    */
   @SuppressWarnings("null")
-  public DefaultExpectConstraint(
+  private DefaultExpectConstraint(
       @Nullable String id,
+      @Nullable String formalName,
+      @Nullable MarkupLine description,
       @NonNull ISource source,
       @NonNull Level level,
-      String message,
       @NonNull MetapathExpression target,
+      @NonNull Map<QName, Set<String>> properties,
       @NonNull MetapathExpression test,
+      @Nullable String message,
       MarkupMultiline remarks) {
-    super(id, source, level, target, remarks);
+    super(id, formalName, description, source, level, target, properties, remarks);
     this.test = Objects.requireNonNull(test);
     this.message = message;
   }
@@ -106,5 +121,70 @@ public class DefaultExpectConstraint
           MetapathExpression expr = MetapathExpression.compile(metapath);
           return expr.evaluateAs(item, MetapathExpression.ResultType.STRING, context);
         });
+  }
+
+  @Override
+  public <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
+    return visitor.visitExpectConstraint(this, state);
+  }
+
+  @NonNull
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  public static class Builder
+      extends AbstractConstraintBuilder<Builder, DefaultExpectConstraint> {
+    private MetapathExpression test;
+    private String message;
+
+    private Builder() {
+      // disable construction
+    }
+
+    public Builder test(@NonNull MetapathExpression test) {
+      this.test = test;
+      return this;
+    }
+
+    public Builder message(@NonNull String message) {
+      this.message = message;
+      return this;
+    }
+
+    @Override
+    protected Builder getThis() {
+      return this;
+    }
+
+    @Override
+    protected void validate() {
+      super.validate();
+
+      ObjectUtils.requireNonNull(getTest());
+    }
+
+    protected MetapathExpression getTest() {
+      return test;
+    }
+
+    protected String getMessage() {
+      return message;
+    }
+
+    @Override
+    protected DefaultExpectConstraint newInstance() {
+      return new DefaultExpectConstraint(
+          getId(),
+          getFormalName(),
+          getDescription(),
+          ObjectUtils.notNull(getSource()),
+          getLevel(),
+          getTarget(),
+          getProperties(),
+          ObjectUtils.requireNonNull(getTest()),
+          getMessage(),
+          getRemarks());
+    }
   }
 }

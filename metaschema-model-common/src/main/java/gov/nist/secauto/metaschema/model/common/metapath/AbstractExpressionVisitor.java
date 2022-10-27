@@ -278,4 +278,14 @@ abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpression
   public RESULT visitWildcard(Wildcard expr, CONTEXT context) {
     return defaultResult();
   }
+
+  @Override
+  public RESULT visitLet(Let expr, CONTEXT context) {
+    return visitChildren(expr, context);
+  }
+
+  @Override
+  public RESULT visitVariableReference(VariableReference expr, CONTEXT context) {
+    return visitChildren(expr, context);
+  }
 }

@@ -57,6 +57,22 @@ public @interface IndexHasKey {
   String id() default "";
 
   /**
+   * An optional formal name for the constraint.
+   * 
+   * @return the formal name if provided or an empty string otherwise
+   */
+  @NonNull
+  String formalName() default "";
+
+  /**
+   * An optional description of the constraint.
+   * 
+   * @return the description if provided or an empty string otherwise
+   */
+  @NonNull
+  String description() default "";
+
+  /**
    * The significance of a violation of this constraint.
    * 
    * @return the level
@@ -76,6 +92,13 @@ public @interface IndexHasKey {
    */
   @NonNull
   String target() default ".";
+
+  /**
+   * An optional set of properties associated with these allowed values.
+   * 
+   * @return the properties or an empty array with no properties
+   */
+  Property[] properties() default {};
 
   /**
    * A reference to a named index.

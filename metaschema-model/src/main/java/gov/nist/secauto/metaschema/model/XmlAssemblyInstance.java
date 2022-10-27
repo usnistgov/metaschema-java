@@ -36,7 +36,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.AssemblyReferenceType;
-import gov.nist.secauto.metaschema.model.xmlbeans.DescriptionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineDatatype;
 
 import java.math.BigInteger;
 import java.util.Collection;
@@ -98,7 +98,7 @@ class XmlAssemblyInstance
   public MarkupLine getDescription() {
     MarkupLine retval = null;
     if (getXmlAssembly().isSetDescription()) {
-      DescriptionType description = getXmlAssembly().getDescription();
+      MarkupLineDatatype description = getXmlAssembly().getDescription();
       assert description != null;
       retval = MarkupStringConverter.toMarkupString(description);
     }

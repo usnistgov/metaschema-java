@@ -26,30 +26,65 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-public class DynamicMetapathException
-    extends AbstractCodedMetapathException {
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-  /**
-   * the serial version UID.
-   */
-  private static final long serialVersionUID = 1L;
-  
-  public static final int INVALID_PATH_GRAMMAR = 3;
+import java.util.List;
 
-  public DynamicMetapathException(int code, String message) {
-    super(code, message);
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public class Let implements IExpression {
+  @NonNull
+  private final Name name;
+  @NonNull
+  private final IExpression boundExpression;
+  @NonNull
+  private final IExpression returnExpression;
+
+  public Let(@NonNull Name name, @NonNull IExpression boundExpression, @NonNull IExpression returnExpression) {
+    super();
+    this.name = name;
+    this.boundExpression = boundExpression;
+    this.returnExpression = returnExpression;
   }
 
-  public DynamicMetapathException(int code, String message, Throwable cause) {
-    super(code, message, cause);
+  @NonNull
+  public Name getName() {
+    return name;
   }
 
-  public DynamicMetapathException(int code, Throwable cause) {
-    super(code, cause);
+  @NonNull
+  public IExpression getBoundExpression() {
+    return boundExpression;
+  }
+
+  @NonNull
+  public IExpression getReturnExpression() {
+    return returnExpression;
   }
 
   @Override
-  protected String getCodePrefix() {
-    return "XPDY";
+  public List<? extends IExpression> getChildren() {
+    return ObjectUtils.notNull(
+        List.of(boundExpression, returnExpression));
+  }
+
+  @Override
+  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitLet(this, context);
+  }
+
+  @Override
+  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    ISequence<?> result = getBoundExpression().accept(dynamicContext, context);
+
+    String name = getName().getValue();
+    dynamicContext.setVariableValue(name, result);
+
+    ISequence<?> retval = getReturnExpression().accept(dynamicContext, context);
+
+    dynamicContext.clearVariableValue(name);
+    
+    return retval;
   }
 }

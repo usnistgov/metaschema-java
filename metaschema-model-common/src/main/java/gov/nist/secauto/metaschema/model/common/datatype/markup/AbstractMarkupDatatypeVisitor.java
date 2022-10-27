@@ -23,33 +23,26 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.datatype.markup;
+/*
+public class AbstractMarkupDatatypeVisitor
+    extends AbstractMarkupVisitor<AbstractMarkupDatatypeVisitor.ProseState, RuntimeException> {
 
-package gov.nist.secauto.metaschema.model.common.metapath;
-
-public class DynamicMetapathException
-    extends AbstractCodedMetapathException {
-
-  /**
-   * the serial version UID.
-   */
-  private static final long serialVersionUID = 1L;
   
-  public static final int INVALID_PATH_GRAMMAR = 3;
-
-  public DynamicMetapathException(int code, String message) {
-    super(code, message);
+  protected AbstractMarkupDatatypeVisitor(boolean handleBlockElements) {
+    super(handleBlockElements);
   }
 
-  public DynamicMetapathException(int code, String message, Throwable cause) {
-    super(code, message, cause);
+  static class ProseState {
+    
   }
 
-  public DynamicMetapathException(int code, Throwable cause) {
-    super(code, cause);
+  static class InlineMarkupState {
+    
   }
-
-  @Override
-  protected String getCodePrefix() {
-    return "XPDY";
+  
+  static class ListItemState {
+    
   }
 }
+*/

@@ -24,32 +24,24 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath;
+package gov.nist.secauto.metaschema.model.common.constraint;
 
-public class DynamicMetapathException
-    extends AbstractCodedMetapathException {
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-  /**
-   * the serial version UID.
-   */
-  private static final long serialVersionUID = 1L;
-  
-  public static final int INVALID_PATH_GRAMMAR = 3;
+public interface IConstraintVisitor<T, R> {
 
-  public DynamicMetapathException(int code, String message) {
-    super(code, message);
-  }
+  R visitAllowedValues(@NonNull IAllowedValuesConstraint constraint, T state);
 
-  public DynamicMetapathException(int code, String message, Throwable cause) {
-    super(code, message, cause);
-  }
+  R visitCardinalityConstraint(@NonNull ICardinalityConstraint constraint, T state);
 
-  public DynamicMetapathException(int code, Throwable cause) {
-    super(code, cause);
-  }
+  R visitExpectConstraint(@NonNull IExpectConstraint constraint, T state);
 
-  @Override
-  protected String getCodePrefix() {
-    return "XPDY";
-  }
+  R visitMatchesConstraint(@NonNull IMatchesConstraint constraint, T state);
+
+  R visitIndexConstraint(@NonNull IIndexConstraint constraint, T state);
+
+  R visitIndexHasKeyConstraint(@NonNull IIndexHasKeyConstraint constraint, T state);
+
+  R visitUniqueConstraint(@NonNull IUniqueConstraint constraint, T state);
+
 }

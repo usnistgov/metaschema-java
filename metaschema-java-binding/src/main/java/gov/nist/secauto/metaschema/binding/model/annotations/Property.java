@@ -23,33 +23,37 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.binding.model.annotations;
 
-package gov.nist.secauto.metaschema.model.common.metapath;
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-public class DynamicMetapathException
-    extends AbstractCodedMetapathException {
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+@Retention(RUNTIME)
+@Target(ANNOTATION_TYPE)
+public @interface Property {
+  /**
+   * The name of the property.
+   * @return the name
+   */
+  @NonNull
+  String name();
 
   /**
-   * the serial version UID.
+   * The namespace of the property's name.
+   * @return the namespace
    */
-  private static final long serialVersionUID = 1L;
-  
-  public static final int INVALID_PATH_GRAMMAR = 3;
+  @NonNull
+  String namespace();
 
-  public DynamicMetapathException(int code, String message) {
-    super(code, message);
-  }
-
-  public DynamicMetapathException(int code, String message, Throwable cause) {
-    super(code, message, cause);
-  }
-
-  public DynamicMetapathException(int code, Throwable cause) {
-    super(code, cause);
-  }
-
-  @Override
-  protected String getCodePrefix() {
-    return "XPDY";
-  }
+  /**
+   * The values for the property's name and namespace.
+   * @return the namespace
+   */
+  @NonNull
+  String[] values();
 }
