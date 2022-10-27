@@ -139,7 +139,7 @@
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
 		<dependency.thymeleaf.version>3.0.15.RELEASE</dependency.thymeleaf.version>
 		<dependency.woodstox.version>6.3.1</dependency.woodstox.version>
-		<dependency.xmlbeans.version>5.1.0</dependency.xmlbeans.version>
+		<dependency.xmlbeans.version>5.1.1</dependency.xmlbeans.version>
 		<dependency.xmlresolver.version>4.5.1</dependency.xmlresolver.version>
 
 		<plugin.license.version>4.2.rc3</plugin.license.version>
