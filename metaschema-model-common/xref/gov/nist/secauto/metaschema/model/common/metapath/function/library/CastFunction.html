@@ -71,7 +71,7 @@
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>    @NonNull
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> &lt;ITEM <strong class="jxr_keyword">extends</strong> IAnyAtomicItem&gt; CastFunction&lt;ITEM&gt;
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>        newCastExecutor(@NonNull ICastExecutor&lt;ITEM&gt; executor) {
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> CastFunction&lt;ITEM&gt;(executor);
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> CastFunction&lt;&gt;(executor);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>    }
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>    <strong class="jxr_keyword">private</strong> <a name="CastFunction" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/library/CastFunction.html#CastFunction">CastFunction</a>(@NonNull ICastExecutor&lt;ITEM&gt; castExecutor) {

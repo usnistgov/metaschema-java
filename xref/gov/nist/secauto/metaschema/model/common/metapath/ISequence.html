@@ -96,7 +96,7 @@
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>    @NonNull
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> &lt;ITEM_TYPE <strong class="jxr_keyword">extends</strong> IItem&gt; ISequence&lt;ITEM_TYPE&gt; of( <em class="jxr_comment">// NOPMD - intentional</em>
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>        @NonNull Stream&lt;ITEM_TYPE&gt; items) {
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>      <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> StreamSequenceImpl&lt;ITEM_TYPE&gt;(items);
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>      <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> StreamSequenceImpl&lt;&gt;(items);
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>    }
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>  
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>    @NonNull

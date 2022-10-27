@@ -111,11 +111,11 @@
 <a class="jxr_linenumber" name="L103" href="#L103">103</a> <em class="jxr_javadoccomment">     * Gets the "description" element</em>
 <a class="jxr_linenumber" name="L104" href="#L104">104</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>     @Override
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>     <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.DescriptionType getDescription() {
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>     <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineDatatype getDescription() {
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>         <strong class="jxr_keyword">synchronized</strong> (monitor()) {
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>             check_orphaned();
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>             gov.nist.secauto.metaschema.model.xmlbeans.DescriptionType target = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>             target = (gov.nist.secauto.metaschema.model.xmlbeans.DescriptionType)get_store().find_element_user(PROPERTY_QNAME[1], 0);
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>             gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineDatatype target = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>             target = (gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineDatatype)get_store().find_element_user(PROPERTY_QNAME[1], 0);
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>             <strong class="jxr_keyword">return</strong> (target == <strong class="jxr_keyword">null</strong>) ? <strong class="jxr_keyword">null</strong> : target;
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>         }
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>     }
@@ -135,7 +135,7 @@
 <a class="jxr_linenumber" name="L127" href="#L127">127</a> <em class="jxr_javadoccomment">     * Sets the "description" element</em>
 <a class="jxr_linenumber" name="L128" href="#L128">128</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>     @Override
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setDescription(gov.nist.secauto.metaschema.model.xmlbeans.DescriptionType description) {
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setDescription(gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineDatatype description) {
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>         generatedSetterHelperImpl(description, PROPERTY_QNAME[1], 0, org.apache.xmlbeans.impl.values.XmlObjectBase.KIND_SETTERHELPER_SINGLETON);
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>     }
 <a class="jxr_linenumber" name="L133" href="#L133">133</a> 
@@ -143,11 +143,11 @@
 <a class="jxr_linenumber" name="L135" href="#L135">135</a> <em class="jxr_javadoccomment">     * Appends and returns a new empty "description" element</em>
 <a class="jxr_linenumber" name="L136" href="#L136">136</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>     @Override
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>     <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.DescriptionType addNewDescription() {
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>     <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineDatatype addNewDescription() {
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>         <strong class="jxr_keyword">synchronized</strong> (monitor()) {
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>             check_orphaned();
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>             gov.nist.secauto.metaschema.model.xmlbeans.DescriptionType target = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>             target = (gov.nist.secauto.metaschema.model.xmlbeans.DescriptionType)get_store().add_element_user(PROPERTY_QNAME[1]);
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>             gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineDatatype target = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>             target = (gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineDatatype)get_store().add_element_user(PROPERTY_QNAME[1]);
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>             <strong class="jxr_keyword">return</strong> target;
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>         }
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>     }

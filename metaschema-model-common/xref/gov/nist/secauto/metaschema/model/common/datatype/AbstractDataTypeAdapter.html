@@ -196,7 +196,7 @@
 <a class="jxr_linenumber" name="L188" href="#L188">188</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> ITEM_TYPE newItem(Object value);
 <a class="jxr_linenumber" name="L189" href="#L189">189</a> 
 <a class="jxr_linenumber" name="L190" href="#L190">190</a>   @Override
-<a class="jxr_linenumber" name="L191" href="#L191">191</a>   <strong class="jxr_keyword">public</strong> ITEM_TYPE <strong class="jxr_keyword">cast</strong>(<a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> item) <strong class="jxr_keyword">throws</strong> <a name="InvalidValueForCastFunctionException" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/InvalidValueForCastFunctionException.html#InvalidValueForCastFunctionException">InvalidValueForCastFunctionException</a> {
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>   <strong class="jxr_keyword">public</strong> ITEM_TYPE <strong class="jxr_keyword">cast</strong>(<a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> item) {
 <a class="jxr_linenumber" name="L192" href="#L192">192</a>     ITEM_TYPE retval;
 <a class="jxr_linenumber" name="L193" href="#L193">193</a>     <strong class="jxr_keyword">if</strong> (item == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L194" href="#L194">194</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="InvalidValueForCastFunctionException" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/InvalidValueForCastFunctionException.html#InvalidValueForCastFunctionException">InvalidValueForCastFunctionException</a>(<span class="jxr_string">"item is null"</span>);
@@ -225,7 +225,7 @@
 <a class="jxr_linenumber" name="L217" href="#L217">217</a> <em class="jxr_javadoccomment">   *           for this adapter's item type</em>
 <a class="jxr_linenumber" name="L218" href="#L218">218</a> <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L219" href="#L219">219</a>   @NonNull
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>   <strong class="jxr_keyword">protected</strong> ITEM_TYPE castInternal(@NonNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> item) <strong class="jxr_keyword">throws</strong> <a name="InvalidValueForCastFunctionException" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/InvalidValueForCastFunctionException.html#InvalidValueForCastFunctionException">InvalidValueForCastFunctionException</a> {
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>   <strong class="jxr_keyword">protected</strong> ITEM_TYPE castInternal(@NonNull <a name="IAnyAtomicItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> item) {
 <a class="jxr_linenumber" name="L221" href="#L221">221</a>     <em class="jxr_comment">// try string based casting as a fallback</em>
 <a class="jxr_linenumber" name="L222" href="#L222">222</a>     String itemString = item.asString();
 <a class="jxr_linenumber" name="L223" href="#L223">223</a>     <strong class="jxr_keyword">try</strong> {

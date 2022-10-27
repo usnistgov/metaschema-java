@@ -150,30 +150,31 @@
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Map&lt;String, IFlagInstance&gt; parseLocalFlags(@NonNull XmlObject xmlObject,
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>       @NonNull <a name="IModelDefinition" href="../../../../../gov/nist/secauto/metaschema/model/common/IModelDefinition.html#IModelDefinition">IModelDefinition</a> parent) {
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>     <em class="jxr_comment">// handle flags</em>
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>     XmlCursor cursor = xmlObject.newCursor();
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>     cursor.selectPath(
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>         <span class="jxr_string">"declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"</span> + <span class="jxr_string">"$this/m:flag|$this/m:define-flag"</span>);
-<a class="jxr_linenumber" name="L148" href="#L148">148</a> 
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>     Map&lt;String, IFlagInstance&gt; flagInstances = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;&gt;(); <em class="jxr_comment">// NOPMD - intentional</em>
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>     <strong class="jxr_keyword">while</strong> (cursor.toNextSelection()) {
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>       XmlObject obj = cursor.getObject();
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>       <strong class="jxr_keyword">if</strong> (obj instanceof FlagReferenceType) {
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>         <a name="XmlFlagInstance" href="../../../../../gov/nist/secauto/metaschema/model/XmlFlagInstance.html#XmlFlagInstance">XmlFlagInstance</a> flagInstance = <strong class="jxr_keyword">new</strong> <a name="XmlFlagInstance" href="../../../../../gov/nist/secauto/metaschema/model/XmlFlagInstance.html#XmlFlagInstance">XmlFlagInstance</a>((FlagReferenceType) obj, parent); <em class="jxr_comment">// NOPMD - intentional</em>
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>         flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>       } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (obj instanceof InlineFlagDefinitionType) {
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>         <a name="XmlInlineFlagDefinition" href="../../../../../gov/nist/secauto/metaschema/model/XmlInlineFlagDefinition.html#XmlInlineFlagDefinition">XmlInlineFlagDefinition</a> flagInstance
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>             = <strong class="jxr_keyword">new</strong> <a name="XmlInlineFlagDefinition" href="../../../../../gov/nist/secauto/metaschema/model/XmlInlineFlagDefinition.html#XmlInlineFlagDefinition">XmlInlineFlagDefinition</a>((InlineFlagDefinitionType) obj, parent); <em class="jxr_comment">// NOPMD - intentional</em>
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>         flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>       }
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>     }
-<a class="jxr_linenumber" name="L161" href="#L161">161</a> 
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>     @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>     @NonNull
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>     Map&lt;String, IFlagInstance&gt; retval
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>         = flagInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagInstances);
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>     <strong class="jxr_keyword">return</strong> retval;
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>   }
-<a class="jxr_linenumber" name="L168" href="#L168">168</a> }
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>     Map&lt;String, IFlagInstance&gt; flagInstances = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;&gt;(); <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>     <strong class="jxr_keyword">try</strong> (XmlCursor cursor = xmlObject.newCursor()) {
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>       cursor.selectPath(
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>           <span class="jxr_string">"declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"</span> + <span class="jxr_string">"$this/m:flag|$this/m:define-flag"</span>);
+<a class="jxr_linenumber" name="L149" href="#L149">149</a> 
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>       <strong class="jxr_keyword">while</strong> (cursor.toNextSelection()) {
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>         XmlObject obj = cursor.getObject();
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>         <strong class="jxr_keyword">if</strong> (obj instanceof FlagReferenceType) {
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>           <a name="XmlFlagInstance" href="../../../../../gov/nist/secauto/metaschema/model/XmlFlagInstance.html#XmlFlagInstance">XmlFlagInstance</a> flagInstance = <strong class="jxr_keyword">new</strong> <a name="XmlFlagInstance" href="../../../../../gov/nist/secauto/metaschema/model/XmlFlagInstance.html#XmlFlagInstance">XmlFlagInstance</a>((FlagReferenceType) obj, parent); <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>           flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (obj instanceof InlineFlagDefinitionType) {
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>           <a name="XmlInlineFlagDefinition" href="../../../../../gov/nist/secauto/metaschema/model/XmlInlineFlagDefinition.html#XmlInlineFlagDefinition">XmlInlineFlagDefinition</a> flagInstance
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>               = <strong class="jxr_keyword">new</strong> <a name="XmlInlineFlagDefinition" href="../../../../../gov/nist/secauto/metaschema/model/XmlInlineFlagDefinition.html#XmlInlineFlagDefinition">XmlInlineFlagDefinition</a>((InlineFlagDefinitionType) obj, parent); <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>           flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>         }
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>       }
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>     }
+<a class="jxr_linenumber" name="L162" href="#L162">162</a> 
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>     @SuppressWarnings(<span class="jxr_string">"null"</span>)
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>     @NonNull
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>     Map&lt;String, IFlagInstance&gt; retval
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>         = flagInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagInstances);
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>     <strong class="jxr_keyword">return</strong> retval;
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>   }
+<a class="jxr_linenumber" name="L169" href="#L169">169</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

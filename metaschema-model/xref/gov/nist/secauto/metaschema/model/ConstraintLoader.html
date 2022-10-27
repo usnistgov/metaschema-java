@@ -149,36 +149,36 @@
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>       URI namespace = ObjectUtils.notNull(URI.create(scope.getMetaschemaNamespace()));
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>       String shortName = ObjectUtils.requireNonNull(scope.getMetaschemaShortName());
 <a class="jxr_linenumber" name="L143" href="#L143">143</a> 
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>       XmlCursor cursor = scope.newCursor();
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>       cursor.selectPath(<span class="jxr_string">"declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"</span>
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>           + <span class="jxr_string">"$this/m:assembly|$this/m:field|$this/m:flag"</span>);
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>       <strong class="jxr_keyword">try</strong> (XmlCursor cursor = scope.newCursor()) {
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>         cursor.selectPath(<span class="jxr_string">"declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"</span>
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>             + <span class="jxr_string">"$this/m:assembly|$this/m:field|$this/m:flag"</span>);
 <a class="jxr_linenumber" name="L147" href="#L147">147</a> 
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>       List&lt;ITargetedConstaints&gt; targetedConstraints = <strong class="jxr_keyword">new</strong> LinkedList&lt;&gt;(); <em class="jxr_comment">// NOPMD - intentional</em>
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>       <strong class="jxr_keyword">while</strong> (cursor.toNextSelection()) {
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>         XmlObject obj = cursor.getObject();
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>         <strong class="jxr_keyword">if</strong> (obj instanceof Scope.Assembly) {
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>           Scope.Assembly assembly = (Scope.Assembly) obj;
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>           MetapathExpression expression = ObjectUtils.requireNonNull(assembly.getTarget());
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>           <a name="AssemblyConstraintSupport" href="../../../../../gov/nist/secauto/metaschema/model/AssemblyConstraintSupport.html#AssemblyConstraintSupport">AssemblyConstraintSupport</a> constraints
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>               = <strong class="jxr_keyword">new</strong> <a name="AssemblyConstraintSupport" href="../../../../../gov/nist/secauto/metaschema/model/AssemblyConstraintSupport.html#AssemblyConstraintSupport">AssemblyConstraintSupport</a>(assembly, constraintSource); <em class="jxr_comment">// NOPMD - intentional</em>
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>           targetedConstraints.add(<strong class="jxr_keyword">new</strong> <a name="AssemblyTargetedConstraints" href="../../../../../gov/nist/secauto/metaschema/model/AssemblyTargetedConstraints.html#AssemblyTargetedConstraints">AssemblyTargetedConstraints</a>(expression, constraints));
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (obj instanceof Scope.Field) {
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>           Scope.Field field = (Scope.Field) obj;
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>           MetapathExpression expression = ObjectUtils.requireNonNull(field.getTarget());
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>           <a name="ValueConstraintSupport" href="../../../../../gov/nist/secauto/metaschema/model/ValueConstraintSupport.html#ValueConstraintSupport">ValueConstraintSupport</a> constraints
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>               = <strong class="jxr_keyword">new</strong> <a name="ValueConstraintSupport" href="../../../../../gov/nist/secauto/metaschema/model/ValueConstraintSupport.html#ValueConstraintSupport">ValueConstraintSupport</a>(field, constraintSource); <em class="jxr_comment">// NOPMD - intentional</em>
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>           targetedConstraints.add(<strong class="jxr_keyword">new</strong> <a name="FieldTargetedConstraints" href="../../../../../gov/nist/secauto/metaschema/model/FieldTargetedConstraints.html#FieldTargetedConstraints">FieldTargetedConstraints</a>(expression, constraints));
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (obj instanceof ScopedIndexHasKeyConstraintType) {
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>           Scope.Flag flag = (Scope.Flag) obj;
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>           MetapathExpression expression = ObjectUtils.requireNonNull(flag.getTarget());
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>           <a name="ValueConstraintSupport" href="../../../../../gov/nist/secauto/metaschema/model/ValueConstraintSupport.html#ValueConstraintSupport">ValueConstraintSupport</a> constraints
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>               = <strong class="jxr_keyword">new</strong> <a name="ValueConstraintSupport" href="../../../../../gov/nist/secauto/metaschema/model/ValueConstraintSupport.html#ValueConstraintSupport">ValueConstraintSupport</a>(flag, constraintSource); <em class="jxr_comment">// NOPMD - intentional</em>
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>           targetedConstraints.add(<strong class="jxr_keyword">new</strong> <a name="FlagTargetedConstraints" href="../../../../../gov/nist/secauto/metaschema/model/FlagTargetedConstraints.html#FlagTargetedConstraints">FlagTargetedConstraints</a>(expression, constraints));
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>         }
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>       }
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>       scopedConstraints.add(
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>           <strong class="jxr_keyword">new</strong> DefaultScopedContraints(namespace, shortName, CollectionUtil.unmodifiableList(targetedConstraints)));
-<a class="jxr_linenumber" name="L173" href="#L173">173</a> 
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>         List&lt;ITargetedConstaints&gt; targetedConstraints = <strong class="jxr_keyword">new</strong> LinkedList&lt;&gt;(); <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>         <strong class="jxr_keyword">while</strong> (cursor.toNextSelection()) {
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>           XmlObject obj = cursor.getObject();
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>           <strong class="jxr_keyword">if</strong> (obj instanceof Scope.Assembly) {
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>             Scope.Assembly assembly = (Scope.Assembly) obj;
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>             MetapathExpression expression = ObjectUtils.requireNonNull(assembly.getTarget());
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>             <a name="AssemblyConstraintSupport" href="../../../../../gov/nist/secauto/metaschema/model/AssemblyConstraintSupport.html#AssemblyConstraintSupport">AssemblyConstraintSupport</a> constraints
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>                 = <strong class="jxr_keyword">new</strong> <a name="AssemblyConstraintSupport" href="../../../../../gov/nist/secauto/metaschema/model/AssemblyConstraintSupport.html#AssemblyConstraintSupport">AssemblyConstraintSupport</a>(assembly, constraintSource); <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>             targetedConstraints.add(<strong class="jxr_keyword">new</strong> <a name="AssemblyTargetedConstraints" href="../../../../../gov/nist/secauto/metaschema/model/AssemblyTargetedConstraints.html#AssemblyTargetedConstraints">AssemblyTargetedConstraints</a>(expression, constraints));
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>           } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (obj instanceof Scope.Field) {
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>             Scope.Field field = (Scope.Field) obj;
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>             MetapathExpression expression = ObjectUtils.requireNonNull(field.getTarget());
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>             <a name="ValueConstraintSupport" href="../../../../../gov/nist/secauto/metaschema/model/ValueConstraintSupport.html#ValueConstraintSupport">ValueConstraintSupport</a> constraints
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>                 = <strong class="jxr_keyword">new</strong> <a name="ValueConstraintSupport" href="../../../../../gov/nist/secauto/metaschema/model/ValueConstraintSupport.html#ValueConstraintSupport">ValueConstraintSupport</a>(field, constraintSource); <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>             targetedConstraints.add(<strong class="jxr_keyword">new</strong> <a name="FieldTargetedConstraints" href="../../../../../gov/nist/secauto/metaschema/model/FieldTargetedConstraints.html#FieldTargetedConstraints">FieldTargetedConstraints</a>(expression, constraints));
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>           } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (obj instanceof ScopedIndexHasKeyConstraintType) {
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>             Scope.Flag flag = (Scope.Flag) obj;
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>             MetapathExpression expression = ObjectUtils.requireNonNull(flag.getTarget());
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>             <a name="ValueConstraintSupport" href="../../../../../gov/nist/secauto/metaschema/model/ValueConstraintSupport.html#ValueConstraintSupport">ValueConstraintSupport</a> constraints
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>                 = <strong class="jxr_keyword">new</strong> <a name="ValueConstraintSupport" href="../../../../../gov/nist/secauto/metaschema/model/ValueConstraintSupport.html#ValueConstraintSupport">ValueConstraintSupport</a>(flag, constraintSource); <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>             targetedConstraints.add(<strong class="jxr_keyword">new</strong> <a name="FlagTargetedConstraints" href="../../../../../gov/nist/secauto/metaschema/model/FlagTargetedConstraints.html#FlagTargetedConstraints">FlagTargetedConstraints</a>(expression, constraints));
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>           }
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>         }
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>         scopedConstraints.add(
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>             <strong class="jxr_keyword">new</strong> DefaultScopedContraints(namespace, shortName, CollectionUtil.unmodifiableList(targetedConstraints)));
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>       }
 <a class="jxr_linenumber" name="L174" href="#L174">174</a>     }
 <a class="jxr_linenumber" name="L175" href="#L175">175</a>     <strong class="jxr_keyword">return</strong> CollectionUtil.unmodifiableList(scopedConstraints);
 <a class="jxr_linenumber" name="L176" href="#L176">176</a>   }
