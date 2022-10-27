@@ -147,7 +147,7 @@
 		<plugin.maven-changes.version>2.12.1</plugin.maven-changes.version>
 		<maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
 		<maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-		<checkstyle.maven-checkstyle-plugin.version>10.3.2</checkstyle.maven-checkstyle-plugin.version>
+		<checkstyle.maven-checkstyle-plugin.version>10.3.4</checkstyle.maven-checkstyle-plugin.version>
 		<spotbugs-maven-plugin.version>4.7.1.1</spotbugs-maven-plugin.version>
 	</properties>
 
