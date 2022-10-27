@@ -32,6 +32,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.METASCHEMADocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.MetaschemaImportType;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -147,7 +148,7 @@ public class MetaschemaLoader
     } else {
       try {
         importedMetaschema = new LinkedHashMap<>();
-        for (METASCHEMADocument.METASCHEMA.Import imported : xmlObject.getMETASCHEMA().getImportList()) {
+        for (MetaschemaImportType imported : xmlObject.getMETASCHEMA().getImportList()) {
           URI importedResource = URI.create(imported.getHref());
           importedResource = ObjectUtils.notNull(resource.resolve(importedResource));
           importedMetaschema.put(importedResource, loadInternal(importedResource, visitedResources));

@@ -77,8 +77,7 @@ public class ConstraintLoader
 
     // now check if this constraint set imports other constraint sets
     int size = xmlObject.getMETASCHEMACONSTRAINTS().sizeOfImportArray();
-    @NonNull
-    Map<URI, IConstraintSet> importedMetaschema;
+    @NonNull Map<URI, IConstraintSet> importedMetaschema;
     if (size == 0) {
       importedMetaschema = ObjectUtils.notNull(Collections.emptyMap());
     } else {
@@ -141,36 +140,36 @@ public class ConstraintLoader
       URI namespace = ObjectUtils.notNull(URI.create(scope.getMetaschemaNamespace()));
       String shortName = ObjectUtils.requireNonNull(scope.getMetaschemaShortName());
 
-      XmlCursor cursor = scope.newCursor();
-      cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
-          + "$this/m:assembly|$this/m:field|$this/m:flag");
+      try (XmlCursor cursor = scope.newCursor()) {
+        cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
+            + "$this/m:assembly|$this/m:field|$this/m:flag");
 
-      List<ITargetedConstaints> targetedConstraints = new LinkedList<>(); // NOPMD - intentional
-      while (cursor.toNextSelection()) {
-        XmlObject obj = cursor.getObject();
-        if (obj instanceof Scope.Assembly) {
-          Scope.Assembly assembly = (Scope.Assembly) obj;
-          MetapathExpression expression = ObjectUtils.requireNonNull(assembly.getTarget());
-          AssemblyConstraintSupport constraints
-              = new AssemblyConstraintSupport(assembly, constraintSource); // NOPMD - intentional
-          targetedConstraints.add(new AssemblyTargetedConstraints(expression, constraints));
-        } else if (obj instanceof Scope.Field) {
-          Scope.Field field = (Scope.Field) obj;
-          MetapathExpression expression = ObjectUtils.requireNonNull(field.getTarget());
-          ValueConstraintSupport constraints
-              = new ValueConstraintSupport(field, constraintSource); // NOPMD - intentional
-          targetedConstraints.add(new FieldTargetedConstraints(expression, constraints));
-        } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
-          Scope.Flag flag = (Scope.Flag) obj;
-          MetapathExpression expression = ObjectUtils.requireNonNull(flag.getTarget());
-          ValueConstraintSupport constraints
-              = new ValueConstraintSupport(flag, constraintSource); // NOPMD - intentional
-          targetedConstraints.add(new FlagTargetedConstraints(expression, constraints));
+        List<ITargetedConstaints> targetedConstraints = new LinkedList<>(); // NOPMD - intentional
+        while (cursor.toNextSelection()) {
+          XmlObject obj = cursor.getObject();
+          if (obj instanceof Scope.Assembly) {
+            Scope.Assembly assembly = (Scope.Assembly) obj;
+            MetapathExpression expression = ObjectUtils.requireNonNull(assembly.getTarget());
+            AssemblyConstraintSupport constraints
+                = new AssemblyConstraintSupport(assembly, constraintSource); // NOPMD - intentional
+            targetedConstraints.add(new AssemblyTargetedConstraints(expression, constraints));
+          } else if (obj instanceof Scope.Field) {
+            Scope.Field field = (Scope.Field) obj;
+            MetapathExpression expression = ObjectUtils.requireNonNull(field.getTarget());
+            ValueConstraintSupport constraints
+                = new ValueConstraintSupport(field, constraintSource); // NOPMD - intentional
+            targetedConstraints.add(new FieldTargetedConstraints(expression, constraints));
+          } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
+            Scope.Flag flag = (Scope.Flag) obj;
+            MetapathExpression expression = ObjectUtils.requireNonNull(flag.getTarget());
+            ValueConstraintSupport constraints
+                = new ValueConstraintSupport(flag, constraintSource); // NOPMD - intentional
+            targetedConstraints.add(new FlagTargetedConstraints(expression, constraints));
+          }
         }
+        scopedConstraints.add(
+            new DefaultScopedContraints(namespace, shortName, CollectionUtil.unmodifiableList(targetedConstraints)));
       }
-      scopedConstraints.add(
-          new DefaultScopedContraints(namespace, shortName, CollectionUtil.unmodifiableList(targetedConstraints)));
-
     }
     return CollectionUtil.unmodifiableList(scopedConstraints);
   }

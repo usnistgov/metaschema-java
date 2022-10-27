@@ -40,7 +40,7 @@ public class QTagDoubleQuoteNodePostProcessor
     extends NodePostProcessor {
 
   @Override
-  public void process(@NonNull NodeTracker state, @NonNull Node node) {
+  public void process(NodeTracker state, Node node) {
     if (node instanceof TypographicQuotes) {
       TypographicQuotes typographicQuotes = (TypographicQuotes) node;
       if (typographicQuotes.getOpeningMarker().matchChars("\"")) {
@@ -62,7 +62,7 @@ public class QTagDoubleQuoteNodePostProcessor
 
     @NonNull
     @Override
-    public NodePostProcessor apply(@NonNull Document document) {
+    public NodePostProcessor apply(Document document) {
       return new QTagDoubleQuoteNodePostProcessor();
     }
   }

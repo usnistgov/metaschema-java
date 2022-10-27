@@ -118,8 +118,7 @@ public final class FunctionUtils {
    *           if the sequence contains more than one item and requireSingleton is {@code true}
    */
   @Nullable
-  public static <ITEM extends IItem> ITEM getFirstItem(@NonNull ISequence<ITEM> sequence, boolean requireSingleton)
-      throws TypeMetapathException {
+  public static <ITEM extends IItem> ITEM getFirstItem(@NonNull ISequence<ITEM> sequence, boolean requireSingleton) {
     @Nullable
     ITEM retval = null;
     if (!sequence.isEmpty()) {
@@ -166,7 +165,7 @@ public final class FunctionUtils {
    *           value
    */
   @NonNull
-  public static INumericItem toNumeric(@NonNull IItem item) throws TypeMetapathException {
+  public static INumericItem toNumeric(@NonNull IItem item) {
     // atomize
     IAnyAtomicItem atomicItem = FnData.fnDataItem(item);
     return toNumeric(atomicItem);
@@ -182,7 +181,7 @@ public final class FunctionUtils {
    *           if the item cannot be cast to a numeric value
    */
   @NonNull
-  public static INumericItem toNumeric(@NonNull IAnyAtomicItem item) throws TypeMetapathException {
+  public static INumericItem toNumeric(@NonNull IAnyAtomicItem item) {
     try {
       return IDecimalItem.cast(item);
     } catch (InvalidValueForCastFunctionException ex) {
@@ -201,12 +200,13 @@ public final class FunctionUtils {
    *           if the item cannot be cast to a numeric value
    */
   @Nullable
-  public static INumericItem toNumericOrNull(@Nullable IAnyAtomicItem item) throws TypeMetapathException {
+  public static INumericItem toNumericOrNull(@Nullable IAnyAtomicItem item) {
     return item == null ? null : toNumeric(item);
   }
 
   @SuppressWarnings("unchecked")
-  public static <TYPE extends IItem> TYPE asType(IItem item) {
+  @NonNull
+  public static <TYPE extends IItem> TYPE asType(@NonNull IItem item) {
     return (TYPE) item;
   }
 

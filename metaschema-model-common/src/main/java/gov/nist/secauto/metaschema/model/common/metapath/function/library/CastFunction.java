@@ -63,7 +63,7 @@ public final class CastFunction<ITEM extends IAnyAtomicItem> implements IFunctio
   @NonNull
   private static <ITEM extends IAnyAtomicItem> CastFunction<ITEM>
       newCastExecutor(@NonNull ICastExecutor<ITEM> executor) {
-    return new CastFunction<ITEM>(executor);
+    return new CastFunction<>(executor);
   }
 
   private CastFunction(@NonNull ICastExecutor<ITEM> castExecutor) {

@@ -134,7 +134,7 @@ public class BooleanAdapter
    *           if the provided item cannot be cast to a boolean value by any means
    */
   @NonNull
-  protected IBooleanItem castToBoolean(@NonNull IStringItem item) throws InvalidValueForCastFunctionException {
+  protected IBooleanItem castToBoolean(@NonNull IStringItem item) {
     IBooleanItem retval;
     try {
       INumericItem numeric = INumericItem.cast(item);

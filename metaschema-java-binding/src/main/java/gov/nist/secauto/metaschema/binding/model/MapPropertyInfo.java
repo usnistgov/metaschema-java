@@ -208,7 +208,7 @@ class MapPropertyInfo
     Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
 
     if (!items.isEmpty()) {
-      JsonGenerator writer = context.getWriter();
+      JsonGenerator writer = context.getWriter(); // NOPMD not closable here
 
       writer.writeStartObject();
 

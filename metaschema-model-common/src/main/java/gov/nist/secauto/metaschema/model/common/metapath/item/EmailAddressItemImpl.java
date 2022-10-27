@@ -55,11 +55,11 @@ class EmailAddressItemImpl
   @Override
   public boolean equals(Object obj) {
     if (this == obj) {
-      return true;
+      return true; // NOPMD readability
     } else if (obj == null) {
-      return false;
+      return false; // NOPMD readability
     } else if (getClass() != obj.getClass()) {
-      return false;
+      return false; // NOPMD readability
     }
     EmailAddressItemImpl other = (EmailAddressItemImpl) obj;
     return getValue().equals(other.getValue());

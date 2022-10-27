@@ -78,7 +78,7 @@ public final class CollectionUtil {
   @NonNull
   public static <T> Iterable<T> toIterable(Iterator<T> iterator) {
     Objects.requireNonNull(iterator, "iterator");
-    return new Iterable<T>() {
+    return new Iterable<>() {
       @Override
       public Iterator<T> iterator() {
         return iterator;
@@ -152,6 +152,14 @@ public final class CollectionUtil {
       throw new UnsupportedOperationException();
     }
     return ObjectUtils.notNull(retval);
+  }
+
+  @NonNull
+  public static <T extends Collection<A>, A> T requireNonEmpty(@NonNull T collection) {
+    if (collection.isEmpty()) {
+      throw new IllegalStateException();
+    }
+    return collection;
   }
 
   @NonNull
