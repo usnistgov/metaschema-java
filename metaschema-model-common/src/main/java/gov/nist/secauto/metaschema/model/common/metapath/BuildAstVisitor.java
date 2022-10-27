@@ -735,9 +735,9 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
     Collections.reverse(clauses);
 
     for (SimpleletbindingContext simpleCtx : clauses) {
-      Name varName = (Name)simpleCtx.varname().accept(this);
+      Name varName = (Name) simpleCtx.varname().accept(this);
       IExpression boundExpression = simpleCtx.exprsingle().accept(this);
-      
+
       result = new Let(varName, boundExpression, result);
     }
     return result;

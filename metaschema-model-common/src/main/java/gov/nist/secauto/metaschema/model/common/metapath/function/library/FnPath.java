@@ -126,7 +126,7 @@ public final class FnPath {
       retval = ISequence.empty();
     } else {
       try {
-        retval = ISequence.of(fnPath((INodeItem)item));
+        retval = ISequence.of(fnPath((INodeItem) item));
       } catch (ClassCastException ex) {
         throw new InvalidTypeMetapathException(
             item,

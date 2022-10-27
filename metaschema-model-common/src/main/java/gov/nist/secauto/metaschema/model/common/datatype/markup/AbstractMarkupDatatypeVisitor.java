@@ -23,26 +23,25 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 /*
-public class AbstractMarkupDatatypeVisitor
-    extends AbstractMarkupVisitor<AbstractMarkupDatatypeVisitor.ProseState, RuntimeException> {
-
-  
-  protected AbstractMarkupDatatypeVisitor(boolean handleBlockElements) {
-    super(handleBlockElements);
-  }
-
-  static class ProseState {
-    
-  }
-
-  static class InlineMarkupState {
-    
-  }
-  
-  static class ListItemState {
-    
-  }
-}
-*/
+ * public class AbstractMarkupDatatypeVisitor extends
+ * AbstractMarkupVisitor<AbstractMarkupDatatypeVisitor.ProseState, RuntimeException> {
+ * 
+ * 
+ * protected AbstractMarkupDatatypeVisitor(boolean handleBlockElements) {
+ * super(handleBlockElements); }
+ * 
+ * static class ProseState {
+ * 
+ * }
+ * 
+ * static class InlineMarkupState {
+ * 
+ * }
+ * 
+ * static class ListItemState {
+ * 
+ * } }
+ */

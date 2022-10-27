@@ -124,7 +124,7 @@ public final class DefaultIndexConstraint
     @Override
     protected void validate() {
       super.validate();
-      
+
       ObjectUtils.requireNonNull(name);
     }
 

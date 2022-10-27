@@ -61,7 +61,7 @@ final class MarkupStringConverter {
     String html = processHTML(content);
     return MarkupLine.fromHtml(html);
   }
-  
+
   @NonNull
   public static MarkupLineDatatype toMarkupLineDatatype(@NonNull MarkupLine markupLine) {
     MarkupLineDatatype retval = ObjectUtils.notNull(MarkupLineDatatype.Factory.newInstance());

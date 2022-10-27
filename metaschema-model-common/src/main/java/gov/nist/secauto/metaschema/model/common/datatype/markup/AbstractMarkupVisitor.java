@@ -122,16 +122,16 @@ public abstract class AbstractMarkupVisitor<T, E extends Throwable> implements I
     } else if (node instanceof Emphasis) {
       visitEmphasis((Emphasis) node, state);
     } else if (node instanceof ListItem) {
-      visitListItem((ListItem)node, state);
+      visitListItem((ListItem) node, state);
     } else if (node instanceof Link || node instanceof AutoLink) {
       visitLink((LinkNode) node, state);
     } else if (node instanceof TextBase) {
       // ignore these, but process their children
       visitChildren(node, state);
     } else if (node instanceof Subscript) {
-      visitSubscript((Subscript)node, state);
+      visitSubscript((Subscript) node, state);
     } else if (node instanceof Superscript) {
-      visitSuperscript((Superscript)node, state);
+      visitSuperscript((Superscript) node, state);
     } else if (node instanceof Image) {
       visitImage((Image) node, state);
     } else if (node instanceof InsertAnchorNode) {
@@ -181,13 +181,13 @@ public abstract class AbstractMarkupVisitor<T, E extends Throwable> implements I
   protected boolean processBlockElements(@NonNull Node node, T state) throws E {
     boolean retval = true;
     if (node instanceof Paragraph) {
-      visitParagraph((Paragraph)node, state);
+      visitParagraph((Paragraph) node, state);
     } else if (node instanceof Heading) {
       visitHeading((Heading) node, state);
     } else if (node instanceof OrderedList) {
-      visitOrderedList((OrderedList)node, state);
+      visitOrderedList((OrderedList) node, state);
     } else if (node instanceof BulletList) {
-      visitBulletList((BulletList)node, state);
+      visitBulletList((BulletList) node, state);
     } else if (node instanceof TableBlock) {
       visitTable((TableBlock) node, state);
     } else if (node instanceof HtmlBlock) {

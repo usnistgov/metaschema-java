@@ -54,21 +54,21 @@ public class XmlbeansMarkupVisitor
     extends AbstractMarkupXmlVisitor<XmlCursor, IllegalArgumentException> {
 
   public static void visit(@NonNull MarkupLine markup, @NonNull String namespace, @NonNull XmlObject obj) {
-	  visit(markup, namespace, obj.newCursor());
+    visit(markup, namespace, obj.newCursor());
   }
 
   public static void visit(@NonNull MarkupLine markup, @NonNull String namespace, @NonNull XmlCursor cursor) {
-	  new XmlbeansMarkupVisitor(namespace, false).visitDocument(markup.getDocument(), cursor);
+    new XmlbeansMarkupVisitor(namespace, false).visitDocument(markup.getDocument(), cursor);
   }
 
   public static void visit(@NonNull MarkupMultiline markup, @NonNull String namespace, @NonNull XmlObject obj) {
-	  visit(markup, namespace, obj.newCursor());
+    visit(markup, namespace, obj.newCursor());
   }
 
   public static void visit(@NonNull MarkupMultiline markup, @NonNull String namespace, @NonNull XmlCursor cursor) {
-	  new XmlbeansMarkupVisitor(namespace, true).visitDocument(markup.getDocument(), cursor);
+    new XmlbeansMarkupVisitor(namespace, true).visitDocument(markup.getDocument(), cursor);
   }
-	
+
   protected XmlbeansMarkupVisitor(@NonNull String namespace, boolean handleBlockElements) {
     super(namespace, handleBlockElements);
   }
@@ -77,7 +77,7 @@ public class XmlbeansMarkupVisitor
   // protected void visitText(Text node, XmlCursor state) throws IllegalArgumentException {
   // state.insertChars(node.getChars().toString());
   // }
-  
+
   @Override
   protected void handleBasicElement(String localName, Node node, XmlCursor state) throws IllegalArgumentException {
     QName qname = newQName(localName);
@@ -173,7 +173,6 @@ public class XmlbeansMarkupVisitor
     handleHtml(node, state);
   }
 
-
   @Override
   protected void visitTable(@NonNull TableBlock node, XmlCursor state) throws IllegalArgumentException {
     QName qname = newQName("table");
@@ -183,7 +182,7 @@ public class XmlbeansMarkupVisitor
     state.push();
 
     super.visitTable(node, state);
-    
+
     // get the saved location state
     state.pop();
 
@@ -191,7 +190,7 @@ public class XmlbeansMarkupVisitor
     state.toEndToken();
 
     // state advance past the end element
-    state.toNextToken();  
+    state.toNextToken();
   }
 
   @Override
@@ -215,7 +214,7 @@ public class XmlbeansMarkupVisitor
     state.toEndToken();
 
     // state advance past the end element
-    state.toNextToken();  
+    state.toNextToken();
   }
 
   private void handleTableCell(TableCell node, XmlCursor state) throws IllegalArgumentException {
@@ -225,7 +224,7 @@ public class XmlbeansMarkupVisitor
     } else {
       qname = newQName("td");
     }
-    
+
     state.beginElement(qname);
 
     // save the current location state
@@ -240,7 +239,7 @@ public class XmlbeansMarkupVisitor
     state.toEndToken();
 
     // state advance past the end element
-    state.toNextToken();  
+    state.toNextToken();
   }
 
   private class XmlBeansNodeVisitor implements NodeVisitor {
@@ -295,7 +294,8 @@ public class XmlbeansMarkupVisitor
           cursor.toEndToken();
 
           // state advance past the end element
-          cursor.toNextToken();        }
+          cursor.toNextToken();
+        }
       }
     }
   }

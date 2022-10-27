@@ -114,7 +114,8 @@ final class ModelFactory {
     Map<String, DefaultAllowedValue> allowedValues // NOPMD - intentional
         = new LinkedHashMap<>(xmlConstraint.sizeOfEnumArray());
     for (EnumType xmlEnum : xmlConstraint.getEnumList()) {
-      @SuppressWarnings("null") DefaultAllowedValue allowedValue = new DefaultAllowedValue( // NOPMD - intentional
+      @SuppressWarnings("null")
+      DefaultAllowedValue allowedValue = new DefaultAllowedValue( // NOPMD - intentional
           xmlEnum.getValue(),
           MarkupStringConverter.toMarkupString(xmlEnum));
       allowedValues.put(allowedValue.getValue(), allowedValue);
@@ -218,7 +219,8 @@ final class ModelFactory {
       @NonNull KeyConstraintType xmlConstraint,
       @NonNull AbstractKeyConstraintBuilder<?, ?> builder) {
     for (KeyConstraintType.KeyField xmlKeyField : xmlConstraint.getKeyFieldList()) {
-      @SuppressWarnings("null") DefaultKeyField keyField
+      @SuppressWarnings("null")
+      DefaultKeyField keyField
           = new DefaultKeyField( // NOPMD - intentional
               xmlKeyField.getTarget(),
               xmlKeyField.isSetPattern() ? xmlKeyField.getPattern() : null, // NOPMD - intentional

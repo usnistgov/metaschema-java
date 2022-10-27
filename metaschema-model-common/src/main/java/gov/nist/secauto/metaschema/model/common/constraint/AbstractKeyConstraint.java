@@ -91,8 +91,8 @@ public abstract class AbstractKeyConstraint
     return keyFields;
   }
 
-  public abstract static class AbstractKeyConstraintBuilder<T extends AbstractKeyConstraintBuilder<T, R>,
-      R extends AbstractKeyConstraint>
+  public abstract static class AbstractKeyConstraintBuilder<T extends AbstractKeyConstraintBuilder<T,
+      R>, R extends AbstractKeyConstraint>
       extends AbstractConstraintBuilder<T, R> {
     @NonNull
     private final List<DefaultKeyField> keyFields = new LinkedList<>();

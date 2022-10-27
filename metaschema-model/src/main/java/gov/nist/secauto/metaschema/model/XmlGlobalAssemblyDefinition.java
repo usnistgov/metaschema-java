@@ -188,6 +188,7 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
   protected IAssemblyConstraintSupport getConstraintSupport() {
     return constraints.get();
   }
+
   @Override
   public List<? extends IConstraint> getConstraints() {
     return getConstraintSupport().getConstraints();

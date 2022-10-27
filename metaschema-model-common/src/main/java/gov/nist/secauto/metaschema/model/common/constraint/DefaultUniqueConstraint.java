@@ -84,7 +84,6 @@ public class DefaultUniqueConstraint
   public <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
     return visitor.visitUniqueConstraint(this, state);
   }
-  
 
   @NonNull
   public static Builder builder() {

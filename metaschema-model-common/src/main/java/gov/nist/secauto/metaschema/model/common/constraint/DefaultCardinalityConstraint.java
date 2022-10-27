@@ -136,11 +136,10 @@ public final class DefaultCardinalityConstraint
       return this;
     }
 
-
     @Override
     protected void validate() {
       super.validate();
-      
+
       if (getMinOccurs() == null && getMaxOccurs() == null) {
         throw new IllegalStateException("At least one of minOccurs or maxOccurs must be provided.");
       }

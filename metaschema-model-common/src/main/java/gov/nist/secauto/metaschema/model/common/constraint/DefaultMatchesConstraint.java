@@ -138,11 +138,10 @@ public final class DefaultMatchesConstraint
       return this;
     }
 
-
     @Override
     protected void validate() {
       super.validate();
-      
+
       if (getPattern() == null && getDatatype() == null) {
         throw new IllegalStateException("A pattern or data type must be provided at minimum.");
       }

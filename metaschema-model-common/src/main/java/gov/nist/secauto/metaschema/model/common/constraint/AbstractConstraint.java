@@ -142,7 +142,8 @@ public abstract class AbstractConstraint implements IConstraint { // NOPMD - int
     return remarks;
   }
 
-  public abstract static class AbstractConstraintBuilder<T extends AbstractConstraintBuilder<T, R>, R extends AbstractConstraint> {
+  public abstract static class AbstractConstraintBuilder<T extends AbstractConstraintBuilder<T,
+      R>, R extends AbstractConstraint> {
     private String id;
     private String formalName;
     private MarkupLine description;

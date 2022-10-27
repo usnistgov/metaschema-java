@@ -161,7 +161,8 @@ class XmlFlagContainerSupport {
     }
 
     @SuppressWarnings("null")
-    @NonNull Map<String, IFlagInstance> retval
+    @NonNull
+    Map<String, IFlagInstance> retval
         = flagInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagInstances);
     return retval;
   }

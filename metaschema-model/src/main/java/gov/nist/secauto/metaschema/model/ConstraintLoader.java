@@ -77,7 +77,8 @@ public class ConstraintLoader
 
     // now check if this constraint set imports other constraint sets
     int size = xmlObject.getMETASCHEMACONSTRAINTS().sizeOfImportArray();
-    @NonNull Map<URI, IConstraintSet> importedMetaschema;
+    @NonNull
+    Map<URI, IConstraintSet> importedMetaschema;
     if (size == 0) {
       importedMetaschema = ObjectUtils.notNull(Collections.emptyMap());
     } else {

@@ -84,7 +84,7 @@ public class Let implements IExpression {
     ISequence<?> retval = getReturnExpression().accept(dynamicContext, context);
 
     dynamicContext.clearVariableValue(name);
-    
+
     return retval;
   }
 }

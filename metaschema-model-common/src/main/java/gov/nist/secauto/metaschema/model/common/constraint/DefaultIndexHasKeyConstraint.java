@@ -98,7 +98,6 @@ public final class DefaultIndexHasKeyConstraint
   public <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
     return visitor.visitIndexHasKeyConstraint(this, state);
   }
-  
 
   @NonNull
   public static Builder builder() {
@@ -126,7 +125,7 @@ public final class DefaultIndexHasKeyConstraint
     @Override
     protected void validate() {
       super.validate();
-      
+
       ObjectUtils.requireNonNull(indexName);
     }
 

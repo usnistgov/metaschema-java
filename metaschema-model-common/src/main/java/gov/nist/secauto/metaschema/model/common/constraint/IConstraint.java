@@ -122,7 +122,7 @@ public interface IConstraint {
 
   @NonNull
   Map<QName, Set<String>> getProperties();
-  
+
   /**
    * Retrieve the Metapath expression to use to query the targets of the constraint.
    * 

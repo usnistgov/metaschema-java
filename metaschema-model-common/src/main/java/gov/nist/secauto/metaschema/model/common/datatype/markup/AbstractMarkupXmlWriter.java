@@ -69,7 +69,8 @@ public abstract class AbstractMarkupXmlWriter<WRITER> // NOPMD - acceptable
     handleLinkEnd(node, writer, name);
   }
 
-  protected abstract void handleLinkStart(@NonNull LinkNode node, WRITER writer, @NonNull QName name) throws XMLStreamException;
+  protected abstract void handleLinkStart(@NonNull LinkNode node, WRITER writer, @NonNull QName name)
+      throws XMLStreamException;
 
   protected abstract void handleLinkEnd(@NonNull LinkNode node, WRITER writer, @NonNull QName name)
       throws XMLStreamException;
