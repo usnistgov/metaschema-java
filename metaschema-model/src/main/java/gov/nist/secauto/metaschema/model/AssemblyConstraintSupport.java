@@ -324,9 +324,6 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
         bean.setLevel(level);
       }
 
-      constraint.getProperties();
-      bean.setPropArray(null);
-
       for (Map.Entry<QName, Set<String>> entry : constraint.getProperties().entrySet()) {
         QName qname = entry.getKey();
         Set<String> values = entry.getValue();
