@@ -120,7 +120,7 @@ final class ConstraintFactory {
         String name = property.name();
         String namespace = property.namespace();
         QName qname = new QName(namespace, name);
-  
+
         String[] values = property.values();
         List<String> valueList = Arrays.asList(values);
         Set<String> valueSet = new LinkedHashSet<>(valueList);
@@ -297,7 +297,7 @@ final class ConstraintFactory {
     applyRemarks(builder, constraint.remarks());
 
     builder.test(toMetapath(constraint.test()));
-    
+
     String message = constraint.message();
     if (!message.isBlank()) {
       builder.message(message);
@@ -333,7 +333,7 @@ final class ConstraintFactory {
     if (max != null) {
       builder.maxOccurs(max);
     }
-    
+
     return builder.build();
   }
 }

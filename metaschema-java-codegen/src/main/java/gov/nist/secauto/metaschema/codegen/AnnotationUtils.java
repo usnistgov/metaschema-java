@@ -107,7 +107,7 @@ final class AnnotationUtils {
     if (id != null) {
       annotation.addMember("id", "$S", id);
     }
-    
+
     String formalName = constraint.getFormalName();
     if (formalName != null) {
       annotation.addMember("formalName", "$S", formalName);
@@ -201,7 +201,7 @@ final class AnnotationUtils {
 
         constraintAnnotation.addMember("values", "$L", valueAnnotation.build());
       }
-      
+
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {
         constraintAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
@@ -219,7 +219,7 @@ final class AnnotationUtils {
       constraintAnnotation.addMember("indexName", "$S", constraint.getIndexName());
 
       buildKeyFields(constraintAnnotation, constraint.getKeyFields());
-      
+
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {
         constraintAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
@@ -269,7 +269,7 @@ final class AnnotationUtils {
       if (dataType != null) {
         constraintAnnotation.addMember("typeAdapter", "$T.class", dataType.getClass());
       }
-      
+
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {
         constraintAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
@@ -291,7 +291,7 @@ final class AnnotationUtils {
       if (constraint.getMessage() != null) {
         constraintAnnotation.addMember("message", "$S", constraint.getMessage());
       }
-      
+
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {
         constraintAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
@@ -311,7 +311,7 @@ final class AnnotationUtils {
       constraintAnnotation.addMember("name", "$S", constraint.getName());
 
       buildKeyFields(constraintAnnotation, constraint.getKeyFields());
-      
+
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {
         constraintAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
@@ -329,7 +329,7 @@ final class AnnotationUtils {
       buildConstraint(IsUnique.class, constraintAnnotation, constraint);
 
       buildKeyFields(constraintAnnotation, constraint.getKeyFields());
-      
+
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {
         constraintAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
@@ -424,7 +424,7 @@ final class AnnotationUtils {
       }
 
       annotation.addMember("hasCardinality", "$L", constraintAnnotation.build());
-      
+
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {
         constraintAnnotation.addMember("remarks", "$S", remarks.toMarkdown());

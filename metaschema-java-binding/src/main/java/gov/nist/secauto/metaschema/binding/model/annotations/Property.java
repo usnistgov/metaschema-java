@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
@@ -38,6 +39,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public @interface Property {
   /**
    * The name of the property.
+   * 
    * @return the name
    */
   @NonNull
@@ -45,6 +47,7 @@ public @interface Property {
 
   /**
    * The namespace of the property's name.
+   * 
    * @return the namespace
    */
   @NonNull
@@ -52,6 +55,7 @@ public @interface Property {
 
   /**
    * The values for the property's name and namespace.
+   * 
    * @return the namespace
    */
   @NonNull

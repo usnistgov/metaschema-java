@@ -256,7 +256,8 @@ public class DefaultBoundLoader implements IBoundLoader {
     IDocumentNodeItem retval;
     if (source.getByteStream() != null) {
       // attempt to use a provided byte stream stream
-      try (@SuppressWarnings("resource") BufferedInputStream bis = toBufferedInputStream(
+      try (@SuppressWarnings("resource")
+      BufferedInputStream bis = toBufferedInputStream(
           ObjectUtils.requireNonNull(source.getByteStream()))) {
         Class<?> clazz = detectModel(bis, format); // NOPMD - must be called before reset
         retval = deserializeToNodeItem(clazz, format, bis, uri);
