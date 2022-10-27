@@ -67,13 +67,14 @@ public class JsonSchemaGenerator
   @Override
   public void generateFromMetaschema(@NonNull IMetaschema metaschema, @NonNull Writer out,
       @NonNull IConfiguration<SchemaGenerationFeature> configuration) throws IOException {
-    JsonGenerator jsonGenerator = getJsonFactory().createGenerator(out);
-    jsonGenerator.setCodec(new ObjectMapper());
-    jsonGenerator.useDefaultPrettyPrinter();
+    try (JsonGenerator jsonGenerator = getJsonFactory().createGenerator(out)) {
+      jsonGenerator.setCodec(new ObjectMapper());
+      jsonGenerator.useDefaultPrettyPrinter();
 
-    generateSchemaMetadata(metaschema, jsonGenerator, configuration);
+      generateSchemaMetadata(metaschema, jsonGenerator, configuration);
 
-    jsonGenerator.flush();
+      jsonGenerator.flush();
+    }
   }
 
   protected void generateSchemaMetadata(@NonNull IMetaschema metaschema, @NonNull JsonGenerator jsonGenerator,
@@ -120,7 +121,7 @@ public class JsonSchemaGenerator
       @NonNull Collection<? extends IDefinition> definitions,
       @NonNull GenerationState state) throws IOException {
     if (!definitions.isEmpty()) {
-      JsonGenerator writer = state.getWriter();
+      JsonGenerator writer = state.getWriter(); // NOPMD not closable here
 
       ObjectNode definitionsObject = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
 
@@ -144,7 +145,7 @@ public class JsonSchemaGenerator
   protected void generateRootProperties(
       @NonNull Set<IAssemblyDefinition> rootAssemblies,
       @NonNull GenerationState state) throws IOException {
-    JsonGenerator writer = state.getWriter();
+    JsonGenerator writer = state.getWriter(); // NOPMD not closable here
     // generate root properties
     writer.writeFieldName("properties");
     writer.writeStartObject();

@@ -26,10 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.ctc.wstx.stax.WstxInputFactory;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -95,54 +92,55 @@ class DefaultFieldPropertyTest {
       throws JsonParseException, IOException, NoSuchFieldException {
     String json = "{ \"field1\": \"field1value\", \"fields2\": [ \"field2value\" ] } }";
     JsonFactory factory = new JsonFactory();
-    JsonParser jsonParser = factory.createParser(json);
-    Class<?> theClass = TestField.class;
+    try (JsonParser jsonParser = factory.createParser(json)) {
+      Class<?> theClass = TestField.class;
 
-    context.checking(new Expectations() {
-      { // NOPMD - intentional
-        allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-        will(returnValue(MetaschemaDataTypeProvider.STRING));
-        allowing(bindingContext).getClassBinding(String.class);
-        will(returnValue(null));
+      context.checking(new Expectations() {
+        { // NOPMD - intentional
+          allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
+          will(returnValue(MetaschemaDataTypeProvider.STRING));
+          allowing(bindingContext).getClassBinding(String.class);
+          will(returnValue(null));
 
-        allowing(classBinding).getBoundClass();
-        will(returnValue(theClass));
-        allowing(classBinding).getBindingContext();
-        will(returnValue(bindingContext));
+          allowing(classBinding).getBoundClass();
+          will(returnValue(theClass));
+          allowing(classBinding).getBindingContext();
+          will(returnValue(bindingContext));
 
-        allowing(jsonParsingContext).getReader();
-        will(returnValue(jsonParser));
-      }
-    });
+          allowing(jsonParsingContext).getReader();
+          will(returnValue(jsonParser));
+        }
+      });
 
-    java.lang.reflect.Field field1 = ObjectUtils.requireNonNull(theClass.getDeclaredField("field1"));
-    IBoundFieldInstance field1Property = IBoundFieldInstance.newInstance(
-        field1,
-        ObjectUtils.notNull(classBinding));
+      java.lang.reflect.Field field1 = ObjectUtils.requireNonNull(theClass.getDeclaredField("field1"));
+      IBoundFieldInstance field1Property = IBoundFieldInstance.newInstance(
+          field1,
+          ObjectUtils.notNull(classBinding));
 
-    java.lang.reflect.Field field2 = ObjectUtils.requireNonNull(theClass.getDeclaredField("_field2"));
-    IBoundFieldInstance field2Property = IBoundFieldInstance.newInstance(
-        field2,
-        ObjectUtils.notNull(classBinding));
+      java.lang.reflect.Field field2 = ObjectUtils.requireNonNull(theClass.getDeclaredField("_field2"));
+      IBoundFieldInstance field2Property = IBoundFieldInstance.newInstance(
+          field2,
+          ObjectUtils.notNull(classBinding));
 
-    TestField obj = new TestField();
+      TestField obj = new TestField();
 
-    assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    assertEquals("field1", jsonParser.nextFieldName());
-    assertTrue(field1Property.read(obj, jsonParsingContext));
-    assertEquals("field1value", obj.getField1());
+      assertAll(
+          () -> assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken()),
+          () -> assertEquals("field1", jsonParser.nextFieldName()),
+          () -> assertTrue(field1Property.read(obj, jsonParsingContext)),
+          () -> assertEquals("field1value", obj.getField1()),
 
-    assertEquals(JsonToken.FIELD_NAME, jsonParser.currentToken());
-    assertEquals("fields2", jsonParser.currentName());
+          () -> assertEquals(JsonToken.FIELD_NAME, jsonParser.currentToken()),
+          () -> assertEquals("fields2", jsonParser.currentName()),
 
-    assertTrue(field2Property.read(obj, jsonParsingContext));
-    assertTrue(obj.getField2() instanceof LinkedList);
-    assertIterableEquals(Collections.singleton("field2value"), obj.getField2());
+          () -> assertTrue(field2Property.read(obj, jsonParsingContext)),
+          () -> assertTrue(obj.getField2() instanceof LinkedList),
+          () -> assertIterableEquals(Collections.singleton("field2value"), obj.getField2()));
 
-    // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
-    // assertEquals("id", jsonParser.currentName());
-
+      // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
+      // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
+      // assertEquals("id", jsonParser.currentName());
+    }
   }
 
   @Test

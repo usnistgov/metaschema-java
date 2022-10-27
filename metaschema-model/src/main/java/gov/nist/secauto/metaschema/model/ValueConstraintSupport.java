@@ -86,25 +86,26 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
   public ValueConstraintSupport( // NOPMD - intentional
       @NonNull DefineFlagConstraintsType xmlConstraints,
       @NonNull ISource source) {
-    XmlCursor cursor = xmlConstraints.newCursor();
-    cursor.selectPath(PATH);
-    while (cursor.toNextSelection()) {
-      XmlObject obj = cursor.getObject();
-      if (obj instanceof AllowedValuesType) {
-        DefaultAllowedValuesConstraint constraint
-            = ModelFactory.newAllowedValuesConstraint((AllowedValuesType) obj, source);
-        addConstraint(constraint);
-      } else if (obj instanceof MatchesConstraintType) {
-        DefaultMatchesConstraint constraint
-            = ModelFactory.newMatchesConstraint((MatchesConstraintType) obj, source);
-        addConstraint(constraint);
-      } else if (obj instanceof IndexHasKeyConstraintType) {
-        DefaultIndexHasKeyConstraint constraint
-            = ModelFactory.newIndexHasKeyConstraint((IndexHasKeyConstraintType) obj, source);
-        addConstraint(constraint);
-      } else if (obj instanceof ExpectConstraintType) {
-        DefaultExpectConstraint constraint = ModelFactory.newExpectConstraint((ExpectConstraintType) obj, source);
-        addConstraint(constraint);
+    try (XmlCursor cursor = xmlConstraints.newCursor()) {
+      cursor.selectPath(PATH);
+      while (cursor.toNextSelection()) {
+        XmlObject obj = cursor.getObject();
+        if (obj instanceof AllowedValuesType) {
+          DefaultAllowedValuesConstraint constraint
+              = ModelFactory.newAllowedValuesConstraint((AllowedValuesType) obj, source);
+          addConstraint(constraint);
+        } else if (obj instanceof MatchesConstraintType) {
+          DefaultMatchesConstraint constraint
+              = ModelFactory.newMatchesConstraint((MatchesConstraintType) obj, source);
+          addConstraint(constraint);
+        } else if (obj instanceof IndexHasKeyConstraintType) {
+          DefaultIndexHasKeyConstraint constraint
+              = ModelFactory.newIndexHasKeyConstraint((IndexHasKeyConstraintType) obj, source);
+          addConstraint(constraint);
+        } else if (obj instanceof ExpectConstraintType) {
+          DefaultExpectConstraint constraint = ModelFactory.newExpectConstraint((ExpectConstraintType) obj, source);
+          addConstraint(constraint);
+        }
       }
     }
   }
@@ -120,28 +121,29 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
   public ValueConstraintSupport( // NOPMD - intentional
       @NonNull DefineFieldConstraintsType xmlConstraints,
       @NonNull ISource source) {
-    XmlCursor cursor = xmlConstraints.newCursor();
-    cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
-        + "$this/m:allowed-values|$this/m:matches|$this/m:index-has-key|$this/m:expect");
+    try (XmlCursor cursor = xmlConstraints.newCursor()) {
+      cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
+          + "$this/m:allowed-values|$this/m:matches|$this/m:index-has-key|$this/m:expect");
 
-    while (cursor.toNextSelection()) {
-      XmlObject obj = cursor.getObject();
-      if (obj instanceof ScopedAllowedValuesType) {
-        DefaultAllowedValuesConstraint constraint
-            = ModelFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj, source);
-        addConstraint(constraint);
-      } else if (obj instanceof ScopedMatchesConstraintType) {
-        DefaultMatchesConstraint constraint
-            = ModelFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj, source);
-        addConstraint(constraint);
-      } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
-        DefaultIndexHasKeyConstraint constraint
-            = ModelFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj, source);
-        addConstraint(constraint);
-      } else if (obj instanceof ScopedExpectConstraintType) {
-        DefaultExpectConstraint constraint
-            = ModelFactory.newExpectConstraint((ScopedExpectConstraintType) obj, source);
-        addConstraint(constraint);
+      while (cursor.toNextSelection()) {
+        XmlObject obj = cursor.getObject();
+        if (obj instanceof ScopedAllowedValuesType) {
+          DefaultAllowedValuesConstraint constraint
+              = ModelFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj, source);
+          addConstraint(constraint);
+        } else if (obj instanceof ScopedMatchesConstraintType) {
+          DefaultMatchesConstraint constraint
+              = ModelFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj, source);
+          addConstraint(constraint);
+        } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
+          DefaultIndexHasKeyConstraint constraint
+              = ModelFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj, source);
+          addConstraint(constraint);
+        } else if (obj instanceof ScopedExpectConstraintType) {
+          DefaultExpectConstraint constraint
+              = ModelFactory.newExpectConstraint((ScopedExpectConstraintType) obj, source);
+          addConstraint(constraint);
+        }
       }
     }
   }

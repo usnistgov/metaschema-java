@@ -46,7 +46,7 @@ public class InsertAnchorFormatter implements NodeFormatter {
   @Override
   public Set<NodeFormattingHandler<?>> getNodeFormattingHandlers() {
     return options.enableInlineInsertAnchors
-        ? Collections.singleton(new NodeFormattingHandler<InsertAnchorNode>(InsertAnchorNode.class, this::render))
+        ? Collections.singleton(new NodeFormattingHandler<>(InsertAnchorNode.class, this::render))
         : Collections.emptySet();
   }
 

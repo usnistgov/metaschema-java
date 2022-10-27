@@ -110,6 +110,7 @@ abstract class AbstractFlagProperty
     return getDefinition().getJavaTypeAdapter().parseAndSupply(value);
   }
 
+  @SuppressWarnings("resource")
   @Override
   public Supplier<?> readValueAndSupply(IJsonParsingContext context) throws IOException {
     return getDefinition().getJavaTypeAdapter().parseAndSupply(context.getReader());
@@ -152,6 +153,7 @@ abstract class AbstractFlagProperty
     return value == null ? null : getDefinition().getJavaTypeAdapter().asString(value);
   }
 
+  @SuppressWarnings("resource")
   @Override
   public void writeValue(@NonNull Object value, IJsonWritingContext context) throws IOException {
     getDefinition().getJavaTypeAdapter().writeJsonValue(value, context.getWriter());

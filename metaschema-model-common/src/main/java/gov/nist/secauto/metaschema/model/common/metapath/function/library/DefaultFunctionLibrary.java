@@ -130,6 +130,8 @@ public class DefaultFunctionLibrary
     // https://www.w3.org/TR/xpath-functions-31/#func-outermost
     // https://www.w3.org/TR/xpath-functions-31/#func-parse-ietf-date
     // https://www.w3.org/TR/xpath-functions-31/#func-path
+    registerFunction(FnPath.SIGNATURE_NO_ARG);
+    registerFunction(FnPath.SIGNATURE_ONE_ARG);
     // https://www.w3.org/TR/xpath-functions-31/#func-position
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-remove
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-replace
@@ -186,6 +188,10 @@ public class DefaultFunctionLibrary
     registerFunction(
         CastFunction.signature("cast-positive-integer", IPositiveIntegerItem.class, IPositiveIntegerItem::cast));
     registerFunction(CastFunction.signature("cast-string", IStringItem.class, IStringItem::cast));
+
+    // extra functions
+    registerFunction(RecurseDepth.SIGNATURE_ONE_ARG);
+    registerFunction(RecurseDepth.SIGNATURE_TWO_ARG);
   }
 
 }

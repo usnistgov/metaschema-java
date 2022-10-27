@@ -80,7 +80,8 @@ public class AstCollectingVisitor
   }
 
   @Override
-  protected void visit(@NonNull Node node) {
+  protected void visit(Node node) {
+    assert node != null;
     appendIndent();
     node.astString(output, true);
     output.append(EOL);

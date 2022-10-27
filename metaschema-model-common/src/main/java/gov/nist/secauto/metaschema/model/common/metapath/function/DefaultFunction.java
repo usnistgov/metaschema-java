@@ -316,16 +316,13 @@ public class DefaultFunction
     try {
       List<ISequence<?>> convertedArguments = convertArguments(this, arguments);
 
-      CallingContext callingContext;
-      ISequence<?> result;
+      CallingContext callingContext = null;
+      ISequence<?> result = null;
       if (isDeterministic()) {
         // check cache
         callingContext = newCallingContext(arguments, focus);
         // attempt to get the result from the cache
         result = dynamicContext.getCachedResult(callingContext);
-      } else {
-        callingContext = null;
-        result = null;
       }
 
       if (result == null) {

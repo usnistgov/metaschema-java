@@ -37,7 +37,7 @@ public class AutoCloser<T, E extends Exception> implements AutoCloseable {
 
   @NonNull
   public static <T, E extends Exception> AutoCloser<T, E> autoClose(@NonNull T object, @NonNull Closer<T, E> lambda) {
-    return new AutoCloser<T, E>(object, lambda);
+    return new AutoCloser<>(object, lambda);
   }
 
   /**

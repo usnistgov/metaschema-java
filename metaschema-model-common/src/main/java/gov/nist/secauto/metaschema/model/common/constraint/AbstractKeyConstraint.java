@@ -26,15 +26,22 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-abstract class AbstractKeyConstraint
+public abstract class AbstractKeyConstraint
     extends AbstractConstraint
     implements IKeyConstraint {
   @NonNull
@@ -45,25 +52,34 @@ abstract class AbstractKeyConstraint
    * 
    * @param id
    *          the optional identifier for the constraint
+   * @param formalName
+   *          the constraint's formal name or {@code null} if not provided
+   * @param description
+   *          the constraint's semantic description or {@code null} if not provided
    * @param source
    *          information about the constraint source
    * @param level
    *          the significance of a violation of this constraint
    * @param target
    *          the Metapath expression identifying the nodes the constraint targets
+   * @param properties
+   *          a collection of associated properties
    * @param keyFields
    *          a list of key fields associated with the constraint
    * @param remarks
    *          optional remarks describing the intent of the constraint
    */
-  public AbstractKeyConstraint(
+  protected AbstractKeyConstraint(
       @Nullable String id,
+      @Nullable String formalName,
+      @Nullable MarkupLine description,
       @NonNull ISource source,
       @NonNull Level level,
       @NonNull MetapathExpression target,
+      @NonNull Map<QName, Set<String>> properties,
       @NonNull List<DefaultKeyField> keyFields,
       @Nullable MarkupMultiline remarks) {
-    super(id, source, level, target, remarks);
+    super(id, formalName, description, source, level, target, properties, remarks);
     if (keyFields.isEmpty()) {
       throw new IllegalArgumentException("an empty list of key fields is not allowed");
     }
@@ -73,5 +89,29 @@ abstract class AbstractKeyConstraint
   @Override
   public List<DefaultKeyField> getKeyFields() {
     return keyFields;
+  }
+
+  public abstract static class AbstractKeyConstraintBuilder<T extends AbstractKeyConstraintBuilder<T, R>,
+      R extends AbstractKeyConstraint>
+      extends AbstractConstraintBuilder<T, R> {
+    @NonNull
+    private final List<DefaultKeyField> keyFields = new LinkedList<>();
+
+    public T keyField(@NonNull DefaultKeyField keyField) {
+      this.keyFields.add(keyField);
+      return getThis();
+    }
+
+    @NonNull
+    protected List<DefaultKeyField> getKeyFields() {
+      return keyFields;
+    }
+
+    @Override
+    protected void validate() {
+      super.validate();
+
+      CollectionUtil.requireNonEmpty(getKeyFields());
+    }
   }
 }

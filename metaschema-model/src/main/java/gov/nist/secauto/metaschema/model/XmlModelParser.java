@@ -59,22 +59,24 @@ class XmlModelParser {
 
   // TODO: move back to calling location
   void parseChoice(XmlObject xmlObject, @NonNull IAssemblyDefinition parent) {
-    XmlCursor cursor = xmlObject.newCursor();
-    cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
-        + "$this/m:assembly|$this/m:define-assembly|$this/m:field"
-        + "|$this/m:define-field");
-    parseInternal(cursor, parent);
+    try (XmlCursor cursor = xmlObject.newCursor()) {
+      cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
+          + "$this/m:assembly|$this/m:define-assembly|$this/m:field"
+          + "|$this/m:define-field");
+      parseInternal(cursor, parent);
+    }
   }
 
   // TODO: move back to calling location
   void parseModel(XmlObject xmlObject, @NonNull IAssemblyDefinition parent) {
     // handle the model
-    XmlCursor cursor = xmlObject.newCursor();
-    cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
-        + "$this/m:model/m:assembly|$this/m:model/m:define-assembly|$this/m:model/m:field"
-        + "|$this/m:model/m:define-field|$this/m:model/m:choice");
+    try (XmlCursor cursor = xmlObject.newCursor()) {
+      cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
+          + "$this/m:model/m:assembly|$this/m:model/m:define-assembly|$this/m:model/m:field"
+          + "|$this/m:model/m:define-field|$this/m:model/m:choice");
 
-    parseInternal(cursor, parent);
+      parseInternal(cursor, parent);
+    }
   }
 
   @SuppressWarnings("null")

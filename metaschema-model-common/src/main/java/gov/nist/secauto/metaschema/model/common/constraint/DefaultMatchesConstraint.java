@@ -27,15 +27,21 @@
 package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class DefaultMatchesConstraint
+public final class DefaultMatchesConstraint
     extends AbstractConstraint
     implements IMatchesConstraint {
   private final Pattern pattern;
@@ -46,12 +52,18 @@ public class DefaultMatchesConstraint
    * 
    * @param id
    *          the optional identifier for the constraint
+   * @param formalName
+   *          the constraint's formal name or {@code null} if not provided
+   * @param description
+   *          the constraint's semantic description or {@code null} if not provided
    * @param source
    *          information about the constraint source
    * @param level
    *          the significance of a violation of this constraint
    * @param target
    *          the Metapath expression identifying the nodes the constraint targets
+   * @param properties
+   *          a collection of associated properties
    * @param pattern
    *          the value pattern to match or {@code null} if there is no match pattern
    * @param dataType
@@ -59,15 +71,18 @@ public class DefaultMatchesConstraint
    * @param remarks
    *          optional remarks describing the intent of the constraint
    */
-  public DefaultMatchesConstraint(
+  private DefaultMatchesConstraint(
       @Nullable String id,
+      @Nullable String formalName,
+      @Nullable MarkupLine description,
       @NonNull ISource source,
       @NonNull Level level,
       @NonNull MetapathExpression target,
+      @NonNull Map<QName, Set<String>> properties,
       @Nullable Pattern pattern,
       @Nullable IDataTypeAdapter<?> dataType,
       @Nullable MarkupMultiline remarks) {
-    super(id, source, level, target, remarks);
+    super(id, formalName, description, source, level, target, properties, remarks);
     if (pattern == null && dataType == null) {
       throw new IllegalArgumentException("a pattern or data type must be provided");
     }
@@ -85,4 +100,75 @@ public class DefaultMatchesConstraint
     return dataType;
   }
 
+  @Override
+  public <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
+    return visitor.visitMatchesConstraint(this, state);
+  }
+
+  @NonNull
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  public static class Builder
+      extends AbstractConstraintBuilder<Builder, DefaultMatchesConstraint> {
+    private Pattern pattern;
+    private IDataTypeAdapter<?> datatype;
+
+    private Builder() {
+      // disable construction
+    }
+
+    public Builder regex(@NonNull String pattern) {
+      return regex(ObjectUtils.notNull(Pattern.compile(pattern)));
+    }
+
+    public Builder regex(@NonNull Pattern pattern) {
+      this.pattern = pattern;
+      return this;
+    }
+
+    public Builder datatype(@NonNull IDataTypeAdapter<?> datatype) {
+      this.datatype = datatype;
+      return this;
+    }
+
+    @Override
+    protected Builder getThis() {
+      return this;
+    }
+
+
+    @Override
+    protected void validate() {
+      super.validate();
+      
+      if (getPattern() == null && getDatatype() == null) {
+        throw new IllegalStateException("A pattern or data type must be provided at minimum.");
+      }
+    }
+
+    protected Pattern getPattern() {
+      return pattern;
+    }
+
+    protected IDataTypeAdapter<?> getDatatype() {
+      return datatype;
+    }
+
+    @Override
+    protected DefaultMatchesConstraint newInstance() {
+      return new DefaultMatchesConstraint(
+          getId(),
+          getFormalName(),
+          getDescription(),
+          ObjectUtils.notNull(getSource()),
+          getLevel(),
+          getTarget(),
+          getProperties(),
+          getPattern(),
+          getDatatype(),
+          getRemarks());
+    }
+  }
 }

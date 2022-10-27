@@ -142,26 +142,26 @@ class XmlFlagContainerSupport {
   private static Map<String, IFlagInstance> parseLocalFlags(@NonNull XmlObject xmlObject,
       @NonNull IModelDefinition parent) {
     // handle flags
-    XmlCursor cursor = xmlObject.newCursor();
-    cursor.selectPath(
-        "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';" + "$this/m:flag|$this/m:define-flag");
-
     Map<String, IFlagInstance> flagInstances = new LinkedHashMap<>(); // NOPMD - intentional
-    while (cursor.toNextSelection()) {
-      XmlObject obj = cursor.getObject();
-      if (obj instanceof FlagReferenceType) {
-        XmlFlagInstance flagInstance = new XmlFlagInstance((FlagReferenceType) obj, parent); // NOPMD - intentional
-        flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
-      } else if (obj instanceof InlineFlagDefinitionType) {
-        XmlInlineFlagDefinition flagInstance
-            = new XmlInlineFlagDefinition((InlineFlagDefinitionType) obj, parent); // NOPMD - intentional
-        flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
+    try (XmlCursor cursor = xmlObject.newCursor()) {
+      cursor.selectPath(
+          "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';" + "$this/m:flag|$this/m:define-flag");
+
+      while (cursor.toNextSelection()) {
+        XmlObject obj = cursor.getObject();
+        if (obj instanceof FlagReferenceType) {
+          XmlFlagInstance flagInstance = new XmlFlagInstance((FlagReferenceType) obj, parent); // NOPMD - intentional
+          flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
+        } else if (obj instanceof InlineFlagDefinitionType) {
+          XmlInlineFlagDefinition flagInstance
+              = new XmlInlineFlagDefinition((InlineFlagDefinitionType) obj, parent); // NOPMD - intentional
+          flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
+        }
       }
     }
 
     @SuppressWarnings("null")
-    @NonNull
-    Map<String, IFlagInstance> retval
+    @NonNull Map<String, IFlagInstance> retval
         = flagInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagInstances);
     return retval;
   }

@@ -157,6 +157,7 @@ public class AbstractBoundModelTestSupport {
     return retval;
   }
 
+  @SuppressWarnings("resource")
   @NonNull
   protected IJsonParsingContext newJsonParsingContext(Reader reader) throws JsonParseException, IOException {
     JsonFactory factory = new JsonFactory();

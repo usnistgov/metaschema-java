@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
@@ -96,8 +95,7 @@ public class DecimalAdapter
   }
 
   @Override
-  protected IDecimalItem castInternal(@NonNull IAnyAtomicItem item)
-      throws InvalidValueForCastFunctionException {
+  protected IDecimalItem castInternal(@NonNull IAnyAtomicItem item) {
     IDecimalItem retval;
     if (item instanceof INumericItem) {
       if (item instanceof IDecimalItem) {

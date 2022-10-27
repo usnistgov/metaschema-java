@@ -23,46 +23,48 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath;
 
-package gov.nist.secauto.metaschema.model.common.metapath.item;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.HostnameAdapter;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class HostnameItemImpl
-    extends AbstractStringItem
-    implements IHostnameItem {
+public class VariableReference implements IExpression {
+  @NonNull
+  private final Name name;
 
-  public HostnameItemImpl(@NonNull String value) {
-    super(value);
+  public VariableReference(@NonNull Name name) {
+    this.name = name;
+  }
+
+  @NonNull
+  public Name getName() {
+    return name;
   }
 
   @Override
-  public HostnameAdapter getJavaTypeAdapter() {
-    return MetaschemaDataTypeProvider.HOSTNAME;
+  public List<? extends IExpression> getChildren() {
+    return CollectionUtil.emptyList();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public String toASTString() {
+    return String.format("%s[name=%s]", getClass().getName(), getName().getValue());
   }
 
   @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + getValue().hashCode();
-    return result;
+  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitVariableReference(this, context);
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true; // NOPMD readability
-    } else if (obj == null) {
-      return false; // NOPMD readability
-    } else if (getClass() != obj.getClass()) {
-      return false; // NOPMD readability
-    }
-    HostnameItemImpl other = (HostnameItemImpl) obj;
-    return getValue().equals(other.getValue());
+  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    return dynamicContext.getVariableValue(ObjectUtils.notNull(getName().getValue()));
   }
 
 }

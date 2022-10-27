@@ -26,19 +26,26 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class DefaultAllowedValuesConstraint
+public final class DefaultAllowedValuesConstraint
     extends AbstractConstraint
     implements IAllowedValuesConstraint {
   private final boolean allowedOther;
+  @NonNull
   private final Extensible extensible;
   @NonNull
   private final Map<String, DefaultAllowedValue> allowedValues;
@@ -53,12 +60,18 @@ public class DefaultAllowedValuesConstraint
    * 
    * @param id
    *          the optional identifier for the constraint
+   * @param formalName
+   *          the constraint's formal name or {@code null} if not provided
+   * @param description
+   *          the constraint's semantic description or {@code null} if not provided
    * @param source
    *          information about the constraint source
    * @param level
    *          the significance of a violation of this constraint
    * @param target
    *          the Metapath expression identifying the nodes the constraint targets
+   * @param properties
+   *          a collection of associated properties
    * @param allowedValues
    *          the list of allowed values for this constraint
    * @param allowedOther
@@ -69,16 +82,19 @@ public class DefaultAllowedValuesConstraint
    * @param remarks
    *          optional remarks describing the intent of the constraint
    */
-  public DefaultAllowedValuesConstraint(
+  private DefaultAllowedValuesConstraint( // NOPMD necessary
       @Nullable String id,
+      @Nullable String formalName,
+      @Nullable MarkupLine description,
       @NonNull ISource source,
       @NonNull Level level,
       @NonNull MetapathExpression target,
+      @NonNull Map<QName, Set<String>> properties,
       @NonNull Map<String, DefaultAllowedValue> allowedValues,
       boolean allowedOther,
       @NonNull Extensible extensible,
       @Nullable MarkupMultiline remarks) {
-    super(id, source, level, target, remarks);
+    super(id, formalName, description, source, level, target, properties, remarks);
     this.allowedValues = allowedValues;
     this.allowedOther = allowedOther;
     this.extensible = extensible;
@@ -97,5 +113,83 @@ public class DefaultAllowedValuesConstraint
   @Override
   public Extensible getExtensible() {
     return extensible;
+  }
+
+  @Override
+  public <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
+    return visitor.visitAllowedValues(this, state);
+  }
+
+  @NonNull
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  public static class Builder
+      extends AbstractConstraintBuilder<Builder, DefaultAllowedValuesConstraint> {
+    @NonNull
+    private final Map<String, DefaultAllowedValue> allowedValues = new LinkedHashMap<>(); // NOPMD not thread safe
+    private boolean allowedOther = IAllowedValuesConstraint.DEFAULT_ALLOW_OTHER;
+    @NonNull
+    private Extensible extensible = IAllowedValuesConstraint.DEFAULT_EXTENSIBLE;
+
+    private Builder() {
+      // disable construction
+    }
+
+    public Builder allowedValue(@NonNull DefaultAllowedValue allowedValue) {
+      this.allowedValues.put(allowedValue.getValue(), allowedValue);
+      return this;
+    }
+
+    public Builder allowedValues(@NonNull Map<String, DefaultAllowedValue> allowedValues) {
+      this.allowedValues.putAll(allowedValues);
+      return this;
+    }
+
+    public Builder allowedOther(boolean bool) {
+      this.allowedOther = bool;
+      return this;
+    }
+
+    public Builder extensible(@NonNull Extensible extensible) {
+      this.extensible = extensible;
+      return this;
+    }
+
+    @Override
+    protected Builder getThis() {
+      return this;
+    }
+
+    @NonNull
+    protected Map<String, DefaultAllowedValue> getAllowedValues() {
+      return allowedValues;
+    }
+
+    protected boolean isAllowedOther() {
+      return allowedOther;
+    }
+
+    @NonNull
+    protected Extensible getExtensible() {
+      return extensible;
+    }
+
+    @Override
+    protected DefaultAllowedValuesConstraint newInstance() {
+      return new DefaultAllowedValuesConstraint(
+          getId(),
+          getFormalName(),
+          getDescription(),
+          ObjectUtils.notNull(getSource()),
+          getLevel(),
+          getTarget(),
+          getProperties(),
+          getAllowedValues(),
+          isAllowedOther(),
+          getExtensible(),
+          getRemarks());
+    }
   }
 }

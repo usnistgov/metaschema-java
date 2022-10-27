@@ -197,19 +197,11 @@ public abstract class AbstractTestSuite {
       Files.createDirectories(parentDir);
     }
 
-    // try (OutputStream os = Files.newOutputStream(
-    // schemaPath,
-    // getWriteOpenOptions())) {
-    //
-    // TeeOutputStream tos = new TeeOutputStream(os, System.out);
-    // Writer writer = new OutputStreamWriter(tos, StandardCharsets.UTF_8);
-
     try (Writer writer = Files.newBufferedWriter(
         schemaPath,
         StandardCharsets.UTF_8,
         getWriteOpenOptions())) {
       schemaProducer.apply(metaschema, writer);
-      writer.flush();
     }
   }
 

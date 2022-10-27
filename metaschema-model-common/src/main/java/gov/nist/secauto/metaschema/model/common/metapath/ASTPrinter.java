@@ -274,6 +274,16 @@ final class ASTPrinter
     return appendNode(expr, super.visitWildcard(expr, context), context);
   }
 
+  @Override
+  public String visitLet(Let expr, State context) {
+    return appendNode(expr, super.visitLet(expr, context), context);
+  }
+
+  @Override
+  public String visitVariableReference(VariableReference expr, State context) {
+    return appendNode(expr, super.visitVariableReference(expr, context), context);
+  }
+
   static class State {
     private int indentation; // 0;
     private int lastIndentation; // 0;

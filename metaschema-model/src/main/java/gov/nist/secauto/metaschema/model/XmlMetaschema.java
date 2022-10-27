@@ -97,38 +97,40 @@ class XmlMetaschema
     // handle definitions in this metaschema
     {
       // start with flag definitions
-      XmlCursor cursor = metaschemaNode.newCursor();
-      cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';$this/m:define-flag");
+      try (XmlCursor cursor = metaschemaNode.newCursor()) {
+        cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';$this/m:define-flag");
 
-      Map<String, IFlagDefinition> flagDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
-      while (cursor.toNextSelection()) {
-        GlobalFlagDefinitionType obj = ObjectUtils.notNull((GlobalFlagDefinitionType) cursor.getObject());
-        XmlGlobalFlagDefinition flag = new XmlGlobalFlagDefinition(obj, this); // NOPMD - intentional
-        if (LOGGER.isTraceEnabled()) {
-          LOGGER.trace("New flag definition '{}'", flag.toCoordinates());
+        Map<String, IFlagDefinition> flagDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
+        while (cursor.toNextSelection()) {
+          GlobalFlagDefinitionType obj = ObjectUtils.notNull((GlobalFlagDefinitionType) cursor.getObject());
+          XmlGlobalFlagDefinition flag = new XmlGlobalFlagDefinition(obj, this); // NOPMD - intentional
+          if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("New flag definition '{}'", flag.toCoordinates());
+          }
+          flagDefinitions.put(flag.getName(), flag);
         }
-        flagDefinitions.put(flag.getName(), flag);
+        this.flagDefinitions
+            = flagDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagDefinitions);
       }
-      this.flagDefinitions
-          = flagDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagDefinitions);
     }
 
     {
       // now field definitions
-      XmlCursor cursor = metaschemaNode.newCursor();
-      cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';$this/m:define-field");
+      try (XmlCursor cursor = metaschemaNode.newCursor()) {
+        cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';$this/m:define-field");
 
-      Map<String, IFieldDefinition> fieldDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
-      while (cursor.toNextSelection()) {
-        GlobalFieldDefinitionType obj = ObjectUtils.notNull((GlobalFieldDefinitionType) cursor.getObject());
-        XmlGlobalFieldDefinition field = new XmlGlobalFieldDefinition(obj, this); // NOPMD - intentional
-        if (LOGGER.isTraceEnabled()) {
-          LOGGER.trace("New field definition '{}'", field.toCoordinates());
+        Map<String, IFieldDefinition> fieldDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
+        while (cursor.toNextSelection()) {
+          GlobalFieldDefinitionType obj = ObjectUtils.notNull((GlobalFieldDefinitionType) cursor.getObject());
+          XmlGlobalFieldDefinition field = new XmlGlobalFieldDefinition(obj, this); // NOPMD - intentional
+          if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("New field definition '{}'", field.toCoordinates());
+          }
+          fieldDefinitions.put(field.getName(), field);
         }
-        fieldDefinitions.put(field.getName(), field);
+        this.fieldDefinitions
+            = fieldDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(fieldDefinitions);
       }
-      this.fieldDefinitions
-          = fieldDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(fieldDefinitions);
     }
 
     {
@@ -136,26 +138,27 @@ class XmlMetaschema
       Map<String, IAssemblyDefinition> assemblyDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
       Map<String, IAssemblyDefinition> rootAssemblyDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
 
-      XmlCursor cursor = metaschemaNode.newCursor();
-      cursor.selectPath(
-          "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';$this/m:define-assembly");
+      try (XmlCursor cursor = metaschemaNode.newCursor()) {
+        cursor.selectPath(
+            "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';$this/m:define-assembly");
 
-      while (cursor.toNextSelection()) {
-        GlobalAssemblyDefinitionType obj = ObjectUtils.notNull((GlobalAssemblyDefinitionType) cursor.getObject());
-        XmlGlobalAssemblyDefinition assembly = new XmlGlobalAssemblyDefinition(obj, this); // NOPMD - intentional
-        if (LOGGER.isTraceEnabled()) {
-          LOGGER.trace("New assembly definition '{}'", assembly.toCoordinates());
+        while (cursor.toNextSelection()) {
+          GlobalAssemblyDefinitionType obj = ObjectUtils.notNull((GlobalAssemblyDefinitionType) cursor.getObject());
+          XmlGlobalAssemblyDefinition assembly = new XmlGlobalAssemblyDefinition(obj, this); // NOPMD - intentional
+          if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("New assembly definition '{}'", assembly.toCoordinates());
+          }
+          assemblyDefinitions.put(assembly.getName(), assembly);
+          if (assembly.isRoot()) {
+            rootAssemblyDefinitions.put(ObjectUtils.notNull(assembly.getRootName()), assembly);
+          }
         }
-        assemblyDefinitions.put(assembly.getName(), assembly);
-        if (assembly.isRoot()) {
-          rootAssemblyDefinitions.put(ObjectUtils.notNull(assembly.getRootName()), assembly);
-        }
+
+        this.assemblyDefinitions
+            = assemblyDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(assemblyDefinitions);
+        this.rootAssemblyDefinitions = rootAssemblyDefinitions.isEmpty() ? Collections.emptyMap()
+            : Collections.unmodifiableMap(rootAssemblyDefinitions);
       }
-
-      this.assemblyDefinitions
-          = assemblyDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(assemblyDefinitions);
-      this.rootAssemblyDefinitions = rootAssemblyDefinitions.isEmpty() ? Collections.emptyMap()
-          : Collections.unmodifiableMap(rootAssemblyDefinitions);
     }
   }
 

@@ -26,14 +26,21 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class DefaultIndexHasKeyConstraint
+public final class DefaultIndexHasKeyConstraint
     extends AbstractKeyConstraint
     implements IIndexHasKeyConstraint {
   @NonNull
@@ -45,30 +52,39 @@ public class DefaultIndexHasKeyConstraint
    * 
    * @param id
    *          the optional identifier for the constraint
+   * @param formalName
+   *          the constraint's formal indexName or {@code null} if not provided
+   * @param description
+   *          the constraint's semantic description or {@code null} if not provided
    * @param source
    *          information about the constraint source
    * @param level
    *          the significance of a violation of this constraint
    * @param target
    *          the Metapath expression identifying the nodes the constraint targets
+   * @param properties
+   *          a collection of associated properties
    * @param indexName
-   *          a reference to the name of the index
+   *          a reference to the indexName of the index
    * @param keyFields
    *          a list of key fields associated with the constraint
    * @param remarks
    *          optional remarks describing the intent of the constraint
    */
-  public DefaultIndexHasKeyConstraint(
-      String id,
+  private DefaultIndexHasKeyConstraint(
+      @Nullable String id,
+      @Nullable String formalName,
+      @Nullable MarkupLine description,
       @NonNull ISource source,
       @NonNull Level level,
       @NonNull MetapathExpression target,
-      String indexName,
+      @NonNull Map<QName, Set<String>> properties,
+      @NonNull String indexName,
       @NonNull List<DefaultKeyField> keyFields,
-      MarkupMultiline remarks) {
-    super(id, source, level, target, keyFields, remarks);
+      @Nullable MarkupMultiline remarks) {
+    super(id, formalName, description, source, level, target, properties, keyFields, remarks);
     if (indexName.isBlank()) {
-      throw new IllegalArgumentException("The index name must be a non-blank string");
+      throw new IllegalArgumentException("The index indexName must be a non-blank string");
     }
     this.indexName = indexName;
   }
@@ -76,5 +92,61 @@ public class DefaultIndexHasKeyConstraint
   @Override
   public String getIndexName() {
     return indexName;
+  }
+
+  @Override
+  public <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
+    return visitor.visitIndexHasKeyConstraint(this, state);
+  }
+  
+
+  @NonNull
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  public static class Builder
+      extends AbstractKeyConstraintBuilder<Builder, DefaultIndexHasKeyConstraint> {
+    private String indexName;
+
+    private Builder() {
+      // disable construction
+    }
+
+    public Builder name(@NonNull String name) {
+      this.indexName = name;
+      return this;
+    }
+
+    @Override
+    protected Builder getThis() {
+      return this;
+    }
+
+    @Override
+    protected void validate() {
+      super.validate();
+      
+      ObjectUtils.requireNonNull(indexName);
+    }
+
+    protected String getIndexName() {
+      return indexName;
+    }
+
+    @Override
+    protected DefaultIndexHasKeyConstraint newInstance() {
+      return new DefaultIndexHasKeyConstraint(
+          getId(),
+          getFormalName(),
+          getDescription(),
+          ObjectUtils.notNull(getSource()),
+          getLevel(),
+          getTarget(),
+          getProperties(),
+          getIndexName(),
+          getKeyFields(),
+          getRemarks());
+    }
   }
 }

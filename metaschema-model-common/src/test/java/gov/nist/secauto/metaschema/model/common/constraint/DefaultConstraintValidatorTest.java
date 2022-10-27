@@ -27,21 +27,13 @@
 package gov.nist.secauto.metaschema.model.common.constraint;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint.Extensible;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
@@ -72,16 +64,13 @@ class DefaultConstraintValidatorTest {
 
     IFlagDefinition flagDefinition = context.mock(IFlagDefinition.class);
 
-    DefaultAllowedValuesConstraint allowedValues = new DefaultAllowedValuesConstraint(
-        null,
-        InternalModelSource.instance(),
-        Level.ERROR,
-        MetapathExpression.CONTEXT_NODE,
-        CollectionUtil.singletonMap("other",
-            new DefaultAllowedValue("other", MarkupLine.fromMarkdown("some documentation"))),
-        true,
-        Extensible.MODEL,
-        null);
+    DefaultAllowedValuesConstraint allowedValues = DefaultAllowedValuesConstraint.builder()
+        .source(InternalModelSource.instance())
+        .allowedValue(new DefaultAllowedValue(
+            "other",
+            MarkupLine.fromMarkdown("some documentation")))
+        .allowedOther(true)
+        .build();
 
     context.checking(new Expectations() {
       { // NOPMD - intentional
@@ -109,7 +98,7 @@ class DefaultConstraintValidatorTest {
     validator.validate(flag);
     validator.finalizeValidation();
 
-    assertTrue(handler.isPassing());
+    assertTrue(handler.isPassing(), "doesn't pass");
   }
 
   @SuppressWarnings("null")
@@ -121,26 +110,20 @@ class DefaultConstraintValidatorTest {
 
     IFlagDefinition flagDefinition = context.mock(IFlagDefinition.class);
 
-    DefaultAllowedValuesConstraint allowedValues1 = new DefaultAllowedValuesConstraint(
-        null,
-        InternalModelSource.instance(),
-        Level.ERROR,
-        MetapathExpression.CONTEXT_NODE,
-        CollectionUtil.singletonMap("other",
-            new DefaultAllowedValue("other", MarkupLine.fromMarkdown("some documentation"))),
-        true,
-        Extensible.MODEL,
-        null);
-    DefaultAllowedValuesConstraint allowedValues2 = new DefaultAllowedValuesConstraint(
-        null,
-        InternalModelSource.instance(),
-        Level.ERROR,
-        MetapathExpression.CONTEXT_NODE,
-        CollectionUtil.singletonMap("other2",
-            new DefaultAllowedValue("other2", MarkupLine.fromMarkdown("some documentation"))),
-        true,
-        Extensible.MODEL,
-        null);
+    DefaultAllowedValuesConstraint allowedValues1 = DefaultAllowedValuesConstraint.builder()
+        .source(InternalModelSource.instance())
+        .allowedValue(new DefaultAllowedValue(
+            "other",
+            MarkupLine.fromMarkdown("some documentation")))
+        .allowedOther(true)
+        .build();
+    DefaultAllowedValuesConstraint allowedValues2 = DefaultAllowedValuesConstraint.builder()
+        .source(InternalModelSource.instance())
+        .allowedValue(new DefaultAllowedValue(
+            "other2",
+            MarkupLine.fromMarkdown("some documentation")))
+        .allowedOther(true)
+        .build();
 
     List<? extends IAllowedValuesConstraint> allowedValuesConstraints
         = List.of(allowedValues1, allowedValues2);
@@ -171,11 +154,12 @@ class DefaultConstraintValidatorTest {
     validator.validate(flag);
     validator.finalizeValidation();
 
-    assertTrue(handler.isPassing());
+    assertTrue(handler.isPassing(), "doesn't pass");
   }
 
   @Test
   void testMultipleAllowedValuesConflictingAllowOther() {
+    @SuppressWarnings("null")
     MockItemFactory itemFactory = new MockItemFactory(context);
 
     IFlagNodeItem flag1 = itemFactory.flag("value", IStringItem.valueOf("value"));
@@ -183,26 +167,20 @@ class DefaultConstraintValidatorTest {
 
     IFlagDefinition flagDefinition = context.mock(IFlagDefinition.class);
 
-    DefaultAllowedValuesConstraint allowedValues1 = new DefaultAllowedValuesConstraint(
-        null,
-        InternalModelSource.instance(),
-        Level.ERROR,
-        MetapathExpression.CONTEXT_NODE,
-        CollectionUtil.singletonMap("other",
-            new DefaultAllowedValue("other", MarkupLine.fromMarkdown("some documentation"))),
-        true,
-        Extensible.MODEL,
-        null);
-    DefaultAllowedValuesConstraint allowedValues2 = new DefaultAllowedValuesConstraint(
-        null,
-        InternalModelSource.instance(),
-        Level.ERROR,
-        MetapathExpression.CONTEXT_NODE,
-        CollectionUtil.singletonMap("other2",
-            new DefaultAllowedValue("other2", MarkupLine.fromMarkdown("some documentation"))),
-        false,
-        Extensible.MODEL,
-        null);
+    DefaultAllowedValuesConstraint allowedValues1 = DefaultAllowedValuesConstraint.builder()
+        .source(InternalModelSource.instance())
+        .allowedValue(new DefaultAllowedValue(
+            "other",
+            MarkupLine.fromMarkdown("some documentation")))
+        .allowedOther(true)
+        .build();
+    DefaultAllowedValuesConstraint allowedValues2 = DefaultAllowedValuesConstraint.builder()
+        .source(InternalModelSource.instance())
+        .allowedValue(new DefaultAllowedValue(
+            "other2",
+            MarkupLine.fromMarkdown("some documentation")))
+        .allowedOther(false)
+        .build();
 
     List<? extends IAllowedValuesConstraint> allowedValuesConstraints
         = List.of(allowedValues1, allowedValues2);
@@ -241,9 +219,9 @@ class DefaultConstraintValidatorTest {
     validator.validate(flag2);
     validator.finalizeValidation();
     assertAll(
-        () -> assertFalse(handler.isPassing()),
-        () -> assertThat(handler.getFindings(), hasSize(1)),
-        () -> assertThat(handler.getFindings(), hasItem(hasProperty("node", is(flag1)))));
+        () -> assertFalse(handler.isPassing(), "must pass"),
+        () -> assertThat("only 1 finding", handler.getFindings(), hasSize(1)),
+        () -> assertThat("finding is for a flag node", handler.getFindings(), hasItem(hasProperty("node", is(flag1)))));
   }
 
   private static class FlagVisitorAction

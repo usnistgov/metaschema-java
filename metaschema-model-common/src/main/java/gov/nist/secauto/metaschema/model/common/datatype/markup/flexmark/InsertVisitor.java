@@ -56,7 +56,7 @@ public class InsertVisitor
   }
 
   @Override
-  protected void visit(@NonNull Node node) {
+  protected void visit(Node node) {
     if (node instanceof InsertAnchorNode) {
       InsertAnchorNode insert = (InsertAnchorNode) node;
       if (filter.test(insert)) {

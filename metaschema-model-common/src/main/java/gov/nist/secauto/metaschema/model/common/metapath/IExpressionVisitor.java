@@ -105,4 +105,8 @@ interface IExpressionVisitor<RESULT, CONTEXT> {
   RESULT visitUnion(@NonNull Union expr, CONTEXT context);
 
   RESULT visitWildcard(@NonNull Wildcard expr, CONTEXT context);
+
+  RESULT visitLet(@NonNull Let expr, CONTEXT context);
+
+  RESULT visitVariableReference(@NonNull VariableReference expr, CONTEXT context);
 }

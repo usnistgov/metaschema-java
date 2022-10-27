@@ -27,6 +27,8 @@
 package gov.nist.secauto.metaschema.model;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.constraint.AbstractConstraint.AbstractConstraintBuilder;
+import gov.nist.secauto.metaschema.model.common.constraint.AbstractKeyConstraint.AbstractKeyConstraintBuilder;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValue;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultCardinalityConstraint;
@@ -36,7 +38,6 @@ import gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexHasKeyCon
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultKeyField;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultUniqueConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.ISource;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
@@ -45,6 +46,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.AllowedValuesType;
+import gov.nist.secauto.metaschema.model.xmlbeans.ConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.EnumType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ExpectConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.HasCardinalityConstraintType;
@@ -60,7 +62,6 @@ import gov.nist.secauto.metaschema.model.xmlbeans.ScopedIndexHasKeyConstraintTyp
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedKeyConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedMatchesConstraintType;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,9 +88,9 @@ final class ModelFactory {
     return level == null ? IConstraint.DEFAULT_LEVEL : level;
   }
 
-  @Nullable
-  private static MarkupMultiline remarks(@Nullable RemarksType remarks) {
-    return remarks == null ? null : MarkupStringConverter.toMarkupString(remarks);
+  @NonNull
+  private static MarkupMultiline remarks(@NonNull RemarksType remarks) {
+    return MarkupStringConverter.toMarkupString(remarks);
   }
 
   @SuppressWarnings("null")
@@ -137,20 +138,44 @@ final class ModelFactory {
   }
 
   @NonNull
+  private static <T extends AbstractConstraintBuilder<T, ?>> T applyToBuilder(
+      @NonNull ConstraintType xmlConstraint,
+      @NonNull MetapathExpression target,
+      @NonNull ISource source,
+      @NonNull T builder) {
+
+    if (xmlConstraint.isSetId()) {
+      builder.identifier(ObjectUtils.notNull(xmlConstraint.getId()));
+    }
+    builder.target(target);
+    builder.source(source);
+    builder.level(level(xmlConstraint.getLevel()));
+    return builder;
+  }
+  
+  @NonNull
   static DefaultAllowedValuesConstraint newAllowedValuesConstraint(
       @NonNull AllowedValuesType xmlConstraint,
       @NonNull MetapathExpression target,
       @NonNull ISource source) {
-    return new DefaultAllowedValuesConstraint(
-        xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
-        source,
-        level(xmlConstraint.getLevel()),
-        target,
-        toAllowedValues(xmlConstraint),
-        xmlConstraint.isSetAllowOther() ? xmlConstraint.getAllowOther() : IAllowedValuesConstraint.DEFAULT_ALLOW_OTHER,
-        xmlConstraint.isSetExtensible() ? ObjectUtils.notNull(xmlConstraint.getExtensible())
-            : IAllowedValuesConstraint.DEFAULT_EXTENSIBLE,
-        remarks(xmlConstraint.getRemarks()));
+
+    DefaultAllowedValuesConstraint.Builder builder = DefaultAllowedValuesConstraint.builder();
+
+    applyToBuilder(xmlConstraint, target, source, builder);
+    
+    if (xmlConstraint.isSetRemarks()) {
+      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
+    }
+
+    builder.allowedValues(toAllowedValues(xmlConstraint));
+    if (xmlConstraint.isSetAllowOther()) {
+      builder.allowedOther(xmlConstraint.getAllowOther());
+    }
+    if (xmlConstraint.isSetExtensible()) {
+      builder.extensible(ObjectUtils.notNull(xmlConstraint.getExtensible()));
+    }
+    
+    return builder.build();
   }
 
   @NonNull
@@ -172,19 +197,27 @@ final class ModelFactory {
       @NonNull MatchesConstraintType xmlConstraint,
       @NonNull MetapathExpression target,
       @NonNull ISource source) {
-    return new DefaultMatchesConstraint(
-        xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
-        source,
-        level(xmlConstraint.getLevel()),
-        target,
-        xmlConstraint.isSetRegex() ? xmlConstraint.getRegex() : null, // NOPMD - intentional
-        xmlConstraint.isSetDatatype() ? xmlConstraint.getDatatype() : null, // NOPMD - intentional
-        remarks(xmlConstraint.getRemarks()));
+    DefaultMatchesConstraint.Builder builder = DefaultMatchesConstraint.builder();
+
+    applyToBuilder(xmlConstraint, target, source, builder);
+    
+    if (xmlConstraint.isSetRemarks()) {
+      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
+    }
+
+    if (xmlConstraint.isSetRegex()) {
+      builder.regex(ObjectUtils.notNull(xmlConstraint.getRegex()));
+    }
+    if (xmlConstraint.isSetDatatype()) {
+      builder.datatype(ObjectUtils.notNull(xmlConstraint.getDatatype()));
+    }
+    
+    return builder.build();
   }
 
-  @NonNull
-  static List<DefaultKeyField> newKeyFields(@NonNull KeyConstraintType xmlConstraint) {
-    List<DefaultKeyField> keyFields = new ArrayList<>(xmlConstraint.sizeOfKeyFieldArray());
+  static void buildKeyFields(
+      @NonNull KeyConstraintType xmlConstraint,
+      @NonNull AbstractKeyConstraintBuilder<?, ?> builder) {
     for (KeyConstraintType.KeyField xmlKeyField : xmlConstraint.getKeyFieldList()) {
       @SuppressWarnings("null")
       DefaultKeyField keyField
@@ -192,36 +225,43 @@ final class ModelFactory {
               xmlKeyField.getTarget(),
               xmlKeyField.isSetPattern() ? xmlKeyField.getPattern() : null, // NOPMD - intentional
               remarks(xmlKeyField.getRemarks()));
-      keyFields.add(keyField);
+      builder.keyField(keyField);
     }
-    return CollectionUtil.unmodifiableList(keyFields);
   }
 
   @NonNull
   static DefaultUniqueConstraint newUniqueConstraint(
       @NonNull ScopedKeyConstraintType xmlConstraint,
       @NonNull ISource source) {
-    return new DefaultUniqueConstraint(
-        xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
-        source,
-        level(xmlConstraint.getLevel()),
-        target(xmlConstraint.getTarget()),
-        newKeyFields(xmlConstraint),
-        remarks(xmlConstraint.getRemarks()));
+    DefaultUniqueConstraint.Builder builder = DefaultUniqueConstraint.builder();
+
+    applyToBuilder(xmlConstraint, target(xmlConstraint.getTarget()), source, builder);
+    
+    if (xmlConstraint.isSetRemarks()) {
+      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
+    }
+
+    buildKeyFields(xmlConstraint, builder);
+    
+    return builder.build();
   }
 
   @NonNull
   static DefaultIndexConstraint newIndexConstraint(
       @NonNull ScopedIndexConstraintType xmlConstraint,
       @NonNull ISource source) {
-    return new DefaultIndexConstraint(
-        xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
-        source,
-        level(xmlConstraint.getLevel()),
-        target(xmlConstraint.getTarget()),
-        xmlConstraint.getName(),
-        newKeyFields(xmlConstraint),
-        remarks(xmlConstraint.getRemarks()));
+    DefaultIndexConstraint.Builder builder = DefaultIndexConstraint.builder();
+
+    applyToBuilder(xmlConstraint, target(xmlConstraint.getTarget()), source, builder);
+    
+    if (xmlConstraint.isSetRemarks()) {
+      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
+    }
+
+    builder.name(ObjectUtils.requireNonNull(xmlConstraint.getName()));
+    buildKeyFields(xmlConstraint, builder);
+    
+    return builder.build();
   }
 
   @NonNull
@@ -244,14 +284,18 @@ final class ModelFactory {
       @NonNull IndexHasKeyConstraintType xmlConstraint,
       @NonNull MetapathExpression target,
       @NonNull ISource source) {
-    return new DefaultIndexHasKeyConstraint(
-        xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
-        source,
-        level(xmlConstraint.getLevel()),
-        target,
-        xmlConstraint.getName(),
-        newKeyFields(xmlConstraint),
-        remarks(xmlConstraint.getRemarks()));
+    DefaultIndexHasKeyConstraint.Builder builder = DefaultIndexHasKeyConstraint.builder();
+
+    applyToBuilder(xmlConstraint, target, source, builder);
+    
+    if (xmlConstraint.isSetRemarks()) {
+      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
+    }
+
+    builder.name(ObjectUtils.requireNonNull(xmlConstraint.getName()));
+    buildKeyFields(xmlConstraint, builder);
+    
+    return builder.build();
   }
 
   @NonNull
@@ -273,27 +317,45 @@ final class ModelFactory {
       @NonNull ExpectConstraintType xmlConstraint,
       @NonNull MetapathExpression target,
       @NonNull ISource source) {
-    return new DefaultExpectConstraint(
-        xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
-        source,
-        level(xmlConstraint.getLevel()),
-        xmlConstraint.isSetMessage() ? xmlConstraint.getMessage() : null, // NOPMD - intentional
-        target,
-        ObjectUtils.requireNonNull(xmlConstraint.getTest()),
-        remarks(xmlConstraint.getRemarks()));
+    
+    DefaultExpectConstraint.Builder builder = DefaultExpectConstraint.builder();
+
+    applyToBuilder(xmlConstraint, target, source, builder);
+    
+    if (xmlConstraint.isSetRemarks()) {
+      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
+    }
+
+    if (xmlConstraint.isSetMessage()) {
+      builder.message(ObjectUtils.notNull(xmlConstraint.getMessage()));
+    }
+
+    builder.test(ObjectUtils.requireNonNull(xmlConstraint.getTest()));
+    
+    return builder.build();
   }
 
   @NonNull
   static DefaultCardinalityConstraint newCardinalityConstraint(
       @NonNull HasCardinalityConstraintType xmlConstraint,
       @NonNull ISource source) {
-    return new DefaultCardinalityConstraint(
-        xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
-        source,
-        level(xmlConstraint.getLevel()),
-        target(xmlConstraint.getTarget()),
-        xmlConstraint.isSetMinOccurs() ? xmlConstraint.getMinOccurs().intValueExact() : null, // NOPMD - intentional
-        xmlConstraint.isSetMaxOccurs() ? xmlConstraint.getMaxOccurs().intValueExact() : null, // NOPMD - intentional
-        remarks(xmlConstraint.getRemarks()));
+    
+    DefaultCardinalityConstraint.Builder builder = DefaultCardinalityConstraint.builder();
+
+    applyToBuilder(xmlConstraint, target(xmlConstraint.getTarget()), source, builder);
+    
+    if (xmlConstraint.isSetRemarks()) {
+      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
+    }
+
+    if (xmlConstraint.isSetMinOccurs()) {
+      builder.minOccurs(xmlConstraint.getMinOccurs().intValueExact());
+    }
+
+    if (xmlConstraint.isSetMaxOccurs()) {
+      builder.maxOccurs(xmlConstraint.getMaxOccurs().intValueExact());
+    }
+    
+    return builder.build();
   }
 }

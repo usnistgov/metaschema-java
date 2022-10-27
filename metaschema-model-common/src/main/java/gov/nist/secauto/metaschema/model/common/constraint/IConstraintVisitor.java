@@ -24,45 +24,24 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.item;
-
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.HostnameAdapter;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
+package gov.nist.secauto.metaschema.model.common.constraint;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class HostnameItemImpl
-    extends AbstractStringItem
-    implements IHostnameItem {
+public interface IConstraintVisitor<T, R> {
 
-  public HostnameItemImpl(@NonNull String value) {
-    super(value);
-  }
+  R visitAllowedValues(@NonNull IAllowedValuesConstraint constraint, T state);
 
-  @Override
-  public HostnameAdapter getJavaTypeAdapter() {
-    return MetaschemaDataTypeProvider.HOSTNAME;
-  }
+  R visitCardinalityConstraint(@NonNull ICardinalityConstraint constraint, T state);
 
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + getValue().hashCode();
-    return result;
-  }
+  R visitExpectConstraint(@NonNull IExpectConstraint constraint, T state);
 
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true; // NOPMD readability
-    } else if (obj == null) {
-      return false; // NOPMD readability
-    } else if (getClass() != obj.getClass()) {
-      return false; // NOPMD readability
-    }
-    HostnameItemImpl other = (HostnameItemImpl) obj;
-    return getValue().equals(other.getValue());
-  }
+  R visitMatchesConstraint(@NonNull IMatchesConstraint constraint, T state);
+
+  R visitIndexConstraint(@NonNull IIndexConstraint constraint, T state);
+
+  R visitIndexHasKeyConstraint(@NonNull IIndexHasKeyConstraint constraint, T state);
+
+  R visitUniqueConstraint(@NonNull IUniqueConstraint constraint, T state);
 
 }

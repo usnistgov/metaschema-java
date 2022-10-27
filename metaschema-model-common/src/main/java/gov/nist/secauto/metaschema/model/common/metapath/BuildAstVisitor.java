@@ -43,6 +43,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.FunctioncallContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.GeneralcompContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.IntersectexceptexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.LetexprContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.LiteralContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.MultiplicativeexprContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.NumericliteralContext;
@@ -52,10 +53,13 @@ import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.PredicateContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.RelativepathexprContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ReversestepContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.SimpleletbindingContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.SimpleletclauseContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.StringconcatexprContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.UnaryexprContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.UnionexprContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ValuecompContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.VarrefContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.WildcardContext;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -68,6 +72,8 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -109,9 +115,10 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
    */
   @NonNull
   protected <CONTEXT extends ParserRuleContext, NODE extends IExpression> IExpression
-      handleNAiryCollection(@NonNull CONTEXT context,
+      handleNAiryCollection(
+          @NonNull CONTEXT context,
           @NonNull Function<List<NODE>, IExpression> supplier) {
-    return handleNAiryCollection(context, 2, (ctx, idx) -> {
+    return handleNAiryCollection(context, 1, 2, (ctx, idx) -> {
       // skip operator, since we know what it is
       ParseTree tree = ctx.getChild(idx + 1);
       @SuppressWarnings({ "unchecked", "null" })
@@ -135,6 +142,8 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
    *          the child expression type
    * @param context
    *          the context instance
+   * @param startIndex
+   *          the starting context child position
    * @param step
    *          the amount to advance the loop over the context children
    * @param parser
@@ -144,14 +153,19 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
    * @return the left expression or the supplied expression for a collection
    */
   @NonNull
-  protected <CONTEXT extends ParserRuleContext, EXPRESSION extends IExpression> IExpression handleNAiryCollection(
-      @NonNull CONTEXT context, int step,
-      @NonNull BiFunction<CONTEXT, Integer, EXPRESSION> parser,
-      @NonNull Function<List<EXPRESSION>, IExpression> supplier) {
+  protected <CONTEXT extends ParserRuleContext, EXPRESSION extends IExpression> IExpression
+      handleNAiryCollection(
+          @NonNull CONTEXT context,
+          int startIndex,
+          int step,
+          @NonNull BiFunction<CONTEXT, Integer, EXPRESSION> parser,
+          @NonNull Function<List<EXPRESSION>, IExpression> supplier) {
     int numChildren = context.getChildCount();
 
     if (numChildren == 0) {
       throw new IllegalStateException("there should always be a child expression");
+    } else if (startIndex > numChildren) {
+      throw new IllegalStateException("Start index is out of bounds");
     }
 
     ParseTree leftTree = context.getChild(0);
@@ -165,7 +179,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
     } else {
       List<EXPRESSION> children = new ArrayList<>(numChildren - 1 / step);
       children.add(leftResult);
-      for (int i = 1; i < numChildren; i = i + step) {
+      for (int i = startIndex; i < numChildren; i = i + step) {
         EXPRESSION result = parser.apply(context, i);
         children.add(result);
       }
@@ -187,22 +201,34 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
    *          the context type to parse
    * @param context
    *          the context instance
+   * @param startingIndex
+   *          the index of the first child expression, which must be a non-negative value that is less
+   *          than the number of children
    * @param step
    *          the amount to advance the loop over the context children
    * @param parser
    *          a trinary function used to parse the context children and supply a result
    * @return the left expression or the supplied expression
    */
-  protected <CONTEXT extends ParserRuleContext> IExpression handleGroupedNAiry(@NonNull CONTEXT context, int step,
+  protected <CONTEXT extends ParserRuleContext> IExpression handleGroupedNAiry(
+      @NonNull CONTEXT context,
+      int startingIndex,
+      int step,
       @NonNull ITriFunction<CONTEXT, Integer, IExpression, IExpression> parser) {
     int numChildren = context.getChildCount();
+    if (startingIndex >= numChildren) {
+      throw new IndexOutOfBoundsException(
+          String.format("The starting index '%d' exceeds the child count '%d'",
+              startingIndex,
+              numChildren));
+    }
 
     IExpression retval = null;
     if (numChildren > 0) {
-      ParseTree leftTree = context.getChild(0);
+      ParseTree leftTree = context.getChild(startingIndex);
       IExpression result = ObjectUtils.notNull(leftTree.accept(this));
 
-      for (int i = 1; i < numChildren; i = i + step) {
+      for (int i = startingIndex + 1; i < numChildren; i = i + step) {
         result = parser.apply(context, i, result);
       }
       retval = result;
@@ -308,7 +334,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
   @Override
   protected IExpression handleAdditiveexpr(AdditiveexprContext context) {
-    return handleGroupedNAiry(context, 2, (ctx, idx, left) -> {
+    return handleGroupedNAiry(context, 0, 2, (ctx, idx, left) -> {
       ParseTree operatorTree = ctx.getChild(idx);
       ParseTree rightTree = ctx.getChild(idx + 1);
       IExpression right = rightTree.accept(this);
@@ -332,7 +358,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
   @Override
   protected IExpression handleMultiplicativeexpr(MultiplicativeexprContext context) {
-    return handleGroupedNAiry(context, 2, (ctx, idx, left) -> {
+    return handleGroupedNAiry(context, 0, 2, (ctx, idx, left) -> {
       ParseTree operatorTree = ctx.getChild(idx);
       ParseTree rightTree = ctx.getChild(idx + 1);
       IExpression right = rightTree.accept(this);
@@ -366,7 +392,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
   @Override
   protected IExpression handleIntersectexceptexpr(IntersectexceptexprContext context) {
-    return handleGroupedNAiry(context, 2, (ctx, idx, left) -> {
+    return handleGroupedNAiry(context, 0, 2, (ctx, idx, left) -> {
       ParseTree operatorTree = ctx.getChild(idx);
       ParseTree rightTree = ctx.getChild(idx + 1);
       IExpression right = rightTree.accept(this);
@@ -390,7 +416,9 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
   @Override
   protected IExpression handleArrowexpr(ArrowexprContext context) {
-    return handleGroupedNAiry(context, 2, (ctx, idx, left) -> {
+    // TODO: handle new syntax
+
+    return handleGroupedNAiry(context, 0, 2, (ctx, idx, left) -> {
       // the next child is "=>"
       assert "=>".equals(ctx.getChild(idx).getText());
 
@@ -472,7 +500,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
   @Override
   protected IExpression handleRelativepathexpr(RelativepathexprContext context) {
-    return handleGroupedNAiry(context, 2, (ctx, idx, left) -> {
+    return handleGroupedNAiry(context, 0, 2, (ctx, idx, left) -> {
       ParseTree operatorTree = ctx.getChild(idx);
       ParseTree rightTree = ctx.getChild(idx + 1);
       IExpression rightResult = rightTree.accept(this);
@@ -696,5 +724,29 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
       Objects.requireNonNull(after);
       return (T t, U u, V v) -> after.apply(apply(t, u, v));
     }
+  }
+
+  @Override
+  protected IExpression handleLet(LetexprContext context) {
+    IExpression result = context.exprsingle().accept(this);
+
+    SimpleletclauseContext letClause = context.simpleletclause();
+    LinkedList<SimpleletbindingContext> clauses = new LinkedList<>(letClause.simpleletbinding());
+    Collections.reverse(clauses);
+
+    for (SimpleletbindingContext simpleCtx : clauses) {
+      Name varName = (Name)simpleCtx.varname().accept(this);
+      IExpression boundExpression = simpleCtx.exprsingle().accept(this);
+      
+      result = new Let(varName, boundExpression, result);
+    }
+    return result;
+  }
+
+  @Override
+  protected IExpression handleVarref(VarrefContext ctx) {
+    Name varName = (Name) ctx.varname().accept(this);
+
+    return new VariableReference(varName);
   }
 }

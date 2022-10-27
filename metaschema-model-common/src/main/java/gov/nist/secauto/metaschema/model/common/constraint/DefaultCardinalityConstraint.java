@@ -26,13 +26,20 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class DefaultCardinalityConstraint
+public final class DefaultCardinalityConstraint
     extends AbstractConstraint
     implements ICardinalityConstraint {
   @Nullable
@@ -47,12 +54,18 @@ public class DefaultCardinalityConstraint
    * 
    * @param id
    *          the optional identifier for the constraint
+   * @param formalName
+   *          the constraint's formal name or {@code null} if not provided
+   * @param description
+   *          the constraint's semantic description or {@code null} if not provided
    * @param source
    *          information about the constraint source
    * @param level
    *          the significance of a violation of this constraint
    * @param target
    *          the Metapath expression identifying the nodes the constraint targets
+   * @param properties
+   *          a collection of associated properties
    * @param minOccurs
    *          if provided, the constraint ensures that the count of targets is at least this value
    * @param maxOccurs
@@ -60,15 +73,18 @@ public class DefaultCardinalityConstraint
    * @param remarks
    *          optional remarks describing the intent of the constraint
    */
-  public DefaultCardinalityConstraint(
+  private DefaultCardinalityConstraint(
       @Nullable String id,
+      @Nullable String formalName,
+      @Nullable MarkupLine description,
       @NonNull ISource source,
       @NonNull Level level,
       @NonNull MetapathExpression target,
+      @NonNull Map<QName, Set<String>> properties,
       @Nullable Integer minOccurs,
       @Nullable Integer maxOccurs,
       MarkupMultiline remarks) {
-    super(id, source, level, target, remarks);
+    super(id, formalName, description, source, level, target, properties, remarks);
     if (minOccurs == null && maxOccurs == null) {
       throw new IllegalArgumentException("at least one of minOccurs or maxOccurs must be provided");
     }
@@ -86,4 +102,71 @@ public class DefaultCardinalityConstraint
     return maxOccurs;
   }
 
+  @Override
+  public <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
+    return visitor.visitCardinalityConstraint(this, state);
+  }
+
+  @NonNull
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  public static class Builder
+      extends AbstractConstraintBuilder<Builder, DefaultCardinalityConstraint> {
+    private Integer minOccurs;
+    private Integer maxOccurs;
+
+    private Builder() {
+      // disable construction
+    }
+
+    public Builder minOccurs(int value) {
+      this.minOccurs = value;
+      return this;
+    }
+
+    public Builder maxOccurs(int value) {
+      this.maxOccurs = value;
+      return this;
+    }
+
+    @Override
+    protected Builder getThis() {
+      return this;
+    }
+
+
+    @Override
+    protected void validate() {
+      super.validate();
+      
+      if (getMinOccurs() == null && getMaxOccurs() == null) {
+        throw new IllegalStateException("At least one of minOccurs or maxOccurs must be provided.");
+      }
+    }
+
+    protected Integer getMinOccurs() {
+      return minOccurs;
+    }
+
+    protected Integer getMaxOccurs() {
+      return maxOccurs;
+    }
+
+    @Override
+    protected DefaultCardinalityConstraint newInstance() {
+      return new DefaultCardinalityConstraint(
+          getId(),
+          getFormalName(),
+          getDescription(),
+          ObjectUtils.notNull(getSource()),
+          getLevel(),
+          getTarget(),
+          getProperties(),
+          getMinOccurs(),
+          getMaxOccurs(),
+          getRemarks());
+    }
+  }
 }

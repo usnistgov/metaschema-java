@@ -43,7 +43,7 @@ public class QTagNodeRenderer implements NodeRenderer {
   @Override
   public @Nullable Set<NodeRenderingHandler<?>> getNodeRenderingHandlers() {
     return Collections.singleton(
-        new NodeRenderingHandler<DoubleQuoteNode>(DoubleQuoteNode.class, this::render));
+        new NodeRenderingHandler<>(DoubleQuoteNode.class, this::render));
   }
 
   protected void render(DoubleQuoteNode node, NodeRendererContext context, HtmlWriter html) {

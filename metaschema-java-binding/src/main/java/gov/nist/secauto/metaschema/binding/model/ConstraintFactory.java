@@ -36,6 +36,9 @@ import gov.nist.secauto.metaschema.binding.model.annotations.IsUnique;
 import gov.nist.secauto.metaschema.binding.model.annotations.KeyField;
 import gov.nist.secauto.metaschema.binding.model.annotations.Matches;
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
+import gov.nist.secauto.metaschema.binding.model.annotations.Property;
+import gov.nist.secauto.metaschema.model.common.constraint.AbstractConstraint.AbstractConstraintBuilder;
+import gov.nist.secauto.metaschema.model.common.constraint.AbstractKeyConstraint.AbstractKeyConstraintBuilder;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValue;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultCardinalityConstraint;
@@ -45,19 +48,21 @@ import gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexHasKeyCon
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultKeyField;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultUniqueConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.ISource;
 import gov.nist.secauto.metaschema.model.common.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -67,32 +72,90 @@ final class ConstraintFactory {
     // disable
   }
 
-  @NonNull
-  static Map<String, DefaultAllowedValue> toAllowedValues(@NonNull AllowedValues constraint) {
-    AllowedValue[] values = constraint.values();
-
-    Map<String, DefaultAllowedValue> allowedValues = new LinkedHashMap<>(values.length); // NOPMD - intentional
-    for (AllowedValue value : values) {
-      DefaultAllowedValue allowedValue
-          = new DefaultAllowedValue(value.value(), MarkupLine.fromMarkdown(value.description())); // NOPMD - intentional
-      allowedValues.put(allowedValue.getValue(), allowedValue);
-    }
-    return CollectionUtil.unmodifiableMap(allowedValues);
-  }
-
-  static String toId(String id) {
-    return id.isBlank() ? null : id;
-  }
-
-  static MarkupMultiline toRemarks(String remarks) {
+  static MarkupMultiline toRemarks(@NonNull String remarks) {
     return remarks.isBlank() ? null : MarkupMultiline.fromMarkdown(remarks);
   }
 
-  static Pattern toPattern(String pattern) {
+  @NonNull
+  static MetapathExpression toMetapath(@NonNull String metapath) {
+    return metapath.isBlank() ? IConstraint.DEFAULT_TARGET : MetapathExpression.compile(metapath);
+  }
+
+  @NonNull
+  static <T extends AbstractConstraintBuilder<T, ?>> T applyId(@NonNull T builder, @NonNull String id) {
+    if (!id.isBlank()) {
+      builder.identifier(id);
+    }
+    return builder;
+  }
+
+  @NonNull
+  static <T extends AbstractConstraintBuilder<T, ?>> T applyFormalName(@NonNull T builder, @NonNull String name) {
+    if (!name.isBlank()) {
+      builder.formalName(name);
+    }
+    return builder;
+  }
+
+  @NonNull
+  static <T extends AbstractConstraintBuilder<T, ?>> T applyDescription(@NonNull T builder, @NonNull String value) {
+    if (!value.isBlank()) {
+      builder.description(MarkupLine.fromMarkdown(value));
+    }
+    return builder;
+  }
+
+  @NonNull
+  static <T extends AbstractConstraintBuilder<T, ?>> T applyTarget(@NonNull T builder, @NonNull String target) {
+    builder.target(toMetapath(target));
+    return builder;
+  }
+
+  @NonNull
+  static <T extends AbstractConstraintBuilder<T, ?>> T applyProperties(
+      @NonNull T builder,
+      @Nullable Property... properties) {
+    if (properties != null) {
+      for (Property property : properties) {
+        String name = property.name();
+        String namespace = property.namespace();
+        QName qname = new QName(namespace, name);
+  
+        String[] values = property.values();
+        List<String> valueList = Arrays.asList(values);
+        Set<String> valueSet = new LinkedHashSet<>(valueList);
+        builder.property(qname, valueSet);
+      }
+    }
+    return builder;
+  }
+
+  static <T extends AbstractConstraintBuilder<T, ?>> T applyRemarks(@NonNull T builder, @NonNull String remarks) {
+    if (!remarks.isBlank()) {
+      builder.remarks(MarkupMultiline.fromMarkdown(remarks));
+    }
+    return builder;
+  }
+
+  @NonNull
+  static DefaultAllowedValuesConstraint.Builder applyAllowedValues(
+      @NonNull DefaultAllowedValuesConstraint.Builder builder,
+      @NonNull AllowedValues constraint) {
+    for (AllowedValue value : constraint.values()) {
+      DefaultAllowedValue allowedValue
+          = new DefaultAllowedValue(value.value(), MarkupLine.fromMarkdown(value.description())); // NOPMD - intentional
+      builder.allowedValue(allowedValue);
+    }
+    return builder;
+  }
+
+  @Nullable
+  static Pattern toPattern(@NonNull String pattern) {
     return pattern.isBlank() ? null : Pattern.compile(pattern);
   }
 
-  static String toMessage(String message) {
+  @Nullable
+  static String toMessage(@NonNull String message) {
     return message.isBlank() ? null : message;
   }
 
@@ -103,51 +166,144 @@ final class ConstraintFactory {
   }
 
   @NonNull
-  static MetapathExpression toMetapath(@NonNull String metapath) {
-    return metapath.isBlank() ? MetapathExpression.CONTEXT_NODE : MetapathExpression.compile(metapath);
-  }
-
-  @NonNull
-  static DefaultAllowedValuesConstraint newAllowedValuesConstraint(@NonNull AllowedValues constraint,
+  static DefaultAllowedValuesConstraint newAllowedValuesConstraint(
+      @NonNull AllowedValues constraint,
       @NonNull ISource source) {
-    return new DefaultAllowedValuesConstraint(
-        toId(constraint.id()),
-        source,
-        constraint.level(),
-        toMetapath(constraint.target()),
-        toAllowedValues(constraint),
-        constraint.allowOthers(),
-        constraint.extensible(),
-        toRemarks(constraint.remarks()));
+    DefaultAllowedValuesConstraint.Builder builder = DefaultAllowedValuesConstraint.builder();
+    applyId(builder, constraint.id());
+    applyFormalName(builder, constraint.formalName());
+    applyDescription(builder, constraint.description());
+    builder
+        .source(source)
+        .level(constraint.level());
+    applyTarget(builder, constraint.target());
+    applyProperties(builder, constraint.properties());
+    applyRemarks(builder, constraint.remarks());
+
+    applyAllowedValues(builder, constraint);
+    builder.allowedOther(constraint.allowOthers());
+    builder.extensible(constraint.extensible());
+
+    return builder.build();
   }
 
   @NonNull
   static DefaultMatchesConstraint newMatchesConstraint(Matches constraint, @NonNull ISource source) {
-    return new DefaultMatchesConstraint(
-        toId(constraint.id()),
-        source,
-        constraint.level(),
-        toMetapath(constraint.target()),
-        toPattern(constraint.pattern()),
-        toDataType(constraint.typeAdapter()),
-        toRemarks(constraint.remarks()));
+    DefaultMatchesConstraint.Builder builder = DefaultMatchesConstraint.builder();
+    applyId(builder, constraint.id());
+    applyFormalName(builder, constraint.formalName());
+    applyDescription(builder, constraint.description());
+    builder
+        .source(source)
+        .level(constraint.level());
+    applyTarget(builder, constraint.target());
+    applyProperties(builder, constraint.properties());
+    applyRemarks(builder, constraint.remarks());
+
+    Pattern pattern = toPattern(constraint.pattern());
+    if (pattern != null) {
+      builder.regex(pattern);
+    }
+
+    IDataTypeAdapter<?> dataType = toDataType(constraint.typeAdapter());
+    if (dataType != null) {
+      builder.datatype(dataType);
+    }
+
+    return builder.build();
   }
 
   @NonNull
-  static List<DefaultKeyField> toKeyFields(@NonNull KeyField... keyFields) {
-    List<DefaultKeyField> retval;
-    if (keyFields.length == 0) {
-      retval = CollectionUtil.emptyList();
-    } else {
-      retval = new ArrayList<>(keyFields.length);
-      for (KeyField keyField : keyFields) {
-        DefaultKeyField field = new DefaultKeyField(toMetapath(keyField.target()), // NOPMD - intentional
-            toPattern(keyField.pattern()), toRemarks(keyField.remarks()));
-        retval.add(field);
-      }
-      retval = CollectionUtil.unmodifiableList(retval);
+  static <T extends AbstractKeyConstraintBuilder<T, ?>> T applyKeyFields(@NonNull T builder,
+      @NonNull KeyField... keyFields) {
+    for (KeyField keyField : keyFields) {
+      DefaultKeyField field = new DefaultKeyField(
+          toMetapath(keyField.target()),
+          toPattern(keyField.pattern()),
+          toRemarks(keyField.remarks()));
+      builder.keyField(field);
     }
-    return retval;
+    return builder;
+  }
+
+  @NonNull
+  static DefaultUniqueConstraint newUniqueConstraint(@NonNull IsUnique constraint, @NonNull ISource source) {
+    DefaultUniqueConstraint.Builder builder = DefaultUniqueConstraint.builder();
+    applyId(builder, constraint.id());
+    applyFormalName(builder, constraint.formalName());
+    applyDescription(builder, constraint.description());
+    builder
+        .source(source)
+        .level(constraint.level());
+    applyTarget(builder, constraint.target());
+    applyProperties(builder, constraint.properties());
+    applyRemarks(builder, constraint.remarks());
+
+    applyKeyFields(builder, constraint.keyFields());
+
+    return builder.build();
+  }
+
+  @NonNull
+  static DefaultIndexConstraint newIndexConstraint(@NonNull Index constraint, @NonNull ISource source) {
+    DefaultIndexConstraint.Builder builder = DefaultIndexConstraint.builder();
+    applyId(builder, constraint.id());
+    applyFormalName(builder, constraint.formalName());
+    applyDescription(builder, constraint.description());
+    builder
+        .source(source)
+        .level(constraint.level());
+    applyTarget(builder, constraint.target());
+    applyProperties(builder, constraint.properties());
+    applyRemarks(builder, constraint.remarks());
+
+    builder.name(constraint.name());
+    applyKeyFields(builder, constraint.keyFields());
+
+    return builder.build();
+  }
+
+  @NonNull
+  static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(@NonNull IndexHasKey constraint,
+      @NonNull ISource source) {
+    DefaultIndexHasKeyConstraint.Builder builder = DefaultIndexHasKeyConstraint.builder();
+    applyId(builder, constraint.id());
+    applyFormalName(builder, constraint.formalName());
+    applyDescription(builder, constraint.description());
+    builder
+        .source(source)
+        .level(constraint.level());
+    applyTarget(builder, constraint.target());
+    applyProperties(builder, constraint.properties());
+    applyRemarks(builder, constraint.remarks());
+
+    builder.name(constraint.indexName());
+    applyKeyFields(builder, constraint.keyFields());
+
+    return builder.build();
+  }
+
+  @NonNull
+  static DefaultExpectConstraint newExpectConstraint(@NonNull Expect constraint, @NonNull ISource source) {
+    DefaultExpectConstraint.Builder builder = DefaultExpectConstraint.builder();
+    applyId(builder, constraint.id());
+    applyFormalName(builder, constraint.formalName());
+    applyDescription(builder, constraint.description());
+    builder
+        .source(source)
+        .level(constraint.level());
+    applyTarget(builder, constraint.target());
+    applyProperties(builder, constraint.properties());
+    applyRemarks(builder, constraint.remarks());
+
+    builder.test(toMetapath(constraint.test()));
+    
+    String message = constraint.message();
+    if (!message.isBlank()) {
+      builder.message(message);
+    }
+
+    return builder.build();
   }
 
   @Nullable
@@ -156,63 +312,28 @@ final class ConstraintFactory {
   }
 
   @NonNull
-  static DefaultUniqueConstraint newUniqueConstraint(@NonNull IsUnique constraint, @NonNull ISource source) {
-    return new DefaultUniqueConstraint(
-        toId(constraint.id()),
-        source,
-        constraint.level(),
-        toMetapath(constraint.target()),
-        toKeyFields(constraint.keyFields()),
-        toRemarks(constraint.remarks()));
-  }
-
-  @NonNull
-  static DefaultIndexConstraint newIndexConstraint(@NonNull Index constraint, @NonNull ISource source) {
-    return new DefaultIndexConstraint(
-        toId(constraint.id()),
-        source,
-        constraint.level(),
-        toMetapath(constraint.target()),
-        constraint.name(),
-        toKeyFields(constraint.keyFields()),
-        toRemarks(constraint.remarks()));
-  }
-
-  @NonNull
-  static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(@NonNull IndexHasKey constraint,
-      @NonNull ISource source) {
-    return new DefaultIndexHasKeyConstraint(
-        toId(constraint.id()),
-        source,
-        constraint.level(),
-        toMetapath(constraint.target()),
-        constraint.indexName(),
-        toKeyFields(constraint.keyFields()),
-        toRemarks(constraint.remarks()));
-  }
-
-  @NonNull
-  static DefaultExpectConstraint newExpectConstraint(@NonNull Expect constraint, @NonNull ISource source) {
-    return new DefaultExpectConstraint(
-        toId(constraint.id()),
-        source,
-        constraint.level(),
-        toMessage(constraint.message()),
-        toMetapath(constraint.target()),
-        toMetapath(constraint.test()),
-        toRemarks(constraint.remarks()));
-  }
-
-  @NonNull
   static DefaultCardinalityConstraint newCardinalityConstraint(@NonNull HasCardinality constraint,
       @NonNull ISource source) {
-    return new DefaultCardinalityConstraint(
-        toId(constraint.id()),
-        source,
-        constraint.level(),
-        toMetapath(constraint.target()),
-        toCardinality(constraint.minOccurs()),
-        toCardinality(constraint.maxOccurs()),
-        toRemarks(constraint.remarks()));
+    DefaultCardinalityConstraint.Builder builder = DefaultCardinalityConstraint.builder();
+    applyId(builder, constraint.id());
+    applyFormalName(builder, constraint.formalName());
+    applyDescription(builder, constraint.description());
+    builder
+        .source(source)
+        .level(constraint.level());
+    applyTarget(builder, constraint.target());
+    applyProperties(builder, constraint.properties());
+    applyRemarks(builder, constraint.remarks());
+
+    Integer min = toCardinality(constraint.minOccurs());
+    if (min != null) {
+      builder.minOccurs(min);
+    }
+    Integer max = toCardinality(constraint.maxOccurs());
+    if (max != null) {
+      builder.maxOccurs(max);
+    }
+    
+    return builder.build();
   }
 }

@@ -58,6 +58,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IKeyField;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
@@ -105,6 +106,16 @@ final class AnnotationUtils {
     String id = constraint.getId();
     if (id != null) {
       annotation.addMember("id", "$S", id);
+    }
+    
+    String formalName = constraint.getFormalName();
+    if (formalName != null) {
+      annotation.addMember("formalName", "$S", formalName);
+    }
+
+    MarkupLine description = constraint.getDescription();
+    if (description != null) {
+      annotation.addMember("description", "$S", description.toMarkdown());
     }
 
     annotation.addMember("level", "$T.$L", IConstraint.Level.class, constraint.getLevel());
@@ -161,7 +172,7 @@ final class AnnotationUtils {
     List<? extends ICardinalityConstraint> cardinality = definition.getHasCardinalityConstraints();
 
     if (!index.isEmpty() || !unique.isEmpty() || !cardinality.isEmpty()) {
-      AnnotationSpec.Builder annotation = AnnotationSpec.builder(AssemblyConstraints.class);
+      AnnotationSpec.Builder annotation = ObjectUtils.notNull(AnnotationSpec.builder(AssemblyConstraints.class));
 
       applyIndexConstraints(annotation, index);
       applyUniqueConstraints(annotation, unique);
@@ -190,6 +201,11 @@ final class AnnotationUtils {
 
         constraintAnnotation.addMember("values", "$L", valueAnnotation.build());
       }
+      
+      MarkupMultiline remarks = constraint.getRemarks();
+      if (remarks != null) {
+        constraintAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
+      }
       annotation.addMember("allowedValues", "$L", constraintAnnotation.build());
     }
   }
@@ -203,6 +219,11 @@ final class AnnotationUtils {
       constraintAnnotation.addMember("indexName", "$S", constraint.getIndexName());
 
       buildKeyFields(constraintAnnotation, constraint.getKeyFields());
+      
+      MarkupMultiline remarks = constraint.getRemarks();
+      if (remarks != null) {
+        constraintAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
+      }
 
       annotation.addMember("indexHasKey", "$L", constraintAnnotation.build());
     }
@@ -248,6 +269,11 @@ final class AnnotationUtils {
       if (dataType != null) {
         constraintAnnotation.addMember("typeAdapter", "$T.class", dataType.getClass());
       }
+      
+      MarkupMultiline remarks = constraint.getRemarks();
+      if (remarks != null) {
+        constraintAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
+      }
       annotation.addMember("matches", "$L", constraintAnnotation.build());
     }
   }
@@ -265,6 +291,11 @@ final class AnnotationUtils {
       if (constraint.getMessage() != null) {
         constraintAnnotation.addMember("message", "$S", constraint.getMessage());
       }
+      
+      MarkupMultiline remarks = constraint.getRemarks();
+      if (remarks != null) {
+        constraintAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
+      }
 
       annotation.addMember("expect", "$L", constraintAnnotation.build());
     }
@@ -280,6 +311,11 @@ final class AnnotationUtils {
       constraintAnnotation.addMember("name", "$S", constraint.getName());
 
       buildKeyFields(constraintAnnotation, constraint.getKeyFields());
+      
+      MarkupMultiline remarks = constraint.getRemarks();
+      if (remarks != null) {
+        constraintAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
+      }
 
       annotation.addMember("index", "$L", constraintAnnotation.build());
     }
@@ -293,6 +329,11 @@ final class AnnotationUtils {
       buildConstraint(IsUnique.class, constraintAnnotation, constraint);
 
       buildKeyFields(constraintAnnotation, constraint.getKeyFields());
+      
+      MarkupMultiline remarks = constraint.getRemarks();
+      if (remarks != null) {
+        constraintAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
+      }
 
       annotation.addMember("isUnique", "$L", constraintAnnotation.build());
     }
@@ -383,6 +424,11 @@ final class AnnotationUtils {
       }
 
       annotation.addMember("hasCardinality", "$L", constraintAnnotation.build());
+      
+      MarkupMultiline remarks = constraint.getRemarks();
+      if (remarks != null) {
+        constraintAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
+      }
     }
   }
 }

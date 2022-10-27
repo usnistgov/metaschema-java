@@ -88,7 +88,7 @@ public interface ISequence<ITEM_TYPE extends IItem> {
   @NonNull
   public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
       @NonNull Stream<ITEM_TYPE> items) {
-    return new StreamSequenceImpl<ITEM_TYPE>(items);
+    return new StreamSequenceImpl<>(items);
   }
 
   @NonNull

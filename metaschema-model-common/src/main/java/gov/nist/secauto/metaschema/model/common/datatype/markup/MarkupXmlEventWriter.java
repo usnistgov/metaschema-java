@@ -31,6 +31,7 @@ import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.ast.Image;
 import com.vladsch.flexmark.ast.LinkNode;
 import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.sequence.BasedSequence;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
 
@@ -71,15 +72,18 @@ public class MarkupXmlEventWriter
   }
 
   @Override
-  protected void handleImage(Image node, XMLEventWriter writer, QName name, String href, String alt)
-      throws XMLStreamException {
+  protected void visitImage(@NonNull Image node, XMLEventWriter writer) throws XMLStreamException {
+    QName name = newQName("img");
     List<Attribute> attributes = new LinkedList<>();
-    if (node.getUrl() != null) {
-      attributes.add(eventFactory.createAttribute("src", href));
+
+    BasedSequence seq = node.getUrl();
+    if (seq != null) {
+      attributes.add(eventFactory.createAttribute("src", seq.toString()));
     }
 
-    if (node.getUrl() != null) {
-      attributes.add(eventFactory.createAttribute("alt", alt));
+    seq = node.getText();
+    if (seq != null) {
+      attributes.add(eventFactory.createAttribute("alt", seq.toString()));
     }
 
     StartElement start = eventFactory.createStartElement(name, attributes.iterator(), null);
@@ -90,8 +94,8 @@ public class MarkupXmlEventWriter
   }
 
   @Override
-  protected void handleInsertAnchor(InsertAnchorNode node, XMLEventWriter writer, QName name)
-      throws XMLStreamException {
+  protected void visitInsertAnchor(@NonNull InsertAnchorNode node, XMLEventWriter writer) throws XMLStreamException {
+    QName name = newQName("insert");
     List<Attribute> attributes = new ArrayList<>(2);
     attributes.add(eventFactory.createAttribute("type", node.getType().toString()));
     attributes.add(eventFactory.createAttribute("id-ref", node.getIdReference().toString()));
@@ -107,12 +111,12 @@ public class MarkupXmlEventWriter
   }
 
   @Override
-  protected void writeText(XMLEventWriter writer, String text) throws XMLStreamException {
+  protected void writeText(String text, XMLEventWriter writer) throws XMLStreamException {
     writer.add(eventFactory.createCharacters(text));
   }
 
   @Override
-  protected void writeHtmlEntity(XMLEventWriter writer, String entityText) throws XMLStreamException {
+  protected void writeHtmlEntity(String entityText, XMLEventWriter writer) throws XMLStreamException {
     writer.add(eventFactory.createEntityReference(entityText, null));
   }
 
@@ -129,7 +133,7 @@ public class MarkupXmlEventWriter
   }
 
   @Override
-  protected void handleLinkStart(LinkNode node, XMLEventWriter writer, QName name, String string)
+  protected void handleLinkStart(LinkNode node, XMLEventWriter writer, QName name)
       throws XMLStreamException {
     List<Attribute> attributes = new LinkedList<>();
     if (node.getUrl() != null) {
@@ -147,7 +151,7 @@ public class MarkupXmlEventWriter
   }
 
   @Override
-  protected void handleHtmlBlock(HtmlBlock node, XMLEventWriter writer) throws XMLStreamException {
+  protected void visitHtmlBlock(HtmlBlock node, XMLEventWriter writer) throws XMLStreamException {
     Document doc = Jsoup.parse(node.getChars().toString());
     try {
       doc.body().traverse(new StreamNodeVisitor(writer));
@@ -157,7 +161,7 @@ public class MarkupXmlEventWriter
   }
 
   @Override
-  protected void handleHtmlInline(HtmlInline node, XMLEventWriter writer) throws XMLStreamException {
+  protected void visitHtmlInline(HtmlInline node, XMLEventWriter writer) throws XMLStreamException {
     Document doc = Jsoup.parse(node.getChars().toString());
     try {
       doc.body().traverse(new StreamNodeVisitor(writer));

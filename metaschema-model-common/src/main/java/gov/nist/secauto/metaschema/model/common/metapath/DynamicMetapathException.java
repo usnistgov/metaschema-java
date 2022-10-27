@@ -33,6 +33,8 @@ public class DynamicMetapathException
    * the serial version UID.
    */
   private static final long serialVersionUID = 1L;
+  
+  public static final int INVALID_PATH_GRAMMAR = 3;
 
   public DynamicMetapathException(int code, String message) {
     super(code, message);

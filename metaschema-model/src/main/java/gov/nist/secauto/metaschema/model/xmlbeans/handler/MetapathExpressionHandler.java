@@ -58,15 +58,16 @@ public final class MetapathExpressionHandler {
           .append(value)
           .append('\'');
 
-      XmlCursor cursor = value.newCursor();
-      cursor.toParent();
-      XmlBookmark bookmark = cursor.getBookmark(XmlLineNumber.class);
-      if (bookmark != null) {
-        XmlLineNumber lineNumber = (XmlLineNumber) bookmark;
-        builder.append(" at location ")
-            .append(lineNumber.getLine())
-            .append(':')
-            .append(lineNumber.getColumn());
+      try (XmlCursor cursor = value.newCursor()) {
+        cursor.toParent();
+        XmlBookmark bookmark = cursor.getBookmark(XmlLineNumber.class);
+        if (bookmark != null) {
+          XmlLineNumber lineNumber = (XmlLineNumber) bookmark;
+          builder.append(" at location ")
+              .append(lineNumber.getLine())
+              .append(':')
+              .append(lineNumber.getColumn());
+        }
       }
       XmlValueNotSupportedException exNew
           = new XmlValueNotSupportedException(builder.toString());

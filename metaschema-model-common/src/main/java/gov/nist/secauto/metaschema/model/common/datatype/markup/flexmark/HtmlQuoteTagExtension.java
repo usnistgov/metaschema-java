@@ -31,8 +31,6 @@ import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 public class HtmlQuoteTagExtension
     implements Parser.ParserExtension, HtmlRenderer.HtmlRendererExtension,
     FlexmarkHtmlConverter.HtmlConverterExtension {
@@ -42,7 +40,7 @@ public class HtmlQuoteTagExtension
   }
 
   @Override
-  public void rendererOptions(@NonNull MutableDataHolder options) {
+  public void rendererOptions(MutableDataHolder options) {
     // do nothing
   }
 
@@ -52,7 +50,7 @@ public class HtmlQuoteTagExtension
   }
 
   @Override
-  public void extend(@NonNull HtmlRenderer.Builder rendererBuilder, @NonNull String rendererType) {
+  public void extend(HtmlRenderer.Builder rendererBuilder, String rendererType) {
     rendererBuilder.nodeRendererFactory(new QTagNodeRenderer.Factory());
   }
 

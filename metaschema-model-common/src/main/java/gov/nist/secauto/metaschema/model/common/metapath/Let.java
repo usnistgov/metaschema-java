@@ -24,45 +24,67 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.item;
+package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.HostnameAdapter;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class HostnameItemImpl
-    extends AbstractStringItem
-    implements IHostnameItem {
+public class Let implements IExpression {
+  @NonNull
+  private final Name name;
+  @NonNull
+  private final IExpression boundExpression;
+  @NonNull
+  private final IExpression returnExpression;
 
-  public HostnameItemImpl(@NonNull String value) {
-    super(value);
+  public Let(@NonNull Name name, @NonNull IExpression boundExpression, @NonNull IExpression returnExpression) {
+    super();
+    this.name = name;
+    this.boundExpression = boundExpression;
+    this.returnExpression = returnExpression;
+  }
+
+  @NonNull
+  public Name getName() {
+    return name;
+  }
+
+  @NonNull
+  public IExpression getBoundExpression() {
+    return boundExpression;
+  }
+
+  @NonNull
+  public IExpression getReturnExpression() {
+    return returnExpression;
   }
 
   @Override
-  public HostnameAdapter getJavaTypeAdapter() {
-    return MetaschemaDataTypeProvider.HOSTNAME;
+  public List<? extends IExpression> getChildren() {
+    return ObjectUtils.notNull(
+        List.of(boundExpression, returnExpression));
   }
 
   @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + getValue().hashCode();
-    return result;
+  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitLet(this, context);
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true; // NOPMD readability
-    } else if (obj == null) {
-      return false; // NOPMD readability
-    } else if (getClass() != obj.getClass()) {
-      return false; // NOPMD readability
-    }
-    HostnameItemImpl other = (HostnameItemImpl) obj;
-    return getValue().equals(other.getValue());
-  }
+  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    ISequence<?> result = getBoundExpression().accept(dynamicContext, context);
 
+    String name = getName().getValue();
+    dynamicContext.setVariableValue(name, result);
+
+    ISequence<?> retval = getReturnExpression().accept(dynamicContext, context);
+
+    dynamicContext.clearVariableValue(name);
+    
+    return retval;
+  }
 }

@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ArgumentContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ArgumentlistContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ArrowexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ArrowfunctionspecifierContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.AxisstepContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ComparisonexprContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ContextitemexprContext;
@@ -45,6 +46,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.FunctioncallContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.GeneralcompContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.IntersectexceptexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.LetexprContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.LiteralContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.MetapathContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.MultiplicativeexprContext;
@@ -60,12 +62,16 @@ import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.RelativepathexprContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ReverseaxisContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ReversestepContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.SimpleletbindingContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.SimpleletclauseContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.StepexprContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.StringconcatexprContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.UnaryexprContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.UnionexprContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ValuecompContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ValueexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.VarnameContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.VarrefContext;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.WildcardContext;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
@@ -584,4 +590,42 @@ abstract class AbstractAstVisitor<R> // NOPMD
   public R visitEqname(EqnameContext ctx) {
     return handleEqname(ctx);
   }
+
+  protected abstract R handleLet(@NonNull LetexprContext ctx);
+
+  @Override
+  public R visitLetexpr(LetexprContext ctx) {
+    return handleLet(ctx);
+  }
+
+  @Override
+  public R visitSimpleletclause(SimpleletclauseContext ctx) {
+    // should never be called, since this is handled by the parent expression
+    throw new IllegalStateException();
+  }
+
+  @Override
+  public R visitSimpleletbinding(SimpleletbindingContext ctx) {
+    // should never be called, since this is handled by the parent expression
+    throw new IllegalStateException();
+  }
+
+  @Override
+  public R visitArrowfunctionspecifier(ArrowfunctionspecifierContext ctx) {
+    // should never be called, since this is handled by the parent expression
+    throw new IllegalStateException();
+  }
+
+  protected abstract R handleVarref(@NonNull VarrefContext ctx);
+
+  @Override
+  public R visitVarref(VarrefContext ctx) {
+    return handleVarref(ctx);
+  }
+
+  @Override
+  public R visitVarname(VarnameContext ctx) {
+    return passThrough(ctx);
+  }
+
 }

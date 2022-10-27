@@ -35,7 +35,6 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
-import org.apache.logging.log4j.LogManager;
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
@@ -142,9 +141,6 @@ public abstract class AbstractFieldProperty
   @Override
   public Object readItem(Object parentInstance, StartElement start,
       IXmlParsingContext context) throws XMLStreamException, IOException {
-    // figure out how to parse the item
-    IXmlBindingSupplier supplier = getDataTypeHandler();
-
     // figure out if we need to parse the wrapper or not
     IDataTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();
     boolean parseWrapper = true;
@@ -154,9 +150,7 @@ public abstract class AbstractFieldProperty
 
     XMLEventReader2 eventReader = context.getReader();
 
-    Object retval = null;
     StartElement currentStart = start;
-    boolean parse = true; // determines if parsing happened
     if (parseWrapper) {
       // TODO: not sure this is needed, since there is a peek just before this
       // parse any whitespace before the element
@@ -174,8 +168,11 @@ public abstract class AbstractFieldProperty
       }
     }
 
+    // figure out how to parse the item
+    IXmlBindingSupplier supplier = getDataTypeHandler();
+
     // consume the value
-    retval = supplier.get(parentInstance, currentStart, context);
+    Object retval = supplier.get(parentInstance, currentStart, context);
 
     if (parseWrapper) {
       // consume the end element

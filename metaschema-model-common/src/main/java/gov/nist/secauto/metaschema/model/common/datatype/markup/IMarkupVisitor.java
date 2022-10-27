@@ -23,46 +23,14 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
-package gov.nist.secauto.metaschema.model.common.metapath.item;
-
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.HostnameAdapter;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
+import com.vladsch.flexmark.util.ast.Document;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-class HostnameItemImpl
-    extends AbstractStringItem
-    implements IHostnameItem {
-
-  public HostnameItemImpl(@NonNull String value) {
-    super(value);
-  }
-
-  @Override
-  public HostnameAdapter getJavaTypeAdapter() {
-    return MetaschemaDataTypeProvider.HOSTNAME;
-  }
-
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + getValue().hashCode();
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true; // NOPMD readability
-    } else if (obj == null) {
-      return false; // NOPMD readability
-    } else if (getClass() != obj.getClass()) {
-      return false; // NOPMD readability
-    }
-    HostnameItemImpl other = (HostnameItemImpl) obj;
-    return getValue().equals(other.getValue());
-  }
-
+@SuppressFBWarnings("THROWS_METHOD_THROWS_CLAUSE_THROWABLE")
+public interface IMarkupVisitor<T, E extends Throwable> {
+  void visitDocument(@NonNull Document document, T state) throws E;
 }

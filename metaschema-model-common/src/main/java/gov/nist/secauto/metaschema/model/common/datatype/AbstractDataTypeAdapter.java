@@ -188,7 +188,7 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
   public abstract ITEM_TYPE newItem(Object value);
 
   @Override
-  public ITEM_TYPE cast(IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  public ITEM_TYPE cast(IAnyAtomicItem item) {
     ITEM_TYPE retval;
     if (item == null) {
       throw new InvalidValueForCastFunctionException("item is null");
@@ -217,7 +217,7 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
    *           for this adapter's item type
    */
   @NonNull
-  protected ITEM_TYPE castInternal(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  protected ITEM_TYPE castInternal(@NonNull IAnyAtomicItem item) {
     // try string based casting as a fallback
     String itemString = item.asString();
     try {

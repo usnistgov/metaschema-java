@@ -45,7 +45,7 @@ public class InsertAnchorNodeRenderer implements NodeRenderer {
 
   @Override
   public Set<NodeRenderingHandler<?>> getNodeRenderingHandlers() {
-    return Collections.singleton(new NodeRenderingHandler<InsertAnchorNode>(InsertAnchorNode.class, this::render));
+    return Collections.singleton(new NodeRenderingHandler<>(InsertAnchorNode.class, this::render));
   }
 
   @SuppressWarnings("unused")

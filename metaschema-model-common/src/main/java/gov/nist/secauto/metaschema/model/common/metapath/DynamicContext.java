@@ -46,6 +46,7 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -63,6 +64,8 @@ public class DynamicContext { // NOPMD - intentional data class
   private CachingLoader documentLoader;
   @NonNull
   private final IMutableConfiguration<MetapathEvaluationFeature> configuration;
+  @NonNull
+  private final Map<String, ISequence<?>> letVariableMap;
 
   @SuppressWarnings("null")
   public DynamicContext(@NonNull StaticContext staticContext) {
@@ -76,6 +79,7 @@ public class DynamicContext { // NOPMD - intentional data class
     this.functionResultCache = new HashMap<>();
     this.configuration = new DefaultConfiguration<>(MetapathEvaluationFeature.class);
     this.configuration.enableFeature(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES);
+    this.letVariableMap = new ConcurrentHashMap<>();
   }
 
   @NonNull
@@ -204,5 +208,18 @@ public class DynamicContext { // NOPMD - intentional data class
       }
 
     }
+  }
+
+  @NonNull
+  public ISequence<?> getVariableValue(String name) {
+    return ObjectUtils.requireNonNull(letVariableMap.get(name));
+  }
+
+  public ISequence<?> setVariableValue(String name, ISequence<?> boundValue) {
+    return letVariableMap.put(name, boundValue);
+  }
+
+  public void clearVariableValue(String name) {
+    letVariableMap.remove(name);
   }
 }

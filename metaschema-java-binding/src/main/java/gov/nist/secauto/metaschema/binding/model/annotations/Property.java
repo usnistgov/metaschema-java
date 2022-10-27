@@ -23,46 +23,37 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.binding.model.annotations;
 
-package gov.nist.secauto.metaschema.model.common.metapath.item;
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.HostnameAdapter;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class HostnameItemImpl
-    extends AbstractStringItem
-    implements IHostnameItem {
+@Retention(RUNTIME)
+@Target(ANNOTATION_TYPE)
+public @interface Property {
+  /**
+   * The name of the property.
+   * @return the name
+   */
+  @NonNull
+  String name();
 
-  public HostnameItemImpl(@NonNull String value) {
-    super(value);
-  }
+  /**
+   * The namespace of the property's name.
+   * @return the namespace
+   */
+  @NonNull
+  String namespace();
 
-  @Override
-  public HostnameAdapter getJavaTypeAdapter() {
-    return MetaschemaDataTypeProvider.HOSTNAME;
-  }
-
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + getValue().hashCode();
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true; // NOPMD readability
-    } else if (obj == null) {
-      return false; // NOPMD readability
-    } else if (getClass() != obj.getClass()) {
-      return false; // NOPMD readability
-    }
-    HostnameItemImpl other = (HostnameItemImpl) obj;
-    return getValue().equals(other.getValue());
-  }
-
+  /**
+   * The values for the property's name and namespace.
+   * @return the namespace
+   */
+  @NonNull
+  String[] values();
 }

@@ -218,6 +218,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
     return handled;
   }
 
+  @SuppressWarnings("resource")
   @Override
   protected Object readInternal(Object parentInstance, IJsonParsingContext context)
       throws IOException {
@@ -320,6 +321,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
   // return info.writeValue(parentInstance, context);
   // }
 
+  @SuppressWarnings("resource")
   @Override
   public void write(Object parentInstance, IJsonWritingContext context) throws IOException {
     if (getPropertyInfo().isValueSet(parentInstance)) {
