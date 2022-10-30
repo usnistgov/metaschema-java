@@ -143,7 +143,7 @@
 		<dependency.xmlresolver.version>4.5.1</dependency.xmlresolver.version>
 
 		<plugin.license.version>4.2.rc3</plugin.license.version>
-		<plugin.antlr4test.version>1.21</plugin.antlr4test.version>
+		<plugin.antlr4test.version>1.22</plugin.antlr4test.version>
 		<plugin.maven-changes.version>2.12.1</plugin.maven-changes.version>
 		<maven-checkstyle-plugin.version>3.2.0</maven-checkstyle-plugin.version>
 		<maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
