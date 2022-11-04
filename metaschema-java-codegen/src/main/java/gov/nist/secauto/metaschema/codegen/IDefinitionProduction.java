@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.codegen;
 
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -41,7 +41,7 @@ public interface IDefinitionProduction {
    * @return the definition
    */
   @NonNull
-  IModelDefinition getDefinition();
+  IFlagContainer getDefinition();
 
   /**
    * Get information about the Java class generated from the definition.

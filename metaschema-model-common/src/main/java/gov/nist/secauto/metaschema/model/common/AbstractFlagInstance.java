@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model.common;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractFlagInstance implements IFlagInstance {
-  @NonNull
-  private final IModelDefinition parent;
+public abstract class AbstractFlagInstance
+    extends AbstractInstance<IFlagContainer>
+    implements IFlagInstance {
 
   /**
    * Create a new flag instance.
@@ -38,13 +38,13 @@ public abstract class AbstractFlagInstance implements IFlagInstance {
    * @param parent
    *          the parent definition, which must be a definition type that can contain flags.
    */
-  public AbstractFlagInstance(@NonNull IModelDefinition parent) {
-    this.parent = parent;
+  public AbstractFlagInstance(@NonNull IFlagContainer parent) {
+    super(parent);
   }
 
   @Override
-  public IModelDefinition getContainingDefinition() {
-    return parent;
+  public IFlagContainer getContainingDefinition() {
+    return getParentContainer();
   }
 
   // @Override

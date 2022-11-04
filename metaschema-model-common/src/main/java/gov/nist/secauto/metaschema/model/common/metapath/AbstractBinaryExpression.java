@@ -54,7 +54,6 @@ abstract class AbstractBinaryExpression<L extends IExpression, R extends IExpres
    * @param right
    *          the second sub-expression to evaluate
    */
-  @SuppressWarnings("null")
   public AbstractBinaryExpression(@NonNull L left, @NonNull R right) {
     this.left = Objects.requireNonNull(left);
     this.right = Objects.requireNonNull(right);

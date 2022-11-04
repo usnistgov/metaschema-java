@@ -32,6 +32,12 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IFlagInstance extends INamedInstance, IFlag {
   @Override
+  IFlagContainer getContainingDefinition();
+
+  @Override
+  IFlagContainer getParentContainer();
+
+  @Override
   default String getXmlNamespace() {
     return INamedInstance.super.getXmlNamespace();
   }
@@ -42,9 +48,6 @@ public interface IFlagInstance extends INamedInstance, IFlag {
   default QName getXmlQName() {
     return INamedInstance.super.getXmlQName();
   }
-
-  @Override
-  IModelDefinition getContainingDefinition();
 
   @Override
   IFlagDefinition getDefinition();

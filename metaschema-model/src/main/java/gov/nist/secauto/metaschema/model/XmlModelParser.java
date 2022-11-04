@@ -26,21 +26,27 @@
 
 package gov.nist.secauto.metaschema.model;
 
-import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IModelContainer;
 import gov.nist.secauto.metaschema.model.common.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.AssemblyReferenceType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ChoiceType;
 import gov.nist.secauto.metaschema.model.xmlbeans.FieldReferenceType;
+import gov.nist.secauto.metaschema.model.xmlbeans.GroupAsType;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,6 +56,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class XmlModelParser {
   private Map<String, INamedModelInstance> namedModelInstances;
@@ -58,24 +65,24 @@ class XmlModelParser {
   private List<? extends IModelInstance> modelInstances;
 
   // TODO: move back to calling location
-  void parseChoice(XmlObject xmlObject, @NonNull IAssemblyDefinition parent) {
+  void parseChoice(XmlObject xmlObject, @NonNull IModelContainer container) {
     try (XmlCursor cursor = xmlObject.newCursor()) {
       cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
           + "$this/m:assembly|$this/m:define-assembly|$this/m:field"
           + "|$this/m:define-field");
-      parseInternal(cursor, parent);
+      parseInternal(cursor, container);
     }
   }
 
   // TODO: move back to calling location
-  void parseModel(XmlObject xmlObject, @NonNull IAssemblyDefinition parent) {
+  void parseModel(XmlObject xmlObject, @NonNull IModelContainer container) {
     // handle the model
     try (XmlCursor cursor = xmlObject.newCursor()) {
       cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
           + "$this/m:model/m:assembly|$this/m:model/m:define-assembly|$this/m:model/m:field"
           + "|$this/m:model/m:define-field|$this/m:model/m:choice");
 
-      parseInternal(cursor, parent);
+      parseInternal(cursor, container);
     }
   }
 
@@ -87,7 +94,7 @@ class XmlModelParser {
   }
 
   @SuppressWarnings("null")
-  private void parseInternal(XmlCursor cursor, @NonNull IAssemblyDefinition parent) {
+  private void parseInternal(XmlCursor cursor, @NonNull IModelContainer container) {
 
     // ensure the streams are treated as sequential, since concatenated streams will only be sequential
     // if both streams are sequential
@@ -104,31 +111,31 @@ class XmlModelParser {
       XmlObject obj = cursor.getObject();
       if (obj instanceof FieldReferenceType) {
         XmlFieldInstance field
-            = new XmlFieldInstance((FieldReferenceType) obj, parent); // NOPMD - intentional
+            = new XmlFieldInstance((FieldReferenceType) obj, container); // NOPMD - intentional
         fieldInstances = append(fieldInstances, field);
         namedModelInstances = append(namedModelInstances, field);
         modelInstances = append(modelInstances, field);
       } else if (obj instanceof InlineFieldDefinitionType) {
         XmlInlineFieldDefinition field
-            = new XmlInlineFieldDefinition((InlineFieldDefinitionType) obj, parent); // NOPMD - intentional
+            = new XmlInlineFieldDefinition((InlineFieldDefinitionType) obj, container); // NOPMD - intentional
         fieldInstances = append(fieldInstances, field);
         namedModelInstances = append(namedModelInstances, field);
         modelInstances = append(modelInstances, field);
       } else if (obj instanceof AssemblyReferenceType) {
         XmlAssemblyInstance assembly
-            = new XmlAssemblyInstance((AssemblyReferenceType) obj, parent); // NOPMD - intentional
+            = new XmlAssemblyInstance((AssemblyReferenceType) obj, container); // NOPMD - intentional
         assemblyInstances = append(assemblyInstances, assembly);
         namedModelInstances = append(namedModelInstances, assembly);
         modelInstances = append(modelInstances, assembly);
       } else if (obj instanceof InlineAssemblyDefinitionType) {
         XmlInlineAssemblyDefinition assembly
-            = new XmlInlineAssemblyDefinition((InlineAssemblyDefinitionType) obj, parent); // NOPMD - intentional
+            = new XmlInlineAssemblyDefinition((InlineAssemblyDefinitionType) obj, container); // NOPMD - intentional
         assemblyInstances = append(assemblyInstances, assembly);
         namedModelInstances = append(namedModelInstances, assembly);
         modelInstances = append(modelInstances, assembly);
       } else if (obj instanceof ChoiceType) {
         XmlChoiceInstance choice
-            = new XmlChoiceInstance((ChoiceType) obj, parent); // NOPMD - intentional
+            = new XmlChoiceInstance((ChoiceType) obj, container); // NOPMD - intentional
         // assemblyInstances.putAll(choice.getAssemblyInstanceMap());
         // fieldInstances..putAll(choice.getFieldInstanceMap());
         modelInstances = append(modelInstances, choice);
@@ -170,5 +177,46 @@ class XmlModelParser {
   @NonNull
   protected List<? extends IModelInstance> getModelInstances() {
     return modelInstances == null ? Collections.emptyList() : modelInstances;
+  }
+
+  @NonNull
+  public static JsonGroupAsBehavior getJsonGroupAsBehavior(@Nullable GroupAsType groupAs) {
+    JsonGroupAsBehavior retval = MetaschemaModelConstants.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
+    if (groupAs != null && groupAs.isSetInJson()) {
+      retval = ObjectUtils.notNull(groupAs.getInJson());
+    }
+    return retval;
+  }
+
+  @NonNull
+  public static XmlGroupAsBehavior getXmlGroupAsBehavior(@Nullable GroupAsType groupAs) {
+    XmlGroupAsBehavior retval = MetaschemaModelConstants.DEFAULT_XML_GROUP_AS_BEHAVIOR;
+    if (groupAs != null && groupAs.isSetInXml()) {
+      retval = ObjectUtils.notNull(groupAs.getInXml());
+    }
+    return retval;
+  }
+
+  public static int getMinOccurs(@Nullable BigInteger value) {
+    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
+    if (value != null) {
+      retval = value.intValueExact();
+    }
+    return retval;
+  }
+
+  public static int getMaxOccurs(@Nullable Object value) {
+    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
+    if (value != null) {
+      if (value instanceof String) {
+        // unbounded
+        retval = -1;
+      } else if (value instanceof BigInteger) {
+        retval = ((BigInteger) value).intValueExact();
+      } else {
+        throw new IllegalStateException("Invalid type: " + value.getClass().getName());
+      }
+    }
+    return retval;
   }
 }

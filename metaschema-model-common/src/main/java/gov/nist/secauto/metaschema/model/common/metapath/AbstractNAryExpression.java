@@ -45,7 +45,6 @@ abstract class AbstractNAryExpression
    * @param children
    *          the sub-expression children
    */
-  @SuppressWarnings("null")
   public AbstractNAryExpression(@NonNull List<IExpression> children) {
     this.children = Objects.requireNonNull(children);
   }

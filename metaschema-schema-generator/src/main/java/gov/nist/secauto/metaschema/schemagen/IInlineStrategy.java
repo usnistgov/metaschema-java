@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.IDefinition;
+import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -34,7 +35,9 @@ public interface IInlineStrategy {
   @NonNull
   IInlineStrategy NONE_INLINE = new IInlineStrategy() {
     @Override
-    public boolean isInline(@NonNull IDefinition definition) {
+    public boolean isInline(
+        @NonNull IDefinition definition,
+        @NonNull MetaschemaIndex metaschemaIndex) {
       return false;
     }
   };
@@ -42,10 +45,32 @@ public interface IInlineStrategy {
   @NonNull
   IInlineStrategy DEFINED_AS_INLINE = new IInlineStrategy() {
     @Override
-    public boolean isInline(@NonNull IDefinition definition) {
+    public boolean isInline(
+        @NonNull IDefinition definition,
+        @NonNull MetaschemaIndex metaschemaIndex) {
       return definition.isInline();
     }
   };
 
-  boolean isInline(@NonNull IDefinition definition);
+  @NonNull
+  IInlineStrategy CHOICE_NOT_INLINE = new ChoiceNotInlineStrategy();
+
+  @NonNull
+  static IInlineStrategy newInlineStrategy(@NonNull IConfiguration<SchemaGenerationFeature> configuration) {
+    IInlineStrategy retval;
+    if (configuration.isFeatureEnabled(SchemaGenerationFeature.INLINE_DEFINITIONS)) {
+      if (configuration.isFeatureEnabled(SchemaGenerationFeature.INLINE_CHOICE_DEFINITIONS)) {
+        retval = DEFINED_AS_INLINE;
+      } else {
+        retval = CHOICE_NOT_INLINE;
+      }
+    } else {
+      retval = NONE_INLINE;
+    }
+    return retval;
+  }
+  
+  boolean isInline(
+      @NonNull IDefinition definition,
+      @NonNull MetaschemaIndex metaschemaIndex);
 }

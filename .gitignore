@@ -17,11 +17,16 @@ pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
 
+# oXygen files
 /metaschema.xpr
-/metaschema-schema-generator/schema.out.xsd
 
 # NodeJS
 node_modules/
 package.json
 package-lock.json
+
+# testing artifacts
+/metaschema-schema-generator/schema.out.xsd
 /metaschema-schema-generator/test-schemagen
+/metaschema-schema-generator/oscal-complete_schema.xsd
+/metaschema-schema-generator/oscal-complete_schema.json

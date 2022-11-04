@@ -27,8 +27,24 @@
 package gov.nist.secauto.metaschema.model.common;
 
 /**
- * This marker interface represents a choice of allowed instances in a Metachema.
+ * A marker interface for a choice of allowed instances in a Metachema.
  */
-public interface IChoiceInstance extends IModelInstance, IModelContainer, IChoice {
-  // this marker does not have any additional methods
+public interface IChoiceInstance extends IModelInstance, IModelContainer {
+  /**
+   * Provides the Metaschema model type of "CHOICE".
+   * 
+   * @return the model type
+   */
+  @Override
+  default ModelType getModelType() {
+    return ModelType.CHOICE;
+  }
+
+  @Override
+  IModelContainer getParentContainer();
+  
+  @Override
+  default IAssemblyDefinition getContainingDefinition() {
+    return getParentContainer().getContainingDefinition();
+  }
 }

@@ -27,15 +27,19 @@
 package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.IDefinition;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IGenerationState<WRITER, DATATYPE_MANAGER extends IDatatypeManager> {
+public interface IGenerationState<WRITER> {
+  @NonNull
+  IMetaschema getMetaschema();
+
   @NonNull
   WRITER getWriter();
 
   boolean isInline(@NonNull IDefinition definition);
-
-  @NonNull
-  DATATYPE_MANAGER getDatatypeManager();
+  //
+  // @NonNull
+  // String getTypeNameForDefinition(@NonNull IDefinition definition);
 }

@@ -32,7 +32,7 @@ import com.squareup.javapoet.TypeSpec;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -44,7 +44,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
 
   @NonNull
-  static IModelDefinitionTypeInfo newTypeInfo(@NonNull IModelDefinition definition,
+  static IModelDefinitionTypeInfo newTypeInfo(@NonNull IFlagContainer definition,
       @NonNull ITypeResolver typeResolver) {
     IModelDefinitionTypeInfo retval;
     switch (definition.getModelType()) {
@@ -63,7 +63,7 @@ public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
   }
 
   @Override
-  IModelDefinition getDefinition();
+  IFlagContainer getDefinition();
 
   /**
    * Get the class type information for the base class of the generated class, .

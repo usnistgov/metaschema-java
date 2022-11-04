@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
+
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractCustomJavaDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.object.Date;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
@@ -68,6 +70,11 @@ public class DateAdapter
   @Override
   public List<String> getNames() {
     return NAMES;
+  }
+
+  @Override
+  public JsonFormatTypes getJsonRawType() {
+    return JsonFormatTypes.STRING;
   }
 
   @Override

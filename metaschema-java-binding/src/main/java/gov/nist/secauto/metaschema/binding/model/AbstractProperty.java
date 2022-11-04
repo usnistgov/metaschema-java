@@ -43,6 +43,11 @@ abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> implements 
   }
 
   @Override
+  public CLASS_BINDING getParentContainer() {
+    return getParentClassBinding();
+  }
+
+  @Override
   public CLASS_BINDING getContainingDefinition() {
     return getParentClassBinding();
   }

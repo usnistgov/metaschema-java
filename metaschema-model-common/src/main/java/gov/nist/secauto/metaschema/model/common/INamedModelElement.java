@@ -63,6 +63,7 @@ public interface INamedModelElement extends IModelElement {
    * 
    * @return a line of markup text or {@code null} if not defined
    */
+  @Nullable
   MarkupLine getDescription();
 
   /**
@@ -71,6 +72,7 @@ public interface INamedModelElement extends IModelElement {
    * 
    * @return a line of markup text or {@code null} if not defined
    */
+  @Nullable
   MarkupLine getEffectiveDescription();
 
   /**

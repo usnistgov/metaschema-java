@@ -94,24 +94,13 @@ public interface INamedInstance extends IInstance, INamedModelElement {
   default String toCoordinates() {
     IDefinition definition = getDefinition();
 
-    IModelDefinition containingDefinition = getContainingDefinition();
-    String retval;
-    if (containingDefinition == null) {
-      retval = String.format("%s:%s@%d(%d)",
-          getModelType(),
-          definition.getName(),
-          hashCode(),
-          definition.isInline() ? 0 : definition.hashCode());
-    } else {
-      retval = String.format("%s:%s:%s@%d(%d)",
+    IDefinition containingDefinition = getContainingDefinition();
+    return String.format("%s:%s:%s@%d(%d)",
           containingDefinition.getContainingMetaschema().getShortName(),
           getModelType(),
           definition.getName(),
           hashCode(),
           definition.isInline() ? 0 : definition.hashCode());
-    }
-
-    return retval;
   }
 
   @Override

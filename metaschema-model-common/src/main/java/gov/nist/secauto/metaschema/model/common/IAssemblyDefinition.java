@@ -31,7 +31,12 @@ import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSu
 import javax.xml.namespace.QName;
 
 public interface IAssemblyDefinition
-    extends IModelDefinition, IModelContainer, IAssembly, IAssemblyConstraintSupport {
+    extends IFlagContainer, IModelContainer, IAssembly, IAssemblyConstraintSupport {
+
+  @Override
+  default IAssemblyDefinition getContainingDefinition() {
+    return this;
+  }
 
   /**
    * Check if the assembly is a top-level root assembly.

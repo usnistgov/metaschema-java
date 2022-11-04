@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model.common;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractFieldInstance implements IFieldInstance {
-  @NonNull
-  private final IAssemblyDefinition parent;
+public abstract class AbstractFieldInstance
+    extends AbstractModelInstance
+    implements IFieldInstance {
 
   /**
    * Create a new field instance.
@@ -38,13 +38,7 @@ public abstract class AbstractFieldInstance implements IFieldInstance {
    * @param parent
    *          the parent assembly definition
    */
-  public AbstractFieldInstance(@NonNull IAssemblyDefinition parent) {
-    this.parent = parent;
-  }
-
-  @Override
-  @NonNull
-  public IAssemblyDefinition getContainingDefinition() {
-    return parent;
+  public AbstractFieldInstance(@NonNull IModelContainer parent) {
+    super(parent);
   }
 }

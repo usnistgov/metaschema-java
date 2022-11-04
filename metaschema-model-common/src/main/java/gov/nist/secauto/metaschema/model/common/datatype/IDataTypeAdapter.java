@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.model.common.datatype;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
@@ -62,6 +63,11 @@ public interface IDataTypeAdapter<TYPE> {
    */
   @NonNull
   List<String> getNames();
+
+  /**
+   * The JSON primative type of the data type.
+   */
+  JsonFormatTypes getJsonRawType();
 
   /**
    * Get the most preferred name for this data type.
@@ -155,7 +161,7 @@ public interface IDataTypeAdapter<TYPE> {
    *           if the provided item type cannot be cast to this item type
    */
   @NonNull
-  IAnyAtomicItem cast(IAnyAtomicItem item) throws InvalidValueForCastFunctionException;
+  IAnyAtomicItem cast(IAnyAtomicItem item);
 
   /**
    * Indicates if the adapter will parse the {@link XMLEvent#START_ELEMENT} before parsing the value

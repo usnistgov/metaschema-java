@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -85,21 +86,26 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
       this.indexHasKeyConstraints = new LinkedList<>();
       this.expectConstraints = new LinkedList<>();
     } else {
-      allowedValuesConstraints = Arrays.stream(valueAnnotation.allowedValues())
-          .map(annotation -> ConstraintFactory.newAllowedValuesConstraint(annotation, source))
-          .collect(Collectors.toCollection(LinkedList::new));
+      try {
+        allowedValuesConstraints = Arrays.stream(valueAnnotation.allowedValues())
+            .map(annotation -> ConstraintFactory.newAllowedValuesConstraint(annotation, source))
+            .collect(Collectors.toCollection(LinkedList::new));
 
-      matchesConstraints = Arrays.stream(valueAnnotation.matches())
-          .map(annotation -> ConstraintFactory.newMatchesConstraint(annotation, source))
-          .collect(Collectors.toCollection(LinkedList::new));
+        matchesConstraints = Arrays.stream(valueAnnotation.matches())
+            .map(annotation -> ConstraintFactory.newMatchesConstraint(annotation, source))
+            .collect(Collectors.toCollection(LinkedList::new));
 
-      indexHasKeyConstraints = Arrays.stream(valueAnnotation.indexHasKey())
-          .map(annotation -> ConstraintFactory.newIndexHasKeyConstraint(annotation, source))
-          .collect(Collectors.toCollection(LinkedList::new));
+        indexHasKeyConstraints = Arrays.stream(valueAnnotation.indexHasKey())
+            .map(annotation -> ConstraintFactory.newIndexHasKeyConstraint(annotation, source))
+            .collect(Collectors.toCollection(LinkedList::new));
 
-      expectConstraints = Arrays.stream(valueAnnotation.expect())
-          .map(annotation -> ConstraintFactory.newExpectConstraint(annotation, source))
-          .collect(Collectors.toCollection(LinkedList::new));
+        expectConstraints = Arrays.stream(valueAnnotation.expect())
+            .map(annotation -> ConstraintFactory.newExpectConstraint(annotation, source))
+            .collect(Collectors.toCollection(LinkedList::new));
+      } catch (MetapathException ex) {
+        throw new MetapathException(
+            String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()), ex);
+      }
     }
 
     constraints = new LinkedList<>();

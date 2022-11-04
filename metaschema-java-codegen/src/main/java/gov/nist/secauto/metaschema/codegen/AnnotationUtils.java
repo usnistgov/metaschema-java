@@ -43,7 +43,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.KeyField;
 import gov.nist.secauto.metaschema.binding.model.annotations.Matches;
 import gov.nist.secauto.metaschema.binding.model.annotations.ValueConstraints;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.IValuedDefinition;
@@ -96,7 +96,7 @@ final class AnnotationUtils {
     try {
       retval = method.getDefaultValue();
     } catch (TypeNotPresentException ex) {
-      retval = null;
+      retval = null; // NOPMD readability
     }
     return retval;
   }
@@ -144,7 +144,7 @@ final class AnnotationUtils {
 
   public static void buildValueConstraints(
       @NonNull TypeSpec.Builder builder,
-      @NonNull IModelDefinition definition) {
+      @NonNull IFlagContainer definition) {
 
     List<? extends IAllowedValuesConstraint> allowedValues = definition.getAllowedValuesConstraints();
     List<? extends IIndexHasKeyConstraint> indexHasKey = definition.getIndexHasKeyConstraints();

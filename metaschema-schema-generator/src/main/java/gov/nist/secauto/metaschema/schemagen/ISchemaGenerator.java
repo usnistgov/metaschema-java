@@ -29,12 +29,26 @@ package gov.nist.secauto.metaschema.schemagen;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 
-import java.io.IOException;
 import java.io.Writer;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface ISchemaGenerator {
-  void generateFromMetaschema(@NonNull IMetaschema metaschema, @NonNull Writer outconfiguration,
-      @NonNull IConfiguration<SchemaGenerationFeature> configuration) throws IOException;
+  /**
+   * Generate and write a schema for the provided {@code metaschema} to the {@link Writer} provided by
+   * {@code writer} using the provided {@code configuration}.
+   * 
+   * @param metaschema
+   *          the Metaschema to generate the schema for
+   * @param writer
+   *          the writer to use to write the schema
+   * @param configuration
+   *          the schema generation configuration
+   * @throws SchemaGenerationException
+   *           if an error occurred while writing the schema
+   */
+  void generateFromMetaschema(
+      @NonNull IMetaschema metaschema,
+      @NonNull Writer writer,
+      @NonNull IConfiguration<SchemaGenerationFeature> configuration);
 }

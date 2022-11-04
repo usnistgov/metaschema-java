@@ -38,7 +38,7 @@ public interface IDurationItem extends IAnyAtomicItem {
   TemporalAmount getValue();
 
   @NonNull
-  static IDurationItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  static IDurationItem cast(@NonNull IAnyAtomicItem item) {
     IDurationItem retval;
     if (item instanceof IDurationItem) {
       retval = (IDurationItem) item;
@@ -51,7 +51,7 @@ public interface IDurationItem extends IAnyAtomicItem {
         } catch (IllegalArgumentException ex2) {
           InvalidValueForCastFunctionException newEx = new InvalidValueForCastFunctionException(ex2);
           newEx.addSuppressed(ex);
-          throw newEx;
+          throw newEx; // NOPMD context as suppressed
         }
       }
     }

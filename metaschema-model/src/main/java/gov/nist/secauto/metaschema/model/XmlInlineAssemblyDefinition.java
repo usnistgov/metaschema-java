@@ -34,10 +34,10 @@ import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IInlineDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.IModelContainer;
 import gov.nist.secauto.metaschema.model.common.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
@@ -56,7 +56,6 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType;
 
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -84,11 +83,11 @@ class XmlInlineAssemblyDefinition
    * @param xmlAssembly
    *          the XML representation bound to Java objects
    * @param parent
-   *          the parent assembly definition
+   *          the parent container, either a choice or assembly
    */
   public XmlInlineAssemblyDefinition(
       @NonNull InlineAssemblyDefinitionType xmlAssembly,
-      @NonNull IAssemblyDefinition parent) {
+      @NonNull IModelContainer parent) {
     super(parent);
     this.xmlAssembly = xmlAssembly;
     this.assemblyDefinition = new InternalAssemblyDefinition();
@@ -144,44 +143,22 @@ class XmlInlineAssemblyDefinition
 
   @Override
   public int getMinOccurs() {
-    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
-    if (getXmlAssembly().isSetMinOccurs()) {
-      retval = getXmlAssembly().getMinOccurs().intValueExact();
-    }
-    return retval;
+    return XmlModelParser.getMinOccurs(getXmlAssembly().getMinOccurs());
   }
 
   @Override
   public int getMaxOccurs() {
-    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
-    if (getXmlAssembly().isSetMaxOccurs()) {
-      Object value = getXmlAssembly().getMaxOccurs();
-      if (value instanceof String) {
-        // unbounded
-        retval = -1;
-      } else if (value instanceof BigInteger) {
-        retval = ((BigInteger) value).intValueExact();
-      }
-    }
-    return retval;
+    return XmlModelParser.getMaxOccurs(getXmlAssembly().getMaxOccurs());
   }
 
   @Override
   public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-    JsonGroupAsBehavior retval = JsonGroupAsBehavior.SINGLETON_OR_LIST;
-    if (getXmlAssembly().isSetGroupAs() && getXmlAssembly().getGroupAs().isSetInJson()) {
-      retval = getXmlAssembly().getGroupAs().getInJson();
-    }
-    return retval;
+    return XmlModelParser.getJsonGroupAsBehavior(getXmlAssembly().getGroupAs());
   }
 
   @Override
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    XmlGroupAsBehavior retval = XmlGroupAsBehavior.UNGROUPED;
-    if (getXmlAssembly().isSetGroupAs() && getXmlAssembly().getGroupAs().isSetInXml()) {
-      retval = getXmlAssembly().getGroupAs().getInXml();
-    }
-    return retval;
+    return XmlModelParser.getXmlGroupAsBehavior(getXmlAssembly().getGroupAs());
   }
 
   @SuppressWarnings("null")

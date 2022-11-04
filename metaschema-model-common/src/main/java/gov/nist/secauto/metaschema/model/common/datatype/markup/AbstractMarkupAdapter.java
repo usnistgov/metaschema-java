@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
+
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractCustomJavaDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IMarkupItem;
 
@@ -53,6 +55,11 @@ public abstract class AbstractMarkupAdapter<TYPE extends AbstractMarkupString<TY
    */
   protected AbstractMarkupAdapter(@NonNull Class<TYPE> clazz) {
     super(clazz);
+  }
+
+  @Override
+  public JsonFormatTypes getJsonRawType() {
+    return JsonFormatTypes.STRING;
   }
 
   @Override

@@ -27,10 +27,14 @@
 package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.binding.io.Format;
+import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+import gov.nist.secauto.metaschema.model.common.configuration.DefaultConfiguration;
+import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator;
+import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -42,6 +46,9 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -98,6 +105,7 @@ class JsonSuiteTest
         contentCase(Format.JSON, "choice-multiple_test_multiple_PASS.json", true));
   }
 
+  @Disabled
   @Test
   void testDatatypeCharStrings() throws IOException, MetaschemaException { // NOPMD - testing delegated to doTest
     doTest(
@@ -107,4 +115,33 @@ class JsonSuiteTest
         contentCase(Format.JSON, "charstrings_test_okay_PASS.json", true),
         contentCase(Format.XML, "charstrings_test_okay_PASS.xml", true));
   }
+
+  @Test
+  void testFlagBasic() throws IOException, MetaschemaException { // NOPMD - testing delegated to doTest
+    doTest(
+        "flag/",
+        "flag-basic_metaschema.xml",
+        "flag-basic-schema",
+        contentCase(Format.JSON, "flag-basic_test_datatype_FAIL.json", false),
+        contentCase(Format.JSON, "flag-basic_test_simple_PASS.json", true));
+  }
+
+  @Test
+  void testOSCALComplete() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
+    MetaschemaLoader loader = new MetaschemaLoader();
+    IMetaschema metaschema = loader.load(new URL(
+        // "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
+        "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
+    ISchemaGenerator schemaGenerator = new JsonSchemaGenerator();
+    IMutableConfiguration<SchemaGenerationFeature> features = new DefaultConfiguration<>(SchemaGenerationFeature.class)
+        .disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+    try (Writer writer = Files.newBufferedWriter(
+        Path.of("oscal-complete_schema.json"),
+        StandardCharsets.UTF_8,
+        getWriteOpenOptions())) {
+      assert writer != null;
+      schemaGenerator.generateFromMetaschema(metaschema, writer, features);
+    }
+  }
+
 }

@@ -132,7 +132,8 @@ public final class FnPath {
             item,
             String.format("Expected a '%s', but received a '%s'",
                 INodeItem.class.getName(),
-                item.getClass().getName()));
+                item.getClass().getName()),
+            ex);
       }
     }
     return retval;

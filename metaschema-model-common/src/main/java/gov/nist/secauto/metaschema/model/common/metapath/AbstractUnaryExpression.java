@@ -45,7 +45,6 @@ abstract class AbstractUnaryExpression
    * @param expr
    *          the single sub-expression
    */
-  @SuppressWarnings("null")
   public AbstractUnaryExpression(@NonNull IExpression expr) {
     this.expr = Objects.requireNonNull(expr, "expr");
   }

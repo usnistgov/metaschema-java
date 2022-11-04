@@ -199,7 +199,7 @@ public abstract class AbstractMetaschema
 
   private static <DEF extends IDefinition> DEF handleShadowedDefinitions(
       @SuppressWarnings("unused") @NonNull String key, @NonNull DEF oldDef, @NonNull DEF newDef) {
-    if (oldDef != newDef && LOGGER.isWarnEnabled()) {
+    if (!oldDef.equals(newDef) && LOGGER.isWarnEnabled()) {
       LOGGER.warn("The {} '{}' from metaschema '{}' is shadowing '{}' from metaschema '{}'",
           newDef.getModelType().name().toLowerCase(Locale.ROOT),
           newDef.getName(),

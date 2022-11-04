@@ -27,166 +27,125 @@
 package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
-import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.IDefinition;
-import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.IFieldInstance;
-import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
-import gov.nist.secauto.metaschema.model.common.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.RootAssemblyDefinitionWrapper;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-import gov.nist.secauto.metaschema.model.common.util.ModelWalker;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.schemagen.datatype.IDatatypeManager;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.io.Writer;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.BiConsumer;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
+/**
+ * 
+ * @param <T>
+ *          the writer type
+ * @param <D>
+ *          the {@link IDatatypeManager} type
+ * @param <S>
+ *          the {@link IGenerationState} type
+ */
+public abstract class AbstractSchemaGenerator<T extends AutoCloseable, D extends IDatatypeManager, S extends AbstractGenerationState<
+    T, D>>
+    implements ISchemaGenerator {
 
+  /**
+   * Create a new writer to use to write the schema.
+   * 
+   * @param out
+   *          the {@link Writer} to write the schema content to
+   * @return the schema writer
+   * @throws SchemaGenerationException
+   *           if an error occurred while creating the writer
+   */
   @NonNull
-  protected IInlineStrategy newInlineStrategy(@NonNull IConfiguration<SchemaGenerationFeature> configuration,
-      @NonNull Collection<? extends IDefinition> definitions) {
-    IInlineStrategy retval;
-    if (configuration.isFeatureEnabled(SchemaGenerationFeature.INLINE_DEFINITIONS)) {
-      if (configuration.isFeatureEnabled(SchemaGenerationFeature.INLINE_CHOICE_DEFINITIONS)) {
-        retval = IInlineStrategy.DEFINED_AS_INLINE;
-      } else {
-        retval = new ChoiceInlineStrategy(definitions);
-      }
-    } else {
-      retval = IInlineStrategy.NONE_INLINE;
-    }
-    return retval;
-  }
+  protected abstract T newWriter(@NonNull Writer out);
 
-  private static class ChoiceInlineStrategy implements IInlineStrategy {
-    @NonNull
-    private final Map<IDefinition, Boolean> definitionInlinedMap;
+  /**
+   * Create a new schema generation state object.
+   * 
+   * @param metaschema
+   *          the Metaschema to generate the schema for
+   * @param schemaWriter
+   *          the writer to use to write the schema
+   * @param configuration
+   *          the generation configuration
+   * @return the generation state object
+   * @throws SchemaGenerationException
+   *           if an error occurred while creating the generation state object
+   */
+  @NonNull
+  protected abstract S newGenerationState(
+      @NonNull IMetaschema metaschema,
+      @NonNull T schemaWriter,
+      @NonNull IConfiguration<SchemaGenerationFeature> configuration);
 
-    public ChoiceInlineStrategy(@NonNull Collection<? extends IDefinition> definitions) {
-      ChoiceModelWalker walker = new ChoiceModelWalker();
-      for (IDefinition definition : definitions) {
-        assert definition != null;
-        walker.walkDefinition(definition);
-      }
-      definitionInlinedMap = walker.getDefinitionInlinedMap();
-    }
+  /**
+   * Called to generate the actual schema content.
+   * 
+   * @param generationState
+   *          the generation state object
+   */
+  protected abstract void generateSchema(@NonNull S generationState);
 
-    @Override
-    public boolean isInline(@NonNull IDefinition definition) {
-      Boolean inlined = definitionInlinedMap.get(definition);
-      return inlined != null && inlined;
-    }
-  }
-
-  private static class ChoiceModelWalker
-      extends ModelWalker<Integer> {
-    @NonNull
-    private final Map<IDefinition, Boolean> definitionInlinedMap = new HashMap<>(); // NOPMD - intentional
-    private final Stack<IDefinition> visitStack = new Stack<>();
-
-    @NonNull
-    protected Map<IDefinition, Boolean> getDefinitionInlinedMap() {
-      return CollectionUtil.unmodifiableMap(definitionInlinedMap);
-    }
-
-    /**
-     * Update the inline status based on the following logic.
-     * <p>
-     * If the current status is {@code null} or {@code true}, then use the provided inline status.
-     * <p>
-     * Otherwise, keep the status as-is.
-     * 
-     * @param definition
-     *          the target definition
-     * @param inline
-     *          the status to update to
-     */
-    protected void updateInlineStatus(@NonNull IDefinition definition, boolean inline) {
-      Boolean value = definitionInlinedMap.get(definition);
-
-      if (value == null || (value && value != inline)) { // NOPMD - readability
-        definitionInlinedMap.put(definition, inline);
-      } // or leave it as-is
-    }
-
-    @Override
-    protected Integer getDefaultData() {
-      return 0;
-    }
-
-    private static boolean isChoiceSibling(@NonNull INamedInstance instance) {
-      IModelDefinition containingDefinition = instance.getContainingDefinition();
-      return containingDefinition instanceof IAssemblyDefinition
-          && !((IAssemblyDefinition) containingDefinition).getChoiceInstances().isEmpty();
-    }
-
-    @Override
-    protected boolean visit(@NonNull IFlagInstance instance, Integer data) {
-      if (isChoiceSibling(instance)) {
-        // choice siblings must not be inline
-        updateInlineStatus(instance.getDefinition(), false);
-      }
-      return true;
-    }
-
-    @Override
-    protected boolean visit(@NonNull IFieldInstance instance, Integer data) {
-      if (isChoiceSibling(instance)) {
-        // choice siblings must not be inline
-        updateInlineStatus(instance.getDefinition(), false);
-      }
-      return true;
-    }
-
-    @Override
-    protected boolean visit(@NonNull IAssemblyInstance instance, Integer data) {
-      if (isChoiceSibling(instance)) {
-        // choice siblings must not be inline
-        updateInlineStatus(instance.getDefinition(), false);
-      }
-      return true;
-    }
-
-    @Override
-    protected void visit(@NonNull IFlagDefinition def, Integer choiceDepth) {
-      updateInlineStatus(def, def.isInline());
-    }
-
-    @Override
-    protected boolean visit(@NonNull IFieldDefinition def, Integer choiceDepth) {
-      boolean inline = def.isInline() && choiceDepth == 0;
-      updateInlineStatus(def, inline);
-      return true;
-    }
-
-    @Override
-    protected boolean visit(@NonNull IAssemblyDefinition def, Integer choiceDepth) {
-      boolean inline = def.isInline() && choiceDepth == 0;
-      updateInlineStatus(def, inline);
-      return true;
-    }
-
-    @Override
-    public void walk(@NonNull IAssemblyDefinition def, Integer choiceDepth) {
-      if (!visitStack.contains(def)) {
-        visitStack.push(def);
-        // ignore depth on children, since they can make their own decision
-        super.walk(def, 0);
-        visitStack.pop();
-      }
-    }
-
-    @Override
-    public void walk(@NonNull IChoiceInstance instance, Integer choiceDepth) {
-      int newDepth = choiceDepth.intValue() + 1;
-      super.walk(instance, newDepth);
+  @Override
+  public void generateFromMetaschema(
+      IMetaschema metaschema,
+      Writer out,
+      IConfiguration<SchemaGenerationFeature> configuration) {
+    // IInlineStrategy inlineStrategy = IInlineStrategy.newInlineStrategy(configuration);
+    try (T schemaWriter = newWriter(out)) {
+      S generationState = newGenerationState(metaschema, schemaWriter, configuration);
+      generateSchema(generationState);
+    } catch (SchemaGenerationException ex) { // NOPMD avoid nesting same exception
+      throw ex;
+    } catch (Exception ex) { // NOPMD need to catch close exception
+      throw new SchemaGenerationException(ex);
     }
   }
+
+  /**
+   * Determine root definitions and any additional information.
+   */
+  protected List<IRootAssemblyDefinition> analyzeDefinitions(
+      @NonNull S state,
+      @Nullable BiConsumer<MetaschemaIndex.DefinitionEntry, IDefinition> handler) {
+
+    List<IRootAssemblyDefinition> rootAssemblyDefinitions = new LinkedList<>();
+    for (MetaschemaIndex.DefinitionEntry entry : state.getMetaschemaIndex().getDefinitions()) {
+
+      boolean referenced = entry.isReferenced();
+
+      IDefinition definition = ObjectUtils.notNull(entry.getDefinition());
+      if (definition instanceof IAssemblyDefinition && ((IAssemblyDefinition) definition).isRoot()) {
+        // found root definition
+        IRootAssemblyDefinition assemblyDefinition
+            = new RootAssemblyDefinitionWrapper<>((IAssemblyDefinition) definition); // NOPMD necessary instantiation
+        rootAssemblyDefinitions.add(assemblyDefinition);
+        if (!referenced) {
+          referenced = true;
+          entry.incrementReferenceCount();
+        }
+
+      }
+
+      if (!referenced) {
+        // skip unreferenced definitions
+        continue;
+      }
+
+      if (handler != null) {
+        handler.accept(entry, definition);
+      }
+    }
+    return rootAssemblyDefinitions;
+  }
+
 }

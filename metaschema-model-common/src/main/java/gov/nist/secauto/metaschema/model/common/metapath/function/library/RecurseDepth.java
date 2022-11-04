@@ -129,7 +129,7 @@ public final class RecurseDepth {
     try {
       recursionMetapath = MetapathExpression.compile(recursionPath.asString());
     } catch (MetapathException ex) {
-      throw new DynamicMetapathException(DynamicMetapathException.INVALID_PATH_GRAMMAR, ex.getMessage());
+      throw new DynamicMetapathException(DynamicMetapathException.INVALID_PATH_GRAMMAR, ex.getMessage(), ex);
     }
 
     return recurseDepth(initialContext, recursionMetapath, dynamicContext);

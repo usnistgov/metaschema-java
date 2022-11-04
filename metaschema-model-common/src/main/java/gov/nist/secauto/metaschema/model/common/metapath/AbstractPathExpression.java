@@ -96,15 +96,14 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
     Stream<? extends INodeItem> nodeMatches
         = (Stream<? extends INodeItem>) expression.accept(dynamicContext, nodeContext).asStream();
 
-    // create a stream of flags and model elements to check
-    Stream<? extends IFlagNodeItem> flags = nodeContext.flags();
-    Stream<? extends INodeItem> modelItems = nodeContext.modelItems();
-
     Stream<? extends INodeItem> childMatches;
     if (nodeContext instanceof ICycledAssemblyNodeItem) {
       // hack to prevent stack overflow
       childMatches = Stream.empty();
     } else {
+      // create a stream of flags and model elements to check
+      Stream<? extends IFlagNodeItem> flags = nodeContext.flags();
+      Stream<? extends INodeItem> modelItems = nodeContext.modelItems();
       childMatches = Stream.concat(flags, modelItems)
           .flatMap(instance -> {
             return searchExpression(expression, dynamicContext, instance);

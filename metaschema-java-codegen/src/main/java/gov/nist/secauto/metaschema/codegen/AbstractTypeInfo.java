@@ -31,7 +31,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.Set;
@@ -103,12 +103,12 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
   }
 
   @Override
-  public Set<IModelDefinition> build(@NonNull TypeSpec.Builder builder, ITypeResolver typeResolver) {
+  public Set<IFlagContainer> build(@NonNull TypeSpec.Builder builder, ITypeResolver typeResolver) {
     FieldSpec.Builder field = FieldSpec.builder(getJavaFieldType(), getJavaFieldName())
         .addModifiers(Modifier.PRIVATE);
     assert field != null;
 
-    final Set<IModelDefinition> retval = buildField(field);
+    final Set<IFlagContainer> retval = buildField(field);
 
     FieldSpec valueField = ObjectUtils.notNull(field.build());
     builder.addField(valueField);
@@ -162,7 +162,7 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
    * @return the set of definitions used by this field
    */
   @NonNull
-  protected abstract Set<IModelDefinition> buildField(@NonNull FieldSpec.Builder builder);
+  protected abstract Set<IFlagContainer> buildField(@NonNull FieldSpec.Builder builder);
 
   /**
    * Generate the getter for the property.

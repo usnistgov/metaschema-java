@@ -26,14 +26,6 @@
 
 package gov.nist.secauto.metaschema.model;
 
-import javax.xml.namespace.QName;
-
-import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.NodeVisitor;
-
 import com.vladsch.flexmark.ast.HtmlBlock;
 import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.ast.Image;
@@ -43,26 +35,41 @@ import com.vladsch.flexmark.ext.tables.TableCell;
 import com.vladsch.flexmark.ext.tables.TableRow;
 import com.vladsch.flexmark.util.ast.Node;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.AbstractMarkupXmlVisitor;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.NodeVisitor;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public class XmlbeansMarkupVisitor
     extends AbstractMarkupXmlVisitor<XmlCursor, IllegalArgumentException> {
 
+  @SuppressWarnings("resource")
   public static void visit(@NonNull MarkupLine markup, @NonNull String namespace, @NonNull XmlObject obj) {
-    visit(markup, namespace, obj.newCursor());
+    try (XmlCursor cursor = ObjectUtils.notNull(obj.newCursor())) {
+      visit(markup, namespace, cursor);
+    }
   }
 
   public static void visit(@NonNull MarkupLine markup, @NonNull String namespace, @NonNull XmlCursor cursor) {
     new XmlbeansMarkupVisitor(namespace, false).visitDocument(markup.getDocument(), cursor);
   }
 
+  @SuppressWarnings("resource")
   public static void visit(@NonNull MarkupMultiline markup, @NonNull String namespace, @NonNull XmlObject obj) {
-    visit(markup, namespace, obj.newCursor());
+    try (XmlCursor cursor = ObjectUtils.notNull(obj.newCursor())) {
+      visit(markup, namespace, cursor);
+    }
   }
 
   public static void visit(@NonNull MarkupMultiline markup, @NonNull String namespace, @NonNull XmlCursor cursor) {
@@ -79,7 +86,7 @@ public class XmlbeansMarkupVisitor
   // }
 
   @Override
-  protected void handleBasicElement(String localName, Node node, XmlCursor state) throws IllegalArgumentException {
+  protected void handleBasicElement(String localName, Node node, XmlCursor state) {
     QName qname = newQName(localName);
     state.beginElement(qname);
     state.push();
@@ -96,17 +103,17 @@ public class XmlbeansMarkupVisitor
   }
 
   @Override
-  protected void writeText(String text, XmlCursor state) throws IllegalArgumentException {
+  protected void writeText(String text, XmlCursor state) {
     state.insertChars(text);
   }
 
   @Override
-  protected void writeHtmlEntity(String entityText, XmlCursor state) throws IllegalArgumentException {
+  protected void writeHtmlEntity(String entityText, XmlCursor state) {
     state.insertChars(entityText);
   }
 
   @Override
-  protected void visitLink(LinkNode node, XmlCursor state) throws IllegalArgumentException {
+  protected void visitLink(LinkNode node, XmlCursor state) {
     QName qname = newQName("a");
     state.beginElement(qname);
 
@@ -130,7 +137,7 @@ public class XmlbeansMarkupVisitor
   }
 
   @Override
-  protected void visitImage(Image node, XmlCursor state) throws IllegalArgumentException {
+  protected void visitImage(Image node, XmlCursor state) {
     QName qname = newQName("img");
     state.beginElement(qname);
 
@@ -144,7 +151,7 @@ public class XmlbeansMarkupVisitor
   }
 
   @Override
-  protected void visitInsertAnchor(InsertAnchorNode node, XmlCursor state) throws IllegalArgumentException {
+  protected void visitInsertAnchor(InsertAnchorNode node, XmlCursor state) {
     QName qname = newQName("insert");
     state.beginElement(qname);
 
@@ -155,11 +162,12 @@ public class XmlbeansMarkupVisitor
   }
 
   @Override
-  protected void visitHtmlInline(HtmlInline node, XmlCursor state) throws IllegalArgumentException {
+  protected void visitHtmlInline(HtmlInline node, XmlCursor state) {
+    assert state != null;
     handleHtml(node, state);
   }
 
-  private void handleHtml(Node node, XmlCursor state) {
+  private void handleHtml(Node node, @NonNull XmlCursor state) {
     Document doc = Jsoup.parse(node.getChars().toString());
     try {
       doc.body().traverse(new XmlBeansNodeVisitor(state));
@@ -169,12 +177,13 @@ public class XmlbeansMarkupVisitor
   }
 
   @Override
-  protected void visitHtmlBlock(HtmlBlock node, XmlCursor state) throws IllegalArgumentException {
+  protected void visitHtmlBlock(HtmlBlock node, XmlCursor state) {
+    assert state != null;
     handleHtml(node, state);
   }
 
   @Override
-  protected void visitTable(@NonNull TableBlock node, XmlCursor state) throws IllegalArgumentException {
+  protected void visitTable(@NonNull TableBlock node, XmlCursor state) {
     QName qname = newQName("table");
     state.beginElement(qname);
 
@@ -194,7 +203,7 @@ public class XmlbeansMarkupVisitor
   }
 
   @Override
-  protected void visitTableRow(@NonNull TableRow node, XmlCursor state) throws IllegalArgumentException {
+  protected void visitTableRow(@NonNull TableRow node, XmlCursor state) {
     QName qname = newQName("tr");
     state.beginElement(qname);
 
@@ -217,7 +226,7 @@ public class XmlbeansMarkupVisitor
     state.toNextToken();
   }
 
-  private void handleTableCell(TableCell node, XmlCursor state) throws IllegalArgumentException {
+  private void handleTableCell(TableCell node, XmlCursor state) {
     QName qname;
     if (node.isHeader()) {
       qname = newQName("th");
@@ -262,7 +271,7 @@ public class XmlbeansMarkupVisitor
             // writer.writeStartElement(getNamespace(), element.tagName());
             // }
 
-            cursor.beginElement(newQName(element.tagName()));
+            cursor.beginElement(newQName(ObjectUtils.notNull(element.tagName())));
 
             for (org.jsoup.nodes.Attribute attr : element.attributes()) {
               cursor.insertAttributeWithValue(attr.getKey(), attr.getValue());

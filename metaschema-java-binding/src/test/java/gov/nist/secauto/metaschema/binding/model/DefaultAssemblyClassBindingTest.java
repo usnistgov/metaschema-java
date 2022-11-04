@@ -45,7 +45,7 @@ class DefaultAssemblyClassBindingTest
   @Test
   void testMinimalJsonParse() throws JsonParseException, IOException {
     File testContent
-        = new File(getClass().getClassLoader().getResource("content/minimal.json").getFile());
+        = new File(getClass().getResource("/content/minimal.json").getFile());
     try (BufferedReader reader = Files.newBufferedReader(testContent.toPath())) {
       IJsonParsingContext context = newJsonParsingContext(reader);
       IAssemblyClassBinding classBinding = getRootAssemblyClassBinding();
@@ -60,7 +60,7 @@ class DefaultAssemblyClassBindingTest
   @Test
   void testCollapseJsonParse() throws JsonParseException, IOException {
     File testContent
-        = new File(getClass().getClassLoader().getResource("content/collapse.json").getFile());
+        = new File(getClass().getResource("/content/collapse.json").getFile());
     try (BufferedReader reader = Files.newBufferedReader(testContent.toPath())) {
       IJsonParsingContext context = newJsonParsingContext(reader);
       IAssemblyClassBinding classBinding = getRootAssemblyClassBinding();

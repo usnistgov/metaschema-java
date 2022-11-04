@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.AbstractFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IInlineDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
@@ -73,7 +73,7 @@ class XmlInlineFlagDefinition
    * @param parent
    *          the parent definition, which must be a definition type that can contain flags.
    */
-  public XmlInlineFlagDefinition(@NonNull InlineFlagDefinitionType xmlFlag, @NonNull IModelDefinition parent) {
+  public XmlInlineFlagDefinition(@NonNull InlineFlagDefinitionType xmlFlag, @NonNull IFlagContainer parent) {
     super(parent);
     this.xmlFlag = xmlFlag;
     this.flagDefinition = new InternalFlagDefinition();
@@ -175,9 +175,11 @@ class XmlInlineFlagDefinition
     private final Object defaultValue;
 
     private InternalFlagDefinition() {
-      this.defaultValue
-          = xmlFlag.isSetDefault() ? getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlFlag.getDefault()))
-              : null;
+      Object defaultValue = null;
+      if (getXmlFlag().isSetDefault()) {
+        defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(getXmlFlag().getDefault()));
+      }
+      this.defaultValue = defaultValue;
     }
 
     @Override

@@ -29,7 +29,13 @@ package gov.nist.secauto.metaschema.model.common;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IFieldDefinition extends IValuedDefinition, IModelDefinition, IField {
+public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IField {
+
+  @Override
+  default IFieldDefinition getContainingDefinition() {
+    return this;
+  }
+  
   @Override
   IFieldInstance getInlineInstance();
 
