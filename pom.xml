@@ -214,7 +214,7 @@
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>metaschema-java-schemagen</artifactId>
+				<artifactId>metaschema-schema-generator</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

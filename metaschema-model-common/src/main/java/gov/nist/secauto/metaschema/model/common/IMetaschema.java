@@ -317,13 +317,26 @@ public interface IMetaschema {
 
   /**
    * Retrieves the top-level assembly definitions that are marked as roots from the current
+   * Metaschema and any imported Metaschema.
+   * 
+   * @return a listing of assembly definitions marked as root
+   */
+  @NonNull
+  default Collection<? extends IAssemblyDefinition> getExportedRootAssemblyDefinitions() {
+    return ObjectUtils.notNull(getExportedAssemblyDefinitions().stream()
+        .filter(allRootAssemblyDefinitions())
+        .collect(Collectors.toList()));
+  }
+
+  /**
+   * Retrieves the top-level assembly definitions that are marked as roots from the current
    * Metaschema.
    * 
    * @return a listing of assembly definitions marked as root
    */
   @NonNull
   default Collection<? extends IAssemblyDefinition> getRootAssemblyDefinitions() {
-    return ObjectUtils.notNull(getExportedAssemblyDefinitions().stream()
+    return ObjectUtils.notNull(getAssemblyDefinitions().stream()
         .filter(allRootAssemblyDefinitions())
         .collect(Collectors.toList()));
   }

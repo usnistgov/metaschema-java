@@ -71,7 +71,7 @@ class MetaschemaLoaderTest {
         Paths.get("metaschema/test-suite/docs-models/models_metaschema.xml").toUri());
     IMetaschema metaschema
         = loader.load(metaschemaUri);
-    assertFalse(metaschema.getRootAssemblyDefinitions().isEmpty(), "no roots found");
+    assertFalse(metaschema.getExportedRootAssemblyDefinitions().isEmpty(), "no roots found");
   }
 
   @Test

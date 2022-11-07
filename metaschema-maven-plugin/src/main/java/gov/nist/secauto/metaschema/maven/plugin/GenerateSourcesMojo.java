@@ -56,9 +56,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * Goal which generates Java source files for a given set of Metaschema definitions.
  */
 @Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
-public class MetaschemaMojo
+public class GenerateSourcesMojo
     extends AbstractMetaschemaMojo {
-  private static final String METASCHEMA_STALE_FILE_NAME = "metaschemaStaleFile";
+  private static final String STALE_FILE_NAME = "generateSourcesStaleFile";
 
   /**
    * A set of binding configurations.
@@ -78,7 +78,7 @@ public class MetaschemaMojo
    */
   @Override
   protected String getStaleFileName() {
-    return METASCHEMA_STALE_FILE_NAME;
+    return STALE_FILE_NAME;
   }
 
   /**
