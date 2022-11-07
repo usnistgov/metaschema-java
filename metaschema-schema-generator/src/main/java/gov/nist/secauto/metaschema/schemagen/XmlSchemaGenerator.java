@@ -115,7 +115,9 @@ public class XmlSchemaGenerator
   }
 
   @Override
-  public void generateFromMetaschema(@NonNull IMetaschema metaschema, @NonNull Writer out,
+  public void generateFromMetaschema(
+      @NonNull IMetaschema metaschema,
+      @NonNull Writer out,
       @NonNull IConfiguration<SchemaGenerationFeature> configuration) throws IOException {
 
     StringWriter stringWriter = new StringWriter();

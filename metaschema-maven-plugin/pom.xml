@@ -32,6 +32,10 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>metaschema-schema-generator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>metaschema-java-codegen</artifactId>
 		</dependency>
 		<dependency>
