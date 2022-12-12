@@ -86,38 +86,39 @@ class DefaultFlagPropertyTest {
       throws JsonParseException, IOException, NoSuchFieldException {
     String json = "{ \"test\": { \"id\": \"theId\", \"number\": 1 } }";
     JsonFactory factory = new JsonFactory();
-    JsonParser jsonParser = factory.createParser(json);
+    try (JsonParser jsonParser = factory.createParser(json)) {
 
-    Field field = SimpleAssembly.class.getDeclaredField("_id");
+      Field field = SimpleAssembly.class.getDeclaredField("_id");
 
-    context.checking(new Expectations() {
-      { // NOPMD - intentional
-        atMost(1).of(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-        will(returnValue(MetaschemaDataTypeProvider.STRING));
+      context.checking(new Expectations() {
+        { // NOPMD - intentional
+          atMost(1).of(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
+          will(returnValue(MetaschemaDataTypeProvider.STRING));
 
-        allowing(classBinding).getBoundClass();
-        will(returnValue(SimpleAssembly.class));
-        allowing(classBinding).getBindingContext();
-        will(returnValue(bindingContext));
+          allowing(classBinding).getBoundClass();
+          will(returnValue(SimpleAssembly.class));
+          allowing(classBinding).getBindingContext();
+          will(returnValue(bindingContext));
 
-        allowing(jsonParsingContext).getReader();
-        will(returnValue(jsonParser));
-      }
-    });
+          allowing(jsonParsingContext).getReader();
+          will(returnValue(jsonParser));
+        }
+      });
 
-    DefaultFlagProperty idProperty = new DefaultFlagProperty(field, classBinding);
+      DefaultFlagProperty idProperty = new DefaultFlagProperty(field, classBinding);
 
-    assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    assertEquals("test", jsonParser.nextFieldName());
-    assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
-    assertEquals("id", jsonParser.currentName());
+      assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
+      assertEquals("test", jsonParser.nextFieldName());
+      assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
+      assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
+      assertEquals("id", jsonParser.currentName());
 
-    SimpleAssembly obj = new SimpleAssembly();
+      SimpleAssembly obj = new SimpleAssembly();
 
-    assertTrue(idProperty.read(obj, jsonParsingContext));
+      assertTrue(idProperty.read(obj, jsonParsingContext));
 
-    assertEquals("theId", obj.getId());
+      assertEquals("theId", obj.getId());
+    }
   }
 
   @Test

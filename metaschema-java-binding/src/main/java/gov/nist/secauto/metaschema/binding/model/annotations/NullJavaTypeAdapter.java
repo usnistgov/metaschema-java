@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
+
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter.VoidItem;
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
@@ -52,6 +54,11 @@ public class NullJavaTypeAdapter
   public NullJavaTypeAdapter(@NonNull Class<Void> clazz) {
     super(clazz);
     throw new UnsupportedOperationException(NOT_VALID);
+  }
+
+  @Override
+  public JsonFormatTypes getJsonRawType() {
+    return JsonFormatTypes.NULL;
   }
 
   @Override

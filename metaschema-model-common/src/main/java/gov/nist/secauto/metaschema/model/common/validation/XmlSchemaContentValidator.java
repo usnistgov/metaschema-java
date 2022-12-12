@@ -36,6 +36,7 @@ import org.xml.sax.SAXParseException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
@@ -65,6 +66,8 @@ public class XmlSchemaContentValidator implements IContentValidator {
     } else {
       retval = schemafactory.newSchema(schemaSources.toArray(new Source[0]));
     }
+
+    // TODO verify source input streams are closed
     return retval;
   }
 
@@ -80,6 +83,7 @@ public class XmlSchemaContentValidator implements IContentValidator {
     return schema;
   }
 
+  @SuppressWarnings("resource")
   @Override
   public IValidationResult validate(@NonNull InputSource source) throws IOException {
     String systemId = source.getSystemId();
@@ -88,10 +92,14 @@ public class XmlSchemaContentValidator implements IContentValidator {
     IValidationResult retval;
     if (source.getCharacterStream() != null) {
       // attempt to use a provided character stream
-      retval = validate(new StreamSource(source.getCharacterStream(), systemId), uri);
+      try (Reader reader = source.getCharacterStream()) {
+        retval = validate(new StreamSource(reader, systemId), uri);
+      }
     } else if (source.getByteStream() != null) {
       // attempt to use a provided byte stream stream
-      retval = validate(new StreamSource(source.getByteStream(), systemId), uri);
+      try (InputStream inputStream = source.getByteStream()) {
+        retval = validate(new StreamSource(inputStream, systemId), uri);
+      }
     } else {
       // fall back to a URL-based connection
       URL url = uri.toURL();

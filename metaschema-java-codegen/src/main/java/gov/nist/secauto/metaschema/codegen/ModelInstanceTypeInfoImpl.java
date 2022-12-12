@@ -42,14 +42,15 @@ import gov.nist.secauto.metaschema.binding.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -143,8 +144,8 @@ class ModelInstanceTypeInfoImpl
   }
 
   @Override
-  public Set<IModelDefinition> buildField(FieldSpec.Builder builder) { // NOPMD - intentional
-    Set<IModelDefinition> retval = new HashSet<>();
+  public Set<IFlagContainer> buildField(FieldSpec.Builder builder) { // NOPMD - intentional
+    Set<IFlagContainer> retval = new HashSet<>();
     retval.addAll(super.buildField(builder));
 
     // determine which annotation to apply
@@ -159,17 +160,19 @@ class ModelInstanceTypeInfoImpl
           modelInstance.getName(), modelInstance.getClass().getName()));
     }
 
-    if (modelInstance.getFormalName() != null) {
-      fieldAnnoation.addMember("formalName", "$S", modelInstance.getFormalName());
+    String formalName = modelInstance.getEffectiveFormalName();
+    if (formalName != null) {
+      fieldAnnoation.addMember("formalName", "$S", formalName);
     }
 
-    if (modelInstance.getDescription() != null) {
-      fieldAnnoation.addMember("description", "$S", modelInstance.getDescription().toMarkdown());
+    MarkupLine description = modelInstance.getEffectiveDescription();
+    if (description != null) {
+      fieldAnnoation.addMember("description", "$S", description.toMarkdown());
     }
 
     fieldAnnoation.addMember("useName", "$S", modelInstance.getEffectiveName());
 
-    IModelDefinition definition = modelInstance.getDefinition();
+    IFlagContainer definition = modelInstance.getDefinition();
     if (definition.isInline() && !(definition instanceof IFieldDefinition && definition.isSimple())) {
       // this is an inline definition that must be built as a child class
       retval.add(definition);

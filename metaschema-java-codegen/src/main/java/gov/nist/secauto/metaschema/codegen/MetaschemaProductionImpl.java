@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.codegen;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.io.IOException;
@@ -50,7 +50,7 @@ class MetaschemaProductionImpl implements IMetaschemaProduction { // NOPMD - int
   @NonNull
   private final IGeneratedClass generatedMetaschema;
   @NonNull
-  private final Map<IModelDefinition, IDefinitionProduction> definitionProductions;
+  private final Map<IFlagContainer, IDefinitionProduction> definitionProductions;
   @NonNull
   private final String packageName;
 
@@ -80,7 +80,7 @@ class MetaschemaProductionImpl implements IMetaschemaProduction { // NOPMD - int
             })
             .flatMap(ObjectUtils::filterNull)
             .map(typeInfo -> {
-              IModelDefinition definition = typeInfo.getDefinition();
+              IFlagContainer definition = typeInfo.getDefinition();
               DefaultGeneratedDefinitionClass generatedClass;
               try {
                 generatedClass = typeInfo.generateClass(targetDirectory);
@@ -106,7 +106,7 @@ class MetaschemaProductionImpl implements IMetaschemaProduction { // NOPMD - int
 
     @NonNull
     @SuppressWarnings("null")
-    Map<IModelDefinition, IDefinitionProduction> retval = productions.collect(
+    Map<IFlagContainer, IDefinitionProduction> retval = productions.collect(
         Collectors.toUnmodifiableMap(DefinitionProductionImpl::getDefinition, Function.identity()));
 
     this.definitionProductions = retval;
@@ -126,7 +126,7 @@ class MetaschemaProductionImpl implements IMetaschemaProduction { // NOPMD - int
 
   @Override
   @SuppressWarnings("null")
-  public Collection<? extends IModelDefinition> getGlobalDefinitions() {
+  public Collection<? extends IFlagContainer> getGlobalDefinitions() {
     return definitionProductions.keySet();
   }
 

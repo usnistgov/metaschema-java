@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.xmlbeans.AllowedValuesType;
 import gov.nist.secauto.metaschema.model.xmlbeans.DefineFieldConstraintsType;
 import gov.nist.secauto.metaschema.model.xmlbeans.DefineFlagConstraintsType;
@@ -50,6 +51,7 @@ import gov.nist.secauto.metaschema.model.xmlbeans.ScopedMatchesConstraintType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.impl.values.XmlValueNotSupportedException;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -107,6 +109,11 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
           addConstraint(constraint);
         }
       }
+    } catch (MetapathException | XmlValueNotSupportedException ex) {
+      if (ex.getCause() instanceof MetapathException) {
+        throw new MetapathException(String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()), ex);
+      }
+      throw ex;
     }
   }
 
@@ -145,6 +152,11 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
           addConstraint(constraint);
         }
       }
+    } catch (MetapathException | XmlValueNotSupportedException ex) {
+      if (ex.getCause() instanceof MetapathException) {
+        throw new MetapathException(String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()), ex);
+      }
+      throw ex;
     }
   }
 

@@ -31,7 +31,7 @@ import com.squareup.javapoet.ClassName;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -44,7 +44,7 @@ public interface ITypeResolver {
   IFieldDefinitionTypeInfo getTypeInfo(@NonNull IFieldDefinition definition);
 
   @NonNull
-  IModelDefinitionTypeInfo getTypeInfo(@NonNull IModelDefinition definition);
+  IModelDefinitionTypeInfo getTypeInfo(@NonNull IFlagContainer definition);
 
   /**
    * Get the name of the class associated with the provided metaschema.
@@ -64,7 +64,7 @@ public interface ITypeResolver {
    * @return the class name information for the definition
    */
   @NonNull
-  ClassName getClassName(@NonNull IModelDefinition definition);
+  ClassName getClassName(@NonNull IFlagContainer definition);
 
   /**
    * Get the name of the base class to use for the class associated with the provided definition.
@@ -74,7 +74,7 @@ public interface ITypeResolver {
    * @return the name of the base class or {@code null} if no base class is to be used
    */
   @Nullable
-  ClassName getBaseClassName(@NonNull IModelDefinition definition);
+  ClassName getBaseClassName(@NonNull IFlagContainer definition);
 
   /**
    * Get the Java package name to use for the provided Metaschema.

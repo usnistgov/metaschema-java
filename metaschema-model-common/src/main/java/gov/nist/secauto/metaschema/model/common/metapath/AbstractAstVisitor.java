@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath;
+package gov.nist.secauto.metaschema.model.common.metapath; // NOPMD requires a large number of public methods
 
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10BaseVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.AbbrevforwardstepContext;

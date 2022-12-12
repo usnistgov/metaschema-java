@@ -68,7 +68,9 @@ class DefaultFieldValueProperty
   @Nullable
   private final Object defaultValue;
 
-  public DefaultFieldValueProperty(@NonNull IFieldClassBinding fieldClassBinding, @NonNull Field field) {
+  public DefaultFieldValueProperty(
+      @NonNull IFieldClassBinding fieldClassBinding,
+      @NonNull Field field) {
     super(fieldClassBinding);
     this.field = ObjectUtils.requireNonNull(field, "field");
     MetaschemaFieldValue valueAnnotation = field.getAnnotation(MetaschemaFieldValue.class);

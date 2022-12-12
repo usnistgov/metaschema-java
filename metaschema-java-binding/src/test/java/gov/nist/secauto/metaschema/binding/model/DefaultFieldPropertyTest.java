@@ -265,54 +265,55 @@ class DefaultFieldPropertyTest {
       throws JsonParseException, IOException, NoSuchFieldException {
     String json = "{ \"test\":\n" + "  { \"fields2\": [\n" + "    \"field2value\"\n" + "    ]\n" + "  }\n" + "}\n";
     JsonFactory factory = new JsonFactory();
-    JsonParser jsonParser = factory.createParser(json);
-    Class<?> theClass = TestField.class;
+    try (JsonParser jsonParser = factory.createParser(json)) {
+      Class<?> theClass = TestField.class;
 
-    context.checking(new Expectations() {
-      { // NOPMD - intentional
-        allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-        will(returnValue(MetaschemaDataTypeProvider.STRING));
-        allowing(bindingContext).getClassBinding(String.class);
-        will(returnValue(null));
+      context.checking(new Expectations() {
+        { // NOPMD - intentional
+          allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
+          will(returnValue(MetaschemaDataTypeProvider.STRING));
+          allowing(bindingContext).getClassBinding(String.class);
+          will(returnValue(null));
 
-        allowing(classBinding).getBoundClass();
-        will(returnValue(theClass));
-        allowing(classBinding).getBindingContext();
-        will(returnValue(bindingContext));
+          allowing(classBinding).getBoundClass();
+          will(returnValue(theClass));
+          allowing(classBinding).getBindingContext();
+          will(returnValue(bindingContext));
 
-        allowing(jsonParsingContext).getReader();
-        will(returnValue(jsonParser));
-      }
-    });
+          allowing(jsonParsingContext).getReader();
+          will(returnValue(jsonParser));
+        }
+      });
 
-    java.lang.reflect.Field field1 = theClass.getDeclaredField("field1");
-    IBoundFieldInstance field1Property = IBoundFieldInstance.newInstance(
-        field1,
-        ObjectUtils.notNull(classBinding));
-    java.lang.reflect.Field field2 = theClass.getDeclaredField("_field2");
-    IBoundFieldInstance field2Property = IBoundFieldInstance.newInstance(
-        field2,
-        ObjectUtils.notNull(classBinding));
+      java.lang.reflect.Field field1 = theClass.getDeclaredField("field1");
+      IBoundFieldInstance field1Property = IBoundFieldInstance.newInstance(
+          field1,
+          ObjectUtils.notNull(classBinding));
+      java.lang.reflect.Field field2 = theClass.getDeclaredField("_field2");
+      IBoundFieldInstance field2Property = IBoundFieldInstance.newInstance(
+          field2,
+          ObjectUtils.notNull(classBinding));
 
-    TestField obj = new TestField();
+      TestField obj = new TestField();
 
-    // Advance to first property to parse
-    assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    assertEquals("test", jsonParser.nextFieldName());
-    assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    assertEquals("fields2", jsonParser.nextFieldName());
+      // Advance to first property to parse
+      assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
+      assertEquals("test", jsonParser.nextFieldName());
+      assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
+      assertEquals("fields2", jsonParser.nextFieldName());
 
-    // attempt to parse the missing property
-    assertFalse(field1Property.read(obj, jsonParsingContext));
-    assertEquals(null, obj.getField1());
+      // attempt to parse the missing property
+      assertFalse(field1Property.read(obj, jsonParsingContext));
+      assertEquals(null, obj.getField1());
 
-    // attempt to parse the existing property
-    assertEquals(JsonToken.FIELD_NAME, jsonParser.currentToken());
-    assertEquals("fields2", jsonParser.currentName());
+      // attempt to parse the existing property
+      assertEquals(JsonToken.FIELD_NAME, jsonParser.currentToken());
+      assertEquals("fields2", jsonParser.currentName());
 
-    assertTrue(field2Property.read(obj, jsonParsingContext));
-    assertTrue(obj.getField2() instanceof LinkedList);
-    assertIterableEquals(Collections.singleton("field2value"), obj.getField2());
+      assertTrue(field2Property.read(obj, jsonParsingContext));
+      assertTrue(obj.getField2() instanceof LinkedList);
+      assertIterableEquals(Collections.singleton("field2value"), obj.getField2());
+    }
   }
 
   @Metaschema

@@ -33,10 +33,19 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Indicates that the Metaschema definition type has a complex model that can contain flags, field,
- * and assembly instances.
+ * Indicates that the Metaschema type that has a complex model that can contain field and assembly
+ * instances.
  */
-public interface IModelContainer {
+public interface IModelContainer extends IContainer {
+  /**
+   * Retrieve the Metaschema definition containing this container.
+   * 
+   * @return the containing Metaschema definition
+   */
+  @Override
+  @NonNull
+  IAssemblyDefinition getContainingDefinition();
+
   /**
    * Get the model instance contained within the model with the associated use name.
    * 

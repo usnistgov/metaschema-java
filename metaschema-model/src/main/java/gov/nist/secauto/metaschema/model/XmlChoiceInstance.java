@@ -27,10 +27,10 @@
 package gov.nist.secauto.metaschema.model;
 
 import gov.nist.secauto.metaschema.model.common.AbstractChoiceInstance;
-import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IModelContainer;
 import gov.nist.secauto.metaschema.model.common.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -54,13 +54,13 @@ class XmlChoiceInstance
    * 
    * @param xmlChoice
    *          the XML for the choice definition bound to Java objects
-   * @param containingAssembly
-   *          the parent assembly definition that contains this choice
+   * @param parent
+   *          the parent container, either a choice or assembly
    */
   public XmlChoiceInstance(
       @NonNull ChoiceType xmlChoice,
-      @NonNull IAssemblyDefinition containingAssembly) {
-    super(containingAssembly);
+      @NonNull IModelContainer parent) {
+    super(parent);
     this.xmlChoice = xmlChoice;
 
   }
@@ -84,7 +84,6 @@ class XmlChoiceInstance
   /**
    * Lazy initialize the model for this choice.
    */
-  @SuppressWarnings("null")
   protected void initModelContainer() {
     synchronized (this) {
       if (modelContainer == null) {

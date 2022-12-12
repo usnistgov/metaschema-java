@@ -35,7 +35,7 @@ import com.squareup.javapoet.TypeSpec;
 import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -57,7 +57,7 @@ import javax.lang.model.element.Modifier;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
+class AbstractModelDefinitionTypeInfo<DEF extends IFlagContainer>
     extends AbstractDefinitionTypeInfo<DEF>
     implements IModelDefinitionTypeInfo {
   @NonNull
@@ -130,12 +130,14 @@ class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
   protected void buildCommonProperties(@NonNull AnnotationSpec.Builder annotation) {
     IDefinition definition = getDefinition();
 
-    if (definition.getFormalName() != null) {
-      annotation.addMember("formalName", "$S", definition.getFormalName());
+    String formalName = definition.getEffectiveFormalName();
+    if (formalName != null) {
+      annotation.addMember("formalName", "$S", formalName);
     }
 
-    if (definition.getDescription() != null) {
-      annotation.addMember("description", "$S", definition.getDescription().toMarkdown());
+    MarkupLine description = definition.getEffectiveDescription();
+    if (description != null) {
+      annotation.addMember("description", "$S", description.toMarkdown());
     }
 
     annotation.addMember("name", "$S", definition.getName());
@@ -144,7 +146,7 @@ class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
   }
 
   protected void buildConstraints(@NonNull TypeSpec.Builder builder) {
-    IModelDefinition definition = getDefinition();
+    IFlagContainer definition = getDefinition();
     AnnotationUtils.buildValueConstraints(builder, definition);
   }
 
@@ -185,11 +187,11 @@ class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
       builder.superclass(baseClassName);
     }
 
-    Set<IModelDefinition> additionalChildClasses = buildClass(builder, className);
+    Set<IFlagContainer> additionalChildClasses = buildClass(builder, className);
 
     ITypeResolver typeResolver = getTypeResolver();
 
-    for (IModelDefinition definition : additionalChildClasses) {
+    for (IFlagContainer definition : additionalChildClasses) {
       assert definition != null;
       IModelDefinitionTypeInfo typeInfo = typeResolver.getTypeInfo(definition);
       TypeSpec childClass = typeInfo.generateChildClass();
@@ -210,7 +212,7 @@ class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
    *           if an error occurred while building the class
    */
   @NonNull
-  protected Set<IModelDefinition> buildClass(@NonNull TypeSpec.Builder builder,
+  protected Set<IFlagContainer> buildClass(@NonNull TypeSpec.Builder builder,
       @NonNull ClassName className)
       throws IOException {
     MarkupLine description = getDefinition().getDescription();
@@ -218,7 +220,7 @@ class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
       builder.addJavadoc(description.toHtml());
     }
 
-    Set<IModelDefinition> additionalChildClasses = new HashSet<>();
+    Set<IFlagContainer> additionalChildClasses = new HashSet<>();
 
     // generate a no-arg constructor
     builder.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC).build());

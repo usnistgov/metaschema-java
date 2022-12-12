@@ -27,8 +27,8 @@
 package gov.nist.secauto.metaschema.model;
 
 import gov.nist.secauto.metaschema.model.common.AbstractFieldInstance;
-import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelContainer;
 import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
@@ -38,7 +38,6 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.FieldReferenceType;
 
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -62,10 +61,12 @@ class XmlFieldInstance
    * @param xmlField
    *          the XML representation bound to Java objects
    * @param parent
-   *          the field definition this object is an instance of
+   *          the parent container, either a choice or assembly
    */
-  public XmlFieldInstance(@NonNull FieldReferenceType xmlField, @NonNull IAssemblyDefinition parent) {
-    super(parent);
+  public XmlFieldInstance(
+      @NonNull FieldReferenceType xmlField,
+      @NonNull IModelContainer container) {
+    super(container);
     this.xmlField = xmlField;
   }
 
@@ -145,44 +146,22 @@ class XmlFieldInstance
 
   @Override
   public int getMinOccurs() {
-    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
-    if (getXmlField().isSetMinOccurs()) {
-      retval = getXmlField().getMinOccurs().intValueExact();
-    }
-    return retval;
+    return XmlModelParser.getMinOccurs(getXmlField().getMinOccurs());
   }
 
   @Override
   public int getMaxOccurs() {
-    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
-    if (getXmlField().isSetMaxOccurs()) {
-      Object value = getXmlField().getMaxOccurs();
-      if (value instanceof String) {
-        // unbounded
-        retval = -1;
-      } else if (value instanceof BigInteger) {
-        retval = ((BigInteger) value).intValueExact();
-      }
-    }
-    return retval;
+    return XmlModelParser.getMaxOccurs(getXmlField().getMaxOccurs());
   }
 
   @Override
   public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-    JsonGroupAsBehavior retval = JsonGroupAsBehavior.SINGLETON_OR_LIST;
-    if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInJson()) {
-      retval = getXmlField().getGroupAs().getInJson();
-    }
-    return retval;
+    return XmlModelParser.getJsonGroupAsBehavior(getXmlField().getGroupAs());
   }
 
   @Override
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    XmlGroupAsBehavior retval = XmlGroupAsBehavior.UNGROUPED;
-    if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInXml()) {
-      retval = getXmlField().getGroupAs().getInXml();
-    }
-    return retval;
+    return XmlModelParser.getXmlGroupAsBehavior(getXmlField().getGroupAs());
   }
 
   @SuppressWarnings("null")

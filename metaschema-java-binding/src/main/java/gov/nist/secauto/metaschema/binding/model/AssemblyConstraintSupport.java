@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSu
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.ISource;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
@@ -90,21 +91,26 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
       this.indexHasKeyConstraints = new LinkedList<>();
       this.expectConstraints = new LinkedList<>();
     } else {
-      allowedValuesConstraints = Arrays.stream(valueAnnotation.allowedValues())
-          .map(annotation -> ConstraintFactory.newAllowedValuesConstraint(annotation, source))
-          .collect(Collectors.toCollection(LinkedList::new));
+      try {
+        allowedValuesConstraints = Arrays.stream(valueAnnotation.allowedValues())
+            .map(annotation -> ConstraintFactory.newAllowedValuesConstraint(annotation, source))
+            .collect(Collectors.toCollection(LinkedList::new));
 
-      matchesConstraints = Arrays.stream(valueAnnotation.matches())
-          .map(annotation -> ConstraintFactory.newMatchesConstraint(annotation, source))
-          .collect(Collectors.toCollection(LinkedList::new));
+        matchesConstraints = Arrays.stream(valueAnnotation.matches())
+            .map(annotation -> ConstraintFactory.newMatchesConstraint(annotation, source))
+            .collect(Collectors.toCollection(LinkedList::new));
 
-      indexHasKeyConstraints = Arrays.stream(valueAnnotation.indexHasKey())
-          .map(annotation -> ConstraintFactory.newIndexHasKeyConstraint(annotation, source))
-          .collect(Collectors.toCollection(LinkedList::new));
+        indexHasKeyConstraints = Arrays.stream(valueAnnotation.indexHasKey())
+            .map(annotation -> ConstraintFactory.newIndexHasKeyConstraint(annotation, source))
+            .collect(Collectors.toCollection(LinkedList::new));
 
-      expectConstraints = Arrays.stream(valueAnnotation.expect())
-          .map(annotation -> ConstraintFactory.newExpectConstraint(annotation, source))
-          .collect(Collectors.toCollection(LinkedList::new));
+        expectConstraints = Arrays.stream(valueAnnotation.expect())
+            .map(annotation -> ConstraintFactory.newExpectConstraint(annotation, source))
+            .collect(Collectors.toCollection(LinkedList::new));
+      } catch (MetapathException ex) {
+        throw new MetapathException(
+            String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()), ex);
+      }
     }
 
     if (assemblyAnnotation == null) {
@@ -112,17 +118,22 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
       this.uniqueConstraints = new LinkedList<>();
       this.cardinalityConstraints = new LinkedList<>();
     } else {
-      indexConstraints = Arrays.stream(assemblyAnnotation.index())
-          .map(annotation -> ConstraintFactory.newIndexConstraint(annotation, source))
-          .collect(Collectors.toCollection(LinkedList::new));
+      try {
+        indexConstraints = Arrays.stream(assemblyAnnotation.index())
+            .map(annotation -> ConstraintFactory.newIndexConstraint(annotation, source))
+            .collect(Collectors.toCollection(LinkedList::new));
 
-      uniqueConstraints = Arrays.stream(assemblyAnnotation.isUnique())
-          .map(annotation -> ConstraintFactory.newUniqueConstraint(annotation, source))
-          .collect(Collectors.toCollection(LinkedList::new));
+        uniqueConstraints = Arrays.stream(assemblyAnnotation.isUnique())
+            .map(annotation -> ConstraintFactory.newUniqueConstraint(annotation, source))
+            .collect(Collectors.toCollection(LinkedList::new));
 
-      cardinalityConstraints = Arrays.stream(assemblyAnnotation.hasCardinality())
-          .map(annotation -> ConstraintFactory.newCardinalityConstraint(annotation, source))
-          .collect(Collectors.toCollection(LinkedList::new));
+        cardinalityConstraints = Arrays.stream(assemblyAnnotation.hasCardinality())
+            .map(annotation -> ConstraintFactory.newCardinalityConstraint(annotation, source))
+            .collect(Collectors.toCollection(LinkedList::new));
+      } catch (MetapathException ex) {
+        throw new MetapathException(
+            String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()), ex);
+      }
     }
 
     constraints = new LinkedList<>();

@@ -27,11 +27,11 @@
 package gov.nist.secauto.metaschema.model; // NOPMD - intentional
 
 import gov.nist.secauto.metaschema.model.common.AbstractFieldInstance;
-import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IInlineDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.IModelContainer;
 import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
@@ -52,7 +52,6 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType;
 
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -77,9 +76,11 @@ class XmlInlineFieldDefinition
    * @param xmlField
    *          the XML representation bound to Java objects
    * @param parent
-   *          the parent assembly definition
+   *          the parent container, either a choice or assembly
    */
-  public XmlInlineFieldDefinition(@NonNull InlineFieldDefinitionType xmlField, @NonNull IAssemblyDefinition parent) {
+  public XmlInlineFieldDefinition(
+      @NonNull InlineFieldDefinitionType xmlField,
+      @NonNull IModelContainer parent) {
     super(parent);
     this.xmlField = xmlField;
     this.fieldDefinition = new InternalFieldDefinition();
@@ -156,44 +157,22 @@ class XmlInlineFieldDefinition
 
   @Override
   public int getMinOccurs() {
-    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
-    if (getXmlField().isSetMinOccurs()) {
-      retval = getXmlField().getMinOccurs().intValueExact();
-    }
-    return retval;
+    return XmlModelParser.getMinOccurs(getXmlField().getMinOccurs());
   }
 
   @Override
   public int getMaxOccurs() {
-    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
-    if (getXmlField().isSetMaxOccurs()) {
-      Object value = getXmlField().getMaxOccurs();
-      if (value instanceof String) {
-        // unbounded
-        retval = -1;
-      } else if (value instanceof BigInteger) {
-        retval = ((BigInteger) value).intValueExact();
-      }
-    }
-    return retval;
+    return XmlModelParser.getMaxOccurs(getXmlField().getMaxOccurs());
   }
 
   @Override
   public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-    JsonGroupAsBehavior retval = MetaschemaModelConstants.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
-    if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInJson()) {
-      retval = getXmlField().getGroupAs().getInJson();
-    }
-    return retval;
+    return XmlModelParser.getJsonGroupAsBehavior(getXmlField().getGroupAs());
   }
 
   @Override
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    XmlGroupAsBehavior retval = MetaschemaModelConstants.DEFAULT_XML_GROUP_AS_BEHAVIOR;
-    if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInXml()) {
-      retval = getXmlField().getGroupAs().getInXml();
-    }
-    return retval;
+    return XmlModelParser.getXmlGroupAsBehavior(getXmlField().getGroupAs());
   }
 
   @SuppressWarnings("null")
@@ -225,9 +204,11 @@ class XmlInlineFieldDefinition
     private IValueConstraintSupport constraints;
 
     private InternalFieldDefinition() {
-      this.defaultValue = getXmlField().isSetDefault()
-          ? getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(getXmlField().getDefault()))
-          : null;
+      Object defaultValue = null;
+      if (getXmlField().isSetDefault()) {
+        defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(getXmlField().getDefault()));
+      }
+      this.defaultValue = defaultValue;
     }
 
     @Override

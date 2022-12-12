@@ -31,7 +31,6 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -48,9 +47,6 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
   protected AbstractModelNodeContext(@NonNull INodeItemFactory factory) {
     super(factory);
   }
-
-  @Override
-  protected abstract Supplier<L> newModelSupplier(@NonNull INodeItemFactory factory);
 
   @Override
   public Collection<? extends List<? extends M>> getModelItems() {

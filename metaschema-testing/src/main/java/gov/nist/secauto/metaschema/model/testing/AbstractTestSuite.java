@@ -86,6 +86,8 @@ public abstract class AbstractTestSuite {
   private static final Logger LOGGER = LogManager.getLogger(AbstractTestSuite.class);
   private static final MetaschemaLoader LOADER = new MetaschemaLoader();
 
+  private static final boolean DELETE_RESULTS_ON_EXIT = false;
+  
   @NonNull
   protected abstract Format getRequiredContentFormat();
 
@@ -171,7 +173,9 @@ public abstract class AbstractTestSuite {
     Path collectionGenerationPath;
     try {
       collectionGenerationPath = Files.createTempDirectory(generationPath, "collection-");
-      deleteCollectionOnExit(collectionGenerationPath);
+      if (DELETE_RESULTS_ON_EXIT) {
+        deleteCollectionOnExit(collectionGenerationPath);
+      }
     } catch (IOException ex) {
       throw new JUnitException("Unable to create collection temp directory", ex);
     }

@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
+
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
@@ -43,6 +45,11 @@ public abstract class AbstractStringAdapter<ITEM_TYPE extends IStringItem>
    */
   protected AbstractStringAdapter() {
     super(String.class);
+  }
+
+  @Override
+  public JsonFormatTypes getJsonRawType() {
+    return JsonFormatTypes.STRING;
   }
 
   @Override

@@ -95,7 +95,7 @@ public class DefaultXmlDeserializer<CLASS>
   protected IDocumentNodeItem deserializeToNodeItemInternal(Reader reader, URI documentUri) throws IOException {
     try (AutoCloser<XMLEventReader2, XMLStreamException> closer
         = new AutoCloser<>(newXMLEventReader2(reader), event -> event.close())) {
-      return parseXmlInternal(closer.getObject(), documentUri);
+      return parseXmlInternal(closer.getResource(), documentUri);
     } catch (XMLStreamException ex) {
       throw new IOException("Unable to create a new XMLEventReader2 instance.", ex);
     }

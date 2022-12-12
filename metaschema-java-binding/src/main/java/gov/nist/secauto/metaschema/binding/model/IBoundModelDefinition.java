@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 
 import java.util.Collection;
 import java.util.Map;
@@ -36,7 +36,7 @@ import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundModelDefinition extends IModelDefinition {
+public interface IBoundModelDefinition extends IFlagContainer {
 
   @Override
   default @NonNull Map<QName, Set<String>> getProperties() {

@@ -96,7 +96,7 @@ public abstract class AbstractMetaschemaMojo
    * </ol>
    * </p>
    * 
-   * @see #getEncoding(boolean)
+   * @see #getEncoding()
    * @since 2.0
    */
   @Parameter(defaultValue = "${project.build.sourceEncoding}")

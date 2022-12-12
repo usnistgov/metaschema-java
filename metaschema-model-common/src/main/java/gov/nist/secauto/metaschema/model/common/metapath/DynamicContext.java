@@ -215,8 +215,8 @@ public class DynamicContext { // NOPMD - intentional data class
     return ObjectUtils.requireNonNull(letVariableMap.get(name));
   }
 
-  public ISequence<?> setVariableValue(String name, ISequence<?> boundValue) {
-    return letVariableMap.put(name, boundValue);
+  public void setVariableValue(String name, ISequence<?> boundValue) {
+    letVariableMap.put(name, boundValue);
   }
 
   public void clearVariableValue(String name) {

@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
+
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUriReferenceItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -48,6 +50,11 @@ public class UriReferenceAdapter
   @Override
   public List<String> getNames() {
     return NAMES;
+  }
+
+  @Override
+  public JsonFormatTypes getJsonRawType() {
+    return JsonFormatTypes.STRING;
   }
 
   @SuppressWarnings("null")

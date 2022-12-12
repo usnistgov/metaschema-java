@@ -27,10 +27,14 @@
 package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.binding.io.Format;
+import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+import gov.nist.secauto.metaschema.model.common.configuration.DefaultConfiguration;
+import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.XmlSchemaContentValidator;
+import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -42,6 +46,9 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -140,5 +147,39 @@ class XmlSuiteTest
         "group-as-by-key_metaschema.xml",
         "group-as-by-key-schema",
         contentCase(Format.JSON, "group-as-by-key_test_valid_PASS.json", true));
+  }
+
+  @Disabled
+  @Test
+  void testAllowedValues() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
+    doTest(
+        "allowed-values",
+        "allowed-values-basic_metaschema.xml",
+        "allowed-values-basic-schema",
+//        contentCase(Format.JSON, "allowed-values-basic_test_baddates_FAIL.json", false),
+//        contentCase(Format.JSON, "allowed-values-basic_test_badvalues_FAIL.json", false),
+        contentCase(Format.XML, "allowed-values-basic_test_valid_FAIL.xml", false),
+//        contentCase(Format.JSON, "allowed-values-basic_test_valid_PASS.json", true),
+        contentCase(Format.XML, "allowed-values-basic_test_valid_PASS.xml", true)
+        );
+  }
+
+  @Disabled
+  @Test
+  void testOSCALComplete() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
+    MetaschemaLoader loader = new MetaschemaLoader();
+    IMetaschema metaschema = loader.load(new URL(
+        // "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
+        "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
+    ISchemaGenerator schemaGenerator = new XmlSchemaGenerator();
+    IMutableConfiguration<SchemaGenerationFeature> features = new DefaultConfiguration<>(SchemaGenerationFeature.class)
+        .disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+    try (Writer writer = Files.newBufferedWriter(
+        Path.of("oscal-complete_schema.xsd"),
+        StandardCharsets.UTF_8,
+        getWriteOpenOptions())) {
+      assert writer != null;
+      schemaGenerator.generateFromMetaschema(metaschema, writer, features);
+    }
   }
 }

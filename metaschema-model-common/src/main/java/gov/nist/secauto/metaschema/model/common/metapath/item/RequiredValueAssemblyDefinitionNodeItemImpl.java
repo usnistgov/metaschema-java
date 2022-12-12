@@ -65,7 +65,7 @@ class RequiredValueAssemblyDefinitionNodeItemImpl
   }
 
   @Override
-  protected @NonNull Supplier<Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
+  protected Supplier<Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
       newModelSupplier(@NonNull INodeItemFactory factory) {
     return () -> {
       Map<String, IRequiredValueFlagNodeItem> flags = factory.generateFlagsWithValues(this);
