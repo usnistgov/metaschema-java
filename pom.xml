@@ -4,30 +4,25 @@
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>21</version>
+		<version>22-SNAPSHOT</version>
 	</parent>
 	<groupId>gov.nist.secauto.metaschema</groupId>
 	<artifactId>metaschema-framework</artifactId>
-	<version>0.10.1-SNAPSHOT</version>
-
+	<version>0.11.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-
 	<name>Metaschema Framework Parent</name>
 	<description>A common build root for all NIST projects related to the Metaschema framework.</description>
 	<url>${site.url}</url>
-
 	<issueManagement>
 		<url>https://github.com/usnistgov/metaschema-java/issues</url>
 		<system>GitHub Issues</system>
 	</issueManagement>
-
 	<scm>
 		<url>https://github.com/usnistgov/metaschema-java/tree/main</url>
 		<connection>scm:git:git@github.com/usnistgov/metaschema-java.git</connection>
 		<developerConnection>scm:git:git@github.com:usnistgov/metaschema-java.git</developerConnection>
 		<tag>v0.10.0</tag>
 	</scm>
-
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
@@ -42,7 +37,6 @@
 			<url>${site.url}</url>
 		</site>
 	</distributionManagement>
-
 	<licenses>
 		<license>
 			<name>NIST License</name>
@@ -51,12 +45,10 @@
 			<comments>NIST software License</comments>
 		</license>
 	</licenses>
-
 	<organization>
 		<name>National Institute of Standards and Technology</name>
 		<url>https://www.nist.gov</url>
 	</organization>
-
 	<developers>
 		<developer>
 			<id>david.waltermire@nist.gov</id>
@@ -70,7 +62,6 @@
 			</roles>
 		</developer>
 	</developers>
-
 	<mailingLists>
 		<mailingList>
 			<name>OSCAL NIST Team</name>
@@ -88,7 +79,6 @@
 			<unsubscribe>oscal-updates-leave@nist.gov</unsubscribe>
 		</mailingList>
 	</mailingLists>
-
 	<properties>
 		<!-- site configuration -->
 		<site.url>https://pages.nist.gov/metaschema-java/</site.url>
@@ -108,11 +98,9 @@
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.release>11</maven.compiler.release>
-
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
 		<dependency.antlr4.version>4.10.1</dependency.antlr4.version>
 		<dependency.auto-service.version>1.0.1</dependency.auto-service.version>
 		<dependency.commons-lang3.version>3.12.0</dependency.commons-lang3.version>
@@ -140,17 +128,11 @@
 		<dependency.thymeleaf.version>3.0.15.RELEASE</dependency.thymeleaf.version>
 		<dependency.woodstox.version>6.4.0</dependency.woodstox.version>
 		<dependency.xmlbeans.version>5.1.1</dependency.xmlbeans.version>
-		<dependency.xmlresolver.version>4.5.1</dependency.xmlresolver.version>
-
-		<plugin.license.version>4.2.rc3</plugin.license.version>
+		<dependency.xmlresolver.version>4.6.0</dependency.xmlresolver.version>
+		<dependency.xml-apis.version>1.4.01</dependency.xml-apis.version>
 		<plugin.antlr4test.version>1.22</plugin.antlr4test.version>
 		<plugin.maven-changes.version>2.12.1</plugin.maven-changes.version>
-		<maven-checkstyle-plugin.version>3.2.0</maven-checkstyle-plugin.version>
-		<maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-		<checkstyle.maven-checkstyle-plugin.version>10.3.4</checkstyle.maven-checkstyle-plugin.version>
-		<spotbugs-maven-plugin.version>4.7.1.1</spotbugs-maven-plugin.version>
 	</properties>
-
 	<repositories>
 		<repository>
 			<name>Nexus Snapshots</name>
@@ -179,7 +161,6 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -222,7 +203,6 @@
 				<artifactId>metaschema-testing</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.google.auto.service</groupId>
 				<artifactId>auto-service</artifactId>
@@ -245,7 +225,6 @@
 				<artifactId>jaxen</artifactId>
 				<version>${dependency.jaxen.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.eclipse.persistence</groupId>
 				<artifactId>org.eclipse.persistence.moxy</artifactId>
@@ -256,31 +235,58 @@
 				<artifactId>jaxb-api</artifactId>
 				<version>${dependency.jaxb-api.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.sun.xml.bind</groupId>
 				<artifactId>jaxb-impl</artifactId>
 				<version>${dependency.jaxb.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.codehaus.woodstox</groupId>
 				<artifactId>stax2-api</artifactId>
 				<version>${dependency.stax2-api.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>net.sf.saxon</groupId>
 				<artifactId>Saxon-HE</artifactId>
 				<version>${dependency.saxon.version}</version>
+				<!--
 				<exclusions>
 					<exclusion>
 						<groupId>org.xmlresolver</groupId>
 						<artifactId>xmlresolver</artifactId>
 					</exclusion>
 				</exclusions>
+-->
 			</dependency>
-
+			<dependency>
+				<groupId>org.xmlresolver</groupId>
+				<artifactId>xmlresolver</artifactId>
+				<version>${dependency.xmlresolver.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>xml-apis</groupId>
+						<artifactId>xml-apis</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<!-- for saxon -->
+				<groupId>org.xmlresolver</groupId>
+				<artifactId>xmlresolver</artifactId>
+				<classifier>data</classifier>
+				<version>${dependency.xmlresolver.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>xml-apis</groupId>
+						<artifactId>xml-apis</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>xml-apis</groupId>
+				<artifactId>xml-apis</artifactId>
+				<version>${dependency.xml-apis.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>com.vladsch.flexmark</groupId>
 				<artifactId>flexmark</artifactId>
@@ -346,49 +352,31 @@
 				<artifactId>jackson-dataformat-yaml</artifactId>
 				<version>${dependency.jackson.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.github.erosb</groupId>
 				<artifactId>everit-json-schema</artifactId>
 				<version>${dependency.everit-json.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
 				<version>${dependency.freemarker.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.thymeleaf</groupId>
 				<artifactId>thymeleaf</artifactId>
 				<version>${dependency.thymeleaf.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.antlr</groupId>
 				<artifactId>antlr4-runtime</artifactId>
 				<version>${dependency.antlr4.version}</version>
 			</dependency>
-
-			<dependency>
-				<groupId>org.xmlresolver</groupId>
-				<artifactId>xmlresolver</artifactId>
-				<version>${dependency.xmlresolver.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>xml-apis</groupId>
-						<artifactId>xml-apis</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-
 			<dependency>
 				<groupId>nl.talsmasoftware</groupId>
 				<artifactId>lazy4j</artifactId>
 				<version>1.0.2</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-core</artifactId>
@@ -411,7 +399,6 @@
 				<artifactId>log4j-api</artifactId>
 				<version>${dependency.log4j2.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
@@ -427,7 +414,6 @@
 				<artifactId>commons-io</artifactId>
 				<version>${dependency.commons-io.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-annotations</artifactId>
@@ -489,23 +475,14 @@
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.junit.jupiter</groupId> -->
-<!-- 			<artifactId>junit-jupiter-engine</artifactId> -->
-<!-- 		</dependency> -->
+		<!-- 		<dependency> -->
+		<!-- 			<groupId>org.junit.jupiter</groupId> -->
+		<!-- 			<artifactId>junit-jupiter-engine</artifactId> -->
+		<!-- 		</dependency> -->
 	</dependencies>
-
 	<build>
 		<pluginManagement>
 			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>${maven-compiler-plugin.version}</version>
-<!-- 					<configuration> -->
-<!-- 						<forceJavacCompilerUse>true</forceJavacCompilerUse> -->
-<!-- 					</configuration> -->
-				</plugin>
 				<plugin>
 					<groupId>org.apache.xmlbeans</groupId>
 					<artifactId>xmlbeans</artifactId>
@@ -530,7 +507,6 @@
 				<plugin>
 					<groupId>com.mycila</groupId>
 					<artifactId>license-maven-plugin</artifactId>
-					<version>${plugin.license.version}</version>
 					<configuration>
 						<licenseSets>
 							<licenseSet>
@@ -613,21 +589,6 @@
 						<deployAtEnd>true</deployAtEnd>
 					</configuration>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>${maven-checkstyle-plugin.version}</version>
-					<configuration>
-						<excludes>module\-info\.java$</excludes>
-					</configuration>
-					<dependencies>
-						<dependency>
-							<groupId>com.puppycrawl.tools</groupId>
-							<artifactId>checkstyle</artifactId>
-							<version>${checkstyle.maven-checkstyle-plugin.version}</version>
-						</dependency>
-					</dependencies>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -653,7 +614,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<profiles>
 		<profile>
 			<id>release</id>
@@ -721,23 +681,6 @@
 							</dependency>
 						</dependencies>
 					</plugin>
-					<plugin>
-						<groupId>com.github.spotbugs</groupId>
-						<artifactId>spotbugs-maven-plugin</artifactId>
-						<version>${spotbugs-maven-plugin.version}</version>
-						<configuration>
-							<effort>Max</effort>
-							<threshold>Normal</threshold>
-							<xmlOutput>true</xmlOutput>
-						</configuration>
-						<executions>
-							<execution>
-								<goals>
-									<goal>check</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -760,38 +703,6 @@
 								</reports>
 							</reportSet>
 						</reportSets>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-project-info-reports-plugin</artifactId>
-						<reportSets>
-							<reportSet>
-								<id>default</id>
-								<reports>
-									<report>summary</report>
-									<report>licenses</report>
-									<report>modules</report>
-									<report>issue-management</report>
-									<report>dependencies</report>
-									<report>dependency-convergence</report>
-									<report>dependency-management</report>
-									<report>plugins</report>
-								</reports>
-							</reportSet>
-						</reportSets>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jxr-plugin</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-pmd-plugin</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>com.github.spotbugs</groupId>
-						<artifactId>spotbugs-maven-plugin</artifactId>
-						<version>${spotbugs-maven-plugin.version}</version>
 					</plugin>
 				</plugins>
 			</reporting>
@@ -824,7 +735,6 @@
 			</build>
 		</profile>
 	</profiles>
-
 	<modules>
 		<module>metaschema-model</module>
 		<module>metaschema-java-codegen</module>

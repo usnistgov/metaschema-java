@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.codegen;
 import com.squareup.javapoet.ClassName;
 
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 
 import java.nio.file.Path;
 
@@ -42,7 +42,7 @@ class DefaultGeneratedDefinitionClass
     extends DefaultGeneratedClass
     implements IGeneratedDefinitionClass {
   @NonNull
-  private final IModelDefinition definition;
+  private final IFlagContainer definition;
 
   /**
    * Construct a new class information object for a generated class.
@@ -55,13 +55,13 @@ class DefaultGeneratedDefinitionClass
    *          the definition on which the class was based
    */
   public DefaultGeneratedDefinitionClass(@NonNull Path classFile, @NonNull ClassName className,
-      @NonNull IModelDefinition definition) {
+      @NonNull IFlagContainer definition) {
     super(classFile, className);
     this.definition = definition;
   }
 
   @Override
-  public IModelDefinition getDefinition() {
+  public IFlagContainer getDefinition() {
     return definition;
   }
 

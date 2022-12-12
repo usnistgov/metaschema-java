@@ -26,25 +26,25 @@
 
 package gov.nist.secauto.metaschema.codegen;
 
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DefinitionProductionImpl implements IDefinitionProduction {
 
   @NonNull
-  private final IModelDefinition definition;
+  private final IFlagContainer definition;
   @NonNull
   private final DefaultGeneratedDefinitionClass generatedClass;
 
-  public DefinitionProductionImpl(@NonNull IModelDefinition definition,
+  public DefinitionProductionImpl(@NonNull IFlagContainer definition,
       @NonNull DefaultGeneratedDefinitionClass generatedClass) {
     this.definition = definition;
     this.generatedClass = generatedClass;
   }
 
   @Override
-  public IModelDefinition getDefinition() {
+  public IFlagContainer getDefinition() {
     return definition;
   }
 

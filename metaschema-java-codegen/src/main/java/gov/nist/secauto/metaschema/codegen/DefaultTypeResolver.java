@@ -31,9 +31,9 @@ import com.squareup.javapoet.ClassName;
 import gov.nist.secauto.metaschema.codegen.binding.config.IBindingConfiguration;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.IInlineDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
@@ -50,7 +50,7 @@ class DefaultTypeResolver implements ITypeResolver {
   private static final Logger LOGGER = LogManager.getLogger(DefaultTypeResolver.class);
 
   private final Map<String, Set<String>> packageToClassNamesMap = new HashMap<>();
-  private final Map<IModelDefinition, ClassName> definitionToTypeMap = new HashMap<>();
+  private final Map<IFlagContainer, ClassName> definitionToTypeMap = new HashMap<>();
   private final Map<IMetaschema, ClassName> metaschemaToTypeMap = new HashMap<>();
   private final Map<IAssemblyDefinition, IAssemblyDefinitionTypeInfo> assemblyDefinitionToTypeInfoMap = new HashMap<>();
   private final Map<IFieldDefinition, IFieldDefinitionTypeInfo> fieldDefinitionToTypeInfoMap = new HashMap<>();
@@ -91,7 +91,7 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public IModelDefinitionTypeInfo getTypeInfo(@NonNull IModelDefinition definition) {
+  public IModelDefinitionTypeInfo getTypeInfo(@NonNull IFlagContainer definition) {
     IModelDefinitionTypeInfo retval;
     if (definition instanceof IAssemblyDefinition) {
       retval = getTypeInfo((IAssemblyDefinition) definition);
@@ -104,14 +104,14 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public ClassName getClassName(@NonNull IModelDefinition definition) {
+  public ClassName getClassName(@NonNull IFlagContainer definition) {
     ClassName retval = definitionToTypeMap.get(definition);
     if (retval == null) {
       String packageName = getBindingConfiguration().getPackageNameForMetaschema(definition.getContainingMetaschema());
       if (definition.isInline()) {
         // this is a local definition, which means a child class needs to be generated
-        IModelDefinition parentDefinition = ObjectUtils.notNull(
-            ((IInlineDefinition<?>) definition).getInlineInstance().getContainingDefinition());
+        INamedModelInstance inlineInstance = definition.getInlineInstance();
+        IFlagContainer parentDefinition = inlineInstance.getContainingDefinition();
         ClassName parentClassName = getClassName(parentDefinition);
         String name = generateClassName(ObjectUtils.notNull(parentClassName.canonicalName()), definition);
         retval = parentClassName.nestedClass(name);
@@ -162,9 +162,8 @@ class DefaultTypeResolver implements ITypeResolver {
     return classNames.add(className);
   }
 
-  private String generateClassName(@NonNull String packageOrTypeName, @NonNull IModelDefinition definition) {
-    @NonNull
-    String className = getBindingConfiguration().getClassName(definition);
+  private String generateClassName(@NonNull String packageOrTypeName, @NonNull IFlagContainer definition) {
+    @NonNull String className = getBindingConfiguration().getClassName(definition);
 
     Set<String> classNames = packageToClassNamesMap.get(packageOrTypeName);
     if (classNames == null) {
@@ -192,7 +191,7 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public ClassName getBaseClassName(IModelDefinition definition) {
+  public ClassName getBaseClassName(IFlagContainer definition) {
     String className = bindingConfiguration.getQualifiedBaseClassName(definition);
     ClassName retval = null;
     if (className != null) {

@@ -33,7 +33,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface INamedModelInstance extends INamedInstance, IModelInstance {
   @Override
-  IModelDefinition getDefinition();
+  @NonNull
+  IFlagContainer getDefinition();
 
   /**
    * Get the item values for the provided {@code instanceValue}. An instance may be singular or many

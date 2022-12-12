@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model;
 
 import gov.nist.secauto.metaschema.model.common.AbstractFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -57,7 +57,7 @@ class XmlFlagInstance
    * @param parent
    *          the field definition this object is an instance of
    */
-  public XmlFlagInstance(@NonNull FlagReferenceType xmlFlag, @NonNull IModelDefinition parent) {
+  public XmlFlagInstance(@NonNull FlagReferenceType xmlFlag, @NonNull IFlagContainer parent) {
     super(parent);
     this.xmlFlag = xmlFlag;
   }

@@ -72,11 +72,17 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
    * @param metaschema
    *          the containing Metaschema
    */
-  public XmlGlobalFlagDefinition(@NonNull GlobalFlagDefinitionType xmlFlag, @NonNull IMetaschema metaschema) {
+  public XmlGlobalFlagDefinition(
+      @NonNull GlobalFlagDefinitionType xmlFlag,
+      @NonNull IMetaschema metaschema) {
     this.xmlFlag = xmlFlag;
     this.metaschema = metaschema;
-    this.defaultValue
-        = xmlFlag.isSetDefault() ? getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlFlag.getDefault())) : null;
+
+    Object defaultValue = null;
+    if (xmlFlag.isSetDefault()) {
+      defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlFlag.getDefault()));
+    }
+    this.defaultValue = defaultValue;
   }
 
   /**

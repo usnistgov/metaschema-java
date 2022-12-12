@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
@@ -50,6 +51,11 @@ public abstract class AbstractIntegerAdapter<ITEM_TYPE extends IIntegerItem>
    */
   protected AbstractIntegerAdapter() {
     super(BigInteger.class);
+  }
+
+  @Override
+  public JsonFormatTypes getJsonRawType() {
+    return JsonFormatTypes.INTEGER;
   }
 
   @Override

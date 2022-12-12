@@ -31,38 +31,40 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class AutoCloser<T, E extends Exception> implements AutoCloseable {
   @NonNull
-  private final T object;
+  private final T resource;
   @NonNull
-  private final Closer<T, E> lambda;
+  private final Closer<T, E> closeLambda;
 
   @NonNull
-  public static <T, E extends Exception> AutoCloser<T, E> autoClose(@NonNull T object, @NonNull Closer<T, E> lambda) {
-    return new AutoCloser<>(object, lambda);
+  public static <T, E extends Exception> AutoCloser<T, E> autoClose(
+      @NonNull T resource,
+      @NonNull Closer<T, E> closeLambda) {
+    return new AutoCloser<>(resource, closeLambda);
   }
 
   /**
    * Adapt the provided {@code object} to be {@link AutoCloseable}, using a provided closer
    * {@code lambda}.
    * 
-   * @param object
+   * @param resource
    *          the object to adapt
    * @param lambda
    *          the lambda to use as a callback on close
    */
-  public AutoCloser(@NonNull T object, @NonNull Closer<T, E> lambda) {
-    this.object = object;
-    this.lambda = lambda;
+  public AutoCloser(@NonNull T resource, @NonNull Closer<T, E> lambda) {
+    this.resource = resource;
+    this.closeLambda = lambda;
   }
 
   @NonNull
-  public T getObject() {
-    return object;
+  public T getResource() {
+    return resource;
   }
 
   @Override
   @SuppressFBWarnings("THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION")
   public void close() throws E {
-    lambda.close(getObject());
+    closeLambda.close(getResource());
   }
 
   @FunctionalInterface

@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 import com.google.re2j.Pattern;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
@@ -52,6 +53,11 @@ public class UuidAdapter
   @Override
   public List<String> getNames() {
     return NAMES;
+  }
+
+  @Override
+  public JsonFormatTypes getJsonRawType() {
+    return JsonFormatTypes.STRING;
   }
 
   @SuppressWarnings("null")

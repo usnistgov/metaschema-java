@@ -65,13 +65,15 @@ class SimpleFieldProperty
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */
-  public SimpleFieldProperty(@NonNull Field field, @NonNull IAssemblyClassBinding parentClassBinding) {
+  public SimpleFieldProperty(
+      @NonNull Field field,
+      @NonNull IAssemblyClassBinding parentClassBinding) {
     super(field, parentClassBinding);
 
     BoundFieldValue boundFieldValue = field.getAnnotation(BoundFieldValue.class);
     if (boundFieldValue == null) {
       this.javaTypeAdapter = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
-      this.defaultValue = null;
+      this.defaultValue = null; // NOPMD readability
     } else {
       this.javaTypeAdapter = ModelUtil.getDataTypeAdapter(
           boundFieldValue.typeAdapter(),

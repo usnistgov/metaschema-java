@@ -36,6 +36,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * assembly's model.
  */
 public interface IModelInstance extends IInstance {
+  @Override
+  IModelContainer getParentContainer();
+
   /**
    * Retrieve the Metaschema assembly definition on which the info element was declared.
    * 

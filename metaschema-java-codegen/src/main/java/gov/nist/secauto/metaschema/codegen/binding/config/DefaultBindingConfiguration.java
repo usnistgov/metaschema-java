@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.codegen.xmlbeans.ObjectDefinitionBindingType;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.xmlbeans.XmlException;
@@ -77,7 +77,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
    */
   @Nullable
   public IDefinitionBindingConfiguration
-      getBindingConfigurationForDefinition(@NonNull IModelDefinition definition) {
+      getBindingConfigurationForDefinition(@NonNull IFlagContainer definition) {
     String metaschemaUri = ObjectUtils.notNull(definition.getContainingMetaschema().getLocation().toString());
     String definitionName = definition.getName();
 
@@ -101,7 +101,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   }
 
   @Override
-  public String getQualifiedBaseClassName(IModelDefinition definition) {
+  public String getQualifiedBaseClassName(IFlagContainer definition) {
     IDefinitionBindingConfiguration config = getBindingConfigurationForDefinition(definition);
 
     String retval = null;
@@ -112,7 +112,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   }
 
   @Override
-  public String getClassName(IModelDefinition definition) {
+  public String getClassName(IFlagContainer definition) {
     IDefinitionBindingConfiguration config = getBindingConfigurationForDefinition(definition);
 
     String retval = null;

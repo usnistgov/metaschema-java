@@ -50,6 +50,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.ConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.DefineAssemblyConstraintsType;
@@ -68,6 +69,7 @@ import gov.nist.secauto.metaschema.model.xmlbeans.ScopedMatchesConstraintType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.impl.values.XmlValueNotSupportedException;
 
 import java.math.BigInteger;
 import java.util.LinkedList;
@@ -168,6 +170,11 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
           addConstraint(constraint);
         }
       }
+    } catch (MetapathException | XmlValueNotSupportedException ex) {
+      if (ex.getCause() instanceof MetapathException) {
+        throw new MetapathException(String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()), ex);
+      }
+      throw ex;
     }
   }
 

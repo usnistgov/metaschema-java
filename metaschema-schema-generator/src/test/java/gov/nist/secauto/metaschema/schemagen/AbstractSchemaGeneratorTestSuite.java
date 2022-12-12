@@ -40,6 +40,8 @@ import gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentVali
 import gov.nist.secauto.metaschema.model.common.validation.XmlSchemaContentValidator;
 import gov.nist.secauto.metaschema.model.testing.AbstractTestSuite;
 import gov.nist.secauto.metaschema.model.testing.DynamicBindingContext;
+import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 
 import org.junit.platform.commons.JUnitException;
 import org.xml.sax.SAXException;
@@ -81,9 +83,11 @@ public abstract class AbstractSchemaGeneratorTestSuite
   @NonNull
   protected static final Function<Path, XmlSchemaContentValidator> XML_CONTENT_VALIDATOR_PROVIDER;
 
+  private static final String UNIT_TEST_CONFIG = "../metaschema-model/metaschema/test-suite/schema-generation/unit-tests.xml";
+
   static {
     IMutableConfiguration<SchemaGenerationFeature> features = new DefaultConfiguration<>(SchemaGenerationFeature.class)
-        .enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+        .disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     SCHEMA_GENERATION_CONFIG = features;
 
     BiFunction<IMetaschema, Writer, Void> xmlProvider = (metaschema, writer) -> {
@@ -91,7 +95,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
       assert writer != null;
       try {
         XML_SCHEMA_GENERATOR.generateFromMetaschema(metaschema, writer, SCHEMA_GENERATION_CONFIG);
-      } catch (IOException ex) {
+      } catch (SchemaGenerationException ex) {
         throw new JUnitException("IO error", ex);
       }
       return null;
@@ -103,14 +107,14 @@ public abstract class AbstractSchemaGeneratorTestSuite
       assert writer != null;
       try {
         JSON_SCHEMA_GENERATOR.generateFromMetaschema(metaschema, writer, SCHEMA_GENERATION_CONFIG);
-      } catch (IOException ex) {
+      } catch (SchemaGenerationException ex) {
         throw new JUnitException("IO error", ex);
       }
       return null;
     };
     JSON_SCHEMA_PROVIDER = jsonProvider;
 
-    try (InputStream is = MetaschemaLoader.class.getClassLoader().getResourceAsStream("schema/json/json-schema.json")) {
+    try (InputStream is = MetaschemaLoader.class.getResourceAsStream("/schema/json/json-schema.json")) {
       assert is != null;
       JsonSchemaContentValidator schemaValidator = new JsonSchemaContentValidator(is);
       JSON_SCHEMA_VALIDATOR = schemaValidator;
@@ -123,8 +127,9 @@ public abstract class AbstractSchemaGeneratorTestSuite
     Function<Path, XmlSchemaContentValidator> xmlContentValidatorProvider = (path) -> {
       try {
         URL schemaResource = path.toUri().toURL();
-        List<? extends Source> schemaSources = Collections.singletonList(
-            new StreamSource(schemaResource.openStream(), schemaResource.toString()));
+        @SuppressWarnings("resource")
+        StreamSource source = new StreamSource(schemaResource.openStream(), schemaResource.toString());
+        List<? extends Source> schemaSources = Collections.singletonList(source);
         return new XmlSchemaContentValidator(schemaSources);
       } catch (IOException | SAXException ex) {
         throw new IllegalStateException(ex);
@@ -147,7 +152,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
   @Override
   protected URI getTestSuiteURI() {
     return ObjectUtils
-        .notNull(Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/unit-tests.xml").toUri());
+        .notNull(Paths.get(UNIT_TEST_CONFIG).toUri());
   }
 
   @Override
@@ -208,7 +213,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
 
       assertEquals(contentCase.isValid(),
           validate(getContentValidatorSupplier().apply(schemaPath), contentPath),
-          "validation did not match expectation");
+          String.format("validation of '%s' did not match expectation", contentPath));
     }
   }
 

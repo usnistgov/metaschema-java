@@ -32,7 +32,7 @@ import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.io.IOException;
@@ -51,9 +51,9 @@ class FieldDefinitionTypeInfoImpl
   }
 
   @Override
-  protected Set<IModelDefinition> buildClass(@NonNull TypeSpec.Builder builder, @NonNull ClassName className)
+  protected Set<IFlagContainer> buildClass(@NonNull TypeSpec.Builder builder, @NonNull ClassName className)
       throws IOException {
-    Set<IModelDefinition> retval = new HashSet<>();
+    Set<IFlagContainer> retval = new HashSet<>();
     retval.addAll(super.buildClass(builder, className));
 
     AnnotationSpec.Builder metaschemaField = ObjectUtils.notNull(AnnotationSpec.builder(MetaschemaField.class));

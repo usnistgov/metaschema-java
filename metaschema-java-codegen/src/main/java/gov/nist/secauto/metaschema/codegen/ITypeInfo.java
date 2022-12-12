@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.codegen;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 
 import java.util.Set;
 
@@ -102,5 +102,5 @@ public interface ITypeInfo {
    * @return the set of additional child definitions that need to be built
    */
   @NonNull
-  Set<IModelDefinition> build(@NonNull TypeSpec.Builder builder, @NonNull ITypeResolver typeResolver);
+  Set<IFlagContainer> build(@NonNull TypeSpec.Builder builder, @NonNull ITypeResolver typeResolver);
 }

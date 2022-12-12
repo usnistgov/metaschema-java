@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -207,6 +208,13 @@ public final class CollectionUtil {
   @NonNull
   public static <T> List<T> listOrEmpty(@Nullable List<T> list) {
     return list == null ? emptyList() : list;
+  }
+
+  @SafeVarargs
+  @SuppressWarnings("null")
+  @NonNull
+  public static <T> List<T> listOrEmpty(@Nullable T... array) {
+    return array == null || array.length == 0 ? emptyList() : Arrays.asList(array);
   }
 
   @SuppressWarnings("null")

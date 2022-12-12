@@ -34,9 +34,9 @@ import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator;
-import gov.nist.secauto.metaschema.schemagen.JsonSchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationFeature;
-import gov.nist.secauto.metaschema.schemagen.XmlSchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -158,7 +158,7 @@ public class GenerateSchemaMojo
           schemaFormats.add(SchemaFormat.JSON_SCHEMA);
           break;
         default:
-          throw new IllegalStateException("Unsupported schema format: "+format);
+          throw new IllegalStateException("Unsupported schema format: " + format);
         }
       }
     } else {
@@ -210,12 +210,12 @@ public class GenerateSchemaMojo
       @NonNull IConfiguration<SchemaGenerationFeature> schemaGenerationConfig,
       @NonNull Path schemaPath,
       @NonNull ISchemaGenerator generator) throws IOException {
-    try (Writer writer = Files.newBufferedWriter(
+    try (@SuppressWarnings("resource") Writer writer = ObjectUtils.notNull(Files.newBufferedWriter(
         schemaPath,
         StandardCharsets.UTF_8,
         StandardOpenOption.CREATE,
         StandardOpenOption.WRITE,
-        StandardOpenOption.TRUNCATE_EXISTING)) {
+        StandardOpenOption.TRUNCATE_EXISTING))) {
       generator.generateFromMetaschema(metaschema, writer, schemaGenerationConfig);
     }
   }

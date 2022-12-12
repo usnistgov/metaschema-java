@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model.common;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractChoiceInstance implements IChoiceInstance {
-  @NonNull
-  private final IAssemblyDefinition parent;
+public abstract class AbstractChoiceInstance
+    extends AbstractModelInstance
+    implements IChoiceInstance {
 
   /**
    * Create a new choice instance.
@@ -38,13 +38,8 @@ public abstract class AbstractChoiceInstance implements IChoiceInstance {
    * @param parent
    *          the containing assembly definition
    */
-  public AbstractChoiceInstance(@NonNull IAssemblyDefinition parent) {
-    this.parent = parent;
-  }
-
-  @Override
-  public IAssemblyDefinition getContainingDefinition() {
-    return parent;
+  public AbstractChoiceInstance(@NonNull IModelContainer parent) {
+    super(parent);
   }
 
   @Override

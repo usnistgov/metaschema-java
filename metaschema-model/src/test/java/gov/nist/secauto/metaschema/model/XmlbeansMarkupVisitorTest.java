@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.METASCHEMADocument;
@@ -46,18 +48,21 @@ class XmlbeansMarkupVisitorTest {
   @Test
   void testText() throws IOException {
     String html = testMarkupLine("this is some basic text");
+    assertNotNull(html, "not null");
     // System.out.println(html);
   }
 
   @Test
   void testQuote() throws IOException {
     String html = testMarkupLine("this is some \"basic text\"");
+    assertNotNull(html, "not null");
     // System.out.println(html);
   }
 
   @Test
   void testLink() throws IOException {
     String html = testMarkupLine("this is some basic text with a [link](url/).");
+    assertNotNull(html, "not null");
     // System.out.println(html);
   }
 
@@ -65,6 +70,7 @@ class XmlbeansMarkupVisitorTest {
   void testComplex() throws IOException {
     String html = testMarkupLine(
         "this is some \"quoted *basic text*\" with a [**bold** link](url/). <span id=\"id\">test</span>");
+    assertNotNull(html, "not null");
     // System.out.println(html);
   }
 

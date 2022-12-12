@@ -47,14 +47,16 @@ class ClassBindingFieldProperty
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */
-  public ClassBindingFieldProperty(@NonNull Field field, @NonNull IFieldClassBinding definition,
+  public ClassBindingFieldProperty(
+      @NonNull Field field,
+      @NonNull IFieldClassBinding definition,
       @NonNull IAssemblyClassBinding parentClassBinding) {
     super(field, parentClassBinding);
 
     this.definition = definition;
 
     if (!isInXmlWrapped()) {
-      if (!isSimple()) {
+      if (!isSimple()) { // NOPMD efficiency
         throw new IllegalStateException(
             String.format("Field '%s' on class '%s' is requested to be unwrapped, but it has flags preventing this.",
                 field.getName(),

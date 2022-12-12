@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -247,7 +247,7 @@ class XmlMetaschema
 
   @SuppressWarnings("null")
   @Override
-  public List<? extends IModelDefinition> getAssemblyAndFieldDefinitions() {
+  public List<? extends IFlagContainer> getAssemblyAndFieldDefinitions() {
     return Stream.concat(getAssemblyDefinitions().stream(), getFieldDefinitions().stream())
         .collect(Collectors.toList());
   }

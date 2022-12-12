@@ -220,7 +220,7 @@ public interface IMetaschema {
    * @return a listing of assembly and field definitions
    */
   @NonNull
-  default List<? extends IModelDefinition> getAssemblyAndFieldDefinitions() {
+  default List<? extends IFlagContainer> getAssemblyAndFieldDefinitions() {
     return ObjectUtils.notNull(
         Stream.concat(getAssemblyDefinitions().stream(), getFieldDefinitions().stream())
             .collect(Collectors.toList()));

@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.model;
 
-import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IModelContainer;
 import gov.nist.secauto.metaschema.model.common.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.xmlbeans.ChoiceType;
@@ -61,12 +61,12 @@ class XmlModelContainerSupport {
    * @param containingAssembly
    *          the assembly containing this model
    */
-  public XmlModelContainerSupport(@NonNull XmlObject xmlContent, @NonNull IAssemblyDefinition containingAssembly) {
+  public XmlModelContainerSupport(@NonNull XmlObject xmlContent, @NonNull IModelContainer container) {
     XmlModelParser parser = new XmlModelParser();
     if (xmlContent instanceof ChoiceType) {
-      parser.parseChoice(xmlContent, containingAssembly);
+      parser.parseChoice(xmlContent, container);
     } else {
-      parser.parseModel(xmlContent, containingAssembly);
+      parser.parseModel(xmlContent, container);
     }
     this.modelInstances = parser.getModelInstances();
     this.namedModelInstances = parser.getNamedModelInstances();

@@ -67,9 +67,9 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
   private final GlobalAssemblyDefinitionType xmlAssembly;
   @NonNull
   private final XmlMetaschema metaschema;
-  private Lazy<XmlFlagContainerSupport> flagContainer;
-  private Lazy<XmlModelContainerSupport> modelContainer;
-  private Lazy<AssemblyConstraintSupport> constraints;
+  private final Lazy<XmlFlagContainerSupport> flagContainer;
+  private final Lazy<XmlModelContainerSupport> modelContainer;
+  private final Lazy<AssemblyConstraintSupport> constraints;
 
   /**
    * Constructs a new Metaschema Assembly definition from an XML representation bound to Java objects.

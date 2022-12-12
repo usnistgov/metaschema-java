@@ -26,18 +26,22 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 /**
  * This marker interface indicates that this object is an instance.
  */
 public interface IInstance extends IModelElement {
   /**
-   * Retrieve the Metaschema definition on which the instance was declared. This value will typically
-   * not be {@code null}, except in the case that the instance represents a definition at the root.
+   * Retrieve the Metaschema definition on which the instance was declared.
    * 
    * @return the Metaschema definition on which the instance was declared
    */
-  // TODO: Make this not null
-  IModelDefinition getContainingDefinition();
+  @NonNull
+  IDefinition getContainingDefinition();
+
+  @NonNull
+  IContainer getParentContainer();
 
   @Override
   default IMetaschema getContainingMetaschema() {

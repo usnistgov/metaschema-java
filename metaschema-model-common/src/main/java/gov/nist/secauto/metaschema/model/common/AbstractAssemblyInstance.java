@@ -28,24 +28,17 @@ package gov.nist.secauto.metaschema.model.common;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractAssemblyInstance implements IAssemblyInstance {
-  @NonNull
-  private final IAssemblyDefinition parent;
-
+public abstract class AbstractAssemblyInstance
+    extends AbstractModelInstance
+    implements IAssemblyInstance {
   /**
    * Create a new assembly instance.
    * 
    * @param parent
    *          the parent assembly definition
    */
-  public AbstractAssemblyInstance(@NonNull IAssemblyDefinition parent) {
-    this.parent = parent;
-  }
-
-  @Override
-  @NonNull
-  public IAssemblyDefinition getContainingDefinition() {
-    return parent;
+  public AbstractAssemblyInstance(@NonNull IModelContainer parent) {
+    super(parent);
   }
 
   @SuppressWarnings("null")

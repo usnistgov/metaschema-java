@@ -81,43 +81,44 @@ class DefaultFieldValuePropertyTest {
       throws JsonParseException, IOException, NoSuchFieldException {
     String json = "{ \"a-value\": \"theValue\" }";
     JsonFactory factory = new JsonFactory();
-    JsonParser jsonParser = factory.createParser(json);
-    Class<?> theClass = SimpleField.class;
+    try (JsonParser jsonParser = factory.createParser(json)) {
+      Class<?> theClass = SimpleField.class;
 
-    Field field = theClass.getDeclaredField("_value");
+      Field field = theClass.getDeclaredField("_value");
 
-    context.checking(new Expectations() {
-      { // NOPMD - intentional
-        atMost(1).of(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-        will(returnValue(MetaschemaDataTypeProvider.STRING));
+      context.checking(new Expectations() {
+        { // NOPMD - intentional
+          atMost(1).of(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
+          will(returnValue(MetaschemaDataTypeProvider.STRING));
 
-        allowing(classBinding).getBoundClass();
-        will(returnValue(theClass));
-        allowing(classBinding).getBoundClass();
-        will(returnValue(theClass));
-        allowing(classBinding).getBindingContext();
-        will(returnValue(bindingContext));
-        allowing(classBinding).getJsonValueKeyFlagInstance();
-        will(returnValue(null));
+          allowing(classBinding).getBoundClass();
+          will(returnValue(theClass));
+          allowing(classBinding).getBoundClass();
+          will(returnValue(theClass));
+          allowing(classBinding).getBindingContext();
+          will(returnValue(bindingContext));
+          allowing(classBinding).getJsonValueKeyFlagInstance();
+          will(returnValue(null));
 
-        allowing(jsonParsingContext).getReader();
-        will(returnValue(jsonParser));
-      }
-    });
+          allowing(jsonParsingContext).getReader();
+          will(returnValue(jsonParser));
+        }
+      });
 
-    DefaultFieldValueProperty idProperty = new DefaultFieldValueProperty(classBinding, field);
+      DefaultFieldValueProperty idProperty = new DefaultFieldValueProperty(classBinding, field);
 
-    assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    assertEquals("a-value", jsonParser.nextFieldName());
-    // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
-    // assertEquals("id", jsonParser.currentName());
+      assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
+      assertEquals("a-value", jsonParser.nextFieldName());
+      // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
+      // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
+      // assertEquals("id", jsonParser.currentName());
 
-    SimpleField obj = new SimpleField();
+      SimpleField obj = new SimpleField();
 
-    idProperty.read(obj, jsonParsingContext);
+      idProperty.read(obj, jsonParsingContext);
 
-    assertEquals("theValue", obj.getValue());
+      assertEquals("theValue", obj.getValue());
+    }
   }
 
   @Test
@@ -226,43 +227,44 @@ class DefaultFieldValuePropertyTest {
   void testJsonDefaultNameRead() throws JsonParseException, IOException, NoSuchFieldException {
     String json = "{ \"STRVALUE\": \"theValue\" }";
     JsonFactory factory = new JsonFactory();
-    JsonParser jsonParser = factory.createParser(json);
-    Class<?> theClass = SimpleField2.class;
+    try (JsonParser jsonParser = factory.createParser(json)) {
+      Class<?> theClass = SimpleField2.class;
 
-    Field field = theClass.getDeclaredField("_value");
+      Field field = theClass.getDeclaredField("_value");
 
-    context.checking(new Expectations() {
-      { // NOPMD - intentional
-        atMost(1).of(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-        will(returnValue(MetaschemaDataTypeProvider.STRING));
+      context.checking(new Expectations() {
+        { // NOPMD - intentional
+          atMost(1).of(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
+          will(returnValue(MetaschemaDataTypeProvider.STRING));
 
-        allowing(classBinding).getBoundClass();
-        will(returnValue(theClass));
-        allowing(classBinding).getBoundClass();
-        will(returnValue(theClass));
-        allowing(classBinding).getJsonValueKeyFlagInstance();
-        will(returnValue(null));
-        allowing(classBinding).getBindingContext();
-        will(returnValue(bindingContext));
+          allowing(classBinding).getBoundClass();
+          will(returnValue(theClass));
+          allowing(classBinding).getBoundClass();
+          will(returnValue(theClass));
+          allowing(classBinding).getJsonValueKeyFlagInstance();
+          will(returnValue(null));
+          allowing(classBinding).getBindingContext();
+          will(returnValue(bindingContext));
 
-        allowing(jsonParsingContext).getReader();
-        will(returnValue(jsonParser));
-      }
-    });
+          allowing(jsonParsingContext).getReader();
+          will(returnValue(jsonParser));
+        }
+      });
 
-    DefaultFieldValueProperty idProperty = new DefaultFieldValueProperty(classBinding, field);
+      DefaultFieldValueProperty idProperty = new DefaultFieldValueProperty(classBinding, field);
 
-    assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    assertEquals("STRVALUE", jsonParser.nextFieldName());
-    // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
-    // assertEquals("id", jsonParser.currentName());
+      assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
+      assertEquals("STRVALUE", jsonParser.nextFieldName());
+      // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
+      // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
+      // assertEquals("id", jsonParser.currentName());
 
-    SimpleField2 obj = new SimpleField2();
+      SimpleField2 obj = new SimpleField2();
 
-    idProperty.read(obj, jsonParsingContext);
+      idProperty.read(obj, jsonParsingContext);
 
-    assertEquals("theValue", obj.getValue());
+      assertEquals("theValue", obj.getValue());
+    }
   }
 
   @Test

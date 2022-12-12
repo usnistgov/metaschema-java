@@ -37,8 +37,9 @@ import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -65,18 +66,20 @@ class FlagInstanceTypeInfoImpl
   }
 
   @Override
-  protected Set<IModelDefinition> buildField(@NonNull FieldSpec.Builder builder) {
+  protected Set<IFlagContainer> buildField(@NonNull FieldSpec.Builder builder) {
     IFlagInstance instance = getInstance();
 
     AnnotationSpec.Builder annotation
         = AnnotationSpec.builder(BoundFlag.class);
 
-    if (instance.getFormalName() != null) {
-      annotation.addMember("formalName", "$S", instance.getFormalName());
+    String formalName = instance.getEffectiveFormalName();
+    if (formalName != null) {
+      annotation.addMember("formalName", "$S", formalName);
     }
 
-    if (instance.getDescription() != null) {
-      annotation.addMember("description", "$S", instance.getDescription().toMarkdown());
+    MarkupLine description = instance.getEffectiveDescription();
+    if (description != null) {
+      annotation.addMember("description", "$S", description.toMarkdown());
     }
 
     annotation.addMember("useName", "$S", instance.getEffectiveName());
@@ -99,8 +102,8 @@ class FlagInstanceTypeInfoImpl
 
     AnnotationUtils.buildValueConstraints(builder, definition);
 
-    IModelDefinition parent = instance.getContainingDefinition();
-    if (parent != null && parent.hasJsonKey() && instance.equals(parent.getJsonKeyFlagInstance())) {
+    IFlagContainer parent = instance.getContainingDefinition();
+    if (parent.hasJsonKey() && instance.equals(parent.getJsonKeyFlagInstance())) {
       builder.addAnnotation(JsonKey.class);
     }
 

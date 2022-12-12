@@ -26,14 +26,14 @@
 
 package gov.nist.secauto.metaschema.codegen;
 
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IGeneratedDefinitionClass extends IGeneratedClass {
 
   @NonNull
-  IModelDefinition getDefinition();
+  IFlagContainer getDefinition();
 
   /**
    * Indicates if the class represents a root Metaschema assembly which can be the top-level

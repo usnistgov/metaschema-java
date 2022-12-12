@@ -79,9 +79,11 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
   public XmlGlobalFieldDefinition(@NonNull GlobalFieldDefinitionType xmlField, @NonNull IMetaschema metaschema) {
     this.xmlField = xmlField;
     this.metaschema = metaschema;
-    this.defaultValue
-        = xmlField.isSetDefault() ? getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlField.getDefault()))
-            : null;
+    Object defaultValue = null;
+    if (xmlField.isSetDefault()) {
+      defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlField.getDefault()));
+    }
+    this.defaultValue = defaultValue;
   }
 
   /**

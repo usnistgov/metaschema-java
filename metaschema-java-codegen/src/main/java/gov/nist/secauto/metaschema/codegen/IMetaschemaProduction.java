@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 
 import java.util.Collection;
 import java.util.stream.Stream;
@@ -43,7 +43,7 @@ public interface IMetaschemaProduction {
   IGeneratedClass getGeneratedMetaschema();
 
   @NonNull
-  Collection<? extends IModelDefinition> getGlobalDefinitions();
+  Collection<? extends IFlagContainer> getGlobalDefinitions();
 
   @NonNull
   Collection<IDefinitionProduction> getDefinitionProductions();

@@ -53,7 +53,8 @@ public interface IContentValidator extends IResourceLoader {
    */
   @NonNull
   default IValidationResult validate(@NonNull Path path) throws IOException {
-    return validate(toInputSource(ObjectUtils.notNull(path.toUri())));
+    InputSource source = toInputSource(ObjectUtils.notNull(path.toUri()));
+    return validate(source);
   }
 
   /**
@@ -69,7 +70,8 @@ public interface IContentValidator extends IResourceLoader {
    */
   @NonNull
   default IValidationResult validate(@NonNull URL url) throws IOException, URISyntaxException {
-    return validate(toInputSource(ObjectUtils.notNull(url.toURI())));
+    InputSource source = toInputSource(ObjectUtils.notNull(url.toURI()));
+    return validate(source);
   }
 
   /**

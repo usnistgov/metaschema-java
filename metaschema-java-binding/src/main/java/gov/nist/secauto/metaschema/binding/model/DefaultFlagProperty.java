@@ -76,7 +76,9 @@ class DefaultFlagProperty
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */
-  public DefaultFlagProperty(@NonNull Field field, @NonNull IClassBinding parentClassBinding) {
+  public DefaultFlagProperty(
+      @NonNull Field field,
+      @NonNull IClassBinding parentClassBinding) {
     super(parentClassBinding);
     this.field = ObjectUtils.requireNonNull(field, "field");
     this.flag = ObjectUtils.requireNonNull(field.getAnnotation(BoundFlag.class));
@@ -90,7 +92,8 @@ class DefaultFlagProperty
     }
 
     String defaultString = this.flag.defaultValue();
-    this.defaultValue = Constants.NULL_VALUE.equals(defaultString) ? null : getJavaTypeAdapter().parse(defaultString);
+    this.defaultValue = Constants.NULL_VALUE.equals(defaultString) ? null  // NOPMD readability
+        : getJavaTypeAdapter().parse(defaultString);
   }
 
   @Override
