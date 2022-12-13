@@ -129,7 +129,7 @@
 		<dependency.woodstox.version>6.4.0</dependency.woodstox.version>
 		<dependency.xmlbeans.version>5.1.1</dependency.xmlbeans.version>
 		<dependency.xmlresolver.version>4.6.0</dependency.xmlresolver.version>
-		<dependency.xml-apis.version>1.4.01</dependency.xml-apis.version>
+		<dependency.xml-apis.version>2.0.2</dependency.xml-apis.version>
 		<plugin.antlr4test.version>1.22</plugin.antlr4test.version>
 		<plugin.maven-changes.version>2.12.1</plugin.maven-changes.version>
 	</properties>
