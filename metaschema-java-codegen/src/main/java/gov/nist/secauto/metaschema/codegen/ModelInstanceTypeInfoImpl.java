@@ -149,12 +149,12 @@ class ModelInstanceTypeInfoImpl
     retval.addAll(super.buildField(builder));
 
     // determine which annotation to apply
-    AnnotationSpec.Builder fieldAnnoation;
+    AnnotationSpec.Builder javaFieldAnnoation;
     INamedModelInstance modelInstance = getInstance();
     if (modelInstance instanceof IFieldInstance) {
-      fieldAnnoation = AnnotationSpec.builder(BoundField.class);
+      javaFieldAnnoation = AnnotationSpec.builder(BoundField.class);
     } else if (modelInstance instanceof IAssemblyInstance) {
-      fieldAnnoation = AnnotationSpec.builder(BoundAssembly.class);
+      javaFieldAnnoation = AnnotationSpec.builder(BoundAssembly.class);
     } else {
       throw new UnsupportedOperationException(String.format("Model instance '%s' of type '%s' is not supported.",
           modelInstance.getName(), modelInstance.getClass().getName()));
@@ -162,15 +162,15 @@ class ModelInstanceTypeInfoImpl
 
     String formalName = modelInstance.getEffectiveFormalName();
     if (formalName != null) {
-      fieldAnnoation.addMember("formalName", "$S", formalName);
+      javaFieldAnnoation.addMember("formalName", "$S", formalName);
     }
 
     MarkupLine description = modelInstance.getEffectiveDescription();
     if (description != null) {
-      fieldAnnoation.addMember("description", "$S", description.toMarkdown());
+      javaFieldAnnoation.addMember("description", "$S", description.toMarkdown());
     }
 
-    fieldAnnoation.addMember("useName", "$S", modelInstance.getEffectiveName());
+    javaFieldAnnoation.addMember("useName", "$S", modelInstance.getEffectiveName());
 
     IFlagContainer definition = modelInstance.getDefinition();
     if (definition.isInline() && !(definition instanceof IFieldDefinition && definition.isSimple())) {
@@ -180,35 +180,35 @@ class ModelInstanceTypeInfoImpl
 
     String namespace = modelInstance.getXmlNamespace();
     if (namespace == null) {
-      fieldAnnoation.addMember("namespace", "$S", "##none");
+      javaFieldAnnoation.addMember("namespace", "$S", "##none");
     } else if (!modelInstance.getContainingMetaschema().getXmlNamespace().toASCIIString().equals(namespace)) {
-      fieldAnnoation.addMember("namespace", "$S", namespace);
+      javaFieldAnnoation.addMember("namespace", "$S", namespace);
     } // otherwise use the ##default
 
     int minOccurs = modelInstance.getMinOccurs();
     if (minOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
-      fieldAnnoation.addMember("minOccurs", "$L", minOccurs);
+      javaFieldAnnoation.addMember("minOccurs", "$L", minOccurs);
     }
 
     int maxOccurs = modelInstance.getMaxOccurs();
     if (maxOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS) {
-      fieldAnnoation.addMember("maxOccurs", "$L", maxOccurs);
+      javaFieldAnnoation.addMember("maxOccurs", "$L", maxOccurs);
     }
 
     MarkupMultiline remarks = modelInstance.getRemarks();
     if (remarks != null) {
-      fieldAnnoation.addMember("remarks", "$S", remarks.toMarkdown());
+      javaFieldAnnoation.addMember("remarks", "$S", remarks.toMarkdown());
     }
 
     if (modelInstance instanceof IFieldInstance) {
       IFieldInstance fieldInstance = (IFieldInstance) modelInstance;
 
       if (MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != fieldInstance.isInXmlWrapped()) {
-        fieldAnnoation.addMember("inXmlWrapped", "$L", fieldInstance.isInXmlWrapped());
+        javaFieldAnnoation.addMember("inXmlWrapped", "$L", fieldInstance.isInXmlWrapped());
       }
     }
 
-    builder.addAnnotation(fieldAnnoation.build());
+    builder.addAnnotation(javaFieldAnnoation.build());
 
     if (modelInstance instanceof IFieldInstance) {
       IFieldInstance fieldInstance = (IFieldInstance) modelInstance;

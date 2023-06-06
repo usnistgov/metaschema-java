@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.binding;
 
-import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
@@ -48,7 +47,7 @@ interface IMetaschemaLoaderStrategy {
    *           if an error occured while processing the associated Metaschema information
    */
   @NonNull
-  IMetaschema getMetaschemaInstanceByClass(@NonNull Class<? extends AbstractBoundMetaschema> clazz);
+  IMetaschema getMetaschemaInstanceByClass(@NonNull Class<? extends IMetaschema> clazz);
 
   /**
    * Get the {@link IClassBinding} instance for a {@link MetaschemaAssembly} or

@@ -73,7 +73,7 @@ class ClassBindingFieldProperty
   }
 
   @Override
-  public IFieldClassBinding getDefinition() {
+  public final IFieldClassBinding getDefinition() {
     return definition;
   }
 

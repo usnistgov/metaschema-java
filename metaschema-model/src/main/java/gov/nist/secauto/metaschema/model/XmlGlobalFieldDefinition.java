@@ -92,7 +92,7 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
    * @return the underlying XML data
    */
   @NonNull
-  protected GlobalFieldDefinitionType getXmlField() {
+  protected final GlobalFieldDefinitionType getXmlField() {
     return xmlField;
   }
 
@@ -191,7 +191,7 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
 
   @Override
   public String getUseName() {
-    return getXmlField().isSetUseName() ? getXmlField().getUseName() : getName();
+    return getXmlField().isSetUseName() ? getXmlField().getUseName() : null;
   }
 
   @Override
@@ -243,7 +243,7 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
 
   @SuppressWarnings("null")
   @Override
-  public IDataTypeAdapter<?> getJavaTypeAdapter() {
+  public final IDataTypeAdapter<?> getJavaTypeAdapter() {
     return getXmlField().isSetAsType() ? getXmlField().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
   }
 

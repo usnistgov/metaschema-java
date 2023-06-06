@@ -90,7 +90,7 @@ public class DefaultUniqueConstraint
     return new Builder();
   }
 
-  public static class Builder
+  public static final class Builder
       extends AbstractKeyConstraintBuilder<Builder, DefaultUniqueConstraint> {
     private Builder() {
       // disable construction

@@ -60,7 +60,7 @@ class XmlFieldInstance
    * 
    * @param xmlField
    *          the XML representation bound to Java objects
-   * @param parent
+   * @param container
    *          the parent container, either a choice or assembly
    */
   public XmlFieldInstance(
@@ -126,7 +126,7 @@ class XmlFieldInstance
 
   @Override
   public String getUseName() {
-    return getXmlField().isSetUseName() ? getXmlField().getUseName() : getDefinition().getUseName();
+    return getXmlField().isSetUseName() ? getXmlField().getUseName() : null;
   }
 
   @Override

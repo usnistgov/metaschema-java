@@ -43,6 +43,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaFieldValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.ValueConstraints;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
@@ -802,7 +803,7 @@ public class DefaultFieldClassBinding
   }
 
   @Override
-  protected Class<? extends AbstractBoundMetaschema> getMetaschemaClass() {
+  protected Class<? extends IMetaschema> getMetaschemaClass() {
     return getMetaschemaFieldAnnotation().metaschema();
   }
 }

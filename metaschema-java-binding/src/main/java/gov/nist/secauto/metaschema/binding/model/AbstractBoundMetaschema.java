@@ -59,7 +59,7 @@ public abstract class AbstractBoundMetaschema
 
   @NonNull
   public static IMetaschema createInstance(
-      @NonNull Class<? extends AbstractBoundMetaschema> clazz,
+      @NonNull Class<? extends IMetaschema> clazz,
       @NonNull IBindingContext bindingContext) {
 
     if (!clazz.isAnnotationPresent(Metaschema.class)) {
@@ -72,7 +72,7 @@ public abstract class AbstractBoundMetaschema
     List<IMetaschema> importedMetaschemas;
     if (metaschemaAnnotation.imports().length > 0) {
       importedMetaschemas = new ArrayList<>(metaschemaAnnotation.imports().length);
-      for (Class<? extends AbstractBoundMetaschema> importClass : metaschemaAnnotation.imports()) {
+      for (Class<? extends IMetaschema> importClass : metaschemaAnnotation.imports()) {
         assert importClass != null;
         IMetaschema metaschemaImport = bindingContext.getMetaschemaInstanceByClass(importClass);
         importedMetaschemas.add(metaschemaImport);
@@ -85,11 +85,11 @@ public abstract class AbstractBoundMetaschema
 
   @NonNull
   public static IMetaschema createInstance(
-      @NonNull Class<? extends AbstractBoundMetaschema> clazz,
+      @NonNull Class<? extends IMetaschema> clazz,
       @NonNull IBindingContext bindingContext,
       @NonNull List<? extends IMetaschema> importedMetaschemas) {
 
-    Constructor<? extends AbstractBoundMetaschema> constructor;
+    Constructor<? extends IMetaschema> constructor;
     try {
       constructor = clazz.getDeclaredConstructor(List.class, IBindingContext.class);
     } catch (NoSuchMethodException ex) {

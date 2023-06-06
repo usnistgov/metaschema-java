@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
 import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -35,6 +37,24 @@ public interface INamedModelInstance extends INamedInstance, IModelInstance {
   @Override
   @NonNull
   IFlagContainer getDefinition();
+
+  @Override
+  default String getJsonName() {
+    @NonNull
+    String retval;
+    if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
+      @NonNull
+      String groupAsName = ObjectUtils.requireNonNull(getGroupAsName(),
+          ObjectUtils.notNull(String.format("null group-as name in instance '%s' on definition '%s' in '%s'",
+              this.getName(),
+              this.getContainingDefinition().getName(),
+              this.getContainingMetaschema().getLocation())));
+      retval = groupAsName;
+    } else {
+      retval = getEffectiveName();
+    }
+    return retval;
+  }
 
   /**
    * Get the item values for the provided {@code instanceValue}. An instance may be singular or many

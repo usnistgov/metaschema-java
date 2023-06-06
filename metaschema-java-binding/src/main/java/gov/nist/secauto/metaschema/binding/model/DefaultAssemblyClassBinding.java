@@ -44,6 +44,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.ValueConstraints;
 import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
@@ -572,7 +573,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   }
 
   @Override
-  protected Class<? extends AbstractBoundMetaschema> getMetaschemaClass() {
+  protected Class<? extends IMetaschema> getMetaschemaClass() {
     return getMetaschemaAssemblyAnnotation().metaschema();
   }
 }

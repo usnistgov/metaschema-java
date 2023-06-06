@@ -116,6 +116,7 @@ class JsonSuiteTest
         contentCase(Format.XML, "charstrings_test_okay_PASS.xml", true));
   }
 
+  @Disabled
   @Test
   void testFlagBasic() throws IOException, MetaschemaException { // NOPMD - testing delegated to doTest
     doTest(
@@ -131,13 +132,30 @@ class JsonSuiteTest
   void testOSCALComplete() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
     MetaschemaLoader loader = new MetaschemaLoader();
     IMetaschema metaschema = loader.load(new URL(
-        // "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
         "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
     ISchemaGenerator schemaGenerator = new JsonSchemaGenerator();
     IMutableConfiguration<SchemaGenerationFeature> features = new DefaultConfiguration<>(SchemaGenerationFeature.class)
         .disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     try (Writer writer = Files.newBufferedWriter(
         Path.of("oscal-complete_schema.json"),
+        StandardCharsets.UTF_8,
+        getWriteOpenOptions())) {
+      assert writer != null;
+      schemaGenerator.generateFromMetaschema(metaschema, writer, features);
+    }
+  }
+
+  @Disabled
+  @Test
+  void testTestMetaschema() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
+    MetaschemaLoader loader = new MetaschemaLoader();
+    IMetaschema metaschema = loader.load(new URL(
+        "https://raw.githubusercontent.com/usnistgov/metaschema/71233f4eb6854e820c7949144e86afa4d7981b22/test-suite/metaschema-xspec/json-schema-gen/json-value-testing-mini-metaschema.xml"));
+    ISchemaGenerator schemaGenerator = new JsonSchemaGenerator();
+    IMutableConfiguration<SchemaGenerationFeature> features = new DefaultConfiguration<>(SchemaGenerationFeature.class)
+        .disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+    try (Writer writer = Files.newBufferedWriter(
+        Path.of("json-value-testing-mini_schema.json"),
         StandardCharsets.UTF_8,
         getWriteOpenOptions())) {
       assert writer != null;

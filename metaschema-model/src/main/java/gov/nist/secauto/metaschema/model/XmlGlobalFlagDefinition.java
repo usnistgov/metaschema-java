@@ -90,7 +90,7 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
    * 
    * @return the underlying XML data
    */
-  protected GlobalFlagDefinitionType getXmlFlag() {
+  protected final GlobalFlagDefinitionType getXmlFlag() {
     return xmlFlag;
   }
 
@@ -220,7 +220,7 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
 
   @SuppressWarnings("null")
   @Override
-  public IDataTypeAdapter<?> getJavaTypeAdapter() {
+  public final IDataTypeAdapter<?> getJavaTypeAdapter() {
     return getXmlFlag().isSetAsType() ? getXmlFlag().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
   }
 

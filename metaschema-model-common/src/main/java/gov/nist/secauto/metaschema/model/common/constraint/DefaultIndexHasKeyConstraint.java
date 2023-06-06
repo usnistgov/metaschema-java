@@ -104,7 +104,7 @@ public final class DefaultIndexHasKeyConstraint
     return new Builder();
   }
 
-  public static class Builder
+  public static final class Builder
       extends AbstractKeyConstraintBuilder<Builder, DefaultIndexHasKeyConstraint> {
     private String indexName;
 

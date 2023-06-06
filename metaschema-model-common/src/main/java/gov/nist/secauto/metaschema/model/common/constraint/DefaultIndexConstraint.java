@@ -103,7 +103,7 @@ public final class DefaultIndexConstraint
     return new Builder();
   }
 
-  public static class Builder
+  public static final class Builder
       extends AbstractKeyConstraintBuilder<Builder, DefaultIndexConstraint> {
     private String name;
 

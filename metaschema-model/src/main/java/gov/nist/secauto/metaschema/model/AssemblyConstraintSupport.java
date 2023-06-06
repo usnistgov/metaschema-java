@@ -301,7 +301,7 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
     return retval;
   }
 
-  private static class XmlbeanGeneratingVisitor implements IConstraintVisitor<DefineAssemblyConstraintsType, Void> {
+  private static final class XmlbeanGeneratingVisitor implements IConstraintVisitor<DefineAssemblyConstraintsType, Void> {
     //
     // public DefineAssemblyConstraintsType visit(@NonNull List<IConstraint> constraints) {
     // DefineAssemblyConstraintsType retval = DefineAssemblyConstraintsType.Factory.newInstance();

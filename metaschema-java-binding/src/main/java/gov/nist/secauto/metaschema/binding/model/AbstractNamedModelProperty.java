@@ -369,7 +369,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
     XmlGroupAsBehavior getXmlGroupAsBehavior();
   }
 
-  private static class SimpleGroupAs implements IGroupAs {
+  private static final class SimpleGroupAs implements IGroupAs {
     @NonNull
     private final String name;
     @NonNull

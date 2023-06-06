@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 
 import java.lang.annotation.Documented;
@@ -85,7 +85,7 @@ public @interface MetaschemaField {
    * @return the metaschema class
    */
   @NonNull
-  Class<? extends AbstractBoundMetaschema> metaschema();
+  Class<? extends IMetaschema> metaschema();
 
   /**
    * If the data type allows it, determines if the field's value must be wrapped with an XML element

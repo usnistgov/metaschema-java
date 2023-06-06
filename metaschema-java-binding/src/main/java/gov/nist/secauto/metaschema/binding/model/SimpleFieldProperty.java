@@ -125,10 +125,10 @@ class SimpleFieldProperty
 
   @Override
   public String getUseName() {
-    return ModelUtil.resolveLocalName(getFieldAnnotation().useName(), null);
+    return ModelUtil.resolveToString(getFieldAnnotation().useName());
   }
 
-  private class ScalarFieldDefinition implements IBoundFieldDefinition, IValueConstraintFeature {
+  private final class ScalarFieldDefinition implements IBoundFieldDefinition, IValueConstraintFeature {
     private final Lazy<IValueConstraintSupport> constraints;
 
     private ScalarFieldDefinition() {
@@ -179,7 +179,7 @@ class SimpleFieldProperty
 
     @Override
     public String getUseName() {
-      return ModelUtil.resolveLocalName(getFieldAnnotation().useName(), null);
+      return ModelUtil.resolveToString(getFieldAnnotation().useName());
     }
 
     @Override

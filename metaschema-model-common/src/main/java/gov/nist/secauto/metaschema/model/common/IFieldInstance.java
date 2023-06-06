@@ -26,11 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-
 import javax.xml.namespace.QName;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IFieldInstance extends INamedModelInstance, IField {
   @Override
@@ -41,18 +37,6 @@ public interface IFieldInstance extends INamedModelInstance, IField {
   @Override
   default QName getXmlQName() {
     return isInXmlWrapped() ? INamedModelInstance.super.getXmlQName() : null;
-  }
-
-  @Override
-  default String getJsonName() {
-    @NonNull
-    String retval;
-    if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-      retval = ObjectUtils.requireNonNull(getGroupAsName(), "null group-as name");
-    } else {
-      retval = getEffectiveName();
-    }
-    return retval;
   }
 
   @Override

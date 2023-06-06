@@ -29,8 +29,11 @@ package gov.nist.secauto.metaschema.model.common.datatype.markup;
 import com.vladsch.flexmark.ast.BulletList;
 import com.vladsch.flexmark.ast.Code;
 import com.vladsch.flexmark.ast.Emphasis;
+import com.vladsch.flexmark.ast.HardLineBreak;
 import com.vladsch.flexmark.ast.Heading;
+import com.vladsch.flexmark.ast.HtmlBlock;
 import com.vladsch.flexmark.ast.HtmlEntity;
+import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.ast.Image;
 import com.vladsch.flexmark.ast.LinkNode;
 import com.vladsch.flexmark.ast.ListItem;
@@ -42,13 +45,21 @@ import com.vladsch.flexmark.ast.Text;
 import com.vladsch.flexmark.ext.escaped.character.EscapedCharacter;
 import com.vladsch.flexmark.ext.gfm.strikethrough.Subscript;
 import com.vladsch.flexmark.ext.superscript.Superscript;
+import com.vladsch.flexmark.ext.tables.TableBlock;
+import com.vladsch.flexmark.ext.tables.TableCell;
+import com.vladsch.flexmark.ext.tables.TableRow;
 import com.vladsch.flexmark.ext.typographic.TypographicQuotes;
 import com.vladsch.flexmark.ext.typographic.TypographicSmarts;
+import com.vladsch.flexmark.util.ast.Block;
 import com.vladsch.flexmark.util.ast.Node;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.DoubleQuoteNode;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.NodeVisitor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -93,9 +104,56 @@ public abstract class AbstractMarkupXmlVisitor<T, E extends Throwable>
     return namespace;
   }
 
+  @NonNull
+  protected QName newQName(@NonNull String localName) {
+    return new QName(getNamespace(), localName);
+  }
+
+  protected void handleBasicElement(@NonNull String localName, @NonNull Node node, T state)
+      throws E {
+    QName name = newQName(localName);
+    handleBasicElementStart(node, state, name);
+    visitChildren(node, state);
+    handleBasicElementEnd(node, state, name);
+  }
+
+  protected abstract void handleBasicElementStart(@NonNull Node node, T state, @NonNull QName name)
+      throws E;
+
+  protected abstract void handleBasicElementEnd(@NonNull Node node, T state, @NonNull QName name)
+      throws E;
+
+  @Override
+  protected void visitLink(LinkNode node, T state) throws E {
+    QName name = newQName("a");
+    handleLinkStart(node, state, name);
+
+    visitChildren(node, state);
+
+    handleLinkEnd(node, state, name);
+  }
+
+  protected abstract void handleLinkStart(@NonNull LinkNode node, T state, @NonNull QName name)
+      throws E;
+
+  protected abstract void handleLinkEnd(@NonNull LinkNode node, T state, @NonNull QName name)
+      throws E;
+
+  @Override
+  protected void visitText(@NonNull Text node, T state) throws E {
+    String text = node.getChars().toString();
+    assert text != null;
+    writeText(text, state);
+  }
+
   protected abstract void writeText(@NonNull String text, T state) throws E;
 
-  protected abstract void writeHtmlEntity(@NonNull String entityText, T state) throws E;
+  @Override
+  protected void visitHtmlEntity(HtmlEntity node, T state) throws E {
+    String text = node.getChars().toString();
+    assert text != null;
+    handleHtmlEntity(text, state);
+  }
 
   protected void handleHtmlEntity(@NonNull String entityText, T state) throws E {
     String replacement = ENTITY_MAP.get(entityText);
@@ -111,31 +169,71 @@ public abstract class AbstractMarkupXmlVisitor<T, E extends Throwable>
     }
   }
 
-  @NonNull
-  protected QName newQName(@NonNull String localName) {
-    return new QName(getNamespace(), localName);
-  }
-
-  protected abstract void handleBasicElement(@NonNull String localName, @NonNull Node node, T state)
-      throws E;
+  protected abstract void writeHtmlEntity(@NonNull String entityText, T state) throws E;
 
   @Override
-  protected void visitText(@NonNull Text node, T state) throws E {
-    String text = node.getChars().toString();
-    assert text != null;
-    writeText(text, state);
+  protected void visitHtmlInline(HtmlInline node, T state) throws E {
+    assert state != null;
+    handleHtml(node, state);
+  }
+
+  @Override
+  protected void visitHtmlBlock(HtmlBlock node, T state) throws E {
+    assert state != null;
+    handleHtml(node, state);
+  }
+
+  @SuppressWarnings("unchecked")
+  private void handleHtml(Node node, T state) throws E {
+    Document doc = Jsoup.parse(node.getChars().toString());
+    try {
+      doc.body().traverse(newNodeVisitor(state));
+    } catch (NodeVisitorException ex) {
+      throw (E) ex.getCause();
+    }
+  }
+
+  protected abstract NodeVisitor newNodeVisitor(T state);
+  
+  @Override
+  protected void visitTable(@NonNull TableBlock node, T state) throws E {
+    QName tableQName = newQName("table");
+    handleBasicElementStart(node, state, tableQName);
+
+    super.visitTable(node, state);
+
+    handleBasicElementEnd(node, state, tableQName);
+  }
+
+  @Override
+  protected void visitTableRow(@NonNull TableRow node, T state) throws E {
+    QName trQName = newQName("tr");
+    handleBasicElementStart(node, state, trQName);
+
+    for (Node childNode : node.getChildren()) {
+      if (childNode instanceof TableCell) {
+        handleTableCell((TableCell) childNode, state);
+      }
+    }
+
+    handleBasicElementEnd(node, state, trQName);
+  }
+
+  private void handleTableCell(TableCell node, T state) throws E {
+    QName cellQName;
+    if (node.isHeader()) {
+      cellQName = newQName("th");
+    } else {
+      cellQName = newQName("td");
+    }
+    handleBasicElementStart(node, state, cellQName);
+    visitChildren(node, state);
+    handleBasicElementEnd(node, state, cellQName);
   }
 
   @Override
   protected void visitEscapedCharacter(EscapedCharacter node, T state) throws E {
     writeText(node.getChars().unescape(), state);
-  }
-
-  @Override
-  protected void visitHtmlEntity(HtmlEntity node, T state) throws E {
-    String text = node.getChars().toString();
-    assert text != null;
-    handleHtmlEntity(text, state);
   }
 
   @Override
@@ -183,9 +281,6 @@ public abstract class AbstractMarkupXmlVisitor<T, E extends Throwable>
   }
 
   @Override
-  protected abstract void visitLink(LinkNode node, T state) throws E;
-
-  @Override
   protected void visitSubscript(Subscript node, T state) throws E {
     handleBasicElement("sub", node, state);
   }
@@ -200,6 +295,12 @@ public abstract class AbstractMarkupXmlVisitor<T, E extends Throwable>
 
   @Override
   protected abstract void visitInsertAnchor(@NonNull InsertAnchorNode node, T state) throws E;
+
+  @Override
+  protected void visitHardLineBreak(HardLineBreak node, T state)
+      throws E {
+    handleBasicElement("br", node, state);
+  }
 
   @Override
   protected void visitSoftLineBreak(SoftLineBreak node, T state)
@@ -227,5 +328,34 @@ public abstract class AbstractMarkupXmlVisitor<T, E extends Throwable>
   @Override
   protected void visitBulletList(@NonNull BulletList node, T state) throws E {
     handleBasicElement("ul", node, state);
+  }
+
+  @Override
+  protected void visitIndentedOrFencedCodeBlock(@NonNull Block node, T state) throws E {
+    QName preQName = newQName("pre");
+    
+    handleBasicElementStart(node, state, preQName);
+
+    QName codeQName = newQName("code");
+
+    handleBasicElementStart(node, state, codeQName);
+
+    visitChildren(node, state);
+
+    handleBasicElementEnd(node, state, codeQName);
+
+    handleBasicElementEnd(node, state, preQName);
+  }
+
+
+  protected static class NodeVisitorException extends IllegalStateException {
+    /**
+     * the serial version uid.
+     */
+    private static final long serialVersionUID = 1L;
+
+    public NodeVisitorException(Throwable cause) {
+      super(cause);
+    }
   }
 }

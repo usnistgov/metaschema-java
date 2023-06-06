@@ -114,7 +114,7 @@ class XmlAssemblyInstance
 
   @Override
   public String getUseName() {
-    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName() : getDefinition().getUseName();
+    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName() : null;
   }
 
   @Override

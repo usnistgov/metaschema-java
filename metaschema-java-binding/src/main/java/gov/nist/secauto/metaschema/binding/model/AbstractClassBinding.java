@@ -124,14 +124,14 @@ abstract class AbstractClassBinding implements IClassBinding {
     return ModuleScopeEnum.INHERITED;
   }
 
-  protected abstract Class<? extends AbstractBoundMetaschema> getMetaschemaClass();
+  protected abstract Class<? extends IMetaschema> getMetaschemaClass();
 
   @SuppressWarnings("null")
   @NonNull
   protected IMetaschema initMetaschema() {
     synchronized (this) {
       if (metaschema == null) {
-        Class<? extends AbstractBoundMetaschema> metaschemaClass = getMetaschemaClass();
+        Class<? extends IMetaschema> metaschemaClass = getMetaschemaClass();
         metaschema = getBindingContext().getMetaschemaInstanceByClass(metaschemaClass);
       }
       return metaschema;

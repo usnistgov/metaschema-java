@@ -62,6 +62,9 @@ public class MarkupLineAdapter
     return NAMES;
   }
 
+  /**
+   * Parse a line of Markdown.
+   */
   @Override
   public MarkupLine parse(String value) {
     return MarkupLine.fromMarkdown(value);

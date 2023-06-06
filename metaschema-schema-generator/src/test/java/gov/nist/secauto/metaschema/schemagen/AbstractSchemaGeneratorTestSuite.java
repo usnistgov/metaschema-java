@@ -157,7 +157,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
 
   @Override
   protected Path getGenerationPath() {
-    return ObjectUtils.notNull(Paths.get("test-schemagen"));
+    return ObjectUtils.notNull(Paths.get("target/test-schemagen"));
   }
 
   protected Path produceXmlSchema(@NonNull IMetaschema metaschema, @NonNull Path schemaPath) throws IOException {

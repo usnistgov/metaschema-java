@@ -48,6 +48,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.NodeVisitor;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -79,20 +80,54 @@ public class XmlbeansMarkupVisitor
   protected XmlbeansMarkupVisitor(@NonNull String namespace, boolean handleBlockElements) {
     super(namespace, handleBlockElements);
   }
-  //
-  // @Override
-  // protected void visitText(Text node, XmlCursor state) throws IllegalArgumentException {
-  // state.insertChars(node.getChars().toString());
-  // }
 
-  @Override
-  protected void handleBasicElement(String localName, Node node, XmlCursor state) {
-    QName qname = newQName(localName);
-    state.beginElement(qname);
+  /**
+   * Visit children in the context of the new element.
+   * 
+   * @param node
+   * @param state
+   */
+  private void visitElementChildren(@NonNull Node node, XmlCursor state) {
     state.push();
 
-    visitChildren(node, state);
+    super.visitChildren(node, state);
 
+    state.pop();
+
+    // go to the end of the new element
+    state.toEndToken();
+
+    // state advance past the end element
+    state.toNextToken();
+  }
+
+  @Override
+  protected void handleBasicElementStart(@NonNull Node node, XmlCursor state, @NonNull QName name) {
+    state.beginElement(name);
+    state.push();
+  }
+
+  @Override
+  protected void handleBasicElementEnd(@NonNull Node node, XmlCursor state, @NonNull QName name) {
+    state.pop();
+
+    // go to the end of the new element
+    state.toEndToken();
+
+    // state advance past the end element
+    state.toNextToken();
+  }
+
+  @Override
+  protected void handleLinkStart(LinkNode node, XmlCursor state, QName name) throws IllegalArgumentException {
+    state.beginElement(name);
+    state.push();
+
+    state.insertAttributeWithValue("href", ObjectUtils.requireNonNull(node.getUrl().toString()));
+  }
+
+  @Override
+  protected void handleLinkEnd(LinkNode node, XmlCursor state, QName name) throws IllegalArgumentException {
     state.pop();
 
     // go to the end of the new element
@@ -110,30 +145,6 @@ public class XmlbeansMarkupVisitor
   @Override
   protected void writeHtmlEntity(String entityText, XmlCursor state) {
     state.insertChars(entityText);
-  }
-
-  @Override
-  protected void visitLink(LinkNode node, XmlCursor state) {
-    QName qname = newQName("a");
-    state.beginElement(qname);
-
-    state.insertAttributeWithValue("href", ObjectUtils.requireNonNull(node.getUrl().toString()));
-
-    visitElementChildren(node, state);
-  }
-
-  private void visitElementChildren(@NonNull Node node, XmlCursor state) {
-    state.push();
-
-    visitChildren(node, state);
-
-    state.pop();
-
-    // go to the end of the new element
-    state.toEndToken();
-
-    // state advance past the end element
-    state.toNextToken();
   }
 
   @Override
@@ -162,95 +173,10 @@ public class XmlbeansMarkupVisitor
   }
 
   @Override
-  protected void visitHtmlInline(HtmlInline node, XmlCursor state) {
-    assert state != null;
-    handleHtml(node, state);
+  protected NodeVisitor newNodeVisitor(XmlCursor cursor) {
+    return new XmlBeansNodeVisitor(ObjectUtils.requireNonNull(cursor));
   }
-
-  private void handleHtml(Node node, @NonNull XmlCursor state) {
-    Document doc = Jsoup.parse(node.getChars().toString());
-    try {
-      doc.body().traverse(new XmlBeansNodeVisitor(state));
-    } catch (InlineHtmlXmlException ex) {
-      throw (IllegalArgumentException) ex.getCause();
-    }
-  }
-
-  @Override
-  protected void visitHtmlBlock(HtmlBlock node, XmlCursor state) {
-    assert state != null;
-    handleHtml(node, state);
-  }
-
-  @Override
-  protected void visitTable(@NonNull TableBlock node, XmlCursor state) {
-    QName qname = newQName("table");
-    state.beginElement(qname);
-
-    // save the current location state
-    state.push();
-
-    super.visitTable(node, state);
-
-    // get the saved location state
-    state.pop();
-
-    // go to the end of the new element
-    state.toEndToken();
-
-    // state advance past the end element
-    state.toNextToken();
-  }
-
-  @Override
-  protected void visitTableRow(@NonNull TableRow node, XmlCursor state) {
-    QName qname = newQName("tr");
-    state.beginElement(qname);
-
-    // save the current location state
-    state.push();
-
-    for (Node childNode : node.getChildren()) {
-      if (childNode instanceof TableCell) {
-        handleTableCell((TableCell) childNode, state);
-      }
-    }
-
-    // get the saved location state
-    state.pop();
-
-    // go to the end of the new element
-    state.toEndToken();
-
-    // state advance past the end element
-    state.toNextToken();
-  }
-
-  private void handleTableCell(TableCell node, XmlCursor state) {
-    QName qname;
-    if (node.isHeader()) {
-      qname = newQName("th");
-    } else {
-      qname = newQName("td");
-    }
-
-    state.beginElement(qname);
-
-    // save the current location state
-    state.push();
-
-    visitChildren(node, state);
-
-    // get the saved location state
-    state.pop();
-
-    // go to the end of the new element
-    state.toEndToken();
-
-    // state advance past the end element
-    state.toNextToken();
-  }
-
+  
   private class XmlBeansNodeVisitor implements NodeVisitor {
     @NonNull
     private final XmlCursor cursor;
@@ -286,7 +212,7 @@ public class XmlbeansMarkupVisitor
             cursor.insertChars(text.text());
           }
         } catch (IllegalArgumentException ex) {
-          throw new InlineHtmlXmlException(ex);
+          throw new NodeVisitorException(ex);
         }
       }
     }
@@ -306,19 +232,6 @@ public class XmlbeansMarkupVisitor
           cursor.toNextToken();
         }
       }
-    }
-  }
-
-  private static class InlineHtmlXmlException
-      extends IllegalStateException {
-
-    /**
-     * the serial version uid.
-     */
-    private static final long serialVersionUID = 1L;
-
-    public InlineHtmlXmlException(Throwable cause) {
-      super(cause);
     }
   }
 }

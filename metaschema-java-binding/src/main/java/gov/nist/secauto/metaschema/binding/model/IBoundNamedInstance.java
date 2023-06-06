@@ -55,7 +55,7 @@ public interface IBoundNamedInstance extends INamedInstance {
   @Override
   default String getName() {
     // delegate to the definition
-    return getDefinition().getEffectiveName();
+    return getDefinition().getName();
   }
 
   @Override

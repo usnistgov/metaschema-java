@@ -69,7 +69,7 @@ public @interface BoundFlag {
    * The model name to use for singleton values. This name will be used for associated XML attributes
    * and JSON properties.
    * <p>
-   * If the value is "##default", then element name is derived from the JavaBean property name.
+   * If the value is "##none", then element name is derived from the JavaBean property name.
    * 
    * @return the name
    */

@@ -16,6 +16,7 @@
     <model>
       <field ref="complex-field1"/>
       <field ref="complex-field2" min-occurs="1" max-occurs="unbounded">
+      	<use-name>cmplx-fd2</use-name>
         <group-as name="complex-fields2" in-xml="UNGROUPED" />
       </field>
       <field ref="complex-field3" min-occurs="2" max-occurs="unbounded">

@@ -58,7 +58,7 @@ class XmlModelContainerSupport {
    * 
    * @param xmlContent
    *          the XMLBeans content to parse
-   * @param containingAssembly
+   * @param container
    *          the assembly containing this model
    */
   public XmlModelContainerSupport(@NonNull XmlObject xmlContent, @NonNull IModelContainer container) {

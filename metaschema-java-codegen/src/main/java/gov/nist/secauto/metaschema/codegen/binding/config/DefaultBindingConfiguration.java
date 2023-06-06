@@ -340,7 +340,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
     return config;
   }
 
-  public static class MetaschemaBindingConfiguration {
+  public static final class MetaschemaBindingConfiguration {
     private final Map<String, IDefinitionBindingConfiguration> assemblyBindingConfigs = new ConcurrentHashMap<>();
     private final Map<String, IDefinitionBindingConfiguration> fieldBindingConfigs = new ConcurrentHashMap<>();
 

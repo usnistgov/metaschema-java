@@ -9,7 +9,7 @@
 
 	<artifactId>metaschema-model-common</artifactId>
 
-	<name>Metaschema API</name>
+	<name>Metaschema Core API</name>
 
 	<url>${site.url}${project.artifactId}/</url>
 	<distributionManagement>
@@ -19,7 +19,7 @@
 		</site>
 	</distributionManagement>
 
-	<description>A simple metaschema-model-common.</description>
+	<description>The core API for working with Metaschema-based models.</description>
 
 	<dependencies>
 		<dependency>
@@ -143,6 +143,13 @@
 		<!-- <version>2.2</version> -->
 		<!-- <scope>test</scope> -->
 		<!-- </dependency> -->
+		
+		<dependency>
+			<!-- Remove compile warning -->
+			<groupId>biz.aQute.bnd</groupId>
+			<artifactId>biz.aQute.bndlib</artifactId>
+			<version>6.4.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

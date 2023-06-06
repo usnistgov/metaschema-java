@@ -79,6 +79,8 @@ class DefaultFieldPropertyTest {
   JUnit5Mockery context = new JUnit5Mockery();
 
   @Mock
+  private IMetaschema metaschema; // NOPMD - it's injected
+  @Mock
   private IAssemblyClassBinding classBinding; // NOPMD - it's injected
   @Mock
   private IBindingContext bindingContext; // NOPMD - it's injected
@@ -104,11 +106,18 @@ class DefaultFieldPropertyTest {
 
           allowing(classBinding).getBoundClass();
           will(returnValue(theClass));
+          allowing(classBinding).getName();
+          will(returnValue(null));
           allowing(classBinding).getBindingContext();
           will(returnValue(bindingContext));
+          allowing(classBinding).getContainingMetaschema();
+          will(returnValue(metaschema));
 
           allowing(jsonParsingContext).getReader();
           will(returnValue(jsonParser));
+          
+          allowing(metaschema).getLocation();
+          will(returnValue(URI.create("relativeLocation")));
         }
       });
 
@@ -159,9 +168,9 @@ class DefaultFieldPropertyTest {
         will(returnValue(MetaschemaDataTypeProvider.STRING));
         allowing(bindingContext).getClassBinding(String.class);
         will(returnValue(null));
-
         allowing(classBinding).getBoundClass();
         will(returnValue(theClass));
+        
         allowing(classBinding).getBindingContext();
         will(returnValue(bindingContext));
         allowing(classBinding).getContainingMetaschema();
@@ -277,11 +286,18 @@ class DefaultFieldPropertyTest {
 
           allowing(classBinding).getBoundClass();
           will(returnValue(theClass));
+          allowing(classBinding).getName();
+          will(returnValue(null));
           allowing(classBinding).getBindingContext();
           will(returnValue(bindingContext));
+          allowing(classBinding).getContainingMetaschema();
+          will(returnValue(metaschema));
 
           allowing(jsonParsingContext).getReader();
           will(returnValue(jsonParser));
+
+          allowing(metaschema).getLocation();
+          will(returnValue(URI.create("relativeLocation")));
         }
       });
 

@@ -26,17 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
-import com.vladsch.flexmark.ast.HtmlBlock;
-import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.ast.Image;
 import com.vladsch.flexmark.ast.LinkNode;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.sequence.BasedSequence;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.select.NodeVisitor;
 
 import javax.xml.namespace.QName;
@@ -46,10 +43,42 @@ import javax.xml.stream.XMLStreamWriter;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class MarkupXmlStreamWriter
-    extends AbstractMarkupXmlWriter<XMLStreamWriter> {
+    extends AbstractMarkupXmlVisitor<XMLStreamWriter, XMLStreamException> {
 
   public MarkupXmlStreamWriter(@NonNull String namespace, boolean handleBlockElements) {
     super(namespace, handleBlockElements);
+  }
+
+  @Override
+  protected void handleBasicElementStart(Node node, XMLStreamWriter writer, QName name) throws XMLStreamException {
+    writer.writeStartElement(name.getNamespaceURI(), name.getLocalPart());
+  }
+
+  @Override
+  protected void handleBasicElementEnd(Node node, XMLStreamWriter writer, QName name) throws XMLStreamException {
+    writer.writeEndElement();
+  }
+
+  @Override
+  protected void handleLinkStart(LinkNode node, XMLStreamWriter writer, QName name) throws XMLStreamException {
+    writer.writeStartElement(name.getNamespaceURI(), name.getLocalPart());
+
+    writer.writeAttribute("href", node.getUrl().toString());
+  }
+
+  @Override
+  protected void handleLinkEnd(LinkNode node, XMLStreamWriter writer, QName name) throws XMLStreamException {
+    writer.writeEndElement();
+  }
+
+  @Override
+  protected void writeText(String text, XMLStreamWriter writer) throws XMLStreamException {
+    writer.writeCharacters(text);
+  }
+
+  @Override
+  protected void writeHtmlEntity(String entityText, XMLStreamWriter writer) throws XMLStreamException {
+    writer.writeEntityRef(entityText);
   }
 
   @Override
@@ -76,56 +105,10 @@ public class MarkupXmlStreamWriter
     writer.writeAttribute("id-ref", node.getIdReference().toString());
   }
 
-  @Override
-  protected void writeText(String text, XMLStreamWriter writer) throws XMLStreamException {
-    writer.writeCharacters(text);
-  }
 
   @Override
-  protected void writeHtmlEntity(String entityText, XMLStreamWriter writer) throws XMLStreamException {
-    writer.writeEntityRef(entityText);
-  }
-
-  @Override
-  protected void handleBasicElementStart(Node node, XMLStreamWriter writer, QName name) throws XMLStreamException {
-    writer.writeStartElement(name.getNamespaceURI(), name.getLocalPart());
-  }
-
-  @Override
-  protected void handleBasicElementEnd(Node node, XMLStreamWriter writer, QName name) throws XMLStreamException {
-    writer.writeEndElement();
-  }
-
-  @Override
-  protected void handleLinkStart(LinkNode node, XMLStreamWriter writer, QName name) throws XMLStreamException {
-    writer.writeStartElement(name.getNamespaceURI(), name.getLocalPart());
-
-    writer.writeAttribute("href", node.getUrl().toString());
-  }
-
-  @Override
-  protected void handleLinkEnd(LinkNode node, XMLStreamWriter writer, QName name) throws XMLStreamException {
-    writer.writeEndElement();
-  }
-
-  @Override
-  protected void visitHtmlBlock(HtmlBlock node, XMLStreamWriter writer) throws XMLStreamException {
-    Document doc = Jsoup.parse(node.getChars().toString());
-    try {
-      doc.body().traverse(new StreamNodeVisitor(writer));
-    } catch (InlineHtmlXmlStreamException ex) {
-      throw (XMLStreamException) ex.getCause();
-    }
-  }
-
-  @Override
-  protected void visitHtmlInline(HtmlInline node, XMLStreamWriter writer) throws XMLStreamException {
-    Document doc = Jsoup.parse(node.getChars().toString());
-    try {
-      doc.body().traverse(new StreamNodeVisitor(writer));
-    } catch (InlineHtmlXmlStreamException ex) {
-      throw (XMLStreamException) ex.getCause();
-    }
+  protected NodeVisitor newNodeVisitor(XMLStreamWriter writer) {
+    return new StreamNodeVisitor(ObjectUtils.requireNonNull(writer));
   }
 
   private class StreamNodeVisitor implements NodeVisitor {
@@ -156,7 +139,7 @@ public class MarkupXmlStreamWriter
             writer.writeCharacters(text.text());
           }
         } catch (XMLStreamException ex) {
-          throw new InlineHtmlXmlStreamException(ex);
+          throw new NodeVisitorException(ex);
         }
       }
     }
@@ -169,23 +152,10 @@ public class MarkupXmlStreamWriter
           try {
             writer.writeEndElement();
           } catch (XMLStreamException ex) {
-            throw new InlineHtmlXmlStreamException(ex);
+            throw new NodeVisitorException(ex);
           }
         }
       }
-    }
-  }
-
-  private static class InlineHtmlXmlStreamException
-      extends IllegalStateException {
-
-    /**
-     * the serial version uid.
-     */
-    private static final long serialVersionUID = 1L;
-
-    public InlineHtmlXmlStreamException(XMLStreamException cause) {
-      super(cause);
     }
   }
 }

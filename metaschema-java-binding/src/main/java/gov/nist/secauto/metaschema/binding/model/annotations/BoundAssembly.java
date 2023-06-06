@@ -73,11 +73,12 @@ public @interface BoundAssembly {
   /**
    * The model name to use for singleton values. This name will be used for associated XML elements.
    * <p>
-   * If the value is "##default", then element name is derived from the JavaBean property name.
+   * If the value is "##none", then element name is derived from the JavaBean property name.
    * 
-   * @return the name
+   * @return the name or {@code "##none"} if no use name is provided
    */
-  String useName() default Constants.DEFAULT_STRING_VALUE;
+  @NonNull
+  String useName() default Constants.NO_STRING_VALUE;
 
   /**
    * The namespace to use for associated XML elements.
@@ -87,6 +88,7 @@ public @interface BoundAssembly {
    * 
    * @return the namespace
    */
+  @NonNull
   String namespace() default Constants.DEFAULT_STRING_VALUE;
 
   /**

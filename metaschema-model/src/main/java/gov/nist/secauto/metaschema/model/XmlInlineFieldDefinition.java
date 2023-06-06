@@ -92,7 +92,7 @@ class XmlInlineFieldDefinition
    * @return the XML model
    */
   @NonNull
-  protected InlineFieldDefinitionType getXmlField() {
+  protected final InlineFieldDefinitionType getXmlField() {
     return xmlField;
   }
 
@@ -147,7 +147,8 @@ class XmlInlineFieldDefinition
 
   @Override
   public String getUseName() {
-    return getXmlField().isSetUseName() ? getXmlField().getUseName() : getDefinition().getUseName();
+    // an inline definition doesn't have a use name
+    return null;
   }
 
   @Override
@@ -197,7 +198,7 @@ class XmlInlineFieldDefinition
   /**
    * The corresponding definition for the local flag instance.
    */
-  public class InternalFieldDefinition implements IFieldDefinition, IInlineDefinition<XmlInlineFieldDefinition> {
+  public final class InternalFieldDefinition implements IFieldDefinition, IInlineDefinition<XmlInlineFieldDefinition> {
     @Nullable
     private final Object defaultValue;
     private XmlFlagContainerSupport flagContainer;
@@ -253,7 +254,8 @@ class XmlInlineFieldDefinition
 
     @Override
     public String getUseName() {
-      return getName();
+      // always use the name instead
+      return null;
     }
 
     @SuppressWarnings("null")

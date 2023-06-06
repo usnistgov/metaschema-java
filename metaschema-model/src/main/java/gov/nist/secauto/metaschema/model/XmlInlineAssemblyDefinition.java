@@ -133,7 +133,8 @@ class XmlInlineAssemblyDefinition
 
   @Override
   public String getUseName() {
-    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName() : getDefinition().getUseName();
+    // an inline definition doesn't have a use name
+    return null;
   }
 
   @Override
@@ -226,7 +227,8 @@ class XmlInlineAssemblyDefinition
 
     @Override
     public String getUseName() {
-      return getName();
+      // always use the name instead
+      return null;
     }
 
     @Override

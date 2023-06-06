@@ -112,7 +112,7 @@ public final class DefaultCardinalityConstraint
     return new Builder();
   }
 
-  public static class Builder
+  public static final class Builder
       extends AbstractConstraintBuilder<Builder, DefaultCardinalityConstraint> {
     private Integer minOccurs;
     private Integer maxOccurs;

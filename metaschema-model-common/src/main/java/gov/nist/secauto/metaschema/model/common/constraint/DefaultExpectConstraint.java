@@ -133,7 +133,7 @@ public final class DefaultExpectConstraint
     return new Builder();
   }
 
-  public static class Builder
+  public static final class Builder
       extends AbstractConstraintBuilder<Builder, DefaultExpectConstraint> {
     private MetapathExpression test;
     private String message;

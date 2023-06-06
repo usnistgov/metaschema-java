@@ -88,7 +88,7 @@ class DefaultFieldValueProperty
   }
 
   @Override
-  public @NonNull Field getField() {
+  public Field getField() {
     return field;
   }
 
@@ -97,12 +97,12 @@ class DefaultFieldValueProperty
     return defaultValue;
   }
 
-  protected MetaschemaFieldValue getFieldValueAnnotation() {
+  protected final MetaschemaFieldValue getFieldValueAnnotation() {
     return fieldValue;
   }
 
   @Override
-  public @NonNull IFieldClassBinding getDefinition() {
+  public IFieldClassBinding getDefinition() {
     return getParentClassBinding();
   }
 

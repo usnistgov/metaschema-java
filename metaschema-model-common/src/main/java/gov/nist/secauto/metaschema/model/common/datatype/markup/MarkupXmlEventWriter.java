@@ -26,18 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
-import com.vladsch.flexmark.ast.HtmlBlock;
-import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.ast.Image;
 import com.vladsch.flexmark.ast.LinkNode;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.sequence.BasedSequence;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.evt.XMLEventFactory2;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.select.NodeVisitor;
 
 import java.util.ArrayList;
@@ -55,7 +52,7 @@ import javax.xml.stream.events.StartElement;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class MarkupXmlEventWriter
-    extends AbstractMarkupXmlWriter<XMLEventWriter> {
+    extends AbstractMarkupXmlVisitor<XMLEventWriter, XMLStreamException> {
   @NonNull
   protected final XMLEventFactory2 eventFactory;
 
@@ -71,6 +68,46 @@ public class MarkupXmlEventWriter
     return eventFactory;
   }
 
+  @Override
+  protected void handleBasicElementStart(Node node, XMLEventWriter writer, QName name) throws XMLStreamException {
+    StartElement start = eventFactory.createStartElement(name, null, null);
+    writer.add(start);
+  }
+
+  @Override
+  protected void handleBasicElementEnd(Node node, XMLEventWriter writer, QName name) throws XMLStreamException {
+    EndElement end = eventFactory.createEndElement(name, null);
+    writer.add(end);
+  }
+
+  @Override
+  protected void handleLinkStart(LinkNode node, XMLEventWriter writer, QName name)
+      throws XMLStreamException {
+    List<Attribute> attributes = new LinkedList<>();
+    if (node.getUrl() != null) {
+      attributes.add(eventFactory.createAttribute("href", node.getUrl().toString()));
+    }
+
+    StartElement start = eventFactory.createStartElement(name, attributes.iterator(), null);
+    writer.add(start);
+  }
+
+  @Override
+  protected void handleLinkEnd(LinkNode node, XMLEventWriter writer, QName name) throws XMLStreamException {
+    EndElement end = eventFactory.createEndElement(name, null);
+    writer.add(end);
+  }
+
+  @Override
+  protected void writeText(String text, XMLEventWriter writer) throws XMLStreamException {
+    writer.add(eventFactory.createCharacters(text));
+  }
+
+  @Override
+  protected void writeHtmlEntity(String entityText, XMLEventWriter writer) throws XMLStreamException {
+    writer.add(eventFactory.createEntityReference(entityText, null));
+  }
+  
   @Override
   protected void visitImage(@NonNull Image node, XMLEventWriter writer) throws XMLStreamException {
     QName name = newQName("img");
@@ -111,63 +148,8 @@ public class MarkupXmlEventWriter
   }
 
   @Override
-  protected void writeText(String text, XMLEventWriter writer) throws XMLStreamException {
-    writer.add(eventFactory.createCharacters(text));
-  }
-
-  @Override
-  protected void writeHtmlEntity(String entityText, XMLEventWriter writer) throws XMLStreamException {
-    writer.add(eventFactory.createEntityReference(entityText, null));
-  }
-
-  @Override
-  protected void handleBasicElementStart(Node node, XMLEventWriter writer, QName name) throws XMLStreamException {
-    StartElement start = eventFactory.createStartElement(name, null, null);
-    writer.add(start);
-  }
-
-  @Override
-  protected void handleBasicElementEnd(Node node, XMLEventWriter writer, QName name) throws XMLStreamException {
-    EndElement end = eventFactory.createEndElement(name, null);
-    writer.add(end);
-  }
-
-  @Override
-  protected void handleLinkStart(LinkNode node, XMLEventWriter writer, QName name)
-      throws XMLStreamException {
-    List<Attribute> attributes = new LinkedList<>();
-    if (node.getUrl() != null) {
-      attributes.add(eventFactory.createAttribute("href", node.getUrl().toString()));
-    }
-
-    StartElement start = eventFactory.createStartElement(name, attributes.iterator(), null);
-    writer.add(start);
-  }
-
-  @Override
-  protected void handleLinkEnd(LinkNode node, XMLEventWriter writer, QName name) throws XMLStreamException {
-    EndElement end = eventFactory.createEndElement(name, null);
-    writer.add(end);
-  }
-
-  @Override
-  protected void visitHtmlBlock(HtmlBlock node, XMLEventWriter writer) throws XMLStreamException {
-    Document doc = Jsoup.parse(node.getChars().toString());
-    try {
-      doc.body().traverse(new StreamNodeVisitor(writer));
-    } catch (InlineHtmlXmlStreamException ex) {
-      throw (XMLStreamException) ex.getCause();
-    }
-  }
-
-  @Override
-  protected void visitHtmlInline(HtmlInline node, XMLEventWriter writer) throws XMLStreamException {
-    Document doc = Jsoup.parse(node.getChars().toString());
-    try {
-      doc.body().traverse(new StreamNodeVisitor(writer));
-    } catch (InlineHtmlXmlStreamException ex) {
-      throw (XMLStreamException) ex.getCause();
-    }
+  protected NodeVisitor newNodeVisitor(XMLEventWriter writer) {
+    return new StreamNodeVisitor(ObjectUtils.requireNonNull(writer));
   }
 
   private class StreamNodeVisitor implements NodeVisitor {
@@ -199,7 +181,7 @@ public class MarkupXmlEventWriter
             writer.add(eventFactory.createCharacters(text.text()));
           }
         } catch (XMLStreamException ex) {
-          throw new InlineHtmlXmlStreamException(ex);
+          throw new NodeVisitorException(ex);
         }
       }
     }
@@ -211,22 +193,9 @@ public class MarkupXmlEventWriter
         try {
           writer.add(eventFactory.createEndElement(new QName(getNamespace(), element.tagName()), null));
         } catch (XMLStreamException ex) {
-          throw new InlineHtmlXmlStreamException(ex);
+          throw new NodeVisitorException(ex);
         }
       }
-    }
-  }
-
-  private static class InlineHtmlXmlStreamException
-      extends IllegalStateException {
-
-    /**
-     * the serial version uid.
-     */
-    private static final long serialVersionUID = 1L;
-
-    public InlineHtmlXmlStreamException(XMLStreamException cause) {
-      super(cause);
     }
   }
 }

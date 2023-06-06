@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -71,7 +71,7 @@ public @interface MetaschemaAssembly {
    * @return the metaschema class
    */
   @NonNull
-  Class<? extends AbstractBoundMetaschema> metaschema();
+  Class<? extends IMetaschema> metaschema();
 
   /**
    * Name of the assembly.

@@ -56,7 +56,9 @@ public interface INamedModelElement extends IModelElement {
    * @return the formal name or {@code null} if not defined
    */
   @Nullable
-  String getEffectiveFormalName();
+  default String getEffectiveFormalName() {
+    return getFormalName();
+  }
 
   /**
    * Get the text that describes the basic use of the element.
@@ -73,7 +75,9 @@ public interface INamedModelElement extends IModelElement {
    * @return a line of markup text or {@code null} if not defined
    */
   @Nullable
-  MarkupLine getEffectiveDescription();
+  default MarkupLine getEffectiveDescription() {
+    return getDescription();
+  }
 
   /**
    * Get the mapping of property name to values for the model element.

@@ -64,16 +64,6 @@ public interface IDefinition extends INamedModelElement, IValueConstraintSupport
         getName(), hashCode());
   }
 
-  @Override
-  default String getEffectiveFormalName() {
-    return getFormalName();
-  }
-
-  @Override
-  default MarkupLine getEffectiveDescription() {
-    return getDescription();
-  }
-
   /**
    * Determine if the definition is defined inline, meaning the definition is declared where it is
    * used.

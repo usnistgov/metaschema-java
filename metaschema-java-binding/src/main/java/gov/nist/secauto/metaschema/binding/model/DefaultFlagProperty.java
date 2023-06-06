@@ -127,7 +127,7 @@ class DefaultFlagProperty
   }
 
   @NonNull
-  protected IDataTypeAdapter<?> getJavaTypeAdapter() {
+  protected final IDataTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
 
@@ -177,7 +177,7 @@ class DefaultFlagProperty
         getField().getName());
   }
 
-  private class InternalFlagDefinition implements IFlagDefinition, IValueConstraintFeature {
+  private final class InternalFlagDefinition implements IFlagDefinition, IValueConstraintFeature {
     private final Lazy<IValueConstraintSupport> constraints;
 
     private InternalFlagDefinition() {
@@ -234,6 +234,7 @@ class DefaultFlagProperty
 
     @Override
     public String getUseName() {
+      // always use the name instead
       return null;
     }
 

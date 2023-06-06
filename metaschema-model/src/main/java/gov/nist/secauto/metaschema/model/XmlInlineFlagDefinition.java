@@ -103,7 +103,7 @@ class XmlInlineFlagDefinition
    * 
    * @return the XML model
    */
-  protected InlineFlagDefinitionType getXmlFlag() {
+  protected final InlineFlagDefinitionType getXmlFlag() {
     return xmlFlag;
   }
 
@@ -142,7 +142,7 @@ class XmlInlineFlagDefinition
 
   @Override
   public String getUseName() {
-    return getDefinition().getUseName();
+    return null;
   }
 
   @Override
@@ -170,7 +170,7 @@ class XmlInlineFlagDefinition
   /**
    * The corresponding definition for the local flag instance.
    */
-  public class InternalFlagDefinition implements IFlagDefinition, IInlineDefinition<XmlInlineFlagDefinition> {
+  public final class InternalFlagDefinition implements IFlagDefinition, IInlineDefinition<XmlInlineFlagDefinition> {
     @Nullable
     private final Object defaultValue;
 
@@ -204,7 +204,8 @@ class XmlInlineFlagDefinition
 
     @Override
     public String getUseName() {
-      return getName();
+      // always use the name
+      return null;
     }
 
     @Override

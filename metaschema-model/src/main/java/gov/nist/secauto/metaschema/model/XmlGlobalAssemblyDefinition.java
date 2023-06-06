@@ -282,7 +282,7 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
 
   @Override
   public String getUseName() {
-    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName() : getName();
+    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName() : null;
   }
 
   @Override

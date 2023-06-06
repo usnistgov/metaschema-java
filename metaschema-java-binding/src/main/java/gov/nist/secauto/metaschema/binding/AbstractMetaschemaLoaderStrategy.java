@@ -60,7 +60,7 @@ class AbstractMetaschemaLoaderStrategy implements IMetaschemaLoaderStrategy {
   }
 
   @Override
-  public IMetaschema getMetaschemaInstanceByClass(@NonNull Class<? extends AbstractBoundMetaschema> clazz) {
+  public IMetaschema getMetaschemaInstanceByClass(@NonNull Class<? extends IMetaschema> clazz) {
     IMetaschema retval;
     synchronized (this) {
       retval = metaschemasByClass.get(clazz);
@@ -73,7 +73,7 @@ class AbstractMetaschemaLoaderStrategy implements IMetaschemaLoaderStrategy {
   }
 
   @NonNull
-  protected IMetaschema newMetaschema(@NonNull Class<? extends AbstractBoundMetaschema> clazz) {
+  protected IMetaschema newMetaschema(@NonNull Class<? extends IMetaschema> clazz) {
     return AbstractBoundMetaschema.createInstance(clazz, getBindingContext());
   }
 

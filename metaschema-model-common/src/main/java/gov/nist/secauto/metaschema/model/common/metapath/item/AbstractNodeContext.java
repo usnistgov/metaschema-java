@@ -42,7 +42,7 @@ abstract class AbstractNodeContext<F extends IFlagNodeItem, L extends AbstractNo
   private final Lazy<L> model;
 
   protected AbstractNodeContext(@NonNull INodeItemFactory factory) {
-    this.model = Lazy.lazy(newModelSupplier(factory));
+    this.model = Lazy.lazy(newModelSupplier(factory)); // NOPMD
   }
 
   @NonNull

@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.net.URI;
 
-class Examples {
+class ExamplesTest {
 
   @Test
   void testLoadMetaschema() throws MetaschemaException, IOException {

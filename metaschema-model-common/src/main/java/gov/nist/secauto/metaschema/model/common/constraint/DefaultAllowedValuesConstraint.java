@@ -125,7 +125,7 @@ public final class DefaultAllowedValuesConstraint
     return new Builder();
   }
 
-  public static class Builder
+  public static final class Builder
       extends AbstractConstraintBuilder<Builder, DefaultAllowedValuesConstraint> {
     @NonNull
     private final Map<String, DefaultAllowedValue> allowedValues = new LinkedHashMap<>(); // NOPMD not thread safe

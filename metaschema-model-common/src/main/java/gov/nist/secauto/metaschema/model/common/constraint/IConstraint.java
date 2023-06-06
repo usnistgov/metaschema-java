@@ -188,7 +188,7 @@ public interface IConstraint {
     URI getSource();
   }
 
-  class InternalModelSource implements ISource {
+  final class InternalModelSource implements ISource {
     @NonNull
     private static final ISource SINGLETON = new InternalModelSource();
 
@@ -213,7 +213,7 @@ public interface IConstraint {
     }
   }
 
-  class ExternalModelSource implements IConstraint.ISource {
+  final class ExternalModelSource implements IConstraint.ISource {
     @NonNull
     private static final Map<URI, ExternalModelSource> sources = new HashMap<>(); // NOPMD - intentional
     @NonNull
@@ -247,7 +247,7 @@ public interface IConstraint {
     }
   }
 
-  class ExternalSource implements IConstraint.ISource {
+  final class ExternalSource implements IConstraint.ISource {
     @NonNull
     private static final Map<URI, ExternalSource> sources = new HashMap<>(); // NOPMD - intentional
 

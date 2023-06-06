@@ -104,14 +104,26 @@ public interface INamedInstance extends IInstance, INamedModelElement {
   }
 
   @Override
+  @NonNull
+  default String getEffectiveName() {
+    String result = getUseName();
+    if (result == null) {
+      // fall back to the definition
+      IDefinition def = getDefinition();
+      result = def.getEffectiveName();
+    }
+    return result;
+  }
+
+  @Override
   default String getEffectiveFormalName() {
     String result = getFormalName();
-    return result == null ? getDefinition().getFormalName() : result;
+    return result == null ? getDefinition().getEffectiveFormalName() : result;
   }
 
   @Override
   default MarkupLine getEffectiveDescription() {
     MarkupLine result = getDescription();
-    return result == null ? getDefinition().getDescription() : result;
+    return result == null ? getDefinition().getEffectiveDescription() : result;
   }
 }

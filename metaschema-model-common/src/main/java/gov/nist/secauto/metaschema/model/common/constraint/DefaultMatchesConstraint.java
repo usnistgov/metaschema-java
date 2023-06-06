@@ -110,7 +110,7 @@ public final class DefaultMatchesConstraint
     return new Builder();
   }
 
-  public static class Builder
+  public static final class Builder
       extends AbstractConstraintBuilder<Builder, DefaultMatchesConstraint> {
     private Pattern pattern;
     private IDataTypeAdapter<?> datatype;

@@ -408,7 +408,7 @@ public class DefaultFunction
     return new CallingContext(arguments, focus);
   }
 
-  public class CallingContext {
+  public final class CallingContext {
     @Nullable
     private final INodeItem contextNodeItem;
     @NonNull

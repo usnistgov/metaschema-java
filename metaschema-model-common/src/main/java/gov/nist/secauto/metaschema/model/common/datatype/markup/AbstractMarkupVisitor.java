@@ -29,12 +29,17 @@ package gov.nist.secauto.metaschema.model.common.datatype.markup;
 import com.vladsch.flexmark.ast.AutoLink;
 import com.vladsch.flexmark.ast.BulletList;
 import com.vladsch.flexmark.ast.Code;
+import com.vladsch.flexmark.ast.CodeBlock;
 import com.vladsch.flexmark.ast.Emphasis;
+import com.vladsch.flexmark.ast.FencedCodeBlock;
+import com.vladsch.flexmark.ast.HardLineBreak;
 import com.vladsch.flexmark.ast.Heading;
 import com.vladsch.flexmark.ast.HtmlBlock;
+import com.vladsch.flexmark.ast.HtmlCommentBlock;
 import com.vladsch.flexmark.ast.HtmlEntity;
 import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.ast.Image;
+import com.vladsch.flexmark.ast.IndentedCodeBlock;
 import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.ast.LinkNode;
 import com.vladsch.flexmark.ast.ListItem;
@@ -138,6 +143,8 @@ public abstract class AbstractMarkupVisitor<T, E extends Throwable> implements I
       visitInsertAnchor((InsertAnchorNode) node, state);
     } else if (node instanceof SoftLineBreak) {
       visitSoftLineBreak((SoftLineBreak) node, state);
+    } else if (node instanceof HardLineBreak) {
+      visitHardLineBreak((HardLineBreak) node, state);
     } else if (node instanceof HtmlInline) {
       visitHtmlInline((HtmlInline) node, state);
     } else {
@@ -176,6 +183,8 @@ public abstract class AbstractMarkupVisitor<T, E extends Throwable> implements I
 
   protected abstract void visitSoftLineBreak(@NonNull SoftLineBreak node, T state) throws E;
 
+  protected abstract void visitHardLineBreak(@NonNull HardLineBreak node, T state) throws E;
+
   protected abstract void visitHtmlInline(@NonNull HtmlInline node, T state) throws E;
 
   protected boolean processBlockElements(@NonNull Node node, T state) throws E {
@@ -192,6 +201,14 @@ public abstract class AbstractMarkupVisitor<T, E extends Throwable> implements I
       visitTable((TableBlock) node, state);
     } else if (node instanceof HtmlBlock) {
       visitHtmlBlock((HtmlBlock) node, state);
+    } else if (node instanceof HtmlCommentBlock) {
+      // ignore
+    } else if (node instanceof IndentedCodeBlock) {
+      visitIndentedOrFencedCodeBlock((IndentedCodeBlock) node, state);
+    } else if (node instanceof FencedCodeBlock) {
+      visitIndentedOrFencedCodeBlock((FencedCodeBlock) node, state);
+    } else if (node instanceof CodeBlock) {
+      visitCodeBlock((CodeBlock) node, state);
     } else {
       retval = false;
     }
@@ -240,4 +257,10 @@ public abstract class AbstractMarkupVisitor<T, E extends Throwable> implements I
   protected abstract void visitTableRow(@NonNull TableRow row, T state) throws E;
 
   protected abstract void visitHtmlBlock(@NonNull HtmlBlock node, T state) throws E;
+
+  protected abstract void visitIndentedOrFencedCodeBlock(@NonNull Block node, T state) throws E;
+
+  private void visitCodeBlock(CodeBlock node, T state) throws E {
+    visitChildren(node, state);
+  }
 }
