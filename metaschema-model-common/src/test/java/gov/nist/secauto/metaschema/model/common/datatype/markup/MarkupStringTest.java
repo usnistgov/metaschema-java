@@ -57,16 +57,21 @@ import java.util.List;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class MarkupStringTest {
   private static final String MARKUP_HTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
   private static final String MARKUP_HTML_PREFIX = "";
 
-  MarkupXmlStreamWriter newMarkupXmlStreamWriter(boolean handleBlockElements) {
-    return new MarkupXmlStreamWriter(MARKUP_HTML_NAMESPACE, handleBlockElements);
+  @NonNull
+  MarkupXmlStreamWriter newMarkupXmlStreamWriter(@NonNull XMLStreamWriter2 streamWriter) {
+    return new MarkupXmlStreamWriter(MARKUP_HTML_NAMESPACE, streamWriter);
   }
 
-  XMLStreamWriter2 newXmlStreamWriter(StringWriter stringWriter) throws XMLStreamException {
+  @NonNull
+  XMLStreamWriter2 newXmlStreamWriter(@NonNull StringWriter stringWriter) throws XMLStreamException {
     XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
     assert factory instanceof WstxOutputFactory;
     factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
@@ -341,11 +346,12 @@ class MarkupStringTest {
     String html = "<p>hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).</p>";
     assertEquals(html, ms.toHtml().trim());
 
-    MarkupXmlStreamWriter writer = newMarkupXmlStreamWriter(true);
     StringWriter stringWriter = new StringWriter();
     XMLStreamWriter2 xmlStreamWriter = newXmlStreamWriter(stringWriter);
+    IMarkupVisitor<XMLStreamWriter, XMLStreamException> markupVisitor = new MarkupVisitor<>(true);
+    MarkupXmlStreamWriter writer = newMarkupXmlStreamWriter(xmlStreamWriter);
 
-    writer.visitChildren(ms.getDocument(), xmlStreamWriter);
+    markupVisitor.visitDocument(ms.getDocument(), writer);
     xmlStreamWriter.close();
 
     assertEquals(html, stringWriter.toString());
@@ -377,11 +383,11 @@ class MarkupStringTest {
     String html = "<p>a user’s identity</p>";
     assertEquals(html, ms.toHtml().trim());
 
-    MarkupXmlStreamWriter writer = newMarkupXmlStreamWriter(true);
     StringWriter stringWriter = new StringWriter();
     XMLStreamWriter2 xmlStreamWriter = newXmlStreamWriter(stringWriter);
-
-    writer.visitChildren(ms.getDocument(), xmlStreamWriter);
+    IMarkupVisitor<XMLStreamWriter, XMLStreamException> markupVisitor = new MarkupVisitor<>(true);
+    MarkupXmlStreamWriter writer = newMarkupXmlStreamWriter(xmlStreamWriter);
+    markupVisitor.visitDocument(ms.getDocument(), writer);
     xmlStreamWriter.close();
 
     assertEquals(html, stringWriter.toString());

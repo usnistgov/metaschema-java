@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 /*
  * public class AbstractMarkupDatatypeVisitor extends
- * AbstractMarkupVisitor<AbstractMarkupDatatypeVisitor.ProseState, RuntimeException> {
+ * MarkupVisitor<AbstractMarkupDatatypeVisitor.ProseState, RuntimeException> {
  * 
  * 
  * protected AbstractMarkupDatatypeVisitor(boolean handleBlockElements) {

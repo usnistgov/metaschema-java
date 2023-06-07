@@ -43,6 +43,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -97,40 +98,6 @@ public class MarkupMultilineAdapter
   @Override
   public boolean canHandleQName(QName nextQName) {
     return true;
-  }
-
-  @Override
-  public void writeXml(Object value, StartElement parent, XMLEventFactory2 eventFactory, XMLEventWriter eventWriter)
-      throws XMLStreamException {
-    MarkupXmlEventWriter writingVisitor
-        = new MarkupXmlEventWriter(ObjectUtils.notNull(parent.getName().getNamespaceURI()), true, eventFactory);
-    writingVisitor.visitChildren(((AbstractMarkupString<?>) value).getDocument(), eventWriter);
-  }
-
-  @Override
-  public void writeXmlCharacters(Object value, QName parentName, XMLStreamWriter2 writer) throws XMLStreamException {
-    MarkupXmlStreamWriter writingVisitor = new MarkupXmlStreamWriter(
-        ObjectUtils.notNull(parentName.getNamespaceURI()), true);
-    writingVisitor.visitChildren(((AbstractMarkupString<?>) value).getDocument(), writer);
-  }
-
-  @Override
-  public void writeJsonValue(Object value, JsonGenerator generator) throws IOException {
-
-    MarkupMultiline mml;
-    try {
-      mml = (MarkupMultiline) value;
-    } catch (ClassCastException ex) {
-      throw new IOException(ex);
-    }
-
-    String jsonString;
-    if (generator instanceof YAMLGenerator) {
-      jsonString = mml.toMarkdownYaml().trim();
-    } else {
-      jsonString = mml.toMarkdown().trim();
-    }
-    generator.writeString(jsonString);
   }
 
   @Override

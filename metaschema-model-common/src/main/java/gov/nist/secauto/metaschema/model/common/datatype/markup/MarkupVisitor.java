@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
 import com.vladsch.flexmark.ast.AutoLink;
+import com.vladsch.flexmark.ast.BlockQuote;
 import com.vladsch.flexmark.ast.BulletList;
 import com.vladsch.flexmark.ast.Code;
 import com.vladsch.flexmark.ast.CodeBlock;
@@ -43,19 +44,18 @@ import com.vladsch.flexmark.ast.IndentedCodeBlock;
 import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.ast.LinkNode;
 import com.vladsch.flexmark.ast.ListItem;
+import com.vladsch.flexmark.ast.MailLink;
 import com.vladsch.flexmark.ast.OrderedList;
 import com.vladsch.flexmark.ast.Paragraph;
 import com.vladsch.flexmark.ast.SoftLineBreak;
 import com.vladsch.flexmark.ast.StrongEmphasis;
 import com.vladsch.flexmark.ast.Text;
 import com.vladsch.flexmark.ast.TextBase;
+import com.vladsch.flexmark.ast.ThematicBreak;
 import com.vladsch.flexmark.ext.escaped.character.EscapedCharacter;
 import com.vladsch.flexmark.ext.gfm.strikethrough.Subscript;
 import com.vladsch.flexmark.ext.superscript.Superscript;
 import com.vladsch.flexmark.ext.tables.TableBlock;
-import com.vladsch.flexmark.ext.tables.TableBody;
-import com.vladsch.flexmark.ext.tables.TableHead;
-import com.vladsch.flexmark.ext.tables.TableRow;
 import com.vladsch.flexmark.ext.typographic.TypographicQuotes;
 import com.vladsch.flexmark.ext.typographic.TypographicSmarts;
 import com.vladsch.flexmark.util.ast.Block;
@@ -67,37 +67,46 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertA
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+/**
+ * 
+ * This implementation is stateless.
+ * 
+ * @param <T>
+ *          the type of stream to write to
+ * @param <E>
+ *          the type of exception that can be thrown when a writing error occurs
+ */
 @SuppressFBWarnings("THROWS_METHOD_THROWS_CLAUSE_THROWABLE")
-public abstract class AbstractMarkupVisitor<T, E extends Throwable> implements IMarkupVisitor<T, E> {
+public class MarkupVisitor<T, E extends Throwable> implements IMarkupVisitor<T, E> {
   private final boolean handleBlockElements;
 
-  protected AbstractMarkupVisitor(boolean handleBlockElements) {
+  public MarkupVisitor(boolean handleBlockElements) {
     this.handleBlockElements = handleBlockElements;
-  }
-
-  @Override
-  public void visitDocument(Document document, T state) throws E {
-    visitChildren(document, state);
   }
 
   protected boolean isHandleBlockElements() {
     return handleBlockElements;
   }
 
-  public void visitChildren(@NonNull Node parentNode, T state) throws E {
+  @Override
+  public void visitDocument(Document document, IMarkupWriter<T, E> writer) throws E {
+    visitChildren(document, writer);
+  }
+
+  protected void visitChildren(@NonNull Node parentNode, @NonNull IMarkupWriter<T, E> writer) throws E {
     for (Node node : parentNode.getChildren()) {
       assert node != null;
-      visit(node, state);
+      visit(node, writer);
     }
   }
 
-  protected void visit(@NonNull Node node, T state) throws E {
-    boolean handled = processInlineElements(node, state);
+  protected void visit(@NonNull Node node, @NonNull IMarkupWriter<T, E> writer) throws E {
+    boolean handled = processInlineElements(node, writer);
     if (!handled && node instanceof Block) {
       if (isHandleBlockElements()) {
-        handled = processBlockElements(node, state);
+        handled = processBlockElements(node, writer);
       } else {
-        visitChildren(node, state);
+        visitChildren(node, writer);
         handled = true;
       }
     }
@@ -108,159 +117,85 @@ public abstract class AbstractMarkupVisitor<T, E extends Throwable> implements I
     }
   }
 
-  protected boolean processInlineElements(@NonNull Node node, T state) throws E { // NOPMD - acceptable
+  protected boolean processInlineElements(
+      @NonNull Node node,
+      @NonNull IMarkupWriter<T, E> writer) throws E { // NOPMD - acceptable
     boolean retval = true;
     if (node instanceof Text) {
-      visitText((Text) node, state);
+      writer.writeText((Text) node);
     } else if (node instanceof EscapedCharacter) {
-      visitEscapedCharacter((EscapedCharacter) node, state);
+      writer.writeText((EscapedCharacter) node);
     } else if (node instanceof HtmlEntity) {
-      visitHtmlEntity((HtmlEntity) node, state);
+      writer.writeHtmlEntity((HtmlEntity) node);
     } else if (node instanceof TypographicSmarts) {
-      visitTypographicSmarts((TypographicSmarts) node, state);
+      writer.writeHtmlEntity((TypographicSmarts) node);
     } else if (node instanceof TypographicQuotes) {
-      visitTypographicQuotes((TypographicQuotes) node, state);
+      writer.writeTypographicQuotes((TypographicQuotes) node, this::visitChildren);
     } else if (node instanceof Code) {
-      visitCode((Code) node, state);
+      writer.writeElement("code", node, this::visitChildren);
     } else if (node instanceof StrongEmphasis) {
-      visitStrong((StrongEmphasis) node, state);
+      writer.writeElement("strong", node, this::visitChildren);
     } else if (node instanceof Emphasis) {
-      visitEmphasis((Emphasis) node, state);
+      writer.writeElement("em", node, this::visitChildren);
     } else if (node instanceof ListItem) {
-      visitListItem((ListItem) node, state);
-    } else if (node instanceof Link || node instanceof AutoLink) {
-      visitLink((LinkNode) node, state);
+      writer.writeElement("li", node, this::visitChildren);
+    } else if (node instanceof Link || node instanceof AutoLink || node instanceof MailLink) {
+      writer.writeLink((LinkNode) node, this::visitChildren);
     } else if (node instanceof TextBase) {
       // ignore these, but process their children
-      visitChildren(node, state);
+      visitChildren(node, writer);
     } else if (node instanceof Subscript) {
-      visitSubscript((Subscript) node, state);
+      writer.writeElement("sub", node, this::visitChildren);
     } else if (node instanceof Superscript) {
-      visitSuperscript((Superscript) node, state);
+      writer.writeElement("sup", node, this::visitChildren);
     } else if (node instanceof Image) {
-      visitImage((Image) node, state);
+      writer.writeImage((Image) node, this::visitChildren);
     } else if (node instanceof InsertAnchorNode) {
-      visitInsertAnchor((InsertAnchorNode) node, state);
+      writer.writeInsertAnchor((InsertAnchorNode) node);
     } else if (node instanceof SoftLineBreak) {
-      visitSoftLineBreak((SoftLineBreak) node, state);
+      writer.writeText(" ");
     } else if (node instanceof HardLineBreak) {
-      visitHardLineBreak((HardLineBreak) node, state);
+      writer.writeElement("br", node, null);
     } else if (node instanceof HtmlInline) {
-      visitHtmlInline((HtmlInline) node, state);
+      writer.writeInlineHtml((HtmlInline) node);
     } else {
       retval = false;
     }
     return retval;
   }
 
-  protected abstract void visitText(@NonNull Text node, T state) throws E;
-
-  protected abstract void visitEscapedCharacter(@NonNull EscapedCharacter node, T state) throws E;
-
-  protected abstract void visitHtmlEntity(@NonNull HtmlEntity node, T state) throws E;
-
-  protected abstract void visitTypographicSmarts(@NonNull TypographicSmarts node, T state) throws E;
-
-  protected abstract void visitTypographicQuotes(@NonNull TypographicQuotes node, T state) throws E;
-
-  protected abstract void visitCode(@NonNull Code node, T state) throws E;
-
-  protected abstract void visitStrong(@NonNull StrongEmphasis node, T state) throws E;
-
-  protected abstract void visitEmphasis(@NonNull Emphasis node, T state) throws E;
-
-  protected abstract void visitListItem(@NonNull ListItem node, T state) throws E;
-
-  protected abstract void visitLink(@NonNull LinkNode node, T state) throws E;
-
-  protected abstract void visitSubscript(@NonNull Subscript node, T state) throws E;
-
-  protected abstract void visitSuperscript(@NonNull Superscript node, T state) throws E;
-
-  protected abstract void visitImage(@NonNull Image node, T state) throws E;
-
-  protected abstract void visitInsertAnchor(@NonNull InsertAnchorNode node, T state) throws E;
-
-  protected abstract void visitSoftLineBreak(@NonNull SoftLineBreak node, T state) throws E;
-
-  protected abstract void visitHardLineBreak(@NonNull HardLineBreak node, T state) throws E;
-
-  protected abstract void visitHtmlInline(@NonNull HtmlInline node, T state) throws E;
-
-  protected boolean processBlockElements(@NonNull Node node, T state) throws E {
+  protected boolean processBlockElements(
+      @NonNull Node node,
+      @NonNull IMarkupWriter<T, E> writer) throws E {
     boolean retval = true;
     if (node instanceof Paragraph) {
-      visitParagraph((Paragraph) node, state);
+      writer.writeElement("p", node, this::visitChildren);
     } else if (node instanceof Heading) {
-      visitHeading((Heading) node, state);
+      writer.writeHeading((Heading) node, this::visitChildren);
     } else if (node instanceof OrderedList) {
-      visitOrderedList((OrderedList) node, state);
+      writer.writeElement("ol", node, this::visitChildren);
     } else if (node instanceof BulletList) {
-      visitBulletList((BulletList) node, state);
+      writer.writeElement("ul", node, this::visitChildren);
     } else if (node instanceof TableBlock) {
-      visitTable((TableBlock) node, state);
+      writer.writeTable((TableBlock) node, this::visitChildren);
     } else if (node instanceof HtmlBlock) {
-      visitHtmlBlock((HtmlBlock) node, state);
+      writer.writeBlockHtml((HtmlBlock) node);
     } else if (node instanceof HtmlCommentBlock) {
       // ignore
     } else if (node instanceof IndentedCodeBlock) {
-      visitIndentedOrFencedCodeBlock((IndentedCodeBlock) node, state);
+      writer.writeCodeBlock((IndentedCodeBlock) node, this::visitChildren);
     } else if (node instanceof FencedCodeBlock) {
-      visitIndentedOrFencedCodeBlock((FencedCodeBlock) node, state);
+      writer.writeCodeBlock((FencedCodeBlock) node, this::visitChildren);
     } else if (node instanceof CodeBlock) {
-      visitCodeBlock((CodeBlock) node, state);
+      // ignore these, but process their children
+      visitChildren(node, writer);
+    } else if (node instanceof BlockQuote) {
+      writer.writeElement("blockquote", node, this::visitChildren);
+    } else if (node instanceof ThematicBreak) {
+      writer.writeElement("hr", node, null);
     } else {
       retval = false;
     }
     return retval;
-  }
-
-  protected abstract void visitParagraph(@NonNull Paragraph node, T state) throws E;
-
-  protected abstract void visitHeading(@NonNull Heading node, T state) throws E;
-
-  protected abstract void visitOrderedList(@NonNull OrderedList node, T state) throws E;
-
-  protected abstract void visitBulletList(@NonNull BulletList node, T state) throws E;
-
-  protected void visitTable(@NonNull TableBlock node, T state) throws E {
-
-    TableHead head = (TableHead) node.getChildOfType(TableHead.class);
-
-    if (head != null) {
-      visitTableHead(head, state);
-    }
-
-    TableBody body = (TableBody) node.getChildOfType(TableBody.class);
-
-    if (body != null) {
-      visitTableBody(body, state);
-    }
-  }
-
-  protected void visitTableHead(@NonNull TableHead head, T state) throws E {
-    for (Node childNode : head.getChildren()) {
-      if (childNode instanceof TableRow) {
-        visitTableRow((TableRow) childNode, state);
-      }
-    }
-  }
-
-  protected void visitTableBody(@NonNull TableBody body, T state) throws E {
-    for (Node childNode : body.getChildren()) {
-      if (childNode instanceof TableRow) {
-        visitTableRow((TableRow) childNode, state);
-      }
-    }
-  }
-
-  protected abstract void visitTableRow(@NonNull TableRow row, T state) throws E;
-
-  protected abstract void visitHtmlBlock(@NonNull HtmlBlock node, T state) throws E;
-
-  protected abstract void visitIndentedOrFencedCodeBlock(@NonNull Block node, T state) throws E;
-
-  private void visitCodeBlock(CodeBlock node, T state) throws E {
-    visitChildren(node, state);
   }
 }

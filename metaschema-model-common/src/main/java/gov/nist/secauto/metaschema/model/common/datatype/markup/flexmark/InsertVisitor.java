@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeVisitorBase;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupText;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupString;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -50,7 +50,7 @@ public class InsertVisitor
     this.filter = filter;
   }
 
-  public InsertVisitor processNode(@NonNull IMarkupText markup) {
+  public InsertVisitor processNode(@NonNull IMarkupString<?> markup) {
     visit(markup.getDocument());
     return this;
   }

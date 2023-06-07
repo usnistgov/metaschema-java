@@ -26,15 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
-import com.vladsch.flexmark.ast.Image;
-import com.vladsch.flexmark.ast.LinkNode;
-import com.vladsch.flexmark.util.ast.Node;
-import com.vladsch.flexmark.util.sequence.BasedSequence;
-
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-
-import org.jsoup.select.NodeVisitor;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -43,119 +35,47 @@ import javax.xml.stream.XMLStreamWriter;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class MarkupXmlStreamWriter
-    extends AbstractMarkupXmlVisitor<XMLStreamWriter, XMLStreamException> {
+    extends AbstractMarkupWriter<XMLStreamWriter, XMLStreamException> {
 
-  public MarkupXmlStreamWriter(@NonNull String namespace, boolean handleBlockElements) {
-    super(namespace, handleBlockElements);
+  public MarkupXmlStreamWriter(
+      @NonNull String namespace,
+      @NonNull XMLStreamWriter writer) {
+    super(namespace, writer);
   }
 
   @Override
-  protected void handleBasicElementStart(Node node, XMLStreamWriter writer, QName name) throws XMLStreamException {
-    writer.writeStartElement(name.getNamespaceURI(), name.getLocalPart());
-  }
+  public void writeEmptyElement(QName qname, Map<String, String> attributes) throws XMLStreamException {
+    XMLStreamWriter stream = getStream();
+    stream.writeEmptyElement(qname.getNamespaceURI(), qname.getLocalPart());
 
-  @Override
-  protected void handleBasicElementEnd(Node node, XMLStreamWriter writer, QName name) throws XMLStreamException {
-    writer.writeEndElement();
-  }
-
-  @Override
-  protected void handleLinkStart(LinkNode node, XMLStreamWriter writer, QName name) throws XMLStreamException {
-    writer.writeStartElement(name.getNamespaceURI(), name.getLocalPart());
-
-    writer.writeAttribute("href", node.getUrl().toString());
-  }
-
-  @Override
-  protected void handleLinkEnd(LinkNode node, XMLStreamWriter writer, QName name) throws XMLStreamException {
-    writer.writeEndElement();
-  }
-
-  @Override
-  protected void writeText(String text, XMLStreamWriter writer) throws XMLStreamException {
-    writer.writeCharacters(text);
-  }
-
-  @Override
-  protected void writeHtmlEntity(String entityText, XMLStreamWriter writer) throws XMLStreamException {
-    writer.writeEntityRef(entityText);
-  }
-
-  @Override
-  protected void visitImage(@NonNull Image node, XMLStreamWriter writer) throws XMLStreamException {
-    QName name = newQName("img");
-    writer.writeEmptyElement(name.getNamespaceURI(), name.getLocalPart());
-
-    BasedSequence seq = node.getUrl();
-    if (seq != null) {
-      writer.writeAttribute("src", seq.toString());
-    }
-
-    seq = node.getText();
-    if (seq != null) {
-      writer.writeAttribute("alt", seq.toString());
+    for (Map.Entry<String, String> entry : attributes.entrySet()) {
+      stream.writeAttribute(entry.getKey(), entry.getValue());
     }
   }
 
   @Override
-  protected void visitInsertAnchor(@NonNull InsertAnchorNode node, XMLStreamWriter writer) throws XMLStreamException {
-    QName name = newQName("insert");
-    writer.writeEmptyElement(name.getNamespaceURI(), name.getLocalPart());
-    writer.writeAttribute("type", node.getType().toString());
-    writer.writeAttribute("id-ref", node.getIdReference().toString());
-  }
+  public void writeElementStart(QName qname, Map<String, String> attributes) throws XMLStreamException {
+    XMLStreamWriter stream = getStream();
+    stream.writeStartElement(qname.getNamespaceURI(), qname.getLocalPart());
 
+    for (Map.Entry<String, String> entry : attributes.entrySet()) {
+      stream.writeAttribute(entry.getKey(), entry.getValue());
+    }
+  }
 
   @Override
-  protected NodeVisitor newNodeVisitor(XMLStreamWriter writer) {
-    return new StreamNodeVisitor(ObjectUtils.requireNonNull(writer));
+  public void writeElementEnd(QName qName) throws XMLStreamException {
+    getStream().writeEndElement();
   }
 
-  private class StreamNodeVisitor implements NodeVisitor {
-    @NonNull
-    private final XMLStreamWriter writer;
+  @Override
+  public void writeText(String text) throws XMLStreamException {
+    getStream().writeCharacters(text);
+    
+  }
 
-    public StreamNodeVisitor(@NonNull XMLStreamWriter writer) {
-      this.writer = writer;
-    }
-
-    @Override
-    public void head(org.jsoup.nodes.Node node, int depth) {
-      if (depth > 0) {
-        try {
-          if (node instanceof org.jsoup.nodes.Element) {
-            org.jsoup.nodes.Element element = (org.jsoup.nodes.Element) node;
-            if (element.childNodes().isEmpty()) {
-              writer.writeEmptyElement(getNamespace(), element.tagName());
-            } else {
-              writer.writeStartElement(getNamespace(), element.tagName());
-            }
-
-            for (org.jsoup.nodes.Attribute attr : element.attributes()) {
-              writer.writeAttribute(attr.getKey(), attr.getValue());
-            }
-          } else if (node instanceof org.jsoup.nodes.TextNode) {
-            org.jsoup.nodes.TextNode text = (org.jsoup.nodes.TextNode) node;
-            writer.writeCharacters(text.text());
-          }
-        } catch (XMLStreamException ex) {
-          throw new NodeVisitorException(ex);
-        }
-      }
-    }
-
-    @Override
-    public void tail(org.jsoup.nodes.Node node, int depth) {
-      if (depth > 0 && node instanceof org.jsoup.nodes.Element) {
-        org.jsoup.nodes.Element element = (org.jsoup.nodes.Element) node;
-        if (!element.childNodes().isEmpty()) {
-          try {
-            writer.writeEndElement();
-          } catch (XMLStreamException ex) {
-            throw new NodeVisitorException(ex);
-          }
-        }
-      }
-    }
+  @Override
+  protected void writeHtmlEntityInternal(String entityText) throws XMLStreamException {
+    getStream().writeEntityRef(entityText);
   }
 }

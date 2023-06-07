@@ -26,21 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
-import com.vladsch.flexmark.ast.Image;
-import com.vladsch.flexmark.ast.LinkNode;
-import com.vladsch.flexmark.util.ast.Node;
-import com.vladsch.flexmark.util.sequence.BasedSequence;
-
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.evt.XMLEventFactory2;
-import org.jsoup.select.NodeVisitor;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
@@ -52,150 +46,71 @@ import javax.xml.stream.events.StartElement;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class MarkupXmlEventWriter
-    extends AbstractMarkupXmlVisitor<XMLEventWriter, XMLStreamException> {
+    extends AbstractMarkupWriter<XMLEventWriter, XMLStreamException> {
+
   @NonNull
   protected final XMLEventFactory2 eventFactory;
+  
 
-  public MarkupXmlEventWriter(@NonNull String namespace, boolean handleBlockElements,
+  public MarkupXmlEventWriter(
+      @NonNull String namespace,
+      @NonNull XMLEventWriter writer,
       @NonNull XMLEventFactory2 eventFactory) {
-    super(namespace, handleBlockElements);
-    Objects.requireNonNull(eventFactory, "eventFactory");
-    this.eventFactory = eventFactory;
+    super(namespace, writer);
+    this.eventFactory = Objects.requireNonNull(eventFactory, "eventFactory");
   }
+
 
   @NonNull
   protected XMLEventFactory2 getEventFactory() {
     return eventFactory;
   }
 
-  @Override
-  protected void handleBasicElementStart(Node node, XMLEventWriter writer, QName name) throws XMLStreamException {
-    StartElement start = eventFactory.createStartElement(name, null, null);
-    writer.add(start);
-  }
-
-  @Override
-  protected void handleBasicElementEnd(Node node, XMLEventWriter writer, QName name) throws XMLStreamException {
-    EndElement end = eventFactory.createEndElement(name, null);
-    writer.add(end);
-  }
-
-  @Override
-  protected void handleLinkStart(LinkNode node, XMLEventWriter writer, QName name)
-      throws XMLStreamException {
-    List<Attribute> attributes = new LinkedList<>();
-    if (node.getUrl() != null) {
-      attributes.add(eventFactory.createAttribute("href", node.getUrl().toString()));
+  @NonNull
+  protected List<Attribute> handleAttributes(@NonNull Map<String, String> attributes) {
+    List<Attribute> attrs;
+    if (attributes.isEmpty()) {
+      attrs = CollectionUtil.emptyList();
+    } else {
+      attrs = ObjectUtils.notNull(attributes.entrySet().stream()
+        .map((entry) -> eventFactory.createAttribute(entry.getKey(), entry.getValue()))
+        .collect(Collectors.toList()));
     }
-
-    StartElement start = eventFactory.createStartElement(name, attributes.iterator(), null);
-    writer.add(start);
+    return attrs;
   }
 
   @Override
-  protected void handleLinkEnd(LinkNode node, XMLEventWriter writer, QName name) throws XMLStreamException {
-    EndElement end = eventFactory.createEndElement(name, null);
-    writer.add(end);
+  public void writeEmptyElement(QName qname, Map<String, String> attributes) throws XMLStreamException {
+    List<Attribute> attrs = handleAttributes(attributes);
+    StartElement start = eventFactory.createStartElement(qname, attrs.isEmpty() ? null : attrs.iterator(), null);
+
+    XMLEventWriter stream = getStream();
+    stream.add(start);
+
+    EndElement end = eventFactory.createEndElement(qname, null);
+    stream.add(end);
   }
 
   @Override
-  protected void writeText(String text, XMLEventWriter writer) throws XMLStreamException {
-    writer.add(eventFactory.createCharacters(text));
+  public void writeElementStart(QName qname, Map<String, String> attributes) throws XMLStreamException {
+    List<Attribute> attrs = handleAttributes(attributes);
+    StartElement start = eventFactory.createStartElement(qname, attrs.isEmpty() ? null : attrs.iterator(), null);
+    getStream().add(start);
   }
 
   @Override
-  protected void writeHtmlEntity(String entityText, XMLEventWriter writer) throws XMLStreamException {
-    writer.add(eventFactory.createEntityReference(entityText, null));
-  }
-  
-  @Override
-  protected void visitImage(@NonNull Image node, XMLEventWriter writer) throws XMLStreamException {
-    QName name = newQName("img");
-    List<Attribute> attributes = new LinkedList<>();
-
-    BasedSequence seq = node.getUrl();
-    if (seq != null) {
-      attributes.add(eventFactory.createAttribute("src", seq.toString()));
-    }
-
-    seq = node.getText();
-    if (seq != null) {
-      attributes.add(eventFactory.createAttribute("alt", seq.toString()));
-    }
-
-    StartElement start = eventFactory.createStartElement(name, attributes.iterator(), null);
-    writer.add(start);
-
-    EndElement end = eventFactory.createEndElement(name, null);
-    writer.add(end);
+  public void writeElementEnd(QName qname) throws XMLStreamException {
+    EndElement end = eventFactory.createEndElement(qname, null);
+    getStream().add(end);
   }
 
   @Override
-  protected void visitInsertAnchor(@NonNull InsertAnchorNode node, XMLEventWriter writer) throws XMLStreamException {
-    QName name = newQName("insert");
-    List<Attribute> attributes = new ArrayList<>(2);
-    attributes.add(eventFactory.createAttribute("type", node.getType().toString()));
-    attributes.add(eventFactory.createAttribute("id-ref", node.getIdReference().toString()));
-
-    StartElement start = eventFactory.createStartElement(name, attributes.iterator(), null);
-    writer.add(start);
-
-    // there are no children
-    // visitChildren(node);
-
-    EndElement end = eventFactory.createEndElement(name, null);
-    writer.add(end);
+  public void writeText(String text) throws XMLStreamException {
+    getStream().add(eventFactory.createCharacters(text));
   }
 
   @Override
-  protected NodeVisitor newNodeVisitor(XMLEventWriter writer) {
-    return new StreamNodeVisitor(ObjectUtils.requireNonNull(writer));
-  }
-
-  private class StreamNodeVisitor implements NodeVisitor {
-    private final XMLEventWriter writer;
-
-    public StreamNodeVisitor(XMLEventWriter writer) {
-      this.writer = writer;
-    }
-
-    @Override
-    public void head(org.jsoup.nodes.Node node, int depth) {
-      if (depth > 0) {
-        try {
-          if (node instanceof org.jsoup.nodes.Element) {
-            org.jsoup.nodes.Element element = (org.jsoup.nodes.Element) node;
-            if (element.childNodes().isEmpty()) {
-              writer.add(eventFactory.createStartElement(new QName(getNamespace(), element.tagName()), null, null));
-            } else {
-              List<Attribute> attributes = new LinkedList<>();
-              for (org.jsoup.nodes.Attribute attr : element.attributes()) {
-                attributes.add(eventFactory.createAttribute(attr.getKey(), attr.getValue()));
-              }
-
-              writer.add(eventFactory.createStartElement(new QName(getNamespace(), element.tagName()),
-                  attributes.iterator(), null));
-            }
-          } else if (node instanceof org.jsoup.nodes.TextNode) {
-            org.jsoup.nodes.TextNode text = (org.jsoup.nodes.TextNode) node;
-            writer.add(eventFactory.createCharacters(text.text()));
-          }
-        } catch (XMLStreamException ex) {
-          throw new NodeVisitorException(ex);
-        }
-      }
-    }
-
-    @Override
-    public void tail(org.jsoup.nodes.Node node, int depth) {
-      if (depth > 0 && node instanceof org.jsoup.nodes.Element) {
-        org.jsoup.nodes.Element element = (org.jsoup.nodes.Element) node;
-        try {
-          writer.add(eventFactory.createEndElement(new QName(getNamespace(), element.tagName()), null));
-        } catch (XMLStreamException ex) {
-          throw new NodeVisitorException(ex);
-        }
-      }
-    }
+  protected void writeHtmlEntityInternal(String entityText) throws XMLStreamException {
+    getStream().add(eventFactory.createEntityReference(entityText, null));
   }
 }

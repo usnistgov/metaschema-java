@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.freemarker.support;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupText;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupString;
 
 import java.util.List;
 
@@ -43,17 +43,17 @@ public class MarkupToMarkdownMethod implements TemplateMethodModelEx {
     if (arguments.isEmpty() || arguments.size() != 1) {
       throw new TemplateModelException(String.format(
           "This method requires a %s typed object argument.",
-          IMarkupText.class.getName()));
+          IMarkupString.class.getName()));
     }
 
     Object markupObject = DeepUnwrap.unwrap((TemplateModel) arguments.get(0));
 
-    if (!(markupObject instanceof IMarkupText)) {
+    if (!(markupObject instanceof IMarkupString)) {
       throw new TemplateModelException(String.format("The first argument must be of type %s. The type %s is invalid.",
-          IMarkupText.class.getName(), markupObject.getClass().getName()));
+          IMarkupString.class.getName(), markupObject.getClass().getName()));
     }
 
-    IMarkupText text = (IMarkupText) markupObject;
+    IMarkupString<?> text = (IMarkupString<?>) markupObject;
 
     return text.toMarkdown();
   }

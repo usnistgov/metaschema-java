@@ -34,6 +34,10 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.FlexmarkFactory;
 
+import org.codehaus.stax2.XMLStreamWriter2;
+
+import javax.xml.stream.XMLStreamException;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class MarkupLine
@@ -73,5 +77,10 @@ public class MarkupLine
     // TODO: find a way to do a deep copy
     // this is a shallow copy that uses the same underlying Document object
     return new MarkupLine(getDocument());
+  }
+
+  @Override
+  public boolean isBlock() {
+    return false;
   }
 }

@@ -42,6 +42,7 @@ import java.util.List;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 class MarkupXmlStreamWriterTest {
 
@@ -66,8 +67,6 @@ class MarkupXmlStreamWriterTest {
     visitor.collect(ms.getDocument());
     // System.out.println(visitor.getAst());
 
-    MarkupXmlStreamWriter writer = new MarkupXmlStreamWriter(namespace, true);
-
     XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
     assert factory instanceof WstxOutputFactory;
     factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
@@ -75,7 +74,13 @@ class MarkupXmlStreamWriterTest {
     NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
         List.of(NamespaceEventImpl.constructNamespace(null, prefix, namespace)));
     xmlStreamWriter.setNamespaceContext(nsContext);
-    writer.visitChildren(ms.getDocument(), xmlStreamWriter);
+
+    IMarkupWriter<XMLStreamWriter, XMLStreamException> writer = new MarkupXmlStreamWriter(
+        namespace,
+        xmlStreamWriter);
+
+    IMarkupVisitor<XMLStreamWriter, XMLStreamException> markupVisitor = new MarkupVisitor<>(true);
+    markupVisitor.visitDocument(ms.getDocument(), writer);
     xmlStreamWriter.close();
   }
 

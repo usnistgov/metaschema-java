@@ -33,5 +33,5 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings("THROWS_METHOD_THROWS_CLAUSE_THROWABLE")
 public interface IMarkupVisitor<T, E extends Throwable> {
-  void visitDocument(@NonNull Document document, T state) throws E;
+  void visitDocument(@NonNull Document document, @NonNull IMarkupWriter<T, E> writer) throws E;
 }

@@ -75,4 +75,10 @@ public class MarkupMultiline
     // this is a shallow copy that uses the same underlying Document object
     return new MarkupMultiline(getDocument());
   }
+
+  @Override
+  public boolean isBlock() {
+    return true;
+  }
+
 }

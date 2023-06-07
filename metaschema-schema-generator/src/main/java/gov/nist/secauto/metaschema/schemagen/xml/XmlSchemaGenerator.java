@@ -32,6 +32,7 @@ import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.AutoCloser;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -237,7 +238,7 @@ public class XmlSchemaGenerator
     state.writeStartElement(PREFIX_XML_SCHEMA, "appinfo", NS_XML_SCHEMA);
 
     state.writeStartElement(targetNS, "schema-name");
-    metaschema.getName().writeHtml(state.getXMLStreamWriter(), targetNS);
+    IMarkupAdapter.writeHtml(metaschema.getName(), targetNS, state.getXMLStreamWriter());
     state.writeEndElement();
 
     state.writeStartElement(targetNS, "schema-version");
@@ -253,7 +254,7 @@ public class XmlSchemaGenerator
     MarkupMultiline remarks = metaschema.getRemarks();
     if (remarks != null) {
       state.writeStartElement(PREFIX_XML_SCHEMA, "documentation", NS_XML_SCHEMA);
-      remarks.writeHtml(state.getXMLStreamWriter(), targetNS);
+      IMarkupAdapter.writeHtml(remarks, targetNS, state.getXMLStreamWriter());
       state.writeEndElement();
     }
 

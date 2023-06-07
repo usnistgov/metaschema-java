@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0"
+    targetNamespace="http://csrc.nist.gov/ns/oscal/metaschema/1.0" elementFormDefault="qualified">
+    <xs:include schemaLocation="../classes/schema/xml/metaschema-markup-line.xsd"/>
+    <xs:include schemaLocation="../classes/schema/xml/metaschema-markup-multiline.xsd"/>
+
+    <xs:element name="line" type="MarkupLineDatatype"/>
+    <xs:element name="multiline" type="MarkupMultilineDatatype"/>
+</xs:schema>

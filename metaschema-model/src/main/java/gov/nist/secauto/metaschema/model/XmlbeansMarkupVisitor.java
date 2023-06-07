@@ -26,212 +26,87 @@
 
 package gov.nist.secauto.metaschema.model;
 
-import com.vladsch.flexmark.ast.HtmlBlock;
-import com.vladsch.flexmark.ast.HtmlInline;
-import com.vladsch.flexmark.ast.Image;
-import com.vladsch.flexmark.ast.LinkNode;
-import com.vladsch.flexmark.ext.tables.TableBlock;
-import com.vladsch.flexmark.ext.tables.TableCell;
-import com.vladsch.flexmark.ext.tables.TableRow;
-import com.vladsch.flexmark.util.ast.Node;
-
-import gov.nist.secauto.metaschema.model.common.datatype.markup.AbstractMarkupXmlVisitor;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.AbstractMarkupWriter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupString;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupVisitor;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupWriter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupVisitor;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.NodeVisitor;
+
+import java.util.Map;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class XmlbeansMarkupVisitor
-    extends AbstractMarkupXmlVisitor<XmlCursor, IllegalArgumentException> {
+    extends AbstractMarkupWriter<XmlCursor, IllegalArgumentException> {
 
   @SuppressWarnings("resource")
-  public static void visit(@NonNull MarkupLine markup, @NonNull String namespace, @NonNull XmlObject obj) {
+  public static void visit(@NonNull IMarkupString<?> markup, @NonNull String namespace, @NonNull XmlObject obj) {
     try (XmlCursor cursor = ObjectUtils.notNull(obj.newCursor())) {
       visit(markup, namespace, cursor);
     }
   }
 
-  public static void visit(@NonNull MarkupLine markup, @NonNull String namespace, @NonNull XmlCursor cursor) {
-    new XmlbeansMarkupVisitor(namespace, false).visitDocument(markup.getDocument(), cursor);
+  public static void visit(@NonNull IMarkupString<?> markup, @NonNull String namespace, @NonNull XmlCursor cursor) {
+    IMarkupWriter<XmlCursor, IllegalArgumentException> writer = new XmlbeansMarkupVisitor(
+        namespace,
+        cursor);
+    IMarkupVisitor<XmlCursor, IllegalArgumentException> visitor = new MarkupVisitor<>(markup.isBlock());
+    visitor.visitDocument(markup.getDocument(), writer);
   }
 
-  @SuppressWarnings("resource")
-  public static void visit(@NonNull MarkupMultiline markup, @NonNull String namespace, @NonNull XmlObject obj) {
-    try (XmlCursor cursor = ObjectUtils.notNull(obj.newCursor())) {
-      visit(markup, namespace, cursor);
-    }
+  protected XmlbeansMarkupVisitor(
+      @NonNull String namespace,
+      @NonNull XmlCursor writer) {
+    super(namespace, writer);
   }
 
-  public static void visit(@NonNull MarkupMultiline markup, @NonNull String namespace, @NonNull XmlCursor cursor) {
-    new XmlbeansMarkupVisitor(namespace, true).visitDocument(markup.getDocument(), cursor);
-  }
-
-  protected XmlbeansMarkupVisitor(@NonNull String namespace, boolean handleBlockElements) {
-    super(namespace, handleBlockElements);
-  }
-
-  /**
-   * Visit children in the context of the new element.
-   * 
-   * @param node
-   * @param state
-   */
-  private void visitElementChildren(@NonNull Node node, XmlCursor state) {
-    state.push();
-
-    super.visitChildren(node, state);
-
-    state.pop();
+  @Override
+  public void writeEmptyElement(QName qname, Map<String, String> attributes) throws IllegalArgumentException {
+    XmlCursor cursor = getStream();
+    cursor.beginElement(qname);
+    
+    attributes.forEach((name, value) -> cursor.insertAttributeWithValue(name, value));
 
     // go to the end of the new element
-    state.toEndToken();
+    cursor.toEndToken();
 
     // state advance past the end element
-    state.toNextToken();
+    cursor.toNextToken();
   }
 
   @Override
-  protected void handleBasicElementStart(@NonNull Node node, XmlCursor state, @NonNull QName name) {
-    state.beginElement(name);
-    state.push();
+  public void writeElementStart(QName qname, Map<String, String> attributes) throws IllegalArgumentException {
+    XmlCursor cursor = getStream();
+    cursor.beginElement(qname);
+    
+    attributes.forEach((name, value) -> cursor.insertAttributeWithValue(name, value));
+
+    // save the current location state
+    cursor.push();
   }
 
   @Override
-  protected void handleBasicElementEnd(@NonNull Node node, XmlCursor state, @NonNull QName name) {
-    state.pop();
+  public void writeElementEnd(QName qname) throws IllegalArgumentException {
+    XmlCursor cursor = getStream();
+
+    // restore location to end of start element
+    cursor.pop();
 
     // go to the end of the new element
-    state.toEndToken();
+    cursor.toEndToken();
 
     // state advance past the end element
-    state.toNextToken();
+    cursor.toNextToken();
   }
 
   @Override
-  protected void handleLinkStart(LinkNode node, XmlCursor state, QName name) throws IllegalArgumentException {
-    state.beginElement(name);
-    state.push();
-
-    state.insertAttributeWithValue("href", ObjectUtils.requireNonNull(node.getUrl().toString()));
-  }
-
-  @Override
-  protected void handleLinkEnd(LinkNode node, XmlCursor state, QName name) throws IllegalArgumentException {
-    state.pop();
-
-    // go to the end of the new element
-    state.toEndToken();
-
-    // state advance past the end element
-    state.toNextToken();
-  }
-
-  @Override
-  protected void writeText(String text, XmlCursor state) {
-    state.insertChars(text);
-  }
-
-  @Override
-  protected void writeHtmlEntity(String entityText, XmlCursor state) {
-    state.insertChars(entityText);
-  }
-
-  @Override
-  protected void visitImage(Image node, XmlCursor state) {
-    QName qname = newQName("img");
-    state.beginElement(qname);
-
-    state.insertAttributeWithValue("src", ObjectUtils.requireNonNull(node.getUrl().toString()));
-
-    if (node.getText() != null) {
-      state.insertAttributeWithValue("alt", ObjectUtils.requireNonNull(node.getText().toString()));
-    }
-
-    visitElementChildren(node, state);
-  }
-
-  @Override
-  protected void visitInsertAnchor(InsertAnchorNode node, XmlCursor state) {
-    QName qname = newQName("insert");
-    state.beginElement(qname);
-
-    state.insertAttributeWithValue("type", ObjectUtils.requireNonNull(node.getType().toString()));
-    state.insertAttributeWithValue("id-ref", ObjectUtils.requireNonNull(node.getIdReference().toString()));
-
-    visitElementChildren(node, state);
-  }
-
-  @Override
-  protected NodeVisitor newNodeVisitor(XmlCursor cursor) {
-    return new XmlBeansNodeVisitor(ObjectUtils.requireNonNull(cursor));
-  }
-  
-  private class XmlBeansNodeVisitor implements NodeVisitor {
-    @NonNull
-    private final XmlCursor cursor;
-
-    public XmlBeansNodeVisitor(@NonNull XmlCursor cursor) {
-      this.cursor = cursor;
-    }
-
-    @Override
-    public void head(org.jsoup.nodes.Node node, int depth) {
-      if (depth > 0) {
-        try {
-          if (node instanceof org.jsoup.nodes.Element) {
-            org.jsoup.nodes.Element element = (org.jsoup.nodes.Element) node;
-            // if (element.childNodes().isEmpty()) {
-            // cursor.writeEmptyElement(getNamespace(), element.tagName());
-            // } else {
-            // writer.writeStartElement(getNamespace(), element.tagName());
-            // }
-
-            cursor.beginElement(newQName(ObjectUtils.notNull(element.tagName())));
-
-            for (org.jsoup.nodes.Attribute attr : element.attributes()) {
-              cursor.insertAttributeWithValue(attr.getKey(), attr.getValue());
-            }
-
-            if (!element.childNodes().isEmpty()) {
-              // save the current location state
-              cursor.push();
-            }
-          } else if (node instanceof org.jsoup.nodes.TextNode) {
-            org.jsoup.nodes.TextNode text = (org.jsoup.nodes.TextNode) node;
-            cursor.insertChars(text.text());
-          }
-        } catch (IllegalArgumentException ex) {
-          throw new NodeVisitorException(ex);
-        }
-      }
-    }
-
-    @Override
-    public void tail(org.jsoup.nodes.Node node, int depth) {
-      if (depth > 0 && node instanceof org.jsoup.nodes.Element) {
-        org.jsoup.nodes.Element element = (org.jsoup.nodes.Element) node;
-        if (!element.childNodes().isEmpty()) {
-          // get the saved location state
-          cursor.pop();
-
-          // go to the end of the new element
-          cursor.toEndToken();
-
-          // state advance past the end element
-          cursor.toNextToken();
-        }
-      }
-    }
+  public void writeText(String text) throws IllegalArgumentException {
+    getStream().insertChars(text);
   }
 }

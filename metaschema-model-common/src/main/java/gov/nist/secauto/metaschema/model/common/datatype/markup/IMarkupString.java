@@ -30,50 +30,31 @@ import com.vladsch.flexmark.formatter.Formatter;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 
+import gov.nist.secauto.metaschema.model.common.datatype.ICustomJavaDataType;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
 
-import org.codehaus.stax2.XMLStreamWriter2;
-
-import java.io.OutputStream;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import javax.xml.stream.XMLStreamException;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IMarkupText {
+public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
+    extends ICustomJavaDataType<TYPE> {
   @NonNull
   Document getDocument();
 
-  /**
-   * Write HTML content to the provided {@code xmlStreamWriter} using the provided {@code namespace}.
-   * 
-   * @param writer
-   *          the writer
-   * @param namespace
-   *          the XML namespace for the HTML
-   * @throws XMLStreamException
-   *           if an error occurred while writing
-   */
-  void writeHtml(@NonNull XMLStreamWriter2 writer, @NonNull String namespace) throws XMLStreamException;
-
-  /**
-   * Write HTML content to the provided {@code outputStream} using the provided {@code namespace}.
-   * 
-   * @param outputStream
-   *          the stream to write to
-   * @param namespace
-   *          the XML namespace for the HTML
-   * @param prefix
-   *          the XML prefix for the HTML
-   * @throws XMLStreamException
-   *           if an error occurred while writing
-   */
-  void writeHtml(@NonNull OutputStream outputStream, @Nullable String namespace, @Nullable String prefix)
-      throws XMLStreamException;
+//  /**
+//   * Write HTML content to the provided {@code xmlStreamWriter} using the provided {@code namespace}.
+//   * 
+//   * @param writer
+//   *          the writer
+//   * @param namespace
+//   *          the XML namespace for the HTML
+//   * @throws XMLStreamException
+//   *           if an error occurred while writing
+//   */
+//  void writeHtml(@NonNull XMLStreamWriter2 writer, @NonNull String namespace) throws XMLStreamException;
 
   @NonNull
   String toHtml();
@@ -110,4 +91,11 @@ public interface IMarkupText {
   @NonNull
   List<InsertAnchorNode> getInserts(
       @NonNull Predicate<InsertAnchorNode> filter);
+
+  /**
+   * Determine if the Markup consists of block elements.
+   * 
+   * @return {@code true} if the markup consists of block elements, or {@code false} otherwise
+   */
+  boolean isBlock();
 }

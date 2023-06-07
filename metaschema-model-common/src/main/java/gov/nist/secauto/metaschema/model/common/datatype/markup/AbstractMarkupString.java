@@ -26,39 +26,25 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
-import com.ctc.wstx.api.WstxOutputProperties;
-import com.ctc.wstx.stax.WstxOutputFactory;
 import com.vladsch.flexmark.formatter.Formatter;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 
-import gov.nist.secauto.metaschema.model.common.datatype.ICustomJavaDataType;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AstCollectingVisitor;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.FlexmarkFactory;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertVisitor;
 
-import org.codehaus.stax2.XMLOutputFactory2;
-import org.codehaus.stax2.XMLStreamWriter2;
-import org.codehaus.stax2.ri.evt.MergedNsContext;
-import org.codehaus.stax2.ri.evt.NamespaceEventImpl;
-
-import java.io.OutputStream;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYPE>>
-    implements IMarkupText, ICustomJavaDataType<TYPE> {
+    implements IMarkupString<TYPE> {
   private static final String DEFAULT_HTML_NS = "http://www.w3.org/1999/xhtml";
   private static final String DEFAULT_HTML_PREFIX = "";
   @NonNull
@@ -78,31 +64,36 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     return document;
   }
 
-  @Override
-  public void writeHtml(@NonNull XMLStreamWriter2 xmlStreamWriter, @NonNull String namespace)
-      throws XMLStreamException {
-    MarkupXmlStreamWriter writingVisitor
-        = new MarkupXmlStreamWriter(namespace, this instanceof MarkupMultiline);
-    writingVisitor.visitChildren(getDocument(), xmlStreamWriter);
-    xmlStreamWriter.flush();
-  }
-
-  @Override
-  public void writeHtml(@NonNull OutputStream os, @Nullable String namespace, @Nullable String prefix)
-      throws XMLStreamException {
-    XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
-    assert factory instanceof WstxOutputFactory;
-    factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
-    XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
-
-    String effectiveNamespace = namespace == null ? DEFAULT_HTML_NS : namespace;
-    String effectivePrefix = prefix == null ? DEFAULT_HTML_PREFIX : prefix;
-    NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
-        List.of(NamespaceEventImpl.constructNamespace(null, effectivePrefix, effectiveNamespace)));
-    xmlStreamWriter.setNamespaceContext(nsContext);
-
-    writeHtml(xmlStreamWriter, effectiveNamespace);
-  }
+//  @Override
+//  public void writeHtml(@NonNull XMLStreamWriter2 xmlStreamWriter, @NonNull String namespace)
+//      throws XMLStreamException {
+//    
+//    
+//    IMarkupString<?> markupString = (IMarkupString<>)value;
+//
+//    MarkupXmlStreamWriter writingVisitor
+//        = new MarkupXmlStreamWriter(namespace, markupString.isBlock());
+//    writingVisitor.visitChildren(getDocument(), xmlStreamWriter);
+//    xmlStreamWriter.flush();
+//  }
+//
+//  @Override
+//  public void writeHtml(@NonNull OutputStream os, @Nullable String namespace, @Nullable String prefix)
+//      throws XMLStreamException {
+//    XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
+//    assert factory instanceof WstxOutputFactory;
+//    factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
+//    XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
+//
+//    String effectiveNamespace = namespace == null ? DEFAULT_HTML_NS : namespace;
+//    String effectivePrefix = prefix == null ? DEFAULT_HTML_PREFIX : prefix;
+//    NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
+//        List.of(NamespaceEventImpl.constructNamespace(null, effectivePrefix, effectiveNamespace)));
+//    xmlStreamWriter.setNamespaceContext(nsContext);
+//
+//    
+//    writeHtml(xmlStreamWriter, effectiveNamespace);
+//  }
 
   @Override
   public String toHtml() {
