@@ -49,9 +49,17 @@ public class IPv6AddressAdapter
   private static final IPAddressStringParameters IP_V_6;
 
   static {
-    IP_V_6 = new IPAddressStringParameters.Builder().allowIPv4(false).allowEmpty(false).allowSingleSegment(false)
-        .allowWildcardedSeparator(false).getIPv6AddressParametersBuilder().allowBinary(false).allowLeadingZeros(false)
-        .allowPrefixesBeyondAddressSize(false).getParentBuilder().toParams();
+    IP_V_6 = new IPAddressStringParameters.Builder()
+        .allowIPv4(false)
+        .allowEmpty(false)
+        .allowSingleSegment(false)
+        .allowWildcardedSeparator(false)
+        .getIPv6AddressParametersBuilder()
+        .allowBinary(false)
+        .allowLeadingZeros(true)
+        .allowPrefixesBeyondAddressSize(false)
+        .getParentBuilder()
+        .toParams();
   }
 
   IPv6AddressAdapter() {
