@@ -189,7 +189,7 @@
     "end_line": 611,
     "section": "Backslash escapes",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "``` foo\\+bar\nfoo\n```\n",
@@ -277,7 +277,7 @@
     "end_line": 749,
     "section": "Entity and numeric character references",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "``` f&ouml;&ouml;\nfoo\n```\n",
@@ -343,7 +343,7 @@
     "end_line": 822,
     "section": "Entity and numeric character references",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "- `one\n- two`\n",
@@ -1641,7 +1641,7 @@
     "end_line": 3186,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "   [foo]: \n      /url  \n           'the title'  \n\n[foo]\n",
@@ -1651,7 +1651,7 @@
     "end_line": 3197,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[Foo*bar\\]]:my_(url) 'title (with parens)'\n\n[Foo*bar\\]]\n",
@@ -1661,7 +1661,7 @@
     "end_line": 3206,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[Foo bar]:\n<my url>\n'title'\n\n[Foo bar]\n",
@@ -1671,7 +1671,7 @@
     "end_line": 3217,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]: /url '\ntitle\nline1\nline2\n'\n\n[foo]\n",
@@ -1681,7 +1681,7 @@
     "end_line": 3236,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]: /url 'title\n\nwith blank line'\n\n[foo]\n",
@@ -1691,7 +1691,7 @@
     "end_line": 3251,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]:\n/url\n\n[foo]\n",
@@ -1701,7 +1701,7 @@
     "end_line": 3263,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]:\n\n[foo]\n",
@@ -1711,7 +1711,7 @@
     "end_line": 3275,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]: <>\n\n[foo]\n",
@@ -1721,7 +1721,7 @@
     "end_line": 3286,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]: <bar>(baz)\n\n[foo]\n",
@@ -1741,7 +1741,7 @@
     "end_line": 3310,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]\n\n[foo]: url\n",
@@ -1751,7 +1751,7 @@
     "end_line": 3321,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]\n\n[foo]: first\n[foo]: second\n",
@@ -1761,7 +1761,7 @@
     "end_line": 3334,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[FOO]: /url\n\n[Foo]\n",
@@ -1771,7 +1771,7 @@
     "end_line": 3346,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[ΑΓΩ]: /φου\n\n[αγω]\n",
@@ -1781,7 +1781,7 @@
     "end_line": 3355,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]: /url\n",
@@ -1791,7 +1791,7 @@
     "end_line": 3367,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[\nfoo\n]: /url\nbar\n",
@@ -1801,7 +1801,7 @@
     "end_line": 3379,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]: /url \"title\" ok\n",
@@ -1811,7 +1811,7 @@
     "end_line": 3389,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]: /url\n\"title\" ok\n",
@@ -1821,7 +1821,7 @@
     "end_line": 3399,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "    [foo]: /url \"title\"\n\n[foo]\n",
@@ -1831,7 +1831,7 @@
     "end_line": 3413,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "```\n[foo]: /url\n```\n\n[foo]\n",
@@ -1841,7 +1841,7 @@
     "end_line": 3429,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "Foo\n[bar]: /baz\n\n[bar]\n",
@@ -1851,7 +1851,7 @@
     "end_line": 3443,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "# [Foo]\n[foo]: /url\n> bar\n",
@@ -1861,7 +1861,7 @@
     "end_line": 3458,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]: /url\nbar\n===\n[foo]\n",
@@ -1871,7 +1871,7 @@
     "end_line": 3468,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]: /url\n===\n[foo]\n",
@@ -1881,7 +1881,7 @@
     "end_line": 3477,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]: /foo-url \"foo\"\n[bar]: /bar-url\n  \"bar\"\n[baz]: /baz-url\n\n[foo],\n[bar],\n[baz]\n",
@@ -1891,7 +1891,7 @@
     "end_line": 3496,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]\n\n> [foo]: /url\n",
@@ -1901,7 +1901,7 @@
     "end_line": 3512,
     "section": "Link reference definitions",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "aaa\n\nbbb\n",
@@ -2695,7 +2695,7 @@
     "end_line": 5660,
     "section": "Lists",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "- a\n- ```\n  b\n\n\n  ```\n- c\n",
@@ -4413,7 +4413,7 @@
     "end_line": 7981,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[link [foo [bar]]][ref]\n\n[ref]: /uri\n",
@@ -4423,7 +4423,7 @@
     "end_line": 7996,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[link \\[bar][ref]\n\n[ref]: /uri\n",
@@ -4433,7 +4433,7 @@
     "end_line": 8005,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[link *foo **bar** `#`*][ref]\n\n[ref]: /uri\n",
@@ -4443,7 +4443,7 @@
     "end_line": 8016,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[![moon](moon.jpg)][ref]\n\n[ref]: /uri\n",
@@ -4453,7 +4453,7 @@
     "end_line": 8025,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo [bar](/uri)][ref]\n\n[ref]: /uri\n",
@@ -4463,7 +4463,7 @@
     "end_line": 8036,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo *bar [baz][ref]*][ref]\n\n[ref]: /uri\n",
@@ -4473,7 +4473,7 @@
     "end_line": 8045,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "*[foo*][ref]\n\n[ref]: /uri\n",
@@ -4483,7 +4483,7 @@
     "end_line": 8060,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo *bar][ref]*\n\n[ref]: /uri\n",
@@ -4493,7 +4493,7 @@
     "end_line": 8069,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo <bar attr=\"][ref]\">\n\n[ref]: /uri\n",
@@ -4533,7 +4533,7 @@
     "end_line": 8110,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[ẞ]\n\n[SS]: /url\n",
@@ -4543,7 +4543,7 @@
     "end_line": 8121,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[Foo\n  bar]: /url\n\n[Baz][Foo bar]\n",
@@ -4553,7 +4553,7 @@
     "end_line": 8134,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo] [bar]\n\n[bar]: /url \"title\"\n",
@@ -4563,7 +4563,7 @@
     "end_line": 8146,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]\n[bar]\n\n[bar]: /url \"title\"\n",
@@ -4573,7 +4573,7 @@
     "end_line": 8157,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]: /url1\n\n[foo]: /url2\n\n[bar][foo]\n",
@@ -4583,7 +4583,7 @@
     "end_line": 8198,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[bar][foo\\!]\n\n[foo!]: /url\n",
@@ -4633,7 +4633,7 @@
     "end_line": 8253,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[bar\\\\]: /uri\n\n[bar\\\\]\n",
@@ -4643,7 +4643,7 @@
     "end_line": 8264,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[]\n\n[]: /uri\n",
@@ -4673,7 +4673,7 @@
     "end_line": 8309,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[*foo* bar][]\n\n[*foo* bar]: /url \"title\"\n",
@@ -4683,7 +4683,7 @@
     "end_line": 8318,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[Foo][]\n\n[foo]: /url \"title\"\n",
@@ -4693,7 +4693,7 @@
     "end_line": 8329,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo] \n[]\n\n[foo]: /url \"title\"\n",
@@ -4703,7 +4703,7 @@
     "end_line": 8344,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]\n\n[foo]: /url \"title\"\n",
@@ -4713,7 +4713,7 @@
     "end_line": 8362,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[*foo* bar]\n\n[*foo* bar]: /url \"title\"\n",
@@ -4723,7 +4723,7 @@
     "end_line": 8371,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[[*foo* bar]]\n\n[*foo* bar]: /url \"title\"\n",
@@ -4733,7 +4733,7 @@
     "end_line": 8380,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[[bar [foo]\n\n[foo]: /url\n",
@@ -4743,7 +4743,7 @@
     "end_line": 8389,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[Foo]\n\n[foo]: /url \"title\"\n",
@@ -4753,7 +4753,7 @@
     "end_line": 8400,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo] bar\n\n[foo]: /url\n",
@@ -4763,7 +4763,7 @@
     "end_line": 8411,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "\\[foo]\n\n[foo]: /url \"title\"\n",
@@ -4773,7 +4773,7 @@
     "end_line": 8423,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo*]: /url\n\n*[foo*]\n",
@@ -4783,7 +4783,7 @@
     "end_line": 8435,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo][bar]\n\n[foo]: /url1\n[bar]: /url2\n",
@@ -4793,7 +4793,7 @@
     "end_line": 8448,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo][]\n\n[foo]: /url1\n",
@@ -4803,7 +4803,7 @@
     "end_line": 8456,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo]()\n\n[foo]: /url1\n",
@@ -4813,7 +4813,7 @@
     "end_line": 8466,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo](not a link)\n\n[foo]: /url1\n",
@@ -4823,7 +4823,7 @@
     "end_line": 8474,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo][bar][baz]\n\n[baz]: /url\n",
@@ -4833,7 +4833,7 @@
     "end_line": 8485,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo][bar][baz]\n\n[baz]: /url1\n[bar]: /url2\n",
@@ -4843,7 +4843,7 @@
     "end_line": 8498,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "[foo][bar][baz]\n\n[baz]: /url1\n[foo]: /url2\n",
@@ -4853,7 +4853,7 @@
     "end_line": 8511,
     "section": "Links",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "![foo](/url \"title\")\n",
@@ -4871,7 +4871,7 @@
     "end_line": 8540,
     "section": "Images",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "![foo ![bar](/url)](/url2)\n",
@@ -4897,7 +4897,7 @@
     "end_line": 8570,
     "section": "Images",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "![foo *bar*][foobar]\n\n[FOOBAR]: train.jpg \"train & tracks\"\n",
@@ -4907,7 +4907,7 @@
     "end_line": 8579,
     "section": "Images",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "![foo](train.jpg)\n",
@@ -4949,7 +4949,7 @@
     "end_line": 8618,
     "section": "Images",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "![foo][bar]\n\n[BAR]: /url\n",
@@ -4959,7 +4959,7 @@
     "end_line": 8627,
     "section": "Images",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "![foo][]\n\n[foo]: /url \"title\"\n",
@@ -4969,7 +4969,7 @@
     "end_line": 8638,
     "section": "Images",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "![*foo* bar][]\n\n[*foo* bar]: /url \"title\"\n",
@@ -4979,7 +4979,7 @@
     "end_line": 8647,
     "section": "Images",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "![Foo][]\n\n[foo]: /url \"title\"\n",
@@ -4989,7 +4989,7 @@
     "end_line": 8658,
     "section": "Images",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "![foo] \n[]\n\n[foo]: /url \"title\"\n",
@@ -4999,7 +4999,7 @@
     "end_line": 8672,
     "section": "Images",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "![foo]\n\n[foo]: /url \"title\"\n",
@@ -5009,7 +5009,7 @@
     "end_line": 8683,
     "section": "Images",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "![*foo* bar]\n\n[*foo* bar]: /url \"title\"\n",
@@ -5019,7 +5019,7 @@
     "end_line": 8692,
     "section": "Images",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "![[foo]]\n\n[[foo]]: /url \"title\"\n",
@@ -5039,7 +5039,7 @@
     "end_line": 8715,
     "section": "Images",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "!\\[foo]\n\n[foo]: /url \"title\"\n",
@@ -5059,7 +5059,7 @@
     "end_line": 8739,
     "section": "Images",
     "enabled": false,
-    "comment": "References are not supported."
+    "comment": "Anchor references are not supported."
   },
   {
     "markdown": "<http://foo.bar.baz>\n",

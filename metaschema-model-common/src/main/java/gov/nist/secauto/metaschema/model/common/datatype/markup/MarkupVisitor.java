@@ -43,6 +43,7 @@ import com.vladsch.flexmark.ast.Image;
 import com.vladsch.flexmark.ast.IndentedCodeBlock;
 import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.ast.LinkNode;
+import com.vladsch.flexmark.ast.LinkRef;
 import com.vladsch.flexmark.ast.ListItem;
 import com.vladsch.flexmark.ast.MailLink;
 import com.vladsch.flexmark.ast.OrderedList;
@@ -158,6 +159,8 @@ public class MarkupVisitor<T, E extends Throwable> implements IMarkupVisitor<T, 
       writer.writeElement("br", node, null);
     } else if (node instanceof HtmlInline) {
       writer.writeInlineHtml((HtmlInline) node);
+    } else if (node instanceof LinkRef) {
+      throw new UnsupportedOperationException("Link references are not supported by Metaschema. Perhaps you have an unescaped bracket?");
     } else {
       retval = false;
     }

@@ -234,6 +234,10 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> implements IM
       throw new IllegalStateException(ex);
     }
 
+    if (node.getTitle() != null) {
+      attributes.put("title", ObjectUtils.requireNonNull(node.getTitle().toString()));
+    }
+
     writeElement("a", node, attributes, childHandler);
   }
 
@@ -300,7 +304,7 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> implements IM
   @Override
   public final void writeTable(
       TableBlock node,
-      Handler<T, E, AbstractMarkupWriter<T, E>> cellChilddHandler) throws E {
+      Handler<T, E, AbstractMarkupWriter<T, E>> cellChildHandler) throws E {
     QName qname = newQName("table");
     writeElementStart(qname);
 
@@ -310,7 +314,7 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> implements IM
     if (head != null) {
       for (Node childNode : head.getChildren()) {
         if (childNode instanceof TableRow) {
-          writeTableRow((TableRow) childNode, cellChilddHandler);
+          writeTableRow((TableRow) childNode, cellChildHandler);
         }
       }
     }
@@ -320,7 +324,7 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> implements IM
     if (body != null) {
       for (Node childNode : body.getChildren()) {
         if (childNode instanceof TableRow) {
-          writeTableRow((TableRow) childNode, cellChilddHandler);
+          writeTableRow((TableRow) childNode, cellChildHandler);
         }
       }
     }
@@ -330,13 +334,13 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> implements IM
 
   private void writeTableRow(
       @NonNull TableRow node,
-      @NonNull Handler<T, E, AbstractMarkupWriter<T, E>> cellChilddHandler) throws E {
+      @NonNull Handler<T, E, AbstractMarkupWriter<T, E>> cellChildHandler) throws E {
     QName qname = newQName("tr");
     writeElementStart(qname);
 
     for (Node childNode : node.getChildren()) {
       if (childNode instanceof TableCell) {
-        writeTableCell((TableCell) childNode, cellChilddHandler);
+        writeTableCell((TableCell) childNode, cellChildHandler);
       }
     }
 
@@ -345,11 +349,16 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> implements IM
 
   private void writeTableCell(
       @NonNull TableCell node,
-      @NonNull Handler<T, E, AbstractMarkupWriter<T, E>> cellChilddHandler) throws E {
+      @NonNull Handler<T, E, AbstractMarkupWriter<T, E>> cellChildHandler) throws E {
     QName qname = node.isHeader() ? newQName("th") : newQName("td");
 
-    writeElementStart(qname);
-    cellChilddHandler.accept(node, this);
+    Map<String, String> attributes = new LinkedHashMap<>();
+    if (node.getAlignment() != null) {
+      attributes.put("align", ObjectUtils.requireNonNull(node.getAlignment().toString()));
+    }
+
+    writeElementStart(qname, attributes);
+    cellChildHandler.accept(node, this);
     writeElementEnd(qname);
   }
 
