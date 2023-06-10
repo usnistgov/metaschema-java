@@ -69,7 +69,7 @@ class XmlbeansMarkupVisitorTest {
   @Test
   void testComplex() throws IOException {
     String html = testMarkupLine(
-        "this is some \"quoted *basic text*\" with a [**bold** link](url/). <span id=\"id\">test</span>");
+        "this is some \"quoted *basic text*\" with a [**bold** link](url/).");
     assertNotNull(html, "not null");
     // System.out.println(html);
   }

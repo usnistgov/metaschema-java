@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto.metaschema</groupId>
@@ -49,17 +51,25 @@
 		<!-- <artifactId>log4j-jul</artifactId> -->
 		<!-- <scope>test</scope> -->
 		<!-- </dependency> -->
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>
 			<!-- 			<resource> -->
-			<!-- 				<directory>${project.build.directory}/generated-resources/xmlbeans</directory> -->
+			<!--
+			<directory>${project.build.directory}/generated-resources/xmlbeans</directory> -->
 			<!-- 			</resource> -->
 			<resource>
 				<directory>${project.build.directory}/generated-resources/schema</directory>
 			</resource>
 		</resources>
-		<!-- <sourceDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceDirectory> -->
+		<!--
+		<sourceDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceDirectory> -->
 		<!-- <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory> -->
 		<pluginManagement>
 			<plugins>
@@ -69,7 +79,8 @@
 					<configuration>
 						<excludeRoots>
 							<excludeRoot>target/generated-sources/xmlbeans</excludeRoot>
-							<!-- <excludeRoot>target/generated-test-sources/metaschema</excludeRoot> -->
+							<!--
+							<excludeRoot>target/generated-test-sources/metaschema</excludeRoot> -->
 						</excludeRoots>
 					</configuration>
 				</plugin>
@@ -79,7 +90,8 @@
 					<configuration>
 						<sourceDirectories>
 							<sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
-							<sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory>
+							<sourceDirectory>
+								${project.build.testSourceDirectory}</sourceDirectory>
 						</sourceDirectories>
 					</configuration>
 				</plugin>
@@ -87,7 +99,8 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<configuration>
-						<excludePackageNames>gov.nist.secauto.metaschema.model.xmlbeans,org.apache.xmlbeans.metadata.*</excludePackageNames>
+						<excludePackageNames>
+							gov.nist.secauto.metaschema.model.xmlbeans,org.apache.xmlbeans.metadata.*</excludePackageNames>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -103,7 +116,8 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/generated-resources/schema/schema</outputDirectory>
+							<outputDirectory>
+								${project.build.directory}/generated-resources/schema/schema</outputDirectory>
 							<resources>
 								<resource>
 									<directory>metaschema/schema</directory>
@@ -123,7 +137,8 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/generated-resources/schema/schema/xml</outputDirectory>
+							<outputDirectory>
+								${project.build.directory}/generated-resources/schema/schema/xml</outputDirectory>
 							<resources>
 								<resource>
 									<directory>metaschema/support/xml</directory>
@@ -142,7 +157,8 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/generated-resources/schema/schema/json</outputDirectory>
+							<outputDirectory>
+								${project.build.directory}/generated-resources/schema/schema/json</outputDirectory>
 							<resources>
 								<resource>
 									<directory>metaschema/support/json</directory>
@@ -169,12 +185,17 @@
 						<configuration>
 							<sourceDir>${project.basedir}/metaschema/schema/xml</sourceDir>
 							<!-- <sourceSchemas>metaschema.xsd</sourceSchemas> -->
-							<javaTargetDir>${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
-							<xmlConfigs>${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</xmlConfigs>
-							<classTargetDir>${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>
+							<javaTargetDir>
+								${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
+							<xmlConfigs>
+								${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</xmlConfigs>
+							<classTargetDir>
+								${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>
 							<name>metaschema</name>
-							<partialMethods>ALL,-XGET,-XSET,-XGET_ARRAY,-XSET_ARRAY,-XGET_IDX,-XSET_IDX</partialMethods>
-							<!-- <repackage>gov.nist.secauto.metaschema.model.xmlbeans</repackage> -->
+							<partialMethods>
+								ALL,-XGET,-XSET,-XGET_ARRAY,-XSET_ARRAY,-XGET_IDX,-XSET_IDX</partialMethods>
+							<!--
+							<repackage>gov.nist.secauto.metaschema.model.xmlbeans</repackage> -->
 						</configuration>
 					</execution>
 				</executions>
@@ -203,7 +224,8 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>${project.build.directory}/generated-sources/xmlbeans</source>
+								<source>
+									${project.build.directory}/generated-sources/xmlbeans</source>
 							</sources>
 						</configuration>
 					</execution>

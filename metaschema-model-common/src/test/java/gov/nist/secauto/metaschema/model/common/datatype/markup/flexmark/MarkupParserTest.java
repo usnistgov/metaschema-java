@@ -24,11 +24,11 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype.markup;
+package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
 
 import com.ctc.wstx.stax.WstxInputFactory;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AstCollectingVisitor;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;

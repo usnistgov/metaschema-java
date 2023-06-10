@@ -26,44 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
 
-import com.vladsch.flexmark.ext.typographic.TypographicQuotes;
-import com.vladsch.flexmark.parser.block.NodePostProcessor;
-import com.vladsch.flexmark.parser.block.NodePostProcessorFactory;
-import com.vladsch.flexmark.util.ast.DoNotDecorate;
 import com.vladsch.flexmark.util.ast.Document;
-import com.vladsch.flexmark.util.ast.Node;
-import com.vladsch.flexmark.util.ast.NodeTracker;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-public class QTagDoubleQuoteNodePostProcessor
-    extends NodePostProcessor {
-
-  @Override
-  public void process(NodeTracker state, Node node) {
-    if (node instanceof TypographicQuotes) {
-      TypographicQuotes typographicQuotes = (TypographicQuotes) node;
-      if (typographicQuotes.getOpeningMarker().matchChars("\"")) {
-        DoubleQuoteNode quoteNode = new DoubleQuoteNode(typographicQuotes);
-        node.insertAfter(quoteNode);
-        state.nodeAdded(quoteNode);
-        node.unlink();
-        state.nodeRemoved(node);
-      }
-    }
-  }
-
-  public static class Factory
-      extends NodePostProcessorFactory {
-    public Factory() {
-      super(false);
-      addNodeWithExclusions(TypographicQuotes.class, DoNotDecorate.class);
-    }
-
-    @NonNull
-    @Override
-    public NodePostProcessor apply(Document document) {
-      return new QTagDoubleQuoteNodePostProcessor();
-    }
-  }
+@SuppressFBWarnings("THROWS_METHOD_THROWS_CLAUSE_THROWABLE")
+public interface IMarkupVisitor<T, E extends Throwable> {
+  void visitDocument(@NonNull Document document, @NonNull IMarkupWriter<T, E> writer) throws E;
 }

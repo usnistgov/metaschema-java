@@ -26,35 +26,62 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
 
-import com.vladsch.flexmark.html2md.converter.HtmlMarkdownWriter;
-import com.vladsch.flexmark.html2md.converter.HtmlNodeConverterContext;
-import com.vladsch.flexmark.html2md.converter.HtmlNodeRenderer;
-import com.vladsch.flexmark.html2md.converter.HtmlNodeRendererFactory;
-import com.vladsch.flexmark.html2md.converter.HtmlNodeRendererHandler;
+import com.vladsch.flexmark.ast.Paragraph;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.html.HtmlWriter;
+import com.vladsch.flexmark.html.renderer.NodeRenderer;
+import com.vladsch.flexmark.html.renderer.NodeRendererContext;
+import com.vladsch.flexmark.html.renderer.NodeRendererFactory;
+import com.vladsch.flexmark.html.renderer.NodeRenderingHandler;
 import com.vladsch.flexmark.util.data.DataHolder;
+import com.vladsch.flexmark.util.data.MutableDataHolder;
 
-import org.jsoup.nodes.Element;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Set;
 
-public class QTagHtmlNodeRenderer implements HtmlNodeRenderer {
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+public class SuppressPTagExtension
+    implements HtmlRenderer.HtmlRendererExtension {
+
+  public static SuppressPTagExtension create() {
+    return new SuppressPTagExtension();
+  }
 
   @Override
-  public Set<HtmlNodeRendererHandler<?>> getHtmlNodeRendererHandlers() {
-    return Collections.singleton(new HtmlNodeRendererHandler<>("q", Element.class, this::renderMarkdown));
+  public void rendererOptions(MutableDataHolder options) {
+    // do nothing
   }
 
-  private void renderMarkdown(Element element, HtmlNodeConverterContext context,
-      @SuppressWarnings("unused") HtmlMarkdownWriter out) {
-    context.wrapTextNodes(element, "\"", element.nextElementSibling() != null);
+  @Override
+  public void extend(HtmlRenderer.Builder rendererBuilder, String rendererType) {
+    rendererBuilder.nodeRendererFactory(new PTagNodeRenderer.Factory());
   }
 
-  public static class Factory implements HtmlNodeRendererFactory {
+  static class PTagNodeRenderer implements NodeRenderer {
 
     @Override
-    public HtmlNodeRenderer apply(DataHolder options) {
-      return new QTagHtmlNodeRenderer();
+    public @Nullable Set<NodeRenderingHandler<?>> getNodeRenderingHandlers() {
+      return Collections.singleton(
+          new NodeRenderingHandler<>(Paragraph.class, this::render));
+    }
+
+    protected void render(
+        @NotNull Paragraph node,
+        @NotNull NodeRendererContext context,
+        @SuppressWarnings("unused") @NotNull HtmlWriter html) {
+      context.renderChildren(node);
+    }
+
+    public static class Factory implements NodeRendererFactory {
+
+      @Override
+      public NodeRenderer apply(DataHolder options) {
+        return new PTagNodeRenderer();
+      }
+
     }
   }
 

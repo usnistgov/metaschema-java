@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.xml;
+package gov.nist.secauto.metaschema.schemagen.xml; // NOPMD
 
 import com.ctc.wstx.stax.WstxOutputFactory;
 
@@ -32,7 +32,6 @@ import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.AutoCloser;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -84,6 +83,7 @@ public class XmlSchemaGenerator
   private static final String PREFIX_XML_SCHEMA_VERSIONING = "vs";
   @NonNull
   private static final String NS_XML_SCHEMA_VERSIONING = "http://www.w3.org/2007/XMLSchema-versioning";
+  @NonNull
   public static final String NS_XHTML = "http://www.w3.org/1999/xhtml";
 
   @NonNull
@@ -156,10 +156,8 @@ public class XmlSchemaGenerator
           StreamSource source = new StreamSource(stringReader);
           transformer.transform(source, serializer);
         }
-      } catch (SaxonApiException ex) {
-        throw new SchemaGenerationException(ex);
       }
-    } catch (IOException ex) {
+    } catch (IOException | SaxonApiException ex) {
       throw new SchemaGenerationException(ex);
     }
   }
@@ -238,7 +236,9 @@ public class XmlSchemaGenerator
     state.writeStartElement(PREFIX_XML_SCHEMA, "appinfo", NS_XML_SCHEMA);
 
     state.writeStartElement(targetNS, "schema-name");
-    IMarkupAdapter.writeHtml(metaschema.getName(), targetNS, state.getXMLStreamWriter());
+
+    metaschema.getName().writeXHtml(targetNS, state.getXMLStreamWriter());
+
     state.writeEndElement();
 
     state.writeStartElement(targetNS, "schema-version");
@@ -254,7 +254,8 @@ public class XmlSchemaGenerator
     MarkupMultiline remarks = metaschema.getRemarks();
     if (remarks != null) {
       state.writeStartElement(PREFIX_XML_SCHEMA, "documentation", NS_XML_SCHEMA);
-      IMarkupAdapter.writeHtml(remarks, targetNS, state.getXMLStreamWriter());
+
+      remarks.writeXHtml(targetNS, state.getXMLStreamWriter());
       state.writeEndElement();
     }
 

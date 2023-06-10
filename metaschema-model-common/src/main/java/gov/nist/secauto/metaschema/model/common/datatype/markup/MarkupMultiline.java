@@ -44,7 +44,11 @@ public class MarkupMultiline
    */
   @NonNull
   public static MarkupMultiline fromHtml(@NonNull String html) {
-    return new MarkupMultiline(FlexmarkFactory.instance().fromHtml(html));
+    return new MarkupMultiline(
+        parseHtml(
+            html,
+            FlexmarkFactory.instance().getFlexmarkHtmlConverter(),
+            FlexmarkFactory.instance().getMarkdownParser()));
   }
 
   /**
@@ -56,7 +60,8 @@ public class MarkupMultiline
    */
   @NonNull
   public static MarkupMultiline fromMarkdown(@NonNull String markdown) {
-    return new MarkupMultiline(FlexmarkFactory.instance().fromMarkdown(markdown));
+    return new MarkupMultiline(
+        parseMarkdown(markdown, FlexmarkFactory.instance().getMarkdownParser()));
   }
 
   /**
@@ -70,6 +75,11 @@ public class MarkupMultiline
   }
 
   @Override
+  public FlexmarkFactory getFlexmarkFactory() {
+    return FlexmarkFactory.instance();
+  }
+
+  @Override
   public MarkupMultiline copy() {
     // TODO: find a way to do a deep copy
     // this is a shallow copy that uses the same underlying Document object
@@ -80,5 +90,4 @@ public class MarkupMultiline
   public boolean isBlock() {
     return true;
   }
-
 }

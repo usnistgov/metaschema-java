@@ -159,7 +159,7 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
   }
 
   @Override
-  public void writeXml(Object value, StartElement parent, XMLEventFactory2 eventFactory, XMLEventWriter eventWriter)
+  public void writeXmlValue(Object value, StartElement parent, XMLEventFactory2 eventFactory, XMLEventWriter eventWriter)
       throws IOException, XMLStreamException {
     try {
       String content = asString(value);
@@ -171,7 +171,7 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
   }
 
   @Override
-  public void writeXmlCharacters(Object value, QName parentName, XMLStreamWriter2 writer) throws XMLStreamException {
+  public void writeXmlValue(Object value, QName parentName, XMLStreamWriter2 writer) throws XMLStreamException {
     String content = asString(value);
     writer.writeCharacters(content);
   }

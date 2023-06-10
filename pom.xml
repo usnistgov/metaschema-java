@@ -114,7 +114,7 @@
 		<dependency.commons-io.version>2.13.0</dependency.commons-io.version>
 		<dependency.eclipse-jdt-annotation.version>2.2.600</dependency.eclipse-jdt-annotation.version>
 		<dependency.everit-json.version>1.14.1</dependency.everit-json.version>
-		<dependency.flexmark.version>0.64.0</dependency.flexmark.version>
+		<dependency.flexmark.version>0.64.6</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.32</dependency.freemarker.version>
 		<dependency.jackson.version>2.13.3</dependency.jackson.version>
 		<dependency.jackson-databind.version>2.13.4</dependency.jackson-databind.version>

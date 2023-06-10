@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype.markup;
+package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
 
 import com.vladsch.flexmark.ast.AutoLink;
 import com.vladsch.flexmark.ast.BlockQuote;
@@ -42,18 +42,17 @@ import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.ast.Image;
 import com.vladsch.flexmark.ast.IndentedCodeBlock;
 import com.vladsch.flexmark.ast.Link;
-import com.vladsch.flexmark.ast.LinkNode;
 import com.vladsch.flexmark.ast.LinkRef;
 import com.vladsch.flexmark.ast.ListItem;
 import com.vladsch.flexmark.ast.MailLink;
 import com.vladsch.flexmark.ast.OrderedList;
 import com.vladsch.flexmark.ast.Paragraph;
+import com.vladsch.flexmark.ast.Reference;
 import com.vladsch.flexmark.ast.SoftLineBreak;
 import com.vladsch.flexmark.ast.StrongEmphasis;
 import com.vladsch.flexmark.ast.Text;
 import com.vladsch.flexmark.ast.TextBase;
 import com.vladsch.flexmark.ast.ThematicBreak;
-import com.vladsch.flexmark.ext.escaped.character.EscapedCharacter;
 import com.vladsch.flexmark.ext.gfm.strikethrough.Subscript;
 import com.vladsch.flexmark.ext.superscript.Superscript;
 import com.vladsch.flexmark.ext.tables.TableBlock;
@@ -63,7 +62,7 @@ import com.vladsch.flexmark.util.ast.Block;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorExtension.InsertAnchorNode;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -118,87 +117,92 @@ public class MarkupVisitor<T, E extends Throwable> implements IMarkupVisitor<T, 
     }
   }
 
-  protected boolean processInlineElements(
+  protected boolean processInlineElements( // NOPMD dispatch method
       @NonNull Node node,
       @NonNull IMarkupWriter<T, E> writer) throws E { // NOPMD - acceptable
     boolean retval = true;
     if (node instanceof Text) {
       writer.writeText((Text) node);
-    } else if (node instanceof EscapedCharacter) {
-      writer.writeText((EscapedCharacter) node);
+    } else if (node instanceof TextBase) {
+      writer.writeText((TextBase) node);
     } else if (node instanceof HtmlEntity) {
       writer.writeHtmlEntity((HtmlEntity) node);
     } else if (node instanceof TypographicSmarts) {
       writer.writeHtmlEntity((TypographicSmarts) node);
     } else if (node instanceof TypographicQuotes) {
-      writer.writeTypographicQuotes((TypographicQuotes) node, this::visitChildren);
+      writer.writeTypographicQuotes((TypographicQuotes) node, this::visit);
     } else if (node instanceof Code) {
-      writer.writeElement("code", node, this::visitChildren);
+      writer.writeCode((Code) node, this::visit);
     } else if (node instanceof StrongEmphasis) {
-      writer.writeElement("strong", node, this::visitChildren);
+      writer.writeElement("strong", node, this::visit);
     } else if (node instanceof Emphasis) {
-      writer.writeElement("em", node, this::visitChildren);
+      writer.writeElement("em", node, this::visit);
     } else if (node instanceof ListItem) {
-      writer.writeElement("li", node, this::visitChildren);
-    } else if (node instanceof Link || node instanceof AutoLink || node instanceof MailLink) {
-      writer.writeLink((LinkNode) node, this::visitChildren);
-    } else if (node instanceof TextBase) {
-      // ignore these, but process their children
-      visitChildren(node, writer);
+      writer.writeElement("li", node, this::visit);
+    } else if (node instanceof Link) {
+      writer.writeLink((Link) node, this::visit);
+    } else if (node instanceof AutoLink) {
+      writer.writeLink((AutoLink) node);
+    } else if (node instanceof MailLink) {
+      writer.writeLink((MailLink) node);
     } else if (node instanceof Subscript) {
-      writer.writeElement("sub", node, this::visitChildren);
+      writer.writeElement("sub", node, this::visit);
     } else if (node instanceof Superscript) {
-      writer.writeElement("sup", node, this::visitChildren);
+      writer.writeElement("sup", node, this::visit);
     } else if (node instanceof Image) {
-      writer.writeImage((Image) node, this::visitChildren);
+      writer.writeImage((Image) node);
     } else if (node instanceof InsertAnchorNode) {
       writer.writeInsertAnchor((InsertAnchorNode) node);
     } else if (node instanceof SoftLineBreak) {
-      writer.writeText(" ");
+      writer.writeText("\n");
     } else if (node instanceof HardLineBreak) {
-      writer.writeElement("br", node, null);
+      writer.writeBreak((HardLineBreak) node);
     } else if (node instanceof HtmlInline) {
       writer.writeInlineHtml((HtmlInline) node);
-    } else if (node instanceof LinkRef) {
-      throw new UnsupportedOperationException("Link references are not supported by Metaschema. Perhaps you have an unescaped bracket?");
+    } else if (node instanceof LinkRef || node instanceof Reference) {
+      throw new UnsupportedOperationException(
+          "Link references are not supported by Metaschema. Perhaps you have an unescaped bracket?");
     } else {
       retval = false;
     }
     return retval;
   }
 
-  protected boolean processBlockElements(
+  protected boolean processBlockElements( // NOPMD dispatch method
       @NonNull Node node,
       @NonNull IMarkupWriter<T, E> writer) throws E {
     boolean retval = true;
     if (node instanceof Paragraph) {
-      writer.writeElement("p", node, this::visitChildren);
+      writer.writeParagraph((Paragraph) node, this::visit);
     } else if (node instanceof Heading) {
-      writer.writeHeading((Heading) node, this::visitChildren);
+      writer.writeHeading((Heading) node, this::visit);
     } else if (node instanceof OrderedList) {
-      writer.writeElement("ol", node, this::visitChildren);
+      writer.writeList("ol", (OrderedList) node, this::visit);
     } else if (node instanceof BulletList) {
-      writer.writeElement("ul", node, this::visitChildren);
+      writer.writeList("ul", (BulletList) node, this::visit);
     } else if (node instanceof TableBlock) {
-      writer.writeTable((TableBlock) node, this::visitChildren);
+      writer.writeTable((TableBlock) node, this::visit);
     } else if (node instanceof HtmlBlock) {
       writer.writeBlockHtml((HtmlBlock) node);
     } else if (node instanceof HtmlCommentBlock) {
-      // ignore
+      writer.writeComment((HtmlCommentBlock) node);
     } else if (node instanceof IndentedCodeBlock) {
-      writer.writeCodeBlock((IndentedCodeBlock) node, this::visitChildren);
+      writer.writeCodeBlock((IndentedCodeBlock) node, this::visit);
     } else if (node instanceof FencedCodeBlock) {
-      writer.writeCodeBlock((FencedCodeBlock) node, this::visitChildren);
+      writer.writeCodeBlock((FencedCodeBlock) node, this::visit);
     } else if (node instanceof CodeBlock) {
-      // ignore these, but process their children
-      visitChildren(node, writer);
+      writer.writeCodeBlock((CodeBlock) node, this::visit);
     } else if (node instanceof BlockQuote) {
-      writer.writeElement("blockquote", node, this::visitChildren);
+      writer.writeBlockQuote((BlockQuote) node, this::visit);
     } else if (node instanceof ThematicBreak) {
-      writer.writeElement("hr", node, null);
+      writer.writeBreak((ThematicBreak) node);
     } else {
       retval = false;
     }
+
+    // if (retval && node.getNextAny(Block.class) != null) {
+    // writer.writeText("\n");
+    // }
     return retval;
   }
 }

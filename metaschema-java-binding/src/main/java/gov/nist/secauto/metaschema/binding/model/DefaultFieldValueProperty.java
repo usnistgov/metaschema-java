@@ -242,7 +242,7 @@ class DefaultFieldValueProperty
       throws XMLStreamException, IOException {
     Object value = getValue(instance);
     if (value != null) {
-      getJavaTypeAdapter().writeXmlCharacters(value, parentName, context.getWriter());
+      getJavaTypeAdapter().writeXmlValue(value, parentName, context.getWriter());
     }
     return true;
   }

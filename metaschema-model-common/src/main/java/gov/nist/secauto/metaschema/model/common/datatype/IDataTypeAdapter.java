@@ -66,6 +66,8 @@ public interface IDataTypeAdapter<TYPE> {
 
   /**
    * The JSON primative type of the data type.
+   * 
+   * @return the JSON data type
    */
   JsonFormatTypes getJsonRawType();
 
@@ -314,14 +316,14 @@ public interface IDataTypeAdapter<TYPE> {
    * @throws IOException
    *           if an unexpected error occurred while writing to the output stream
    */
-  void writeXml(@NonNull Object instance, @NonNull StartElement parent, @NonNull XMLEventFactory2 eventFactory,
+  void writeXmlValue(@NonNull Object instance, @NonNull StartElement parent, @NonNull XMLEventFactory2 eventFactory,
       @NonNull XMLEventWriter eventWriter)
       throws IOException, XMLStreamException;
 
   /**
-   * Writes the provided Java class instance data as an XML character sequence. The parent element
-   * information is provided as an XML {@link QName}, which allows namespace information to be
-   * obtained from the parent element. Additional namespace information can be gathered using the
+   * Writes the provided Java class instance data as XML. The parent element information is provided
+   * as an XML {@link QName}, which allows namespace information to be obtained from the parent
+   * element. Additional namespace information can be gathered using the
    * {@link XMLStreamWriter2#getNamespaceContext()} method, which can be used when writing the
    * provided instance value.
    * 
@@ -334,7 +336,7 @@ public interface IDataTypeAdapter<TYPE> {
    * @throws XMLStreamException
    *           if an unexpected error occurred while processing the XML output
    */
-  void writeXmlCharacters(@NonNull Object instance, @NonNull QName parentName, @NonNull XMLStreamWriter2 writer)
+  void writeXmlValue(@NonNull Object instance, @NonNull QName parentName, @NonNull XMLStreamWriter2 writer)
       throws XMLStreamException;
 
   /**

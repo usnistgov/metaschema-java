@@ -24,7 +24,9 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype.markup;
+package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
+
+import com.vladsch.flexmark.parser.ListOptions;
 
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -54,9 +56,10 @@ public class MarkupXmlEventWriter
 
   public MarkupXmlEventWriter(
       @NonNull String namespace,
+      @NonNull ListOptions listOptions,
       @NonNull XMLEventWriter writer,
       @NonNull XMLEventFactory2 eventFactory) {
-    super(namespace, writer);
+    super(namespace, listOptions, writer);
     this.eventFactory = Objects.requireNonNull(eventFactory, "eventFactory");
   }
 
@@ -105,12 +108,17 @@ public class MarkupXmlEventWriter
   }
 
   @Override
-  public void writeText(String text) throws XMLStreamException {
-    getStream().add(eventFactory.createCharacters(text));
+  public void writeText(CharSequence text) throws XMLStreamException {
+    getStream().add(eventFactory.createCharacters(text.toString()));
   }
 
   @Override
   protected void writeHtmlEntityInternal(String entityText) throws XMLStreamException {
     getStream().add(eventFactory.createEntityReference(entityText, null));
+  }
+  
+  @Override
+  protected void writeComment(CharSequence text) throws XMLStreamException {
+    getStream().add(eventFactory.createComment(text.toString()));
   }
 }

@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.freemarker.support;
 import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxOutputFactory;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupString;
 
 import org.codehaus.stax2.XMLOutputFactory2;
@@ -87,7 +86,7 @@ public class MarkupToHtmlMethod implements TemplateMethodModelEx {
           List.of(NamespaceEventImpl.constructNamespace(null, prefix != null ? prefix : "", namespace)));
       xmlStreamWriter.setNamespaceContext(nsContext);
 
-      IMarkupAdapter.writeHtml(text, namespace, xmlStreamWriter);
+      text.writeXHtml(namespace, xmlStreamWriter);
       
       xmlStreamWriter.flush();
       return os.toString(StandardCharsets.UTF_8);

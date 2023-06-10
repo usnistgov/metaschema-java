@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.schemagen.xml;
 import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IModelElement;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
@@ -141,7 +140,7 @@ public final class DocumentationGenerator {
 
         if (description != null) {
           state.writeStartElement(xmlNS, "description");
-          IMarkupAdapter.writeHtml(description, xmlNS, state.getXMLStreamWriter());
+          description.writeXHtml(xmlNS, state.getXMLStreamWriter());
           state.writeEndElement();
         }
 
@@ -162,12 +161,12 @@ public final class DocumentationGenerator {
           state.writeCharacters(": ");
         }
 
-        IMarkupAdapter.writeHtml(description, XmlSchemaGenerator.NS_XHTML, state.getXMLStreamWriter());
+        description.writeXHtml(XmlSchemaGenerator.NS_XHTML, state.getXMLStreamWriter());
         state.writeEndElement(); // p
       }
 
       for (MarkupMultiline remark : remarks) {
-        IMarkupAdapter.writeHtml(remark, XmlSchemaGenerator.NS_XHTML, state.getXMLStreamWriter());
+        remark.writeXHtml(XmlSchemaGenerator.NS_XHTML, state.getXMLStreamWriter());
       }
 
       state.writeEndElement(); // xs:documentation

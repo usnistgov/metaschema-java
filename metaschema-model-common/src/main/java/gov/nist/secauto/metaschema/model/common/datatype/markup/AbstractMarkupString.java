@@ -27,33 +27,55 @@
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
 import com.vladsch.flexmark.formatter.Formatter;
-import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
+import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AstCollectingVisitor;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.FlexmarkFactory;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.IMarkupVisitor;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.IMarkupWriter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorExtension.InsertAnchorNode;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertVisitor;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.MarkupVisitor;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.MarkupXmlEventWriter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.MarkupXmlStreamWriter;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codehaus.stax2.XMLStreamWriter2;
+import org.codehaus.stax2.evt.XMLEventFactory2;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYPE>>
     implements IMarkupString<TYPE> {
-  private static final String DEFAULT_HTML_NS = "http://www.w3.org/1999/xhtml";
-  private static final String DEFAULT_HTML_PREFIX = "";
-  @NonNull
-  private final Document document;
+  private static final Logger LOGGER = LogManager.getLogger(FlexmarkFactory.class);
+
+  private static final Pattern QUOTE_TAG_REPLACEMENT_PATTERN
+      = Pattern.compile("</?q>");
 
   //
-  // public AbstractMarkupString() {
-  // this(null);
-  // }
+  // @NonNull
+  // private static final String DEFAULT_HTML_NS = "http://www.w3.org/1999/xhtml";
+  // @NonNull
+  // private static final String DEFAULT_HTML_PREFIX = "";
+
+  @NonNull
+  private final Document document;
 
   public AbstractMarkupString(@NonNull Document document) {
     this.document = document;
@@ -64,66 +86,105 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     return document;
   }
 
-//  @Override
-//  public void writeHtml(@NonNull XMLStreamWriter2 xmlStreamWriter, @NonNull String namespace)
-//      throws XMLStreamException {
-//    
-//    
-//    IMarkupString<?> markupString = (IMarkupString<>)value;
-//
-//    MarkupXmlStreamWriter writingVisitor
-//        = new MarkupXmlStreamWriter(namespace, markupString.isBlock());
-//    writingVisitor.visitChildren(getDocument(), xmlStreamWriter);
-//    xmlStreamWriter.flush();
-//  }
-//
-//  @Override
-//  public void writeHtml(@NonNull OutputStream os, @Nullable String namespace, @Nullable String prefix)
-//      throws XMLStreamException {
-//    XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
-//    assert factory instanceof WstxOutputFactory;
-//    factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
-//    XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
-//
-//    String effectiveNamespace = namespace == null ? DEFAULT_HTML_NS : namespace;
-//    String effectivePrefix = prefix == null ? DEFAULT_HTML_PREFIX : prefix;
-//    NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
-//        List.of(NamespaceEventImpl.constructNamespace(null, effectivePrefix, effectiveNamespace)));
-//    xmlStreamWriter.setNamespaceContext(nsContext);
-//
-//    
-//    writeHtml(xmlStreamWriter, effectiveNamespace);
-//  }
+  // @Override
+  // public void writeHtml(@NonNull XMLStreamWriter2 xmlStreamWriter, @NonNull String namespace)
+  // throws XMLStreamException {
+  //
+  //
+  // IMarkupString<?> markupString = (IMarkupString<>)value;
+  //
+  // MarkupXmlStreamWriter writingVisitor
+  // = new MarkupXmlStreamWriter(namespace, markupString.isBlock());
+  // writingVisitor.visitChildren(getDocument(), xmlStreamWriter);
+  // xmlStreamWriter.flush();
+  // }
+  //
+  // @Override
+  // public void writeHtml(@NonNull OutputStream os, @Nullable String namespace, @Nullable String
+  // prefix)
+  // throws XMLStreamException {
+  // XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
+  // assert factory instanceof WstxOutputFactory;
+  // factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
+  // XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
+  //
+  // String effectiveNamespace = namespace == null ? DEFAULT_HTML_NS : namespace;
+  // String effectivePrefix = prefix == null ? DEFAULT_HTML_PREFIX : prefix;
+  // NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
+  // List.of(NamespaceEventImpl.constructNamespace(null, effectivePrefix, effectiveNamespace)));
+  // xmlStreamWriter.setNamespaceContext(nsContext);
+  //
+  //
+  // writeHtml(xmlStreamWriter, effectiveNamespace);
+  // }
 
-  @Override
-  public String toHtml() {
-    return toHTML(FlexmarkFactory.instance().getHtmlRenderer());
+  @NonNull
+  protected static Document parseHtml(@NonNull String html, @NonNull FlexmarkHtmlConverter htmlParser,
+      @NonNull Parser markdownParser) {
+    String markdown = ObjectUtils.notNull(htmlParser.convert(Objects.requireNonNull(html, "html")));
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace("markdown: {}", markdown);
+    }
+    return parseMarkdown(markdown, markdownParser);
   }
 
   @NonNull
-  protected String toHTML(HtmlRenderer renderer) {
-    return renderer.render(getDocument());
+  protected static Document parseMarkdown(@NonNull String markdown, @NonNull Parser parser) {
+    return parser.parse(markdown);
+  }
+
+  @Override
+  public String toHtml() {
+    // String html;
+    // try {
+    // html = toXHtml("");
+    // } catch(RuntimeException ex) {
+    // throw ex;
+    // } catch (Throwable ex) {
+    // throw new RuntimeException(ex);
+    // }
+    // return QUOTE_TAG_REPLACEMENT_PATTERN.matcher(html)
+    // .replaceAll("&quot;");
+    String html = getFlexmarkFactory().getHtmlRenderer().render(getDocument());
+    return QUOTE_TAG_REPLACEMENT_PATTERN.matcher(html)
+        .replaceAll("&quot;");
   }
 
   @Override
   public String toMarkdown() {
-    return toMarkdown(FlexmarkFactory.instance().getFormatter());
+    return toMarkdown(getFlexmarkFactory().getFormatter());
   }
 
-  @NonNull
   @Override
   public String toMarkdown(Formatter formatter) {
     return formatter.render(getDocument());
   }
 
   @Override
-  public String toMarkdownYaml() {
-    return toMarkdownYaml(FlexmarkFactory.instance().getFormatter());
+  public void writeXHtml(String namespace, XMLStreamWriter2 streamWriter) throws XMLStreamException {
+
+    IMarkupWriter<XMLStreamWriter, XMLStreamException> writer = new MarkupXmlStreamWriter(
+        namespace,
+        getFlexmarkFactory().getListOptions(),
+        streamWriter);
+
+    IMarkupVisitor<XMLStreamWriter, XMLStreamException> visitor = new MarkupVisitor<>(isBlock());
+    visitor.visitDocument(getDocument(), writer);
   }
 
-  @NonNull
-  protected String toMarkdownYaml(Formatter formatter) {
-    return formatter.render(getDocument());
+  @Override
+  public void writeXHtml(String namespace, XMLEventFactory2 eventFactory, XMLEventWriter eventWriter)
+      throws XMLStreamException {
+
+    IMarkupWriter<XMLEventWriter, XMLStreamException> writer = new MarkupXmlEventWriter(
+        namespace,
+        getFlexmarkFactory().getListOptions(),
+        eventWriter,
+        eventFactory);
+
+    IMarkupVisitor<XMLEventWriter, XMLStreamException> visitor = new MarkupVisitor<>(isBlock());
+    visitor.visitDocument(getDocument(), writer);
+
   }
 
   @SuppressWarnings("null")

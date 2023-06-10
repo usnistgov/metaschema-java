@@ -26,38 +26,64 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
 
-import com.vladsch.flexmark.html.HtmlWriter;
-import com.vladsch.flexmark.html.renderer.NodeRenderer;
-import com.vladsch.flexmark.html.renderer.NodeRendererContext;
-import com.vladsch.flexmark.html.renderer.NodeRendererFactory;
-import com.vladsch.flexmark.html.renderer.NodeRenderingHandler;
-import com.vladsch.flexmark.util.data.DataHolder;
+import com.vladsch.flexmark.parser.ListOptions;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.Map;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
-public class QTagNodeRenderer implements NodeRenderer {
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public class MarkupXmlStreamWriter
+    extends AbstractMarkupWriter<XMLStreamWriter, XMLStreamException> {
+
+  public MarkupXmlStreamWriter(
+      @NonNull String namespace,
+      @NonNull ListOptions listOptions,
+      @NonNull XMLStreamWriter writer) {
+    super(namespace, listOptions, writer);
+  }
 
   @Override
-  public @Nullable Set<NodeRenderingHandler<?>> getNodeRenderingHandlers() {
-    return Collections.singleton(
-        new NodeRenderingHandler<>(DoubleQuoteNode.class, this::render));
-  }
+  public void writeEmptyElement(QName qname, Map<String, String> attributes) throws XMLStreamException {
+    XMLStreamWriter stream = getStream();
+    stream.writeEmptyElement(qname.getNamespaceURI(), qname.getLocalPart());
 
-  protected void render(DoubleQuoteNode node, NodeRendererContext context, HtmlWriter html) {
-    html.withAttr().tag("q");
-    context.renderChildren(node);
-    html.tag("/q");
-  }
-
-  public static class Factory implements NodeRendererFactory {
-
-    @Override
-    public NodeRenderer apply(DataHolder options) {
-      return new QTagNodeRenderer();
+    for (Map.Entry<String, String> entry : attributes.entrySet()) {
+      stream.writeAttribute(entry.getKey(), entry.getValue());
     }
+  }
 
+  @Override
+  public void writeElementStart(QName qname, Map<String, String> attributes) throws XMLStreamException {
+    XMLStreamWriter stream = getStream();
+    stream.writeStartElement(qname.getNamespaceURI(), qname.getLocalPart());
+
+    for (Map.Entry<String, String> entry : attributes.entrySet()) {
+      stream.writeAttribute(entry.getKey(), entry.getValue());
+    }
+  }
+
+  @Override
+  public void writeElementEnd(QName qName) throws XMLStreamException {
+    getStream().writeEndElement();
+  }
+
+  @Override
+  public void writeText(CharSequence text) throws XMLStreamException {
+    getStream().writeCharacters(text.toString());
+
+  }
+
+  @Override
+  protected void writeHtmlEntityInternal(String entityText) throws XMLStreamException {
+    getStream().writeEntityRef(entityText);
+  }
+
+  @Override
+  protected void writeComment(CharSequence text) throws XMLStreamException {
+    getStream().writeComment(text.toString());
   }
 }

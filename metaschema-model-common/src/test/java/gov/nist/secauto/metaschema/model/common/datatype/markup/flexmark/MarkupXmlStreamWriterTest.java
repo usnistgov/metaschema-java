@@ -23,55 +23,60 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.model.common.datatype.markup;
+
+package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
 
 import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxOutputFactory;
 
-import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
+import org.codehaus.stax2.ri.evt.MergedNsContext;
+import org.codehaus.stax2.ri.evt.NamespaceEventImpl;
+import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.util.List;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+class MarkupXmlStreamWriterTest {
+  private static final String NAMESPACE = "http://www.w3.org/1999/xhtml";
+  private static final String NS_PREFIX = "";
 
-public interface IMarkupAdapter<TYPE extends IMarkupString<TYPE>> extends IDataTypeAdapter<TYPE> {
-
-  static void writeHtml(
-      @NonNull IMarkupString<?> markupString,
-      @NonNull String namespace,
-      @NonNull XMLStreamWriter2 streamWriter)
-      throws XMLStreamException {
-    IMarkupWriter<XMLStreamWriter, XMLStreamException> writer = new MarkupXmlStreamWriter(
-        namespace,
-        streamWriter);
-
-    IMarkupVisitor<XMLStreamWriter, XMLStreamException> visitor = new MarkupVisitor<>(markupString.isBlock());
-    visitor.visitDocument(markupString.getDocument(), writer);
-  }
-
-  static String toHtml(
-      @NonNull IMarkupString<?> markupString,
-      @NonNull String namespace) throws XMLStreamException, IOException {
+  @Test
+  void testHTML() throws XMLStreamException {
+    String html = "<h1>Example</h1>\n"
+        + "<p><a href=\"link\">text</a><q>quote1</q></p>\n"
+        + "<table>\n"
+        + "<thead>\n"
+        + "<tr><th>Heading 1</th></tr>\n"
+        + "</thead>\n"
+        + "<tbody>\n"
+        + "<tr><td><q>data1</q> <insert type=\"param\" id-ref=\"insert\" /></td></tr>\n"
+        + "<tr><td><q>data2</q> <insert type=\"param\" id-ref=\"insert\" /></td></tr>\n"
+        + "</tbody>\n"
+        + "</table>\n"
+        + "<p>Some <q><em>more</em></q> <strong>text</strong> <img src=\"src\" alt=\"alt\" /></p>\n";
+    
+    MarkupMultiline ms = MarkupMultiline.fromHtml(html);
+    AstCollectingVisitor visitor = new AstCollectingVisitor();
+    visitor.collect(ms.getDocument());
+    // System.out.println(visitor.getAst());
 
     XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
     assert factory instanceof WstxOutputFactory;
     factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
-    try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-      XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
+    XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(System.out);
+    NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
+        List.of(NamespaceEventImpl.constructNamespace(null, NS_PREFIX, NAMESPACE)));
+    xmlStreamWriter.setNamespaceContext(nsContext);
 
-      IMarkupAdapter.writeHtml(markupString, namespace, xmlStreamWriter);
-      
-      xmlStreamWriter.flush();
-      return os.toString(StandardCharsets.UTF_8);
-    }
+    ms.writeXHtml(NAMESPACE, xmlStreamWriter);
+    xmlStreamWriter.close();
   }
+
 }

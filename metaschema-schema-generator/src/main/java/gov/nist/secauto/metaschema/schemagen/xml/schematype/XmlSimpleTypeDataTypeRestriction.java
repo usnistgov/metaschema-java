@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.schemagen.xml.schematype;
 
 import gov.nist.secauto.metaschema.model.common.IValuedDefinition;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValue;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.AbstractGenerationState.AllowedValueCollection;
@@ -104,7 +103,8 @@ public class XmlSimpleTypeDataTypeRestriction
     // write description
     writer.writeStartElement(xmlNS, "p");
 
-    IMarkupAdapter.writeHtml(description, xmlNS, writer);
+    description.writeXHtml(xmlNS, writer);
+
     writer.writeEndElement(); // p
 
     writer.writeEndElement(); // xs:documentation

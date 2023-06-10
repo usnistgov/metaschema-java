@@ -26,11 +26,13 @@
 
 package gov.nist.secauto.metaschema.model;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.AbstractMarkupWriter;
+import com.vladsch.flexmark.parser.ListOptions;
+
 import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupString;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupVisitor;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupWriter;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupVisitor;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AbstractMarkupWriter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.IMarkupVisitor;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.IMarkupWriter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.MarkupVisitor;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.xmlbeans.XmlCursor;
@@ -42,7 +44,7 @@ import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class XmlbeansMarkupVisitor
+public class XmlbeansMarkupVisitor // TODO: rename
     extends AbstractMarkupWriter<XmlCursor, IllegalArgumentException> {
 
   @SuppressWarnings("resource")
@@ -55,6 +57,7 @@ public class XmlbeansMarkupVisitor
   public static void visit(@NonNull IMarkupString<?> markup, @NonNull String namespace, @NonNull XmlCursor cursor) {
     IMarkupWriter<XmlCursor, IllegalArgumentException> writer = new XmlbeansMarkupVisitor(
         namespace,
+        markup.getFlexmarkFactory().getListOptions(),
         cursor);
     IMarkupVisitor<XmlCursor, IllegalArgumentException> visitor = new MarkupVisitor<>(markup.isBlock());
     visitor.visitDocument(markup.getDocument(), writer);
@@ -62,8 +65,9 @@ public class XmlbeansMarkupVisitor
 
   protected XmlbeansMarkupVisitor(
       @NonNull String namespace,
+      @NonNull ListOptions options,
       @NonNull XmlCursor writer) {
-    super(namespace, writer);
+    super(namespace, options, writer);
   }
 
   @Override
@@ -106,7 +110,12 @@ public class XmlbeansMarkupVisitor
   }
 
   @Override
-  public void writeText(String text) throws IllegalArgumentException {
-    getStream().insertChars(text);
+  public void writeText(CharSequence text) throws IllegalArgumentException {
+    getStream().insertChars(text.toString());
+  }
+
+  @Override
+  protected void writeComment(CharSequence text) throws IllegalArgumentException {
+    getStream().insertComment(text.toString());
   }
 }

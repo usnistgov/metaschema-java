@@ -41,7 +41,7 @@ public class AstCollectingVisitor
 
   @SuppressWarnings("null")
   @NonNull
-  protected String getAst() {
+  public String getAst() {
     return output.toString();
   }
 

@@ -41,8 +41,8 @@ class MetapathExpressionTest {
   @GivenTextResource(from = "/correct-examples.txt", charset = "UTF-8")
   String correctMetapathInstances;
 
-  @GivenTextResource(from = "/incorrect-examples.txt", charset = "UTF-8")
-  String incorrectMetapathInstances;
+//  @GivenTextResource(from = "/incorrect-examples.txt", charset = "UTF-8")
+//  String incorrectMetapathInstances;
 
   @Test
   @Disabled
@@ -55,22 +55,22 @@ class MetapathExpressionTest {
       MetapathExpression.compile(line);
     }
   }
-
-  @Test
-  @Disabled
-  void testIncorrect() {
-    for (String line : incorrectMetapathInstances.split("\\r?\\n")) {
-      if (line.startsWith("# ")) {
-        continue;
-      }
-      // System.out.println(line);
-      try {
-        MetapathExpression.compile(line);
-      } catch (ParseCancellationException ex) {
-        // ex.printStackTrace();
-      }
-    }
-  }
+//
+//  @Test
+//  @Disabled
+//  void testIncorrect() {
+//    for (String line : incorrectMetapathInstances.split("\\r?\\n")) {
+//      if (line.startsWith("# ")) {
+//        continue;
+//      }
+//      // System.out.println(line);
+//      try {
+//        MetapathExpression.compile(line);
+//      } catch (ParseCancellationException ex) {
+//        // ex.printStackTrace();
+//      }
+//    }
+//  }
 
   @Test
   void testSyntaxError() {

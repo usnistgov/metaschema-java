@@ -30,6 +30,7 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeVisitorBase;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupString;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorExtension.InsertAnchorNode;
 
 import java.util.LinkedList;
 import java.util.List;

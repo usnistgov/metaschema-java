@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -39,10 +40,10 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.AbstractMarkupString;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupString;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.MarkupParser;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -68,10 +69,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -87,27 +86,16 @@ import javax.xml.validation.Validator;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+// TODO: move this to the correct package and rename class
 class CommonmarkSchemaTest {
   private static final String SCHEMA_CLASSPATH = "/markup-test.xsd";
-  private static final Set<String> BLOCK_ELEMENTS = new HashSet<>();
   private static final Pattern INITIAL_ELEMENT_PATTERN
       = Pattern.compile("^\\s*<([^\\s/>]+)[^>]*>.*", Pattern.DOTALL);
 
-  static {
-    BLOCK_ELEMENTS.add("blockquote");
-    BLOCK_ELEMENTS.add("h1");
-    BLOCK_ELEMENTS.add("h2");
-    BLOCK_ELEMENTS.add("h3");
-    BLOCK_ELEMENTS.add("h4");
-    BLOCK_ELEMENTS.add("h5");
-    BLOCK_ELEMENTS.add("h6");
-    BLOCK_ELEMENTS.add("ol");
-    BLOCK_ELEMENTS.add("ul");
-    BLOCK_ELEMENTS.add("p");
-    BLOCK_ELEMENTS.add("pre");
-    BLOCK_ELEMENTS.add("hr");
-    BLOCK_ELEMENTS.add("table");
-  }
+  private static final Pattern QUOTE_TAG_REPLACEMENT_PATTERN
+      = Pattern.compile("</?q>");
+
+  private static final String METASCHEMA_NS = "http://csrc.nist.gov/ns/oscal/metaschema/1.0";
 
   @Disabled
   @Test
@@ -119,7 +107,7 @@ class CommonmarkSchemaTest {
     Matcher matcher = INITIAL_ELEMENT_PATTERN.matcher(vector);
 
     assertTrue(matcher.matches());
-    assertTrue(BLOCK_ELEMENTS.contains(matcher.group(1)));
+    assertTrue(MarkupParser.BLOCK_ELEMENTS.contains(matcher.group(1)));
   }
 
   private static List<Entry> generateTestVectors() throws JsonParseException, IOException {
@@ -157,13 +145,13 @@ class CommonmarkSchemaTest {
   }
 
   public boolean isMultilineMarkdown(@NonNull String markdown) {
-    return markdown.contains("\n");
+    return markdown.trim().contains("\n");
   }
 
   public boolean isBlockElement(@NonNull String html) {
     Matcher matcher = INITIAL_ELEMENT_PATTERN.matcher(html);
 
-    return matcher.matches() && BLOCK_ELEMENTS.contains(matcher.group(1));
+    return matcher.matches() && MarkupParser.BLOCK_ELEMENTS.contains(matcher.group(1));
   }
 
   @NonNull
@@ -186,7 +174,7 @@ class CommonmarkSchemaTest {
                 + "]>\r\n")
         .append('<')
         .append(topLevelElementName)
-        .append(" xmlns=\"http://csrc.nist.gov/ns/oscal/metaschema/1.0\"") // NOPMD
+        .append(" xmlns=\"" + METASCHEMA_NS + "\"") // NOPMD
         .append(" xmlns:zoop=\"http://csrc.nist.gov/ns/oscal/metaschema-zoop/1.0\"")
         .append('>')
         .append(html)
@@ -218,11 +206,12 @@ class CommonmarkSchemaTest {
         + "<!ENTITY nbsp \"&#160;\">\r\n"
         + "]>\r\n");
 
-    xmlWriter.writeStartElement("http://csrc.nist.gov/ns/oscal/metaschema/1.0", topLevelElementName);
-    xmlWriter.writeNamespace("", "http://csrc.nist.gov/ns/oscal/metaschema/1.0");
+    xmlWriter.setPrefix("", METASCHEMA_NS);
+    xmlWriter.writeStartElement(METASCHEMA_NS, topLevelElementName);
+    xmlWriter.writeNamespace("", METASCHEMA_NS);
     xmlWriter.writeNamespace("zoop", "http://csrc.nist.gov/ns/oscal/metaschema-zoop/1.0");
 
-    IMarkupAdapter.writeHtml(content, "http://csrc.nist.gov/ns/oscal/metaschema/1.0", xmlWriter);
+    content.writeXHtml(METASCHEMA_NS, xmlWriter);
 
     xmlWriter.writeEndElement();
     xmlWriter.writeEndDocument();
@@ -264,41 +253,96 @@ class CommonmarkSchemaTest {
                         Stream.of(
                             DynamicTest.dynamicTest(
                                 testVector.getMarkdown(),
-                                () -> { 
+                                () -> {
                                   // do nothing
                                 }),
-                            DynamicTest.dynamicTest(
-                                "Markdown To XML/HTML Test Vector",
-                                () -> {
-                                  String markdown = testVector.getMarkdown();
-                                  AbstractMarkupString<?> content;
-                                  if (isMultilineMarkdown(markdown)) {
-                                    content = MarkupDataTypeProvider.MARKUP_MULTILINE.parse(markdown);
-                                  } else {
-                                    content = MarkupDataTypeProvider.MARKUP_LINE.parse(markdown);
-                                  }
+                            DynamicContainer.dynamicContainer(
+                                "Markdown To XML/HTML Conversion",
+                                Stream.of(
+                                    DynamicTest.dynamicTest(
+                                        "Validate Markdown To XML/HTML",
+                                        () -> {
+                                          String markdown = testVector.getMarkdown();
+                                          AbstractMarkupString<?> content;
+                                          content = MarkupDataTypeProvider.MARKUP_MULTILINE.parse(markdown);
 
-                                  String xmlTestVector = generateXmlInstance(content);
+                                          String convertedHtmlInstance = generateXmlInstance(content);
 
-                                  // System.out.println(xmlTestVector);
-                                  StringReader reader = new StringReader(xmlTestVector);
+                                          // validate the produced content
+                                          StringReader reader = new StringReader(convertedHtmlInstance);
+                                          StreamSource source = new StreamSource(reader);
+                                          Validator validator = schema.newValidator();
+                                          validator.setErrorHandler(new Handler());
+                                          try {
+                                            validator.validate(source);
+                                          } catch (SAXParseException ex) {
+                                            fail(String.format("Invalid content '%s'. %s",
+                                                content,
+                                                ex.getLocalizedMessage()));
+                                          }
+                                        }),
+                                    DynamicTest.dynamicTest(
+                                        "Match with Test Vector",
+                                        () -> {
+                                          String markdown = testVector.getMarkdown();
+                                          IMarkupString<?> content;
+                                          String topLevelElementName;
+                                          // if (isMultilineMarkdown(markdown)) {
+                                          content = MarkupDataTypeProvider.MARKUP_MULTILINE.parse(markdown);
+                                          topLevelElementName = "multiline";
+                                          /*
+                                           * } else { content = MarkupDataTypeProvider.MARKUP_LINE.parse(markdown);
+                                           * topLevelElementName = "line";
+                                           * 
+                                           * // extract the line from the opening and closing tags Pattern linePattern =
+                                           * Pattern.compile("^<[^>]+>(.+)</[^>]+>(?:\\s+)?$",Pattern.DOTALL); Matcher
+                                           * matcher = linePattern.matcher(expected);
+                                           * 
+                                           * if (!matcher.matches()) { fail(String.
+                                           * format("Unable to extract expected line content using pattern '%s' from: %s"
+                                           * , linePattern.pattern(), expected)); }
+                                           * 
+                                           * expected = matcher.group(1); }
+                                           */
+                                          String convertedHtmlInstance = generateXmlInstance(content);
 
-                                  StreamSource source = new StreamSource(reader);
-                                  Validator validator = schema.newValidator();
-                                  validator.setErrorHandler(new Handler());
-                                  try {
-                                    validator.validate(source);
-                                  } catch (SAXParseException ex) {
-                                    fail(String.format("Invalid vector '%s'. %s",
-                                        content,
-                                        ex.getLocalizedMessage()));
-                                  }
-                                }),
+                                          // extract the generated HTML
+                                          convertedHtmlInstance = convertedHtmlInstance.substring(
+                                              convertedHtmlInstance.indexOf("<" + topLevelElementName),
+                                              convertedHtmlInstance.indexOf("</" + topLevelElementName + ">"));
+                                          Pattern pattern = Pattern.compile(
+                                              String.format("^<%s[^>]+>(.+)$",
+                                                  topLevelElementName),
+                                              Pattern.DOTALL);
+                                          Matcher matcher = pattern.matcher(convertedHtmlInstance);
+
+                                          if (!matcher.matches()) {
+                                            fail(String.format(
+                                                "Unable to extract converted content using pattern '%s' from: %s",
+                                                pattern.pattern(),
+                                                convertedHtmlInstance));
+                                          }
+
+                                          // compare the generated XML
+                                          String actualXml = matcher.group(1);
+
+                                          // replace q tags
+                                          actualXml = QUOTE_TAG_REPLACEMENT_PATTERN.matcher(actualXml)
+                                              .replaceAll("\"");
+
+                                          assertEquals(testVector.getXml(), actualXml);
+
+                                          // compare the generated HTML
+                                          String actualHtml = content.toHtml();
+
+                                          assertEquals(testVector.getRawHtml(), actualHtml);
+                                        }))),
                             DynamicTest.dynamicTest(
                                 "Validate XML Test Vector",
                                 () -> {
-                                  Document data = testVector.getHtml();
-                                  String html = data.body().html();
+                                  // Document data = testVector.getHtmlDocument();
+                                  // String html = data.body().html();
+                                  String html = testVector.getHtml();
                                   String xmlTestVector = generateXmlInstance(html);
 
                                   // System.out.println(xmlTestVector);
@@ -314,17 +358,23 @@ class CommonmarkSchemaTest {
                                         html,
                                         ex.getLocalizedMessage()));
                                   }
-                                })
-                            ));
+                                })));
                   }));
         });
   }
 
   @JsonIgnoreProperties({ "comment" })
   private static class Entry {
+    @NonNull
     private final String markdown;
+    @NonNull
+    private final String rawHtml;
+    @NonNull
     private final Document html;
+    @NonNull
+    private final String xml;
     private final int exampleNumber;
+    @NonNull
     private final String section;
     private final int startLine;
     private final int endLine;
@@ -334,20 +384,29 @@ class CommonmarkSchemaTest {
     public Entry(
         @JsonProperty("markdown") String markdown,
         @JsonProperty("html") String html,
+        @JsonProperty("xml") String xml,
         @JsonProperty("example") int exampleNumber,
         @JsonProperty("section") String section,
         @JsonProperty("start_line") int startLine,
         @JsonProperty("end_line") int endLine,
         @JsonProperty("enabled") Boolean enabled) {
       this.markdown = markdown;
+      this.rawHtml = html.trim();
       Document document = Jsoup.parseBodyFragment(html);
       document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
       this.html = document;
+      this.xml = ObjectUtils.notNull(
+          (xml == null ? html : xml) // allow for XML overrides
+              .replace(" />", "/>") // the XML stack produces tighter closing elements
+              .replaceAll("(?<!>|\")&gt;", ">") // the XML stack doesn't need these entities
+              .stripTrailing()); // this implementation removes trailing whitespace
+
+
       this.exampleNumber = exampleNumber;
       this.section = section;
       this.startLine = startLine;
       this.endLine = endLine;
-      this.enabled = enabled == null ? true : enabled.booleanValue();
+      this.enabled = enabled == null || enabled;
     }
 
     @NonNull
@@ -356,8 +415,24 @@ class CommonmarkSchemaTest {
     }
 
     @NonNull
-    public Document getHtml() {
+    protected Document getHtmlDocument() {
       return html;
+    }
+
+    @NonNull
+    public String getRawHtml() {
+      return rawHtml;
+    }
+
+    @SuppressWarnings("null")
+    @NonNull
+    public String getHtml() {
+      return getHtmlDocument().body().html();
+    }
+
+    @NonNull
+    public String getXml() {
+      return xml;
     }
 
     public int getExampleNumber() {
@@ -390,6 +465,5 @@ class CommonmarkSchemaTest {
     public void error(SAXParseException e) throws SAXException {
       throw e;
     }
-
   }
 }

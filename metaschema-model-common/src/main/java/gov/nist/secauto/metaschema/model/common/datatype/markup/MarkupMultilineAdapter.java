@@ -26,25 +26,19 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.MarkupParser;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IMarkupItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLEventReader2;
-import org.codehaus.stax2.XMLStreamWriter2;
-import org.codehaus.stax2.evt.XMLEventFactory2;
 
 import java.io.IOException;
 import java.util.List;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -80,7 +74,7 @@ public class MarkupMultilineAdapter
   @Override
   public MarkupMultiline parse(XMLEventReader2 eventReader) throws IOException {
     try {
-      return getMarkupParser().parseMarkupMultiline(eventReader);
+      return MarkupParser.instance().parseMarkupMultiline(eventReader);
     } catch (XMLStreamException ex) {
       throw new IOException(ex);
     }

@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -42,33 +43,31 @@ import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AstCollectingVisitor;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorExtension.InsertAnchorNode;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.codehaus.stax2.ri.evt.MergedNsContext;
 import org.codehaus.stax2.ri.evt.NamespaceEventImpl;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class MarkupStringTest {
+  private static final Logger LOGGER = LogManager.getLogger(MarkupStringTest.class);
   private static final String MARKUP_HTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
   private static final String MARKUP_HTML_PREFIX = "";
-
-  @NonNull
-  MarkupXmlStreamWriter newMarkupXmlStreamWriter(@NonNull XMLStreamWriter2 streamWriter) {
-    return new MarkupXmlStreamWriter(MARKUP_HTML_NAMESPACE, streamWriter);
-  }
 
   @NonNull
   XMLStreamWriter2 newXmlStreamWriter(@NonNull StringWriter stringWriter) throws XMLStreamException {
@@ -173,40 +172,30 @@ class MarkupStringTest {
     assertEquals(markdown, ms.toMarkdown());
 
     String html
-        = "<p>Some *<em>more</em> <strong>text</strong> and a param: <insert type=\"param\" id-ref=\"insert\" />.</p>";
+        = "Some *<em>more</em> <strong>text</strong> and a param: <insert type=\"param\" id-ref=\"insert\" />.";
 
     assertEquals(html, ms.toHtml());
   }
 
   @Test
-  void markupMultilineFromMarkdownTest() {
+  void markupMultilineFromMarkdownTest() throws XMLStreamException, IOException {
     String markdown = "# Example\n\nSome \"\\**more*\" **text**\n\nA param: {{ insert: param, insert }}.";
     String html = "<h1>Example</h1>\n"
         + "<p>Some <q>*<em>more</em></q> <strong>text</strong></p>\n"
-        + "<p>A param: <insert type=\"param\" id-ref=\"insert\" />.</p>";
+        + "<p>A param: <insert type=\"param\" id-ref=\"insert\"/>.</p>";
     MarkupMultiline ms = MarkupMultiline.fromMarkdown(markdown);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
     visitor.collect(ms.getDocument());
-    // System.out.println("Markup AST");
-    // System.out.println("==========");
-    // System.out.println(visitor.getAst());
-    // System.out.println("HTML Output");
-    // System.out.println("===========");
-    // System.out.println(ms.toHtml());
-    // System.out.println("Markdown Output");
-    // System.out.println("===============");
-    // System.out.println(ms.toMarkdown());
+    LOGGER.atInfo().log("AST: {}", visitor.getAst());
+    LOGGER.atInfo().log("HTML: {}", ms.toXHtml(""));
+    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
     assertEquals(markdown, ms.toMarkdown());
-    assertEquals(html, ms.toHtml());
+    assertEquals(html, ms.toXHtml(""));
   }
 
-  /*
-   * {@link HtmlConverterCoreNodeRenderer} has a bug on line 629 in the call to "wrapTextNodes", which
-   * can add spaces to the HTML string
-   */
   @Test
-  void markupMultilineFromHtmlTest() {
+  void markupMultilineFromHtmlTest() throws XMLStreamException, IOException {
     String html = "<h1>Example</h1>\n"
         + "<p><a href=\"link\">text</a><q>quote1</q></p>\n"
         + "<table>\n"
@@ -214,11 +203,11 @@ class MarkupStringTest {
         + "<tr><th>Heading 1</th></tr>\n"
         + "</thead>\n"
         + "<tbody>\n"
-        + "<tr><td><q>data1</q> <insert type=\"param\" id-ref=\"insert\" /></td></tr>\n"
-        + "<tr><td><q>data2</q> <insert type=\"param\" id-ref=\"insert\" /></td></tr>\n"
+        + "<tr><td><q>data1</q> <insert type=\"param\" id-ref=\"insert\"/></td></tr>\n"
+        + "<tr><td><q>data2</q> <insert type=\"param\" id-ref=\"insert\"/></td></tr>\n"
         + "</tbody>\n"
         + "</table>\n"
-        + "<p>Some <q><em>more</em></q> <strong>text</strong> <img src=\"src\" alt=\"alt\" /></p>";
+        + "<p>Some <q><em>more</em></q> <strong>text</strong> <img src=\"src\" alt=\"alt\"/></p>";
     String markdown = "# Example\n"
         + "\n"
         + "[text](link)\"quote1\"\n"
@@ -232,21 +221,32 @@ class MarkupStringTest {
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
     visitor.collect(ms.getDocument());
-    // System.out.println("Source");
-    // System.out.println("======");
-    // System.out.println(html);
-    // System.out.println("Markup AST");
-    // System.out.println("==========");
-    // System.out.println(visitor.getAst());
-    // System.out.println("HTML Output");
-    // System.out.println("===========");
-    // System.out.println(ms.toHtml());
-    // System.out.println("Markdown Output");
-    // System.out.println("===============");
-    // System.out.println(ms.toMarkdown());
-
+    LOGGER.atInfo().log("HTML Source: {}", html);
+    LOGGER.atInfo().log("AST: {}", visitor.getAst());
+    LOGGER.atInfo().log("HTML: {}", ms.toXHtml(""));
+    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
     assertEquals(markdown, ms.toMarkdown());
-    assertEquals(html, ms.toHtml());
+    assertEquals(html, ms.toXHtml(""));
+  }
+
+  /*
+   * {@link HtmlConverterCoreNodeRenderer} has a bug on line 629 in the call to "wrapTextNodes", which
+   * can add spaces to the HTML string. This relates to <a
+   * href="https://github.com/vsch/flexmark-java/issues/422">an existing issue</a>.
+   */
+  @Test
+  void markupSpaceHandlingTest() throws XMLStreamException, IOException {
+    String html = "<p>a <q><em>b</em></q> <strong>c</strong></p>";
+    String markdown = "a <q>*b*</q> **c**";
+    MarkupMultiline ms = MarkupMultiline.fromHtml(html);
+    AstCollectingVisitor visitor = new AstCollectingVisitor();
+    visitor.collect(ms.getDocument());
+    LOGGER.atInfo().log("HTML Source: {}", html);
+    LOGGER.atInfo().log("AST: {}", visitor.getAst());
+    LOGGER.atInfo().log("HTML: {}", ms.toXHtml(""));
+    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
+    assertNotEquals(markdown, ms.toMarkdown());
+    assertEquals(html, ms.toXHtml(""));
   }
 
   @Test
@@ -331,30 +331,29 @@ class MarkupStringTest {
 
     assertNotNull(document);
     visitor.collect(document);
-    // System.out.println("Markup AST");
-    // System.out.println("==========");
-    // System.out.println(visitor.getAst());
-    // System.out.println("HTML Output");
-    // System.out.println("===========");
-    // System.out.println(ms.toHtml());
-    // System.out.println("Markdown Output");
-    // System.out.println("===============");
-    // System.out.println(ms.toMarkdown());
+
+    LOGGER.atInfo().log("AST: {}", visitor.getAst());
+    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
+    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
     assertEquals(markdown, ms.toMarkdown());
 
-    String html = "<p>hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).</p>";
+    String html = "hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).";
     assertEquals(html, ms.toHtml().trim());
 
     StringWriter stringWriter = new StringWriter();
     XMLStreamWriter2 xmlStreamWriter = newXmlStreamWriter(stringWriter);
-    IMarkupVisitor<XMLStreamWriter, XMLStreamException> markupVisitor = new MarkupVisitor<>(true);
-    MarkupXmlStreamWriter writer = newMarkupXmlStreamWriter(xmlStreamWriter);
 
-    markupVisitor.visitDocument(ms.getDocument(), writer);
+    xmlStreamWriter.writeStartElement(MARKUP_HTML_NAMESPACE, "p");
+
+    ms.writeXHtml(MARKUP_HTML_NAMESPACE, xmlStreamWriter);
+
+    xmlStreamWriter.writeEndElement();
+
     xmlStreamWriter.close();
 
-    assertEquals(html, stringWriter.toString());
+    String xhtml = "<p>hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).</p>";
+    assertEquals(xhtml, stringWriter.toString());
   }
 
   @Test
@@ -380,17 +379,21 @@ class MarkupStringTest {
 
     assertEquals(markdown, ms.toMarkdown());
 
-    String html = "<p>a user’s identity</p>";
+    String html = "a user’s identity";
     assertEquals(html, ms.toHtml().trim());
 
     StringWriter stringWriter = new StringWriter();
     XMLStreamWriter2 xmlStreamWriter = newXmlStreamWriter(stringWriter);
-    IMarkupVisitor<XMLStreamWriter, XMLStreamException> markupVisitor = new MarkupVisitor<>(true);
-    MarkupXmlStreamWriter writer = newMarkupXmlStreamWriter(xmlStreamWriter);
-    markupVisitor.visitDocument(ms.getDocument(), writer);
+
+    xmlStreamWriter.writeStartElement(MARKUP_HTML_NAMESPACE, "p");
+
+    ms.writeXHtml(MARKUP_HTML_NAMESPACE, xmlStreamWriter);
+
+    xmlStreamWriter.writeEndElement();
+
     xmlStreamWriter.close();
 
-    assertEquals(html, stringWriter.toString());
+    assertEquals("<p>" + html + "</p>", stringWriter.toString());
 
     // test from HTML source
     ms = MarkupLine.fromHtml(html);

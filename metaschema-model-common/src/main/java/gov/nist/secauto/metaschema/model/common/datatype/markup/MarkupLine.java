@@ -26,45 +26,68 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
+import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Block;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.data.DataSet;
 import com.vladsch.flexmark.util.data.MutableDataSet;
+import com.vladsch.flexmark.util.misc.Extension;
 
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.FlexmarkConfiguration;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.FlexmarkFactory;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.SuppressPTagExtension;
 
-import org.codehaus.stax2.XMLStreamWriter2;
-
-import javax.xml.stream.XMLStreamException;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class MarkupLine
     extends AbstractMarkupString<MarkupLine> {
-  private static final Parser MARKDOWN_PARSER;
 
-  static {
+  @NonNull
+  private static final DataSet FLEXMARK_CONFIG = newParserOptions();
+
+  @NonNull
+  private static final FlexmarkFactory FLEXMARK_FACTORY = new FlexmarkFactory(FLEXMARK_CONFIG);
+
+  @SuppressWarnings("null")
+  @NonNull
+  protected static DataSet newParserOptions() {
     MutableDataSet options = new MutableDataSet();
     // disable inline HTML
     options.set(Parser.HTML_BLOCK_PARSER, false);
     // disable list processing
     options.set(Parser.LIST_BLOCK_PARSER, false);
+    options.set(HtmlRenderer.SUPPRESS_HTML_BLOCKS, true);
+    
+    Collection<Extension> currentExtensions = Parser.EXTENSIONS.get(FlexmarkConfiguration.FLEXMARK_CONFIG);
+    List<Extension> extensions = new LinkedList<>(currentExtensions);
+    extensions.add(SuppressPTagExtension.create());
+    Parser.EXTENSIONS.set(options, extensions);
 
-    MARKDOWN_PARSER = FlexmarkFactory.instance().newMarkdownParser(options);
+    return FlexmarkConfiguration.newFlexmarkConfig(options);
   }
 
   @NonNull
-  public static MarkupLine fromHtml(String html) {
-    return new MarkupLine(FlexmarkFactory.instance().fromHtml(html, null, MARKDOWN_PARSER));
+  public static MarkupLine fromHtml(@NonNull String html) {
+    return new MarkupLine(parseHtml(html, FLEXMARK_FACTORY.getFlexmarkHtmlConverter(), FLEXMARK_FACTORY.getMarkdownParser()));
   }
 
   @NonNull
-  public static MarkupLine fromMarkdown(String markdown) {
-    return new MarkupLine(FlexmarkFactory.instance().fromMarkdown(markdown));
+  public static MarkupLine fromMarkdown(@NonNull String markdown) {
+    return new MarkupLine(parseMarkdown(markdown, FLEXMARK_FACTORY.getMarkdownParser()));
   }
 
-  protected MarkupLine(Document astNode) {
+  @Override
+  public FlexmarkFactory getFlexmarkFactory() {
+    return FLEXMARK_FACTORY;
+  }
+
+  protected MarkupLine(@NonNull Document astNode) {
     super(astNode);
     Node child = astNode.getFirstChild();
     if (child != null && child instanceof Block && child.getNext() != null) {

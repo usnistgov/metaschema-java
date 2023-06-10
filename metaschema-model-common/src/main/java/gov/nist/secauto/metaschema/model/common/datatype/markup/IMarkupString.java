@@ -26,46 +26,81 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
+import com.ctc.wstx.api.WstxOutputProperties;
+import com.ctc.wstx.stax.WstxOutputFactory;
 import com.vladsch.flexmark.formatter.Formatter;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 
 import gov.nist.secauto.metaschema.model.common.datatype.ICustomJavaDataType;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.FlexmarkFactory;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorExtension.InsertAnchorNode;
 
+import org.codehaus.stax2.XMLOutputFactory2;
+import org.codehaus.stax2.XMLStreamWriter2;
+import org.codehaus.stax2.evt.XMLEventFactory2;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
     extends ICustomJavaDataType<TYPE> {
   @NonNull
+  FlexmarkFactory getFlexmarkFactory();
+
+  @NonNull
   Document getDocument();
 
-//  /**
-//   * Write HTML content to the provided {@code xmlStreamWriter} using the provided {@code namespace}.
-//   * 
-//   * @param writer
-//   *          the writer
-//   * @param namespace
-//   *          the XML namespace for the HTML
-//   * @throws XMLStreamException
-//   *           if an error occurred while writing
-//   */
-//  void writeHtml(@NonNull XMLStreamWriter2 writer, @NonNull String namespace) throws XMLStreamException;
+  // /**
+  // * Write HTML content to the provided {@code xmlStreamWriter} using the provided {@code
+  // namespace}.
+  // *
+  // * @param writer
+  // * the writer
+  // * @param namespace
+  // * the XML namespace for the HTML
+  // * @throws XMLStreamException
+  // * if an error occurred while writing
+  // */
+  // void writeHtml(@NonNull XMLStreamWriter2 writer, @NonNull String namespace) throws
+  // XMLStreamException;
 
   @NonNull
   String toHtml();
 
   @NonNull
-  String toMarkdown();
+  default String toXHtml(@NonNull String namespace) throws XMLStreamException, IOException {
 
-  String toMarkdown(Formatter formatter);
+    XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
+    assert factory instanceof WstxOutputFactory;
+    factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
+    try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+      XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
+
+      writeXHtml(namespace, xmlStreamWriter);
+
+      xmlStreamWriter.flush();
+      xmlStreamWriter.close();
+      os.flush();
+      return os.toString(StandardCharsets.UTF_8);
+    }
+  }
 
   @NonNull
-  String toMarkdownYaml();
+  String toMarkdown();
+
+  @NonNull
+  String toMarkdown(@NonNull Formatter formatter);
 
   /**
    * Retrieve all nodes contained within this markup text as a stream.
@@ -98,4 +133,13 @@ public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
    * @return {@code true} if the markup consists of block elements, or {@code false} otherwise
    */
   boolean isBlock();
+
+  void writeXHtml(
+      @NonNull String namespace,
+      @NonNull XMLStreamWriter2 streamWriter) throws XMLStreamException;
+
+  void writeXHtml(
+      @NonNull String namespace,
+      @NonNull XMLEventFactory2 eventFactory,
+      @NonNull XMLEventWriter eventWriter) throws XMLStreamException;
 }
