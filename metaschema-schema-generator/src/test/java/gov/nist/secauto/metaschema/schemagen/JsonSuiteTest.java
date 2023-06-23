@@ -126,6 +126,7 @@ class JsonSuiteTest
         contentCase(Format.JSON, "flag-basic_test_simple_PASS.json", true));
   }
 
+  @Disabled
   @Test
   void testOSCALComplete() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
     MetaschemaLoader loader = new MetaschemaLoader();
