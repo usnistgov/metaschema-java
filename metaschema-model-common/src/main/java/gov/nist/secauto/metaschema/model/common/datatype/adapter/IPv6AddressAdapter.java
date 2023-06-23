@@ -50,7 +50,7 @@ public class IPv6AddressAdapter
 
   static {
     IP_V_6 = new IPAddressStringParameters.Builder().allowIPv4(false).allowEmpty(false).allowSingleSegment(false)
-        .allowWildcardedSeparator(false).getIPv6AddressParametersBuilder().allowBinary(false).allowLeadingZeros(false)
+        .allowWildcardedSeparator(false).getIPv6AddressParametersBuilder().allowBinary(false)
         .allowPrefixesBeyondAddressSize(false).getParentBuilder().toParams();
   }
 
