@@ -101,12 +101,18 @@
 		<jqueryVersion>3.4.1</jqueryVersion>
 		<fontawesomeVersion>5.12.1</fontawesomeVersion>
 		<popperVersion>1.16.0</popperVersion>
+
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.release>11</maven.compiler.release>
+		<mojo.java.target>${maven.compiler.target}</mojo.java.target>
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<mojo.maven.version>3.9.2</mojo.maven.version>
+
 		<dependency.antlr4.version>4.10.1</dependency.antlr4.version>
 		<dependency.auto-service.version>1.0.1</dependency.auto-service.version>
 		<dependency.commons-collections4.version>4.4</dependency.commons-collections4.version>
@@ -130,6 +136,8 @@
 		<dependency.junit5-platform-launcher.version>1.9.0</dependency.junit5-platform-launcher.version>
 		<dependency.log4j2.version>2.20.0</dependency.log4j2.version>
 		<dependency.moxy.version>3.0.3</dependency.moxy.version>
+		<dependency.plexus-utils.version>3.5.0</dependency.plexus-utils.version>
+		<dependency.plexus-build-api.version>0.0.7</dependency.plexus-build-api.version>
 		<dependency.saxon.version>12.2</dependency.saxon.version>
 		<dependency.spotbugs-annotations.version>4.7.2</dependency.spotbugs-annotations.version>
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
