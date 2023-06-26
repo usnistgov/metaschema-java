@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression.Resu
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class DefaultIndex implements IIndex {
   @NonNull
@@ -51,19 +53,29 @@ public class DefaultIndex implements IIndex {
   @NonNull
   private final Map<List<String>, INodeItem> keyToItemMap = new ConcurrentHashMap<>();
 
-  public DefaultIndex(@NonNull List<? extends IKeyField> keyFields) {
+  /**
+   * Construct a new index.
+   * 
+   * @param keyFields
+   *          the key field components to use to generate keys by default
+   */
+  protected DefaultIndex(@NonNull List<? extends IKeyField> keyFields) {
     this.keyFields = CollectionUtil.unmodifiableList(new ArrayList<>(keyFields));
   }
 
-  @NonNull
+  @Override
   public List<IKeyField> getKeyFields() {
     return keyFields;
   }
 
   @Override
-  public INodeItem put(@NonNull INodeItem item, @NonNull DynamicContext dynamicContext) {
-    List<String> key = toKeyInternal(item, getKeyFields(), dynamicContext);
-    return keyToItemMap.put(key, item);
+  public INodeItem put(@NonNull INodeItem item, @NonNull List<String> key) {
+    INodeItem oldItem = null;
+    if (!IIndex.isAllNulls(key)) {
+      // only add keys with some information (values)
+      oldItem = keyToItemMap.put(key, item);
+    }
+    return oldItem;
   }
 
   @Override
@@ -77,18 +89,27 @@ public class DefaultIndex implements IIndex {
     if (getKeyFields().size() != keyFields.size()) {
       throw new IllegalArgumentException("Provided key fields are not the same size as the index requires.");
     }
-    return toKeyInternal(item, keyFields, dynamicContext);
-
+    return CollectionUtil.unmodifiableList(
+        ObjectUtils.notNull(keyFields.stream()
+            .map(keyField -> {
+              assert keyField != null;
+              return buildKeyItem(item, keyField, dynamicContext);
+            })
+            .collect(Collectors.toCollection(ArrayList::new))));
   }
 
-  @SuppressWarnings("null")
-  protected List<String> toKeyInternal(@NonNull INodeItem item, @NonNull List<? extends IKeyField> keyFields,
-      @NonNull DynamicContext dynamicContext) {
-    return CollectionUtil.unmodifiableList(keyFields.stream()
-        .map(keyField -> buildKeyItem(item, keyField, dynamicContext))
-        .collect(Collectors.toCollection(ArrayList::new)));
-  }
-
+  /**
+   * Evaluates the provided key field component against the item to generate a key value.
+   * 
+   * @param item
+   *          the item to generate the key value from
+   * @param keyField
+   *          the key field component used to generate the key value
+   * @param dynamicContext
+   *          the Metapath evaluation context
+   * @return the key value or {@code null} if the evaluation resulted in no value
+   */
+  @Nullable
   protected static String buildKeyItem(
       @NonNull INodeItem item,
       @NonNull IKeyField keyField,
