@@ -22,7 +22,7 @@
 	</distributionManagement>
 
 	<properties>
-		<mojo.maven.version>3.8.7</mojo.maven.version>
+		<mojo.maven.version>3.9.2</mojo.maven.version>
 		<mojo.java.target>${maven.compiler.target}</mojo.java.target>
 		<dependency.plexus-utils.version>4.0.0</dependency.plexus-utils.version>
 		<dependency.plexus-build-api.version>0.0.7</dependency.plexus-build-api.version>
