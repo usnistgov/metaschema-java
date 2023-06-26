@@ -37,7 +37,7 @@ public interface IDefinitionProduction {
 
   /**
    * Get the definition for which the Java class was produced.
-   * 
+   *
    * @return the definition
    */
   @NonNull
@@ -45,7 +45,7 @@ public interface IDefinitionProduction {
 
   /**
    * Get information about the Java class generated from the definition.
-   * 
+   *
    * @return the class information
    */
   @NonNull

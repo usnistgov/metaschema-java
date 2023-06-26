@@ -42,7 +42,7 @@ class Addition
 
   /**
    * An expression that sums two atomic data items.
-   * 
+   *
    * @param left
    *          an expression whose result is summed
    * @param right
@@ -59,7 +59,7 @@ class Addition
 
   /**
    * Get the sum of two atomic items.
-   * 
+   *
    * @param left
    *          the first item to sum
    * @param right
@@ -73,15 +73,17 @@ class Addition
 
   /**
    * Get the sum of two atomic items.
-   * 
+   *
    * @param leftItem
    *          the first item to sum
    * @param rightItem
    *          the second item to sum
    * @return the sum of both items
    */
+  @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.CognitiveComplexity" })
   @NonNull
-  public static IAnyAtomicItem sum(@NonNull IAnyAtomicItem leftItem, // NOPMD - intentional
+  public static IAnyAtomicItem sum(
+      @NonNull IAnyAtomicItem leftItem, // NOPMD - intentional
       @NonNull IAnyAtomicItem rightItem) {
     IAnyAtomicItem retval = null;
     if (leftItem instanceof IDateItem) {

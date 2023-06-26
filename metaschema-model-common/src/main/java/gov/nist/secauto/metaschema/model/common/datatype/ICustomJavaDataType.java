@@ -37,7 +37,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface ICustomJavaDataType<TYPE extends ICustomJavaDataType<TYPE>> {
   /**
    * Provides a copy of the data value associated with the Datatype instance.
-   * 
+   *
    * @return the copy
    */
   @NonNull

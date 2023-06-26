@@ -42,7 +42,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IDefineableJsonSchema extends IJsonSchema {
   /**
    * Determine if the JSON schema object is a definition.
-   * 
+   *
    * @param state
    *          the schema generation state used for context and writing
    * @return {@code true} if the SON schema object is a definition or {@code false} otherwise
@@ -53,7 +53,7 @@ public interface IDefineableJsonSchema extends IJsonSchema {
 
   /**
    * Get the definition's name.
-   * 
+   *
    * @param state
    *          the schema generation state used for context and writing
    * @return the definition name
@@ -65,7 +65,7 @@ public interface IDefineableJsonSchema extends IJsonSchema {
 
   /**
    * Get the definition's reference URI.
-   * 
+   *
    * @param state
    *          the schema generation state used for context and writing
    * @return the definition's reference URI

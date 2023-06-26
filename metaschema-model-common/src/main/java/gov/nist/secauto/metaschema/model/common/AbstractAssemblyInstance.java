@@ -33,7 +33,7 @@ public abstract class AbstractAssemblyInstance
     implements IAssemblyInstance {
   /**
    * Create a new assembly instance.
-   * 
+   *
    * @param parent
    *          the parent assembly definition
    */
@@ -41,7 +41,6 @@ public abstract class AbstractAssemblyInstance
     super(parent);
   }
 
-  @SuppressWarnings("null")
   @Override
   public String getXmlNamespace() {
     return getContainingMetaschema().getXmlNamespace().toASCIIString();

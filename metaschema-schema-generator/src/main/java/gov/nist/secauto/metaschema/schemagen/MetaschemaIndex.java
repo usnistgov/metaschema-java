@@ -71,7 +71,7 @@ public class MetaschemaIndex {
   public boolean hasEntry(@NonNull IDefinition definition) {
     return index.containsKey(definition);
   }
-  
+
   @NonNull
   public DefinitionEntry getEntry(@NonNull IDefinition definition) {
     return ObjectUtils.notNull(index.computeIfAbsent(
@@ -116,16 +116,16 @@ public class MetaschemaIndex {
     protected void visit(IFlagDefinition def, MetaschemaIndex data) {
       // do nothing
     }
-//
-//    @Override
-//    protected boolean visit(IAssemblyDefinition def, MetaschemaIndex data) {
-//      // only walk if the definition hasn't already been visited
-//      return !index.hasEntry(def);
-//    }
+    //
+    // @Override
+    // protected boolean visit(IAssemblyDefinition def, MetaschemaIndex data) {
+    // // only walk if the definition hasn't already been visited
+    // return !index.hasEntry(def);
+    // }
 
     private boolean handleInstance(INamedInstance instance) {
       IDefinition definition = instance.getDefinition();
-      boolean exists =  getDefaultData().hasEntry(definition);
+      boolean exists = getDefaultData().hasEntry(definition);
       DefinitionEntry entry = getDefaultData().getEntry(definition);
       entry.incrementReferenceCount();
 

@@ -69,7 +69,7 @@ public interface IInlineStrategy {
     }
     return retval;
   }
-  
+
   boolean isInline(
       @NonNull IDefinition definition,
       @NonNull MetaschemaIndex metaschemaIndex);

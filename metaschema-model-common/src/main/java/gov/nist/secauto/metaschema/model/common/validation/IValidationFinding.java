@@ -39,7 +39,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IValidationFinding {
   /**
    * Get the finding's severity.
-   * 
+   *
    * @return the severity
    */
   @NonNull
@@ -47,7 +47,7 @@ public interface IValidationFinding {
 
   /**
    * Get the document's URI.
-   * 
+   *
    * @return the document's URI
    */
   @NonNull
@@ -69,7 +69,7 @@ public interface IValidationFinding {
 
   /**
    * Get the finding message.
-   * 
+   *
    * @return the message
    */
   @NonNull
@@ -77,7 +77,7 @@ public interface IValidationFinding {
 
   /**
    * Get the exception associated with the finding.
-   * 
+   *
    * @return the {@link Throwable} or {@code null} if no thowable is associated with the finding
    */
   Throwable getCause();

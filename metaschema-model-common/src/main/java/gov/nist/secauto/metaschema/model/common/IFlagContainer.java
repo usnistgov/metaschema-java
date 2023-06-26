@@ -32,12 +32,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * This marker interface identifies a type of definition that contains flags, either a field or assembly.
+ * This marker interface identifies a type of definition that contains flags, either a field or
+ * assembly.
  */
 public interface IFlagContainer extends IDefinition, IContainer {
   /**
    * Retrieve the Metaschema definition containing this container.
-   * 
+   *
    * @return the containing Metaschema definition
    */
   @Override
@@ -49,7 +50,7 @@ public interface IFlagContainer extends IDefinition, IContainer {
 
   /**
    * Identifies if the field has flags or not.
-   * 
+   *
    * @return {@code true} if the field has not flags, or false otherwise
    */
   default boolean isSimple() {
@@ -59,7 +60,7 @@ public interface IFlagContainer extends IDefinition, IContainer {
   /**
    * Retrieves a flag instance, by the flag's effective name, that is defined on the containing
    * definition.
-   * 
+   *
    * @param name
    *          the flag's name
    * @return the matching flag instance, or {@code null} if there is no flag matching the specified
@@ -70,7 +71,7 @@ public interface IFlagContainer extends IDefinition, IContainer {
 
   /**
    * Retrieves the flag instances for all flags defined on the containing definition.
-   * 
+   *
    * @return the flags
    */
   @NonNull
@@ -82,7 +83,7 @@ public interface IFlagContainer extends IDefinition, IContainer {
    * object. This is only allowed if the flag is required, as determined by a {@code true} result from
    * {@link IFlagInstance#isRequired()}. The {@link IFlagInstance} can be retrieved using
    * {@link #getJsonKeyFlagInstance()}.
-   * 
+   *
    * @return {@code true} if the flag's value can be used as a property name, or {@code false}
    *         otherwise
    * @see #getJsonKeyFlagInstance()
@@ -93,7 +94,7 @@ public interface IFlagContainer extends IDefinition, IContainer {
   /**
    * Retrieves the flag instance to use as as the property name for the containing object in JSON
    * who's value will be the object containing the flag.
-   * 
+   *
    * @return the flag instance if a JSON key is configured, or {@code null} otherwise
    * @see #hasJsonKey()
    */

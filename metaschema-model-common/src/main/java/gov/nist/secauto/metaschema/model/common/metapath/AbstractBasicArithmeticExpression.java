@@ -36,7 +36,7 @@ abstract class AbstractBasicArithmeticExpression
 
   /**
    * An expression that represents a basic arithmetic operation on two values.
-   * 
+   *
    * @param left
    *          the first item
    * @param right
@@ -61,7 +61,7 @@ abstract class AbstractBasicArithmeticExpression
 
   /**
    * Setup the operation on two atomic items.
-   * 
+   *
    * @param leftItem
    *          the first item
    * @param rightItem
@@ -69,7 +69,8 @@ abstract class AbstractBasicArithmeticExpression
    * @return the result of the operation or an empty {@link ISequence} if either item is {@code null}
    */
   @NonNull
-  protected ISequence<? extends IAnyAtomicItem> resultOrEmpty(@Nullable IAnyAtomicItem leftItem,
+  protected ISequence<? extends IAnyAtomicItem> resultOrEmpty(
+      @Nullable IAnyAtomicItem leftItem,
       @Nullable IAnyAtomicItem rightItem) {
     ISequence<? extends IAnyAtomicItem> retval;
     if (leftItem == null || rightItem == null) {
@@ -83,7 +84,7 @@ abstract class AbstractBasicArithmeticExpression
 
   /**
    * Performs the arithmetic operation using the two provided values.
-   * 
+   *
    * @param left
    *          the first item
    * @param right

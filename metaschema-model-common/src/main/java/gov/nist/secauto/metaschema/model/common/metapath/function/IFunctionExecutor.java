@@ -42,7 +42,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IFunctionExecutor {
   /**
    * Execute the provided function using the provided arguments, dynamic context, and focus.
-   * 
+   *
    * @param function
    *          the signature of the function
    * @param arguments

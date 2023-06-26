@@ -55,7 +55,7 @@ public interface IBoundNamedInstance extends INamedInstance {
   @Override
   default String getName() {
     // delegate to the definition
-    return getDefinition().getEffectiveName();
+    return getDefinition().getName();
   }
 
   @Override
@@ -66,7 +66,7 @@ public interface IBoundNamedInstance extends INamedInstance {
 
   /**
    * Get the {@link IClassBinding} for the Java class within which this property exists.
-   * 
+   *
    * @return the containing class's binding
    */
   @NonNull
@@ -74,7 +74,7 @@ public interface IBoundNamedInstance extends INamedInstance {
 
   /**
    * Gets the bound Java field associated with this property.
-   * 
+   *
    * @return the Java field
    */
   @NonNull
@@ -90,7 +90,7 @@ public interface IBoundNamedInstance extends INamedInstance {
    * <p>
    * This may be the same as the what is returned by {@link #getItemType()}, or may be a Java
    * collection class.
-   * 
+   *
    * @return the raw type of the bound object
    */
   @SuppressWarnings("null")
@@ -102,7 +102,7 @@ public interface IBoundNamedInstance extends INamedInstance {
   /**
    * Get the item type of the bound object. An item type is the primitive or specialized type that
    * represents that data associated with this binding.
-   * 
+   *
    * @return the item type of the bound object
    */
   @NonNull
@@ -113,7 +113,7 @@ public interface IBoundNamedInstance extends INamedInstance {
   /**
    * Get the current value from the provided {@code parentInstance} object. The provided object must
    * be of the type associated with the definition containing this property.
-   * 
+   *
    * @param parentInstance
    *          the object associated with the definition containing this property
    * @return the value if available, or {@code null} otherwise
@@ -141,7 +141,7 @@ public interface IBoundNamedInstance extends INamedInstance {
   /**
    * Set the provided value on the provided object. The provided object must be of the item's type
    * associated with this property.
-   * 
+   *
    * @param parentInstance
    *          the object
    * @param value
@@ -175,7 +175,7 @@ public interface IBoundNamedInstance extends INamedInstance {
    * being parsed.
    * <p>
    * After parsing the parser's current token will be the next token after the field's value.
-   * 
+   *
    * @param objectInstance
    *          an instance of the class on which this property exists
    * @param context
@@ -194,7 +194,7 @@ public interface IBoundNamedInstance extends INamedInstance {
    * being parsed.
    * <p>
    * After parsing the parser's current token will be the next token after the field's value.
-   * 
+   *
    * @param context
    *          the JSON parsing context
    * @return the instance value or {@code null} if no data was available to read
@@ -206,7 +206,7 @@ public interface IBoundNamedInstance extends INamedInstance {
   /**
    * Read the XML data associated with this property and apply it to the provided
    * {@code objectInstance} on which this property exists.
-   * 
+   *
    * @param objectInstance
    *          an instance of the class on which this property exists
    * @param parent
@@ -250,7 +250,7 @@ public interface IBoundNamedInstance extends INamedInstance {
 
   /**
    * Copy this instance from one parent object to another.
-   * 
+   *
    * @param fromInstance
    *          the object to copy from
    * @param toInstance

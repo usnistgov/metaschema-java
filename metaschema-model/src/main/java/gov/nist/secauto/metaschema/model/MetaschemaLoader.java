@@ -46,11 +46,11 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
@@ -82,7 +82,7 @@ public class MetaschemaLoader
   /**
    * Construct a new Metaschema loader, which will incorporate the additional provided constraints
    * into matching loaded definitions.
-   * 
+   *
    * @param additionalConstraintSets
    *          additional constraints to associate with loaded definitions
    */
@@ -92,7 +92,7 @@ public class MetaschemaLoader
 
   /**
    * Get the set of additional constraints associated with this loader.
-   * 
+   *
    * @return the set of constraints
    */
   @NonNull
@@ -111,7 +111,7 @@ public class MetaschemaLoader
 
   /**
    * Parse the {@code resource} based on the provided {@code xmlObject}.
-   * 
+   *
    * @param resource
    *          the URI of the resource being parsed
    * @param xmlObject
@@ -134,15 +134,14 @@ public class MetaschemaLoader
   }
 
   @Override
-  protected IMetaschema parseResource(@NonNull URI resource, @NonNull Stack<URI> visitedResources)
+  protected IMetaschema parseResource(@NonNull URI resource, @NonNull Deque<URI> visitedResources)
       throws IOException {
     // parse this metaschema
     METASCHEMADocument xmlObject = parseMetaschema(resource);
 
     // now check if this Metaschema imports other metaschema
     int size = xmlObject.getMETASCHEMA().sizeOfImportArray();
-    @NonNull
-    Map<URI, IMetaschema> importedMetaschema;
+    @NonNull Map<URI, IMetaschema> importedMetaschema;
     if (size == 0) {
       importedMetaschema = ObjectUtils.notNull(Collections.emptyMap());
     } else {
@@ -169,7 +168,7 @@ public class MetaschemaLoader
 
   /**
    * Parse the provided XML resource as a Metaschema.
-   * 
+   *
    * @param resource
    *          the resource to parse
    * @return the XMLBeans representation of the Metaschema

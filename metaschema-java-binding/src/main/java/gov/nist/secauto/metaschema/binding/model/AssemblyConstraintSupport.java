@@ -109,7 +109,8 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
             .collect(Collectors.toCollection(LinkedList::new));
       } catch (MetapathException ex) {
         throw new MetapathException(
-            String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()), ex);
+            String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()),
+            ex);
       }
     }
 
@@ -132,7 +133,8 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
             .collect(Collectors.toCollection(LinkedList::new));
       } catch (MetapathException ex) {
         throw new MetapathException(
-            String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()), ex);
+            String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()),
+            ex);
       }
     }
 

@@ -67,7 +67,7 @@ public interface IMetaschema {
 
   /**
    * Get a filter that will match all definitions that are not locally defined.
-   * 
+   *
    * @param <DEF>
    *          the type of definition
    * @return a predicate implementing the filter
@@ -81,7 +81,7 @@ public interface IMetaschema {
 
   /**
    * Get a filter that will match all definitions that are root assemblies.
-   * 
+   *
    * @param <DEF>
    *          the type of definition
    * @return a predicate implementing the filter
@@ -94,14 +94,14 @@ public interface IMetaschema {
 
   /**
    * Retrieves the location where the Metaschema was loaded from.
-   * 
+   *
    * @return the location, or {@code null} if this information is not available
    */
   URI getLocation();
 
   /**
    * Get the long name for the Metaschema.
-   * 
+   *
    * @return the name
    */
   @NonNull
@@ -109,7 +109,7 @@ public interface IMetaschema {
 
   /**
    * Get the revision of the Metaschema.
-   * 
+   *
    * @return the revision
    */
   @NonNull
@@ -117,7 +117,7 @@ public interface IMetaschema {
 
   /**
    * Retrieve the remarks associated with this Metaschema, if any.
-   * 
+   *
    * @return the remarks or {@code null} if no remarks are defined
    */
   @Nullable
@@ -126,7 +126,7 @@ public interface IMetaschema {
   /**
    * Retrieves the unique short name for the Metaschema, which provides a textual identifier for the
    * Metaschema instance.
-   * 
+   *
    * @return the short name
    */
   @NonNull
@@ -134,7 +134,7 @@ public interface IMetaschema {
 
   /**
    * Retrieves the XML namespace associated with the Metaschema.
-   * 
+   *
    * @return a namespace
    */
   @NonNull
@@ -142,7 +142,7 @@ public interface IMetaschema {
 
   /**
    * Retrieve the JSON schema base URI associated with the Metaschema.
-   * 
+   *
    * @return the base URI
    */
   @NonNull
@@ -150,7 +150,7 @@ public interface IMetaschema {
 
   /**
    * Get the qualified name associated with the Metaschema.
-   * 
+   *
    * @return the qualified name
    */
   default QName getQName() {
@@ -159,7 +159,7 @@ public interface IMetaschema {
 
   /**
    * Retrieves all Metaschema imported by this Metaschema.
-   * 
+   *
    * @return a list of imported Metaschema
    */
   @NonNull
@@ -167,7 +167,7 @@ public interface IMetaschema {
 
   /**
    * Retrieve the imported Metaschema with the specified name, if it exists.
-   * 
+   *
    * @param name
    *          the short name of the Metschema to retrieve
    * @return the imported Metaschema or {@code null} if it doesn't exist
@@ -177,7 +177,7 @@ public interface IMetaschema {
 
   /**
    * Retrieves the top-level assembly definitions in this Metaschema.
-   * 
+   *
    * @return the collection of assembly definitions
    */
   @NonNull
@@ -186,10 +186,10 @@ public interface IMetaschema {
   /**
    * Retrieves the top-level assembly definition in this Metaschema with the matching name, if it
    * exists.
-   * 
+   *
    * @param name
    *          the definition name
-   * 
+   *
    * @return the matching assembly definition, or {@code null} if none match
    */
   @Nullable
@@ -197,7 +197,7 @@ public interface IMetaschema {
 
   /**
    * Retrieves the top-level field definitions in this Metaschema.
-   * 
+   *
    * @return the collection of field definitions
    */
   @NonNull
@@ -205,10 +205,10 @@ public interface IMetaschema {
 
   /**
    * Retrieves the top-level field definition in this Metaschema with the matching name, if it exists.
-   * 
+   *
    * @param name
    *          the definition name
-   * 
+   *
    * @return the matching field definition, or {@code null} if none match
    */
   @Nullable
@@ -216,7 +216,7 @@ public interface IMetaschema {
 
   /**
    * Retrieves the top-level assembly and field definitions in this Metaschema.
-   * 
+   *
    * @return a listing of assembly and field definitions
    */
   @NonNull
@@ -228,7 +228,7 @@ public interface IMetaschema {
 
   /**
    * Retrieves the top-level flag definitions in this Metaschema.
-   * 
+   *
    * @return the collection of flag definitions
    */
   @NonNull
@@ -236,10 +236,10 @@ public interface IMetaschema {
 
   /**
    * Retrieves the top-level flag definition in this Metaschema with the matching name, if it exists.
-   * 
+   *
    * @param name
    *          the definition name
-   * 
+   *
    * @return the matching flag definition, or {@code null} if none match
    */
   @Nullable
@@ -259,7 +259,7 @@ public interface IMetaschema {
    * Retrieves the assembly definition with a matching name from either: 1) the top-level assembly
    * definitions from this Metaschema, or 2) global assembly definitions from each imported Metaschema
    * in reverse order of import.
-   * 
+   *
    * @param name
    *          the name of the assembly to find
    * @return the assembly definition
@@ -279,7 +279,7 @@ public interface IMetaschema {
    * Retrieves the field definition with a matching name from either: 1) the top-level field
    * definitions from this Metaschema, or 2) global field definitions from each imported Metaschema in
    * reverse order of import.
-   * 
+   *
    * @param name
    *          the name of the field definition to find
    * @return the field definition
@@ -299,7 +299,7 @@ public interface IMetaschema {
    * Retrieves the flag definition with a matching name from either: 1) the top-level flag definitions
    * from this Metaschema, or 2) global flag definitions from each imported Metaschema in reverse
    * order of import.
-   * 
+   *
    * @param name
    *          the name of the flag definition to find
    * @return the flag definition
@@ -316,9 +316,9 @@ public interface IMetaschema {
   }
 
   /**
-   * Retrieves the top-level assembly definitions that are marked as roots from the current
-   * Metaschema and any imported Metaschema.
-   * 
+   * Retrieves the top-level assembly definitions that are marked as roots from the current Metaschema
+   * and any imported Metaschema.
+   *
    * @return a listing of assembly definitions marked as root
    */
   @NonNull
@@ -331,7 +331,7 @@ public interface IMetaschema {
   /**
    * Retrieves the top-level assembly definitions that are marked as roots from the current
    * Metaschema.
-   * 
+   *
    * @return a listing of assembly definitions marked as root
    */
   @NonNull
@@ -347,7 +347,7 @@ public interface IMetaschema {
    * imported Metaschema in order of import, then adding global definitions from the current
    * Metaschema. Such a map is built in this way for each imported Metaschema in the chain. Values for
    * clashing keys will be replaced in this order, giving preference to the "closest" definition.
-   * 
+   *
    * @return the collection of exported flag definitions
    */
   @NonNull
@@ -358,7 +358,7 @@ public interface IMetaschema {
    * <p>
    * For information about how flag definitions are exported see
    * {@link #getExportedFlagDefinitions()}.
-   * 
+   *
    * @param name
    *          the definition name
    * @return the flag definition, or {@code null} if it doesn't exist.
@@ -372,7 +372,7 @@ public interface IMetaschema {
    * imported Metaschema in order of import, then adding global definitions from the current
    * Metaschema. Such a map is built in this way for each imported Metaschema in the chain. Values for
    * clashing keys will be replaced in this order, giving preference to the "closest" definition
-   * 
+   *
    * @return the collection of exported field definitions
    */
   @NonNull
@@ -383,7 +383,7 @@ public interface IMetaschema {
    * <p>
    * For information about how field definitions are exported see
    * {@link #getExportedFieldDefinitions()}.
-   * 
+   *
    * @param name
    *          the definition name
    * @return the field definition, or {@code null} if it doesn't exist.
@@ -398,7 +398,7 @@ public interface IMetaschema {
    * Metaschema. This collection is built in this way for each imported Metaschema in the chain. Items
    * with duplicate names will be replaced in this order, giving preference to the "closest"
    * definition
-   * 
+   *
    * @return the collection of exported assembly definitions
    */
   @NonNull
@@ -409,7 +409,7 @@ public interface IMetaschema {
    * <p>
    * For information about how assembly definitions are exported see
    * {@link #getExportedFieldDefinitions()}.
-   * 
+   *
    * @param name
    *          the definition name
    * @return the assembly definition, or {@code null} if it doesn't exist.

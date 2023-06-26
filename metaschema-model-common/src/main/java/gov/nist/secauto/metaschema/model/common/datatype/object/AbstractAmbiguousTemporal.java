@@ -39,7 +39,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * <p>
  * This class wraps a ZonedDateTime object and tracks if a time zone was found when parsing, which
  * can be used to ensure that the assumed time zone is not written back out in such cases.
- * 
+ *
  * @param <TYPE>
  *          the bound object type
  */
@@ -50,7 +50,7 @@ public abstract class AbstractAmbiguousTemporal<TYPE extends AbstractAmbiguousTe
   /**
    * Construct a new object. This type supports ambiguous dates/times that were provided without a
    * time zone.
-   * 
+   *
    * @param value
    *          the date value
    * @param hasTimeZone
@@ -64,7 +64,7 @@ public abstract class AbstractAmbiguousTemporal<TYPE extends AbstractAmbiguousTe
 
   /**
    * Indicate if a time zone is configured.
-   * 
+   *
    * @return {@code true} if the date is intended to have an associated time zone or {@code false}
    *         otherwise
    */

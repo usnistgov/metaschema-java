@@ -56,7 +56,7 @@ public final class DataTypeService {
 
   /**
    * Get the singleton service instance, which will be lazy constructed on first access.
-   * 
+   *
    * @return the service instance
    */
   @SuppressWarnings("null")
@@ -71,7 +71,7 @@ public final class DataTypeService {
 
   /**
    * Lookup a specific {@link IDataTypeAdapter} instance by its name.
-   * 
+   *
    * @param name
    *          the data type name of data type adapter to get the instance for
    * @return the instance or {@code null} if the instance is unknown to the type system
@@ -83,7 +83,7 @@ public final class DataTypeService {
 
   /**
    * Lookup a specific {@link IDataTypeAdapter} instance by its class.
-   * 
+   *
    * @param clazz
    *          the adapter class to get the instance for
    * @param <TYPE>
@@ -98,7 +98,7 @@ public final class DataTypeService {
 
   /**
    * Load available data types registered with the {@link IDataTypeProvider} SPI.
-   * 
+   *
    * @throws IllegalStateException
    *           if there are two adapters with the same name
    */
@@ -126,19 +126,19 @@ public final class DataTypeService {
             },
             ConcurrentHashMap::new));
 
-    @SuppressWarnings({ "unchecked", "null" })
-    Map<Class<? extends IDataTypeAdapter<?>>, IDataTypeAdapter<?>> libraryByClass = dataTypes.stream()
-        .collect(CustomCollectors.toMap(
-            dataType -> (Class<? extends IDataTypeAdapter<?>>) dataType.getClass(),
-            Function.identity(),
-            (key, v1, v2) -> {
-              if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn("Duplicate data type class '{}'. Using the first.",
-                    key.getClass().getName());
-              }
-              return v1;
-            },
-            ConcurrentHashMap::new));
+    @SuppressWarnings({ "unchecked", "null" }) Map<Class<? extends IDataTypeAdapter<?>>,
+        IDataTypeAdapter<?>> libraryByClass = dataTypes.stream()
+            .collect(CustomCollectors.toMap(
+                dataType -> (Class<? extends IDataTypeAdapter<?>>) dataType.getClass(),
+                Function.identity(),
+                (key, v1, v2) -> {
+                  if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("Duplicate data type class '{}'. Using the first.",
+                        key.getClass().getName());
+                  }
+                  return v1;
+                },
+                ConcurrentHashMap::new));
 
     synchronized (this) {
       this.libraryByName = libraryByName;

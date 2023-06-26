@@ -41,7 +41,7 @@ public interface IDefinitionNodeItem extends INodeItem {
 
   /**
    * Get the Metaschema definition associated with this node.
-   * 
+   *
    * @return the definition
    */
   @NonNull
@@ -49,7 +49,7 @@ public interface IDefinitionNodeItem extends INodeItem {
 
   /**
    * Retrieve the instance associated with this path segment.
-   * 
+   *
    * @return the instance of the segment, or {@code null} if it doesn't have one
    */
   INamedInstance getInstance();

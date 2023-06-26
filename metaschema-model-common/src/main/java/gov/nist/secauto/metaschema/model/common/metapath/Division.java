@@ -40,7 +40,7 @@ class Division
 
   /**
    * An expression that gets the quotient result by dividing the dividend by the divisor.
-   * 
+   *
    * @param dividend
    *          the expression whose result is to be divided
    * @param divisor
@@ -57,7 +57,7 @@ class Division
 
   /**
    * Get the quotient result by dividing the dividend by the divisor.
-   * 
+   *
    * @param dividend
    *          the item to be divided
    * @param divisor
@@ -72,7 +72,7 @@ class Division
 
   /**
    * Get the quotient result by dividing the dividend by the divisor.
-   * 
+   *
    * @param dividend
    *          the item to be divided
    * @param divisor

@@ -40,7 +40,7 @@ public interface IDefinitionTypeInfo {
 
   /**
    * Gets the resolver which can be used to lookup Java type information for Metaschema objects.
-   * 
+   *
    * @return the type resolver
    */
   @NonNull
@@ -48,7 +48,7 @@ public interface IDefinitionTypeInfo {
 
   /**
    * Check's if the Java class to be generated will have a property with the given name.
-   * 
+   *
    * @param propertyName
    *          the property name to look for
    * @return {@code true} if there is an associated property with the name or {@code false} otherwise

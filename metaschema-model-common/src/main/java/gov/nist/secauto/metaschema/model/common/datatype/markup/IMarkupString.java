@@ -26,69 +26,69 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
+import com.ctc.wstx.api.WstxOutputProperties;
+import com.ctc.wstx.stax.WstxOutputFactory;
 import com.vladsch.flexmark.formatter.Formatter;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
+import gov.nist.secauto.metaschema.model.common.datatype.ICustomJavaDataType;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.FlexmarkFactory;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorExtension.InsertAnchorNode;
 
+import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
+import org.codehaus.stax2.evt.XMLEventFactory2;
 
-import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IMarkupText {
+public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
+    extends ICustomJavaDataType<TYPE> {
+  @NonNull
+  FlexmarkFactory getFlexmarkFactory();
+
   @NonNull
   Document getDocument();
 
-  /**
-   * Write HTML content to the provided {@code xmlStreamWriter} using the provided {@code namespace}.
-   * 
-   * @param writer
-   *          the writer
-   * @param namespace
-   *          the XML namespace for the HTML
-   * @throws XMLStreamException
-   *           if an error occurred while writing
-   */
-  void writeHtml(@NonNull XMLStreamWriter2 writer, @NonNull String namespace) throws XMLStreamException;
-
-  /**
-   * Write HTML content to the provided {@code outputStream} using the provided {@code namespace}.
-   * 
-   * @param outputStream
-   *          the stream to write to
-   * @param namespace
-   *          the XML namespace for the HTML
-   * @param prefix
-   *          the XML prefix for the HTML
-   * @throws XMLStreamException
-   *           if an error occurred while writing
-   */
-  void writeHtml(@NonNull OutputStream outputStream, @Nullable String namespace, @Nullable String prefix)
-      throws XMLStreamException;
+  // /**
+  // * Write HTML content to the provided {@code xmlStreamWriter} using the provided {@code
+  // namespace}.
+  // *
+  // * @param writer
+  // * the writer
+  // * @param namespace
+  // * the XML namespace for the HTML
+  // * @throws XMLStreamException
+  // * if an error occurred while writing
+  // */
+  // void writeHtml(@NonNull XMLStreamWriter2 writer, @NonNull String namespace) throws
+  // XMLStreamException;
 
   @NonNull
   String toHtml();
 
   @NonNull
+  String toXHtml(@NonNull String namespace) throws XMLStreamException, IOException;
+  @NonNull
   String toMarkdown();
 
-  String toMarkdown(Formatter formatter);
-
   @NonNull
-  String toMarkdownYaml();
+  String toMarkdown(@NonNull Formatter formatter);
 
   /**
    * Retrieve all nodes contained within this markup text as a stream.
-   * 
+   *
    * @return a depth first stream
    */
   @NonNull
@@ -102,7 +102,7 @@ public interface IMarkupText {
   /**
    * Retrieve all insert statements that are contained within this markup text that match the provided
    * filter.
-   * 
+   *
    * @param filter
    *          a filter used to identify matching insert statements
    * @return the matching insert statements
@@ -110,4 +110,20 @@ public interface IMarkupText {
   @NonNull
   List<InsertAnchorNode> getInserts(
       @NonNull Predicate<InsertAnchorNode> filter);
+
+  /**
+   * Determine if the Markup consists of block elements.
+   *
+   * @return {@code true} if the markup consists of block elements, or {@code false} otherwise
+   */
+  boolean isBlock();
+
+  void writeXHtml(
+      @NonNull String namespace,
+      @NonNull XMLStreamWriter2 streamWriter) throws XMLStreamException;
+
+  void writeXHtml(
+      @NonNull String namespace,
+      @NonNull XMLEventFactory2 eventFactory,
+      @NonNull XMLEventWriter eventWriter) throws XMLStreamException;
 }

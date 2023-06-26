@@ -56,7 +56,7 @@ class AssemblyDefinitionNodeItemImpl
   /**
    * Construct a new {@link INodeItem} instance, that is orphaned from any parent nodes, based on the
    * provided assembly {@code definition}.
-   * 
+   *
    * @param definition
    *          the field
    * @param baseUri

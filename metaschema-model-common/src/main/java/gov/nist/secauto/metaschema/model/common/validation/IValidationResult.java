@@ -59,7 +59,7 @@ public interface IValidationResult {
 
   /**
    * Determines if the result of validation was valid or not.
-   * 
+   *
    * @return {@code true} if the result was determined to be valid or {@code false} otherwise
    */
   default boolean isPassing() {
@@ -69,7 +69,7 @@ public interface IValidationResult {
   /**
    * Get the highest finding severity level for the validation. The level {@link Level#INFORMATIONAL}
    * will be returned if no validation findings were identified.
-   * 
+   *
    * @return the highest finding severity level
    */
   @NonNull
@@ -77,7 +77,7 @@ public interface IValidationResult {
 
   /**
    * Get the list of validation findings, which may be empty.
-   * 
+   *
    * @return the list
    */
   @NonNull

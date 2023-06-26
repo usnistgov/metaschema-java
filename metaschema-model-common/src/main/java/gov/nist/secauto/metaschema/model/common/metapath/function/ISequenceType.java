@@ -56,28 +56,28 @@ public interface ISequenceType {
 
   /**
    * Determine if the sequence is empty (if it holds any data) or not.
-   * 
+   *
    * @return {@code true} if the sequence is empty or {@code false} otherwise
    */
   boolean isEmpty();
 
   /**
    * Get the type of the sequence.
-   * 
+   *
    * @return the type of the sequence or {@code null} if the sequence is empty
    */
   Class<? extends IItem> getType();
 
   /**
    * Get the occurrence of the sequence.
-   * 
+   *
    * @return the occurrence of the sequence or {@code null} if the sequence is empty
    */
   Occurrence getOccurrence();
 
   /**
    * Get the signature of the function as a string.
-   * 
+   *
    * @return the signature
    */
   String toSignature();

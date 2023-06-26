@@ -47,7 +47,7 @@ public class NullJavaTypeAdapter
 
   /**
    * Construct a new adapter.
-   * 
+   *
    * @param clazz
    *          the class to adapt
    */

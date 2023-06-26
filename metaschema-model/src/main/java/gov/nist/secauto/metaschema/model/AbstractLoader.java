@@ -41,9 +41,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.Stack;
 import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -56,7 +57,7 @@ public abstract class AbstractLoader<T> {
 
   /**
    * Retrieve the set of loaded resources.
-   * 
+   *
    * @return the set of loaded resources
    */
   @NonNull
@@ -66,7 +67,7 @@ public abstract class AbstractLoader<T> {
 
   /**
    * Retrieve a mapping of resource URIs to the associated loaded resource.
-   * 
+   *
    * @return the mapping
    */
   @NonNull
@@ -76,7 +77,7 @@ public abstract class AbstractLoader<T> {
 
   /**
    * Load a resource from the specified URI.
-   * 
+   *
    * @param resource
    *          the resource to load
    * @return the loaded instance for the specified resource
@@ -90,12 +91,12 @@ public abstract class AbstractLoader<T> {
     if (!resource.isAbsolute()) {
       throw new IllegalArgumentException(String.format("The URI '%s' must be absolute.", resource.toString()));
     }
-    return loadInternal(resource, new Stack<>());
+    return loadInternal(resource, new LinkedList<>());
   }
 
   /**
    * Load a resource from the specified path.
-   * 
+   *
    * @param path
    *          the resource to load
    * @return the loaded instance for the specified resource
@@ -106,12 +107,12 @@ public abstract class AbstractLoader<T> {
    */
   @NonNull
   public T load(@NonNull Path path) throws MetaschemaException, IOException {
-    return loadInternal(ObjectUtils.notNull(path.toUri()), new Stack<>());
+    return loadInternal(ObjectUtils.notNull(path.toUri()), new LinkedList<>());
   }
 
   /**
    * Load a resource from the specified file.
-   * 
+   *
    * @param file
    *          the resource to load
    * @return the loaded instance for the specified resource
@@ -122,12 +123,12 @@ public abstract class AbstractLoader<T> {
    */
   @NonNull
   public T load(@NonNull File file) throws MetaschemaException, IOException {
-    return loadInternal(ObjectUtils.notNull(file.toURI()), new Stack<>());
+    return loadInternal(ObjectUtils.notNull(file.toURI()), new LinkedList<>());
   }
 
   /**
    * Loads a resource from the specified URL.
-   * 
+   *
    * @param url
    *          the URL to load the resource from
    * @return the loaded instance for the specified resource
@@ -140,7 +141,7 @@ public abstract class AbstractLoader<T> {
   public T load(@NonNull URL url) throws MetaschemaException, IOException {
     try {
       URI resource = url.toURI();
-      return loadInternal(ObjectUtils.notNull(resource), new Stack<>());
+      return loadInternal(ObjectUtils.notNull(resource), new LinkedList<>());
     } catch (URISyntaxException ex) {
       // this should not happen
       LOGGER.error("Invalid url", ex);
@@ -156,7 +157,7 @@ public abstract class AbstractLoader<T> {
    * <p>
    * Previously loaded resources are provided by the cache. This method will add the resource to the
    * cache after all imported resources have been loaded.
-   * 
+   *
    * @param resource
    *          the resource to load
    * @param visitedResources
@@ -170,7 +171,7 @@ public abstract class AbstractLoader<T> {
    *           if an error occurred parsing the resource
    */
   @NonNull
-  protected T loadInternal(@NonNull URI resource, @NonNull Stack<URI> visitedResources)
+  protected T loadInternal(@NonNull URI resource, @NonNull Deque<URI> visitedResources)
       throws MetaschemaException, MalformedURLException, IOException {
     // first check if the current resource has been visited to prevent cycles
     if (visitedResources.contains(resource)) {
@@ -199,7 +200,7 @@ public abstract class AbstractLoader<T> {
 
   /**
    * Parse the provided {@code resource}.
-   * 
+   *
    * @param resource
    *          the resource to parse
    * @param visitedResources
@@ -209,7 +210,7 @@ public abstract class AbstractLoader<T> {
    * @throws IOException
    *           if an error occurred while parsing the resource
    */
-  protected abstract T parseResource(@NonNull URI resource, @NonNull Stack<URI> visitedResources)
+  protected abstract T parseResource(@NonNull URI resource, @NonNull Deque<URI> visitedResources)
       throws IOException;
 
 }

@@ -81,7 +81,7 @@ public class BooleanAdapter
   public void writeJsonValue(Object value, JsonGenerator generator)
       throws IOException {
     try {
-      generator.writeBoolean(((Boolean) value).booleanValue());
+      generator.writeBoolean((Boolean) value);
     } catch (ClassCastException ex) {
       throw new IOException(ex);
     }
@@ -120,7 +120,7 @@ public class BooleanAdapter
   /**
    * Cast the provided numeric value to a boolean. Any non-zero value will be {@code true}, or
    * {@code false} otherwise.
-   * 
+   *
    * @param item
    *          the item to cast
    * @return {@code true} if the item value is non-zero, or {@code false} otherwise
@@ -132,7 +132,7 @@ public class BooleanAdapter
 
   /**
    * If the string is a numeric value, treat it as so. Otherwise parse the value as a boolean string.
-   * 
+   *
    * @param item
    *          the item to cast
    * @return the effective boolean value of the string

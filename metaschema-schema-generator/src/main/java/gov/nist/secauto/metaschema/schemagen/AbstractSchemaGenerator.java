@@ -44,7 +44,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * 
+ *
  * @param <T>
  *          the writer type
  * @param <D>
@@ -58,7 +58,7 @@ public abstract class AbstractSchemaGenerator<T extends AutoCloseable, D extends
 
   /**
    * Create a new writer to use to write the schema.
-   * 
+   *
    * @param out
    *          the {@link Writer} to write the schema content to
    * @return the schema writer
@@ -70,14 +70,14 @@ public abstract class AbstractSchemaGenerator<T extends AutoCloseable, D extends
 
   /**
    * Create a new schema generation state object.
-   * 
+   *
    * @param metaschema
    *          the Metaschema to generate the schema for
    * @param schemaWriter
    *          the writer to use to write the schema
    * @param configuration
    *          the generation configuration
-   * @return the generation state object
+   * @return the schema generation state used for context and writing
    * @throws SchemaGenerationException
    *           if an error occurred while creating the generation state object
    */
@@ -89,7 +89,7 @@ public abstract class AbstractSchemaGenerator<T extends AutoCloseable, D extends
 
   /**
    * Called to generate the actual schema content.
-   * 
+   *
    * @param generationState
    *          the generation state object
    */
@@ -112,14 +112,22 @@ public abstract class AbstractSchemaGenerator<T extends AutoCloseable, D extends
   }
 
   /**
-   * Determine root definitions and any additional information.
+   * Determine the collection of root definitions.
+   *
+   * @param generationState
+   *          the schema generation state used for context and writing
+   * @param handler
+   *          a callback to execute on each identified root definition
+   * @return the list of identified root definitions
    */
   protected List<IRootAssemblyDefinition> analyzeDefinitions(
-      @NonNull S state,
+      @NonNull S generationState,
       @Nullable BiConsumer<MetaschemaIndex.DefinitionEntry, IDefinition> handler) {
+    // TODO: use of handler here is confusing and introduces side effects. Consider refactoring this in
+    // the caller
 
     List<IRootAssemblyDefinition> rootAssemblyDefinitions = new LinkedList<>();
-    for (MetaschemaIndex.DefinitionEntry entry : state.getMetaschemaIndex().getDefinitions()) {
+    for (MetaschemaIndex.DefinitionEntry entry : generationState.getMetaschemaIndex().getDefinitions()) {
 
       boolean referenced = entry.isReferenced();
 

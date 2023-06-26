@@ -26,41 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-
-import javax.xml.namespace.QName;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 public interface IAssemblyInstance extends INamedModelInstance, IAssembly {
-
-  @SuppressWarnings("null")
-  @NonNull
-  @Override
-  default String getXmlNamespace() {
-    return INamedModelInstance.super.getXmlNamespace();
-  }
-
-  @SuppressWarnings("null")
-  @NonNull
-  @Override
-  default QName getXmlQName() {
-    return INamedModelInstance.super.getXmlQName();
-  }
-
-  @Override
-  default String getJsonName() {
-    @NonNull
-    String retval;
-    if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-      @NonNull
-      String groupAsName = ObjectUtils.requireNonNull(getGroupAsName(), "null group-as name");
-      retval = groupAsName;
-    } else {
-      retval = getEffectiveName();
-    }
-    return retval;
-  }
 
   @Override
   IAssemblyDefinition getDefinition();

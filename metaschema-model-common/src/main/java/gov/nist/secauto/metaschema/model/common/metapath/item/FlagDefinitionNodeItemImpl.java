@@ -47,7 +47,7 @@ class FlagDefinitionNodeItemImpl implements IFlagNodeItem {
   /**
    * Construct a new {@link INodeItem} instance, that is orphaned from any parent nodes, based on the
    * provided flag {@code definition}.
-   * 
+   *
    * @param definition
    *          the flag
    * @param baseUri

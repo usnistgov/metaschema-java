@@ -49,7 +49,7 @@ public final class DefaultMatchesConstraint
 
   /**
    * Create a new matches constraint, which enforces a value pattern and/or data type.
-   * 
+   *
    * @param id
    *          the optional identifier for the constraint
    * @param formalName
@@ -110,7 +110,7 @@ public final class DefaultMatchesConstraint
     return new Builder();
   }
 
-  public static class Builder
+  public static final class Builder
       extends AbstractConstraintBuilder<Builder, DefaultMatchesConstraint> {
     private Pattern pattern;
     private IDataTypeAdapter<?> datatype;

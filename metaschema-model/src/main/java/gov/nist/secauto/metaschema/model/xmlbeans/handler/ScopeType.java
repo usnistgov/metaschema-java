@@ -35,7 +35,7 @@ public final class ScopeType {
 
   /**
    * Sets the value of obj onto the given simple value target.
-   * 
+   *
    * @param obj
    *          the boolean value to set
    * @param target
@@ -58,7 +58,7 @@ public final class ScopeType {
 
   /**
    * Returns an appropriate Java object from the given simple value.
-   * 
+   *
    * @param obj
    *          the XML value to cast to a scope
    * @return the associated scope value

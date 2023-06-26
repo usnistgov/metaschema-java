@@ -42,7 +42,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public @interface AssemblyConstraints {
   /**
    * Get the index constraints for this assembly.
-   * 
+   *
    * @return the index constraints or an empty array if no index constraints are defined
    */
   @NonNull
@@ -50,7 +50,7 @@ public @interface AssemblyConstraints {
 
   /**
    * Get the unique constraints for this assembly.
-   * 
+   *
    * @return the unique constraints or an empty array if no unique constraints are defined
    */
   @NonNull
@@ -58,7 +58,7 @@ public @interface AssemblyConstraints {
 
   /**
    * Get the cardinality constraints for this assembly.
-   * 
+   *
    * @return the cardinality constraints or an empty array if no cardinality constraints are defined
    */
   @NonNull

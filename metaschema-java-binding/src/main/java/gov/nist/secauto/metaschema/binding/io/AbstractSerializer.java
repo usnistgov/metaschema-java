@@ -43,7 +43,7 @@ public abstract class AbstractSerializer<CLASS>
 
   /**
    * Construct a new serializer.
-   * 
+   *
    * @param bindingContext
    *          the binding context used to supply bound Java classes while reading
    * @param classBinding

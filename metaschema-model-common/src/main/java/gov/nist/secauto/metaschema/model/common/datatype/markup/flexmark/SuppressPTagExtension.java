@@ -26,44 +26,63 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
 
-import com.vladsch.flexmark.ext.typographic.TypographicQuotes;
-import com.vladsch.flexmark.parser.block.NodePostProcessor;
-import com.vladsch.flexmark.parser.block.NodePostProcessorFactory;
-import com.vladsch.flexmark.util.ast.DoNotDecorate;
-import com.vladsch.flexmark.util.ast.Document;
-import com.vladsch.flexmark.util.ast.Node;
-import com.vladsch.flexmark.util.ast.NodeTracker;
+import com.vladsch.flexmark.ast.Paragraph;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.html.HtmlWriter;
+import com.vladsch.flexmark.html.renderer.NodeRenderer;
+import com.vladsch.flexmark.html.renderer.NodeRendererContext;
+import com.vladsch.flexmark.html.renderer.NodeRendererFactory;
+import com.vladsch.flexmark.html.renderer.NodeRenderingHandler;
+import com.vladsch.flexmark.util.data.DataHolder;
+import com.vladsch.flexmark.util.data.MutableDataHolder;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jetbrains.annotations.NotNull;
 
-public class QTagDoubleQuoteNodePostProcessor
-    extends NodePostProcessor {
+import java.util.Collections;
+import java.util.Set;
+
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+public class SuppressPTagExtension
+    implements HtmlRenderer.HtmlRendererExtension {
+
+  public static SuppressPTagExtension create() {
+    return new SuppressPTagExtension();
+  }
 
   @Override
-  public void process(NodeTracker state, Node node) {
-    if (node instanceof TypographicQuotes) {
-      TypographicQuotes typographicQuotes = (TypographicQuotes) node;
-      if (typographicQuotes.getOpeningMarker().matchChars("\"")) {
-        DoubleQuoteNode quoteNode = new DoubleQuoteNode(typographicQuotes);
-        node.insertAfter(quoteNode);
-        state.nodeAdded(quoteNode);
-        node.unlink();
-        state.nodeRemoved(node);
-      }
-    }
+  public void rendererOptions(MutableDataHolder options) {
+    // do nothing
   }
 
-  public static class Factory
-      extends NodePostProcessorFactory {
-    public Factory() {
-      super(false);
-      addNodeWithExclusions(TypographicQuotes.class, DoNotDecorate.class);
-    }
+  @Override
+  public void extend(HtmlRenderer.Builder rendererBuilder, String rendererType) {
+    rendererBuilder.nodeRendererFactory(new PTagNodeRenderer.Factory());
+  }
 
-    @NonNull
+  static class PTagNodeRenderer implements NodeRenderer {
+
     @Override
-    public NodePostProcessor apply(Document document) {
-      return new QTagDoubleQuoteNodePostProcessor();
+    public @Nullable Set<NodeRenderingHandler<?>> getNodeRenderingHandlers() {
+      return Collections.singleton(
+          new NodeRenderingHandler<>(Paragraph.class, this::render));
+    }
+
+    protected void render(
+        @NotNull Paragraph node,
+        @NotNull NodeRendererContext context,
+        @SuppressWarnings("unused") @NotNull HtmlWriter html) {
+      context.renderChildren(node);
+    }
+
+    public static class Factory implements NodeRendererFactory {
+
+      @Override
+      public NodeRenderer apply(DataHolder options) {
+        return new PTagNodeRenderer();
+      }
+
     }
   }
+
 }

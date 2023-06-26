@@ -19,7 +19,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItemVisitor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.Deque;
 import java.util.HashMap;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class ExplosionVisitor
     implements INodeItemVisitor<IMutableModelElement, ExplosionVisitor.Context> {

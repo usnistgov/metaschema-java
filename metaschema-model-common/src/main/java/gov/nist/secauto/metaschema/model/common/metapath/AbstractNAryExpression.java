@@ -41,7 +41,7 @@ abstract class AbstractNAryExpression
 
   /**
    * Construct a new n-ary expression.
-   * 
+   *
    * @param children
    *          the sub-expression children
    */

@@ -44,6 +44,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IConstraintVisitor;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IKeyField;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
@@ -57,6 +58,7 @@ import gov.nist.secauto.metaschema.model.xmlbeans.DefineAssemblyConstraintsType;
 import gov.nist.secauto.metaschema.model.xmlbeans.EnumType;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.model.xmlbeans.HasCardinalityConstraintType;
+import gov.nist.secauto.metaschema.model.xmlbeans.KeyConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.KeyConstraintType.KeyField;
 import gov.nist.secauto.metaschema.model.xmlbeans.PropertyType;
 import gov.nist.secauto.metaschema.model.xmlbeans.RemarksType;
@@ -86,6 +88,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * Provides support for parsing and maintaining a set of Metaschema constraints. Constraints are
  * parsed from XML.
  */
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
   @NonNull
   private static final String PATH = "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
@@ -126,7 +129,7 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
 
   /**
    * Generate a set of constraints from the provided XMLBeans instance.
-   * 
+   *
    * @param xmlConstraints
    *          the XMLBeans instance
    * @param source
@@ -172,7 +175,9 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
       }
     } catch (MetapathException | XmlValueNotSupportedException ex) {
       if (ex.getCause() instanceof MetapathException) {
-        throw new MetapathException(String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()), ex);
+        throw new MetapathException(
+            String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()),
+            ex);
       }
       throw ex;
     }
@@ -301,15 +306,8 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
     return retval;
   }
 
-  private static class XmlbeanGeneratingVisitor implements IConstraintVisitor<DefineAssemblyConstraintsType, Void> {
-    //
-    // public DefineAssemblyConstraintsType visit(@NonNull List<IConstraint> constraints) {
-    // DefineAssemblyConstraintsType retval = DefineAssemblyConstraintsType.Factory.newInstance();
-    // for (IConstraint constraint : constraints) {
-    // constraint.accept(this, retval);
-    // }
-    // return retval;
-    // }
+  private static final class XmlbeanGeneratingVisitor
+      implements IConstraintVisitor<DefineAssemblyConstraintsType, Void> {
 
     private static void applyCommonValues(@NonNull IConstraint constraint, @NonNull ConstraintType bean) {
       MarkupLine description = constraint.getDescription();
@@ -350,6 +348,7 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
     @Override
     public Void visitAllowedValues(IAllowedValuesConstraint constraint, DefineAssemblyConstraintsType state) {
       ScopedAllowedValuesType bean = state.addNewAllowedValues();
+      assert bean != null;
       applyCommonValues(constraint, bean);
 
       if (Boolean.compare(IAllowedValuesConstraint.DEFAULT_ALLOW_OTHER, constraint.isAllowedOther()) != 0) {
@@ -374,6 +373,7 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
+        assert remarksType != null;
         XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
       }
       return null;
@@ -382,6 +382,7 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
     @Override
     public Void visitCardinalityConstraint(ICardinalityConstraint constraint, DefineAssemblyConstraintsType state) {
       HasCardinalityConstraintType bean = state.addNewHasCardinality();
+      assert bean != null;
       applyCommonValues(constraint, bean);
 
       Integer minOccurs = constraint.getMinOccurs();
@@ -397,6 +398,7 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
+        assert remarksType != null;
         XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
       }
       return null;
@@ -405,6 +407,7 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
     @Override
     public Void visitExpectConstraint(IExpectConstraint constraint, DefineAssemblyConstraintsType state) {
       ScopedExpectConstraintType bean = state.addNewExpect();
+      assert bean != null;
       applyCommonValues(constraint, bean);
 
       bean.setTest(constraint.getTest());
@@ -417,6 +420,7 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
+        assert remarksType != null;
         XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
       }
       return null;
@@ -425,6 +429,7 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
     @Override
     public Void visitMatchesConstraint(IMatchesConstraint constraint, DefineAssemblyConstraintsType state) {
       ScopedMatchesConstraintType bean = state.addNewMatches();
+      assert bean != null;
       applyCommonValues(constraint, bean);
 
       Pattern pattern = constraint.getPattern();
@@ -440,9 +445,19 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
+        assert remarksType != null;
         XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
       }
       return null;
+    }
+
+    private static void applyKeyFields(@NonNull IKeyConstraint constraint, @NonNull KeyConstraintType bean) {
+      for (IKeyField keyField : constraint.getKeyFields()) {
+        KeyField keyFieldBean = bean.addNewKeyField();
+        assert keyField != null;
+        assert keyFieldBean != null;
+        applyKeyField(keyField, keyFieldBean);
+      }
     }
 
     private static void applyKeyField(@NonNull IKeyField keyField, @NonNull KeyField bean) {
@@ -456,6 +471,7 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
       MarkupMultiline remarks = keyField.getRemarks();
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
+        assert remarksType != null;
         XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
       }
     }
@@ -463,18 +479,16 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
     @Override
     public Void visitIndexConstraint(IIndexConstraint constraint, DefineAssemblyConstraintsType state) {
       ScopedIndexConstraintType bean = state.addNewIndex();
+      assert bean != null;
       applyCommonValues(constraint, bean);
+      applyKeyFields(constraint, bean);
 
       bean.setName(constraint.getName());
-
-      for (IKeyField keyField : constraint.getKeyFields()) {
-        KeyField keyFieldBean = bean.addNewKeyField();
-        applyKeyField(keyField, keyFieldBean);
-      }
 
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
+        assert remarksType != null;
         XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
       }
       return null;
@@ -483,18 +497,16 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
     @Override
     public Void visitIndexHasKeyConstraint(IIndexHasKeyConstraint constraint, DefineAssemblyConstraintsType state) {
       ScopedIndexHasKeyConstraintType bean = state.addNewIndexHasKey();
+      assert bean != null;
       applyCommonValues(constraint, bean);
+      applyKeyFields(constraint, bean);
 
       bean.setName(constraint.getIndexName());
-
-      for (IKeyField keyField : constraint.getKeyFields()) {
-        KeyField keyFieldBean = bean.addNewKeyField();
-        applyKeyField(keyField, keyFieldBean);
-      }
 
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
+        assert remarksType != null;
         XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
       }
       return null;
@@ -503,16 +515,14 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
     @Override
     public Void visitUniqueConstraint(IUniqueConstraint constraint, DefineAssemblyConstraintsType state) {
       ScopedIndexHasKeyConstraintType bean = state.addNewIndexHasKey();
+      assert bean != null;
       applyCommonValues(constraint, bean);
-
-      for (IKeyField keyField : constraint.getKeyFields()) {
-        KeyField keyFieldBean = bean.addNewKeyField();
-        applyKeyField(keyField, keyFieldBean);
-      }
+      applyKeyFields(constraint, bean);
 
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
+        assert remarksType != null;
         XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
       }
       return null;

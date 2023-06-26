@@ -38,7 +38,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IConstraintValidator {
   /**
    * Validate the provided item against any associated constraints.
-   * 
+   *
    * @param item
    *          the item to validate
    * @throws MetapathException
@@ -48,7 +48,7 @@ public interface IConstraintValidator {
 
   /**
    * Complete any validations that require full analysis of the content model.
-   * 
+   *
    * @throws MetapathException
    *           if an error occurred while evaluating a Metapath used in a constraint
    */

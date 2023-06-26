@@ -47,7 +47,7 @@ class Predicate implements IExpression {
 
   /**
    * Construct a new predicate expression.
-   * 
+   *
    * @param base
    *          the base to evaluate against
    * @param predicates
@@ -60,7 +60,7 @@ class Predicate implements IExpression {
 
   /**
    * Get the base sub-expression.
-   * 
+   *
    * @return the sub-expression
    */
   @NonNull
@@ -70,7 +70,7 @@ class Predicate implements IExpression {
 
   /**
    * Retrieve the list of predicates to filter with.
-   * 
+   *
    * @return the list of predicates
    */
   @NonNull
@@ -100,8 +100,7 @@ class Predicate implements IExpression {
             return Map.entry(BigInteger.valueOf(index.incrementAndGet()), item);
           }).filter(entry -> {
             @SuppressWarnings("null")
-            @NonNull
-            IItem item = entry.getValue();
+            @NonNull IItem item = entry.getValue();
 
             // return false if any predicate evaluates to false
             return !predicates.stream()

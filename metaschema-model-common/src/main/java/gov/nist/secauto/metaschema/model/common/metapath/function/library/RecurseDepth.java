@@ -143,8 +143,7 @@ public final class RecurseDepth {
 
     return ISequence.of(ObjectUtils.notNull(initialContext.asStream()
         .flatMap(item -> {
-          @NonNull
-          ISequence<INodeItem> metapathResult
+          @NonNull ISequence<INodeItem> metapathResult
               = recursionMetapath.evaluate(ObjectUtils.requireNonNull(item), dynamicContext);
           ISequence<INodeItem> result = recurseDepth(metapathResult, recursionMetapath, dynamicContext);
           return Stream.concat(result.asStream(), Stream.of(item));

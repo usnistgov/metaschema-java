@@ -26,299 +26,128 @@
 
 package gov.nist.secauto.metaschema.model;
 
-import com.vladsch.flexmark.ast.HtmlBlock;
-import com.vladsch.flexmark.ast.HtmlInline;
-import com.vladsch.flexmark.ast.Image;
-import com.vladsch.flexmark.ast.LinkNode;
-import com.vladsch.flexmark.ext.tables.TableBlock;
-import com.vladsch.flexmark.ext.tables.TableCell;
-import com.vladsch.flexmark.ext.tables.TableRow;
-import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.parser.ListOptions;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.AbstractMarkupXmlVisitor;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupString;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AbstractMarkupWriter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.IMarkupVisitor;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.IMarkupWriter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.MarkupVisitor;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.NodeVisitor;
+
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class XmlbeansMarkupVisitor
-    extends AbstractMarkupXmlVisitor<XmlCursor, IllegalArgumentException> {
+public class XmlbeansMarkupVisitor // TODO: rename
+    extends AbstractMarkupWriter<XmlCursor, IllegalArgumentException> {
 
+  /**
+   * Write the provided markup to the provided object.
+   *
+   * @param markup
+   *          the markup to write
+   * @param namespace
+   *          the XML namespace to use for markup elements
+   * @param obj
+   *          the XML beans object to write to
+   */
   @SuppressWarnings("resource")
-  public static void visit(@NonNull MarkupLine markup, @NonNull String namespace, @NonNull XmlObject obj) {
+  public static void visit(@NonNull IMarkupString<?> markup, @NonNull String namespace, @NonNull XmlObject obj) {
     try (XmlCursor cursor = ObjectUtils.notNull(obj.newCursor())) {
       visit(markup, namespace, cursor);
     }
   }
 
-  public static void visit(@NonNull MarkupLine markup, @NonNull String namespace, @NonNull XmlCursor cursor) {
-    new XmlbeansMarkupVisitor(namespace, false).visitDocument(markup.getDocument(), cursor);
+  /**
+   * Write the provided markup to the provided object.
+   *
+   * @param markup
+   *          the markup to write
+   * @param namespace
+   *          the XML namespace to use for markup elements
+   * @param cursor
+   *          the XML beans cursor to write to
+   */
+  public static void visit(@NonNull IMarkupString<?> markup, @NonNull String namespace, @NonNull XmlCursor cursor) {
+    IMarkupWriter<XmlCursor, IllegalArgumentException> writer = new XmlbeansMarkupVisitor(
+        namespace,
+        markup.getFlexmarkFactory().getListOptions(),
+        cursor);
+    IMarkupVisitor<XmlCursor, IllegalArgumentException> visitor = new MarkupVisitor<>(markup.isBlock());
+    visitor.visitDocument(markup.getDocument(), writer);
   }
 
-  @SuppressWarnings("resource")
-  public static void visit(@NonNull MarkupMultiline markup, @NonNull String namespace, @NonNull XmlObject obj) {
-    try (XmlCursor cursor = ObjectUtils.notNull(obj.newCursor())) {
-      visit(markup, namespace, cursor);
-    }
+  /**
+   * Construct a new XML beans markup visitor used for writing XML.
+   *
+   * @param namespace
+   *          the XML namespace to use for markup elements
+   * @param options
+   *          Flexmark-based formatting options to control output formatting
+   * @param writer
+   *          the XML beans cursor to write to
+   */
+  protected XmlbeansMarkupVisitor(
+      @NonNull String namespace,
+      @NonNull ListOptions options,
+      @NonNull XmlCursor writer) {
+    super(namespace, options, writer);
   }
-
-  public static void visit(@NonNull MarkupMultiline markup, @NonNull String namespace, @NonNull XmlCursor cursor) {
-    new XmlbeansMarkupVisitor(namespace, true).visitDocument(markup.getDocument(), cursor);
-  }
-
-  protected XmlbeansMarkupVisitor(@NonNull String namespace, boolean handleBlockElements) {
-    super(namespace, handleBlockElements);
-  }
-  //
-  // @Override
-  // protected void visitText(Text node, XmlCursor state) throws IllegalArgumentException {
-  // state.insertChars(node.getChars().toString());
-  // }
 
   @Override
-  protected void handleBasicElement(String localName, Node node, XmlCursor state) {
-    QName qname = newQName(localName);
-    state.beginElement(qname);
-    state.push();
+  public void writeEmptyElement(QName qname, Map<String, String> attributes)
+      throws IllegalArgumentException { // NOPMD intended
+    XmlCursor cursor = getStream();
+    cursor.beginElement(qname);
 
-    visitChildren(node, state);
-
-    state.pop();
+    attributes.forEach((name, value) -> cursor.insertAttributeWithValue(name, value));
 
     // go to the end of the new element
-    state.toEndToken();
+    cursor.toEndToken();
 
     // state advance past the end element
-    state.toNextToken();
+    cursor.toNextToken();
   }
 
   @Override
-  protected void writeText(String text, XmlCursor state) {
-    state.insertChars(text);
-  }
+  public void writeElementStart(QName qname, Map<String, String> attributes)
+      throws IllegalArgumentException { // NOPMD intended
+    XmlCursor cursor = getStream();
+    cursor.beginElement(qname);
 
-  @Override
-  protected void writeHtmlEntity(String entityText, XmlCursor state) {
-    state.insertChars(entityText);
-  }
-
-  @Override
-  protected void visitLink(LinkNode node, XmlCursor state) {
-    QName qname = newQName("a");
-    state.beginElement(qname);
-
-    state.insertAttributeWithValue("href", ObjectUtils.requireNonNull(node.getUrl().toString()));
-
-    visitElementChildren(node, state);
-  }
-
-  private void visitElementChildren(@NonNull Node node, XmlCursor state) {
-    state.push();
-
-    visitChildren(node, state);
-
-    state.pop();
-
-    // go to the end of the new element
-    state.toEndToken();
-
-    // state advance past the end element
-    state.toNextToken();
-  }
-
-  @Override
-  protected void visitImage(Image node, XmlCursor state) {
-    QName qname = newQName("img");
-    state.beginElement(qname);
-
-    state.insertAttributeWithValue("src", ObjectUtils.requireNonNull(node.getUrl().toString()));
-
-    if (node.getText() != null) {
-      state.insertAttributeWithValue("alt", ObjectUtils.requireNonNull(node.getText().toString()));
-    }
-
-    visitElementChildren(node, state);
-  }
-
-  @Override
-  protected void visitInsertAnchor(InsertAnchorNode node, XmlCursor state) {
-    QName qname = newQName("insert");
-    state.beginElement(qname);
-
-    state.insertAttributeWithValue("type", ObjectUtils.requireNonNull(node.getType().toString()));
-    state.insertAttributeWithValue("id-ref", ObjectUtils.requireNonNull(node.getIdReference().toString()));
-
-    visitElementChildren(node, state);
-  }
-
-  @Override
-  protected void visitHtmlInline(HtmlInline node, XmlCursor state) {
-    assert state != null;
-    handleHtml(node, state);
-  }
-
-  private void handleHtml(Node node, @NonNull XmlCursor state) {
-    Document doc = Jsoup.parse(node.getChars().toString());
-    try {
-      doc.body().traverse(new XmlBeansNodeVisitor(state));
-    } catch (InlineHtmlXmlException ex) {
-      throw (IllegalArgumentException) ex.getCause();
-    }
-  }
-
-  @Override
-  protected void visitHtmlBlock(HtmlBlock node, XmlCursor state) {
-    assert state != null;
-    handleHtml(node, state);
-  }
-
-  @Override
-  protected void visitTable(@NonNull TableBlock node, XmlCursor state) {
-    QName qname = newQName("table");
-    state.beginElement(qname);
+    attributes.forEach((name, value) -> cursor.insertAttributeWithValue(name, value));
 
     // save the current location state
-    state.push();
-
-    super.visitTable(node, state);
-
-    // get the saved location state
-    state.pop();
-
-    // go to the end of the new element
-    state.toEndToken();
-
-    // state advance past the end element
-    state.toNextToken();
+    cursor.push();
   }
 
   @Override
-  protected void visitTableRow(@NonNull TableRow node, XmlCursor state) {
-    QName qname = newQName("tr");
-    state.beginElement(qname);
+  public void writeElementEnd(QName qname) throws IllegalArgumentException { // NOPMD intended
+    XmlCursor cursor = getStream();
 
-    // save the current location state
-    state.push();
-
-    for (Node childNode : node.getChildren()) {
-      if (childNode instanceof TableCell) {
-        handleTableCell((TableCell) childNode, state);
-      }
-    }
-
-    // get the saved location state
-    state.pop();
+    // restore location to end of start element
+    cursor.pop();
 
     // go to the end of the new element
-    state.toEndToken();
+    cursor.toEndToken();
 
     // state advance past the end element
-    state.toNextToken();
+    cursor.toNextToken();
   }
 
-  private void handleTableCell(TableCell node, XmlCursor state) {
-    QName qname;
-    if (node.isHeader()) {
-      qname = newQName("th");
-    } else {
-      qname = newQName("td");
-    }
-
-    state.beginElement(qname);
-
-    // save the current location state
-    state.push();
-
-    visitChildren(node, state);
-
-    // get the saved location state
-    state.pop();
-
-    // go to the end of the new element
-    state.toEndToken();
-
-    // state advance past the end element
-    state.toNextToken();
+  @Override
+  public void writeText(CharSequence text) throws IllegalArgumentException { // NOPMD intended
+    getStream().insertChars(text.toString());
   }
 
-  private class XmlBeansNodeVisitor implements NodeVisitor {
-    @NonNull
-    private final XmlCursor cursor;
-
-    public XmlBeansNodeVisitor(@NonNull XmlCursor cursor) {
-      this.cursor = cursor;
-    }
-
-    @Override
-    public void head(org.jsoup.nodes.Node node, int depth) {
-      if (depth > 0) {
-        try {
-          if (node instanceof org.jsoup.nodes.Element) {
-            org.jsoup.nodes.Element element = (org.jsoup.nodes.Element) node;
-            // if (element.childNodes().isEmpty()) {
-            // cursor.writeEmptyElement(getNamespace(), element.tagName());
-            // } else {
-            // writer.writeStartElement(getNamespace(), element.tagName());
-            // }
-
-            cursor.beginElement(newQName(ObjectUtils.notNull(element.tagName())));
-
-            for (org.jsoup.nodes.Attribute attr : element.attributes()) {
-              cursor.insertAttributeWithValue(attr.getKey(), attr.getValue());
-            }
-
-            if (!element.childNodes().isEmpty()) {
-              // save the current location state
-              cursor.push();
-            }
-          } else if (node instanceof org.jsoup.nodes.TextNode) {
-            org.jsoup.nodes.TextNode text = (org.jsoup.nodes.TextNode) node;
-            cursor.insertChars(text.text());
-          }
-        } catch (IllegalArgumentException ex) {
-          throw new InlineHtmlXmlException(ex);
-        }
-      }
-    }
-
-    @Override
-    public void tail(org.jsoup.nodes.Node node, int depth) {
-      if (depth > 0 && node instanceof org.jsoup.nodes.Element) {
-        org.jsoup.nodes.Element element = (org.jsoup.nodes.Element) node;
-        if (!element.childNodes().isEmpty()) {
-          // get the saved location state
-          cursor.pop();
-
-          // go to the end of the new element
-          cursor.toEndToken();
-
-          // state advance past the end element
-          cursor.toNextToken();
-        }
-      }
-    }
-  }
-
-  private static class InlineHtmlXmlException
-      extends IllegalStateException {
-
-    /**
-     * the serial version uid.
-     */
-    private static final long serialVersionUID = 1L;
-
-    public InlineHtmlXmlException(Throwable cause) {
-      super(cause);
-    }
+  @Override
+  protected void writeComment(CharSequence text) throws IllegalArgumentException { // NOPMD intended
+    getStream().insertComment(text.toString());
   }
 }

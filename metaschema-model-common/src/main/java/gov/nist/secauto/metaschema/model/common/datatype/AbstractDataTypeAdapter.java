@@ -51,7 +51,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * Provides a basic Java type adapter implementation. This implementation should be the parent class
  * of all Java type adapter implementations.
- * 
+ *
  * @param <TYPE>
  *          the raw Java type this adapter supports
  * @param <ITEM_TYPE>
@@ -66,7 +66,7 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
 
   /**
    * Construct a new Java type adapter for a provided class.
-   * 
+   *
    * @param clazz
    *          the Java type this adapter supports
    */
@@ -129,8 +129,7 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
 
       // trim leading and trailing whitespace
       @SuppressWarnings("null")
-      @NonNull
-      String value = builder.toString().trim();
+      @NonNull String value = builder.toString().trim();
       return parse(value);
     } catch (XMLStreamException ex) {
       throw new IOException(ex);
@@ -159,7 +158,11 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
   }
 
   @Override
-  public void writeXml(Object value, StartElement parent, XMLEventFactory2 eventFactory, XMLEventWriter eventWriter)
+  public void writeXmlValue(
+      Object value,
+      StartElement parent,
+      XMLEventFactory2 eventFactory,
+      XMLEventWriter eventWriter)
       throws IOException, XMLStreamException {
     try {
       String content = asString(value);
@@ -171,7 +174,7 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
   }
 
   @Override
-  public void writeXmlCharacters(Object value, QName parentName, XMLStreamWriter2 writer) throws XMLStreamException {
+  public void writeXmlValue(Object value, QName parentName, XMLStreamWriter2 writer) throws XMLStreamException {
     String content = asString(value);
     writer.writeCharacters(content);
   }
@@ -193,8 +196,7 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
     if (item == null) {
       throw new InvalidValueForCastFunctionException("item is null");
     } else if (getItemClass().isAssignableFrom(item.getClass())) {
-      @SuppressWarnings("unchecked")
-      ITEM_TYPE typedItem = (ITEM_TYPE) item;
+      @SuppressWarnings("unchecked") ITEM_TYPE typedItem = (ITEM_TYPE) item;
       retval = typedItem;
     } else {
       retval = castInternal(item);
@@ -208,7 +210,7 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
    * The default implementation of this will attempt to parse the provided item as a string using the
    * {@link #parse(String)} method. If this behavior is undesirable, then a subclass should override
    * this method.
-   * 
+   *
    * @param item
    *          the item to cast
    * @return the item casted to this adapter's item type

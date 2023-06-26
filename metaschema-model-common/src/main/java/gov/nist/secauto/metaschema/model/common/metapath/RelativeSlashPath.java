@@ -47,8 +47,7 @@ class RelativeSlashPath
     IExpression left = getLeft();
 
     @SuppressWarnings("unchecked")
-    @NonNull
-    ISequence<? extends INodeItem> leftResult
+    @NonNull ISequence<? extends INodeItem> leftResult
         = (ISequence<? extends INodeItem>) left.accept(dynamicContext, context);
 
     return evaluateInNodeContext(getRight(), dynamicContext, leftResult);

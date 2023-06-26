@@ -39,7 +39,7 @@ class Modulo
   /**
    * Create an expression that gets the numeric remainder from dividing the dividend by the divisor,
    * also called the "modulo operation".
-   * 
+   *
    * @param dividend
    *          the item to be divided
    * @param divisor
@@ -68,7 +68,7 @@ class Modulo
 
   /**
    * Get the numeric remainder from dividing the dividend by the divisor.
-   * 
+   *
    * @param dividend
    *          the item to be divided
    * @param divisor

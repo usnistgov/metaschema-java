@@ -46,7 +46,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 interface IModelPropertyInfo {
   /**
    * Get the associated property for which this info is for.
-   * 
+   *
    * @return the property
    */
   @NonNull
@@ -68,7 +68,7 @@ interface IModelPropertyInfo {
    * Read the value data for the property. At the point that this is called, the parser must be
    * located just after the property/field name has been parsed. This method will return a value based
    * on the property's value type as reported by {@link #getProperty()}.
-   * 
+   *
    * @param collector
    *          used to hold parsed values
    * @param context
@@ -88,7 +88,7 @@ interface IModelPropertyInfo {
 
   /**
    * Write a {@code value} that is not {@code null}.
-   * 
+   *
    * @param value
    *          the value to write
    * @param parentName

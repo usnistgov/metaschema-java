@@ -34,7 +34,8 @@ import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaPackage;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlNs;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlNsForm;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupText;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupString;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.FlexmarkConfiguration;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.io.IOException;
@@ -95,8 +96,8 @@ class PackageProductionImpl implements IPackageProduction {
         = new DefaultGeneratedClass(packageInfo, ObjectUtils.notNull(ClassName.get(javaPackage, "package-info")));
   }
 
-  public static String formatMarkdown(@NonNull IMarkupText markup) {
-    Formatter.Builder builder = Formatter.builder();
+  public static String formatMarkdown(@NonNull IMarkupString<?> markup) {
+    Formatter.Builder builder = Formatter.builder(FlexmarkConfiguration.FLEXMARK_CONFIG);
     builder.set(ObjectUtils.notNull(Formatter.FORMAT_FLAGS), LineAppendable.F_WHITESPACE_REMOVAL);
     // builder.set(Formatter.ESCAPE_SPECIAL_CHARS, false);
     Formatter formatter = builder.build();
@@ -118,7 +119,7 @@ class PackageProductionImpl implements IPackageProduction {
 
   /**
    * Get the generated package-info class associated with this package.
-   * 
+   *
    * @return the package-info class
    */
   @Override

@@ -83,7 +83,7 @@ public class GenerateSourcesMojo
 
   /**
    * Retrieve a list of binding configurations.
-   * 
+   *
    * @return the collection of binding configurations
    */
   protected List<File> getConfigs() {
@@ -116,7 +116,7 @@ public class GenerateSourcesMojo
       throw new MojoExecutionException("Creation of Java classes failed.", ex);
     }
   }
-  
+
   @Override
   public void execute() throws MojoExecutionException {
     File staleFile = getStaleFile();
@@ -148,7 +148,6 @@ public class GenerateSourcesMojo
         }
       }
 
-      
       // generate Java sources based on provided metaschema sources
       final MetaschemaLoader loader = new MetaschemaLoader();
       loader.allowEntityResolution();

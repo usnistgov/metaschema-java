@@ -64,15 +64,9 @@ class EmptyListImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> {
 
   @Override
   public boolean equals(Object other) {
-    if (other == this) {
-      return true; // NOPMD - readability
-    }
-
-    if (!(other instanceof ISequence)) {
-      return false; // NOPMD - readability
-    }
-
-    return ((ISequence<?>) other).isEmpty();
+    // must either be the same instance or a sequence that is empty
+    return other == this
+        || (other instanceof ISequence && ((ISequence<?>) other).isEmpty());
   }
 
   @Override

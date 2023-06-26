@@ -59,7 +59,7 @@ class SimpleFieldProperty
   /**
    * Construct a new bound flag instance based on a Java property. The name of the property is bound
    * to the name of the instance.
-   * 
+   *
    * @param field
    *          the Java field to bind to
    * @param parentClassBinding
@@ -125,10 +125,10 @@ class SimpleFieldProperty
 
   @Override
   public String getUseName() {
-    return ModelUtil.resolveLocalName(getFieldAnnotation().useName(), null);
+    return ModelUtil.resolveToString(getFieldAnnotation().useName());
   }
 
-  private class ScalarFieldDefinition implements IBoundFieldDefinition, IValueConstraintFeature {
+  private final class ScalarFieldDefinition implements IBoundFieldDefinition, IValueConstraintFeature {
     private final Lazy<IValueConstraintSupport> constraints;
 
     private ScalarFieldDefinition() {
@@ -179,7 +179,7 @@ class SimpleFieldProperty
 
     @Override
     public String getUseName() {
-      return ModelUtil.resolveLocalName(getFieldAnnotation().useName(), null);
+      return ModelUtil.resolveToString(getFieldAnnotation().useName());
     }
 
     @Override

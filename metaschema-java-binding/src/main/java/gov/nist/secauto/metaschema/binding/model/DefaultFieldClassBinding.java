@@ -43,6 +43,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaFieldValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.ValueConstraints;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
@@ -90,7 +91,7 @@ public class DefaultFieldClassBinding
   /**
    * Create a new {@link IClassBinding} for a Java bean annotated with the {@link BoundField}
    * annotation.
-   * 
+   *
    * @param clazz
    *          the Java bean class
    * @param bindingContext
@@ -113,7 +114,7 @@ public class DefaultFieldClassBinding
   /**
    * Construct a new {@link IClassBinding} for a Java bean annotated with the {@link BoundField}
    * annotation.
-   * 
+   *
    * @param clazz
    *          the Java bean class
    * @param bindingContext
@@ -164,7 +165,7 @@ public class DefaultFieldClassBinding
 
   /**
    * Collect all fields that are part of the model for this class.
-   * 
+   *
    * @param clazz
    *          the class
    * @return the field value instances if found or {@code null} otherwise
@@ -199,7 +200,7 @@ public class DefaultFieldClassBinding
 
   /**
    * Initialize the flag instances for this class.
-   * 
+   *
    * @return the field value instance
    */
   protected IBoundFieldValueInstance initalizeFieldValueInstance() {
@@ -802,7 +803,7 @@ public class DefaultFieldClassBinding
   }
 
   @Override
-  protected Class<? extends AbstractBoundMetaschema> getMetaschemaClass() {
+  protected Class<? extends IMetaschema> getMetaschemaClass() {
     return getMetaschemaFieldAnnotation().metaschema();
   }
 }

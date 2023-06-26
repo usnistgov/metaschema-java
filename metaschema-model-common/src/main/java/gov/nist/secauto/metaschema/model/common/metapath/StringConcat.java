@@ -40,7 +40,7 @@ class StringConcat
   /**
    * Create a new expression that concatenates the results of evaluating the provided
    * {@code expressions} as strings.
-   * 
+   *
    * @param expressions
    *          the expressions to evaluate
    */

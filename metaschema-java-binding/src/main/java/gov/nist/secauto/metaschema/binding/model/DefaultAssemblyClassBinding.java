@@ -44,6 +44,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.ValueConstraints;
 import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
@@ -90,7 +91,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   /**
    * Create a new {@link IClassBinding} for a Java bean annotated with the {@link BoundAssembly}
    * annotation.
-   * 
+   *
    * @param clazz
    *          the Java bean class
    * @param bindingContext
@@ -106,7 +107,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   /**
    * Construct a new {@link IClassBinding} for a Java bean annotated with the {@link BoundAssembly}
    * annotation.
-   * 
+   *
    * @param clazz
    *          the Java bean class
    * @param bindingContext
@@ -136,7 +137,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   /**
    * Get the {@link MetaschemaAssembly} annotation associated with this class. This annotation
    * provides information used by this class binding to control binding behavior.
-   * 
+   *
    * @return the annotation
    */
   public MetaschemaAssembly getMetaschemaAssemblyAnnotation() {
@@ -393,7 +394,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
    * <p>
    * After parsing the current token will be the token at the end object immediately after all the
    * fields and values.
-   * 
+   *
    * @param instance
    *          the bound object to read data into
    * @param parentInstance
@@ -487,7 +488,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
 
   /**
    * Serializes the provided instance in JSON.
-   * 
+   *
    * @param instance
    *          the instance to serialize
    * @param writeObjectWrapper
@@ -572,7 +573,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   }
 
   @Override
-  protected Class<? extends AbstractBoundMetaschema> getMetaschemaClass() {
+  protected Class<? extends IMetaschema> getMetaschemaClass() {
     return getMetaschemaAssemblyAnnotation().metaschema();
   }
 }

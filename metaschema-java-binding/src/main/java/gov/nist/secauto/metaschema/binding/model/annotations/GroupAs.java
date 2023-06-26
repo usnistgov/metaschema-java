@@ -44,7 +44,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public @interface GroupAs {
   /**
    * The name to use for an XML grouping element wrapper or a JSON/YAML grouping property.
-   * 
+   *
    * @return the name
    */
   @NonNull
@@ -55,7 +55,7 @@ public @interface GroupAs {
    * <p>
    * If the value is "##default", then element name is derived from the namespace provided in the
    * package-info.
-   * 
+   *
    * @return the namespace
    */
   @NonNull
@@ -63,7 +63,7 @@ public @interface GroupAs {
 
   /**
    * Describes how to handle collections in JSON/YAML.
-   * 
+   *
    * @return the JSON collection strategy
    */
   @NonNull
@@ -71,7 +71,7 @@ public @interface GroupAs {
 
   /**
    * Describes how to handle collections in XML.
-   * 
+   *
    * @return the XML collection strategy
    */
   @NonNull

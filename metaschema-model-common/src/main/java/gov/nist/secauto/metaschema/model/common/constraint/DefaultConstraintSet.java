@@ -52,7 +52,7 @@ public class DefaultConstraintSet implements IConstraintSet {
 
   /**
    * Construct a new constraint set.
-   * 
+   *
    * @param resourceLocation
    *          the resource the constraint was provided from
    * @param scopedContraints
@@ -78,7 +78,7 @@ public class DefaultConstraintSet implements IConstraintSet {
 
   /**
    * Get the resource the constraint was provided from.
-   * 
+   *
    * @return the resource
    */
   @NonNull

@@ -39,7 +39,7 @@ class ClassBindingFieldProperty
   /**
    * Construct a new bound flag instance based on a Java property. The name of the property is bound
    * to the name of the instance.
-   * 
+   *
    * @param field
    *          the Java field to bind to
    * @param definition
@@ -73,7 +73,7 @@ class ClassBindingFieldProperty
   }
 
   @Override
-  public IFieldClassBinding getDefinition() {
+  public final IFieldClassBinding getDefinition() {
     return definition;
   }
 

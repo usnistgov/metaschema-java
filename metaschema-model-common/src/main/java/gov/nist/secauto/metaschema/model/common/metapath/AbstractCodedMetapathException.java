@@ -45,7 +45,7 @@ public abstract class AbstractCodedMetapathException
 
   /**
    * Constructs a new Metapath exception with the provided {@code message} and no cause.
-   * 
+   *
    * @param code
    *          the error code value
    * @param message
@@ -58,7 +58,7 @@ public abstract class AbstractCodedMetapathException
 
   /**
    * Constructs a new Metapath exception with the provided {@code message} and {@code cause}.
-   * 
+   *
    * @param code
    *          the error code value
    * @param message
@@ -73,7 +73,7 @@ public abstract class AbstractCodedMetapathException
 
   /**
    * Constructs a new Metapath exception with a {@code null} message and the provided {@code cause}.
-   * 
+   *
    * @param code
    *          the error code value
    * @param cause
@@ -91,7 +91,7 @@ public abstract class AbstractCodedMetapathException
 
   /**
    * Get the error code value.
-   * 
+   *
    * @return the error code value
    */
   protected int getCode() {
@@ -100,14 +100,14 @@ public abstract class AbstractCodedMetapathException
 
   /**
    * Get the error code family.
-   * 
+   *
    * @return the error code family
    */
   protected abstract String getCodePrefix();
 
   /**
    * Get a combination of the error code family and value.
-   * 
+   *
    * @return the full error code.
    */
   protected String getCodeAsString() {

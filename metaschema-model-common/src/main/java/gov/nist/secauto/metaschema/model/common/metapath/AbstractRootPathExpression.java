@@ -41,7 +41,7 @@ abstract class AbstractRootPathExpression
 
   /**
    * Construct a new relative path expression of "/expression".
-   * 
+   *
    * @param expression
    *          the path expression to evaluate from the root
    */
@@ -53,7 +53,7 @@ abstract class AbstractRootPathExpression
 
   /**
    * Get the path expression.
-   * 
+   *
    * @return the expression
    */
   @NonNull

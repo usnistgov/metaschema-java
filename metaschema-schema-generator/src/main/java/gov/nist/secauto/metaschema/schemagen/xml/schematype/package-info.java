@@ -24,7 +24,8 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 /**
- * Supports generation of XML Schema types based on Metaschema contructs (i.e. flags, fields, assemblies).
+ * Supports generation of XML Schema types based on Metaschema contructs (i.e. flags, fields,
+ * assemblies).
  */
 
 package gov.nist.secauto.metaschema.schemagen.xml.schematype;

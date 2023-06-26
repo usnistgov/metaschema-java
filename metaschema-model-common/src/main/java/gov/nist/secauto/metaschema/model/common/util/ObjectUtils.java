@@ -41,7 +41,7 @@ public final class ObjectUtils {
    * <p>
    * This method sets the expectation that the provided object is not {@code null} in cases where a
    * non-null value is required.
-   * 
+   *
    * @param <T>
    *          the object type
    * @param obj
@@ -56,7 +56,7 @@ public final class ObjectUtils {
 
   /**
    * Require a non-null value.
-   * 
+   *
    * @param <T>
    *          the type of the reference
    * @param obj
@@ -75,7 +75,7 @@ public final class ObjectUtils {
 
   /**
    * Require a non-null value.
-   * 
+   *
    * @param <T>
    *          the type of the reference
    * @param obj
@@ -97,7 +97,7 @@ public final class ObjectUtils {
 
   /**
    * A filter used to remove null items from a stream.
-   * 
+   *
    * @param <T>
    *          the item type
    * @param item

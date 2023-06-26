@@ -27,7 +27,11 @@
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression.ResultType;
@@ -54,6 +58,7 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+@SuppressWarnings("PMD.TooManyStaticImports")
 class BuildAstVisitorTest {
   @RegisterExtension
   Mockery context = new JUnit5Mockery();

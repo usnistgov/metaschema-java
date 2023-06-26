@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.model;
 
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagContainer;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.xmlbeans.FlagReferenceType;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
@@ -54,7 +54,7 @@ class XmlFlagContainerSupport {
 
   /**
    * Generate a set of constraints from the provided XMLBeans instance.
-   * 
+   *
    * @param xmlField
    *          the XMLBeans instance
    * @param container
@@ -73,7 +73,7 @@ class XmlFlagContainerSupport {
 
   /**
    * Generate a set of constraints from the provided XMLBeans instance.
-   * 
+   *
    * @param xmlField
    *          the XMLBeans instance
    * @param container
@@ -92,7 +92,7 @@ class XmlFlagContainerSupport {
 
   /**
    * Generate a set of constraints from the provided XMLBeans instance.
-   * 
+   *
    * @param xmlAssembly
    *          the XMLBeans instance
    * @param container
@@ -111,7 +111,7 @@ class XmlFlagContainerSupport {
 
   /**
    * Generate a set of constraints from the provided XMLBeans instance.
-   * 
+   *
    * @param xmlAssembly
    *          the XMLBeans instance
    * @param container
@@ -130,7 +130,7 @@ class XmlFlagContainerSupport {
 
   /**
    * Get a mapping of flag effective name to flag instance.
-   * 
+   *
    * @return the mapping of flag effective name to flag instance
    */
   @NonNull
@@ -161,8 +161,7 @@ class XmlFlagContainerSupport {
     }
 
     @SuppressWarnings("null")
-    @NonNull
-    Map<String, IFlagInstance> retval
+    @NonNull Map<String, IFlagInstance> retval
         = flagInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagInstances);
     return retval;
   }

@@ -104,7 +104,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
 
   /**
    * Generate a message suitable for logging that describes the provided {@link XMLEvent}.
-   * 
+   *
    * @param xmlEvent
    *          the event to generate the message for
    * @return the message
@@ -116,8 +116,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
       retval = "EOF";
     } else {
       @SuppressWarnings("null")
-      @NonNull
-      StringBuilder builder = new StringBuilder()
+      @NonNull StringBuilder builder = new StringBuilder()
           .append(toEventName(xmlEvent));
       QName name = toQName(xmlEvent);
       if (name != null) {
@@ -140,7 +139,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
 
   /**
    * Generates a message for the provided {@link Location}.
-   * 
+   *
    * @param location
    *          the location to generate the message for
    * @return the message
@@ -157,7 +156,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
 
   /**
    * Generates a string containing the current event and location of the stream reader.
-   * 
+   *
    * @param reader
    *          the stream reader
    * @return the generated string
@@ -167,8 +166,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
     int type = reader.getEventType();
 
     @SuppressWarnings("null")
-    @NonNull
-    StringBuilder builder = new StringBuilder().append(toEventName(type));
+    @NonNull StringBuilder builder = new StringBuilder().append(toEventName(type));
     QName name = reader.getName();
     if (name != null) {
       builder.append(": ").append(name.toString());
@@ -188,7 +186,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
 
   /**
    * Retrieve the resource location of {@code event}.
-   * 
+   *
    * @param event
    *          the event to identify the location for
    * @return the location or {@code null} if the location is unknown
@@ -211,7 +209,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
 
   /**
    * Retrieve the name of the node associated with {@code event}.
-   * 
+   *
    * @param event
    *          the event to get the {@link QName} for
    * @return the name of the node or {@code null} if the event is not a start or end element
@@ -231,7 +229,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
 
   /**
    * Get the event name of the {@code event}.
-   * 
+   *
    * @param event
    *          the event to get the event name for
    * @return the event name
@@ -244,7 +242,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   /**
    * Get the event name of the {@code eventType}, which is one of the types defined by
    * {@link XMLStreamConstants}.
-   * 
+   *
    * @param eventType
    *          the event constant to get the event name for as defined by {@link XMLStreamConstants}
    * @return the event name
@@ -261,7 +259,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   /**
    * Advance through XMLEvents until the event type identified by {@code eventType} is reached or the
    * end of stream is found.
-   * 
+   *
    * @param reader
    *          the event reader to advance
    * @param eventType
@@ -293,7 +291,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
 
   /**
    * Skip over any processing instructions.
-   * 
+   *
    * @param reader
    *          the event reader to advance
    * @return the last processing instruction event or the reader's next event if no processing
@@ -312,7 +310,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
 
   /**
    * Skip over any whitespace.
-   * 
+   *
    * @param reader
    *          the event reader to advance
    * @return the last character event containing whitespace or the reader's next event if no character
@@ -323,8 +321,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   @SuppressWarnings("null")
   @NonNull
   public static XMLEvent skipWhitespace(@NonNull XMLEventReader2 reader) throws XMLStreamException {
-    @NonNull
-    XMLEvent nextEvent;
+    @NonNull XMLEvent nextEvent;
     while ((nextEvent = reader.peek()).isCharacters()) {
       Characters characters = nextEvent.asCharacters();
       String data = characters.getData();
@@ -340,7 +337,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   /**
    * Determine if the next event from {@code reader} is an end element whose name matches the provided
    * {@code name}.
-   * 
+   *
    * @param reader
    *          the event reader
    * @param name
@@ -358,7 +355,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   /**
    * Determine if the next event from {@code reader} is an end element whose name matches the provided
    * {@code expectedLocalName} and {@code expectedNamespace}.
-   * 
+   *
    * @param reader
    *          the event reader
    * @param expectedLocalName
@@ -390,7 +387,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   /**
    * Determine if the next event from {@code reader} is a start element whose name matches the
    * provided {@code name}.
-   * 
+   *
    * @param reader
    *          the event reader
    * @param name
@@ -406,7 +403,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
 
   /**
    * Determine if the next event from {@code reader} is an end of document event.
-   * 
+   *
    * @param reader
    *          the event reader
    * @return {@code true} if the next event is an end of document event
@@ -420,7 +417,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   /**
    * Consume the next event from {@code reader} and assert that this event is of the type identified
    * by {@code presumedEventType}.
-   * 
+   *
    * @param reader
    *          the event reader
    * @param presumedEventType
@@ -437,7 +434,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   /**
    * Consume the next event from {@code reader} and assert that this event is of the type identified
    * by {@code presumedEventType} and has the name identified by {@code presumedName}.
-   * 
+   *
    * @param reader
    *          the event reader
    * @param presumedEventType
@@ -466,7 +463,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   /**
    * Assert that the next event from {@code reader} is of the type identified by
    * {@code presumedEventType}.
-   * 
+   *
    * @param reader
    *          the event reader
    * @param presumedEventType
@@ -482,7 +479,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   /**
    * Assert that the next event from {@code reader} is of the type identified by
    * {@code presumedEventType} and has the name identified by {@code presumedName}.
-   * 
+   *
    * @param reader
    *          the event reader
    * @param presumedEventType
@@ -503,8 +500,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
             presumedName);
   }
 
-  private static CharSequence generateAssertMessage(XMLEvent retval, int presumedEventType, QName presumedName) {
-    StringBuilder builder = new StringBuilder(30);
+  private static CharSequence generateAssertMessage(XMLEvent event, int presumedEventType, QName presumedName) {
+    StringBuilder builder = new StringBuilder(64);
     builder
         .append("Expected XML ")
         .append(toEventName(presumedEventType));
@@ -514,13 +511,18 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
           .append(presumedName.toString());
     }
     builder.append("', instead found ")
-        .append(toString(retval));
+        .append(toString(event));
+    
+    Location location = toLocation(event);
+    if (location != null) {
+      builder.append(" at ").append(toString(location));
+    }
     return builder;
   }
 
   /**
    * Skips events specified by {@code events}.
-   * 
+   *
    * @param reader
    *          the event reader
    * @param events

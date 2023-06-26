@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../../metaschema/toolchains/xslt-M4/validate/metaschema-composition-check.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<!-- OSCAL CATALOG METASCHEMA -->
+<!-- validate with XSD and Schematron (linked) -->
+<METASCHEMA xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0">
+   <schema-name>Metaschema Commonmark Test</schema-name>
+   <schema-version>1.0</schema-version>
+   <short-name>metaschema-commonmark-test</short-name>
+   <namespace>http://csrc.nist.gov/ns/oscal/metaschema/commonmark-test</namespace>
+   <json-base-uri>http://csrc.nist.gov/ns/oscal/metaschema/commonmark-test</json-base-uri>
+   <define-assembly name="test">
+      <formal-name>Test</formal-name>
+      <description>A given test</description>
+      <root-name>test</root-name>
+      <model>
+         <choice>
+            <define-field name="line" as-type="markup-line" min-occurs="1">
+               <formal-name>Single Markup Line Test</formal-name>
+               <description>Used to test a single link of markup.</description>
+            </define-field>
+            <define-field name="multiline" as-type="markup-multiline" min-occurs="1">
+               <formal-name>Single Markup Line Test</formal-name>
+               <description>Used to test a single link of markup.</description>
+            </define-field>
+         </choice>
+      </model>
+   </define-assembly>
+</METASCHEMA>

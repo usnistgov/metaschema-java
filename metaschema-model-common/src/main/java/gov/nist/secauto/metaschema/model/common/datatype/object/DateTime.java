@@ -36,7 +36,7 @@ public class DateTime
   /**
    * Construct a new date/time object. This type supports ambiguous dates/times that were provided
    * without a time zone.
-   * 
+   *
    * @param value
    *          the date/time value
    * @param hasTimeZone

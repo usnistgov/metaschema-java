@@ -84,7 +84,7 @@ public final class FnBoolean {
    * <p>
    * Based on the XPath 3.1
    * <a href="https://www.w3.org/TR/xpath-functions-31/#func-boolean">fn:boolean</a> function.
-   * 
+   *
    * @param sequence
    *          the sequence to evaluate
    * @return the effective boolean value of the sequence
@@ -103,7 +103,7 @@ public final class FnBoolean {
   /**
    * A helper method that gets the effective boolean value of the provided sequence based on
    * <a href="https://www.w3.org/TR/xpath-31/#id-ebv">XPath 3.1</a>.
-   * 
+   *
    * @param sequence
    *          the sequence to evaluate
    * @return the effective boolean value
@@ -125,7 +125,7 @@ public final class FnBoolean {
   /**
    * A helper method that gets the effective boolean value of the provided item based on
    * <a href="https://www.w3.org/TR/xpath-31/#id-ebv">XPath 3.1</a>.
-   * 
+   *
    * @param item
    *          the item to evaluate
    * @return the effective boolean value

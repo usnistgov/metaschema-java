@@ -34,7 +34,7 @@ public abstract class AbstractFlagInstance
 
   /**
    * Create a new flag instance.
-   * 
+   *
    * @param parent
    *          the parent definition, which must be a definition type that can contain flags.
    */

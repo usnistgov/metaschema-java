@@ -37,7 +37,7 @@ class DecimalLiteral
 
   /**
    * Construct a new expression that always returns the same decimal value.
-   * 
+   *
    * @param value
    *          the literal value
    */

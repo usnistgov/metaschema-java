@@ -58,6 +58,7 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+@SuppressWarnings({ "PMD.GodClass", "PMD.CouplingBetweenObjects" })
 class XmlGlobalFieldDefinition implements IFieldDefinition {
   @NonNull
   private final GlobalFieldDefinitionType xmlField;
@@ -70,7 +71,7 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
 
   /**
    * Constructs a new Metaschema field definition from an XML representation bound to Java objects.
-   * 
+   *
    * @param xmlField
    *          the XML representation bound to Java objects
    * @param metaschema
@@ -88,11 +89,11 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
 
   /**
    * Get the underlying XML data.
-   * 
+   *
    * @return the underlying XML data
    */
   @NonNull
-  protected GlobalFieldDefinitionType getXmlField() {
+  protected final GlobalFieldDefinitionType getXmlField() {
     return xmlField;
   }
 
@@ -109,7 +110,7 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
   /**
    * Used to generate the instances for the constraints in a lazy fashion when the constraints are
    * first accessed.
-   * 
+   *
    * @return the constraints instance
    */
   @SuppressWarnings("null")
@@ -191,7 +192,7 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
 
   @Override
   public String getUseName() {
-    return getXmlField().isSetUseName() ? getXmlField().getUseName() : getName();
+    return getXmlField().isSetUseName() ? getXmlField().getUseName() : null;
   }
 
   @Override
@@ -213,7 +214,7 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
 
   /**
    * Lazy initialize the flag instances associated with this definition.
-   * 
+   *
    * @return the flag container
    */
   protected XmlFlagContainerSupport initFlagContainer() {
@@ -243,7 +244,7 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
 
   @SuppressWarnings("null")
   @Override
-  public IDataTypeAdapter<?> getJavaTypeAdapter() {
+  public final IDataTypeAdapter<?> getJavaTypeAdapter() {
     return getXmlField().isSetAsType() ? getXmlField().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
   }
 

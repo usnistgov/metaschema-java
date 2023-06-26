@@ -34,7 +34,7 @@ public interface IRootAssemblyDefinition extends IAssemblyDefinition {
 
   /**
    * Create a root assembly definition from a qualified assembly with root characteristics.
-   * 
+   *
    * @param <T>
    *          the definition type
    * @param rootDefinition

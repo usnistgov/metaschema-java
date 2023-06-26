@@ -48,14 +48,13 @@ public interface IIntegerItem extends IDecimalItem {
   @NonNull
   static IIntegerItem valueOf(long value) {
     @SuppressWarnings("null")
-    @NonNull
-    BigInteger bigInteger = BigInteger.valueOf(value);
+    @NonNull BigInteger bigInteger = BigInteger.valueOf(value);
     return valueOf(bigInteger);
   }
 
   /**
    * Create an integer item from a string representing an integer value.
-   * 
+   *
    * @param value
    *          an integer value
    * @return the item

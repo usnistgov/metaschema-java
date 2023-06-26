@@ -24,38 +24,41 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
+package gov.nist.secauto.metaschema.model;
 
-import com.vladsch.flexmark.html2md.converter.HtmlMarkdownWriter;
-import com.vladsch.flexmark.html2md.converter.HtmlNodeConverterContext;
-import com.vladsch.flexmark.html2md.converter.HtmlNodeRenderer;
-import com.vladsch.flexmark.html2md.converter.HtmlNodeRendererFactory;
-import com.vladsch.flexmark.html2md.converter.HtmlNodeRendererHandler;
-import com.vladsch.flexmark.util.data.DataHolder;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.jsoup.nodes.Element;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import java.util.Collections;
-import java.util.Set;
+import org.junit.jupiter.api.Test;
 
-public class QTagHtmlNodeRenderer implements HtmlNodeRenderer {
+import java.io.IOException;
+import java.net.URI;
 
-  @Override
-  public Set<HtmlNodeRendererHandler<?>> getHtmlNodeRendererHandlers() {
-    return Collections.singleton(new HtmlNodeRendererHandler<>("q", Element.class, this::renderMarkdown));
+class ExamplesTest {
+
+  @Test
+  void testLoadMetaschema() throws MetaschemaException, IOException {
+    MetaschemaLoader loader = new MetaschemaLoader();
+
+    URI metaschemaUri = ObjectUtils.notNull(URI.create(
+        "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
+    IMetaschema metaschema = loader.load(metaschemaUri);
+    assertNotNull(metaschema, "metaschema not found");
   }
 
-  private void renderMarkdown(Element element, HtmlNodeConverterContext context,
-      @SuppressWarnings("unused") HtmlMarkdownWriter out) {
-    context.wrapTextNodes(element, "\"", element.nextElementSibling() != null);
-  }
+  @Test
+  void testExamineAssemblyDefinitionByName() throws MetaschemaException, IOException {
+    MetaschemaLoader loader = new MetaschemaLoader();
+    URI metaschemaUri = ObjectUtils.notNull(URI.create(
+        "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
+    IMetaschema metaschema = loader.load(metaschemaUri);
 
-  public static class Factory implements HtmlNodeRendererFactory {
-
-    @Override
-    public HtmlNodeRenderer apply(DataHolder options) {
-      return new QTagHtmlNodeRenderer();
-    }
+    IAssemblyDefinition definition = metaschema.getScopedAssemblyDefinitionByName("property");
+    assertNotNull(definition, "definition not found");
   }
 
 }

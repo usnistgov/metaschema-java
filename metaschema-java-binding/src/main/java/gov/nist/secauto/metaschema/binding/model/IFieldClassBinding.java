@@ -38,7 +38,7 @@ public interface IFieldClassBinding extends IClassBinding, IBoundFieldDefinition
 
   /**
    * Get the instance for the fiel'd value.
-   * 
+   *
    * @return the value property
    */
   @NonNull

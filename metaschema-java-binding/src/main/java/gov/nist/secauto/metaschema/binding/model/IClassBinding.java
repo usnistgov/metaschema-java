@@ -60,7 +60,7 @@ public interface IClassBinding extends IBoundModelDefinition {
 
   /**
    * The class this binding is for.
-   * 
+   *
    * @return the bound class
    */
   @NonNull
@@ -72,7 +72,7 @@ public interface IClassBinding extends IBoundModelDefinition {
 
   /**
    * Get the class's properties that match the filter.
-   * 
+   *
    * @param flagFilter
    *          a filter to apply or {@code null} if no filtering is needed
    * @return a collection of properties
@@ -89,7 +89,7 @@ public interface IClassBinding extends IBoundModelDefinition {
    * <p>
    * After returning the current {@link JsonToken} of the {@link JsonParser} is expected to be the
    * next token after the {@link JsonToken#END_OBJECT} for this class.
-   * 
+   *
    * @param parentInstance
    *          the parent Java object to store the data in, which can be {@code null} if there is no
    *          parent
@@ -117,7 +117,7 @@ public interface IClassBinding extends IBoundModelDefinition {
    * After returning the next {@link XMLEvent} of the {@link XMLStreamReader2} is expected to be a the
    * next event after the {@link XMLStreamConstants#END_ELEMENT} for the XML
    * {@link XMLStreamConstants#START_ELEMENT} element associated with the Java class.
-   * 
+   *
    * @param parentInstance
    *          the Java instance for the object containing this object, which can be {@code null} if
    *          there is no parent
@@ -150,7 +150,7 @@ public interface IClassBinding extends IBoundModelDefinition {
 
   /**
    * Create a deep copy of the provided bound object.
-   * 
+   *
    * @param item
    *          the bound object to copy
    * @param parentInstance

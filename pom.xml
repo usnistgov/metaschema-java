@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
@@ -11,7 +13,8 @@
 	<version>0.11.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Metaschema Framework Parent</name>
-	<description>A common build root for all NIST projects related to the Metaschema framework.</description>
+	<description>A common build root for all NIST projects related to the
+		Metaschema framework.</description>
 	<url>${site.url}</url>
 	<issueManagement>
 		<url>https://github.com/usnistgov/metaschema-java/issues</url>
@@ -20,7 +23,8 @@
 	<scm>
 		<url>https://github.com/usnistgov/metaschema-java/tree/main</url>
 		<connection>scm:git:git@github.com/usnistgov/metaschema-java.git</connection>
-		<developerConnection>scm:git:git@github.com:usnistgov/metaschema-java.git</developerConnection>
+		<developerConnection>
+			scm:git:git@github.com:usnistgov/metaschema-java.git</developerConnection>
 		<tag>v0.10.0</tag>
 	</scm>
 	<distributionManagement>
@@ -84,9 +88,11 @@
 		<site.url>https://pages.nist.gov/metaschema-java/</site.url>
 		<scm.url>https://github.com/usnistgov/metaschema-java</scm.url>
 		<issueManagement.url>https://github.com/usnistgov/metaschema-java/issues</issueManagement.url>
-		<!-- ================================================================================ -->
+		<!--
+		================================================================================ -->
 		<!-- Web dependencies version -->
-		<!-- ================================================================================ -->
+		<!--
+		================================================================================ -->
 		<anchorJsVesrion>3.2.2</anchorJsVesrion>
 		<bootstrapVersion>4.4.1</bootstrapVersion>
 		<bootswatchVersion>4.4.1</bootswatchVersion>
@@ -103,13 +109,15 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<dependency.antlr4.version>4.10.1</dependency.antlr4.version>
 		<dependency.auto-service.version>1.0.1</dependency.auto-service.version>
-		<dependency.commons-lang3.version>3.12.0</dependency.commons-lang3.version>
 		<dependency.commons-collections4.version>4.4</dependency.commons-collections4.version>
 		<dependency.commons-io.version>2.13.0</dependency.commons-io.version>
+		<dependency.commons-lang3.version>3.12.0</dependency.commons-lang3.version>
+		<dependency.commons-text.version>1.10.0</dependency.commons-text.version>
 		<dependency.eclipse-jdt-annotation.version>2.2.600</dependency.eclipse-jdt-annotation.version>
 		<dependency.everit-json.version>1.14.1</dependency.everit-json.version>
-		<dependency.flexmark.version>0.64.0</dependency.flexmark.version>
+		<dependency.flexmark.version>0.64.8</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.32</dependency.freemarker.version>
+		<dependency.inject-resources-junit-jupiter.version>0.3.2</dependency.inject-resources-junit-jupiter.version>
 		<dependency.jackson.version>2.13.3</dependency.jackson.version>
 		<dependency.jackson-databind.version>2.13.4</dependency.jackson-databind.version>
 		<dependency.jaxb.version>4.0.0</dependency.jaxb.version>
@@ -122,16 +130,21 @@
 		<dependency.junit5-platform-launcher.version>1.9.0</dependency.junit5-platform-launcher.version>
 		<dependency.log4j2.version>2.20.0</dependency.log4j2.version>
 		<dependency.moxy.version>3.0.3</dependency.moxy.version>
-		<dependency.saxon.version>11.4</dependency.saxon.version>
+		<dependency.saxon.version>12.2</dependency.saxon.version>
 		<dependency.spotbugs-annotations.version>4.7.2</dependency.spotbugs-annotations.version>
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
 		<dependency.thymeleaf.version>3.0.15.RELEASE</dependency.thymeleaf.version>
 		<dependency.woodstox.version>6.4.0</dependency.woodstox.version>
 		<dependency.xmlbeans.version>5.1.1</dependency.xmlbeans.version>
+		<dependency.xmlcalabash.version>1.5.6-120</dependency.xmlcalabash.version>
 		<dependency.xmlresolver.version>4.6.0</dependency.xmlresolver.version>
-		<dependency.xml-apis.version>1.4.01</dependency.xml-apis.version>
+		<dependency.xml-apis.version>2.0.2</dependency.xml-apis.version>
+
 		<plugin.antlr4test.version>1.22</plugin.antlr4test.version>
 		<plugin.maven-changes.version>2.12.1</plugin.maven-changes.version>
+		<plugin.maven-dependency.version>3.6.0</plugin.maven-dependency.version>
+		<plugin.maven-invoker.version>3.5.0</plugin.maven-invoker.version>
+		<plugin.spotbugs.version>4.7.3.4</plugin.spotbugs.version>
 	</properties>
 	<repositories>
 		<repository>
@@ -252,8 +265,8 @@
 				<!--
 				<exclusions>
 					<exclusion>
-						<groupId>org.xmlresolver</groupId>
-						<artifactId>xmlresolver</artifactId>
+				<groupId>org.xmlresolver</groupId>
+				<artifactId>xmlresolver</artifactId>
 					</exclusion>
 				</exclusions>
 -->
@@ -286,6 +299,11 @@
 				<groupId>xml-apis</groupId>
 				<artifactId>xml-apis</artifactId>
 				<version>${dependency.xml-apis.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.xmlcalabash</groupId>
+				<artifactId>xmlcalabash</artifactId>
+				<version>${dependency.xmlcalabash.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.vladsch.flexmark</groupId>
@@ -378,6 +396,11 @@
 				<version>1.0.2</version>
 			</dependency>
 			<dependency>
+				<groupId>com.github.seancfoley</groupId>
+				<artifactId>ipaddress</artifactId>
+				<version>5.4.0</version>
+			</dependency>
+			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-core</artifactId>
 				<version>${dependency.log4j2.version}</version>
@@ -410,9 +433,24 @@
 				<version>${dependency.commons-collections4.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-text</artifactId>
+				<version>${dependency.commons-text.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
 				<version>${dependency.commons-io.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.squareup</groupId>
+				<artifactId>javapoet</artifactId>
+				<version>1.13.0</version>
+			</dependency>
+			<dependency>
+				<groupId>net.openhft</groupId>
+				<artifactId>compiler</artifactId>
+				<version>2.23ea0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.github.spotbugs</groupId>
@@ -462,6 +500,23 @@
 						<artifactId>annotations</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>io.hosuaby</groupId>
+				<artifactId>inject-resources-junit-jupiter</artifactId>
+				<version>${dependency.inject-resources-junit-jupiter.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven.plugin-tools</groupId>
+				<artifactId>maven-plugin-annotations</artifactId>
+				<version>3.7.0</version>
+			</dependency>
+			<dependency>
+				<!-- Remove compile warning -->
+				<groupId>biz.aQute.bnd</groupId>
+				<artifactId>biz.aQute.bndlib</artifactId>
+				<version>6.4.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -578,7 +633,8 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<configuration>
-						<excludePackageNames>gov.nist.secauto.metaschema.*.xmlbeans,org.apache.xmlbeans.*</excludePackageNames>
+						<excludePackageNames>
+							gov.nist.secauto.metaschema.*.xmlbeans,org.apache.xmlbeans.*</excludePackageNames>
 						<failOnWarnings>false</failOnWarnings>
 					</configuration>
 				</plugin>
@@ -588,6 +644,24 @@
 					<configuration>
 						<deployAtEnd>true</deployAtEnd>
 					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>com.github.spotbugs</groupId>
+					<artifactId>spotbugs-maven-plugin</artifactId>
+					<version>${plugin.spotbugs.version}</version>
+					<configuration>
+						<excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>${plugin.maven-dependency.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-invoker-plugin</artifactId>
+					<version>${plugin.maven-invoker.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -641,7 +715,8 @@
 									<rules>
 										<requireUpperBoundDeps>
 											<excludes>
-												<exclude>org.jetbrains:annotations</exclude>
+												<exclude>
+													org.jetbrains:annotations</exclude>
 											</excludes>
 										</requireUpperBoundDeps>
 										<dependencyConvergence>
@@ -659,8 +734,9 @@
 								<configuration>
 									<fail>true</fail>
 									<rules>
-										<!-- <reactorModuleConvergence> <ignoreModuleDependencies>true</ignoreModuleDependencies> 
-											</reactorModuleConvergence> -->
+										<!-- <reactorModuleConvergence>
+										<ignoreModuleDependencies>true</ignoreModuleDependencies>
+										</reactorModuleConvergence> -->
 										<banDuplicateClasses>
 											<scopes>
 												<scope>compile</scope>
@@ -741,7 +817,7 @@
 		<module>metaschema-maven-plugin</module>
 		<module>metaschema-java-binding</module>
 		<module>metaschema-model-common</module>
-		<module>metaschema-freemarker-support</module>
+		<!-- <module>metaschema-freemarker-support</module> -->
 		<module>metaschema-schema-generator</module>
 		<!-- <module>metaschema-documentation-generator</module> -->
 		<module>metaschema-testing</module>

@@ -36,7 +36,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 interface ILiteralExpression<RESULT_TYPE extends IAnyAtomicItem, VALUE> extends IExpression {
   /**
    * Get the literal value.
-   * 
+   *
    * @return the value
    */
   @NonNull

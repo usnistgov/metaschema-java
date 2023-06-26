@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupText;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupString;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -37,7 +37,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IMarkupItem extends IUntypedAtomicItem {
 
   @Override
-  IMarkupText getValue();
+  IMarkupString<?> getValue();
 
   @NonNull
   static IMarkupItem valueOf(@NonNull MarkupLine value) {

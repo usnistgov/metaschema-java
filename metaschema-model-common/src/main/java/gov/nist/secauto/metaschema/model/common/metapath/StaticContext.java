@@ -40,7 +40,7 @@ public class StaticContext {
   /**
    * Get the static base URI to use in resolving URIs handled by the Metapath processor. This URI, if
    * provided, will be used when a document base URI is not available.
-   * 
+   *
    * @return the base URI or {@code null} if not defined
    */
   @Nullable
@@ -54,7 +54,7 @@ public class StaticContext {
    * Sets the static base URI to use in resolving URIs handled by the Metapath processor, when a
    * document base URI is not available. There is only a single base URI. Subsequent calls to this
    * method will change the base URI.
-   * 
+   *
    * @param baseUri
    *          the base URI to use
    */
@@ -66,7 +66,7 @@ public class StaticContext {
 
   /**
    * Generate a new dynamic context.
-   * 
+   *
    * @return the generated dynamic context
    */
   @NonNull

@@ -40,7 +40,7 @@ abstract class AbstractFilterExpression
 
   /**
    * Construct a new filter expression.
-   * 
+   *
    * @param left
    *          an expression indicating the items to filter
    * @param right
@@ -70,7 +70,7 @@ abstract class AbstractFilterExpression
 
   /**
    * A callback used to apply the filter to the result of evaluating the left expression.
-   * 
+   *
    * @param result
    *          the set of items to filter
    * @param items

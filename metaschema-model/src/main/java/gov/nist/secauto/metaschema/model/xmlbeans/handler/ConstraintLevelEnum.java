@@ -35,7 +35,7 @@ public final class ConstraintLevelEnum {
 
   /**
    * Sets the value of obj onto the given simple value target.
-   * 
+   *
    * @param obj
    *          the boolean value to set
    * @param target
@@ -64,7 +64,7 @@ public final class ConstraintLevelEnum {
 
   /**
    * Returns an appropriate Java object from the given simple value.
-   * 
+   *
    * @param obj
    *          the XML value to cast to a boolean
    * @return the associated boolean value

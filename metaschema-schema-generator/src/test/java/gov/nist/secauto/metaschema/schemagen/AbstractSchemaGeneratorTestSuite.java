@@ -83,7 +83,8 @@ public abstract class AbstractSchemaGeneratorTestSuite
   @NonNull
   protected static final Function<Path, XmlSchemaContentValidator> XML_CONTENT_VALIDATOR_PROVIDER;
 
-  private static final String UNIT_TEST_CONFIG = "../metaschema-model/metaschema/test-suite/schema-generation/unit-tests.xml";
+  private static final String UNIT_TEST_CONFIG
+      = "../metaschema-model/metaschema/test-suite/schema-generation/unit-tests.xml";
 
   static {
     IMutableConfiguration<SchemaGenerationFeature> features = new DefaultConfiguration<>(SchemaGenerationFeature.class)
@@ -123,12 +124,11 @@ public abstract class AbstractSchemaGeneratorTestSuite
     }
 
     @SuppressWarnings("null")
-    @NonNull
-    Function<Path, XmlSchemaContentValidator> xmlContentValidatorProvider = (path) -> {
+    @NonNull Function<Path, XmlSchemaContentValidator> xmlContentValidatorProvider = (path) -> {
       try {
         URL schemaResource = path.toUri().toURL();
-        @SuppressWarnings("resource")
-        StreamSource source = new StreamSource(schemaResource.openStream(), schemaResource.toString());
+        @SuppressWarnings("resource") StreamSource source
+            = new StreamSource(schemaResource.openStream(), schemaResource.toString());
         List<? extends Source> schemaSources = Collections.singletonList(source);
         return new XmlSchemaContentValidator(schemaSources);
       } catch (IOException | SAXException ex) {
@@ -137,8 +137,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
     };
     XML_CONTENT_VALIDATOR_PROVIDER = xmlContentValidatorProvider;
 
-    @NonNull
-    Function<Path, JsonSchemaContentValidator> jsonContentValidatorProvider = (path) -> {
+    @NonNull Function<Path, JsonSchemaContentValidator> jsonContentValidatorProvider = (path) -> {
       try (InputStream is = Files.newInputStream(path, StandardOpenOption.READ)) {
         assert is != null;
         return new JsonSchemaContentValidator(is);
@@ -157,7 +156,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
 
   @Override
   protected Path getGenerationPath() {
-    return ObjectUtils.notNull(Paths.get("test-schemagen"));
+    return ObjectUtils.notNull(Paths.get("target/test-schemagen"));
   }
 
   protected Path produceXmlSchema(@NonNull IMetaschema metaschema, @NonNull Path schemaPath) throws IOException {

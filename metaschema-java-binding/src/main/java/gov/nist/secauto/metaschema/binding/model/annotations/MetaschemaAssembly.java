@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -48,7 +48,7 @@ public @interface MetaschemaAssembly {
    * Get the documentary formal name of the assembly.
    * <p>
    * If the value is "##none", then the description will be considered {@code null}.
-   * 
+   *
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
   @NonNull
@@ -58,7 +58,7 @@ public @interface MetaschemaAssembly {
    * Get the documentary description of the assembly.
    * <p>
    * If the value is "##none", then the description will be considered {@code null}.
-   * 
+   *
    * @return a markdown string or {@code "##none"} if no description is provided
    */
   @NonNull
@@ -67,15 +67,15 @@ public @interface MetaschemaAssembly {
   /**
    * Get the metaschema class that "owns" this assembly, which is the concrete implementation of the
    * metaschema containing the assembly.
-   * 
+   *
    * @return the metaschema class
    */
   @NonNull
-  Class<? extends AbstractBoundMetaschema> metaschema();
+  Class<? extends IMetaschema> metaschema();
 
   /**
    * Name of the assembly.
-   * 
+   *
    * @return the name
    */
   @NonNull
@@ -85,7 +85,7 @@ public @interface MetaschemaAssembly {
    * Name of the root XML element or the JSON/YAML property.
    * <p>
    * If the value is "##none", then there is no root name.
-   * 
+   *
    * @return the name
    */
   @NonNull
@@ -96,7 +96,7 @@ public @interface MetaschemaAssembly {
    * <p>
    * If the value is "##default", then namespace is derived from the namespace provided in the
    * package-info.
-   * 
+   *
    * @return the namespace
    */
   @NonNull
@@ -104,7 +104,7 @@ public @interface MetaschemaAssembly {
 
   /**
    * Get any remarks for this assembly.
-   * 
+   *
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
   @NonNull

@@ -33,7 +33,7 @@ package gov.nist.secauto.metaschema.model.common;
 public interface IField extends INamedModelElement {
   /**
    * Provides the Metaschema model type of "FIELD".
-   * 
+   *
    * @return the model type
    */
   @Override

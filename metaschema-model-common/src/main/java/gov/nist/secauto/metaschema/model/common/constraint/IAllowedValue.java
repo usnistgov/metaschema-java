@@ -36,7 +36,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IAllowedValue {
   /**
    * Retrieves the enumerated value associated with this allowed value constraint entry.
-   * 
+   *
    * @return the value
    */
   @NonNull
@@ -44,7 +44,7 @@ public interface IAllowedValue {
 
   /**
    * Retrieves the enumerated value's description associated with this allowed value constraint entry.
-   * 
+   *
    * @return the description
    */
   @NonNull

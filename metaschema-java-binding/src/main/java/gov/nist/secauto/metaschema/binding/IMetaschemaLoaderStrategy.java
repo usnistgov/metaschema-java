@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.binding;
 
-import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
@@ -40,7 +39,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 interface IMetaschemaLoaderStrategy {
   /**
    * Get the Metaschema instance identified by the provided class.
-   * 
+   *
    * @param clazz
    *          the Metaschema class
    * @return the Metaschema instance
@@ -48,12 +47,12 @@ interface IMetaschemaLoaderStrategy {
    *           if an error occured while processing the associated Metaschema information
    */
   @NonNull
-  IMetaschema getMetaschemaInstanceByClass(@NonNull Class<? extends AbstractBoundMetaschema> clazz);
+  IMetaschema getMetaschemaInstanceByClass(@NonNull Class<? extends IMetaschema> clazz);
 
   /**
    * Get the {@link IClassBinding} instance for a {@link MetaschemaAssembly} or
    * {@link MetaschemaField} associated with a Java class.
-   * 
+   *
    * @param clazz
    *          the class binding to load
    * @return the associated class binding instance or {@code null} if the class is not bound

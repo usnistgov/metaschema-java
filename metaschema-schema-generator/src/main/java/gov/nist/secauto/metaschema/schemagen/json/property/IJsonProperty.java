@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.schemagen.json.property;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -45,7 +46,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IJsonProperty<I extends INamedInstance> {
   @NonNull
   I getInstance();
-  
+
   @NonNull
   String getName();
 
@@ -53,7 +54,7 @@ public interface IJsonProperty<I extends INamedInstance> {
 
   /**
    * Generate the schema type.
-   * 
+   *
    * @param properties
    * @param state
    *          the schema generation state used for context and writing

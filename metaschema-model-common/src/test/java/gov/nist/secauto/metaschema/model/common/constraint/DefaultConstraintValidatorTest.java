@@ -27,8 +27,13 @@
 package gov.nist.secauto.metaschema.model.common.constraint;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
@@ -51,6 +56,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.List;
 
+@SuppressWarnings("PMD.TooManyStaticImports")
 class DefaultConstraintValidatorTest {
   @RegisterExtension
   Mockery context = new JUnit5Mockery();
@@ -159,8 +165,7 @@ class DefaultConstraintValidatorTest {
 
   @Test
   void testMultipleAllowedValuesConflictingAllowOther() {
-    @SuppressWarnings("null")
-    MockItemFactory itemFactory = new MockItemFactory(context);
+    @SuppressWarnings("null") MockItemFactory itemFactory = new MockItemFactory(context);
 
     IFlagNodeItem flag1 = itemFactory.flag("value", IStringItem.valueOf("value"));
     IFlagNodeItem flag2 = itemFactory.flag("other2", IStringItem.valueOf("other2"));

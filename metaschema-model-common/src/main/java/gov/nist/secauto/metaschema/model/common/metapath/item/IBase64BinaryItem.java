@@ -37,7 +37,7 @@ public interface IBase64BinaryItem extends IAnyAtomicItem {
 
   @NonNull
   static IBase64BinaryItem valueOf(@NonNull String value) {
-    return IBase64BinaryItem.cast(IStringItem.valueOf(value));
+    return cast(IStringItem.valueOf(value));
   }
 
   @NonNull

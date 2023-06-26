@@ -39,9 +39,16 @@ public class AstCollectingVisitor
   protected int indent; // 0;
   protected boolean eolPending; // false;
 
+  @NonNull
+  public static String asString(@NonNull Node node) {
+    AstCollectingVisitor visitor = new AstCollectingVisitor();
+    visitor.collect(node);
+    return visitor.getAst();
+  }
+  
   @SuppressWarnings("null")
   @NonNull
-  protected String getAst() {
+  public String getAst() {
     return output.toString();
   }
 
@@ -67,12 +74,6 @@ public class AstCollectingVisitor
     if (eolPending) {
       appendEOL();
     }
-  }
-
-  @NonNull
-  public String collectAndGetAstText(@NonNull Node node) {
-    visit(node);
-    return getAst();
   }
 
   public void collect(@NonNull Node node) {

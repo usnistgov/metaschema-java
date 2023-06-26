@@ -38,7 +38,6 @@ import gov.nist.secauto.metaschema.binding.io.xml.DefaultXmlDeserializer;
 import gov.nist.secauto.metaschema.binding.io.xml.DefaultXmlSerializer;
 import gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlDeserializer;
 import gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlSerializer;
-import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
@@ -98,7 +97,7 @@ public class DefaultBindingContext implements IBindingContext {
 
   /**
    * Construct a new binding context.
-   * 
+   *
    * @param externalConstraintSets
    *          the set of external constraints to configure this binding to use
    */
@@ -116,7 +115,7 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public IMetaschema getMetaschemaInstanceByClass(@NonNull Class<? extends AbstractBoundMetaschema> clazz) {
+  public IMetaschema getMetaschemaInstanceByClass(@NonNull Class<? extends IMetaschema> clazz) {
     return metaschemaLoaderStrategy.getMetaschemaInstanceByClass(clazz);
   }
 
@@ -242,8 +241,7 @@ public class DefaultBindingContext implements IBindingContext {
     if (classBinding == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", other.getClass().getName()));
     }
-    @SuppressWarnings("unchecked")
-    CLASS retval = (CLASS) classBinding.copyBoundObject(other, parentInstance);
+    @SuppressWarnings("unchecked") CLASS retval = (CLASS) classBinding.copyBoundObject(other, parentInstance);
     return retval;
   }
 

@@ -68,12 +68,11 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.apache.commons.collections.iterators.ReverseListIterator;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -83,6 +82,7 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 class BuildAstVisitor // NOPMD - this visitor has many methods
     extends AbstractAstVisitor<IExpression> {
 
@@ -102,7 +102,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
    * <li><code>left (operator right)*</code> for which a collection of the left and right members will
    * be returned based on what is provided by the supplier.
    * </ol>
-   * 
+   *
    * @param <CONTEXT>
    *          the context type to parse
    * @param <NODE>
@@ -122,8 +122,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
       // skip operator, since we know what it is
       ParseTree tree = ctx.getChild(idx + 1);
       @SuppressWarnings({ "unchecked", "null" })
-      @NonNull
-      NODE node = (NODE) tree.accept(this);
+      @NonNull NODE node = (NODE) tree.accept(this);
       return node;
     }, supplier);
   }
@@ -135,7 +134,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
    * <li><code>left (operator right)*</code> for which a collection of the left and right members will
    * be returned based on what is provided by the supplier.
    * </ol>
-   * 
+   *
    * @param <CONTEXT>
    *          the context type to parse
    * @param <EXPRESSION>
@@ -170,8 +169,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
     ParseTree leftTree = context.getChild(0);
     @SuppressWarnings({ "unchecked", "null" })
-    @NonNull
-    EXPRESSION leftResult = (EXPRESSION) leftTree.accept(this);
+    @NonNull EXPRESSION leftResult = (EXPRESSION) leftTree.accept(this);
 
     IExpression retval;
     if (numChildren == 1) {
@@ -196,7 +194,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
    * <li><code>left (operator right)*</code> for which a collection of the left and right members will
    * be returned based on what is provided by the supplier.
    * </ol>
-   * 
+   *
    * @param <CONTEXT>
    *          the context type to parse
    * @param context
@@ -238,17 +236,26 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
   @Override
   protected IExpression handleExpr(ExprContext ctx) {
-    return handleNAiryCollection(ctx, children -> new Metapath(children));
+    return handleNAiryCollection(ctx, children -> {
+      assert children != null;
+      return new Metapath(children);
+    });
   }
 
   @Override
   protected IExpression handleOrexpr(OrexprContext ctx) {
-    return handleNAiryCollection(ctx, children -> new Or(children));
+    return handleNAiryCollection(ctx, children -> {
+      assert children != null;
+      return new Or(children);
+    });
   }
 
   @Override
   protected IExpression handleAndexpr(AndexprContext ctx) {
-    return handleNAiryCollection(ctx, children -> new And(children));
+    return handleNAiryCollection(ctx, children -> {
+      assert children != null;
+      return new And(children);
+    });
   }
 
   @Override
@@ -329,7 +336,10 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
   @Override
   protected IExpression handleStringconcatexpr(StringconcatexprContext ctx) {
-    return handleNAiryCollection(ctx, children -> new StringConcat(children));
+    return handleNAiryCollection(ctx, children -> {
+      assert children != null;
+      return new StringConcat(children);
+    });
   }
 
   @Override
@@ -338,6 +348,9 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
       ParseTree operatorTree = ctx.getChild(idx);
       ParseTree rightTree = ctx.getChild(idx + 1);
       IExpression right = rightTree.accept(this);
+
+      assert left != null;
+      assert right != null;
 
       int type = ((TerminalNode) operatorTree).getSymbol().getType();
 
@@ -363,6 +376,9 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
       ParseTree rightTree = ctx.getChild(idx + 1);
       IExpression right = rightTree.accept(this);
 
+      assert left != null;
+      assert right != null;
+
       int type = ((TerminalNode) operatorTree).getSymbol().getType();
       IExpression retval;
       switch (type) {
@@ -387,7 +403,10 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
   @Override
   protected IExpression handleUnionexpr(UnionexprContext ctx) {
-    return handleNAiryCollection(ctx, children -> new Union(children));
+    return handleNAiryCollection(ctx, children -> {
+      assert children != null;
+      return new Union(children);
+    });
   }
 
   @Override
@@ -396,6 +415,9 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
       ParseTree operatorTree = ctx.getChild(idx);
       ParseTree rightTree = ctx.getChild(idx + 1);
       IExpression right = rightTree.accept(this);
+
+      assert left != null;
+      assert right != null;
 
       int type = ((TerminalNode) operatorTree).getSymbol().getType();
 
@@ -414,6 +436,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
     });
   }
 
+  @SuppressWarnings("resource")
   @Override
   protected IExpression handleArrowexpr(ArrowexprContext context) {
     // TODO: handle new syntax
@@ -426,11 +449,11 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
       String name = fcCtx.eqname().getText();
       assert name != null;
 
-      Stream<IExpression> args = parseArgumentList(fcCtx.argumentlist());
+      Stream<IExpression> args = parseArgumentList(ObjectUtils.notNull(fcCtx.argumentlist()));
       args = Stream.concat(Stream.of(left), args);
       assert args != null;
 
-      return new FunctionCall(name, args.collect(Collectors.toUnmodifiableList()));
+      return new FunctionCall(name, ObjectUtils.notNull(args.collect(Collectors.toUnmodifiableList())));
     });
   }
 
@@ -456,6 +479,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
     ParseTree expr = ctx.getChild(0);
     IExpression retval = expr.accept(this);
+    assert retval != null;
     if (negateCount % 2 != 0) {
       retval = new Negate(retval);
     }
@@ -476,8 +500,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
         if (numChildren == 2) {
           // the optional path
           ParseTree pathTree = ctx.getChild(1);
-          IExpression relativeExpr = pathTree.accept(this);
-          retval = new RootSlashPath(relativeExpr);
+          retval = new RootSlashPath(ObjectUtils.notNull(pathTree.accept(this)));
         } else {
           retval = new RootSlashOnlyPath();
         }
@@ -486,6 +509,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
         // a double slash expression with path
         ParseTree pathTree = ctx.getChild(1);
         IExpression node = pathTree.accept(this);
+        assert node != null;
         retval = new RootDoubleSlashPath(node);
         break;
       default:
@@ -504,6 +528,9 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
       ParseTree operatorTree = ctx.getChild(idx);
       ParseTree rightTree = ctx.getChild(idx + 1);
       IExpression rightResult = rightTree.accept(this);
+
+      assert left != null;
+      assert rightResult != null;
 
       int type = ((TerminalNode) operatorTree).getSymbol().getType();
 
@@ -572,8 +599,11 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
   @Override
   protected IExpression handleAxisstep(AxisstepContext ctx) {
     IExpression step = ctx.getChild(0).accept(this);
+    assert step != null;
 
     ParseTree predicateTree = ctx.getChild(1);
+    assert predicateTree != null;
+
     List<IExpression> predicates = parsePredicates(predicateTree, 0);
 
     return predicates.isEmpty() ? step : new Predicate(step, predicates);
@@ -602,20 +632,21 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
     default:
       throw new UnsupportedOperationException(token.getText());
     }
-    return new Step(axis, ctx.nametest().accept(this));
+    return new Step(axis, ObjectUtils.notNull(ctx.nametest().accept(this)));
   }
 
   @Override
   protected IExpression handleAbbrevforwardstep(AbbrevforwardstepContext ctx) {
     int numChildren = ctx.getChildCount();
+
     IExpression retval;
     if (numChildren == 1) {
       ParseTree tree = ctx.getChild(0);
-      retval = new ModelInstance(tree.accept(this));
+      retval = new ModelInstance(ObjectUtils.notNull(tree.accept(this)));
     } else {
       // this is an AT test
       ParseTree tree = ctx.getChild(1);
-      retval = new Flag(tree.accept(this));
+      retval = new Flag(ObjectUtils.notNull(tree.accept(this)));
 
     }
     return retval;
@@ -641,7 +672,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
     default:
       throw new UnsupportedOperationException(token.getText());
     }
-    return new Step(axis, ctx.nametest().accept(this));
+    return new Step(axis, ObjectUtils.notNull(ctx.nametest().accept(this)));
   }
 
   @Override
@@ -652,7 +683,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
   @Override
   protected IExpression handleStringLiteral(LiteralContext ctx) {
     ParseTree tree = ctx.getChild(0);
-    return new StringLiteral(tree.getText());
+    return new StringLiteral(ObjectUtils.notNull(tree.getText()));
   }
 
   @Override
@@ -679,8 +710,8 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
     return ContextItem.instance();
   }
 
-  protected Stream<IExpression>
-      parseArgumentList(ArgumentlistContext context) {
+  @NonNull
+  protected Stream<IExpression> parseArgumentList(@NonNull ArgumentlistContext context) {
     int numChildren = context.getChildCount();
 
     Stream<IExpression> retval;
@@ -693,6 +724,8 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
             return argument.exprsingle().accept(this);
           });
     }
+    assert retval != null;
+
     return retval;
   }
 
@@ -700,13 +733,22 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
   protected IExpression handleFunctioncall(FunctioncallContext ctx) {
     EqnameContext nameCtx = ctx.eqname();
     String name = nameCtx.getText();
-    return new FunctionCall(name, parseArgumentList(ctx.argumentlist()).collect(Collectors.toUnmodifiableList()));
+
+    assert name != null;
+
+    return new FunctionCall(
+        name,
+        ObjectUtils.notNull(parseArgumentList(ObjectUtils.notNull(ctx.argumentlist()))
+            .collect(Collectors.toUnmodifiableList())));
   }
 
   @Override
   protected IExpression handleEqname(EqnameContext ctx) {
     ParseTree tree = ctx.getChild(0);
     String name = ((TerminalNode) tree).getText();
+
+    assert name != null;
+
     return new Name(name);
   }
 
@@ -728,25 +770,30 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
   @Override
   protected IExpression handleLet(LetexprContext context) {
-    IExpression result = context.exprsingle().accept(this);
+    @NonNull IExpression retval = ObjectUtils.notNull(context.exprsingle().accept(this));
 
     SimpleletclauseContext letClause = context.simpleletclause();
-    LinkedList<SimpleletbindingContext> clauses = new LinkedList<>(letClause.simpleletbinding());
-    Collections.reverse(clauses);
+    List<SimpleletbindingContext> clauses = letClause.simpleletbinding();
 
-    for (SimpleletbindingContext simpleCtx : clauses) {
+    ReverseListIterator reverseListIterator = new ReverseListIterator(clauses);
+    while (reverseListIterator.hasNext()) {
+      SimpleletbindingContext simpleCtx = (SimpleletbindingContext) reverseListIterator.next();
+
       Name varName = (Name) simpleCtx.varname().accept(this);
       IExpression boundExpression = simpleCtx.exprsingle().accept(this);
 
-      result = new Let(varName, boundExpression, result);
+      assert varName != null;
+      assert boundExpression != null;
+
+      retval = new Let(varName, boundExpression, retval); // NOPMD intended
     }
-    return result;
+    return retval;
   }
 
   @Override
   protected IExpression handleVarref(VarrefContext ctx) {
     Name varName = (Name) ctx.varname().accept(this);
-
+    assert varName != null;
     return new VariableReference(varName);
   }
 }

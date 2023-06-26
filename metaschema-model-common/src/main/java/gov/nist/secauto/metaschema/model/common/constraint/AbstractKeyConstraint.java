@@ -49,7 +49,7 @@ public abstract class AbstractKeyConstraint
 
   /**
    * Create a new key-based constraint, which uses a set of key fields to build a key.
-   * 
+   *
    * @param id
    *          the optional identifier for the constraint
    * @param formalName

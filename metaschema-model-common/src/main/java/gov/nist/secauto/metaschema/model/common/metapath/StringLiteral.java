@@ -40,7 +40,7 @@ class StringLiteral
 
   /**
    * Construct a new expression that always returns the same string value.
-   * 
+   *
    * @param value
    *          the literal value
    */

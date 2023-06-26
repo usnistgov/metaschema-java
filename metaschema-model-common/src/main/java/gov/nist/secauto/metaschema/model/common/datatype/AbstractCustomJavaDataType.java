@@ -35,7 +35,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * A common base implementation of a custom Java object providing an underlying implementation of a
  * data type.
- * 
+ *
  * @param <TYPE>
  *          the bound object type supported by this data type
  * @param <VALUE>
@@ -48,7 +48,7 @@ public abstract class AbstractCustomJavaDataType<TYPE extends ICustomJavaDataTyp
 
   /**
    * Construct a new instance of a custom Java object-based data value.
-   * 
+   *
    * @param value
    *          the bound object that the data type is based on
    */
@@ -58,7 +58,7 @@ public abstract class AbstractCustomJavaDataType<TYPE extends ICustomJavaDataTyp
 
   /**
    * Get the bound Java object value.
-   * 
+   *
    * @return the bound object
    */
   @NonNull

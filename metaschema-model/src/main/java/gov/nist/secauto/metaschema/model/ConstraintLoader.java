@@ -50,12 +50,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -69,7 +69,7 @@ public class ConstraintLoader
     extends AbstractLoader<IConstraintSet> {
 
   @Override
-  protected IConstraintSet parseResource(@NonNull URI resource, @NonNull Stack<URI> visitedResources)
+  protected IConstraintSet parseResource(@NonNull URI resource, @NonNull Deque<URI> visitedResources)
       throws IOException {
 
     // parse this metaschema
@@ -77,8 +77,7 @@ public class ConstraintLoader
 
     // now check if this constraint set imports other constraint sets
     int size = xmlObject.getMETASCHEMACONSTRAINTS().sizeOfImportArray();
-    @NonNull
-    Map<URI, IConstraintSet> importedMetaschema;
+    @NonNull Map<URI, IConstraintSet> importedMetaschema;
     if (size == 0) {
       importedMetaschema = ObjectUtils.notNull(Collections.emptyMap());
     } else {
@@ -102,7 +101,7 @@ public class ConstraintLoader
 
   /**
    * Parse the provided XML resource as a Metaschema.
-   * 
+   *
    * @param resource
    *          the resource to parse
    * @return the XMLBeans representation of the Metaschema
@@ -123,7 +122,7 @@ public class ConstraintLoader
 
   /**
    * Parse individual constraint definitions from the provided XMLBeans object.
-   * 
+   *
    * @param xmlObject
    *          the XMLBeans object
    * @param source

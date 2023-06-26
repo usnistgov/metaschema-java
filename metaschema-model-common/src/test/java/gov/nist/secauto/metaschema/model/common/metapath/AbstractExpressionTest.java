@@ -44,7 +44,7 @@ public class AbstractExpressionTest {
 
   /**
    * Construct a new dynamic context for testing.
-   * 
+   *
    * @return the dynamic context
    */
   @NonNull

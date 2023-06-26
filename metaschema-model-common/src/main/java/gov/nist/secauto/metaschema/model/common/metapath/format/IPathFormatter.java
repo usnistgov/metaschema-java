@@ -42,7 +42,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * {@link #format(IPathSegment)} is called on a formatter implementation, the formatter will render
  * the path segments based on the implemented path syntax. This allows a collection of path segments
  * to be rendered in different forms by swapping out the formatter used.
- * 
+ *
  * A path formatter is expected to be stateless and thus thread safe.
  */
 public interface IPathFormatter {
@@ -56,7 +56,7 @@ public interface IPathFormatter {
    * Format the path represented by the provided path segment. The provided segment is expected to be
    * the last node in this path. A call to {@link IPathSegment#getPathStream()} or
    * {@link IPathSegment#getPath()} can be used to walk the path tree in descending order.
-   * 
+   *
    * @param segment
    *          The last segment in a sequence of path segments
    * @return a formatted path
@@ -73,7 +73,7 @@ public interface IPathFormatter {
 
   /**
    * This visitor callback is used to format an individual flag path segment.
-   * 
+   *
    * @param flag
    *          the node to format
    * @return the formatted text for the segment
@@ -83,7 +83,7 @@ public interface IPathFormatter {
 
   /**
    * This visitor callback is used to format an individual field path segment.
-   * 
+   *
    * @param field
    *          the node to format
    * @return the formatted text for the segment
@@ -93,7 +93,7 @@ public interface IPathFormatter {
 
   /**
    * This visitor callback is used to format an individual assembly path segment.
-   * 
+   *
    * @param assembly
    *          the node to format
    * @return the formatted text for the segment
@@ -103,7 +103,7 @@ public interface IPathFormatter {
 
   /**
    * This visitor callback is used to format a root assembly path segment.
-   * 
+   *
    * @param root
    *          the node to format
    * @return the formatted text for the segment
@@ -113,7 +113,7 @@ public interface IPathFormatter {
 
   /**
    * This visitor callback is used to format an individual document path segment.
-   * 
+   *
    * @param document
    *          the node to format
    * @return the formatted text for the segment
@@ -121,6 +121,13 @@ public interface IPathFormatter {
   @NonNull
   String formatDocument(@NonNull IDocumentNodeItem document);
 
+  /**
+   * This visitor callback is used to format an individual metaschema path segment.
+   *
+   * @param metaschema
+   *          the node to format
+   * @return the formatted text for the segment
+   */
   @NonNull
   String formatMetaschema(@NonNull IMetaschemaNodeItem metaschema);
 }

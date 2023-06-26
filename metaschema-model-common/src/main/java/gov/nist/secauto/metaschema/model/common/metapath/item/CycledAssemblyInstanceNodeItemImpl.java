@@ -45,7 +45,7 @@ public class CycledAssemblyInstanceNodeItemImpl implements ICycledAssemblyNodeIt
 
   /**
    * Construct a new assembly node item that represents a loop back to a previously declared item.
-   * 
+   *
    * @param instance
    *          the instance in the parent's model
    * @param parent

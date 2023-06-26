@@ -122,7 +122,7 @@ public final class FnDocumentUri {
    * Based on the XPath 3.1
    * <a href="https://www.w3.org/TR/xpath-functions-31/#func-document-uri">fn:document-uri</a>
    * function.
-   * 
+   *
    * @param document
    *          the document to get the URI for
    * @return the URI of the document

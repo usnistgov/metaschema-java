@@ -36,7 +36,7 @@ public class Date // NOPMD - intentional
   /**
    * Construct a new date object. This type supports ambiguous dates that were provided without a time
    * zone.
-   * 
+   *
    * @param value
    *          the date value
    * @param hasTimeZone

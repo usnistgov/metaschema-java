@@ -15,13 +15,14 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeIte
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class ExplosionVisitorTest {
 
@@ -50,7 +51,7 @@ class ExplosionVisitorTest {
     fail("Not yet implemented");
   }
 
-  private static class Visitor implements IModelElementVisitor<Void, Integer> {
+  private static final class Visitor implements IModelElementVisitor<Void, Integer> {
     void visitFlags(@NonNull IModelElement element, @NonNull Integer depth) {
       int newDepth = depth + 1;
       for (IModelElement flag : element.getFlags()) {
@@ -109,7 +110,7 @@ class ExplosionVisitorTest {
       // .append(Objects.hashCode(nodeItem.getDefinition()));
 
       String values = element.getConstraints().stream()
-          .filter(constraint -> (constraint instanceof IAllowedValuesConstraint))
+          .filter(constraint -> constraint instanceof IAllowedValuesConstraint)
           .map(constraint -> (IAllowedValuesConstraint) constraint)
           .flatMap(constraint -> constraint.getAllowedValues().values().stream())
           .map(IAllowedValue::getValue)
@@ -121,7 +122,7 @@ class ExplosionVisitorTest {
             .append(" values: ")
             .append(values);
       }
-      System.out.println(buffer);
+//      System.out.println(buffer);
     }
 
   }

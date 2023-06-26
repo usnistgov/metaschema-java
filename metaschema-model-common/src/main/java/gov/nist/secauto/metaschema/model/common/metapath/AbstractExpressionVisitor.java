@@ -27,43 +27,46 @@
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Provides base support for processing a Metapath expression based on the visitor pattern.
- * 
+ *
  * @param <RESULT>
  *          the result of processing any node
  * @param <CONTEXT>
  *          additional state to pass between nodes visited
  */
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpressionVisitor<RESULT, CONTEXT> {
 
   /**
    * This dispatch method will visit the provided {@code expression}.
-   * 
+   *
    * @param expression
    *          the expression to visit
    * @param context
    *          the visitor context
    * @return the result
    */
-  protected RESULT visit(IExpression expression, CONTEXT context) {
+  protected RESULT visit(@NonNull IExpression expression, @NonNull CONTEXT context) {
     return expression.accept(this, context);
   }
 
   /**
    * Visit each child expression of the provided {@code expr}, aggregating the results.
-   * 
+   *
    * @param expr
    *          the expression whoose children should be visited
    * @param context
    *          used to pass additional state
    * @return the aggegated result
    */
-  protected RESULT visitChildren(@NonNull IExpression expr, CONTEXT context) {
+  protected RESULT visitChildren(@NonNull IExpression expr, @NonNull CONTEXT context) {
     RESULT result = defaultResult();
 
     for (IExpression childExpr : expr.getChildren()) {
+      assert childExpr != null;
       if (!shouldVisitNextChild(expr, childExpr, result, context)) {
         break;
       }
@@ -77,7 +80,7 @@ abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpression
 
   /**
    * Determines if a given {@code childExpr} should be visited.
-   * 
+   *
    * @param parent
    *          the parent expression of the child
    * @param child
@@ -88,15 +91,18 @@ abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpression
    *          additional state to pass between nodes visited
    * @return {@code true} if the child should be visited, or {@code false} otherwise
    */
-  protected boolean shouldVisitNextChild(@NonNull IExpression parent, @NonNull IExpression child, RESULT result,
-      CONTEXT context) {
+  protected boolean shouldVisitNextChild(
+      @NonNull IExpression parent,
+      @NonNull IExpression child,
+      @Nullable RESULT result,
+      @NonNull CONTEXT context) {
     // allow visitation of the child
     return true;
   }
 
   /**
    * Aggregates the results produced by a visitation with an existing result into a single result.
-   * 
+   *
    * @param result
    *          the existing result
    * @param nextResult
@@ -105,11 +111,15 @@ abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpression
    *          the state passed to the last visitation
    * @return the aggregate result
    */
-  protected abstract RESULT aggregateResult(RESULT result, RESULT nextResult, CONTEXT context);
+  @Nullable
+  protected abstract RESULT aggregateResult(
+      @Nullable RESULT result,
+      @Nullable RESULT nextResult,
+      @NonNull CONTEXT context);
 
   /**
    * Get the default result.
-   * 
+   *
    * @return the default result
    */
   protected abstract RESULT defaultResult();

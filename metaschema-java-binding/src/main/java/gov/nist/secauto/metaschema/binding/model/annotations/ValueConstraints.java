@@ -42,7 +42,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public @interface ValueConstraints {
   /**
    * Get the allowed value constraints for the type or field this annotation is applied to.
-   * 
+   *
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
   @NonNull
@@ -50,7 +50,7 @@ public @interface ValueConstraints {
 
   /**
    * Get the matches constraints for the type or field this annotation is applied to.
-   * 
+   *
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
   @NonNull
@@ -58,7 +58,7 @@ public @interface ValueConstraints {
 
   /**
    * Get the index-has-key constraints for the type or field this annotation is applied to.
-   * 
+   *
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
   @NonNull
@@ -66,7 +66,7 @@ public @interface ValueConstraints {
 
   /**
    * Get the expect constraints for the type or field this annotation is applied to.
-   * 
+   *
    * @return the expected constraints or an empty array if no expected constraints are defined
    */
   @NonNull

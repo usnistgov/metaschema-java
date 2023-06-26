@@ -40,7 +40,7 @@ class IntegerDivision
   /**
    * Create an expression that gets the whole number quotient result by dividing the dividend by the
    * divisor.
-   * 
+   *
    * @param dividend
    *          the expression whose item result will be divided
    * @param divisor
@@ -72,7 +72,7 @@ class IntegerDivision
 
   /**
    * Get the whole number quotient result by dividing the dividend by the divisor.
-   * 
+   *
    * @param dividend
    *          the item to be divided
    * @param divisor
@@ -94,7 +94,7 @@ class IntegerDivision
 
   /**
    * Get the whole number quotient result by dividing the dividend by the divisor.
-   * 
+   *
    * @param dividend
    *          the item to be divided
    * @param divisor

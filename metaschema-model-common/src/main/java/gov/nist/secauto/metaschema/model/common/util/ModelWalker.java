@@ -43,21 +43,21 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * Walks a Metaschema model. The "visit" methods can be implemented by child classes to perform
  * processing on a visited node.
- * 
+ *
  * @param <DATA>
  *          state information that is carried through the walk
  */
 public abstract class ModelWalker<DATA> {
   /**
    * Generate default state information.
-   * 
+   *
    * @return the state information
    */
   protected abstract DATA getDefaultData();
 
   /**
    * Will visit the provided metaschema flag definition.
-   * 
+   *
    * @param flag
    *          the metaschema flag definition to walk
    */
@@ -67,7 +67,7 @@ public abstract class ModelWalker<DATA> {
 
   /**
    * Will visit the provided metaschema flag definition.
-   * 
+   *
    * @param flag
    *          the metaschema flag definition to walk
    * @param data
@@ -79,7 +79,7 @@ public abstract class ModelWalker<DATA> {
 
   /**
    * Will visit the provided metaschema field definition, and then walk the associated flag instances.
-   * 
+   *
    * @param field
    *          the metaschema field definition to walk
    */
@@ -89,7 +89,7 @@ public abstract class ModelWalker<DATA> {
 
   /**
    * Will visit the provided metaschema field definition, and then walk the associated flag instances.
-   * 
+   *
    * @param field
    *          the metaschema field definition to walk
    * @param data
@@ -104,7 +104,7 @@ public abstract class ModelWalker<DATA> {
   /**
    * Will visit the provided metaschema assembly definition, and then walk the associated flag and
    * model instances.
-   * 
+   *
    * @param assembly
    *          the metaschema assembly definition to walk
    */
@@ -115,7 +115,7 @@ public abstract class ModelWalker<DATA> {
   /**
    * Will visit the provided metaschema assembly definition, and then walk the associated flag and
    * model instances.
-   * 
+   *
    * @param assembly
    *          the metaschema assembly definition to walk
    * @param data
@@ -130,7 +130,7 @@ public abstract class ModelWalker<DATA> {
 
   /**
    * Will visit the provided metaschema flag instance, and then walk the associated flag definition.
-   * 
+   *
    * @param instance
    *          the metaschema flag instance to walk
    * @param data
@@ -144,7 +144,7 @@ public abstract class ModelWalker<DATA> {
 
   /**
    * Will visit the provided metaschema field instance, and then walk the associated field definition.
-   * 
+   *
    * @param instance
    *          the metaschema field instance to walk
    * @param data
@@ -159,7 +159,7 @@ public abstract class ModelWalker<DATA> {
   /**
    * Will visit the provided metaschema assembly instance, and then walk the associated assembly
    * definition.
-   * 
+   *
    * @param instance
    *          the metaschema assembly instance to walk
    * @param data
@@ -174,7 +174,7 @@ public abstract class ModelWalker<DATA> {
   /**
    * Will visit the provided metaschema choice instance, and then walk the choice's child model
    * instances.
-   * 
+   *
    * @param instance
    *          the metaschema choice instance to walk
    * @param data
@@ -188,7 +188,7 @@ public abstract class ModelWalker<DATA> {
 
   /**
    * Will walk the provided model definition.
-   * 
+   *
    * @param definition
    *          the definition to walk
    */
@@ -198,7 +198,7 @@ public abstract class ModelWalker<DATA> {
 
   /**
    * Will walk the provided model definition.
-   * 
+   *
    * @param definition
    *          the definition to walk
    * @param data
@@ -216,7 +216,7 @@ public abstract class ModelWalker<DATA> {
 
   /**
    * Will walk each of the provided flag instances.
-   * 
+   *
    * @param instances
    *          a collection of flag instances to visit
    * @param data
@@ -231,7 +231,7 @@ public abstract class ModelWalker<DATA> {
 
   /**
    * Will walk each of the provided model instances.
-   * 
+   *
    * @param instances
    *          a collection of model instances to visit
    * @param data
@@ -246,7 +246,7 @@ public abstract class ModelWalker<DATA> {
 
   /**
    * Will walk the provided model instance.
-   * 
+   *
    * @param instance
    *          the instance to walk
    * @param data
@@ -265,7 +265,7 @@ public abstract class ModelWalker<DATA> {
   /**
    * Called when the provided definition is walked. This can be overridden by child classes to enable
    * processing of the visited definition.
-   * 
+   *
    * @param def
    *          the definition that is visited
    * @param data
@@ -276,7 +276,7 @@ public abstract class ModelWalker<DATA> {
   /**
    * Called when the provided definition is walked. This can be overridden by child classes to enable
    * processing of the visited definition.
-   * 
+   *
    * @param def
    *          the definition that is visited
    * @param data
@@ -290,7 +290,7 @@ public abstract class ModelWalker<DATA> {
   /**
    * Called when the provided definition is walked. This can be overridden by child classes to enable
    * processing of the visited definition.
-   * 
+   *
    * @param def
    *          the definition that is visited
    * @param data
@@ -304,7 +304,7 @@ public abstract class ModelWalker<DATA> {
   /**
    * Called when the provided instance is walked. This can be overridden by child classes to enable
    * processing of the visited instance.
-   * 
+   *
    * @param instance
    *          the instance that is visited
    * @param data
@@ -318,7 +318,7 @@ public abstract class ModelWalker<DATA> {
   /**
    * Called when the provided instance is walked. This can be overridden by child classes to enable
    * processing of the visited instance.
-   * 
+   *
    * @param instance
    *          the instance that is visited
    * @param data
@@ -332,7 +332,7 @@ public abstract class ModelWalker<DATA> {
   /**
    * Called when the provided instance is walked. This can be overridden by child classes to enable
    * processing of the visited instance.
-   * 
+   *
    * @param instance
    *          the instance that is visited
    * @param data
@@ -346,7 +346,7 @@ public abstract class ModelWalker<DATA> {
   /**
    * Called when the provided instance is walked. This can be overridden by child classes to enable
    * processing of the visited instance.
-   * 
+   *
    * @param instance
    *          the instance that is visited
    * @param data

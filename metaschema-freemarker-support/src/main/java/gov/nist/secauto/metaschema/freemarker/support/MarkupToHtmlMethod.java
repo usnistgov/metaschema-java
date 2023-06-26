@@ -29,9 +29,7 @@ package gov.nist.secauto.metaschema.freemarker.support;
 import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxOutputFactory;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupText;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupXmlStreamWriter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupString;
 
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -60,7 +58,7 @@ public class MarkupToHtmlMethod implements TemplateMethodModelEx {
       throw new TemplateModelException(String.format(
           "This method requires a %s typed object argument, a namspace string argument, and may optionally have a"
               + " prefix string argument.",
-          IMarkupText.class.getName()));
+          IMarkupString.class.getName()));
     }
 
     String prefix = null;
@@ -70,16 +68,14 @@ public class MarkupToHtmlMethod implements TemplateMethodModelEx {
 
     Object markupObject = DeepUnwrap.unwrap((TemplateModel) arguments.get(0));
 
-    if (!(markupObject instanceof IMarkupText)) {
+    if (!(markupObject instanceof IMarkupString)) {
       throw new TemplateModelException(String.format("The first argument must be of type %s. The type %s is invalid.",
-          IMarkupText.class.getName(), markupObject.getClass().getName()));
+          IMarkupString.class.getName(), markupObject.getClass().getName()));
     }
 
-    IMarkupText text = (IMarkupText) markupObject;
+    IMarkupString<?> text = (IMarkupString<?>) markupObject;
     String namespace = DeepUnwrap.unwrap((TemplateModel) arguments.get(1)).toString();
     assert namespace != null;
-
-    MarkupXmlStreamWriter writingVisitor = new MarkupXmlStreamWriter(namespace, text instanceof MarkupMultiline);
 
     XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
     assert factory instanceof WstxOutputFactory;
@@ -89,7 +85,9 @@ public class MarkupToHtmlMethod implements TemplateMethodModelEx {
       NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
           List.of(NamespaceEventImpl.constructNamespace(null, prefix != null ? prefix : "", namespace)));
       xmlStreamWriter.setNamespaceContext(nsContext);
-      writingVisitor.visitChildren(text.getDocument(), xmlStreamWriter);
+
+      text.writeXHtml(namespace, xmlStreamWriter);
+      
       xmlStreamWriter.flush();
       return os.toString(StandardCharsets.UTF_8);
     } catch (XMLStreamException | IOException ex) {

@@ -107,22 +107,24 @@ public class DataTypeRestrictionDefinitionJsonSchema
         throw new UnsupportedOperationException(getDefinition().getJavaTypeAdapter().getJsonRawType().toString());
       }
     }
+    // get schema for the built-in type
+    IJsonSchema dataTypeSchema = state.getSchema(getDefinition().getJavaTypeAdapter());
 
+    // if other values are allowed, we need to make a union of the restriction type and the base
+    // built-in type
+    ArrayNode ofArray;
     if (allowedValuesCollection.isClosed()) {
-      obj.set("enum", enumArray);
+      // this restriction is allOf, since both must match
+      ofArray = obj.putArray("allOf");
     } else {
-      // get schema for the built-in type
-      IJsonSchema dataTypeSchema = state.getSchema(getDefinition().getJavaTypeAdapter());
-
-      // if other values are allowed, we need to make a union of the restriction type and the base
-      // built-in type
-      ArrayNode anyOfArray = obj.putArray("anyOf");
-
-      // add the data type reference
-      dataTypeSchema.generateSchemaOrRef(state, ObjectUtils.notNull(anyOfArray.addObject()));
-      // add the enumeration
-      anyOfArray.addObject()
-          .set("enum", enumArray);
+      // this restriction is anyOf, since any can match
+      ofArray = obj.putArray("anyOf");
     }
+
+    // add the data type reference
+    dataTypeSchema.generateSchemaOrRef(state, ObjectUtils.notNull(ofArray.addObject()));
+    // add the enumeration
+    ofArray.addObject()
+        .set("enum", enumArray);
   }
 }

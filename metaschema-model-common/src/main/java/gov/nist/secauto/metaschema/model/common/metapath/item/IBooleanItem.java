@@ -51,7 +51,7 @@ public interface IBooleanItem extends IAnyAtomicItem {
   static IBooleanItem valueOf(@NonNull String value) {
     IBooleanItem retval;
     if ("1".equals(value)) {
-      retval = IBooleanItem.TRUE;
+      retval = TRUE;
     } else {
       try {
         Boolean bool = MetaschemaDataTypeProvider.BOOLEAN.parse(value);

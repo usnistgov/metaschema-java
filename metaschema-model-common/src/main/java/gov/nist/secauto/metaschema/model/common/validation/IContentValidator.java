@@ -44,7 +44,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IContentValidator extends IResourceLoader {
   /**
    * Validate the resource at provided {@code path}.
-   * 
+   *
    * @param path
    *          the resource to validate
    * @return the result of the validation
@@ -59,7 +59,7 @@ public interface IContentValidator extends IResourceLoader {
 
   /**
    * Validate the resource at provided {@code path}.
-   * 
+   *
    * @param url
    *          the resource to validate
    * @return the result of the validation
@@ -76,7 +76,7 @@ public interface IContentValidator extends IResourceLoader {
 
   /**
    * Validate the resource associated with the provided input stream {@code is}.
-   * 
+   *
    * @param source
    *          information about how to access the resource
    * @return the result of the validation

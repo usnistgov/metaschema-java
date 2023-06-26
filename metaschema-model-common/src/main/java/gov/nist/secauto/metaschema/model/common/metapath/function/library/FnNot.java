@@ -78,7 +78,7 @@ public final class FnNot {
    * <p>
    * Based on the XPath 3.1 <a href="https://www.w3.org/TR/xpath-functions-31/#func-not">fn:not</a>
    * function.
-   * 
+   *
    * @param item
    *          the item to get the negated, effective boolean value for
    * @return the negated boolean value
@@ -93,7 +93,7 @@ public final class FnNot {
    * <p>
    * Based on the XPath 3.1 <a href="https://www.w3.org/TR/xpath-functions-31/#func-not">fn:not</a>
    * function.
-   * 
+   *
    * @param sequence
    *          the sequence to get the negated, effective boolean value for
    * @return the negated boolean value

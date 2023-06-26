@@ -72,7 +72,7 @@ class XmlInlineFieldDefinition
 
   /**
    * Constructs a new Metaschema field definition from an XML representation bound to Java objects.
-   * 
+   *
    * @param xmlField
    *          the XML representation bound to Java objects
    * @param parent
@@ -88,11 +88,11 @@ class XmlInlineFieldDefinition
 
   /**
    * Get the underlying XML model.
-   * 
+   *
    * @return the XML model
    */
   @NonNull
-  protected InlineFieldDefinitionType getXmlField() {
+  protected final InlineFieldDefinitionType getXmlField() {
     return xmlField;
   }
 
@@ -147,7 +147,8 @@ class XmlInlineFieldDefinition
 
   @Override
   public String getUseName() {
-    return getXmlField().isSetUseName() ? getXmlField().getUseName() : getDefinition().getUseName();
+    // an inline definition doesn't have a use name
+    return null;
   }
 
   @Override
@@ -197,7 +198,7 @@ class XmlInlineFieldDefinition
   /**
    * The corresponding definition for the local flag instance.
    */
-  public class InternalFieldDefinition implements IFieldDefinition, IInlineDefinition<XmlInlineFieldDefinition> {
+  public final class InternalFieldDefinition implements IFieldDefinition, IInlineDefinition<XmlInlineFieldDefinition> {
     @Nullable
     private final Object defaultValue;
     private XmlFlagContainerSupport flagContainer;
@@ -253,7 +254,8 @@ class XmlInlineFieldDefinition
 
     @Override
     public String getUseName() {
-      return getName();
+      // always use the name instead
+      return null;
     }
 
     @SuppressWarnings("null")
@@ -298,10 +300,10 @@ class XmlInlineFieldDefinition
 
     /**
      * Lazy initialize the flag instances associated with this definition.
-     * 
+     *
      * @return the flag container
      */
-    protected XmlFlagContainerSupport initFlagContainer() {
+    private XmlFlagContainerSupport initFlagContainer() {
       synchronized (this) {
         if (flagContainer == null) {
           flagContainer = new XmlFlagContainerSupport(getXmlField(), this);
@@ -343,12 +345,12 @@ class XmlInlineFieldDefinition
     /**
      * Used to generate the instances for the constraints in a lazy fashion when the constraints are
      * first accessed.
-     * 
+     *
      * @return the constraints instance
      */
     @SuppressWarnings("null")
     @NonNull
-    protected IValueConstraintSupport initModelConstraints() {
+    private IValueConstraintSupport initModelConstraints() {
       synchronized (this) {
         if (constraints == null) {
           if (getXmlField().isSetConstraint()) {

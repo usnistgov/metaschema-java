@@ -47,7 +47,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public @interface MetaschemaFieldValue {
   /**
    * The Metaschema data type adapter for the field's value.
-   * 
+   *
    * @return the data type adapter
    */
   Class<? extends IDataTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
@@ -68,7 +68,7 @@ public @interface MetaschemaFieldValue {
    * defined by the data type.
    * <p>
    * Use of this annotation is mutually exclusive with the {@link JsonFieldValueKeyFlag} annotation.
-   * 
+   *
    * @return the name
    */
   @NonNull

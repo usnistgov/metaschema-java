@@ -47,7 +47,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public @interface BoundFieldValue {
   /**
    * The Metaschema data type adapter for the field's value.
-   * 
+   *
    * @return the data type adapter
    */
   @NonNull

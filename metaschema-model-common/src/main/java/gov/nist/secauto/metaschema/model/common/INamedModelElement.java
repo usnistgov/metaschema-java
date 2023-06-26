@@ -44,7 +44,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface INamedModelElement extends IModelElement {
   /**
    * The formal display name.
-   * 
+   *
    * @return the formal name or {@code null} if not defined
    */
   @Nullable
@@ -52,15 +52,17 @@ public interface INamedModelElement extends IModelElement {
 
   /**
    * The resolved formal display name, which allows an instance to override a definition's name.
-   * 
+   *
    * @return the formal name or {@code null} if not defined
    */
   @Nullable
-  String getEffectiveFormalName();
+  default String getEffectiveFormalName() {
+    return getFormalName();
+  }
 
   /**
    * Get the text that describes the basic use of the element.
-   * 
+   *
    * @return a line of markup text or {@code null} if not defined
    */
   @Nullable
@@ -69,15 +71,17 @@ public interface INamedModelElement extends IModelElement {
   /**
    * Get the text that describes the basic use of the element, which allows an instance to override a
    * definition's description.
-   * 
+   *
    * @return a line of markup text or {@code null} if not defined
    */
   @Nullable
-  MarkupLine getEffectiveDescription();
+  default MarkupLine getEffectiveDescription() {
+    return getDescription();
+  }
 
   /**
    * Get the mapping of property name to values for the model element.
-   * 
+   *
    * @return the mapping
    */
   @NonNull
@@ -85,7 +89,7 @@ public interface INamedModelElement extends IModelElement {
 
   /**
    * Determine if a property is defined.
-   * 
+   *
    * @param qname
    *          the qualified name of the property
    * @return {@code true} if the property is defined or {@code false} otherwise
@@ -96,7 +100,7 @@ public interface INamedModelElement extends IModelElement {
 
   /**
    * Get the values associated with a given property.
-   * 
+   *
    * @param qname
    *          the qualified name of the property
    * @return the values or an empty set
@@ -112,7 +116,7 @@ public interface INamedModelElement extends IModelElement {
 
   /**
    * Determine if a given property, with a given {@code qname}, has the identified {@code value}.
-   * 
+   *
    * @param qname
    *          the qualified name of the property
    * @param value
@@ -140,7 +144,7 @@ public interface INamedModelElement extends IModelElement {
 
   /**
    * Get the name used for the associated property in JSON/YAML.
-   * 
+   *
    * @return the JSON property name
    */
   @NonNull
@@ -153,22 +157,21 @@ public interface INamedModelElement extends IModelElement {
    * {@link #getUseName()} if the call is not {@code null}, and fall back to the name provided by
    * {@link #getName()} otherwise. This is the model name to use for the for an instance where the
    * instance is referenced.
-   * 
+   *
    * @return the use name if available, or the name if not
-   * 
+   *
    * @see #getUseName()
    * @see #getName()
    */
   @NonNull
   default String getEffectiveName() {
-    @Nullable
-    String useName = getUseName();
+    @Nullable String useName = getUseName();
     return useName == null ? getName() : useName;
   }
 
   /**
    * Retrieve the name of the model element.
-   * 
+   *
    * @return the name
    */
   @NonNull
@@ -176,7 +179,7 @@ public interface INamedModelElement extends IModelElement {
 
   /**
    * Retrieve the name to use for the model element, instead of the name.
-   * 
+   *
    * @return the use name or {@code null} if no use name is defined
    */
   @Nullable

@@ -50,7 +50,7 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
 
   /**
    * Get the root assembly associated with this document.
-   * 
+   *
    * @return the root assembly
    */
   @NonNull
@@ -70,7 +70,7 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
 
   /**
    * Get the URI associated with this document.
-   * 
+   *
    * @return the document's URI
    */
   @NonNull

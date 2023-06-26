@@ -24,15 +24,19 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype.markup;
+package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.ctc.wstx.stax.WstxInputFactory;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AstCollectingVisitor;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
@@ -41,10 +45,15 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 
 class MarkupParserTest {
+  private static final Logger LOGGER = LogManager.getLogger(MarkupParserTest.class);
 
-  @Disabled
   @Test
   void test() throws XMLStreamException {
+    XMLInputFactory2 factory = (XMLInputFactory2) XMLInputFactory.newInstance();
+    assert factory instanceof WstxInputFactory;
+    factory.configureForXmlConformance();
+    factory.setProperty(XMLInputFactory.IS_COALESCING, true);
+
     String html = new StringBuilder()
         .append("<node>\n")
         .append("  <p> some text </p>\n")
@@ -56,27 +65,49 @@ class MarkupParserTest {
         .append("    <li>a <strong>list item</strong></li>\n")
         .append("    <li>another <i>list item</i></li>\n")
         .append("  </ul>\n")
-        // .append(" <table>\n")
-        // .append(" <tr><th>Heading 1</th></tr>\n")
-        // .append(" <tr><td><q>data1</q> <insert param-id=\"insert\" /></td></tr>\n")
-        // .append(" </table>\n")
+        .append(" <table>\n")
+        .append(" <tr><th>Heading 1</th></tr>\n")
+        .append(" <tr><td><q>data1</q> <insert param-id=\"insert\" /></td></tr>\n")
+        .append(" </table>\n")
         .append("  <p>Some <em>more</em> <strong>text</strong><img alt=\"alt\" src=\"src\"/></p>\n")
         .append("</node>\n")
         .toString();
+
+    XMLEventReader2 reader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(html));
+    LOGGER.atInfo().log("StartDocument: {}", XmlEventUtil.toString(reader.nextEvent()));
+    LOGGER.atInfo().log("StartElement: {}", XmlEventUtil.toString(reader.nextEvent()));
+    assertDoesNotThrow(() -> {
+      MarkupMultiline markupString = XmlMarkupParser.instance().parseMarkupMultiline(reader);
+      AstCollectingVisitor visitor = new AstCollectingVisitor();
+      visitor.collect(markupString.getDocument());
+      // System.out.println(html);
+      // System.out.println(visitor.getAst());
+      // System.out.println(markupString.toMarkdown());
+
+    });
+  }
+
+  @Test
+  void emptyParagraphTest() throws XMLStreamException {
+    final String html = new StringBuilder()
+        .append("<node>\n")
+        .append("  <p/>\n")
+        .append("</node>\n")
+        .toString();
+
     XMLInputFactory2 factory = (XMLInputFactory2) XMLInputFactory.newInstance();
     assert factory instanceof WstxInputFactory;
     factory.configureForXmlConformance();
     factory.setProperty(XMLInputFactory.IS_COALESCING, true);
     XMLEventReader2 reader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(html));
-    // System.out.println("Start: " + XmlEventUtil.toString(reader.nextEvent()));
-    // System.out.println("Start: " + XmlEventUtil.toString(reader.nextEvent()));
-    MarkupParser parser = new MarkupParser();
-    MarkupMultiline markupString = parser.parseMarkupMultiline(reader);
-    AstCollectingVisitor visitor = new AstCollectingVisitor();
-    visitor.collect(markupString.getDocument());
-    // System.out.println(html);
-    // System.out.println(visitor.getAst());
-    // System.out.println(markupString.toMarkdown());
+    LOGGER.atInfo().log("StartDocument: {}", XmlEventUtil.toString(reader.nextEvent()));
+    LOGGER.atInfo().log("StartElement: {}", XmlEventUtil.toString(reader.nextEvent()));
+    assertDoesNotThrow(() -> {
+      MarkupMultiline ms = XmlMarkupParser.instance().parseMarkupMultiline(reader);
+      LOGGER.atInfo().log("AST: {}",  AstCollectingVisitor.asString(ms.getDocument()));
+      LOGGER.atInfo().log("HTML: {}", ms.toXHtml(""));
+      LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
+    });
   }
 
 }

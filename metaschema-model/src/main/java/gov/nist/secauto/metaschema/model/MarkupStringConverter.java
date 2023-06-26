@@ -49,7 +49,7 @@ final class MarkupStringConverter {
 
   /**
    * Converts HTML-like markup into a MarkupLine.
-   * 
+   *
    * @param content
    *          the content to convert
    * @return the equivalent formatted text as a MarkupLine
@@ -62,16 +62,9 @@ final class MarkupStringConverter {
     return MarkupLine.fromHtml(html);
   }
 
-  @NonNull
-  public static MarkupLineDatatype toMarkupLineDatatype(@NonNull MarkupLine markupLine) {
-    MarkupLineDatatype retval = ObjectUtils.notNull(MarkupLineDatatype.Factory.newInstance());
-    XmlbeansMarkupVisitor.visit(markupLine, IMetaschema.METASCHEMA_XML_NS, retval);
-    return retval;
-  }
-
   /**
    * Converts multiple lines of HTML-like markup into a MarkupMultiline.
-   * 
+   *
    * @param content
    *          the content to convert
    * @return the equivalent formatted text as a MarkupLine
@@ -84,9 +77,16 @@ final class MarkupStringConverter {
     return MarkupMultiline.fromHtml(html);
   }
 
+  @NonNull
+  public static MarkupLineDatatype toMarkupLineDatatype(@NonNull MarkupLine markupLine) {
+    MarkupLineDatatype retval = ObjectUtils.notNull(MarkupLineDatatype.Factory.newInstance());
+    XmlbeansMarkupVisitor.visit(markupLine, IMetaschema.METASCHEMA_XML_NS, retval);
+    return retval;
+  }
+
   /**
    * Converts a set of XML tokens, which represent HTML content, into an HTML string.
-   * 
+   *
    * @param content
    *          the content to convert
    * @return an HTML string

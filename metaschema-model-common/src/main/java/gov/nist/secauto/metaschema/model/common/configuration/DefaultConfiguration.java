@@ -35,10 +35,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides immutable access to configuration state.
- * 
+ *
  * @param <T>
  *          the type of managed features
  */
+@SuppressWarnings({ "PMD.ReplaceVectorWithList", "PMD.DoNotUseThreads" })
 public class DefaultConfiguration<T extends Enum<T> & IConfigurationFeature>
     implements IMutableConfiguration<T> {
   @NonNull
@@ -46,11 +47,11 @@ public class DefaultConfiguration<T extends Enum<T> & IConfigurationFeature>
 
   /**
    * Create a new configuration based on the provided feature enumeration.
-   * 
+   *
    * @param enumClass
    *          the feature enumeration class
    */
-  @SuppressWarnings("null")
+  @SuppressWarnings({ "null", "PMD.CloseResource" })
   public DefaultConfiguration(@NonNull Class<T> enumClass) {
     this.featureSet = EnumSet.noneOf(enumClass);
 
@@ -64,7 +65,7 @@ public class DefaultConfiguration<T extends Enum<T> & IConfigurationFeature>
 
   /**
    * Create a new configuration based on the provided feature enumeration.
-   * 
+   *
    * @param featureSet
    *          the set of enabled features
    */
@@ -75,7 +76,7 @@ public class DefaultConfiguration<T extends Enum<T> & IConfigurationFeature>
 
   /**
    * Create a new configuration based on the provided configuration.
-   * 
+   *
    * @param original
    *          the original configuration
    */

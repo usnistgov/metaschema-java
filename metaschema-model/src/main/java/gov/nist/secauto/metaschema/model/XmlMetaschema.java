@@ -29,9 +29,9 @@ package gov.nist.secauto.metaschema.model;
 import gov.nist.secauto.metaschema.model.common.AbstractMetaschema;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -58,6 +58,7 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 class XmlMetaschema
     extends AbstractMetaschema {
   private static final Logger LOGGER = LogManager.getLogger(XmlMetaschema.class);
@@ -73,7 +74,7 @@ class XmlMetaschema
 
   /**
    * Constructs a new Metaschema instance.
-   * 
+   *
    * @param resource
    *          the resource from which the metaschema was loaded
    * @param metaschemaXml
@@ -170,7 +171,7 @@ class XmlMetaschema
 
   /**
    * Get the XMLBeans representation of the Metaschema.
-   * 
+   *
    * @return the XMLBean for the Metaschema
    */
   @NonNull

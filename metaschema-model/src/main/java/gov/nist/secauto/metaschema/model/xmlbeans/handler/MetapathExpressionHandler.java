@@ -43,7 +43,7 @@ public final class MetapathExpressionHandler {
 
   /**
    * Compile a Metapath expression for the provided expression value.
-   * 
+   *
    * @param value
    *          the Metapath as a string value
    * @return the compiled Metapath
@@ -53,7 +53,7 @@ public final class MetapathExpressionHandler {
     try {
       return MetapathExpression.compile(path);
     } catch (MetapathException ex) {
-      StringBuilder builder = new StringBuilder(32)
+      StringBuilder builder = new StringBuilder(48)
           .append("Error parsing metapath '")
           .append(value)
           .append('\'');
@@ -79,7 +79,7 @@ public final class MetapathExpressionHandler {
   /**
    * Given a Metapath expression, set the string value to the raw path provided by
    * {@link MetapathExpression#getPath()}.
-   * 
+   *
    * @param expression
    *          a compiled Metapath expression
    * @param target

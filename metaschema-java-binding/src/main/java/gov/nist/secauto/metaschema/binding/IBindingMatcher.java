@@ -35,7 +35,7 @@ import javax.xml.namespace.QName;
 public interface IBindingMatcher {
   /**
    * Determine the bound class for the provided XML {@link QName}.
-   * 
+   *
    * @param rootQName
    *          the root XML element's QName
    * @return the bound class or {@code null} if not recognized
@@ -44,7 +44,7 @@ public interface IBindingMatcher {
 
   /**
    * Determine the bound class for the provided JSON/YAML property/item name.
-   * 
+   *
    * @param rootName
    *          the JSON/YAML property/item name
    * @return the bound class or {@code null} if not recognized

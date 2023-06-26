@@ -51,7 +51,7 @@ public final class DefaultCardinalityConstraint
    * Construct a new cardinality constraint which enforces that the number of items matching the
    * target fall within the inclusive range described by the {@code minOccurs} or {@code maxOccurs}
    * values.
-   * 
+   *
    * @param id
    *          the optional identifier for the constraint
    * @param formalName
@@ -112,7 +112,7 @@ public final class DefaultCardinalityConstraint
     return new Builder();
   }
 
-  public static class Builder
+  public static final class Builder
       extends AbstractConstraintBuilder<Builder, DefaultCardinalityConstraint> {
     private Integer minOccurs;
     private Integer maxOccurs;

@@ -24,41 +24,14 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model;
+package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import com.vladsch.flexmark.util.ast.Document;
 
-import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.MetaschemaException;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.net.URI;
-
-class Examples {
-
-  @Test
-  void testLoadMetaschema() throws MetaschemaException, IOException {
-    MetaschemaLoader loader = new MetaschemaLoader();
-
-    URI metaschemaUri = ObjectUtils.notNull(URI.create(
-        "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
-    IMetaschema metaschema = loader.load(metaschemaUri);
-    assertNotNull(metaschema, "metaschema not found");
-  }
-
-  @Test
-  void testExamineAssemblyDefinitionByName() throws MetaschemaException, IOException {
-    MetaschemaLoader loader = new MetaschemaLoader();
-    URI metaschemaUri = ObjectUtils.notNull(URI.create(
-        "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
-    IMetaschema metaschema = loader.load(metaschemaUri);
-
-    IAssemblyDefinition definition = metaschema.getScopedAssemblyDefinitionByName("property");
-    assertNotNull(definition, "definition not found");
-  }
-
+@SuppressFBWarnings("THROWS_METHOD_THROWS_CLAUSE_THROWABLE")
+public interface IMarkupVisitor<T, E extends Throwable> {
+  void visitDocument(@NonNull Document document, @NonNull IMarkupWriter<T, E> writer) throws E;
 }

@@ -41,7 +41,7 @@ public interface INodeContext {
 
   /**
    * Get the current node in this context.
-   * 
+   *
    * @return the context node
    */
   @NonNull
@@ -50,7 +50,7 @@ public interface INodeContext {
   /**
    * Get the flags and value data associated this node. The resulting collection is expected to be
    * ordered, with the results in document order.
-   * 
+   *
    * @return a collection of flags
    */
   @NonNull
@@ -58,7 +58,7 @@ public interface INodeContext {
 
   /**
    * Lookup a flag and value data on this node by it's effective name.
-   * 
+   *
    * @param name
    *          the effective name of the flag
    * @return the flag with the matching effective name or {@code null} if no match was found
@@ -68,7 +68,7 @@ public interface INodeContext {
 
   /**
    * Get the flags and value data associated with this node as a stream.
-   * 
+   *
    * @return the stream of flags or an empty stream if none exist
    */
   @SuppressWarnings("null")
@@ -81,7 +81,7 @@ public interface INodeContext {
    * Get the model items (i.e., fields, assemblies) and value data associated this node. A given model
    * instance can be multi-valued, so the value of each instance will be a list. The resulting
    * collection is expected to be ordered, with the results in document order.
-   * 
+   *
    * @return a collection of list(s), with each list containing the items for a given model instance
    */
   @NonNull
@@ -92,7 +92,7 @@ public interface INodeContext {
 
   /**
    * Get the model items (i.e., fields, assemblies) and value data associated this node as a stream.
-   * 
+   *
    * @return the stream of model items or an empty stream if none exist
    */
   @SuppressWarnings("null")

@@ -50,7 +50,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public @interface Matches {
   /**
    * An optional identifier for the constraint, which must be unique to only this constraint.
-   * 
+   *
    * @return the identifier if provided or an empty string otherwise
    */
   @NonNull
@@ -58,7 +58,7 @@ public @interface Matches {
 
   /**
    * An optional formal name for the constraint.
-   * 
+   *
    * @return the formal name if provided or an empty string otherwise
    */
   @NonNull
@@ -66,7 +66,7 @@ public @interface Matches {
 
   /**
    * An optional description of the constraint.
-   * 
+   *
    * @return the description if provided or an empty string otherwise
    */
   @NonNull
@@ -74,7 +74,7 @@ public @interface Matches {
 
   /**
    * The significance of a violation of this constraint.
-   * 
+   *
    * @return the level
    */
   @NonNull
@@ -87,7 +87,7 @@ public @interface Matches {
    * appears on. In the prior case, this annotation may only appear on a {@link BoundField} if the
    * field has no flags, which results in a {@link BoundField} annotation on a field instance with a
    * scalar, data type value.
-   * 
+   *
    * @return the target metapath
    */
   @NonNull
@@ -95,7 +95,7 @@ public @interface Matches {
 
   /**
    * An optional set of properties associated with these allowed values.
-   * 
+   *
    * @return the properties or an empty array with no properties
    */
   Property[] properties() default {};
@@ -103,7 +103,7 @@ public @interface Matches {
   /**
    * Retrieve an optional pattern that the associated value must match. This must be a pattern that
    * can compile using {@link Pattern#compile(String)}.
-   * 
+   *
    * @return a pattern string or an empty string if no pattern is provided
    */
   @NonNull
@@ -111,7 +111,7 @@ public @interface Matches {
 
   /**
    * The Metaschema data type adapter for the data type that the associated value must conform to.
-   * 
+   *
    * @return the data type adapter or a {@link NullJavaTypeAdapter} if none is provided
    */
   @NonNull
@@ -119,7 +119,7 @@ public @interface Matches {
 
   /**
    * The message to emit when the constraint is violated.
-   * 
+   *
    * @return the message or an empty string otherwise
    */
   @NonNull
@@ -127,7 +127,7 @@ public @interface Matches {
 
   /**
    * Any remarks about the constraint, encoded as an escaped Markdown string.
-   * 
+   *
    * @return an encoded markdown string or an empty string if no remarks are provided
    */
   @NonNull

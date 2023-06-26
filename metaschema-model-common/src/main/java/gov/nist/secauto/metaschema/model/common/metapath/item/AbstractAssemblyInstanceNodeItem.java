@@ -45,7 +45,7 @@ public abstract class AbstractAssemblyInstanceNodeItem<F extends IFlagNodeItem, 
   /**
    * Construct a new {@link INodeItem} instance, that has a parent node, based on the provided field
    * {@code definition}.
-   * 
+   *
    * @param instance
    *          the instance to construct the node item for
    * @param parent

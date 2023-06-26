@@ -57,7 +57,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   /**
    * Get the singleton {@link IBindingContext} instance, which can be used to load information that
    * binds a model to a set of Java classes.
-   * 
+   *
    * @return a new binding context
    */
   @NonNull
@@ -67,7 +67,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
 
   /**
    * Register a matcher used to identify a bound class by the content's root name.
-   * 
+   *
    * @param matcher
    *          the matcher implementation
    */
@@ -75,7 +75,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
 
   /**
    * Determine the bound class for the provided XML {@link QName}.
-   * 
+   *
    * @param rootQName
    *          the root XML element's QName
    * @return the bound class or {@code null} if not recognized
@@ -87,7 +87,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   /**
    * Determine the bound class for the provided JSON/YAML property/item name using any registered
    * matchers.
-   * 
+   *
    * @param rootName
    *          the JSON/YAML property/item name
    * @return the bound class or {@code null} if not recognized
@@ -102,7 +102,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    * supports a direct binding between the Java class and structured data in one of the supported
    * formats. Adapters are used to support bindings for simple data objects (e.g., {@link String},
    * {@link BigInteger}, {@link ZonedDateTime}, etc).
-   * 
+   *
    * @param <TYPE>
    *          the class type of the adapter
    * @param clazz
@@ -122,7 +122,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    * class to the requested format. The provided class must be a bound Java class with a
    * {@link MetaschemaAssembly} or {@link MetaschemaField} annotation for which a
    * {@link IClassBinding} exists.
-   * 
+   *
    * @param <CLASS>
    *          the Java type this deserializer can write data from
    * @param format
@@ -146,7 +146,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    * class from the requested format. The provided class must be a bound Java class with a
    * {@link MetaschemaAssembly} or {@link MetaschemaField} annotation for which a
    * {@link IClassBinding} exists.
-   * 
+   *
    * @param <CLASS>
    *          the Java type this deserializer can read data into
    * @param format
@@ -167,7 +167,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
 
   /**
    * Get a new {@link IBoundLoader} instance.
-   * 
+   *
    * @return the instance
    */
   @NonNull
@@ -175,7 +175,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
 
   /**
    * Create a deep copy of the provided bound object.
-   * 
+   *
    * @param <CLASS>
    *          the bound object type
    * @param other
@@ -195,7 +195,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
 
   /**
    * Wraps a bound object in an {@link INodeItem} for use in the Metapath engine.
-   * 
+   *
    * @param boundObject
    *          the bound object to wrap
    * @param baseUri
@@ -212,7 +212,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
 
   /**
    * Wraps a bound object in an {@link INodeItem} for use in the Metapath engine.
-   * 
+   *
    * @param boundObject
    *          the bound object to wrap
    * @param baseUri
@@ -229,7 +229,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   /**
    * Perform constraint validation on the provided bound object represented as an {@link INodeItem}.
    * The bound object can be turned into a {@link INodeItem} using {@link #toNodeItem(Object, URI)}.
-   * 
+   *
    * @param nodeItem
    *          the node item to validate
    * @return the validation result

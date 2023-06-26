@@ -61,7 +61,7 @@ public final class NumericFunction implements IFunctionExecutor {
             .build())
         .returnType(INumericItem.class)
         .returnZeroOrOne()
-        .functionHandler(NumericFunction.newFunctionHandler(executor))
+        .functionHandler(newFunctionHandler(executor))
         .build();
   }
 
@@ -99,7 +99,7 @@ public final class NumericFunction implements IFunctionExecutor {
   public interface INumericExecutor {
     /**
      * Perform the execution using the provided {@code item}.
-     * 
+     *
      * @param item
      *          the item to operate on
      * @return the numeric result from the execution

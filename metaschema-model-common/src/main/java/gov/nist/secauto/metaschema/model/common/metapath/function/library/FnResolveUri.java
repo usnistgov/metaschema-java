@@ -115,7 +115,7 @@ public final class FnResolveUri {
   /**
    * Implements the two argument version of the XPath 3.1 function
    * <a href="https://www.w3.org/TR/xpath-functions-31/#func-resolve-uri">resolve-uri</a>.
-   * 
+   *
    * @param function
    *          the function definition
    * @param arguments
@@ -127,6 +127,7 @@ public final class FnResolveUri {
    * @return a sequence containing the resolved URI or and empty sequence if either the base or
    *         relative URI is {@code null}
    */
+  @SuppressWarnings("PMD.UnusedPrivateMethod") // used in lambda
   @NonNull
   private static ISequence<IAnyUriItem> executeTwoArg(
       @NonNull IFunction function, // NOPMD - ok
@@ -161,7 +162,7 @@ public final class FnResolveUri {
 
   /**
    * Resolve the {@code relative} URI against the provided {@code base} URI.
-   * 
+   *
    * @param relative
    *          the relative URI to resolve
    * @param base
@@ -177,7 +178,7 @@ public final class FnResolveUri {
 
   /**
    * Resolve the {@code relative} URI against the provided {@code base} URI.
-   * 
+   *
    * @param relative
    *          the relative URI to resolve
    * @param base
@@ -191,8 +192,7 @@ public final class FnResolveUri {
     }
 
     @SuppressWarnings("null")
-    @NonNull
-    URI resolvedUri = base.getValue().resolve(relative.getValue());
+    @NonNull URI resolvedUri = base.getValue().resolve(relative.getValue());
     return IAnyUriItem.valueOf(resolvedUri);
   }
 }

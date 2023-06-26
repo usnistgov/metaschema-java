@@ -70,7 +70,7 @@ class DefaultFlagProperty
   /**
    * Construct a new bound flag instance based on a Java property. The name of the property is bound
    * to the name of the instance.
-   * 
+   *
    * @param field
    *          the Java field to bind to
    * @param parentClassBinding
@@ -92,7 +92,7 @@ class DefaultFlagProperty
     }
 
     String defaultString = this.flag.defaultValue();
-    this.defaultValue = Constants.NULL_VALUE.equals(defaultString) ? null  // NOPMD readability
+    this.defaultValue = Constants.NULL_VALUE.equals(defaultString) ? null // NOPMD readability
         : getJavaTypeAdapter().parse(defaultString);
   }
 
@@ -127,7 +127,7 @@ class DefaultFlagProperty
   }
 
   @NonNull
-  protected IDataTypeAdapter<?> getJavaTypeAdapter() {
+  protected final IDataTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
 
@@ -177,7 +177,7 @@ class DefaultFlagProperty
         getField().getName());
   }
 
-  private class InternalFlagDefinition implements IFlagDefinition, IValueConstraintFeature {
+  private final class InternalFlagDefinition implements IFlagDefinition, IValueConstraintFeature {
     private final Lazy<IValueConstraintSupport> constraints;
 
     private InternalFlagDefinition() {
@@ -234,6 +234,7 @@ class DefaultFlagProperty
 
     @Override
     public String getUseName() {
+      // always use the name instead
       return null;
     }
 

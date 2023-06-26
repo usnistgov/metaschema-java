@@ -69,7 +69,7 @@ class XmlbeansMarkupVisitorTest {
   @Test
   void testComplex() throws IOException {
     String html = testMarkupLine(
-        "this is some \"quoted *basic text*\" with a [**bold** link](url/). <span id=\"id\">test</span>");
+        "this is some \"quoted *basic text*\" with a [**bold** link](url/).");
     assertNotNull(html, "not null");
     // System.out.println(html);
   }
@@ -89,9 +89,7 @@ class XmlbeansMarkupVisitorTest {
     try (XmlCursor cursor = xmlData.newCursor()) {
       cursor.toEndToken();
 
-      new XmlbeansMarkupVisitor("http://csrc.nist.gov/ns/oscal/metaschema/1.0", false).visitDocument(
-          markup.getDocument(),
-          cursor);
+      XmlbeansMarkupVisitor.visit(markup, "http://csrc.nist.gov/ns/oscal/metaschema/1.0", cursor);
 
       try (StringWriter writer = new StringWriter()) {
         metaschemaDocument.save(writer, options);

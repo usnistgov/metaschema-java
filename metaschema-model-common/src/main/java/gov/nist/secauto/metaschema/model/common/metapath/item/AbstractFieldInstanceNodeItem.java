@@ -33,7 +33,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A {@link INodeItem} supported by a {@link IFieldInstance}.
- * 
+ *
  * @param <F>
  *          the flag node item type
  * @param <P>

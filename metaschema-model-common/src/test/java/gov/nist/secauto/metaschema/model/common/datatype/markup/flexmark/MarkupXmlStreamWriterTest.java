@@ -24,12 +24,12 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype.markup;
+package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
 
 import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxOutputFactory;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AstCollectingVisitor;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -44,6 +44,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 class MarkupXmlStreamWriterTest {
+  private static final String NAMESPACE = "http://www.w3.org/1999/xhtml";
+  private static final String NS_PREFIX = "";
 
   @Test
   void testHTML() throws XMLStreamException {
@@ -55,27 +57,25 @@ class MarkupXmlStreamWriterTest {
         + "</thead>\n"
         + "<tbody>\n"
         + "<tr><td><q>data1</q> <insert type=\"param\" id-ref=\"insert\" /></td></tr>\n"
-        + "<tr><td><q>data2</q> <first a=\"1\"> <insert type=\"param\" id-ref=\"insert\" /></td></tr>\n"
+        + "<tr><td><q>data2</q> <insert type=\"param\" id-ref=\"insert\" /></td></tr>\n"
         + "</tbody>\n"
         + "</table>\n"
         + "<p>Some <q><em>more</em></q> <strong>text</strong> <img src=\"src\" alt=\"alt\" /></p>\n";
-    String namespace = "http://www.w3.org/1999/xhtml";
-    String prefix = "";
+
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
     visitor.collect(ms.getDocument());
     // System.out.println(visitor.getAst());
-
-    MarkupXmlStreamWriter writer = new MarkupXmlStreamWriter(namespace, true);
 
     XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
     assert factory instanceof WstxOutputFactory;
     factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
     XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(System.out);
     NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
-        List.of(NamespaceEventImpl.constructNamespace(null, prefix, namespace)));
+        List.of(NamespaceEventImpl.constructNamespace(null, NS_PREFIX, NAMESPACE)));
     xmlStreamWriter.setNamespaceContext(nsContext);
-    writer.visitChildren(ms.getDocument(), xmlStreamWriter);
+
+    ms.writeXHtml(NAMESPACE, xmlStreamWriter);
     xmlStreamWriter.close();
   }
 

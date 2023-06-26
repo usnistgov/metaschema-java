@@ -64,29 +64,29 @@ public class XmlSimpleTypeDataTypeRestriction
     try {
       state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "simpleType", XmlSchemaGenerator.NS_XML_SCHEMA);
 
-    if (!anonymous) {
-      state.writeAttribute("name", ObjectUtils.notNull(getQName().getLocalPart()));
-    }
+      if (!anonymous) {
+        state.writeAttribute("name", ObjectUtils.notNull(getQName().getLocalPart()));
+      }
 
-    state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "restriction", XmlSchemaGenerator.NS_XML_SCHEMA);
-    state.writeAttribute("base", state.getSimpleType(getDataTypeAdapter()).getTypeReference());
+      state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "restriction", XmlSchemaGenerator.NS_XML_SCHEMA);
+      state.writeAttribute("base", state.getSimpleType(getDataTypeAdapter()).getTypeReference());
 
-    for (IAllowedValue allowedValue : getAllowedValuesCollection().getValues()) {
-      state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "enumeration", XmlSchemaGenerator.NS_XML_SCHEMA);
-      state.writeAttribute("value", allowedValue.getValue());
+      for (IAllowedValue allowedValue : getAllowedValuesCollection().getValues()) {
+        state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "enumeration", XmlSchemaGenerator.NS_XML_SCHEMA);
+        state.writeAttribute("value", allowedValue.getValue());
 
-      MarkupLine description = allowedValue.getDescription();
-      generateDescriptionAnnotation(
-          description,
-          ObjectUtils.notNull(getQName().getNamespaceURI()),
-          state);
-//        LOGGER.info(String.format("Field:%s:%s: %s", definition.getContainingMetaschema().getLocation(),
-//            definition.getName(), allowedValue.getValue()));
-      state.writeEndElement(); // xs:enumeration
-    }
+        MarkupLine description = allowedValue.getDescription();
+        generateDescriptionAnnotation(
+            description,
+            ObjectUtils.notNull(getQName().getNamespaceURI()),
+            state);
+        // LOGGER.info(String.format("Field:%s:%s: %s", definition.getContainingMetaschema().getLocation(),
+        // definition.getName(), allowedValue.getValue()));
+        state.writeEndElement(); // xs:enumeration
+      }
 
-    state.writeEndElement(); // xs:restriction
-    state.writeEndElement(); // xs:simpleType
+      state.writeEndElement(); // xs:restriction
+      state.writeEndElement(); // xs:simpleType
     } catch (XMLStreamException ex) {
       throw new SchemaGenerationException(ex);
     }
@@ -103,7 +103,8 @@ public class XmlSimpleTypeDataTypeRestriction
     // write description
     writer.writeStartElement(xmlNS, "p");
 
-    description.writeHtml(writer, xmlNS);
+    description.writeXHtml(xmlNS, writer);
+
     writer.writeEndElement(); // p
 
     writer.writeEndElement(); // xs:documentation

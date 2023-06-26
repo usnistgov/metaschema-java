@@ -48,6 +48,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Provides a common, abstract implementation of a {@link IMetaschema}.
  */
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 public abstract class AbstractMetaschema
     implements IMetaschema {
   private static final Logger LOGGER = LogManager.getLogger(AbstractMetaschema.class);
@@ -60,7 +61,7 @@ public abstract class AbstractMetaschema
 
   /**
    * Construct a new Metaschema object.
-   * 
+   *
    * @param importedMetaschemas
    *          the collection of Metaschema objects this Metaschema imports
    */
@@ -197,6 +198,7 @@ public abstract class AbstractMetaschema
     }
   }
 
+  @SuppressWarnings({ "unused", "PMD.UnusedPrivateMethod" }) // used by lambda
   private static <DEF extends IDefinition> DEF handleShadowedDefinitions(
       @SuppressWarnings("unused") @NonNull String key, @NonNull DEF oldDef, @NonNull DEF newDef) {
     if (!oldDef.equals(newDef) && LOGGER.isWarnEnabled()) {

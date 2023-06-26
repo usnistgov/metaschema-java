@@ -40,7 +40,7 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
 
   /**
    * Construct a new assembly node item.
-   * 
+   *
    * @param factory
    *          the factory to use to instantiate new node items
    */
@@ -61,7 +61,7 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
 
   /**
    * Provides an abstract implementation of a lazy loaded model.
-   * 
+   *
    * @param <F>
    *          the type of the child flag items
    * @param <M>
@@ -73,7 +73,7 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
 
     /**
      * Creates a new collection of flags and model items.
-     * 
+     *
      * @param flags
      *          a mapping of flag name to a flag item
      * @param modelItems
@@ -88,7 +88,7 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
 
     /**
      * Get the matching list of model items having the provided name.
-     * 
+     *
      * @param name
      *          the name of the model items to retrieve
      * @return a lisy of matching model items or {@code null} if no match was found
@@ -101,7 +101,7 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
 
     /**
      * Get all model items grouped by model item name.
-     * 
+     *
      * @return a collection of lists containg model items grouped by names
      */
     @SuppressWarnings("null")

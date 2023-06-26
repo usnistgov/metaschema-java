@@ -49,7 +49,7 @@ public @interface BoundFlag {
    * Get the documentary formal name of the flag.
    * <p>
    * If the value is "##none", then the description will be considered {@code null}.
-   * 
+   *
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
   @NonNull
@@ -59,7 +59,7 @@ public @interface BoundFlag {
    * Get the documentary description of the flag.
    * <p>
    * If the value is "##none", then the description will be considered {@code null}.
-   * 
+   *
    * @return a markdown string or {@code "##none"} if no description is provided
    */
   @NonNull
@@ -69,8 +69,8 @@ public @interface BoundFlag {
    * The model name to use for singleton values. This name will be used for associated XML attributes
    * and JSON properties.
    * <p>
-   * If the value is "##default", then element name is derived from the JavaBean property name.
-   * 
+   * If the value is "##none", then element name is derived from the JavaBean property name.
+   *
    * @return the name
    */
   @NonNull
@@ -81,7 +81,7 @@ public @interface BoundFlag {
    * <p>
    * If the value is "##default", then namespace is derived from the namespace provided in the
    * package-info. If the value is "##none", the namespace will be {@code null}.
-   * 
+   *
    * @return the namespace
    */
   @NonNull
@@ -101,14 +101,14 @@ public @interface BoundFlag {
    * Specifies if the XML Schema attribute is optional or required. If true, then the JavaBean
    * property is mapped to a XML Schema attribute that is required. Otherwise it is mapped to a XML
    * Schema attribute that is optional.
-   * 
+   *
    * @return {@code true} if the flag must occur, or {@code false} otherwise
    */
   boolean required() default false;
 
   /**
    * The Metaschema data type adapter for the field's value.
-   * 
+   *
    * @return the data type adapter
    */
   @NonNull
@@ -116,7 +116,7 @@ public @interface BoundFlag {
 
   /**
    * Get any remarks for this flag.
-   * 
+   *
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
   @NonNull

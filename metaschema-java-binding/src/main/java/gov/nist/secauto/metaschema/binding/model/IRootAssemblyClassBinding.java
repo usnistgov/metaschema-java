@@ -68,7 +68,7 @@ public interface IRootAssemblyClassBinding extends IAssemblyClassBinding, IRootA
    * fields. In this case the method will throw an {@link IOException} indicating the root was not
    * found.</li>
    * </ul>
-   * 
+   *
    * @param context
    *          the JSON parser
    * @return the bound object instance representing the JSON object
@@ -81,7 +81,7 @@ public interface IRootAssemblyClassBinding extends IAssemblyClassBinding, IRootA
   /**
    * Parses XML into a bound object. This assembly must be a root assembly for which a call to
    * {@link IAssemblyClassBinding#isRoot()} will return {@code true}.
-   * 
+   *
    * @param context
    *          the XML parser
    * @return the bound object instance representing the JSON object
@@ -97,7 +97,7 @@ public interface IRootAssemblyClassBinding extends IAssemblyClassBinding, IRootA
   /**
    * Writes data in a bound object to JSON. This assembly must be a root assembly for which a call to
    * {@link IAssemblyClassBinding#isRoot()} will return {@code true}.
-   * 
+   *
    * @param instance
    *          the bound object
    * @param context
@@ -110,7 +110,7 @@ public interface IRootAssemblyClassBinding extends IAssemblyClassBinding, IRootA
   /**
    * Writes data in a bound object to XML. This assembly must be a root assembly for which a call to
    * {@link IAssemblyClassBinding#isRoot()} will return {@code true}.
-   * 
+   *
    * @param instance
    *          the bound object
    * @param context

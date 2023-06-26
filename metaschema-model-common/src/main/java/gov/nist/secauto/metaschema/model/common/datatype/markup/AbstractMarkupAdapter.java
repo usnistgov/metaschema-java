@@ -26,30 +26,31 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractCustomJavaDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IMarkupItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import org.codehaus.stax2.XMLStreamWriter2;
+import org.codehaus.stax2.evt.XMLEventFactory2;
+
+import java.io.IOException;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractMarkupAdapter<TYPE extends AbstractMarkupString<TYPE>>
+public abstract class AbstractMarkupAdapter<TYPE extends IMarkupString<TYPE>>
     extends AbstractCustomJavaDataTypeAdapter<TYPE, IMarkupItem> {
-
-  private static final MarkupParser MARKUP_PARSER = new MarkupParser();
-
-  /**
-   * Gets the markup parser used to read and write markup.
-   * 
-   * @return the parser
-   */
-  protected static MarkupParser getMarkupParser() {
-    return MARKUP_PARSER;
-  }
 
   /**
    * Construct a new adapter.
-   * 
+   *
    * @param clazz
    *          the markup type class
    */
@@ -65,5 +66,45 @@ public abstract class AbstractMarkupAdapter<TYPE extends AbstractMarkupString<TY
   @Override
   public boolean isXmlMixed() {
     return true;
+  }
+
+  // TODO: verify that read/write methods cannot be generalized in the base class
+  @Override
+  public void writeXmlValue(
+      Object value,
+      StartElement parent,
+      XMLEventFactory2 eventFactory,
+      XMLEventWriter eventWriter)
+      throws XMLStreamException {
+
+    IMarkupString<?> markupString = (IMarkupString<?>) value;
+
+    markupString.writeXHtml(
+        ObjectUtils.notNull(parent.getName().getNamespaceURI()),
+        eventFactory,
+        eventWriter);
+  }
+
+  @Override
+  public void writeXmlValue(Object value, QName parentName, XMLStreamWriter2 streamWriter)
+      throws XMLStreamException {
+    IMarkupString<?> markupString = (IMarkupString<?>) value;
+
+    markupString.writeXHtml(
+        ObjectUtils.notNull(parentName.getNamespaceURI()),
+        streamWriter);
+  }
+
+  @Override
+  public void writeJsonValue(Object value, JsonGenerator generator) throws IOException {
+
+    IMarkupString<?> markupString;
+    try {
+      markupString = (IMarkupString<?>) value;
+    } catch (ClassCastException ex) {
+      throw new IOException(ex);
+    }
+
+    generator.writeString(markupString.toMarkdown().trim());
   }
 }

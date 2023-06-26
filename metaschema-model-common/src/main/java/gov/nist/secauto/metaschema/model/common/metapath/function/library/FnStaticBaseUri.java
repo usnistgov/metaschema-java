@@ -71,7 +71,7 @@ public final class FnStaticBaseUri {
 
   /**
    * Get the static base URI from the static context.
-   * 
+   *
    * @param context
    *          the dynamic context
    * @return the base URI or {@code null} if none was set

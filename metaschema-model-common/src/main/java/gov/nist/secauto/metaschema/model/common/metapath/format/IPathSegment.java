@@ -40,10 +40,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IPathSegment {
   /**
    * Get the path for this node item using the provided formatter.
-   * 
+   *
    * @param formatter
    *          the path formatter to use to produce the path
-   * 
+   *
    * @return the formatted path
    */
   @NonNull
@@ -54,7 +54,7 @@ public interface IPathSegment {
   /**
    * Apply formatting for the path segment. This is a visitor pattern that will be called to format
    * each segment in a larger path.
-   * 
+   *
    * @param formatter
    *          the path formatter
    * @return a textual representation of the path segment
@@ -64,7 +64,7 @@ public interface IPathSegment {
 
   /**
    * Get a list of path segments, starting at the root and descending.
-   * 
+   *
    * @return a list of path segments in descending order
    */
   @SuppressWarnings("null")
@@ -75,7 +75,7 @@ public interface IPathSegment {
 
   /**
    * Get a stream of path segments, starting at the root and descending.
-   * 
+   *
    * @return a stream of path segments in descending order
    */
   @NonNull
@@ -83,7 +83,7 @@ public interface IPathSegment {
 
   /**
    * Get the value associated with the path segment.
-   * 
+   *
    * @return the value or {@code} if no value is associated with this path segment
    */
   INodeItem getNodeItem();

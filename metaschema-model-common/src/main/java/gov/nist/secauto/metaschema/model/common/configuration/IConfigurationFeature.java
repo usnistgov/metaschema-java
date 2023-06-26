@@ -35,7 +35,7 @@ package gov.nist.secauto.metaschema.model.common.configuration;
 public interface IConfigurationFeature {
   /**
    * Determine if the given feature is enabled in the default configuration.
-   * 
+   *
    * @return {@code true} if the feature is enabled in the default configuration, or {@code false}
    *         otherwise
    */

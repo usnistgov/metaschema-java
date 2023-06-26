@@ -183,8 +183,7 @@ public interface INodeItemFactory {
     Map<String, List<IModelNodeItem>> retval = new LinkedHashMap<>(); // NOPMD - intentional
 
     for (INamedModelInstance instance : CollectionUtil.toIterable(getNamedModelInstances(parent.getDefinition()))) {
-      @NonNull
-      IModelNodeItem item;
+      @NonNull IModelNodeItem item;
       if (instance instanceof IAssemblyInstance) {
         item = newAssemblyNodeItem((IAssemblyInstance) instance, parent);
       } else if (instance instanceof IFieldInstance) {
@@ -230,8 +229,7 @@ public interface INodeItemFactory {
       List<IRequiredValueModelNodeItem> items = itemValues.map(itemValue -> {
         assert itemValue != null;
 
-        @NonNull
-        IRequiredValueModelNodeItem item;
+        @NonNull IRequiredValueModelNodeItem item;
         if (instance instanceof IAssemblyInstance) {
           item = newAssemblyNodeItem((IAssemblyInstance) instance, parent, index.incrementAndGet(),
               itemValue);

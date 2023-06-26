@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.xml;
+package gov.nist.secauto.metaschema.schemagen.xml; // NOPMD
 
 import com.ctc.wstx.stax.WstxOutputFactory;
 
@@ -83,6 +83,7 @@ public class XmlSchemaGenerator
   private static final String PREFIX_XML_SCHEMA_VERSIONING = "vs";
   @NonNull
   private static final String NS_XML_SCHEMA_VERSIONING = "http://www.w3.org/2007/XMLSchema-versioning";
+  @NonNull
   public static final String NS_XHTML = "http://www.w3.org/1999/xhtml";
 
   @NonNull
@@ -155,10 +156,8 @@ public class XmlSchemaGenerator
           StreamSource source = new StreamSource(stringReader);
           transformer.transform(source, serializer);
         }
-      } catch (SaxonApiException ex) {
-        throw new SchemaGenerationException(ex);
       }
-    } catch (IOException ex) {
+    } catch (IOException | SaxonApiException ex) {
       throw new SchemaGenerationException(ex);
     }
   }
@@ -171,7 +170,7 @@ public class XmlSchemaGenerator
 
       // analyze all definitions
       Map<String, String> prefixToNamespaceMap = new HashMap<>(); // NOPMD concurrency not needed
-      List<IRootAssemblyDefinition> rootAssemblyDefinitions = analyzeDefinitions(
+      final List<IRootAssemblyDefinition> rootAssemblyDefinitions = analyzeDefinitions(
           state,
           (entry, definition) -> {
             assert entry != null;
@@ -237,7 +236,9 @@ public class XmlSchemaGenerator
     state.writeStartElement(PREFIX_XML_SCHEMA, "appinfo", NS_XML_SCHEMA);
 
     state.writeStartElement(targetNS, "schema-name");
-    metaschema.getName().writeHtml(state.getXMLStreamWriter(), targetNS);
+
+    metaschema.getName().writeXHtml(targetNS, state.getXMLStreamWriter());
+
     state.writeEndElement();
 
     state.writeStartElement(targetNS, "schema-version");
@@ -253,7 +254,8 @@ public class XmlSchemaGenerator
     MarkupMultiline remarks = metaschema.getRemarks();
     if (remarks != null) {
       state.writeStartElement(PREFIX_XML_SCHEMA, "documentation", NS_XML_SCHEMA);
-      remarks.writeHtml(state.getXMLStreamWriter(), targetNS);
+
+      remarks.writeXHtml(targetNS, state.getXMLStreamWriter());
       state.writeEndElement();
     }
 

@@ -51,7 +51,7 @@ public final class FunctionUtils {
 
   /**
    * Converts a {@link INumericItem} value to an integer value.
-   * 
+   *
    * @param value
    *          the value to convert
    * @return the integer value
@@ -64,7 +64,7 @@ public final class FunctionUtils {
 
   /**
    * Converts a {@link BigInteger} value to an integer value.
-   * 
+   *
    * @param value
    *          the value to convert
    * @return the integer value
@@ -77,7 +77,7 @@ public final class FunctionUtils {
 
   /**
    * Converts a {@link INumericItem} value to a long value.
-   * 
+   *
    * @param value
    *          the value to convert
    * @return the long value
@@ -90,7 +90,7 @@ public final class FunctionUtils {
 
   /**
    * Converts a {@link BigInteger} value to a long value.
-   * 
+   *
    * @param value
    *          the value to convert
    * @return the long value
@@ -105,7 +105,7 @@ public final class FunctionUtils {
    * Retrieves the first item in a sequence. If the sequence is empty, a {@code null} result is
    * returned. If requireSingleton is {@code true} and the sequence contains more than one item, a
    * {@link TypeMetapathException} is thrown.
-   * 
+   *
    * @param <ITEM>
    *          the item type to return derived from the provided sequence
    * @param sequence
@@ -119,8 +119,7 @@ public final class FunctionUtils {
    */
   @Nullable
   public static <ITEM extends IItem> ITEM getFirstItem(@NonNull ISequence<ITEM> sequence, boolean requireSingleton) {
-    @Nullable
-    ITEM retval = null;
+    @Nullable ITEM retval = null;
     if (!sequence.isEmpty()) {
       List<ITEM> items = sequence.asList();
       if (requireSingleton && items.size() != 1) {
@@ -136,7 +135,7 @@ public final class FunctionUtils {
   /**
    * Gets the first item of the provided sequence as a {@link INumericItem} value. If the sequence is
    * empty, then a {@code null} value is returned.
-   * 
+   *
    * @param sequence
    *          a Metapath sequence containing the value to convert
    * @param requireSingleton
@@ -146,7 +145,7 @@ public final class FunctionUtils {
    * @throws TypeMetapathException
    *           if the sequence contains more than one item, or the item cannot be cast to a numeric
    *           value
-   * 
+   *
    */
   @Nullable
   public static INumericItem toNumeric(@NonNull ISequence<?> sequence, boolean requireSingleton) {
@@ -156,7 +155,7 @@ public final class FunctionUtils {
 
   /**
    * Gets the provided item value as a {@link INumericItem} value.
-   * 
+   *
    * @param item
    *          the value to convert
    * @return the numeric item value
@@ -173,7 +172,7 @@ public final class FunctionUtils {
 
   /**
    * Gets the provided item value as a {@link INumericItem} value.
-   * 
+   *
    * @param item
    *          the value to convert
    * @return the numeric item value
@@ -192,7 +191,7 @@ public final class FunctionUtils {
   /**
    * Gets the provided item value as a {@link INumericItem} value. If the item is {@code null}, then a
    * {@code null} value is returned.
-   * 
+   *
    * @param item
    *          the value to convert
    * @return the numeric item value

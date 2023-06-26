@@ -49,7 +49,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public @interface AllowedValues {
   /**
    * An optional identifier for the constraint, which must be unique to only this constraint.
-   * 
+   *
    * @return the identifier if provided or an empty string otherwise
    */
   @NonNull
@@ -57,7 +57,7 @@ public @interface AllowedValues {
 
   /**
    * An optional formal name for the constraint.
-   * 
+   *
    * @return the formal name if provided or an empty string otherwise
    */
   @NonNull
@@ -65,7 +65,7 @@ public @interface AllowedValues {
 
   /**
    * An optional description of the constraint.
-   * 
+   *
    * @return the description if provided or an empty string otherwise
    */
   @NonNull
@@ -73,7 +73,7 @@ public @interface AllowedValues {
 
   /**
    * The significance of a violation of this constraint.
-   * 
+   *
    * @return the level
    */
   @NonNull
@@ -86,7 +86,7 @@ public @interface AllowedValues {
    * appears on. In the prior case, this annotation may only appear on a {@link BoundField} if the
    * field has no flags, which results in a {@link BoundField} annotation on a field instance with a
    * scalar, data type value.
-   * 
+   *
    * @return the target metapath
    */
   @NonNull
@@ -94,14 +94,14 @@ public @interface AllowedValues {
 
   /**
    * An optional set of properties associated with these allowed values.
-   * 
+   *
    * @return the properties or an empty array with no properties
    */
   Property[] properties() default {};
 
   /**
    * Get any allowed values for this constraint.
-   * 
+   *
    * @return an array of allowed value enumerations
    */
   @NonNull
@@ -109,14 +109,14 @@ public @interface AllowedValues {
 
   /**
    * Indicates if the constraint allows other values not included in the enumerated list.
-   * 
+   *
    * @return {@code true} if other values are allowed or {@code false} otherwise
    */
   boolean allowOthers() default IAllowedValuesConstraint.DEFAULT_ALLOW_OTHER;
 
   /**
    * Indicates if the constraint can be extended by other constraints.
-   * 
+   *
    * @return the extension mode
    */
   @NonNull
@@ -124,7 +124,7 @@ public @interface AllowedValues {
 
   /**
    * The message to emit when the constraint is violated.
-   * 
+   *
    * @return the message or an empty string otherwise
    */
   @NonNull
@@ -132,7 +132,7 @@ public @interface AllowedValues {
 
   /**
    * Any remarks about the constraint, encoded as an escaped Markdown string.
-   * 
+   *
    * @return an encoded markdown string or an empty string if no remarks are provided
    */
   @NonNull

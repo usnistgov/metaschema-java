@@ -48,7 +48,7 @@ public final class DefaultIndexConstraint
 
   /**
    * Create a index constraint, which uses a set of key fields to build a key.
-   * 
+   *
    * @param id
    *          the optional identifier for the constraint
    * @param formalName
@@ -103,7 +103,7 @@ public final class DefaultIndexConstraint
     return new Builder();
   }
 
-  public static class Builder
+  public static final class Builder
       extends AbstractKeyConstraintBuilder<Builder, DefaultIndexConstraint> {
     private String name;
 

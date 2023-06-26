@@ -47,7 +47,7 @@ public final class FunctionService {
 
   /**
    * Get the singleton instance of the function service.
-   * 
+   *
    * @return the service instance
    */
   public static FunctionService getInstance() {
@@ -65,7 +65,7 @@ public final class FunctionService {
 
   /**
    * Load all known functions registered with this function service.
-   * 
+   *
    * @return the function library
    */
   @NonNull
@@ -88,7 +88,7 @@ public final class FunctionService {
 
   /**
    * Get the function service loader instance.
-   * 
+   *
    * @return the service loader instance.
    */
   @NonNull
@@ -99,7 +99,7 @@ public final class FunctionService {
   /**
    * Retrieve the function with the provided name that supports the signature of the provided methods,
    * if such a function exists.
-   * 
+   *
    * @param name
    *          the name of a group of functions
    * @param arguments
@@ -116,7 +116,7 @@ public final class FunctionService {
   /**
    * Retrieve the function with the provided name that supports the signature of the provided methods,
    * if such a function exists.
-   * 
+   *
    * @param name
    *          the name of a group of functions
    * @param arguments

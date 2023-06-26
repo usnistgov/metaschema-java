@@ -27,10 +27,10 @@
 package gov.nist.secauto.metaschema.model;
 
 import gov.nist.secauto.metaschema.model.common.AbstractFlagInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IInlineDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
@@ -67,7 +67,7 @@ class XmlInlineFlagDefinition
 
   /**
    * Constructs a new Metaschema flag definition from an XML representation bound to Java objects.
-   * 
+   *
    * @param xmlFlag
    *          the XML representation bound to Java objects
    * @param parent
@@ -100,10 +100,10 @@ class XmlInlineFlagDefinition
 
   /**
    * Get the underlying XML model.
-   * 
+   *
    * @return the XML model
    */
-  protected InlineFlagDefinitionType getXmlFlag() {
+  protected final InlineFlagDefinitionType getXmlFlag() {
     return xmlFlag;
   }
 
@@ -142,7 +142,7 @@ class XmlInlineFlagDefinition
 
   @Override
   public String getUseName() {
-    return getDefinition().getUseName();
+    return null;
   }
 
   @Override
@@ -170,7 +170,7 @@ class XmlInlineFlagDefinition
   /**
    * The corresponding definition for the local flag instance.
    */
-  public class InternalFlagDefinition implements IFlagDefinition, IInlineDefinition<XmlInlineFlagDefinition> {
+  public final class InternalFlagDefinition implements IFlagDefinition, IInlineDefinition<XmlInlineFlagDefinition> {
     @Nullable
     private final Object defaultValue;
 
@@ -204,7 +204,8 @@ class XmlInlineFlagDefinition
 
     @Override
     public String getUseName() {
-      return getName();
+      // always use the name
+      return null;
     }
 
     @Override

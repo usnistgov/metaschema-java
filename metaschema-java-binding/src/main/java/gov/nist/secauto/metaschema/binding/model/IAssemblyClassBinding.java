@@ -74,7 +74,7 @@ public interface IAssemblyClassBinding extends IClassBinding, IAssemblyDefinitio
    * <p>
    * After parsing the current token will be the {@link JsonToken#END_OBJECT} corresponding to the
    * initial {@link JsonToken#START_OBJECT} parsed by this method.
-   * 
+   *
    * @param context
    *          the JSON parser
    * @return the bound object instance representing the JSON object

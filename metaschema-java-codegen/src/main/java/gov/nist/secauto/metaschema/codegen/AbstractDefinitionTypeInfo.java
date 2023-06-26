@@ -67,14 +67,14 @@ abstract class AbstractDefinitionTypeInfo<DEF extends IDefinition> implements ID
 
   /**
    * Lazy initialize instance information.
-   * 
+   *
    * @return {@code true} if instance information was initialized or {@code false} otherwise
    */
   protected abstract boolean initInstanceTypeInfos();
 
   /**
    * Adds the provided property generator to this class generator.
-   * 
+   *
    * @param typeInfo
    *          the instance type info to add
    */

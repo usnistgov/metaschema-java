@@ -94,7 +94,7 @@ class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
   @Override
   public void accept(Object item, QName currentParentName, IXmlWritingContext context)
       throws IOException, XMLStreamException {
-    getJavaTypeAdapter().writeXmlCharacters(item, currentParentName, context.getWriter());
+    getJavaTypeAdapter().writeXmlValue(item, currentParentName, context.getWriter());
   }
 
   @Override

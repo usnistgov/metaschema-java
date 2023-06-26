@@ -74,7 +74,7 @@ public class MetapathExpression {
 
   /**
    * Compiles a Metapath expression string.
-   * 
+   *
    * @param path
    *          the metapath expression
    * @return the compiled expression object
@@ -83,10 +83,9 @@ public class MetapathExpression {
    */
   @NonNull
   public static MetapathExpression compile(@NonNull String path) {
-    @NonNull
-    MetapathExpression retval;
+    @NonNull MetapathExpression retval;
     if (".".equals(path)) {
-      retval = MetapathExpression.CONTEXT_NODE;
+      retval = CONTEXT_NODE;
     } else {
       try {
         metapath10Lexer lexer = new metapath10Lexer(CharStreams.fromString(path));
@@ -127,7 +126,7 @@ public class MetapathExpression {
 
   /**
    * Construct a new Metapath expression.
-   * 
+   *
    * @param path
    *          the Metapath as a string
    * @param expr
@@ -140,7 +139,7 @@ public class MetapathExpression {
 
   /**
    * Get the original Metapath expression as a string.
-   * 
+   *
    * @return the expression
    */
   public String getPath() {
@@ -149,7 +148,7 @@ public class MetapathExpression {
 
   /**
    * Get the compiled abstract syntax tree (AST) representation of the Metapath.
-   * 
+   *
    * @return the Metapath AST
    */
   @NonNull
@@ -166,7 +165,7 @@ public class MetapathExpression {
    * Evaluate this Metapath expression using the provided {@code nodeContext} as the initial
    * evaluation context. The specific result type will be determined by the {@code resultType}
    * argument.
-   * 
+   *
    * @param <T>
    *          the expected result type
    * @param nodeContext
@@ -191,7 +190,7 @@ public class MetapathExpression {
    * argument.
    * <p>
    * This variant allow for reuse of a provided {@code dynamicContext}.
-   * 
+   *
    * @param <T>
    *          the expected result type
    * @param nodeContext
@@ -227,7 +226,7 @@ public class MetapathExpression {
    * <li>SEQUENCE - the evaluation result sequence.</li>
    * <li>STRING - the string value of the first result item in the sequence.</li>
    * </ul>
-   * 
+   *
    * @param <T>
    *          the requested return value
    * @param sequence
@@ -238,6 +237,7 @@ public class MetapathExpression {
    * @throws TypeMetapathException
    *           if the provided sequence is incompatible with the requested result type
    */
+  @SuppressWarnings("PMD.NullAssignment") // for readability
   @Nullable
   protected <T> T toResultType(@NonNull ISequence<?> sequence, @NonNull ResultType resultType) {
     Object result;
@@ -263,15 +263,14 @@ public class MetapathExpression {
       throw new InvalidTypeMetapathException(null, String.format("unsupported result type '%s'", resultType.name()));
     }
 
-    @SuppressWarnings("unchecked")
-    T retval = (T) result;
+    @SuppressWarnings("unchecked") T retval = (T) result;
     return retval;
   }
 
   /**
    * Evaluate this Metapath expression using the provided {@code nodeContext} as the initial
    * evaluation context.
-   * 
+   *
    * @param <T>
    *          the type of items contained in the resulting sequence
    * @param nodeContext
@@ -291,7 +290,7 @@ public class MetapathExpression {
    * evaluation context.
    * <p>
    * This variant allow for reuse of a provided {@code dynamicContext}.
-   * 
+   *
    * @param <T>
    *          the type of items contained in the resulting sequence
    * @param nodeContext

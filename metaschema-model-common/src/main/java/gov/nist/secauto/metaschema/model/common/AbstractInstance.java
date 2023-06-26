@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -30,7 +31,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public abstract class AbstractInstance<P extends IContainer> implements IInstance {
   @NonNull
   private final P parent;
-  
+
   public AbstractInstance(@NonNull P parent) {
     this.parent = parent;
   }

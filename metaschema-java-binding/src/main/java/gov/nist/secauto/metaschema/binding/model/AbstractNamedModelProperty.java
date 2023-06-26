@@ -97,10 +97,10 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
   /**
    * Construct a new bound model instance based on a Java property. The name of the property is bound
    * to the name of the instance.
-   * 
+   *
    * @param field
    *          the field instance associated with this property
-   * 
+   *
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */
@@ -150,7 +150,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
 
   /**
    * Gets information about the bound property.
-   * 
+   *
    * @return the property information for the bound property
    */
   @SuppressWarnings("null")
@@ -369,7 +369,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
     XmlGroupAsBehavior getXmlGroupAsBehavior();
   }
 
-  private static class SimpleGroupAs implements IGroupAs {
+  private static final class SimpleGroupAs implements IGroupAs {
     @NonNull
     private final String name;
     @NonNull

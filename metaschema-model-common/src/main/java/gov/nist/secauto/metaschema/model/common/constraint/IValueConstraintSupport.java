@@ -37,7 +37,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IValueConstraintSupport extends IConstraintSupport {
   /**
    * Get the collection of allowed value constraints, if any.
-   * 
+   *
    * @return the constraints or an empty list
    */
   @NonNull
@@ -45,7 +45,7 @@ public interface IValueConstraintSupport extends IConstraintSupport {
 
   /**
    * Get the collection of matches constraints, if any.
-   * 
+   *
    * @return the constraints or an empty list
    */
   @NonNull
@@ -53,7 +53,7 @@ public interface IValueConstraintSupport extends IConstraintSupport {
 
   /**
    * Get the collection of index key reference constraints, if any.
-   * 
+   *
    * @return the constraints or an empty list
    */
   @NonNull
@@ -61,7 +61,7 @@ public interface IValueConstraintSupport extends IConstraintSupport {
 
   /**
    * Get the collection of expect constraints, if any.
-   * 
+   *
    * @return the constraints or an empty list
    */
   @NonNull

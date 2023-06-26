@@ -34,7 +34,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 interface IDefinitionBindingConfiguration {
   /**
    * Get the class name to use for the generated class associated with this binding.
-   * 
+   *
    * @return a class name
    */
   @Nullable
@@ -42,7 +42,7 @@ interface IDefinitionBindingConfiguration {
 
   /**
    * Get the class that the associated generated class will extend.
-   * 
+   *
    * @return a full type, including the package
    */
   @Nullable
@@ -50,7 +50,7 @@ interface IDefinitionBindingConfiguration {
 
   /**
    * A collection of interfaces that the associated generated class will implement.
-   * 
+   *
    * @return a list of fully qualified type names for interfaces
    */
   @NonNull

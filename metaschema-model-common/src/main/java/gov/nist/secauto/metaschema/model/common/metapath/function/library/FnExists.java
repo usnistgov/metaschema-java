@@ -73,7 +73,7 @@ public final class FnExists {
 
   /**
    * Identify if there is at least one item in the {@code sequence}.
-   * 
+   *
    * @param sequence
    *          the sequence to check
    * @return {@code true} if the sequence contains at least one item, or {@code false} otherwise

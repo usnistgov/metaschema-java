@@ -39,6 +39,7 @@ import java.net.URI;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Since a node doesn't have a base URI in Metaschema, this is an alias for the document-uri
@@ -83,7 +84,7 @@ public final class FnBaseUri {
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
       INodeItem focus) {
-    return focus == null ? ISequence.empty() : ISequence.of(fnBaseUri(focus));
+    return ISequence.of(fnBaseUri(focus));
   }
 
   @SuppressWarnings("unused")
@@ -97,7 +98,7 @@ public final class FnBaseUri {
 
     INodeItem item = FunctionUtils.getFirstItem(arg, true);
 
-    return item == null ? ISequence.empty() : ISequence.of(fnBaseUri(item));
+    return ISequence.of(fnBaseUri(item));
   }
 
   /**
@@ -105,11 +106,13 @@ public final class FnBaseUri {
    * <p>
    * Based on the XPath 3.1
    * <a href="https://www.w3.org/TR/xpath-functions-31/#func-base-uri">fn:base-uri</a> function.
-   * 
+   *
    * @param nodeItem
    *          the node to get the base URI from
    * @return the base URI, or {@code null} if the node is either null or doesn't have a base URI
    */
+  @SuppressWarnings("PMD.NullAssignment") // for readability
+  @Nullable
   public static IAnyUriItem fnBaseUri(INodeItem nodeItem) {
     IAnyUriItem retval;
     if (nodeItem == null) {

@@ -26,226 +26,78 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
 
-import com.vladsch.flexmark.ext.escaped.character.EscapedCharacterExtension;
-import com.vladsch.flexmark.ext.gfm.strikethrough.SubscriptExtension;
-import com.vladsch.flexmark.ext.superscript.SuperscriptExtension;
-import com.vladsch.flexmark.ext.tables.TablesExtension;
-import com.vladsch.flexmark.ext.typographic.TypographicExtension;
 import com.vladsch.flexmark.formatter.Formatter;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
+import com.vladsch.flexmark.parser.ListOptions;
 import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.util.ast.Document;
-import com.vladsch.flexmark.util.builder.BuilderBase;
 import com.vladsch.flexmark.util.data.DataHolder;
-import com.vladsch.flexmark.util.misc.Extension;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class FlexmarkFactory {
-  private static final Logger LOGGER = LogManager.getLogger(FlexmarkFactory.class);
-
   @NonNull
   private static final FlexmarkFactory SINGLETON = new FlexmarkFactory();
 
   @NonNull
-  private static final Map<String, String> TYPOGRAPHIC_REPLACEMENT_MAP = new ConcurrentHashMap<>();
-
-  static {
-    TYPOGRAPHIC_REPLACEMENT_MAP.put("“", "\"");
-    TYPOGRAPHIC_REPLACEMENT_MAP.put("”", "\"");
-    TYPOGRAPHIC_REPLACEMENT_MAP.put("&ldquo;", "“");
-    TYPOGRAPHIC_REPLACEMENT_MAP.put("&rdquo;", "”");
-    // TYPOGRAPHIC_REPLACEMENT_MAP.put("‘", "'");
-    // TYPOGRAPHIC_REPLACEMENT_MAP.put("’", "'");
-    TYPOGRAPHIC_REPLACEMENT_MAP.put("&lsquo;", "‘");
-    TYPOGRAPHIC_REPLACEMENT_MAP.put("&rsquo;", "’");
-    TYPOGRAPHIC_REPLACEMENT_MAP.put("&apos;", "’");
-    // TYPOGRAPHIC_REPLACEMENT_MAP.put("«", "<<");
-    TYPOGRAPHIC_REPLACEMENT_MAP.put("&laquo;", "«");
-    // TYPOGRAPHIC_REPLACEMENT_MAP.put("»", ">>");
-    TYPOGRAPHIC_REPLACEMENT_MAP.put("&raquo;", "»");
-    // TYPOGRAPHIC_REPLACEMENT_MAP.put("…", "...");
-    TYPOGRAPHIC_REPLACEMENT_MAP.put("&hellip;", "…");
-    // TYPOGRAPHIC_REPLACEMENT_MAP.put("–", "--");
-    TYPOGRAPHIC_REPLACEMENT_MAP.put("&endash;", "–");
-    // TYPOGRAPHIC_REPLACEMENT_MAP.put("—", "---");
-    TYPOGRAPHIC_REPLACEMENT_MAP.put("&emdash;", "—");
-  }
-
-  private Parser markdownParser;
-  private HtmlRenderer htmlRenderer;
-  private Formatter formatter;
-  private FlexmarkHtmlConverter htmlConverter;
+  private final DataHolder configuration;
+  @NonNull
+  private final Parser markdownParser;
+  @NonNull
+  private final HtmlRenderer htmlRenderer;
+  @NonNull
+  private final Formatter formatter;
+  @NonNull
+  private final FlexmarkHtmlConverter htmlConverter;
+  @NonNull
+  final ListOptions listOptions;
 
   @NonNull
   public static FlexmarkFactory instance() {
     return SINGLETON;
   }
 
-  @NonNull
-  public Document fromHtml(@NonNull String html) {
-    return fromHtml(html, null, null);
+  public FlexmarkFactory() {
+    this(FlexmarkConfiguration.FLEXMARK_CONFIG);
+  }
+
+  public FlexmarkFactory(@NonNull DataHolder config) {
+    this.configuration = config;
+    this.markdownParser = Parser.builder(config).customDelimiterProcessor(
+        new FixedEmphasisDelimiterProcessor(Parser.STRONG_WRAPS_EMPHASIS.get(config))).build();
+    this.htmlRenderer = HtmlRenderer.builder(config).build();
+    this.formatter = Formatter.builder(config).build();
+    this.htmlConverter = FlexmarkHtmlConverter.builder(config).build();
+    this.listOptions = ListOptions.get(config);
   }
 
   @NonNull
-  public Document fromHtml(@NonNull String html, FlexmarkHtmlConverter htmlParser, Parser markdownParser) {
-    Objects.requireNonNull(html, "html");
-
-    FlexmarkHtmlConverter effectiveHtmlParser = htmlParser == null ? getFlexmarkHtmlConverter() : htmlParser;
-    Parser effectiveMarkdownParser = markdownParser == null ? getMarkdownParser() : markdownParser;
-
-    String markdown = effectiveHtmlParser.convert(html);
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("markdown: {}", markdown);
-    }
-    return fromMarkdown(markdown, effectiveMarkdownParser);
+  public DataHolder getConfiguration() {
+    return configuration;
   }
 
   @NonNull
-  public Document fromMarkdown(String markdown) {
-    return fromMarkdown(markdown, getMarkdownParser());
+  public ListOptions getListOptions() {
+    return listOptions;
   }
 
-  @NonNull
-  public Document fromMarkdown(String markdown, Parser parser) {
-    Objects.requireNonNull(markdown, "markdown");
-    Objects.requireNonNull(parser, "parser");
-
-    return parser.parse(markdown);
-  }
-
-  @SuppressWarnings("null")
-  protected void applyOptions(@NonNull BuilderBase<?> builder) {
-    builder.set(Parser.FENCED_CODE_CONTENT_BLOCK, true);
-    // GitHub-flavored tables
-    builder.set(TablesExtension.COLUMN_SPANS, false);
-    builder.set(TablesExtension.APPEND_MISSING_COLUMNS, true);
-    builder.set(TablesExtension.DISCARD_EXTRA_COLUMNS, true);
-    builder.set(TablesExtension.HEADER_SEPARATOR_COLUMN_MATCH, true);
-    builder.set(TypographicExtension.SINGLE_QUOTE_UNMATCHED, "'");
-    builder.set(TypographicExtension.ENABLE_QUOTES, true);
-    builder.set(TypographicExtension.ENABLE_SMARTS, false);
-    builder.set(TypographicExtension.DOUBLE_QUOTE_OPEN, "\"");
-    builder.set(TypographicExtension.DOUBLE_QUOTE_CLOSE, "\"");
-    builder.set(FlexmarkHtmlConverter.TYPOGRAPHIC_REPLACEMENT_MAP, TYPOGRAPHIC_REPLACEMENT_MAP);
-    // builder.set(FlexmarkHtmlConverter.OUTPUT_UNKNOWN_TAGS, true);
-    // builder.set(HtmlRenderer.UNESCAPE_HTML_ENTITIES, true);
-    builder.set(FlexmarkHtmlConverter.SETEXT_HEADINGS, false);
-    builder.set(FlexmarkHtmlConverter.ADD_TRAILING_EOL, false);
-    builder.set(Formatter.MAX_TRAILING_BLANK_LINES, -1);
-    builder.set(HtmlRenderer.MAX_TRAILING_BLANK_LINES, -1);
-
-    List<Extension> extensions = List.of(
-        // Metaschema insert
-        InsertAnchorExtension.create(),
-        // q tag handling
-        HtmlQuoteTagExtension.create(), TypographicExtension.create(), TablesExtension.create(),
-        // to ensure that escaped characters are not lost
-        EscapedCharacterExtension.create(), SuperscriptExtension.create(), SubscriptExtension.create());
-    builder.extensions(extensions);
-  }
-
-  @SuppressWarnings("null")
   @NonNull
   public Parser getMarkdownParser() {
-    synchronized (this) {
-      if (markdownParser == null) {
-        markdownParser = newMarkdownParser(null);
-      }
-      return markdownParser;
-    }
-  }
-
-  @NonNull
-  public Parser newMarkdownParser(DataHolder options) {
-    @NonNull
-    Parser.Builder builder;
-    if (options != null) {
-      builder = Parser.builder(options);
-    } else {
-      builder = Parser.builder();
-    }
-
-    applyOptions(builder);
-    return builder.build();
+    return markdownParser;
   }
 
   @NonNull
   public HtmlRenderer getHtmlRenderer() {
-    synchronized (this) {
-      if (htmlRenderer == null) {
-        htmlRenderer = newHtmlRenderer(null);
-      }
-      return htmlRenderer;
-    }
-  }
-
-  @NonNull
-  public HtmlRenderer newHtmlRenderer(DataHolder options) {
-    HtmlRenderer.Builder builder;
-    if (options != null) {
-      builder = HtmlRenderer.builder(options);
-    } else {
-      builder = HtmlRenderer.builder();
-    }
-
-    applyOptions(builder);
-    return builder.build();
+    return htmlRenderer;
   }
 
   @NonNull
   public Formatter getFormatter() {
-    synchronized (this) {
-      if (formatter == null) {
-        formatter = newFormatter(null);
-      }
-      return formatter;
-    }
-  }
-
-  @NonNull
-  public Formatter newFormatter(DataHolder options) {
-    Formatter.Builder builder;
-    if (options != null) {
-      builder = Formatter.builder(options);
-    } else {
-      builder = Formatter.builder();
-    }
-
-    applyOptions(builder);
-    return builder.build();
+    return formatter;
   }
 
   @NonNull
   public FlexmarkHtmlConverter getFlexmarkHtmlConverter() {
-    synchronized (this) {
-      if (htmlConverter == null) {
-        htmlConverter = newFlexmarkHtmlConverter(null);
-      }
-      return htmlConverter;
-    }
-  }
-
-  @NonNull
-  public FlexmarkHtmlConverter newFlexmarkHtmlConverter(@Nullable DataHolder options) {
-    FlexmarkHtmlConverter.Builder builder;
-    if (options != null) {
-      builder = FlexmarkHtmlConverter.builder(options);
-    } else {
-      builder = FlexmarkHtmlConverter.builder();
-    }
-
-    applyOptions(builder);
-    return builder.build();
+    return htmlConverter;
   }
 }

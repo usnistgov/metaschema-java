@@ -26,7 +26,7 @@
       <xs:complexType>
          <xs:sequence>
             <xs:element ref="complex-field:complex-field1" minOccurs="0" maxOccurs="1"/>
-            <xs:element ref="complex-field:complex-field2"
+            <xs:element ref="complex-field:cmplx-fd2"
                         minOccurs="1"
                         maxOccurs="unbounded"/>
             <xs:element name="complex-fields3" minOccurs="1" maxOccurs="1">
@@ -92,7 +92,7 @@
          </xs:simpleContent>
       </xs:complexType>
    </xs:element>
-   <xs:element name="complex-field2">
+   <xs:element name="cmplx-fd2">
       <xs:annotation>
          <xs:appinfo>
             <m:formal-name>Complex Field 1</m:formal-name>

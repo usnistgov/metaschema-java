@@ -47,7 +47,7 @@ public interface IKeyField {
   /**
    * A pattern to use to retrieve the value. If non-{@code null}, the first capturing group is used to
    * retrieve the value.
-   * 
+   *
    * @return a pattern to use to get the value or {@code null} if the full value is to be used
    */
   @Nullable
@@ -55,7 +55,7 @@ public interface IKeyField {
 
   /**
    * Any remarks about the key field as markup text.
-   * 
+   *
    * @return markup text or {@code null} if no text is provided
    */
   @Nullable

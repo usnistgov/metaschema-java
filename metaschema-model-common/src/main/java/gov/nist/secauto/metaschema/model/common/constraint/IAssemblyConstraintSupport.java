@@ -37,7 +37,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IAssemblyConstraintSupport extends IValueConstraintSupport {
   /**
    * Get the collection of index constraints, if any.
-   * 
+   *
    * @return the constraints or an empty list
    */
   @NonNull
@@ -45,7 +45,7 @@ public interface IAssemblyConstraintSupport extends IValueConstraintSupport {
 
   /**
    * Get the collection of unique constraints, if any.
-   * 
+   *
    * @return the constraints or an empty list
    */
   @NonNull
@@ -53,7 +53,7 @@ public interface IAssemblyConstraintSupport extends IValueConstraintSupport {
 
   /**
    * Get the collection of cardinality constraints, if any.
-   * 
+   *
    * @return the constraints or an empty list
    */
   @NonNull

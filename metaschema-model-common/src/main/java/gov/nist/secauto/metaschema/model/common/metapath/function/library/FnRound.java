@@ -90,8 +90,7 @@ public final class FnRound {
       return ISequence.empty(); // NOPMD - readability
     }
 
-    @NonNull
-    IIntegerItem precision = ObjectUtils.notNull(
+    @NonNull IIntegerItem precision = ObjectUtils.notNull(
         FunctionUtils.getFirstItem(FunctionUtils.asType(
             ObjectUtils.requireNonNull(arguments.get(1))), true));
 

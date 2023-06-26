@@ -43,7 +43,7 @@ class GeneralComparison
 
   /**
    * Create a new value comparison expression.
-   * 
+   *
    * @param left
    *          the expression to compare against
    * @param operator
@@ -69,7 +69,7 @@ class GeneralComparison
 
   /**
    * Compare the sets of atomic items.
-   * 
+   *
    * @param leftItems
    *          the first set of items to compare
    * @param operator
@@ -87,8 +87,7 @@ class GeneralComparison
     IBooleanItem retval = IBooleanItem.FALSE;
     for (IAnyAtomicItem left : leftItems.asList()) {
       for (IAnyAtomicItem right : rightItems.asList()) {
-        @NonNull
-        IAnyAtomicItem leftCast;
+        @NonNull IAnyAtomicItem leftCast;
         IAnyAtomicItem rightCast;
         if (left instanceof IUntypedAtomicItem) {
           if (right instanceof IUntypedAtomicItem) {
@@ -117,7 +116,7 @@ class GeneralComparison
 
   /**
    * Attempts to cast the provided {@code other} item to the type of the {@code item}.
-   * 
+   *
    * @param item
    *          the item whose type the other item is to be cast to
    * @param other

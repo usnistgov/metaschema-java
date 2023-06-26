@@ -42,7 +42,7 @@ class Negate
 
   /**
    * Create an expression that gets the complement of a number.
-   * 
+   *
    * @param expr
    *          the expression whose item result will be complemented
    */

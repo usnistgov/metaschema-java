@@ -95,7 +95,7 @@ public class XmlSimpleTypeUnion
 
       state.writeEndElement(); // xs:union
       state.writeEndElement(); // xs:simpleType
-      
+
       for (IXmlSimpleType memberType : memberTypes) {
         memberType.generateType(state, false);
       }

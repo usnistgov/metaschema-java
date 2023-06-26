@@ -70,7 +70,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
 
   /**
    * Retrieve the binding configuration for the provided {@code definition}.
-   * 
+   *
    * @param definition
    *          the definition to get the config for
    * @return the binding configuration or {@code null} if there is not configuration
@@ -135,7 +135,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   /**
    * Binds an XML namespace, which is normally associated with one or more Metaschema, with a provided
    * Java package name.
-   * 
+   *
    * @param namespace
    *          an XML namespace URI
    * @param packageName
@@ -162,7 +162,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
    * namespace. If the namespace is already mapped, such as through the use of
    * {@link #addModelBindingConfig(String, String)}, then the provided package name will be used. If
    * the namespace is not mapped, then the namespace URI will be translated into a Java package name.
-   * 
+   *
    * @param namespace
    *          the namespace to generate a Java package name for
    * @return a Java package name
@@ -178,7 +178,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
 
   /**
    * Get the binding configuration for the provided Metaschema.
-   * 
+   *
    * @param metaschema
    *          the Metaschema
    * @return the configuration for the Metaschema or {@code null} if there is no configuration
@@ -191,7 +191,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
 
   /**
    * Get the binding configuration for the Metaschema located at the provided {@code metaschemaUri}.
-   * 
+   *
    * @param metaschemaUri
    *          the location of the Metaschema
    * @return the configuration for the Metaschema or {@code null} if there is no configuration
@@ -203,7 +203,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
 
   /**
    * Set the binding configuration for the Metaschema located at the provided {@code metaschemaUri}.
-   * 
+   *
    * @param metaschemaUri
    *          the location of the Metaschema
    * @param config
@@ -220,7 +220,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
 
   /**
    * Load the binding configuration from the provided {@code file}.
-   * 
+   *
    * @param file
    *          the configuration resource
    * @throws IOException
@@ -233,7 +233,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
 
   /**
    * Load the binding configuration from the provided {@code file}.
-   * 
+   *
    * @param file
    *          the configuration resource
    * @throws IOException
@@ -246,7 +246,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
 
   /**
    * Load the binding configuration from the provided {@code resource}.
-   * 
+   *
    * @param resource
    *          the configuration resource
    * @throws IOException
@@ -340,7 +340,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
     return config;
   }
 
-  public static class MetaschemaBindingConfiguration {
+  public static final class MetaschemaBindingConfiguration {
     private final Map<String, IDefinitionBindingConfiguration> assemblyBindingConfigs = new ConcurrentHashMap<>();
     private final Map<String, IDefinitionBindingConfiguration> fieldBindingConfigs = new ConcurrentHashMap<>();
 
@@ -349,7 +349,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
 
     /**
      * Get the binding configuration for the {@link IAssemblyDefinition} with the provided {@code name}.
-     * 
+     *
      * @param name
      *          the definition name
      * @return the definition's binding configuration or {@code null} if no configuration is provided
@@ -361,7 +361,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
 
     /**
      * Get the binding configuration for the {@link IFieldDefinition} with the provided {@code name}.
-     * 
+     *
      * @param name
      *          the definition name
      * @return the definition's binding configuration or {@code null} if no configuration is provided
@@ -373,7 +373,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
 
     /**
      * Set the binding configuration for the {@link IAssemblyDefinition} with the provided {@code name}.
-     * 
+     *
      * @param name
      *          the definition name
      * @param config
@@ -389,7 +389,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
 
     /**
      * Set the binding configuration for the {@link IFieldDefinition} with the provided {@code name}.
-     * 
+     *
      * @param name
      *          the definition name
      * @param config

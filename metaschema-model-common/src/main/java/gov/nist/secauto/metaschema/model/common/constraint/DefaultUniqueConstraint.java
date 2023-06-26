@@ -47,7 +47,7 @@ public class DefaultUniqueConstraint
   /**
    * Create a new key-based constraint, which uses a set of key fields to build a key used to identify
    * non-unique items.
-   * 
+   *
    * @param id
    *          the optional identifier for the constraint
    * @param formalName
@@ -90,7 +90,7 @@ public class DefaultUniqueConstraint
     return new Builder();
   }
 
-  public static class Builder
+  public static final class Builder
       extends AbstractKeyConstraintBuilder<Builder, DefaultUniqueConstraint> {
     private Builder() {
       // disable construction

@@ -70,7 +70,7 @@ class Step implements IExpression { // NOPMD - intentional
 
   /**
    * Construct a new stepExpression expression.
-   * 
+   *
    * @param axis
    *          the axis to evaluate against
    * @param step
@@ -90,7 +90,7 @@ class Step implements IExpression { // NOPMD - intentional
 
   /**
    * Get the stepExpression's sub-expression.
-   * 
+   *
    * @return the sub-expression
    */
   @NonNull

@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -41,7 +41,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public @interface Metaschema {
   /**
    * Get the classes representing the global fields defined on this Metaschema.
-   * 
+   *
    * @return an array of field classes
    */
   @NonNull
@@ -49,7 +49,7 @@ public @interface Metaschema {
 
   /**
    * Get the classes representing the global assemblies defined on this Metaschema.
-   * 
+   *
    * @return an array of assembly classes
    */
   @NonNull
@@ -57,15 +57,15 @@ public @interface Metaschema {
 
   /**
    * Get the classes representing the Metaschemas imported by this Metaschema.
-   * 
+   *
    * @return an array of imported Metaschemas
    */
   @NonNull
-  Class<? extends AbstractBoundMetaschema>[] imports() default {};
+  Class<? extends IMetaschema>[] imports() default {};
 
   /**
    * Get any remarks for this metaschema.
-   * 
+   *
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
   @NonNull

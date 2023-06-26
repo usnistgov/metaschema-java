@@ -74,7 +74,7 @@ public interface IFunction {
 
   /**
    * Retrieve the name of the function.
-   * 
+   *
    * @return the function's name
    */
   @NonNull
@@ -82,7 +82,7 @@ public interface IFunction {
 
   /**
    * Retrieve the set of assigned function properties.
-   * 
+   *
    * @return the set of properties or an empty set
    */
   @NonNull
@@ -90,7 +90,7 @@ public interface IFunction {
 
   /**
    * Retrieve the list of function arguments.
-   * 
+   *
    * @return the function arguments or an empty list if there are none
    */
   @NonNull
@@ -98,7 +98,7 @@ public interface IFunction {
 
   /**
    * Determine the number of arguments the function has.
-   * 
+   *
    * @return the number of function arguments
    */
   int arity();
@@ -106,7 +106,7 @@ public interface IFunction {
   /**
    * Determines if the result of the function call will produce identical results when provided the
    * same implicit or explicit arguments.
-   * 
+   *
    * @return {@code true} if function is deterministic or {@code false} otherwise
    * @see FunctionProperty#DETERMINISTIC
    */
@@ -117,7 +117,7 @@ public interface IFunction {
   /**
    * Determines if the result of the function call depends on property values within the static or
    * dynamic context and the provided arguments.
-   * 
+   *
    * @return {@code true} if function is context dependent or {@code false} otherwise
    * @see FunctionProperty#CONTEXT_DEPENDENT
    */
@@ -127,7 +127,7 @@ public interface IFunction {
 
   /**
    * Determines if the result of the function call depends on the current focus.
-   * 
+   *
    * @return {@code true} if function is focus dependent or {@code false} otherwise
    * @see FunctionProperty#FOCUS_DEPENDENT
    */
@@ -137,7 +137,7 @@ public interface IFunction {
 
   /**
    * Determines if the final argument can be repeated.
-   * 
+   *
    * @return {@code true} if the final argument can be repeated or {@code false} otherwise
    * @see FunctionProperty#UNBOUNDED_ARITY
    */
@@ -147,7 +147,7 @@ public interface IFunction {
 
   /**
    * Retrieve the function result sequence type.
-   * 
+   *
    * @return the function result sequence type
    */
   @NonNull
@@ -168,7 +168,7 @@ public interface IFunction {
 
   /**
    * Get the signature of the function as a string.
-   * 
+   *
    * @return the signature
    */
   String toSignature();
@@ -178,6 +178,7 @@ public interface IFunction {
     return new Builder();
   }
 
+  @SuppressWarnings("PMD.LooseCoupling")
   class Builder {
     private String name;
     @SuppressWarnings("null")

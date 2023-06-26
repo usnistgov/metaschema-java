@@ -154,8 +154,7 @@ class MapPropertyInfo
   public void writeValue(Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     IBoundNamedModelInstance property = getProperty();
-    @SuppressWarnings("unchecked")
-    Map<String, ? extends Object> items = (Map<String, ? extends Object>) value;
+    @SuppressWarnings("unchecked") Map<String, ? extends Object> items = (Map<String, ? extends Object>) value;
     for (Object item : items.values()) {
       property.writeItem(ObjectUtils.notNull(item), parentName, context);
     }

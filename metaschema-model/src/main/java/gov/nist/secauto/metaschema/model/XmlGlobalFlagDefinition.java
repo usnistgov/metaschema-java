@@ -66,7 +66,7 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
 
   /**
    * Constructs a new Metaschema flag definition from an XML representation bound to Java objects.
-   * 
+   *
    * @param xmlFlag
    *          the XML representation bound to Java objects
    * @param metaschema
@@ -87,10 +87,10 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
 
   /**
    * Get the underlying XML representation.
-   * 
+   *
    * @return the underlying XML data
    */
-  protected GlobalFlagDefinitionType getXmlFlag() {
+  protected final GlobalFlagDefinitionType getXmlFlag() {
     return xmlFlag;
   }
 
@@ -107,7 +107,7 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   /**
    * Used to generate the instances for the constraints in a lazy fashion when the constraints are
    * first accessed.
-   * 
+   *
    * @return the constraints instance
    */
   @SuppressWarnings("null")
@@ -220,7 +220,7 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
 
   @SuppressWarnings("null")
   @Override
-  public IDataTypeAdapter<?> getJavaTypeAdapter() {
+  public final IDataTypeAdapter<?> getJavaTypeAdapter() {
     return getXmlFlag().isSetAsType() ? getXmlFlag().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
   }
 

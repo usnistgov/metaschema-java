@@ -35,17 +35,31 @@ public class AutoCloser<T, E extends Exception> implements AutoCloseable {
   @NonNull
   private final Closer<T, E> closeLambda;
 
+  /**
+   * Adapt the the provided {@code resource} to be {@link AutoCloseable}, using a provided closer
+   * {@code lambda}.
+   *
+   * @param <T>
+   *          the resource's type
+   * @param <E>
+   *          the exception that can be thrown when closing
+   * @param resource
+   *          the object to adapt
+   * @param lambda
+   *          the lambda to use as a callback on close
+   * @return the resource wrapped in an {@link AutoCloseable}
+   */
   @NonNull
   public static <T, E extends Exception> AutoCloser<T, E> autoClose(
       @NonNull T resource,
-      @NonNull Closer<T, E> closeLambda) {
-    return new AutoCloser<>(resource, closeLambda);
+      @NonNull Closer<T, E> lambda) {
+    return new AutoCloser<>(resource, lambda);
   }
 
   /**
-   * Adapt the provided {@code object} to be {@link AutoCloseable}, using a provided closer
+   * Adapt the provided {@code resource} to be {@link AutoCloseable}, using a provided closer
    * {@code lambda}.
-   * 
+   *
    * @param resource
    *          the object to adapt
    * @param lambda

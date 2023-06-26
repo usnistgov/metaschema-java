@@ -42,7 +42,7 @@ class Metapath
 
   /**
    * Create a new internal metapath expression.
-   * 
+   *
    * @param expressions
    *          the expressions to evaluate
    */

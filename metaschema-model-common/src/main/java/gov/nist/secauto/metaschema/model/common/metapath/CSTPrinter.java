@@ -45,7 +45,7 @@ class CSTPrinter {
 
   /**
    * Construct a new concrete syntax tree (CST) printer.
-   * 
+   *
    * @param outputStream
    *          the stream to print to
    */
@@ -55,7 +55,7 @@ class CSTPrinter {
 
   /**
    * Set the behavior for handling wrapper nodes in the CST hierarchy.
-   * 
+   *
    * @param ignoringWrappers
    *          {@code true} if wrappers should be ignored or {@code false} otherwise
    */
@@ -65,7 +65,7 @@ class CSTPrinter {
 
   /**
    * Print a given CST {@link RuleContext} node.
-   * 
+   *
    * @param ctx
    *          the CST node
    */
@@ -75,7 +75,7 @@ class CSTPrinter {
 
   /**
    * Print a given CST {@link ParseTree} using the provided {@code ruleNames}.
-   * 
+   *
    * @param tree
    *          the CST parse tree
    * @param ruleNames

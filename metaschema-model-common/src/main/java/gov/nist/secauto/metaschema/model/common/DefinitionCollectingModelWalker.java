@@ -59,7 +59,7 @@ public abstract class DefinitionCollectingModelWalker
 
   /**
    * Construct a new walker using the provided filter.
-   * 
+   *
    * @param filter
    *          the filter to match definitions against
    */
@@ -70,7 +70,7 @@ public abstract class DefinitionCollectingModelWalker
 
   /**
    * Retrieves the filter used for matching.
-   * 
+   *
    * @return the filter
    */
   protected Function<IDefinition, Boolean> getFilter() {
@@ -79,7 +79,7 @@ public abstract class DefinitionCollectingModelWalker
 
   /**
    * Return the collection of definitions matching the configured filter.
-   * 
+   *
    * @return the collection of definitions
    */
   @NonNull

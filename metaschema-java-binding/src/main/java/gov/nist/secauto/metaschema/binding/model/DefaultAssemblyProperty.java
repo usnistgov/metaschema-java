@@ -83,7 +83,7 @@ class DefaultAssemblyProperty
 
   @Override
   public String getUseName() {
-    return ModelUtil.resolveLocalName(getAssemblyAnnotation().useName(), getName());
+    return ModelUtil.resolveToString(getAssemblyAnnotation().useName());
   }
 
   @Override

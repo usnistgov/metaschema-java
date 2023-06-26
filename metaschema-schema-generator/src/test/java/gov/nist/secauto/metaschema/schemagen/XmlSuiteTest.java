@@ -156,12 +156,11 @@ class XmlSuiteTest
         "allowed-values",
         "allowed-values-basic_metaschema.xml",
         "allowed-values-basic-schema",
-//        contentCase(Format.JSON, "allowed-values-basic_test_baddates_FAIL.json", false),
-//        contentCase(Format.JSON, "allowed-values-basic_test_badvalues_FAIL.json", false),
+        // contentCase(Format.JSON, "allowed-values-basic_test_baddates_FAIL.json", false),
+        // contentCase(Format.JSON, "allowed-values-basic_test_badvalues_FAIL.json", false),
         contentCase(Format.XML, "allowed-values-basic_test_valid_FAIL.xml", false),
-//        contentCase(Format.JSON, "allowed-values-basic_test_valid_PASS.json", true),
-        contentCase(Format.XML, "allowed-values-basic_test_valid_PASS.xml", true)
-        );
+        // contentCase(Format.JSON, "allowed-values-basic_test_valid_PASS.json", true),
+        contentCase(Format.XML, "allowed-values-basic_test_valid_PASS.xml", true));
   }
 
   @Disabled

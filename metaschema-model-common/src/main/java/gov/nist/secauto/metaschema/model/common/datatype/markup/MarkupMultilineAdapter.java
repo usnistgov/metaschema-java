@@ -26,24 +26,19 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.XmlMarkupParser;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IMarkupItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLEventReader2;
-import org.codehaus.stax2.XMLStreamWriter2;
-import org.codehaus.stax2.evt.XMLEventFactory2;
 
 import java.io.IOException;
 import java.util.List;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -67,6 +62,9 @@ public class MarkupMultilineAdapter
     return true;
   }
 
+  /**
+   * Parse a line of Markdown.
+   */
   @Override
   public MarkupMultiline parse(String value) {
     return MarkupMultiline.fromMarkdown(value);
@@ -76,7 +74,7 @@ public class MarkupMultilineAdapter
   @Override
   public MarkupMultiline parse(XMLEventReader2 eventReader) throws IOException {
     try {
-      return getMarkupParser().parseMarkupMultiline(eventReader);
+      return XmlMarkupParser.instance().parseMarkupMultiline(eventReader);
     } catch (XMLStreamException ex) {
       throw new IOException(ex);
     }
@@ -84,8 +82,7 @@ public class MarkupMultilineAdapter
 
   @Override
   public MarkupMultiline parse(JsonParser parser) throws IOException {
-    @SuppressWarnings("null")
-    MarkupMultiline retval = parse(parser.getValueAsString());
+    @SuppressWarnings("null") MarkupMultiline retval = parse(parser.getValueAsString());
     // skip past value
     parser.nextToken();
     return retval;
@@ -94,40 +91,6 @@ public class MarkupMultilineAdapter
   @Override
   public boolean canHandleQName(QName nextQName) {
     return true;
-  }
-
-  @Override
-  public void writeXml(Object value, StartElement parent, XMLEventFactory2 eventFactory, XMLEventWriter eventWriter)
-      throws XMLStreamException {
-    MarkupXmlEventWriter writingVisitor
-        = new MarkupXmlEventWriter(ObjectUtils.notNull(parent.getName().getNamespaceURI()), true, eventFactory);
-    writingVisitor.visitChildren(((AbstractMarkupString<?>) value).getDocument(), eventWriter);
-  }
-
-  @Override
-  public void writeXmlCharacters(Object value, QName parentName, XMLStreamWriter2 writer) throws XMLStreamException {
-    MarkupXmlStreamWriter writingVisitor = new MarkupXmlStreamWriter(
-        ObjectUtils.notNull(parentName.getNamespaceURI()), true);
-    writingVisitor.visitChildren(((AbstractMarkupString<?>) value).getDocument(), writer);
-  }
-
-  @Override
-  public void writeJsonValue(Object value, JsonGenerator generator) throws IOException {
-
-    MarkupMultiline mml;
-    try {
-      mml = (MarkupMultiline) value;
-    } catch (ClassCastException ex) {
-      throw new IOException(ex);
-    }
-
-    String jsonString;
-    if (generator instanceof YAMLGenerator) {
-      jsonString = mml.toMarkdownYaml().trim();
-    } else {
-      jsonString = mml.toMarkdown().trim();
-    }
-    generator.writeString(jsonString);
   }
 
   @Override

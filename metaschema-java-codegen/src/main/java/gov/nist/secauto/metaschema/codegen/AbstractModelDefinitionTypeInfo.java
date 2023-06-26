@@ -164,7 +164,7 @@ class AbstractModelDefinitionTypeInfo<DEF extends IFlagContainer>
 
   /**
    * Supports the building of Java classes.
-   * 
+   *
    * @param className
    *          the type info for the class
    * @param isChild
@@ -202,7 +202,7 @@ class AbstractModelDefinitionTypeInfo<DEF extends IFlagContainer>
 
   /**
    * Generate the class contents.
-   * 
+   *
    * @param builder
    *          the builder to use for generating the class
    * @param className

@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 
 import java.lang.annotation.Documented;
@@ -51,7 +51,7 @@ public @interface MetaschemaField {
    * Get the documentary formal name of the field.
    * <p>
    * If the value is "##none", then the description will be considered {@code null}.
-   * 
+   *
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
   @NonNull
@@ -61,7 +61,7 @@ public @interface MetaschemaField {
    * Get the documentary description of the field.
    * <p>
    * If the value is "##none", then the description will be considered {@code null}.
-   * 
+   *
    * @return a markdown string or {@code "##none"} if no description is provided
    */
   @NonNull
@@ -69,7 +69,7 @@ public @interface MetaschemaField {
 
   /**
    * Name of the field.
-   * 
+   *
    * @return the name
    */
   @NonNull
@@ -81,11 +81,11 @@ public @interface MetaschemaField {
   /**
    * Get the metaschema class that "owns" this assembly, which is the concrete implementation of the
    * metaschema containing the assembly.
-   * 
+   *
    * @return the metaschema class
    */
   @NonNull
-  Class<? extends AbstractBoundMetaschema> metaschema();
+  Class<? extends IMetaschema> metaschema();
 
   /**
    * If the data type allows it, determines if the field's value must be wrapped with an XML element
@@ -103,14 +103,14 @@ public @interface MetaschemaField {
    * <p>
    * For a Metaschema field to be collapsible, it must have flags, otherwise the collapsible status is
    * ignored.
-   * 
+   *
    * @return {@code true} if the field is collapsible, or {@code false} otherwise
    */
   boolean isCollapsible() default false;
 
   /**
    * Get any remarks for this field.
-   * 
+   *
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
   @NonNull

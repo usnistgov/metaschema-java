@@ -45,8 +45,7 @@ class FlagTest
     DynamicContext dynamicContext = newDynamicContext();
 
     @SuppressWarnings("null")
-    @NonNull
-    IRequiredValueModelNodeItem nodeContext = context.mock(IRequiredValueModelNodeItem.class);
+    @NonNull IRequiredValueModelNodeItem nodeContext = context.mock(IRequiredValueModelNodeItem.class);
     IFlagInstance instance = context.mock(IFlagInstance.class);
     IRequiredValueFlagNodeItem flagNode = context.mock(IRequiredValueFlagNodeItem.class);
 

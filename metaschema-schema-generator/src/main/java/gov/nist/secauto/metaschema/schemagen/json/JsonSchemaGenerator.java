@@ -92,6 +92,32 @@ public class JsonSchemaGenerator
   protected void generateSchema(JsonGenerationState state) {
     IMetaschema metaschema = state.getMetaschema();
 
+
+    // analyze all definitions
+    List<IRootAssemblyDefinition> rootAssemblyDefinitions = analyzeDefinitions(
+        state,
+        (entry, definition) -> {
+          assert entry != null;
+          assert definition != null;
+
+          if (entry.isReferenced()) {
+            // ensure schema is generated
+            state.getSchema(definition);
+          }
+        });
+
+    if (rootAssemblyDefinitions.isEmpty()) {
+      throw new SchemaGenerationException("No root definitions found");
+    }
+
+    // generate the properties first to ensure all definitions are identified
+    List<RootPropertyEntry> rootEntries = rootAssemblyDefinitions.stream()
+        .map(root -> {
+          assert root != null;
+          return new RootPropertyEntry(root, state);
+        })
+        .collect(Collectors.toUnmodifiableList());
+    
     try {
       state.writeStartObject();
 
@@ -104,31 +130,6 @@ public class JsonSchemaGenerator
       state.writeField("$comment", metaschema.getName().toMarkdown());
       state.writeField("type", "object");
 
-      // analyze all definitions
-      List<IRootAssemblyDefinition> rootAssemblyDefinitions = analyzeDefinitions(
-          state,
-          (entry, definition) -> {
-            assert entry != null;
-            assert definition != null;
-
-            if (entry.isReferenced()) {
-              // ensure schema is generated
-              state.getSchema(definition);
-            }
-          });
-
-      if (rootAssemblyDefinitions.isEmpty()) {
-        throw new SchemaGenerationException("No root definitions found");
-      }
-
-      // generate the properties first to ensure all definitions are identified
-      List<RootPropertyEntry> rootEntries = rootAssemblyDefinitions.stream()
-        .map(root -> {
-          assert root != null;
-          return new RootPropertyEntry(root, state);
-        })
-        .collect(Collectors.toUnmodifiableList());
-      
       ObjectNode definitionsObject = state.generateDefinitions();
       if (!definitionsObject.isEmpty()) {
         state.writeField("definitions", definitionsObject);
@@ -136,7 +137,7 @@ public class JsonSchemaGenerator
 
       @SuppressWarnings("resource")
       JsonGenerator writer = state.getWriter(); // NOPMD not owned
-      
+
       if (rootEntries.size() == 1) {
         rootEntries.iterator().next().write(writer);
       } else {
@@ -206,9 +207,9 @@ public class JsonSchemaGenerator
         writer.writeFieldName(entry.getKey());
         writer.writeTree(entry.getValue());
       }
-      
+
       writer.writeEndObject();
-      
+
       writer.writeFieldName("required");
       writer.writeStartArray();
       writer.writeString(getDefinition().getRootJsonName());
