@@ -100,7 +100,9 @@ public interface IDefineableJsonSchema extends IJsonSchema {
     // create the definition property
     ObjectNode definitionObj = ObjectUtils.notNull(
         definitionsObject.putObject(getDefinitionName(state)));
-    // definitionObj.put("$id", state.getJsonDefinitionRefForDefinition(definition));
+
+    // Add identifier, see usnistgov/metaschema#160
+    definitionObj.put("$id", getDefinitionRef(state));
 
     // generate the definition object contents
     generateSchema(state, definitionObj);
