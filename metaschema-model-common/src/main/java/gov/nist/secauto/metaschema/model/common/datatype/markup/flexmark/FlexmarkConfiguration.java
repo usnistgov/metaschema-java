@@ -42,8 +42,6 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 import com.vladsch.flexmark.util.format.options.ListBulletMarker;
 import com.vladsch.flexmark.util.misc.Extension;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.HtmlCodeRenderExtension.CodeNodeHtmlRenderer;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -84,10 +82,10 @@ public final class FlexmarkConfiguration {
 
     // AST processing expects this
     Parser.FENCED_CODE_CONTENT_BLOCK.set(options, true);
-//    Parser.CODE_SOFT_LINE_BREAKS.set(options, true);
-    Parser.PARSE_INNER_HTML_COMMENTS.set(options, true);
-    Parser.HTML_BLOCK_COMMENT_ONLY_FULL_LINE.set(options, true);
-//    Parser.HTML_COMMENT_BLOCKS_INTERRUPT_PARAGRAPH.set(options, true);
+    // Parser.CODE_SOFT_LINE_BREAKS.set(options, true);
+    // Parser.PARSE_INNER_HTML_COMMENTS.set(options, true);
+    // Parser.HTML_BLOCK_COMMENT_ONLY_FULL_LINE.set(options, true);
+    // Parser.HTML_COMMENT_BLOCKS_INTERRUPT_PARAGRAPH.set(options, true);
 
     // disable the built in processor, since we are configuring a patched one
     Parser.ASTERISK_DELIMITER_PROCESSOR.set(options, false);
@@ -109,39 +107,42 @@ public final class FlexmarkConfiguration {
     typographicReplacementMap.put("”", "\"");
     typographicReplacementMap.put("&ldquo;", "“");
     typographicReplacementMap.put("&rdquo;", "”");
-    // // typographicReplacementMap.put("‘", "'");
-    // // typographicReplacementMap.put("’", "'");
+    // typographicReplacementMap.put("‘", "'");
+    // typographicReplacementMap.put("’", "'");
     typographicReplacementMap.put("&lsquo;", "‘");
     typographicReplacementMap.put("&rsquo;", "’");
     typographicReplacementMap.put("&apos;", "’");
-    // // typographicReplacementMap.put("«", "<<");
+    // typographicReplacementMap.put("«", "<<");
     typographicReplacementMap.put("&laquo;", "«");
-    // // typographicReplacementMap.put("»", ">>");
+    // typographicReplacementMap.put("»", ">>");
     typographicReplacementMap.put("&raquo;", "»");
-    // // typographicReplacementMap.put("…", "...");
+    // typographicReplacementMap.put("…", "...");
     typographicReplacementMap.put("&hellip;", "…");
-    // // typographicReplacementMap.put("–", "--");
+    // typographicReplacementMap.put("–", "--");
     typographicReplacementMap.put("&endash;", "–");
-    // // typographicReplacementMap.put("—", "---");
+    // typographicReplacementMap.put("—", "---");
     typographicReplacementMap.put("&emdash;", "—");
-    // typographicReplacementMap.put("<", "&lt;");
-    // typographicReplacementMap.put(">", "&gt;");
-//    typographicReplacementMap.put("&gt;", ">");
 
     FlexmarkHtmlConverter.TYPOGRAPHIC_REPLACEMENT_MAP.set(options, typographicReplacementMap);
     FlexmarkHtmlConverter.OUTPUT_UNKNOWN_TAGS.set(options, true);
     FlexmarkHtmlConverter.SETEXT_HEADINGS.set(options, false); // disable
-    FlexmarkHtmlConverter.RENDER_COMMENTS.set(options, true);
+    // needed to ensure extra empty paragraphs are ignored
+    FlexmarkHtmlConverter.BR_AS_EXTRA_BLANK_LINES.set(options, false);
+
+    // FlexmarkHtmlConverter.RENDER_COMMENTS.set(options, true);
     // FlexmarkHtmlConverter.ADD_TRAILING_EOL.set(options, false); // default
+
     Formatter.MAX_TRAILING_BLANK_LINES.set(options, -1);
     Formatter.LIST_BULLET_MARKER.set(options, ListBulletMarker.DASH);
+
+    
     HtmlRenderer.MAX_TRAILING_BLANK_LINES.set(options, -1);
     HtmlRenderer.UNESCAPE_HTML_ENTITIES.set(options, true);
     HtmlRenderer.PERCENT_ENCODE_URLS.set(options, true);
-    HtmlRenderer.ESCAPE_HTML_COMMENT_BLOCKS.set(options, false); // default
-    HtmlRenderer.SUPPRESS_HTML_COMMENT_BLOCKS.set(options, false); // default
-    HtmlRenderer.SUPPRESS_INLINE_HTML_COMMENTS.set(options, false); // default
-//    HtmlRenderer.HARD_BREAK.set(options,"<br/>");
+    // HtmlRenderer.ESCAPE_HTML_COMMENT_BLOCKS.set(options, false); // default
+    // HtmlRenderer.SUPPRESS_HTML_COMMENT_BLOCKS.set(options, false); // default
+    // HtmlRenderer.SUPPRESS_INLINE_HTML_COMMENTS.set(options, false); // default
+    // HtmlRenderer.HARD_BREAK.set(options,"<br/>");
 
     return options.toImmutable();
   }

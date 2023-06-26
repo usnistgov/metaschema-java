@@ -65,7 +65,7 @@ public interface INumericItem extends IAnyAtomicItem {
 
   /**
    * Get the absolute value of the item.
-   * 
+   *
    * @return this item negated if this item is negative, or the item otherwise
    */
   @NonNull
@@ -73,7 +73,7 @@ public interface INumericItem extends IAnyAtomicItem {
 
   /**
    * Round the value to the whole number closest to positive infinity.
-   * 
+   *
    * @return the rounded value
    */
   @NonNull
@@ -81,7 +81,7 @@ public interface INumericItem extends IAnyAtomicItem {
 
   /**
    * Round the value to the whole number closest to negative infinity.
-   * 
+   *
    * @return the rounded value
    */
   @NonNull
@@ -124,8 +124,7 @@ public interface INumericItem extends IAnyAtomicItem {
       BigInteger value = this.asInteger();
       BigInteger divisor = BigInteger.TEN.pow(0 - precision);
 
-      @NonNull
-      BigInteger result;
+      @NonNull BigInteger result;
       if (divisor.compareTo(value.abs()) > 0) {
         result = ObjectUtils.notNull(BigInteger.ZERO);
       } else {

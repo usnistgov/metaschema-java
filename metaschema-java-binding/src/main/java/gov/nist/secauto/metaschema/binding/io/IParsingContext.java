@@ -30,7 +30,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides objects used for parsing data associated with a specific format.
- * 
+ *
  * @param <READER>
  *          the format specific data reader
  * @param <PROBLEM_HANDLER>
@@ -39,7 +39,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IParsingContext<READER, PROBLEM_HANDLER extends IProblemHandler> {
   /**
    * The parser used for reading data associated with the supported format.
-   * 
+   *
    * @return the parser
    */
   @NonNull
@@ -47,7 +47,7 @@ public interface IParsingContext<READER, PROBLEM_HANDLER extends IProblemHandler
 
   /**
    * A handler that provides callbacks used to resolve parsing issues.
-   * 
+   *
    * @return the configured handler
    */
   @NonNull

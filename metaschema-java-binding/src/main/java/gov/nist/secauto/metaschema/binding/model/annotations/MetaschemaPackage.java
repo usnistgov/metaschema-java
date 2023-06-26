@@ -39,7 +39,7 @@ import java.lang.annotation.Target;
 public @interface MetaschemaPackage {
   /**
    * Get the metaschemas associated with this package.
-   * 
+   *
    * @return the metaschemas or an empty array if no metaschemas are defined
    */
   Class<? extends IMetaschema>[] metaschemas() default {};

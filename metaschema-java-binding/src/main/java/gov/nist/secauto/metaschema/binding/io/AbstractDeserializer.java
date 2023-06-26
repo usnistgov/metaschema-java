@@ -56,7 +56,7 @@ public abstract class AbstractDeserializer<CLASS>
 
   /**
    * Construct a new deserializer.
-   * 
+   *
    * @param bindingContext
    *          the binding context used to supply bound Java classes while writing
    * @param classBinding
@@ -108,7 +108,7 @@ public abstract class AbstractDeserializer<CLASS>
 
   /**
    * This abstract method delegates parsing to the concrete implementation.
-   * 
+   *
    * @param reader
    *          the reader instance to read data from
    * @param documentUri

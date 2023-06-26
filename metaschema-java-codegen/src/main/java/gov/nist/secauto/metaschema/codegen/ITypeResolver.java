@@ -48,7 +48,7 @@ public interface ITypeResolver {
 
   /**
    * Get the name of the class associated with the provided metaschema.
-   * 
+   *
    * @param metaschema
    *          a metaschema that will be built as a class
    * @return the class name information for the metaschema
@@ -58,7 +58,7 @@ public interface ITypeResolver {
 
   /**
    * Get the name of the class associated with the provided definition.
-   * 
+   *
    * @param definition
    *          a definition that may be built as a subclass
    * @return the class name information for the definition
@@ -68,7 +68,7 @@ public interface ITypeResolver {
 
   /**
    * Get the name of the base class to use for the class associated with the provided definition.
-   * 
+   *
    * @param definition
    *          a definition that may be built as a class
    * @return the name of the base class or {@code null} if no base class is to be used
@@ -78,7 +78,7 @@ public interface ITypeResolver {
 
   /**
    * Get the Java package name to use for the provided Metaschema.
-   * 
+   *
    * @param metaschema
    *          the Metaschema
    * @return the Java package name

@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
 import com.fasterxml.jackson.core.JsonParser;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.MarkupParser;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.XmlMarkupParser;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IMarkupItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
@@ -74,7 +74,7 @@ public class MarkupMultilineAdapter
   @Override
   public MarkupMultiline parse(XMLEventReader2 eventReader) throws IOException {
     try {
-      return MarkupParser.instance().parseMarkupMultiline(eventReader);
+      return XmlMarkupParser.instance().parseMarkupMultiline(eventReader);
     } catch (XMLStreamException ex) {
       throw new IOException(ex);
     }
@@ -82,8 +82,7 @@ public class MarkupMultilineAdapter
 
   @Override
   public MarkupMultiline parse(JsonParser parser) throws IOException {
-    @SuppressWarnings("null")
-    MarkupMultiline retval = parse(parser.getValueAsString());
+    @SuppressWarnings("null") MarkupMultiline retval = parse(parser.getValueAsString());
     // skip past value
     parser.nextToken();
     return retval;

@@ -34,7 +34,7 @@ public abstract class AbstractChoiceInstance
 
   /**
    * Create a new choice instance.
-   * 
+   *
    * @param parent
    *          the containing assembly definition
    */

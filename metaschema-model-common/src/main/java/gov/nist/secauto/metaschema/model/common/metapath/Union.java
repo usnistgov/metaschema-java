@@ -43,7 +43,7 @@ class Union
   /**
    * Create a new expression that gets the union of the results of evaluating the provided
    * {@code expressions}.
-   * 
+   *
    * @param expressions
    *          the expressions to evaluate
    */
@@ -64,8 +64,7 @@ class Union
 
   @Override
   public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
-    @NonNull
-    Stream<? extends IItem> retval = ObjectUtils.notNull(getChildren().stream()
+    @NonNull Stream<? extends IItem> retval = ObjectUtils.notNull(getChildren().stream()
         .flatMap(child -> {
           ISequence<?> result = child.accept(dynamicContext, context);
           return result.asStream();

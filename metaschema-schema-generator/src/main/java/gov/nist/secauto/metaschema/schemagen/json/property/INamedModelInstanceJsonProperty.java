@@ -34,10 +34,10 @@ public interface INamedModelInstanceJsonProperty extends IJsonProperty<INamedMod
   int getMinOccurs();
 
   int getMaxOccurs();
-  
+
   static INamedModelInstanceJsonProperty newProperty(@NonNull INamedModelInstance instance) {
     int maxOccurs = instance.getMaxOccurs();
-    
+
     INamedModelInstanceJsonProperty retval;
     if (maxOccurs > 1 || maxOccurs == -1) {
       switch (instance.getJsonGroupAsBehavior()) {

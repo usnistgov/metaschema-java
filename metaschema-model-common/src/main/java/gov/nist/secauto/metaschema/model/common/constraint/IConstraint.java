@@ -92,7 +92,7 @@ public interface IConstraint {
 
   /**
    * Retrieve the unique identifier for the constraint.
-   * 
+   *
    * @return the identifier or {@code null} if no identifier is defined
    */
   @Nullable
@@ -106,7 +106,7 @@ public interface IConstraint {
 
   /**
    * Get information about the source of the constraint.
-   * 
+   *
    * @return the source information
    */
   @NonNull
@@ -114,7 +114,7 @@ public interface IConstraint {
 
   /**
    * The significance of a violation of this constraint.
-   * 
+   *
    * @return the level
    */
   @NonNull
@@ -125,7 +125,7 @@ public interface IConstraint {
 
   /**
    * Retrieve the Metapath expression to use to query the targets of the constraint.
-   * 
+   *
    * @return a Metapath expression
    */
   @NonNull
@@ -133,7 +133,7 @@ public interface IConstraint {
 
   /**
    * Based on the provided {@code contextNodeItem}, find all nodes matching the target expression.
-   * 
+   *
    * @param contextNodeItem
    *          the node item to evaluate the target expression against
    * @return the matching nodes as a sequence
@@ -146,7 +146,7 @@ public interface IConstraint {
 
   /**
    * Based on the provided {@code contextNodeItem}, find all nodes matching the target expression.
-   * 
+   *
    * @param contextNodeItem
    *          the node item to evaluate the target expression against
    * @param dynamicContext
@@ -162,7 +162,7 @@ public interface IConstraint {
 
   /**
    * Retrieve the remarks associated with the constraint.
-   * 
+   *
    * @return the remarks or {@code null} if no remarks are defined
    */
   MarkupMultiline getRemarks();

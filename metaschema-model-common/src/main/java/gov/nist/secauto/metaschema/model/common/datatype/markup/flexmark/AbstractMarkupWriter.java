@@ -90,7 +90,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Used to write HTML-based Markup to various types of streams.
- * 
+ *
  * @param <T>
  *          the type of stream to write to
  * @param <E>
@@ -195,7 +195,11 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
     }
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({
+      "unchecked",
+      "unused",
+      "PMD.UnusedPrivateMethod"
+  }) // while unused, keeping code for when inline HTML is supported
   private void writeHtml(Node node) throws E {
     Document doc = Jsoup.parse(node.getChars().toString());
     try {
@@ -274,16 +278,15 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
   public void writeParagraph(
       @NonNull Paragraph node,
       @NonNull ChildHandler<T, E> childHandler) throws E {
-    if (!(node.getParent() instanceof ParagraphItemContainer)
-        || !getOptions().isInTightListItem(node)) {
-      writePrecedingNewline(node);
-      writeElement("p", node, childHandler);
-      writeTrailingNewline(node);
-    } else {
+    if (node.getParent() instanceof ParagraphItemContainer && getOptions().isInTightListItem(node)) {
       if (node.getPrevious() != null) {
         writeText("\n");
       }
       visitChildren(node, childHandler);
+    } else {
+      writePrecedingNewline(node);
+      writeElement("p", node, childHandler);
+      writeTrailingNewline(node);
     }
   }
 
@@ -374,19 +377,19 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
 
   @Override
   public final void writeInlineHtml(HtmlInline node) throws E {
-    throw new UnsupportedOperationException(
-        String.format("Inline HTML is not supported. Found: %s", node.getChars()));
-    // writeHtml(node);
+    // throw new UnsupportedOperationException(
+    // String.format("Inline HTML is not supported. Found: %s", node.getChars()));
+    writeHtml(node);
   }
 
   @Override
   public final void writeBlockHtml(HtmlBlock node) throws E {
-    throw new UnsupportedOperationException(
-        String.format("Inline HTML is not supported. Found: %s", node.getChars()));
+    // throw new UnsupportedOperationException(
+    // String.format("Inline HTML is not supported. Found: %s", node.getChars()));
 
-//    writePrecedingNewline(node);
-//    writeHtml(node);
-//    writeTrailingNewline(node);
+    writePrecedingNewline(node);
+    writeHtml(node);
+    writeTrailingNewline(node);
   }
 
   @Override
@@ -514,7 +517,8 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
   }
 
   /**
-   * Normalize whitespace according to https://spec.commonmark.org/0.30/#code-spans
+   * Normalize whitespace according to https://spec.commonmark.org/0.30/#code-spans. Based on code
+   * from Flexmark.
    *
    * @param text
    *          text to process
@@ -526,9 +530,9 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
     int length = text.length();
     boolean needsSpace = false;
     for (int i = 0; i < length; i++) {
-      char c = text.charAt(i);
+      char ch = text.charAt(i);
       // convert line endings to spaces
-      if (c == '\n' || c == '\r') {
+      if (ch == '\n' || ch == '\r') {
         if (sb.length() > 0) {
           // ignore leading
           needsSpace = true;
@@ -538,7 +542,7 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
           sb.append(' ');
           needsSpace = false;
         }
-        sb.append(c);
+        sb.append(ch);
       }
     }
 

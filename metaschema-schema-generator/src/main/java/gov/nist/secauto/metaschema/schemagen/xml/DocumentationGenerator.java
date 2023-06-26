@@ -49,18 +49,6 @@ public final class DocumentationGenerator {
   private final @NonNull List<MarkupMultiline> remarks;
   private final @NonNull IModelElement modelElement;
 
-  public static void generateDocumentation(
-      @NonNull IDefinition definition,
-      @NonNull XmlGenerationState state) {
-    new DocumentationGenerator(definition).generate(state);
-  }
-
-  public static void generateDocumentation(
-      @NonNull INamedInstance instance,
-      @NonNull XmlGenerationState state) {
-    new DocumentationGenerator(instance).generate(state);
-  }
-
   private DocumentationGenerator(@NonNull IDefinition definition) {
     this.formalName = definition.getEffectiveFormalName();
     this.description = definition.getEffectiveDescription();
@@ -119,6 +107,18 @@ public final class DocumentationGenerator {
     if (formalName != null || description != null || !remarks.isEmpty()) {
       generateDocumentation(formalName, description, remarks, state.getNS(getModelElement()), state);
     }
+  }
+
+  public static void generateDocumentation(
+      @NonNull IDefinition definition,
+      @NonNull XmlGenerationState state) {
+    new DocumentationGenerator(definition).generate(state);
+  }
+
+  public static void generateDocumentation(
+      @NonNull INamedInstance instance,
+      @NonNull XmlGenerationState state) {
+    new DocumentationGenerator(instance).generate(state);
   }
 
   public static void generateDocumentation( // NOPMD acceptable complexity

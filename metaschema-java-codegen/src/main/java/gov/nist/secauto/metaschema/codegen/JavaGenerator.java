@@ -52,7 +52,7 @@ public final class JavaGenerator {
 
   /**
    * Generate Java sources for the provided metaschema.
-   * 
+   *
    * @param metaschema
    *          the Metaschema to generate Java sources for
    * @param targetDir
@@ -72,7 +72,7 @@ public final class JavaGenerator {
 
   /**
    * Generates Java classes for Metaschema fields and flags.
-   * 
+   *
    * @param metaschemas
    *          the Metaschema instances to build classes for
    * @param targetDirectory

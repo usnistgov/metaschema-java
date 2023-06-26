@@ -31,7 +31,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface INodeItemVisitable {
   /**
    * A visitor callback.
-   * 
+   *
    * @param <RESULT>
    *          the type of the visitor result
    * @param <CONTEXT>

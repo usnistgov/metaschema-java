@@ -37,7 +37,7 @@ class IntegerLiteral
 
   /**
    * Construct a new expression that always returns the same integer value.
-   * 
+   *
    * @param value
    *          the literal value
    */

@@ -34,7 +34,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IInstance extends IModelElement {
   /**
    * Retrieve the Metaschema definition on which the instance was declared.
-   * 
+   *
    * @return the Metaschema definition on which the instance was declared
    */
   @NonNull
@@ -50,7 +50,7 @@ public interface IInstance extends IModelElement {
 
   /**
    * Generates a "coordinate" string for the provided information element instance.
-   * 
+   *
    * A coordinate consists of the element's:
    * <ul>
    * <li>containing Metaschema's short name</li>
@@ -59,7 +59,7 @@ public interface IInstance extends IModelElement {
    * <li>hash code</li>
    * <li>the hash code of the definition</li>
    * </ul>
-   * 
+   *
    * @return the coordinate
    */
   @SuppressWarnings("null")

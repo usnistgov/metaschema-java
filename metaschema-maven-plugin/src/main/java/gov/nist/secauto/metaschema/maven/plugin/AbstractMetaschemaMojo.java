@@ -49,7 +49,7 @@ public abstract class AbstractMetaschemaMojo
 
   /**
    * The Maven project context.
-   * 
+   *
    * @parameter default-value="${project}"
    * @required
    * @readonly
@@ -95,7 +95,7 @@ public abstract class AbstractMetaschemaMojo
    * <li>Otherwise use the value from the system property <code>file.encoding</code>.</li>
    * </ol>
    * </p>
-   * 
+   *
    * @see #getEncoding()
    * @since 2.0
    */
@@ -146,7 +146,7 @@ public abstract class AbstractMetaschemaMojo
 
   /**
    * Retrieve the Maven project context.
-   * 
+   *
    * @return The active MavenProject.
    */
   protected final MavenProject getMavenProject() {
@@ -155,7 +155,7 @@ public abstract class AbstractMetaschemaMojo
 
   /**
    * Retrieve the mojo execution context.
-   * 
+   *
    * @return The active MojoExecution.
    */
   @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "this is a data holder")
@@ -165,7 +165,7 @@ public abstract class AbstractMetaschemaMojo
 
   /**
    * Retrieve the directory where generated classes will be stored.
-   * 
+   *
    * @return the directory
    */
   protected File getOutputDirectory() {
@@ -174,7 +174,7 @@ public abstract class AbstractMetaschemaMojo
 
   /**
    * Set the directory where generated classes will be stored.
-   * 
+   *
    * @param outputDirectory
    *          the directory to use
    */
@@ -214,7 +214,7 @@ public abstract class AbstractMetaschemaMojo
 
   /**
    * Retrieve a stream of Metaschema file sources.
-   * 
+   *
    * @return the stream
    */
   protected Stream<File> getSources() {
@@ -231,7 +231,7 @@ public abstract class AbstractMetaschemaMojo
 
   /**
    * Determine if the execution of this mojo should be skipped.
-   * 
+   *
    * @return {@code true} if the mojo execution should be skipped, or {@code false} otherwise
    */
   protected boolean shouldExecutionBeSkipped() {
@@ -257,7 +257,7 @@ public abstract class AbstractMetaschemaMojo
   /**
    * Determine if code generation is required. This is done by comparing the last modified time of
    * each Metaschema source file against the stale file managed by this plugin.
-   * 
+   *
    * @return {@code true} if the code generation is needed, or {@code false} otherwise
    */
   protected boolean isGenerationRequired() {

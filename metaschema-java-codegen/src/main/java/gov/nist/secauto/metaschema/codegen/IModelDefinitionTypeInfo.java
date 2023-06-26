@@ -67,7 +67,7 @@ public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
 
   /**
    * Get the class type information for the base class of the generated class, .
-   * 
+   *
    * @return the type information or {@code null} if no base class is configured
    */
   @Nullable
@@ -76,7 +76,7 @@ public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
   /**
    * Gets the class type information for the object definition for which this class is being
    * generated.
-   * 
+   *
    * @return the class's type information
    */
   @NonNull
@@ -90,7 +90,7 @@ public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
 
   /**
    * Generates the associated Java class and saves it using the provided file.
-   * 
+   *
    * @param dir
    *          the directory to generate the class in
    * @return the qualified class name for the generated class
@@ -103,7 +103,7 @@ public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
   /**
    * This method is responsible for generating the Java class using a builder that is returned for
    * further customization.
-   * 
+   *
    * @return the class definition for the generated class
    * @throws IOException
    *           if a build error occurred while generating the class

@@ -83,7 +83,6 @@
 		<dependency>
 			<groupId>com.github.seancfoley</groupId>
 			<artifactId>ipaddress</artifactId>
-			<version>5.4.0</version>
 		</dependency>
 
 		<dependency>
@@ -93,7 +92,6 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-text</artifactId>
-			<version>1.10.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -124,7 +122,6 @@
 		<dependency>
 			<groupId>io.hosuaby</groupId>
 			<artifactId>inject-resources-junit-jupiter</artifactId>
-			<version>0.3.2</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -154,7 +151,6 @@
 			<!-- Remove compile warning -->
 			<groupId>biz.aQute.bnd</groupId>
 			<artifactId>biz.aQute.bndlib</artifactId>
-			<version>6.4.0</version>
 		</dependency>
 	</dependencies>
 

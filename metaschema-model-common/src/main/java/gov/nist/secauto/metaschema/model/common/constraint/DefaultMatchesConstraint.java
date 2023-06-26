@@ -49,7 +49,7 @@ public final class DefaultMatchesConstraint
 
   /**
    * Create a new matches constraint, which enforces a value pattern and/or data type.
-   * 
+   *
    * @param id
    *          the optional identifier for the constraint
    * @param formalName

@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
 
+import com.vladsch.flexmark.util.sequence.Escaping;
+
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
@@ -47,8 +49,8 @@ import javax.xml.stream.events.XMLEvent;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class MarkupParser { // NOPMD - acceptable
-  private static final Logger LOGGER = LogManager.getLogger(MarkupParser.class);
+public class XmlMarkupParser { // NOPMD - acceptable
+  private static final Logger LOGGER = LogManager.getLogger(XmlMarkupParser.class);
 
   @NonNull
   public static final Set<String> BLOCK_ELEMENTS = ObjectUtils.notNull(
@@ -69,10 +71,10 @@ public class MarkupParser { // NOPMD - acceptable
           "img"));
 
   @NonNull
-  private static final MarkupParser SINGLETON = new MarkupParser();
+  private static final XmlMarkupParser SINGLETON = new XmlMarkupParser();
 
   @NonNull
-  public static MarkupParser instance() {
+  public static XmlMarkupParser instance() {
     return SINGLETON;
   }
 
@@ -87,6 +89,10 @@ public class MarkupParser { // NOPMD - acceptable
     StringBuilder buffer = new StringBuilder();
     parseToString(reader, buffer);
     String html = buffer.toString().trim();
+    
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("XML->HTML: {}", html);
+    }
     return html.isEmpty() ? null : MarkupMultiline.fromHtml(html);
   }
 
@@ -146,11 +152,12 @@ public class MarkupParser { // NOPMD - acceptable
     buffer.append('<')
         .append(name.getLocalPart());
     for (Attribute attribute : CollectionUtil.toIterable(start.getAttributes())) {
-      buffer.append(' ');
-      buffer.append(attribute.getName().getLocalPart());
-      buffer.append("=\"");
-      buffer.append(attribute.getValue());
-      buffer.append('"');
+      buffer
+          .append(' ')
+          .append(attribute.getName().getLocalPart())
+          .append("=\"")
+          .append(attribute.getValue())
+          .append('"');
     }
 
     XMLEvent next = reader.peek();
@@ -164,7 +171,8 @@ public class MarkupParser { // NOPMD - acceptable
       // parse until the start's END_ELEMENT is reached
       parseContents(reader, start, buffer);
 
-      buffer.append("</")
+      buffer
+          .append("</")
           .append(name.getLocalPart())
           .append('>');
 
@@ -210,13 +218,13 @@ public class MarkupParser { // NOPMD - acceptable
         // reader.nextEvent();
       } else if (event.isCharacters()) {
         Characters characters = event.asCharacters();
-        buffer.append(characters.getData());
+        buffer.append(Escaping.escapeHtml(characters.getData(), true));
         reader.nextEvent();
       }
     }
 
-    assert start == null || XmlEventUtil.isNextEventEndElement(reader,
-        ObjectUtils.notNull(start.getName())) : XmlEventUtil.toString(reader.peek());
+    assert start == null
+        || XmlEventUtil.isNextEventEndElement(reader,ObjectUtils.notNull(start.getName())) : XmlEventUtil.toString(reader.peek());
 
     // if (LOGGER.isDebugEnabled()) {
     // LOGGER.debug("parseContents(exit): {}", reader.peek() != null ?

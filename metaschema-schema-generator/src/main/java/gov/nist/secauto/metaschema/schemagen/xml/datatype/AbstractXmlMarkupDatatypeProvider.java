@@ -49,7 +49,7 @@ public abstract class AbstractXmlMarkupDatatypeProvider
 
   /**
    * Get the absolute classpath of the schema resource.
-   * 
+   *
    * @return the resource path
    */
   @NonNull
@@ -73,7 +73,7 @@ public abstract class AbstractXmlMarkupDatatypeProvider
         new JDom2DatatypeContent(
             dataTypeName,
             ObjectUtils.notNull(items.stream()
-                .filter(element -> !("include".equals(element.getName())))
+                .filter(element -> !"include".equals(element.getName()))
                 .collect(Collectors.toList())),
             CollectionUtil.emptyList()));
   }

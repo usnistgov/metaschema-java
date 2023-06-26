@@ -95,7 +95,7 @@ public class DefaultBoundLoader implements IBoundLoader {
 
   /**
    * Construct a new OSCAL loader instance, using the provided {@link IBindingContext}.
-   * 
+   *
    * @param bindingContext
    *          the Metaschema binding context to use to load Java types
    */
@@ -137,7 +137,7 @@ public class DefaultBoundLoader implements IBoundLoader {
 
   /**
    * Get the configured Metaschema binding context to use to load Java types.
-   * 
+   *
    * @return the binding context
    */
   public IBindingContext getBindingContext() {
@@ -256,8 +256,7 @@ public class DefaultBoundLoader implements IBoundLoader {
     IDocumentNodeItem retval;
     if (source.getByteStream() != null) {
       // attempt to use a provided byte stream stream
-      try (@SuppressWarnings("resource")
-      BufferedInputStream bis = toBufferedInputStream(
+      try (@SuppressWarnings("resource") BufferedInputStream bis = toBufferedInputStream(
           ObjectUtils.requireNonNull(source.getByteStream()))) {
         Class<?> clazz = detectModel(bis, format); // NOPMD - must be called before reset
         retval = deserializeToNodeItem(clazz, format, bis, uri);

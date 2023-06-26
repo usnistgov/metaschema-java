@@ -28,10 +28,11 @@ package gov.nist.secauto.metaschema.model.common.configuration;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+@SuppressWarnings({ "PMD.DoNotUseThreads", "PMD.ReplaceVectorWithList" })
 public interface IMutableConfiguration<T extends Enum<T> & IConfigurationFeature> extends IConfiguration<T> {
   /**
    * Turn on the provided feature.
-   * 
+   *
    * @param feature
    *          the feature to turn on
    * @return the updated configuration
@@ -41,7 +42,7 @@ public interface IMutableConfiguration<T extends Enum<T> & IConfigurationFeature
 
   /**
    * Turn off the provided feature.
-   * 
+   *
    * @param feature
    *          the feature to turn off
    * @return the updated configuration
@@ -51,7 +52,7 @@ public interface IMutableConfiguration<T extends Enum<T> & IConfigurationFeature
 
   /**
    * Replace this configuration with the {@code other} configuration.
-   * 
+   *
    * @param other
    *          the new configuration
    * @return the updated configuration

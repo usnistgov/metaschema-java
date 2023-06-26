@@ -77,7 +77,7 @@ abstract class AbstractClassBinding implements IClassBinding {
 
   /**
    * Construct a new class binding for the provided class.
-   * 
+   *
    * @param clazz
    *          the bound class
    * @param bindingContext
@@ -145,7 +145,7 @@ abstract class AbstractClassBinding implements IClassBinding {
 
   /**
    * Collect all fields that are flag instances on this class.
-   * 
+   *
    * @param clazz
    *          the class
    * @return an immutable collection of flag instances
@@ -180,7 +180,7 @@ abstract class AbstractClassBinding implements IClassBinding {
 
   /**
    * Initialize the flag instances for this class.
-   * 
+   *
    * @return the initialized flag instances
    */
   @NonNull
@@ -205,7 +205,7 @@ abstract class AbstractClassBinding implements IClassBinding {
 
   /**
    * Used to delegate flag instance initialization to subclasses.
-   * 
+   *
    * @param instance
    *          the flag instance to process
    */
@@ -257,7 +257,7 @@ abstract class AbstractClassBinding implements IClassBinding {
 
   /**
    * Gets a new instance of the bound class.
-   * 
+   *
    * @param <CLASS>
    *          the type of the bound class
    * @return a Java object for the class
@@ -268,8 +268,8 @@ abstract class AbstractClassBinding implements IClassBinding {
   protected <CLASS> CLASS newInstance() throws BindingException {
     Class<?> clazz = getBoundClass();
     try {
-      @SuppressWarnings("unchecked")
-      Constructor<CLASS> constructor = (Constructor<CLASS>) clazz.getDeclaredConstructor();
+      @SuppressWarnings("unchecked") Constructor<CLASS> constructor
+          = (Constructor<CLASS>) clazz.getDeclaredConstructor();
       return ObjectUtils.notNull(constructor.newInstance());
     } catch (NoSuchMethodException ex) {
       String msg = String.format("Class '%s' does not have a required no-arg constructor.", clazz.getName());
@@ -284,7 +284,7 @@ abstract class AbstractClassBinding implements IClassBinding {
    * Calls the method named "beforeDeserialize" on each class in the class's hierarchy if the method
    * exists. These methods can be used to set the initial state of a bound class before data is
    * applied during deserialization.
-   * 
+   *
    * @param objectInstance
    *          the object instance
    * @param parentInstance
@@ -306,7 +306,7 @@ abstract class AbstractClassBinding implements IClassBinding {
    * Calls the method named "afterDeserialize" on each class in the class's hierarchy if the method
    * exists. These methods can be used to modify the state of a bound class after data is applied
    * during deserialization.
-   * 
+   *
    * @param objectInstance
    *          the object instance
    * @param parentInstance

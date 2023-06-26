@@ -56,7 +56,7 @@ class XmlAssemblyInstance
   /**
    * Constructs a new Metaschema Assembly instance definition from an XML representation bound to Java
    * objects.
-   * 
+   *
    * @param xmlAssembly
    *          the XML representation bound to Java objects
    * @param parent
@@ -71,7 +71,7 @@ class XmlAssemblyInstance
 
   /**
    * Get the underlying XML data.
-   * 
+   *
    * @return the underlying XML data
    */
   protected AssemblyReferenceType getXmlAssembly() {

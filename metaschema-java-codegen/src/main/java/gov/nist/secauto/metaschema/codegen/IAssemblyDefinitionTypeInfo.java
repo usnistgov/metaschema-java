@@ -38,7 +38,7 @@ public interface IAssemblyDefinitionTypeInfo extends IModelDefinitionTypeInfo {
 
   /**
    * Construct a new type info based on the provided definition.
-   * 
+   *
    * @param definition
    *          the definition associated with the type info
    * @param typeResolver

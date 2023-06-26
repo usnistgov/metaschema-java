@@ -38,7 +38,7 @@ public class DefaultAllowedValue implements IAllowedValue {
 
   /**
    * Construct a new allowed value entry for use in an {@link IAllowedValuesConstraint}.
-   * 
+   *
    * @param value
    *          the allowed value
    * @param description

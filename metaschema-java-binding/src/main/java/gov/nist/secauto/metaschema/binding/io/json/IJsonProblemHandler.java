@@ -54,7 +54,7 @@ public interface IJsonProblemHandler extends IProblemHandler {
    * parsed.
    * <p>
    * This can be used to supply default or prescribed values based on application logic.
-   * 
+   *
    * @param classBinding
    *          the bound class on which the missing properties are found
    * @param missingPropertyBindings

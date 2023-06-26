@@ -41,7 +41,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public @interface Metaschema {
   /**
    * Get the classes representing the global fields defined on this Metaschema.
-   * 
+   *
    * @return an array of field classes
    */
   @NonNull
@@ -49,7 +49,7 @@ public @interface Metaschema {
 
   /**
    * Get the classes representing the global assemblies defined on this Metaschema.
-   * 
+   *
    * @return an array of assembly classes
    */
   @NonNull
@@ -57,7 +57,7 @@ public @interface Metaschema {
 
   /**
    * Get the classes representing the Metaschemas imported by this Metaschema.
-   * 
+   *
    * @return an array of imported Metaschemas
    */
   @NonNull
@@ -65,7 +65,7 @@ public @interface Metaschema {
 
   /**
    * Get any remarks for this metaschema.
-   * 
+   *
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
   @NonNull

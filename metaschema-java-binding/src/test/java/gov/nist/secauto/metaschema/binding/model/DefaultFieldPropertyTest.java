@@ -115,7 +115,7 @@ class DefaultFieldPropertyTest {
 
           allowing(jsonParsingContext).getReader();
           will(returnValue(jsonParser));
-          
+
           allowing(metaschema).getLocation();
           will(returnValue(URI.create("relativeLocation")));
         }
@@ -170,7 +170,7 @@ class DefaultFieldPropertyTest {
         will(returnValue(null));
         allowing(classBinding).getBoundClass();
         will(returnValue(theClass));
-        
+
         allowing(classBinding).getBindingContext();
         will(returnValue(bindingContext));
         allowing(classBinding).getContainingMetaschema();

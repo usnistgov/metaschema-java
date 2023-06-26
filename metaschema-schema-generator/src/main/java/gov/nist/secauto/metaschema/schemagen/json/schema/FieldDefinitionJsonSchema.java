@@ -60,9 +60,9 @@ public class FieldDefinitionJsonSchema
     }
   }
 
+  @SuppressWarnings("PMD.CognitiveComplexity")
   @Override
-  protected void generateBody(JsonGenerationState state, ObjectNode obj) throws IOException { // NOPMD acceptable
-                                                                                              // complexity
+  protected void generateBody(JsonGenerationState state, ObjectNode obj) throws IOException {
     IFieldDefinition definition = getDefinition();
 
     Collection<? extends IFlagInstance> flags = definition.getFlagInstances();

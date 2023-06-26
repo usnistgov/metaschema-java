@@ -50,7 +50,7 @@ public interface ISequence<ITEM_TYPE extends IItem> {
 
   /**
    * Get an empty sequence.
-   * 
+   *
    * @param <ITEM_TYPE>
    *          the item type
    * @return the empty sequence
@@ -132,7 +132,7 @@ public interface ISequence<ITEM_TYPE extends IItem> {
         return list -> {
           ISequence<ITEM_TYPE> retval;
           if (list.isEmpty()) {
-            retval = ISequence.empty();
+            retval = empty();
           } else if (list.size() == 1) {
             retval = new SingletonSequenceImpl<>(ObjectUtils.notNull(list.iterator().next()));
           } else {

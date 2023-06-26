@@ -58,6 +58,7 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 class XmlModelParser {
   private Map<String, INamedModelInstance> namedModelInstances;
   private Map<String, IFieldInstance> fieldInstances;

@@ -49,7 +49,7 @@ public final class DefaultIndexHasKeyConstraint
   /**
    * Create a key reference constraint, which uses a set of key fields to build a key to match against
    * an index.
-   * 
+   *
    * @param id
    *          the optional identifier for the constraint
    * @param formalName

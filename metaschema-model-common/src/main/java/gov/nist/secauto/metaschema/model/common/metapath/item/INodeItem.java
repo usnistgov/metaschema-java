@@ -40,14 +40,14 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemVisitable {
   /**
    * Retrieve the parent node item if it exists.
-   * 
+   *
    * @return the parent node item, or {@code null} if this node item has no known parent
    */
   INodeItem getParentNodeItem();
 
   /**
    * Retrieve the parent content node item if it exists. A content node is a non-document node.
-   * 
+   *
    * @return the parent content node item, or {@code null} if this node item has no known parent
    *         content node item
    */
@@ -55,7 +55,7 @@ public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemV
 
   /**
    * Get the type of node item this is.
-   * 
+   *
    * @return the node item's type
    */
   @NonNull
@@ -71,14 +71,14 @@ public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemV
    * <li>the base URI defined on the document node</li>
    * <li>{@code null} if the document node is unknown</li>
    * </ol>
-   * 
+   *
    * @return the base URI or {@code null} if it is unknown
    */
   URI getBaseUri();
 
   /**
    * Get the path for this node item as a Metapath.
-   * 
+   *
    * @return the Metapath
    */
   @NonNull

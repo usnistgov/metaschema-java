@@ -39,7 +39,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 interface IPropertyCollector {
   /**
    * Add an item to the "collection", who's type depends on the property configuration.
-   * 
+   *
    * @param item
    *          the item to add
    * @throws IllegalStateException
@@ -49,7 +49,7 @@ interface IPropertyCollector {
 
   /**
    * Add a collection of item to the "collection", who's type depends on the property configuration.
-   * 
+   *
    * @param items
    *          the items to add
    * @throws IllegalStateException
@@ -61,7 +61,7 @@ interface IPropertyCollector {
    * Get the current state of the "collection". For single valued "non-collections" this may return a
    * {@code null} value. For any collection type, such as {@link List} or {@link Map}, this must
    * return a non-{@code null} empty collection.
-   * 
+   *
    * @return the "collection" value or {@code null} for a single valued instance that is not defined
    */
   Object getValue();

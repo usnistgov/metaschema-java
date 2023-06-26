@@ -52,6 +52,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class HtmlCodeRenderExtension
     implements HtmlRenderer.HtmlRendererExtension {
@@ -72,7 +73,7 @@ public class HtmlCodeRenderExtension
   }
 
   static final class CodeNodeHtmlRenderer implements NodeRenderer {
-    final private boolean codeSoftLineBreaks;
+    private final boolean codeSoftLineBreaks;
 
     private CodeNodeHtmlRenderer(DataHolder options) {
       codeSoftLineBreaks = Parser.CODE_SOFT_LINE_BREAKS.get(options);
@@ -84,6 +85,7 @@ public class HtmlCodeRenderExtension
           new NodeRenderingHandler<>(Code.class, this::render));
     }
 
+    @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT", justification = "false positive")
     private void render( // NOPMD actually used in lambda
         @NotNull Code node,
         @NotNull NodeRendererContext context,

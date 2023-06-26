@@ -51,7 +51,7 @@ class XmlChoiceInstance
 
   /**
    * Constructs a mutually exclusive choice between two possible objects.
-   * 
+   *
    * @param xmlChoice
    *          the XML for the choice definition bound to Java objects
    * @param parent
@@ -73,7 +73,7 @@ class XmlChoiceInstance
 
   /**
    * Get the underlying XML data.
-   * 
+   *
    * @return the underlying XML data
    */
   @NonNull

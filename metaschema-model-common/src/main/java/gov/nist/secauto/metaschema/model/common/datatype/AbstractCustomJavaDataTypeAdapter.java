@@ -33,7 +33,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * Provides a Java type adapter implementation for data types that are based on
  * {@link ICustomJavaDataType}.
- * 
+ *
  * @param <TYPE>
  *          the Java type this adapter supports, which is based on {@link ICustomJavaDataType}
  * @param <ITEM_TYPE>
@@ -45,7 +45,7 @@ public abstract class AbstractCustomJavaDataTypeAdapter<TYPE extends ICustomJava
 
   /**
    * Construct a new Java type adapter for the class based on {@link ICustomJavaDataType}.
-   * 
+   *
    * @param clazz
    *          a data type class based on {@link ICustomJavaDataType}
    */

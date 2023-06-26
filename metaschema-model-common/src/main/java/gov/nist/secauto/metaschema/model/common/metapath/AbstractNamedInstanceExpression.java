@@ -39,7 +39,7 @@ abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeItem>
 
   /**
    * Construct a new expression that finds children that match the provided {@code test} expression.
-   * 
+   *
    * @param test
    *          the expression to use to determine a match
    */
@@ -49,7 +49,7 @@ abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeItem>
 
   /**
    * Get the {@link Wildcard} or {@link Name} test.
-   * 
+   *
    * @return the test
    */
   @NonNull

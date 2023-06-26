@@ -91,7 +91,7 @@ public class DefaultFieldClassBinding
   /**
    * Create a new {@link IClassBinding} for a Java bean annotated with the {@link BoundField}
    * annotation.
-   * 
+   *
    * @param clazz
    *          the Java bean class
    * @param bindingContext
@@ -114,7 +114,7 @@ public class DefaultFieldClassBinding
   /**
    * Construct a new {@link IClassBinding} for a Java bean annotated with the {@link BoundField}
    * annotation.
-   * 
+   *
    * @param clazz
    *          the Java bean class
    * @param bindingContext
@@ -165,7 +165,7 @@ public class DefaultFieldClassBinding
 
   /**
    * Collect all fields that are part of the model for this class.
-   * 
+   *
    * @param clazz
    *          the class
    * @return the field value instances if found or {@code null} otherwise
@@ -200,7 +200,7 @@ public class DefaultFieldClassBinding
 
   /**
    * Initialize the flag instances for this class.
-   * 
+   *
    * @return the field value instance
    */
   protected IBoundFieldValueInstance initalizeFieldValueInstance() {

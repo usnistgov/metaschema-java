@@ -39,7 +39,7 @@ public interface ICardinalityConstraint extends IConstraint {
    * Retrieve the required minimum occurrence of the target instance. If specified, this value must be
    * less than or equal to the value of {@link IModelInstance#getMaxOccurs()} and greater than
    * {@link IModelInstance#getMinOccurs()}.
-   * 
+   *
    * @return a non-negative integer or {@code null} if not defined
    */
   @Nullable
@@ -49,7 +49,7 @@ public interface ICardinalityConstraint extends IConstraint {
    * Retrieve the required maximum occurrence of the target instance. If specified, this value must be
    * less than the value of {@link IModelInstance#getMaxOccurs()} and greater than or equal to
    * {@link IModelInstance#getMinOccurs()}.
-   * 
+   *
    * @return a non-negative integer or {@code null} if not defined
    */
   @Nullable

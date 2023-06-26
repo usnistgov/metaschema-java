@@ -45,7 +45,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * Implementations of this interface are able to write data in a bound object instance of the
  * parameterized type to a structured data format.
- * 
+ *
  * @param <CLASS>
  *          the Java type from which data can be written
  */
@@ -54,7 +54,7 @@ public interface ISerializer<CLASS> extends IMutableConfiguration<SerializationF
    * Write data from a bound class instance to the {@link OutputStream}.
    * <p>
    * This method does not have ownership of the the provided output stream and will not close it.
-   * 
+   *
    * @param data
    *          the instance data
    * @param os
@@ -70,7 +70,7 @@ public interface ISerializer<CLASS> extends IMutableConfiguration<SerializationF
 
   /**
    * Write data from a bound class instance to the {@link File}.
-   * 
+   *
    * @param data
    *          the instance data
    * @param path
@@ -90,7 +90,7 @@ public interface ISerializer<CLASS> extends IMutableConfiguration<SerializationF
 
   /**
    * Write data from a bound class instance to the {@link File}.
-   * 
+   *
    * @param data
    *          the instance data
    * @param file
@@ -105,7 +105,7 @@ public interface ISerializer<CLASS> extends IMutableConfiguration<SerializationF
 
   /**
    * Write data from a bound class instance to the {@link Writer}.
-   * 
+   *
    * @param data
    *          the instance data
    * @param writer

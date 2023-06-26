@@ -39,7 +39,7 @@ public interface IIndexConstraint extends IKeyConstraint {
   /**
    * Get the name of the index, which is used to refer to the index by an
    * {@link IIndexHasKeyConstraint}.
-   * 
+   *
    * @return the name of the index
    */
   @NonNull

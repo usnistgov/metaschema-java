@@ -73,6 +73,7 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 final class ModelFactory {
   private ModelFactory() {
     // disable
@@ -114,8 +115,7 @@ final class ModelFactory {
     Map<String, DefaultAllowedValue> allowedValues // NOPMD - intentional
         = new LinkedHashMap<>(xmlConstraint.sizeOfEnumArray());
     for (EnumType xmlEnum : xmlConstraint.getEnumList()) {
-      @SuppressWarnings("null")
-      DefaultAllowedValue allowedValue = new DefaultAllowedValue( // NOPMD - intentional
+      @SuppressWarnings("null") DefaultAllowedValue allowedValue = new DefaultAllowedValue( // NOPMD - intentional
           xmlEnum.getValue(),
           MarkupStringConverter.toMarkupString(xmlEnum));
       allowedValues.put(allowedValue.getValue(), allowedValue);
@@ -135,22 +135,6 @@ final class ModelFactory {
       @NonNull AllowedValuesType xmlConstraint,
       @NonNull ISource source) {
     return newAllowedValuesConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE, source);
-  }
-
-  @NonNull
-  private static <T extends AbstractConstraintBuilder<T, ?>> T applyToBuilder(
-      @NonNull ConstraintType xmlConstraint,
-      @NonNull MetapathExpression target,
-      @NonNull ISource source,
-      @NonNull T builder) {
-
-    if (xmlConstraint.isSetId()) {
-      builder.identifier(ObjectUtils.notNull(xmlConstraint.getId()));
-    }
-    builder.target(target);
-    builder.source(source);
-    builder.level(level(xmlConstraint.getLevel()));
-    return builder;
   }
 
   @NonNull
@@ -176,6 +160,22 @@ final class ModelFactory {
     }
 
     return builder.build();
+  }
+
+  @NonNull
+  private static <T extends AbstractConstraintBuilder<T, ?>> T applyToBuilder(
+      @NonNull ConstraintType xmlConstraint,
+      @NonNull MetapathExpression target,
+      @NonNull ISource source,
+      @NonNull T builder) {
+
+    if (xmlConstraint.isSetId()) {
+      builder.identifier(ObjectUtils.notNull(xmlConstraint.getId()));
+    }
+    builder.target(target);
+    builder.source(source);
+    builder.level(level(xmlConstraint.getLevel()));
+    return builder;
   }
 
   @NonNull
@@ -219,8 +219,7 @@ final class ModelFactory {
       @NonNull KeyConstraintType xmlConstraint,
       @NonNull AbstractKeyConstraintBuilder<?, ?> builder) {
     for (KeyConstraintType.KeyField xmlKeyField : xmlConstraint.getKeyFieldList()) {
-      @SuppressWarnings("null")
-      DefaultKeyField keyField
+      @SuppressWarnings("null") DefaultKeyField keyField
           = new DefaultKeyField( // NOPMD - intentional
               xmlKeyField.getTarget(),
               xmlKeyField.isSetPattern() ? xmlKeyField.getPattern() : null, // NOPMD - intentional

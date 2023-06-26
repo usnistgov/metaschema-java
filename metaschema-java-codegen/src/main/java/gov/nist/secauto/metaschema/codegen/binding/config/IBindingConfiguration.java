@@ -36,7 +36,7 @@ public interface IBindingConfiguration {
 
   /**
    * Generates a Java package name for the provided Metaschema.
-   * 
+   *
    * @param metaschema
    *          the Metaschema to generate a package name for
    * @return a Java package name
@@ -46,7 +46,7 @@ public interface IBindingConfiguration {
 
   /**
    * Get the Java class name for the provided field or assembly definition.
-   * 
+   *
    * @param definition
    *          the definition to generate the Java class name for
    * @return a Java class name
@@ -56,7 +56,7 @@ public interface IBindingConfiguration {
 
   /**
    * Get the Java class name for the provided Metaschema.
-   * 
+   *
    * @param metaschema
    *          the Metaschema to generate the Java class name for
    * @return a Java class name
@@ -67,7 +67,7 @@ public interface IBindingConfiguration {
   /**
    * Get the Java class name of the base class to use for the class associated with the provided
    * definition.
-   * 
+   *
    * @param definition
    *          a definition that may be built as a class
    * @return the name of the base class or {@code null} if no base class is to be used

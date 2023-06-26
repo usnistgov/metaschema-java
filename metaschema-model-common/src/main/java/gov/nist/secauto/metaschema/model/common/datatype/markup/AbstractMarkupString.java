@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
+import com.ctc.wstx.api.WstxOutputProperties;
+import com.ctc.wstx.stax.WstxOutputFactory;
 import com.vladsch.flexmark.formatter.Formatter;
 import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
 import com.vladsch.flexmark.parser.Parser;
@@ -45,9 +47,13 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.codehaus.stax2.evt.XMLEventFactory2;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -56,6 +62,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -122,8 +129,8 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   protected static Document parseHtml(@NonNull String html, @NonNull FlexmarkHtmlConverter htmlParser,
       @NonNull Parser markdownParser) {
     String markdown = ObjectUtils.notNull(htmlParser.convert(Objects.requireNonNull(html, "html")));
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("markdown: {}", markdown);
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("html->markdown: {}", markdown);
     }
     return parseMarkdown(markdown, markdownParser);
   }
@@ -131,6 +138,33 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   @NonNull
   protected static Document parseMarkdown(@NonNull String markdown, @NonNull Parser parser) {
     return parser.parse(markdown);
+  }
+
+  @Override
+  public String toXHtml(@NonNull String namespace) throws XMLStreamException, IOException {
+
+    String retval;
+
+    Document document = getDocument();
+    if (document.hasChildren()) {
+
+      XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
+      assert factory instanceof WstxOutputFactory;
+      factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
+      try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+        XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
+
+        writeXHtml(namespace, xmlStreamWriter);
+
+        xmlStreamWriter.flush();
+        xmlStreamWriter.close();
+        os.flush();
+        retval = os.toString(StandardCharsets.UTF_8);
+      }
+    } else {
+      retval = "";
+    }
+    return retval;
   }
 
   @Override
@@ -162,28 +196,37 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
 
   @Override
   public void writeXHtml(String namespace, XMLStreamWriter2 streamWriter) throws XMLStreamException {
+    Document document = getDocument();
+    if (document.hasChildren()) {
+      IMarkupWriter<XMLStreamWriter, XMLStreamException> writer = new MarkupXmlStreamWriter(
+          namespace,
+          getFlexmarkFactory().getListOptions(),
+          streamWriter);
 
-    IMarkupWriter<XMLStreamWriter, XMLStreamException> writer = new MarkupXmlStreamWriter(
-        namespace,
-        getFlexmarkFactory().getListOptions(),
-        streamWriter);
-
-    IMarkupVisitor<XMLStreamWriter, XMLStreamException> visitor = new MarkupVisitor<>(isBlock());
-    visitor.visitDocument(getDocument(), writer);
+      IMarkupVisitor<XMLStreamWriter, XMLStreamException> visitor = new MarkupVisitor<>(isBlock());
+      visitor.visitDocument(document, writer);
+    } else {
+      streamWriter.writeCharacters("");
+    }
   }
 
   @Override
   public void writeXHtml(String namespace, XMLEventFactory2 eventFactory, XMLEventWriter eventWriter)
       throws XMLStreamException {
+    Document document = getDocument();
+    if (document.hasChildren()) {
 
-    IMarkupWriter<XMLEventWriter, XMLStreamException> writer = new MarkupXmlEventWriter(
-        namespace,
-        getFlexmarkFactory().getListOptions(),
-        eventWriter,
-        eventFactory);
+      IMarkupWriter<XMLEventWriter, XMLStreamException> writer = new MarkupXmlEventWriter(
+          namespace,
+          getFlexmarkFactory().getListOptions(),
+          eventWriter,
+          eventFactory);
 
-    IMarkupVisitor<XMLEventWriter, XMLStreamException> visitor = new MarkupVisitor<>(isBlock());
-    visitor.visitDocument(getDocument(), writer);
+      IMarkupVisitor<XMLEventWriter, XMLStreamException> visitor = new MarkupVisitor<>(isBlock());
+      visitor.visitDocument(getDocument(), writer);
+    } else {
+      eventWriter.add(eventFactory.createSpace(""));
+    }
 
   }
 
@@ -204,6 +247,6 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
 
   @Override
   public String toString() {
-    return new AstCollectingVisitor().collectAndGetAstText(getDocument());
+    return AstCollectingVisitor.asString(getDocument());
   }
 }

@@ -66,7 +66,7 @@ public class DefaultFunction
 
   /**
    * Construct a new function signature.
-   * 
+   *
    * @param name
    *          the name of the function
    * @param properties
@@ -78,7 +78,7 @@ public class DefaultFunction
    * @param handler
    *          the handler to call to execute the function
    */
-  @SuppressWarnings("null")
+  @SuppressWarnings({ "null", "PMD.LooseCoupling" })
   DefaultFunction(
       @NonNull String name,
       @NonNull EnumSet<FunctionProperty> properties,
@@ -163,7 +163,7 @@ public class DefaultFunction
 
   /**
    * Converts arguments in an attempt to align with the function's signature.
-   * 
+   *
    * @param function
    *          the function
    * @param parameters
@@ -171,10 +171,10 @@ public class DefaultFunction
    * @return the converted argument list
    */
   @NonNull
-  public static List<ISequence<?>> convertArguments(@NonNull IFunction function,
+  public static List<ISequence<?>> convertArguments(
+      @NonNull IFunction function,
       @NonNull List<ISequence<?>> parameters) {
-    @NonNull
-    List<ISequence<?>> retval = new ArrayList<>(parameters.size());
+    @NonNull List<ISequence<?>> retval = new ArrayList<>(parameters.size());
 
     Iterator<IArgument> argumentIterator = function.getArguments().iterator();
     Iterator<ISequence<?>> parametersIterator = parameters.iterator();
@@ -260,7 +260,7 @@ public class DefaultFunction
   /**
    * Based on XPath 3.1 <a href="https://www.w3.org/TR/xpath-31/#dt-function-conversion">function
    * conversion</a> rules.
-   * 
+   *
    * @param argument
    *          the function argument signature details
    * @param sequence
@@ -269,8 +269,7 @@ public class DefaultFunction
    */
   @NonNull
   protected static ISequence<?> convertSequence(@NonNull IArgument argument, @NonNull ISequence<?> sequence) {
-    @NonNull
-    ISequence<?> retval;
+    @NonNull ISequence<?> retval;
     if (sequence.isEmpty()) {
       retval = ISequence.empty();
     } else {
@@ -396,7 +395,7 @@ public class DefaultFunction
 
   /**
    * Set up the execution context for this function.
-   * 
+   *
    * @param arguments
    *          the function arguments
    * @param focus
@@ -425,17 +424,17 @@ public class DefaultFunction
 
     /**
      * Get the function instance associated with the calling context.
-     * 
+     *
      * @return the function instance
      */
     @NonNull
-    protected DefaultFunction getFunction() {
+    public DefaultFunction getFunction() {
       return DefaultFunction.this;
     }
 
     /**
      * Get the node item focus associated with the calling context.
-     * 
+     *
      * @return the function instance
      */
     @Nullable
@@ -445,7 +444,7 @@ public class DefaultFunction
 
     /**
      * Get the arguments associated with the calling context.
-     * 
+     *
      * @return the arguments
      */
     @NonNull

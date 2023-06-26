@@ -61,6 +61,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - intentional
 
   @NonNull
@@ -73,7 +74,7 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
 
   /**
    * Constructs a new Metaschema Assembly definition from an XML representation bound to Java objects.
-   * 
+   *
    * @param xmlAssembly
    *          the XML representation bound to Java objects
    * @param metaschema
@@ -93,7 +94,7 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
 
   /**
    * Get the underlying XML data.
-   * 
+   *
    * @return the underlying XML data
    */
   @NonNull

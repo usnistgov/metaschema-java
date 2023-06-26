@@ -75,8 +75,7 @@ class ExpressionUtilsTest {
         will(returnValue(IFlagNodeItem.class));
       }
     });
-    @SuppressWarnings("null")
-    Class<? extends INodeItem> result
+    @SuppressWarnings("null") Class<? extends INodeItem> result
         = ExpressionUtils.analyzeStaticResultType(baseType, List.of(basicFlagExpr1, basicFlagExpr2));
     assertEquals(IFlagNodeItem.class, result);
   }
@@ -93,8 +92,7 @@ class ExpressionUtilsTest {
         will(returnValue(IAssemblyNodeItem.class));
       }
     });
-    @SuppressWarnings("null")
-    Class<? extends INodeItem> result
+    @SuppressWarnings("null") Class<? extends INodeItem> result
         = ExpressionUtils.analyzeStaticResultType(baseType, List.of(basicFlagExpr1, basicAssemblyExpr));
     assertEquals(IDefinitionNodeItem.class, result);
   }
@@ -111,8 +109,7 @@ class ExpressionUtilsTest {
         will(returnValue(IAssemblyNodeItem.class));
       }
     });
-    @SuppressWarnings("null")
-    Class<? extends INodeItem> result
+    @SuppressWarnings("null") Class<? extends INodeItem> result
         = ExpressionUtils.analyzeStaticResultType(baseType, List.of(basicFieldExpr, basicAssemblyExpr));
     assertEquals(IModelNodeItem.class, result);
   }

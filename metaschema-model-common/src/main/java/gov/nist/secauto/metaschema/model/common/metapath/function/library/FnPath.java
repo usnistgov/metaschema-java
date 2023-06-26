@@ -112,7 +112,7 @@ public final class FnPath {
    * An implementation of XPath 3.1
    * <a href="https://www.w3.org/TR/xpath-functions-31/#func-data">fn:data</a> supporting
    * <a href="https://www.w3.org/TR/xpath-31/#id-atomization">item atomization</a>.
-   * 
+   *
    * @param sequence
    *          the sequence of items to atomize
    * @return the atomized result
@@ -142,7 +142,7 @@ public final class FnPath {
   /**
    * An implementation of <a href="https://www.w3.org/TR/xpath-31/#id-atomization">item
    * atomization</a>.
-   * 
+   *
    * @param item
    *          the item to atomize
    * @return the atomized result

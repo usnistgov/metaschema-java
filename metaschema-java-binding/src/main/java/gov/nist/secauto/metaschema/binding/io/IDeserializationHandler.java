@@ -37,7 +37,7 @@ public interface IDeserializationHandler {
 
   /**
    * A method called just before the object data is read and added to the object.
-   * 
+   *
    * @param parent
    *          the Java object containing this object
    */
@@ -45,7 +45,7 @@ public interface IDeserializationHandler {
 
   /**
    * A method called just after the object's data is read and added to the object.
-   * 
+   *
    * @param parent
    *          the Java object containing this object
    */

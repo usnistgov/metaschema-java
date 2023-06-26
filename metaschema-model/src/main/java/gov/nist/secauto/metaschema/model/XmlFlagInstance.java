@@ -27,8 +27,8 @@
 package gov.nist.secauto.metaschema.model;
 
 import gov.nist.secauto.metaschema.model.common.AbstractFlagInstance;
-import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagContainer;
+import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -51,7 +51,7 @@ class XmlFlagInstance
   /**
    * Constructs a new Metaschema flag instance definition from an XML representation bound to Java
    * objects.
-   * 
+   *
    * @param xmlFlag
    *          the XML representation bound to Java objects
    * @param parent
@@ -64,7 +64,7 @@ class XmlFlagInstance
 
   /**
    * Get the underlying XML data.
-   * 
+   *
    * @return the underlying XML data
    */
   protected FlagReferenceType getXmlFlag() {

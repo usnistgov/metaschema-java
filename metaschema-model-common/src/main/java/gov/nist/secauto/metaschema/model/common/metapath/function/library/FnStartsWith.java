@@ -84,7 +84,7 @@ public final class FnStartsWith {
    * <p>
    * Based on the XPath 3.1
    * <a href="https://www.w3.org/TR/xpath-functions-31/#func-starts-with">fn:starts-with</a> function.
-   * 
+   *
    * @param arg1
    *          the string to examine
    * @param arg2

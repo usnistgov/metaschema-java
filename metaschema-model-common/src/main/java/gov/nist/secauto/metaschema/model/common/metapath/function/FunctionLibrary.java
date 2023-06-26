@@ -43,7 +43,7 @@ public class FunctionLibrary implements IFunctionLibrary {
 
   /**
    * Get the map of function name to function signatures.
-   * 
+   *
    * @return the mapping
    */
   @NonNull
@@ -53,7 +53,7 @@ public class FunctionLibrary implements IFunctionLibrary {
 
   /**
    * Register the provided function signature.
-   * 
+   *
    * @param function
    *          the function signature to register
    * @throws IllegalArgumentException
@@ -92,6 +92,7 @@ public class FunctionLibrary implements IFunctionLibrary {
     return getFunction(name, args) != null;
   }
 
+  @SuppressWarnings("PMD.NullAssignment") // for readability
   @Override
   public IFunction getFunction(@NonNull String name, @NonNull List<IExpression> args) {
     IFunction retval;

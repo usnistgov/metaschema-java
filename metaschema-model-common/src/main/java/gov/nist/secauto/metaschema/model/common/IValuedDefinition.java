@@ -38,7 +38,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface IValuedDefinition extends IDefinition {
   /**
    * Retrieves the data type of the definition's value.
-   * 
+   *
    * @return the data type
    */
   @NonNull

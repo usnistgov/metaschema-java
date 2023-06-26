@@ -46,13 +46,12 @@ class FunctionCall implements IExpression {
 
   /**
    * Construct a new function call expression.
-   * 
+   *
    * @param name
    *          the function name
    * @param arguments
    *          the expressions used to provide arguments to the function call
    */
-  @SuppressWarnings("null")
   protected FunctionCall(@NonNull String name, @NonNull List<IExpression> arguments) {
     this.name = Objects.requireNonNull(name, "name");
     this.arguments = Objects.requireNonNull(arguments, "arguments");
@@ -60,7 +59,7 @@ class FunctionCall implements IExpression {
 
   /**
    * Retrieve the associated function.
-   * 
+   *
    * @return the function or {@code null} if no function matched the defined name and arguments
    * @throws StaticMetapathException
    *           if the function was not found
@@ -102,8 +101,7 @@ class FunctionCall implements IExpression {
   @Override
   public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
     List<ISequence<?>> arguments = ObjectUtils.notNull(getChildren().stream().map(expression -> {
-      @NonNull
-      ISequence<?> result = expression.accept(dynamicContext, context);
+      @NonNull ISequence<?> result = expression.accept(dynamicContext, context);
       return result;
     }).collect(Collectors.toList()));
 

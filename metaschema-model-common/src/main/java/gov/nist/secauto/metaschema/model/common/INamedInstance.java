@@ -41,7 +41,7 @@ public interface INamedInstance extends IInstance, INamedModelElement {
 
   /**
    * Retrieve the definition of this instance.
-   * 
+   *
    * @return the corresponding definition
    */
   @NonNull
@@ -49,7 +49,7 @@ public interface INamedInstance extends IInstance, INamedModelElement {
 
   /**
    * Get the XML qualified name to use in XML.
-   * 
+   *
    * @return the XML qualified name, or {@code null} if there isn't one
    */
   default QName getXmlQName() {
@@ -58,7 +58,7 @@ public interface INamedInstance extends IInstance, INamedModelElement {
 
   /**
    * Retrieve the XML namespace for this instance.
-   * 
+   *
    * @return the XML namespace or {@code null} if no namespace is defined
    */
   default String getXmlNamespace() {
@@ -68,7 +68,7 @@ public interface INamedInstance extends IInstance, INamedModelElement {
   /**
    * Get the current value from the provided {@code parentInstance} object. The provided object must
    * be of the type associated with the definition containing this property.
-   * 
+   *
    * @param parentInstance
    *          the object associated with the definition containing this property
    * @return the value if available, or {@code null} otherwise
@@ -77,7 +77,7 @@ public interface INamedInstance extends IInstance, INamedModelElement {
 
   /**
    * Generates a "coordinate" string for the provided information element instance.
-   * 
+   *
    * A coordinate consists of the element's:
    * <ul>
    * <li>containing Metaschema's short name</li>
@@ -86,7 +86,7 @@ public interface INamedInstance extends IInstance, INamedModelElement {
    * <li>hash code</li>
    * <li>the hash code of the definition</li>
    * </ul>
-   * 
+   *
    * @return the coordinate
    */
   @SuppressWarnings("null")
@@ -96,11 +96,11 @@ public interface INamedInstance extends IInstance, INamedModelElement {
 
     IDefinition containingDefinition = getContainingDefinition();
     return String.format("%s:%s:%s@%d(%d)",
-          containingDefinition.getContainingMetaschema().getShortName(),
-          getModelType(),
-          definition.getName(),
-          hashCode(),
-          definition.isInline() ? 0 : definition.hashCode());
+        containingDefinition.getContainingMetaschema().getShortName(),
+        getModelType(),
+        definition.getName(),
+        hashCode(),
+        definition.isInline() ? 0 : definition.hashCode());
   }
 
   @Override

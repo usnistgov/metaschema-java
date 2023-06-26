@@ -55,9 +55,9 @@ public class DynamicBindingContext
         }).map(definitionProduction -> {
           IAssemblyDefinition definition = (IAssemblyDefinition) definitionProduction.getDefinition();
           try {
-            @SuppressWarnings("unchecked")
-            Class<IAssemblyClassBinding> clazz = ObjectUtils.notNull((Class<IAssemblyClassBinding>) classLoader
-                .loadClass(definitionProduction.getGeneratedClass().getClassName().reflectionName()));
+            @SuppressWarnings("unchecked") Class<IAssemblyClassBinding> clazz
+                = ObjectUtils.notNull((Class<IAssemblyClassBinding>) classLoader
+                    .loadClass(definitionProduction.getGeneratedClass().getClassName().reflectionName()));
             return new DynamicBindingMatcher(definition, clazz);
           } catch (ClassNotFoundException ex) {
             throw new IllegalStateException(ex);

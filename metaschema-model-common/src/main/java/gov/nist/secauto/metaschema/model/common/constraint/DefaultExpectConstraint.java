@@ -59,7 +59,7 @@ public final class DefaultExpectConstraint
   /**
    * Construct a new expect constraint which requires that the associated test evaluates to
    * {@link IBooleanItem#TRUE} against the target.
-   * 
+   *
    * @param id
    *          the optional identifier for the constraint
    * @param formalName
@@ -82,7 +82,6 @@ public final class DefaultExpectConstraint
    * @param remarks
    *          optional remarks describing the intent of the constraint
    */
-  @SuppressWarnings("null")
   private DefaultExpectConstraint(
       @Nullable String id,
       @Nullable String formalName,
@@ -116,8 +115,7 @@ public final class DefaultExpectConstraint
     return message == null ? null
         : ReplacementScanner.replaceTokens(message, METAPATH_VALUE_TEMPLATE_PATTERN, match -> {
           @SuppressWarnings("null")
-          @NonNull
-          String metapath = match.group(2);
+          @NonNull String metapath = match.group(2);
           MetapathExpression expr = MetapathExpression.compile(metapath);
           return expr.evaluateAs(item, MetapathExpression.ResultType.STRING, context);
         });

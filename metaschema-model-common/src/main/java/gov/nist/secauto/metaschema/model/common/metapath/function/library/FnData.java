@@ -114,7 +114,7 @@ public final class FnData {
    * An implementation of XPath 3.1
    * <a href="https://www.w3.org/TR/xpath-functions-31/#func-data">fn:data</a> supporting
    * <a href="https://www.w3.org/TR/xpath-31/#id-atomization">item atomization</a>.
-   * 
+   *
    * @param sequence
    *          the sequence of items to atomize
    * @return the atomized result
@@ -122,8 +122,7 @@ public final class FnData {
   @SuppressWarnings("null")
   @NonNull
   public static ISequence<IAnyAtomicItem> fnData(@NonNull ISequence<?> sequence) {
-    @NonNull
-    Stream<? extends IItem> stream = sequence.asStream();
+    @NonNull Stream<? extends IItem> stream = sequence.asStream();
     return ISequence.of(stream.flatMap(x -> {
       return Stream.of(fnDataItem(x));
     }));
@@ -132,7 +131,7 @@ public final class FnData {
   /**
    * An implementation of <a href="https://www.w3.org/TR/xpath-31/#id-atomization">item
    * atomization</a>.
-   * 
+   *
    * @param item
    *          the item to atomize
    * @return the atomized result

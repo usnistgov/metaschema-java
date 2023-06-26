@@ -35,7 +35,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IExpression {
   /**
    * Retrieve the child expressions associated with this expression.
-   * 
+   *
    * @return a list of expressions, which may be empty
    */
   @NonNull
@@ -44,7 +44,7 @@ public interface IExpression {
   /**
    * The minimum expected result type to be produced when evaluating the expression. The result may be
    * a sub-class or sub-interface of this value.
-   * 
+   *
    * @return the base result type
    */
   @NonNull
@@ -58,7 +58,7 @@ public interface IExpression {
    * <p>
    * This method can be overloaded to provide static analysis of the expression to determine a more
    * specific result type.
-   * 
+   *
    * @return the result type
    */
   @NonNull
@@ -70,7 +70,7 @@ public interface IExpression {
    * Produce a string representation of this expression including the expression's name.
    * <p>
    * This method can be overloaded to provide a more appropriate representation of the expression.
-   * 
+   *
    * @return a string representing the data elements of the expression
    */
   @SuppressWarnings("null")
@@ -81,7 +81,7 @@ public interface IExpression {
 
   /**
    * Provides a double dispatch callback for visitor handling.
-   * 
+   *
    * @param dynamicContext
    *          the dynamic evaluation context
    * @param context
@@ -93,7 +93,7 @@ public interface IExpression {
 
   /**
    * Provides a double dispatch callback for visitor handling.
-   * 
+   *
    * @param <RESULT>
    *          the type of the evaluation result
    * @param <CONTEXT>
@@ -104,5 +104,5 @@ public interface IExpression {
    *          the visitor context
    * @return the result of evaluation
    */
-  <RESULT, CONTEXT> RESULT accept(@NonNull IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
+  <RESULT, CONTEXT> RESULT accept(@NonNull IExpressionVisitor<RESULT, CONTEXT> visitor, @NonNull CONTEXT context);
 }

@@ -115,7 +115,7 @@ public class DefaultIndex implements IIndex {
 
   /**
    * Apply the key value pattern, if configured, to generate the final key value.
-   * 
+   *
    * @param keyItem
    *          the node item used to form the key field
    * @param pattern

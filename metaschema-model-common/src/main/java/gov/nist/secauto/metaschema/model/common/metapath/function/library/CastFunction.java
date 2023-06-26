@@ -56,7 +56,7 @@ public final class CastFunction<ITEM extends IAnyAtomicItem> implements IFunctio
             .build())
         .returnType(resulingAtomicType)
         .returnZeroOrOne()
-        .functionHandler(CastFunction.newCastExecutor(executor))
+        .functionHandler(newCastExecutor(executor))
         .build();
   }
 
@@ -92,7 +92,7 @@ public final class CastFunction<ITEM extends IAnyAtomicItem> implements IFunctio
   public interface ICastExecutor<ITEM extends IAnyAtomicItem> {
     /**
      * Cast the provided {@code item}.
-     * 
+     *
      * @param item
      *          the item to cast
      * @return the item cast to the appropriate type

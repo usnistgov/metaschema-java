@@ -40,11 +40,9 @@ public interface INamedModelInstance extends INamedInstance, IModelInstance {
 
   @Override
   default String getJsonName() {
-    @NonNull
-    String retval;
+    @NonNull String retval;
     if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-      @NonNull
-      String groupAsName = ObjectUtils.requireNonNull(getGroupAsName(),
+      @NonNull String groupAsName = ObjectUtils.requireNonNull(getGroupAsName(),
           ObjectUtils.notNull(String.format("null group-as name in instance '%s' on definition '%s' in '%s'",
               this.getName(),
               this.getContainingDefinition().getName(),
@@ -59,7 +57,7 @@ public interface INamedModelInstance extends INamedInstance, IModelInstance {
   /**
    * Get the item values for the provided {@code instanceValue}. An instance may be singular or many
    * valued.
-   * 
+   *
    * @param instanceValue
    *          the instance
    * @return the item values or an empty collection if no item values exist
@@ -73,7 +71,7 @@ public interface INamedModelInstance extends INamedInstance, IModelInstance {
    * object. This is only allowed if the flag is required, as determined by a {@code true} result from
    * {@link IFlagInstance#isRequired()}. The {@link IFlagInstance} can be retrieved using
    * {@link #getJsonKeyFlagInstance()}.
-   * 
+   *
    * @return {@code true} if the flag's value can be used as a property name, or {@code false}
    *         otherwise
    * @see #getJsonKeyFlagInstance()
@@ -85,7 +83,7 @@ public interface INamedModelInstance extends INamedInstance, IModelInstance {
   /**
    * Retrieves the flag instance to use as as the property name for the containing object in JSON
    * who's value will be the object containing the flag.
-   * 
+   *
    * @return the flag instance if a JSON key is configured, or {@code null} otherwise
    * @see #hasJsonKey()
    */

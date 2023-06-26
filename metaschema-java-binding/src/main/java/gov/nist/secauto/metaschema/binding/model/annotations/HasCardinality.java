@@ -48,7 +48,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public @interface HasCardinality {
   /**
    * An optional identifier for the constraint, which must be unique to only this constraint.
-   * 
+   *
    * @return the identifier if provided or an empty string otherwise
    */
   @NonNull
@@ -56,7 +56,7 @@ public @interface HasCardinality {
 
   /**
    * An optional formal name for the constraint.
-   * 
+   *
    * @return the formal name if provided or an empty string otherwise
    */
   @NonNull
@@ -64,7 +64,7 @@ public @interface HasCardinality {
 
   /**
    * An optional description of the constraint.
-   * 
+   *
    * @return the description if provided or an empty string otherwise
    */
   @NonNull
@@ -72,7 +72,7 @@ public @interface HasCardinality {
 
   /**
    * The significance of a violation of this constraint.
-   * 
+   *
    * @return the level
    */
   @NonNull
@@ -85,7 +85,7 @@ public @interface HasCardinality {
    * appears on. In the prior case, this annotation may only appear on a {@link BoundField} if the
    * field has no flags, which results in a {@link BoundField} annotation on a field instance with a
    * scalar, data type value.
-   * 
+   *
    * @return the target metapath
    */
   @NonNull
@@ -93,7 +93,7 @@ public @interface HasCardinality {
 
   /**
    * An optional set of properties associated with these allowed values.
-   * 
+   *
    * @return the properties or an empty array with no properties
    */
   Property[] properties() default {};
@@ -101,7 +101,7 @@ public @interface HasCardinality {
   /**
    * The minimum occurrence of the target. This value cannot be less than or equal to the
    * corresponding value defined on the target. The value must be greater than {@code 0}.
-   * 
+   *
    * @return a non-negative integer or {@code -1} if not defined
    */
   int minOccurs() default -1;
@@ -110,14 +110,14 @@ public @interface HasCardinality {
    * The maximum occurrence of the target. This value must be greater than or equal to the
    * {@link #minOccurs()} if both are provided. This value must be less than the corresponding value
    * defined on the target.
-   * 
+   *
    * @return a non-negative integer or {@code -1} if not defined
    */
   int maxOccurs() default -1;
 
   /**
    * The message to emit when the constraint is violated.
-   * 
+   *
    * @return the message or an empty string otherwise
    */
   @NonNull
@@ -125,7 +125,7 @@ public @interface HasCardinality {
 
   /**
    * Any remarks about the constraint, encoded as an escaped Markdown string.
-   * 
+   *
    * @return an encoded markdown string or an empty string if no remarks are provided
    */
   @NonNull

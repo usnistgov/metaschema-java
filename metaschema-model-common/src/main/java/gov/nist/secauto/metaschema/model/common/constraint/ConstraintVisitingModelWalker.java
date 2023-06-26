@@ -44,7 +44,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * A callback called when visiting the {@code constraint} associated with {@code def}.
-   * 
+   *
    * @param definition
    *          the definition the constraint is associated with
    * @param constraint
@@ -59,7 +59,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * A callback called when visiting the {@code constraint} associated with {@code def}.
-   * 
+   *
    * @param definition
    *          the definition the constraint is associated with
    * @param constraint
@@ -74,7 +74,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * A callback called when visiting the {@code constraint} associated with {@code def}.
-   * 
+   *
    * @param definition
    *          the definition the constraint is associated with
    * @param constraint
@@ -88,7 +88,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * A callback called when visiting the {@code constraint} associated with {@code def}.
-   * 
+   *
    * @param definition
    *          the definition the constraint is associated with
    * @param constraint
@@ -102,7 +102,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * A callback called when visiting the {@code constraint} associated with {@code def}.
-   * 
+   *
    * @param definition
    *          the definition the constraint is associated with
    * @param constraint
@@ -117,7 +117,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * A callback called when visiting the {@code constraint} associated with {@code def}.
-   * 
+   *
    * @param definition
    *          the definition the constraint is associated with
    * @param constraint
@@ -132,7 +132,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * A callback called when visiting the {@code constraint} associated with {@code def}.
-   * 
+   *
    * @param definition
    *          the definition the constraint is associated with
    * @param constraint
@@ -153,7 +153,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * A callback called when visiting the {@code constraint} associated with {@code def}.
-   * 
+   *
    * @param definition
    *          the definition the constraint is associated with
    * @param constraint
@@ -168,7 +168,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * A callback called when visiting the {@code constraint} associated with {@code def}.
-   * 
+   *
    * @param definition
    *          the definition the constraint is associated with
    * @param constraint
@@ -182,7 +182,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * A callback called when visiting the {@code constraint} associated with {@code def}.
-   * 
+   *
    * @param definition
    *          the definition the constraint is associated with
    * @param constraint
@@ -197,7 +197,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * A callback called when visiting the {@code constraint} associated with {@code def}.
-   * 
+   *
    * @param definition
    *          the definition the constraint is associated with
    * @param constraint
@@ -216,7 +216,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * A callback called when visiting the {@code constraint} associated with {@code def}.
-   * 
+   *
    * @param definition
    *          the definition the constraint is associated with
    * @param constraint
@@ -231,7 +231,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * A callback called when visiting the {@code constraint} associated with {@code def}.
-   * 
+   *
    * @param definition
    *          the definition the constraint is associated with
    * @param constraint
@@ -245,7 +245,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * A callback called when visiting the {@code constraint} associated with {@code def}.
-   * 
+   *
    * @param definition
    *          the definition the constraint is associated with
    * @param constraint
@@ -260,7 +260,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * A callback called when visiting the {@code constraint} associated with {@code def}.
-   * 
+   *
    * @param definition
    *          the definition the constraint is associated with
    * @param constraint
@@ -274,7 +274,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * Walk the constraints associated with the {@code definition}.
-   * 
+   *
    * @param definition
    *          the definition the constraints to walk are associated with
    * @param data
@@ -312,7 +312,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * Walk the constraints associated with the {@code definition}.
-   * 
+   *
    * @param definition
    *          the definition the constraints to walk are associated with
    * @param data
@@ -338,7 +338,7 @@ abstract class ConstraintVisitingModelWalker<DATA>
 
   /**
    * Walk the constraints associated with the {@code definition}.
-   * 
+   *
    * @param definition
    *          the definition the constraints to walk are associated with
    * @param data

@@ -63,7 +63,7 @@ public class MarkupLine
     // disable list processing
     options.set(Parser.LIST_BLOCK_PARSER, false);
     options.set(HtmlRenderer.SUPPRESS_HTML_BLOCKS, true);
-    
+
     Collection<Extension> currentExtensions = Parser.EXTENSIONS.get(FlexmarkConfiguration.FLEXMARK_CONFIG);
     List<Extension> extensions = new LinkedList<>(currentExtensions);
     extensions.add(SuppressPTagExtension.create());
@@ -74,7 +74,8 @@ public class MarkupLine
 
   @NonNull
   public static MarkupLine fromHtml(@NonNull String html) {
-    return new MarkupLine(parseHtml(html, FLEXMARK_FACTORY.getFlexmarkHtmlConverter(), FLEXMARK_FACTORY.getMarkdownParser()));
+    return new MarkupLine(
+        parseHtml(html, FLEXMARK_FACTORY.getFlexmarkHtmlConverter(), FLEXMARK_FACTORY.getMarkdownParser()));
   }
 
   @NonNull
@@ -90,7 +91,7 @@ public class MarkupLine
   protected MarkupLine(@NonNull Document astNode) {
     super(astNode);
     Node child = astNode.getFirstChild();
-    if (child != null && child instanceof Block && child.getNext() != null) {
+    if (child instanceof Block && child.getNext() != null) {
       throw new IllegalStateException("multiple blocks not allowed");
     } // else empty markdown
   }

@@ -42,7 +42,7 @@ class Subtraction
 
   /**
    * An expression that gets the difference of two atomic data items.
-   * 
+   *
    * @param minuend
    *          an expression whose result is the value being subtracted from
    * @param subtrahend
@@ -59,7 +59,7 @@ class Subtraction
 
   /**
    * Get the difference of two atomic items.
-   * 
+   *
    * @param minuend
    *          the item being subtracted from
    * @param subtrahend
@@ -74,7 +74,7 @@ class Subtraction
 
   /**
    * Get the difference of two atomic items.
-   * 
+   *
    * @param minuend
    *          the item being subtracted from
    * @param subtrahend

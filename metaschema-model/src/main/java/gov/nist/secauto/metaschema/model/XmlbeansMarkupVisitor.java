@@ -47,6 +47,16 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class XmlbeansMarkupVisitor // TODO: rename
     extends AbstractMarkupWriter<XmlCursor, IllegalArgumentException> {
 
+  /**
+   * Write the provided markup to the provided object.
+   *
+   * @param markup
+   *          the markup to write
+   * @param namespace
+   *          the XML namespace to use for markup elements
+   * @param obj
+   *          the XML beans object to write to
+   */
   @SuppressWarnings("resource")
   public static void visit(@NonNull IMarkupString<?> markup, @NonNull String namespace, @NonNull XmlObject obj) {
     try (XmlCursor cursor = ObjectUtils.notNull(obj.newCursor())) {
@@ -54,6 +64,16 @@ public class XmlbeansMarkupVisitor // TODO: rename
     }
   }
 
+  /**
+   * Write the provided markup to the provided object.
+   *
+   * @param markup
+   *          the markup to write
+   * @param namespace
+   *          the XML namespace to use for markup elements
+   * @param cursor
+   *          the XML beans cursor to write to
+   */
   public static void visit(@NonNull IMarkupString<?> markup, @NonNull String namespace, @NonNull XmlCursor cursor) {
     IMarkupWriter<XmlCursor, IllegalArgumentException> writer = new XmlbeansMarkupVisitor(
         namespace,
@@ -63,6 +83,16 @@ public class XmlbeansMarkupVisitor // TODO: rename
     visitor.visitDocument(markup.getDocument(), writer);
   }
 
+  /**
+   * Construct a new XML beans markup visitor used for writing XML.
+   *
+   * @param namespace
+   *          the XML namespace to use for markup elements
+   * @param options
+   *          Flexmark-based formatting options to control output formatting
+   * @param writer
+   *          the XML beans cursor to write to
+   */
   protected XmlbeansMarkupVisitor(
       @NonNull String namespace,
       @NonNull ListOptions options,
@@ -71,10 +101,11 @@ public class XmlbeansMarkupVisitor // TODO: rename
   }
 
   @Override
-  public void writeEmptyElement(QName qname, Map<String, String> attributes) throws IllegalArgumentException {
+  public void writeEmptyElement(QName qname, Map<String, String> attributes)
+      throws IllegalArgumentException { // NOPMD intended
     XmlCursor cursor = getStream();
     cursor.beginElement(qname);
-    
+
     attributes.forEach((name, value) -> cursor.insertAttributeWithValue(name, value));
 
     // go to the end of the new element
@@ -85,10 +116,11 @@ public class XmlbeansMarkupVisitor // TODO: rename
   }
 
   @Override
-  public void writeElementStart(QName qname, Map<String, String> attributes) throws IllegalArgumentException {
+  public void writeElementStart(QName qname, Map<String, String> attributes)
+      throws IllegalArgumentException { // NOPMD intended
     XmlCursor cursor = getStream();
     cursor.beginElement(qname);
-    
+
     attributes.forEach((name, value) -> cursor.insertAttributeWithValue(name, value));
 
     // save the current location state
@@ -96,7 +128,7 @@ public class XmlbeansMarkupVisitor // TODO: rename
   }
 
   @Override
-  public void writeElementEnd(QName qname) throws IllegalArgumentException {
+  public void writeElementEnd(QName qname) throws IllegalArgumentException { // NOPMD intended
     XmlCursor cursor = getStream();
 
     // restore location to end of start element
@@ -110,12 +142,12 @@ public class XmlbeansMarkupVisitor // TODO: rename
   }
 
   @Override
-  public void writeText(CharSequence text) throws IllegalArgumentException {
+  public void writeText(CharSequence text) throws IllegalArgumentException { // NOPMD intended
     getStream().insertChars(text.toString());
   }
 
   @Override
-  protected void writeComment(CharSequence text) throws IllegalArgumentException {
+  protected void writeComment(CharSequence text) throws IllegalArgumentException { // NOPMD intended
     getStream().insertComment(text.toString());
   }
 }

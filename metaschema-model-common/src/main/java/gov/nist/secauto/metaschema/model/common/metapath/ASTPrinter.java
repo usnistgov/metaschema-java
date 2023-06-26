@@ -29,7 +29,9 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 import gov.nist.secauto.metaschema.model.common.metapath.ASTPrinter.State;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 final class ASTPrinter
     extends AbstractExpressionVisitor<String, State> {
 
@@ -37,7 +39,7 @@ final class ASTPrinter
 
   /**
    * Get the singleton instance.
-   * 
+   *
    * @return the instance
    */
   public static ASTPrinter instance() {
@@ -76,7 +78,7 @@ final class ASTPrinter
 
   /**
    * Append the {@code childResult} to the record produced for the current node.
-   * 
+   *
    * @param expr
    *          the current node
    * @param childResult
@@ -86,7 +88,7 @@ final class ASTPrinter
    * @return the string representation of the node tree for the current node and its children
    */
   @SuppressWarnings("static-method")
-  protected String appendNode(IExpression expr, String childResult, State context) {
+  protected String appendNode(@NonNull IExpression expr, @Nullable String childResult, @NonNull State context) {
     StringBuilder buffer = new StringBuilder();
     buffer.append(context.getIndentation())
         .append(expr.toASTString());
@@ -99,13 +101,13 @@ final class ASTPrinter
 
   /**
    * Visit a node and produce a string representation of its the node tree.
-   * 
+   *
    * @param expression
    *          the node to build the node tree for
    * @return the string representation of the node tree for the provided expression node and its
    *         children
    */
-  public String visit(IExpression expression) {
+  public String visit(@NonNull IExpression expression) {
     return visit(expression, new State());
   }
 
@@ -175,7 +177,7 @@ final class ASTPrinter
   }
 
   @Override
-  public String visitIntersect(@NonNull Intersect expr, State context) {
+  public String visitIntersect(Intersect expr, State context) {
     return appendNode(expr, super.visitIntersect(expr, context), context);
   }
 
@@ -220,7 +222,7 @@ final class ASTPrinter
   }
 
   @Override
-  public String visitPredicate(@NonNull Predicate expr, State context) {
+  public String visitPredicate(Predicate expr, State context) {
     return appendNode(expr, super.visitPredicate(expr, context), context);
   }
 

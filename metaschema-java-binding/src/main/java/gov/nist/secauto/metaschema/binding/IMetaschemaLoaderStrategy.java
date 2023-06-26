@@ -39,7 +39,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 interface IMetaschemaLoaderStrategy {
   /**
    * Get the Metaschema instance identified by the provided class.
-   * 
+   *
    * @param clazz
    *          the Metaschema class
    * @return the Metaschema instance
@@ -52,7 +52,7 @@ interface IMetaschemaLoaderStrategy {
   /**
    * Get the {@link IClassBinding} instance for a {@link MetaschemaAssembly} or
    * {@link MetaschemaField} associated with a Java class.
-   * 
+   *
    * @param clazz
    *          the class binding to load
    * @return the associated class binding instance or {@code null} if the class is not bound

@@ -41,7 +41,7 @@ abstract class AbstractUnaryExpression
 
   /**
    * Construct a new unary expression.
-   * 
+   *
    * @param expr
    *          the single sub-expression
    */
@@ -51,7 +51,7 @@ abstract class AbstractUnaryExpression
 
   /**
    * Retrieve the single child sub-expression.
-   * 
+   *
    * @return the sub-expression
    */
   @NonNull

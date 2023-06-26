@@ -63,7 +63,7 @@ public abstract class AbstractConstraint implements IConstraint { // NOPMD - int
 
   /**
    * Construct a new Metaschema constraint.
-   * 
+   *
    * @param id
    *          the optional identifier for the constraint
    * @param formalName

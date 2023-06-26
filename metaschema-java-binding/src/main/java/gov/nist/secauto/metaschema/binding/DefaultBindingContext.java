@@ -97,7 +97,7 @@ public class DefaultBindingContext implements IBindingContext {
 
   /**
    * Construct a new binding context.
-   * 
+   *
    * @param externalConstraintSets
    *          the set of external constraints to configure this binding to use
    */
@@ -241,8 +241,7 @@ public class DefaultBindingContext implements IBindingContext {
     if (classBinding == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", other.getClass().getName()));
     }
-    @SuppressWarnings("unchecked")
-    CLASS retval = (CLASS) classBinding.copyBoundObject(other, parentInstance);
+    @SuppressWarnings("unchecked") CLASS retval = (CLASS) classBinding.copyBoundObject(other, parentInstance);
     return retval;
   }
 

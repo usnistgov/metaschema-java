@@ -109,13 +109,15 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<dependency.antlr4.version>4.10.1</dependency.antlr4.version>
 		<dependency.auto-service.version>1.0.1</dependency.auto-service.version>
-		<dependency.commons-lang3.version>3.12.0</dependency.commons-lang3.version>
 		<dependency.commons-collections4.version>4.4</dependency.commons-collections4.version>
 		<dependency.commons-io.version>2.13.0</dependency.commons-io.version>
+		<dependency.commons-lang3.version>3.12.0</dependency.commons-lang3.version>
+		<dependency.commons-text.version>1.10.0</dependency.commons-text.version>
 		<dependency.eclipse-jdt-annotation.version>2.2.600</dependency.eclipse-jdt-annotation.version>
 		<dependency.everit-json.version>1.14.1</dependency.everit-json.version>
-		<dependency.flexmark.version>0.64.6</dependency.flexmark.version>
+		<dependency.flexmark.version>0.64.8</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.32</dependency.freemarker.version>
+		<dependency.inject-resources-junit-jupiter.version>0.3.2</dependency.inject-resources-junit-jupiter.version>
 		<dependency.jackson.version>2.13.3</dependency.jackson.version>
 		<dependency.jackson-databind.version>2.13.4</dependency.jackson-databind.version>
 		<dependency.jaxb.version>4.0.0</dependency.jaxb.version>
@@ -128,17 +130,20 @@
 		<dependency.junit5-platform-launcher.version>1.9.0</dependency.junit5-platform-launcher.version>
 		<dependency.log4j2.version>2.20.0</dependency.log4j2.version>
 		<dependency.moxy.version>3.0.3</dependency.moxy.version>
-		<dependency.saxon.version>11.4</dependency.saxon.version>
+		<dependency.saxon.version>12.2</dependency.saxon.version>
 		<dependency.spotbugs-annotations.version>4.7.2</dependency.spotbugs-annotations.version>
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
 		<dependency.thymeleaf.version>3.0.15.RELEASE</dependency.thymeleaf.version>
 		<dependency.woodstox.version>6.4.0</dependency.woodstox.version>
 		<dependency.xmlbeans.version>5.1.1</dependency.xmlbeans.version>
+		<dependency.xmlcalabash.version>1.5.6-120</dependency.xmlcalabash.version>
 		<dependency.xmlresolver.version>4.6.0</dependency.xmlresolver.version>
-		<dependency.xml-apis.version>1.4.01</dependency.xml-apis.version>
+		<dependency.xml-apis.version>2.0.2</dependency.xml-apis.version>
 
 		<plugin.antlr4test.version>1.22</plugin.antlr4test.version>
 		<plugin.maven-changes.version>2.12.1</plugin.maven-changes.version>
+		<plugin.maven-dependency.version>3.6.0</plugin.maven-dependency.version>
+		<plugin.maven-invoker.version>3.5.0</plugin.maven-invoker.version>
 		<plugin.spotbugs.version>4.7.3.4</plugin.spotbugs.version>
 	</properties>
 	<repositories>
@@ -296,6 +301,11 @@
 				<version>${dependency.xml-apis.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>com.xmlcalabash</groupId>
+				<artifactId>xmlcalabash</artifactId>
+				<version>${dependency.xmlcalabash.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>com.vladsch.flexmark</groupId>
 				<artifactId>flexmark</artifactId>
 				<version>${dependency.flexmark.version}</version>
@@ -386,6 +396,11 @@
 				<version>1.0.2</version>
 			</dependency>
 			<dependency>
+				<groupId>com.github.seancfoley</groupId>
+				<artifactId>ipaddress</artifactId>
+				<version>5.4.0</version>
+			</dependency>
+			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-core</artifactId>
 				<version>${dependency.log4j2.version}</version>
@@ -418,9 +433,24 @@
 				<version>${dependency.commons-collections4.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-text</artifactId>
+				<version>${dependency.commons-text.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
 				<version>${dependency.commons-io.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.squareup</groupId>
+				<artifactId>javapoet</artifactId>
+				<version>1.13.0</version>
+			</dependency>
+			<dependency>
+				<groupId>net.openhft</groupId>
+				<artifactId>compiler</artifactId>
+				<version>2.23ea0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.github.spotbugs</groupId>
@@ -470,6 +500,23 @@
 						<artifactId>annotations</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>io.hosuaby</groupId>
+				<artifactId>inject-resources-junit-jupiter</artifactId>
+				<version>${dependency.inject-resources-junit-jupiter.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven.plugin-tools</groupId>
+				<artifactId>maven-plugin-annotations</artifactId>
+				<version>3.7.0</version>
+			</dependency>
+			<dependency>
+				<!-- Remove compile warning -->
+				<groupId>biz.aQute.bnd</groupId>
+				<artifactId>biz.aQute.bndlib</artifactId>
+				<version>6.4.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -606,7 +653,16 @@
 						<excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
 					</configuration>
 				</plugin>
-
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>${plugin.maven-dependency.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-invoker-plugin</artifactId>
+					<version>${plugin.maven-invoker.version}</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>

@@ -40,7 +40,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSupplier, IXmlBindingConsumer {
   /**
    * Get the model instance associated with this handler.
-   * 
+   *
    * @return the model instance
    */
   @NonNull
@@ -48,14 +48,14 @@ interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSupplier, IX
 
   /**
    * Get the class binding associated with this handler.
-   * 
+   *
    * @return the class binding or {@code null} if the property's item type is not a bound class
    */
   IClassBinding getClassBinding();
 
   /**
    * Get the associated {@link IDataTypeAdapter}, if the data type is not a complex bound object.
-   * 
+   *
    * @return the adpater, or {@code null} otherwise
    */
   IDataTypeAdapter<?> getJavaTypeAdapter();
@@ -65,7 +65,7 @@ interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSupplier, IX
    * <p>
    * Implementations may proxy this request to the JavaTypeAdapter if it is used or return
    * {@code false} otherwise.
-   * 
+   *
    * @return {@code true} if the underlying data type is allowed to be unwrapped, or {@code false}
    *         otherwise
    */
@@ -78,7 +78,7 @@ interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSupplier, IX
 
   /**
    * Write the provided collection of items to JSON.
-   * 
+   *
    * @param items
    *          the collection of items to write
    * @param writeObjectWrapper
@@ -94,7 +94,7 @@ interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSupplier, IX
 
   /**
    * Build and return a deep copy of the provided item.
-   * 
+   *
    * @param item
    *          the item to copy
    * @param parentInstance

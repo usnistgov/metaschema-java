@@ -50,7 +50,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public @interface IndexHasKey {
   /**
    * An optional identifier for the constraint, which must be unique to only this constraint.
-   * 
+   *
    * @return the identifier if provided or an empty string otherwise
    */
   @NonNull
@@ -58,7 +58,7 @@ public @interface IndexHasKey {
 
   /**
    * An optional formal name for the constraint.
-   * 
+   *
    * @return the formal name if provided or an empty string otherwise
    */
   @NonNull
@@ -66,7 +66,7 @@ public @interface IndexHasKey {
 
   /**
    * An optional description of the constraint.
-   * 
+   *
    * @return the description if provided or an empty string otherwise
    */
   @NonNull
@@ -74,7 +74,7 @@ public @interface IndexHasKey {
 
   /**
    * The significance of a violation of this constraint.
-   * 
+   *
    * @return the level
    */
   @NonNull
@@ -87,7 +87,7 @@ public @interface IndexHasKey {
    * appears on. In the prior case, this annotation may only appear on a {@link BoundField} if the
    * field has no flags, which results in a {@link BoundField} annotation on a field instance with a
    * scalar, data type value.
-   * 
+   *
    * @return the target metapath
    */
   @NonNull
@@ -95,14 +95,14 @@ public @interface IndexHasKey {
 
   /**
    * An optional set of properties associated with these allowed values.
-   * 
+   *
    * @return the properties or an empty array with no properties
    */
   Property[] properties() default {};
 
   /**
    * A reference to a named index.
-   * 
+   *
    * @return the index name
    */
   @NonNull
@@ -110,7 +110,7 @@ public @interface IndexHasKey {
 
   /**
    * A list of one or more keys to use in looking up an entry in a given index.
-   * 
+   *
    * @return one or more keys
    */
   @NonNull
@@ -118,7 +118,7 @@ public @interface IndexHasKey {
 
   /**
    * The message to emit when the constraint is violated.
-   * 
+   *
    * @return the message or an empty string otherwise
    */
   @NonNull
@@ -126,7 +126,7 @@ public @interface IndexHasKey {
 
   /**
    * Any remarks about the constraint, encoded as an escaped Markdown string.
-   * 
+   *
    * @return an encoded markdown string or an empty string if no remarks are provided
    */
   @NonNull

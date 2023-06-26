@@ -68,21 +68,18 @@ final class ExpressionUtils {
       @NonNull List<Class<?>> expressionClasses) {
     Class<? extends RESULT_TYPE> retval;
     if (expressionClasses.size() == 1) {
-      @SuppressWarnings("unchecked")
-      Class<? extends RESULT_TYPE> result
+      @SuppressWarnings("unchecked") Class<? extends RESULT_TYPE> result
           = (Class<? extends RESULT_TYPE>) expressionClasses.iterator().next();
       retval = result;
     } else {
-      @SuppressWarnings("unchecked")
-      Class<? extends RESULT_TYPE> first
+      @SuppressWarnings("unchecked") Class<? extends RESULT_TYPE> first
           = (Class<? extends RESULT_TYPE>) expressionClasses.iterator().next();
       if (baseType.equals(first)) {
         // the first type is the same as the base, which is the least common type
         retval = baseType;
       } else {
         // search for the least common type
-        @SuppressWarnings("unchecked")
-        Class<? extends RESULT_TYPE> newBase
+        @SuppressWarnings("unchecked") Class<? extends RESULT_TYPE> newBase
             = (Class<? extends RESULT_TYPE>) getCommonBaseClass(baseType, first,
                 expressionClasses.subList(1, expressionClasses.size()));
         if (newBase != null) {

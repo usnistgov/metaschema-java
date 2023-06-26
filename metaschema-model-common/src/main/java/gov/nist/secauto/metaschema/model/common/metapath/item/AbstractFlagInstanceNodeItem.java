@@ -35,7 +35,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A {@link INodeItem} supported by a {@link IFlagInstance}.
- * 
+ *
  * @param <P>
  *          the parent node item type
  */

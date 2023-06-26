@@ -83,8 +83,7 @@ public interface IConstraintSet {
     ConstraintComposingVisitor visitor = new ConstraintComposingVisitor();
     IMetaschemaNodeItem item = DefaultNodeItemFactory.instance().newMetaschemaNodeItem(metaschema);
 
-    for (ITargetedConstaints targeted : IConstraintSet.getTargetedConstraintsForMetaschema(resolvedConstraintSets,
-        metaschema)) {
+    for (ITargetedConstaints targeted : getTargetedConstraintsForMetaschema(resolvedConstraintSets, metaschema)) {
       MetapathExpression targetExpression = targeted.getTargetExpression();
       INodeItem node = targetExpression.evaluateAs(item, ResultType.NODE);
       if (node == null) {
@@ -112,7 +111,7 @@ public interface IConstraintSet {
   /**
    * Get the set of Metaschema scoped constraints to apply by a {@link QName} formed from the
    * Metaschema namespace and short name.
-   * 
+   *
    * @return the mapping of QName to scoped constraints
    */
   @NonNull

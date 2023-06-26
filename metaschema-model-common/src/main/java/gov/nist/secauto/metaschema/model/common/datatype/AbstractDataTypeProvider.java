@@ -54,7 +54,7 @@ public abstract class AbstractDataTypeProvider implements IDataTypeProvider {
 
   /**
    * Register the provided {@code adapter} with the type system.
-   * 
+   *
    * @param adapter
    *          the adapter to register
    * @throws IllegalArgumentException

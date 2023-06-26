@@ -43,7 +43,7 @@ public interface IAnyAtomicItem extends IAtomicValuedItem {
 
   /**
    * Get the item's string value.
-   * 
+   *
    * @return the string value value of the item
    */
   @SuppressWarnings("null")
@@ -54,7 +54,7 @@ public interface IAnyAtomicItem extends IAtomicValuedItem {
 
   /**
    * Get a new {@link IStringItem} based on the the textual value of the item's "wrapped" value.
-   * 
+   *
    * @return a new string item
    */
   // TODO: rename to asStringItem
@@ -65,7 +65,7 @@ public interface IAnyAtomicItem extends IAtomicValuedItem {
 
   /**
    * Get the item's type adapter.
-   * 
+   *
    * @return the type adapter for the item
    */
   IDataTypeAdapter<?> getJavaTypeAdapter();

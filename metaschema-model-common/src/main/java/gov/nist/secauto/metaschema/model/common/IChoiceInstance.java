@@ -32,7 +32,7 @@ package gov.nist.secauto.metaschema.model.common;
 public interface IChoiceInstance extends IModelInstance, IModelContainer {
   /**
    * Provides the Metaschema model type of "CHOICE".
-   * 
+   *
    * @return the model type
    */
   @Override
@@ -42,7 +42,7 @@ public interface IChoiceInstance extends IModelInstance, IModelContainer {
 
   @Override
   IModelContainer getParentContainer();
-  
+
   @Override
   default IAssemblyDefinition getContainingDefinition() {
     return getParentContainer().getContainingDefinition();

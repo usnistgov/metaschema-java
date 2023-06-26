@@ -33,7 +33,7 @@ import javax.xml.namespace.QName;
 public interface IXmlProblemHandler extends IProblemHandler {
   /**
    * Callback used to handle an attribute that is unknown to the model being parsed.
-   * 
+   *
    * @param instance
    *          the Java instance that data is to be deserialized to
    * @param attributeName

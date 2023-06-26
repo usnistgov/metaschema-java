@@ -40,7 +40,7 @@ public final class ReplacementScanner {
   /**
    * Search for instances of {@code pattern} in {@code text}. Replace each matching occurrence using
    * the {@code replacementFunction}.
-   * 
+   *
    * @param text
    *          the text to search
    * @param pattern

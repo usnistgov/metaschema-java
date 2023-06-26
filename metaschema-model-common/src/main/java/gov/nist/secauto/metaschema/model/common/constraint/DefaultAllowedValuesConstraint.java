@@ -55,9 +55,9 @@ public final class DefaultAllowedValuesConstraint
    * of the allowed values. This match is required if {@link #isAllowedOther()} is {@code false},
    * otherwise the constraint will generate a validation warning message if the target instance's
    * value does not match any of the associated allowed value constraints targeting it.
-   * 
+   *
    * the associated test evaluates to {@link IBooleanItem#TRUE} against the target.
-   * 
+   *
    * @param id
    *          the optional identifier for the constraint
    * @param formalName

@@ -33,7 +33,7 @@ public interface IModelNodeItem extends IDefinitionNodeItem {
   /**
    * Retrieve the relative position of the associated instance in a collection of instances. A
    * singleton instance will have a position value of {@code 1}.
-   * 
+   *
    * @return a positive integer value designating this instance's position within a collection
    */
   int getPosition();

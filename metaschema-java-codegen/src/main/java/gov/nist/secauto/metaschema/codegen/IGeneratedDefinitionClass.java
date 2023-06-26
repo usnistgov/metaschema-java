@@ -38,7 +38,7 @@ public interface IGeneratedDefinitionClass extends IGeneratedClass {
   /**
    * Indicates if the class represents a root Metaschema assembly which can be the top-level
    * element/property of an XML, JSON, or YAML instance.
-   * 
+   *
    * @return {@code true} if the class is a root assembly, or {@code false} otherwise
    */
   boolean isRootClass();

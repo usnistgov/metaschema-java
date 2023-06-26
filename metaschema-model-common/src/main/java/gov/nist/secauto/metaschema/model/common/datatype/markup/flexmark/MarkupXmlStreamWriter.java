@@ -67,7 +67,7 @@ public class MarkupXmlStreamWriter
   }
 
   @Override
-  public void writeElementEnd(QName qName) throws XMLStreamException {
+  public void writeElementEnd(QName qname) throws XMLStreamException {
     getStream().writeEndElement();
   }
 

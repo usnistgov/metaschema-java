@@ -54,7 +54,7 @@ public final class CollectionUtil {
 
   /**
    * Get an {@link Iterable} for the provided {@link Stream}.
-   * 
+   *
    * @param <T>
    *          the type to iterate on
    * @param stream
@@ -69,7 +69,7 @@ public final class CollectionUtil {
 
   /**
    * Get an {@link Iterable} for the provided {@link Iterator}.
-   * 
+   *
    * @param <T>
    *          the type to iterate on
    * @param iterator
@@ -89,7 +89,7 @@ public final class CollectionUtil {
 
   /**
    * Get a reverse {@link Iterable} for the provided {@link List}.
-   * 
+   *
    * @param <T>
    *          the type to iterate on
    * @param list
@@ -103,7 +103,7 @@ public final class CollectionUtil {
 
   /**
    * Convert the provided {@link Iterable} to a list of the same generic type.
-   * 
+   *
    * @param <T>
    *          the collection item's generic type
    * @param iterable
@@ -117,7 +117,7 @@ public final class CollectionUtil {
 
   /**
    * Convert the provided {@link Iterator} to a list of the same generic type.
-   * 
+   *
    * @param <T>
    *          the collection item's generic type
    * @param iterator
@@ -133,7 +133,7 @@ public final class CollectionUtil {
 
   /**
    * Get a reverse {@link Iterator} for the provided {@link List}.
-   * 
+   *
    * @param <T>
    *          the type to iterate on
    * @param list
@@ -174,7 +174,7 @@ public final class CollectionUtil {
   /**
    * A wrapper of the {@link Collections#unmodifiableCollection(Collection)} method that ensure a
    * {@link NonNull} result is returned.
-   * 
+   *
    * @param <T>
    *          the collection's item type
    * @param collection

@@ -43,7 +43,7 @@ abstract class AbstractRelativePathExpression
 
   /**
    * Construct a new relative path expression of "left/right".
-   * 
+   *
    * @param left
    *          the left part of the path
    * @param right
@@ -58,7 +58,7 @@ abstract class AbstractRelativePathExpression
 
   /**
    * The expression associated with the left path segment.
-   * 
+   *
    * @return the expression
    */
   @NonNull
@@ -68,7 +68,7 @@ abstract class AbstractRelativePathExpression
 
   /**
    * The expression associated with the right path segment.
-   * 
+   *
    * @return the expression
    */
   @NonNull

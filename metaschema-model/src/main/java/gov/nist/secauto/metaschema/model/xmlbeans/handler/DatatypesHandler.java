@@ -40,7 +40,7 @@ public final class DatatypesHandler {
   /**
    * Given an XMLBeans value, return the {@link IDataTypeAdapter} instance with the given name, as
    * determined by matching {@link IDataTypeAdapter#getNames()}.
-   * 
+   *
    * @param value
    *          the name of the data type
    * @return the data type instance
@@ -52,7 +52,7 @@ public final class DatatypesHandler {
   /**
    * Given a data type instance, set the name of the data type, as determined by matching
    * {@link IDataTypeAdapter#getNames()}, in the provided target XMLBeans value.
-   * 
+   *
    * @param datatype
    *          the data type instance
    * @param target
@@ -65,7 +65,7 @@ public final class DatatypesHandler {
   /**
    * Given an XMLBeans value, return the {@link IDataTypeAdapter} instance with the given name, as
    * determined by matching {@link IDataTypeAdapter#getNames()}.
-   * 
+   *
    * @param value
    *          the name of the data type
    * @return the data type instance
@@ -77,7 +77,7 @@ public final class DatatypesHandler {
   /**
    * Given a data type instance, set the name of the data type, as determined by matching
    * {@link IDataTypeAdapter#getNames()}, in the provided target XMLBeans value.
-   * 
+   *
    * @param datatype
    *          the data type instance
    * @param target

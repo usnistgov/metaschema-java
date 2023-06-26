@@ -40,7 +40,6 @@ public abstract class AbstractJsonProperty<I extends INamedInstance> implements 
   @NonNull
   private final I instance;
 
-  
   public AbstractJsonProperty(@NonNull I instance) {
     this.instance = instance;
   }
@@ -49,7 +48,7 @@ public abstract class AbstractJsonProperty<I extends INamedInstance> implements 
   public I getInstance() {
     return instance;
   }
-  
+
   @Override
   public String getName() {
     return getInstance().getJsonName();
@@ -66,7 +65,7 @@ public abstract class AbstractJsonProperty<I extends INamedInstance> implements 
     IJsonSchema schema = state.getSchema(instance.getDefinition());
     schema.generateSchemaOrRef(state, obj);
   }
-  
+
   @Override
   public void generateProperty(PropertyCollection properties, JsonGenerationState state) {
     ObjectNode contextObj = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
@@ -79,5 +78,5 @@ public abstract class AbstractJsonProperty<I extends INamedInstance> implements 
       properties.addRequired(name);
     }
   }
-  
+
 }

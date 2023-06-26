@@ -61,7 +61,7 @@ class MarkupXmlStreamWriterTest {
         + "</tbody>\n"
         + "</table>\n"
         + "<p>Some <q><em>more</em></q> <strong>text</strong> <img src=\"src\" alt=\"alt\" /></p>\n";
-    
+
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
     visitor.collect(ms.getDocument());

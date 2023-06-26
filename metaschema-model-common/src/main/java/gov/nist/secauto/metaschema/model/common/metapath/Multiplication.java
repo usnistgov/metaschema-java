@@ -40,7 +40,7 @@ class Multiplication
 
   /**
    * An expression that gets the product result by multiplying two values.
-   * 
+   *
    * @param left
    *          the item to be divided
    * @param right
@@ -57,7 +57,7 @@ class Multiplication
 
   /**
    * Get the sum of two atomic items.
-   * 
+   *
    * @param left
    *          the first item to multiply
    * @param right
@@ -72,7 +72,7 @@ class Multiplication
 
   /**
    * Get the sum of two atomic items.
-   * 
+   *
    * @param leftItem
    *          the first item to multiply
    * @param rightItem

@@ -37,7 +37,7 @@ public interface IFunctionLibrary {
 
   /**
    * Retrieve the collection of function signatures in this library as a stream.
-   * 
+   *
    * @return a stream of function signatures
    */
   @NonNull
@@ -46,7 +46,7 @@ public interface IFunctionLibrary {
   /**
    * Determine if there is a function with the provided name that supports the signature of the
    * provided methods.
-   * 
+   *
    * @param name
    *          the name of a group of functions
    * @param arguments
@@ -58,7 +58,7 @@ public interface IFunctionLibrary {
   /**
    * Retrieve the function with the provided name that supports the signature of the provided methods,
    * if such a function exists.
-   * 
+   *
    * @param name
    *          the name of a group of functions
    * @param arguments

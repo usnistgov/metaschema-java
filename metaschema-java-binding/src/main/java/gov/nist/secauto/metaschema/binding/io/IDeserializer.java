@@ -48,14 +48,14 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * Implementations of this interface are able to read structured data into a bound object instance
  * of the parameterized type.
- * 
+ *
  * @param <CLASS>
  *          the Java type into which data can be read
  */
 public interface IDeserializer<CLASS> extends IMutableConfiguration<DeserializationFeature> {
   /**
    * Determine if the serializer is performing validation.
-   * 
+   *
    * @return {@code true} if the serializer is performing content validation, or {@code false}
    *         otherwise
    */
@@ -70,7 +70,7 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
 
   /**
    * Read data from the {@link InputStream} into a bound class instance.
-   * 
+   *
    * @param is
    *          the input stream to read from
    * @param documentUri
@@ -86,7 +86,7 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
 
   /**
    * Read data from the {@link Path} into a bound class instance.
-   * 
+   *
    * @param path
    *          the file to read from
    * @return the instance data
@@ -103,7 +103,7 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
 
   /**
    * Read data from the {@link File} into a bound class instance.
-   * 
+   *
    * @param file
    *          the file to read from
    * @return the instance data
@@ -117,8 +117,8 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
 
   /**
    * Read data from the remote resource into a bound class instance.
-   * 
-   * 
+   *
+   *
    * @param url
    *          the remote resource to read from
    * @return the instance data
@@ -137,8 +137,8 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
 
   /**
    * Read data from the {@link Reader} into a bound class instance.
-   * 
-   * 
+   *
+   *
    * @param reader
    *          the reader to read from
    * @param documentUri
@@ -156,7 +156,7 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
 
   /**
    * Read data from the {@link Reader} into a node item instance.
-   * 
+   *
    * @param is
    *          the input stream to read from
    * @param documentUri
@@ -173,7 +173,7 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
 
   /**
    * Read data from the {@link Reader} into a node item instance.
-   * 
+   *
    * @param reader
    *          the reader to read from
    * @param documentUri

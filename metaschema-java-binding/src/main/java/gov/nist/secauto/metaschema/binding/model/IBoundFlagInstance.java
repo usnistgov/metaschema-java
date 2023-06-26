@@ -48,7 +48,7 @@ public interface IBoundFlagInstance extends IBoundNamedInstance, IFlagInstance {
 
   /**
    * Given a bound flag value, get that value as a {@link String}.
-   * 
+   *
    * @param value
    *          the bound flag value, which may be {@code null}
    * @return the bound flag value as a string, or {@code null} if the flag is not defined
@@ -57,7 +57,7 @@ public interface IBoundFlagInstance extends IBoundNamedInstance, IFlagInstance {
 
   /**
    * Write the provided value as a JSON property.
-   * 
+   *
    * @param value
    *          the value of the property to write
    * @param context

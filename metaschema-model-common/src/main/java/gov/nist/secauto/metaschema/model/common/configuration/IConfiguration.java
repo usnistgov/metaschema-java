@@ -33,14 +33,15 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * The base feature interface for getting the configuration of processors and parsers in this
  * library. This provides an immutable view of the current configuration.
- * 
+ *
  * @param <T>
  *          the type of the feature set
  */
+@SuppressWarnings({ "PMD.DoNotUseThreads", "PMD.ReplaceVectorWithList" })
 public interface IConfiguration<T extends Enum<T> & IConfigurationFeature> {
   /**
    * Determines if a specific serialization/deserialization feature is enabled.
-   * 
+   *
    * @param feature
    *          the feature to check for
    * @return {@code true} if the feature is enabled, or {@code false} otherwise
@@ -49,7 +50,7 @@ public interface IConfiguration<T extends Enum<T> & IConfigurationFeature> {
 
   /**
    * Get the set of enabled features.
-   * 
+   *
    * @return the set of enabled features.
    */
   @NonNull

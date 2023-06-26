@@ -35,13 +35,13 @@ public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IFi
   default IFieldDefinition getContainingDefinition() {
     return this;
   }
-  
+
   @Override
   IFieldInstance getInlineInstance();
 
   /**
    * Retrieves the key to use as the field name for this field's value in JSON.
-   * 
+   *
    * @return a string or a FlagInstance value
    */
   @Nullable
@@ -55,7 +55,7 @@ public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IFi
 
   /**
    * Check if a JSON value key flag is configured.
-   * 
+   *
    * @return {@code true} if a JSON value key flag is configured, or {@code false} otherwise
    */
   default boolean hasJsonValueKeyFlagInstance() {
@@ -64,7 +64,7 @@ public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IFi
 
   /**
    * Retrieves the flag instance who's value will be used as the "value key".
-   * 
+   *
    * @return the configured flag instance, or {@code null} if a flag is not configured as the "value
    *         key"
    */
@@ -74,7 +74,7 @@ public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IFi
   /**
    * Retrieves the configured static label to use as the value key, or the type specific name if a
    * label is not configured.
-   * 
+   *
    * @return the value key label
    */
   @NonNull
@@ -85,14 +85,14 @@ public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IFi
    * all fields that have the same flag values can be represented as a single object with a "value"
    * property that contains an array of values. This packing of values can make the resulting JSON
    * more concise.
-   * 
+   *
    * @return {@code true} if the field is eligible for collapsing, or {@code false} otherwise
    */
   boolean isCollapsible();
 
   /**
    * Get the value of the field's value from the field item object.
-   * 
+   *
    * @param item
    *          the field item
    * @return the field's value or {@code null} if it has no value

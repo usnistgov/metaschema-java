@@ -100,7 +100,7 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
   /**
    * Retrieve any allowed values that are context independent, meaning they always apply regardless of
    * the location of the node in the larger graph.
-   * 
+   *
    * @param definition
    *          the definition to get allowed values for
    * @return the list of allowed values or an empty list
@@ -128,7 +128,7 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
   /**
    * Get the name of the definition (and any parent instances/definition) to ensure an inline type is
    * unique.
-   * 
+   *
    * @param definition
    *          the definition to generate a type name for
    * @param childMetaschema
@@ -143,8 +143,9 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
       INamedInstance inlineInstance = definition.getInlineInstance();
       IDefinition parentDefinition = inlineInstance.getContainingDefinition();
 
-      builder.append(getTypeContext(parentDefinition, childMetaschema));
-      builder.append(toCamelCase(inlineInstance.getEffectiveName()));
+      builder
+          .append(getTypeContext(parentDefinition, childMetaschema))
+          .append(toCamelCase(inlineInstance.getEffectiveName()));
     } else {
       builder.append(toCamelCase(definition.getEffectiveName()));
     }
@@ -184,7 +185,7 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
     }
     return builder;
   }
-  
+
   public static class AllowedValueCollection {
     private final boolean closed;
     @NonNull

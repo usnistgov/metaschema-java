@@ -125,8 +125,7 @@ class ModelInstanceTypeInfoImpl
   public @NonNull TypeName getJavaFieldType() {
     TypeName item = getJavaItemType();
 
-    @NonNull
-    TypeName retval;
+    @NonNull TypeName retval;
     INamedModelInstance instance = getInstance();
     int maxOccurance = instance.getMaxOccurs();
     if (maxOccurance == -1 || maxOccurance > 1) {

@@ -59,7 +59,7 @@ abstract class AbstractComparison // NOPMD - unavoidable
   /**
    * Construct an expression that compares the result of the {@code right} expression with the result
    * of the {@code left} expression using the specified {@code operator}.
-   * 
+   *
    * @param left
    *          the expression to compare against
    * @param operator
@@ -74,7 +74,7 @@ abstract class AbstractComparison // NOPMD - unavoidable
 
   /**
    * Get the comparison operator.
-   * 
+   *
    * @return the operator
    */
   @NonNull
@@ -90,7 +90,7 @@ abstract class AbstractComparison // NOPMD - unavoidable
 
   /**
    * Compare the {@code right} item with the {@code left} item using the specified {@code operator}.
-   * 
+   *
    * @param left
    *          the value to compare against
    * @param operator
@@ -104,8 +104,7 @@ abstract class AbstractComparison // NOPMD - unavoidable
       @NonNull IAnyAtomicItem left,
       @NonNull Operator operator,
       @NonNull IAnyAtomicItem right) {
-    @NonNull
-    IBooleanItem retval;
+    @NonNull IBooleanItem retval;
     if (left instanceof IStringItem || right instanceof IStringItem) {
       retval = stringCompare(IStringItem.cast(left), operator, IStringItem.cast(right));
     } else if (left instanceof INumericItem && right instanceof INumericItem) {
@@ -132,7 +131,7 @@ abstract class AbstractComparison // NOPMD - unavoidable
   /**
    * Perform a string-based comparison of the {@code right} item against the {@code left} item using
    * the specified {@code operator}.
-   * 
+   *
    * @param left
    *          the value to compare against
    * @param operator
@@ -174,7 +173,7 @@ abstract class AbstractComparison // NOPMD - unavoidable
   /**
    * Perform a number-based comparison of the {@code right} item against the {@code left} item using
    * the specified {@code operator}.
-   * 
+   *
    * @param left
    *          the value to compare against
    * @param operator
@@ -221,7 +220,7 @@ abstract class AbstractComparison // NOPMD - unavoidable
   /**
    * Perform a boolean-based comparison of the {@code right} item against the {@code left} item using
    * the specified {@code operator}.
-   * 
+   *
    * @param left
    *          the value to compare against
    * @param operator
@@ -268,7 +267,7 @@ abstract class AbstractComparison // NOPMD - unavoidable
   /**
    * Perform a date and time-based comparison of the {@code right} item against the {@code left} item
    * using the specified {@code operator}.
-   * 
+   *
    * @param left
    *          the value to compare against
    * @param operator
@@ -315,7 +314,7 @@ abstract class AbstractComparison // NOPMD - unavoidable
   /**
    * Perform a date-based comparison of the {@code right} item against the {@code left} item using the
    * specified {@code operator}.
-   * 
+   *
    * @param left
    *          the value to compare against
    * @param operator
@@ -362,7 +361,7 @@ abstract class AbstractComparison // NOPMD - unavoidable
   /**
    * Perform a duration-based comparison of the {@code right} item against the {@code left} item using
    * the specified {@code operator}.
-   * 
+   *
    * @param left
    *          the value to compare against
    * @param operator
@@ -453,7 +452,7 @@ abstract class AbstractComparison // NOPMD - unavoidable
   /**
    * Perform a binary data-based comparison of the {@code right} item against the {@code left} item
    * using the specified {@code operator}.
-   * 
+   *
    * @param left
    *          the value to compare against
    * @param operator

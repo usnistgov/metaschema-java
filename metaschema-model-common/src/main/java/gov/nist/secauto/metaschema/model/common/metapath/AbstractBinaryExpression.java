@@ -33,7 +33,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * An immutable representation of an {@link IExpression} that has two sub-expression children.
- * 
+ *
  * @param <L>
  *          the type of the left expression
  * @param <R>
@@ -48,7 +48,7 @@ abstract class AbstractBinaryExpression<L extends IExpression, R extends IExpres
 
   /**
    * Construct a new binary expression.
-   * 
+   *
    * @param left
    *          the first sub-expression to evaluate
    * @param right
@@ -61,7 +61,7 @@ abstract class AbstractBinaryExpression<L extends IExpression, R extends IExpres
 
   /**
    * Retrieve the first sub-expression.
-   * 
+   *
    * @return the first sub-expression
    */
   @NonNull
@@ -71,7 +71,7 @@ abstract class AbstractBinaryExpression<L extends IExpression, R extends IExpres
 
   /**
    * Retrieve the second sub-expression.
-   * 
+   *
    * @return the second sub-expression
    */
   @NonNull

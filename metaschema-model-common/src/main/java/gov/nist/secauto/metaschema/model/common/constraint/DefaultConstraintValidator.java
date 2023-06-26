@@ -104,7 +104,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
 
   /**
    * Validate the provided flag item against any associated constraints.
-   * 
+   *
    * @param item
    *          the flag item to validate
    * @throws MetapathException
@@ -121,7 +121,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
 
   /**
    * Validate the provided field item against any associated constraints.
-   * 
+   *
    * @param item
    *          the field item to validate
    * @throws MetapathException
@@ -138,7 +138,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
 
   /**
    * Validate the provided assembly item against any associated constraints.
-   * 
+   *
    * @param item
    *          the assembly item to validate
    * @throws MetapathException
@@ -390,7 +390,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
 
   private static void rethrowConstraintError(@NonNull IConstraint constraint, INodeItem item,
       MetapathException ex) {
-    StringBuilder builder = new StringBuilder(94);
+    StringBuilder builder = new StringBuilder(128);
     builder.append("A ")
         .append(constraint.getClass().getName())
         .append(" constraint");
@@ -416,7 +416,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
 
   /**
    * Add a new allowed value to the value status tracker.
-   * 
+   *
    * @param targetItem
    *          the item whose value is targeted by the constraint
    * @param allowedValues
@@ -425,8 +425,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
   protected void updateValueStatus(@NonNull INodeItem targetItem, @NonNull IAllowedValuesConstraint allowedValues) {
     // constraint.getAllowedValues().containsKey(value)
 
-    @Nullable
-    ValueStatus valueStatus = valueMap.get(targetItem);
+    @Nullable ValueStatus valueStatus = valueMap.get(targetItem);
     if (valueStatus == null) {
       valueStatus = new ValueStatus(targetItem);
       valueMap.put(targetItem, valueStatus);

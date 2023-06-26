@@ -46,7 +46,7 @@ class DefaultGeneratedDefinitionClass
 
   /**
    * Construct a new class information object for a generated class.
-   * 
+   *
    * @param classFile
    *          the file the class was written to
    * @param className

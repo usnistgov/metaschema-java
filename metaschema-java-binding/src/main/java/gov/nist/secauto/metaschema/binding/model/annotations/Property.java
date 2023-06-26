@@ -39,7 +39,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public @interface Property {
   /**
    * The name of the property.
-   * 
+   *
    * @return the name
    */
   @NonNull
@@ -47,7 +47,7 @@ public @interface Property {
 
   /**
    * The namespace of the property's name.
-   * 
+   *
    * @return the namespace
    */
   @NonNull
@@ -55,7 +55,7 @@ public @interface Property {
 
   /**
    * The values for the property's name and namespace.
-   * 
+   *
    * @return the namespace
    */
   @NonNull

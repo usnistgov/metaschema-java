@@ -31,7 +31,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * A trait indicating that the implementation is a localized definition that is declared in-line as
  * an instance.
- * 
+ *
  * @param <INSTANCE>
  *          the associated instance type
  */
@@ -44,7 +44,7 @@ public interface IInlineDefinition<INSTANCE extends INamedInstance> extends IDef
 
   /**
    * Retrieves the {@link INamedInstance} associated with this definition.
-   * 
+   *
    * @return the associated instance
    */
   @Override

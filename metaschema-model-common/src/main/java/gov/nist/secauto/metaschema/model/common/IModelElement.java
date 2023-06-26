@@ -39,7 +39,7 @@ public interface IModelElement {
 
   /**
    * Get the Metaschema model type of the information element.
-   * 
+   *
    * @return the type
    */
   @NonNull
@@ -49,7 +49,7 @@ public interface IModelElement {
    * Retrieves a string that uniquely identifies the model element in the overall collection of model
    * elements. This should the type of element, it's name, and any additional information needed to
    * uniquely identify it.
-   * 
+   *
    * @return the coordinates
    */
   @NonNull
@@ -57,7 +57,7 @@ public interface IModelElement {
 
   /**
    * Retrieve the remarks associated with this information element, if any.
-   * 
+   *
    * @return the remarks or {@code null} if no remarks are defined
    */
   @Nullable
@@ -65,7 +65,7 @@ public interface IModelElement {
 
   /**
    * Retrieves the Metaschema instance that contains for the information element's declaration.
-   * 
+   *
    * @return the Metaschema instance
    */
   @NonNull

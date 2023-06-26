@@ -37,7 +37,7 @@ public class MarkupMultiline
 
   /**
    * Convert the provided HTML string into markup.
-   * 
+   *
    * @param html
    *          the HTML
    * @return the multiline markup instance
@@ -53,7 +53,7 @@ public class MarkupMultiline
 
   /**
    * Convert the provided markdown string into markup.
-   * 
+   *
    * @param markdown
    *          the markup
    * @return the multiline markup instance
@@ -66,7 +66,7 @@ public class MarkupMultiline
 
   /**
    * Construct a new multiline markup instance.
-   * 
+   *
    * @param astNode
    *          the parsed markup AST
    */

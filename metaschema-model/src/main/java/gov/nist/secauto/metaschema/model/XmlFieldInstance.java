@@ -57,7 +57,7 @@ class XmlFieldInstance
   /**
    * Constructs a new Metaschema field instance definition from an XML representation bound to Java
    * objects.
-   * 
+   *
    * @param xmlField
    *          the XML representation bound to Java objects
    * @param container
@@ -72,7 +72,7 @@ class XmlFieldInstance
 
   /**
    * Get the underlying XML data.
-   * 
+   *
    * @return the underlying XML data
    */
   protected FieldReferenceType getXmlField() {

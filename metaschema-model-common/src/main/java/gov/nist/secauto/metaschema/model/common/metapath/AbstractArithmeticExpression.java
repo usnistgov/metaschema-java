@@ -36,7 +36,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * An immutable binary expression that supports arithmetic evaluation. The result type is determined
  * through static analysis of the sub-expressions, which may result in a more specific type that is
  * a sub-class of the base result type.
- * 
+ *
  * @param <RESULT_TYPE>
  *          the base result of evaluating the arithmetic expression
  */
@@ -48,7 +48,7 @@ abstract class AbstractArithmeticExpression<RESULT_TYPE extends IAnyAtomicItem>
 
   /**
    * Construct a new arithmetic expression.
-   * 
+   *
    * @param left
    *          the left side of the arithmetic operation
    * @param right

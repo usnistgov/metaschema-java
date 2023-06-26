@@ -41,7 +41,7 @@ class Name // NOPMD - intentional
 
   /**
    * Create a new literal expression.
-   * 
+   *
    * @param value
    *          the literal value
    */

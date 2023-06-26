@@ -54,7 +54,7 @@ public interface IFlagInstance extends INamedInstance, IFlag {
 
   /**
    * Determines if a flag value is required to be provided.
-   * 
+   *
    * @return {@code true} if a value is required, or {@code false} otherwise
    */
   boolean isRequired();

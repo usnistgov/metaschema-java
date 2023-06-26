@@ -57,7 +57,7 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
 
   /**
    * The property name of the instance, which must be unique within the class.
-   * 
+   *
    * @return the name
    */
   @Override
@@ -88,7 +88,7 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
 
   /**
    * Gets the name of the Java field for this property item.
-   * 
+   *
    * @return the Java field name
    */
   @Override
@@ -139,7 +139,7 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
 
   /**
    * This method can be implemented by subclasses to create additional methods.
-   * 
+   *
    * @param builder
    *          the class builder
    * @param valueField
@@ -156,7 +156,7 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
 
   /**
    * Generate the Java field associated with this property.
-   * 
+   *
    * @param builder
    *          the field builder
    * @return the set of definitions used by this field
@@ -166,7 +166,7 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
 
   /**
    * Generate the getter for the property.
-   * 
+   *
    * @param builder
    *          the method builder
    * @param valueField
@@ -178,7 +178,7 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
 
   /**
    * Generate the setter for the property.
-   * 
+   *
    * @param builder
    *          the method builder
    * @param valueParam

@@ -41,7 +41,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IDataTypeProvider {
   /**
    * Get the {@link IDataTypeAdapter} instances associated with this provider.
-   * 
+   *
    * @return the sequence of adapters in match priority order
    */
   @NonNull

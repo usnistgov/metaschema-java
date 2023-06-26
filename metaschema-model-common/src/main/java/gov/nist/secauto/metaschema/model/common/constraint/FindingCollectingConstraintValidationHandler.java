@@ -57,7 +57,6 @@ public class FindingCollectingConstraintValidationHandler
     return pathFormatter;
   }
 
-  @SuppressWarnings("null")
   public void setPathFormatter(@NonNull IPathFormatter pathFormatter) {
     this.pathFormatter = Objects.requireNonNull(pathFormatter, "pathFormatter");
   }

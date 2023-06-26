@@ -53,9 +53,11 @@ public interface IJsonSchema {
 
   /**
    * Generate the schema type.
-   * 
+   *
    * @param state
    *          the schema generation state used for context and writing
+   * @param obj
+   *          the parent JSON object to populate
    * @throws SchemaGenerationException
    *           if an error occurred while writing the type
    */

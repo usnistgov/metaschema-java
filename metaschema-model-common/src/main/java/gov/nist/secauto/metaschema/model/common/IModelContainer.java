@@ -39,7 +39,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface IModelContainer extends IContainer {
   /**
    * Retrieve the Metaschema definition containing this container.
-   * 
+   *
    * @return the containing Metaschema definition
    */
   @Override
@@ -48,7 +48,7 @@ public interface IModelContainer extends IContainer {
 
   /**
    * Get the model instance contained within the model with the associated use name.
-   * 
+   *
    * @param name
    *          the use name of the model instance
    * @return the matching model instance, or {@code null} if no match was found
@@ -59,7 +59,7 @@ public interface IModelContainer extends IContainer {
 
   /**
    * Get all named model instances within the container.
-   * 
+   *
    * @return an ordered mapping of use name to model instance
    */
   @NonNull
@@ -67,7 +67,7 @@ public interface IModelContainer extends IContainer {
 
   /**
    * Get all field instances within the container.
-   * 
+   *
    * @return a mapping of use name to field instance
    */
   @NonNull
@@ -75,7 +75,7 @@ public interface IModelContainer extends IContainer {
 
   /**
    * Get the field instance contained within the model with the associated use name.
-   * 
+   *
    * @param name
    *          the use name of the field instance
    * @return the matching field instance, or {@code null} if no match was found
@@ -86,7 +86,7 @@ public interface IModelContainer extends IContainer {
 
   /**
    * Get all assembly instances within the container.
-   * 
+   *
    * @return a mapping of use name to assembly instance
    */
   @NonNull
@@ -94,7 +94,7 @@ public interface IModelContainer extends IContainer {
 
   /**
    * Get the assembly instance contained within the model with the associated use name.
-   * 
+   *
    * @param name
    *          the use name of the assembly instance
    * @return the matching assembly instance, or {@code null} if no match was found
@@ -105,7 +105,7 @@ public interface IModelContainer extends IContainer {
 
   /**
    * Get all choice instances within the container.
-   * 
+   *
    * @return a list of choice instances
    */
   @NonNull
@@ -113,7 +113,7 @@ public interface IModelContainer extends IContainer {
 
   /**
    * Get all model instances within the container.
-   * 
+   *
    * @return an ordered collection of model instances
    */
   @NonNull

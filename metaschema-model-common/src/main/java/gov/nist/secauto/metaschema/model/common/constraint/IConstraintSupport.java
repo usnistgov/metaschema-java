@@ -36,7 +36,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IConstraintSupport {
   /**
    * Retrieve the ordered collection of constraints.
-   * 
+   *
    * @return the constraints or an empty list
    */
   @NonNull

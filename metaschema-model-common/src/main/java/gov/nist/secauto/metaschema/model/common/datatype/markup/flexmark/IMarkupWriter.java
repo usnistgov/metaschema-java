@@ -47,6 +47,7 @@ import com.vladsch.flexmark.ast.Paragraph;
 import com.vladsch.flexmark.ast.Text;
 import com.vladsch.flexmark.ast.TextBase;
 import com.vladsch.flexmark.ast.ThematicBreak;
+import com.vladsch.flexmark.ext.escaped.character.EscapedCharacter;
 import com.vladsch.flexmark.ext.tables.TableBlock;
 import com.vladsch.flexmark.ext.typographic.TypographicQuotes;
 import com.vladsch.flexmark.ext.typographic.TypographicSmarts;
@@ -99,7 +100,7 @@ public interface IMarkupWriter<T, E extends Throwable> { // NOPMD
   }
 
   void writeEmptyElement(
-      @NonNull QName qName,
+      @NonNull QName qname,
       @NonNull Map<String, String> attributes) throws E;
 
   default void writeElementStart(
@@ -111,15 +112,17 @@ public interface IMarkupWriter<T, E extends Throwable> { // NOPMD
       @NonNull QName qname,
       @NonNull Map<String, String> attributes) throws E;
 
-  void writeElementEnd(@NonNull QName qName) throws E;
+  void writeElementEnd(@NonNull QName qname) throws E;
 
   void writeText(@NonNull Text node) throws E;
 
   /**
-   * Handle a combination of {@link Text} and {@link @EscapedCharacater} node children.
-   * 
+   * Handle a combination of {@link Text} and {@link EscapedCharacter} node children.
+   *
    * @param node
+   *          the text node to write
    * @throws E
+   *           if an error occured while writing
    */
   void writeText(@NonNull TextBase node) throws E;
 
@@ -206,7 +209,7 @@ public interface IMarkupWriter<T, E extends Throwable> { // NOPMD
 
   /**
    * Provides a callback to handle node children.
-   * 
+   *
    * @param <T>
    *          the type of stream to write to
    * @param <E>

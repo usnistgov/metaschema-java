@@ -64,8 +64,7 @@ class StreamSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE
 
   @Override
   public Stream<ITEM_TYPE> asStream() {
-    @NonNull
-    Stream<ITEM_TYPE> retval;
+    @NonNull Stream<ITEM_TYPE> retval;
     synchronized (this) {
       if (list == null) {
         if (stream == null) {
@@ -98,15 +97,9 @@ class StreamSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE
 
   @Override
   public boolean equals(Object other) {
-    if (other == this) {
-      return true; // NOPMD - readability
-    }
-
-    if (!(other instanceof ISequence)) {
-      return false; // NOPMD - readability
-    }
-
-    return asList().equals(((ISequence<?>) other).asList());
+    // must either be the same instance or a sequence that has the same list contents
+    return other == this
+        || (other instanceof ISequence && asList().equals(((ISequence<?>) other).asList()));
   }
 
   @Override

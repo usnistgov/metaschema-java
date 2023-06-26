@@ -35,7 +35,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IAssembly extends INamedModelElement {
   /**
    * Provides the Metaschema model type of "ASSEMBLY".
-   * 
+   *
    * @return the model type
    */
   @Override

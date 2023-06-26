@@ -37,7 +37,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 abstract class AbstractExpression implements IExpression {
   /**
    * Get the first data item of the provided {@code sequence} cast to an {@link IAnyAtomicItem}.
-   * 
+   *
    * @param sequence
    *          the sequence to get the data item from
    * @param requireSingleton

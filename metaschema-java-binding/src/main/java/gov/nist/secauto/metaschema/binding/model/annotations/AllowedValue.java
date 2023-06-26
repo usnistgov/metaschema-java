@@ -45,7 +45,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public @interface AllowedValue {
   /**
    * The specific enumerated value.
-   * 
+   *
    * @return the value
    */
   @NonNull
@@ -53,7 +53,7 @@ public @interface AllowedValue {
 
   /**
    * A description, encoded as a line of Markdown.
-   * 
+   *
    * @return an encoded markdown string
    */
   @NonNull

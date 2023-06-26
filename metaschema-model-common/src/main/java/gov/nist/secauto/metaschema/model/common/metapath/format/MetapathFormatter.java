@@ -44,7 +44,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class MetapathFormatter implements IPathFormatter {
 
   @Override
-  public @NonNull String formatMetaschema(@NonNull IMetaschemaNodeItem metaschema) {
+  public @NonNull String formatMetaschema(IMetaschemaNodeItem metaschema) {
     // this will result in a slash being generated using the join in the format method
     return "";
   }
@@ -56,12 +56,12 @@ public class MetapathFormatter implements IPathFormatter {
   }
 
   @Override
-  public String formatRootAssembly(@NonNull IRootAssemblyNodeItem root) {
+  public String formatRootAssembly(IRootAssemblyNodeItem root) {
     return root.getName();
   }
 
   @Override
-  public String formatAssembly(@NonNull IAssemblyNodeItem assembly) {
+  public String formatAssembly(IAssemblyNodeItem assembly) {
     // TODO: does it make sense to use this for an intermediate that has no parent?
     return formatModelPathSegment(assembly);
   }
@@ -78,7 +78,7 @@ public class MetapathFormatter implements IPathFormatter {
 
   @SuppressWarnings("null")
   @NonNull
-  protected String formatModelPathSegment(IModelNodeItem item) {
+  private static String formatModelPathSegment(@NonNull IModelNodeItem item) {
     StringBuilder builder = new StringBuilder(item.getName())
         .append('[')
         .append(item.getPosition())

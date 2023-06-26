@@ -79,7 +79,7 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
 
   /**
    * Generate a set of constraints from the provided XMLBeans instance.
-   * 
+   *
    * @param xmlConstraints
    *          the XMLBeans instance
    * @param source
@@ -111,7 +111,11 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
       }
     } catch (MetapathException | XmlValueNotSupportedException ex) {
       if (ex.getCause() instanceof MetapathException) {
-        throw new MetapathException(String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()), ex);
+        throw new MetapathException(
+            String.format("Unable to compile a Metapath in '%s'. %s",
+                source.getSource(),
+                ex.getLocalizedMessage()),
+            ex);
       }
       throw ex;
     }
@@ -119,7 +123,7 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
 
   /**
    * Generate a set of constraints from the provided XMLBeans instance.
-   * 
+   *
    * @param xmlConstraints
    *          the XMLBeans instance
    * @param source
@@ -154,7 +158,11 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
       }
     } catch (MetapathException | XmlValueNotSupportedException ex) {
       if (ex.getCause() instanceof MetapathException) {
-        throw new MetapathException(String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()), ex);
+        throw new MetapathException(
+            String.format("Unable to compile a Metapath in '%s'. %s",
+                source.getSource(),
+                ex.getLocalizedMessage()),
+            ex);
       }
       throw ex;
     }

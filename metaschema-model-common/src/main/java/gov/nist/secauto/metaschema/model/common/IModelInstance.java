@@ -41,7 +41,7 @@ public interface IModelInstance extends IInstance {
 
   /**
    * Retrieve the Metaschema assembly definition on which the info element was declared.
-   * 
+   *
    * @return the Metaschema assembly definition on which the info element was declared
    */
   @Override
@@ -51,7 +51,7 @@ public interface IModelInstance extends IInstance {
    * Get the name used for the associated element wrapping a collection of elements in XML. This value
    * is required when {@link #getXmlGroupAsBehavior()} = {@link XmlGroupAsBehavior#GROUPED}. This name
    * will be the element name wrapping a collection of elements.
-   * 
+   *
    * @return the groupAs QName or {@code null} if no name is configured, such as when
    *         {@link #getMaxOccurs()} = 1.
    */
@@ -72,7 +72,7 @@ public interface IModelInstance extends IInstance {
   /**
    * Get the minimum cardinality for this associated instance. This value must be less than or equal
    * to the maximum cardinality returned by {@link #getMaxOccurs()}.
-   * 
+   *
    * @return {@code 0} or a positive integer value
    */
   int getMinOccurs();
@@ -80,7 +80,7 @@ public interface IModelInstance extends IInstance {
   /**
    * Get the maximum cardinality for this associated instance. This value must be greater than or
    * equal to the minimum cardinality returned by {@link #getMinOccurs()}, or {@code -1} if unbounded.
-   * 
+   *
    * @return a positive integer value or {@code -1} if unbounded
    */
   int getMaxOccurs();
@@ -88,7 +88,7 @@ public interface IModelInstance extends IInstance {
   /**
    * Get the name provided for grouping. An instance in Metaschema must have a group name if the
    * instance has a cardinality greater than {@code 1}.
-   * 
+   *
    * @return the group-as name or {@code null} if no name is configured, such as when
    *         {@link #getMaxOccurs()} = 1
    */
@@ -97,7 +97,7 @@ public interface IModelInstance extends IInstance {
 
   /**
    * Retrieve the XML namespace for this group.
-   * 
+   *
    * @return the XML namespace or {@code null} if no namespace is used
    */
   @Nullable
@@ -106,7 +106,7 @@ public interface IModelInstance extends IInstance {
   /**
    * Gets the configured JSON group-as strategy. A JSON group-as strategy is only required when
    * {@link #getMaxOccurs()} &gt; 1.
-   * 
+   *
    * @return the JSON group-as strategy, or {@code JsonGroupAsBehavior#NONE} if
    *         {@link #getMaxOccurs()} = 1
    */
@@ -116,7 +116,7 @@ public interface IModelInstance extends IInstance {
   /**
    * Gets the configured XML group-as strategy. A XML group-as strategy is only required when
    * {@link #getMaxOccurs()} &gt; 1.
-   * 
+   *
    * @return the JSON group-as strategy, or {@code XmlGroupAsBehavior#UNGROUPED} if
    *         {@link #getMaxOccurs()} = 1
    */

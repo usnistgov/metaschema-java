@@ -56,7 +56,7 @@ abstract class AbstractSerializationBase<T extends Enum<T> & IConfigurationFeatu
 
   /**
    * Retrieve the binding context associated with the serializer.
-   * 
+   *
    * @return the binding context
    */
   @NonNull
@@ -67,7 +67,7 @@ abstract class AbstractSerializationBase<T extends Enum<T> & IConfigurationFeatu
   /**
    * Retrieve the bound class information associated with the assembly that the
    * serializer/deserializer will write/read data from.
-   * 
+   *
    * @return the class binding for the Metaschema assembly
    */
   @NonNull
@@ -77,7 +77,7 @@ abstract class AbstractSerializationBase<T extends Enum<T> & IConfigurationFeatu
 
   /**
    * Get the current configuration of the serializer/deserializer.
-   * 
+   *
    * @return the configuration
    */
   @NonNull

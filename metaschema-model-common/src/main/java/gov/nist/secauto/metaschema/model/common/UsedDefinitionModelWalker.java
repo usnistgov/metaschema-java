@@ -49,7 +49,7 @@ public class UsedDefinitionModelWalker
 
   /**
    * Get the collection of all definitions used directly and transitively by the provided definitions.
-   * 
+   *
    * @param definitions
    *          a collection of definitions to generate used definitions from
    * @return the collection of used definitions
@@ -68,7 +68,7 @@ public class UsedDefinitionModelWalker
   /**
    * Collect the globally defined metaschema definitions from the provided metaschemas, and any
    * metaschema imported by these metaschema.
-   * 
+   *
    * @param metaschemas
    *          the metaschemas to analyze
    * @return a collection of matching definitions
@@ -96,7 +96,7 @@ public class UsedDefinitionModelWalker
   /**
    * Collect the globally defined metaschema definitions from the provided metaschema, and any
    * metaschema imported by this metaschema.
-   * 
+   *
    * @param metaschema
    *          the metaschema to analyze
    * @return a collection of matching definitions

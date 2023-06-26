@@ -31,7 +31,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public abstract class AbstractInstance<P extends IContainer> implements IInstance {
   @NonNull
   private final P parent;
-  
+
   public AbstractInstance(@NonNull P parent) {
     this.parent = parent;
   }

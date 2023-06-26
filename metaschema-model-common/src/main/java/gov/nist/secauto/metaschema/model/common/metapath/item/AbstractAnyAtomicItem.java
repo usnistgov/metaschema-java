@@ -43,7 +43,7 @@ public abstract class AbstractAnyAtomicItem<TYPE> implements IAnyAtomicItem {
 
   /**
    * Construct a new atomic item using the provided {@code value}.
-   * 
+   *
    * @param value
    *          the value to assign to this atomic item
    */

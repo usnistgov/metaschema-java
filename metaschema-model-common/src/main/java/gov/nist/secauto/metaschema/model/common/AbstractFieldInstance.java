@@ -34,7 +34,7 @@ public abstract class AbstractFieldInstance
 
   /**
    * Create a new field instance.
-   * 
+   *
    * @param parent
    *          the parent assembly definition
    */

@@ -47,8 +47,7 @@ class RelativeDoubleSlashPath
 
   @Override
   public ISequence<? extends INodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
-    @SuppressWarnings("unchecked")
-    ISequence<? extends INodeItem> leftResult
+    @SuppressWarnings("unchecked") ISequence<? extends INodeItem> leftResult
         = (ISequence<? extends INodeItem>) getLeft().accept(dynamicContext, context);
 
     Stream<? extends INodeItem> result = ObjectUtils.notNull(leftResult.asStream()

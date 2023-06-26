@@ -91,7 +91,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   /**
    * Create a new {@link IClassBinding} for a Java bean annotated with the {@link BoundAssembly}
    * annotation.
-   * 
+   *
    * @param clazz
    *          the Java bean class
    * @param bindingContext
@@ -107,7 +107,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   /**
    * Construct a new {@link IClassBinding} for a Java bean annotated with the {@link BoundAssembly}
    * annotation.
-   * 
+   *
    * @param clazz
    *          the Java bean class
    * @param bindingContext
@@ -137,7 +137,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   /**
    * Get the {@link MetaschemaAssembly} annotation associated with this class. This annotation
    * provides information used by this class binding to control binding behavior.
-   * 
+   *
    * @return the annotation
    */
   public MetaschemaAssembly getMetaschemaAssemblyAnnotation() {
@@ -394,7 +394,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
    * <p>
    * After parsing the current token will be the token at the end object immediately after all the
    * fields and values.
-   * 
+   *
    * @param instance
    *          the bound object to read data into
    * @param parentInstance
@@ -488,7 +488,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
 
   /**
    * Serializes the provided instance in JSON.
-   * 
+   *
    * @param instance
    *          the instance to serialize
    * @param writeObjectWrapper

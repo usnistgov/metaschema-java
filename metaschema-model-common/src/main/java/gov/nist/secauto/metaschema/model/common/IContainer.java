@@ -31,7 +31,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IContainer {
   /**
    * Retrieve the Metaschema definition containing this container.
-   * 
+   *
    * @return the containing Metaschema definition
    */
   @NonNull

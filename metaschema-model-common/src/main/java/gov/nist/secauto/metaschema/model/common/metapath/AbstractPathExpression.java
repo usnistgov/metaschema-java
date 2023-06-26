@@ -49,7 +49,7 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
   /**
    * A callback used to evaluate the provided {@code expression} in the context of a set of context
    * items.
-   * 
+   *
    * @param expression
    *          the expression to evaluate
    * @param dynamicContext
@@ -78,7 +78,7 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
   /**
    * Evaluate the {@code nodeContext} and its ancestors against the provided {@code expression},
    * keeping any matching nodes.
-   * 
+   *
    * @param expression
    *          the expression to evaluate
    * @param dynamicContext
@@ -92,8 +92,7 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
       @NonNull DynamicContext dynamicContext, @NonNull INodeContext nodeContext) {
 
     // check the current node
-    @SuppressWarnings("unchecked")
-    Stream<? extends INodeItem> nodeMatches
+    @SuppressWarnings("unchecked") Stream<? extends INodeItem> nodeMatches
         = (Stream<? extends INodeItem>) expression.accept(dynamicContext, nodeContext).asStream();
 
     Stream<? extends INodeItem> childMatches;
@@ -106,20 +105,20 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
       Stream<? extends INodeItem> modelItems = nodeContext.modelItems();
       childMatches = Stream.concat(flags, modelItems)
           .flatMap(instance -> {
+            assert instance != null;
             return searchExpression(expression, dynamicContext, instance);
           });
     }
 
     @SuppressWarnings("null")
-    @NonNull
-    Stream<? extends INodeItem> result = Stream.concat(nodeMatches, childMatches);
+    @NonNull Stream<? extends INodeItem> result = Stream.concat(nodeMatches, childMatches);
     return result;
   }
 
   /**
    * Evaluate the {@code nodeContext} and its ancestors against the provided {@code expression},
    * keeping any matching nodes.
-   * 
+   *
    * @param expression
    *          the expression to evaluate
    * @param dynamicContext

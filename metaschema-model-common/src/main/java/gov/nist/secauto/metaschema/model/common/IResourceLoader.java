@@ -43,7 +43,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface IResourceLoader {
   /**
    * Get the entity resolver associated with this loader.
-   * 
+   *
    * @return the entity resolver
    */
   @Nullable
@@ -55,7 +55,7 @@ public interface IResourceLoader {
 
   /**
    * Create a new input source based on the provided URI.
-   * 
+   *
    * @param uri
    *          the resource to use as input
    * @return the created input source

@@ -79,7 +79,7 @@ class XmlInlineAssemblyDefinition
 
   /**
    * Constructs a new Metaschema assembly definition from an XML representation bound to Java objects.
-   * 
+   *
    * @param xmlAssembly
    *          the XML representation bound to Java objects
    * @param parent
@@ -95,7 +95,7 @@ class XmlInlineAssemblyDefinition
 
   /**
    * Get the underlying XML model.
-   * 
+   *
    * @return the XML model
    */
   protected InlineAssemblyDefinitionType getXmlAssembly() {
@@ -184,6 +184,7 @@ class XmlInlineAssemblyDefinition
   /**
    * The corresponding definition for the local flag instance.
    */
+  @SuppressWarnings("PMD.GodClass")
   public class InternalAssemblyDefinition
       implements IAssemblyDefinition, IInlineDefinition<XmlInlineAssemblyDefinition> {
     private XmlFlagContainerSupport flagContainer;
@@ -258,7 +259,7 @@ class XmlInlineAssemblyDefinition
 
     /**
      * Lazy initialize the flags associated with this definition.
-     * 
+     *
      * @return the flag container instance
      */
     @SuppressWarnings("null")
@@ -289,7 +290,7 @@ class XmlInlineAssemblyDefinition
 
     /**
      * Lazy initialize the model associated with this definition.
-     * 
+     *
      * @return the flag container instance
      */
     @SuppressWarnings("null")
@@ -360,7 +361,7 @@ class XmlInlineAssemblyDefinition
     /**
      * Used to generate the instances for the constraints in a lazy fashion when the constraints are
      * first accessed.
-     * 
+     *
      * @return the constraints instance
      */
     protected IAssemblyConstraintSupport initModelConstraints() {

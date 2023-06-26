@@ -54,7 +54,7 @@ public @interface BoundAssembly {
    * Get the documentary formal name of the assembly.
    * <p>
    * If the value is "##none", then the description will be considered {@code null}.
-   * 
+   *
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
   @NonNull
@@ -64,7 +64,7 @@ public @interface BoundAssembly {
    * Get the documentary description of the assembly.
    * <p>
    * If the value is "##none", then the description will be considered {@code null}.
-   * 
+   *
    * @return a markdown string or {@code "##none"} if no description is provided
    */
   @NonNull
@@ -74,7 +74,7 @@ public @interface BoundAssembly {
    * The model name to use for singleton values. This name will be used for associated XML elements.
    * <p>
    * If the value is "##none", then element name is derived from the JavaBean property name.
-   * 
+   *
    * @return the name or {@code "##none"} if no use name is provided
    */
   @NonNull
@@ -85,7 +85,7 @@ public @interface BoundAssembly {
    * <p>
    * If the value is "##default", then element name is derived from the namespace provided in the
    * package-info.
-   * 
+   *
    * @return the namespace
    */
   @NonNull
@@ -93,21 +93,21 @@ public @interface BoundAssembly {
 
   /**
    * A non-negative number that indicates the minimum occurrence of the model instance.
-   * 
+   *
    * @return a non-negative number
    */
   int minOccurs() default MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
 
   /**
    * A number that indicates the maximum occurrence of the model instance.
-   * 
+   *
    * @return a positive number or {@code -1} to indicate "unbounded"
    */
   int maxOccurs() default MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
 
   /**
    * Get any remarks for this field.
-   * 
+   *
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
   @NonNull

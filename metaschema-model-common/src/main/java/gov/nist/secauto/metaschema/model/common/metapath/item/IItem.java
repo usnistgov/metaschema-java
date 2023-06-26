@@ -41,7 +41,7 @@ public interface IItem {
    * <li>In the case of a Field without flags or a flag, a Java type managed by a
    * {@link IDataTypeAdapter} or a primitive type provided by the Java standard library.
    * </ul>
-   * 
+   *
    * @return the value or {@code null} if the item has no available value
    */
   @Nullable

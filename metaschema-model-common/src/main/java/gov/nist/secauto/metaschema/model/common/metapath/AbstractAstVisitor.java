@@ -88,7 +88,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
   /**
    * This dispatch method will call the node handler on a leaf node or if multiple child expressions
    * exist. Otherwise, it will delegate to the single child expression.
-   * 
+   *
    * @param <T>
    *          the visitor context type
    * @param ctx
@@ -113,7 +113,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
   /**
    * This dispatch method expects a single child expression which will be called. Other cases will
    * result in an exception.
-   * 
+   *
    * @param <T>
    *          the visitor context type
    * @param ctx
@@ -122,26 +122,22 @@ abstract class AbstractAstVisitor<R> // NOPMD
    * @throws IllegalStateException
    *           if there was not a single child expression
    */
-  protected <T extends RuleContext> R passThrough(T ctx) {
-    T context = ObjectUtils.requireNonNull(ctx);
-
-    R retval;
-    if (context.getChildCount() == 1) {
-      retval = context.getChild(0).accept(this);
-    } else {
-      throw new IllegalStateException("a single child expression was expected");
+  protected <T extends RuleContext> R passThrough(@NonNull T ctx) {
+    if (ctx.getChildCount() == 1) {
+      return ctx.getChild(0).accept(this);
     }
-    return retval;
+    throw new IllegalStateException("a single child expression was expected");
   }
 
   @Override
   public R visitMetapath(MetapathContext ctx) {
+    assert ctx != null;
     return passThrough(ctx);
   }
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -156,12 +152,13 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   @Override
   public R visitExprsingle(ExprsingleContext ctx) {
+    assert ctx != null;
     return passThrough(ctx);
   }
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -176,7 +173,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -191,7 +188,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -206,7 +203,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -221,7 +218,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -236,7 +233,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -251,7 +248,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -266,7 +263,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -281,7 +278,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -296,7 +293,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -311,6 +308,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   @Override
   public R visitValueexpr(ValueexprContext ctx) {
+    assert ctx != null;
     return passThrough(ctx);
   }
 
@@ -328,7 +326,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -343,7 +341,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -358,12 +356,13 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   @Override
   public R visitStepexpr(StepexprContext ctx) {
+    assert ctx != null;
     return passThrough(ctx);
   }
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -378,7 +377,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -399,7 +398,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -414,7 +413,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -435,7 +434,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -450,12 +449,13 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   @Override
   public R visitNametest(NametestContext ctx) {
+    assert ctx != null;
     return passThrough(ctx);
   }
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -470,7 +470,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -503,12 +503,13 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   @Override
   public R visitPrimaryexpr(PrimaryexprContext ctx) {
+    assert ctx != null;
     return passThrough(ctx);
   }
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -523,7 +524,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -543,7 +544,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -558,7 +559,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -573,12 +574,13 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   @Override
   public R visitArgument(ArgumentContext ctx) {
+    assert ctx != null;
     return passThrough(ctx);
   }
 
   /**
    * Handle the provided expression.
-   * 
+   *
    * @param ctx
    *          the provided expression context
    * @return the result
@@ -595,6 +597,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   @Override
   public R visitLetexpr(LetexprContext ctx) {
+    assert ctx != null;
     return handleLet(ctx);
   }
 
@@ -620,11 +623,13 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
   @Override
   public R visitVarref(VarrefContext ctx) {
+    assert ctx != null;
     return handleVarref(ctx);
   }
 
   @Override
   public R visitVarname(VarnameContext ctx) {
+    assert ctx != null;
     return passThrough(ctx);
   }
 

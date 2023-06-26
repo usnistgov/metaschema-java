@@ -52,7 +52,6 @@ public class MarkupXmlEventWriter
 
   @NonNull
   protected final XMLEventFactory2 eventFactory;
-  
 
   public MarkupXmlEventWriter(
       @NonNull String namespace,
@@ -62,7 +61,6 @@ public class MarkupXmlEventWriter
     super(namespace, listOptions, writer);
     this.eventFactory = Objects.requireNonNull(eventFactory, "eventFactory");
   }
-
 
   @NonNull
   protected XMLEventFactory2 getEventFactory() {
@@ -76,8 +74,8 @@ public class MarkupXmlEventWriter
       attrs = CollectionUtil.emptyList();
     } else {
       attrs = ObjectUtils.notNull(attributes.entrySet().stream()
-        .map((entry) -> eventFactory.createAttribute(entry.getKey(), entry.getValue()))
-        .collect(Collectors.toList()));
+          .map((entry) -> eventFactory.createAttribute(entry.getKey(), entry.getValue()))
+          .collect(Collectors.toList()));
     }
     return attrs;
   }
@@ -116,7 +114,7 @@ public class MarkupXmlEventWriter
   protected void writeHtmlEntityInternal(String entityText) throws XMLStreamException {
     getStream().add(eventFactory.createEntityReference(entityText, null));
   }
-  
+
   @Override
   protected void writeComment(CharSequence text) throws XMLStreamException {
     getStream().add(eventFactory.createComment(text.toString()));

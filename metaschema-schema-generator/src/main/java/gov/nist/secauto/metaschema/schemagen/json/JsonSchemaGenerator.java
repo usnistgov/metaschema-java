@@ -92,6 +92,32 @@ public class JsonSchemaGenerator
   protected void generateSchema(JsonGenerationState state) {
     IMetaschema metaschema = state.getMetaschema();
 
+
+    // analyze all definitions
+    List<IRootAssemblyDefinition> rootAssemblyDefinitions = analyzeDefinitions(
+        state,
+        (entry, definition) -> {
+          assert entry != null;
+          assert definition != null;
+
+          if (entry.isReferenced()) {
+            // ensure schema is generated
+            state.getSchema(definition);
+          }
+        });
+
+    if (rootAssemblyDefinitions.isEmpty()) {
+      throw new SchemaGenerationException("No root definitions found");
+    }
+
+    // generate the properties first to ensure all definitions are identified
+    List<RootPropertyEntry> rootEntries = rootAssemblyDefinitions.stream()
+        .map(root -> {
+          assert root != null;
+          return new RootPropertyEntry(root, state);
+        })
+        .collect(Collectors.toUnmodifiableList());
+    
     try {
       state.writeStartObject();
 
@@ -103,31 +129,6 @@ public class JsonSchemaGenerator
               metaschema.getVersion()));
       state.writeField("$comment", metaschema.getName().toMarkdown());
       state.writeField("type", "object");
-
-      // analyze all definitions
-      List<IRootAssemblyDefinition> rootAssemblyDefinitions = analyzeDefinitions(
-          state,
-          (entry, definition) -> {
-            assert entry != null;
-            assert definition != null;
-
-            if (entry.isReferenced()) {
-              // ensure schema is generated
-              state.getSchema(definition);
-            }
-          });
-
-      if (rootAssemblyDefinitions.isEmpty()) {
-        throw new SchemaGenerationException("No root definitions found");
-      }
-
-      // generate the properties first to ensure all definitions are identified
-      List<RootPropertyEntry> rootEntries = rootAssemblyDefinitions.stream()
-          .map(root -> {
-            assert root != null;
-            return new RootPropertyEntry(root, state);
-          })
-          .collect(Collectors.toUnmodifiableList());
 
       ObjectNode definitionsObject = state.generateDefinitions();
       if (!definitionsObject.isEmpty()) {

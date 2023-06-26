@@ -37,7 +37,7 @@ class ValueComparison
 
   /**
    * Create a new value comparison expression.
-   * 
+   *
    * @param left
    *          the expression to compare against
    * @param operator
@@ -64,7 +64,7 @@ class ValueComparison
 
   /**
    * Compare the two atomic items.
-   * 
+   *
    * @param leftItem
    *          the first item to compare
    * @param rightItem
@@ -86,7 +86,7 @@ class ValueComparison
 
   /**
    * Compare the two items using the provided {@code operator}.
-   * 
+   *
    * @param leftItem
    *          the first item to compare
    * @param operator

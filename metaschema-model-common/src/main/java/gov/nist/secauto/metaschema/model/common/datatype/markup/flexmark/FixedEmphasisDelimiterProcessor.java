@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
 
 import com.vladsch.flexmark.ast.Emphasis;
@@ -38,15 +39,17 @@ import com.vladsch.flexmark.util.sequence.BasedSequence;
 /**
  * Provides a temporary fix for the broken {@link EmphasisDelimiterProcessor} in Flexmark.
  */
-public class FixedEmphasisDelimiterProcessor extends AsteriskDelimiterProcessor {
-  //TODO: remove this class once vsch/flexmark-java#580 is merged
-  final private int multipleUse;
-  
+public class FixedEmphasisDelimiterProcessor
+    extends AsteriskDelimiterProcessor {
+  // TODO: remove this class once vsch/flexmark-java#580 is merged
+  private final int multipleUse;
+
   public FixedEmphasisDelimiterProcessor(boolean strongWrapsEmphasis) {
     super(strongWrapsEmphasis);
     this.multipleUse = strongWrapsEmphasis ? 1 : 2;
   }
 
+  @SuppressWarnings("PMD.OnlyOneReturn") // for readability
   @Override
   public int getDelimiterUse(DelimiterRun opener, DelimiterRun closer) {
     // "multiple of 3" rule for internal delimiter runs
@@ -59,7 +62,7 @@ public class FixedEmphasisDelimiterProcessor extends AsteriskDelimiterProcessor 
 
     // calculate actual number of delimiters used from this closer
     if (opener.length() < 3 || closer.length() < 3) {
-        return Utils.min(closer.length(), opener.length());
+      return Utils.min(closer.length(), opener.length());
     }
     // default to latest spec
     return closer.length() % 2 == 0 ? 2 : multipleUse;
@@ -69,7 +72,8 @@ public class FixedEmphasisDelimiterProcessor extends AsteriskDelimiterProcessor 
   public void process(Delimiter opener, Delimiter closer, int delimitersUsed) {
     DelimitedNode emphasis = delimitersUsed == 1
         ? new Emphasis(opener.getTailChars(delimitersUsed), BasedSequence.NULL, closer.getLeadChars(delimitersUsed))
-        : new StrongEmphasis(opener.getTailChars(delimitersUsed), BasedSequence.NULL, closer.getLeadChars(delimitersUsed));
+        : new StrongEmphasis(opener.getTailChars(delimitersUsed), BasedSequence.NULL,
+            closer.getLeadChars(delimitersUsed));
 
     opener.moveNodesBetweenDelimitersTo(emphasis, closer);
   }

@@ -33,7 +33,7 @@ package gov.nist.secauto.metaschema.model.common;
 public interface IFlag extends INamedModelElement {
   /**
    * Provides the Metaschema model type of "FLAG".
-   * 
+   *
    * @return the model type
    */
   @Override

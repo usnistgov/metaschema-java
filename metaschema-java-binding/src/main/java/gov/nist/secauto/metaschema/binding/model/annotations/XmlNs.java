@@ -42,14 +42,14 @@ public @interface XmlNs {
    * Suggests a namespace prefix to use for generated code.
    * <p>
    * If the value is "##none", then there is no prefix defined.
-   * 
+   *
    * @return the associated namespace prefix
    */
   String prefix() default "##none";
 
   /**
    * Defines the Namespace URI for this namespace.
-   * 
+   *
    * @return the associated namespace
    */
   String namespace();

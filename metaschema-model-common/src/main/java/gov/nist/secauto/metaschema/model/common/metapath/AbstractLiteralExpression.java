@@ -38,7 +38,7 @@ abstract class AbstractLiteralExpression<RESULT_TYPE extends IAnyAtomicItem, VAL
 
   /**
    * Construct an expression that always returns the same literal value.
-   * 
+   *
    * @param value
    *          the literal value
    */

@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model;
+package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -39,11 +39,11 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.AbstractMarkupString;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupString;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.MarkupParser;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -85,9 +85,10 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-// TODO: move this to the correct package and rename class
-class CommonmarkSchemaTest {
+@SuppressWarnings("PMD.CouplingBetweenObjects")
+class CommonmarkConformanceTest {
   private static final String SCHEMA_CLASSPATH = "/markup-test.xsd";
   private static final Pattern INITIAL_ELEMENT_PATTERN
       = Pattern.compile("^\\s*<([^\\s/>]+)[^>]*>.*", Pattern.DOTALL);
@@ -107,14 +108,14 @@ class CommonmarkSchemaTest {
     Matcher matcher = INITIAL_ELEMENT_PATTERN.matcher(vector);
 
     assertTrue(matcher.matches());
-    assertTrue(MarkupParser.BLOCK_ELEMENTS.contains(matcher.group(1)));
+    assertTrue(XmlMarkupParser.BLOCK_ELEMENTS.contains(matcher.group(1)));
   }
 
   private static List<Entry> generateTestVectors() throws JsonParseException, IOException {
     ObjectMapper mapper = new ObjectMapper();
     // mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-    try (InputStream is = CommonmarkSchemaTest.class.getResourceAsStream("/commonmark-spec.json")) {
+    try (InputStream is = CommonmarkConformanceTest.class.getResourceAsStream("/commonmark-spec.json")) {
       try (JsonParser parser = mapper.getFactory().createParser(is)) {
         if (parser.nextToken() != JsonToken.START_ARRAY) {
           throw new IllegalStateException();
@@ -151,7 +152,7 @@ class CommonmarkSchemaTest {
   public boolean isBlockElement(@NonNull String html) {
     Matcher matcher = INITIAL_ELEMENT_PATTERN.matcher(html);
 
-    return matcher.matches() && MarkupParser.BLOCK_ELEMENTS.contains(matcher.group(1));
+    return matcher.matches() && XmlMarkupParser.BLOCK_ELEMENTS.contains(matcher.group(1));
   }
 
   @NonNull
@@ -246,7 +247,7 @@ class CommonmarkSchemaTest {
                         .append(testVector.getSection())
                         .append(" (")
                         .append(testVector.getExampleNumber())
-                        .append(")")
+                        .append(')')
                         .toString();
                     return DynamicContainer.dynamicContainer(
                         testName,
@@ -282,31 +283,16 @@ class CommonmarkSchemaTest {
                                           }
                                         }),
                                     DynamicTest.dynamicTest(
-                                        "Match with Test Vector",
+                                        "Convert Markdown to HTML/XHTML and Match with Test Vector",
                                         () -> {
                                           String markdown = testVector.getMarkdown();
                                           IMarkupString<?> content;
-                                          String topLevelElementName;
-                                          // if (isMultilineMarkdown(markdown)) {
+
                                           content = MarkupDataTypeProvider.MARKUP_MULTILINE.parse(markdown);
-                                          topLevelElementName = "multiline";
-                                          /*
-                                           * } else { content = MarkupDataTypeProvider.MARKUP_LINE.parse(markdown);
-                                           * topLevelElementName = "line";
-                                           * 
-                                           * // extract the line from the opening and closing tags Pattern linePattern =
-                                           * Pattern.compile("^<[^>]+>(.+)</[^>]+>(?:\\s+)?$",Pattern.DOTALL); Matcher
-                                           * matcher = linePattern.matcher(expected);
-                                           * 
-                                           * if (!matcher.matches()) { fail(String.
-                                           * format("Unable to extract expected line content using pattern '%s' from: %s"
-                                           * , linePattern.pattern(), expected)); }
-                                           * 
-                                           * expected = matcher.group(1); }
-                                           */
                                           String convertedHtmlInstance = generateXmlInstance(content);
 
                                           // extract the generated HTML
+                                          String topLevelElementName = "multiline";
                                           convertedHtmlInstance = convertedHtmlInstance.substring(
                                               convertedHtmlInstance.indexOf("<" + topLevelElementName),
                                               convertedHtmlInstance.indexOf("</" + topLevelElementName + ">"));
@@ -363,7 +349,8 @@ class CommonmarkSchemaTest {
         });
   }
 
-  @JsonIgnoreProperties({ "comment" })
+  @JsonIgnoreProperties({ "comment", "start_line", "end_line" })
+  @SuppressWarnings("PMD.DataClass")
   private static class Entry {
     @NonNull
     private final String markdown;
@@ -376,22 +363,18 @@ class CommonmarkSchemaTest {
     private final int exampleNumber;
     @NonNull
     private final String section;
-    private final int startLine;
-    private final int endLine;
     private final boolean enabled;
 
     @JsonCreator
     public Entry(
-        @JsonProperty("markdown") String markdown,
-        @JsonProperty("html") String html,
-        @JsonProperty("xml") String xml,
+        @JsonProperty("markdown") @NonNull String markdown,
+        @JsonProperty("html") @NonNull String html,
+        @JsonProperty("xml") @Nullable String xml,
         @JsonProperty("example") int exampleNumber,
-        @JsonProperty("section") String section,
-        @JsonProperty("start_line") int startLine,
-        @JsonProperty("end_line") int endLine,
-        @JsonProperty("enabled") Boolean enabled) {
+        @JsonProperty("section") @NonNull String section,
+        @JsonProperty("enabled") @Nullable Boolean enabled) {
       this.markdown = markdown;
-      this.rawHtml = html.trim();
+      this.rawHtml = ObjectUtils.notNull(html.trim());
       Document document = Jsoup.parseBodyFragment(html);
       document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
       this.html = document;
@@ -401,11 +384,8 @@ class CommonmarkSchemaTest {
               .replaceAll("(?<!>|\")&gt;", ">") // the XML stack doesn't need these entities
               .stripTrailing()); // this implementation removes trailing whitespace
 
-
       this.exampleNumber = exampleNumber;
       this.section = section;
-      this.startLine = startLine;
-      this.endLine = endLine;
       this.enabled = enabled == null || enabled;
     }
 
@@ -444,14 +424,6 @@ class CommonmarkSchemaTest {
       return section;
     }
 
-    public int getStartLine() {
-      return startLine;
-    }
-
-    public int getEndLine() {
-      return endLine;
-    }
-
     public boolean isEnabled() {
       return enabled;
     }
@@ -462,8 +434,8 @@ class CommonmarkSchemaTest {
       extends DefaultHandler {
 
     @Override
-    public void error(SAXParseException e) throws SAXException {
-      throw e;
+    public void error(SAXParseException ex) throws SAXException {
+      throw ex;
     }
   }
 }

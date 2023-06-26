@@ -55,7 +55,7 @@ class XmlModelContainerSupport {
 
   /**
    * Construct a new model container.
-   * 
+   *
    * @param xmlContent
    *          the XMLBeans content to parse
    * @param container
@@ -76,7 +76,7 @@ class XmlModelContainerSupport {
 
   /**
    * Get a listing of all model instances.
-   * 
+   *
    * @return the listing
    */
   @NonNull
@@ -86,7 +86,7 @@ class XmlModelContainerSupport {
 
   /**
    * Get a mapping of all named model instances, mapped from their effective name to the instance.
-   * 
+   *
    * @return the mapping
    */
   @NonNull
@@ -96,7 +96,7 @@ class XmlModelContainerSupport {
 
   /**
    * Get a mapping of all field instances, mapped from their effective name to the instance.
-   * 
+   *
    * @return the mapping
    */
   @NonNull
@@ -106,7 +106,7 @@ class XmlModelContainerSupport {
 
   /**
    * Get a mapping of all assembly instances, mapped from their effective name to the instance.
-   * 
+   *
    * @return the mapping
    */
   @NonNull
@@ -116,7 +116,7 @@ class XmlModelContainerSupport {
 
   /**
    * Get a listing of all choice instances.
-   * 
+   *
    * @return the listing
    */
   @SuppressWarnings("null")

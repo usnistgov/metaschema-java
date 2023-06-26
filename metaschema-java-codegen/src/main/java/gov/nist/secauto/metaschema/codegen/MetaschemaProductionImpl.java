@@ -105,8 +105,7 @@ class MetaschemaProductionImpl implements IMetaschemaProduction { // NOPMD - int
             });
 
     @NonNull
-    @SuppressWarnings("null")
-    Map<IFlagContainer, IDefinitionProduction> retval = productions.collect(
+    @SuppressWarnings("null") Map<IFlagContainer, IDefinitionProduction> retval = productions.collect(
         Collectors.toUnmodifiableMap(DefinitionProductionImpl::getDefinition, Function.identity()));
 
     this.definitionProductions = retval;

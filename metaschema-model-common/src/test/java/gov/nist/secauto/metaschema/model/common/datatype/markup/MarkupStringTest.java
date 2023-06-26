@@ -86,20 +86,13 @@ class MarkupStringTest {
     String markdown = "Some \\**more* **text** and a param: {{ insert: param, insert }}.";
 
     MarkupLine ms = MarkupLine.fromMarkdown(markdown);
-    AstCollectingVisitor visitor = new AstCollectingVisitor();
     Document document = ms.getDocument();
 
     assertNotNull(document);
-    visitor.collect(document);
-    // System.out.println("Markup AST");
-    // System.out.println("==========");
-    // System.out.println(visitor.getAst());
-    // System.out.println("HTML Output");
-    // System.out.println("===========");
-    // System.out.println(ms.toHtml());
-    // System.out.println("Markdown Output");
-    // System.out.println("===============");
-    // System.out.println(ms.toMarkdown());
+
+    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(document));
+    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
+    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
     // Document[0, 49]
     List<Node> documentChildren = CollectionUtil.toList(document.getChildren());
@@ -159,8 +152,7 @@ class MarkupStringTest {
       }
       // InsertAnchorNode[0, 0] name:[39, 45, "insert"]
       {
-        @SuppressWarnings("unused")
-        InsertAnchorNode insert = (InsertAnchorNode) paragraphChildren.get(5);
+        @SuppressWarnings("unused") InsertAnchorNode insert = (InsertAnchorNode) paragraphChildren.get(5);
       }
       // Text[48, 49] chars:[48, 49, "."]
       {
@@ -179,14 +171,13 @@ class MarkupStringTest {
 
   @Test
   void markupMultilineFromMarkdownTest() throws XMLStreamException, IOException {
-    String markdown = "# Example\n\nSome \"\\**more*\" **text**\n\nA param: {{ insert: param, insert }}.";
-    String html = "<h1>Example</h1>\n"
+    final String markdown = "# Example\n\nSome \"\\**more*\" **text**\n\nA param: {{ insert: param, insert }}.";
+    final String html = "<h1>Example</h1>\n"
         + "<p>Some <q>*<em>more</em></q> <strong>text</strong></p>\n"
         + "<p>A param: <insert type=\"param\" id-ref=\"insert\"/>.</p>";
+
     MarkupMultiline ms = MarkupMultiline.fromMarkdown(markdown);
-    AstCollectingVisitor visitor = new AstCollectingVisitor();
-    visitor.collect(ms.getDocument());
-    LOGGER.atInfo().log("AST: {}", visitor.getAst());
+    LOGGER.atInfo().log("AST: {}",  AstCollectingVisitor.asString(ms.getDocument()));
     LOGGER.atInfo().log("HTML: {}", ms.toXHtml(""));
     LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
@@ -196,7 +187,7 @@ class MarkupStringTest {
 
   @Test
   void markupMultilineFromHtmlTest() throws XMLStreamException, IOException {
-    String html = "<h1>Example</h1>\n"
+    final String html = "<h1>Example</h1>\n"
         + "<p><a href=\"link\">text</a><q>quote1</q></p>\n"
         + "<table>\n"
         + "<thead>\n"
@@ -208,7 +199,7 @@ class MarkupStringTest {
         + "</tbody>\n"
         + "</table>\n"
         + "<p>Some <q><em>more</em></q> <strong>text</strong> <img src=\"src\" alt=\"alt\"/></p>";
-    String markdown = "# Example\n"
+    final String markdown = "# Example\n"
         + "\n"
         + "[text](link)\"quote1\"\n"
         + "\n"
@@ -219,10 +210,8 @@ class MarkupStringTest {
         + "\n"
         + "Some \"*more*\" **text** ![alt](src)";
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
-    AstCollectingVisitor visitor = new AstCollectingVisitor();
-    visitor.collect(ms.getDocument());
     LOGGER.atInfo().log("HTML Source: {}", html);
-    LOGGER.atInfo().log("AST: {}", visitor.getAst());
+    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
     LOGGER.atInfo().log("HTML: {}", ms.toXHtml(""));
     LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
     assertEquals(markdown, ms.toMarkdown());
@@ -236,13 +225,11 @@ class MarkupStringTest {
    */
   @Test
   void markupSpaceHandlingTest() throws XMLStreamException, IOException {
-    String html = "<p>a <q><em>b</em></q> <strong>c</strong></p>";
-    String markdown = "a <q>*b*</q> **c**";
+    final String html = "<p>a <q><em>b</em></q> <strong>c</strong></p>";
+    final String markdown = "a <q>*b*</q> **c**";
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
-    AstCollectingVisitor visitor = new AstCollectingVisitor();
-    visitor.collect(ms.getDocument());
     LOGGER.atInfo().log("HTML Source: {}", html);
-    LOGGER.atInfo().log("AST: {}", visitor.getAst());
+    LOGGER.atInfo().log("AST: {}",  AstCollectingVisitor.asString(ms.getDocument()));
     LOGGER.atInfo().log("HTML: {}", ms.toXHtml(""));
     LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
     assertNotEquals(markdown, ms.toMarkdown());
@@ -259,17 +246,10 @@ class MarkupStringTest {
         + "```";
 
     MarkupMultiline ms = MarkupMultiline.fromHtml(htmlPreOnly);
-    AstCollectingVisitor visitor = new AstCollectingVisitor();
-    visitor.collect(ms.getDocument());
-    // System.out.println("Markup AST");
-    // System.out.println("==========");
-    // System.out.println(visitor.getAst());
-    // System.out.println("HTML Output");
-    // System.out.println("===========");
-    // System.out.println(ms.toHtml());
-    // System.out.println("Markdown Output");
-    // System.out.println("===============");
-    // System.out.println(ms.toMarkdown());
+
+    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
+    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
     assertEquals(markdown, ms.toMarkdown());
     assertEquals(html, ms.toHtml());
@@ -284,17 +264,10 @@ class MarkupStringTest {
         + "    nextline\n";
 
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
-    AstCollectingVisitor visitor = new AstCollectingVisitor();
-    visitor.collect(ms.getDocument());
-    // System.out.println("Markup AST");
-    // System.out.println("==========");
-    // System.out.println(visitor.getAst());
-    // System.out.println("HTML Output");
-    // System.out.println("===========");
-    // System.out.println(ms.toHtml());
-    // System.out.println("Markdown Output");
-    // System.out.println("===============");
-    // System.out.println(ms.toMarkdown());
+
+    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
+    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
     assertEquals(markdown, ms.toMarkdown());
     assertEquals(html, ms.toHtml());
@@ -305,17 +278,10 @@ class MarkupStringTest {
     String html = "<p>Example<code>**some** *code*</code></p>";
     String markdown = "Example`**some** *code*`";
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
-    AstCollectingVisitor visitor = new AstCollectingVisitor();
-    visitor.collect(ms.getDocument());
-    // System.out.println("Markup AST");
-    // System.out.println("==========");
-    // System.out.println(visitor.getAst());
-    // System.out.println("HTML Output");
-    // System.out.println("===========");
-    // System.out.println(ms.toHtml());
-    // System.out.println("Markdown Output");
-    // System.out.println("===============");
-    // System.out.println(ms.toMarkdown());
+
+    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
+    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
     assertEquals(markdown, ms.toMarkdown());
     assertEquals(html, ms.toHtml());
@@ -326,13 +292,11 @@ class MarkupStringTest {
     String markdown = "hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).";
 
     MarkupLine ms = MarkupLine.fromMarkdown(markdown);
-    AstCollectingVisitor visitor = new AstCollectingVisitor();
     Document document = ms.getDocument();
 
     assertNotNull(document);
-    visitor.collect(document);
 
-    LOGGER.atInfo().log("AST: {}", visitor.getAst());
+    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
     LOGGER.atInfo().log("HTML: {}", ms.toHtml());
     LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
@@ -362,20 +326,13 @@ class MarkupStringTest {
 
     // test from Markdown source
     MarkupLine ms = MarkupLine.fromMarkdown(markdown);
-    AstCollectingVisitor visitor = new AstCollectingVisitor();
     Document document = ms.getDocument();
 
     assertNotNull(document);
-    visitor.collect(document);
-    // System.out.println("Markup AST");
-    // System.out.println("==========");
-    // System.out.println(visitor.getAst());
-    // System.out.println("HTML Output");
-    // System.out.println("===========");
-    // System.out.println(ms.toHtml());
-    // System.out.println("Markdown Output");
-    // System.out.println("===============");
-    // System.out.println(ms.toMarkdown());
+
+    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
+    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
     assertEquals(markdown, ms.toMarkdown());
 
@@ -400,17 +357,22 @@ class MarkupStringTest {
     document = ms.getDocument();
 
     assertNotNull(document);
-    visitor.collect(document);
-    // System.out.println("Markup AST");
-    // System.out.println("==========");
-    // System.out.println(visitor.getAst());
-    // System.out.println("HTML Output");
-    // System.out.println("===========");
-    // System.out.println(ms.toHtml());
-    // System.out.println("Markdown Output");
-    // System.out.println("===============");
-    // System.out.println(ms.toMarkdown());
+    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
+    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
     assertEquals(markdown, ms.toMarkdown());
     assertEquals(html, ms.toHtml().trim());
+  }
+  
+  @Test
+  void testHtml() {
+    String html = "<p>before &lt;thing[02] text&gt; after</p>";
+    MarkupMultiline ms = MarkupMultiline.fromHtml(html);
+
+
+    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
+    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
+
   }
 }

@@ -170,7 +170,7 @@ public class XmlSchemaGenerator
 
       // analyze all definitions
       Map<String, String> prefixToNamespaceMap = new HashMap<>(); // NOPMD concurrency not needed
-      List<IRootAssemblyDefinition> rootAssemblyDefinitions = analyzeDefinitions(
+      final List<IRootAssemblyDefinition> rootAssemblyDefinitions = analyzeDefinitions(
           state,
           (entry, definition) -> {
             assert entry != null;

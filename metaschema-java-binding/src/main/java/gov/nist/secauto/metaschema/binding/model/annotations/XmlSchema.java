@@ -41,7 +41,7 @@ public @interface XmlSchema {
   /**
    * Defines the XML namespace URI and prefix to use for this model. If a prefix is not provided, the
    * XML prefix will be auto-generated.
-   * 
+   *
    * @return an array of namespace definitions
    */
   XmlNs[] xmlns() default {};
@@ -50,7 +50,7 @@ public @interface XmlSchema {
    * Name of the XML namespace.
    * <p>
    * If the value is "##none", then there is no prefix defined.
-   * 
+   *
    * @return a namespace string in the form of a URI
    */
   String namespace() default Constants.NO_STRING_VALUE;
@@ -71,14 +71,14 @@ public @interface XmlSchema {
 
   /**
    * Get the default XML element form.
-   * 
+   *
    * @return the XML element form
    */
   XmlNsForm xmlElementFormDefault() default XmlNsForm.UNSET;
 
   /**
    * Get the default XML attribute form.
-   * 
+   *
    * @return the XML attribute form
    */
   XmlNsForm xmlAttributeFormDefault() default XmlNsForm.UNSET;

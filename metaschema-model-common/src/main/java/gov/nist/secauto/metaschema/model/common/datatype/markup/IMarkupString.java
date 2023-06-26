@@ -79,23 +79,7 @@ public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
   String toHtml();
 
   @NonNull
-  default String toXHtml(@NonNull String namespace) throws XMLStreamException, IOException {
-
-    XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
-    assert factory instanceof WstxOutputFactory;
-    factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
-    try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-      XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
-
-      writeXHtml(namespace, xmlStreamWriter);
-
-      xmlStreamWriter.flush();
-      xmlStreamWriter.close();
-      os.flush();
-      return os.toString(StandardCharsets.UTF_8);
-    }
-  }
-
+  String toXHtml(@NonNull String namespace) throws XMLStreamException, IOException;
   @NonNull
   String toMarkdown();
 
@@ -104,7 +88,7 @@ public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
 
   /**
    * Retrieve all nodes contained within this markup text as a stream.
-   * 
+   *
    * @return a depth first stream
    */
   @NonNull
@@ -118,7 +102,7 @@ public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
   /**
    * Retrieve all insert statements that are contained within this markup text that match the provided
    * filter.
-   * 
+   *
    * @param filter
    *          a filter used to identify matching insert statements
    * @return the matching insert statements
@@ -129,7 +113,7 @@ public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
 
   /**
    * Determine if the Markup consists of block elements.
-   * 
+   *
    * @return {@code true} if the markup consists of block elements, or {@code false} otherwise
    */
   boolean isBlock();

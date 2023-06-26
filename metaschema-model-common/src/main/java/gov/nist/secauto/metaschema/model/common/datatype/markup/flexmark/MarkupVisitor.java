@@ -63,14 +63,15 @@ import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorExtension.InsertAnchorNode;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * 
+ *
  * This implementation is stateless.
- * 
+ *
  * @param <T>
  *          the type of stream to write to
  * @param <E>
@@ -161,7 +162,9 @@ public class MarkupVisitor<T, E extends Throwable> implements IMarkupVisitor<T, 
       writer.writeInlineHtml((HtmlInline) node);
     } else if (node instanceof LinkRef || node instanceof Reference) {
       throw new UnsupportedOperationException(
-          "Link references are not supported by Metaschema. Perhaps you have an unescaped bracket?");
+          String.format(
+              "Link references are not supported by Metaschema. Perhaps you have an unescaped bracket in the following string? %s",
+              ObjectUtils.notNull(node.getParent()).getChars()));
     } else {
       retval = false;
     }

@@ -63,8 +63,8 @@ public class FlexmarkFactory {
 
   public FlexmarkFactory(@NonNull DataHolder config) {
     this.configuration = config;
-    this.markdownParser = Parser.builder(config)
-        .customDelimiterProcessor(new FixedEmphasisDelimiterProcessor(Parser.STRONG_WRAPS_EMPHASIS.get(config))).build();
+    this.markdownParser = Parser.builder(config).customDelimiterProcessor(
+        new FixedEmphasisDelimiterProcessor(Parser.STRONG_WRAPS_EMPHASIS.get(config))).build();
     this.htmlRenderer = HtmlRenderer.builder(config).build();
     this.formatter = Formatter.builder(config).build();
     this.htmlConverter = FlexmarkHtmlConverter.builder(config).build();

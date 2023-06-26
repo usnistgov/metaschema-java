@@ -34,7 +34,7 @@ abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> implements 
 
   /**
    * Construct a new bound instance based on a Java property.
-   * 
+   *
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */

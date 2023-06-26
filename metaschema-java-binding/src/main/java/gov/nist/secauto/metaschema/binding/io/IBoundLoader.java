@@ -51,7 +51,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<DeserializationFeature> {
   /**
    * Determine the format of the provided resource.
-   * 
+   *
    * @param url
    *          the resource
    * @return the format of the provided resource
@@ -67,7 +67,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
 
   /**
    * Determine the format of the provided resource.
-   * 
+   *
    * @param path
    *          the resource
    * @return the format of the provided resource
@@ -81,7 +81,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
 
   /**
    * Determine the format of the provided resource.
-   * 
+   *
    * @param file
    *          the resource
    * @return the format of the provided resource
@@ -101,7 +101,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * stream that can be reset.
    * <p>
    * This method will not close the provided {@link InputStream}, since it does not own the stream.
-   * 
+   *
    * @param is
    *          an input stream for the resource
    * @return the format of the provided resource
@@ -122,7 +122,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * <p>
    * This method will not close any {@link InputStream} provided by the {@link InputSource}, since it
    * does not own the stream.
-   * 
+   *
    * @param source
    *          information about how to access the resource
    * @return the format of the provided resource
@@ -136,7 +136,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * Load data from the provided resource into a bound object.
    * <p>
    * This method will auto-detect the format of the provided resource.
-   * 
+   *
    * @param <CLASS>
    *          the type of the bound object to return
    * @param url
@@ -158,7 +158,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * Load data from the provided resource into a bound object.
    * <p>
    * This method will auto-detect the format of the provided resource.
-   * 
+   *
    * @param <CLASS>
    *          the type of the bound object to return
    * @param path
@@ -178,7 +178,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * Load data from the provided resource into a bound object.
    * <p>
    * This method will auto-detect the format of the provided resource.
-   * 
+   *
    * @param <CLASS>
    *          the type of the bound object to return
    * @param file
@@ -200,7 +200,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * This method should auto-detect the format of the provided resource.
    * <p>
    * This method will not close the provided {@link InputStream}, since it does not own the stream.
-   * 
+   *
    * @param <CLASS>
    *          the type of the bound object to return
    * @param is
@@ -225,7 +225,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * <p>
    * This method will not close any {@link InputStream} provided by the {@link InputSource}, since it
    * does not own the stream.
-   * 
+   *
    * @param <CLASS>
    *          the type of the bound object to return
    * @param source
@@ -244,7 +244,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   /**
    * Load data from the specified resource into a bound object with the type of the specified Java
    * class.
-   * 
+   *
    * @param <CLASS>
    *          the Java type to load data into
    * @param clazz
@@ -265,7 +265,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   /**
    * Load data from the specified resource into a bound object with the type of the specified Java
    * class.
-   * 
+   *
    * @param <CLASS>
    *          the Java type to load data into
    * @param clazz
@@ -284,7 +284,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   /**
    * Load data from the specified resource into a bound object with the type of the specified Java
    * class.
-   * 
+   *
    * @param <CLASS>
    *          the Java type to load data into
    * @param clazz
@@ -313,7 +313,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * possibility, use and implementation of {@link IDeserializer#deserialize(InputStream, URI)}
    * instead, such as what is provided by
    * {@link DefaultBindingContext#newDeserializer(Format, Class)}.
-   * 
+   *
    * @param <CLASS>
    *          the Java type to load data into
    * @param clazz

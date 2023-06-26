@@ -57,7 +57,7 @@ public interface IAllowedValuesConstraint extends IConstraint {
 
   /**
    * Get the collection allowed values associated with this constraint.
-   * 
+   *
    * @return a mapping of value to the associated {@link IAllowedValue} item
    */
   @NonNull
@@ -65,7 +65,7 @@ public interface IAllowedValuesConstraint extends IConstraint {
 
   /**
    * Get a specific allowed value by name, if it is defined for this constraint.
-   * 
+   *
    * @param name
    *          the value name
    * @return the allowed value or {@code null} if the value is not defined
@@ -79,7 +79,7 @@ public interface IAllowedValuesConstraint extends IConstraint {
    * Determines if this allowed value constraint is open-ended ({@code true}) or closed. If
    * "open-ended", the constraint allows the target's value to by any additional unspecified value. If
    * "closed", the constraint requries the target's value to be one of the specified values.
-   * 
+   *
    * @return {@code true} if the constraint is "open-ended", or {@code false} otherwise
    */
   boolean isAllowedOther();
@@ -87,7 +87,7 @@ public interface IAllowedValuesConstraint extends IConstraint {
   /**
    * Determines the degree to which this constraint can be extended by other constraints applied to
    * the same value.
-   * 
+   *
    * @return the enumeration value
    */
   @NonNull

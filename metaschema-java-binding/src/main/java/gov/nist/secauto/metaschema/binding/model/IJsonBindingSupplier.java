@@ -38,7 +38,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface IJsonBindingSupplier {
   /**
    * Parse and return the next set of items from the JSON.
-   * 
+   *
    * @param parentInstance
    *          an optional parent object to use for serialization callbacks
    * @param requiresJsonKey

@@ -40,7 +40,7 @@ public interface ITypeInfo {
   /**
    * Get the name to use for the property. If the property is a collection type, then this will be the
    * group-as name, else this will be the use name or the name if not use name is set.
-   * 
+   *
    * @return the name
    */
   @NonNull
@@ -50,7 +50,7 @@ public interface ITypeInfo {
    * The name to use for Java constructs that refer to the item. This is used for when a field is
    * collection-based and there is a need to refer to a single item, such as in an add/remove method
    * name.
-   * 
+   *
    * @return the item base name
    */
   @NonNull
@@ -60,7 +60,7 @@ public interface ITypeInfo {
 
   /**
    * Get the Java property name for the property.
-   * 
+   *
    * @return the Java property name
    */
   @NonNull
@@ -68,7 +68,7 @@ public interface ITypeInfo {
 
   /**
    * Gets the name of the Java field for this property.
-   * 
+   *
    * @return the Java field name
    */
   @NonNull
@@ -76,7 +76,7 @@ public interface ITypeInfo {
 
   /**
    * Gets the type of the associated Java field for the property.
-   * 
+   *
    * @return the Java type for the field
    */
   @NonNull
@@ -84,7 +84,7 @@ public interface ITypeInfo {
 
   /**
    * Gets the type of the property's item.
-   * 
+   *
    * @return the Java type for the item
    */
   @NonNull
@@ -94,7 +94,7 @@ public interface ITypeInfo {
 
   /**
    * Build the Java class data for the property.
-   * 
+   *
    * @param builder
    *          the class builder
    * @param typeResolver

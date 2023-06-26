@@ -62,7 +62,7 @@ public @interface BoundField {
    * Get the documentary formal name of the field.
    * <p>
    * If the value is "##none", then the description will be considered {@code null}.
-   * 
+   *
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
   @NonNull
@@ -72,7 +72,7 @@ public @interface BoundField {
    * Get the documentary description of the field.
    * <p>
    * If the value is "##none", then the description will be considered {@code null}.
-   * 
+   *
    * @return a markdown string or {@code "##none"} if no description is provided
    */
   @NonNull
@@ -83,7 +83,7 @@ public @interface BoundField {
    * <p>
    * If the value is "##none", then the use name will be provided by the definition or by the field
    * name if the item value class is missing the {@link MetaschemaField} annotation.
-   * 
+   *
    * @return the name
    */
   @NonNull
@@ -94,7 +94,7 @@ public @interface BoundField {
    * <p>
    * If the value is "##default", then element name is derived from the namespace provided in the
    * package-info.
-   * 
+   *
    * @return the namespace
    */
   String namespace() default Constants.DEFAULT_STRING_VALUE;
@@ -108,21 +108,21 @@ public @interface BoundField {
 
   /**
    * A non-negative number that indicates the minimum occurrence of the model instance.
-   * 
+   *
    * @return a non-negative number
    */
   int minOccurs() default MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
 
   /**
    * A number that indicates the maximum occurrence of the model instance.
-   * 
+   *
    * @return a positive number or {@code -1} to indicate "unbounded"
    */
   int maxOccurs() default MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
 
   /**
    * Get any remarks for this field.
-   * 
+   *
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
   @NonNull

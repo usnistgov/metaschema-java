@@ -50,7 +50,7 @@ public abstract class AbstractMarkupAdapter<TYPE extends IMarkupString<TYPE>>
 
   /**
    * Construct a new adapter.
-   * 
+   *
    * @param clazz
    *          the markup type class
    */
@@ -67,10 +67,14 @@ public abstract class AbstractMarkupAdapter<TYPE extends IMarkupString<TYPE>>
   public boolean isXmlMixed() {
     return true;
   }
-  
+
   // TODO: verify that read/write methods cannot be generalized in the base class
   @Override
-  public void writeXmlValue(Object value, StartElement parent, XMLEventFactory2 eventFactory, XMLEventWriter eventWriter)
+  public void writeXmlValue(
+      Object value,
+      StartElement parent,
+      XMLEventFactory2 eventFactory,
+      XMLEventWriter eventWriter)
       throws XMLStreamException {
 
     IMarkupString<?> markupString = (IMarkupString<?>) value;

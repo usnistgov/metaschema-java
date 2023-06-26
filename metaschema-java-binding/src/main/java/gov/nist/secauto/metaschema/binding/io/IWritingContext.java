@@ -31,7 +31,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IWritingContext<WRITER> {
   /**
    * Get the writer associated with the writing context.
-   * 
+   *
    * @return the writer
    */
   @NonNull

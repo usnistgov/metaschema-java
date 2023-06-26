@@ -36,7 +36,7 @@ public class MetaschemaException
 
   /**
    * Create a new Metaschema exception with a provided message.
-   * 
+   *
    * @param message
    *          text describing the cause of the exception
    */
@@ -46,7 +46,7 @@ public class MetaschemaException
 
   /**
    * Create a new Metaschema exception based on the provided cause.
-   * 
+   *
    * @param cause
    *          the exception that caused this exception
    */
@@ -56,7 +56,7 @@ public class MetaschemaException
 
   /**
    * Create a new Metaschema exception with a provided message based on the provided cause.
-   * 
+   *
    * @param message
    *          text describing the cause of the exception
    * @param cause
@@ -68,8 +68,8 @@ public class MetaschemaException
 
   /**
    * Create a new Metaschema exception with a provided message based on the provided cause.
-   * 
-   * 
+   *
+   *
    * @param message
    *          text describing the cause of the exception
    * @param cause

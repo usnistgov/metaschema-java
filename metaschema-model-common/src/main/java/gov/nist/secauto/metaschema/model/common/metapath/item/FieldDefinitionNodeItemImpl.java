@@ -53,7 +53,7 @@ class FieldDefinitionNodeItemImpl
   /**
    * Construct a new {@link INodeItem} instance, that is orphaned from any parent nodes, based on the
    * provided field {@code definition}.
-   * 
+   *
    * @param definition
    *          the field
    * @param baseUri

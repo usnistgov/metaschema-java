@@ -119,7 +119,7 @@ class PackageProductionImpl implements IPackageProduction {
 
   /**
    * Get the generated package-info class associated with this package.
-   * 
+   *
    * @return the package-info class
    */
   @Override

@@ -87,7 +87,7 @@ public abstract class AbstractTestSuite {
   private static final MetaschemaLoader LOADER = new MetaschemaLoader();
 
   private static final boolean DELETE_RESULTS_ON_EXIT = false;
-  
+
   @NonNull
   protected abstract Format getRequiredContentFormat();
 
@@ -346,8 +346,8 @@ public abstract class AbstractTestSuite {
       throw new JUnitException("Unable to create schema temp file", ex);
     }
 
-    @SuppressWarnings("rawtypes")
-    ISerializer serializer = context.newSerializer(getRequiredContentFormat(), object.getClass());
+    @SuppressWarnings("rawtypes") ISerializer serializer
+        = context.newSerializer(getRequiredContentFormat(), object.getClass());
     serializer.serialize(object, convertedContetPath, getWriteOpenOptions());
 
     return convertedContetPath;

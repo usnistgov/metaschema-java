@@ -84,7 +84,7 @@ class AssemblyDefinitionTypeInfoImpl
   /**
    * Creates a new {@link IModelInstanceTypeInfo} for the provided {@link INamedModelInstance} and
    * registers it with this class generator.
-   * 
+   *
    * @param instance
    *          the model instance to generate the property for
    * @return the new property generator

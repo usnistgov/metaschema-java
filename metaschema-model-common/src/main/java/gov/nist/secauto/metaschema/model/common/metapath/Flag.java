@@ -38,7 +38,7 @@ class Flag // NOPMD - intentional name
   /**
    * Construct a new expression that finds any child {@link IFlagNodeItem} that matches the provided
    * {@code test}.
-   * 
+   *
    * @param test
    *          the test to use to match
    */
@@ -63,7 +63,7 @@ class Flag // NOPMD - intentional name
 
   /**
    * Get a stream of matching child node items for the provided {@code context}.
-   * 
+   *
    * @param context
    *          the context to match child items of
    * @return the stream of matching node items

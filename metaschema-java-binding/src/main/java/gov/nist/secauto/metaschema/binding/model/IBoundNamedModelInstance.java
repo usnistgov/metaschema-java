@@ -156,7 +156,7 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
 
   /**
    * Get the item values associated with the provided value.
-   * 
+   *
    * @param value
    *          the value which may be a singleton or a collection
    * @return the ordered collection of values
@@ -167,7 +167,7 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
 
   /**
    * Reads an individual XML item from the XML stream.
-   * 
+   *
    * @param parentInstance
    *          the object the data is parsed into
    * @param start
@@ -187,7 +187,7 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
    * Reads a set of JSON items from the JSON stream.
    * <p>
    * An item is a complete value, which can be a {@link JsonToken#START_OBJECT}, or a value token.
-   * 
+   *
    * @param parentInstance
    *          the object the data is parsed into
    * @param requiresJsonKey
