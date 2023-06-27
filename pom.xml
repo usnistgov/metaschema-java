@@ -111,7 +111,7 @@
 		<project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<mojo.maven.version>3.9.2</mojo.maven.version>
+		<mojo.maven.version>3.9.3</mojo.maven.version>
 
 		<dependency.antlr4.version>4.10.1</dependency.antlr4.version>
 		<dependency.auto-service.version>1.0.1</dependency.auto-service.version>
