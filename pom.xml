@@ -117,7 +117,7 @@
 		<dependency.everit-json.version>1.14.2</dependency.everit-json.version>
 		<dependency.flexmark.version>0.64.8</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.32</dependency.freemarker.version>
-		<dependency.inject-resources-junit-jupiter.version>0.3.2</dependency.inject-resources-junit-jupiter.version>
+		<dependency.inject-resources-junit-jupiter.version>0.3.3</dependency.inject-resources-junit-jupiter.version>
 		<dependency.jackson.version>2.13.3</dependency.jackson.version>
 		<dependency.jackson-databind.version>2.13.4</dependency.jackson-databind.version>
 		<dependency.jaxb.version>4.0.0</dependency.jaxb.version>
