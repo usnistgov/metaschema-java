@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.binding.io.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
@@ -59,6 +60,7 @@ public class DefaultJsonSerializer<CLASS>
       if (jsonFactory == null) {
         jsonFactory = getJsonFactoryInstance();
       }
+      assert jsonFactory != null;
       return jsonFactory;
     }
   }
@@ -72,6 +74,7 @@ public class DefaultJsonSerializer<CLASS>
   protected JsonGenerator newJsonGenerator(Writer writer) throws IOException {
     JsonFactory factory = getJsonFactory();
     JsonGenerator retval = factory.createGenerator(writer);
+    // avoid automatically closing streams not owned by the generator
     retval.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
     retval.setPrettyPrinter(new DefaultPrettyPrinter());
     return retval;

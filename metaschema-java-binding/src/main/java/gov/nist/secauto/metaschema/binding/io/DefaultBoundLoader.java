@@ -135,11 +135,7 @@ public class DefaultBoundLoader implements IBoundLoader {
     return configuration;
   }
 
-  /**
-   * Get the configured Metaschema binding context to use to load Java types.
-   *
-   * @return the binding context
-   */
+  @Override
   public IBindingContext getBindingContext() {
     return bindingContext;
   }

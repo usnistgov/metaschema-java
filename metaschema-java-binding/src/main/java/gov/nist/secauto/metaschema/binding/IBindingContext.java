@@ -27,23 +27,43 @@
 package gov.nist.secauto.metaschema.binding;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.DeserializationFeature;
 import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.io.IBoundLoader;
 import gov.nist.secauto.metaschema.binding.io.IDeserializer;
 import gov.nist.secauto.metaschema.binding.io.ISerializer;
+import gov.nist.secauto.metaschema.binding.io.yaml.YamlOperations;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
+import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
+import gov.nist.secauto.metaschema.model.common.constraint.FindingCollectingConstraintValidationHandler;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidationHandler;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidator;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.model.common.validation.AggregateValidationResult;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
+import gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator;
+import gov.nist.secauto.metaschema.model.common.validation.XmlSchemaContentValidator;
 
+import org.json.JSONObject;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URI;
+import java.nio.file.Path;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -227,6 +247,21 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   INodeItem toNodeItem(@NonNull Object boundObject, @NonNull URI baseUri, boolean rootNode);
 
   /**
+   * Get a new single use constraint validator.
+   * 
+   * @return the validator
+   */
+  default IConstraintValidator newValidator(@NonNull IConstraintValidationHandler handler) {
+    IBoundLoader loader = newBoundLoader();
+    loader.disableFeature(DeserializationFeature.DESERIALIZE_VALIDATE_CONSTRAINTS);
+
+    DynamicContext context = new StaticContext().newDynamicContext();
+    context.setDocumentLoader(loader);
+
+    return new DefaultConstraintValidator(context, handler);
+  }
+
+  /**
    * Perform constraint validation on the provided bound object represented as an {@link INodeItem}.
    * The bound object can be turned into a {@link INodeItem} using {@link #toNodeItem(Object, URI)}.
    *
@@ -236,6 +271,74 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    * @throws IllegalArgumentException
    *           if the provided class is not bound to a Metaschema assembly or field
    */
-  IValidationResult validate(@NonNull INodeItem nodeItem);
+  default IValidationResult validate(@NonNull INodeItem nodeItem) {
+    FindingCollectingConstraintValidationHandler handler = new FindingCollectingConstraintValidationHandler();
+    IConstraintValidator validator = newValidator(handler);
+    validator.validate(nodeItem);
+    validator.finalizeValidation();
+    return handler;
+  }
 
+  default IValidationResult validateWithConstraints(@NonNull Path target) throws IOException {
+    IBoundLoader loader = newBoundLoader();
+    loader.disableFeature(DeserializationFeature.DESERIALIZE_VALIDATE_CONSTRAINTS);
+
+    DynamicContext dynamicContext = new StaticContext().newDynamicContext();
+    dynamicContext.setDocumentLoader(loader);
+    IDocumentNodeItem nodeItem = loader.loadAsNodeItem(target);
+
+    return validate(nodeItem);
+  }
+
+  /**
+   * Perform schema and constraint validation on the target. The constraint validation will only be
+   * performed if the schema validation is passes.
+   * 
+   * @param target
+   *          the target to validate
+   * @param asFormat
+   *          the schema format to use to validate the target
+   * @param schemaProvider
+   *          provides callbacks to get the appropriate schemas
+   * @return the validation result
+   * @throws IOException
+   * @throws SAXException
+   */
+  default IValidationResult validate(
+      @NonNull Path target,
+      @NonNull Format asFormat,
+      @NonNull IValidationSchemaProvider schemaProvider) throws IOException, SAXException {
+    IValidationResult retval;
+    switch (asFormat) {
+    case JSON:
+      retval = new JsonSchemaContentValidator(schemaProvider.getJsonSchema()).validate(target);
+      break;
+    case XML:
+      List<Source> schemaSources = schemaProvider.getXmlSchemas();
+      retval = new XmlSchemaContentValidator(schemaSources).validate(target);
+      break;
+    case YAML:
+      JSONObject json = YamlOperations.yamlToJson(YamlOperations.parseYaml(target));
+      assert json != null;
+      retval = new JsonSchemaContentValidator(schemaProvider.getJsonSchema())
+          .validate(json, ObjectUtils.notNull(target.toUri()));
+      break;
+    default:
+      throw new UnsupportedOperationException("Unsupported format: " + asFormat.name());
+    }
+
+    if (retval.isPassing()) {
+      IValidationResult constraintValidationResult = validateWithConstraints(target);
+      retval = AggregateValidationResult.aggregate(retval, constraintValidationResult);
+    }
+    return retval;
+  }
+
+  public interface IValidationSchemaProvider {
+    @NonNull
+    JSONObject getJsonSchema();
+
+    @NonNull
+    List<Source> getXmlSchemas() throws IOException;
+  }
 }

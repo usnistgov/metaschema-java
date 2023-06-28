@@ -245,6 +245,35 @@
 					</usedDependencies>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>io.github.git-commit-id</groupId>
+				<artifactId>git-commit-id-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>metaschema-java-git-info</id>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+						<phase>initialize</phase>
+						<configuration>
+							<prefix>git</prefix>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>templating-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>filter-src</id>
+						<goals>
+							<goal>filter-sources</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 			<!-- <plugin> <groupId>com.khubla.antlr</groupId>
 			<artifactId>antlr4test-maven-plugin</artifactId> <configuration>
 			<verbose>false</verbose> 

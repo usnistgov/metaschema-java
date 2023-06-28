@@ -28,8 +28,17 @@ package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -51,4 +60,58 @@ public interface ISchemaGenerator {
       @NonNull IMetaschema metaschema,
       @NonNull Writer writer,
       @NonNull IConfiguration<SchemaGenerationFeature> configuration);
+
+  static void generateSchema(
+      @NonNull IMetaschema metaschema,
+      @NonNull Path destination,
+      @NonNull SchemaFormat asFormat,
+      @NonNull IConfiguration<SchemaGenerationFeature> configuration)
+      throws IOException {
+    ISchemaGenerator schemaGenerator = asFormat.getSchemaGenerator();
+
+    try (Writer writer = Files.newBufferedWriter(
+        destination,
+        StandardCharsets.UTF_8,
+        StandardOpenOption.CREATE,
+        StandardOpenOption.WRITE,
+        StandardOpenOption.TRUNCATE_EXISTING)) {
+      schemaGenerator.generateFromMetaschema(metaschema, writer, configuration);
+      writer.flush();
+    }
+  }
+
+  static void generateSchema(
+      @NonNull IMetaschema metaschema,
+      @NonNull OutputStream os,
+      @NonNull SchemaFormat asFormat,
+      @NonNull IConfiguration<SchemaGenerationFeature> configuration)
+      throws IOException {
+    ISchemaGenerator schemaGenerator = asFormat.getSchemaGenerator();
+
+    Writer writer = new OutputStreamWriter(os, StandardCharsets.UTF_8);
+    schemaGenerator.generateFromMetaschema(metaschema, writer, configuration);
+    writer.flush();
+    // we don't want to close os, since we do not own it
+  }
+
+  public enum SchemaFormat {
+    /**
+     * a JSON Schema.
+     */
+    JSON(new JsonSchemaGenerator()),
+    /**
+     * an XML Schema.
+     */
+    XML(new XmlSchemaGenerator());
+
+    private final ISchemaGenerator schemaGenerator;
+
+    SchemaFormat(@NonNull ISchemaGenerator schemaGenerator) {
+      this.schemaGenerator = schemaGenerator;
+    }
+
+    public ISchemaGenerator getSchemaGenerator() {
+      return schemaGenerator;
+    }
+  }
 }

@@ -32,6 +32,7 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.xml.sax.InputSource;
@@ -52,8 +53,13 @@ public class JsonSchemaContentValidator implements IContentValidator {
   @NonNull
   private final Schema schema;
 
+  @NonNull
+  public static JSONObject toJsonObject(@NonNull InputStream schemaInputStream) {
+    return new JSONObject(new JSONTokener(schemaInputStream));
+  }
+
   public JsonSchemaContentValidator(@NonNull InputStream schemaInputStream) {
-    this(new JSONObject(new JSONTokener(Objects.requireNonNull(schemaInputStream, "schemaInputStream"))));
+    this(toJsonObject(Objects.requireNonNull(schemaInputStream, "schemaInputStream")));
   }
 
   @SuppressWarnings("null")
@@ -75,18 +81,22 @@ public class JsonSchemaContentValidator implements IContentValidator {
     URI uri = ObjectUtils.notNull(URI.create(source.getSystemId()));
 
     JSONObject json;
-    if (source.getCharacterStream() != null) {
-      // attempt to use a provided character stream
-      json = new JSONObject(new JSONTokener(source.getCharacterStream()));
-    } else if (source.getByteStream() != null) {
-      // attempt to use a provided byte stream stream
-      json = new JSONObject(new JSONTokener(source.getByteStream()));
-    } else {
-      // fall back to a URL-based connection
-      URL url = uri.toURL();
-      try (InputStream is = url.openStream()) {
-        json = new JSONObject(new JSONTokener(is));
+    try {
+      if (source.getCharacterStream() != null) {
+        // attempt to use a provided character stream
+        json = new JSONObject(new JSONTokener(source.getCharacterStream()));
+      } else if (source.getByteStream() != null) {
+        // attempt to use a provided byte stream stream
+        json = new JSONObject(new JSONTokener(source.getByteStream()));
+      } else {
+        // fall back to a URL-based connection
+        URL url = uri.toURL();
+        try (InputStream is = url.openStream()) {
+          json = new JSONObject(new JSONTokener(is));
+        }
       }
+    } catch (JSONException ex) {
+      throw new IOException(String.format("Unable to parse JSON from '%s'", uri), ex);
     }
     return validate(json, uri);
   }

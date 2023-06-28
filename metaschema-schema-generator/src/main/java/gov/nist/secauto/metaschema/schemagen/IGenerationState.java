@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.schemagen;
 import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 
+import java.io.IOException;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IGenerationState<WRITER> {
@@ -39,6 +41,8 @@ public interface IGenerationState<WRITER> {
   WRITER getWriter();
 
   boolean isInline(@NonNull IDefinition definition);
+  
+  void flushWriter() throws IOException;
   //
   // @NonNull
   // String getTypeNameForDefinition(@NonNull IDefinition definition);

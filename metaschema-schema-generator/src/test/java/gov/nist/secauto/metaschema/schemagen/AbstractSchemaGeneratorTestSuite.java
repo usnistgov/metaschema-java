@@ -116,7 +116,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
     JSON_SCHEMA_PROVIDER = jsonProvider;
 
     try (InputStream is = MetaschemaLoader.class.getResourceAsStream("/schema/json/json-schema.json")) {
-      assert is != null;
+      assert is != null : "unable to get JSON schema resource";
       JsonSchemaContentValidator schemaValidator = new JsonSchemaContentValidator(is);
       JSON_SCHEMA_VALIDATOR = schemaValidator;
     } catch (IOException ex) {

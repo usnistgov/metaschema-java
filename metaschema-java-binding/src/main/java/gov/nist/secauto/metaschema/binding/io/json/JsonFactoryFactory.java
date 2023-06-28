@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.binding.io.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser.Feature;
 
 public final class JsonFactoryFactory {
   private static final JsonFactory SINGLETON = newJsonFactoryInstance();
@@ -36,7 +37,10 @@ public final class JsonFactoryFactory {
   }
 
   public static JsonFactory newJsonFactoryInstance() {
-    return new JsonFactory();
+    JsonFactory retval = new JsonFactory();
+    // avoid automatically closing streams not owned by the reader
+    retval.disable(Feature.AUTO_CLOSE_SOURCE);
+    return retval;
   }
 
   public static JsonFactory instance() {

@@ -254,14 +254,4 @@ public class DefaultBindingContext implements IBindingContext {
     return DefaultNodeItemFactory.instance().newNodeItem(classBinding, boundObject, baseUri, rootNode);
   }
 
-  @Override
-  public IValidationResult validate(@NonNull INodeItem nodeItem) {
-    DynamicContext context = new StaticContext().newDynamicContext();
-    context.setDocumentLoader(newBoundLoader());
-    FindingCollectingConstraintValidationHandler handler = new FindingCollectingConstraintValidationHandler();
-    DefaultConstraintValidator validator = new DefaultConstraintValidator(context, handler);
-    validator.validate(nodeItem);
-    return handler;
-  }
-
 }

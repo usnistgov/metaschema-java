@@ -26,6 +26,14 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Selections of serialization formats.
  */
@@ -33,13 +41,38 @@ public enum Format {
   /**
    * The <a href="https://www.w3.org/XML/">Extensible Markup Language</a> format.
    */
-  XML,
+  XML(".xml"),
   /**
    * The <a href="https://www.json.org/">JavaScript Object Notation</a> format.
    */
-  JSON,
+  JSON(".json"),
   /**
    * The <a href="https://yaml.org/">YAML Ain't Markup Language</a> format.
    */
-  YAML;
+  YAML(".yml");
+
+  private static final List<String> NAMES;
+
+  @NonNull
+  private final String defaultExtension;
+
+  static {
+    NAMES = Arrays.stream(values())
+        .map(format -> format.name().toLowerCase(Locale.ROOT))
+        .collect(Collectors.toUnmodifiableList());
+  }
+
+  @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Exposes names provided by the enum")
+  public static List<String> names() {
+    return NAMES;
+  }
+
+  Format(@NonNull String defaultExtension) {
+    this.defaultExtension = defaultExtension;
+  }
+
+  @NonNull
+  public String getDefaultExtension() {
+    return defaultExtension;
+  }
 }

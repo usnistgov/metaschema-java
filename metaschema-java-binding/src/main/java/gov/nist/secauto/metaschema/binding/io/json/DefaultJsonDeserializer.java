@@ -79,6 +79,7 @@ public class DefaultJsonDeserializer<CLASS>
   @NonNull
   protected JsonParser newJsonParser(@NonNull Reader reader) throws IOException {
     JsonParser retval = getJsonFactory().createParser(reader);
+    // avoid automatically closing streams not owned by the parser
     retval.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
     return retval;
 

@@ -180,4 +180,9 @@ public class JsonGenerationState
     writer.writeFieldName(fieldName);
     writer.writeTree(obj);
   }
+
+  @Override
+  public void flushWriter() throws IOException {
+    getWriter().flush();
+  }
 }
