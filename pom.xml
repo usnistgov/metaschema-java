@@ -136,11 +136,7 @@
 		<dependency.junit5-platform-launcher.version>1.9.0</dependency.junit5-platform-launcher.version>
 		<dependency.log4j2.version>2.20.0</dependency.log4j2.version>
 		<dependency.moxy.version>3.0.3</dependency.moxy.version>
-<<<<<<< HEAD
 		<dependency.plexus-utils.version>4.0.0</dependency.plexus-utils.version>
-=======
-		<dependency.plexus-utils.version>3.5.0</dependency.plexus-utils.version>
->>>>>>> f0168e65 (Updating to latest metaschema developmental commit.)
 		<dependency.plexus-build-api.version>0.0.7</dependency.plexus-build-api.version>
 		<dependency.saxon.version>12.2</dependency.saxon.version>
 		<dependency.spotbugs-annotations.version>4.7.2</dependency.spotbugs-annotations.version>
