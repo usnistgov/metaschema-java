@@ -30,12 +30,13 @@ import gov.nist.secauto.metaschema.model.common.util.IVersionInfo;
 
 public class MetaschemaVersion implements IVersionInfo {
 
-  public static final String NAME = "Metaschema";
+  public static final String NAME = "metaschema";
   public static final String BUILD_VERSION = "${project.version}";
   public static final String BUILD_TIMESTAMP = "${timestamp}";
   public static final String COMMIT = "@metaschema-git.commit.id.abbrev@";
   public static final String BRANCH = "@metaschema-git.branch@";
   public static final String CLOSEST_TAG = "@metaschema-git.closest.tag.name@";
+  public static final String ORIGIN = "@metaschema-git.remote.origin.url@";
 
   @Override
   public String getName() {
@@ -50,6 +51,11 @@ public class MetaschemaVersion implements IVersionInfo {
   @Override
   public String getBuildTimestamp() {
     return BUILD_TIMESTAMP;
+  }
+
+  @Override
+  public String getGitOriginUrl() {
+    return ORIGIN;
   }
 
   @Override

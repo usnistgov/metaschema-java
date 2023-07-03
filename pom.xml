@@ -842,7 +842,6 @@
 								<configuration>
 									<excludePackageNames>*.xmlbeans:*.xmlbeans.*</excludePackageNames>
 									<failOnWarnings>false</failOnWarnings>
-									<failOnErrors>false</failOnErrors>
 								</configuration>
 								<reports>
 									<report>aggregate</report>

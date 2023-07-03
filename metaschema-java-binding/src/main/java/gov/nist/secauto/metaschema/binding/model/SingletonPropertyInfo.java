@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -54,6 +55,11 @@ class SingletonPropertyInfo
   @Override
   public List<?> getItemsFromValue(Object value) {
     return value == null ? List.of() : List.of(value);
+  }
+
+  @Override
+  public int getItemCount(Object value) {
+    return value == null ? 0 : 1;
   }
 
   @Override

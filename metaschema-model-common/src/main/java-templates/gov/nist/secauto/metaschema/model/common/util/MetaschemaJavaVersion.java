@@ -33,6 +33,7 @@ public class MetaschemaJavaVersion implements IVersionInfo {
   public static final String COMMIT = "@git.commit.id.abbrev@";
   public static final String BRANCH = "@git.branch@";
   public static final String CLOSEST_TAG = "@git.closest.tag.name@";
+  public static final String ORIGIN = "@git.remote.origin.url@";
 
   @Override
   public String getName() {
@@ -47,6 +48,11 @@ public class MetaschemaJavaVersion implements IVersionInfo {
   @Override
   public String getBuildTimestamp() {
     return BUILD_TIMESTAMP;
+  }
+
+  @Override
+  public String getGitOriginUrl() {
+    return ORIGIN;
   }
 
   @Override

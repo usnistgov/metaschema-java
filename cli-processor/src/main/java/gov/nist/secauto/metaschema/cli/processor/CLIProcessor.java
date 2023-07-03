@@ -28,8 +28,6 @@ package gov.nist.secauto.metaschema.cli.processor;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
-import com.google.common.base.Functions;
-
 import gov.nist.secauto.metaschema.cli.processor.command.Command;
 import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;
 import gov.nist.secauto.metaschema.model.common.util.IVersionInfo;
@@ -60,6 +58,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -217,14 +216,17 @@ public class CLIProcessor {
     @SuppressWarnings("resource") PrintStream out = AnsiConsole.out(); // NOPMD - not owner
     getVersionInfos().stream().forEach((info) -> {
       out.println(ansi()
-          .bold().a(getExec()).boldOff()
-          .a(info.getName())
-          .a(" version ")
+          .bold().a(info.getName()).boldOff()
+          .a(" ")
           .bold().a(info.getVersion()).boldOff()
-          .a(" built on ")
+          .a(" built at ")
           .bold().a(info.getBuildTimestamp()).boldOff()
-          .a(" on commit ")
-          .bold().a(info.getGitCommit())
+          .a(" from branch ")
+          .bold().a(info.getGitBranch()).boldOff()
+          .a(" (")
+          .bold().a(info.getGitCommit()).boldOff()
+          .a(") at ")
+          .bold().a(info.getGitOriginUrl()).boldOff()
           .reset());
     });
     out.flush();
@@ -246,7 +248,7 @@ public class CLIProcessor {
 
     public CallingContext(@NonNull List<String> args) {
       Map<String, Command> topLevelCommandMap = getTopLevelCommands().stream()
-          .collect(Collectors.toUnmodifiableMap(Command::getName, Functions.identity()));
+          .collect(Collectors.toUnmodifiableMap(Command::getName, Function.identity()));
 
       List<Option> options = new LinkedList<>(OPTIONS);
       Deque<Command> calledCommands = new LinkedList<>();

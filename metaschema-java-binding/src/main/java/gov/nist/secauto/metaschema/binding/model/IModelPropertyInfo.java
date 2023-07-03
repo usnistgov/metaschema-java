@@ -52,6 +52,8 @@ interface IModelPropertyInfo {
   @NonNull
   IBoundNamedModelInstance getProperty();
 
+  int getItemCount(@Nullable Object value);
+  
   /**
    * Get the type of the bound object.
    *

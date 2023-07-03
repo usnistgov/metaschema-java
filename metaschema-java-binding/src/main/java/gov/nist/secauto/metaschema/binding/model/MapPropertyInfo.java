@@ -66,6 +66,11 @@ class MapPropertyInfo
     return value == null ? List.of() : ((Map<?, ?>) value).values();
   }
 
+  @Override
+  public int getItemCount(Object value) {
+    return value == null ? 0 : ((Map<?, ?>) value).size();
+  }
+
   public MapPropertyInfo(@NonNull IBoundNamedModelInstance property) {
     super(property);
   }

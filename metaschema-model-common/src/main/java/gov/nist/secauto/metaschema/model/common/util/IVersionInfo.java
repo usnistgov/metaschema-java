@@ -39,6 +39,9 @@ public interface IVersionInfo {
   String getBuildTimestamp();
 
   @NonNull
+  String getGitOriginUrl();
+
+  @NonNull
   String getGitCommit();
 
   @NonNull

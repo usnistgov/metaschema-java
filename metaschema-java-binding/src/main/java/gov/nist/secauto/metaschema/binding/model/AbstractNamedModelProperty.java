@@ -291,20 +291,25 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
       return false; // NOPMD - intentional
     }
 
-    QName currentStart = parentName;
-    XMLStreamWriter2 writer = context.getWriter();
-    QName groupQName = getXmlGroupAsQName();
-    if (groupQName != null) {
-      // write the grouping element
-      writer.writeStartElement(groupQName.getNamespaceURI(), groupQName.getLocalPart());
-      currentStart = groupQName;
-    }
-
-    // There are one or more named values based on cardinality
-    getPropertyInfo().writeValue(value, currentStart, context);
-
-    if (groupQName != null) {
-      writer.writeEndElement();
+    IModelPropertyInfo propertyInfo = getPropertyInfo();
+    
+    if (propertyInfo.getProperty().getMinOccurs() > 0 || propertyInfo.getItemCount(value) > 0) {
+      // only write a property if the wrapper is required or if it has contents
+      QName currentStart = parentName;
+      XMLStreamWriter2 writer = context.getWriter();
+      QName groupQName = getXmlGroupAsQName();
+      if (groupQName != null) {
+        // write the grouping element
+        writer.writeStartElement(groupQName.getNamespaceURI(), groupQName.getLocalPart());
+        currentStart = groupQName;
+      }
+  
+      // There are one or more named values based on cardinality
+      propertyInfo.writeValue(value, currentStart, context);
+  
+      if (groupQName != null) {
+        writer.writeEndElement();
+      }
     }
     return true;
   }

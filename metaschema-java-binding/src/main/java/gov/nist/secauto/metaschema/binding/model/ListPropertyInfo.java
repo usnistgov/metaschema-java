@@ -85,6 +85,11 @@ class ListPropertyInfo
   }
 
   @Override
+  public int getItemCount(Object value) {
+    return value == null ? 0 : ((List<?>) value).size();
+  }
+
+  @Override
   public boolean readValue(IPropertyCollector collector, Object parentInstance, StartElement start,
       IXmlParsingContext context) throws IOException, XMLStreamException {
     XMLEventReader2 eventReader = context.getReader();
