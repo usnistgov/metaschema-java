@@ -1,3 +1,4 @@
+# ${project.name}
 
 This module provides a Java parser library, that can read and write XML, JSON, and YAML content that is valid to the associated Metaschema model from and to bound Java objects. This library is a dependency for Java code generated from a Metaschema using the [Metaschema code generator](../metaschema-java-codegen) plugin.
 

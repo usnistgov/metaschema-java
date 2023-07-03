@@ -44,7 +44,7 @@ public abstract class AbstractExitStatus implements ExitStatus {
 
   /**
    * Construct a new exit status based on the provided {@code exitCode}.
-   * 
+   *
    * @param exitCode
    *          the exit code
    */
@@ -59,7 +59,7 @@ public abstract class AbstractExitStatus implements ExitStatus {
 
   /**
    * Get the associated throwable.
-   * 
+   *
    * @return the throwable or {@code null}
    */
   @Override
@@ -76,7 +76,7 @@ public abstract class AbstractExitStatus implements ExitStatus {
 
   /**
    * Get the associated message.
-   * 
+   *
    * @return the message or {@code null}
    */
   @Nullable

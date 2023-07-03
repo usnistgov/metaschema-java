@@ -1,3 +1,5 @@
+# ${project.name}
+
 This module provides a [Java API](apidocs/index.html) for parsing and accessing Metaschema information. This API allows for the full Metaschema model to be explored in code.
 
 The following dependency can be added to your POM to use this library.

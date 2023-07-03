@@ -45,7 +45,7 @@ public class InvalidArgumentException
 
   /**
    * Generate a new exception.
-   * 
+   *
    * @param message
    *          the message
    */
@@ -65,7 +65,7 @@ public class InvalidArgumentException
 
   /**
    * Assign the option requiring an argument that wasn't provided on the command line.
-   * 
+   *
    * @param option
    *          the option to set
    */

@@ -106,6 +106,7 @@ class XmlInlineFieldDefinition
     return getContainingDefinition().getContainingMetaschema();
   }
 
+  @SuppressWarnings("CPD-START")
   @Override
   public boolean isInXmlWrapped() {
     boolean retval;
@@ -182,6 +183,7 @@ class XmlInlineFieldDefinition
     return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
   }
 
+  @SuppressWarnings("CPD-END")
   @Override
   public Object getValue(@NonNull Object parentValue) {
     // there is no value

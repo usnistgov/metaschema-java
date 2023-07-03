@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.validation;
 
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
@@ -58,10 +59,10 @@ public final class AggregateValidationResult implements IValidationResult {
     assert stream != null;
     return aggregate(stream);
   }
-  
+
   public static IValidationResult aggregate(@NonNull Stream<? extends IValidationFinding> findingStream) {
     AtomicReference<Level> highestSeverity = new AtomicReference<>(Level.INFORMATIONAL);
-    
+
     List<IValidationFinding> findings = new LinkedList<>();
     findingStream.sequential().forEachOrdered(finding -> {
       findings.add(finding);

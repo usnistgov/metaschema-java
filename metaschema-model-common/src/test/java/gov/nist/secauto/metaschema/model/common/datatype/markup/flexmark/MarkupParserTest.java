@@ -104,7 +104,7 @@ class MarkupParserTest {
     LOGGER.atInfo().log("StartElement: {}", XmlEventUtil.toString(reader.nextEvent()));
     assertDoesNotThrow(() -> {
       MarkupMultiline ms = XmlMarkupParser.instance().parseMarkupMultiline(reader);
-      LOGGER.atInfo().log("AST: {}",  AstCollectingVisitor.asString(ms.getDocument()));
+      LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
       LOGGER.atInfo().log("HTML: {}", ms.toXHtml(""));
       LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
     });

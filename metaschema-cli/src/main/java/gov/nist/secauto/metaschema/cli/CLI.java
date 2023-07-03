@@ -52,7 +52,7 @@ public class CLI {
     List<IVersionInfo> versions = List.of(
         new MetaschemaJavaVersion(),
         new MetaschemaVersion());
-    CLIProcessor processor = new CLIProcessor("metaschema-cli",versions);
+    CLIProcessor processor = new CLIProcessor("metaschema-cli", versions);
     processor.addCommandHandler(new ValidateCommand());
     processor.addCommandHandler(new GenerateSchemaCommand());
 

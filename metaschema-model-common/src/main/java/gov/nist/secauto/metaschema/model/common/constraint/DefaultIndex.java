@@ -55,7 +55,7 @@ public class DefaultIndex implements IIndex {
 
   /**
    * Construct a new index.
-   * 
+   *
    * @param keyFields
    *          the key field components to use to generate keys by default
    */
@@ -100,7 +100,7 @@ public class DefaultIndex implements IIndex {
 
   /**
    * Evaluates the provided key field component against the item to generate a key value.
-   * 
+   *
    * @param item
    *          the item to generate the key value from
    * @param keyField

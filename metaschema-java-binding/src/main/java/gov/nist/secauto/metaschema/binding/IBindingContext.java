@@ -248,7 +248,10 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
 
   /**
    * Get a new single use constraint validator.
-   * 
+   *
+   * @param handler
+   *          the validation handler to use to process the validation results
+   *
    * @return the validator
    */
   default IConstraintValidator newValidator(@NonNull IConstraintValidationHandler handler) {
@@ -293,7 +296,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   /**
    * Perform schema and constraint validation on the target. The constraint validation will only be
    * performed if the schema validation is passes.
-   * 
+   *
    * @param target
    *          the target to validate
    * @param asFormat
@@ -302,7 +305,9 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    *          provides callbacks to get the appropriate schemas
    * @return the validation result
    * @throws IOException
+   *           if an error occurred while reading the target
    * @throws SAXException
+   *           if an error occurred when parsing the target as XML
    */
   default IValidationResult validate(
       @NonNull Path target,

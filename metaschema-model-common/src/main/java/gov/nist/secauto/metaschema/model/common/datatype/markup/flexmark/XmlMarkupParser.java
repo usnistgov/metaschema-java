@@ -89,7 +89,7 @@ public class XmlMarkupParser { // NOPMD - acceptable
     StringBuilder buffer = new StringBuilder();
     parseToString(reader, buffer);
     String html = buffer.toString().trim();
-    
+
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("XML->HTML: {}", html);
     }
@@ -224,7 +224,8 @@ public class XmlMarkupParser { // NOPMD - acceptable
     }
 
     assert start == null
-        || XmlEventUtil.isNextEventEndElement(reader,ObjectUtils.notNull(start.getName())) : XmlEventUtil.toString(reader.peek());
+        || XmlEventUtil.isNextEventEndElement(reader, ObjectUtils.notNull(start.getName())) : XmlEventUtil
+            .toString(reader.peek());
 
     // if (LOGGER.isDebugEnabled()) {
     // LOGGER.debug("parseContents(exit): {}", reader.peek() != null ?

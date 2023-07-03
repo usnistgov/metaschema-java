@@ -1,3 +1,4 @@
+# ${project.name}
 
 This Maven build plugin automates the generation of Java classes for a set of Metaschema definitions as part of a Maven build.
 

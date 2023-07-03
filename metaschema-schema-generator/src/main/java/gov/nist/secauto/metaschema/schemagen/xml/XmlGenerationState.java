@@ -284,6 +284,4 @@ public class XmlGenerationState
       throw new IOException(ex);
     }
   }
-  }
-
-  
+}

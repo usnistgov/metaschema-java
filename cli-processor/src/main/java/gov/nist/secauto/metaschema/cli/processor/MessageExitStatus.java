@@ -38,7 +38,7 @@ public class MessageExitStatus
 
   /**
    * Construct a new {@link ExitStatus} based on an array of message arguments.
-   * 
+   *
    * @param code
    *          the exit code to use.
    * @param messageArguments

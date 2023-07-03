@@ -101,6 +101,7 @@ class XmlFieldInstance
     return retval;
   }
 
+  @SuppressWarnings("CPD-START")
   @Override
   public String getFormalName() {
     return getXmlField().isSetFormalName() ? getXmlField().getFormalName() : null;
@@ -170,6 +171,7 @@ class XmlFieldInstance
     return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
   }
 
+  @SuppressWarnings("CPD-END")
   @Override
   public Object getValue(@NonNull Object parentValue) {
     // there is no value

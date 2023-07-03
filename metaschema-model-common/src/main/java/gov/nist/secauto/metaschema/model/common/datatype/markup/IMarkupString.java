@@ -80,6 +80,7 @@ public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
 
   @NonNull
   String toXHtml(@NonNull String namespace) throws XMLStreamException, IOException;
+
   @NonNull
   String toMarkdown();
 

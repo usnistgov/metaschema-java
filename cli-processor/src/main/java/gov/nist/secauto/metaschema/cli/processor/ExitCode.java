@@ -44,7 +44,7 @@ public enum ExitCode {
 
   /**
    * Get the related status code for use with {@link System#exit(int)}.
-   * 
+   *
    * @return the statusCode
    */
   public int getStatusCode() {
@@ -53,7 +53,7 @@ public enum ExitCode {
 
   /**
    * Exit without a message.
-   * 
+   *
    * @return the exit status
    */
   @NonNull
@@ -63,7 +63,7 @@ public enum ExitCode {
 
   /**
    * Exit with the associated message.
-   * 
+   *
    * @return the exit status
    */
   @NonNull
@@ -73,10 +73,10 @@ public enum ExitCode {
 
   /**
    * Exit with the associated message and message arguments.
-   * 
+   *
    * @param messageArguments
    *          any message parameters
-   * 
+   *
    * @return the exit status
    */
   @NonNull

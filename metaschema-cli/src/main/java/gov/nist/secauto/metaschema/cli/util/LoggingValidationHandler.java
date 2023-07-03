@@ -71,7 +71,7 @@ public final class LoggingValidationHandler {
       }
     }
   }
-  
+
   public static void handleJsonValidationFinding(@NonNull JsonValidationFinding finding) {
     Ansi ansi = generatePreamble(finding.getSeverity());
 

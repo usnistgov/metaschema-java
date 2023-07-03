@@ -41,7 +41,7 @@ public interface IGenerationState<WRITER> {
   WRITER getWriter();
 
   boolean isInline(@NonNull IDefinition definition);
-  
+
   void flushWriter() throws IOException;
   //
   // @NonNull

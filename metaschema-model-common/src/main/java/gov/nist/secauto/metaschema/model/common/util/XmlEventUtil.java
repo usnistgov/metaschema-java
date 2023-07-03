@@ -512,7 +512,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
     }
     builder.append("', instead found ")
         .append(toString(event));
-    
+
     Location location = toLocation(event);
     if (location != null) {
       builder.append(" at ").append(toString(location));

@@ -177,7 +177,7 @@ class MarkupStringTest {
         + "<p>A param: <insert type=\"param\" id-ref=\"insert\"/>.</p>";
 
     MarkupMultiline ms = MarkupMultiline.fromMarkdown(markdown);
-    LOGGER.atInfo().log("AST: {}",  AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
     LOGGER.atInfo().log("HTML: {}", ms.toXHtml(""));
     LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
@@ -229,7 +229,7 @@ class MarkupStringTest {
     final String markdown = "a <q>*b*</q> **c**";
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
     LOGGER.atInfo().log("HTML Source: {}", html);
-    LOGGER.atInfo().log("AST: {}",  AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
     LOGGER.atInfo().log("HTML: {}", ms.toXHtml(""));
     LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
     assertNotEquals(markdown, ms.toMarkdown());
@@ -363,12 +363,11 @@ class MarkupStringTest {
     assertEquals(markdown, ms.toMarkdown());
     assertEquals(html, ms.toHtml().trim());
   }
-  
+
   @Test
   void testHtml() {
     String html = "<p>before &lt;thing[02] text&gt; after</p>";
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
-
 
     LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
     LOGGER.atInfo().log("HTML: {}", ms.toHtml());

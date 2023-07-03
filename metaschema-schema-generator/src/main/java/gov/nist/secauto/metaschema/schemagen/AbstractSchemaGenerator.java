@@ -101,7 +101,7 @@ public abstract class AbstractSchemaGenerator<T extends AutoCloseable, D extends
       Writer out,
       IConfiguration<SchemaGenerationFeature> configuration) {
     // IInlineStrategy inlineStrategy = IInlineStrategy.newInlineStrategy(configuration);
-    try  {
+    try {
       // avoid automatically closing streams not owned by the generator
       T schemaWriter = newWriter(out);
       S generationState = newGenerationState(metaschema, schemaWriter, configuration);

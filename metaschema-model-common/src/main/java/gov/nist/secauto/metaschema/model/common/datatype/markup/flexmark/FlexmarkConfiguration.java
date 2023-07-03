@@ -135,7 +135,6 @@ public final class FlexmarkConfiguration {
     Formatter.MAX_TRAILING_BLANK_LINES.set(options, -1);
     Formatter.LIST_BULLET_MARKER.set(options, ListBulletMarker.DASH);
 
-    
     HtmlRenderer.MAX_TRAILING_BLANK_LINES.set(options, -1);
     HtmlRenderer.UNESCAPE_HTML_ENTITIES.set(options, true);
     HtmlRenderer.PERCENT_ENCODE_URLS.set(options, true);

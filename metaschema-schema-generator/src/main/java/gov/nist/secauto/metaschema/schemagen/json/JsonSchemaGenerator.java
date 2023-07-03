@@ -94,7 +94,6 @@ public class JsonSchemaGenerator
   protected void generateSchema(JsonGenerationState state) {
     IMetaschema metaschema = state.getMetaschema();
 
-
     // analyze all definitions
     List<IRootAssemblyDefinition> rootAssemblyDefinitions = analyzeDefinitions(
         state,
@@ -119,7 +118,7 @@ public class JsonSchemaGenerator
           return new RootPropertyEntry(root, state);
         })
         .collect(Collectors.toUnmodifiableList());
-    
+
     try {
       state.writeStartObject();
 
@@ -137,8 +136,7 @@ public class JsonSchemaGenerator
         state.writeField("definitions", definitionsObject);
       }
 
-      @SuppressWarnings("resource")
-      JsonGenerator writer = state.getWriter(); // NOPMD not owned
+      @SuppressWarnings("resource") JsonGenerator writer = state.getWriter(); // NOPMD not owned
 
       if (rootEntries.size() == 1) {
         rootEntries.iterator().next().write(writer);

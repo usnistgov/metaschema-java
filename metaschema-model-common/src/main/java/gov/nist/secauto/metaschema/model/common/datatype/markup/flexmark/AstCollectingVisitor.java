@@ -45,7 +45,7 @@ public class AstCollectingVisitor
     visitor.collect(node);
     return visitor.getAst();
   }
-  
+
   @SuppressWarnings("null")
   @NonNull
   public String getAst() {

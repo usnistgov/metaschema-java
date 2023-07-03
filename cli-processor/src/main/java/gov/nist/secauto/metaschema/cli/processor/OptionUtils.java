@@ -41,5 +41,4 @@ public final class OptionUtils {
     return option.hasLongOpt() ? "--" + option.getLongOpt() : "-" + option.getOpt();
   }
 
-
 }

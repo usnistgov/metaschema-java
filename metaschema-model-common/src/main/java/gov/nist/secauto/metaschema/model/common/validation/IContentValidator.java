@@ -95,7 +95,7 @@ public interface IContentValidator extends IResourceLoader {
 
   /**
    * Validate the target using the provided XML schemas.
-   * 
+   *
    * @param target
    *          the target to validate
    * @param schemaSources
@@ -114,7 +114,7 @@ public interface IContentValidator extends IResourceLoader {
 
   /**
    * Validate the target using the provided JSON schema.
-   * 
+   *
    * @param target
    *          the target to validate
    * @param schema
@@ -122,7 +122,7 @@ public interface IContentValidator extends IResourceLoader {
    * @return the validation result
    * @throws IOException
    *           if an error occurred while performing validation
-   * @see {@link JsonSchemaContentValidator#toJsonObject(InputStream)}
+   * @see JsonSchemaContentValidator#toJsonObject(InputStream)
    */
   @NonNull
   static IValidationResult validateWithJsonSchema(@NonNull Path target, @NonNull JSONObject schema)

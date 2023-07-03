@@ -184,7 +184,7 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
     return null;
   }
 
-  @SuppressWarnings("null")
+  @SuppressWarnings({ "null", "CPD-START" })
   @Override
   public String getName() {
     return getXmlField().getName();
@@ -308,6 +308,7 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
     return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
   }
 
+  @SuppressWarnings("CPD-END")
   @Override
   public Object getFieldValue(@NonNull Object parentFieldValue) {
     // there is no value

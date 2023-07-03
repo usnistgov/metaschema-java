@@ -32,7 +32,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface ExitStatus {
   /**
    * Get the exit code information associated with this exit status.
-   * 
+   *
    * @return the exit code information
    */
   @NonNull
@@ -43,7 +43,7 @@ public interface ExitStatus {
 
   /**
    * Process the exit status.
-   * 
+   *
    * @param showStackTrace
    *          include the stack trace for the throwable, if associated
    * @see #withThrowable(Throwable)
@@ -52,7 +52,7 @@ public interface ExitStatus {
 
   /**
    * Associate a throwable with the exit status.
-   * 
+   *
    * @param throwable
    *          the throwable
    * @return this exit status

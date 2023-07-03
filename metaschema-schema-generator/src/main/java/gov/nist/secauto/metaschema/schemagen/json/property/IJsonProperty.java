@@ -56,6 +56,7 @@ public interface IJsonProperty<I extends INamedInstance> {
    * Generate the schema type.
    *
    * @param properties
+   *          the containing property context to add the property to
    * @param state
    *          the schema generation state used for context and writing
    * @throws SchemaGenerationException

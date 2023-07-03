@@ -188,8 +188,7 @@ public abstract class AbstractValidateContentCommand
     IBoundLoader loader = bindingContext.newBoundLoader();
 
     List<String> extraArgs = cmdLine.getArgList();
-    @SuppressWarnings("null")
-    Path source = resolvePathAgainstCWD(Paths.get(extraArgs.get(0)));
+    @SuppressWarnings("null") Path source = resolvePathAgainstCWD(Paths.get(extraArgs.get(0)));
     assert source != null;
 
     Format asFormat;

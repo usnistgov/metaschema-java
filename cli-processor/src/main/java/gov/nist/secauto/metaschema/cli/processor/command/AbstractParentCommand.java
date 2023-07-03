@@ -78,14 +78,14 @@ public abstract class AbstractParentCommand implements Command {
     ExitStatus status;
     if (isSubCommandRequired()) {
       status = ExitCode.INVALID_COMMAND
-          .exitMessage("Please use one of the following sub-commands: "+
+          .exitMessage("Please use one of the following sub-commands: " +
               getSubCommands().stream()
-          .map(command -> command.getName())
-          .collect(Collectors.joining(", ")));
+                  .map(command -> command.getName())
+                  .collect(Collectors.joining(", ")));
     } else {
       status = ExitCode.OK.exit();
     }
-    return status; 
+    return status;
   }
 
 }

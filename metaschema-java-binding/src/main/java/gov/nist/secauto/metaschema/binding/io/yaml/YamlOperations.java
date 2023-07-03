@@ -79,7 +79,7 @@ public final class YamlOperations {
 
   /**
    * Converts the provided YAML {@code map} into JSON.
-   * 
+   *
    * @param map
    *          the YAML map
    * @return the JSON object

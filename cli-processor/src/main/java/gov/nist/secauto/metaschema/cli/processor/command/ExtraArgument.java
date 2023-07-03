@@ -33,7 +33,7 @@ public interface ExtraArgument {
 
   /**
    * The allowed number of arguments of this type.
-   * 
+   *
    * @return a positive integer value
    */
   int getNumber();

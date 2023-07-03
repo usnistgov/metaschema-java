@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>22-SNAPSHOT</version>
+		<version>24-SNAPSHOT</version>
 	</parent>
 	<groupId>gov.nist.secauto.metaschema</groupId>
 	<artifactId>metaschema-framework</artifactId>
@@ -666,8 +666,7 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<configuration>
-						<excludePackageNames>
-							gov.nist.secauto.metaschema.*.xmlbeans,org.apache.xmlbeans.*</excludePackageNames>
+						<excludePackageNames>*.xmlbeans</excludePackageNames>
 						<failOnWarnings>false</failOnWarnings>
 					</configuration>
 				</plugin>
@@ -715,6 +714,22 @@
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>appassembler-maven-plugin</artifactId>
 					<version>${plugin.appassembler.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-pmd-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>cpd-verify</id>
+							<phase>verify</phase>
+							<goals>
+								<goal>cpd-check</goal>
+							</goals>
+							<configuration>
+								<failOnViolation>false</failOnViolation>
+							</configuration>
+						</execution>
+					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -820,13 +835,15 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<configuration>
-							<excludePackageNames>:*.impl</excludePackageNames>
-						</configuration>
 						<reportSets>
 							<reportSet>
 								<id>aggregate</id>
 								<inherited>false</inherited>
+								<configuration>
+									<excludePackageNames>*.xmlbeans:*.xmlbeans.*</excludePackageNames>
+									<failOnWarnings>false</failOnWarnings>
+									<failOnErrors>false</failOnErrors>
+								</configuration>
 								<reports>
 									<report>aggregate</report>
 								</reports>

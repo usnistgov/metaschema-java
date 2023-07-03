@@ -138,7 +138,7 @@ public class CLIProcessor {
 
   /**
    * Gets the command used to execute for use in help text.
-   * 
+   *
    * @return the command name
    */
   @NonNull
@@ -148,7 +148,7 @@ public class CLIProcessor {
 
   /**
    * Retrieve the version information for this application.
-   * 
+   *
    * @return the versionInfo
    */
   @NonNull
@@ -164,7 +164,7 @@ public class CLIProcessor {
    * Process a set of CLIProcessor arguments.
    * <p>
    * process().getExitCode().getStatusCode()
-   * 
+   *
    * @param args
    *          the arguments to process
    * @return the exit status
@@ -202,9 +202,8 @@ public class CLIProcessor {
   }
 
   public static void handleQuiet() {
-    @SuppressWarnings("resource")
-    LoggerContext ctx = (LoggerContext) LogManager.getContext(false); // NOPMD not
-                                                                      // closable here
+    @SuppressWarnings("resource") LoggerContext ctx = (LoggerContext) LogManager.getContext(false); // NOPMD not
+                                                                                                    // closable here
     Configuration config = ctx.getConfiguration();
     LoggerConfig loggerConfig = config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
     Level oldLevel = loggerConfig.getLevel();
@@ -215,8 +214,7 @@ public class CLIProcessor {
   }
 
   protected void showVersion() {
-    @SuppressWarnings("resource")
-    PrintStream out = AnsiConsole.out(); // NOPMD - not owner
+    @SuppressWarnings("resource") PrintStream out = AnsiConsole.out(); // NOPMD - not owner
     getVersionInfos().stream().forEach((info) -> {
       out.println(ansi()
           .bold().a(getExec()).boldOff()
@@ -232,12 +230,12 @@ public class CLIProcessor {
     out.flush();
   }
 
-//  @SuppressWarnings("null")
-//  @NonNull
-//  public String[] getArgArray() {
-//    return Stream.concat(options.stream(), extraArgs.stream()).toArray(size -> new String[size]);
-//  }
-  
+  // @SuppressWarnings("null")
+  // @NonNull
+  // public String[] getArgArray() {
+  // return Stream.concat(options.stream(), extraArgs.stream()).toArray(size -> new String[size]);
+  // }
+
   public class CallingContext {
     @NonNull
     private final List<Option> options;
@@ -249,7 +247,7 @@ public class CLIProcessor {
     public CallingContext(@NonNull List<String> args) {
       Map<String, Command> topLevelCommandMap = getTopLevelCommands().stream()
           .collect(Collectors.toUnmodifiableMap(Command::getName, Functions.identity()));
-      
+
       List<Option> options = new LinkedList<>(OPTIONS);
       Deque<Command> calledCommands = new LinkedList<>();
       List<String> extraArgs = new LinkedList<>();
@@ -297,7 +295,7 @@ public class CLIProcessor {
 
       assert options != null;
       assert extraArgs != null;
-      
+
       this.options = options;
       this.calledCommands = calledCommands;
       this.extraArgs = extraArgs;
@@ -330,7 +328,7 @@ public class CLIProcessor {
       }
       return retval;
     }
-    
+
     public ExitStatus processCommand() {
       CommandLineParser parser = new DefaultParser();
       CommandLine cmdLine;
@@ -404,7 +402,7 @@ public class CLIProcessor {
 
     /**
      * Callback for providing a help header.
-     * 
+     *
      * @return the header or {@code null}
      */
     @Nullable
@@ -415,10 +413,10 @@ public class CLIProcessor {
 
     /**
      * Callback for providing a help footer.
-     * 
+     *
      * @param exec
      *          the executable name
-     * 
+     *
      * @return the footer or {@code null}
      */
     @NonNull
@@ -467,7 +465,7 @@ public class CLIProcessor {
 
     /**
      * Get the CLI syntax.
-     * 
+     *
      * @return the CLI syntax to display in help output
      */
     protected String buildHelpCliSyntax() {
@@ -538,9 +536,9 @@ public class CLIProcessor {
       AnsiPrintStream out = AnsiConsole.out();
       int terminalWidth = Math.max(out.getTerminalWidth(), 40);
 
-      @SuppressWarnings("resource")
-      PrintWriter writer = new PrintWriter(out, true, StandardCharsets.UTF_8); // NOPMD -
-                                                                               // not owned
+      @SuppressWarnings("resource") PrintWriter writer = new PrintWriter(out, true, StandardCharsets.UTF_8); // NOPMD -
+                                                                                                             // not
+                                                                                                             // owned
       formatter.printHelp(
           writer,
           terminalWidth,
