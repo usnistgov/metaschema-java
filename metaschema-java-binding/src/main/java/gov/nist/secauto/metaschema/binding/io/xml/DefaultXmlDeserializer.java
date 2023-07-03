@@ -93,6 +93,7 @@ public class DefaultXmlDeserializer<CLASS>
 
   @Override
   protected IDocumentNodeItem deserializeToNodeItemInternal(Reader reader, URI documentUri) throws IOException {
+    // doesn't auto close the underlying reader
     try (AutoCloser<XMLEventReader2, XMLStreamException> closer
         = new AutoCloser<>(newXMLEventReader2(reader), event -> event.close())) {
       return parseXmlInternal(closer.getResource(), documentUri);

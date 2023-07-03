@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.schemagen.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -74,7 +75,8 @@ public class JsonSchemaGenerator
     try {
       return ObjectUtils.notNull(getJsonFactory().createGenerator(out)
           .setCodec(new ObjectMapper())
-          .useDefaultPrettyPrinter());
+          .useDefaultPrettyPrinter()
+          .disable(Feature.AUTO_CLOSE_TARGET));
     } catch (IOException ex) {
       throw new SchemaGenerationException(ex);
     }

@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.binding.io;
 
 import gov.nist.secauto.metaschema.binding.DefaultBindingContext;
+import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.model.common.metapath.IDocumentLoader;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
@@ -35,8 +36,10 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import org.xml.sax.InputSource;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -44,6 +47,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * A common interface for loading Metaschema based instance resources.
@@ -328,4 +332,33 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   <CLASS> CLASS load(@NonNull Class<CLASS> clazz, @NonNull InputSource source) throws IOException;
 
   IDocumentNodeItem loadAsNodeItem(@NonNull Format format, @NonNull InputSource source) throws IOException;
+
+  /**
+   * Get the configured Metaschema binding context to use to load Java types.
+   *
+   * @return the binding context
+   */
+  IBindingContext getBindingContext();
+
+  default <CLASS> void convert(
+      @NonNull Path source,
+      @NonNull Path destination,
+      @NonNull Format toFormat,
+      @NonNull Class<CLASS> rootClass) throws FileNotFoundException, IOException {
+    CLASS object = load(rootClass, source);
+
+    ISerializer<CLASS> serializer = getBindingContext().newSerializer(toFormat, rootClass);
+    serializer.serialize(object, destination);
+  }
+
+  default <CLASS> void convert(
+      @NonNull Path source,
+      @NonNull OutputStream os,
+      @NonNull Format toFormat,
+      @NonNull Class<CLASS> rootClass) throws FileNotFoundException, IOException {
+    CLASS object = load(rootClass, source);
+
+    ISerializer<CLASS> serializer = getBindingContext().newSerializer(toFormat, rootClass);
+    serializer.serialize(object, os);
+  }
 }

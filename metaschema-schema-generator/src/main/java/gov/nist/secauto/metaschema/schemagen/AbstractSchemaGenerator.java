@@ -101,9 +101,12 @@ public abstract class AbstractSchemaGenerator<T extends AutoCloseable, D extends
       Writer out,
       IConfiguration<SchemaGenerationFeature> configuration) {
     // IInlineStrategy inlineStrategy = IInlineStrategy.newInlineStrategy(configuration);
-    try (T schemaWriter = newWriter(out)) {
+    try  {
+      // avoid automatically closing streams not owned by the generator
+      T schemaWriter = newWriter(out);
       S generationState = newGenerationState(metaschema, schemaWriter, configuration);
       generateSchema(generationState);
+      generationState.flushWriter();
     } catch (SchemaGenerationException ex) { // NOPMD avoid nesting same exception
       throw ex;
     } catch (Exception ex) { // NOPMD need to catch close exception

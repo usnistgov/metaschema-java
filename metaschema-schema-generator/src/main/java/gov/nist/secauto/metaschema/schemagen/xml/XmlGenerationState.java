@@ -53,6 +53,7 @@ import gov.nist.secauto.metaschema.schemagen.xml.schematype.XmlSimpleTypeUnion;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -274,4 +275,15 @@ public class XmlGenerationState
   public void writeNamespace(String prefix, String namespaceUri) throws XMLStreamException {
     getXMLStreamWriter().writeNamespace(prefix, namespaceUri);
   }
-}
+
+  @Override
+  public void flushWriter() throws IOException {
+    try {
+      getWriter().getResource().flush();
+    } catch (XMLStreamException ex) {
+      throw new IOException(ex);
+    }
+  }
+  }
+
+  

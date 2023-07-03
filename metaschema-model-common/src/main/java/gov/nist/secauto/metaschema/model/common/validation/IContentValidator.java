@@ -29,12 +29,19 @@ package gov.nist.secauto.metaschema.model.common.validation;
 import gov.nist.secauto.metaschema.model.common.IResourceLoader;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.List;
+
+import javax.xml.transform.Source;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -85,4 +92,41 @@ public interface IContentValidator extends IResourceLoader {
    */
   @NonNull
   IValidationResult validate(@NonNull InputSource source) throws IOException;
+
+  /**
+   * Validate the target using the provided XML schemas.
+   * 
+   * @param target
+   *          the target to validate
+   * @param schemaSources
+   *          the XML schema sources to validate with
+   * @return the validation result
+   * @throws IOException
+   *           if an error occurred while performing validation
+   * @throws SAXException
+   *           if an error occurred while parsing the XML target or schema
+   */
+  @NonNull
+  static IValidationResult validateWithXmlSchema(@NonNull Path target, @NonNull List<Source> schemaSources)
+      throws IOException, SAXException {
+    return new XmlSchemaContentValidator(schemaSources).validate(target);
+  }
+
+  /**
+   * Validate the target using the provided JSON schema.
+   * 
+   * @param target
+   *          the target to validate
+   * @param schema
+   *          the JSON schema to validate with
+   * @return the validation result
+   * @throws IOException
+   *           if an error occurred while performing validation
+   * @see {@link JsonSchemaContentValidator#toJsonObject(InputStream)}
+   */
+  @NonNull
+  static IValidationResult validateWithJsonSchema(@NonNull Path target, @NonNull JSONObject schema)
+      throws IOException {
+    return new JsonSchemaContentValidator(schema).validate(target);
+  }
 }
