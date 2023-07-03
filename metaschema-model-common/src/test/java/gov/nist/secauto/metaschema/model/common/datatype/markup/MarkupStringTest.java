@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxOutputFactory;
 import com.vladsch.flexmark.ast.Emphasis;
+import com.vladsch.flexmark.ast.Heading;
 import com.vladsch.flexmark.ast.Paragraph;
 import com.vladsch.flexmark.ast.StrongEmphasis;
 import com.vladsch.flexmark.ast.Text;
@@ -46,6 +48,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AstColl
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorExtension.InsertAnchorNode;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
+import org.apache.commons.collections.IteratorUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLOutputFactory2;
@@ -152,7 +155,8 @@ class MarkupStringTest {
       }
       // InsertAnchorNode[0, 0] name:[39, 45, "insert"]
       {
-        @SuppressWarnings("unused") InsertAnchorNode insert = (InsertAnchorNode) paragraphChildren.get(5);
+        @SuppressWarnings("unused")
+        InsertAnchorNode insert = (InsertAnchorNode) paragraphChildren.get(5);
       }
       // Text[48, 49] chars:[48, 49, "."]
       {
@@ -373,5 +377,27 @@ class MarkupStringTest {
     LOGGER.atInfo().log("HTML: {}", ms.toHtml());
     LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
+  }
+
+  @Test
+  void testIntraTagNewline() {
+    // addresses usnistgov/liboscal-java#5
+    String html = 
+        "<h1>A custom title\n" +
+        "  <em>with italic</em>\n" +
+        "</h1>";
+    MarkupMultiline ms = MarkupMultiline.fromHtml(html);
+
+    Document doc = ms.getDocument();
+    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(doc));
+    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
+    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
+
+    List<Node> children = CollectionUtil.toList(doc.getChildren());
+    // ensure there is only 1 child and that it is a heading
+    assertAll(
+        () -> assertEquals(1, children.size()),
+        () -> assertEquals(Heading.class, children.get(0).getClass())
+    );
   }
 }

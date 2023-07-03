@@ -43,19 +43,21 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertV
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.MarkupVisitor;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.MarkupXmlEventWriter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.MarkupXmlStreamWriter;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.codehaus.stax2.evt.XMLEventFactory2;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.TextNode;
+import org.jsoup.select.NodeTraversor;
+import org.jsoup.select.NodeVisitor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -67,6 +69,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYPE>>
     implements IMarkupString<TYPE> {
@@ -128,7 +131,32 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   @NonNull
   protected static Document parseHtml(@NonNull String html, @NonNull FlexmarkHtmlConverter htmlParser,
       @NonNull Parser markdownParser) {
-    String markdown = ObjectUtils.notNull(htmlParser.convert(Objects.requireNonNull(html, "html")));
+    org.jsoup.nodes.Document document = Jsoup.parse(html);
+
+    // Fix for usnistgov/liboscal-java#5
+    // Caused by not stripping out extra newlines inside HTML tags
+    NodeTraversor.traverse(new NodeVisitor() {
+
+      @Override
+      public void head(org.jsoup.nodes.Node node, int depth) {
+        if (node instanceof TextNode) {
+          TextNode textNode = (TextNode)node;
+
+          org.jsoup.nodes.Node parent = textNode.parent();
+
+          if (!isTag(parent,"code") || !isTag(parent.parent(),"pre")) {
+            node.replaceWith(new TextNode(textNode.text()));
+          }
+        }
+      }
+      
+      private boolean isTag(@Nullable org.jsoup.nodes.Node node, @NonNull String tagName) {
+        return node != null && tagName.equals(node.normalName());
+      }
+      
+    }, document);
+    
+    String markdown = htmlParser.convert(document);
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("html->markdown: {}", markdown);
     }
