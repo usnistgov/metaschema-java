@@ -35,6 +35,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class MarkupMultiline
     extends AbstractMarkupString<MarkupMultiline> {
 
+  @NonNull
+  private static final FlexmarkFactory FLEXMARK_FACTORY = FlexmarkFactory.instance();
+
   /**
    * Convert the provided HTML string into markup.
    *
@@ -47,8 +50,8 @@ public class MarkupMultiline
     return new MarkupMultiline(
         parseHtml(
             html,
-            FlexmarkFactory.instance().getFlexmarkHtmlConverter(),
-            FlexmarkFactory.instance().getMarkdownParser()));
+            FLEXMARK_FACTORY.getFlexmarkHtmlConverter(),
+            FLEXMARK_FACTORY.getMarkdownParser()));
   }
 
   /**
@@ -61,7 +64,7 @@ public class MarkupMultiline
   @NonNull
   public static MarkupMultiline fromMarkdown(@NonNull String markdown) {
     return new MarkupMultiline(
-        parseMarkdown(markdown, FlexmarkFactory.instance().getMarkdownParser()));
+        parseMarkdown(markdown, FLEXMARK_FACTORY.getMarkdownParser()));
   }
 
   /**
@@ -76,7 +79,7 @@ public class MarkupMultiline
 
   @Override
   public FlexmarkFactory getFlexmarkFactory() {
-    return FlexmarkFactory.instance();
+    return FLEXMARK_FACTORY;
   }
 
   @Override
