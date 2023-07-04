@@ -124,13 +124,13 @@ public class ValidateCommand
 
     if (!schemaValidationResult.isPassing()) {
       if (LOGGER.isErrorEnabled()) {
-        LOGGER.error("The file '{}' has schema validation issue(s). The issues are:", target);
+        LOGGER.error("The file '{}' has validation issue(s). The issues are:", target);
       }
-      LoggingValidationHandler.handleValidationResults(schemaValidationResult);
+      LoggingValidationHandler.instance().handleValidationResults(schemaValidationResult);
       return ExitCode.FAIL.exit();
     }
 
-    if (!cmdLine.hasOption(CLIProcessor.QUIET_OPTION) && LOGGER.isInfoEnabled()) {
+    if (schemaValidationResult.isPassing() && !cmdLine.hasOption(CLIProcessor.QUIET_OPTION) && LOGGER.isInfoEnabled()) {
       LOGGER.info("The file '{}' is valid.", target);
     }
     return ExitCode.OK.exit();

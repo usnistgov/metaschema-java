@@ -48,17 +48,36 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public final class LoggingValidationHandler {
   private static final Logger LOGGER = LogManager.getLogger(LoggingValidationHandler.class);
+  
+  private static final LoggingValidationHandler NO_LOG_EXCPTION_INSTANCE = new LoggingValidationHandler(false);
+  private static final LoggingValidationHandler LOG_EXCPTION_INSTANCE = new LoggingValidationHandler(true);
 
-  private LoggingValidationHandler() {
-    // disable construction
+  private final boolean logExceptions;
+
+  public static LoggingValidationHandler instance() {
+    return instance(false);
   }
 
-  public static boolean handleValidationResults(IValidationResult result) {
+  public static LoggingValidationHandler instance(boolean logExceptions) {
+    return logExceptions ? LOG_EXCPTION_INSTANCE : NO_LOG_EXCPTION_INSTANCE;
+  }
+  
+  protected LoggingValidationHandler(boolean logExceptions) {
+    this.logExceptions = logExceptions;
+  }
+
+  
+  public boolean isLogExceptions() {
+    return logExceptions;
+  }
+
+
+  public boolean handleValidationResults(IValidationResult result) {
     handleValidationFindings(result.getFindings());
     return result.isPassing();
   }
 
-  public static void handleValidationFindings(@NonNull List<? extends IValidationFinding> findings) {
+  public void handleValidationFindings(@NonNull List<? extends IValidationFinding> findings) {
     for (IValidationFinding finding : findings) {
       if (finding instanceof JsonValidationFinding) {
         handleJsonValidationFinding((JsonValidationFinding) finding);
@@ -72,7 +91,7 @@ public final class LoggingValidationHandler {
     }
   }
 
-  public static void handleJsonValidationFinding(@NonNull JsonValidationFinding finding) {
+  protected void handleJsonValidationFinding(@NonNull JsonValidationFinding finding) {
     Ansi ansi = generatePreamble(finding.getSeverity());
 
     getLogger(finding).log(
@@ -86,7 +105,7 @@ public final class LoggingValidationHandler {
                 finding.getDocumentUri().toString()));
   }
 
-  public static void handleXmlValidationFinding(XmlValidationFinding finding) {
+  protected void handleXmlValidationFinding(XmlValidationFinding finding) {
     Ansi ansi = generatePreamble(finding.getSeverity());
     SAXParseException ex = finding.getCause();
 
@@ -98,7 +117,7 @@ public final class LoggingValidationHandler {
             ex.getColumnNumber()));
   }
 
-  public static void handleConstraintValidationFinding(@NonNull ConstraintValidationFinding finding) {
+  protected void handleConstraintValidationFinding(@NonNull ConstraintValidationFinding finding) {
     Ansi ansi = generatePreamble(finding.getSeverity());
 
     getLogger(finding).log(
@@ -106,7 +125,7 @@ public final class LoggingValidationHandler {
   }
 
   @NonNull
-  private static LogBuilder getLogger(@NonNull IValidationFinding finding) {
+  protected LogBuilder getLogger(@NonNull IValidationFinding finding) {
     LogBuilder retval;
     switch (finding.getSeverity()) {
     case CRITICAL:
@@ -125,15 +144,18 @@ public final class LoggingValidationHandler {
       throw new IllegalArgumentException("Unknown level: " + finding.getSeverity().name());
     }
 
-    if (finding.getCause() != null) {
+    assert retval != null;
+    
+    if (finding.getCause() != null && isLogExceptions()) {
       retval.withThrowable(finding.getCause());
     }
 
     return retval;
   }
 
+  @SuppressWarnings("static-method")
   @NonNull
-  private static Ansi generatePreamble(@NonNull Level level) {
+  protected Ansi generatePreamble(@NonNull Level level) {
     Ansi ansi = ansi().fgBright(Color.WHITE).a('[').reset();
 
     switch (level) {
@@ -154,6 +176,8 @@ public final class LoggingValidationHandler {
       break;
     }
     ansi = ansi.fgBright(Color.WHITE).a("] ").reset();
+
+    assert ansi != null;
     return ansi;
   }
 }
