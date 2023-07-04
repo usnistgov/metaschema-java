@@ -64,7 +64,7 @@ public class CLITest {
   void testMetaschemaGenerateSchema() {
     String[] args = { "generate-schema", "--overwrite", "--as", "JSON",
         "../metaschema-java-codegen/src/test/resources/metaschema/fields_with_flags/metaschema.xml",
-        "schema-test.json" };
+        "target/schema-test.json" };
     evaluateResult(CLI.runCli(args), ExitCode.OK);
   }
 

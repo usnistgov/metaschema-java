@@ -233,9 +233,9 @@ public abstract class AbstractValidateContentCommand
       LOGGER.info("Validation identified the following in file '{}'.", source);
     }
 
-    LoggingValidationHandler.handleValidationResults(validationResult);
+    LoggingValidationHandler.instance().handleValidationResults(validationResult);
 
-    if (!cmdLine.hasOption(CLIProcessor.QUIET_OPTION) && LOGGER.isInfoEnabled()) {
+    if (validationResult.isPassing() && !cmdLine.hasOption(CLIProcessor.QUIET_OPTION) && LOGGER.isInfoEnabled()) {
       LOGGER.info("The file '{}' is valid.", source);
     }
 
