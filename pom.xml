@@ -155,7 +155,7 @@
 
 		<plugin.antlr4test.version>1.22</plugin.antlr4test.version>
 		<plugin.appassembler.version>2.1.0</plugin.appassembler.version>
-		<plugin.git-commit-id.version>5.0.0</plugin.git-commit-id.version>
+		<plugin.git-commit-id.version>6.0.0</plugin.git-commit-id.version>
 		<plugin.maven-changes.version>2.12.1</plugin.maven-changes.version>
 		<plugin.maven-dependency.version>3.6.0</plugin.maven-dependency.version>
 		<plugin.maven-invoker.version>3.6.0</plugin.maven-invoker.version>
