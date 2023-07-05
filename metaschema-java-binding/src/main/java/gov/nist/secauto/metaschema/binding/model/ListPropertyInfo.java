@@ -142,6 +142,8 @@ class ListPropertyInfo
       // // read the object's END_OBJECT
       // JsonUtil.assertAndAdvance(context.getReader(), JsonToken.END_OBJECT);
       // }
+    } else if (JsonToken.VALUE_NULL.equals(parser.currentToken())) {
+      JsonUtil.assertAndAdvance(parser, JsonToken.VALUE_NULL);
     } else {
       // this is an array, we need to parse the array wrapper then each item
       JsonUtil.assertAndAdvance(parser, JsonToken.START_ARRAY);
