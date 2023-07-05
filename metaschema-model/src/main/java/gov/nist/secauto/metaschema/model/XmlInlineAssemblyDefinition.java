@@ -185,7 +185,7 @@ class XmlInlineAssemblyDefinition
    * The corresponding definition for the local flag instance.
    */
   @SuppressWarnings("PMD.GodClass")
-  public class InternalAssemblyDefinition
+  private final class InternalAssemblyDefinition
       implements IAssemblyDefinition, IInlineDefinition<XmlInlineAssemblyDefinition> {
     private XmlFlagContainerSupport flagContainer;
     private XmlModelContainerSupport modelContainer;

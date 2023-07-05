@@ -26,11 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxOutputFactory;
@@ -48,13 +44,13 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AstColl
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorExtension.InsertAnchorNode;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import org.apache.commons.collections.IteratorUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.codehaus.stax2.ri.evt.MergedNsContext;
 import org.codehaus.stax2.ri.evt.NamespaceEventImpl;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -91,7 +87,7 @@ class MarkupStringTest {
     MarkupLine ms = MarkupLine.fromMarkdown(markdown);
     Document document = ms.getDocument();
 
-    assertNotNull(document);
+    Assertions.assertNotNull(document);
 
     LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(document));
     LOGGER.atInfo().log("HTML: {}", ms.toHtml());
@@ -102,9 +98,9 @@ class MarkupStringTest {
     {
       // Paragraph[0, 49]
       // ensure there is a single paragraph
-      assertEquals(1, documentChildren.size());
+      Assertions.assertEquals(1, documentChildren.size());
       Node paragraph = documentChildren.get(0);
-      assertTrue(paragraph instanceof Paragraph);
+      Assertions.assertTrue(paragraph instanceof Paragraph);
 
       List<Node> paragraphChildren = CollectionUtil.toList(paragraph.getChildren());
       // TextBase[0, 7] chars:[0, 7, "Some \*"]
@@ -114,12 +110,12 @@ class MarkupStringTest {
         // Text[0, 5] chars:[0, 5, "Some "]
         {
           Text text = (Text) textBaseChildren.get(0);
-          assertEquals("Some ", text.getChars().toString());
+          Assertions.assertEquals("Some ", text.getChars().toString());
         }
         // EscapedCharacter[5, 7] textOpen:[5, 6, "\"] text:[6, 7, "*"]
         {
           EscapedCharacter text = (EscapedCharacter) textBaseChildren.get(1);
-          assertEquals("*", text.getText().toString());
+          Assertions.assertEquals("*", text.getText().toString());
         }
       }
       // Emphasis[7, 13] textOpen:[7, 8, "*"] text:[8, 12, "more"] textClose:[12, 13, "*"]
@@ -129,13 +125,13 @@ class MarkupStringTest {
         // Text[8, 12] chars:[8, 12, "more"]
         {
           Text text = (Text) emphasisChildren.get(0);
-          assertEquals("more", text.getChars().toString());
+          Assertions.assertEquals("more", text.getChars().toString());
         }
       }
       // Text[13, 14] chars:[13, 14, " "]
       {
         Text text = (Text) paragraphChildren.get(2);
-        assertEquals(" ", text.getChars().toString());
+        Assertions.assertEquals(" ", text.getChars().toString());
       }
       // StrongEmphasis[14, 22] textOpen:[14, 16, "**"] text:[16, 20, "text"] textClose:[20, 22, "**"]
       {
@@ -144,14 +140,14 @@ class MarkupStringTest {
         // Text[16, 20] chars:[16, 20, "text"]
         {
           Text text = (Text) strongEmphasisChildren.get(0);
-          assertEquals("text", text.getChars().toString());
+          Assertions.assertEquals("text", text.getChars().toString());
         }
 
       }
       // Text[22, 36] chars:[22, 36, " and … ram: "]
       {
         Text text = (Text) paragraphChildren.get(4);
-        assertEquals(" and a param: ", text.getChars().toString());
+        Assertions.assertEquals(" and a param: ", text.getChars().toString());
       }
       // InsertAnchorNode[0, 0] name:[39, 45, "insert"]
       {
@@ -161,16 +157,16 @@ class MarkupStringTest {
       // Text[48, 49] chars:[48, 49, "."]
       {
         Text text = (Text) paragraphChildren.get(6);
-        assertEquals(".", text.getChars().toString());
+        Assertions.assertEquals(".", text.getChars().toString());
       }
     }
 
-    assertEquals(markdown, ms.toMarkdown());
+    Assertions.assertEquals(markdown, ms.toMarkdown());
 
     String html
         = "Some *<em>more</em> <strong>text</strong> and a param: <insert type=\"param\" id-ref=\"insert\" />.";
 
-    assertEquals(html, ms.toHtml());
+    Assertions.assertEquals(html, ms.toHtml());
   }
 
   @Test
@@ -185,8 +181,8 @@ class MarkupStringTest {
     LOGGER.atInfo().log("HTML: {}", ms.toXHtml(""));
     LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
-    assertEquals(markdown, ms.toMarkdown());
-    assertEquals(html, ms.toXHtml(""));
+    Assertions.assertEquals(markdown, ms.toMarkdown());
+    Assertions.assertEquals(html, ms.toXHtml(""));
   }
 
   @Test
@@ -218,8 +214,8 @@ class MarkupStringTest {
     LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
     LOGGER.atInfo().log("HTML: {}", ms.toXHtml(""));
     LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
-    assertEquals(markdown, ms.toMarkdown());
-    assertEquals(html, ms.toXHtml(""));
+    Assertions.assertEquals(markdown, ms.toMarkdown());
+    Assertions.assertEquals(html, ms.toXHtml(""));
   }
 
   /*
@@ -236,8 +232,8 @@ class MarkupStringTest {
     LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
     LOGGER.atInfo().log("HTML: {}", ms.toXHtml(""));
     LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
-    assertNotEquals(markdown, ms.toMarkdown());
-    assertEquals(html, ms.toXHtml(""));
+    Assertions.assertNotEquals(markdown, ms.toMarkdown());
+    Assertions.assertEquals(html, ms.toXHtml(""));
   }
 
   @Test
@@ -255,8 +251,8 @@ class MarkupStringTest {
     LOGGER.atInfo().log("HTML: {}", ms.toHtml());
     LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
-    assertEquals(markdown, ms.toMarkdown());
-    assertEquals(html, ms.toHtml());
+    Assertions.assertEquals(markdown, ms.toMarkdown());
+    Assertions.assertEquals(html, ms.toHtml());
   }
 
   @Test
@@ -273,8 +269,8 @@ class MarkupStringTest {
     LOGGER.atInfo().log("HTML: {}", ms.toHtml());
     LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
-    assertEquals(markdown, ms.toMarkdown());
-    assertEquals(html, ms.toHtml());
+    Assertions.assertEquals(markdown, ms.toMarkdown());
+    Assertions.assertEquals(html, ms.toHtml());
   }
 
   @Test
@@ -287,8 +283,8 @@ class MarkupStringTest {
     LOGGER.atInfo().log("HTML: {}", ms.toHtml());
     LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
-    assertEquals(markdown, ms.toMarkdown());
-    assertEquals(html, ms.toHtml());
+    Assertions.assertEquals(markdown, ms.toMarkdown());
+    Assertions.assertEquals(html, ms.toHtml());
   }
 
   @Test
@@ -298,16 +294,16 @@ class MarkupStringTest {
     MarkupLine ms = MarkupLine.fromMarkdown(markdown);
     Document document = ms.getDocument();
 
-    assertNotNull(document);
+    Assertions.assertNotNull(document);
 
     LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
     LOGGER.atInfo().log("HTML: {}", ms.toHtml());
     LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
-    assertEquals(markdown, ms.toMarkdown());
+    Assertions.assertEquals(markdown, ms.toMarkdown());
 
     String html = "hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).";
-    assertEquals(html, ms.toHtml().trim());
+    Assertions.assertEquals(html, ms.toHtml().trim());
 
     StringWriter stringWriter = new StringWriter();
     XMLStreamWriter2 xmlStreamWriter = newXmlStreamWriter(stringWriter);
@@ -321,7 +317,7 @@ class MarkupStringTest {
     xmlStreamWriter.close();
 
     String xhtml = "<p>hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).</p>";
-    assertEquals(xhtml, stringWriter.toString());
+    Assertions.assertEquals(xhtml, stringWriter.toString());
   }
 
   @Test
@@ -332,16 +328,16 @@ class MarkupStringTest {
     MarkupLine ms = MarkupLine.fromMarkdown(markdown);
     Document document = ms.getDocument();
 
-    assertNotNull(document);
+    Assertions.assertNotNull(document);
 
     LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
     LOGGER.atInfo().log("HTML: {}", ms.toHtml());
     LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
-    assertEquals(markdown, ms.toMarkdown());
+    Assertions.assertEquals(markdown, ms.toMarkdown());
 
     String html = "a user’s identity";
-    assertEquals(html, ms.toHtml().trim());
+    Assertions.assertEquals(html, ms.toHtml().trim());
 
     StringWriter stringWriter = new StringWriter();
     XMLStreamWriter2 xmlStreamWriter = newXmlStreamWriter(stringWriter);
@@ -354,18 +350,18 @@ class MarkupStringTest {
 
     xmlStreamWriter.close();
 
-    assertEquals("<p>" + html + "</p>", stringWriter.toString());
+    Assertions.assertEquals("<p>" + html + "</p>", stringWriter.toString());
 
     // test from HTML source
     ms = MarkupLine.fromHtml(html);
     document = ms.getDocument();
 
-    assertNotNull(document);
+    Assertions.assertNotNull(document);
     LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
     LOGGER.atInfo().log("HTML: {}", ms.toHtml());
     LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
-    assertEquals(markdown, ms.toMarkdown());
-    assertEquals(html, ms.toHtml().trim());
+    Assertions.assertEquals(markdown, ms.toMarkdown());
+    Assertions.assertEquals(html, ms.toHtml().trim());
   }
 
   @Test
@@ -382,8 +378,7 @@ class MarkupStringTest {
   @Test
   void testIntraTagNewline() {
     // addresses usnistgov/liboscal-java#5
-    String html = 
-        "<h1>A custom title\n" +
+    String html = "<h1>A custom title\n" +
         "  <em>with italic</em>\n" +
         "</h1>";
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
@@ -395,9 +390,8 @@ class MarkupStringTest {
 
     List<Node> children = CollectionUtil.toList(doc.getChildren());
     // ensure there is only 1 child and that it is a heading
-    assertAll(
-        () -> assertEquals(1, children.size()),
-        () -> assertEquals(Heading.class, children.get(0).getClass())
-    );
+    Assertions.assertAll(
+        () -> Assertions.assertEquals(1, children.size()),
+        () -> Assertions.assertEquals(Heading.class, children.get(0).getClass()));
   }
 }

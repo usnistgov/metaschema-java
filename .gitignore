@@ -30,3 +30,5 @@ package-lock.json
 /metaschema-schema-generator/test-schemagen
 /metaschema-schema-generator/oscal-complete_schema.xsd
 /metaschema-schema-generator/oscal-complete_schema.json
+velocity.log
+.fbExcludeFilterFile

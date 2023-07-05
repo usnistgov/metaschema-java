@@ -163,9 +163,10 @@ class DefaultConstraintValidatorTest {
     assertTrue(handler.isPassing(), "doesn't pass");
   }
 
+  @SuppressWarnings("null")
   @Test
   void testMultipleAllowedValuesConflictingAllowOther() {
-    @SuppressWarnings("null") MockItemFactory itemFactory = new MockItemFactory(context);
+    MockItemFactory itemFactory = new MockItemFactory(context);
 
     IFlagNodeItem flag1 = itemFactory.flag("value", IStringItem.valueOf("value"));
     IFlagNodeItem flag2 = itemFactory.flag("other2", IStringItem.valueOf("other2"));
@@ -239,6 +240,7 @@ class DefaultConstraintValidatorTest {
     @Override
     public Object invoke(Invocation invocation) {
       IFlagNodeItem thisFlag = (IFlagNodeItem) invocation.getInvokedObject();
+      assert thisFlag != null;
       DefaultConstraintValidator.Visitor visitor = (DefaultConstraintValidator.Visitor) invocation.getParameter(0);
       return visitor.visitFlag(thisFlag, null);
     }

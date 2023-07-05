@@ -140,29 +140,31 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
       @Override
       public void head(org.jsoup.nodes.Node node, int depth) {
         if (node instanceof TextNode) {
-          TextNode textNode = (TextNode)node;
+          TextNode textNode = (TextNode) node;
 
           org.jsoup.nodes.Node parent = textNode.parent();
 
-          if (!isTag(parent,"code") || !isTag(parent.parent(),"pre")) {
+          if (!isTag(parent, "code") || !isTag(parent.parent(), "pre")) {
             node.replaceWith(new TextNode(textNode.text()));
           }
         }
       }
-      
+
       private boolean isTag(@Nullable org.jsoup.nodes.Node node, @NonNull String tagName) {
         return node != null && tagName.equals(node.normalName());
       }
-      
+
     }, document);
-    
+
     String markdown = htmlParser.convert(document);
+    assert markdown != null;
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("html->markdown: {}", markdown);
     }
     return parseMarkdown(markdown, markdownParser);
   }
 
+  @SuppressWarnings("null")
   @NonNull
   protected static Document parseMarkdown(@NonNull String markdown, @NonNull Parser parser) {
     return parser.parse(markdown);
@@ -266,8 +268,22 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   }
 
   @Override
-  public List<InsertAnchorNode> getInserts(
-      @NonNull Predicate<InsertAnchorNode> filter) {
+  @NonNull
+  public List<InsertAnchorNode> getInserts() {
+    return getInserts(insert -> true);
+  }
+
+  /**
+   * Retrieve all insert statements that are contained within this markup text that match the provided
+   * filter.
+   *
+   * @param filter
+   *          a filter used to identify matching insert statements
+   * @return the matching insert statements
+   */
+  @Override
+  @NonNull
+  public List<InsertAnchorNode> getInserts(@NonNull Predicate<InsertAnchorNode> filter) {
     InsertVisitor visitor = new InsertVisitor(filter);
     visitor.visitChildren(getDocument());
     return visitor.getInserts();

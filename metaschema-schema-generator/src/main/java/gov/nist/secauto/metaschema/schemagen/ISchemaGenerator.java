@@ -75,6 +75,7 @@ public interface ISchemaGenerator {
         StandardOpenOption.CREATE,
         StandardOpenOption.WRITE,
         StandardOpenOption.TRUNCATE_EXISTING)) {
+      assert writer != null;
       schemaGenerator.generateFromMetaschema(metaschema, writer, configuration);
       writer.flush();
     }
@@ -94,7 +95,7 @@ public interface ISchemaGenerator {
     // we don't want to close os, since we do not own it
   }
 
-  public enum SchemaFormat {
+  enum SchemaFormat {
     /**
      * a JSON Schema.
      */

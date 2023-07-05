@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 
 import org.jmock.Expectations;
+import org.jmock.Mockery;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -40,7 +41,7 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class OrTest
-    extends AbstractExpressionTest {
+    extends ExpressionTestBase {
 
   private static Stream<Arguments> testOr() { // NOPMD - false positive
     return Stream.of(
@@ -54,9 +55,11 @@ class OrTest
   @MethodSource
   void testOr(IBooleanItem bool1, IBooleanItem bool2, IBooleanItem expectedResult) {
     DynamicContext dynamicContext = newDynamicContext();
+    Mockery context = getContext();
 
     @SuppressWarnings("null")
-    @NonNull INodeContext nodeContext = context.mock(INodeContext.class);
+    @NonNull
+    INodeContext nodeContext = context.mock(INodeContext.class);
 
     IExpression exp1 = context.mock(IExpression.class, "exp1");
     IExpression exp2 = context.mock(IExpression.class, "exp2");

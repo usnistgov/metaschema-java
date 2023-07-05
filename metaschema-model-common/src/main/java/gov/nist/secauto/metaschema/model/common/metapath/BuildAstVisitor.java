@@ -68,12 +68,12 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.apache.commons.collections.iterators.ReverseListIterator;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -775,9 +775,9 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
     SimpleletclauseContext letClause = context.simpleletclause();
     List<SimpleletbindingContext> clauses = letClause.simpleletbinding();
 
-    ReverseListIterator reverseListIterator = new ReverseListIterator(clauses);
-    while (reverseListIterator.hasNext()) {
-      SimpleletbindingContext simpleCtx = (SimpleletbindingContext) reverseListIterator.next();
+    ListIterator<SimpleletbindingContext> reverseListIterator = clauses.listIterator(clauses.size());
+    while (reverseListIterator.hasPrevious()) {
+      SimpleletbindingContext simpleCtx = reverseListIterator.previous();
 
       Name varName = (Name) simpleCtx.varname().accept(this);
       IExpression boundExpression = simpleCtx.exprsingle().accept(this);

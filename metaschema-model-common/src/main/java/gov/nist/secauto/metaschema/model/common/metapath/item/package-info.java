@@ -25,7 +25,7 @@
  */
 /**
  * The Metapath type system, which overlays the Metaschema type system defined in
- * {@link gov.nist.secauto.metaschema.model.common.datatype.adapter}.
+ * {@link gov.nist.secauto.metaschema.model.common.datatype}.
  */
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;

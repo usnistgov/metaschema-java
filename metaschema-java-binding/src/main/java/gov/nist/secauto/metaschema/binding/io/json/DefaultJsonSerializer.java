@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.binding.io.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;

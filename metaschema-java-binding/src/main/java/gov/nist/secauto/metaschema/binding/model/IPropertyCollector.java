@@ -36,7 +36,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * The class is used to "collect" items together to assign to the property's field. For fields with
  * a collection type, implementations of this class will handle managing the underlying collection.
  */
-interface IPropertyCollector {
+public interface IPropertyCollector {
   /**
    * Add an item to the "collection", who's type depends on the property configuration.
    *

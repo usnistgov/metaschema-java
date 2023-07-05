@@ -53,6 +53,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  *          the type of the wrapped definition
  */
 public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implements IRootAssemblyDefinition {
+  // TODO: find a better way to support this, e.g. abstract class
   @NonNull
   private final T rootDefinition;
 

@@ -77,9 +77,11 @@ public class DefaultXmlSerializer<CLASS>
   @NonNull
   protected XMLStreamWriter2 newXMLStreamWriter(@NonNull Writer writer) throws IOException {
     try {
-      XMLStreamWriter2 streamWriter = (XMLStreamWriter2) getXMLOutputFactory().createXMLStreamWriter(writer);
+      return (XMLStreamWriter2) getXMLOutputFactory().createXMLStreamWriter(writer);
+      // XMLStreamWriter2 streamWriter = (XMLStreamWriter2)
+      // getXMLOutputFactory().createXMLStreamWriter(writer);
       // streamWriter = new IndentingXmlStreamWriter2(streamWriter);
-      return streamWriter;
+      // return streamWriter;
     } catch (XMLStreamException ex) {
       throw new IOException(ex);
     }

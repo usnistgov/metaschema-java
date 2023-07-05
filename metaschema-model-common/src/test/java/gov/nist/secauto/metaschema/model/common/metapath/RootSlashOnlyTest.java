@@ -31,16 +31,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
+import org.jmock.Mockery;
 import org.junit.jupiter.api.Test;
 
 class RootSlashOnlyTest
-    extends AbstractExpressionTest {
+    extends ExpressionTestBase {
 
   @Test
   void testRootSlashOnlyPathUsingDocument() {
     DynamicContext dynamicContext = newDynamicContext();
+    Mockery context = getContext();
 
     IDocumentNodeItem nodeContext = context.mock(IDocumentNodeItem.class);
+    assert nodeContext != null;
 
     RootSlashOnlyPath expr = new RootSlashOnlyPath();
 
@@ -51,8 +54,10 @@ class RootSlashOnlyTest
   @Test
   void testRootSlashOnlyPathUsingNonDocument() {
     DynamicContext dynamicContext = newDynamicContext();
+    Mockery context = getContext();
 
     INodeItem nodeContext = context.mock(INodeItem.class);
+    assert nodeContext != null;
 
     RootSlashOnlyPath expr = new RootSlashOnlyPath();
 

@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark;
 
-import com.google.re2j.Pattern;
 import com.vladsch.flexmark.ast.Code;
 import com.vladsch.flexmark.ast.Text;
 import com.vladsch.flexmark.html.HtmlRenderer;
@@ -46,11 +45,11 @@ import com.vladsch.flexmark.util.sequence.SequenceUtils;
 
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collections;
 import java.util.Set;
+import java.util.regex.Pattern;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -87,9 +86,9 @@ public class HtmlCodeRenderExtension
 
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT", justification = "false positive")
     private void render( // NOPMD actually used in lambda
-        @NotNull Code node,
-        @NotNull NodeRendererContext context,
-        @NotNull HtmlWriter html) {
+        @NonNull Code node,
+        @NonNull NodeRendererContext context,
+        @NonNull HtmlWriter html) {
       HtmlRendererOptions htmlOptions = context.getHtmlOptions();
 
       boolean customTag = htmlOptions.codeStyleHtmlOpen != null || htmlOptions.codeStyleHtmlClose != null;

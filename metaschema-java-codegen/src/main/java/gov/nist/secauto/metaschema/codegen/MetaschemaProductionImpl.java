@@ -81,7 +81,7 @@ class MetaschemaProductionImpl implements IMetaschemaProduction { // NOPMD - int
             .flatMap(ObjectUtils::filterNull)
             .map(typeInfo -> {
               IFlagContainer definition = typeInfo.getDefinition();
-              DefaultGeneratedDefinitionClass generatedClass;
+              IGeneratedDefinitionClass generatedClass;
               try {
                 generatedClass = typeInfo.generateClass(targetDirectory);
               } catch (RuntimeException ex) { // NOPMD - intended

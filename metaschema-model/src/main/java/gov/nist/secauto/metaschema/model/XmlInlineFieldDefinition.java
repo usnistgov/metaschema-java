@@ -200,7 +200,7 @@ class XmlInlineFieldDefinition
   /**
    * The corresponding definition for the local flag instance.
    */
-  public final class InternalFieldDefinition implements IFieldDefinition, IInlineDefinition<XmlInlineFieldDefinition> {
+  private final class InternalFieldDefinition implements IFieldDefinition, IInlineDefinition<XmlInlineFieldDefinition> {
     @Nullable
     private final Object defaultValue;
     private XmlFlagContainerSupport flagContainer;

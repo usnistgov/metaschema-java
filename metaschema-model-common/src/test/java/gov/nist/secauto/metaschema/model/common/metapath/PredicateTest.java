@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IRequiredValueAsse
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jmock.Expectations;
+import org.jmock.Mockery;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -43,19 +44,23 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
 class PredicateTest
-    extends AbstractExpressionTest {
+    extends ExpressionTestBase {
 
   @Test
   void testPredicateWithValues() {
     DynamicContext dynamicContext = newDynamicContext();
+    Mockery context = getContext();
 
     @SuppressWarnings("null")
-    @NonNull IExpression stepExpr = context.mock(IExpression.class);
+    @NonNull
+    IExpression stepExpr = context.mock(IExpression.class);
     ISequence<?> stepResult = context.mock(ISequence.class, "stepResult");
     @SuppressWarnings("null")
-    @NonNull IRequiredValueAssemblyNodeItem item = context.mock(IRequiredValueAssemblyNodeItem.class);
+    @NonNull
+    IRequiredValueAssemblyNodeItem item = context.mock(IRequiredValueAssemblyNodeItem.class);
     @SuppressWarnings({ "unchecked", "null" })
-    @NonNull List<IExpression> predicates = context.mock(List.class, "predicates");
+    @NonNull
+    List<IExpression> predicates = context.mock(List.class, "predicates");
 
     context.checking(new Expectations() {
       { // NOPMD - intentional
@@ -88,14 +93,18 @@ class PredicateTest
   @Test
   void testPredicateWithoutValues() {
     DynamicContext dynamicContext = newDynamicContext().disablePredicateEvaluation();
+    Mockery context = getContext();
 
     @SuppressWarnings("null")
-    @NonNull IExpression stepExpr = context.mock(IExpression.class);
+    @NonNull
+    IExpression stepExpr = context.mock(IExpression.class);
     ISequence<?> stepResult = context.mock(ISequence.class, "stepResult");
     @SuppressWarnings("null")
-    @NonNull IAssemblyNodeItem item = context.mock(IAssemblyNodeItem.class);
+    @NonNull
+    IAssemblyNodeItem item = context.mock(IAssemblyNodeItem.class);
     @SuppressWarnings({ "unchecked", "null" })
-    @NonNull List<IExpression> predicates = context.mock(List.class, "predicates");
+    @NonNull
+    List<IExpression> predicates = context.mock(List.class, "predicates");
 
     context.checking(new Expectations() {
       { // NOPMD - intentional

@@ -308,7 +308,7 @@ final class ConstraintFactory {
 
   @Nullable
   static Integer toCardinality(int value) {
-    return value < 0 ? null : Integer.valueOf(value);
+    return value < 0 ? null : value;
   }
 
   @NonNull

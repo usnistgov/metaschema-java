@@ -339,7 +339,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
     return retval;
   }
 
-  public interface IValidationSchemaProvider {
+  interface IValidationSchemaProvider {
     @NonNull
     JSONObject getJsonSchema();
 

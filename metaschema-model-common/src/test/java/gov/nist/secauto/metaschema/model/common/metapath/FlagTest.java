@@ -34,15 +34,18 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IRequiredValueMode
 import gov.nist.secauto.metaschema.model.common.metapath.item.NodeItemType;
 
 import org.jmock.Expectations;
+import org.jmock.Mockery;
 import org.junit.jupiter.api.Test;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class FlagTest
-    extends AbstractExpressionTest {
+    extends ExpressionTestBase {
   @Test
   void testFlagWithName() {
     DynamicContext dynamicContext = newDynamicContext();
+
+    Mockery context = getContext();
 
     @SuppressWarnings("null")
     @NonNull IRequiredValueModelNodeItem nodeContext = context.mock(IRequiredValueModelNodeItem.class);

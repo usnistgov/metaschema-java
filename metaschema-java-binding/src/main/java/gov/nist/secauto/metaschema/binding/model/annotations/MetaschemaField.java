@@ -82,9 +82,8 @@ public @interface MetaschemaField {
    * Get the metaschema class that "owns" this assembly, which is the concrete implementation of the
    * metaschema containing the assembly.
    *
-   * @return the metaschema class
+   * @return the class that extends {@link IMetaschema}
    */
-  @NonNull
   Class<? extends IMetaschema> metaschema();
 
   /**

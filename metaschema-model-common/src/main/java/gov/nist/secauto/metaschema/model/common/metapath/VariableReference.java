@@ -34,7 +34,7 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class VariableReference implements IExpression {
+class VariableReference implements IExpression {
   @NonNull
   private final Name name;
 

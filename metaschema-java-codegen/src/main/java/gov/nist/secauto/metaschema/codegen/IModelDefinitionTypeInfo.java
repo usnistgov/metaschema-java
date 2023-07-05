@@ -98,7 +98,7 @@ public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
    *           if a build error occurred while generating the class
    */
   @NonNull
-  DefaultGeneratedDefinitionClass generateClass(@NonNull Path dir) throws IOException;
+  IGeneratedDefinitionClass generateClass(@NonNull Path dir) throws IOException;
 
   /**
    * This method is responsible for generating the Java class using a builder that is returned for

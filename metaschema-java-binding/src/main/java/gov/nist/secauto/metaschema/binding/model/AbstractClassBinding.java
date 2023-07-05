@@ -150,6 +150,7 @@ abstract class AbstractClassBinding implements IClassBinding {
    *          the class
    * @return an immutable collection of flag instances
    */
+  @SuppressWarnings("PMD.UseArraysAsList")
   @NonNull
   protected Collection<Field> getFlagInstanceFields(Class<?> clazz) {
     Field[] fields = clazz.getDeclaredFields();

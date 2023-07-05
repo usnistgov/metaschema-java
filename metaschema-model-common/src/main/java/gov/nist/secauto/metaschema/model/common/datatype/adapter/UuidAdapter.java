@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
-import com.google.re2j.Pattern;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUuidItem;
@@ -35,6 +34,7 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 

@@ -106,7 +106,7 @@ public abstract class AbstractTestSuite {
   @NonNull
   protected abstract Function<Path, ? extends IContentValidator> getContentValidatorSupplier();
 
-  protected Stream<? extends DynamicNode> testFactory() {
+  protected Stream<DynamicNode> testFactory() {
     try {
       return generateTests();
     } catch (XmlException | IOException ex) {
@@ -114,7 +114,7 @@ public abstract class AbstractTestSuite {
     }
   }
 
-  private Stream<? extends DynamicNode> generateTests() throws XmlException, IOException {
+  private Stream<DynamicNode> generateTests() throws XmlException, IOException {
     XmlOptions options = new XmlOptions();
     options.setBaseURI(null);
     options.setLoadLineNumbers();

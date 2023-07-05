@@ -39,21 +39,24 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DefaultTypeResolver implements ITypeResolver {
   private static final Logger LOGGER = LogManager.getLogger(DefaultTypeResolver.class);
 
-  private final Map<String, Set<String>> packageToClassNamesMap = new HashMap<>();
-  private final Map<IFlagContainer, ClassName> definitionToTypeMap = new HashMap<>();
-  private final Map<IMetaschema, ClassName> metaschemaToTypeMap = new HashMap<>();
-  private final Map<IAssemblyDefinition, IAssemblyDefinitionTypeInfo> assemblyDefinitionToTypeInfoMap = new HashMap<>();
-  private final Map<IFieldDefinition, IFieldDefinitionTypeInfo> fieldDefinitionToTypeInfoMap = new HashMap<>();
+  private final Map<String, Set<String>> packageToClassNamesMap = new ConcurrentHashMap<>();
+  private final Map<IFlagContainer, ClassName> definitionToTypeMap = new ConcurrentHashMap<>();
+  private final Map<IMetaschema, ClassName> metaschemaToTypeMap = new ConcurrentHashMap<>();
+  private final Map<IAssemblyDefinition, IAssemblyDefinitionTypeInfo> assemblyDefinitionToTypeInfoMap
+      = new ConcurrentHashMap<>();
+  private final Map<IFieldDefinition, IFieldDefinitionTypeInfo> fieldDefinitionToTypeInfoMap
+      = new ConcurrentHashMap<>();
 
   @NonNull
   private final IBindingConfiguration bindingConfiguration;
@@ -68,26 +71,16 @@ class DefaultTypeResolver implements ITypeResolver {
 
   @Override
   public IAssemblyDefinitionTypeInfo getTypeInfo(@NonNull IAssemblyDefinition definition) {
-    synchronized (this) {
-      IAssemblyDefinitionTypeInfo retval = assemblyDefinitionToTypeInfoMap.get(definition);
-      if (retval == null) {
-        retval = IAssemblyDefinitionTypeInfo.newTypeInfo(definition, this);
-        assemblyDefinitionToTypeInfoMap.put(definition, retval);
-      }
-      return retval;
-    }
+    return ObjectUtils.notNull(assemblyDefinitionToTypeInfoMap.computeIfAbsent(
+        definition,
+        (def) -> IAssemblyDefinitionTypeInfo.newTypeInfo(ObjectUtils.notNull(def), this)));
   }
 
   @Override
   public IFieldDefinitionTypeInfo getTypeInfo(@NonNull IFieldDefinition definition) {
-    synchronized (this) {
-      IFieldDefinitionTypeInfo retval = fieldDefinitionToTypeInfoMap.get(definition);
-      if (retval == null) {
-        retval = IFieldDefinitionTypeInfo.newTypeInfo(definition, this);
-        fieldDefinitionToTypeInfoMap.put(definition, retval);
-      }
-      return retval;
-    }
+    return ObjectUtils.notNull(fieldDefinitionToTypeInfoMap.computeIfAbsent(
+        definition,
+        (def) -> IFieldDefinitionTypeInfo.newTypeInfo(ObjectUtils.notNull(def), this)));
   }
 
   @Override
@@ -105,88 +98,84 @@ class DefaultTypeResolver implements ITypeResolver {
 
   @Override
   public ClassName getClassName(@NonNull IFlagContainer definition) {
-    ClassName retval = definitionToTypeMap.get(definition);
-    if (retval == null) {
-      String packageName = getBindingConfiguration().getPackageNameForMetaschema(definition.getContainingMetaschema());
-      if (definition.isInline()) {
-        // this is a local definition, which means a child class needs to be generated
-        INamedModelInstance inlineInstance = definition.getInlineInstance();
-        IFlagContainer parentDefinition = inlineInstance.getContainingDefinition();
-        ClassName parentClassName = getClassName(parentDefinition);
-        String name = generateClassName(ObjectUtils.notNull(parentClassName.canonicalName()), definition);
-        retval = parentClassName.nestedClass(name);
-      } else {
-        String className = generateClassName(packageName, definition);
-        retval = ClassName.get(packageName, className);
-      }
-      definitionToTypeMap.put(definition, retval);
-    }
-    return ObjectUtils.notNull(retval);
+    return ObjectUtils.notNull(definitionToTypeMap.computeIfAbsent(
+        definition,
+        (def) -> {
+          ClassName retval;
+          String packageName = getBindingConfiguration()
+              .getPackageNameForMetaschema(def.getContainingMetaschema());
+          if (def.isInline()) {
+            // this is a local definition, which means a child class needs to be generated
+            INamedModelInstance inlineInstance = def.getInlineInstance();
+            IFlagContainer parentDefinition = inlineInstance.getContainingDefinition();
+            ClassName parentClassName = getClassName(parentDefinition);
+            String name = generateClassName(ObjectUtils.notNull(parentClassName.canonicalName()), def);
+            retval = parentClassName.nestedClass(name);
+          } else {
+            String className = generateClassName(packageName, def);
+            retval = ClassName.get(packageName, className);
+          }
+          return retval;
+        }));
   }
 
   @Override
   public ClassName getClassName(IMetaschema metaschema) {
-    ClassName retval = metaschemaToTypeMap.get(metaschema);
-    if (retval == null) {
-      String packageName = getBindingConfiguration().getPackageNameForMetaschema(metaschema);
+    return ObjectUtils.notNull(metaschemaToTypeMap.computeIfAbsent(
+        metaschema,
+        (meta) -> {
+          assert meta != null;
+          String packageName = getBindingConfiguration().getPackageNameForMetaschema(meta);
 
-      String className = getBindingConfiguration().getClassName(metaschema);
-      String classNameBase = className;
-      int index = 1;
-      while (isClassNameClash(packageName, className)) {
-        className = classNameBase + Integer.toString(index);
-      }
-      addClassName(packageName, className);
-      retval = ClassName.get(packageName, className);
+          String className = getBindingConfiguration().getClassName(meta);
+          String classNameBase = className;
+          int index = 1;
+          while (isClassNameClash(packageName, className)) {
+            className = classNameBase + Integer.toString(index);
+          }
+          addClassName(packageName, className);
+          return ClassName.get(packageName, className);
+        }));
+  }
 
-      metaschemaToTypeMap.put(metaschema, retval);
-    }
-    return ObjectUtils.notNull(retval);
+  @NonNull
+  protected Set<String> getClassNamesFor(@NonNull String packageOrTypeName) {
+    return ObjectUtils.notNull(packageToClassNamesMap.computeIfAbsent(
+        packageOrTypeName,
+        (pkg) -> Collections.synchronizedSet(new HashSet<>())));
   }
 
   protected boolean isClassNameClash(@NonNull String packageOrTypeName, @NonNull String className) {
-    Set<String> classNames = packageToClassNamesMap.get(packageOrTypeName);
-    if (classNames == null) {
-      classNames = new HashSet<>();
-      packageToClassNamesMap.put(packageOrTypeName, classNames);
-    }
-    return classNames.contains(className);
+    return getClassNamesFor(packageOrTypeName).contains(className);
   }
 
   protected boolean addClassName(@NonNull String packageOrTypeName, @NonNull String className) {
-    Set<String> classNames = packageToClassNamesMap.get(packageOrTypeName);
-    if (classNames == null) {
-      classNames = new HashSet<>();
-      packageToClassNamesMap.put(packageOrTypeName, classNames);
-    }
-    return classNames.add(className);
+    return getClassNamesFor(packageOrTypeName).add(className);
   }
 
   private String generateClassName(@NonNull String packageOrTypeName, @NonNull IFlagContainer definition) {
-    @NonNull String className = getBindingConfiguration().getClassName(definition);
+    @NonNull
+    String className = getBindingConfiguration().getClassName(definition);
 
-    Set<String> classNames = packageToClassNamesMap.get(packageOrTypeName);
-    if (classNames == null) {
-      classNames = new HashSet<>();
-      packageToClassNamesMap.put(packageOrTypeName, classNames);
-    }
-
-    if (isClassNameClash(packageOrTypeName, className)) {
-      if (LOGGER.isWarnEnabled()) {
-        LOGGER.warn(String.format("Class name '%s' in metaschema '%s' conflicts with a previously used class name.",
-            className, definition.getContainingMetaschema().getLocation()));
+    Set<String> classNames = getClassNamesFor(packageOrTypeName);
+    synchronized (classNames) {
+      if (classNames.contains(className)) {
+        if (LOGGER.isWarnEnabled()) {
+          LOGGER.warn(String.format("Class name '%s' in metaschema '%s' conflicts with a previously used class name.",
+              className, definition.getContainingMetaschema().getLocation()));
+        }
+        // first try to append the metaschema's short name
+        String metaschemaShortName = definition.getContainingMetaschema().getShortName();
+        className = ClassUtils.toClassName(className + metaschemaShortName);
       }
-      // first try to append the metaschema's short name
-      String metaschemaShortName = definition.getContainingMetaschema().getShortName();
-      className = ClassUtils.toClassName(className + metaschemaShortName);
-    }
 
-    String classNameBase = className;
-    int index = 1;
-    while (isClassNameClash(packageOrTypeName, className)) {
-      className = classNameBase + Integer.toString(index);
+      String classNameBase = className;
+      int index = 1;
+      while (classNames.contains(className)) {
+        className = classNameBase + Integer.toString(index++);
+      }
+      classNames.add(className);
     }
-    addClassName(packageOrTypeName, className);
     return className;
   }
 
