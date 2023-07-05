@@ -36,6 +36,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.MissingOptionException;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -201,8 +202,9 @@ public class CLIProcessor {
   }
 
   public static void handleQuiet() {
-    @SuppressWarnings("resource") LoggerContext ctx = (LoggerContext) LogManager.getContext(false); // NOPMD not
-                                                                                                    // closable here
+    @SuppressWarnings("resource")
+    LoggerContext ctx = (LoggerContext) LogManager.getContext(false); // NOPMD not
+                                                                      // closable here
     Configuration config = ctx.getConfiguration();
     LoggerConfig loggerConfig = config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
     Level oldLevel = loggerConfig.getLevel();
@@ -213,7 +215,8 @@ public class CLIProcessor {
   }
 
   protected void showVersion() {
-    @SuppressWarnings("resource") PrintStream out = AnsiConsole.out(); // NOPMD - not owner
+    @SuppressWarnings("resource")
+    PrintStream out = AnsiConsole.out(); // NOPMD - not owner
     getVersionInfos().stream().forEach((info) -> {
       out.println(ansi()
           .bold().a(info.getName()).boldOff()
@@ -399,7 +402,10 @@ public class CLIProcessor {
     public ExitStatus handleInvalidCommand(
         @NonNull String message) {
       showHelp();
-      return ExitCode.INVALID_COMMAND.exitMessage(message);
+
+      ExitStatus retval = ExitCode.INVALID_COMMAND.exitMessage(message);
+      retval.generateMessage(false);
+      return retval;
     }
 
     /**
@@ -482,6 +488,7 @@ public class CLIProcessor {
             .collect(Collectors.joining(" ", " ", "")));
       }
 
+      // output calling commands
       Command targetCommand = getTargetCommand();
       if (targetCommand == null) {
         builder.append(" <command>");
@@ -502,8 +509,24 @@ public class CLIProcessor {
         }
       }
 
+      // output required options
+      getOptionsList().stream()
+          .filter(option -> option.isRequired())
+          .forEach(option -> {
+            builder
+                .append(' ')
+                .append(OptionUtils.toArgument(option));
+            if (option.hasArg()) {
+              builder
+                  .append('=')
+                  .append(option.getArgName());
+            }
+          });
+
+      // output non-required option placeholder
       builder.append(" [<options>]");
 
+      // output extra arguments
       if (targetCommand != null) {
         // handle extra arguments
         for (ExtraArgument argument : targetCommand.getExtraArguments()) {
@@ -538,9 +561,10 @@ public class CLIProcessor {
       AnsiPrintStream out = AnsiConsole.out();
       int terminalWidth = Math.max(out.getTerminalWidth(), 40);
 
-      @SuppressWarnings("resource") PrintWriter writer = new PrintWriter(out, true, StandardCharsets.UTF_8); // NOPMD -
-                                                                                                             // not
-                                                                                                             // owned
+      @SuppressWarnings("resource")
+      PrintWriter writer = new PrintWriter(out, true, StandardCharsets.UTF_8); // NOPMD -
+                                                                               // not
+                                                                               // owned
       formatter.printHelp(
           writer,
           terminalWidth,
