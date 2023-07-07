@@ -91,18 +91,18 @@ class PackageProductionImpl implements IPackageProduction {
     this.packageInfoClass
         = new DefaultGeneratedClass(packageInfo, ObjectUtils.notNull(ClassName.get(javaPackage, "package-info")));
   }
-//
-//  public static String formatMarkdown(@NonNull IFlexmarkMarkupString<?> markup) {
-//    // TODO: seemingly unused method. Remove?
-//    Formatter.Builder builder = Formatter.builder(FlexmarkConfiguration.FLEXMARK_CONFIG);
-//    builder.set(ObjectUtils.notNull(Formatter.FORMAT_FLAGS), LineAppendable.F_WHITESPACE_REMOVAL);
-//    // builder.set(Formatter.ESCAPE_SPECIAL_CHARS, false);
-//    Formatter formatter = builder.build();
-//    String markdown = markup.toMarkdown(formatter).trim();
-//    markdown = markdown.replace("\\&", "&");
-//    markdown = markdown.replace("\"", "\\\"");
-//    return markdown;
-//  }
+  //
+  // public static String formatMarkdown(@NonNull IFlexmarkMarkupString<?> markup) {
+  // // TODO: seemingly unused method. Remove?
+  // Formatter.Builder builder = Formatter.builder(FlexmarkConfiguration.FLEXMARK_CONFIG);
+  // builder.set(ObjectUtils.notNull(Formatter.FORMAT_FLAGS), LineAppendable.F_WHITESPACE_REMOVAL);
+  // // builder.set(Formatter.ESCAPE_SPECIAL_CHARS, false);
+  // Formatter formatter = builder.build();
+  // String markdown = markup.toMarkdown(formatter).trim();
+  // markdown = markdown.replace("\\&", "&");
+  // markdown = markdown.replace("\"", "\\\"");
+  // return markdown;
+  // }
 
   @Override
   public String getJavaPackage() {

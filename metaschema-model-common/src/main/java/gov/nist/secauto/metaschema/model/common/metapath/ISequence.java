@@ -27,18 +27,9 @@
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -61,6 +52,17 @@ public interface ISequence<ITEM_TYPE extends IItem> {
     return EMPTY;
   }
 
+  /**
+   * Construct a new sequence containing the provided {@code item}.
+   * <p>
+   * If the item is {@code null} and empty sequence will be created.
+   * 
+   * @param <ITEM_TYPE>
+   *          the type of items contained in the sequence.
+   * @param item
+   *          the item to add to the sequence
+   * @return the new sequence
+   */
   @NonNull
   public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
       @Nullable ITEM_TYPE item) {
@@ -73,6 +75,15 @@ public interface ISequence<ITEM_TYPE extends IItem> {
     return retval;
   }
 
+  /**
+   * Construct a new sequence containing the provided {@code items}.
+   * 
+   * @param <ITEM_TYPE>
+   *          the type of items contained in the sequence.
+   * @param items
+   *          the items to add to the sequence
+   * @return the new sequence
+   */
   @NonNull
   public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
       @NonNull List<ITEM_TYPE> items) {
@@ -85,69 +96,104 @@ public interface ISequence<ITEM_TYPE extends IItem> {
     return retval;
   }
 
+  /**
+   * Construct a new sequence containing the provided {@code items}.
+   * 
+   * @param <ITEM_TYPE>
+   *          the type of items contained in the sequence.
+   * @param items
+   *          the items to add to the sequence
+   * @return the new sequence
+   */
   @NonNull
   public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
       @NonNull Stream<ITEM_TYPE> items) {
     return new StreamSequenceImpl<>(items);
   }
 
+  /**
+   * Get the items in this sequence as a {@link List}.
+   * 
+   * @return a list containing all the items of the sequence
+   */
   @NonNull
   List<ITEM_TYPE> asList();
 
+  /**
+   * Get the items in this sequence as a {@link Stream}.
+   * 
+   * @return a stream containing all the items of the sequence
+   */
   // TODO: rename to "stream"
   @NonNull
   Stream<ITEM_TYPE> asStream();
 
+  /**
+   * Determine if this sequence is empty.
+   * 
+   * @return {@code true} if the sequence contains no items, or {@code false} otherwise
+   */
   boolean isEmpty();
 
+  /**
+   * Get the count of items in this sequence.
+   * 
+   * @return the count of items
+   */
   int size();
 
+  /**
+   * Iterate over each item in the sequence using the provided {@code action}.
+   * 
+   * @param action
+   *          code to execute for each item
+   */
   void forEach(Consumer<? super ITEM_TYPE> action);
-
-  @NonNull
-  static <ITEM_TYPE extends IItem> Collector<ITEM_TYPE, ?, ISequence<ITEM_TYPE>> toSequence() {
-
-    return new Collector<ITEM_TYPE, List<ITEM_TYPE>, ISequence<ITEM_TYPE>>() {
-
-      @Override
-      public Supplier<List<ITEM_TYPE>> supplier() {
-        return ArrayList::new;
-      }
-
-      @Override
-      public BiConsumer<List<ITEM_TYPE>, ITEM_TYPE> accumulator() {
-        return (list, value) -> list.add(value);
-      }
-
-      @Override
-      public BinaryOperator<List<ITEM_TYPE>> combiner() {
-        return (list1, list2) -> {
-          list1.addAll(list2);
-          return list1;
-        };
-      }
-
-      @Override
-      public Function<List<ITEM_TYPE>, ISequence<ITEM_TYPE>> finisher() {
-        return list -> {
-          ISequence<ITEM_TYPE> retval;
-          if (list.isEmpty()) {
-            retval = empty();
-          } else if (list.size() == 1) {
-            retval = new SingletonSequenceImpl<>(ObjectUtils.notNull(list.iterator().next()));
-          } else {
-            retval = new ListSequenceImpl<>(list, false);
-          }
-          return retval;
-        };
-      }
-
-      @Override
-      public Set<Characteristics> characteristics() {
-        return Collections.emptySet();
-      }
-
-    };
-  }
+  //
+  // @NonNull
+  // static <ITEM_TYPE extends IItem> Collector<ITEM_TYPE, ?, ISequence<ITEM_TYPE>> toSequence() {
+  //
+  // return new Collector<ITEM_TYPE, List<ITEM_TYPE>, ISequence<ITEM_TYPE>>() {
+  //
+  // @Override
+  // public Supplier<List<ITEM_TYPE>> supplier() {
+  // return ArrayList::new;
+  // }
+  //
+  // @Override
+  // public BiConsumer<List<ITEM_TYPE>, ITEM_TYPE> accumulator() {
+  // return (list, value) -> list.add(value);
+  // }
+  //
+  // @Override
+  // public BinaryOperator<List<ITEM_TYPE>> combiner() {
+  // return (list1, list2) -> {
+  // list1.addAll(list2);
+  // return list1;
+  // };
+  // }
+  //
+  // @Override
+  // public Function<List<ITEM_TYPE>, ISequence<ITEM_TYPE>> finisher() {
+  // return list -> {
+  // ISequence<ITEM_TYPE> retval;
+  // if (list.isEmpty()) {
+  // retval = empty();
+  // } else if (list.size() == 1) {
+  // retval = new SingletonSequenceImpl<>(ObjectUtils.notNull(list.iterator().next()));
+  // } else {
+  // retval = new ListSequenceImpl<>(list, false);
+  // }
+  // return retval;
+  // };
+  // }
+  //
+  // @Override
+  // public Set<Characteristics> characteristics() {
+  // return Collections.emptySet();
+  // }
+  //
+  // };
+  // }
 
 }

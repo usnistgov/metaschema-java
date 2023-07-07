@@ -65,7 +65,8 @@ class TestBasicMetaschema {
   private static final Logger LOGGER = LogManager.getLogger(TestBasicMetaschema.class);
   // @TempDir
   // Path generationDir;
-  Path generationDir = Paths.get("target/generated-test-sources/metaschema");
+  @NonNull
+  Path generationDir = ObjectUtils.notNull(Paths.get("target/generated-test-sources/metaschema"));
 
   @NonNull
   private static IMetaschema loadMetaschema(@NonNull Path metaschemaFile) throws MetaschemaException, IOException {
@@ -97,7 +98,7 @@ class TestBasicMetaschema {
 
     try (Reader reader = Files.newBufferedReader(file)) {
       assert reader != null;
-      Object value = context.newDeserializer(format, rootClass).deserialize(reader, file.toUri());
+      Object value = context.newDeserializer(format, rootClass).deserialize(reader, ObjectUtils.notNull(file.toUri()));
       return value;
     }
   }
@@ -109,6 +110,7 @@ class TestBasicMetaschema {
 
     try (Writer writer = Files.newBufferedWriter(file, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
         StandardOpenOption.TRUNCATE_EXISTING)) {
+      assert writer != null;
       context.newSerializer(format, clazz).serialize(rootObject, writer);
     }
   }
@@ -149,13 +151,13 @@ class TestBasicMetaschema {
         }
 
         LOGGER.info("Write XML:");
-        write(Format.XML, Paths.get("out.xml"), root);
+        write(Format.XML, ObjectUtils.notNull(Paths.get("out.xml")), root);
 
         LOGGER.info("Write JSON:");
-        write(Format.XML, Paths.get("out.json"), root);
+        write(Format.XML, ObjectUtils.notNull(Paths.get("out.json")), root);
       }
 
-      Object root = read(Format.XML, Paths.get("out.xml"), rootClass);
+      Object root = read(Format.XML, ObjectUtils.notNull(Paths.get("out.xml")), rootClass);
       if (assertions != null) {
         assertAll("Deserialize XML (roundtrip)", () -> assertions.accept(root));
       }

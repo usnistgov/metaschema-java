@@ -44,6 +44,7 @@ import gov.nist.secauto.metaschema.binding.model.test.TestMetaschema;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.jmock.Expectations;
@@ -67,7 +68,7 @@ public class AbstractBoundModelTestSupport {
 
   @NonNull
   protected JUnit5Mockery getJUnit5Mockery() {
-    return context;
+    return ObjectUtils.requireNonNull(context);
   }
 
   protected void registerDatatype(@NonNull IDataTypeAdapter<?> adapter) {
@@ -83,7 +84,9 @@ public class AbstractBoundModelTestSupport {
 
   @NonNull
   protected IFieldClassBinding registerFieldBinding(@NonNull Class<?> clazz) {
-    IFieldClassBinding retval = DefaultFieldClassBinding.createInstance(clazz, bindingContext);
+    IFieldClassBinding retval = DefaultFieldClassBinding.createInstance(
+        clazz,
+        ObjectUtils.notNull(bindingContext));
     context.checking(new Expectations() {
       { // NOPMD - intentional
         allowing(bindingContext).getClassBinding(clazz);
@@ -95,7 +98,9 @@ public class AbstractBoundModelTestSupport {
 
   @NonNull
   protected IAssemblyClassBinding registerAssemblyBinding(@NonNull Class<?> clazz) {
-    IAssemblyClassBinding retval = DefaultAssemblyClassBinding.createInstance(clazz, bindingContext);
+    IAssemblyClassBinding retval = DefaultAssemblyClassBinding.createInstance(
+        clazz,
+        ObjectUtils.notNull(bindingContext));
     context.checking(new Expectations() {
       { // NOPMD - intentional
         allowing(bindingContext).getClassBinding(clazz);
@@ -107,7 +112,9 @@ public class AbstractBoundModelTestSupport {
 
   @NonNull
   protected IMetaschema registerMetaschema(@NonNull Class<? extends AbstractBoundMetaschema> clazz) {
-    IMetaschema retval = AbstractBoundMetaschema.createInstance(clazz, bindingContext);
+    IMetaschema retval = AbstractBoundMetaschema.createInstance(
+        clazz,
+        ObjectUtils.notNull(bindingContext));
     context.checking(new Expectations() {
       { // NOPMD - intentional
         allowing(bindingContext).getMetaschemaInstanceByClass(clazz);
@@ -154,7 +161,8 @@ public class AbstractBoundModelTestSupport {
         will(returnValue(parser));
       }
     });
-    return retval;
+
+    return ObjectUtils.notNull(retval);
   }
 
   @SuppressWarnings("resource")
@@ -171,6 +179,6 @@ public class AbstractBoundModelTestSupport {
         will(returnValue(jsonParser));
       }
     });
-    return retval;
+    return ObjectUtils.notNull(retval);
   }
 }

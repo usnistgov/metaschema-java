@@ -43,6 +43,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertV
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.MarkupVisitor;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.MarkupXmlEventWriter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.MarkupXmlStreamWriter;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -184,12 +185,12 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
       try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
         XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
 
-        writeXHtml(namespace, xmlStreamWriter);
+        writeXHtml(namespace, ObjectUtils.notNull(xmlStreamWriter));
 
         xmlStreamWriter.flush();
         xmlStreamWriter.close();
         os.flush();
-        retval = os.toString(StandardCharsets.UTF_8);
+        retval = ObjectUtils.notNull(os.toString(StandardCharsets.UTF_8));
       }
     } else {
       retval = "";
@@ -210,8 +211,8 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     // return QUOTE_TAG_REPLACEMENT_PATTERN.matcher(html)
     // .replaceAll("&quot;");
     String html = getFlexmarkFactory().getHtmlRenderer().render(getDocument());
-    return QUOTE_TAG_REPLACEMENT_PATTERN.matcher(html)
-        .replaceAll("&quot;");
+    return ObjectUtils.notNull(QUOTE_TAG_REPLACEMENT_PATTERN.matcher(html)
+        .replaceAll("&quot;"));
   }
 
   @Override
@@ -221,7 +222,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
 
   @Override
   public String toMarkdown(Formatter formatter) {
-    return formatter.render(getDocument());
+    return ObjectUtils.notNull(formatter.render(getDocument()));
   }
 
   @Override

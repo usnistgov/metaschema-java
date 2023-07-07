@@ -69,11 +69,13 @@ public final class MetaschemaCompilerHelper {
     // disable construction
   }
 
+  @NonNull
   public static IProduction compileMetaschema(@NonNull Path metaschemaPath, @NonNull Path classDir)
       throws IOException, MetaschemaException {
     return compileMetaschema(metaschemaPath, classDir, new DefaultBindingConfiguration());
   }
 
+  @NonNull
   public static IProduction compileMetaschema(@NonNull Path metaschemaPath, @NonNull Path classDir,
       @NonNull IBindingConfiguration bindingConfiguration)
       throws IOException, MetaschemaException {
@@ -81,11 +83,13 @@ public final class MetaschemaCompilerHelper {
     return compileMetaschema(metaschema, classDir, bindingConfiguration);
   }
 
+  @NonNull
   public static IProduction compileMetaschema(@NonNull IMetaschema metaschema, @NonNull Path classDir)
       throws IOException {
     return compileMetaschema(metaschema, classDir, new DefaultBindingConfiguration());
   }
 
+  @NonNull
   public static IProduction compileMetaschema(@NonNull IMetaschema metaschema, @NonNull Path classDir,
       @NonNull IBindingConfiguration bindingConfiguration) throws IOException {
     IProduction production = JavaGenerator.generate(metaschema, classDir, bindingConfiguration);
@@ -104,6 +108,8 @@ public final class MetaschemaCompilerHelper {
     return production;
   }
 
+  @SuppressWarnings("null")
+  @NonNull
   public static ClassLoader getClassLoader(@NonNull final Path classDir, @NonNull final ClassLoader parent) {
     return AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
       @Override

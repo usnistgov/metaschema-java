@@ -29,13 +29,17 @@ package gov.nist.secauto.metaschema.binding.io.json;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser.Feature;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public final class JsonFactoryFactory {
+  @NonNull
   private static final JsonFactory SINGLETON = newJsonFactoryInstance();
 
   private JsonFactoryFactory() {
     // disable construction
   }
 
+  @NonNull
   public static JsonFactory newJsonFactoryInstance() {
     JsonFactory retval = new JsonFactory();
     // avoid automatically closing streams not owned by the reader
@@ -43,6 +47,7 @@ public final class JsonFactoryFactory {
     return retval;
   }
 
+  @NonNull
   public static JsonFactory instance() {
     return SINGLETON;
   }

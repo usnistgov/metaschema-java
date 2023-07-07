@@ -30,6 +30,8 @@ import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.binding.io.AbstractParsingContext;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public class DefaultJsonParsingContext
     extends AbstractParsingContext<JsonParser, IJsonProblemHandler>
     implements IJsonParsingContext {
@@ -38,8 +40,9 @@ public class DefaultJsonParsingContext
   // this(parser, new DefaultJsonProblemHandler(), false);
   // }
 
-  public DefaultJsonParsingContext(JsonParser parser,
-      IJsonProblemHandler problemHandler) {
+  public DefaultJsonParsingContext(
+      @NonNull JsonParser parser,
+      @NonNull IJsonProblemHandler problemHandler) {
     super(parser, problemHandler);
   }
 }

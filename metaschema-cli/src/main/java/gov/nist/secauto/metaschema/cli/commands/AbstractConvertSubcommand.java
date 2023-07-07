@@ -98,6 +98,7 @@ public abstract class AbstractConvertSubcommand
     return EXTRA_ARGUMENTS;
   }
 
+  @SuppressWarnings("PMD.PreserveStackTrace") // intended
   @Override
   public void validateOptions(CallingContext callingContext, CommandLine cmdLine) throws InvalidArgumentException {
 
@@ -171,6 +172,7 @@ public abstract class AbstractConvertSubcommand
     }
 
     Path source = Paths.get(extraArgs.get(0));
+    assert source != null;
 
     String toFormatText = cmdLine.getOptionValue(TO_OPTION);
     Format toFormat = Format.valueOf(toFormatText.toUpperCase(Locale.ROOT));
@@ -179,7 +181,7 @@ public abstract class AbstractConvertSubcommand
     try {
       IBoundLoader loader = bindingContext.newBoundLoader();
       if (destination == null) {
-        loader.convert(source, System.out, toFormat, getLoadedClass());
+        loader.convert(source, ObjectUtils.notNull(System.out), toFormat, getLoadedClass());
       } else {
         loader.convert(source, destination, toFormat, getLoadedClass());
       }
@@ -192,9 +194,11 @@ public abstract class AbstractConvertSubcommand
     return ExitCode.OK.exit();
   }
 
+  @NonNull
   protected abstract Class<?> getLoadedClass();
 
+  @NonNull
   public String getLoadedClassSimpleName() {
-    return getLoadedClass().getSimpleName();
+    return ObjectUtils.notNull(getLoadedClass().getSimpleName());
   }
 }

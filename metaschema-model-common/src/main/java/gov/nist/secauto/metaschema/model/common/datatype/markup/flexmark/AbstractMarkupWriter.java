@@ -633,7 +633,7 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
     } else {
       text = node.getContentChars().toString();
     }
-    writeText(text);
+    writeText(ObjectUtils.notNull(text));
   }
 
   @Override
@@ -713,7 +713,7 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
 
     BasedSequence text = node.getChars();
     text = text.subSequence(4, text.length() - 4);
-    writeComment(text.unescape());
+    writeComment(ObjectUtils.notNull(text.unescape()));
     writeTrailingNewline(node);
 
   }

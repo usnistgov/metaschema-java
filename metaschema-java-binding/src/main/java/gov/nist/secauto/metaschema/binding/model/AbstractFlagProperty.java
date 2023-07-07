@@ -88,6 +88,7 @@ abstract class AbstractFlagProperty
     return handled;
   }
 
+  @SuppressWarnings("resource") // not owned
   @Override
   protected Object readInternal(Object parentInstance, IJsonParsingContext context) throws IOException {
     JsonParser parser = context.getReader();// NOPMD - intentional
@@ -136,6 +137,7 @@ abstract class AbstractFlagProperty
 
   @Override
   public void write(Object instance, IJsonWritingContext context) throws IOException {
+    @SuppressWarnings("resource") // not owned
     JsonGenerator writer = context.getWriter(); // NOPMD - intentional
 
     Object value = getValue(instance);

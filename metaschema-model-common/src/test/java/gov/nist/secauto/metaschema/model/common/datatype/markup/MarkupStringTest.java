@@ -239,9 +239,9 @@ class MarkupStringTest {
   @Test
   void preMarkdown() {
     String htmlPreOnly = "<pre>Example **some** *code*</pre>";
-    String html = "<pre><code>Example **some** *code*\n"
+    final String html = "<pre><code>Example **some** *code*\n"
         + "</code></pre>";
-    String markdown = "```\n"
+    final String markdown = "```\n"
         + "Example **some** *code*\n"
         + "```";
 
@@ -257,10 +257,10 @@ class MarkupStringTest {
 
   @Test
   void preCodeMarkdown() {
-    String html = "<pre><code>Example **some** *code*\n"
+    final String html = "<pre><code>Example **some** *code*\n"
         + "nextline\n"
         + "</code></pre>";
-    String markdown = "    Example **some** *code*\n"
+    final String markdown = "    Example **some** *code*\n"
         + "    nextline\n";
 
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
@@ -275,8 +275,8 @@ class MarkupStringTest {
 
   @Test
   void paragraphCodeMarkdown() {
-    String html = "<p>Example<code>**some** *code*</code></p>";
-    String markdown = "Example`**some** *code*`";
+    final String html = "<p>Example<code>**some** *code*</code></p>";
+    final String markdown = "Example`**some** *code*`";
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
 
     LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
@@ -289,7 +289,9 @@ class MarkupStringTest {
 
   @Test
   void testEntityRoundTrip() throws XMLStreamException {
-    String markdown = "hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).";
+    final String markdown = "hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).";
+    final String html = "hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).";
+    final String xhtml = "<p>hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).</p>";
 
     MarkupLine ms = MarkupLine.fromMarkdown(markdown);
     Document document = ms.getDocument();
@@ -301,8 +303,6 @@ class MarkupStringTest {
     LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
 
     Assertions.assertEquals(markdown, ms.toMarkdown());
-
-    String html = "hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).";
     Assertions.assertEquals(html, ms.toHtml().trim());
 
     StringWriter stringWriter = new StringWriter();
@@ -316,7 +316,6 @@ class MarkupStringTest {
 
     xmlStreamWriter.close();
 
-    String xhtml = "<p>hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).</p>";
     Assertions.assertEquals(xhtml, stringWriter.toString());
   }
 

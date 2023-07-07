@@ -119,6 +119,7 @@ class ListPropertyInfo
     return handled;
   }
 
+  @SuppressWarnings("resource") // not owned
   @Override
   public void readValue(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
       throws IOException {
@@ -185,6 +186,7 @@ class ListPropertyInfo
   public void writeValue(Object parentInstance, IJsonWritingContext context) throws IOException {
     List<? extends Object> items = getItemsFromParentInstance(parentInstance);
 
+    @SuppressWarnings("resource") // not owned
     JsonGenerator writer = context.getWriter(); // NOPMD - intentional
 
     boolean writeArray = false;

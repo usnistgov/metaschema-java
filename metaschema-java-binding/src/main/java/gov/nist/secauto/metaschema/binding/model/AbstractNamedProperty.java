@@ -54,6 +54,7 @@ abstract class AbstractNamedProperty<CLASS_BINDING extends IClassBinding>
     super(parentClassBinding);
   }
 
+  @SuppressWarnings("resource") // not owned
   public boolean isNextProperty(IJsonParsingContext context) throws IOException {
     JsonParser parser = context.getReader(); // NOPMD - intentional
 
@@ -77,6 +78,7 @@ abstract class AbstractNamedProperty<CLASS_BINDING extends IClassBinding>
     return retval;
   }
 
+  @SuppressWarnings("resource") // not owned
   @Override
   public boolean read(Object objectInstance, IJsonParsingContext context) throws IOException {
     JsonParser parser = context.getReader(); // NOPMD - intentional

@@ -38,6 +38,7 @@ public final class XmlUtil {
     // disable construction
   }
 
+  @SuppressWarnings("resource") // user of source is expected to close
   public static Source getStreamSource(URL url) throws IOException {
     return new StreamSource(url.openStream(), url.toString());
   }

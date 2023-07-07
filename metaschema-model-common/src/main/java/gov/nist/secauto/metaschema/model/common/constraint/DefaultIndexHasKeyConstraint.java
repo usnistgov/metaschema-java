@@ -143,7 +143,7 @@ public final class DefaultIndexHasKeyConstraint
           getLevel(),
           getTarget(),
           getProperties(),
-          getIndexName(),
+          ObjectUtils.notNull(getIndexName()),
           getKeyFields(),
           getRemarks());
     }

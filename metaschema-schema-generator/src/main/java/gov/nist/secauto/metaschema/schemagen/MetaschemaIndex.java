@@ -123,9 +123,18 @@ public class MetaschemaIndex {
     // return !index.hasEntry(def);
     // }
 
+    /**
+     * Updates the index entry for the definition associated with the reference.
+     * 
+     * @param instance
+     *          the instance to process
+     * @return {@code true} if this is the first time handling the definition this instance references,
+     *         or {@code false} otherwise
+     */
     private boolean handleInstance(INamedInstance instance) {
       IDefinition definition = instance.getDefinition();
-      boolean exists = getDefaultData().hasEntry(definition);
+      // check if this will be a new entry, which needs to be called before getEntry, which will create it
+      final boolean exists = getDefaultData().hasEntry(definition);
       DefinitionEntry entry = getDefaultData().getEntry(definition);
       entry.incrementReferenceCount();
 

@@ -41,6 +41,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -51,19 +52,19 @@ public final class JsonUtil {
     // disable construction
   }
 
-  public static String toString(JsonParser parser) throws IOException {
+  public static String toString(@NonNull JsonParser parser) throws IOException {
     StringBuilder builder = new StringBuilder(32);
     builder
         .append(parser.currentToken().name())
         .append(" '")
         .append(parser.getText())
         .append("' at location '")
-        .append(toString(parser.getCurrentLocation()))
+        .append(toString(ObjectUtils.notNull(parser.getCurrentLocation())))
         .append('\'');
     return builder.toString();
   }
 
-  public static String toString(JsonLocation location) {
+  public static String toString(@NonNull JsonLocation location) {
     StringBuilder builder = new StringBuilder();
     builder
         .append(location.getLineNr())
@@ -72,7 +73,7 @@ public final class JsonUtil {
     return builder.toString();
   }
 
-  public static JsonToken advanceTo(JsonParser parser, JsonToken token) throws IOException {
+  public static JsonToken advanceTo(@NonNull JsonParser parser, JsonToken token) throws IOException {
     JsonToken currentToken = null;
     while (parser.hasCurrentToken() && !token.equals(currentToken = parser.currentToken())) {
       currentToken = parser.nextToken();
@@ -83,7 +84,11 @@ public final class JsonUtil {
     return currentToken;
   }
 
-  public static JsonToken skipNextValue(JsonParser parser) throws IOException {
+  @SuppressWarnings({
+      "resource", // parser not owned
+      "PMD.CyclomaticComplexity" // acceptable
+  })
+  public static JsonToken skipNextValue(@NonNull JsonParser parser) throws IOException {
 
     JsonToken currentToken = parser.currentToken();
     // skip the field name
@@ -115,7 +120,8 @@ public final class JsonUtil {
     return parser.nextToken();
   }
 
-  public static boolean checkEndOfValue(JsonParser parser, JsonToken startToken) {
+  @SuppressWarnings("PMD.CyclomaticComplexity") // acceptable
+  public static boolean checkEndOfValue(@NonNull JsonParser parser, @NonNull JsonToken startToken) {
     JsonToken currentToken = parser.getCurrentToken();
 
     boolean retval;
@@ -144,7 +150,7 @@ public final class JsonUtil {
   public static void assertCurrent(@NonNull JsonParser parser, @NonNull JsonToken... expectedTokens) {
     JsonToken current = parser.currentToken();
     assert Arrays.stream(expectedTokens).anyMatch(expected -> expected.equals(current)) : getAssertMessage(
-        Arrays.asList(expectedTokens), parser.currentToken(), parser.getCurrentLocation());
+        expectedTokens, parser.currentToken(), ObjectUtils.notNull(parser.getCurrentLocation()));
   }
 
   public static void assertCurrentIsFieldValue(@NonNull JsonParser parser) {
@@ -152,20 +158,22 @@ public final class JsonUtil {
     assert token.isStructStart() || token.isScalarValue() : String.format(
         "Expected a START_OBJECT, START_ARRAY, or VALUE_xxx token, but found JsonToken '%s' at '%s'.",
         token,
-        JsonUtil.toString(parser.getCurrentLocation()));
+        JsonUtil.toString(ObjectUtils.notNull(parser.getCurrentLocation())));
   }
 
   public static JsonToken assertAndAdvance(@NonNull JsonParser parser, @NonNull JsonToken expectedToken)
       throws IOException {
     JsonToken token = parser.currentToken();
-    assert expectedToken.equals(token) : getAssertMessage(expectedToken, token, parser.getCurrentLocation());
+    assert expectedToken.equals(token) : getAssertMessage(expectedToken, token,
+        ObjectUtils.notNull(parser.getCurrentLocation()));
     return parser.nextToken();
   }
 
   public static JsonToken advanceAndAssert(@NonNull JsonParser parser, @NonNull JsonToken expectedToken)
       throws IOException {
     JsonToken token = parser.nextToken();
-    assert expectedToken.equals(token) : getAssertMessage(expectedToken, token, parser.getCurrentLocation());
+    assert expectedToken.equals(token) : getAssertMessage(expectedToken, token,
+        ObjectUtils.notNull(parser.getCurrentLocation()));
     return token;
   }
 
@@ -176,6 +184,13 @@ public final class JsonUtil {
             expected,
             actual,
             JsonUtil.toString(location)));
+  }
+
+  @NonNull
+  public static String getAssertMessage(@NonNull JsonToken[] expected, JsonToken actual,
+      @NonNull JsonLocation location) {
+    List<JsonToken> expectedTokens = ObjectUtils.notNull(Arrays.asList(expected));
+    return getAssertMessage(expectedTokens, actual, location);
   }
 
   @NonNull

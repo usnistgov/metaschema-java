@@ -263,7 +263,7 @@ class XmlInlineAssemblyDefinition
      * @return the flag container instance
      */
     @SuppressWarnings("null")
-    protected XmlFlagContainerSupport initFlagContainer() {
+    private XmlFlagContainerSupport initFlagContainer() {
       synchronized (this) {
         if (flagContainer == null) {
           flagContainer = new XmlFlagContainerSupport(getXmlAssembly(), this);
@@ -294,7 +294,7 @@ class XmlInlineAssemblyDefinition
      * @return the flag container instance
      */
     @SuppressWarnings("null")
-    protected XmlModelContainerSupport initModelContainer() {
+    private XmlModelContainerSupport initModelContainer() {
       synchronized (this) {
         if (modelContainer == null) {
           modelContainer = new XmlModelContainerSupport(getXmlAssembly(), this);
@@ -364,7 +364,7 @@ class XmlInlineAssemblyDefinition
      *
      * @return the constraints instance
      */
-    protected IAssemblyConstraintSupport initModelConstraints() {
+    private IAssemblyConstraintSupport initModelConstraints() {
       synchronized (this) {
         if (constraints == null) {
           if (getXmlAssembly().isSetConstraint()) {

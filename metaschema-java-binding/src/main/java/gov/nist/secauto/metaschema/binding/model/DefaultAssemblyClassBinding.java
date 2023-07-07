@@ -334,6 +334,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
     return constraints.get();
   }
 
+  @SuppressWarnings("resource") // not owned
   @Override
   public Object readObject(IJsonParsingContext context) throws IOException {
     JsonParser parser = context.getReader(); // NOPMD - intentional
@@ -370,6 +371,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
     }
   }
 
+  @SuppressWarnings("resource") // not owned
   @Override
   public List<Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
       throws IOException {
@@ -404,6 +406,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
    * @throws IOException
    *           if an error occurred while reading the JSON
    */
+  @SuppressWarnings("resource") // not owned
   protected void readInternal( // NOPMD - ok
       @NonNull Object instance,
       @Nullable Object parentInstance,
@@ -455,7 +458,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
       } else {
         if (LOGGER.isWarnEnabled()) {
           LOGGER.warn("Unrecognized property named '{}' at '{}'", propertyName,
-              JsonUtil.toString(parser.getCurrentLocation()));
+              JsonUtil.toString(ObjectUtils.notNull(parser.getCurrentLocation())));
         }
         JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
         JsonUtil.skipNextValue(parser);
@@ -500,6 +503,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
    * @throws NullPointerException
    *           if there is a JSON key configured and the key property's value is {@code null}
    */
+  @SuppressWarnings("resource") // not owned
   protected void writeInternal(@NonNull Object instance, boolean writeObjectWrapper,
       @NonNull IJsonWritingContext context)
       throws IOException {

@@ -149,6 +149,7 @@ class DefaultFieldValueProperty
     return new SingletonPropertyCollector();
   }
 
+  @SuppressWarnings("resource") // not owned
   @Override
   public Object read(IJsonParsingContext context) throws IOException {
     if (getParentClassBinding().hasJsonValueKeyFlagInstance()) {
@@ -166,6 +167,7 @@ class DefaultFieldValueProperty
     return retval;
   }
 
+  @SuppressWarnings("resource") // not owned
   @Override
   public boolean read(Object objectInstance, IJsonParsingContext context) throws IOException {
     boolean handled = isNextProperty(context);
@@ -210,6 +212,7 @@ class DefaultFieldValueProperty
     return readInternal(context);
   }
 
+  @SuppressWarnings("resource") // not owned
   public boolean isNextProperty(IJsonParsingContext context) throws IOException {
     JsonParser parser = context.getReader(); // NOPMD - intentional
 
@@ -227,6 +230,7 @@ class DefaultFieldValueProperty
     return handled;
   }
 
+  @SuppressWarnings("resource") // not owned
   protected Object readInternal(IJsonParsingContext context) throws IOException {
     // parse the value
     return getJavaTypeAdapter().parse(context.getReader());
@@ -247,6 +251,7 @@ class DefaultFieldValueProperty
     return true;
   }
 
+  @SuppressWarnings("resource") // not owned
   @Override
   public void write(Object instance, IJsonWritingContext context) throws IOException {
     Object value = getValue(instance);
@@ -269,6 +274,7 @@ class DefaultFieldValueProperty
     }
   }
 
+  @SuppressWarnings("resource") // not owned
   @Override
   public void writeValue(Object value, IJsonWritingContext context) throws IOException {
     if (value != null) {

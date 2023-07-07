@@ -282,17 +282,6 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
     return handler;
   }
 
-  default IValidationResult validateWithConstraints(@NonNull Path target) throws IOException {
-    IBoundLoader loader = newBoundLoader();
-    loader.disableFeature(DeserializationFeature.DESERIALIZE_VALIDATE_CONSTRAINTS);
-
-    DynamicContext dynamicContext = new StaticContext().newDynamicContext();
-    dynamicContext.setDocumentLoader(loader);
-    IDocumentNodeItem nodeItem = loader.loadAsNodeItem(target);
-
-    return validate(nodeItem);
-  }
-
   /**
    * Perform schema and constraint validation on the target. The constraint validation will only be
    * performed if the schema validation is passes.
@@ -337,6 +326,17 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
       retval = AggregateValidationResult.aggregate(retval, constraintValidationResult);
     }
     return retval;
+  }
+
+  default IValidationResult validateWithConstraints(@NonNull Path target) throws IOException {
+    IBoundLoader loader = newBoundLoader();
+    loader.disableFeature(DeserializationFeature.DESERIALIZE_VALIDATE_CONSTRAINTS);
+
+    DynamicContext dynamicContext = new StaticContext().newDynamicContext();
+    dynamicContext.setDocumentLoader(loader);
+    IDocumentNodeItem nodeItem = loader.loadAsNodeItem(target);
+
+    return validate(nodeItem);
   }
 
   interface IValidationSchemaProvider {

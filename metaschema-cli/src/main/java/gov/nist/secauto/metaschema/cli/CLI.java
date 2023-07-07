@@ -34,24 +34,30 @@ import gov.nist.secauto.metaschema.cli.processor.ExitStatus;
 import gov.nist.secauto.metaschema.model.MetaschemaVersion;
 import gov.nist.secauto.metaschema.model.common.util.IVersionInfo;
 import gov.nist.secauto.metaschema.model.common.util.MetaschemaJavaVersion;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Hello world!
  *
  */
-public class CLI {
+@SuppressWarnings("PMD.ShortClassName")
+public final class CLI {
   public static void main(String[] args) {
     System.exit(runCli(args).getExitCode().getStatusCode());
   }
 
-  public static ExitStatus runCli(String[] args) {
+  @NonNull
+  public static ExitStatus runCli(String... args) {
     System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
 
-    List<IVersionInfo> versions = List.of(
-        new MetaschemaJavaVersion(),
-        new MetaschemaVersion());
+    List<IVersionInfo> versions = ObjectUtils.notNull(
+        List.of(
+            new MetaschemaJavaVersion(),
+            new MetaschemaVersion()));
     CLIProcessor processor = new CLIProcessor("metaschema-cli", versions);
     processor.addCommandHandler(new ValidateCommand());
     processor.addCommandHandler(new GenerateSchemaCommand());
@@ -61,5 +67,9 @@ public class CLI {
       processor.addCommandHandler(command);
     });
     return processor.process(args);
+  }
+
+  private CLI() {
+    // disable construction
   }
 }

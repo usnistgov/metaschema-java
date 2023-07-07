@@ -62,7 +62,7 @@ public class DynamicBindingContext
           } catch (ClassNotFoundException ex) {
             throw new IllegalStateException(ex);
           }
-        }).forEachOrdered(matcher -> registerBindingMatcher(matcher));
+        }).forEachOrdered(matcher -> registerBindingMatcher(ObjectUtils.notNull(matcher)));
   }
 
   private static class DynamicBindingMatcher implements IBindingMatcher {

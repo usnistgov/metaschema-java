@@ -80,6 +80,7 @@ class DefaultFlagPropertyTest {
   private final IJsonParsingContext jsonParsingContext = context.mock(IJsonParsingContext.class);
   private final IXmlParsingContext xmlParsingContext = context.mock(IXmlParsingContext.class);
 
+  @SuppressWarnings("resource") // mocked
   @Test
   @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
   void testJsonRead()
@@ -105,7 +106,9 @@ class DefaultFlagPropertyTest {
         }
       });
 
-      DefaultFlagProperty idProperty = new DefaultFlagProperty(field, classBinding);
+      DefaultFlagProperty idProperty = new DefaultFlagProperty(
+          ObjectUtils.notNull(field),
+          ObjectUtils.notNull(classBinding));
 
       assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
       assertEquals("test", jsonParser.nextFieldName());
@@ -115,7 +118,7 @@ class DefaultFlagPropertyTest {
 
       SimpleAssembly obj = new SimpleAssembly();
 
-      assertTrue(idProperty.read(obj, jsonParsingContext));
+      assertTrue(idProperty.read(obj, ObjectUtils.notNull(jsonParsingContext)));
 
       assertEquals("theId", obj.getId());
     }
@@ -147,7 +150,9 @@ class DefaultFlagPropertyTest {
       }
     });
 
-    DefaultFlagProperty idProperty = new DefaultFlagProperty(field, classBinding);
+    DefaultFlagProperty idProperty = new DefaultFlagProperty(
+        ObjectUtils.notNull(field),
+        ObjectUtils.notNull(classBinding));
 
     assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
     XMLEvent event = eventReader.nextEvent();

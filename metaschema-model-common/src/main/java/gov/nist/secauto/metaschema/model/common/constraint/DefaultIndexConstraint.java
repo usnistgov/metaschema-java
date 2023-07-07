@@ -142,7 +142,7 @@ public final class DefaultIndexConstraint
           getLevel(),
           getTarget(),
           getProperties(),
-          getName(),
+          ObjectUtils.notNull(getName()),
           getKeyFields(),
           getRemarks());
     }

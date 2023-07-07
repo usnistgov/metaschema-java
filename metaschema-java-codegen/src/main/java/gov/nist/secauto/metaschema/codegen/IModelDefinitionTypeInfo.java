@@ -31,8 +31,8 @@ import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagContainer;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 
 import java.io.IOException;
 import java.nio.file.Path;

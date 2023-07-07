@@ -64,13 +64,14 @@ public class DefaultJsonSerializer<CLASS>
     }
   }
 
-  protected void setJsonFactory(JsonFactory jsonFactory) {
+  protected void setJsonFactory(@NonNull JsonFactory jsonFactory) {
     synchronized (this) {
       this.jsonFactory = jsonFactory;
     }
   }
 
-  protected JsonGenerator newJsonGenerator(Writer writer) throws IOException {
+  @NonNull
+  protected JsonGenerator newJsonGenerator(@NonNull Writer writer) throws IOException {
     JsonFactory factory = getJsonFactory();
     JsonGenerator retval = factory.createGenerator(writer);
     // avoid automatically closing streams not owned by the generator

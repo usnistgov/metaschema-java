@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -44,7 +46,7 @@ class DateTimeAdapterTest {
       "2019-12-31T23:59:59"
   })
   void testSimpleDate(String date) {
-    new DateTimeAdapter().parse(date);
+    new DateTimeAdapter().parse(ObjectUtils.requireNonNull(date));
   }
 
 }

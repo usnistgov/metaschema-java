@@ -31,6 +31,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import gov.nist.secauto.metaschema.binding.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.binding.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,7 +72,7 @@ public class CollapseKeyBuilder {
 
   public void addAll(@NonNull Collection<? extends Object> instances) {
     for (Object instance : instances) {
-      add(instance);
+      add(ObjectUtils.notNull(instance));
     }
   }
 
@@ -123,6 +124,7 @@ public class CollapseKeyBuilder {
       }
     }
 
+    @SuppressWarnings("resource") // not owned
     JsonGenerator writer = context.getWriter(); // NOPMD - intentional
     // for each key, we need to write the properties
     for (Map.Entry<CollapseKey, List<Object>> entry : keyToValuesMap.entrySet()) {

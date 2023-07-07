@@ -84,8 +84,8 @@ public class FunctionLibrary implements IFunctionLibrary {
     synchronized (this) {
       return ObjectUtils.notNull(
           getLibrary().values().stream().flatMap(set -> {
-        return set.getFunctionsAsStream();
-      }));
+            return set.getFunctionsAsStream();
+          }));
     }
   }
 

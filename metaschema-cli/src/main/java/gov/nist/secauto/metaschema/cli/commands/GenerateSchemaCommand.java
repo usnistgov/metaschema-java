@@ -52,6 +52,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -120,6 +121,7 @@ public class GenerateSchemaCommand
     return EXTRA_ARGUMENTS;
   }
 
+  @SuppressWarnings("PMD.PreserveStackTrace") // intended
   @Override
   public void validateOptions(CallingContext callingContext, CommandLine cmdLine) throws InvalidArgumentException {
     try {
@@ -203,7 +205,9 @@ public class GenerateSchemaCommand
     try {
       IMetaschema metaschema = new MetaschemaLoader().load(input);
       if (destination == null) {
-        ISchemaGenerator.generateSchema(metaschema, ObjectUtils.notNull(System.out), asFormat, configuration);
+        @SuppressWarnings({"resource", "PMD.CloseResource"}) // not owned
+        OutputStream os = ObjectUtils.notNull(System.out);
+        ISchemaGenerator.generateSchema(metaschema, os, asFormat, configuration);
       } else {
         ISchemaGenerator.generateSchema(metaschema, destination, asFormat, configuration);
       }

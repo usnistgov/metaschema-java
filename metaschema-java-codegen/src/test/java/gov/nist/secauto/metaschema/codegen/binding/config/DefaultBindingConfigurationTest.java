@@ -29,9 +29,10 @@ package gov.nist.secauto.metaschema.codegen.binding.config;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IFlagContainer;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.ModelType;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jmock.Expectations;
 import org.jmock.junit5.JUnit5Mockery;
@@ -77,7 +78,8 @@ class DefaultBindingConfigurationTest {
         will(returnValue(DEFINITION_NAME));
       }
     });
-    IDefinitionBindingConfiguration defConfig = config.getBindingConfigurationForDefinition(definition);
+    IDefinitionBindingConfiguration defConfig = config.getBindingConfigurationForDefinition(
+        ObjectUtils.notNull(definition));
     assertNotNull(defConfig);
     assertEquals(DEFINITION__CLASS_NAME, defConfig.getClassName());
   }

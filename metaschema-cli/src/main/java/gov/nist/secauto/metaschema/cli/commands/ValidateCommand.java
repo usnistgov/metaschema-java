@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.cli.processor.command.DefaultExtraArgument;
 import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;
 import gov.nist.secauto.metaschema.cli.util.LoggingValidationHandler;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
@@ -50,7 +51,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -86,11 +86,12 @@ public class ValidateCommand
     return EXTRA_ARGUMENTS;
   }
 
+  @NonNull
   protected List<Source> getXmlSchemaSources() throws IOException {
     List<Source> retval = new LinkedList<>();
     retval.add(XmlUtil.getStreamSource(
         MetaschemaLoader.class.getResource("/schema/xml/metaschema.xsd")));
-    return Collections.unmodifiableList(retval);
+    return CollectionUtil.unmodifiableList(retval);
   }
 
   @Override
@@ -109,10 +110,12 @@ public class ValidateCommand
     }
   }
 
+  @SuppressWarnings("PMD.OnlyOneReturn") // readability
   @Override
   public ExitStatus executeCommand(CallingContext callingContext, CommandLine cmdLine) {
     List<String> extraArgs = cmdLine.getArgList();
     Path target = Paths.get(extraArgs.get(0));
+    assert target != null;
 
     IValidationResult schemaValidationResult;
     try {
