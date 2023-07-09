@@ -33,7 +33,7 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class Let implements IExpression { // NOPMD class name ok
+class Let implements IExpression { // NOPMD class name ok
   @NonNull
   private final Name name;
   @NonNull

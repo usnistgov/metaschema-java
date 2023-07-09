@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.codegen;
 
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IFlagContainer;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 
 import java.util.Collection;
 import java.util.stream.Stream;

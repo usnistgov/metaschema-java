@@ -49,6 +49,7 @@ public class DefaultJsonProblemHandler implements IJsonProblemHandler {
     IGNORED_ROOT_FIELD_NAMES.add(JSON_SCHEMA_ROOT_FIELD_NAME);
   }
 
+  @SuppressWarnings("resource") // not owned
   @Override
   public boolean handleUnknownRootProperty(IAssemblyClassBinding classBinding, String fieldName,
       IJsonParsingContext context) throws IOException {

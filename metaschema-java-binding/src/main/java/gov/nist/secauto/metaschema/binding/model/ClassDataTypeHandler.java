@@ -81,6 +81,7 @@ class ClassDataTypeHandler implements IDataTypeHandler {
     return false;
   }
 
+  @SuppressWarnings("resource") // not owned
   @Override
   public List<Object> get(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
       throws IOException {

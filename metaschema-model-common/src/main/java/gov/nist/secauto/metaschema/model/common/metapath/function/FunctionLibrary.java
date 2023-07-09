@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.IExpression;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -81,9 +82,10 @@ public class FunctionLibrary implements IFunctionLibrary {
   @Override
   public Stream<IFunction> getFunctionsAsStream() {
     synchronized (this) {
-      return getLibrary().values().stream().flatMap(set -> {
-        return set.getFunctionsAsStream();
-      });
+      return ObjectUtils.notNull(
+          getLibrary().values().stream().flatMap(set -> {
+            return set.getFunctionsAsStream();
+          }));
     }
   }
 

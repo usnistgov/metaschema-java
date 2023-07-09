@@ -35,10 +35,10 @@ class DefinitionProductionImpl implements IDefinitionProduction {
   @NonNull
   private final IFlagContainer definition;
   @NonNull
-  private final DefaultGeneratedDefinitionClass generatedClass;
+  private final IGeneratedDefinitionClass generatedClass;
 
   public DefinitionProductionImpl(@NonNull IFlagContainer definition,
-      @NonNull DefaultGeneratedDefinitionClass generatedClass) {
+      @NonNull IGeneratedDefinitionClass generatedClass) {
     this.definition = definition;
     this.generatedClass = generatedClass;
   }
@@ -49,7 +49,7 @@ class DefinitionProductionImpl implements IDefinitionProduction {
   }
 
   @Override
-  public DefaultGeneratedDefinitionClass getGeneratedClass() {
+  public IGeneratedDefinitionClass getGeneratedClass() {
     return generatedClass;
   }
 }

@@ -37,11 +37,16 @@ import java.net.URI;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class AbstractExpressionTest {
+public class ExpressionTestBase {
   @NonNull
   @RegisterExtension
-  Mockery context = new JUnit5Mockery();
+  private final Mockery context = new JUnit5Mockery();
 
+  @NonNull
+  protected Mockery getContext() {
+    return context;
+  }
+  
   /**
    * Construct a new dynamic context for testing.
    *

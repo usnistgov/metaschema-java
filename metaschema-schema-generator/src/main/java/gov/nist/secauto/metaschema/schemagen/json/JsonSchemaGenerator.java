@@ -92,8 +92,6 @@ public class JsonSchemaGenerator
 
   @Override
   protected void generateSchema(JsonGenerationState state) {
-    IMetaschema metaschema = state.getMetaschema();
-
     // analyze all definitions
     List<IRootAssemblyDefinition> rootAssemblyDefinitions = analyzeDefinitions(
         state,
@@ -119,6 +117,7 @@ public class JsonSchemaGenerator
         })
         .collect(Collectors.toUnmodifiableList());
 
+    IMetaschema metaschema = state.getMetaschema();
     try {
       state.writeStartObject();
 

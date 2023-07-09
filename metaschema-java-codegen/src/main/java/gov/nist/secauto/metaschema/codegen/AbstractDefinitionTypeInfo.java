@@ -45,8 +45,10 @@ abstract class AbstractDefinitionTypeInfo<DEF extends IDefinition> implements ID
   private final DEF definition;
   @NonNull
   private final ITypeResolver typeResolver;
+  @SuppressWarnings("PMD.UseConcurrentHashMap") // need ordered map
   @NonNull
   private final Map<String, ITypeInfo> propertyNameToInstanceTypeInfoMap = new LinkedHashMap<>();
+  @SuppressWarnings("PMD.UseConcurrentHashMap") // need ordered map
   @NonNull
   private final Map<INamedInstance, IInstanceTypeInfo> instanceToInstanceTypeInfoMap = new LinkedHashMap<>();
 

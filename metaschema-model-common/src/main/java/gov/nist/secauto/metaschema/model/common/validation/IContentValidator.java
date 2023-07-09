@@ -30,7 +30,6 @@ import gov.nist.secauto.metaschema.model.common.IResourceLoader;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 

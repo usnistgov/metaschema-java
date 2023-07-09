@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 
 import org.jmock.Expectations;
+import org.jmock.Mockery;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -39,7 +40,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 class AndTest
-    extends AbstractExpressionTest {
+    extends ExpressionTestBase {
 
   private static Stream<Arguments> testAnd() { // NOPMD - false positive
     return Stream.of(
@@ -49,13 +50,15 @@ class AndTest
         Arguments.of(IBooleanItem.FALSE, IBooleanItem.FALSE, IBooleanItem.FALSE));
   }
 
-  @SuppressWarnings("null")
   @ParameterizedTest
   @MethodSource
   void testAnd(IBooleanItem bool1, IBooleanItem bool2, IBooleanItem expectedResult) {
     DynamicContext dynamicContext = newDynamicContext();
+    
+    Mockery context = getContext();
 
     INodeContext nodeContext = context.mock(INodeContext.class);
+    assert nodeContext != null;
 
     IExpression exp1 = context.mock(IExpression.class, "exp1");
     IExpression exp2 = context.mock(IExpression.class, "exp2");
@@ -69,7 +72,9 @@ class AndTest
       }
     });
 
-    And expr = new And(List.of(exp1, exp2));
+    List<IExpression> list = List.of(exp1, exp2);
+    assert list != null;
+    And expr = new And(list);
 
     ISequence<?> result = expr.accept(dynamicContext, nodeContext);
     assertEquals(ISequence.of(expectedResult), result);

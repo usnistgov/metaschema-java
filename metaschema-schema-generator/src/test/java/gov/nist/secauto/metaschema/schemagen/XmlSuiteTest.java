@@ -91,6 +91,7 @@ class XmlSuiteTest
     return XML_SCHEMA_PROVIDER;
   }
 
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   @Execution(ExecutionMode.SAME_THREAD)
   @DisplayName("XML Schema Generation")
   @TestFactory

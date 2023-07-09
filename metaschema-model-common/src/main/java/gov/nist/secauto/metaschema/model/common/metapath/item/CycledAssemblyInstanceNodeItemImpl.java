@@ -35,7 +35,7 @@ import java.util.List;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class CycledAssemblyInstanceNodeItemImpl implements ICycledAssemblyNodeItem {
+class CycledAssemblyInstanceNodeItemImpl implements ICycledAssemblyNodeItem {
   @NonNull
   private final IAssemblyInstance instance;
   @NonNull

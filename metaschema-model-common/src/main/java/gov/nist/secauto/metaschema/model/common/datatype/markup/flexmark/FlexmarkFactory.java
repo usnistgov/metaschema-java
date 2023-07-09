@@ -61,6 +61,7 @@ public class FlexmarkFactory {
     this(FlexmarkConfiguration.FLEXMARK_CONFIG);
   }
 
+  @SuppressWarnings("null")
   public FlexmarkFactory(@NonNull DataHolder config) {
     this.configuration = config;
     this.markdownParser = Parser.builder(config)

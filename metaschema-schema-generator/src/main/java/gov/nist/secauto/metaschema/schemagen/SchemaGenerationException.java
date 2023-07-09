@@ -32,7 +32,7 @@ public class SchemaGenerationException
     extends IllegalStateException {
 
   /**
-   * the serial version UID
+   * the serial version UID.
    */
   private static final long serialVersionUID = 1L;
 

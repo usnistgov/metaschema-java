@@ -77,6 +77,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.talsmasoftware.lazy4j.Lazy;
 
+@SuppressWarnings("PMD.GodClass")
 public class DefaultFieldClassBinding
     extends AbstractClassBinding
     implements IFieldClassBinding, IValueConstraintFeature {
@@ -294,6 +295,7 @@ public class DefaultFieldClassBinding
     }
   }
 
+  @SuppressWarnings("resource") // not owned
   @Override
   public List<Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
       throws IOException {
@@ -322,6 +324,7 @@ public class DefaultFieldClassBinding
     return retval;
   }
 
+  @SuppressWarnings("resource") // not owned
   @NonNull
   private Object readNormal(@Nullable Object parentInstance, boolean requiresJsonKey,
       @NonNull IJsonParsingContext context)
@@ -441,7 +444,7 @@ public class DefaultFieldClassBinding
           } else {
             if (LOGGER.isWarnEnabled()) {
               LOGGER.warn("Unrecognized property named '{}' at '{}'", propertyName,
-                  JsonUtil.toString(jsonParser.getCurrentLocation()));
+                  JsonUtil.toString(ObjectUtils.notNull(jsonParser.getCurrentLocation())));
             }
             JsonUtil.skipNextValue(jsonParser);
           }
@@ -478,6 +481,7 @@ public class DefaultFieldClassBinding
     }
   }
 
+  @SuppressWarnings("resource") // not owned
   @NonNull
   private List<Object> readCollapsed(@Nullable Object parentInstance, boolean requiresJsonKey,
       IJsonParsingContext context) throws IOException {
@@ -585,7 +589,7 @@ public class DefaultFieldClassBinding
       } else {
         if (LOGGER.isWarnEnabled()) {
           LOGGER.warn("Unrecognized property named '{}' at '{}'", propertyName,
-              JsonUtil.toString(jsonParser.getCurrentLocation()));
+              JsonUtil.toString(ObjectUtils.notNull(jsonParser.getCurrentLocation())));
         }
         JsonUtil.skipNextValue(jsonParser);
       }
@@ -660,6 +664,7 @@ public class DefaultFieldClassBinding
     return retval;
   }
 
+  @SuppressWarnings("resource") // not owned
   @NonNull
   private List<? extends Object> handleCollapsedValues(@NonNull IJsonParsingContext context)
       throws IOException {
@@ -703,7 +708,7 @@ public class DefaultFieldClassBinding
     }
   }
 
-  private void writeCollapsed(Collection<? extends Object> items, boolean writeObjectWrapper,
+  private void writeCollapsed(@NonNull Collection<? extends Object> items, boolean writeObjectWrapper,
       @NonNull IJsonWritingContext context) throws IOException {
     CollapseKeyBuilder builder = new CollapseKeyBuilder(this);
     builder.addAll(items);
@@ -711,6 +716,7 @@ public class DefaultFieldClassBinding
     builder.write(writeObjectWrapper, context);
   }
 
+  @SuppressWarnings("resource") // not owned
   private void writeNormal(Collection<? extends Object> items, boolean writeObjectWrapper,
       IJsonWritingContext context)
       throws IOException {

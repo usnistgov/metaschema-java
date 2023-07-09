@@ -119,10 +119,12 @@ final class ConstraintFactory {
       for (Property property : properties) {
         String name = property.name();
         String namespace = property.namespace();
+        @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops") // ok
         QName qname = new QName(namespace, name);
 
         String[] values = property.values();
         List<String> valueList = Arrays.asList(values);
+        @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops") // ok
         Set<String> valueSet = new LinkedHashSet<>(valueList);
         builder.property(qname, valueSet);
       }
@@ -217,6 +219,7 @@ final class ConstraintFactory {
   static <T extends AbstractKeyConstraintBuilder<T, ?>> T applyKeyFields(@NonNull T builder,
       @NonNull KeyField... keyFields) {
     for (KeyField keyField : keyFields) {
+      @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops") // ok
       DefaultKeyField field = new DefaultKeyField(
           toMetapath(keyField.target()),
           toPattern(keyField.pattern()),
@@ -308,7 +311,7 @@ final class ConstraintFactory {
 
   @Nullable
   static Integer toCardinality(int value) {
-    return value < 0 ? null : Integer.valueOf(value);
+    return value < 0 ? null : value;
   }
 
   @NonNull

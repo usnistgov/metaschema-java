@@ -111,11 +111,17 @@ class MetaschemaClassGenerator {
     }
 
     for (IAssemblyDefinition definition : metaschema.getAssemblyDefinitions()) {
-      metaschemaAnnotation.addMember("assemblies", "$T.class", typeResolver.getClassName(definition));
+      metaschemaAnnotation.addMember(
+          "assemblies",
+          "$T.class",
+          typeResolver.getClassName(ObjectUtils.notNull(definition)));
     }
 
     for (IMetaschema metaschemaImport : metaschema.getImportedMetaschemas()) {
-      metaschemaAnnotation.addMember("imports", "$T.class", typeResolver.getClassName(metaschemaImport));
+      metaschemaAnnotation.addMember(
+          "imports",
+          "$T.class",
+          typeResolver.getClassName(ObjectUtils.notNull(metaschemaImport)));
     }
 
     {

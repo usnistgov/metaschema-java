@@ -163,7 +163,8 @@ public class MarkupVisitor<T, E extends Throwable> implements IMarkupVisitor<T, 
     } else if (node instanceof LinkRef || node instanceof Reference) {
       throw new UnsupportedOperationException(
           String.format(
-              "Link references are not supported by Metaschema. Perhaps you have an unescaped bracket in the following string? %s",
+              "Link references are not supported by Metaschema."
+                  + " Perhaps you have an unescaped bracket in the following string? %s",
               ObjectUtils.notNull(node.getParent()).getChars()));
     } else {
       retval = false;

@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Lexer;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -144,11 +145,12 @@ class Step implements IExpression { // NOPMD - intentional
 
     IExpression step = getStep();
 
-    return ISequence.of(items.flatMap(item -> {
-      assert item != null;
-      ISequence<?> result = step.accept(dynamicContext, item);
-      return result.asStream();
-    }));
+    return ISequence.of(ObjectUtils.notNull(
+        items.flatMap(item -> {
+          assert item != null;
+          ISequence<?> result = step.accept(dynamicContext, item);
+          return result.asStream();
+        })));
   }
 
   @SuppressWarnings("null")

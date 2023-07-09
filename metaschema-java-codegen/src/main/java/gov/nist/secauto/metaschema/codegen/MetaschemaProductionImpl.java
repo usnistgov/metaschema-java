@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IFlagContainer;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.io.IOException;
@@ -81,7 +81,7 @@ class MetaschemaProductionImpl implements IMetaschemaProduction { // NOPMD - int
             .flatMap(ObjectUtils::filterNull)
             .map(typeInfo -> {
               IFlagContainer definition = typeInfo.getDefinition();
-              DefaultGeneratedDefinitionClass generatedClass;
+              IGeneratedDefinitionClass generatedClass;
               try {
                 generatedClass = typeInfo.generateClass(targetDirectory);
               } catch (RuntimeException ex) { // NOPMD - intended

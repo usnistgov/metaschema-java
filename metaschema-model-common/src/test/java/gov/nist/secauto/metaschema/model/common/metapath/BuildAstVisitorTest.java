@@ -104,6 +104,7 @@ class BuildAstVisitorTest {
     // select starting node
     IDocumentNodeItem document = newTestDocument();
     IFieldNodeItem field = MetapathExpression.compile("/root/field1").evaluateAs(document, ResultType.NODE);
+    assert field != null;
 
     // evaluate
     ISequence<?> result = ast.accept(newDynamicContext(), field);
@@ -118,6 +119,7 @@ class BuildAstVisitorTest {
     // select starting node
     IDocumentNodeItem document = newTestDocument();
     IFieldNodeItem field = MetapathExpression.compile("/root/field1").evaluateAs(document, ResultType.NODE);
+    assert field != null;
 
     // compile expression
     String path = "parent::root";
@@ -136,6 +138,7 @@ class BuildAstVisitorTest {
     // select starting node
     IDocumentNodeItem document = newTestDocument();
     IFieldNodeItem field = MetapathExpression.compile("/root/field1").evaluateAs(document, ResultType.NODE);
+    assert field != null;
 
     // compile expression
     String path = "parent::other";
@@ -184,6 +187,7 @@ class BuildAstVisitorTest {
     // select starting node
     IDocumentNodeItem document = newTestDocument();
     IFieldNodeItem field = MetapathExpression.compile("/root/field2").evaluateAs(document, ResultType.NODE);
+    assert field != null;
 
     // evaluate
     ISequence<?> result = ast.accept(newDynamicContext(), field);
@@ -201,6 +205,7 @@ class BuildAstVisitorTest {
     // select starting node
     IDocumentNodeItem document = newTestDocument();
     IRootAssemblyNodeItem root = MetapathExpression.compile("/root").evaluateAs(document, ResultType.NODE);
+    assert root != null;
 
     // evaluate
     ISequence<?> result = ast.accept(newDynamicContext(), root);

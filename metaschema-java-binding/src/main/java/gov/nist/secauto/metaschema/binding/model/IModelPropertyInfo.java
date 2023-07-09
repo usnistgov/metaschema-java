@@ -43,7 +43,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 // TODO: make all read and write methods take the value, not the parent instance as an argument
-interface IModelPropertyInfo {
+public interface IModelPropertyInfo {
   /**
    * Get the associated property for which this info is for.
    *
@@ -53,7 +53,7 @@ interface IModelPropertyInfo {
   IBoundNamedModelInstance getProperty();
 
   int getItemCount(@Nullable Object value);
-  
+
   /**
    * Get the type of the bound object.
    *

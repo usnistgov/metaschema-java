@@ -37,7 +37,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 // TODO: get rid of functional interfaces
-interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSupplier, IXmlBindingConsumer {
+public interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSupplier, IXmlBindingConsumer {
   /**
    * Get the model instance associated with this handler.
    *

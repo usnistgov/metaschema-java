@@ -26,15 +26,10 @@
 
 package gov.nist.secauto.metaschema.binding.io.xml;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
 import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 public final class XmlUtil {
@@ -43,6 +38,7 @@ public final class XmlUtil {
     // disable construction
   }
 
+  @SuppressWarnings("resource") // user of source is expected to close
   public static Source getStreamSource(URL url) throws IOException {
     return new StreamSource(url.openStream(), url.toString());
   }

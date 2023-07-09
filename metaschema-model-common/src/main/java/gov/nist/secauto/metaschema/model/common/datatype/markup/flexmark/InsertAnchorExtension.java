@@ -182,6 +182,8 @@ public class InsertAnchorExtension
         if (matcher != null) {
           BasedSequence type = input.subSequence(matcher.start(1), matcher.end(1));
           BasedSequence idReference = input.subSequence(matcher.start(2), matcher.end(2));
+          assert type != null;
+          assert idReference != null;
           inlineParser.appendNode(new InsertAnchorNode(type, idReference));
           return true; // NOPMD - readability
         }
@@ -271,7 +273,6 @@ public class InsertAnchorExtension
           : Collections.emptySet();
     }
 
-    @SuppressWarnings("null")
     private void processInsert( // NOPMD used as lambda
         Element node,
         @SuppressWarnings("unused") HtmlNodeConverterContext context,
@@ -331,7 +332,8 @@ public class InsertAnchorExtension
     @Override
     @NonNull
     public BasedSequence[] getSegments() {
-      @NonNull BasedSequence[] retval = { getType(), getIdReference() };
+      @NonNull
+      BasedSequence[] retval = { getType(), getIdReference() };
       return retval;
     }
 

@@ -229,14 +229,14 @@ public class DefaultBoundLoader implements IBoundLoader {
     IDocumentNodeItem retval;
     if (source.getByteStream() != null) {
       // attempt to use a provided byte stream stream
-      try (BufferedInputStream bis = toBufferedInputStream(source.getByteStream())) {
+      try (BufferedInputStream bis = toBufferedInputStream(ObjectUtils.notNull(source.getByteStream()))) {
         retval = loadAsNodeItemInternal(bis, uri);
       }
     } else {
       // fall back to a URL-based connection
       URL url = uri.toURL();
       try (InputStream is = url.openStream()) {
-        try (BufferedInputStream bis = toBufferedInputStream(is)) {
+        try (BufferedInputStream bis = toBufferedInputStream(ObjectUtils.notNull(is))) {
           retval = loadAsNodeItemInternal(bis, uri);
         }
       }
@@ -261,7 +261,7 @@ public class DefaultBoundLoader implements IBoundLoader {
       // fall back to a URL-based connection
       URL url = uri.toURL();
       try (InputStream is = url.openStream()) {
-        try (BufferedInputStream bis = toBufferedInputStream(is)) {
+        try (BufferedInputStream bis = toBufferedInputStream(ObjectUtils.notNull(is))) {
           Class<?> clazz = detectModel(bis, format); // NOPMD - must be called before reset
           retval = deserializeToNodeItem(clazz, format, bis, uri);
         }

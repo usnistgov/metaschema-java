@@ -69,7 +69,6 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.commons.text.StringEscapeUtils;
-import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
@@ -172,8 +171,8 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
 
   protected void writeTrailingNewline(@NonNull Block node) throws E {
     Node next = node.getNext();
-    if ((next != null && !next.isOrDescendantOfType(Block.class)) // handled by preceding block
-        || (next == null && !(node.getParent() instanceof com.vladsch.flexmark.util.ast.Document))) {
+    if (next != null && !next.isOrDescendantOfType(Block.class) // handled by preceding block
+        || next == null && !(node.getParent() instanceof com.vladsch.flexmark.util.ast.Document)) {
       writeText("\n");
     }
   }
@@ -212,13 +211,13 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
   @Override
   public final void writeText(Text node) throws E {
     BasedSequence text = node.getChars();
-    assert text != null;
-
     Node prev = node.getPrevious();
     if (prev instanceof HardLineBreak) {
       // strip leading after hard line break
+      assert text != null;
       text = text.trimStart();
     }
+    assert text != null;
     writeText(text);
   }
 
@@ -266,6 +265,7 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
       }
     } else {
       String value = StringEscapeUtils.unescapeHtml4(entityText);
+      assert value != null;
       writeText(value);
     }
   }
@@ -333,7 +333,7 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
     writeElementStart(qname, attributes);
 
     BasedSequence text = node.getText();
-    writeText(text == null ? "\n" : text.unescape());
+    writeText(text == null ? "\n" : ObjectUtils.notNull(text.unescape()));
     writeElementEnd(qname);
   }
 
@@ -350,7 +350,7 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
 
     QName qname = asQName("a");
     writeElementStart(qname, attributes);
-    writeText(node.getText().unescape());
+    writeText(ObjectUtils.notNull(node.getText().unescape()));
     writeElementEnd(qname);
   }
 
@@ -524,8 +524,8 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
    *          text to process
    * @return the normalized text
    */
-  @NotNull
-  protected static String collapseWhitespace(@NotNull CharSequence text) {
+  @NonNull
+  protected static String collapseWhitespace(@NonNull CharSequence text) {
     StringBuilder sb = new StringBuilder(text.length());
     int length = text.length();
     boolean needsSpace = false;
@@ -560,7 +560,7 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
     writeElementStart(qname);
     visitChildren(node, (child, writer) -> {
       if (child instanceof Text || child instanceof TextBase) {
-        String text = collapseWhitespace(child.getChars());
+        String text = collapseWhitespace(ObjectUtils.notNull(child.getChars()));
         writeText(text);
       } else {
         childHandler.accept(child, writer);
@@ -633,7 +633,7 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
     } else {
       text = node.getContentChars().toString();
     }
-    writeText(text);
+    writeText(ObjectUtils.notNull(text));
   }
 
   @Override
@@ -713,7 +713,7 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
 
     BasedSequence text = node.getChars();
     text = text.subSequence(4, text.length() - 4);
-    writeComment(text.unescape());
+    writeComment(ObjectUtils.notNull(text.unescape()));
     writeTrailingNewline(node);
 
   }

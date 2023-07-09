@@ -104,6 +104,7 @@ class MapPropertyInfo
   @Override
   public void readValue(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
       throws IOException {
+    @SuppressWarnings("resource") // not owned
     JsonParser jsonParser = context.getReader(); // NOPMD - intentional
 
     // A map value is always wrapped in a START_OBJECT, since fields are used for the keys
@@ -212,6 +213,7 @@ class MapPropertyInfo
     Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
 
     if (!items.isEmpty()) {
+      @SuppressWarnings("resource") // not owned
       JsonGenerator writer = context.getWriter(); // NOPMD not closable here
 
       writer.writeStartObject();

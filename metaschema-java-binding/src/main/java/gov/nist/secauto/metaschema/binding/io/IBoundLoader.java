@@ -43,11 +43,9 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * A common interface for loading Metaschema based instance resources.
@@ -261,8 +259,10 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    */
   @NonNull
   default <CLASS> CLASS load(@NonNull Class<CLASS> clazz, @NonNull Path path) throws IOException {
-    try (InputStream is = Files.newInputStream(path)) {
-      return load(clazz, toInputSource(ObjectUtils.notNull(path.toUri())));
+    try {
+      return load(clazz, ObjectUtils.notNull(path.toUri()));
+    } catch (URISyntaxException ex) {
+      throw new IOException(ex);
     }
   }
 
@@ -303,7 +303,28 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    */
   @NonNull
   default <CLASS> CLASS load(@NonNull Class<CLASS> clazz, @NonNull URL url) throws IOException, URISyntaxException {
-    return load(clazz, toInputSource(ObjectUtils.notNull(url.toURI())));
+    return load(clazz, ObjectUtils.notNull(url.toURI()));
+  }
+
+  /**
+   * Load data from the specified resource into a bound object with the type of the specified Java
+   * class.
+   *
+   * @param <CLASS>
+   *          the Java type to load data into
+   * @param clazz
+   *          the class for the java type
+   * @param uri
+   *          the resource to load
+   * @return the loaded instance data
+   * @throws IOException
+   *           if an error occurred while loading the data in the specified file
+   * @throws URISyntaxException
+   *           if the provided {@code url} is malformed
+   */
+  @NonNull
+  default <CLASS> CLASS load(@NonNull Class<CLASS> clazz, @NonNull URI uri) throws IOException, URISyntaxException {
+    return load(clazz, toInputSource(ObjectUtils.requireNonNull(uri)));
   }
 
   /**

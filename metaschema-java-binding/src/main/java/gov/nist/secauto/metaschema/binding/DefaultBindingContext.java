@@ -41,18 +41,13 @@ import gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlSerializer;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
-import gov.nist.secauto.metaschema.model.common.constraint.FindingCollectingConstraintValidationHandler;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.model.common.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 
 import java.net.URI;
 import java.util.LinkedList;

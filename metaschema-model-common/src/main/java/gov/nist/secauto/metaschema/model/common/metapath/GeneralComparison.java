@@ -86,8 +86,10 @@ class GeneralComparison
 
     IBooleanItem retval = IBooleanItem.FALSE;
     for (IAnyAtomicItem left : leftItems.asList()) {
+      assert left != null;
       for (IAnyAtomicItem right : rightItems.asList()) {
-        @NonNull IAnyAtomicItem leftCast;
+        assert right != null;
+        IAnyAtomicItem leftCast;
         IAnyAtomicItem rightCast;
         if (left instanceof IUntypedAtomicItem) {
           if (right instanceof IUntypedAtomicItem) {
@@ -105,6 +107,7 @@ class GeneralComparison
           rightCast = right;
         }
 
+        assert leftCast != null;
         IBooleanItem result = compare(leftCast, operator, rightCast);
         if (IBooleanItem.TRUE.equals(result)) {
           retval = IBooleanItem.TRUE;

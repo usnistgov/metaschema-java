@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.codegen.binding.config;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -49,7 +51,7 @@ class BindingConfigurationLoaderTest {
         "gov.nist.csrc.ns.metaschema.testing.assembly");
 
     for (Map.Entry<String, String> entry : namespaceToPackageName.entrySet()) {
-      assertEquals(entry.getValue(), config.getPackageNameForNamespace(entry.getKey()));
+      assertEquals(entry.getValue(), config.getPackageNameForNamespace(ObjectUtils.notNull(entry.getKey())));
     }
   }
 
@@ -67,7 +69,7 @@ class BindingConfigurationLoaderTest {
     }
 
     for (Map.Entry<String, String> entry : namespaceToPackageName.entrySet()) {
-      assertEquals(entry.getValue(), config.getPackageNameForNamespace(entry.getKey()));
+      assertEquals(entry.getValue(), config.getPackageNameForNamespace(ObjectUtils.notNull(entry.getKey())));
     }
   }
 

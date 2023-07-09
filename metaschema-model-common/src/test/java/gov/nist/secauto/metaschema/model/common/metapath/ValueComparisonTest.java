@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
 import org.jmock.Expectations;
+import org.jmock.Mockery;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -40,7 +41,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 class ValueComparisonTest
-    extends AbstractExpressionTest {
+    extends ExpressionTestBase {
 
   private static Stream<Arguments> testValueComparison() { // NOPMD - false positive
     return Stream.of(
@@ -64,6 +65,7 @@ class ValueComparisonTest
   @MethodSource
   void testValueComparison(IItem leftItem, Operator operator, IItem rightItem, IBooleanItem expectedResult) {
     DynamicContext dynamicContext = newDynamicContext();
+    Mockery context = getContext();
 
     INodeContext nodeContext = context.mock(INodeContext.class);
 

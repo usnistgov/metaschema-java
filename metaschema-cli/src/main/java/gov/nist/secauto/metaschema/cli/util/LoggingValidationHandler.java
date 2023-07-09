@@ -91,7 +91,7 @@ public final class LoggingValidationHandler {
     }
   }
 
-  protected void handleJsonValidationFinding(@NonNull JsonValidationFinding finding) {
+  private void handleJsonValidationFinding(@NonNull JsonValidationFinding finding) {
     Ansi ansi = generatePreamble(finding.getSeverity());
 
     getLogger(finding).log(
@@ -105,7 +105,7 @@ public final class LoggingValidationHandler {
                 finding.getDocumentUri().toString()));
   }
 
-  protected void handleXmlValidationFinding(XmlValidationFinding finding) {
+  private void handleXmlValidationFinding(XmlValidationFinding finding) {
     Ansi ansi = generatePreamble(finding.getSeverity());
     SAXParseException ex = finding.getCause();
 
@@ -117,7 +117,7 @@ public final class LoggingValidationHandler {
             ex.getColumnNumber()));
   }
 
-  protected void handleConstraintValidationFinding(@NonNull ConstraintValidationFinding finding) {
+  private void handleConstraintValidationFinding(@NonNull ConstraintValidationFinding finding) {
     Ansi ansi = generatePreamble(finding.getSeverity());
 
     getLogger(finding).log(
@@ -125,7 +125,7 @@ public final class LoggingValidationHandler {
   }
 
   @NonNull
-  protected LogBuilder getLogger(@NonNull IValidationFinding finding) {
+  private LogBuilder getLogger(@NonNull IValidationFinding finding) {
     LogBuilder retval;
     switch (finding.getSeverity()) {
     case CRITICAL:
@@ -155,7 +155,7 @@ public final class LoggingValidationHandler {
 
   @SuppressWarnings("static-method")
   @NonNull
-  protected Ansi generatePreamble(@NonNull Level level) {
+  private Ansi generatePreamble(@NonNull Level level) {
     Ansi ansi = ansi().fgBright(Color.WHITE).a('[').reset();
 
     switch (level) {

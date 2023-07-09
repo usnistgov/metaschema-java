@@ -76,6 +76,7 @@ class DefaultFieldValuePropertyTest {
   private final IJsonParsingContext jsonParsingContext = context.mock(IJsonParsingContext.class);
   private final IXmlParsingContext xmlParsingContext = context.mock(IXmlParsingContext.class);
 
+  @SuppressWarnings("resource") // mocked
   @Test
   void testJsonRead()
       throws JsonParseException, IOException, NoSuchFieldException {
@@ -105,7 +106,9 @@ class DefaultFieldValuePropertyTest {
         }
       });
 
-      DefaultFieldValueProperty idProperty = new DefaultFieldValueProperty(classBinding, field);
+      DefaultFieldValueProperty idProperty = new DefaultFieldValueProperty(
+          ObjectUtils.notNull(classBinding),
+          ObjectUtils.notNull(field));
 
       assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
       assertEquals("a-value", jsonParser.nextFieldName());
@@ -115,7 +118,7 @@ class DefaultFieldValuePropertyTest {
 
       SimpleField obj = new SimpleField();
 
-      idProperty.read(obj, jsonParsingContext);
+      idProperty.read(obj, ObjectUtils.notNull(jsonParsingContext));
 
       assertEquals("theValue", obj.getValue());
     }
@@ -147,7 +150,9 @@ class DefaultFieldValuePropertyTest {
       }
     });
 
-    DefaultFieldValueProperty idProperty = new DefaultFieldValueProperty(classBinding, field);
+    DefaultFieldValueProperty idProperty = new DefaultFieldValueProperty(
+        ObjectUtils.notNull(classBinding),
+        ObjectUtils.notNull(field));
 
     assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
     XMLEvent event = eventReader.nextEvent();
@@ -223,6 +228,7 @@ class DefaultFieldValuePropertyTest {
     }
   }
 
+  @SuppressWarnings("resource") // mocked
   @Test
   void testJsonDefaultNameRead() throws JsonParseException, IOException, NoSuchFieldException {
     String json = "{ \"STRVALUE\": \"theValue\" }";
@@ -251,7 +257,9 @@ class DefaultFieldValuePropertyTest {
         }
       });
 
-      DefaultFieldValueProperty idProperty = new DefaultFieldValueProperty(classBinding, field);
+      DefaultFieldValueProperty idProperty = new DefaultFieldValueProperty(
+          ObjectUtils.notNull(classBinding),
+          ObjectUtils.notNull(field));
 
       assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
       assertEquals("STRVALUE", jsonParser.nextFieldName());
@@ -261,7 +269,7 @@ class DefaultFieldValuePropertyTest {
 
       SimpleField2 obj = new SimpleField2();
 
-      idProperty.read(obj, jsonParsingContext);
+      idProperty.read(obj, ObjectUtils.notNull(jsonParsingContext));
 
       assertEquals("theValue", obj.getValue());
     }
@@ -293,7 +301,9 @@ class DefaultFieldValuePropertyTest {
       }
     });
 
-    DefaultFieldValueProperty idProperty = new DefaultFieldValueProperty(classBinding, field);
+    DefaultFieldValueProperty idProperty = new DefaultFieldValueProperty(
+        ObjectUtils.notNull(classBinding),
+        ObjectUtils.notNull(field));
 
     assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
     XMLEvent event = eventReader.nextEvent();

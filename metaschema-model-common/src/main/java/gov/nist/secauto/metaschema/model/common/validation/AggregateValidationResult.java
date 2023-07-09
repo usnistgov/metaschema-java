@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.model.common.validation;
 
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -72,7 +73,7 @@ public final class AggregateValidationResult implements IValidationResult {
       }
     });
 
-    return new AggregateValidationResult(findings, highestSeverity.get());
+    return new AggregateValidationResult(findings, ObjectUtils.notNull(highestSeverity.get()));
   }
 
   @Override

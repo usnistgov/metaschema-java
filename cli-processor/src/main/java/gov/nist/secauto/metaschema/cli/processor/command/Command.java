@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.cli.processor.command;
 
 import gov.nist.secauto.metaschema.cli.processor.CLIProcessor.CallingContext;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.cli.processor.ExitStatus;
 import gov.nist.secauto.metaschema.cli.processor.InvalidArgumentException;
 
@@ -34,7 +35,6 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -46,10 +46,9 @@ public interface Command {
   @NonNull
   String getDescription();
 
-  @SuppressWarnings("null")
   @NonNull
   default List<ExtraArgument> getExtraArguments() {
-    return Collections.emptyList();
+    return CollectionUtil.emptyList();
   }
 
   default int requiredExtraArgumentsCount() {
@@ -61,13 +60,13 @@ public interface Command {
   @NonNull
   default Collection<? extends Option> gatherOptions() {
     // by default there are no options to handle
-    return Collections.emptyList();
+    return CollectionUtil.emptyList();
   }
 
+  @SuppressWarnings("unused")
   default void validateOptions(
       @NonNull CallingContext callingContext,
-      @NonNull CommandLine cmdLine)
-      throws InvalidArgumentException {
+      @NonNull CommandLine cmdLine) throws InvalidArgumentException {
     // by default there are no options to handle
   }
 
@@ -79,7 +78,9 @@ public interface Command {
 
   boolean isSubCommandRequired();
 
-  default Command getSubCommandByName(String name) {
+  @SuppressWarnings("unused") 
+  default Command getSubCommandByName(@NonNull String name) {
+    // no sub commands by default
     return null;
   }
 }

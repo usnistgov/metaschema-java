@@ -170,7 +170,7 @@ class XmlInlineFlagDefinition
   /**
    * The corresponding definition for the local flag instance.
    */
-  public final class InternalFlagDefinition implements IFlagDefinition, IInlineDefinition<XmlInlineFlagDefinition> {
+  private final class InternalFlagDefinition implements IFlagDefinition, IInlineDefinition<XmlInlineFlagDefinition> {
     @Nullable
     private final Object defaultValue;
 

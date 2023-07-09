@@ -44,7 +44,8 @@ import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class XmlbeansMarkupVisitor // TODO: rename
+@SuppressWarnings("PMD.AvoidUncheckedExceptionsInSignatures") // intended
+class XmlbeansMarkupVisitor // TODO: rename
     extends AbstractMarkupWriter<XmlCursor, IllegalArgumentException> {
 
   /**
@@ -58,7 +59,8 @@ public class XmlbeansMarkupVisitor // TODO: rename
    *          the XML beans object to write to
    */
   @SuppressWarnings("resource")
-  public static void visit(@NonNull IMarkupString<?> markup, @NonNull String namespace, @NonNull XmlObject obj) {
+  public static void visit(@NonNull IMarkupString<?> markup, @NonNull String namespace,
+      @NonNull XmlObject obj) {
     try (XmlCursor cursor = ObjectUtils.notNull(obj.newCursor())) {
       visit(markup, namespace, cursor);
     }
@@ -74,7 +76,8 @@ public class XmlbeansMarkupVisitor // TODO: rename
    * @param cursor
    *          the XML beans cursor to write to
    */
-  public static void visit(@NonNull IMarkupString<?> markup, @NonNull String namespace, @NonNull XmlCursor cursor) {
+  public static void visit(@NonNull IMarkupString<?> markup, @NonNull String namespace,
+      @NonNull XmlCursor cursor) {
     IMarkupWriter<XmlCursor, IllegalArgumentException> writer = new XmlbeansMarkupVisitor(
         namespace,
         markup.getFlexmarkFactory().getListOptions(),
@@ -102,7 +105,8 @@ public class XmlbeansMarkupVisitor // TODO: rename
 
   @Override
   public void writeEmptyElement(QName qname, Map<String, String> attributes)
-      throws IllegalArgumentException { // NOPMD intended
+      throws IllegalArgumentException {
+    @SuppressWarnings("resource") // not owned
     XmlCursor cursor = getStream();
     cursor.beginElement(qname);
 
@@ -117,7 +121,8 @@ public class XmlbeansMarkupVisitor // TODO: rename
 
   @Override
   public void writeElementStart(QName qname, Map<String, String> attributes)
-      throws IllegalArgumentException { // NOPMD intended
+      throws IllegalArgumentException {
+    @SuppressWarnings("resource") // not owned
     XmlCursor cursor = getStream();
     cursor.beginElement(qname);
 
@@ -128,7 +133,8 @@ public class XmlbeansMarkupVisitor // TODO: rename
   }
 
   @Override
-  public void writeElementEnd(QName qname) throws IllegalArgumentException { // NOPMD intended
+  public void writeElementEnd(QName qname) throws IllegalArgumentException {
+    @SuppressWarnings("resource") // not owned
     XmlCursor cursor = getStream();
 
     // restore location to end of start element
@@ -142,12 +148,16 @@ public class XmlbeansMarkupVisitor // TODO: rename
   }
 
   @Override
-  public void writeText(CharSequence text) throws IllegalArgumentException { // NOPMD intended
-    getStream().insertChars(text.toString());
+  public void writeText(CharSequence text) throws IllegalArgumentException {
+    @SuppressWarnings("resource") // not owned
+    XmlCursor cursor = getStream();
+    cursor.insertChars(text.toString());
   }
 
   @Override
-  protected void writeComment(CharSequence text) throws IllegalArgumentException { // NOPMD intended
-    getStream().insertComment(text.toString());
+  protected void writeComment(CharSequence text) throws IllegalArgumentException {
+    @SuppressWarnings("resource") // not owned
+    XmlCursor cursor = getStream();
+    cursor.insertComment(text.toString());
   }
 }

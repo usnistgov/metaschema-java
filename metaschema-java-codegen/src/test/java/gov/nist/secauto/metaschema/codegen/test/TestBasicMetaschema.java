@@ -26,6 +26,12 @@
 
 package gov.nist.secauto.metaschema.codegen.test;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import gov.nist.secauto.metaschema.binding.IBindingContext;
+import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.codegen.MetaschemaCompilerHelper;
 import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
@@ -33,24 +39,34 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ReflectionUtils;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 class TestBasicMetaschema {
   private static final MetaschemaLoader LOADER = new MetaschemaLoader();
-
+  private static final Logger LOGGER = LogManager.getLogger(TestBasicMetaschema.class);
   // @TempDir
   // Path generationDir;
-  Path generationDir = Paths.get("target/generated-test-sources/metaschema");
+  @NonNull
+  Path generationDir = ObjectUtils.notNull(Paths.get("target/generated-test-sources/metaschema"));
 
   @NonNull
   private static IMetaschema loadMetaschema(@NonNull Path metaschemaFile) throws MetaschemaException, IOException {
@@ -76,53 +92,31 @@ class TestBasicMetaschema {
         .loadClass(rootClassName);
   }
 
-  // private static Object readXml(Reader reader, Class<?> rootClass) throws BindingException {
-  // IBindingContext context = IBindingContext.newInstance();
-  // Object value = context.newDeserializer(Format.XML, rootClass, null).deserialize(reader);
-  // return value;
-  // }
+  private static Object read(@NonNull Format format, @NonNull Path file, @NonNull Class<?> rootClass)
+      throws IOException {
+    IBindingContext context = IBindingContext.instance();
 
-  // private static <CLASS> void writeXml(Writer writer, CLASS rootObject) throws BindingException {
-  // IBindingContext context = IBindingContext.newInstance();
-  // @SuppressWarnings("unchecked")
-  // Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
-  // context.newSerializer(Format.XML, clazz, null).serialize(rootObject, writer);
-  // }
-  //
-  // private static String writeXml(Object rootObject) throws BindingException {
-  // StringWriter writer = new StringWriter();
-  // writeXml(writer, rootObject);
-  // return writer.toString();
-  // }
-  //
+    try (Reader reader = Files.newBufferedReader(file)) {
+      assert reader != null;
+      Object value = context.newDeserializer(format, rootClass).deserialize(reader, ObjectUtils.notNull(file.toUri()));
+      return value;
+    }
+  }
 
-  // @SuppressWarnings("unused")
-  // private static Object readJson(Reader reader, Class<?> rootClass) throws IOException,
-  // BindingException {
-  // IBindingContext context = IBindingContext.newInstance();
-  // IDeserializer<?> deserializer = context.newDeserializer(Format.JSON, rootClass);
-  // deserializer.enableFeature(Feature.DESERIALIZE_ROOT);
-  // return deserializer.deserialize(reader);
-  // }
-  //
-  // private static <CLASS> void writeJson(Writer writer, CLASS rootObject) throws BindingException {
-  // IBindingContext context = IBindingContext.newInstance();
-  // @SuppressWarnings("unchecked")
-  // Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
-  // context.newSerializer(Format.JSON, clazz, null).serialize(rootObject, writer);
-  // }
-  //
-  // @SuppressWarnings("unused")
-  // private static <CLASS> void writeYaml(Writer writer, CLASS rootObject) throws IOException,
-  // BindingException {
-  // IBindingContext context = IBindingContext.newInstance();
-  // @SuppressWarnings("unchecked")
-  // Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
-  // context.newSerializer(Format.YAML, clazz, null).serialize(rootObject, writer);
-  // }
+  private static <CLASS> void write(@NonNull Format format, @NonNull Path file, CLASS rootObject) throws IOException {
+    IBindingContext context = IBindingContext.instance();
+    @SuppressWarnings("unchecked")
+    Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
+
+    try (Writer writer = Files.newBufferedWriter(file, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
+        StandardOpenOption.TRUNCATE_EXISTING)) {
+      assert writer != null;
+      context.newSerializer(format, clazz).serialize(rootObject, writer);
+    }
+  }
 
   private static void runTests(@NonNull String testPath, @NonNull String rootClassName, @NonNull Path classDir)
-      throws ClassNotFoundException, IOException, MetaschemaException {
+      throws ClassNotFoundException, IOException, MetaschemaException, BindingException {
     runTests(testPath, rootClassName, classDir, null);
   }
 
@@ -132,45 +126,46 @@ class TestBasicMetaschema {
       @NonNull String rootClassName,
       @NonNull Path classDir,
       java.util.function.Consumer<Object> assertions)
-      throws ClassNotFoundException, IOException, MetaschemaException {
-    // Class<?> rootClass =
-    compileMetaschema(
+      throws ClassNotFoundException, IOException, MetaschemaException, BindingException {
+
+    Class<?> rootClass = compileMetaschema(
         ObjectUtils.notNull(Paths.get(String.format("src/test/resources/metaschema/%s/metaschema.xml", testPath))),
         Paths.get(String.format("src/test/resources/metaschema/%s/binding.xml", testPath)),
         rootClassName,
         classDir);
 
-    // File xmlExample = new File(String.format("src/test/resources/metaschema/%s/example.xml",
-    // testPath));
-    // LOGGER.info("Testing XML file: {}", xmlExample.getName());
-    // if (xmlExample.exists()) {
-    // String xml;
-    // {
-    // Object root = readXml(new FileReader(xmlExample), rootClass);
-    // LOGGER.info("Read XML: Object: {}", root.toString());
-    // if (assertions != null) {
-    // assertAll("Deserialize XML", () -> {
-    // assertions.accept(root);
-    // });
-    // }
-    //
-    // // xml = writeXml(root);
-    // // LOGGER.info("Write XML: Object: {}", xml);
-    // //
-    // // StringWriter writer = new StringWriter();
-    // // writeJson(writer, root);
-    // // LOGGER.info("Write JSON: Object: {}", writer.toString());
-    // }
-    //
-    // // Object root = readXml(new StringReader(xml), rootClass);
-    // // if (assertions != null) {
-    // // assertAll("Deserialize XML (roundtrip)", () -> assertions.accept(root));
-    // // }
-    // }
+    assert rootClass != null;
+
+    Path xmlExample = Paths.get(String.format("src/test/resources/metaschema/%s/example.xml",
+        testPath));
+    LOGGER.info("Testing XML file: {}", xmlExample.toString());
+    if (Files.exists(xmlExample)) {
+      String xml;
+      {
+        Object root = read(Format.XML, xmlExample, rootClass);
+        LOGGER.info("Read XML: Object: {}", root.toString());
+        if (assertions != null) {
+          assertAll("Deserialize XML", () -> {
+            assertions.accept(root);
+          });
+        }
+
+        LOGGER.info("Write XML:");
+        write(Format.XML, ObjectUtils.notNull(Paths.get("out.xml")), root);
+
+        LOGGER.info("Write JSON:");
+        write(Format.XML, ObjectUtils.notNull(Paths.get("out.json")), root);
+      }
+
+      Object root = read(Format.XML, ObjectUtils.notNull(Paths.get("out.xml")), rootClass);
+      if (assertions != null) {
+        assertAll("Deserialize XML (roundtrip)", () -> assertions.accept(root));
+      }
+    }
   }
 
   @Test
-  void testSimpleMetaschema() throws MetaschemaException, IOException, ClassNotFoundException {
+  void testSimpleMetaschema() throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
     runTests("simple", "gov.nist.csrc.ns.metaschema.testing.simple.TopLevel", generationDir);
     // runTests("simple", "gov.nist.csrc.ns.metaschema.testing.simple.TopLevel", generationDir, (obj) ->
     // {
@@ -184,7 +179,7 @@ class TestBasicMetaschema {
 
   @Test
   void testSimpleUuidMetaschema()
-      throws MetaschemaException, IOException, ClassNotFoundException {
+      throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
     runTests("simple_with_uuid", "gov.nist.csrc.ns.metaschema.testing.simple.with.uuid.TopLevel", generationDir,
         (obj) -> {
           try {
@@ -197,7 +192,7 @@ class TestBasicMetaschema {
 
   @Test
   void testSimpleWithFieldMetaschema()
-      throws MetaschemaException, IOException, ClassNotFoundException {
+      throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
     runTests("simple_with_field", "gov.nist.csrc.ns.metaschema.testing.simple.with.field.TopLevel", generationDir);
   }
 
@@ -207,78 +202,78 @@ class TestBasicMetaschema {
 
   @Test
   void testFieldsWithFlagMetaschema()
-      throws MetaschemaException, IOException, ClassNotFoundException {
-    runTests("fields_with_flags", "gov.nist.csrc.ns.metaschema.testing.fields.with.flags.TopLevel", generationDir);
+      throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
     // runTests("fields_with_flags", "gov.nist.csrc.ns.metaschema.testing.fields.with.flags.TopLevel",
-    // generationDir,
-    // (obj) -> {
-    // try {
-    // Assertions.assertEquals("test", reflectMethod(obj, "getId"));
-    // Object field1 = ReflectionUtils.invokeMethod(obj.getClass().getMethod("getComplexField1"), obj);
-    // Assertions.assertNotNull(field1);
-    // Assertions.assertEquals("complex-field1", reflectMethod(field1, "getId"));
-    // Assertions.assertEquals("test-string", reflectMethod(field1, "getValue"));
-    //
-    // @SuppressWarnings("unchecked")
-    // List<Object> field2s
-    // = (List<Object>) ReflectionUtils.invokeMethod(obj.getClass().getMethod("getComplexFields2"),
-    // obj);
-    // Assertions.assertNotNull(field2s);
-    // Assertions.assertEquals(1, field2s.size());
-    // Object field2 = field2s.get(0);
-    // Assertions.assertEquals("complex-field2-1", reflectMethod(field2, "getId"));
-    // Assertions.assertEquals("test-string2", reflectMethod(field2, "getValue"));
-    //
-    // @SuppressWarnings("unchecked")
-    // List<Object> field3s
-    // = (List<Object>) ReflectionUtils.invokeMethod(obj.getClass().getMethod("getComplexFields3"),
-    // obj);
-    // Assertions.assertEquals(2, field3s.size());
-    // Assertions.assertAll("ComplexFields4 item", () -> {
-    // Object item = field3s.get(0);
-    // assertEquals("complex-field3-1", reflectMethod(item, "getId2"));
-    // assertEquals("test-string3", reflectMethod(item, "getValue"));
-    // });
-    // Assertions.assertAll("ComplexFields4 item", () -> {
-    // Object item = field3s.get(1);
-    // assertEquals("complex-field3-2", reflectMethod(item, "getId2"));
-    // assertEquals("test-string4", reflectMethod(item, "getValue"));
-    // });
-    //
-    // Assertions.assertAll("ComplexFields4", () -> {
-    // @SuppressWarnings("unchecked")
-    // Map<String, Object> collection
-    // = (Map<String, Object>)
-    // ReflectionUtils.invokeMethod(obj.getClass().getMethod("getComplexFields4"),
-    // obj);
-    // Assertions.assertNotNull(collection);
-    // Assertions.assertEquals(2, collection.size());
-    // Set<Map.Entry<String, Object>> entries = collection.entrySet();
-    // Iterator<Map.Entry<String, Object>> iter = entries.iterator();
-    //
-    // Assertions.assertAll("ComplexFields4 item", () -> {
-    // Map.Entry<String, Object> entry = iter.next();
-    // assertEquals("complex-field4-1", entry.getKey());
-    // assertEquals("complex-field4-1", reflectMethod(entry.getValue(), "getId2"));
-    // assertEquals("test-string5", reflectMethod(entry.getValue(), "getValue"));
-    // });
-    //
-    // Assertions.assertAll("ComplexFields4 item", () -> {
-    // Map.Entry<String, Object> entry = iter.next();
-    // assertEquals("complex-field4-2", entry.getKey());
-    // assertEquals("complex-field4-2", reflectMethod(entry.getValue(), "getId2"));
-    // assertEquals("test-string6", reflectMethod(entry.getValue(), "getValue"));
-    // });
-    // });
-    // } catch (NoSuchMethodException | SecurityException e) {
-    // Assertions.fail(e);
-    // }
-    // });
+    // generationDir);
+    runTests("fields_with_flags", "gov.nist.csrc.ns.metaschema.testing.fields.with.flags.TopLevel",
+        generationDir,
+        (obj) -> {
+          try {
+            Assertions.assertEquals("test", reflectMethod(obj, "getId"));
+            Object field1 = ReflectionUtils.invokeMethod(obj.getClass().getMethod("getComplexField1"), obj);
+            Assertions.assertNotNull(field1);
+            Assertions.assertEquals("complex-field1", reflectMethod(field1, "getId"));
+            Assertions.assertEquals("test-string", reflectMethod(field1, "getValue"));
+
+            @SuppressWarnings("unchecked")
+            List<Object> field2s
+                = (List<Object>) ReflectionUtils.invokeMethod(obj.getClass().getMethod("getComplexFields2"),
+                    obj);
+            Assertions.assertNotNull(field2s);
+            Assertions.assertEquals(1, field2s.size());
+            Object field2 = field2s.get(0);
+            Assertions.assertEquals("complex-field2-1", reflectMethod(field2, "getId"));
+            Assertions.assertEquals("test-string2", reflectMethod(field2, "getValue"));
+
+            @SuppressWarnings("unchecked")
+            List<Object> field3s
+                = (List<Object>) ReflectionUtils.invokeMethod(obj.getClass().getMethod("getComplexFields3"),
+                    obj);
+            Assertions.assertEquals(2, field3s.size());
+            Assertions.assertAll("ComplexFields4 item", () -> {
+              Object item = field3s.get(0);
+              assertEquals("complex-field3-1", reflectMethod(item, "getId2"));
+              assertEquals("test-string3", reflectMethod(item, "getValue"));
+            });
+            Assertions.assertAll("ComplexFields4 item", () -> {
+              Object item = field3s.get(1);
+              assertEquals("complex-field3-2", reflectMethod(item, "getId2"));
+              assertEquals("test-string4", reflectMethod(item, "getValue"));
+            });
+
+            Assertions.assertAll("ComplexFields4", () -> {
+              @SuppressWarnings("unchecked")
+              Map<String, Object> collection
+                  = (Map<String, Object>) ReflectionUtils.invokeMethod(obj.getClass().getMethod("getComplexFields4"),
+                      obj);
+              Assertions.assertNotNull(collection);
+              Assertions.assertEquals(2, collection.size());
+              Set<Map.Entry<String, Object>> entries = collection.entrySet();
+              Iterator<Map.Entry<String, Object>> iter = entries.iterator();
+
+              Assertions.assertAll("ComplexFields4 item", () -> {
+                Map.Entry<String, Object> entry = iter.next();
+                assertEquals("complex-field4-1", entry.getKey());
+                assertEquals("complex-field4-1", reflectMethod(entry.getValue(), "getId2"));
+                assertEquals("test-string5", reflectMethod(entry.getValue(), "getValue"));
+              });
+
+              Assertions.assertAll("ComplexFields4 item", () -> {
+                Map.Entry<String, Object> entry = iter.next();
+                assertEquals("complex-field4-2", entry.getKey());
+                assertEquals("complex-field4-2", reflectMethod(entry.getValue(), "getId2"));
+                assertEquals("test-string6", reflectMethod(entry.getValue(), "getValue"));
+              });
+            });
+          } catch (NoSuchMethodException | SecurityException e) {
+            Assertions.fail(e);
+          }
+        });
   }
 
   @Test
   void testAssemblyMetaschema()
-      throws MetaschemaException, IOException, ClassNotFoundException {
+      throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
     runTests("assembly", "gov.nist.itl.metaschema.codegen.xml.example.assembly.TopLevel", generationDir, (obj) -> {
       try {
         Assertions.assertEquals("test", reflectMethod(obj, "getId"));
@@ -290,7 +285,7 @@ class TestBasicMetaschema {
 
   @Test
   void testLocalDefinitionsMetaschema()
-      throws MetaschemaException, IOException, ClassNotFoundException {
+      throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
     runTests("local-definitions", "gov.nist.csrc.ns.metaschema.testing.local.definitions.TopLevel", generationDir);
   }
 }

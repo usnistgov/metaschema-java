@@ -152,7 +152,7 @@ public final class ModelUtil {
   }
 
   @Nullable
-  public static Object resolveDefaultValue(String defaultValue, IDataTypeAdapter<?> adapter) {
+  public static Object resolveDefaultValue(@NonNull String defaultValue, IDataTypeAdapter<?> adapter) {
     Object retval = null;
     if (!Constants.NULL_VALUE.equals(defaultValue)) {
       retval = adapter.parse(defaultValue);

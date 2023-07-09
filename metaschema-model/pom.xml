@@ -27,6 +27,22 @@
 			<artifactId>xmlbeans</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.woodstox</groupId>
+			<artifactId>stax2-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>nl.talsmasoftware</groupId>
+			<artifactId>lazy4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.vladsch.flexmark</groupId>
+			<artifactId>flexmark</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
 		</dependency>
@@ -51,6 +67,10 @@
 		<!-- <artifactId>log4j-jul</artifactId> -->
 		<!-- <scope>test</scope> -->
 		<!-- </dependency> -->
+		<dependency>
+			<groupId>com.github.spotbugs</groupId>
+			<artifactId>spotbugs-annotations</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -123,6 +143,7 @@
 									<directory>metaschema/schema</directory>
 									<includes>
 										<include>**/*.xsd</include>
+										<include>**/*.dtd</include>
 										<include>**/*.json</include>
 									</includes>
 									<filtering>false</filtering>
@@ -143,7 +164,8 @@
 								<resource>
 									<directory>metaschema/support/xml</directory>
 									<includes>
-										<include>**/*</include>
+										<include>**/*.xsd</include>
+										<include>**/*.dtd</include>
 									</includes>
 									<filtering>false</filtering>
 								</resource>
@@ -163,7 +185,7 @@
 								<resource>
 									<directory>metaschema/support/json</directory>
 									<includes>
-										<include>**/*</include>
+										<include>**/*.json</include>
 									</includes>
 									<filtering>false</filtering>
 								</resource>
@@ -240,7 +262,7 @@
 					</usedDependencies>
 				</configuration>
 			</plugin>
-						<plugin>
+			<plugin>
 				<groupId>io.github.git-commit-id</groupId>
 				<artifactId>git-commit-id-maven-plugin</artifactId>
 				<executions>

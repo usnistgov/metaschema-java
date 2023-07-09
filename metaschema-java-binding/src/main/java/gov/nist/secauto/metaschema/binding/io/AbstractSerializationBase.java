@@ -38,6 +38,7 @@ import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+@SuppressWarnings("PMD.ReplaceVectorWithList") // false positive
 abstract class AbstractSerializationBase<T extends Enum<T> & IConfigurationFeature>
     implements IMutableConfiguration<T> {
   @NonNull

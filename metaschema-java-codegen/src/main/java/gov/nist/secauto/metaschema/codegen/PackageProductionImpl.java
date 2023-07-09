@@ -27,15 +27,11 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import com.squareup.javapoet.ClassName;
-import com.vladsch.flexmark.formatter.Formatter;
-import com.vladsch.flexmark.util.sequence.LineAppendable;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaPackage;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlNs;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlNsForm;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupString;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.FlexmarkConfiguration;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.io.IOException;
@@ -95,17 +91,18 @@ class PackageProductionImpl implements IPackageProduction {
     this.packageInfoClass
         = new DefaultGeneratedClass(packageInfo, ObjectUtils.notNull(ClassName.get(javaPackage, "package-info")));
   }
-
-  public static String formatMarkdown(@NonNull IMarkupString<?> markup) {
-    Formatter.Builder builder = Formatter.builder(FlexmarkConfiguration.FLEXMARK_CONFIG);
-    builder.set(ObjectUtils.notNull(Formatter.FORMAT_FLAGS), LineAppendable.F_WHITESPACE_REMOVAL);
-    // builder.set(Formatter.ESCAPE_SPECIAL_CHARS, false);
-    Formatter formatter = builder.build();
-    String markdown = markup.toMarkdown(formatter).trim();
-    markdown = markdown.replace("\\&", "&");
-    markdown = markdown.replace("\"", "\\\"");
-    return markdown;
-  }
+  //
+  // public static String formatMarkdown(@NonNull IFlexmarkMarkupString<?> markup) {
+  // // TODO: seemingly unused method. Remove?
+  // Formatter.Builder builder = Formatter.builder(FlexmarkConfiguration.FLEXMARK_CONFIG);
+  // builder.set(ObjectUtils.notNull(Formatter.FORMAT_FLAGS), LineAppendable.F_WHITESPACE_REMOVAL);
+  // // builder.set(Formatter.ESCAPE_SPECIAL_CHARS, false);
+  // Formatter formatter = builder.build();
+  // String markdown = markup.toMarkdown(formatter).trim();
+  // markdown = markdown.replace("\\&", "&");
+  // markdown = markdown.replace("\"", "\\\"");
+  // return markdown;
+  // }
 
   @Override
   public String getJavaPackage() {

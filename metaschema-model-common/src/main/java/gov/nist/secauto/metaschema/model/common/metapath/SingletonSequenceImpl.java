@@ -83,7 +83,7 @@ class SingletonSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_T
   public boolean equals(Object other) {
     // must either be the same instance or a sequence that has the same list contents
     return other == this
-        || (other instanceof ISequence && asList().equals(((ISequence<?>) other).asList()));
+        || other instanceof ISequence && asList().equals(((ISequence<?>) other).asList());
   }
 
   @Override

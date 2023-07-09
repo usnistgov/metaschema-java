@@ -39,6 +39,7 @@ class ReplacementScannerTest {
     String string = "Some { first} text \\{ to {second\\}} scan";
 
     Pattern pattern = Pattern.compile("(?<!\\\\)(\\{\\s*((?:(?:\\\\})|[^}])*)\\s*\\})");
+    assert pattern != null;
     String result = ReplacementScanner.replaceTokens(string, pattern, match -> match.group(2)).toString();
     assertEquals("Some first text \\{ to second\\} scan", result, "replacement doesn't match expectation");
   }

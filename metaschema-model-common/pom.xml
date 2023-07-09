@@ -146,11 +146,15 @@
 		<!-- <version>2.2</version> -->
 		<!-- <scope>test</scope> -->
 		<!-- </dependency> -->
-
+<!--		<dependency>-->
+<!--			<groupId>biz.aQute.bnd</groupId>-->
+<!--			<artifactId>biz.aQute.bndlib</artifactId>-->
+<!--			<scope>provided</scope>-->
+<!--		</dependency>-->
 		<dependency>
-			<!-- Remove compile warning -->
 			<groupId>biz.aQute.bnd</groupId>
-			<artifactId>biz.aQute.bndlib</artifactId>
+			<artifactId>biz.aQute.bnd.util</artifactId>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
@@ -194,6 +198,11 @@
 							<artifactId>auto-service</artifactId>
 							<version>${dependency.auto-service.version}</version>
 						</dependency>
+						<dependency>
+							<groupId>com.google.auto.service</groupId>
+							<artifactId>auto-service-annotations</artifactId>
+							<version>${dependency.auto-service.version}</version>
+						</dependency>
 					</dependencies>
 				</plugin>
 				<plugin>
@@ -201,6 +210,15 @@
 					<artifactId>spotbugs-maven-plugin</artifactId>
 					<configuration>
 						<excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<!-- Use of TCP to transmit events to the plugin -->
+						<forkNode
+							implementation="org.apache.maven.plugin.surefire.extensions.SurefireForkNodeFactory" />
 					</configuration>
 				</plugin>
 			</plugins>

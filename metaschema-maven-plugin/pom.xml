@@ -25,6 +25,9 @@
 		<dependency.maven-shared-incremental.version>1.1</dependency.maven-shared-incremental.version>
 	</properties>
 
+	<prerequisites>
+		<maven>${plugin.maven-plugin.version}</maven>
+	</prerequisites>
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>

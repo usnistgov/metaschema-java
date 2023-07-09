@@ -179,6 +179,7 @@ public class MetapathExpression {
    *           if an error occurred during evaluation
    * @see #toResultType(ISequence, ResultType)
    */
+  @Nullable
   public <T> T evaluateAs(@NonNull INodeContext nodeContext, @NonNull ResultType resultType) {
     ISequence<?> result = evaluate(nodeContext);
     return toResultType(result, resultType);
@@ -206,6 +207,7 @@ public class MetapathExpression {
    *           if an error occurred during evaluation
    * @see #toResultType(ISequence, ResultType)
    */
+  @Nullable
   public <T> T evaluateAs(@NonNull INodeContext nodeContext, @NonNull ResultType resultType,
       @NonNull DynamicContext dynamicContext) {
     ISequence<?> result = evaluate(nodeContext, dynamicContext);

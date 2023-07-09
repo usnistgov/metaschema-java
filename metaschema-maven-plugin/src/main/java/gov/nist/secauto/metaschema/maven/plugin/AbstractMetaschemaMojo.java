@@ -238,7 +238,7 @@ public abstract class AbstractMetaschemaMojo
     return skip;
   }
 
-  abstract protected String getStaleFileName();
+  protected abstract String getStaleFileName();
 
   /**
    * Gets the staleFile for this execution.

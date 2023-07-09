@@ -112,6 +112,7 @@ public abstract class AbstractValidateContentCommand
     return EXTRA_ARGUMENTS;
   }
 
+  @SuppressWarnings("PMD.PreserveStackTrace") // intended
   @Override
   public void validateOptions(CallingContext callingContext, CommandLine cmdLine) throws InvalidArgumentException {
     if (cmdLine.hasOption(CONSTRAINTS_OPTION)) {
@@ -151,12 +152,14 @@ public abstract class AbstractValidateContentCommand
         String toFormatText = cmdLine.getOptionValue(AS_OPTION);
         Format.valueOf(toFormatText.toUpperCase(Locale.ROOT));
       } catch (IllegalArgumentException ex) {
-        throw new InvalidArgumentException(
+        InvalidArgumentException newEx = new InvalidArgumentException(
             String.format("Invalid '%s' argument. The format must be one of: %s.",
                 OptionUtils.toArgument(AS_OPTION),
                 Arrays.asList(Format.values()).stream()
                     .map(format -> format.name())
                     .collect(CustomCollectors.joiningWithOxfordComma("and"))));
+        newEx.addSuppressed(ex);
+        throw newEx;
       }
     }
   }
@@ -164,6 +167,7 @@ public abstract class AbstractValidateContentCommand
   @NonNull
   protected abstract IBindingContext getBindingContext(@Nullable Set<IConstraintSet> constraintSets);
 
+  @SuppressWarnings("PMD.OnlyOneReturn") // readability
   @Override
   public ExitStatus executeCommand(CallingContext callingContext, CommandLine cmdLine) {
     IBindingContext bindingContext;

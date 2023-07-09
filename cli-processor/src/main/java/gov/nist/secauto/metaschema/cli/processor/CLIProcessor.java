@@ -31,12 +31,12 @@ import static org.fusesource.jansi.Ansi.ansi;
 import gov.nist.secauto.metaschema.cli.processor.command.Command;
 import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;
 import gov.nist.secauto.metaschema.model.common.util.IVersionInfo;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.MissingOptionException;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -169,10 +169,12 @@ public class CLIProcessor {
    *          the arguments to process
    * @return the exit status
    */
+  @NonNull
   public ExitStatus process(String... args) {
     return parseCommand(args);
   }
 
+  @NonNull
   private ExitStatus parseCommand(String... args) {
     List<String> commandArgs = Arrays.asList(args);
     assert commandArgs != null;
@@ -259,7 +261,9 @@ public class CLIProcessor {
 
       boolean endArgs = false;
       for (String arg : args) {
-        if (!endArgs) {
+        if (endArgs) {
+          extraArgs.add(arg);
+        } else {
           if (arg.startsWith("-")) {
             extraArgs.add(arg);
           } else if ("--".equals(arg)) {
@@ -279,8 +283,6 @@ public class CLIProcessor {
               calledCommands.add(command);
             }
           }
-        } else {
-          extraArgs.add(arg);
         }
       }
 
@@ -334,6 +336,8 @@ public class CLIProcessor {
       return retval;
     }
 
+    @SuppressWarnings("PMD.OnlyOneReturn") // readability
+    @NonNull
     public ExitStatus processCommand() {
       CommandLineParser parser = new DefaultParser();
       CommandLine cmdLine;
@@ -373,6 +377,7 @@ public class CLIProcessor {
       return retval;
     }
 
+    @SuppressWarnings("PMD.OnlyOneReturn") // readability
     protected ExitStatus invokeCommand(@NonNull CommandLine cmdLine) {
       for (Command cmd : getCalledCommands()) {
         try {
@@ -515,7 +520,7 @@ public class CLIProcessor {
           .forEach(option -> {
             builder
                 .append(' ')
-                .append(OptionUtils.toArgument(option));
+                .append(OptionUtils.toArgument(ObjectUtils.notNull(option)));
             if (option.hasArg()) {
               builder
                   .append('=')
@@ -557,6 +562,7 @@ public class CLIProcessor {
     public void showHelp() {
 
       HelpFormatter formatter = new HelpFormatter();
+      formatter.setLongOptSeparator("=");
 
       AnsiPrintStream out = AnsiConsole.out();
       int terminalWidth = Math.max(out.getTerminalWidth(), 40);

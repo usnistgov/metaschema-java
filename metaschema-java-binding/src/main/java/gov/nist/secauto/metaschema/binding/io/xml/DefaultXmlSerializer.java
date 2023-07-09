@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.RootAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -77,9 +78,11 @@ public class DefaultXmlSerializer<CLASS>
   @NonNull
   protected XMLStreamWriter2 newXMLStreamWriter(@NonNull Writer writer) throws IOException {
     try {
-      XMLStreamWriter2 streamWriter = (XMLStreamWriter2) getXMLOutputFactory().createXMLStreamWriter(writer);
+      return ObjectUtils.notNull((XMLStreamWriter2) getXMLOutputFactory().createXMLStreamWriter(writer));
+      // XMLStreamWriter2 streamWriter = (XMLStreamWriter2)
+      // getXMLOutputFactory().createXMLStreamWriter(writer);
       // streamWriter = new IndentingXmlStreamWriter2(streamWriter);
-      return streamWriter;
+      // return streamWriter;
     } catch (XMLStreamException ex) {
       throw new IOException(ex);
     }

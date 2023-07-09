@@ -49,7 +49,6 @@ import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.data.DataHolder;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
 
-import org.jetbrains.annotations.NotNull;
 import org.jsoup.nodes.Element;
 
 import java.util.Collections;
@@ -99,8 +98,8 @@ public class HtmlQuoteTagExtension
           new NodeRenderingHandler<>(DoubleQuoteNode.class, this::render));
     }
 
-    protected void render(@NotNull DoubleQuoteNode node, @NotNull NodeRendererContext context,
-        @NotNull HtmlWriter html) {
+    protected void render(@NonNull DoubleQuoteNode node, @NonNull NodeRendererContext context,
+        @NonNull HtmlWriter html) {
       html.withAttr().tag("q");
       context.renderChildren(node);
       html.tag("/q");

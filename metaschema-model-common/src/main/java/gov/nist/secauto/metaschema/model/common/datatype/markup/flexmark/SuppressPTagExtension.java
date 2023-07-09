@@ -36,11 +36,10 @@ import com.vladsch.flexmark.html.renderer.NodeRenderingHandler;
 import com.vladsch.flexmark.util.data.DataHolder;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collections;
 import java.util.Set;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class SuppressPTagExtension
@@ -69,9 +68,9 @@ public class SuppressPTagExtension
     }
 
     protected void render(
-        @NotNull Paragraph node,
-        @NotNull NodeRendererContext context,
-        @SuppressWarnings("unused") @NotNull HtmlWriter html) {
+        @NonNull Paragraph node,
+        @NonNull NodeRendererContext context,
+        @SuppressWarnings("unused") @NonNull HtmlWriter html) {
       context.renderChildren(node);
     }
 

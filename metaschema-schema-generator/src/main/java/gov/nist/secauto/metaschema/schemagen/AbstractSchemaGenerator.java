@@ -44,7 +44,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- *
+ * Thsi abstract class provides a common implementation shared by all schema generators.
+ * 
  * @param <T>
  *          the writer type
  * @param <D>
@@ -52,8 +53,10 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * @param <S>
  *          the {@link IGenerationState} type
  */
-public abstract class AbstractSchemaGenerator<T extends AutoCloseable, D extends IDatatypeManager, S extends AbstractGenerationState<
-    T, D>>
+public abstract class AbstractSchemaGenerator<
+    T extends AutoCloseable,
+    D extends IDatatypeManager,
+    S extends AbstractGenerationState<T, D>>
     implements ISchemaGenerator {
 
   /**
@@ -103,6 +106,7 @@ public abstract class AbstractSchemaGenerator<T extends AutoCloseable, D extends
     // IInlineStrategy inlineStrategy = IInlineStrategy.newInlineStrategy(configuration);
     try {
       // avoid automatically closing streams not owned by the generator
+      @SuppressWarnings("PMD.CloseResource")
       T schemaWriter = newWriter(out);
       S generationState = newGenerationState(metaschema, schemaWriter, configuration);
       generateSchema(generationState);

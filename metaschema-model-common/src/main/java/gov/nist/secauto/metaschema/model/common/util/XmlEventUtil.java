@@ -500,7 +500,10 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
             presumedName);
   }
 
-  private static CharSequence generateAssertMessage(XMLEvent event, int presumedEventType, QName presumedName) {
+  private static CharSequence generateAssertMessage(
+      @NonNull XMLEvent event,
+      int presumedEventType,
+      @Nullable QName presumedName) {
     StringBuilder builder = new StringBuilder(64);
     builder
         .append("Expected XML ")

@@ -292,7 +292,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
     }
 
     IModelPropertyInfo propertyInfo = getPropertyInfo();
-    
+
     if (propertyInfo.getProperty().getMinOccurs() > 0 || propertyInfo.getItemCount(value) > 0) {
       // only write a property if the wrapper is required or if it has contents
       QName currentStart = parentName;
@@ -303,10 +303,10 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
         writer.writeStartElement(groupQName.getNamespaceURI(), groupQName.getLocalPart());
         currentStart = groupQName;
       }
-  
+
       // There are one or more named values based on cardinality
       propertyInfo.writeValue(value, currentStart, context);
-  
+
       if (groupQName != null) {
         writer.writeEndElement();
       }

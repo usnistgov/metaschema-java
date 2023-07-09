@@ -78,10 +78,11 @@ class JsonSuiteTest
     return JSON_SCHEMA_PROVIDER;
   }
 
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   @Execution(ExecutionMode.SAME_THREAD)
   @DisplayName("JSON Schema Generation")
   @TestFactory
-  Stream<? extends DynamicNode> generateTests() {
+  Stream<DynamicNode> generateTests() {
     return testFactory();
   }
 

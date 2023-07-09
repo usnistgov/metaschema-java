@@ -53,19 +53,18 @@ public class DefaultJsonDeserializer<CLASS>
     super(bindingContext, classBinding);
   }
 
-  @SuppressWarnings("null")
   @NonNull
   protected JsonFactory getJsonFactoryInstance() {
     return JsonFactoryFactory.instance();
   }
 
-  @SuppressWarnings("null")
   @NonNull
   protected JsonFactory getJsonFactory() {
     synchronized (this) {
       if (jsonFactory == null) {
         jsonFactory = getJsonFactoryInstance();
       }
+      assert jsonFactory != null;
       return jsonFactory;
     }
   }

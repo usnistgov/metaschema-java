@@ -66,7 +66,7 @@ class EmptyListImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> {
   public boolean equals(Object other) {
     // must either be the same instance or a sequence that is empty
     return other == this
-        || (other instanceof ISequence && ((ISequence<?>) other).isEmpty());
+        || other instanceof ISequence && ((ISequence<?>) other).isEmpty();
   }
 
   @Override

@@ -31,7 +31,7 @@ import java.util.Collection;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-interface IDefinitionBindingConfiguration {
+public interface IDefinitionBindingConfiguration {
   /**
    * Get the class name to use for the generated class associated with this binding.
    *

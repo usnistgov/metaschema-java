@@ -57,6 +57,19 @@ public abstract class AbstractBoundMetaschema
   private Map<String, IAssemblyClassBinding> assemblyDefinitions;
   private Map<String, IFieldClassBinding> fieldDefinitions;
 
+  /**
+   * Create a new Metaschema instance for a given class annotated by the {@link Metaschema}
+   * annotation.
+   * <p>
+   * Will also load any imported Metaschemas.
+   *
+   * 
+   * @param clazz
+   *          the Metaschema class
+   * @param bindingContext
+   *          the Metaschema binding context
+   * @return the new Metaschema instance
+   */
   @NonNull
   public static IMetaschema createInstance(
       @NonNull Class<? extends IMetaschema> clazz,
@@ -84,7 +97,7 @@ public abstract class AbstractBoundMetaschema
   }
 
   @NonNull
-  public static IMetaschema createInstance(
+  private static IMetaschema createInstance(
       @NonNull Class<? extends IMetaschema> clazz,
       @NonNull IBindingContext bindingContext,
       @NonNull List<? extends IMetaschema> importedMetaschemas) {
@@ -103,12 +116,26 @@ public abstract class AbstractBoundMetaschema
     }
   }
 
-  public AbstractBoundMetaschema(@NonNull List<? extends IMetaschema> importedMetaschema,
+  /**
+   * Construct a new Metaschema instance.
+   * 
+   * @param importedMetaschema
+   *          Metaschema imports associated with the metaschema
+   * @param bindingContext
+   *          the Metaschema binding context
+   */
+  protected AbstractBoundMetaschema(
+      @NonNull List<? extends IMetaschema> importedMetaschema,
       @NonNull IBindingContext bindingContext) {
     super(importedMetaschema);
     this.bindingContext = bindingContext;
   }
 
+  /**
+   * Get the Metaschema binding context.
+   * 
+   * @return the context
+   */
   @NonNull
   protected IBindingContext getBindingContext() {
     return bindingContext;
