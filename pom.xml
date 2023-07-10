@@ -13,7 +13,7 @@
     <version>0.11.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Metaschema Framework Parent</name>
-    <description>A common build root for all NIST projects related to the
+    <description>A common build root for all NIST Java projects related to the
         Metaschema framework.</description>
     <url>${site.url}</url>
     <issueManagement>
