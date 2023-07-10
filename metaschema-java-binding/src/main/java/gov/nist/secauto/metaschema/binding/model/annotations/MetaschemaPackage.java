@@ -40,7 +40,8 @@ public @interface MetaschemaPackage {
   /**
    * Get the metaschemas associated with this package.
    *
-   * @return the classes that extend {@link IMetaschema} or an empty array if no metaschemas are defined
+   * @return the classes that extend {@link IMetaschema} or an empty array if no metaschemas are
+   *         defined
    */
   Class<? extends IMetaschema>[] metaschemas() default {};
 }
