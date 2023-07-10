@@ -69,7 +69,6 @@
 		<dependency>
 			<groupId>gov.nist.secauto.oscal.tools.oscal-cli</groupId>
 			<artifactId>cli-framework</artifactId>
-			<version>0.3.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>
