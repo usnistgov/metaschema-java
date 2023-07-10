@@ -27,9 +27,14 @@
 package gov.nist.secauto.metaschema.binding.io.yaml;
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactoryBuilder;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 
+import org.yaml.snakeyaml.LoaderOptions;
+
 public final class YamlFactoryFactory {
+  public static final int CODEPOINT_LIMIT = 2 * 1024 * 1024 * 1024; // 2 GB
+
   private static final YAMLFactory SINGLETON = newYamlFactoryInstance();
 
   private YamlFactoryFactory() {
@@ -37,8 +42,15 @@ public final class YamlFactoryFactory {
   }
 
   public static YAMLFactory newYamlFactoryInstance() {
+    YAMLFactoryBuilder builder = YAMLFactory.builder();
+    LoaderOptions loaderOptions = builder.loaderOptions();
+    if (loaderOptions == null) {
+      loaderOptions = new LoaderOptions();
+    }
+    loaderOptions.setCodePointLimit(CODEPOINT_LIMIT);
+    builder.loaderOptions(loaderOptions);
 
-    return YAMLFactory.builder()
+    return builder
         .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
         .enable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
         .enable(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS)
