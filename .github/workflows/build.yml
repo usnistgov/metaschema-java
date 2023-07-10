@@ -42,11 +42,11 @@ jobs:
       id: maven-build-develop
       if: ((github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'develop') || (github.event_name == 'pull_request' && github.base_ref == 'develop')
       run: |
-        mvn -Preporting verify
+        mvn -B -Preporting verify
     - name: Build and run tests (main)
       if: steps.maven-build-develop.conclusion == 'skipped'
       run: |
-        mvn -Prelease -Preporting verify
+        mvn -B -Prelease -Preporting verify
     - name: Perform CodeQL Analysis
       if: github.event_name == 'push'
       uses: github/codeql-action/analyze@46ed16ded91731b2df79a2893d3aea8e9f03b5c4
@@ -80,14 +80,14 @@ jobs:
     # -------------------------
     - name: Build Website
       run: |
-          mvn -Preporting -Prelease package site site:stage
-      working-directory: ${{ env.REPO_PATH }}
+        mvn -B -Preporting -Prelease package site site:stage
     # -------------------------
     # Maven Deploy
     # -------------------------
     - name: Deploy Maven Artifact SNAPSHOTs
       run: |
-        mvn -e -Pgpg -Preporting deploy -Dmaven.deploy.skip=releases
+        # No need to run tests, since these were run in the previous workflow
+        mvn -B -e -Pgpg -Preporting deploy -Dmaven.deploy.skip=releases -Dmaven.test.skip=true -Dpmd.skip=true -Dcpd.skip=true -Dspotbugs.skip=true
       env:
         MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         MAVEN_CENTRAL_TOKEN: ${{ secrets.SONATYPE_PASSWORD }}
