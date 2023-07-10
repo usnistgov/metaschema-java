@@ -34,8 +34,7 @@ jobs:
     # -------------------------
     - name: Build Website
       run: |
-          mvn -Preporting -Prelease package site site:stage
-      working-directory: ${{ env.REPO_PATH }}
+        mvn -B -Preporting -Prelease package site site:stage
     - name: Run deploy script
       run: |
         touch target/staging/.nojekyll
@@ -45,7 +44,7 @@ jobs:
     # -------------------------
     - name: Deploy Maven Artifacts
       run: |
-        mvn -Pgpg -Prelease -Preporting deploy
+        mvn -B -Pgpg -Prelease -Preporting deploy
         # mvn -Pgpg -Prelease nexus-staging:close -DstagingDescription="closing to release"
       env:
         MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
