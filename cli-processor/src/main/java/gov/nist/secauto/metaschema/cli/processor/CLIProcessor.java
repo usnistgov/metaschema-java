@@ -279,6 +279,7 @@ public class CLIProcessor {
 
             if (command == null) {
               extraArgs.add(arg);
+              endArgs = true;
             } else {
               calledCommands.add(command);
             }
