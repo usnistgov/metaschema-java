@@ -78,7 +78,7 @@ public interface Command {
 
   boolean isSubCommandRequired();
 
-  @SuppressWarnings("unused") 
+  @SuppressWarnings("unused")
   default Command getSubCommandByName(@NonNull String name) {
     // no sub commands by default
     return null;

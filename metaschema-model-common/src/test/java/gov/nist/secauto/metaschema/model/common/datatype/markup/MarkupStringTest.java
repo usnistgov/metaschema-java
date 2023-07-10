@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
-
-
 import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxOutputFactory;
 import com.vladsch.flexmark.ast.Emphasis;
@@ -151,8 +149,7 @@ class MarkupStringTest {
       }
       // InsertAnchorNode[0, 0] name:[39, 45, "insert"]
       {
-        @SuppressWarnings("unused")
-        InsertAnchorNode insert = (InsertAnchorNode) paragraphChildren.get(5);
+        @SuppressWarnings("unused") InsertAnchorNode insert = (InsertAnchorNode) paragraphChildren.get(5);
       }
       // Text[48, 49] chars:[48, 49, "."]
       {

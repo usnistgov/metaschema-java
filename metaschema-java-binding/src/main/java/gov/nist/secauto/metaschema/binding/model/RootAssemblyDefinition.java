@@ -291,8 +291,7 @@ public class RootAssemblyDefinition
   @Override
   public void writeRoot(Object instance, IJsonWritingContext context) throws IOException {
 
-    @SuppressWarnings("resource")
-    JsonGenerator writer = context.getWriter(); // NOPMD - intentional
+    @SuppressWarnings("resource") JsonGenerator writer = context.getWriter(); // NOPMD - intentional
 
     // first read the initial START_OBJECT
     writer.writeStartObject();

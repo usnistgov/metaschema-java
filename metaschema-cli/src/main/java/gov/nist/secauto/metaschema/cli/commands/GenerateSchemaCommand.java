@@ -205,7 +205,7 @@ public class GenerateSchemaCommand
     try {
       IMetaschema metaschema = new MetaschemaLoader().load(input);
       if (destination == null) {
-        @SuppressWarnings({"resource", "PMD.CloseResource"}) // not owned
+        @SuppressWarnings({ "resource", "PMD.CloseResource" }) // not owned
         OutputStream os = ObjectUtils.notNull(System.out);
         ISchemaGenerator.generateSchema(metaschema, os, asFormat, configuration);
       } else {

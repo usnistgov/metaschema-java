@@ -48,7 +48,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public final class LoggingValidationHandler {
   private static final Logger LOGGER = LogManager.getLogger(LoggingValidationHandler.class);
-  
+
   private static final LoggingValidationHandler NO_LOG_EXCPTION_INSTANCE = new LoggingValidationHandler(false);
   private static final LoggingValidationHandler LOG_EXCPTION_INSTANCE = new LoggingValidationHandler(true);
 
@@ -61,16 +61,14 @@ public final class LoggingValidationHandler {
   public static LoggingValidationHandler instance(boolean logExceptions) {
     return logExceptions ? LOG_EXCPTION_INSTANCE : NO_LOG_EXCPTION_INSTANCE;
   }
-  
+
   protected LoggingValidationHandler(boolean logExceptions) {
     this.logExceptions = logExceptions;
   }
 
-  
   public boolean isLogExceptions() {
     return logExceptions;
   }
-
 
   public boolean handleValidationResults(IValidationResult result) {
     handleValidationFindings(result.getFindings());
@@ -145,7 +143,7 @@ public final class LoggingValidationHandler {
     }
 
     assert retval != null;
-    
+
     if (finding.getCause() != null && isLogExceptions()) {
       retval.withThrowable(finding.getCause());
     }

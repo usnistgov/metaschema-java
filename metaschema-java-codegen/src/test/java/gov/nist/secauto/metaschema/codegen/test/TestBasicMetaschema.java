@@ -105,8 +105,7 @@ class TestBasicMetaschema {
 
   private static <CLASS> void write(@NonNull Format format, @NonNull Path file, CLASS rootObject) throws IOException {
     IBindingContext context = IBindingContext.instance();
-    @SuppressWarnings("unchecked")
-    Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
+    @SuppressWarnings("unchecked") Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
 
     try (Writer writer = Files.newBufferedWriter(file, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
         StandardOpenOption.TRUNCATE_EXISTING)) {
@@ -215,8 +214,7 @@ class TestBasicMetaschema {
             Assertions.assertEquals("complex-field1", reflectMethod(field1, "getId"));
             Assertions.assertEquals("test-string", reflectMethod(field1, "getValue"));
 
-            @SuppressWarnings("unchecked")
-            List<Object> field2s
+            @SuppressWarnings("unchecked") List<Object> field2s
                 = (List<Object>) ReflectionUtils.invokeMethod(obj.getClass().getMethod("getComplexFields2"),
                     obj);
             Assertions.assertNotNull(field2s);
@@ -225,8 +223,7 @@ class TestBasicMetaschema {
             Assertions.assertEquals("complex-field2-1", reflectMethod(field2, "getId"));
             Assertions.assertEquals("test-string2", reflectMethod(field2, "getValue"));
 
-            @SuppressWarnings("unchecked")
-            List<Object> field3s
+            @SuppressWarnings("unchecked") List<Object> field3s
                 = (List<Object>) ReflectionUtils.invokeMethod(obj.getClass().getMethod("getComplexFields3"),
                     obj);
             Assertions.assertEquals(2, field3s.size());
@@ -242,8 +239,7 @@ class TestBasicMetaschema {
             });
 
             Assertions.assertAll("ComplexFields4", () -> {
-              @SuppressWarnings("unchecked")
-              Map<String, Object> collection
+              @SuppressWarnings("unchecked") Map<String, Object> collection
                   = (Map<String, Object>) ReflectionUtils.invokeMethod(obj.getClass().getMethod("getComplexFields4"),
                       obj);
               Assertions.assertNotNull(collection);

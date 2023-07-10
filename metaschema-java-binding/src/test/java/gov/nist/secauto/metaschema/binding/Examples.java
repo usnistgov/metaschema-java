@@ -26,13 +26,23 @@
 
 package gov.nist.secauto.metaschema.binding;
 
+//import gov.nist.secauto.metaschema.binding.io.Format;
+//import gov.nist.secauto.metaschema.binding.io.IBoundLoader;
+//import gov.nist.secauto.metaschema.binding.io.ISerializer;
+//
+//import org.junit.jupiter.api.Test;
+//
+//import java.io.File;
+//import java.io.FileNotFoundException;
+//import java.io.IOException;
+
 class Examples { // NOPMD
 
   // @SuppressWarnings("PMD")
   // @Test
   // void testLoadJson() throws FileNotFoundException, IOException {
   // // get the binding context instance, which manages Metaschema-to-object binding information
-  // IBindingContext bindingContext = IBindingContext.newInstance();
+  // IBindingContext bindingContext = IBindingContext.instance();
   //
   // // create a loader which is used to parse the content
   // IBoundLoader loader = bindingContext.newBoundLoader();
@@ -48,7 +58,7 @@ class Examples { // NOPMD
   // @Test
   // void test() throws FileNotFoundException, IOException {
   // // get the binding context instance, which manages Metaschema-to-object binding information
-  // IBindingContext bindingContext = IBindingContext.newInstance();
+  // IBindingContext bindingContext = IBindingContext.instance();
   //
   // // create a loader which is used to parse the content
   // IBoundLoader loader = bindingContext.newBoundLoader();
@@ -60,8 +70,7 @@ class Examples { // NOPMD
   // File("src/test/resources/test-content/bound-class-simple.json"));
   //
   // // create a serializer to write the object
-  // ISerializer<@NonNull BoundClass> serializer = bindingContext.newSerializer(Format.XML,
-  // BoundClass.class);
+  // ISerializer<Object> serializer = bindingContext.newSerializer(Format.XML, Object.class);
   // serializer.serialize(object, new File("target/bound-class-simple.xml"));
   // }
 

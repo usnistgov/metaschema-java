@@ -85,8 +85,8 @@ final class ExpressionUtils {
             baseType,
             first,
             ObjectUtils.notNull(expressionClasses.subList(1, expressionClasses.size())));
-        @SuppressWarnings("unchecked")
-        Class<? extends RESULT_TYPE> newBase = (Class<? extends RESULT_TYPE>) leastCommon;
+        @SuppressWarnings("unchecked") Class<? extends RESULT_TYPE> newBase
+            = (Class<? extends RESULT_TYPE>) leastCommon;
         if (newBase != null) {
           retval = newBase;
         } else {

@@ -46,7 +46,7 @@ public class ExpressionTestBase {
   protected Mockery getContext() {
     return context;
   }
-  
+
   /**
    * Construct a new dynamic context for testing.
    *

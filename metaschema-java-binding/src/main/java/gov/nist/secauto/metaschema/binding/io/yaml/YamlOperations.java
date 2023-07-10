@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.binding.io.yaml;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Tag;
@@ -48,9 +49,10 @@ public final class YamlOperations {
   private static final Yaml YAML_PARSER;
 
   static {
-    Constructor constructor = new Constructor();
-    Representer representer = new Representer();
-    YAML_PARSER = new Yaml(constructor, representer, new DumperOptions(), new Resolver() {
+    Constructor constructor = new Constructor(new LoaderOptions());
+    DumperOptions dumperOptions = new DumperOptions();
+    Representer representer = new Representer(dumperOptions);
+    YAML_PARSER = new Yaml(constructor, representer, dumperOptions, new Resolver() {
       @Override
       protected void addImplicitResolvers() {
         addImplicitResolver(Tag.BOOL, BOOL, "yYnNtTfFoO");

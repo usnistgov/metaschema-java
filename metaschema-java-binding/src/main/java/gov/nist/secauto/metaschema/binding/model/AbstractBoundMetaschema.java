@@ -63,7 +63,7 @@ public abstract class AbstractBoundMetaschema
    * <p>
    * Will also load any imported Metaschemas.
    *
-   * 
+   *
    * @param clazz
    *          the Metaschema class
    * @param bindingContext
@@ -118,7 +118,7 @@ public abstract class AbstractBoundMetaschema
 
   /**
    * Construct a new Metaschema instance.
-   * 
+   *
    * @param importedMetaschema
    *          Metaschema imports associated with the metaschema
    * @param bindingContext
@@ -133,7 +133,7 @@ public abstract class AbstractBoundMetaschema
 
   /**
    * Get the Metaschema binding context.
-   * 
+   *
    * @return the context
    */
   @NonNull

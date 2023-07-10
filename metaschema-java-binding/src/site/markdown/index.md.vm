@@ -18,14 +18,15 @@ The following code illustrates how to load data into a bound object using this [
 
 ```java
 // get the binding context instance, which manages Metaschema-to-object binding information
-BindingContext bindingContext = BindingContext.newInstance();
+IBindingContext bindingContext = IBindingContext.instance();
 
 // create a loader which is used to parse the content
 IBoundLoader loader = bindingContext.newBoundLoader();
 
 // specify the bound class to load data into and the file to load it from
 // the loader figures out the format to load from (i.e. JSON)
-BoundClass object = loader.load(BoundClass.class, new File("src/test/resources/test-content/bound-class-simple.json"));
+BoundClass object
+    = loader.load(BoundClass.class, new File("src/test/resources/test-content/bound-class-simple.json"));
 System.out.println(object.getId());
 ```
 
@@ -40,7 +41,7 @@ Next you can save the data in a specific format. In the following example, we sa
 
 ```java
 // create a serializer to write the object
-Serializer<BoundClass> serializer = bindingContext.newSerializer(Format.XML, BoundClass.class);
+ISerializer<BoundClass> serializer = bindingContext.newSerializer(Format.XML, BoundClass.class);
 serializer.serialize(object, new File("target/bound-class-simple.xml"));
 ```
 

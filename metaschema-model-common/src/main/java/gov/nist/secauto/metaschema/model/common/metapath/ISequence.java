@@ -56,7 +56,7 @@ public interface ISequence<ITEM_TYPE extends IItem> {
    * Construct a new sequence containing the provided {@code item}.
    * <p>
    * If the item is {@code null} and empty sequence will be created.
-   * 
+   *
    * @param <ITEM_TYPE>
    *          the type of items contained in the sequence.
    * @param item
@@ -77,7 +77,7 @@ public interface ISequence<ITEM_TYPE extends IItem> {
 
   /**
    * Construct a new sequence containing the provided {@code items}.
-   * 
+   *
    * @param <ITEM_TYPE>
    *          the type of items contained in the sequence.
    * @param items
@@ -98,7 +98,7 @@ public interface ISequence<ITEM_TYPE extends IItem> {
 
   /**
    * Construct a new sequence containing the provided {@code items}.
-   * 
+   *
    * @param <ITEM_TYPE>
    *          the type of items contained in the sequence.
    * @param items
@@ -113,7 +113,7 @@ public interface ISequence<ITEM_TYPE extends IItem> {
 
   /**
    * Get the items in this sequence as a {@link List}.
-   * 
+   *
    * @return a list containing all the items of the sequence
    */
   @NonNull
@@ -121,7 +121,7 @@ public interface ISequence<ITEM_TYPE extends IItem> {
 
   /**
    * Get the items in this sequence as a {@link Stream}.
-   * 
+   *
    * @return a stream containing all the items of the sequence
    */
   // TODO: rename to "stream"
@@ -130,21 +130,21 @@ public interface ISequence<ITEM_TYPE extends IItem> {
 
   /**
    * Determine if this sequence is empty.
-   * 
+   *
    * @return {@code true} if the sequence contains no items, or {@code false} otherwise
    */
   boolean isEmpty();
 
   /**
    * Get the count of items in this sequence.
-   * 
+   *
    * @return the count of items
    */
   int size();
 
   /**
    * Iterate over each item in the sequence using the provided {@code action}.
-   * 
+   *
    * @param action
    *          code to execute for each item
    */

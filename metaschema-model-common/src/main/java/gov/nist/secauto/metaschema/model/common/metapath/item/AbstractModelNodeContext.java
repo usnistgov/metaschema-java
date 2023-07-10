@@ -34,10 +34,8 @@ import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractModelNodeContext<
-    F extends IFlagNodeItem,
-    M extends IModelNodeItem,
-    L extends AbstractModelNodeContext.Model<F, M>>
+public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extends IModelNodeItem, L extends AbstractModelNodeContext.Model<
+    F, M>>
     extends AbstractNodeContext<F, L> {
 
   /**

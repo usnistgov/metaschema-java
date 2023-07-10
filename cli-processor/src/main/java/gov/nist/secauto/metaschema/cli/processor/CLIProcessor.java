@@ -204,9 +204,8 @@ public class CLIProcessor {
   }
 
   public static void handleQuiet() {
-    @SuppressWarnings("resource")
-    LoggerContext ctx = (LoggerContext) LogManager.getContext(false); // NOPMD not
-                                                                      // closable here
+    @SuppressWarnings("resource") LoggerContext ctx = (LoggerContext) LogManager.getContext(false); // NOPMD not
+                                                                                                    // closable here
     Configuration config = ctx.getConfiguration();
     LoggerConfig loggerConfig = config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
     Level oldLevel = loggerConfig.getLevel();
@@ -217,8 +216,7 @@ public class CLIProcessor {
   }
 
   protected void showVersion() {
-    @SuppressWarnings("resource")
-    PrintStream out = AnsiConsole.out(); // NOPMD - not owner
+    @SuppressWarnings("resource") PrintStream out = AnsiConsole.out(); // NOPMD - not owner
     getVersionInfos().stream().forEach((info) -> {
       out.println(ansi()
           .bold().a(info.getName()).boldOff()
@@ -568,10 +566,9 @@ public class CLIProcessor {
       AnsiPrintStream out = AnsiConsole.out();
       int terminalWidth = Math.max(out.getTerminalWidth(), 40);
 
-      @SuppressWarnings("resource")
-      PrintWriter writer = new PrintWriter(out, true, StandardCharsets.UTF_8); // NOPMD -
-                                                                               // not
-                                                                               // owned
+      @SuppressWarnings("resource") PrintWriter writer = new PrintWriter(out, true, StandardCharsets.UTF_8); // NOPMD -
+                                                                                                             // not
+                                                                                                             // owned
       formatter.printHelp(
           writer,
           terminalWidth,

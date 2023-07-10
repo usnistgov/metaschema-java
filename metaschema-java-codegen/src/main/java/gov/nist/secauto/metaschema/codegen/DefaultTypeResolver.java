@@ -154,8 +154,7 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   private String generateClassName(@NonNull String packageOrTypeName, @NonNull IFlagContainer definition) {
-    @NonNull
-    String className = getBindingConfiguration().getClassName(definition);
+    @NonNull String className = getBindingConfiguration().getClassName(definition);
 
     Set<String> classNames = getClassNamesFor(packageOrTypeName);
     synchronized (classNames) {

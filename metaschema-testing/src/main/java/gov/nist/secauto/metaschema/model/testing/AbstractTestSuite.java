@@ -288,7 +288,8 @@ public abstract class AbstractTestSuite {
       IMetaschema metaschema = loadMetaschemaFuture.get();
       DynamicBindingContext context;
       try {
-        context = produceDynamicBindingContext(ObjectUtils.notNull(metaschema), ObjectUtils.notNull(scenarioGenerationPath));
+        context = produceDynamicBindingContext(ObjectUtils.notNull(metaschema),
+            ObjectUtils.notNull(scenarioGenerationPath));
       } catch (Exception ex) { // NOPMD - intentional
         throw new JUnitException("Unable to generate classes for metaschema: " + metaschemaUri, ex);
       }
@@ -358,8 +359,7 @@ public abstract class AbstractTestSuite {
       throw new JUnitException("Unable to create schema temp file", ex);
     }
 
-    @SuppressWarnings("rawtypes")
-    ISerializer serializer
+    @SuppressWarnings("rawtypes") ISerializer serializer
         = context.newSerializer(getRequiredContentFormat(), object.getClass());
     serializer.serialize(object, convertedContetPath, getWriteOpenOptions());
 

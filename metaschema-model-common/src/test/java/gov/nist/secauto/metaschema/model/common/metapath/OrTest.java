@@ -58,8 +58,7 @@ class OrTest
     Mockery context = getContext();
 
     @SuppressWarnings("null")
-    @NonNull
-    INodeContext nodeContext = context.mock(INodeContext.class);
+    @NonNull INodeContext nodeContext = context.mock(INodeContext.class);
 
     IExpression exp1 = context.mock(IExpression.class, "exp1");
     IExpression exp2 = context.mock(IExpression.class, "exp2");

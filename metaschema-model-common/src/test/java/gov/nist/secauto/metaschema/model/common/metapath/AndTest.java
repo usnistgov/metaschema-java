@@ -54,7 +54,7 @@ class AndTest
   @MethodSource
   void testAnd(IBooleanItem bool1, IBooleanItem bool2, IBooleanItem expectedResult) {
     DynamicContext dynamicContext = newDynamicContext();
-    
+
     Mockery context = getContext();
 
     INodeContext nodeContext = context.mock(INodeContext.class);

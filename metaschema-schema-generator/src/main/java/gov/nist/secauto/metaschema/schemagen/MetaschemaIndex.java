@@ -125,7 +125,7 @@ public class MetaschemaIndex {
 
     /**
      * Updates the index entry for the definition associated with the reference.
-     * 
+     *
      * @param instance
      *          the instance to process
      * @return {@code true} if this is the first time handling the definition this instance references,
