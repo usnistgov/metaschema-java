@@ -87,7 +87,7 @@ jobs:
     # -------------------------
     - name: Deploy Maven Artifact SNAPSHOTs
       run: |
-        mvn -e -Pgpg -Preporting deploy
+        mvn -e -Pgpg -Preporting deploy -Dmaven.deploy.skip=releases
       env:
         MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         MAVEN_CENTRAL_TOKEN: ${{ secrets.SONATYPE_PASSWORD }}
