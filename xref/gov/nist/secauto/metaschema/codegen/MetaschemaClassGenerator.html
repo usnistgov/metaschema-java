@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>MetaschemaClassGenerator xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
@@ -119,123 +119,129 @@
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>     }
 <a class="jxr_linenumber" name="L112" href="#L112">112</a> 
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>     <strong class="jxr_keyword">for</strong> (<a name="IAssemblyDefinition" href="../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyDefinition.html#IAssemblyDefinition">IAssemblyDefinition</a> definition : metaschema.getAssemblyDefinitions()) {
-<a class="jxr_linenumber" name="L114" href="#L114">114</a>       metaschemaAnnotation.addMember(<span class="jxr_string">"assemblies"</span>, <span class="jxr_string">"$T.class"</span>, typeResolver.getClassName(definition));
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>     }
-<a class="jxr_linenumber" name="L116" href="#L116">116</a> 
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>     <strong class="jxr_keyword">for</strong> (<a name="IMetaschema" href="../../../../../gov/nist/secauto/metaschema/model/common/IMetaschema.html#IMetaschema">IMetaschema</a> metaschemaImport : metaschema.getImportedMetaschemas()) {
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>       metaschemaAnnotation.addMember(<span class="jxr_string">"imports"</span>, <span class="jxr_string">"$T.class"</span>, typeResolver.getClassName(metaschemaImport));
-<a class="jxr_linenumber" name="L119" href="#L119">119</a>     }
-<a class="jxr_linenumber" name="L120" href="#L120">120</a> 
-<a class="jxr_linenumber" name="L121" href="#L121">121</a>     {
-<a class="jxr_linenumber" name="L122" href="#L122">122</a>       <a name="MarkupMultiline" href="../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/MarkupMultiline.html#MarkupMultiline">MarkupMultiline</a> remarks = metaschema.getRemarks();
-<a class="jxr_linenumber" name="L123" href="#L123">123</a>       <strong class="jxr_keyword">if</strong> (remarks != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L124" href="#L124">124</a>         metaschemaAnnotation.addMember(<span class="jxr_string">"remarks"</span>, <span class="jxr_string">"$S"</span>, remarks.toMarkdown());
-<a class="jxr_linenumber" name="L125" href="#L125">125</a>       }
-<a class="jxr_linenumber" name="L126" href="#L126">126</a>     }
-<a class="jxr_linenumber" name="L127" href="#L127">127</a> 
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>     builder.addAnnotation(metaschemaAnnotation.build());
-<a class="jxr_linenumber" name="L129" href="#L129">129</a> 
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>     builder.addField(
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>         FieldSpec.builder(MarkupLine.<strong class="jxr_keyword">class</strong>, <span class="jxr_string">"NAME"</span>, Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>             .initializer(<span class="jxr_string">"$T.fromMarkdown($S)"</span>, MarkupLine.<strong class="jxr_keyword">class</strong>, metaschema.getName().toMarkdown())
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>             .build());
-<a class="jxr_linenumber" name="L134" href="#L134">134</a> 
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>     builder.addField(
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>         FieldSpec.builder(String.<strong class="jxr_keyword">class</strong>, <span class="jxr_string">"SHORT_NAME"</span>, Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>             .initializer(<span class="jxr_string">"$S"</span>, metaschema.getShortName())
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>             .build());
-<a class="jxr_linenumber" name="L139" href="#L139">139</a> 
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>     builder.addField(
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>         FieldSpec.builder(String.<strong class="jxr_keyword">class</strong>, <span class="jxr_string">"VERSION"</span>, Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>             .initializer(<span class="jxr_string">"$S"</span>, metaschema.getVersion())
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>             .build());
-<a class="jxr_linenumber" name="L144" href="#L144">144</a> 
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>     builder.addField(
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>         FieldSpec.builder(URI.<strong class="jxr_keyword">class</strong>, <span class="jxr_string">"XML_NAMESPACE"</span>, Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>             .initializer(<span class="jxr_string">"$T.create($S)"</span>, URI.<strong class="jxr_keyword">class</strong>, metaschema.getXmlNamespace())
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>             .build());
-<a class="jxr_linenumber" name="L149" href="#L149">149</a> 
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>     builder.addField(
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>         FieldSpec.builder(URI.<strong class="jxr_keyword">class</strong>, <span class="jxr_string">"JSON_BASE_URI"</span>, Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>             .initializer(<span class="jxr_string">"$T.create($S)"</span>, URI.<strong class="jxr_keyword">class</strong>, metaschema.getJsonBaseUri())
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>             .build());
-<a class="jxr_linenumber" name="L154" href="#L154">154</a> 
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>     <a name="MarkupMultiline" href="../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/MarkupMultiline.html#MarkupMultiline">MarkupMultiline</a> remarks = metaschema.getRemarks();
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>     <strong class="jxr_keyword">if</strong> (remarks != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>       builder.addField(
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>           FieldSpec.builder(MarkupMultiline.<strong class="jxr_keyword">class</strong>, <span class="jxr_string">"REMARKS"</span>, Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>               .initializer(<span class="jxr_string">"$T.fromMarkdown($S)"</span>, MarkupMultiline.<strong class="jxr_keyword">class</strong>, remarks.toMarkdown())
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>               .build());
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>     }
-<a class="jxr_linenumber" name="L162" href="#L162">162</a> 
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>     builder.addMethod(
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>         MethodSpec.constructorBuilder()
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>             .addModifiers(Modifier.PUBLIC)
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>             .addParameter(
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>                 ParameterizedTypeName.get(ClassName.get(List.<strong class="jxr_keyword">class</strong>),
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>                     WildcardTypeName.subtypeOf(IMetaschema.<strong class="jxr_keyword">class</strong>).box()),
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>                 <span class="jxr_string">"importedMetaschema"</span>)
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>             .addParameter(IBindingContext.<strong class="jxr_keyword">class</strong>, <span class="jxr_string">"bindingContext"</span>)
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>             .addStatement(<span class="jxr_string">"super($N, $N)"</span>, <span class="jxr_string">"importedMetaschema"</span>, <span class="jxr_string">"bindingContext"</span>)
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>             .build());
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>     builder.addMethod(
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>         MethodSpec.methodBuilder(<span class="jxr_string">"getName"</span>)
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>             .addAnnotation(Override.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>             .addModifiers(Modifier.PUBLIC)
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>             .returns(MarkupLine.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>             .addStatement(<span class="jxr_string">"return NAME"</span>)
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>             .build());
-<a class="jxr_linenumber" name="L180" href="#L180">180</a> 
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>     builder.addMethod(
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>         MethodSpec.methodBuilder(<span class="jxr_string">"getShortName"</span>)
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>             .addAnnotation(Override.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>             .addModifiers(Modifier.PUBLIC)
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>             .returns(String.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L186" href="#L186">186</a>             .addStatement(<span class="jxr_string">"return SHORT_NAME"</span>)
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>             .build());
-<a class="jxr_linenumber" name="L188" href="#L188">188</a> 
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>     builder.addMethod(
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>         MethodSpec.methodBuilder(<span class="jxr_string">"getVersion"</span>)
-<a class="jxr_linenumber" name="L191" href="#L191">191</a>             .addAnnotation(Override.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L192" href="#L192">192</a>             .addModifiers(Modifier.PUBLIC)
-<a class="jxr_linenumber" name="L193" href="#L193">193</a>             .returns(String.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L194" href="#L194">194</a>             .addStatement(<span class="jxr_string">"return VERSION"</span>)
-<a class="jxr_linenumber" name="L195" href="#L195">195</a>             .build());
-<a class="jxr_linenumber" name="L196" href="#L196">196</a> 
-<a class="jxr_linenumber" name="L197" href="#L197">197</a>     builder.addMethod(
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>         MethodSpec.methodBuilder(<span class="jxr_string">"getXmlNamespace"</span>)
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>             .addAnnotation(Override.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>             .addModifiers(Modifier.PUBLIC)
-<a class="jxr_linenumber" name="L201" href="#L201">201</a>             .returns(URI.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>             .addStatement(<span class="jxr_string">"return XML_NAMESPACE"</span>)
-<a class="jxr_linenumber" name="L203" href="#L203">203</a>             .build());
-<a class="jxr_linenumber" name="L204" href="#L204">204</a> 
-<a class="jxr_linenumber" name="L205" href="#L205">205</a>     builder.addMethod(
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>         MethodSpec.methodBuilder(<span class="jxr_string">"getJsonBaseUri"</span>)
-<a class="jxr_linenumber" name="L207" href="#L207">207</a>             .addAnnotation(Override.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L208" href="#L208">208</a>             .addModifiers(Modifier.PUBLIC)
-<a class="jxr_linenumber" name="L209" href="#L209">209</a>             .returns(URI.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>             .addStatement(<span class="jxr_string">"return JSON_BASE_URI"</span>)
-<a class="jxr_linenumber" name="L211" href="#L211">211</a>             .build());
-<a class="jxr_linenumber" name="L212" href="#L212">212</a> 
-<a class="jxr_linenumber" name="L213" href="#L213">213</a>     MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(<span class="jxr_string">"getRemarks"</span>)
-<a class="jxr_linenumber" name="L214" href="#L214">214</a>         .addAnnotation(Override.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L215" href="#L215">215</a>         .addModifiers(Modifier.PUBLIC)
-<a class="jxr_linenumber" name="L216" href="#L216">216</a>         .returns(MarkupMultiline.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L217" href="#L217">217</a> 
-<a class="jxr_linenumber" name="L218" href="#L218">218</a>     <strong class="jxr_keyword">if</strong> (remarks == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L219" href="#L219">219</a>       methodBuilder.addStatement(<span class="jxr_string">"return null"</span>);
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>     } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L221" href="#L221">221</a>       methodBuilder.addStatement(<span class="jxr_string">"return REMARKS"</span>);
-<a class="jxr_linenumber" name="L222" href="#L222">222</a>     }
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>       metaschemaAnnotation.addMember(
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>           <span class="jxr_string">"assemblies"</span>,
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>           <span class="jxr_string">"$T.class"</span>,
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>           typeResolver.getClassName(ObjectUtils.notNull(definition)));
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>     }
+<a class="jxr_linenumber" name="L119" href="#L119">119</a> 
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>     <strong class="jxr_keyword">for</strong> (<a name="IMetaschema" href="../../../../../gov/nist/secauto/metaschema/model/common/IMetaschema.html#IMetaschema">IMetaschema</a> metaschemaImport : metaschema.getImportedMetaschemas()) {
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>       metaschemaAnnotation.addMember(
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>           <span class="jxr_string">"imports"</span>,
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>           <span class="jxr_string">"$T.class"</span>,
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>           typeResolver.getClassName(ObjectUtils.notNull(metaschemaImport)));
+<a class="jxr_linenumber" name="L125" href="#L125">125</a>     }
+<a class="jxr_linenumber" name="L126" href="#L126">126</a> 
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>     {
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>       <a name="MarkupMultiline" href="../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/MarkupMultiline.html#MarkupMultiline">MarkupMultiline</a> remarks = metaschema.getRemarks();
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>       <strong class="jxr_keyword">if</strong> (remarks != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>         metaschemaAnnotation.addMember(<span class="jxr_string">"remarks"</span>, <span class="jxr_string">"$S"</span>, remarks.toMarkdown());
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>       }
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>     }
+<a class="jxr_linenumber" name="L133" href="#L133">133</a> 
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>     builder.addAnnotation(metaschemaAnnotation.build());
+<a class="jxr_linenumber" name="L135" href="#L135">135</a> 
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>     builder.addField(
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>         FieldSpec.builder(MarkupLine.<strong class="jxr_keyword">class</strong>, <span class="jxr_string">"NAME"</span>, Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>             .initializer(<span class="jxr_string">"$T.fromMarkdown($S)"</span>, MarkupLine.<strong class="jxr_keyword">class</strong>, metaschema.getName().toMarkdown())
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>             .build());
+<a class="jxr_linenumber" name="L140" href="#L140">140</a> 
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>     builder.addField(
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>         FieldSpec.builder(String.<strong class="jxr_keyword">class</strong>, <span class="jxr_string">"SHORT_NAME"</span>, Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>             .initializer(<span class="jxr_string">"$S"</span>, metaschema.getShortName())
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>             .build());
+<a class="jxr_linenumber" name="L145" href="#L145">145</a> 
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>     builder.addField(
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>         FieldSpec.builder(String.<strong class="jxr_keyword">class</strong>, <span class="jxr_string">"VERSION"</span>, Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>             .initializer(<span class="jxr_string">"$S"</span>, metaschema.getVersion())
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>             .build());
+<a class="jxr_linenumber" name="L150" href="#L150">150</a> 
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>     builder.addField(
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>         FieldSpec.builder(URI.<strong class="jxr_keyword">class</strong>, <span class="jxr_string">"XML_NAMESPACE"</span>, Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>             .initializer(<span class="jxr_string">"$T.create($S)"</span>, URI.<strong class="jxr_keyword">class</strong>, metaschema.getXmlNamespace())
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>             .build());
+<a class="jxr_linenumber" name="L155" href="#L155">155</a> 
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>     builder.addField(
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>         FieldSpec.builder(URI.<strong class="jxr_keyword">class</strong>, <span class="jxr_string">"JSON_BASE_URI"</span>, Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>             .initializer(<span class="jxr_string">"$T.create($S)"</span>, URI.<strong class="jxr_keyword">class</strong>, metaschema.getJsonBaseUri())
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>             .build());
+<a class="jxr_linenumber" name="L160" href="#L160">160</a> 
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>     <a name="MarkupMultiline" href="../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/MarkupMultiline.html#MarkupMultiline">MarkupMultiline</a> remarks = metaschema.getRemarks();
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>     <strong class="jxr_keyword">if</strong> (remarks != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>       builder.addField(
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>           FieldSpec.builder(MarkupMultiline.<strong class="jxr_keyword">class</strong>, <span class="jxr_string">"REMARKS"</span>, Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>               .initializer(<span class="jxr_string">"$T.fromMarkdown($S)"</span>, MarkupMultiline.<strong class="jxr_keyword">class</strong>, remarks.toMarkdown())
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>               .build());
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>     }
+<a class="jxr_linenumber" name="L168" href="#L168">168</a> 
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>     builder.addMethod(
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>         MethodSpec.constructorBuilder()
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>             .addModifiers(Modifier.PUBLIC)
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>             .addParameter(
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>                 ParameterizedTypeName.get(ClassName.get(List.<strong class="jxr_keyword">class</strong>),
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>                     WildcardTypeName.subtypeOf(IMetaschema.<strong class="jxr_keyword">class</strong>).box()),
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>                 <span class="jxr_string">"importedMetaschema"</span>)
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>             .addParameter(IBindingContext.<strong class="jxr_keyword">class</strong>, <span class="jxr_string">"bindingContext"</span>)
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>             .addStatement(<span class="jxr_string">"super($N, $N)"</span>, <span class="jxr_string">"importedMetaschema"</span>, <span class="jxr_string">"bindingContext"</span>)
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>             .build());
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>     builder.addMethod(
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>         MethodSpec.methodBuilder(<span class="jxr_string">"getName"</span>)
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>             .addAnnotation(Override.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>             .addModifiers(Modifier.PUBLIC)
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>             .returns(MarkupLine.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>             .addStatement(<span class="jxr_string">"return NAME"</span>)
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>             .build());
+<a class="jxr_linenumber" name="L186" href="#L186">186</a> 
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>     builder.addMethod(
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>         MethodSpec.methodBuilder(<span class="jxr_string">"getShortName"</span>)
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>             .addAnnotation(Override.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>             .addModifiers(Modifier.PUBLIC)
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>             .returns(String.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L192" href="#L192">192</a>             .addStatement(<span class="jxr_string">"return SHORT_NAME"</span>)
+<a class="jxr_linenumber" name="L193" href="#L193">193</a>             .build());
+<a class="jxr_linenumber" name="L194" href="#L194">194</a> 
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>     builder.addMethod(
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>         MethodSpec.methodBuilder(<span class="jxr_string">"getVersion"</span>)
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>             .addAnnotation(Override.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>             .addModifiers(Modifier.PUBLIC)
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>             .returns(String.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>             .addStatement(<span class="jxr_string">"return VERSION"</span>)
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>             .build());
+<a class="jxr_linenumber" name="L202" href="#L202">202</a> 
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>     builder.addMethod(
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>         MethodSpec.methodBuilder(<span class="jxr_string">"getXmlNamespace"</span>)
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>             .addAnnotation(Override.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>             .addModifiers(Modifier.PUBLIC)
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>             .returns(URI.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>             .addStatement(<span class="jxr_string">"return XML_NAMESPACE"</span>)
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>             .build());
+<a class="jxr_linenumber" name="L210" href="#L210">210</a> 
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>     builder.addMethod(
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>         MethodSpec.methodBuilder(<span class="jxr_string">"getJsonBaseUri"</span>)
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>             .addAnnotation(Override.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>             .addModifiers(Modifier.PUBLIC)
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>             .returns(URI.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>             .addStatement(<span class="jxr_string">"return JSON_BASE_URI"</span>)
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>             .build());
+<a class="jxr_linenumber" name="L218" href="#L218">218</a> 
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>     MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(<span class="jxr_string">"getRemarks"</span>)
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>         .addAnnotation(Override.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>         .addModifiers(Modifier.PUBLIC)
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>         .returns(MarkupMultiline.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L223" href="#L223">223</a> 
-<a class="jxr_linenumber" name="L224" href="#L224">224</a>     builder.addMethod(methodBuilder.build());
-<a class="jxr_linenumber" name="L225" href="#L225">225</a> 
-<a class="jxr_linenumber" name="L226" href="#L226">226</a>     <strong class="jxr_keyword">return</strong> builder;
-<a class="jxr_linenumber" name="L227" href="#L227">227</a>   }
-<a class="jxr_linenumber" name="L228" href="#L228">228</a> }
+<a class="jxr_linenumber" name="L224" href="#L224">224</a>     <strong class="jxr_keyword">if</strong> (remarks == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>       methodBuilder.addStatement(<span class="jxr_string">"return null"</span>);
+<a class="jxr_linenumber" name="L226" href="#L226">226</a>     } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L227" href="#L227">227</a>       methodBuilder.addStatement(<span class="jxr_string">"return REMARKS"</span>);
+<a class="jxr_linenumber" name="L228" href="#L228">228</a>     }
+<a class="jxr_linenumber" name="L229" href="#L229">229</a> 
+<a class="jxr_linenumber" name="L230" href="#L230">230</a>     builder.addMethod(methodBuilder.build());
+<a class="jxr_linenumber" name="L231" href="#L231">231</a> 
+<a class="jxr_linenumber" name="L232" href="#L232">232</a>     <strong class="jxr_keyword">return</strong> builder;
+<a class="jxr_linenumber" name="L233" href="#L233">233</a>   }
+<a class="jxr_linenumber" name="L234" href="#L234">234</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

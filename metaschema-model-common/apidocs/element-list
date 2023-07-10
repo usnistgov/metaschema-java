@@ -7,7 +7,6 @@ gov.nist.secauto.metaschema.model.common.datatype.markup
 gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark
 gov.nist.secauto.metaschema.model.common.datatype.object
 gov.nist.secauto.metaschema.model.common.metapath
-gov.nist.secauto.metaschema.model.common.metapath.antlr
 gov.nist.secauto.metaschema.model.common.metapath.format
 gov.nist.secauto.metaschema.model.common.metapath.function
 gov.nist.secauto.metaschema.model.common.metapath.function.library

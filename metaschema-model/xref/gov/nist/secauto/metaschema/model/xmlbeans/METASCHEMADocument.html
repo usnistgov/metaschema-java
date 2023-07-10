@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>METASCHEMADocument xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../../stylesheet.css" />
@@ -320,7 +320,7 @@
 <a class="jxr_linenumber" name="L312" href="#L312">312</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L313" href="#L313">313</a> <em class="jxr_javadoccomment">         * Gets the "abstract" attribute</em>
 <a class="jxr_linenumber" name="L314" href="#L314">314</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L315" href="#L315">315</a>         gov.nist.secauto.metaschema.model.xmlbeans.METASCHEMADocument.METASCHEMA.Abstract.Enum getAbstract();
+<a class="jxr_linenumber" name="L315" href="#L315">315</a>         java.lang.Boolean getAbstract();
 <a class="jxr_linenumber" name="L316" href="#L316">316</a> 
 <a class="jxr_linenumber" name="L317" href="#L317">317</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L318" href="#L318">318</a> <em class="jxr_javadoccomment">         * True if has "abstract" attribute</em>
@@ -330,84 +330,16 @@
 <a class="jxr_linenumber" name="L322" href="#L322">322</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L323" href="#L323">323</a> <em class="jxr_javadoccomment">         * Sets the "abstract" attribute</em>
 <a class="jxr_linenumber" name="L324" href="#L324">324</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L325" href="#L325">325</a>         <strong class="jxr_keyword">void</strong> setAbstract(gov.nist.secauto.metaschema.model.xmlbeans.METASCHEMADocument.METASCHEMA.Abstract.Enum xabstract);
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>         <strong class="jxr_keyword">void</strong> setAbstract(java.lang.Boolean xabstract);
 <a class="jxr_linenumber" name="L326" href="#L326">326</a> 
 <a class="jxr_linenumber" name="L327" href="#L327">327</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L328" href="#L328">328</a> <em class="jxr_javadoccomment">         * Unsets the "abstract" attribute</em>
 <a class="jxr_linenumber" name="L329" href="#L329">329</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L330" href="#L330">330</a>         <strong class="jxr_keyword">void</strong> unsetAbstract();
-<a class="jxr_linenumber" name="L331" href="#L331">331</a> 
-<a class="jxr_linenumber" name="L332" href="#L332">332</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L333" href="#L333">333</a> <em class="jxr_javadoccomment">         * An XML abstract(@).</em>
-<a class="jxr_linenumber" name="L334" href="#L334">334</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L335" href="#L335">335</a> <em class="jxr_javadoccomment">         * This is an atomic type that is a restriction of gov.nist.secauto.metaschema.model.xmlbeans.METASCHEMADocument$METASCHEMA$Abstract.</em>
-<a class="jxr_linenumber" name="L336" href="#L336">336</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L337" href="#L337">337</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> Abstract <strong class="jxr_keyword">extends</strong> org.apache.xmlbeans.XmlString {
-<a class="jxr_linenumber" name="L338" href="#L338">338</a>             ElementFactory&lt;gov.nist.secauto.metaschema.model.xmlbeans.METASCHEMADocument.METASCHEMA.Abstract&gt; Factory = <strong class="jxr_keyword">new</strong> ElementFactory&lt;&gt;(org.apache.xmlbeans.metadata.system.metaschema.TypeSystemHolder.typeSystem, <span class="jxr_string">"abstractc922attrtype"</span>);
-<a class="jxr_linenumber" name="L339" href="#L339">339</a>             org.apache.xmlbeans.SchemaType type = Factory.getType();
-<a class="jxr_linenumber" name="L340" href="#L340">340</a> 
-<a class="jxr_linenumber" name="L341" href="#L341">341</a> 
-<a class="jxr_linenumber" name="L342" href="#L342">342</a>             org.apache.xmlbeans.StringEnumAbstractBase getEnumValue();
-<a class="jxr_linenumber" name="L343" href="#L343">343</a>             <strong class="jxr_keyword">void</strong> setEnumValue(org.apache.xmlbeans.StringEnumAbstractBase e);
-<a class="jxr_linenumber" name="L344" href="#L344">344</a> 
-<a class="jxr_linenumber" name="L345" href="#L345">345</a>             Enum YES = Enum.forString(<span class="jxr_string">"yes"</span>);
-<a class="jxr_linenumber" name="L346" href="#L346">346</a>             Enum NO = Enum.forString(<span class="jxr_string">"no"</span>);
-<a class="jxr_linenumber" name="L347" href="#L347">347</a> 
-<a class="jxr_linenumber" name="L348" href="#L348">348</a>             <strong class="jxr_keyword">int</strong> INT_YES = Enum.INT_YES;
-<a class="jxr_linenumber" name="L349" href="#L349">349</a>             <strong class="jxr_keyword">int</strong> INT_NO = Enum.INT_NO;
-<a class="jxr_linenumber" name="L350" href="#L350">350</a> 
-<a class="jxr_linenumber" name="L351" href="#L351">351</a>             <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L352" href="#L352">352</a> <em class="jxr_javadoccomment">             * Enumeration value class for gov.nist.secauto.metaschema.model.xmlbeans.METASCHEMADocument$METASCHEMA$Abstract.</em>
-<a class="jxr_linenumber" name="L353" href="#L353">353</a> <em class="jxr_javadoccomment">             * These enum values can be used as follows:</em>
-<a class="jxr_linenumber" name="L354" href="#L354">354</a> <em class="jxr_javadoccomment">             * &lt;pre&gt;</em>
-<a class="jxr_linenumber" name="L355" href="#L355">355</a> <em class="jxr_javadoccomment">             * enum.toString(); // returns the string value of the enum</em>
-<a class="jxr_linenumber" name="L356" href="#L356">356</a> <em class="jxr_javadoccomment">             * enum.intValue(); // returns an int value, useful for switches</em>
-<a class="jxr_linenumber" name="L357" href="#L357">357</a> <em class="jxr_javadoccomment">             * // e.g., case Enum.INT_YES</em>
-<a class="jxr_linenumber" name="L358" href="#L358">358</a> <em class="jxr_javadoccomment">             * Enum.forString(s); // returns the enum value for a string</em>
-<a class="jxr_linenumber" name="L359" href="#L359">359</a> <em class="jxr_javadoccomment">             * Enum.forInt(i); // returns the enum value for an int</em>
-<a class="jxr_linenumber" name="L360" href="#L360">360</a> <em class="jxr_javadoccomment">             * &lt;/pre&gt;</em>
-<a class="jxr_linenumber" name="L361" href="#L361">361</a> <em class="jxr_javadoccomment">             * Enumeration objects are immutable singleton objects that</em>
-<a class="jxr_linenumber" name="L362" href="#L362">362</a> <em class="jxr_javadoccomment">             * can be compared using == object equality. They have no</em>
-<a class="jxr_linenumber" name="L363" href="#L363">363</a> <em class="jxr_javadoccomment">             * public constructor. See the constants defined within this</em>
-<a class="jxr_linenumber" name="L364" href="#L364">364</a> <em class="jxr_javadoccomment">             * class for all the valid values.</em>
-<a class="jxr_linenumber" name="L365" href="#L365">365</a> <em class="jxr_javadoccomment">             */</em>
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> Enum <strong class="jxr_keyword">extends</strong> org.apache.xmlbeans.StringEnumAbstractBase {
-<a class="jxr_linenumber" name="L367" href="#L367">367</a>                 <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L368" href="#L368">368</a> <em class="jxr_javadoccomment">                 * Returns the enum value for a string, or null if none.</em>
-<a class="jxr_linenumber" name="L369" href="#L369">369</a> <em class="jxr_javadoccomment">                 */</em>
-<a class="jxr_linenumber" name="L370" href="#L370">370</a>                 <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Enum forString(java.lang.String s) {
-<a class="jxr_linenumber" name="L371" href="#L371">371</a>                     <strong class="jxr_keyword">return</strong> (Enum)table.forString(s);
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>                 }
-<a class="jxr_linenumber" name="L373" href="#L373">373</a> 
-<a class="jxr_linenumber" name="L374" href="#L374">374</a>                 <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L375" href="#L375">375</a> <em class="jxr_javadoccomment">                 * Returns the enum value corresponding to an int, or null if none.</em>
-<a class="jxr_linenumber" name="L376" href="#L376">376</a> <em class="jxr_javadoccomment">                 */</em>
-<a class="jxr_linenumber" name="L377" href="#L377">377</a>                 <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Enum forInt(<strong class="jxr_keyword">int</strong> i) {
-<a class="jxr_linenumber" name="L378" href="#L378">378</a>                     <strong class="jxr_keyword">return</strong> (Enum)table.forInt(i);
-<a class="jxr_linenumber" name="L379" href="#L379">379</a>                 }
-<a class="jxr_linenumber" name="L380" href="#L380">380</a> 
-<a class="jxr_linenumber" name="L381" href="#L381">381</a>                 <strong class="jxr_keyword">private</strong> Enum(java.lang.String s, <strong class="jxr_keyword">int</strong> i) {
-<a class="jxr_linenumber" name="L382" href="#L382">382</a>                     <strong class="jxr_keyword">super</strong>(s, i);
-<a class="jxr_linenumber" name="L383" href="#L383">383</a>                 }
-<a class="jxr_linenumber" name="L384" href="#L384">384</a> 
-<a class="jxr_linenumber" name="L385" href="#L385">385</a>                 <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> INT_YES = 1;
-<a class="jxr_linenumber" name="L386" href="#L386">386</a>                 <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> INT_NO = 2;
-<a class="jxr_linenumber" name="L387" href="#L387">387</a> 
-<a class="jxr_linenumber" name="L388" href="#L388">388</a>                 <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> org.apache.xmlbeans.StringEnumAbstractBase.Table table =
-<a class="jxr_linenumber" name="L389" href="#L389">389</a>                     <strong class="jxr_keyword">new</strong> org.apache.xmlbeans.StringEnumAbstractBase.Table(<strong class="jxr_keyword">new</strong> Enum[] {
-<a class="jxr_linenumber" name="L390" href="#L390">390</a>                     <strong class="jxr_keyword">new</strong> Enum(<span class="jxr_string">"yes"</span>, INT_YES),
-<a class="jxr_linenumber" name="L391" href="#L391">391</a>                     <strong class="jxr_keyword">new</strong> Enum(<span class="jxr_string">"no"</span>, INT_NO),
-<a class="jxr_linenumber" name="L392" href="#L392">392</a>                 });
-<a class="jxr_linenumber" name="L393" href="#L393">393</a>                 <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 1L;
-<a class="jxr_linenumber" name="L394" href="#L394">394</a>                 <strong class="jxr_keyword">private</strong> java.lang.Object readResolve() {
-<a class="jxr_linenumber" name="L395" href="#L395">395</a>                     <strong class="jxr_keyword">return</strong> forInt(intValue());
-<a class="jxr_linenumber" name="L396" href="#L396">396</a>                 }
-<a class="jxr_linenumber" name="L397" href="#L397">397</a>             }
-<a class="jxr_linenumber" name="L398" href="#L398">398</a>         }
-<a class="jxr_linenumber" name="L399" href="#L399">399</a>     }
-<a class="jxr_linenumber" name="L400" href="#L400">400</a> }
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>     }
+<a class="jxr_linenumber" name="L332" href="#L332">332</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

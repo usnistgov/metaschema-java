@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>IPathFormatter xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../../../../stylesheet.css" />
@@ -50,7 +50,7 @@
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_javadoccomment"> * {@link #format(IPathSegment)} is called on a formatter implementation, the formatter will render</em>
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment"> * the path segments based on the implemented path syntax. This allows a collection of path segments</em>
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment"> * to be rendered in different forms by swapping out the formatter used.</em>
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment"> * </em>
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment"> * A path formatter is expected to be stateless and thus thread safe.</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="IPathFormatter" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/format/IPathFormatter.html#IPathFormatter">IPathFormatter</a> {
@@ -64,7 +64,7 @@
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment">   * Format the path represented by the provided path segment. The provided segment is expected to be</em>
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">   * the last node in this path. A call to {@link IPathSegment#getPathStream()} or</em>
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">   * {@link IPathSegment#getPath()} can be used to walk the path tree in descending order.</em>
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">   * @param segment</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">   *          The last segment in a sequence of path segments</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">   * @return a formatted path</em>
@@ -81,7 +81,7 @@
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">   * This visitor callback is used to format an individual flag path segment.</em>
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  <em class="jxr_javadoccomment">   * @param flag</em>
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment">   *          the node to format</em>
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">   * @return the formatted text for the segment</em>
@@ -91,7 +91,7 @@
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  <em class="jxr_javadoccomment">   * This visitor callback is used to format an individual field path segment.</em>
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">   * @param field</em>
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">   *          the node to format</em>
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">   * @return the formatted text for the segment</em>
@@ -101,7 +101,7 @@
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>  
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  <em class="jxr_javadoccomment">   * This visitor callback is used to format an individual assembly path segment.</em>
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>  <em class="jxr_javadoccomment">   * @param assembly</em>
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  <em class="jxr_javadoccomment">   *          the node to format</em>
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  <em class="jxr_javadoccomment">   * @return the formatted text for the segment</em>
@@ -111,7 +111,7 @@
 <a class="jxr_linenumber" name="L103" href="#L103">103</a> 
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>   <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L105" href="#L105">105</a> <em class="jxr_javadoccomment">   * This visitor callback is used to format a root assembly path segment.</em>
-<a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L107" href="#L107">107</a> <em class="jxr_javadoccomment">   * @param root</em>
 <a class="jxr_linenumber" name="L108" href="#L108">108</a> <em class="jxr_javadoccomment">   *          the node to format</em>
 <a class="jxr_linenumber" name="L109" href="#L109">109</a> <em class="jxr_javadoccomment">   * @return the formatted text for the segment</em>
@@ -121,7 +121,7 @@
 <a class="jxr_linenumber" name="L113" href="#L113">113</a> 
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>   <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L115" href="#L115">115</a> <em class="jxr_javadoccomment">   * This visitor callback is used to format an individual document path segment.</em>
-<a class="jxr_linenumber" name="L116" href="#L116">116</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L116" href="#L116">116</a> <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L117" href="#L117">117</a> <em class="jxr_javadoccomment">   * @param document</em>
 <a class="jxr_linenumber" name="L118" href="#L118">118</a> <em class="jxr_javadoccomment">   *          the node to format</em>
 <a class="jxr_linenumber" name="L119" href="#L119">119</a> <em class="jxr_javadoccomment">   * @return the formatted text for the segment</em>
@@ -129,11 +129,18 @@
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>   @NonNull
 <a class="jxr_linenumber" name="L122" href="#L122">122</a>   String formatDocument(@NonNull <a name="IDocumentNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IDocumentNodeItem.html#IDocumentNodeItem">IDocumentNodeItem</a> document);
 <a class="jxr_linenumber" name="L123" href="#L123">123</a> 
-<a class="jxr_linenumber" name="L124" href="#L124">124</a>   @NonNull
-<a class="jxr_linenumber" name="L125" href="#L125">125</a>   String formatMetaschema(@NonNull <a name="IMetaschemaNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IMetaschemaNodeItem.html#IMetaschemaNodeItem">IMetaschemaNodeItem</a> metaschema);
-<a class="jxr_linenumber" name="L126" href="#L126">126</a> }
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L125" href="#L125">125</a> <em class="jxr_javadoccomment">   * This visitor callback is used to format an individual metaschema path segment.</em>
+<a class="jxr_linenumber" name="L126" href="#L126">126</a> <em class="jxr_javadoccomment">   *</em>
+<a class="jxr_linenumber" name="L127" href="#L127">127</a> <em class="jxr_javadoccomment">   * @param metaschema</em>
+<a class="jxr_linenumber" name="L128" href="#L128">128</a> <em class="jxr_javadoccomment">   *          the node to format</em>
+<a class="jxr_linenumber" name="L129" href="#L129">129</a> <em class="jxr_javadoccomment">   * @return the formatted text for the segment</em>
+<a class="jxr_linenumber" name="L130" href="#L130">130</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>   @NonNull
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>   String formatMetaschema(@NonNull <a name="IMetaschemaNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IMetaschemaNodeItem.html#IMetaschemaNodeItem">IMetaschemaNodeItem</a> metaschema);
+<a class="jxr_linenumber" name="L133" href="#L133">133</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

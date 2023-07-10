@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>RelativeDoubleSlashPath xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../../../stylesheet.css" />
@@ -55,22 +55,21 @@
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>    @Override
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>    <strong class="jxr_keyword">public</strong> ISequence&lt;? <strong class="jxr_keyword">extends</strong> INodeItem&gt; accept(<a name="DynamicContext" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/DynamicContext.html#DynamicContext">DynamicContext</a> dynamicContext, <a name="INodeContext" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/INodeContext.html#INodeContext">INodeContext</a> context) {
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>      @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>      ISequence&lt;? <strong class="jxr_keyword">extends</strong> INodeItem&gt; leftResult
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>          = (ISequence&lt;? <strong class="jxr_keyword">extends</strong> INodeItem&gt;) getLeft().accept(dynamicContext, context);
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>  
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>      Stream&lt;? <strong class="jxr_keyword">extends</strong> INodeItem&gt; result = ObjectUtils.notNull(leftResult.asStream()
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>          .flatMap(item -&gt; {
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>            assert item != <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>            <em class="jxr_comment">// evaluate the right path in the context of the left</em>
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>            <strong class="jxr_keyword">return</strong> search(getRight(), dynamicContext, item);
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>          }));
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>  
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">return</strong> ISequence.of(result);
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>    }
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>  }
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>      @SuppressWarnings(<span class="jxr_string">"unchecked"</span>) ISequence&lt;? <strong class="jxr_keyword">extends</strong> INodeItem&gt; leftResult
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>          = (ISequence&lt;? <strong class="jxr_keyword">extends</strong> INodeItem&gt;) getLeft().accept(dynamicContext, context);
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      Stream&lt;? <strong class="jxr_keyword">extends</strong> INodeItem&gt; result = ObjectUtils.notNull(leftResult.asStream()
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>          .flatMap(item -&gt; {
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>            assert item != <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>            <em class="jxr_comment">// evaluate the right path in the context of the left</em>
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>            <strong class="jxr_keyword">return</strong> search(getRight(), dynamicContext, item);
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>          }));
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>      <strong class="jxr_keyword">return</strong> ISequence.of(result);
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>    }
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

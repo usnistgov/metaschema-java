@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>IExpression xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../../../stylesheet.css" />
@@ -43,7 +43,7 @@
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="IExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/IExpression.html#IExpression">IExpression</a> {
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment">   * Retrieve the child expressions associated with this expression.</em>
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment">   * @return a list of expressions, which may be empty</em>
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>    @NonNull
@@ -52,7 +52,7 @@
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">   * The minimum expected result type to be produced when evaluating the expression. The result may be</em>
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment">   * a sub-class or sub-interface of this value.</em>
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">   * @return the base result type</em>
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>    @NonNull
@@ -66,7 +66,7 @@
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">   * &lt;p&gt;</em>
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">   * This method can be overloaded to provide static analysis of the expression to determine a more</em>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">   * specific result type.</em>
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">   * @return the result type</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>    @NonNull
@@ -78,7 +78,7 @@
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">   * Produce a string representation of this expression including the expression's name.</em>
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">   * &lt;p&gt;</em>
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  <em class="jxr_javadoccomment">   * This method can be overloaded to provide a more appropriate representation of the expression.</em>
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>  <em class="jxr_javadoccomment">   * @return a string representing the data elements of the expression</em>
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
@@ -89,7 +89,7 @@
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  <em class="jxr_javadoccomment">   * Provides a double dispatch callback for visitor handling.</em>
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  <em class="jxr_javadoccomment">   * @param dynamicContext</em>
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">   *          the dynamic evaluation context</em>
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">   * @param context</em>
@@ -101,7 +101,7 @@
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>  
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  <em class="jxr_javadoccomment">   * Provides a double dispatch callback for visitor handling.</em>
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>  <em class="jxr_javadoccomment">   * @param &lt;RESULT&gt;</em>
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  <em class="jxr_javadoccomment">   *          the type of the evaluation result</em>
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  <em class="jxr_javadoccomment">   * @param &lt;CONTEXT&gt;</em>
@@ -112,10 +112,10 @@
 <a class="jxr_linenumber" name="L104" href="#L104">104</a> <em class="jxr_javadoccomment">   *          the visitor context</em>
 <a class="jxr_linenumber" name="L105" href="#L105">105</a> <em class="jxr_javadoccomment">   * @return the result of evaluation</em>
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>   &lt;RESULT, CONTEXT&gt; RESULT accept(@NonNull IExpressionVisitor&lt;RESULT, CONTEXT&gt; visitor, CONTEXT context);
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>   &lt;RESULT, CONTEXT&gt; RESULT accept(@NonNull IExpressionVisitor&lt;RESULT, CONTEXT&gt; visitor, @NonNull CONTEXT context);
 <a class="jxr_linenumber" name="L108" href="#L108">108</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

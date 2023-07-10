@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>DataTypeService xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../../../stylesheet.css" />
@@ -64,7 +64,7 @@
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">   * Get the singleton service instance, which will be lazy constructed on first access.</em>
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">   * @return the service instance</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
@@ -79,7 +79,7 @@
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_javadoccomment">   * Lookup a specific {@link IDataTypeAdapter} instance by its name.</em>
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">   * @param name</em>
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">   *          the data type name of data type adapter to get the instance for</em>
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  <em class="jxr_javadoccomment">   * @return the instance or {@code null} if the instance is unknown to the type system</em>
@@ -91,7 +91,7 @@
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  <em class="jxr_javadoccomment">   * Lookup a specific {@link IDataTypeAdapter} instance by its class.</em>
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">   * @param clazz</em>
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">   *          the adapter class to get the instance for</em>
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">   * @param &lt;TYPE&gt;</em>
@@ -106,7 +106,7 @@
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L100" href="#L100">100</a> <em class="jxr_javadoccomment">   * Load available data types registered with the {@link IDataTypeProvider} SPI.</em>
-<a class="jxr_linenumber" name="L101" href="#L101">101</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L101" href="#L101">101</a> <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L102" href="#L102">102</a> <em class="jxr_javadoccomment">   * @throws IllegalStateException</em>
 <a class="jxr_linenumber" name="L103" href="#L103">103</a> <em class="jxr_javadoccomment">   *           if there are two adapters with the same name</em>
 <a class="jxr_linenumber" name="L104" href="#L104">104</a> <em class="jxr_javadoccomment">   */</em>
@@ -134,19 +134,19 @@
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>             },
 <a class="jxr_linenumber" name="L127" href="#L127">127</a>             ConcurrentHashMap::<strong class="jxr_keyword">new</strong>));
 <a class="jxr_linenumber" name="L128" href="#L128">128</a> 
-<a class="jxr_linenumber" name="L129" href="#L129">129</a>     @SuppressWarnings({ <span class="jxr_string">"unchecked"</span>, <span class="jxr_string">"null"</span> })
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>     Map&lt;Class&lt;? <strong class="jxr_keyword">extends</strong> IDataTypeAdapter&lt;?&gt;&gt;, IDataTypeAdapter&lt;?&gt;&gt; libraryByClass = dataTypes.stream()
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>         .collect(CustomCollectors.toMap(
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>             dataType -&gt; (Class&lt;? <strong class="jxr_keyword">extends</strong> IDataTypeAdapter&lt;?&gt;&gt;) dataType.getClass(),
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>             Function.identity(),
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>             (key, v1, v2) -&gt; {
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>               <strong class="jxr_keyword">if</strong> (LOGGER.isWarnEnabled()) {
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>                 LOGGER.warn(<span class="jxr_string">"Duplicate data type class '{}'. Using the first."</span>,
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>                     key.getClass().getName());
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>               }
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>               <strong class="jxr_keyword">return</strong> v1;
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>             },
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>             ConcurrentHashMap::<strong class="jxr_keyword">new</strong>));
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>     @SuppressWarnings({ <span class="jxr_string">"unchecked"</span>, <span class="jxr_string">"null"</span> }) Map&lt;Class&lt;? <strong class="jxr_keyword">extends</strong> IDataTypeAdapter&lt;?&gt;&gt;,
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>         IDataTypeAdapter&lt;?&gt;&gt; libraryByClass = dataTypes.stream()
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>             .collect(CustomCollectors.toMap(
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>                 dataType -&gt; (Class&lt;? <strong class="jxr_keyword">extends</strong> IDataTypeAdapter&lt;?&gt;&gt;) dataType.getClass(),
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>                 Function.identity(),
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>                 (key, v1, v2) -&gt; {
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>                   <strong class="jxr_keyword">if</strong> (LOGGER.isWarnEnabled()) {
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>                     LOGGER.warn(<span class="jxr_string">"Duplicate data type class '{}'. Using the first."</span>,
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>                         key.getClass().getName());
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>                   }
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>                   <strong class="jxr_keyword">return</strong> v1;
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>                 },
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>                 ConcurrentHashMap::<strong class="jxr_keyword">new</strong>));
 <a class="jxr_linenumber" name="L142" href="#L142">142</a> 
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>     <strong class="jxr_keyword">synchronized</strong> (<strong class="jxr_keyword">this</strong>) {
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>       <strong class="jxr_keyword">this</strong>.libraryByName = libraryByName;
@@ -156,6 +156,6 @@
 <a class="jxr_linenumber" name="L148" href="#L148">148</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

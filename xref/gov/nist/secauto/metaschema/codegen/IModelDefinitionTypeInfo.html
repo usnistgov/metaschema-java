@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>IModelDefinitionTypeInfo xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
@@ -39,8 +39,8 @@
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFieldDefinition;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFlagInstance;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IModelDefinition;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFlagContainer;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFlagInstance;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> java.nio.file.Path;
@@ -52,7 +52,7 @@
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="IModelDefinitionTypeInfo" href="../../../../../gov/nist/secauto/metaschema/codegen/IModelDefinitionTypeInfo.html#IModelDefinitionTypeInfo">IModelDefinitionTypeInfo</a> <strong class="jxr_keyword">extends</strong> <a name="IDefinitionTypeInfo" href="../../../../../gov/nist/secauto/metaschema/codegen/IDefinitionTypeInfo.html#IDefinitionTypeInfo">IDefinitionTypeInfo</a> {
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>    @NonNull
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>    <strong class="jxr_keyword">static</strong> <a name="IModelDefinitionTypeInfo" href="../../../../../gov/nist/secauto/metaschema/codegen/IModelDefinitionTypeInfo.html#IModelDefinitionTypeInfo">IModelDefinitionTypeInfo</a> newTypeInfo(@NonNull <a name="IModelDefinition" href="../../../../../gov/nist/secauto/metaschema/model/common/IModelDefinition.html#IModelDefinition">IModelDefinition</a> definition,
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>    <strong class="jxr_keyword">static</strong> <a name="IModelDefinitionTypeInfo" href="../../../../../gov/nist/secauto/metaschema/codegen/IModelDefinitionTypeInfo.html#IModelDefinitionTypeInfo">IModelDefinitionTypeInfo</a> newTypeInfo(@NonNull <a name="IFlagContainer" href="../../../../../gov/nist/secauto/metaschema/model/common/IFlagContainer.html#IFlagContainer">IFlagContainer</a> definition,
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>        @NonNull <a name="ITypeResolver" href="../../../../../gov/nist/secauto/metaschema/codegen/ITypeResolver.html#ITypeResolver">ITypeResolver</a> typeResolver) {
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      <a name="IModelDefinitionTypeInfo" href="../../../../../gov/nist/secauto/metaschema/codegen/IModelDefinitionTypeInfo.html#IModelDefinitionTypeInfo">IModelDefinitionTypeInfo</a> retval;
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>      <strong class="jxr_keyword">switch</strong> (definition.getModelType()) {
@@ -71,11 +71,11 @@
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>    }
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>    @Override
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>    <a name="IModelDefinition" href="../../../../../gov/nist/secauto/metaschema/model/common/IModelDefinition.html#IModelDefinition">IModelDefinition</a> getDefinition();
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>    <a name="IFlagContainer" href="../../../../../gov/nist/secauto/metaschema/model/common/IFlagContainer.html#IFlagContainer">IFlagContainer</a> getDefinition();
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">   * Get the class type information for the base class of the generated class, .</em>
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">   * @return the type information or {@code null} if no base class is configured</em>
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>    @Nullable
@@ -84,7 +84,7 @@
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  <em class="jxr_javadoccomment">   * Gets the class type information for the object definition for which this class is being</em>
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment">   * generated.</em>
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_javadoccomment">   * @return the class's type information</em>
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>    @NonNull
@@ -98,7 +98,7 @@
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">   * Generates the associated Java class and saves it using the provided file.</em>
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>  <em class="jxr_javadoccomment">   * @param dir</em>
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  <em class="jxr_javadoccomment">   *          the directory to generate the class in</em>
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  <em class="jxr_javadoccomment">   * @return the qualified class name for the generated class</em>
@@ -106,12 +106,12 @@
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  <em class="jxr_javadoccomment">   *           if a build error occurred while generating the class</em>
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>   @NonNull
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>   <a name="DefaultGeneratedDefinitionClass" href="../../../../../gov/nist/secauto/metaschema/codegen/DefaultGeneratedDefinitionClass.html#DefaultGeneratedDefinitionClass">DefaultGeneratedDefinitionClass</a> generateClass(@NonNull Path dir) <strong class="jxr_keyword">throws</strong> IOException;
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>   <a name="IGeneratedDefinitionClass" href="../../../../../gov/nist/secauto/metaschema/codegen/IGeneratedDefinitionClass.html#IGeneratedDefinitionClass">IGeneratedDefinitionClass</a> generateClass(@NonNull Path dir) <strong class="jxr_keyword">throws</strong> IOException;
 <a class="jxr_linenumber" name="L102" href="#L102">102</a> 
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>   <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L104" href="#L104">104</a> <em class="jxr_javadoccomment">   * This method is responsible for generating the Java class using a builder that is returned for</em>
 <a class="jxr_linenumber" name="L105" href="#L105">105</a> <em class="jxr_javadoccomment">   * further customization.</em>
-<a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L107" href="#L107">107</a> <em class="jxr_javadoccomment">   * @return the class definition for the generated class</em>
 <a class="jxr_linenumber" name="L108" href="#L108">108</a> <em class="jxr_javadoccomment">   * @throws IOException</em>
 <a class="jxr_linenumber" name="L109" href="#L109">109</a> <em class="jxr_javadoccomment">   *           if a build error occurred while generating the class</em>
@@ -121,6 +121,6 @@
 <a class="jxr_linenumber" name="L113" href="#L113">113</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

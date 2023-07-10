@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>RecurseDepth xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../../../../../stylesheet.css" />
@@ -137,7 +137,7 @@
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>     <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>       recursionMetapath = MetapathExpression.compile(recursionPath.asString());
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>     } <strong class="jxr_keyword">catch</strong> (<a name="MetapathException" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathException.html#MetapathException">MetapathException</a> ex) {
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="DynamicMetapathException" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/DynamicMetapathException.html#DynamicMetapathException">DynamicMetapathException</a>(DynamicMetapathException.INVALID_PATH_GRAMMAR, ex.getMessage());
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="DynamicMetapathException" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/DynamicMetapathException.html#DynamicMetapathException">DynamicMetapathException</a>(DynamicMetapathException.INVALID_PATH_GRAMMAR, ex.getMessage(), ex);
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>     }
 <a class="jxr_linenumber" name="L134" href="#L134">134</a> 
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>     <strong class="jxr_keyword">return</strong> recurseDepth(initialContext, recursionMetapath, dynamicContext);
@@ -151,16 +151,15 @@
 <a class="jxr_linenumber" name="L143" href="#L143">143</a> 
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>     <strong class="jxr_keyword">return</strong> ISequence.of(ObjectUtils.notNull(initialContext.asStream()
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>         .flatMap(item -&gt; {
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>           @NonNull
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>           ISequence&lt;INodeItem&gt; metapathResult
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>               = recursionMetapath.evaluate(ObjectUtils.requireNonNull(item), dynamicContext);
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>           ISequence&lt;INodeItem&gt; result = recurseDepth(metapathResult, recursionMetapath, dynamicContext);
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>           <strong class="jxr_keyword">return</strong> Stream.concat(result.asStream(), Stream.of(item));
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>         })));
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>   }
-<a class="jxr_linenumber" name="L153" href="#L153">153</a> }
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>           @NonNull ISequence&lt;INodeItem&gt; metapathResult
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>               = recursionMetapath.evaluate(ObjectUtils.requireNonNull(item), dynamicContext);
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>           ISequence&lt;INodeItem&gt; result = recurseDepth(metapathResult, recursionMetapath, dynamicContext);
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>           <strong class="jxr_keyword">return</strong> Stream.concat(result.asStream(), Stream.of(item));
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>         })));
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>   }
+<a class="jxr_linenumber" name="L152" href="#L152">152</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

@@ -1,4 +1,4 @@
 gov.nist.secauto.metaschema.model.testing
 gov.nist.secauto.metaschema.model.testing.xmlbeans
 gov.nist.secauto.metaschema.model.testing.xmlbeans.handler
-org.apache.xmlbeans.metadata.system.metaschema.testing
+gov.nist.secauto.metaschema.model.testing.xmlbeans.impl

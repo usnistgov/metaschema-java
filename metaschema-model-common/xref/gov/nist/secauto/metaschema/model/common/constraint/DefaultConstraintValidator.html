@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>DefaultConstraintValidator xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../../../stylesheet.css" />
@@ -112,7 +112,7 @@
 <a class="jxr_linenumber" name="L104" href="#L104">104</a> 
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>   <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">   * Validate the provided flag item against any associated constraints.</em>
-<a class="jxr_linenumber" name="L107" href="#L107">107</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L107" href="#L107">107</a> <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L108" href="#L108">108</a> <em class="jxr_javadoccomment">   * @param item</em>
 <a class="jxr_linenumber" name="L109" href="#L109">109</a> <em class="jxr_javadoccomment">   *          the flag item to validate</em>
 <a class="jxr_linenumber" name="L110" href="#L110">110</a> <em class="jxr_javadoccomment">   * @throws MetapathException</em>
@@ -129,7 +129,7 @@
 <a class="jxr_linenumber" name="L121" href="#L121">121</a> 
 <a class="jxr_linenumber" name="L122" href="#L122">122</a>   <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L123" href="#L123">123</a> <em class="jxr_javadoccomment">   * Validate the provided field item against any associated constraints.</em>
-<a class="jxr_linenumber" name="L124" href="#L124">124</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L124" href="#L124">124</a> <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L125" href="#L125">125</a> <em class="jxr_javadoccomment">   * @param item</em>
 <a class="jxr_linenumber" name="L126" href="#L126">126</a> <em class="jxr_javadoccomment">   *          the field item to validate</em>
 <a class="jxr_linenumber" name="L127" href="#L127">127</a> <em class="jxr_javadoccomment">   * @throws MetapathException</em>
@@ -146,7 +146,7 @@
 <a class="jxr_linenumber" name="L138" href="#L138">138</a> 
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>   <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L140" href="#L140">140</a> <em class="jxr_javadoccomment">   * Validate the provided assembly item against any associated constraints.</em>
-<a class="jxr_linenumber" name="L141" href="#L141">141</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L141" href="#L141">141</a> <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L142" href="#L142">142</a> <em class="jxr_javadoccomment">   * @param item</em>
 <a class="jxr_linenumber" name="L143" href="#L143">143</a> <em class="jxr_javadoccomment">   *          the assembly item to validate</em>
 <a class="jxr_linenumber" name="L144" href="#L144">144</a> <em class="jxr_javadoccomment">   * @throws MetapathException</em>
@@ -398,7 +398,7 @@
 <a class="jxr_linenumber" name="L390" href="#L390">390</a> 
 <a class="jxr_linenumber" name="L391" href="#L391">391</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> rethrowConstraintError(@NonNull <a name="IConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IConstraint.html#IConstraint">IConstraint</a> constraint, <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> item,
 <a class="jxr_linenumber" name="L392" href="#L392">392</a>       <a name="MetapathException" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathException.html#MetapathException">MetapathException</a> ex) {
-<a class="jxr_linenumber" name="L393" href="#L393">393</a>     StringBuilder builder = <strong class="jxr_keyword">new</strong> StringBuilder(94);
+<a class="jxr_linenumber" name="L393" href="#L393">393</a>     StringBuilder builder = <strong class="jxr_keyword">new</strong> StringBuilder(128);
 <a class="jxr_linenumber" name="L394" href="#L394">394</a>     builder.append(<span class="jxr_string">"A "</span>)
 <a class="jxr_linenumber" name="L395" href="#L395">395</a>         .append(constraint.getClass().getName())
 <a class="jxr_linenumber" name="L396" href="#L396">396</a>         .append(<span class="jxr_string">" constraint"</span>);
@@ -424,7 +424,7 @@
 <a class="jxr_linenumber" name="L416" href="#L416">416</a> 
 <a class="jxr_linenumber" name="L417" href="#L417">417</a>   <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L418" href="#L418">418</a> <em class="jxr_javadoccomment">   * Add a new allowed value to the value status tracker.</em>
-<a class="jxr_linenumber" name="L419" href="#L419">419</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L419" href="#L419">419</a> <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L420" href="#L420">420</a> <em class="jxr_javadoccomment">   * @param targetItem</em>
 <a class="jxr_linenumber" name="L421" href="#L421">421</a> <em class="jxr_javadoccomment">   *          the item whose value is targeted by the constraint</em>
 <a class="jxr_linenumber" name="L422" href="#L422">422</a> <em class="jxr_javadoccomment">   * @param allowedValues</em>
@@ -433,196 +433,195 @@
 <a class="jxr_linenumber" name="L425" href="#L425">425</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> updateValueStatus(@NonNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> targetItem, @NonNull <a name="IAllowedValuesConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IAllowedValuesConstraint.html#IAllowedValuesConstraint">IAllowedValuesConstraint</a> allowedValues) {
 <a class="jxr_linenumber" name="L426" href="#L426">426</a>     <em class="jxr_comment">// constraint.getAllowedValues().containsKey(value)</em>
 <a class="jxr_linenumber" name="L427" href="#L427">427</a> 
-<a class="jxr_linenumber" name="L428" href="#L428">428</a>     @Nullable
-<a class="jxr_linenumber" name="L429" href="#L429">429</a>     ValueStatus valueStatus = valueMap.get(targetItem);
-<a class="jxr_linenumber" name="L430" href="#L430">430</a>     <strong class="jxr_keyword">if</strong> (valueStatus == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L431" href="#L431">431</a>       valueStatus = <strong class="jxr_keyword">new</strong> ValueStatus(targetItem);
-<a class="jxr_linenumber" name="L432" href="#L432">432</a>       valueMap.put(targetItem, valueStatus);
-<a class="jxr_linenumber" name="L433" href="#L433">433</a>     }
-<a class="jxr_linenumber" name="L434" href="#L434">434</a> 
-<a class="jxr_linenumber" name="L435" href="#L435">435</a>     valueStatus.registerAllowedValue(allowedValues);
-<a class="jxr_linenumber" name="L436" href="#L436">436</a>   }
-<a class="jxr_linenumber" name="L437" href="#L437">437</a> 
-<a class="jxr_linenumber" name="L438" href="#L438">438</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleAllowedValues(@NonNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> targetItem) {
-<a class="jxr_linenumber" name="L439" href="#L439">439</a>     ValueStatus valueStatus = valueMap.remove(targetItem);
-<a class="jxr_linenumber" name="L440" href="#L440">440</a>     <strong class="jxr_keyword">if</strong> (valueStatus != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L441" href="#L441">441</a>       valueStatus.validate();
-<a class="jxr_linenumber" name="L442" href="#L442">442</a>     }
-<a class="jxr_linenumber" name="L443" href="#L443">443</a>   }
-<a class="jxr_linenumber" name="L444" href="#L444">444</a> 
-<a class="jxr_linenumber" name="L445" href="#L445">445</a>   @Override
-<a class="jxr_linenumber" name="L446" href="#L446">446</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> finalizeValidation() {
-<a class="jxr_linenumber" name="L447" href="#L447">447</a>     <em class="jxr_comment">// key references</em>
-<a class="jxr_linenumber" name="L448" href="#L448">448</a>     <strong class="jxr_keyword">for</strong> (Map.Entry&lt;String, List&lt;KeyRef&gt;&gt; entry : indexNameToKeyRefMap.entrySet()) {
-<a class="jxr_linenumber" name="L449" href="#L449">449</a>       String indexName = entry.getKey();
-<a class="jxr_linenumber" name="L450" href="#L450">450</a>       <a name="IIndex" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IIndex.html#IIndex">IIndex</a> index = indexNameToIndexMap.get(indexName);
-<a class="jxr_linenumber" name="L451" href="#L451">451</a> 
-<a class="jxr_linenumber" name="L452" href="#L452">452</a>       List&lt;KeyRef&gt; keyRefs = entry.getValue();
-<a class="jxr_linenumber" name="L453" href="#L453">453</a> 
-<a class="jxr_linenumber" name="L454" href="#L454">454</a>       <strong class="jxr_keyword">for</strong> (KeyRef keyRef : keyRefs) {
-<a class="jxr_linenumber" name="L455" href="#L455">455</a>         <a name="IIndexHasKeyConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IIndexHasKeyConstraint.html#IIndexHasKeyConstraint">IIndexHasKeyConstraint</a> constraint = keyRef.getConstraint();
-<a class="jxr_linenumber" name="L456" href="#L456">456</a>         <strong class="jxr_keyword">for</strong> (<a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> item : keyRef.getTargets()) {
-<a class="jxr_linenumber" name="L457" href="#L457">457</a>           assert item != <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L458" href="#L458">458</a> 
-<a class="jxr_linenumber" name="L459" href="#L459">459</a>           <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L460" href="#L460">460</a>             <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> referencedItem = index.get(item, constraint.getKeyFields(), getMetapathContext());
-<a class="jxr_linenumber" name="L461" href="#L461">461</a> 
-<a class="jxr_linenumber" name="L462" href="#L462">462</a>             <strong class="jxr_keyword">if</strong> (referencedItem == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L463" href="#L463">463</a>               getConstraintValidationHandler().handleIndexMiss(constraint, keyRef.getNode(), item);
-<a class="jxr_linenumber" name="L464" href="#L464">464</a>             }
-<a class="jxr_linenumber" name="L465" href="#L465">465</a>           } <strong class="jxr_keyword">catch</strong> (<a name="MetapathException" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathException.html#MetapathException">MetapathException</a> ex) {
-<a class="jxr_linenumber" name="L466" href="#L466">466</a>             getConstraintValidationHandler().handleKeyMatchError(constraint, keyRef.getNode(), item, ex);
-<a class="jxr_linenumber" name="L467" href="#L467">467</a>           }
-<a class="jxr_linenumber" name="L468" href="#L468">468</a>         }
-<a class="jxr_linenumber" name="L469" href="#L469">469</a>       }
-<a class="jxr_linenumber" name="L470" href="#L470">470</a>     }
-<a class="jxr_linenumber" name="L471" href="#L471">471</a>   }
-<a class="jxr_linenumber" name="L472" href="#L472">472</a> 
-<a class="jxr_linenumber" name="L473" href="#L473">473</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">class</strong> ValueStatus {
-<a class="jxr_linenumber" name="L474" href="#L474">474</a>     @NonNull
-<a class="jxr_linenumber" name="L475" href="#L475">475</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> List&lt;IAllowedValuesConstraint&gt; constraints = <strong class="jxr_keyword">new</strong> LinkedList&lt;&gt;();
-<a class="jxr_linenumber" name="L476" href="#L476">476</a>     @NonNull
-<a class="jxr_linenumber" name="L477" href="#L477">477</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String value;
-<a class="jxr_linenumber" name="L478" href="#L478">478</a>     @NonNull
-<a class="jxr_linenumber" name="L479" href="#L479">479</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> item;
-<a class="jxr_linenumber" name="L480" href="#L480">480</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> allowOthers = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L481" href="#L481">481</a>     @NonNull
-<a class="jxr_linenumber" name="L482" href="#L482">482</a>     <strong class="jxr_keyword">private</strong> IAllowedValuesConstraint.Extensible extensible = IAllowedValuesConstraint.Extensible.EXTERNAL;
-<a class="jxr_linenumber" name="L483" href="#L483">483</a> 
-<a class="jxr_linenumber" name="L484" href="#L484">484</a>     <strong class="jxr_keyword">public</strong> ValueStatus(@NonNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> item) {
-<a class="jxr_linenumber" name="L485" href="#L485">485</a>       <strong class="jxr_keyword">this</strong>.item = item;
-<a class="jxr_linenumber" name="L486" href="#L486">486</a>       <strong class="jxr_keyword">this</strong>.value = FnData.fnDataItem(item).asString();
-<a class="jxr_linenumber" name="L487" href="#L487">487</a>     }
-<a class="jxr_linenumber" name="L488" href="#L488">488</a> 
-<a class="jxr_linenumber" name="L489" href="#L489">489</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> registerAllowedValue(@NonNull <a name="IAllowedValuesConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IAllowedValuesConstraint.html#IAllowedValuesConstraint">IAllowedValuesConstraint</a> allowedValues) {
-<a class="jxr_linenumber" name="L490" href="#L490">490</a>       <strong class="jxr_keyword">this</strong>.constraints.add(allowedValues);
-<a class="jxr_linenumber" name="L491" href="#L491">491</a>       <strong class="jxr_keyword">if</strong> (!allowedValues.isAllowedOther()) {
-<a class="jxr_linenumber" name="L492" href="#L492">492</a>         <em class="jxr_comment">// record the most restrictive value</em>
-<a class="jxr_linenumber" name="L493" href="#L493">493</a>         allowOthers = false;
-<a class="jxr_linenumber" name="L494" href="#L494">494</a>       }
-<a class="jxr_linenumber" name="L495" href="#L495">495</a> 
-<a class="jxr_linenumber" name="L496" href="#L496">496</a>       IAllowedValuesConstraint.Extensible newExtensible = allowedValues.getExtensible();
-<a class="jxr_linenumber" name="L497" href="#L497">497</a>       <strong class="jxr_keyword">if</strong> (newExtensible.ordinal() &gt; extensible.ordinal()) {
-<a class="jxr_linenumber" name="L498" href="#L498">498</a>         <em class="jxr_comment">// record the most restrictive value</em>
-<a class="jxr_linenumber" name="L499" href="#L499">499</a>         extensible = allowedValues.getExtensible();
-<a class="jxr_linenumber" name="L500" href="#L500">500</a>       } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (IAllowedValuesConstraint.Extensible.NONE.equals(newExtensible)
-<a class="jxr_linenumber" name="L501" href="#L501">501</a>           &amp;&amp; IAllowedValuesConstraint.Extensible.NONE.equals(extensible)) {
-<a class="jxr_linenumber" name="L502" href="#L502">502</a>         <em class="jxr_comment">// this is an error, where there are two none constraints that conflict</em>
-<a class="jxr_linenumber" name="L503" href="#L503">503</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="MetapathException" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathException.html#MetapathException">MetapathException</a>(
-<a class="jxr_linenumber" name="L504" href="#L504">504</a>             String.format(<span class="jxr_string">"Multiple constraints have extensibility scope=none at path '%s'"</span>, item.getMetapath()));
-<a class="jxr_linenumber" name="L505" href="#L505">505</a>       } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (allowedValues.getExtensible().ordinal() &lt; extensible.ordinal()) {
-<a class="jxr_linenumber" name="L506" href="#L506">506</a>         String msg = String.format(
-<a class="jxr_linenumber" name="L507" href="#L507">507</a>             <span class="jxr_string">"An allowed values constraint with an extensibility scope '%s'"</span>
-<a class="jxr_linenumber" name="L508" href="#L508">508</a>                 + <span class="jxr_string">" exceeds the allowed scope '%s' at path '%s'"</span>,
-<a class="jxr_linenumber" name="L509" href="#L509">509</a>             allowedValues.getExtensible().name(), extensible.name(), item.getMetapath());
-<a class="jxr_linenumber" name="L510" href="#L510">510</a>         LOGGER.atError().log(msg);
-<a class="jxr_linenumber" name="L511" href="#L511">511</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="MetapathException" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathException.html#MetapathException">MetapathException</a>(msg);
-<a class="jxr_linenumber" name="L512" href="#L512">512</a>       }
-<a class="jxr_linenumber" name="L513" href="#L513">513</a>     }
-<a class="jxr_linenumber" name="L514" href="#L514">514</a> 
-<a class="jxr_linenumber" name="L515" href="#L515">515</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> validate() {
-<a class="jxr_linenumber" name="L516" href="#L516">516</a>       <strong class="jxr_keyword">if</strong> (!constraints.isEmpty()) {
-<a class="jxr_linenumber" name="L517" href="#L517">517</a>         <strong class="jxr_keyword">boolean</strong> match = false;
-<a class="jxr_linenumber" name="L518" href="#L518">518</a>         List&lt;IAllowedValuesConstraint&gt; failedConstraints = <strong class="jxr_keyword">new</strong> LinkedList&lt;&gt;();
-<a class="jxr_linenumber" name="L519" href="#L519">519</a>         <strong class="jxr_keyword">for</strong> (<a name="IAllowedValuesConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IAllowedValuesConstraint.html#IAllowedValuesConstraint">IAllowedValuesConstraint</a> allowedValues : constraints) {
-<a class="jxr_linenumber" name="L520" href="#L520">520</a>           <a name="IAllowedValue" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IAllowedValue.html#IAllowedValue">IAllowedValue</a> matchingValue = allowedValues.getAllowedValue(value);
-<a class="jxr_linenumber" name="L521" href="#L521">521</a>           <strong class="jxr_keyword">if</strong> (matchingValue != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L522" href="#L522">522</a>             match = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L523" href="#L523">523</a>           } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (IAllowedValuesConstraint.Extensible.NONE.equals(allowedValues.getExtensible())) {
-<a class="jxr_linenumber" name="L524" href="#L524">524</a>             <em class="jxr_comment">// hard failure, since no other values can satisfy this constraint</em>
-<a class="jxr_linenumber" name="L525" href="#L525">525</a>             failedConstraints = CollectionUtil.singletonList(allowedValues);
-<a class="jxr_linenumber" name="L526" href="#L526">526</a>             match = false;
-<a class="jxr_linenumber" name="L527" href="#L527">527</a>             <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="L528" href="#L528">528</a>           } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L529" href="#L529">529</a>             failedConstraints.add(allowedValues);
-<a class="jxr_linenumber" name="L530" href="#L530">530</a>           } <em class="jxr_comment">// this constraint passes, but we need to make sure other constraints do as well</em>
-<a class="jxr_linenumber" name="L531" href="#L531">531</a>         }
-<a class="jxr_linenumber" name="L532" href="#L532">532</a> 
-<a class="jxr_linenumber" name="L533" href="#L533">533</a>         <em class="jxr_comment">// it's not a failure if allow others is true</em>
-<a class="jxr_linenumber" name="L534" href="#L534">534</a>         <strong class="jxr_keyword">if</strong> (!match &amp;&amp; !allowOthers) {
-<a class="jxr_linenumber" name="L535" href="#L535">535</a>           getConstraintValidationHandler().handleAllowedValuesViolation(failedConstraints, item);
-<a class="jxr_linenumber" name="L536" href="#L536">536</a>         }
-<a class="jxr_linenumber" name="L537" href="#L537">537</a>       }
-<a class="jxr_linenumber" name="L538" href="#L538">538</a>     }
-<a class="jxr_linenumber" name="L539" href="#L539">539</a>   }
-<a class="jxr_linenumber" name="L540" href="#L540">540</a> 
-<a class="jxr_linenumber" name="L541" href="#L541">541</a>   <strong class="jxr_keyword">class</strong> Visitor
-<a class="jxr_linenumber" name="L542" href="#L542">542</a>       <strong class="jxr_keyword">extends</strong> AbstractNodeItemVisitor&lt;Void, Void&gt; {
-<a class="jxr_linenumber" name="L543" href="#L543">543</a>     @Override
-<a class="jxr_linenumber" name="L544" href="#L544">544</a>     <strong class="jxr_keyword">public</strong> Void visitDocument(@NonNull <a name="IDocumentNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IDocumentNodeItem.html#IDocumentNodeItem">IDocumentNodeItem</a> item, Void context) {
-<a class="jxr_linenumber" name="L545" href="#L545">545</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">super</strong>.visitDocument(item, context);
-<a class="jxr_linenumber" name="L546" href="#L546">546</a>     }
-<a class="jxr_linenumber" name="L547" href="#L547">547</a> 
-<a class="jxr_linenumber" name="L548" href="#L548">548</a>     @Override
-<a class="jxr_linenumber" name="L549" href="#L549">549</a>     <strong class="jxr_keyword">public</strong> Void visitFlag(@NonNull <a name="IFlagNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IFlagNodeItem.html#IFlagNodeItem">IFlagNodeItem</a> item, Void context) {
-<a class="jxr_linenumber" name="L550" href="#L550">550</a>       validateFlag(item);
-<a class="jxr_linenumber" name="L551" href="#L551">551</a>       <strong class="jxr_keyword">super</strong>.visitFlag(item, context);
-<a class="jxr_linenumber" name="L552" href="#L552">552</a>       handleAllowedValues(item);
-<a class="jxr_linenumber" name="L553" href="#L553">553</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L554" href="#L554">554</a>     }
-<a class="jxr_linenumber" name="L555" href="#L555">555</a> 
-<a class="jxr_linenumber" name="L556" href="#L556">556</a>     @Override
-<a class="jxr_linenumber" name="L557" href="#L557">557</a>     <strong class="jxr_keyword">public</strong> Void visitField(@NonNull <a name="IFieldNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IFieldNodeItem.html#IFieldNodeItem">IFieldNodeItem</a> item, Void context) {
-<a class="jxr_linenumber" name="L558" href="#L558">558</a>       validateField(item);
-<a class="jxr_linenumber" name="L559" href="#L559">559</a>       <strong class="jxr_keyword">super</strong>.visitField(item, context);
-<a class="jxr_linenumber" name="L560" href="#L560">560</a>       handleAllowedValues(item);
-<a class="jxr_linenumber" name="L561" href="#L561">561</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L562" href="#L562">562</a>     }
-<a class="jxr_linenumber" name="L563" href="#L563">563</a> 
-<a class="jxr_linenumber" name="L564" href="#L564">564</a>     @Override
-<a class="jxr_linenumber" name="L565" href="#L565">565</a>     <strong class="jxr_keyword">public</strong> Void visitAssembly(@NonNull <a name="IAssemblyNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAssemblyNodeItem.html#IAssemblyNodeItem">IAssemblyNodeItem</a> item, Void context) {
-<a class="jxr_linenumber" name="L566" href="#L566">566</a>       validateAssembly(item);
-<a class="jxr_linenumber" name="L567" href="#L567">567</a>       <strong class="jxr_keyword">super</strong>.visitAssembly(item, context);
-<a class="jxr_linenumber" name="L568" href="#L568">568</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L569" href="#L569">569</a>     }
-<a class="jxr_linenumber" name="L570" href="#L570">570</a> 
-<a class="jxr_linenumber" name="L571" href="#L571">571</a>     @Override
-<a class="jxr_linenumber" name="L572" href="#L572">572</a>     <strong class="jxr_keyword">public</strong> Void visitMetaschema(@NonNull <a name="IMetaschemaNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IMetaschemaNodeItem.html#IMetaschemaNodeItem">IMetaschemaNodeItem</a> item, Void context) {
-<a class="jxr_linenumber" name="L573" href="#L573">573</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException(<span class="jxr_string">"not needed"</span>);
-<a class="jxr_linenumber" name="L574" href="#L574">574</a>     }
-<a class="jxr_linenumber" name="L575" href="#L575">575</a> 
-<a class="jxr_linenumber" name="L576" href="#L576">576</a>     @Override
-<a class="jxr_linenumber" name="L577" href="#L577">577</a>     <strong class="jxr_keyword">protected</strong> Void defaultResult() {
-<a class="jxr_linenumber" name="L578" href="#L578">578</a>       <em class="jxr_comment">// no result value</em>
-<a class="jxr_linenumber" name="L579" href="#L579">579</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L580" href="#L580">580</a>     }
-<a class="jxr_linenumber" name="L581" href="#L581">581</a>   }
-<a class="jxr_linenumber" name="L582" href="#L582">582</a> 
-<a class="jxr_linenumber" name="L583" href="#L583">583</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> KeyRef {
-<a class="jxr_linenumber" name="L584" href="#L584">584</a>     @NonNull
-<a class="jxr_linenumber" name="L585" href="#L585">585</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="IIndexHasKeyConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IIndexHasKeyConstraint.html#IIndexHasKeyConstraint">IIndexHasKeyConstraint</a> constraint;
-<a class="jxr_linenumber" name="L586" href="#L586">586</a>     @NonNull
-<a class="jxr_linenumber" name="L587" href="#L587">587</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node;
-<a class="jxr_linenumber" name="L588" href="#L588">588</a>     @NonNull
-<a class="jxr_linenumber" name="L589" href="#L589">589</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> List&lt;INodeItem&gt; targets;
-<a class="jxr_linenumber" name="L590" href="#L590">590</a> 
-<a class="jxr_linenumber" name="L591" href="#L591">591</a>     <strong class="jxr_keyword">public</strong> KeyRef(
-<a class="jxr_linenumber" name="L592" href="#L592">592</a>         @NonNull <a name="IIndexHasKeyConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IIndexHasKeyConstraint.html#IIndexHasKeyConstraint">IIndexHasKeyConstraint</a> constraint,
-<a class="jxr_linenumber" name="L593" href="#L593">593</a>         @NonNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node,
-<a class="jxr_linenumber" name="L594" href="#L594">594</a>         @NonNull List&lt;INodeItem&gt; targets) {
-<a class="jxr_linenumber" name="L595" href="#L595">595</a>       <strong class="jxr_keyword">this</strong>.node = node;
-<a class="jxr_linenumber" name="L596" href="#L596">596</a>       <strong class="jxr_keyword">this</strong>.constraint = constraint;
-<a class="jxr_linenumber" name="L597" href="#L597">597</a>       <strong class="jxr_keyword">this</strong>.targets = targets;
-<a class="jxr_linenumber" name="L598" href="#L598">598</a>     }
-<a class="jxr_linenumber" name="L599" href="#L599">599</a> 
-<a class="jxr_linenumber" name="L600" href="#L600">600</a>     @NonNull
-<a class="jxr_linenumber" name="L601" href="#L601">601</a>     <strong class="jxr_keyword">public</strong> <a name="IIndexHasKeyConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IIndexHasKeyConstraint.html#IIndexHasKeyConstraint">IIndexHasKeyConstraint</a> getConstraint() {
-<a class="jxr_linenumber" name="L602" href="#L602">602</a>       <strong class="jxr_keyword">return</strong> constraint;
-<a class="jxr_linenumber" name="L603" href="#L603">603</a>     }
-<a class="jxr_linenumber" name="L604" href="#L604">604</a> 
-<a class="jxr_linenumber" name="L605" href="#L605">605</a>     @NonNull
-<a class="jxr_linenumber" name="L606" href="#L606">606</a>     <strong class="jxr_keyword">protected</strong> <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> getNode() {
-<a class="jxr_linenumber" name="L607" href="#L607">607</a>       <strong class="jxr_keyword">return</strong> node;
-<a class="jxr_linenumber" name="L608" href="#L608">608</a>     }
-<a class="jxr_linenumber" name="L609" href="#L609">609</a> 
-<a class="jxr_linenumber" name="L610" href="#L610">610</a>     @NonNull
-<a class="jxr_linenumber" name="L611" href="#L611">611</a>     <strong class="jxr_keyword">public</strong> List&lt;INodeItem&gt; getTargets() {
-<a class="jxr_linenumber" name="L612" href="#L612">612</a>       <strong class="jxr_keyword">return</strong> targets;
-<a class="jxr_linenumber" name="L613" href="#L613">613</a>     }
-<a class="jxr_linenumber" name="L614" href="#L614">614</a>   }
-<a class="jxr_linenumber" name="L615" href="#L615">615</a> }
+<a class="jxr_linenumber" name="L428" href="#L428">428</a>     @Nullable ValueStatus valueStatus = valueMap.get(targetItem);
+<a class="jxr_linenumber" name="L429" href="#L429">429</a>     <strong class="jxr_keyword">if</strong> (valueStatus == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L430" href="#L430">430</a>       valueStatus = <strong class="jxr_keyword">new</strong> ValueStatus(targetItem);
+<a class="jxr_linenumber" name="L431" href="#L431">431</a>       valueMap.put(targetItem, valueStatus);
+<a class="jxr_linenumber" name="L432" href="#L432">432</a>     }
+<a class="jxr_linenumber" name="L433" href="#L433">433</a> 
+<a class="jxr_linenumber" name="L434" href="#L434">434</a>     valueStatus.registerAllowedValue(allowedValues);
+<a class="jxr_linenumber" name="L435" href="#L435">435</a>   }
+<a class="jxr_linenumber" name="L436" href="#L436">436</a> 
+<a class="jxr_linenumber" name="L437" href="#L437">437</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleAllowedValues(@NonNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> targetItem) {
+<a class="jxr_linenumber" name="L438" href="#L438">438</a>     ValueStatus valueStatus = valueMap.remove(targetItem);
+<a class="jxr_linenumber" name="L439" href="#L439">439</a>     <strong class="jxr_keyword">if</strong> (valueStatus != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L440" href="#L440">440</a>       valueStatus.validate();
+<a class="jxr_linenumber" name="L441" href="#L441">441</a>     }
+<a class="jxr_linenumber" name="L442" href="#L442">442</a>   }
+<a class="jxr_linenumber" name="L443" href="#L443">443</a> 
+<a class="jxr_linenumber" name="L444" href="#L444">444</a>   @Override
+<a class="jxr_linenumber" name="L445" href="#L445">445</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> finalizeValidation() {
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>     <em class="jxr_comment">// key references</em>
+<a class="jxr_linenumber" name="L447" href="#L447">447</a>     <strong class="jxr_keyword">for</strong> (Map.Entry&lt;String, List&lt;KeyRef&gt;&gt; entry : indexNameToKeyRefMap.entrySet()) {
+<a class="jxr_linenumber" name="L448" href="#L448">448</a>       String indexName = entry.getKey();
+<a class="jxr_linenumber" name="L449" href="#L449">449</a>       <a name="IIndex" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IIndex.html#IIndex">IIndex</a> index = indexNameToIndexMap.get(indexName);
+<a class="jxr_linenumber" name="L450" href="#L450">450</a> 
+<a class="jxr_linenumber" name="L451" href="#L451">451</a>       List&lt;KeyRef&gt; keyRefs = entry.getValue();
+<a class="jxr_linenumber" name="L452" href="#L452">452</a> 
+<a class="jxr_linenumber" name="L453" href="#L453">453</a>       <strong class="jxr_keyword">for</strong> (KeyRef keyRef : keyRefs) {
+<a class="jxr_linenumber" name="L454" href="#L454">454</a>         <a name="IIndexHasKeyConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IIndexHasKeyConstraint.html#IIndexHasKeyConstraint">IIndexHasKeyConstraint</a> constraint = keyRef.getConstraint();
+<a class="jxr_linenumber" name="L455" href="#L455">455</a>         <strong class="jxr_keyword">for</strong> (<a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> item : keyRef.getTargets()) {
+<a class="jxr_linenumber" name="L456" href="#L456">456</a>           assert item != <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L457" href="#L457">457</a> 
+<a class="jxr_linenumber" name="L458" href="#L458">458</a>           <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L459" href="#L459">459</a>             <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> referencedItem = index.get(item, constraint.getKeyFields(), getMetapathContext());
+<a class="jxr_linenumber" name="L460" href="#L460">460</a> 
+<a class="jxr_linenumber" name="L461" href="#L461">461</a>             <strong class="jxr_keyword">if</strong> (referencedItem == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L462" href="#L462">462</a>               getConstraintValidationHandler().handleIndexMiss(constraint, keyRef.getNode(), item);
+<a class="jxr_linenumber" name="L463" href="#L463">463</a>             }
+<a class="jxr_linenumber" name="L464" href="#L464">464</a>           } <strong class="jxr_keyword">catch</strong> (<a name="MetapathException" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathException.html#MetapathException">MetapathException</a> ex) {
+<a class="jxr_linenumber" name="L465" href="#L465">465</a>             getConstraintValidationHandler().handleKeyMatchError(constraint, keyRef.getNode(), item, ex);
+<a class="jxr_linenumber" name="L466" href="#L466">466</a>           }
+<a class="jxr_linenumber" name="L467" href="#L467">467</a>         }
+<a class="jxr_linenumber" name="L468" href="#L468">468</a>       }
+<a class="jxr_linenumber" name="L469" href="#L469">469</a>     }
+<a class="jxr_linenumber" name="L470" href="#L470">470</a>   }
+<a class="jxr_linenumber" name="L471" href="#L471">471</a> 
+<a class="jxr_linenumber" name="L472" href="#L472">472</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">class</strong> ValueStatus {
+<a class="jxr_linenumber" name="L473" href="#L473">473</a>     @NonNull
+<a class="jxr_linenumber" name="L474" href="#L474">474</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> List&lt;IAllowedValuesConstraint&gt; constraints = <strong class="jxr_keyword">new</strong> LinkedList&lt;&gt;();
+<a class="jxr_linenumber" name="L475" href="#L475">475</a>     @NonNull
+<a class="jxr_linenumber" name="L476" href="#L476">476</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String value;
+<a class="jxr_linenumber" name="L477" href="#L477">477</a>     @NonNull
+<a class="jxr_linenumber" name="L478" href="#L478">478</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> item;
+<a class="jxr_linenumber" name="L479" href="#L479">479</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> allowOthers = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L480" href="#L480">480</a>     @NonNull
+<a class="jxr_linenumber" name="L481" href="#L481">481</a>     <strong class="jxr_keyword">private</strong> IAllowedValuesConstraint.Extensible extensible = IAllowedValuesConstraint.Extensible.EXTERNAL;
+<a class="jxr_linenumber" name="L482" href="#L482">482</a> 
+<a class="jxr_linenumber" name="L483" href="#L483">483</a>     <strong class="jxr_keyword">public</strong> ValueStatus(@NonNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> item) {
+<a class="jxr_linenumber" name="L484" href="#L484">484</a>       <strong class="jxr_keyword">this</strong>.item = item;
+<a class="jxr_linenumber" name="L485" href="#L485">485</a>       <strong class="jxr_keyword">this</strong>.value = FnData.fnDataItem(item).asString();
+<a class="jxr_linenumber" name="L486" href="#L486">486</a>     }
+<a class="jxr_linenumber" name="L487" href="#L487">487</a> 
+<a class="jxr_linenumber" name="L488" href="#L488">488</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> registerAllowedValue(@NonNull <a name="IAllowedValuesConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IAllowedValuesConstraint.html#IAllowedValuesConstraint">IAllowedValuesConstraint</a> allowedValues) {
+<a class="jxr_linenumber" name="L489" href="#L489">489</a>       <strong class="jxr_keyword">this</strong>.constraints.add(allowedValues);
+<a class="jxr_linenumber" name="L490" href="#L490">490</a>       <strong class="jxr_keyword">if</strong> (!allowedValues.isAllowedOther()) {
+<a class="jxr_linenumber" name="L491" href="#L491">491</a>         <em class="jxr_comment">// record the most restrictive value</em>
+<a class="jxr_linenumber" name="L492" href="#L492">492</a>         allowOthers = false;
+<a class="jxr_linenumber" name="L493" href="#L493">493</a>       }
+<a class="jxr_linenumber" name="L494" href="#L494">494</a> 
+<a class="jxr_linenumber" name="L495" href="#L495">495</a>       IAllowedValuesConstraint.Extensible newExtensible = allowedValues.getExtensible();
+<a class="jxr_linenumber" name="L496" href="#L496">496</a>       <strong class="jxr_keyword">if</strong> (newExtensible.ordinal() &gt; extensible.ordinal()) {
+<a class="jxr_linenumber" name="L497" href="#L497">497</a>         <em class="jxr_comment">// record the most restrictive value</em>
+<a class="jxr_linenumber" name="L498" href="#L498">498</a>         extensible = allowedValues.getExtensible();
+<a class="jxr_linenumber" name="L499" href="#L499">499</a>       } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (IAllowedValuesConstraint.Extensible.NONE.equals(newExtensible)
+<a class="jxr_linenumber" name="L500" href="#L500">500</a>           &amp;&amp; IAllowedValuesConstraint.Extensible.NONE.equals(extensible)) {
+<a class="jxr_linenumber" name="L501" href="#L501">501</a>         <em class="jxr_comment">// this is an error, where there are two none constraints that conflict</em>
+<a class="jxr_linenumber" name="L502" href="#L502">502</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="MetapathException" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathException.html#MetapathException">MetapathException</a>(
+<a class="jxr_linenumber" name="L503" href="#L503">503</a>             String.format(<span class="jxr_string">"Multiple constraints have extensibility scope=none at path '%s'"</span>, item.getMetapath()));
+<a class="jxr_linenumber" name="L504" href="#L504">504</a>       } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (allowedValues.getExtensible().ordinal() &lt; extensible.ordinal()) {
+<a class="jxr_linenumber" name="L505" href="#L505">505</a>         String msg = String.format(
+<a class="jxr_linenumber" name="L506" href="#L506">506</a>             <span class="jxr_string">"An allowed values constraint with an extensibility scope '%s'"</span>
+<a class="jxr_linenumber" name="L507" href="#L507">507</a>                 + <span class="jxr_string">" exceeds the allowed scope '%s' at path '%s'"</span>,
+<a class="jxr_linenumber" name="L508" href="#L508">508</a>             allowedValues.getExtensible().name(), extensible.name(), item.getMetapath());
+<a class="jxr_linenumber" name="L509" href="#L509">509</a>         LOGGER.atError().log(msg);
+<a class="jxr_linenumber" name="L510" href="#L510">510</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="MetapathException" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathException.html#MetapathException">MetapathException</a>(msg);
+<a class="jxr_linenumber" name="L511" href="#L511">511</a>       }
+<a class="jxr_linenumber" name="L512" href="#L512">512</a>     }
+<a class="jxr_linenumber" name="L513" href="#L513">513</a> 
+<a class="jxr_linenumber" name="L514" href="#L514">514</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> validate() {
+<a class="jxr_linenumber" name="L515" href="#L515">515</a>       <strong class="jxr_keyword">if</strong> (!constraints.isEmpty()) {
+<a class="jxr_linenumber" name="L516" href="#L516">516</a>         <strong class="jxr_keyword">boolean</strong> match = false;
+<a class="jxr_linenumber" name="L517" href="#L517">517</a>         List&lt;IAllowedValuesConstraint&gt; failedConstraints = <strong class="jxr_keyword">new</strong> LinkedList&lt;&gt;();
+<a class="jxr_linenumber" name="L518" href="#L518">518</a>         <strong class="jxr_keyword">for</strong> (<a name="IAllowedValuesConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IAllowedValuesConstraint.html#IAllowedValuesConstraint">IAllowedValuesConstraint</a> allowedValues : constraints) {
+<a class="jxr_linenumber" name="L519" href="#L519">519</a>           <a name="IAllowedValue" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IAllowedValue.html#IAllowedValue">IAllowedValue</a> matchingValue = allowedValues.getAllowedValue(value);
+<a class="jxr_linenumber" name="L520" href="#L520">520</a>           <strong class="jxr_keyword">if</strong> (matchingValue != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L521" href="#L521">521</a>             match = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L522" href="#L522">522</a>           } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (IAllowedValuesConstraint.Extensible.NONE.equals(allowedValues.getExtensible())) {
+<a class="jxr_linenumber" name="L523" href="#L523">523</a>             <em class="jxr_comment">// hard failure, since no other values can satisfy this constraint</em>
+<a class="jxr_linenumber" name="L524" href="#L524">524</a>             failedConstraints = CollectionUtil.singletonList(allowedValues);
+<a class="jxr_linenumber" name="L525" href="#L525">525</a>             match = false;
+<a class="jxr_linenumber" name="L526" href="#L526">526</a>             <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L527" href="#L527">527</a>           } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L528" href="#L528">528</a>             failedConstraints.add(allowedValues);
+<a class="jxr_linenumber" name="L529" href="#L529">529</a>           } <em class="jxr_comment">// this constraint passes, but we need to make sure other constraints do as well</em>
+<a class="jxr_linenumber" name="L530" href="#L530">530</a>         }
+<a class="jxr_linenumber" name="L531" href="#L531">531</a> 
+<a class="jxr_linenumber" name="L532" href="#L532">532</a>         <em class="jxr_comment">// it's not a failure if allow others is true</em>
+<a class="jxr_linenumber" name="L533" href="#L533">533</a>         <strong class="jxr_keyword">if</strong> (!match &amp;&amp; !allowOthers) {
+<a class="jxr_linenumber" name="L534" href="#L534">534</a>           getConstraintValidationHandler().handleAllowedValuesViolation(failedConstraints, item);
+<a class="jxr_linenumber" name="L535" href="#L535">535</a>         }
+<a class="jxr_linenumber" name="L536" href="#L536">536</a>       }
+<a class="jxr_linenumber" name="L537" href="#L537">537</a>     }
+<a class="jxr_linenumber" name="L538" href="#L538">538</a>   }
+<a class="jxr_linenumber" name="L539" href="#L539">539</a> 
+<a class="jxr_linenumber" name="L540" href="#L540">540</a>   <strong class="jxr_keyword">class</strong> Visitor
+<a class="jxr_linenumber" name="L541" href="#L541">541</a>       <strong class="jxr_keyword">extends</strong> AbstractNodeItemVisitor&lt;Void, Void&gt; {
+<a class="jxr_linenumber" name="L542" href="#L542">542</a>     @Override
+<a class="jxr_linenumber" name="L543" href="#L543">543</a>     <strong class="jxr_keyword">public</strong> Void visitDocument(@NonNull <a name="IDocumentNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IDocumentNodeItem.html#IDocumentNodeItem">IDocumentNodeItem</a> item, Void context) {
+<a class="jxr_linenumber" name="L544" href="#L544">544</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">super</strong>.visitDocument(item, context);
+<a class="jxr_linenumber" name="L545" href="#L545">545</a>     }
+<a class="jxr_linenumber" name="L546" href="#L546">546</a> 
+<a class="jxr_linenumber" name="L547" href="#L547">547</a>     @Override
+<a class="jxr_linenumber" name="L548" href="#L548">548</a>     <strong class="jxr_keyword">public</strong> Void visitFlag(@NonNull <a name="IFlagNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IFlagNodeItem.html#IFlagNodeItem">IFlagNodeItem</a> item, Void context) {
+<a class="jxr_linenumber" name="L549" href="#L549">549</a>       validateFlag(item);
+<a class="jxr_linenumber" name="L550" href="#L550">550</a>       <strong class="jxr_keyword">super</strong>.visitFlag(item, context);
+<a class="jxr_linenumber" name="L551" href="#L551">551</a>       handleAllowedValues(item);
+<a class="jxr_linenumber" name="L552" href="#L552">552</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L553" href="#L553">553</a>     }
+<a class="jxr_linenumber" name="L554" href="#L554">554</a> 
+<a class="jxr_linenumber" name="L555" href="#L555">555</a>     @Override
+<a class="jxr_linenumber" name="L556" href="#L556">556</a>     <strong class="jxr_keyword">public</strong> Void visitField(@NonNull <a name="IFieldNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IFieldNodeItem.html#IFieldNodeItem">IFieldNodeItem</a> item, Void context) {
+<a class="jxr_linenumber" name="L557" href="#L557">557</a>       validateField(item);
+<a class="jxr_linenumber" name="L558" href="#L558">558</a>       <strong class="jxr_keyword">super</strong>.visitField(item, context);
+<a class="jxr_linenumber" name="L559" href="#L559">559</a>       handleAllowedValues(item);
+<a class="jxr_linenumber" name="L560" href="#L560">560</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L561" href="#L561">561</a>     }
+<a class="jxr_linenumber" name="L562" href="#L562">562</a> 
+<a class="jxr_linenumber" name="L563" href="#L563">563</a>     @Override
+<a class="jxr_linenumber" name="L564" href="#L564">564</a>     <strong class="jxr_keyword">public</strong> Void visitAssembly(@NonNull <a name="IAssemblyNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAssemblyNodeItem.html#IAssemblyNodeItem">IAssemblyNodeItem</a> item, Void context) {
+<a class="jxr_linenumber" name="L565" href="#L565">565</a>       validateAssembly(item);
+<a class="jxr_linenumber" name="L566" href="#L566">566</a>       <strong class="jxr_keyword">super</strong>.visitAssembly(item, context);
+<a class="jxr_linenumber" name="L567" href="#L567">567</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L568" href="#L568">568</a>     }
+<a class="jxr_linenumber" name="L569" href="#L569">569</a> 
+<a class="jxr_linenumber" name="L570" href="#L570">570</a>     @Override
+<a class="jxr_linenumber" name="L571" href="#L571">571</a>     <strong class="jxr_keyword">public</strong> Void visitMetaschema(@NonNull <a name="IMetaschemaNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IMetaschemaNodeItem.html#IMetaschemaNodeItem">IMetaschemaNodeItem</a> item, Void context) {
+<a class="jxr_linenumber" name="L572" href="#L572">572</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException(<span class="jxr_string">"not needed"</span>);
+<a class="jxr_linenumber" name="L573" href="#L573">573</a>     }
+<a class="jxr_linenumber" name="L574" href="#L574">574</a> 
+<a class="jxr_linenumber" name="L575" href="#L575">575</a>     @Override
+<a class="jxr_linenumber" name="L576" href="#L576">576</a>     <strong class="jxr_keyword">protected</strong> Void defaultResult() {
+<a class="jxr_linenumber" name="L577" href="#L577">577</a>       <em class="jxr_comment">// no result value</em>
+<a class="jxr_linenumber" name="L578" href="#L578">578</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L579" href="#L579">579</a>     }
+<a class="jxr_linenumber" name="L580" href="#L580">580</a>   }
+<a class="jxr_linenumber" name="L581" href="#L581">581</a> 
+<a class="jxr_linenumber" name="L582" href="#L582">582</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> KeyRef {
+<a class="jxr_linenumber" name="L583" href="#L583">583</a>     @NonNull
+<a class="jxr_linenumber" name="L584" href="#L584">584</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="IIndexHasKeyConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IIndexHasKeyConstraint.html#IIndexHasKeyConstraint">IIndexHasKeyConstraint</a> constraint;
+<a class="jxr_linenumber" name="L585" href="#L585">585</a>     @NonNull
+<a class="jxr_linenumber" name="L586" href="#L586">586</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node;
+<a class="jxr_linenumber" name="L587" href="#L587">587</a>     @NonNull
+<a class="jxr_linenumber" name="L588" href="#L588">588</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> List&lt;INodeItem&gt; targets;
+<a class="jxr_linenumber" name="L589" href="#L589">589</a> 
+<a class="jxr_linenumber" name="L590" href="#L590">590</a>     <strong class="jxr_keyword">public</strong> KeyRef(
+<a class="jxr_linenumber" name="L591" href="#L591">591</a>         @NonNull <a name="IIndexHasKeyConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IIndexHasKeyConstraint.html#IIndexHasKeyConstraint">IIndexHasKeyConstraint</a> constraint,
+<a class="jxr_linenumber" name="L592" href="#L592">592</a>         @NonNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node,
+<a class="jxr_linenumber" name="L593" href="#L593">593</a>         @NonNull List&lt;INodeItem&gt; targets) {
+<a class="jxr_linenumber" name="L594" href="#L594">594</a>       <strong class="jxr_keyword">this</strong>.node = node;
+<a class="jxr_linenumber" name="L595" href="#L595">595</a>       <strong class="jxr_keyword">this</strong>.constraint = constraint;
+<a class="jxr_linenumber" name="L596" href="#L596">596</a>       <strong class="jxr_keyword">this</strong>.targets = targets;
+<a class="jxr_linenumber" name="L597" href="#L597">597</a>     }
+<a class="jxr_linenumber" name="L598" href="#L598">598</a> 
+<a class="jxr_linenumber" name="L599" href="#L599">599</a>     @NonNull
+<a class="jxr_linenumber" name="L600" href="#L600">600</a>     <strong class="jxr_keyword">public</strong> <a name="IIndexHasKeyConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IIndexHasKeyConstraint.html#IIndexHasKeyConstraint">IIndexHasKeyConstraint</a> getConstraint() {
+<a class="jxr_linenumber" name="L601" href="#L601">601</a>       <strong class="jxr_keyword">return</strong> constraint;
+<a class="jxr_linenumber" name="L602" href="#L602">602</a>     }
+<a class="jxr_linenumber" name="L603" href="#L603">603</a> 
+<a class="jxr_linenumber" name="L604" href="#L604">604</a>     @NonNull
+<a class="jxr_linenumber" name="L605" href="#L605">605</a>     <strong class="jxr_keyword">protected</strong> <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> getNode() {
+<a class="jxr_linenumber" name="L606" href="#L606">606</a>       <strong class="jxr_keyword">return</strong> node;
+<a class="jxr_linenumber" name="L607" href="#L607">607</a>     }
+<a class="jxr_linenumber" name="L608" href="#L608">608</a> 
+<a class="jxr_linenumber" name="L609" href="#L609">609</a>     @NonNull
+<a class="jxr_linenumber" name="L610" href="#L610">610</a>     <strong class="jxr_keyword">public</strong> List&lt;INodeItem&gt; getTargets() {
+<a class="jxr_linenumber" name="L611" href="#L611">611</a>       <strong class="jxr_keyword">return</strong> targets;
+<a class="jxr_linenumber" name="L612" href="#L612">612</a>     }
+<a class="jxr_linenumber" name="L613" href="#L613">613</a>   }
+<a class="jxr_linenumber" name="L614" href="#L614">614</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

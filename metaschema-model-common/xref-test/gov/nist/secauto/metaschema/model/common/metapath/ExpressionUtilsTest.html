@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>ExpressionUtilsTest xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../../../stylesheet.css" />
@@ -83,50 +83,47 @@
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          will(returnValue(IFlagNodeItem.<strong class="jxr_keyword">class</strong>));
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>        }
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>      });
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>      @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>      Class&lt;? <strong class="jxr_keyword">extends</strong> INodeItem&gt; result
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>          = ExpressionUtils.analyzeStaticResultType(baseType, List.of(basicFlagExpr1, basicFlagExpr2));
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>      assertEquals(IFlagNodeItem.<strong class="jxr_keyword">class</strong>, result);
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>    }
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>  
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>    @Test
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>    <strong class="jxr_keyword">void</strong> testFlagAndAssembly() {
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>      Class&lt;INodeItem&gt; baseType = INodeItem.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>  
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>      context.checking(<strong class="jxr_keyword">new</strong> Expectations() {
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>        { <em class="jxr_comment">// NOPMD - intentional</em>
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>          allowing(basicFlagExpr1).getStaticResultType();
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>          will(returnValue(IFlagNodeItem.<strong class="jxr_keyword">class</strong>));
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>          allowing(basicAssemblyExpr).getStaticResultType();
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>          will(returnValue(IAssemblyNodeItem.<strong class="jxr_keyword">class</strong>));
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>        }
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>      });
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>      @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>      Class&lt;? <strong class="jxr_keyword">extends</strong> INodeItem&gt; result
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>          = ExpressionUtils.analyzeStaticResultType(baseType, List.of(basicFlagExpr1, basicAssemblyExpr));
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>      assertEquals(IDefinitionNodeItem.<strong class="jxr_keyword">class</strong>, result);
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>   }
-<a class="jxr_linenumber" name="L101" href="#L101">101</a> 
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>   @Test
-<a class="jxr_linenumber" name="L103" href="#L103">103</a>   <strong class="jxr_keyword">void</strong> testFieldAndAssembly() {
-<a class="jxr_linenumber" name="L104" href="#L104">104</a>     Class&lt;INodeItem&gt; baseType = INodeItem.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L105" href="#L105">105</a> 
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>     context.checking(<strong class="jxr_keyword">new</strong> Expectations() {
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>       { <em class="jxr_comment">// NOPMD - intentional</em>
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>         allowing(basicFieldExpr).getStaticResultType();
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>         will(returnValue(IFieldNodeItem.<strong class="jxr_keyword">class</strong>));
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>         allowing(basicAssemblyExpr).getStaticResultType();
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>         will(returnValue(IAssemblyNodeItem.<strong class="jxr_keyword">class</strong>));
-<a class="jxr_linenumber" name="L112" href="#L112">112</a>       }
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>     });
-<a class="jxr_linenumber" name="L114" href="#L114">114</a>     @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>     Class&lt;? <strong class="jxr_keyword">extends</strong> INodeItem&gt; result
-<a class="jxr_linenumber" name="L116" href="#L116">116</a>         = ExpressionUtils.analyzeStaticResultType(baseType, List.of(basicFieldExpr, basicAssemblyExpr));
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>     assertEquals(IModelNodeItem.<strong class="jxr_keyword">class</strong>, result);
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>   }
-<a class="jxr_linenumber" name="L119" href="#L119">119</a> }
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>      @SuppressWarnings(<span class="jxr_string">"null"</span>) Class&lt;? <strong class="jxr_keyword">extends</strong> INodeItem&gt; result
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>          = ExpressionUtils.analyzeStaticResultType(baseType, List.of(basicFlagExpr1, basicFlagExpr2));
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>      assertEquals(IFlagNodeItem.<strong class="jxr_keyword">class</strong>, result);
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>    }
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>    @Test
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>    <strong class="jxr_keyword">void</strong> testFlagAndAssembly() {
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>      Class&lt;INodeItem&gt; baseType = INodeItem.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>  
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>      context.checking(<strong class="jxr_keyword">new</strong> Expectations() {
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>        { <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>          allowing(basicFlagExpr1).getStaticResultType();
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>          will(returnValue(IFlagNodeItem.<strong class="jxr_keyword">class</strong>));
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>          allowing(basicAssemblyExpr).getStaticResultType();
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>          will(returnValue(IAssemblyNodeItem.<strong class="jxr_keyword">class</strong>));
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>        }
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>      });
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>      @SuppressWarnings(<span class="jxr_string">"null"</span>) Class&lt;? <strong class="jxr_keyword">extends</strong> INodeItem&gt; result
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>          = ExpressionUtils.analyzeStaticResultType(baseType, List.of(basicFlagExpr1, basicAssemblyExpr));
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>      assertEquals(IDefinitionNodeItem.<strong class="jxr_keyword">class</strong>, result);
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>    }
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>  
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>   @Test
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>   <strong class="jxr_keyword">void</strong> testFieldAndAssembly() {
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>     Class&lt;INodeItem&gt; baseType = INodeItem.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L103" href="#L103">103</a> 
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>     context.checking(<strong class="jxr_keyword">new</strong> Expectations() {
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>       { <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>         allowing(basicFieldExpr).getStaticResultType();
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>         will(returnValue(IFieldNodeItem.<strong class="jxr_keyword">class</strong>));
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>         allowing(basicAssemblyExpr).getStaticResultType();
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>         will(returnValue(IAssemblyNodeItem.<strong class="jxr_keyword">class</strong>));
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>       }
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>     });
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>     @SuppressWarnings(<span class="jxr_string">"null"</span>) Class&lt;? <strong class="jxr_keyword">extends</strong> INodeItem&gt; result
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>         = ExpressionUtils.analyzeStaticResultType(baseType, List.of(basicFieldExpr, basicAssemblyExpr));
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>     assertEquals(IModelNodeItem.<strong class="jxr_keyword">class</strong>, result);
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>   }
+<a class="jxr_linenumber" name="L116" href="#L116">116</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

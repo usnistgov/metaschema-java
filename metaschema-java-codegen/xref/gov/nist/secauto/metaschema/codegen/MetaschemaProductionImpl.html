@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>MetaschemaProductionImpl xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
@@ -36,8 +36,8 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFieldDefinition;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IMetaschema;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IModelDefinition;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFlagContainer;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IMetaschema;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
@@ -58,7 +58,7 @@
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>    @NonNull
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="IGeneratedClass" href="../../../../../gov/nist/secauto/metaschema/codegen/IGeneratedClass.html#IGeneratedClass">IGeneratedClass</a> generatedMetaschema;
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>    @NonNull
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;IModelDefinition, IDefinitionProduction&gt; definitionProductions;
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;IFlagContainer, IDefinitionProduction&gt; definitionProductions;
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>    @NonNull
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String packageName;
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  
@@ -88,8 +88,8 @@
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>              })
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>              .flatMap(ObjectUtils::filterNull)
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>              .map(typeInfo -&gt; {
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>                IModelDefinition definition = typeInfo.getDefinition();
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>                <a name="DefaultGeneratedDefinitionClass" href="../../../../../gov/nist/secauto/metaschema/codegen/DefaultGeneratedDefinitionClass.html#DefaultGeneratedDefinitionClass">DefaultGeneratedDefinitionClass</a> generatedClass;
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>                IFlagContainer definition = typeInfo.getDefinition();
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>                <a name="IGeneratedDefinitionClass" href="../../../../../gov/nist/secauto/metaschema/codegen/IGeneratedDefinitionClass.html#IGeneratedDefinitionClass">IGeneratedDefinitionClass</a> generatedClass;
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>                <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>                  generatedClass = typeInfo.generateClass(targetDirectory);
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>                } <strong class="jxr_keyword">catch</strong> (RuntimeException ex) { <em class="jxr_comment">// NOPMD - intended</em>
@@ -113,52 +113,51 @@
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>             });
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> 
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>     @NonNull
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>     @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>     Map&lt;IModelDefinition, IDefinitionProduction&gt; retval = productions.collect(
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>         Collectors.toUnmodifiableMap(DefinitionProductionImpl::getDefinition, Function.identity()));
-<a class="jxr_linenumber" name="L111" href="#L111">111</a> 
-<a class="jxr_linenumber" name="L112" href="#L112">112</a>     <strong class="jxr_keyword">this</strong>.definitionProductions = retval;
-<a class="jxr_linenumber" name="L113" href="#L113">113</a> 
-<a class="jxr_linenumber" name="L114" href="#L114">114</a>     <strong class="jxr_keyword">this</strong>.packageName = typeResolver.getPackageName(metaschema);
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>   }
-<a class="jxr_linenumber" name="L116" href="#L116">116</a> 
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>   @Override
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>   <strong class="jxr_keyword">public</strong> IMetaschema getMetaschema() {
-<a class="jxr_linenumber" name="L119" href="#L119">119</a>     <strong class="jxr_keyword">return</strong> metaschema;
-<a class="jxr_linenumber" name="L120" href="#L120">120</a>   }
-<a class="jxr_linenumber" name="L121" href="#L121">121</a> 
-<a class="jxr_linenumber" name="L122" href="#L122">122</a>   @Override
-<a class="jxr_linenumber" name="L123" href="#L123">123</a>   <strong class="jxr_keyword">public</strong> <a name="IGeneratedClass" href="../../../../../gov/nist/secauto/metaschema/codegen/IGeneratedClass.html#IGeneratedClass">IGeneratedClass</a> getGeneratedMetaschema() {
-<a class="jxr_linenumber" name="L124" href="#L124">124</a>     <strong class="jxr_keyword">return</strong> generatedMetaschema;
-<a class="jxr_linenumber" name="L125" href="#L125">125</a>   }
-<a class="jxr_linenumber" name="L126" href="#L126">126</a> 
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>   @Override
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>   @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L129" href="#L129">129</a>   <strong class="jxr_keyword">public</strong> Collection&lt;? <strong class="jxr_keyword">extends</strong> IModelDefinition&gt; getGlobalDefinitions() {
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>     <strong class="jxr_keyword">return</strong> definitionProductions.keySet();
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>   }
-<a class="jxr_linenumber" name="L132" href="#L132">132</a> 
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>   @Override
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>   @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>   <strong class="jxr_keyword">public</strong> Collection&lt;IDefinitionProduction&gt; getDefinitionProductions() {
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>     <strong class="jxr_keyword">return</strong> definitionProductions.values();
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>   }
-<a class="jxr_linenumber" name="L138" href="#L138">138</a> 
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>   @Override
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>   <strong class="jxr_keyword">public</strong> String getPackageName() {
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>     <strong class="jxr_keyword">return</strong> packageName;
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>   }
-<a class="jxr_linenumber" name="L143" href="#L143">143</a> 
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>   @Override
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>   <strong class="jxr_keyword">public</strong> Stream&lt;IGeneratedClass&gt; getGeneratedClasses() {
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>     <strong class="jxr_keyword">return</strong> ObjectUtils.notNull(Stream.concat(
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>         Stream.of(getGeneratedMetaschema()),
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>         getDefinitionProductions().stream()
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>             .map(definition -&gt; definition.getGeneratedClass())));
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>   }
-<a class="jxr_linenumber" name="L151" href="#L151">151</a> }
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>     @SuppressWarnings(<span class="jxr_string">"null"</span>) Map&lt;IFlagContainer, IDefinitionProduction&gt; retval = productions.collect(
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>         Collectors.toUnmodifiableMap(DefinitionProductionImpl::getDefinition, Function.identity()));
+<a class="jxr_linenumber" name="L110" href="#L110">110</a> 
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>     <strong class="jxr_keyword">this</strong>.definitionProductions = retval;
+<a class="jxr_linenumber" name="L112" href="#L112">112</a> 
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>     <strong class="jxr_keyword">this</strong>.packageName = typeResolver.getPackageName(metaschema);
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>   }
+<a class="jxr_linenumber" name="L115" href="#L115">115</a> 
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>   @Override
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>   <strong class="jxr_keyword">public</strong> IMetaschema getMetaschema() {
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>     <strong class="jxr_keyword">return</strong> metaschema;
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>   }
+<a class="jxr_linenumber" name="L120" href="#L120">120</a> 
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>   @Override
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>   <strong class="jxr_keyword">public</strong> <a name="IGeneratedClass" href="../../../../../gov/nist/secauto/metaschema/codegen/IGeneratedClass.html#IGeneratedClass">IGeneratedClass</a> getGeneratedMetaschema() {
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>     <strong class="jxr_keyword">return</strong> generatedMetaschema;
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>   }
+<a class="jxr_linenumber" name="L125" href="#L125">125</a> 
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>   @Override
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>   @SuppressWarnings(<span class="jxr_string">"null"</span>)
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>   <strong class="jxr_keyword">public</strong> Collection&lt;? <strong class="jxr_keyword">extends</strong> IFlagContainer&gt; getGlobalDefinitions() {
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>     <strong class="jxr_keyword">return</strong> definitionProductions.keySet();
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>   }
+<a class="jxr_linenumber" name="L131" href="#L131">131</a> 
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>   @Override
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>   @SuppressWarnings(<span class="jxr_string">"null"</span>)
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>   <strong class="jxr_keyword">public</strong> Collection&lt;IDefinitionProduction&gt; getDefinitionProductions() {
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>     <strong class="jxr_keyword">return</strong> definitionProductions.values();
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>   }
+<a class="jxr_linenumber" name="L137" href="#L137">137</a> 
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>   @Override
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>   <strong class="jxr_keyword">public</strong> String getPackageName() {
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>     <strong class="jxr_keyword">return</strong> packageName;
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>   }
+<a class="jxr_linenumber" name="L142" href="#L142">142</a> 
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>   @Override
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>   <strong class="jxr_keyword">public</strong> Stream&lt;IGeneratedClass&gt; getGeneratedClasses() {
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>     <strong class="jxr_keyword">return</strong> ObjectUtils.notNull(Stream.concat(
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>         Stream.of(getGeneratedMetaschema()),
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>         getDefinitionProductions().stream()
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>             .map(definition -&gt; definition.getGeneratedClass())));
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>   }
+<a class="jxr_linenumber" name="L150" href="#L150">150</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

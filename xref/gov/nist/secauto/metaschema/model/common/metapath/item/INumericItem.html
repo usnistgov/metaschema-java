@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>INumericItem xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../../../../stylesheet.css" />
@@ -73,7 +73,7 @@
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">   * Get the absolute value of the item.</em>
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">   * @return this item negated if this item is negative, or the item otherwise</em>
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>    @NonNull
@@ -81,7 +81,7 @@
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">   * Round the value to the whole number closest to positive infinity.</em>
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  <em class="jxr_javadoccomment">   * @return the rounded value</em>
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>    @NonNull
@@ -89,7 +89,7 @@
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  <em class="jxr_javadoccomment">   * Round the value to the whole number closest to negative infinity.</em>
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  <em class="jxr_javadoccomment">   * @return the rounded value</em>
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>    @NonNull
@@ -132,24 +132,23 @@
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>       BigInteger value = <strong class="jxr_keyword">this</strong>.asInteger();
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>       BigInteger divisor = BigInteger.TEN.pow(0 - precision);
 <a class="jxr_linenumber" name="L126" href="#L126">126</a> 
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>       @NonNull
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>       BigInteger result;
-<a class="jxr_linenumber" name="L129" href="#L129">129</a>       <strong class="jxr_keyword">if</strong> (divisor.compareTo(value.abs()) &gt; 0) {
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>         result = ObjectUtils.notNull(BigInteger.ZERO);
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>       } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>         BigInteger remainder = value.mod(divisor);
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>         BigInteger lessRemainder = value.subtract(remainder);
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>         BigInteger halfDivisor = divisor.divide(BigInteger.TWO);
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>         result = ObjectUtils.notNull(
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>             remainder.compareTo(halfDivisor) &gt;= 0 ? lessRemainder.add(divisor) : lessRemainder);
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>       }
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>       retval = IIntegerItem.valueOf(result);
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>     }
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>     <strong class="jxr_keyword">return</strong> retval;
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>   }
-<a class="jxr_linenumber" name="L142" href="#L142">142</a> }
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>       @NonNull BigInteger result;
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>       <strong class="jxr_keyword">if</strong> (divisor.compareTo(value.abs()) &gt; 0) {
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>         result = ObjectUtils.notNull(BigInteger.ZERO);
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>       } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>         BigInteger remainder = value.mod(divisor);
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>         BigInteger lessRemainder = value.subtract(remainder);
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>         BigInteger halfDivisor = divisor.divide(BigInteger.TWO);
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>         result = ObjectUtils.notNull(
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>             remainder.compareTo(halfDivisor) &gt;= 0 ? lessRemainder.add(divisor) : lessRemainder);
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>       }
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>       retval = IIntegerItem.valueOf(result);
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>     }
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>     <strong class="jxr_keyword">return</strong> retval;
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>   }
+<a class="jxr_linenumber" name="L141" href="#L141">141</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

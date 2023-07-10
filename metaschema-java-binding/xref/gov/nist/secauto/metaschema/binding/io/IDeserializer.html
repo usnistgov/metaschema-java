@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>IDeserializer xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../../stylesheet.css" />
@@ -56,14 +56,14 @@
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment"> * Implementations of this interface are able to read structured data into a bound object instance</em>
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  <em class="jxr_javadoccomment"> * of the parameterized type.</em>
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <em class="jxr_javadoccomment"> * </em>
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  <em class="jxr_javadoccomment"> * @param &lt;CLASS&gt;</em>
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment"> *          the Java type into which data can be read</em>
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> IDeserializer&lt;CLASS&gt; <strong class="jxr_keyword">extends</strong> IMutableConfiguration&lt;DeserializationFeature&gt; {
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">   * Determine if the serializer is performing validation.</em>
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">   * @return {@code true} if the serializer is performing content validation, or {@code false}</em>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">   *         otherwise</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">   */</em>
@@ -78,7 +78,7 @@
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  <em class="jxr_javadoccomment">   * Read data from the {@link InputStream} into a bound class instance.</em>
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>  <em class="jxr_javadoccomment">   * @param is</em>
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">   *          the input stream to read from</em>
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">   * @param documentUri</em>
@@ -94,7 +94,7 @@
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">   * Read data from the {@link Path} into a bound class instance.</em>
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  <em class="jxr_javadoccomment">   * @param path</em>
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  <em class="jxr_javadoccomment">   *          the file to read from</em>
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">   * @return the instance data</em>
@@ -111,7 +111,7 @@
 <a class="jxr_linenumber" name="L103" href="#L103">103</a> 
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>   <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L105" href="#L105">105</a> <em class="jxr_javadoccomment">   * Read data from the {@link File} into a bound class instance.</em>
-<a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L107" href="#L107">107</a> <em class="jxr_javadoccomment">   * @param file</em>
 <a class="jxr_linenumber" name="L108" href="#L108">108</a> <em class="jxr_javadoccomment">   *          the file to read from</em>
 <a class="jxr_linenumber" name="L109" href="#L109">109</a> <em class="jxr_javadoccomment">   * @return the instance data</em>
@@ -125,8 +125,8 @@
 <a class="jxr_linenumber" name="L117" href="#L117">117</a> 
 <a class="jxr_linenumber" name="L118" href="#L118">118</a>   <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L119" href="#L119">119</a> <em class="jxr_javadoccomment">   * Read data from the remote resource into a bound class instance.</em>
-<a class="jxr_linenumber" name="L120" href="#L120">120</a> <em class="jxr_javadoccomment">   * </em>
-<a class="jxr_linenumber" name="L121" href="#L121">121</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L120" href="#L120">120</a> <em class="jxr_javadoccomment">   *</em>
+<a class="jxr_linenumber" name="L121" href="#L121">121</a> <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L122" href="#L122">122</a> <em class="jxr_javadoccomment">   * @param url</em>
 <a class="jxr_linenumber" name="L123" href="#L123">123</a> <em class="jxr_javadoccomment">   *          the remote resource to read from</em>
 <a class="jxr_linenumber" name="L124" href="#L124">124</a> <em class="jxr_javadoccomment">   * @return the instance data</em>
@@ -145,8 +145,8 @@
 <a class="jxr_linenumber" name="L137" href="#L137">137</a> 
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>   <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L139" href="#L139">139</a> <em class="jxr_javadoccomment">   * Read data from the {@link Reader} into a bound class instance.</em>
-<a class="jxr_linenumber" name="L140" href="#L140">140</a> <em class="jxr_javadoccomment">   * </em>
-<a class="jxr_linenumber" name="L141" href="#L141">141</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L140" href="#L140">140</a> <em class="jxr_javadoccomment">   *</em>
+<a class="jxr_linenumber" name="L141" href="#L141">141</a> <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L142" href="#L142">142</a> <em class="jxr_javadoccomment">   * @param reader</em>
 <a class="jxr_linenumber" name="L143" href="#L143">143</a> <em class="jxr_javadoccomment">   *          the reader to read from</em>
 <a class="jxr_linenumber" name="L144" href="#L144">144</a> <em class="jxr_javadoccomment">   * @param documentUri</em>
@@ -164,7 +164,7 @@
 <a class="jxr_linenumber" name="L156" href="#L156">156</a> 
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>   <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L158" href="#L158">158</a> <em class="jxr_javadoccomment">   * Read data from the {@link Reader} into a node item instance.</em>
-<a class="jxr_linenumber" name="L159" href="#L159">159</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L159" href="#L159">159</a> <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L160" href="#L160">160</a> <em class="jxr_javadoccomment">   * @param is</em>
 <a class="jxr_linenumber" name="L161" href="#L161">161</a> <em class="jxr_javadoccomment">   *          the input stream to read from</em>
 <a class="jxr_linenumber" name="L162" href="#L162">162</a> <em class="jxr_javadoccomment">   * @param documentUri</em>
@@ -181,7 +181,7 @@
 <a class="jxr_linenumber" name="L173" href="#L173">173</a> 
 <a class="jxr_linenumber" name="L174" href="#L174">174</a>   <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L175" href="#L175">175</a> <em class="jxr_javadoccomment">   * Read data from the {@link Reader} into a node item instance.</em>
-<a class="jxr_linenumber" name="L176" href="#L176">176</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L176" href="#L176">176</a> <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L177" href="#L177">177</a> <em class="jxr_javadoccomment">   * @param reader</em>
 <a class="jxr_linenumber" name="L178" href="#L178">178</a> <em class="jxr_javadoccomment">   *          the reader to read from</em>
 <a class="jxr_linenumber" name="L179" href="#L179">179</a> <em class="jxr_javadoccomment">   * @param documentUri</em>
@@ -195,6 +195,6 @@
 <a class="jxr_linenumber" name="L187" href="#L187">187</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

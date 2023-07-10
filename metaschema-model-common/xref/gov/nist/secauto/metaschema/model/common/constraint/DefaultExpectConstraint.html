@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>DefaultExpectConstraint xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../../../stylesheet.css" />
@@ -67,7 +67,7 @@
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">   * Construct a new expect constraint which requires that the associated test evaluates to</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">   * {@link IBooleanItem#TRUE} against the target.</em>
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">   * @param id</em>
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment">   *          the optional identifier for the constraint</em>
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  <em class="jxr_javadoccomment">   * @param formalName</em>
@@ -90,114 +90,112 @@
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  <em class="jxr_javadoccomment">   * @param remarks</em>
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  <em class="jxr_javadoccomment">   *          optional remarks describing the intent of the constraint</em>
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>    <strong class="jxr_keyword">private</strong> <a name="DefaultExpectConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultExpectConstraint.html#DefaultExpectConstraint">DefaultExpectConstraint</a>(
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>        @Nullable String id,
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>        @Nullable String formalName,
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>        @Nullable <a name="MarkupLine" href="../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/MarkupLine.html#MarkupLine">MarkupLine</a> description,
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>        @NonNull ISource source,
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>        @NonNull Level level,
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>        @NonNull <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> target,
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>        @NonNull Map&lt;QName, Set&lt;String&gt;&gt; properties,
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>        @NonNull <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> test,
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>        @Nullable String message,
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>        <a name="MarkupMultiline" href="../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/MarkupMultiline.html#MarkupMultiline">MarkupMultiline</a> remarks) {
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>      <strong class="jxr_keyword">super</strong>(id, formalName, description, source, level, target, properties, remarks);
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>      <strong class="jxr_keyword">this</strong>.test = Objects.requireNonNull(test);
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>      <strong class="jxr_keyword">this</strong>.message = message;
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>   }
-<a class="jxr_linenumber" name="L101" href="#L101">101</a> 
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>   @Override
-<a class="jxr_linenumber" name="L103" href="#L103">103</a>   <strong class="jxr_keyword">public</strong> <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> getTest() {
-<a class="jxr_linenumber" name="L104" href="#L104">104</a>     <strong class="jxr_keyword">return</strong> test;
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>   }
-<a class="jxr_linenumber" name="L106" href="#L106">106</a> 
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>   @Override
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>   <strong class="jxr_keyword">public</strong> String getMessage() {
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>     <strong class="jxr_keyword">return</strong> message;
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>   }
-<a class="jxr_linenumber" name="L111" href="#L111">111</a> 
-<a class="jxr_linenumber" name="L112" href="#L112">112</a>   @Override
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>   <strong class="jxr_keyword">public</strong> CharSequence generateMessage(@NonNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> item, @NonNull <a name="DynamicContext" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/DynamicContext.html#DynamicContext">DynamicContext</a> context) {
-<a class="jxr_linenumber" name="L114" href="#L114">114</a>     String message = getMessage();
-<a class="jxr_linenumber" name="L115" href="#L115">115</a> 
-<a class="jxr_linenumber" name="L116" href="#L116">116</a>     <strong class="jxr_keyword">return</strong> message == <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>         : ReplacementScanner.replaceTokens(message, METAPATH_VALUE_TEMPLATE_PATTERN, match -&gt; {
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>           @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L119" href="#L119">119</a>           @NonNull
-<a class="jxr_linenumber" name="L120" href="#L120">120</a>           String metapath = match.group(2);
-<a class="jxr_linenumber" name="L121" href="#L121">121</a>           <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> expr = MetapathExpression.compile(metapath);
-<a class="jxr_linenumber" name="L122" href="#L122">122</a>           <strong class="jxr_keyword">return</strong> expr.evaluateAs(item, MetapathExpression.ResultType.STRING, context);
-<a class="jxr_linenumber" name="L123" href="#L123">123</a>         });
-<a class="jxr_linenumber" name="L124" href="#L124">124</a>   }
-<a class="jxr_linenumber" name="L125" href="#L125">125</a> 
-<a class="jxr_linenumber" name="L126" href="#L126">126</a>   @Override
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>   <strong class="jxr_keyword">public</strong> &lt;T, R&gt; R accept(IConstraintVisitor&lt;T, R&gt; visitor, T state) {
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>     <strong class="jxr_keyword">return</strong> visitor.visitExpectConstraint(<strong class="jxr_keyword">this</strong>, state);
-<a class="jxr_linenumber" name="L129" href="#L129">129</a>   }
-<a class="jxr_linenumber" name="L130" href="#L130">130</a> 
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>   @NonNull
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Builder builder() {
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> Builder();
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>   }
-<a class="jxr_linenumber" name="L135" href="#L135">135</a> 
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> Builder
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>       <strong class="jxr_keyword">extends</strong> AbstractConstraintBuilder&lt;Builder, DefaultExpectConstraint&gt; {
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>     <strong class="jxr_keyword">private</strong> <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> test;
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>     <strong class="jxr_keyword">private</strong> String message;
-<a class="jxr_linenumber" name="L140" href="#L140">140</a> 
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>     <strong class="jxr_keyword">private</strong> Builder() {
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>       <em class="jxr_comment">// disable construction</em>
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>     }
-<a class="jxr_linenumber" name="L144" href="#L144">144</a> 
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>     <strong class="jxr_keyword">public</strong> Builder test(@NonNull <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> test) {
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>       <strong class="jxr_keyword">this</strong>.test = test;
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>     }
-<a class="jxr_linenumber" name="L149" href="#L149">149</a> 
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>     <strong class="jxr_keyword">public</strong> Builder message(@NonNull String message) {
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>       <strong class="jxr_keyword">this</strong>.message = message;
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>     }
-<a class="jxr_linenumber" name="L154" href="#L154">154</a> 
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>     @Override
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>     <strong class="jxr_keyword">protected</strong> Builder getThis() {
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>     }
-<a class="jxr_linenumber" name="L159" href="#L159">159</a> 
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>     @Override
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> validate() {
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>       <strong class="jxr_keyword">super</strong>.validate();
-<a class="jxr_linenumber" name="L163" href="#L163">163</a> 
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>       ObjectUtils.requireNonNull(getTest());
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>     }
-<a class="jxr_linenumber" name="L166" href="#L166">166</a> 
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>     <strong class="jxr_keyword">protected</strong> <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> getTest() {
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>       <strong class="jxr_keyword">return</strong> test;
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>     }
-<a class="jxr_linenumber" name="L170" href="#L170">170</a> 
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>     <strong class="jxr_keyword">protected</strong> String getMessage() {
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>       <strong class="jxr_keyword">return</strong> message;
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>     }
-<a class="jxr_linenumber" name="L174" href="#L174">174</a> 
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>     @Override
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>     <strong class="jxr_keyword">protected</strong> <a name="DefaultExpectConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultExpectConstraint.html#DefaultExpectConstraint">DefaultExpectConstraint</a> newInstance() {
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="DefaultExpectConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultExpectConstraint.html#DefaultExpectConstraint">DefaultExpectConstraint</a>(
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>           getId(),
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>           getFormalName(),
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>           getDescription(),
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>           ObjectUtils.notNull(getSource()),
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>           getLevel(),
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>           getTarget(),
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>           getProperties(),
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>           ObjectUtils.requireNonNull(getTest()),
-<a class="jxr_linenumber" name="L186" href="#L186">186</a>           getMessage(),
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>           getRemarks());
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>     }
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>   }
-<a class="jxr_linenumber" name="L190" href="#L190">190</a> }
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>    <strong class="jxr_keyword">private</strong> <a name="DefaultExpectConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultExpectConstraint.html#DefaultExpectConstraint">DefaultExpectConstraint</a>(
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>        @Nullable String id,
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>        @Nullable String formalName,
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>        @Nullable <a name="MarkupLine" href="../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/MarkupLine.html#MarkupLine">MarkupLine</a> description,
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>        @NonNull ISource source,
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>        @NonNull Level level,
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>        @NonNull <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> target,
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>        @NonNull Map&lt;QName, Set&lt;String&gt;&gt; properties,
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>        @NonNull <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> test,
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>        @Nullable String message,
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>        <a name="MarkupMultiline" href="../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/MarkupMultiline.html#MarkupMultiline">MarkupMultiline</a> remarks) {
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>      <strong class="jxr_keyword">super</strong>(id, formalName, description, source, level, target, properties, remarks);
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>      <strong class="jxr_keyword">this</strong>.test = Objects.requireNonNull(test);
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>      <strong class="jxr_keyword">this</strong>.message = message;
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>    }
+<a class="jxr_linenumber" name="L100" href="#L100">100</a> 
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>   @Override
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>   <strong class="jxr_keyword">public</strong> <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> getTest() {
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>     <strong class="jxr_keyword">return</strong> test;
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>   }
+<a class="jxr_linenumber" name="L105" href="#L105">105</a> 
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>   @Override
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>   <strong class="jxr_keyword">public</strong> String getMessage() {
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>     <strong class="jxr_keyword">return</strong> message;
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>   }
+<a class="jxr_linenumber" name="L110" href="#L110">110</a> 
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>   @Override
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>   <strong class="jxr_keyword">public</strong> CharSequence generateMessage(@NonNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> item, @NonNull <a name="DynamicContext" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/DynamicContext.html#DynamicContext">DynamicContext</a> context) {
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>     String message = getMessage();
+<a class="jxr_linenumber" name="L114" href="#L114">114</a> 
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>     <strong class="jxr_keyword">return</strong> message == <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">null</strong>
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>         : ReplacementScanner.replaceTokens(message, METAPATH_VALUE_TEMPLATE_PATTERN, match -&gt; {
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>           @SuppressWarnings(<span class="jxr_string">"null"</span>)
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>           @NonNull String metapath = match.group(2);
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>           <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> expr = MetapathExpression.compile(metapath);
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>           <strong class="jxr_keyword">return</strong> expr.evaluateAs(item, MetapathExpression.ResultType.STRING, context);
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>         });
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>   }
+<a class="jxr_linenumber" name="L123" href="#L123">123</a> 
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>   @Override
+<a class="jxr_linenumber" name="L125" href="#L125">125</a>   <strong class="jxr_keyword">public</strong> &lt;T, R&gt; R accept(IConstraintVisitor&lt;T, R&gt; visitor, T state) {
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>     <strong class="jxr_keyword">return</strong> visitor.visitExpectConstraint(<strong class="jxr_keyword">this</strong>, state);
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>   }
+<a class="jxr_linenumber" name="L128" href="#L128">128</a> 
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>   @NonNull
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Builder builder() {
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> Builder();
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>   }
+<a class="jxr_linenumber" name="L133" href="#L133">133</a> 
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> Builder
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>       <strong class="jxr_keyword">extends</strong> AbstractConstraintBuilder&lt;Builder, DefaultExpectConstraint&gt; {
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>     <strong class="jxr_keyword">private</strong> <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> test;
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>     <strong class="jxr_keyword">private</strong> String message;
+<a class="jxr_linenumber" name="L138" href="#L138">138</a> 
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>     <strong class="jxr_keyword">private</strong> Builder() {
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>       <em class="jxr_comment">// disable construction</em>
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>     }
+<a class="jxr_linenumber" name="L142" href="#L142">142</a> 
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>     <strong class="jxr_keyword">public</strong> Builder test(@NonNull <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> test) {
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>       <strong class="jxr_keyword">this</strong>.test = test;
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>     }
+<a class="jxr_linenumber" name="L147" href="#L147">147</a> 
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>     <strong class="jxr_keyword">public</strong> Builder message(@NonNull String message) {
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>       <strong class="jxr_keyword">this</strong>.message = message;
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>     }
+<a class="jxr_linenumber" name="L152" href="#L152">152</a> 
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>     @Override
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>     <strong class="jxr_keyword">protected</strong> Builder getThis() {
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>     }
+<a class="jxr_linenumber" name="L157" href="#L157">157</a> 
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>     @Override
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> validate() {
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>       <strong class="jxr_keyword">super</strong>.validate();
+<a class="jxr_linenumber" name="L161" href="#L161">161</a> 
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>       ObjectUtils.requireNonNull(getTest());
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>     }
+<a class="jxr_linenumber" name="L164" href="#L164">164</a> 
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>     <strong class="jxr_keyword">protected</strong> <a name="MetapathExpression" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.html#MetapathExpression">MetapathExpression</a> getTest() {
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>       <strong class="jxr_keyword">return</strong> test;
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>     }
+<a class="jxr_linenumber" name="L168" href="#L168">168</a> 
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>     <strong class="jxr_keyword">protected</strong> String getMessage() {
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>       <strong class="jxr_keyword">return</strong> message;
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>     }
+<a class="jxr_linenumber" name="L172" href="#L172">172</a> 
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>     @Override
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>     <strong class="jxr_keyword">protected</strong> <a name="DefaultExpectConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultExpectConstraint.html#DefaultExpectConstraint">DefaultExpectConstraint</a> newInstance() {
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>       <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="DefaultExpectConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultExpectConstraint.html#DefaultExpectConstraint">DefaultExpectConstraint</a>(
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>           getId(),
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>           getFormalName(),
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>           getDescription(),
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>           ObjectUtils.notNull(getSource()),
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>           getLevel(),
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>           getTarget(),
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>           getProperties(),
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>           ObjectUtils.requireNonNull(getTest()),
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>           getMessage(),
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>           getRemarks());
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>     }
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>   }
+<a class="jxr_linenumber" name="L188" href="#L188">188</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

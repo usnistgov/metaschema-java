@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>AssemblyDefinitionTypeInfoImpl xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
@@ -41,8 +41,8 @@
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IChoiceInstance;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IModelContainer;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IModelDefinition;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFlagContainer;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IModelContainer;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IModelInstance;
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -92,7 +92,7 @@
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  <em class="jxr_javadoccomment">   * Creates a new {@link IModelInstanceTypeInfo} for the provided {@link INamedModelInstance} and</em>
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">   * registers it with this class generator.</em>
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">   * @param instance</em>
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">   *          the model instance to generate the property for</em>
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  <em class="jxr_javadoccomment">   * @return the new property generator</em>
@@ -113,8 +113,8 @@
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>   }
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> 
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>   @Override
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>   <strong class="jxr_keyword">protected</strong> Set&lt;IModelDefinition&gt; buildClass(TypeSpec.Builder builder, ClassName className) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>     Set&lt;IModelDefinition&gt; retval = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;();
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>   <strong class="jxr_keyword">protected</strong> Set&lt;IFlagContainer&gt; buildClass(TypeSpec.Builder builder, ClassName className) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>     Set&lt;IFlagContainer&gt; retval = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;();
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>     retval.addAll(<strong class="jxr_keyword">super</strong>.buildClass(builder, className));
 <a class="jxr_linenumber" name="L111" href="#L111">111</a> 
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>     AnnotationSpec.Builder metaschemaAssembly = ObjectUtils.notNull(AnnotationSpec.builder(MetaschemaAssembly.<strong class="jxr_keyword">class</strong>));
@@ -138,6 +138,6 @@
 <a class="jxr_linenumber" name="L130" href="#L130">130</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

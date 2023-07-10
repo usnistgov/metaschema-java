@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>ClassDataTypeHandler xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../../stylesheet.css" />
@@ -89,49 +89,50 @@
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>      <strong class="jxr_keyword">return</strong> false;
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>    }
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>    @Override
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>    <strong class="jxr_keyword">public</strong> List&lt;Object&gt; get(Object parentInstance, <strong class="jxr_keyword">boolean</strong> requiresJsonKey, <a name="IJsonParsingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonParsingContext.html#IJsonParsingContext">IJsonParsingContext</a> context)
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>        <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>      JsonParser parser = context.getReader(); <em class="jxr_comment">// NOPMD - intentional</em>
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>      <strong class="jxr_keyword">boolean</strong> objectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">if</strong> (objectWrapper) {
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>        JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>      }
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>  
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>      List&lt;Object&gt; retval = classBinding.readItem(parentInstance, requiresJsonKey, context);
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>  
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>      <strong class="jxr_keyword">if</strong> (objectWrapper) {
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>        JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>      }
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>      <strong class="jxr_keyword">return</strong> retval;
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>    }
-<a class="jxr_linenumber" name="L100" href="#L100">100</a> 
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>   @Override
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>   <strong class="jxr_keyword">public</strong> Object get(Object parentInstance, StartElement start, <a name="IXmlParsingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/xml/IXmlParsingContext.html#IXmlParsingContext">IXmlParsingContext</a> context)
-<a class="jxr_linenumber" name="L103" href="#L103">103</a>       <strong class="jxr_keyword">throws</strong> IOException, XMLStreamException {
-<a class="jxr_linenumber" name="L104" href="#L104">104</a>     <strong class="jxr_keyword">return</strong> classBinding.readItem(parentInstance, start, context);
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>   }
-<a class="jxr_linenumber" name="L106" href="#L106">106</a> 
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>   @Override
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> accept(Object item, QName currentParentName, <a name="IXmlWritingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/xml/IXmlWritingContext.html#IXmlWritingContext">IXmlWritingContext</a> context)
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>       <strong class="jxr_keyword">throws</strong> IOException, XMLStreamException {
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>     classBinding.writeItem(item, currentParentName, context);
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>   }
-<a class="jxr_linenumber" name="L112" href="#L112">112</a> 
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>   @Override
-<a class="jxr_linenumber" name="L114" href="#L114">114</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> writeItems(Collection&lt;? <strong class="jxr_keyword">extends</strong> Object&gt; items, <strong class="jxr_keyword">boolean</strong> writeObjectWrapper,
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>       <a name="IJsonWritingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonWritingContext.html#IJsonWritingContext">IJsonWritingContext</a> context)
-<a class="jxr_linenumber" name="L116" href="#L116">116</a>       <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>     classBinding.writeItems(items, writeObjectWrapper, context);
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>   }
-<a class="jxr_linenumber" name="L119" href="#L119">119</a> 
-<a class="jxr_linenumber" name="L120" href="#L120">120</a>   @Override
-<a class="jxr_linenumber" name="L121" href="#L121">121</a>   <strong class="jxr_keyword">public</strong> Object copyItem(@NonNull Object fromItem, Object parentInstance) <strong class="jxr_keyword">throws</strong> <a name="BindingException" href="../../../../../../gov/nist/secauto/metaschema/binding/io/BindingException.html#BindingException">BindingException</a> {
-<a class="jxr_linenumber" name="L122" href="#L122">122</a>     <strong class="jxr_keyword">return</strong> classBinding.copyBoundObject(fromItem, parentInstance);
-<a class="jxr_linenumber" name="L123" href="#L123">123</a>   }
-<a class="jxr_linenumber" name="L124" href="#L124">124</a> }
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>    @SuppressWarnings(<span class="jxr_string">"resource"</span>) <em class="jxr_comment">// not owned</em>
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>    @Override
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>    <strong class="jxr_keyword">public</strong> List&lt;Object&gt; get(Object parentInstance, <strong class="jxr_keyword">boolean</strong> requiresJsonKey, <a name="IJsonParsingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonParsingContext.html#IJsonParsingContext">IJsonParsingContext</a> context)
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>        <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>      JsonParser parser = context.getReader(); <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">boolean</strong> objectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>      <strong class="jxr_keyword">if</strong> (objectWrapper) {
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>        JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>      }
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>  
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>      List&lt;Object&gt; retval = classBinding.readItem(parentInstance, requiresJsonKey, context);
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>  
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>      <strong class="jxr_keyword">if</strong> (objectWrapper) {
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>        JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>      }
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>      <strong class="jxr_keyword">return</strong> retval;
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>   }
+<a class="jxr_linenumber" name="L101" href="#L101">101</a> 
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>   @Override
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>   <strong class="jxr_keyword">public</strong> Object get(Object parentInstance, StartElement start, <a name="IXmlParsingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/xml/IXmlParsingContext.html#IXmlParsingContext">IXmlParsingContext</a> context)
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>       <strong class="jxr_keyword">throws</strong> IOException, XMLStreamException {
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>     <strong class="jxr_keyword">return</strong> classBinding.readItem(parentInstance, start, context);
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>   }
+<a class="jxr_linenumber" name="L107" href="#L107">107</a> 
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>   @Override
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> accept(Object item, QName currentParentName, <a name="IXmlWritingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/xml/IXmlWritingContext.html#IXmlWritingContext">IXmlWritingContext</a> context)
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>       <strong class="jxr_keyword">throws</strong> IOException, XMLStreamException {
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>     classBinding.writeItem(item, currentParentName, context);
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>   }
+<a class="jxr_linenumber" name="L113" href="#L113">113</a> 
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>   @Override
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> writeItems(Collection&lt;? <strong class="jxr_keyword">extends</strong> Object&gt; items, <strong class="jxr_keyword">boolean</strong> writeObjectWrapper,
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>       <a name="IJsonWritingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonWritingContext.html#IJsonWritingContext">IJsonWritingContext</a> context)
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>       <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>     classBinding.writeItems(items, writeObjectWrapper, context);
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>   }
+<a class="jxr_linenumber" name="L120" href="#L120">120</a> 
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>   @Override
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>   <strong class="jxr_keyword">public</strong> Object copyItem(@NonNull Object fromItem, Object parentInstance) <strong class="jxr_keyword">throws</strong> <a name="BindingException" href="../../../../../../gov/nist/secauto/metaschema/binding/io/BindingException.html#BindingException">BindingException</a> {
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>     <strong class="jxr_keyword">return</strong> classBinding.copyBoundObject(fromItem, parentInstance);
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>   }
+<a class="jxr_linenumber" name="L125" href="#L125">125</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

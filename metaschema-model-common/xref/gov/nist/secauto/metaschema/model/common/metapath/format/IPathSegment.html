@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>IPathSegment xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../../../../stylesheet.css" />
@@ -48,10 +48,10 @@
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="IPathSegment" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/format/IPathSegment.html#IPathSegment">IPathSegment</a> {
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_javadoccomment">   * Get the path for this node item using the provided formatter.</em>
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment">   * @param formatter</em>
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">   *          the path formatter to use to produce the path</em>
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">   * @return the formatted path</em>
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>    @NonNull
@@ -62,7 +62,7 @@
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">   * Apply formatting for the path segment. This is a visitor pattern that will be called to format</em>
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment">   * each segment in a larger path.</em>
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">   * @param formatter</em>
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">   *          the path formatter</em>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">   * @return a textual representation of the path segment</em>
@@ -72,7 +72,7 @@
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  <em class="jxr_javadoccomment">   * Get a list of path segments, starting at the root and descending.</em>
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment">   * @return a list of path segments in descending order</em>
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
@@ -83,7 +83,7 @@
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  <em class="jxr_javadoccomment">   * Get a stream of path segments, starting at the root and descending.</em>
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">   * @return a stream of path segments in descending order</em>
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>    @NonNull
@@ -91,13 +91,13 @@
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  <em class="jxr_javadoccomment">   * Get the value associated with the path segment.</em>
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">   * @return the value or {@code} if no value is associated with this path segment</em>
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>    <a name="INodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> getNodeItem();
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

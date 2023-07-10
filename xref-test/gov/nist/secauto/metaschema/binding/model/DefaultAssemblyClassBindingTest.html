@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>DefaultAssemblyClassBindingTest xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../../stylesheet.css" />
@@ -53,7 +53,7 @@
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>    @Test
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>    <strong class="jxr_keyword">void</strong> testMinimalJsonParse() <strong class="jxr_keyword">throws</strong> JsonParseException, IOException {
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      File testContent
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>          = <strong class="jxr_keyword">new</strong> File(getClass().getClassLoader().getResource(<span class="jxr_string">"content/minimal.json"</span>).getFile());
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>          = <strong class="jxr_keyword">new</strong> File(getClass().getResource(<span class="jxr_string">"/content/minimal.json"</span>).getFile());
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">try</strong> (BufferedReader reader = Files.newBufferedReader(testContent.toPath())) {
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>        IJsonParsingContext context = newJsonParsingContext(reader);
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>        IAssemblyClassBinding classBinding = getRootAssemblyClassBinding();
@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>    @Test
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>    <strong class="jxr_keyword">void</strong> testCollapseJsonParse() <strong class="jxr_keyword">throws</strong> JsonParseException, IOException {
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      File testContent
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>          = <strong class="jxr_keyword">new</strong> File(getClass().getClassLoader().getResource(<span class="jxr_string">"content/collapse.json"</span>).getFile());
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>          = <strong class="jxr_keyword">new</strong> File(getClass().getResource(<span class="jxr_string">"/content/collapse.json"</span>).getFile());
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">try</strong> (BufferedReader reader = Files.newBufferedReader(testContent.toPath())) {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>        IJsonParsingContext context = newJsonParsingContext(reader);
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>        IAssemblyClassBinding classBinding = getRootAssemblyClassBinding();
@@ -208,6 +208,6 @@
 <a class="jxr_linenumber" name="L200" href="#L200">200</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

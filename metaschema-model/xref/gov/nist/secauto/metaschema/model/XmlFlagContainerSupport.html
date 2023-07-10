@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>XmlFlagContainerSupport xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
@@ -36,8 +36,8 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFieldDefinition;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFlagInstance;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IModelDefinition;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFlagContainer;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFlagInstance;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.xmlbeans.FlagReferenceType;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
@@ -62,7 +62,7 @@
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment">   * Generate a set of constraints from the provided XMLBeans instance.</em>
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">   * @param xmlField</em>
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">   *          the XMLBeans instance</em>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">   * @param container</em>
@@ -81,7 +81,7 @@
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">   * Generate a set of constraints from the provided XMLBeans instance.</em>
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  <em class="jxr_javadoccomment">   * @param xmlField</em>
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment">   *          the XMLBeans instance</em>
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">   * @param container</em>
@@ -100,7 +100,7 @@
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>  <em class="jxr_javadoccomment">   * Generate a set of constraints from the provided XMLBeans instance.</em>
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>  <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  <em class="jxr_javadoccomment">   * @param xmlAssembly</em>
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>  <em class="jxr_javadoccomment">   *          the XMLBeans instance</em>
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  <em class="jxr_javadoccomment">   * @param container</em>
@@ -119,7 +119,7 @@
 <a class="jxr_linenumber" name="L111" href="#L111">111</a> 
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>   <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L113" href="#L113">113</a> <em class="jxr_javadoccomment">   * Generate a set of constraints from the provided XMLBeans instance.</em>
-<a class="jxr_linenumber" name="L114" href="#L114">114</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L114" href="#L114">114</a> <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L115" href="#L115">115</a> <em class="jxr_javadoccomment">   * @param xmlAssembly</em>
 <a class="jxr_linenumber" name="L116" href="#L116">116</a> <em class="jxr_javadoccomment">   *          the XMLBeans instance</em>
 <a class="jxr_linenumber" name="L117" href="#L117">117</a> <em class="jxr_javadoccomment">   * @param container</em>
@@ -138,7 +138,7 @@
 <a class="jxr_linenumber" name="L130" href="#L130">130</a> 
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>   <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L132" href="#L132">132</a> <em class="jxr_javadoccomment">   * Get a mapping of flag effective name to flag instance.</em>
-<a class="jxr_linenumber" name="L133" href="#L133">133</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L133" href="#L133">133</a> <em class="jxr_javadoccomment">   *</em>
 <a class="jxr_linenumber" name="L134" href="#L134">134</a> <em class="jxr_javadoccomment">   * @return the mapping of flag effective name to flag instance</em>
 <a class="jxr_linenumber" name="L135" href="#L135">135</a> <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>   @NonNull
@@ -148,7 +148,7 @@
 <a class="jxr_linenumber" name="L140" href="#L140">140</a> 
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>   @NonNull
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Map&lt;String, IFlagInstance&gt; parseLocalFlags(@NonNull XmlObject xmlObject,
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>       @NonNull IModelDefinition parent) {
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>       @NonNull IFlagContainer parent) {
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>     <em class="jxr_comment">// handle flags</em>
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>     Map&lt;String, IFlagInstance&gt; flagInstances = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;&gt;(); <em class="jxr_comment">// NOPMD - intentional</em>
 <a class="jxr_linenumber" name="L146" href="#L146">146</a>     <strong class="jxr_keyword">try</strong> (XmlCursor cursor = xmlObject.newCursor()) {
@@ -169,14 +169,13 @@
 <a class="jxr_linenumber" name="L161" href="#L161">161</a>     }
 <a class="jxr_linenumber" name="L162" href="#L162">162</a> 
 <a class="jxr_linenumber" name="L163" href="#L163">163</a>     @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>     @NonNull
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>     Map&lt;String, IFlagInstance&gt; retval
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>         = flagInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagInstances);
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>     <strong class="jxr_keyword">return</strong> retval;
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>   }
-<a class="jxr_linenumber" name="L169" href="#L169">169</a> }
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>     @NonNull Map&lt;String, IFlagInstance&gt; retval
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>         = flagInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagInstances);
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>     <strong class="jxr_keyword">return</strong> retval;
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>   }
+<a class="jxr_linenumber" name="L168" href="#L168">168</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

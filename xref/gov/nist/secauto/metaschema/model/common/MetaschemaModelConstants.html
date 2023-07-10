@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>MetaschemaModelConstants xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../../stylesheet.css" />
@@ -34,23 +34,27 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.model.common;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a name="MetaschemaModelConstants" href="../../../../../../gov/nist/secauto/metaschema/model/common/MetaschemaModelConstants.html#MetaschemaModelConstants">MetaschemaModelConstants</a> {
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> DEFAULT_FLAG_REQUIRED = false;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> DEFAULT_FIELD_IN_XML_WRAPPED = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> DEFAULT_FIELD_COLLAPSIBLE = false;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>    <em class="jxr_comment">// TODO: rename to DEFAULT_MIN_OCCURS</em>
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> DEFAULT_GROUP_AS_MIN_OCCURS = 0;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>    <em class="jxr_comment">// TODO: rename to DEFAULT_MAX_OCCURS</em>
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> DEFAULT_GROUP_AS_MAX_OCCURS = 1;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a name="JsonGroupAsBehavior" href="../../../../../../gov/nist/secauto/metaschema/model/common/JsonGroupAsBehavior.html#JsonGroupAsBehavior">JsonGroupAsBehavior</a> DEFAULT_JSON_GROUP_AS_BEHAVIOR = JsonGroupAsBehavior.SINGLETON_OR_LIST;
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a name="XmlGroupAsBehavior" href="../../../../../../gov/nist/secauto/metaschema/model/common/XmlGroupAsBehavior.html#XmlGroupAsBehavior">XmlGroupAsBehavior</a> DEFAULT_XML_GROUP_AS_BEHAVIOR = XmlGroupAsBehavior.UNGROUPED;
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>    <strong class="jxr_keyword">private</strong> <a name="MetaschemaModelConstants" href="../../../../../../gov/nist/secauto/metaschema/model/common/MetaschemaModelConstants.html#MetaschemaModelConstants">MetaschemaModelConstants</a>() {
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>      <em class="jxr_comment">/* disable construction */</em>
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>    }
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  }
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a name="MetaschemaModelConstants" href="../../../../../../gov/nist/secauto/metaschema/model/common/MetaschemaModelConstants.html#MetaschemaModelConstants">MetaschemaModelConstants</a> {
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> DEFAULT_FLAG_REQUIRED = false;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> DEFAULT_FIELD_IN_XML_WRAPPED = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> DEFAULT_FIELD_COLLAPSIBLE = false;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>    <em class="jxr_comment">// TODO: rename to DEFAULT_MIN_OCCURS</em>
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> DEFAULT_GROUP_AS_MIN_OCCURS = 0;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>    <em class="jxr_comment">// TODO: rename to DEFAULT_MAX_OCCURS</em>
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> DEFAULT_GROUP_AS_MAX_OCCURS = 1;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>    @NonNull
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a name="JsonGroupAsBehavior" href="../../../../../../gov/nist/secauto/metaschema/model/common/JsonGroupAsBehavior.html#JsonGroupAsBehavior">JsonGroupAsBehavior</a> DEFAULT_JSON_GROUP_AS_BEHAVIOR = JsonGroupAsBehavior.SINGLETON_OR_LIST;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>    @NonNull
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a name="XmlGroupAsBehavior" href="../../../../../../gov/nist/secauto/metaschema/model/common/XmlGroupAsBehavior.html#XmlGroupAsBehavior">XmlGroupAsBehavior</a> DEFAULT_XML_GROUP_AS_BEHAVIOR = XmlGroupAsBehavior.UNGROUPED;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>    <strong class="jxr_keyword">private</strong> <a name="MetaschemaModelConstants" href="../../../../../../gov/nist/secauto/metaschema/model/common/MetaschemaModelConstants.html#MetaschemaModelConstants">MetaschemaModelConstants</a>() {
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>      <em class="jxr_comment">/* disable construction */</em>
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>    }
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
 </body>
 </html>

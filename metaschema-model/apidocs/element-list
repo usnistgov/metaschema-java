@@ -1,4 +1,3 @@
 gov.nist.secauto.metaschema.model
-gov.nist.secauto.metaschema.model.xmlbeans
 gov.nist.secauto.metaschema.model.xmlbeans.handler
-org.apache.xmlbeans.metadata.system.metaschema
+gov.nist.secauto.metaschema.model.xmlbeans.impl
