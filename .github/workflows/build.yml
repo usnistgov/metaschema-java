@@ -40,11 +40,11 @@ jobs:
     # Maven Build
     - name: Build and run tests (develop)
       id: maven-build-develop
-      if: ((github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'develop') || (github.event_name == 'pull_request' && github.base_ref == 'develop')
+      if: ((github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref_name == 'develop' || startsWith("release-", github.ref_name) )) || (github.event_name == 'pull_request' && (github.base_ref == 'develop' || || startsWith("release-", github.base_ref) ))
       run: |
         mvn -B -Preporting verify
     - name: Build and run tests (main)
-      if: steps.maven-build-develop.conclusion == 'skipped'
+      if: ((github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main')
       run: |
         mvn -B -Prelease -Preporting verify
     - name: Perform CodeQL Analysis
