@@ -8,7 +8,7 @@
     </parent>
     <groupId>gov.nist.secauto.metaschema</groupId>
     <artifactId>metaschema-framework</artifactId>
-    <version>0.11.0</version>
+    <version>0.11.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Metaschema Framework Parent</name>
     <description>A common build root for all NIST Java projects related to the
