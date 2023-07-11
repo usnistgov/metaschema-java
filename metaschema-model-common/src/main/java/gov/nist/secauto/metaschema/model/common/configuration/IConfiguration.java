@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.configuration;
 
-import java.util.Set;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -38,7 +38,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  *          the type of the feature set
  */
 @SuppressWarnings({ "PMD.DoNotUseThreads", "PMD.ReplaceVectorWithList" })
-public interface IConfiguration<T extends Enum<T> & IConfigurationFeature> {
+public interface IConfiguration<T extends IConfigurationFeature<?>> {
   /**
    * Determines if a specific serialization/deserialization feature is enabled.
    *
@@ -47,12 +47,14 @@ public interface IConfiguration<T extends Enum<T> & IConfigurationFeature> {
    * @return {@code true} if the feature is enabled, or {@code false} otherwise
    */
   boolean isFeatureEnabled(@NonNull T feature);
+  
+  <V> V get(@NonNull T feature);
 
   /**
-   * Get the set of enabled features.
+   * Get the mapping of feature to feature value.
    *
-   * @return the set of enabled features.
+   * @return the mapping.
    */
   @NonNull
-  Set<T> getFeatureSet();
+  Map<T, Object> getFeatureValues();
 }

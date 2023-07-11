@@ -189,8 +189,7 @@ public class GenerateSchemaCommand
     String asFormatText = cmdLine.getOptionValue(AS_OPTION);
     SchemaFormat asFormat = SchemaFormat.valueOf(asFormatText.toUpperCase(Locale.ROOT));
 
-    IMutableConfiguration<SchemaGenerationFeature> configuration
-        = new DefaultConfiguration<>(SchemaGenerationFeature.class);
+    IMutableConfiguration<SchemaGenerationFeature<?>> configuration = new DefaultConfiguration<>();
     if (cmdLine.hasOption(INLINE_TYPES_OPTION)) {
       configuration.enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
       if (SchemaFormat.JSON.equals(asFormat)) {

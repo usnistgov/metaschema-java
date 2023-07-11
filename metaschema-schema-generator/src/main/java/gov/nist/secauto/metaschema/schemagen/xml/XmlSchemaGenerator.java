@@ -133,7 +133,7 @@ public class XmlSchemaGenerator
   protected XmlGenerationState newGenerationState(
       IMetaschema metaschema,
       AutoCloser<XMLStreamWriter2, SchemaGenerationException> schemaWriter,
-      IConfiguration<SchemaGenerationFeature> configuration) {
+      IConfiguration<SchemaGenerationFeature<?>> configuration) {
     return new XmlGenerationState(metaschema, schemaWriter, configuration);
   }
 
@@ -141,7 +141,7 @@ public class XmlSchemaGenerator
   public void generateFromMetaschema(
       @NonNull IMetaschema metaschema,
       @NonNull Writer out,
-      @NonNull IConfiguration<SchemaGenerationFeature> configuration) {
+      @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration) {
     try (StringWriter stringWriter = new StringWriter()) {
       super.generateFromMetaschema(metaschema, stringWriter, configuration);
       stringWriter.flush();

@@ -86,7 +86,7 @@ public class JsonSchemaGenerator
   protected JsonGenerationState newGenerationState(
       IMetaschema metaschema,
       JsonGenerator schemaWriter,
-      IConfiguration<SchemaGenerationFeature> configuration) {
+      IConfiguration<SchemaGenerationFeature<?>> configuration) {
     return new JsonGenerationState(metaschema, schemaWriter, configuration);
   }
 

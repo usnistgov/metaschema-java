@@ -27,28 +27,41 @@
 package gov.nist.secauto.metaschema.binding.io;
 
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.configuration.IConfigurationFeature;
+import gov.nist.secauto.metaschema.model.common.configuration.AbstractConfigurationFeature;
 
-public enum DeserializationFeature implements IConfigurationFeature {
+import org.yaml.snakeyaml.Yaml;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public final class DeserializationFeature<V>
+    extends AbstractConfigurationFeature<V> {
+  public static final int YAML_CODEPOINT_LIMIT_DEFAULT =  2 * 1024 * 1024 * 1024; // 2 GB
+
   /**
    * If enabled, perform constraint validation on the deserialized bound objects.
    */
-  DESERIALIZE_VALIDATE_CONSTRAINTS(true),
+  @NonNull
+  public static final DeserializationFeature<Boolean> DESERIALIZE_VALIDATE_CONSTRAINTS
+      = new DeserializationFeature<>(Boolean.class, true);
+
   /**
    * If enabled, process the next JSON node as a field, whose name must match the
    * {@link IAssemblyDefinition#getRootJsonName()}. If not enabled, the next JSON node is expected to
    * be an object containing the data of the {@link IAssemblyDefinition}.
    */
-  DESERIALIZE_JSON_ROOT_PROPERTY(true);
+  public static final DeserializationFeature<Boolean> DESERIALIZE_JSON_ROOT_PROPERTY
+      = new DeserializationFeature<>(Boolean.class, true);
 
-  private final boolean enabledByDefault;
+  /**
+   * If enabled, perform constraint validation on the deserialized bound objects.
+   */
+  @NonNull
+  public static final DeserializationFeature<Integer> YAML_CODEPOINT_LIMIT
+      = new DeserializationFeature<>(Integer.class, YAML_CODEPOINT_LIMIT_DEFAULT);
 
-  DeserializationFeature(boolean enabled) {
-    this.enabledByDefault = enabled;
-  }
-
-  @Override
-  public boolean isEnabledByDefault() {
-    return enabledByDefault;
+  private DeserializationFeature(
+      @NonNull Class<V> valueClass,
+      @NonNull V defaultValue) {
+    super(valueClass, defaultValue);
   }
 }

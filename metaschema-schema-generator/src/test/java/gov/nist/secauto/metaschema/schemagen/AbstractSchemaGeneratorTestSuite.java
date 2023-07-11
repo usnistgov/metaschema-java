@@ -71,7 +71,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
   @NonNull
   protected static final ISchemaGenerator JSON_SCHEMA_GENERATOR = new JsonSchemaGenerator();
   @NonNull
-  protected static final IConfiguration<SchemaGenerationFeature> SCHEMA_GENERATION_CONFIG;
+  protected static final IConfiguration<SchemaGenerationFeature<?>> SCHEMA_GENERATION_CONFIG;
   @NonNull
   protected static final BiFunction<IMetaschema, Writer, Void> XML_SCHEMA_PROVIDER;
   @NonNull
@@ -87,8 +87,8 @@ public abstract class AbstractSchemaGeneratorTestSuite
       = "../metaschema-model/metaschema/test-suite/schema-generation/unit-tests.xml";
 
   static {
-    IMutableConfiguration<SchemaGenerationFeature> features = new DefaultConfiguration<>(SchemaGenerationFeature.class)
-        .disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+    IMutableConfiguration<SchemaGenerationFeature<?>> features = new DefaultConfiguration<>();
+    features.disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     SCHEMA_GENERATION_CONFIG = features;
 
     BiFunction<IMetaschema, Writer, Void> xmlProvider = (metaschema, writer) -> {

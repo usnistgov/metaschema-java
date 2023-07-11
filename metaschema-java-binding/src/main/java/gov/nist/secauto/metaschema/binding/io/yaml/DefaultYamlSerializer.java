@@ -31,7 +31,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.json.DefaultJsonSerializer;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -44,7 +43,6 @@ public class DefaultYamlSerializer<CLASS>
 
   @Override
   protected JsonFactory getJsonFactoryInstance() {
-    return ObjectUtils.notNull(YamlFactoryFactory.instance());
+    return YamlFactoryFactory.newGeneratorFactoryInstance(getConfiguration());
   }
-
 }

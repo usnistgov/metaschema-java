@@ -238,6 +238,11 @@ public abstract class AbstractMetaschemaMojo
     return skip;
   }
 
+  /**
+   * Get the name of the file that is used to detect staleness.
+   * 
+   * @return the name
+   */
   protected abstract String getStaleFileName();
 
   /**

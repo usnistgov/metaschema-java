@@ -24,24 +24,38 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath;
-
-import gov.nist.secauto.metaschema.model.common.configuration.AbstractConfigurationFeature;
+package gov.nist.secauto.metaschema.model.common.configuration;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public final class MetapathEvaluationFeature<V>
-    extends AbstractConfigurationFeature<V> {
-  /**
-   * If enabled, evaluate {@link Predicate} nodes, otherwise skip evaluating them.
-   */
+public abstract class AbstractConfigurationFeature<V> implements IConfigurationFeature<V> {
   @NonNull
-  public static final MetapathEvaluationFeature<Boolean> METAPATH_EVALUATE_PREDICATES
-      = new MetapathEvaluationFeature<>(Boolean.class, true);
+  private final Class<V> valueClass;
+  @NonNull
+  private final V defaultValue;
 
-  private MetapathEvaluationFeature(
+  /**
+   * Construct a new feature with a default value.
+   * 
+   * @param valueClass
+   *          the class of the feature's value
+   * @param defaultValue
+   *          the value's default
+   */
+  protected AbstractConfigurationFeature(
       @NonNull Class<V> valueClass,
       @NonNull V defaultValue) {
-    super(valueClass, defaultValue);
+    this.valueClass = valueClass;
+    this.defaultValue = defaultValue;
+  }
+
+  @Override
+  public V getDefault() {
+    return defaultValue;
+  }
+
+  @Override
+  public Class<V> getValueClass() {
+    return valueClass;
   }
 }

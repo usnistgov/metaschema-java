@@ -86,7 +86,7 @@ public abstract class AbstractSchemaGenerator<T extends AutoCloseable, D extends
   protected abstract S newGenerationState(
       @NonNull IMetaschema metaschema,
       @NonNull T schemaWriter,
-      @NonNull IConfiguration<SchemaGenerationFeature> configuration);
+      @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration);
 
   /**
    * Called to generate the actual schema content.
@@ -100,7 +100,7 @@ public abstract class AbstractSchemaGenerator<T extends AutoCloseable, D extends
   public void generateFromMetaschema(
       IMetaschema metaschema,
       Writer out,
-      IConfiguration<SchemaGenerationFeature> configuration) {
+      IConfiguration<SchemaGenerationFeature<?>> configuration) {
     // IInlineStrategy inlineStrategy = IInlineStrategy.newInlineStrategy(configuration);
     try {
       // avoid automatically closing streams not owned by the generator

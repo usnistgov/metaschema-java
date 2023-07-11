@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
+import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
@@ -49,7 +50,20 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * @param <CLASS>
  *          the Java type from which data can be written
  */
-public interface ISerializer<CLASS> extends IMutableConfiguration<SerializationFeature> {
+public interface ISerializer<CLASS> extends IMutableConfiguration<SerializationFeature<?>> {
+
+  @Override
+  ISerializer<CLASS> enableFeature(SerializationFeature<?> feature);
+
+  @Override
+  ISerializer<CLASS> disableFeature(SerializationFeature<?> feature);
+
+  @Override
+  ISerializer<CLASS> applyConfiguration(IConfiguration<SerializationFeature<?>> other);
+
+  @Override
+  ISerializer<CLASS> set(SerializationFeature<?> feature, Object value);
+
   /**
    * Write data from a bound class instance to the {@link OutputStream}.
    * <p>

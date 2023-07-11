@@ -82,7 +82,7 @@ public class XmlGenerationState
   public XmlGenerationState(
       @NonNull IMetaschema metaschema,
       @NonNull AutoCloser<XMLStreamWriter2, SchemaGenerationException> writer,
-      @NonNull IConfiguration<SchemaGenerationFeature> configuration) {
+      @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration) {
     super(metaschema, writer, configuration, new XmlDatatypeManager());
     this.defaultNS = ObjectUtils.notNull(metaschema.getXmlNamespace().toASCIIString());
   }

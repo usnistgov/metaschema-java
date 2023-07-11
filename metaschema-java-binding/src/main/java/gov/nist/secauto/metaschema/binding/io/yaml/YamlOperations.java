@@ -49,7 +49,9 @@ public final class YamlOperations {
   private static final Yaml YAML_PARSER;
 
   static {
-    Constructor constructor = new Constructor(new LoaderOptions());
+    LoaderOptions loaderOptions = new LoaderOptions();
+    // loaderOptions.setCodePointLimit(YamlFactoryFactory.CODEPOINT_LIMIT);
+    Constructor constructor = new Constructor(loaderOptions);
     DumperOptions dumperOptions = new DumperOptions();
     Representer representer = new Representer(dumperOptions);
     YAML_PARSER = new Yaml(constructor, representer, dumperOptions, new Resolver() {

@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.model.common.configuration;
 
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import java.util.EnumSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -40,38 +40,28 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  *          the type of managed features
  */
 @SuppressWarnings({ "PMD.ReplaceVectorWithList", "PMD.DoNotUseThreads" })
-public class DefaultConfiguration<T extends Enum<T> & IConfigurationFeature>
+public class DefaultConfiguration<T extends IConfigurationFeature<?>>
     implements IMutableConfiguration<T> {
   @NonNull
-  private Set<T> featureSet;
+  private Map<T, Object> featureValues;
 
   /**
-   * Create a new configuration based on the provided feature enumeration.
+   * Create a new configuration.
    *
-   * @param enumClass
-   *          the feature enumeration class
    */
-  @SuppressWarnings({ "null", "PMD.CloseResource" })
-  public DefaultConfiguration(@NonNull Class<T> enumClass) {
-    this.featureSet = EnumSet.noneOf(enumClass);
-
-    for (T feature : enumClass.getEnumConstants()) {
-      if (feature.isEnabledByDefault()) {
-        // enable default features
-        this.featureSet.add(feature);
-      }
-    }
+  @SuppressWarnings("PMD.CloseResource")
+  public DefaultConfiguration() {
+    this.featureValues = new HashMap<>();
   }
 
   /**
-   * Create a new configuration based on the provided feature enumeration.
+   * Create a new configuration based on the provided feature value map.
    *
-   * @param featureSet
+   * @param featureValues
    *          the set of enabled features
    */
-  @SuppressWarnings("null")
-  public DefaultConfiguration(@NonNull Set<T> featureSet) {
-    this.featureSet = EnumSet.copyOf(featureSet);
+  public DefaultConfiguration(@NonNull Map<T, Object> featureValues) {
+    this.featureValues = new HashMap<>(featureValues);
   }
 
   /**
@@ -80,37 +70,70 @@ public class DefaultConfiguration<T extends Enum<T> & IConfigurationFeature>
    * @param original
    *          the original configuration
    */
-  @SuppressWarnings("null")
   public DefaultConfiguration(@NonNull DefaultConfiguration<T> original) {
-    this.featureSet = EnumSet.copyOf(original.featureSet);
+    this(original.getFeatureValues());
   }
 
   @Override
-  public Set<T> getFeatureSet() {
-    return CollectionUtil.unmodifiableSet(featureSet);
+  public Map<T, Object> getFeatureValues() {
+    return CollectionUtil.unmodifiableMap(featureValues);
+  }
+
+  private void ensureBooleanValue(@NonNull T feature) {
+    Class<?> valueClass = feature.getValueClass();
+    if (!Boolean.class.isAssignableFrom(valueClass)) {
+      throw new UnsupportedOperationException(
+          String.format("Feature value class '%s' is boolean valued.", valueClass.getName()));
+    }
   }
 
   @Override
   public boolean isFeatureEnabled(@NonNull T feature) {
-    return featureSet.contains(feature);
+    ensureBooleanValue(feature);
+    return get(feature);
   }
 
   @Override
   public IMutableConfiguration<T> enableFeature(@NonNull T feature) {
-    this.featureSet.add(feature);
+    ensureBooleanValue(feature);
+    featureValues.put(feature, true);
     return this;
   }
 
   @Override
   public IMutableConfiguration<T> disableFeature(@NonNull T feature) {
-    this.featureSet.remove(feature);
+    ensureBooleanValue(feature);
+    featureValues.put(feature, false);
     return this;
   }
 
   @Override
-  @SuppressWarnings("null")
   public IMutableConfiguration<T> applyConfiguration(@NonNull IConfiguration<T> original) {
-    this.featureSet = EnumSet.copyOf(original.getFeatureSet());
+    this.featureValues.putAll(original.getFeatureValues());
+    return this;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public <V> V get(T feature) {
+    V value = (V)featureValues.get(feature);
+    if (value == null) {
+      value = (V)feature.getDefault();
+    }
+    return value;
+  }
+
+  @Override
+  public IMutableConfiguration<T> set(T feature, Object value) {
+    Class<?> featureValueClass = feature.getClass();
+    Class<?> valueClass = value.getClass();
+    if (!featureValueClass.isAssignableFrom(valueClass)) {
+      throw new UnsupportedOperationException(
+          String.format("Provided value of class '%s' is not assignment compatible with feature value class '%s'.",
+              valueClass.getName(),
+              featureValueClass.getName()));
+    }
+    featureValues.put(feature, value);
     return this;
   }
 }

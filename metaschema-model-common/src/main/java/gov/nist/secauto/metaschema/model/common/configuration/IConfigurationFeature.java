@@ -26,18 +26,31 @@
 
 package gov.nist.secauto.metaschema.model.common.configuration;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 /**
  * The common interface that all configuration features must implement.
  * <p>
  * This approach is inspired by the configuration implementation in the
  * <a href="https://github.com/FasterXML/jackson-databind">Jackson databind library</a>.
+ * 
+ * @param <V>
+ *          the value type of the feature
  */
-public interface IConfigurationFeature {
+public interface IConfigurationFeature<V> {
   /**
-   * Determine if the given feature is enabled in the default configuration.
+   * Get the default value of the configuration feature.
    *
-   * @return {@code true} if the feature is enabled in the default configuration, or {@code false}
-   *         otherwise
+   * @return the default value
    */
-  boolean isEnabledByDefault();
+  @NonNull
+  V getDefault();
+
+  /**
+   * Get the class of the feature's value.
+   * 
+   * @return the value's class
+   */
+  @NonNull
+  Class<V> getValueClass();
 }

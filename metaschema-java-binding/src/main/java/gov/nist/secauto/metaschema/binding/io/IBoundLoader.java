@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.binding.io;
 
 import gov.nist.secauto.metaschema.binding.DefaultBindingContext;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
+import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.model.common.metapath.IDocumentLoader;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
@@ -50,7 +51,20 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * A common interface for loading Metaschema based instance resources.
  */
-public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<DeserializationFeature> {
+public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<DeserializationFeature<?>> {
+
+  @Override
+  IBoundLoader enableFeature(DeserializationFeature<?> feature);
+
+  @Override
+  IBoundLoader disableFeature(DeserializationFeature<?> feature);
+
+  @Override
+  IBoundLoader applyConfiguration(IConfiguration<DeserializationFeature<?>> other);
+
+  @Override
+  IBoundLoader set(DeserializationFeature<?> feature, Object value);
+
   /**
    * Determine the format of the provided resource.
    *

@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.binding.io;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -38,7 +40,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  *          the bound class to serialize from
  */
 public abstract class AbstractSerializer<CLASS>
-    extends AbstractSerializationBase<SerializationFeature>
+    extends AbstractSerializationBase<SerializationFeature<?>>
     implements ISerializer<CLASS> {
 
   /**
@@ -49,7 +51,36 @@ public abstract class AbstractSerializer<CLASS>
    * @param classBinding
    *          the bound class information for the Java type this serializer is operating on
    */
-  public AbstractSerializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
-    super(bindingContext, classBinding, SerializationFeature.class);
+  public AbstractSerializer(
+      @NonNull IBindingContext bindingContext,
+      @NonNull IAssemblyClassBinding classBinding) {
+    super(bindingContext, classBinding);
+  }
+
+  @Override
+  public ISerializer<CLASS> enableFeature(SerializationFeature<?> feature) {
+    return set(feature, true);
+  }
+
+  @Override
+  public ISerializer<CLASS> disableFeature(SerializationFeature<?> feature) {
+    return set(feature, false);
+  }
+
+  @Override
+  public ISerializer<CLASS> applyConfiguration(
+      @NonNull IConfiguration<SerializationFeature<?>> other) {
+    IMutableConfiguration<SerializationFeature<?>> config = getConfiguration();
+    config.applyConfiguration(other);
+    configurationChanged(config);
+    return this;
+  }
+
+  @Override
+  public ISerializer<CLASS> set(SerializationFeature<?> feature, Object value) {
+    IMutableConfiguration<SerializationFeature<?>> config = getConfiguration();
+    config.set(feature, value);
+    configurationChanged(config);
+    return this;
   }
 }
