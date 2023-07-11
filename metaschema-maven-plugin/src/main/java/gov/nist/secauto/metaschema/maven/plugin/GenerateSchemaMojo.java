@@ -131,8 +131,8 @@ public class GenerateSchemaMojo
   }
 
   protected void generate(@NonNull Set<IMetaschema> metaschemaCollection) throws MojoExecutionException {
-    IMutableConfiguration<SchemaGenerationFeature> schemaGenerationConfig
-        = new DefaultConfiguration<>(SchemaGenerationFeature.class);
+    IMutableConfiguration<SchemaGenerationFeature<?>> schemaGenerationConfig
+        = new DefaultConfiguration<>();
 
     if (isInlineDefinitions()) {
       schemaGenerationConfig.enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
@@ -178,7 +178,7 @@ public class GenerateSchemaMojo
 
   private static void generateSchemas(
       @NonNull IMetaschema metaschema,
-      @NonNull IConfiguration<SchemaGenerationFeature> schemaGenerationConfig,
+      @NonNull IConfiguration<SchemaGenerationFeature<?>> schemaGenerationConfig,
       @NonNull Path outputDirectory,
       @NonNull Set<SchemaFormat> schemaFormats) throws MojoExecutionException {
 
@@ -207,7 +207,7 @@ public class GenerateSchemaMojo
 
   private static void generateSchema(
       @NonNull IMetaschema metaschema,
-      @NonNull IConfiguration<SchemaGenerationFeature> schemaGenerationConfig,
+      @NonNull IConfiguration<SchemaGenerationFeature<?>> schemaGenerationConfig,
       @NonNull Path schemaPath,
       @NonNull ISchemaGenerator generator) throws IOException {
     try (@SuppressWarnings("resource") Writer writer = ObjectUtils.notNull(Files.newBufferedWriter(

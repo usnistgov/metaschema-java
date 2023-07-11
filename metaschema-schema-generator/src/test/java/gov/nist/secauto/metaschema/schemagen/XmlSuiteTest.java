@@ -172,8 +172,8 @@ class XmlSuiteTest
         // "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
         "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
     ISchemaGenerator schemaGenerator = new XmlSchemaGenerator();
-    IMutableConfiguration<SchemaGenerationFeature> features = new DefaultConfiguration<>(SchemaGenerationFeature.class)
-        .disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+    IMutableConfiguration<SchemaGenerationFeature<?>> features = new DefaultConfiguration<>();
+    features.disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     try (Writer writer = Files.newBufferedWriter(
         Path.of("oscal-complete_schema.xsd"),
         StandardCharsets.UTF_8,

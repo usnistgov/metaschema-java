@@ -29,17 +29,16 @@ package gov.nist.secauto.metaschema.binding.io;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.model.common.configuration.DefaultConfiguration;
-import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfigurationFeature;
 import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import java.util.Set;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 @SuppressWarnings("PMD.ReplaceVectorWithList") // false positive
-abstract class AbstractSerializationBase<T extends Enum<T> & IConfigurationFeature>
+abstract class AbstractSerializationBase<T extends IConfigurationFeature<?>>
     implements IMutableConfiguration<T> {
   @NonNull
   private final IBindingContext bindingContext;
@@ -48,11 +47,12 @@ abstract class AbstractSerializationBase<T extends Enum<T> & IConfigurationFeatu
   @NonNull
   private final DefaultConfiguration<T> configuration;
 
-  protected AbstractSerializationBase(@NonNull IBindingContext bindingContext,
-      @NonNull IAssemblyClassBinding classBinding, @NonNull Class<T> configurationEnum) {
+  protected AbstractSerializationBase(
+      @NonNull IBindingContext bindingContext,
+      @NonNull IAssemblyClassBinding classBinding) {
     this.bindingContext = ObjectUtils.requireNonNull(bindingContext, "bindingContext");
     this.classBinding = ObjectUtils.requireNonNull(classBinding, "classBinding");
-    this.configuration = new DefaultConfiguration<>(configurationEnum);
+    this.configuration = new DefaultConfiguration<>();
   }
 
   /**
@@ -76,24 +76,19 @@ abstract class AbstractSerializationBase<T extends Enum<T> & IConfigurationFeatu
     return classBinding;
   }
 
+  @SuppressWarnings("unused")
+  protected void configurationChanged(@NonNull IMutableConfiguration<T> config) {
+    // do nothing by default. Methods can override this to deal with factory caching
+  }
+
   /**
    * Get the current configuration of the serializer/deserializer.
    *
    * @return the configuration
    */
   @NonNull
-  protected IConfiguration<T> getConfiguration() {
+  protected IMutableConfiguration<T> getConfiguration() {
     return configuration;
-  }
-
-  @Override
-  public IMutableConfiguration<T> enableFeature(T feature) {
-    return configuration.enableFeature(feature);
-  }
-
-  @Override
-  public IMutableConfiguration<T> disableFeature(T feature) {
-    return configuration.disableFeature(feature);
   }
 
   @Override
@@ -102,13 +97,13 @@ abstract class AbstractSerializationBase<T extends Enum<T> & IConfigurationFeatu
   }
 
   @Override
-  public Set<T> getFeatureSet() {
-    return configuration.getFeatureSet();
+  public Map<T, Object> getFeatureValues() {
+    return configuration.getFeatureValues();
   }
 
   @Override
-  public IMutableConfiguration<T>
-      applyConfiguration(@NonNull IConfiguration<T> other) {
-    return configuration.applyConfiguration(other);
+  public <V> V get(T feature) {
+    return configuration.get(feature);
   }
+
 }

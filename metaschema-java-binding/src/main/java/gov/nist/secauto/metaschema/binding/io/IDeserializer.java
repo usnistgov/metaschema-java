@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
+import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidationHandler;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
@@ -52,7 +53,20 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * @param <CLASS>
  *          the Java type into which data can be read
  */
-public interface IDeserializer<CLASS> extends IMutableConfiguration<DeserializationFeature> {
+public interface IDeserializer<CLASS> extends IMutableConfiguration<DeserializationFeature<?>> {
+
+  @Override
+  IDeserializer<CLASS> enableFeature(DeserializationFeature<?> feature);
+
+  @Override
+  IDeserializer<CLASS> disableFeature(DeserializationFeature<?> feature);
+
+  @Override
+  IDeserializer<CLASS> applyConfiguration(IConfiguration<DeserializationFeature<?>> other);
+
+  @Override
+  IDeserializer<CLASS> set(DeserializationFeature<?> feature, Object value);
+
   /**
    * Determine if the serializer is performing validation.
    *

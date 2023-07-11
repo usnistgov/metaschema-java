@@ -42,8 +42,7 @@ public final class JsonFactoryFactory {
   @NonNull
   public static JsonFactory newJsonFactoryInstance() {
     JsonFactory retval = new JsonFactory();
-    // avoid automatically closing streams not owned by the reader
-    retval.disable(Feature.AUTO_CLOSE_SOURCE);
+    configureJsonFactory(retval);
     return retval;
   }
 
@@ -52,4 +51,8 @@ public final class JsonFactoryFactory {
     return SINGLETON;
   }
 
+  public static void configureJsonFactory(@NonNull JsonFactory factory) {
+    // avoid automatically closing streams not owned by the reader
+    factory.disable(Feature.AUTO_CLOSE_SOURCE);
+  }
 }

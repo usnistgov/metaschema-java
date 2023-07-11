@@ -59,13 +59,13 @@ public interface ISchemaGenerator {
   void generateFromMetaschema(
       @NonNull IMetaschema metaschema,
       @NonNull Writer writer,
-      @NonNull IConfiguration<SchemaGenerationFeature> configuration);
+      @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration);
 
   static void generateSchema(
       @NonNull IMetaschema metaschema,
       @NonNull Path destination,
       @NonNull SchemaFormat asFormat,
-      @NonNull IConfiguration<SchemaGenerationFeature> configuration)
+      @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration)
       throws IOException {
     ISchemaGenerator schemaGenerator = asFormat.getSchemaGenerator();
 
@@ -85,7 +85,7 @@ public interface ISchemaGenerator {
       @NonNull IMetaschema metaschema,
       @NonNull OutputStream os,
       @NonNull SchemaFormat asFormat,
-      @NonNull IConfiguration<SchemaGenerationFeature> configuration)
+      @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration)
       throws IOException {
     ISchemaGenerator schemaGenerator = asFormat.getSchemaGenerator();
 

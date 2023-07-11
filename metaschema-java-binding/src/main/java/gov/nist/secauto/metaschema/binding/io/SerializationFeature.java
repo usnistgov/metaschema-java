@@ -26,24 +26,25 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import gov.nist.secauto.metaschema.model.common.configuration.IConfigurationFeature;
+import gov.nist.secauto.metaschema.model.common.configuration.AbstractConfigurationFeature;
 
-public enum SerializationFeature implements IConfigurationFeature {
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public final class SerializationFeature<V>
+    extends AbstractConfigurationFeature<V> {
   /**
    * If enabled, generate document level constructs in the underlying data format. In XML this would
    * include XML declarations. In JSON or YAML, this would include an outer object and field with the
    * name associated with the root node.
    */
-  SERIALIZE_ROOT(true);
+  @NonNull
+  public static final SerializationFeature<Boolean> SERIALIZE_ROOT
+      = new SerializationFeature<>(Boolean.class, true);
 
-  private final boolean enabledByDefault;
-
-  SerializationFeature(boolean enabled) {
-    this.enabledByDefault = enabled;
+  private SerializationFeature(
+      @NonNull Class<V> valueClass,
+      @NonNull V defaultValue) {
+    super(valueClass, defaultValue);
   }
 
-  @Override
-  public boolean isEnabledByDefault() {
-    return enabledByDefault;
-  }
 }

@@ -32,8 +32,10 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractSerializer;
+import gov.nist.secauto.metaschema.binding.io.SerializationFeature;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.RootAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -51,6 +53,13 @@ public class DefaultJsonSerializer<CLASS>
   @NonNull
   protected JsonFactory getJsonFactoryInstance() {
     return JsonFactoryFactory.instance();
+  }
+
+  @Override
+  protected void configurationChanged(IMutableConfiguration<SerializationFeature<?>> config) {
+    synchronized (this) {
+      jsonFactory = null;
+    }
   }
 
   @NonNull
@@ -74,8 +83,6 @@ public class DefaultJsonSerializer<CLASS>
   protected JsonGenerator newJsonGenerator(@NonNull Writer writer) throws IOException {
     JsonFactory factory = getJsonFactory();
     JsonGenerator retval = factory.createGenerator(writer);
-    // avoid automatically closing streams not owned by the generator
-    retval.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
     retval.setPrettyPrinter(new DefaultPrettyPrinter());
     return retval;
   }

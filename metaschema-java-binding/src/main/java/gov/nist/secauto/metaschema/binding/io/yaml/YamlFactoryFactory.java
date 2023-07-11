@@ -26,40 +26,54 @@
 
 package gov.nist.secauto.metaschema.binding.io.yaml;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactoryBuilder;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 
+import gov.nist.secauto.metaschema.binding.io.DeserializationFeature;
+import gov.nist.secauto.metaschema.binding.io.SerializationFeature;
+import gov.nist.secauto.metaschema.binding.io.json.JsonFactoryFactory;
+import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
 import org.yaml.snakeyaml.LoaderOptions;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public final class YamlFactoryFactory {
-  public static final int CODEPOINT_LIMIT = 2 * 1024 * 1024 * 1024; // 2 GB
-
-  private static final YAMLFactory SINGLETON = newYamlFactoryInstance();
-
   private YamlFactoryFactory() {
     // disable construction
   }
 
-  public static YAMLFactory newYamlFactoryInstance() {
+  @NonNull
+  public static YAMLFactory newParserFactoryInstance(@NonNull IMutableConfiguration<DeserializationFeature<?>> config) {
     YAMLFactoryBuilder builder = YAMLFactory.builder();
     LoaderOptions loaderOptions = builder.loaderOptions();
     if (loaderOptions == null) {
       loaderOptions = new LoaderOptions();
     }
-    loaderOptions.setCodePointLimit(CODEPOINT_LIMIT);
+
+    int codePointLimit = config.get(DeserializationFeature.YAML_CODEPOINT_LIMIT);
+    loaderOptions.setCodePointLimit(codePointLimit);
     builder.loaderOptions(loaderOptions);
 
-    return builder
+    YAMLFactory retval = ObjectUtils.notNull(builder.build());
+    JsonFactoryFactory.configureJsonFactory(retval);
+    return retval;
+  }
+
+  @NonNull
+  public static YAMLFactory
+      newGeneratorFactoryInstance(@NonNull IMutableConfiguration<SerializationFeature<?>> config) {
+    YAMLFactoryBuilder builder = YAMLFactory.builder();
+    YAMLFactory retval = ObjectUtils.notNull(builder
         .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
         .enable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
         .enable(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS)
         .disable(YAMLGenerator.Feature.SPLIT_LINES)
-        .build();
+        .build());
+    JsonFactoryFactory.configureJsonFactory(retval);
+    return retval;
   }
-
-  public static YAMLFactory instance() {
-    return SINGLETON;
-  }
-
 }

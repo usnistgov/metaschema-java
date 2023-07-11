@@ -63,7 +63,7 @@ public class DynamicContext { // NOPMD - intentional data class
   private final Map<CallingContext, ISequence<?>> functionResultCache;
   private CachingLoader documentLoader;
   @NonNull
-  private final IMutableConfiguration<MetapathEvaluationFeature> configuration;
+  private final IMutableConfiguration<MetapathEvaluationFeature<?>> configuration;
   @NonNull
   private final Map<String, ISequence<?>> letVariableMap;
 
@@ -77,7 +77,7 @@ public class DynamicContext { // NOPMD - intentional data class
     this.currentDateTime = ZonedDateTime.now(clock);
     this.availableDocuments = new HashMap<>();
     this.functionResultCache = new HashMap<>();
-    this.configuration = new DefaultConfiguration<>(MetapathEvaluationFeature.class);
+    this.configuration = new DefaultConfiguration<>();
     this.configuration.enableFeature(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES);
     this.letVariableMap = new ConcurrentHashMap<>();
   }
@@ -122,7 +122,7 @@ public class DynamicContext { // NOPMD - intentional data class
   }
 
   @NonNull
-  public IConfiguration<MetapathEvaluationFeature> getConfiguration() {
+  public IConfiguration<MetapathEvaluationFeature<?>> getConfiguration() {
     return configuration;
   }
 

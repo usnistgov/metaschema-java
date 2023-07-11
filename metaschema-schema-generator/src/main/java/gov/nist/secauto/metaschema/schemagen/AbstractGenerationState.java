@@ -63,7 +63,7 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
   public AbstractGenerationState(
       @NonNull IMetaschema metaschema,
       @NonNull WRITER writer,
-      @NonNull IConfiguration<SchemaGenerationFeature> configuration,
+      @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration,
       @NonNull DATATYPE_MANAGER datatypeManager) {
     this.metaschema = metaschema;
     this.writer = writer;

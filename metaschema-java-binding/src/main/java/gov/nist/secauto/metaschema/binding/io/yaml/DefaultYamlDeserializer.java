@@ -26,12 +26,11 @@
 
 package gov.nist.secauto.metaschema.binding.io.yaml;
 
-import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.json.DefaultJsonDeserializer;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -48,8 +47,8 @@ public class DefaultYamlDeserializer<CLASS>
   // }
 
   @Override
-  protected JsonFactory getJsonFactoryInstance() {
-    return ObjectUtils.notNull(YamlFactoryFactory.instance());
+  protected YAMLFactory getJsonFactoryInstance() {
+    return YamlFactoryFactory.newParserFactoryInstance(getConfiguration());
   }
 
 }

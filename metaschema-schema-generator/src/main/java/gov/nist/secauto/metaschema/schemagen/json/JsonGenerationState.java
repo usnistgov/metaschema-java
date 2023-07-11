@@ -63,15 +63,19 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class JsonGenerationState
     extends AbstractGenerationState<JsonGenerator, JsonDatatypeManager> {
 
+  @NonNull
   private final Set<IDefineableJsonSchema> definitionSchemas = new LinkedHashSet<>();
+  @NonNull
   private final Map<IDefinition, IJsonSchema> definitionToSchemaMap = new ConcurrentHashMap<>();
+  @NonNull
   private final Map<IValuedDefinition, IJsonSchema> definitionValueToDataTypeSchemaMap = new ConcurrentHashMap<>();
+  @NonNull
   private final Map<IDataTypeAdapter<?>, IJsonSchema> dataTypeToSchemaMap = new ConcurrentHashMap<>();
 
   public JsonGenerationState(
       @NonNull IMetaschema metaschema,
       @NonNull JsonGenerator writer,
-      @NonNull IConfiguration<SchemaGenerationFeature> configuration) {
+      @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration) {
     super(metaschema, writer, configuration, new JsonDatatypeManager());
   }
 

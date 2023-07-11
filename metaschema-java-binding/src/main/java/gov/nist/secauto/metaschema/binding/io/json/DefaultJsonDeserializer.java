@@ -77,11 +77,7 @@ public class DefaultJsonDeserializer<CLASS>
 
   @NonNull
   protected JsonParser newJsonParser(@NonNull Reader reader) throws IOException {
-    JsonParser retval = getJsonFactory().createParser(reader);
-    // avoid automatically closing streams not owned by the parser
-    retval.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
-    return retval;
-
+    return ObjectUtils.notNull(getJsonFactory().createParser(reader));
   }
 
   @SuppressWarnings("null")
@@ -92,14 +88,15 @@ public class DefaultJsonDeserializer<CLASS>
     try (JsonParser parser = newJsonParser(reader)) {
       DefaultJsonParsingContext parsingContext = new DefaultJsonParsingContext(parser, new DefaultJsonProblemHandler());
       IAssemblyClassBinding classBinding = getClassBinding();
-      IConfiguration<DeserializationFeature> configuration = getConfiguration();
+      IConfiguration<DeserializationFeature<?>> configuration = getConfiguration();
 
       if (classBinding.isRoot()
           && configuration.isFeatureEnabled(DeserializationFeature.DESERIALIZE_JSON_ROOT_PROPERTY)) {
 
         RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
         // now parse the root property
-        @SuppressWarnings("unchecked") CLASS value = ObjectUtils.requireNonNull((CLASS) root.readRoot(parsingContext));
+        @SuppressWarnings("unchecked")
+        CLASS value = ObjectUtils.requireNonNull((CLASS) root.readRoot(parsingContext));
 
         // // we should be at the end object
         // JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
@@ -109,7 +106,8 @@ public class DefaultJsonDeserializer<CLASS>
 
         retval = DefaultNodeItemFactory.instance().newDocumentNodeItem(root, value, documentUri);
       } else {
-        @SuppressWarnings("unchecked") CLASS value
+        @SuppressWarnings("unchecked")
+        CLASS value
             = ObjectUtils.requireNonNull((CLASS) classBinding.readObject(parsingContext));
         retval = DefaultNodeItemFactory.instance().newAssemblyNodeItem(classBinding, value, documentUri);
       }

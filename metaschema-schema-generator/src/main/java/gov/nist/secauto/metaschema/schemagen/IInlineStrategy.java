@@ -56,7 +56,7 @@ public interface IInlineStrategy {
   IInlineStrategy CHOICE_NOT_INLINE = new ChoiceNotInlineStrategy();
 
   @NonNull
-  static IInlineStrategy newInlineStrategy(@NonNull IConfiguration<SchemaGenerationFeature> configuration) {
+  static IInlineStrategy newInlineStrategy(@NonNull IConfiguration<SchemaGenerationFeature<?>> configuration) {
     IInlineStrategy retval;
     if (configuration.isFeatureEnabled(SchemaGenerationFeature.INLINE_DEFINITIONS)) {
       if (configuration.isFeatureEnabled(SchemaGenerationFeature.INLINE_CHOICE_DEFINITIONS)) {

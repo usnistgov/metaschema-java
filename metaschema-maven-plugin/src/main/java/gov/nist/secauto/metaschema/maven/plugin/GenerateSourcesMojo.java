@@ -96,6 +96,14 @@ public class GenerateSourcesMojo
     return retval;
   }
 
+  /**
+   * Generate the Java source files for the provided Metaschemas.
+   * 
+   * @param metaschemaCollection
+   *          the collection of Metaschemas to generate sources for
+   * @throws MojoExecutionException
+   *           if an error occurred while generating sources
+   */
   protected void generate(@NonNull Set<IMetaschema> metaschemaCollection) throws MojoExecutionException {
     DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
     for (File config : getConfigs()) {

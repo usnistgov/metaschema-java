@@ -50,7 +50,7 @@ public final class YamlOperations {
 
   static {
     LoaderOptions loaderOptions = new LoaderOptions();
-//    loaderOptions.setCodePointLimit(YamlFactoryFactory.CODEPOINT_LIMIT);
+    // loaderOptions.setCodePointLimit(YamlFactoryFactory.CODEPOINT_LIMIT);
     Constructor constructor = new Constructor(loaderOptions);
     DumperOptions dumperOptions = new DumperOptions();
     Representer representer = new Representer(dumperOptions);

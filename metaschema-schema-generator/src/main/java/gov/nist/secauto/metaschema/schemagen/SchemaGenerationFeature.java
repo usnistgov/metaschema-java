@@ -26,32 +26,40 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.model.common.configuration.IConfigurationFeature;
+import gov.nist.secauto.metaschema.model.common.configuration.AbstractConfigurationFeature;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Configuration options for schema generation.
+ * 
+ * @param <V>
+ *          the feature value type
  */
-public enum SchemaGenerationFeature implements IConfigurationFeature {
+public final class SchemaGenerationFeature<V>
+    extends AbstractConfigurationFeature<V> {
+
   /**
    * If enabled, definitions that are defined inline will be generated as inline types. If disabled,
    * definitions will always be generated as global types.
    */
-  INLINE_DEFINITIONS(false),
+  @NonNull
+  public static final SchemaGenerationFeature<Boolean> INLINE_DEFINITIONS
+      = new SchemaGenerationFeature<>(Boolean.class, false);
+
   /**
    * If enabled, child definitions of a choice that are defined inline will be generated as inline
    * types. If disabled, child definitions of a choice will always be generated as global types. This
    * option will only be used if {@link #INLINE_DEFINITIONS} is also enabled.
    */
-  INLINE_CHOICE_DEFINITIONS(false);
+  @NonNull
+  public static final SchemaGenerationFeature<Boolean> INLINE_CHOICE_DEFINITIONS
+      = new SchemaGenerationFeature<>(Boolean.class, false);
 
-  private final boolean enabledByDefault;
-
-  SchemaGenerationFeature(boolean enabled) {
-    this.enabledByDefault = enabled;
+  private SchemaGenerationFeature(
+      @NonNull Class<V> valueClass,
+      @NonNull V defaultValue) {
+    super(valueClass, defaultValue);
   }
 
-  @Override
-  public boolean isEnabledByDefault() {
-    return enabledByDefault;
-  }
 }

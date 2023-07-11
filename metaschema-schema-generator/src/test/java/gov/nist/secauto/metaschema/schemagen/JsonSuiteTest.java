@@ -135,8 +135,9 @@ class JsonSuiteTest
     IMetaschema metaschema = loader.load(new URL(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
     ISchemaGenerator schemaGenerator = new JsonSchemaGenerator();
-    IMutableConfiguration<SchemaGenerationFeature> features = new DefaultConfiguration<>(SchemaGenerationFeature.class)
-        .disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+    IMutableConfiguration<SchemaGenerationFeature<?>> features
+        = new DefaultConfiguration<>();
+    features.disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     try (Writer writer = Files.newBufferedWriter(
         Path.of("oscal-complete_schema.json"),
         StandardCharsets.UTF_8,
@@ -153,8 +154,8 @@ class JsonSuiteTest
     IMetaschema metaschema = loader.load(new URL(
         "https://raw.githubusercontent.com/usnistgov/metaschema/71233f4eb6854e820c7949144e86afa4d7981b22/test-suite/metaschema-xspec/json-schema-gen/json-value-testing-mini-metaschema.xml"));
     ISchemaGenerator schemaGenerator = new JsonSchemaGenerator();
-    IMutableConfiguration<SchemaGenerationFeature> features = new DefaultConfiguration<>(SchemaGenerationFeature.class)
-        .disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+    IMutableConfiguration<SchemaGenerationFeature<?>> features = new DefaultConfiguration<>();
+    features.disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     try (Writer writer = Files.newBufferedWriter(
         Path.of("json-value-testing-mini_schema.json"),
         StandardCharsets.UTF_8,

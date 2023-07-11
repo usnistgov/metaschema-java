@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.binding.io;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidationHandler;
 import gov.nist.secauto.metaschema.model.common.constraint.LoggingConstraintValidationHandler;
@@ -49,7 +51,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  *          the bound class to deserialize to
  */
 public abstract class AbstractDeserializer<CLASS>
-    extends AbstractSerializationBase<DeserializationFeature>
+    extends AbstractSerializationBase<DeserializationFeature<?>>
     implements IDeserializer<CLASS> {
 
   private IConstraintValidationHandler constraintValidationHandler;
@@ -63,7 +65,7 @@ public abstract class AbstractDeserializer<CLASS>
    *          the bound class information for the Java type this deserializer is operating on
    */
   protected AbstractDeserializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
-    super(bindingContext, classBinding, DeserializationFeature.class);
+    super(bindingContext, classBinding);
   }
 
   @Override
@@ -120,4 +122,31 @@ public abstract class AbstractDeserializer<CLASS>
   @NonNull
   protected abstract INodeItem deserializeToNodeItemInternal(@NonNull Reader reader, @NonNull URI documentUri)
       throws IOException;
+
+  @Override
+  public IDeserializer<CLASS> enableFeature(DeserializationFeature<?> feature) {
+    return set(feature, true);
+  }
+
+  @Override
+  public IDeserializer<CLASS> disableFeature(DeserializationFeature<?> feature) {
+    return set(feature, false);
+  }
+
+  @Override
+  public IDeserializer<CLASS> applyConfiguration(
+      @NonNull IConfiguration<DeserializationFeature<?>> other) {
+    IMutableConfiguration<DeserializationFeature<?>> config = getConfiguration();
+    config.applyConfiguration(other);
+    configurationChanged(config);
+    return this;
+  }
+
+  @Override
+  public IDeserializer<CLASS> set(DeserializationFeature<?> feature, Object value) {
+    IMutableConfiguration<DeserializationFeature<?>> config = getConfiguration();
+    config.set(feature, value);
+    configurationChanged(config);
+    return this;
+  }
 }

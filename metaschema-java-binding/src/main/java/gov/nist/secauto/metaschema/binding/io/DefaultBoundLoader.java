@@ -60,7 +60,7 @@ import java.io.Reader;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Set;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -75,17 +75,19 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  */
 public class DefaultBoundLoader implements IBoundLoader {
   public static final int LOOK_AHEAD_BYTES = 32_768;
-  @NonNull
-  private static final JsonFactory JSON_FACTORY = new JsonFactory();
-  @NonNull
-  private static final XmlFactory XML_FACTORY = new XmlFactory();
-  @NonNull
-  private static final YAMLFactory YAML_FACTORY = new YAMLFactory();
+//  @NonNull
+//  private static final JsonFactory JSON_FACTORY = new JsonFactory();
+//  @NonNull
+//  private static final XmlFactory XML_FACTORY = new XmlFactory();
+//  @NonNull
+//  private static final YAMLFactory YAML_FACTORY = new YAMLFactory();
 
+  private JsonFactory[] detectorFactory;
+  
   @NonNull
   private final IBindingContext bindingContext;
   @NonNull
-  private final IMutableConfiguration<DeserializationFeature> configuration;
+  private final IMutableConfiguration<DeserializationFeature<?>> configuration;
 
   /**
    * An {@link EntityResolver} is not provided by default.
@@ -101,38 +103,56 @@ public class DefaultBoundLoader implements IBoundLoader {
    */
   public DefaultBoundLoader(@NonNull IBindingContext bindingContext) {
     this.bindingContext = bindingContext;
-    this.configuration = new DefaultConfiguration<>(DeserializationFeature.class);
+    this.configuration = new DefaultConfiguration<>();
   }
 
   @Override
-  public IMutableConfiguration<DeserializationFeature> enableFeature(DeserializationFeature feature) {
-    return configuration.enableFeature(feature);
+  public IBoundLoader enableFeature(DeserializationFeature<?> feature) {
+    return set(feature, true);
   }
 
   @Override
-  public IMutableConfiguration<DeserializationFeature> disableFeature(DeserializationFeature feature) {
-    return configuration.disableFeature(feature);
+  public IBoundLoader disableFeature(DeserializationFeature<?> feature) {
+    return set(feature, false);
   }
 
   @Override
-  public boolean isFeatureEnabled(DeserializationFeature feature) {
-    return configuration.isFeatureEnabled(feature);
+  public boolean isFeatureEnabled(DeserializationFeature<?> feature) {
+    return getConfiguration().isFeatureEnabled(feature);
   }
 
   @Override
-  public Set<DeserializationFeature> getFeatureSet() {
-    return configuration.getFeatureSet();
+  public Map<DeserializationFeature<?>, Object> getFeatureValues() {
+    return getConfiguration().getFeatureValues();
   }
 
   @Override
-  public IMutableConfiguration<DeserializationFeature>
-      applyConfiguration(@NonNull IConfiguration<DeserializationFeature> other) {
-    return configuration.applyConfiguration(other);
+  public IBoundLoader applyConfiguration(@NonNull IConfiguration<DeserializationFeature<?>> other) {
+    getConfiguration().applyConfiguration(other);
+    resetDetector();
+    return this;
+  }
+
+  private void resetDetector() {
+    // reset the detector
+    detectorFactory = null;
   }
 
   @NonNull
-  protected IMutableConfiguration<DeserializationFeature> getConfiguration() {
+  protected IMutableConfiguration<DeserializationFeature<?>> getConfiguration() {
     return configuration;
+  }
+
+  @Override
+  public IBoundLoader set(DeserializationFeature<?> feature, Object value) {
+    getConfiguration().set(feature, value);
+    resetDetector();
+    return this;
+  }
+
+  @Override
+  public <V> V get(DeserializationFeature<?> feature) {
+    return getConfiguration().get(feature);
   }
 
   @Override
@@ -180,9 +200,19 @@ public class DefaultBoundLoader implements IBoundLoader {
     return formatFromMatcher(matcher);
   }
 
+  private JsonFactory[] getDetectorFactory() {
+    if (detectorFactory == null) {
+      detectorFactory = new JsonFactory[3];
+      detectorFactory[0] = YamlFactoryFactory.newParserFactoryInstance(getConfiguration());
+      detectorFactory[1] = JsonFactoryFactory.instance();
+      detectorFactory[2] = new XmlFactory();
+    }
+    return detectorFactory; 
+  }
+  
   @NonNull
   protected DataFormatMatcher matchFormat(@NonNull InputStream is, int lookAheadBytes) throws IOException {
-    DataFormatDetector det = new DataFormatDetector(new JsonFactory[] { YAML_FACTORY, JSON_FACTORY, XML_FACTORY });
+    DataFormatDetector det = new DataFormatDetector(getDetectorFactory());
     det = det.withMinimalMatch(MatchStrength.INCONCLUSIVE).withOptimalMatch(MatchStrength.SOLID_MATCH)
         .withMaxInputLookahead(lookAheadBytes);
 
@@ -252,7 +282,8 @@ public class DefaultBoundLoader implements IBoundLoader {
     IDocumentNodeItem retval;
     if (source.getByteStream() != null) {
       // attempt to use a provided byte stream stream
-      try (@SuppressWarnings("resource") BufferedInputStream bis = toBufferedInputStream(
+      try (@SuppressWarnings("resource")
+      BufferedInputStream bis = toBufferedInputStream(
           ObjectUtils.requireNonNull(source.getByteStream()))) {
         Class<?> clazz = detectModel(bis, format); // NOPMD - must be called before reset
         retval = deserializeToNodeItem(clazz, format, bis, uri);
@@ -305,7 +336,8 @@ public class DefaultBoundLoader implements IBoundLoader {
       }
       break;
     case YAML:
-      clazz = detectModelJsonClass(ObjectUtils.notNull(YamlFactoryFactory.instance().createParser(bis)));
+      YAMLFactory factory = YamlFactoryFactory.newParserFactoryInstance(getConfiguration());
+      clazz = detectModelJsonClass(ObjectUtils.notNull(factory.createParser(bis)));
       if (clazz == null) {
         throw new IllegalStateException(
             String.format("Detected format '%s', but unable to detect the bound data type", format.name()));
@@ -452,8 +484,10 @@ public class DefaultBoundLoader implements IBoundLoader {
   }
 
   @NonNull
-  protected <CLASS> IDeserializer<CLASS> getDeserializer(@NonNull Class<CLASS> clazz, @NonNull Format format,
-      @NonNull IConfiguration<DeserializationFeature> config) {
+  protected <CLASS> IDeserializer<CLASS> getDeserializer(
+      @NonNull Class<CLASS> clazz,
+      @NonNull Format format,
+      @NonNull IConfiguration<DeserializationFeature<?>> config) {
     IDeserializer<CLASS> retval = getBindingContext().newDeserializer(format, clazz);
     retval.applyConfiguration(config);
     return retval;
