@@ -27,7 +27,8 @@
 package gov.nist.secauto.metaschema.binding.io.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser.Feature;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -53,6 +54,8 @@ public final class JsonFactoryFactory {
 
   public static void configureJsonFactory(@NonNull JsonFactory factory) {
     // avoid automatically closing streams not owned by the reader
-    factory.disable(Feature.AUTO_CLOSE_SOURCE);
+    factory.disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
+    // avoid automatically closing streams not owned by the reader
+    factory.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
   }
 }

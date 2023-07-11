@@ -35,7 +35,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public final class DeserializationFeature<V>
     extends AbstractConfigurationFeature<V> {
-  public static final int YAML_CODEPOINT_LIMIT_DEFAULT =  2 * 1024 * 1024 * 1024; // 2 GB
+  public static final int YAML_CODEPOINT_LIMIT_DEFAULT = Integer.MAX_VALUE; // 2 GB
 
   /**
    * If enabled, perform constraint validation on the deserialized bound objects.

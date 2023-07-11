@@ -125,7 +125,7 @@ public class DefaultConfiguration<T extends IConfigurationFeature<?>>
 
   @Override
   public IMutableConfiguration<T> set(T feature, Object value) {
-    Class<?> featureValueClass = feature.getClass();
+    Class<?> featureValueClass = feature.getValueClass();
     Class<?> valueClass = value.getClass();
     if (!featureValueClass.isAssignableFrom(valueClass)) {
       throw new UnsupportedOperationException(
