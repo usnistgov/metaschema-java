@@ -3,11 +3,13 @@ on:
     branches:
     - main
     - develop
+    - release-*
   pull_request:
     types: [opened, synchronize, reopened]
     branches:
     - main
     - develop
+    - release-*
   workflow_dispatch:
 name: Build and Test Code
 jobs:
@@ -40,7 +42,7 @@ jobs:
     # Maven Build
     - name: Build and run tests (develop)
       id: maven-build-develop
-      if: ((github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref_name == 'develop' || startsWith("release-", github.ref_name) )) || (github.event_name == 'pull_request' && (github.base_ref == 'develop' || || startsWith("release-", github.base_ref) ))
+      if: ${{ !((github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main') }}
       run: |
         mvn -B -Preporting verify
     - name: Build and run tests (main)
