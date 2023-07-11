@@ -48,3 +48,11 @@ serializer.serialize(object, new File("target/bound-class-simple.xml"));
 A serializer is associated with a specific format, which in this case is XML.
 
 For a more complex example, the [liboscal-java](https://github.com/usnistgov/liboscal-java/) library illustrates how to build a domain-specific API using some of the more advanced features of this library.
+
+## Known Limitations
+
+This library has the following limitations.
+
+- When parsing YAML, files cannot be larger than `2147483646` codepoint. This is a restriction imposed by [SnakeYAML](https://bitbucket.org/snakeyaml/snakeyaml/src/master/) For larger content, use JSON or XML.
+- For JSON and YAML, additional, unrecognized properties will be ignored by the parser.
+ 
