@@ -646,7 +646,7 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <configuration>
-                        <excludePackageNames>*.xmlbeans</excludePackageNames>
+						<excludePackageNames>*.xmlbeans:*.antlr</excludePackageNames>
                         <failOnWarnings>false</failOnWarnings>
                     </configuration>
                 </plugin>
@@ -797,40 +797,6 @@
                     </plugin>
                 </plugins>
             </build>
-            <reporting>
-                <plugins>
-<!--
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jxr-plugin</artifactId>
-                        <reportSets>
-                            <reportSet>
-                                <reports>
-                                    <report>aggregate</report>
-                                </reports>
-                            </reportSet>
-                        </reportSets>
-                    </plugin>
--->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <reportSets>
-                            <reportSet>
-                                <id>aggregate</id>
-                                <inherited>false</inherited>
-                                <configuration>
-                                    <excludePackageNames>*.xmlbeans:*.xmlbeans.*</excludePackageNames>
-                                    <failOnWarnings>false</failOnWarnings>
-                                </configuration>
-                                <reports>
-                                    <report>aggregate-no-fork</report>
-                                </reports>
-                            </reportSet>
-                        </reportSets>
-                    </plugin>
-                </plugins>
-            </reporting>
         </profile>
         <profile>
             <id>gpg</id>

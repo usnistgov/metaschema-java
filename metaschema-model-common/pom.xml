@@ -181,14 +181,6 @@
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<configuration>
-						<excludePackageNames>
-							gov.nist.secauto.metaschema.model.common.metapath.antlr</excludePackageNames>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<dependencies>
 						<dependency>
