@@ -32,3 +32,4 @@ package-lock.json
 /metaschema-schema-generator/oscal-complete_schema.json
 velocity.log
 .fbExcludeFilterFile
+/velocity.log.*
