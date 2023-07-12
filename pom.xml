@@ -799,6 +799,19 @@
             </build>
             <reporting>
                 <plugins>
+<!--
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jxr-plugin</artifactId>
+                        <reportSets>
+                            <reportSet>
+                                <reports>
+                                    <report>aggregate</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+-->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
@@ -811,7 +824,7 @@
                                     <failOnWarnings>false</failOnWarnings>
                                 </configuration>
                                 <reports>
-                                    <report>aggregate</report>
+                                    <report>aggregate-no-fork</report>
                                 </reports>
                             </reportSet>
                         </reportSets>

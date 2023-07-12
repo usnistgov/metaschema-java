@@ -95,8 +95,7 @@ public class DefaultJsonDeserializer<CLASS>
 
         RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
         // now parse the root property
-        @SuppressWarnings("unchecked")
-        CLASS value = ObjectUtils.requireNonNull((CLASS) root.readRoot(parsingContext));
+        @SuppressWarnings("unchecked") CLASS value = ObjectUtils.requireNonNull((CLASS) root.readRoot(parsingContext));
 
         // // we should be at the end object
         // JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
@@ -106,8 +105,7 @@ public class DefaultJsonDeserializer<CLASS>
 
         retval = DefaultNodeItemFactory.instance().newDocumentNodeItem(root, value, documentUri);
       } else {
-        @SuppressWarnings("unchecked")
-        CLASS value
+        @SuppressWarnings("unchecked") CLASS value
             = ObjectUtils.requireNonNull((CLASS) classBinding.readObject(parsingContext));
         retval = DefaultNodeItemFactory.instance().newAssemblyNodeItem(classBinding, value, documentUri);
       }

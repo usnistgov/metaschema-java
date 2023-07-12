@@ -36,7 +36,7 @@ public abstract class AbstractConfigurationFeature<V> implements IConfigurationF
 
   /**
    * Construct a new feature with a default value.
-   * 
+   *
    * @param valueClass
    *          the class of the feature's value
    * @param defaultValue

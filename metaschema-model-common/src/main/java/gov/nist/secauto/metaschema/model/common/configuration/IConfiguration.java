@@ -47,7 +47,7 @@ public interface IConfiguration<T extends IConfigurationFeature<?>> {
    * @return {@code true} if the feature is enabled, or {@code false} otherwise
    */
   boolean isFeatureEnabled(@NonNull T feature);
-  
+
   <V> V get(@NonNull T feature);
 
   /**

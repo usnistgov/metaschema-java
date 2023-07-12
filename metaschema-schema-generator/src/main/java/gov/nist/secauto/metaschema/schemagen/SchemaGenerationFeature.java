@@ -32,7 +32,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Configuration options for schema generation.
- * 
+ *
  * @param <V>
  *          the feature value type
  */

@@ -33,7 +33,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * <p>
  * This approach is inspired by the configuration implementation in the
  * <a href="https://github.com/FasterXML/jackson-databind">Jackson databind library</a>.
- * 
+ *
  * @param <V>
  *          the value type of the feature
  */
@@ -48,7 +48,7 @@ public interface IConfigurationFeature<V> {
 
   /**
    * Get the class of the feature's value.
-   * 
+   *
    * @return the value's class
    */
   @NonNull

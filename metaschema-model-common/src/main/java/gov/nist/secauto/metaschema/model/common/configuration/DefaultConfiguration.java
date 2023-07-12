@@ -116,9 +116,9 @@ public class DefaultConfiguration<T extends IConfigurationFeature<?>>
   @SuppressWarnings("unchecked")
   @Override
   public <V> V get(T feature) {
-    V value = (V)featureValues.get(feature);
+    V value = (V) featureValues.get(feature);
     if (value == null) {
-      value = (V)feature.getDefault();
+      value = (V) feature.getDefault();
     }
     return value;
   }

@@ -75,15 +75,15 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  */
 public class DefaultBoundLoader implements IBoundLoader {
   public static final int LOOK_AHEAD_BYTES = 32_768;
-//  @NonNull
-//  private static final JsonFactory JSON_FACTORY = new JsonFactory();
-//  @NonNull
-//  private static final XmlFactory XML_FACTORY = new XmlFactory();
-//  @NonNull
-//  private static final YAMLFactory YAML_FACTORY = new YAMLFactory();
+  // @NonNull
+  // private static final JsonFactory JSON_FACTORY = new JsonFactory();
+  // @NonNull
+  // private static final XmlFactory XML_FACTORY = new XmlFactory();
+  // @NonNull
+  // private static final YAMLFactory YAML_FACTORY = new YAMLFactory();
 
   private JsonFactory[] detectorFactory;
-  
+
   @NonNull
   private final IBindingContext bindingContext;
   @NonNull
@@ -207,9 +207,9 @@ public class DefaultBoundLoader implements IBoundLoader {
       detectorFactory[1] = JsonFactoryFactory.instance();
       detectorFactory[2] = new XmlFactory();
     }
-    return detectorFactory; 
+    return detectorFactory;
   }
-  
+
   @NonNull
   protected DataFormatMatcher matchFormat(@NonNull InputStream is, int lookAheadBytes) throws IOException {
     DataFormatDetector det = new DataFormatDetector(getDetectorFactory());
@@ -282,8 +282,7 @@ public class DefaultBoundLoader implements IBoundLoader {
     IDocumentNodeItem retval;
     if (source.getByteStream() != null) {
       // attempt to use a provided byte stream stream
-      try (@SuppressWarnings("resource")
-      BufferedInputStream bis = toBufferedInputStream(
+      try (@SuppressWarnings("resource") BufferedInputStream bis = toBufferedInputStream(
           ObjectUtils.requireNonNull(source.getByteStream()))) {
         Class<?> clazz = detectModel(bis, format); // NOPMD - must be called before reset
         retval = deserializeToNodeItem(clazz, format, bis, uri);
