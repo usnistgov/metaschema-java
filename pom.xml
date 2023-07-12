@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>gov.nist.secauto</groupId>
         <artifactId>oss-parent</artifactId>
-        <version>24</version>
+        <version>25-SNAPSHOT</version>
     </parent>
     <groupId>gov.nist.secauto.metaschema</groupId>
     <artifactId>metaschema-framework</artifactId>
@@ -153,7 +155,6 @@
         <plugin.appassembler.version>2.1.0</plugin.appassembler.version>
         <plugin.git-commit-id.version>6.0.0</plugin.git-commit-id.version>
         <plugin.maven-changes.version>2.12.1</plugin.maven-changes.version>
-        <plugin.maven-dependency.version>3.6.0</plugin.maven-dependency.version>
         <plugin.maven-invoker.version>3.6.0</plugin.maven-invoker.version>
         <plugin.maven-surefire.version>3.1.2</plugin.maven-surefire.version>
         <plugin.maven-toolchains.version>3.1.0</plugin.maven-toolchains.version>
@@ -612,21 +613,6 @@
                     </dependencies>
                 </plugin>
                 <plugin>
-                    <groupId>com.mycila</groupId>
-                    <artifactId>license-maven-plugin</artifactId>
-                    <configuration>
-                        <licenseSets>
-                            <licenseSet>
-                                <header>license/nist/license.txt</header>
-                                <includes>
-                                    <include>src/**/*.java</include>
-                                </includes>
-                            </licenseSet>
-                        </licenseSets>
-                        <failIfMissing>true</failIfMissing>
-                    </configuration>
-                </plugin>
-                <plugin>
                     <groupId>org.antlr</groupId>
                     <artifactId>antlr4-maven-plugin</artifactId>
                     <version>${dependency.antlr4.version}</version>
@@ -642,13 +628,6 @@
                     <configuration>
                         <topSiteURL>${site.url}</topSiteURL>
                     </configuration>
-                </plugin>
-                <!--This plugin's configuration is used to store Eclipse m2e settings 
-                    only. It has no influence on the Maven build itself. -->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -669,9 +648,6 @@
                     <configuration>
                         <excludePackageNames>*.xmlbeans</excludePackageNames>
                         <failOnWarnings>false</failOnWarnings>
-                        <encoding>UTF-8</encoding>
-                        <docencoding>UTF-8</docencoding>
-                        <charset>UTF-8</charset>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -688,11 +664,6 @@
                     <configuration>
                         <excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>${plugin.maven-dependency.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -719,22 +690,6 @@
                     <artifactId>appassembler-maven-plugin</artifactId>
                     <version>${plugin.appassembler.version}</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-pmd-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>cpd-verify</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>cpd-check</goal>
-                            </goals>
-                            <configuration>
-                                <failOnViolation>false</failOnViolation>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -748,19 +703,6 @@
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <inherited>false</inherited>
-                <executions>
-                    <execution>
-                        <id>attach-descriptor</id>
-                        <goals>
-                            <goal>attach-descriptor</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
@@ -838,6 +780,23 @@
         </profile>
         <profile>
             <id>reporting</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-site-plugin</artifactId>
+<!--                        <inherited>false</inherited>-->
+                        <executions>
+                            <execution>
+                                <id>attach-descriptor</id>
+                                <goals>
+                                    <goal>attach-descriptor</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
             <reporting>
                 <plugins>
                     <plugin>

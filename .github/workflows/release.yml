@@ -39,7 +39,7 @@ jobs:
     # -------------------------
     - name: Build Website
       run: |
-        mvn -B -Preporting -Prelease package site site:stage
+        mvn -B -Prelease -Preporting package site site:stage
     - name: Run deploy script
       run: |
         touch target/staging/.nojekyll
