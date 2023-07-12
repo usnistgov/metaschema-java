@@ -126,20 +126,6 @@
 				<plugin>
 					<groupId>org.apache.xmlbeans</groupId>
 					<artifactId>xmlbeans</artifactId>
-					<configuration>
-						<sourceDir>${project.basedir}/metaschema/schema/xml</sourceDir>
-						<!-- <sourceSchemas>metaschema.xsd</sourceSchemas> -->
-						<javaTargetDir>
-							${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
-						<xmlConfigs>
-							${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</xmlConfigs>
-						<classTargetDir>
-							${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>
-						<name>metaschema</name>
-						<partialMethods>
-							ALL,-XGET,-XSET,-XGET_ARRAY,-XSET_ARRAY,-XGET_IDX,-XSET_IDX</partialMethods>
-						<!--<repackage>gov.nist.secauto.metaschema.model.xmlbeans</repackage> -->
-					</configuration>
 					<dependencies>
 						<dependency>
 							<groupId>org.apache.logging.log4j</groupId>
@@ -227,23 +213,36 @@
 			<plugin>
 				<groupId>org.apache.xmlbeans</groupId>
 				<artifactId>xmlbeans</artifactId>
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<id>metaschema-M4</id>-->
-<!--						<phase>generate-sources</phase>-->
-<!--						<goals>-->
-<!--							<goal>compile</goal>-->
-<!--						</goals>-->
-
-<!--					</execution>-->
-<!--				</executions>-->
+				<executions>
+					<execution>
+						<id>metaschema-beans</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+						<configuration>
+							<sourceDir>${project.basedir}/metaschema/schema/xml</sourceDir>
+							<!-- <sourceSchemas>metaschema.xsd</sourceSchemas> -->
+							<javaTargetDir>
+								${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
+							<xmlConfigs>
+								${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</xmlConfigs>
+							<classTargetDir>
+								${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>
+							<name>metaschema</name>
+							<partialMethods>
+								ALL,-XGET,-XSET,-XGET_ARRAY,-XSET_ARRAY,-XGET_IDX,-XSET_IDX</partialMethods>
+							<!--<repackage>gov.nist.secauto.metaschema.model.xmlbeans</repackage> -->
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>add-xmlbeans-source</id>
+						<id>add-xmlbeans-sources</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>add-source</goal>
