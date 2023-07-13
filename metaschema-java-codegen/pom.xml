@@ -113,38 +113,25 @@
 		</pluginManagement>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.xmlbeans</groupId>
-				<artifactId>xmlbeans</artifactId>
+				<groupId>gov.nist.secauto</groupId>
+				<artifactId>oss-build-support</artifactId>
 				<executions>
 					<execution>
-						<id>metaschema-codegen</id>
+						<id>metaschema-codegen-beans</id>
+						<inherited>false</inherited>
 						<phase>generate-sources</phase>
 						<goals>
-							<goal>compile</goal>
+							<goal>generate-xmlbeans</goal>
 						</goals>
 						<configuration>
+							<xmlConfigs>${project.basedir}/src/schema/xmlconfig.xml</xmlConfigs>
 							<sourceDir>${project.basedir}/src/main/xsd</sourceDir>
 							<javaTargetDir>${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
 							<classTargetDir>${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>
-							<xmlConfigs>${project.basedir}/src/main/xsdconfig/metaschema-binding.xsdconfig</xmlConfigs>
 							<name>metaschema.codegen</name>
-							<partialMethods>ALL,-XGET,-XSET,-XGET_ARRAY,-XSET_ARRAY,-XGET_IDX,-XSET_IDX</partialMethods>
-							<!-- <repackage>gov.nist.secauto.metaschema.codegen.xmlbeans</repackage> -->
 						</configuration>
 					</execution>
 				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.logging.log4j</groupId>
-						<artifactId>log4j-api</artifactId>
-						<version>${dependency.log4j2.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.apache.logging.log4j</groupId>
-						<artifactId>log4j-core</artifactId>
-						<version>${dependency.log4j2.version}</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

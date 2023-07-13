@@ -84,24 +84,23 @@
 		</pluginManagement>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.xmlbeans</groupId>
-				<artifactId>xmlbeans</artifactId>
+				<groupId>gov.nist.secauto</groupId>
+				<artifactId>oss-build-support</artifactId>
 				<executions>
 					<execution>
-						<id>metaschema-testing</id>
+						<id>metaschema-testing-beans</id>
+						<inherited>false</inherited>
 						<phase>generate-sources</phase>
 						<goals>
-							<goal>compile</goal>
+							<goal>generate-xmlbeans</goal>
 						</goals>
 						<configuration>
+	                        <xmlConfigs>${project.basedir}/src/schema/xmlconfig.xml</xmlConfigs>
 							<sourceDir>${project.basedir}/../metaschema-model/metaschema/test-suite</sourceDir>
 							<sourceSchemas>unit-tests.xsd</sourceSchemas>
 							<javaTargetDir>${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
-							<xmlConfigs>${project.basedir}/src/main/xsdconfig/test-suite.xsdconfig</xmlConfigs>
 							<classTargetDir>${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>
 							<name>metaschema.testing</name>
-							<partialMethods>ALL,-XGET,-XSET,-XGET_ARRAY,-XSET_ARRAY,-XGET_IDX,-XSET_IDX</partialMethods>
-							<!-- <repackage>gov.nist.secauto.metaschema.model.xmlbeans</repackage> -->
 						</configuration>
 					</execution>
 				</executions>

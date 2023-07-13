@@ -115,33 +115,51 @@
 						</sourceDirectories>
 					</configuration>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<configuration>
-						<excludePackageNames>
-							gov.nist.secauto.metaschema.model.xmlbeans:org.apache.xmlbeans.metadata.*</excludePackageNames>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.xmlbeans</groupId>
-					<artifactId>xmlbeans</artifactId>
-					<dependencies>
-						<dependency>
-							<groupId>org.apache.logging.log4j</groupId>
-							<artifactId>log4j-api</artifactId>
-							<version>${dependency.log4j2.version}</version>
-						</dependency>
-						<dependency>
-							<groupId>org.apache.logging.log4j</groupId>
-							<artifactId>log4j-core</artifactId>
-							<version>${dependency.log4j2.version}</version>
-						</dependency>
-					</dependencies>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
+			<plugin>
+				<groupId>gov.nist.secauto</groupId>
+				<artifactId>oss-build-support</artifactId>
+				<executions>
+					<execution>
+						<id>metaschema-beans</id>
+						<inherited>false</inherited>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-xmlbeans</goal>
+						</goals>
+						<configuration>
+	                        <xmlConfigs>${project.basedir}/src/schema/xmlconfig.xml</xmlConfigs>
+							<sourceDir>${project.basedir}/metaschema/schema/xml</sourceDir>
+							<javaTargetDir>
+								${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
+							<classTargetDir>
+								${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>
+							<name>metaschema</name>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-xmlbeans-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>
+									${project.build.directory}/generated-sources/xmlbeans</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
@@ -210,52 +228,145 @@
 					</execution>
 				</executions>
 			</plugin>
+<!--
 			<plugin>
-				<groupId>org.apache.xmlbeans</groupId>
-				<artifactId>xmlbeans</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>metaschema-beans</id>
+						<id>exec-xmlbeans-metaschema</id>
 						<phase>generate-sources</phase>
 						<goals>
-							<goal>compile</goal>
+							<goal>run</goal>
 						</goals>
 						<configuration>
-							<sourceDir>${project.basedir}/metaschema/schema/xml</sourceDir>
-							<!-- <sourceSchemas>metaschema.xsd</sourceSchemas> -->
-							<javaTargetDir>
-								${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
-							<xmlConfigs>
-								${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</xmlConfigs>
-							<classTargetDir>
-								${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>
-							<name>metaschema</name>
-							<partialMethods>
-								ALL,-XGET,-XSET,-XGET_ARRAY,-XSET_ARRAY,-XGET_IDX,-XSET_IDX</partialMethods>
-							<!--<repackage>gov.nist.secauto.metaschema.model.xmlbeans</repackage> -->
+							<target>
+								<java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler" fork="true" failonerror="true">
+									<classpath>
+										<path refid="maven.plugin.classpath"/>
+									</classpath>
+									<arg value="-srconly"/>
+									<arg value="-src"/>
+									<arg value="${project.build.directory}/generated-sources/xmlbeans"/>
+									<arg value="${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig"/>
+									<arg value="-d"/>
+									<arg value="${project.basedir}/target/generated-resources/xmlbeans"/>
+									<arg value="-partialMethods"/>
+									<arg value="ALL,-XGET,-XSET,-XGET_ARRAY,-XSET_ARRAY,-XGET_IDX,-XSET_IDX"/>
+									<arg value="-name"/>
+									<arg value="metaschema"/>
+									<arg value="${project.basedir}/metaschema/schema/xml"/>
+								</java>
+							</target>
 						</configuration>
 					</execution>
 				</executions>
+				<dependencies>
+					<dependency>
+						fix for missing runtime dependency
+						<groupId>com.github.javaparser</groupId>
+					    <artifactId>javaparser-symbol-solver-core</artifactId>
+						<version>3.24.4</version>
+					</dependency>
+					<dependency>
+						fix for missing runtime dependency
+						<groupId>org.apache.logging.log4j</groupId>
+						<artifactId>log4j-core</artifactId>
+						<version>2.20.0</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.xmlbeans</groupId>
+    			        <artifactId>xmlbeans</artifactId>
+						<version>${dependency.xmlbeans.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
-			<plugin>
+			<plugin> 
 				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
+				<artifactId>exec-maven-plugin</artifactId>
+				Enable "paths" Toolchain provided by Exec Maven Plugin
+        		<extensions>true</extensions>
 				<executions>
 					<execution>
-						<id>add-xmlbeans-sources</id>
+						<id>exec-xmlbeans-metaschema</id>
 						<phase>generate-sources</phase>
 						<goals>
-							<goal>add-source</goal>
+							<goal>java</goal>
 						</goals>
 						<configuration>
-							<sources>
-								<source>
-									${project.build.directory}/generated-sources/xmlbeans</source>
-							</sources>
+							<toolchain>paths</toolchain>
+							<executable>java</executable>
+							<includePluginDependencies>true</includePluginDependencies>
+							<includeProjectDependencies>false</includeProjectDependencies>
+							<arguments>
+								<argument>-classpath</argument>
+								automatically creates the classpath
+					            <classpath/>
+            					<argument>org.apache.xmlbeans.impl.tool.SchemaCompiler</argument>
+								<argument>-srconly</argument>
+								<argument>-src</argument>
+								<argument>${project.build.directory}/generated-sources/xmlbeans</argument>
+								<argument>${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</argument>
+								<argument>-d</argument>
+								<argument>${project.basedir}/target/generated-resources/xmlbeans</argument>
+								<argument>-partialMethods</argument>
+								<argument>ALL,-XGET,-XSET,-XGET_ARRAY,-XSET_ARRAY,-XGET_IDX,-XSET_IDX</argument>
+								<argument>-name</argument>
+								<argument>metaschema</argument>
+								<argument>${project.basedir}/metaschema/schema/xml</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>exec-java-xmlbeans-metaschema</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>org.apache.xmlbeans.impl.tool.SchemaCompiler</mainClass>
+							keep maven running, since it has more work to do
+							<cleanupDaemonThreads>false</cleanupDaemonThreads>
+							<addResourcesToClasspath>true</addResourcesToClasspath>
+							<includePluginDependencies>true</includePluginDependencies>
+							<includeProjectDependencies>false</includeProjectDependencies>
+							<arguments>
+								<argument>-srconly</argument>
+								<argument>-src</argument>
+								<argument>${project.build.directory}/generated-sources/xmlbeans</argument>
+								<argument>${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</argument>
+								<argument>-d</argument>
+								<argument>${project.basedir}/target/generated-resources/xmlbeans</argument>
+								<argument>-partialMethods</argument>
+								<argument>ALL,-XGET,-XSET,-XGET_ARRAY,-XSET_ARRAY,-XGET_IDX,-XSET_IDX</argument>
+								<argument>-name</argument>
+								<argument>metaschema</argument>
+								<argument>${project.basedir}/metaschema/schema/xml</argument>
+							</arguments>
 						</configuration>
 					</execution>
 				</executions>
+				<dependencies>
+					<dependency>
+						fix for missing runtime dependency
+						<groupId>com.github.javaparser</groupId>
+					    <artifactId>javaparser-symbol-solver-core</artifactId>
+						<version>3.24.4</version>
+					</dependency>
+					<dependency>
+						fix for missing runtime dependency
+						<groupId>org.apache.logging.log4j</groupId>
+						<artifactId>log4j-core</artifactId>
+						<version>2.20.0</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.xmlbeans</groupId>
+    			        <artifactId>xmlbeans</artifactId>
+						<version>${dependency.xmlbeans.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
+-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
