@@ -39,8 +39,8 @@ jobs:
     # -------------------------
     - name: Build Website
       run: |
-        mvn -B -e -Prelease -Preporting package site site:stage
-    - name: Run deploy script
+        mvn -B -e -Pgpg -Prelease -Preporting install site site:stage
+    - name: Run Website Deploy Script
       run: |
         touch target/staging/.nojekyll
         bash .github/workflows/deploy.sh --push-only -v -m "Deploying website [ci skip]"

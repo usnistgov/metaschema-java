@@ -41,12 +41,15 @@ public abstract class AbstractIntegerItem
 
   @Override
   public boolean toEffectiveBoolean() {
-    return !BigInteger.ZERO.equals(getValue());
+    return !BigInteger.ZERO.equals(
+        getValue());
   }
 
   @Override
   public BigDecimal asDecimal() {
-    return new BigDecimal(getValue(), MathContext.DECIMAL64);
+    return new BigDecimal(
+        getValue(),
+        MathContext.DECIMAL64);
   }
 
   @Override
@@ -64,7 +67,8 @@ public abstract class AbstractIntegerItem
     if (signum > -1) {
       retval = this;
     } else {
-      retval = IIntegerItem.valueOf(getValue().abs());
+      retval = IIntegerItem.valueOf(
+          getValue().abs());
     }
     return retval;
   }

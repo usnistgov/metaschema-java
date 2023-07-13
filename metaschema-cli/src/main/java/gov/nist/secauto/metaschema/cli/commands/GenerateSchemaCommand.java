@@ -91,6 +91,7 @@ public class GenerateSchemaCommand
           .longOpt("inline-types")
           .desc("definitions declared inline will be generated as inline types")
           .build());
+
   static {
     EXTRA_ARGUMENTS = ObjectUtils.notNull(List.of(
         new DefaultExtraArgument("metaschema file", true),

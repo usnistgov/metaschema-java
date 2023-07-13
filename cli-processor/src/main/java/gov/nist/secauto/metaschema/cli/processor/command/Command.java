@@ -27,9 +27,9 @@
 package gov.nist.secauto.metaschema.cli.processor.command;
 
 import gov.nist.secauto.metaschema.cli.processor.CLIProcessor.CallingContext;
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.cli.processor.ExitStatus;
 import gov.nist.secauto.metaschema.cli.processor.InvalidArgumentException;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;

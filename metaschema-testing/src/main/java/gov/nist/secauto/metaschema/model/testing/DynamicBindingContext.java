@@ -34,35 +34,49 @@ import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagContainer;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DynamicBindingContext
     extends DefaultBindingContext {
 
   public DynamicBindingContext(@NonNull IProduction production, ClassLoader classLoader) {
     production.getDefinitionProductionsAsStream()
-        .filter(definitionProduction -> {
-          boolean retval = false;
-          IFlagContainer definition = definitionProduction.getDefinition();
-          if (definition instanceof IAssemblyDefinition) {
-            IAssemblyDefinition assembly = (IAssemblyDefinition) definition;
-            if (assembly.isRoot()) {
-              retval = true;
-            }
-          }
-          return retval;
-        }).map(definitionProduction -> {
-          IAssemblyDefinition definition = (IAssemblyDefinition) definitionProduction.getDefinition();
-          try {
-            @SuppressWarnings("unchecked") Class<IAssemblyClassBinding> clazz
-                = ObjectUtils.notNull((Class<IAssemblyClassBinding>) classLoader
-                    .loadClass(definitionProduction.getGeneratedClass().getClassName().reflectionName()));
-            return new DynamicBindingMatcher(definition, clazz);
-          } catch (ClassNotFoundException ex) {
-            throw new IllegalStateException(ex);
-          }
-        }).forEachOrdered(matcher -> registerBindingMatcher(ObjectUtils.notNull(matcher)));
+        .filter(
+            definitionProduction -> {
+              boolean retval = false;
+              IFlagContainer definition = definitionProduction.getDefinition();
+              if (definition instanceof IAssemblyDefinition) {
+                IAssemblyDefinition assembly = (IAssemblyDefinition) definition;
+                if (assembly.isRoot()) {
+                  retval = true;
+                }
+              }
+              return retval;
+            })
+        .map(
+            definitionProduction -> {
+              IAssemblyDefinition definition = (IAssemblyDefinition) definitionProduction.getDefinition();
+              try {
+                @SuppressWarnings("unchecked")
+                Class<IAssemblyClassBinding> clazz
+                    = ObjectUtils.notNull(
+                        (Class<IAssemblyClassBinding>) classLoader
+                            .loadClass(
+                                definitionProduction.getGeneratedClass().getClassName().reflectionName()));
+                return new DynamicBindingMatcher(
+                    definition,
+                    clazz);
+              } catch (ClassNotFoundException ex) {
+                throw new IllegalStateException(
+                    ex);
+              }
+            })
+        .forEachOrdered(
+            matcher -> registerBindingMatcher(
+                ObjectUtils.notNull(
+                    matcher)));
   }
 
   private static class DynamicBindingMatcher implements IBindingMatcher {
@@ -96,12 +110,14 @@ public class DynamicBindingContext
 
     @Override
     public Class<?> getBoundClassForXmlQName(QName rootQName) {
-      return getRootQName().equals(rootQName) ? getClazz() : null;
+      return getRootQName().equals(
+          rootQName) ? getClazz() : null;
     }
 
     @Override
     public Class<?> getBoundClassForJsonName(String rootName) {
-      return getRootJsonName().equals(rootName) ? getClazz() : null;
+      return getRootJsonName().equals(
+          rootName) ? getClazz() : null;
     }
 
   }

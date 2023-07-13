@@ -151,13 +151,13 @@ public abstract class AbstractTestSuite {
                   }
 
                   @Override
-                  public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException {
-                    if (e == null) {
+                  public FileVisitResult postVisitDirectory(Path dir, IOException ex) throws IOException {
+                    if (ex == null) {
                       Files.delete(dir);
                       return FileVisitResult.CONTINUE;
                     }
                     // directory iteration failed for some reason
-                    throw e;
+                    throw ex;
                   }
                 });
               } catch (IOException ex) {
@@ -189,11 +189,11 @@ public abstract class AbstractTestSuite {
         collection.getName(),
         testSuiteUri,
         collection.getTestScenarioList().stream()
-            .flatMap(scenario -> {
-              assert scenario != null;
-              return Stream.of(generateScenario(scenario, collectionUri, collectionGenerationPath));
-            })
-            .sequential());
+        .flatMap(scenario -> {
+          assert scenario != null;
+          return Stream.of(generateScenario(scenario, collectionUri, collectionGenerationPath));
+        })
+        .sequential());
   }
 
   protected void produceSchema(@NonNull IMetaschema metaschema, @NonNull Path schemaPath) throws IOException {
@@ -326,8 +326,8 @@ public abstract class AbstractTestSuite {
           .flatMap(contentCase -> {
             assert contentCase != null;
             DynamicTest test
-                = generateValidationCase(contentCase, dynamicBindingContextFuture, contentValidatorFuture,
-                    collectionUri, ObjectUtils.notNull(scenarioGenerationPath));
+            = generateValidationCase(contentCase, dynamicBindingContextFuture, contentValidatorFuture,
+                collectionUri, ObjectUtils.notNull(scenarioGenerationPath));
             return test == null ? Stream.empty() : Stream.of(test);
           }).sequential();
     }
@@ -360,7 +360,7 @@ public abstract class AbstractTestSuite {
     }
 
     @SuppressWarnings("rawtypes") ISerializer serializer
-        = context.newSerializer(getRequiredContentFormat(), object.getClass());
+    = context.newSerializer(getRequiredContentFormat(), object.getClass());
     serializer.serialize(object, convertedContetPath, getWriteOpenOptions());
 
     return convertedContetPath;

@@ -34,8 +34,10 @@ import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extends IModelNodeItem, L extends AbstractModelNodeContext.Model<
-    F, M>>
+public abstract class AbstractModelNodeContext<
+    F extends IFlagNodeItem,
+    M extends IModelNodeItem,
+    L extends AbstractModelNodeContext.Model<F, M>>
     extends AbstractNodeContext<F, L> {
 
   /**
@@ -44,7 +46,8 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
    * @param factory
    *          the factory to use to instantiate new node items
    */
-  protected AbstractModelNodeContext(@NonNull INodeItemFactory factory) {
+  protected AbstractModelNodeContext(@NonNull
+  INodeItemFactory factory) {
     super(factory);
   }
 
@@ -56,7 +59,8 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
   @SuppressWarnings("null")
   @Override
   public List<? extends M> getModelItemsByName(String name) {
-    return getModel().getModelItemsByName(name);
+    return getModel().getModelItemsByName(
+        name);
   }
 
   /**
@@ -80,8 +84,10 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
      *          a mapping of model item name to a list of model items
      */
     protected Model(
-        @NonNull Map<String, F> flags,
-        @NonNull Map<String, List<M>> modelItems) {
+        @NonNull
+        Map<String, F> flags,
+        @NonNull
+        Map<String, List<M>> modelItems) {
       super(flags);
       this.modelItems = modelItems;
     }
@@ -94,8 +100,10 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
      * @return a lisy of matching model items or {@code null} if no match was found
      */
     @NonNull
-    public List<M> getModelItemsByName(@NonNull String name) {
-      List<M> result = modelItems.get(name);
+    public List<M> getModelItemsByName(@NonNull
+    String name) {
+      List<M> result = modelItems.get(
+          name);
       return result == null ? CollectionUtil.emptyList() : result;
     }
 

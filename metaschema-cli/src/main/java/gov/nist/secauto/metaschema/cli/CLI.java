@@ -40,10 +40,6 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-/**
- * Hello world!
- *
- */
 @SuppressWarnings("PMD.ShortClassName")
 public final class CLI {
   public static void main(String[] args) {
