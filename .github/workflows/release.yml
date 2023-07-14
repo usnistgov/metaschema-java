@@ -35,16 +35,6 @@ jobs:
         gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }} # Value of the GPG private key to import
         gpg-passphrase: MAVEN_GPG_PASSPHRASE # env variable for GPG private key passphrase
     # -------------------------
-    # Maven Site
-    # -------------------------
-    - name: Build Website
-      run: |
-        mvn -B -e -Pgpg -Prelease -Preporting install site site:stage
-    - name: Run Website Deploy Script
-      run: |
-        touch target/staging/.nojekyll
-        bash .github/workflows/deploy.sh --push-only -v -m "Deploying website [ci skip]"
-    # -------------------------
     # Maven Deploy
     # -------------------------
     - name: Deploy Maven Artifacts
@@ -55,3 +45,13 @@ jobs:
         MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         MAVEN_CENTRAL_TOKEN: ${{ secrets.SONATYPE_PASSWORD }}
         MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+    # -------------------------
+    # Maven Site
+    # -------------------------
+    - name: Build Website
+      run: |
+        mvn -B -e -Pgpg -Prelease -Preporting site site:stage
+    - name: Run Website Deploy Script
+      run: |
+        touch target/staging/.nojekyll
+        bash .github/workflows/deploy.sh --push-only -v -m "Deploying website [ci skip]"
