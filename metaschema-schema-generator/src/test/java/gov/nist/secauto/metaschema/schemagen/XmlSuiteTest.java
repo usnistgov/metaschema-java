@@ -175,7 +175,7 @@ class XmlSuiteTest
     IMutableConfiguration<SchemaGenerationFeature<?>> features = new DefaultConfiguration<>();
     features.disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     try (Writer writer = Files.newBufferedWriter(
-        Path.of("oscal-complete_schema.xsd"),
+        Path.of("target/oscal-complete_schema.xsd"),
         StandardCharsets.UTF_8,
         getWriteOpenOptions())) {
       assert writer != null;

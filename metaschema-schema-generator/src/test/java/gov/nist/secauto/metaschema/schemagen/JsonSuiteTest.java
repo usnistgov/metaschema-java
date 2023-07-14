@@ -139,7 +139,7 @@ class JsonSuiteTest
         = new DefaultConfiguration<>();
     features.disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     try (Writer writer = Files.newBufferedWriter(
-        Path.of("oscal-complete_schema.json"),
+        Path.of("target/oscal-complete_schema.json"),
         StandardCharsets.UTF_8,
         getWriteOpenOptions())) {
       assert writer != null;
@@ -157,7 +157,7 @@ class JsonSuiteTest
     IMutableConfiguration<SchemaGenerationFeature<?>> features = new DefaultConfiguration<>();
     features.disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     try (Writer writer = Files.newBufferedWriter(
-        Path.of("json-value-testing-mini_schema.json"),
+        Path.of("target/json-value-testing-mini_schema.json"),
         StandardCharsets.UTF_8,
         getWriteOpenOptions())) {
       assert writer != null;
