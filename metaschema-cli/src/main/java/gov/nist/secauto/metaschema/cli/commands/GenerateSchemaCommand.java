@@ -177,13 +177,13 @@ public class GenerateSchemaCommand
     if (destination != null) {
       if (Files.exists(destination)) {
         if (!cmdLine.hasOption(OVERWRITE_OPTION)) {
-          return ExitCode.FAIL.exitMessage( // NOPMD readability
+          return ExitCode.INVALID_ARGUMENTS.exitMessage( // NOPMD readability
               String.format("The provided destination '%s' already exists and the '%s' option was not provided.",
                   destination,
                   OptionUtils.toArgument(OVERWRITE_OPTION)));
         }
         if (!Files.isWritable(destination)) {
-          return ExitCode.FAIL.exitMessage( // NOPMD readability
+          return ExitCode.IO_ERROR.exitMessage( // NOPMD readability
               "The provided destination '" + destination + "' is not writable.");
         }
       } else {
@@ -229,7 +229,7 @@ public class GenerateSchemaCommand
         ISchemaGenerator.generateSchema(metaschema, destination, asFormat, configuration);
       }
     } catch (IOException | MetaschemaException ex) {
-      return ExitCode.FAIL.exit().withThrowable(ex); // NOPMD readability
+      return ExitCode.PROCESSING_ERROR.exit().withThrowable(ex); // NOPMD readability
     }
     if (destination != null && LOGGER.isInfoEnabled()) {
       LOGGER.info("Generated {} schema file: {}", asFormat.toString(), destination);
