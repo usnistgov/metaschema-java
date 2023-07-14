@@ -24,22 +24,48 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.testing;
+package gov.nist.secauto.metaschema.codegen.binding;
 
 import gov.nist.secauto.metaschema.binding.DefaultBindingContext;
 import gov.nist.secauto.metaschema.binding.IBindingMatcher;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.codegen.IProduction;
+import gov.nist.secauto.metaschema.codegen.MetaschemaCompilerHelper;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagContainer;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class DynamicBindingContext
     extends DefaultBindingContext {
+
+  @SuppressWarnings("PMD.UseProperClassLoader") // false positive
+  @NonNull
+  public static DynamicBindingContext forMetaschema(
+      @NonNull IMetaschema metaschema,
+      @Nullable Path tempPath) throws IOException {
+    Path classDir;
+    if (tempPath == null) {
+      classDir = Files.createTempDirectory("classes-");
+    } else {
+      classDir = Files.createTempDirectory(tempPath, "classes-");
+    }
+    classDir.toFile().deleteOnExit();
+
+    IProduction production = MetaschemaCompilerHelper.compileMetaschema(metaschema, classDir);
+    return new DynamicBindingContext(production,
+        MetaschemaCompilerHelper.getClassLoader(classDir,
+            ObjectUtils.notNull(Thread.currentThread().getContextClassLoader())));
+  }
 
   public DynamicBindingContext(@NonNull IProduction production, ClassLoader classLoader) {
     production.getDefinitionProductionsAsStream()
@@ -59,8 +85,7 @@ public class DynamicBindingContext
             definitionProduction -> {
               IAssemblyDefinition definition = (IAssemblyDefinition) definitionProduction.getDefinition();
               try {
-                @SuppressWarnings("unchecked")
-                Class<IAssemblyClassBinding> clazz
+                @SuppressWarnings("unchecked") Class<IAssemblyClassBinding> clazz
                     = ObjectUtils.notNull(
                         (Class<IAssemblyClassBinding>) classLoader
                             .loadClass(

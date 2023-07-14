@@ -39,6 +39,7 @@ import org.xml.sax.InputSource;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
@@ -56,6 +57,11 @@ public class JsonSchemaContentValidator implements IContentValidator {
   @NonNull
   public static JSONObject toJsonObject(@NonNull InputStream schemaInputStream) {
     return new JSONObject(new JSONTokener(schemaInputStream));
+  }
+
+  @NonNull
+  public static JSONObject toJsonObject(@NonNull Reader reader) {
+    return new JSONObject(new JSONTokener(reader));
   }
 
   public JsonSchemaContentValidator(@NonNull InputStream schemaInputStream) {

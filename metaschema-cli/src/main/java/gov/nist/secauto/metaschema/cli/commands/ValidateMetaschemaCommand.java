@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.cli.processor.InvalidArgumentException;
 import gov.nist.secauto.metaschema.cli.processor.command.AbstractTerminalCommand;
 import gov.nist.secauto.metaschema.cli.processor.command.DefaultExtraArgument;
 import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;
+import gov.nist.secauto.metaschema.cli.processor.command.ICommandExecutor;
 import gov.nist.secauto.metaschema.cli.util.LoggingValidationHandler;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
@@ -58,9 +59,9 @@ import javax.xml.transform.Source;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class ValidateCommand
+public class ValidateMetaschemaCommand
     extends AbstractTerminalCommand {
-  private static final Logger LOGGER = LogManager.getLogger(ValidateCommand.class);
+  private static final Logger LOGGER = LogManager.getLogger(ValidateMetaschemaCommand.class);
   @NonNull
   private static final String COMMAND = "validate";
   @NonNull
@@ -110,9 +111,14 @@ public class ValidateCommand
     }
   }
 
-  @SuppressWarnings("PMD.OnlyOneReturn") // readability
   @Override
-  public ExitStatus executeCommand(CallingContext callingContext, CommandLine cmdLine) {
+  public ICommandExecutor newExecutor(CallingContext callingContext, CommandLine cmdLine) {
+    return ICommandExecutor.using(callingContext, cmdLine, this::executeCommand);
+  }
+
+  @SuppressWarnings("PMD.OnlyOneReturn") // readability
+  @NonNull
+  protected ExitStatus executeCommand(CallingContext callingContext, CommandLine cmdLine) {
     List<String> extraArgs = cmdLine.getArgList();
     Path target = Paths.get(extraArgs.get(0));
     assert target != null;

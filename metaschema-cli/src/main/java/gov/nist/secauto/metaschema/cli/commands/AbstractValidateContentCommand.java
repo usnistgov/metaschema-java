@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.cli.processor.ExitCode;
 import gov.nist.secauto.metaschema.cli.processor.ExitStatus;
 import gov.nist.secauto.metaschema.cli.processor.InvalidArgumentException;
 import gov.nist.secauto.metaschema.cli.processor.OptionUtils;
+import gov.nist.secauto.metaschema.cli.processor.command.AbstractCommandExecutor;
 import gov.nist.secauto.metaschema.cli.processor.command.AbstractTerminalCommand;
 import gov.nist.secauto.metaschema.cli.processor.command.DefaultExtraArgument;
 import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;
@@ -43,6 +44,7 @@ import gov.nist.secauto.metaschema.cli.util.LoggingValidationHandler;
 import gov.nist.secauto.metaschema.model.ConstraintLoader;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintSet;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
@@ -66,11 +68,9 @@ import java.util.Locale;
 import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public abstract class AbstractValidateContentCommand
-    extends AbstractTerminalCommand
-    implements IValidationSchemaProvider {
+    extends AbstractTerminalCommand {
   private static final Logger LOGGER = LogManager.getLogger(AbstractValidateContentCommand.class);
   @NonNull
   private static final String COMMAND = "validate";
@@ -164,85 +164,107 @@ public abstract class AbstractValidateContentCommand
     }
   }
 
-  @NonNull
-  protected abstract IBindingContext getBindingContext(@Nullable Set<IConstraintSet> constraintSets);
+  protected abstract class AbstractValidationCommandExecutor
+      extends AbstractCommandExecutor
+      implements IValidationSchemaProvider {
 
-  @SuppressWarnings("PMD.OnlyOneReturn") // readability
-  @Override
-  public ExitStatus executeCommand(CallingContext callingContext, CommandLine cmdLine) {
-    IBindingContext bindingContext;
-    if (cmdLine.hasOption(CONSTRAINTS_OPTION)) {
-      ConstraintLoader constraintLoader = new ConstraintLoader();
-      Set<IConstraintSet> constraintSets = new LinkedHashSet<>();
-      String[] args = cmdLine.getOptionValues(CONSTRAINTS_OPTION);
-      for (String arg : args) {
-        Path constraintPath = Paths.get(arg);
-        assert constraintPath != null;
-        try {
-          constraintSets.add(constraintLoader.load(constraintPath));
-        } catch (IOException | MetaschemaException ex) {
-          return ExitCode.FAIL.exitMessage("Unable to load constraint set '" + arg + "'.").withThrowable(ex);
-        }
-      }
-      bindingContext = getBindingContext(constraintSets);
-    } else {
-      bindingContext = getBindingContext(null);
+    public AbstractValidationCommandExecutor(
+        @NonNull CallingContext callingContext,
+        @NonNull CommandLine commandLine) {
+      super(callingContext, commandLine);
     }
 
-    IBoundLoader loader = bindingContext.newBoundLoader();
+    @NonNull
+    protected abstract IBindingContext getBindingContext(@NonNull Set<IConstraintSet> constraintSets)
+        throws MetaschemaException, IOException;
 
-    List<String> extraArgs = cmdLine.getArgList();
-    @SuppressWarnings("null") Path source = resolvePathAgainstCWD(Paths.get(extraArgs.get(0)));
-    assert source != null;
+    @SuppressWarnings("PMD.OnlyOneReturn") // readability
+    @Override
+    public ExitStatus execute() {
+      CommandLine cmdLine = getCommandLine();
 
-    Format asFormat;
-    if (cmdLine.hasOption(AS_OPTION)) {
+      Set<IConstraintSet> constraintSets;
+      if (cmdLine.hasOption(CONSTRAINTS_OPTION)) {
+        ConstraintLoader constraintLoader = new ConstraintLoader();
+        constraintSets = new LinkedHashSet<>();
+        String[] args = cmdLine.getOptionValues(CONSTRAINTS_OPTION);
+        for (String arg : args) {
+          Path constraintPath = Paths.get(arg);
+          assert constraintPath != null;
+          try {
+            constraintSets.add(constraintLoader.load(constraintPath));
+          } catch (IOException | MetaschemaException ex) {
+            return ExitCode.FAIL.exitMessage("Unable to load constraint set '" + arg + "'.").withThrowable(ex);
+          }
+        }
+      } else {
+        constraintSets = CollectionUtil.emptySet();
+      }
+      IBindingContext bindingContext;
       try {
-        String toFormatText = cmdLine.getOptionValue(AS_OPTION);
-        asFormat = Format.valueOf(toFormatText.toUpperCase(Locale.ROOT));
-      } catch (IllegalArgumentException ex) {
+        bindingContext = getBindingContext(constraintSets);
+      } catch (IOException | MetaschemaException ex) {
         return ExitCode.FAIL
-            .exitMessage("Invalid '--as' argument. The format must be one of: "
-                + Arrays.stream(Format.values())
-                    .map(format -> format.name())
-                    .collect(CustomCollectors.joiningWithOxfordComma("or")))
+            .exitMessage("Unable to get binding context. " + ex.getMessage())
             .withThrowable(ex);
       }
-    } else {
-      // attempt to determine the format
-      try {
-        asFormat = loader.detectFormat(source);
-      } catch (FileNotFoundException ex) {
-        // this case was already checked for
-        return ExitCode.INPUT_ERROR.exitMessage("The provided source file '" + source + "' does not exist.");
-      } catch (IOException ex) {
-        return ExitCode.FAIL.exit().withThrowable(ex);
-      } catch (IllegalArgumentException ex) {
-        return ExitCode.FAIL.exitMessage(
-            "Source file has unrecognizable format. Use '--as' to specify the format. The format must be one of: "
-                + Arrays.stream(Format.values())
-                    .map(format -> format.name())
-                    .collect(CustomCollectors.joiningWithOxfordComma("or")));
+
+      IBoundLoader loader = bindingContext.newBoundLoader();
+
+      List<String> extraArgs = cmdLine.getArgList();
+      @SuppressWarnings("null") Path source = resolvePathAgainstCWD(Paths.get(extraArgs.get(0)));
+      assert source != null;
+
+      Format asFormat;
+      if (cmdLine.hasOption(AS_OPTION)) {
+        try {
+          String toFormatText = cmdLine.getOptionValue(AS_OPTION);
+          asFormat = Format.valueOf(toFormatText.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ex) {
+          return ExitCode.FAIL
+              .exitMessage("Invalid '--as' argument. The format must be one of: "
+                  + Arrays.stream(Format.values())
+                      .map(format -> format.name())
+                      .collect(CustomCollectors.joiningWithOxfordComma("or")))
+              .withThrowable(ex);
+        }
+      } else {
+        // attempt to determine the format
+        try {
+          asFormat = loader.detectFormat(source);
+        } catch (FileNotFoundException ex) {
+          // this case was already checked for
+          return ExitCode.INPUT_ERROR.exitMessage("The provided source file '" + source + "' does not exist.");
+        } catch (IOException ex) {
+          return ExitCode.FAIL.exit().withThrowable(ex);
+        } catch (IllegalArgumentException ex) {
+          return ExitCode.FAIL.exitMessage(
+              "Source file has unrecognizable format. Use '--as' to specify the format. The format must be one of: "
+                  + Arrays.stream(Format.values())
+                      .map(format -> format.name())
+                      .collect(CustomCollectors.joiningWithOxfordComma("or")));
+        }
       }
+
+      IValidationResult validationResult;
+      try {
+        validationResult = bindingContext.validate(source, asFormat, this);
+      } catch (IOException | SAXException ex) {
+        return ExitCode.PROCESSING_ERROR.exit().withThrowable(ex);
+      }
+
+      if (LOGGER.isInfoEnabled()) {
+        LOGGER.info("Validation identified the following in file '{}'.", source);
+      }
+
+      LoggingValidationHandler.instance().handleValidationResults(validationResult);
+
+      if (validationResult.isPassing() && !cmdLine.hasOption(CLIProcessor.QUIET_OPTION) && LOGGER.isInfoEnabled()) {
+        LOGGER.info("The file '{}' is valid.", source);
+      }
+
+      return (validationResult.isPassing() ? ExitCode.OK : ExitCode.FAIL).exit();
     }
 
-    IValidationResult validationResult;
-    try {
-      validationResult = bindingContext.validate(source, asFormat, this);
-    } catch (IOException | SAXException ex) {
-      return ExitCode.PROCESSING_ERROR.exit().withThrowable(ex);
-    }
-
-    if (LOGGER.isInfoEnabled()) {
-      LOGGER.info("Validation identified the following in file '{}'.", source);
-    }
-
-    LoggingValidationHandler.instance().handleValidationResults(validationResult);
-
-    if (validationResult.isPassing() && !cmdLine.hasOption(CLIProcessor.QUIET_OPTION) && LOGGER.isInfoEnabled()) {
-      LOGGER.info("The file '{}' is valid.", source);
-    }
-
-    return (validationResult.isPassing() ? ExitCode.OK : ExitCode.FAIL).exit();
   }
 }

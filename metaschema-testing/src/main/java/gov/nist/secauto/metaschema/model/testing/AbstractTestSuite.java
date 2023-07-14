@@ -30,8 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.io.ISerializer;
-import gov.nist.secauto.metaschema.codegen.IProduction;
-import gov.nist.secauto.metaschema.codegen.MetaschemaCompilerHelper;
+import gov.nist.secauto.metaschema.codegen.binding.DynamicBindingContext;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
@@ -189,11 +188,11 @@ public abstract class AbstractTestSuite {
         collection.getName(),
         testSuiteUri,
         collection.getTestScenarioList().stream()
-        .flatMap(scenario -> {
-          assert scenario != null;
-          return Stream.of(generateScenario(scenario, collectionUri, collectionGenerationPath));
-        })
-        .sequential());
+            .flatMap(scenario -> {
+              assert scenario != null;
+              return Stream.of(generateScenario(scenario, collectionUri, collectionGenerationPath));
+            })
+            .sequential());
   }
 
   protected void produceSchema(@NonNull IMetaschema metaschema, @NonNull Path schemaPath) throws IOException {
@@ -221,23 +220,6 @@ public abstract class AbstractTestSuite {
         StandardOpenOption.WRITE,
         StandardOpenOption.TRUNCATE_EXISTING
     };
-  }
-
-  @SuppressWarnings("PMD.UseProperClassLoader") // false positive
-  protected DynamicBindingContext produceDynamicBindingContext(@NonNull IMetaschema metaschema,
-      @NonNull Path generationDirPath) throws IOException {
-    Path classDir;
-    try {
-      classDir = Files.createTempDirectory(generationDirPath, "classes-");
-    } catch (IOException ex) {
-      throw new JUnitException("Unable to class generation directory", ex);
-    }
-
-    assert classDir != null;
-    IProduction production = MetaschemaCompilerHelper.compileMetaschema(metaschema, classDir);
-    return new DynamicBindingContext(production,
-        MetaschemaCompilerHelper.getClassLoader(classDir,
-            ObjectUtils.notNull(Thread.currentThread().getContextClassLoader())));
   }
 
   private DynamicContainer generateScenario(@NonNull TestScenario scenario, @NonNull URI collectionUri,
@@ -288,7 +270,8 @@ public abstract class AbstractTestSuite {
       IMetaschema metaschema = loadMetaschemaFuture.get();
       DynamicBindingContext context;
       try {
-        context = produceDynamicBindingContext(ObjectUtils.notNull(metaschema),
+        context = DynamicBindingContext.forMetaschema(
+            ObjectUtils.notNull(metaschema),
             ObjectUtils.notNull(scenarioGenerationPath));
       } catch (Exception ex) { // NOPMD - intentional
         throw new JUnitException("Unable to generate classes for metaschema: " + metaschemaUri, ex);
@@ -326,8 +309,8 @@ public abstract class AbstractTestSuite {
           .flatMap(contentCase -> {
             assert contentCase != null;
             DynamicTest test
-            = generateValidationCase(contentCase, dynamicBindingContextFuture, contentValidatorFuture,
-                collectionUri, ObjectUtils.notNull(scenarioGenerationPath));
+                = generateValidationCase(contentCase, dynamicBindingContextFuture, contentValidatorFuture,
+                    collectionUri, ObjectUtils.notNull(scenarioGenerationPath));
             return test == null ? Stream.empty() : Stream.of(test);
           }).sequential();
     }
@@ -360,7 +343,7 @@ public abstract class AbstractTestSuite {
     }
 
     @SuppressWarnings("rawtypes") ISerializer serializer
-    = context.newSerializer(getRequiredContentFormat(), object.getClass());
+        = context.newSerializer(getRequiredContentFormat(), object.getClass());
     serializer.serialize(object, convertedContetPath, getWriteOpenOptions());
 
     return convertedContetPath;

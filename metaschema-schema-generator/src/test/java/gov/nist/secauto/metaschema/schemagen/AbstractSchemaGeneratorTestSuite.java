@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.schemagen;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import gov.nist.secauto.metaschema.binding.io.Format;
+import gov.nist.secauto.metaschema.codegen.binding.DynamicBindingContext;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
@@ -39,7 +40,6 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.XmlSchemaContentValidator;
 import gov.nist.secauto.metaschema.model.testing.AbstractTestSuite;
-import gov.nist.secauto.metaschema.model.testing.DynamicBindingContext;
 import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 
@@ -60,9 +60,10 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractSchemaGeneratorTestSuite
     extends AbstractTestSuite {
@@ -202,7 +203,9 @@ public abstract class AbstractSchemaGeneratorTestSuite
       throw new IllegalStateException();
     }
 
-    DynamicBindingContext context = produceDynamicBindingContext(metaschema, generationDir);
+    DynamicBindingContext context = DynamicBindingContext.forMetaschema(
+        metaschema,
+        generationDir);
     for (ContentCase contentCase : contentCases) {
       Path contentPath = collectionPath.resolve(contentCase.getName());
 

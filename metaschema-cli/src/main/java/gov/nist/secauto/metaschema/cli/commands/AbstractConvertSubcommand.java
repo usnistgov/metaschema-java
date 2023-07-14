@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.cli.processor.ExitCode;
 import gov.nist.secauto.metaschema.cli.processor.ExitStatus;
 import gov.nist.secauto.metaschema.cli.processor.InvalidArgumentException;
 import gov.nist.secauto.metaschema.cli.processor.OptionUtils;
+import gov.nist.secauto.metaschema.cli.processor.command.AbstractCommandExecutor;
 import gov.nist.secauto.metaschema.cli.processor.command.AbstractTerminalCommand;
 import gov.nist.secauto.metaschema.cli.processor.command.DefaultExtraArgument;
 import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;
@@ -130,75 +131,82 @@ public abstract class AbstractConvertSubcommand
     }
   }
 
-  @NonNull
-  protected abstract IBindingContext getBindingContext();
+  protected abstract static class AbstractConversionCommandExecutor
+      extends AbstractCommandExecutor {
 
-  @SuppressWarnings({
-      "PMD.OnlyOneReturn", // readability
-      "PMD.CyclomaticComplexity", "PMD.CognitiveComplexity" // reasonable
-  })
-  @Override
-  public ExitStatus executeCommand(CallingContext callingContext, CommandLine cmdLine) {
-
-    List<String> extraArgs = cmdLine.getArgList();
-
-    Path destination = null;
-    if (extraArgs.size() > 1) {
-      destination = Paths.get(extraArgs.get(1)).toAbsolutePath();
+    public AbstractConversionCommandExecutor(
+        @NonNull CallingContext callingContext,
+        @NonNull CommandLine commandLine) {
+      super(callingContext, commandLine);
     }
 
-    if (destination != null) {
-      if (Files.exists(destination)) {
-        if (!cmdLine.hasOption(OVERWRITE_OPTION)) {
-          return ExitCode.FAIL.exitMessage(
-              String.format("The provided destination '%s' already exists and the '%s' option was not provided.",
-                  destination,
-                  OptionUtils.toArgument(OVERWRITE_OPTION)));
-        }
-        if (!Files.isWritable(destination)) {
-          return ExitCode.FAIL.exitMessage(
-              "The provided destination '" + destination + "' is not writable.");
-        }
-      } else {
-        Path parent = destination.getParent();
-        if (parent != null) {
-          try {
-            Files.createDirectories(parent);
-          } catch (IOException ex) {
-            return ExitCode.INVALID_TARGET.exit().withThrowable(ex); // NOPMD readability
+    @NonNull
+    protected abstract IBindingContext getBindingContext();
+
+    @NonNull
+    protected abstract Class<?> getLoadedClass();
+
+    @SuppressWarnings({
+        "PMD.OnlyOneReturn", // readability
+        "PMD.CyclomaticComplexity", "PMD.CognitiveComplexity" // reasonable
+    })
+    @Override
+    public ExitStatus execute() {
+      CommandLine cmdLine = getCommandLine();
+
+      List<String> extraArgs = cmdLine.getArgList();
+
+      Path destination = null;
+      if (extraArgs.size() > 1) {
+        destination = Paths.get(extraArgs.get(1)).toAbsolutePath();
+      }
+
+      if (destination != null) {
+        if (Files.exists(destination)) {
+          if (!cmdLine.hasOption(OVERWRITE_OPTION)) {
+            return ExitCode.FAIL.exitMessage(
+                String.format("The provided destination '%s' already exists and the '%s' option was not provided.",
+                    destination,
+                    OptionUtils.toArgument(OVERWRITE_OPTION)));
+          }
+          if (!Files.isWritable(destination)) {
+            return ExitCode.FAIL.exitMessage(
+                "The provided destination '" + destination + "' is not writable.");
+          }
+        } else {
+          Path parent = destination.getParent();
+          if (parent != null) {
+            try {
+              Files.createDirectories(parent);
+            } catch (IOException ex) {
+              return ExitCode.INVALID_TARGET.exit().withThrowable(ex); // NOPMD readability
+            }
           }
         }
       }
-    }
 
-    Path source = Paths.get(extraArgs.get(0));
-    assert source != null;
+      Path source = Paths.get(extraArgs.get(0));
+      assert source != null;
 
-    String toFormatText = cmdLine.getOptionValue(TO_OPTION);
-    Format toFormat = Format.valueOf(toFormatText.toUpperCase(Locale.ROOT));
+      String toFormatText = cmdLine.getOptionValue(TO_OPTION);
+      Format toFormat = Format.valueOf(toFormatText.toUpperCase(Locale.ROOT));
 
-    IBindingContext bindingContext = getBindingContext();
-    try {
-      IBoundLoader loader = bindingContext.newBoundLoader();
-      if (destination == null) {
-        loader.convert(source, ObjectUtils.notNull(System.out), toFormat, getLoadedClass());
-      } else {
-        loader.convert(source, destination, toFormat, getLoadedClass());
+      IBindingContext bindingContext = getBindingContext();
+      try {
+        IBoundLoader loader = bindingContext.newBoundLoader();
+        if (destination == null) {
+          loader.convert(source, ObjectUtils.notNull(System.out), toFormat, getLoadedClass());
+        } else {
+          loader.convert(source, destination, toFormat, getLoadedClass());
+        }
+      } catch (IOException | IllegalArgumentException ex) {
+        return ExitCode.FAIL.exit().withThrowable(ex); // NOPMD readability
       }
-    } catch (IOException | IllegalArgumentException ex) {
-      return ExitCode.FAIL.exit().withThrowable(ex); // NOPMD readability
+      if (destination != null && LOGGER.isInfoEnabled()) {
+        LOGGER.info("Generated {} file: {}", toFormat.toString(), destination);
+      }
+      return ExitCode.OK.exit();
     }
-    if (destination != null && LOGGER.isInfoEnabled()) {
-      LOGGER.info("Generated {} file: {}", toFormat.toString(), destination);
-    }
-    return ExitCode.OK.exit();
-  }
 
-  @NonNull
-  protected abstract Class<?> getLoadedClass();
-
-  @NonNull
-  public String getLoadedClassSimpleName() {
-    return ObjectUtils.notNull(getLoadedClass().getSimpleName());
   }
 }

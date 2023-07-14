@@ -95,6 +95,9 @@ public interface ISchemaGenerator {
     // we don't want to close os, since we do not own it
   }
 
+  /**
+   * Identifies the supported schema generation formats.
+   */
   enum SchemaFormat {
     /**
      * a JSON Schema.

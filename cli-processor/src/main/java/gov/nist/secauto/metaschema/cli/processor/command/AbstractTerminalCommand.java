@@ -33,11 +33,11 @@ import java.util.Collections;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractTerminalCommand implements Command {
+public abstract class AbstractTerminalCommand implements ICommand {
 
   @SuppressWarnings("null")
   @Override
-  public Collection<Command> getSubCommands() {
+  public Collection<ICommand> getSubCommands() {
     return Collections.emptyList();
   }
 
