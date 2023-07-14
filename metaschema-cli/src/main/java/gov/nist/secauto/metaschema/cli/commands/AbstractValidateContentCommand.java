@@ -194,7 +194,7 @@ public abstract class AbstractValidateContentCommand
           try {
             constraintSets.add(constraintLoader.load(constraintPath));
           } catch (IOException | MetaschemaException ex) {
-            return ExitCode.FAIL.exitMessage("Unable to load constraint set '" + arg + "'.").withThrowable(ex);
+            return ExitCode.INPUT_ERROR.exitMessage("Unable to load constraint set '" + arg + "'.").withThrowable(ex);
           }
         }
       } else {
@@ -204,7 +204,7 @@ public abstract class AbstractValidateContentCommand
       try {
         bindingContext = getBindingContext(constraintSets);
       } catch (IOException | MetaschemaException ex) {
-        return ExitCode.FAIL
+        return ExitCode.PROCESSING_ERROR
             .exitMessage("Unable to get binding context. " + ex.getMessage())
             .withThrowable(ex);
       }
@@ -221,7 +221,7 @@ public abstract class AbstractValidateContentCommand
           String toFormatText = cmdLine.getOptionValue(AS_OPTION);
           asFormat = Format.valueOf(toFormatText.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException ex) {
-          return ExitCode.FAIL
+          return ExitCode.INPUT_ERROR
               .exitMessage("Invalid '--as' argument. The format must be one of: "
                   + Arrays.stream(Format.values())
                       .map(format -> format.name())
@@ -236,9 +236,9 @@ public abstract class AbstractValidateContentCommand
           // this case was already checked for
           return ExitCode.INPUT_ERROR.exitMessage("The provided source file '" + source + "' does not exist.");
         } catch (IOException ex) {
-          return ExitCode.FAIL.exit().withThrowable(ex);
+          return ExitCode.PROCESSING_ERROR.exit().withThrowable(ex);
         } catch (IllegalArgumentException ex) {
-          return ExitCode.FAIL.exitMessage(
+          return ExitCode.INPUT_ERROR.exitMessage(
               "Source file has unrecognizable format. Use '--as' to specify the format. The format must be one of: "
                   + Arrays.stream(Format.values())
                       .map(format -> format.name())

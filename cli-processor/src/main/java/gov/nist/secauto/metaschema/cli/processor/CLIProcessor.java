@@ -378,29 +378,38 @@ public class CLIProcessor {
       return retval;
     }
 
-    @SuppressWarnings("PMD.OnlyOneReturn") // readability
+    @SuppressWarnings({
+        "PMD.OnlyOneReturn", // readability
+        "PMD.AvoidCatchingGenericException" // needed here
+    })
     protected ExitStatus invokeCommand(@NonNull CommandLine cmdLine) {
-      for (ICommand cmd : getCalledCommands()) {
-        try {
-          cmd.validateOptions(this, cmdLine);
-        } catch (InvalidArgumentException ex) {
-          String msg = ex.getMessage();
-          assert msg != null;
-          return handleInvalidCommand(msg);
-        }
-      }
-
-      ICommand targetCommand = getTargetCommand();
       ExitStatus retval;
-      if (targetCommand == null) {
-        retval = ExitCode.INVALID_COMMAND.exit();
-      } else {
-        ICommandExecutor executor = targetCommand.newExecutor(this, cmdLine);
-        retval = executor.execute();
-      }
+      try {
+        for (ICommand cmd : getCalledCommands()) {
+          try {
+            cmd.validateOptions(this, cmdLine);
+          } catch (InvalidArgumentException ex) {
+            String msg = ex.getMessage();
+            assert msg != null;
+            return handleInvalidCommand(msg);
+          }
+        }
 
-      if (ExitCode.INVALID_COMMAND.equals(retval.getExitCode())) {
-        showHelp();
+        ICommand targetCommand = getTargetCommand();
+        if (targetCommand == null) {
+          retval = ExitCode.INVALID_COMMAND.exit();
+        } else {
+          ICommandExecutor executor = targetCommand.newExecutor(this, cmdLine);
+          retval = executor.execute();
+        }
+
+        if (ExitCode.INVALID_COMMAND.equals(retval.getExitCode())) {
+          showHelp();
+        }
+      } catch (RuntimeException ex) {
+        retval = ExitCode.RUNTIME_ERROR
+            .exitMessage(String.format("An uncaught runtime error occured. %s", ex.getLocalizedMessage()))
+            .withThrowable(ex);
       }
       return retval;
     }

@@ -30,11 +30,30 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public enum ExitCode {
   OK(0),
+  /**
+   * The command executed properly, but the operation failed.
+   */
   FAIL(1),
+  /**
+   * The argument information for a command is invalid.
+   */
   INPUT_ERROR(2),
+  /**
+   * A command was requested by name that doesn't exist.
+   */
   INVALID_COMMAND(3),
+  /**
+   * The target argument was not found or invalid.
+   */
   INVALID_TARGET(4),
-  PROCESSING_ERROR(5);
+  /**
+   * Handled errors that occur during command execution.
+   */
+  PROCESSING_ERROR(5),
+  /**
+   * Unhandled errors that occur during command execution.
+   */
+  RUNTIME_ERROR(6);
 
   private final int statusCode;
 
