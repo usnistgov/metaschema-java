@@ -234,7 +234,7 @@ public abstract class AbstractValidateContentCommand
           asFormat = loader.detectFormat(source);
         } catch (FileNotFoundException ex) {
           // this case was already checked for
-          return ExitCode.INPUT_ERROR.exitMessage("The provided source file '" + source + "' does not exist.");
+          return ExitCode.IO_ERROR.exitMessage("The provided source file '" + source + "' does not exist.");
         } catch (IOException ex) {
           return ExitCode.PROCESSING_ERROR.exit().withThrowable(ex);
         } catch (IllegalArgumentException ex) {

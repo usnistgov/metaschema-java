@@ -164,7 +164,7 @@ public abstract class AbstractConvertSubcommand
       if (destination != null) {
         if (Files.exists(destination)) {
           if (!cmdLine.hasOption(OVERWRITE_OPTION)) {
-            return ExitCode.IO_ERROR.exitMessage(
+            return ExitCode.INVALID_ARGUMENTS.exitMessage(
                 String.format("The provided destination '%s' already exists and the '%s' option was not provided.",
                     destination,
                     OptionUtils.toArgument(OVERWRITE_OPTION)));

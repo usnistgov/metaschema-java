@@ -38,11 +38,11 @@ public enum ExitCode {
    */
   FAIL(1),
   /**
-   * The argument information for a command is invalid.
+   * An error occurred while reading or writing.
    */
   IO_ERROR(2),
   /**
-   * A command was requested by name that doesn't exist.
+   * A command was requested by name that doesn't exist or required arguments are missing.
    */
   INVALID_COMMAND(3),
   /**
@@ -56,7 +56,11 @@ public enum ExitCode {
   /**
    * Unhandled errors that occur during command execution.
    */
-  RUNTIME_ERROR(6);
+  RUNTIME_ERROR(6),
+  /**
+   * The provided argument information for a command fails to match argument use requirements.
+   */
+  INVALID_ARGUMENTS(7);
 
   private final int statusCode;
 
