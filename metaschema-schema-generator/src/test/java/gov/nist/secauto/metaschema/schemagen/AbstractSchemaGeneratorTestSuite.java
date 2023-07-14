@@ -182,6 +182,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
     Path collectionPath = testSuite.resolve(collectionName);
 
     MetaschemaLoader loader = new MetaschemaLoader();
+    loader.allowEntityResolution();
     Path metaschemaPath = collectionPath.resolve(metaschemaName);
     IMetaschema metaschema = loader.load(metaschemaPath);
 

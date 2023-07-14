@@ -168,6 +168,8 @@ class XmlSuiteTest
   @Test
   void testOSCALComplete() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
     MetaschemaLoader loader = new MetaschemaLoader();
+    loader.allowEntityResolution();
+
     IMetaschema metaschema = loader.load(new URL(
         // "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
         "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));

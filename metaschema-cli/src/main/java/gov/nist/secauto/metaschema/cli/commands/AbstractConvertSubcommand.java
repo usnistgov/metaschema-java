@@ -194,6 +194,10 @@ public abstract class AbstractConvertSubcommand
       IBindingContext bindingContext = getBindingContext();
       try {
         IBoundLoader loader = bindingContext.newBoundLoader();
+        if (LOGGER.isInfoEnabled()) {
+          LOGGER.info("Converting '{}'.", source);
+        }
+
         if (destination == null) {
           loader.convert(source, ObjectUtils.notNull(System.out), toFormat, getLoadedClass());
         } else {

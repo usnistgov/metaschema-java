@@ -132,6 +132,8 @@ class JsonSuiteTest
   @Test
   void testOSCALComplete() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
     MetaschemaLoader loader = new MetaschemaLoader();
+    loader.allowEntityResolution();
+
     IMetaschema metaschema = loader.load(new URL(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
     ISchemaGenerator schemaGenerator = new JsonSchemaGenerator();
@@ -151,6 +153,7 @@ class JsonSuiteTest
   @Test
   void testTestMetaschema() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
     MetaschemaLoader loader = new MetaschemaLoader();
+    loader.allowEntityResolution();
     IMetaschema metaschema = loader.load(new URL(
         "https://raw.githubusercontent.com/usnistgov/metaschema/71233f4eb6854e820c7949144e86afa4d7981b22/test-suite/metaschema-xspec/json-schema-gen/json-value-testing-mini-metaschema.xml"));
     ISchemaGenerator schemaGenerator = new JsonSchemaGenerator();

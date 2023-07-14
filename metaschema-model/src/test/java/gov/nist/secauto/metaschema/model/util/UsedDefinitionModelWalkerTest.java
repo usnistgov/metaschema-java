@@ -50,6 +50,7 @@ class UsedDefinitionModelWalkerTest {
   @Test
   void test() throws MetaschemaException, IOException {
     MetaschemaLoader loader = new MetaschemaLoader();
+    loader.allowEntityResolution();
 
     IMetaschema metaschema = loader.load(new URL(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));

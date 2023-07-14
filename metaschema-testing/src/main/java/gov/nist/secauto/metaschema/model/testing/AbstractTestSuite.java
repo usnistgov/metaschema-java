@@ -87,6 +87,10 @@ public abstract class AbstractTestSuite {
 
   private static final boolean DELETE_RESULTS_ON_EXIT = false;
 
+  static {
+    LOADER.allowEntityResolution();
+  }
+
   @NonNull
   protected abstract Format getRequiredContentFormat();
 

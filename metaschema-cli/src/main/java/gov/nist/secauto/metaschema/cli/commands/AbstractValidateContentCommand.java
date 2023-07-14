@@ -246,6 +246,10 @@ public abstract class AbstractValidateContentCommand
         }
       }
 
+      if (LOGGER.isInfoEnabled()) {
+        LOGGER.info("Validating '{}' as {}.", source, asFormat.name());
+      }
+
       IValidationResult validationResult;
       try {
         validationResult = bindingContext.validate(source, asFormat, this);

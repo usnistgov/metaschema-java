@@ -138,6 +138,7 @@ public class ValidateContentWithMetaschemaCommand
         assert metaschemaPath != null;
 
         MetaschemaLoader loader = new MetaschemaLoader(constraintSets);
+        loader.allowEntityResolution();
         metaschema = loader.load(metaschemaPath);
       }
       assert metaschema != null;

@@ -65,6 +65,10 @@ public final class MetaschemaCompilerHelper {
   private static final Logger LOGGER = LogManager.getLogger(MetaschemaCompilerHelper.class);
   private static final MetaschemaLoader LOADER = new MetaschemaLoader();
 
+  static {
+    LOADER.allowEntityResolution();
+  }
+
   private MetaschemaCompilerHelper() {
     // disable construction
   }

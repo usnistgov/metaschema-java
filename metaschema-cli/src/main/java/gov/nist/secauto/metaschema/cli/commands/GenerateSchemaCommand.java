@@ -214,7 +214,13 @@ public class GenerateSchemaCommand
     Path input = Paths.get(extraArgs.get(0));
     assert input != null;
     try {
-      IMetaschema metaschema = new MetaschemaLoader().load(input);
+      MetaschemaLoader loader = new MetaschemaLoader();
+      loader.allowEntityResolution();
+      IMetaschema metaschema = loader.load(input);
+
+      if (LOGGER.isInfoEnabled()) {
+        LOGGER.info("Generating {} schema for '{}'.", asFormat.name(), input);
+      }
       if (destination == null) {
         @SuppressWarnings({ "resource", "PMD.CloseResource" }) // not owned
         OutputStream os = ObjectUtils.notNull(System.out);
