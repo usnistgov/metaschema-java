@@ -246,11 +246,13 @@
                 <groupId>org.apache.xmlbeans</groupId>
                 <artifactId>xmlbeans</artifactId>
                 <version>${dependency.xmlbeans.version}</version>
-				<exclusion>
-					<!-- Ensure proper convergance -->
-					<groupId>org.apache.logging.log4j</groupId>
-					<artifactId>log4j-api</artifactId>
-				</exclusion>
+                <exclusions>
+                    <exclusion>
+                        <!-- Ensure proper convergance -->
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jdom</groupId>
