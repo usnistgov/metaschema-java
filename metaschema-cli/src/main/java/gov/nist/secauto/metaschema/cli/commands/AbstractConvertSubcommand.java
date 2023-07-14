@@ -164,13 +164,13 @@ public abstract class AbstractConvertSubcommand
       if (destination != null) {
         if (Files.exists(destination)) {
           if (!cmdLine.hasOption(OVERWRITE_OPTION)) {
-            return ExitCode.INPUT_ERROR.exitMessage(
+            return ExitCode.IO_ERROR.exitMessage(
                 String.format("The provided destination '%s' already exists and the '%s' option was not provided.",
                     destination,
                     OptionUtils.toArgument(OVERWRITE_OPTION)));
           }
           if (!Files.isWritable(destination)) {
-            return ExitCode.INPUT_ERROR.exitMessage(
+            return ExitCode.IO_ERROR.exitMessage(
                 "The provided destination '" + destination + "' is not writable.");
           }
         } else {

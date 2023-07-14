@@ -194,7 +194,7 @@ public abstract class AbstractValidateContentCommand
           try {
             constraintSets.add(constraintLoader.load(constraintPath));
           } catch (IOException | MetaschemaException ex) {
-            return ExitCode.INPUT_ERROR.exitMessage("Unable to load constraint set '" + arg + "'.").withThrowable(ex);
+            return ExitCode.IO_ERROR.exitMessage("Unable to load constraint set '" + arg + "'.").withThrowable(ex);
           }
         }
       } else {
@@ -221,7 +221,7 @@ public abstract class AbstractValidateContentCommand
           String toFormatText = cmdLine.getOptionValue(AS_OPTION);
           asFormat = Format.valueOf(toFormatText.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException ex) {
-          return ExitCode.INPUT_ERROR
+          return ExitCode.IO_ERROR
               .exitMessage("Invalid '--as' argument. The format must be one of: "
                   + Arrays.stream(Format.values())
                       .map(format -> format.name())
@@ -238,7 +238,7 @@ public abstract class AbstractValidateContentCommand
         } catch (IOException ex) {
           return ExitCode.PROCESSING_ERROR.exit().withThrowable(ex);
         } catch (IllegalArgumentException ex) {
-          return ExitCode.INPUT_ERROR.exitMessage(
+          return ExitCode.IO_ERROR.exitMessage(
               "Source file has unrecognizable format. Use '--as' to specify the format. The format must be one of: "
                   + Arrays.stream(Format.values())
                       .map(format -> format.name())

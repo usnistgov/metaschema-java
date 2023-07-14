@@ -40,7 +40,7 @@ public enum ExitCode {
   /**
    * The argument information for a command is invalid.
    */
-  INPUT_ERROR(2),
+  IO_ERROR(2),
   /**
    * A command was requested by name that doesn't exist.
    */
