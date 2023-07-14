@@ -140,7 +140,7 @@
         <dependency.log4j2.version>2.20.0</dependency.log4j2.version>
         <dependency.moxy.version>3.0.3</dependency.moxy.version>
         <dependency.plexus-utils.version>4.0.0</dependency.plexus-utils.version>
-        <dependency.plexus-build-api.version>0.0.7</dependency.plexus-build-api.version>
+        <dependency.plexus-build-api.version>1.2.0</dependency.plexus-build-api.version>
         <dependency.saxon.version>12.3</dependency.saxon.version>
         <dependency.spotbugs-annotations.version>4.7.3</dependency.spotbugs-annotations.version>
         <dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
@@ -148,7 +148,7 @@
         <dependency.woodstox.version>6.5.1</dependency.woodstox.version>
         <dependency.xmlbeans.version>5.1.1</dependency.xmlbeans.version>
         <dependency.xmlcalabash.version>1.5.6-120</dependency.xmlcalabash.version>
-        <dependency.xmlresolver.version>4.6.0</dependency.xmlresolver.version>
+        <dependency.xmlresolver.version>5.2.0</dependency.xmlresolver.version>
         <dependency.xml-apis.version>2.0.2</dependency.xml-apis.version>
 
         <plugin.antlr4test.version>1.22</plugin.antlr4test.version>
@@ -246,6 +246,11 @@
                 <groupId>org.apache.xmlbeans</groupId>
                 <artifactId>xmlbeans</artifactId>
                 <version>${dependency.xmlbeans.version}</version>
+				<exclusion>
+					<!-- Ensure proper convergance -->
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-api</artifactId>
+				</exclusion>
             </dependency>
             <dependency>
                 <groupId>org.jdom</groupId>

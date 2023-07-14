@@ -107,10 +107,20 @@ public class GenerateSchemaMojo
   @Parameter(defaultValue = "false")
   private boolean inlineChoiceDefinitions = false;
 
+  /**
+   * Determine if inlining definitions is required.
+   *
+   * @return {@code true} if inlining definitions is required, or {@code false} otherwise
+   */
   protected boolean isInlineDefinitions() {
     return inlineDefinitions;
   }
 
+  /**
+   * Determine if inlining choice definitions is required.
+   *
+   * @return {@code true} if inlining choice definitions is required, or {@code false} otherwise
+   */
   protected boolean isInlineChoiceDefinitions() {
     return inlineChoiceDefinitions;
   }
@@ -130,6 +140,14 @@ public class GenerateSchemaMojo
     return STALE_FILE_NAME;
   }
 
+  /**
+   * Performs schema generation using the provided Metaschemas.
+   *
+   * @param metaschemaCollection
+   *          the Metaschemas to generate the schema for
+   * @throws MojoExecutionException
+   *           if an error occurred during generation
+   */
   protected void generate(@NonNull Set<IMetaschema> metaschemaCollection) throws MojoExecutionException {
     IMutableConfiguration<SchemaGenerationFeature<?>> schemaGenerationConfig
         = new DefaultConfiguration<>();
