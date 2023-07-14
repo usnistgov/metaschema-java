@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE METASCHEMA [
+   <!ENTITY allowed-values-entity SYSTEM "entity-file.ent">
+]>
+<METASCHEMA xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0">
+	<schema-name>Test Metaschema with an external entity</schema-name>
+	<schema-version>1.0.4</schema-version>
+	<short-name>external-entity-test</short-name>
+	<namespace>http://csrc.nist.gov/ns/test/metaschema/entity</namespace>
+	<json-base-uri>http://csrc.nist.gov/ns/test/metaschema/entity</json-base-uri>
+	<define-assembly name="root">
+		<root-name>root</root-name>
+		<model>
+			<define-field name="name" as-type="token" max-occurs="unbounded">
+				<group-as name="names" in-json="ARRAY" />
+			</define-field>
+		</model>
+		<constraint>
+			<allowed-values target="name">
+                &allowed-values-entity;
+			</allowed-values>
+		</constraint>
+	</define-assembly>
+</METASCHEMA>

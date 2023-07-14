@@ -24,53 +24,44 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.cli.processor;
+package gov.nist.secauto.metaschema.cli.processor.command;
 
-import gov.nist.secauto.metaschema.cli.processor.command.Command;
+import gov.nist.secauto.metaschema.cli.processor.CLIProcessor.CallingContext;
+import gov.nist.secauto.metaschema.cli.processor.ExitStatus;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.ServiceLoader.Provider;
-import java.util.stream.Collectors;
+import org.apache.commons.cli.CommandLine;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import nl.talsmasoftware.lazy4j.Lazy;
 
-public final class CommandService {
-  private static final Lazy<CommandService> INSTANCE = Lazy.lazy(() -> new CommandService());
+public abstract class AbstractCommandExecutor implements ICommandExecutor {
   @NonNull
-  private final ServiceLoader<Command> loader;
+  private final CallingContext callingContext;
+  @NonNull
+  private final CommandLine commandLine;
 
-  /**
-   * Get the singleton instance of the function service.
-   *
-   * @return the service instance
-   */
-  public static CommandService getInstance() {
-    return INSTANCE.get();
+  public AbstractCommandExecutor(
+      @NonNull CallingContext callingContext,
+      @NonNull CommandLine commandLine) {
+    this.callingContext = callingContext;
+    this.commandLine = commandLine;
   }
 
-  public CommandService() {
-    ServiceLoader<Command> loader = ServiceLoader.load(Command.class);
-    assert loader != null;
-    this.loader = loader;
+  @NonNull
+  protected CallingContext getCallingContext() {
+    return callingContext;
   }
 
-  /**
-   * Get the function service loader instance.
-   *
-   * @return the service loader instance.
-   */
   @NonNull
-  private ServiceLoader<Command> getLoader() {
-    return loader;
+  protected CommandLine getCommandLine() {
+    return commandLine;
   }
 
-  @SuppressWarnings("null")
+  @Override
+  public abstract ExitStatus execute();
+
   @NonNull
-  public List<Command> getCommands() {
-    return getLoader().stream()
-        .map(Provider<Command>::get)
-        .collect(Collectors.toUnmodifiableList());
+  protected ICommand getCommand() {
+    return ObjectUtils.requireNonNull(getCallingContext().getTargetCommand());
   }
 }

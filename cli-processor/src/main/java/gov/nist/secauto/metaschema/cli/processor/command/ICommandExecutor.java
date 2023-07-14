@@ -24,73 +24,38 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.item;
+package gov.nist.secauto.metaschema.cli.processor.command;
 
-import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.cli.processor.CLIProcessor.CallingContext;
+import gov.nist.secauto.metaschema.cli.processor.ExitStatus;
+
+import org.apache.commons.cli.CommandLine;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-/**
- * A {@link INodeItem} supported by a {@link IFieldInstance}.
- *
- * @param <F>
- *          the flag node item type
- * @param <P>
- *          the parent node item type
- */
-abstract class AbstractFieldInstanceNodeItem<F extends IFlagNodeItem, P extends IAssemblyNodeItem, L extends AbstractNodeContext.Flags<
-    F>>
-    extends AbstractNodeContext<F, L>
-    implements IFieldNodeItem {
+public interface ICommandExecutor {
   @NonNull
-  private final IFieldInstance instance;
-  private final int position;
-  @NonNull
-  private final P parent;
+  ExitStatus execute();
 
-  public AbstractFieldInstanceNodeItem(
-      @NonNull IFieldInstance instance,
-      @NonNull P parent,
-      int position,
-      @NonNull INodeItemFactory factory) {
-    super(factory);
-    this.instance = instance;
-    this.parent = parent;
-    if (position < 1) {
-      throw new IllegalArgumentException(
-          String.format(
-              "The position must be positive, but found '%d'",
-              position));
-    }
-    this.position = position;
+  @NonNull
+  static ICommandExecutor using(
+      @NonNull CallingContext callingContext,
+      @NonNull CommandLine commandLine,
+      @NonNull ExecutionFunction function) {
+    return new ICommandExecutor() {
+      @Override
+      public ExitStatus execute() {
+        return function.execute(callingContext, commandLine);
+      }
+
+    };
   }
 
-  @Override
-  @NonNull
-  public P getParentContentNodeItem() {
-    return getParentNodeItem();
-  }
-
-  @Override
-  @NonNull
-  public P getParentNodeItem() {
-    return parent;
-  }
-
-  @Override
-  public IFieldDefinition getDefinition() {
-    return getInstance().getDefinition();
-  }
-
-  @Override
-  @NonNull
-  public IFieldInstance getInstance() {
-    return instance;
-  }
-
-  @Override
-  public int getPosition() {
-    return position;
+  @FunctionalInterface
+  public interface ExecutionFunction {
+    @NonNull
+    ExitStatus execute(
+        @NonNull CallingContext callingContext,
+        @NonNull CommandLine commandLine);
   }
 }

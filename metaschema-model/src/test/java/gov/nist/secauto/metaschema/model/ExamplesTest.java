@@ -43,6 +43,7 @@ class ExamplesTest {
   @Test
   void testLoadMetaschema() throws MetaschemaException, IOException {
     MetaschemaLoader loader = new MetaschemaLoader();
+    loader.allowEntityResolution();
 
     URI metaschemaUri = ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
@@ -53,6 +54,7 @@ class ExamplesTest {
   @Test
   void testExamineAssemblyDefinitionByName() throws MetaschemaException, IOException {
     MetaschemaLoader loader = new MetaschemaLoader();
+    loader.allowEntityResolution();
     URI metaschemaUri = ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
     IMetaschema metaschema = loader.load(metaschemaUri);

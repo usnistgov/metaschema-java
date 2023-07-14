@@ -341,7 +341,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
 
   interface IValidationSchemaProvider {
     @NonNull
-    JSONObject getJsonSchema();
+    JSONObject getJsonSchema() throws IOException;
 
     @NonNull
     List<Source> getXmlSchemas() throws IOException;

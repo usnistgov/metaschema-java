@@ -24,73 +24,51 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.item;
+package gov.nist.secauto.metaschema.cli.processor.command;
 
-import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.ServiceLoader.Provider;
+import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
-/**
- * A {@link INodeItem} supported by a {@link IFieldInstance}.
- *
- * @param <F>
- *          the flag node item type
- * @param <P>
- *          the parent node item type
- */
-abstract class AbstractFieldInstanceNodeItem<F extends IFlagNodeItem, P extends IAssemblyNodeItem, L extends AbstractNodeContext.Flags<
-    F>>
-    extends AbstractNodeContext<F, L>
-    implements IFieldNodeItem {
+public final class CommandService {
+  private static final Lazy<CommandService> INSTANCE = Lazy.lazy(() -> new CommandService());
   @NonNull
-  private final IFieldInstance instance;
-  private final int position;
-  @NonNull
-  private final P parent;
+  private final ServiceLoader<ICommand> loader;
 
-  public AbstractFieldInstanceNodeItem(
-      @NonNull IFieldInstance instance,
-      @NonNull P parent,
-      int position,
-      @NonNull INodeItemFactory factory) {
-    super(factory);
-    this.instance = instance;
-    this.parent = parent;
-    if (position < 1) {
-      throw new IllegalArgumentException(
-          String.format(
-              "The position must be positive, but found '%d'",
-              position));
-    }
-    this.position = position;
+  /**
+   * Get the singleton instance of the function service.
+   *
+   * @return the service instance
+   */
+  public static CommandService getInstance() {
+    return INSTANCE.get();
   }
 
-  @Override
+  public CommandService() {
+    ServiceLoader<ICommand> loader = ServiceLoader.load(ICommand.class);
+    assert loader != null;
+    this.loader = loader;
+  }
+
+  /**
+   * Get the function service loader instance.
+   *
+   * @return the service loader instance.
+   */
   @NonNull
-  public P getParentContentNodeItem() {
-    return getParentNodeItem();
+  private ServiceLoader<ICommand> getLoader() {
+    return loader;
   }
 
-  @Override
+  @SuppressWarnings("null")
   @NonNull
-  public P getParentNodeItem() {
-    return parent;
-  }
-
-  @Override
-  public IFieldDefinition getDefinition() {
-    return getInstance().getDefinition();
-  }
-
-  @Override
-  @NonNull
-  public IFieldInstance getInstance() {
-    return instance;
-  }
-
-  @Override
-  public int getPosition() {
-    return position;
+  public List<ICommand> getCommands() {
+    return getLoader().stream()
+        .map(Provider<ICommand>::get)
+        .collect(Collectors.toUnmodifiableList());
   }
 }

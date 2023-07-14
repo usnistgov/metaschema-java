@@ -168,6 +168,8 @@ class XmlSuiteTest
   @Test
   void testOSCALComplete() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
     MetaschemaLoader loader = new MetaschemaLoader();
+    loader.allowEntityResolution();
+
     IMetaschema metaschema = loader.load(new URL(
         // "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
         "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
@@ -175,7 +177,7 @@ class XmlSuiteTest
     IMutableConfiguration<SchemaGenerationFeature<?>> features = new DefaultConfiguration<>();
     features.disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     try (Writer writer = Files.newBufferedWriter(
-        Path.of("oscal-complete_schema.xsd"),
+        Path.of("target/oscal-complete_schema.xsd"),
         StandardCharsets.UTF_8,
         getWriteOpenOptions())) {
       assert writer != null;

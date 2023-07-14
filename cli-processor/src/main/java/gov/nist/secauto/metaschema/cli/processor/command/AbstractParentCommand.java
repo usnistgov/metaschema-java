@@ -40,9 +40,9 @@ import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractParentCommand implements Command {
+public abstract class AbstractParentCommand implements ICommand {
   @NonNull
-  private final Map<String, Command> commandToSubcommandHandlerMap;
+  private final Map<String, ICommand> commandToSubcommandHandlerMap;
   private final boolean subCommandRequired;
 
   @SuppressWarnings("null")
@@ -51,19 +51,19 @@ public abstract class AbstractParentCommand implements Command {
     this.subCommandRequired = subCommandRequired;
   }
 
-  protected void addCommandHandler(Command handler) {
+  protected void addCommandHandler(ICommand handler) {
     String commandName = handler.getName();
     this.commandToSubcommandHandlerMap.put(commandName, handler);
   }
 
   @Override
-  public Command getSubCommandByName(String name) {
+  public ICommand getSubCommandByName(String name) {
     return commandToSubcommandHandlerMap.get(name);
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<Command> getSubCommands() {
+  public Collection<ICommand> getSubCommands() {
     return Collections.unmodifiableCollection(commandToSubcommandHandlerMap.values());
   }
 
@@ -73,7 +73,14 @@ public abstract class AbstractParentCommand implements Command {
   }
 
   @Override
-  public ExitStatus executeCommand(CallingContext callingContext, CommandLine cmdLine) {
+  public ICommandExecutor newExecutor(CallingContext callingContext, CommandLine cmdLine) {
+    return ICommandExecutor.using(callingContext, cmdLine, this::executeCommand);
+  }
+
+  @NonNull
+  protected ExitStatus executeCommand(
+      @NonNull CallingContext callingContext,
+      @NonNull CommandLine commandLine) {
     callingContext.showHelp();
     ExitStatus status;
     if (isSubCommandRequired()) {

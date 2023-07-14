@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.cli.processor.command;
 
 import gov.nist.secauto.metaschema.cli.processor.CLIProcessor.CallingContext;
-import gov.nist.secauto.metaschema.cli.processor.ExitStatus;
 import gov.nist.secauto.metaschema.cli.processor.InvalidArgumentException;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
@@ -39,7 +38,7 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface Command {
+public interface ICommand {
   @NonNull
   String getName();
 
@@ -63,6 +62,17 @@ public interface Command {
     return CollectionUtil.emptyList();
   }
 
+  @NonNull
+  Collection<ICommand> getSubCommands();
+
+  boolean isSubCommandRequired();
+
+  @SuppressWarnings("unused")
+  default ICommand getSubCommandByName(@NonNull String name) {
+    // no sub commands by default
+    return null;
+  }
+
   @SuppressWarnings("unused")
   default void validateOptions(
       @NonNull CallingContext callingContext,
@@ -71,16 +81,5 @@ public interface Command {
   }
 
   @NonNull
-  ExitStatus executeCommand(@NonNull CallingContext callingContext, @NonNull CommandLine cmdLine);
-
-  @NonNull
-  Collection<Command> getSubCommands();
-
-  boolean isSubCommandRequired();
-
-  @SuppressWarnings("unused")
-  default Command getSubCommandByName(@NonNull String name) {
-    // no sub commands by default
-    return null;
-  }
+  ICommandExecutor newExecutor(@NonNull CallingContext callingContext, @NonNull CommandLine cmdLine);
 }

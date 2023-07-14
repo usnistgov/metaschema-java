@@ -156,26 +156,33 @@ class DefaultTypeResolver implements ITypeResolver {
   private String generateClassName(@NonNull String packageOrTypeName, @NonNull IFlagContainer definition) {
     @NonNull String className = getBindingConfiguration().getClassName(definition);
 
+    @NonNull String retval = className;
     Set<String> classNames = getClassNamesFor(packageOrTypeName);
     synchronized (classNames) {
+      boolean clash = false;
       if (classNames.contains(className)) {
-        if (LOGGER.isWarnEnabled()) {
-          LOGGER.warn(String.format("Class name '%s' in metaschema '%s' conflicts with a previously used class name.",
-              className, definition.getContainingMetaschema().getLocation()));
-        }
+        clash = true;
         // first try to append the metaschema's short name
         String metaschemaShortName = definition.getContainingMetaschema().getShortName();
-        className = ClassUtils.toClassName(className + metaschemaShortName);
+        retval = ClassUtils.toClassName(className + metaschemaShortName);
       }
 
-      String classNameBase = className;
+      String classNameBase = retval;
       int index = 1;
-      while (classNames.contains(className)) {
-        className = classNameBase + Integer.toString(index++);
+      while (classNames.contains(retval)) {
+        retval = classNameBase + Integer.toString(index++);
       }
-      classNames.add(className);
+      classNames.add(retval);
+
+      if (clash && LOGGER.isWarnEnabled()) {
+        LOGGER.warn(String.format(
+            "Class name '%s' in metaschema '%s' conflicts with a previously used class name. Using '%s' instead.",
+            className,
+            definition.getContainingMetaschema().getLocation(),
+            retval));
+      }
     }
-    return className;
+    return retval;
   }
 
   @Override

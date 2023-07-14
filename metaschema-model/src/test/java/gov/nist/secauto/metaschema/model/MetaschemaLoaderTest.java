@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -33,6 +35,7 @@ import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
@@ -50,6 +53,7 @@ class MetaschemaLoaderTest {
   @Test
   void testUrl() throws MetaschemaException, IOException { // NOPMD - intentional
     MetaschemaLoader loader = new MetaschemaLoader();
+    loader.allowEntityResolution();
     URI metaschemaUri = ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
     IMetaschema metaschema = loader.load(metaschemaUri);
@@ -81,6 +85,7 @@ class MetaschemaLoaderTest {
         ObjectUtils.notNull(Paths.get("src/test/resources/content/oscal-constraints.xml")));
 
     MetaschemaLoader loader = new MetaschemaLoader(CollectionUtil.singleton(constraintSet));
+    loader.allowEntityResolution();
     URI metaschemaUri = ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
     IMetaschema metaschema = loader.load(metaschemaUri);
@@ -89,5 +94,22 @@ class MetaschemaLoaderTest {
     assertNotNull(catalog, "catalog not found");
     List<? extends IConstraint> constraints = catalog.getConstraints();
     assertFalse(constraints.isEmpty(), "a constraint was expected");
+  }
+
+  @Test
+  void testLoadMetaschemaWithExternalEntity() throws MetaschemaException, IOException {
+    MetaschemaLoader loader = new MetaschemaLoader();
+    loader.allowEntityResolution();
+    IMetaschema metaschema
+        = loader.load(ObjectUtils.notNull(Paths.get("src/test/resources/content/custom-entity-metaschema.xml")));
+
+    IAssemblyDefinition root = metaschema.getAssemblyDefinitionByName("root");
+    assert root != null;
+    List<? extends IAllowedValuesConstraint> allowedValues = root.getAllowedValuesConstraints();
+
+    assertAll(
+        () -> assertEquals(1, allowedValues.size(), "Expecting a single constraint."),
+        () -> assertEquals(1, allowedValues.get(0).getAllowedValues().values().size(),
+            "Expecting a single allowed value. Entity reference not parsed."));
   }
 }

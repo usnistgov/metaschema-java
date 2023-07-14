@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.cli.processor.OptionUtils;
 import gov.nist.secauto.metaschema.cli.processor.command.AbstractTerminalCommand;
 import gov.nist.secauto.metaschema.cli.processor.command.DefaultExtraArgument;
 import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;
+import gov.nist.secauto.metaschema.cli.processor.command.ICommandExecutor;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
@@ -155,7 +156,17 @@ public class GenerateSchemaCommand
   }
 
   @Override
-  public ExitStatus executeCommand(CallingContext callingContext, CommandLine cmdLine) {
+  public ICommandExecutor newExecutor(CallingContext callingContext, CommandLine cmdLine) {
+    return ICommandExecutor.using(callingContext, cmdLine, this::executeCommand);
+  }
+
+  @SuppressWarnings({
+      "PMD.OnlyOneReturn", // readability
+      "unused"
+  })
+  protected ExitStatus executeCommand(
+      @NonNull CallingContext callingContext,
+      @NonNull CommandLine cmdLine) {
     List<String> extraArgs = cmdLine.getArgList();
 
     Path destination = null;
@@ -203,7 +214,13 @@ public class GenerateSchemaCommand
     Path input = Paths.get(extraArgs.get(0));
     assert input != null;
     try {
-      IMetaschema metaschema = new MetaschemaLoader().load(input);
+      MetaschemaLoader loader = new MetaschemaLoader();
+      loader.allowEntityResolution();
+      IMetaschema metaschema = loader.load(input);
+
+      if (LOGGER.isInfoEnabled()) {
+        LOGGER.info("Generating {} schema for '{}'.", asFormat.name(), input);
+      }
       if (destination == null) {
         @SuppressWarnings({ "resource", "PMD.CloseResource" }) // not owned
         OutputStream os = ObjectUtils.notNull(System.out);
@@ -219,5 +236,4 @@ public class GenerateSchemaCommand
     }
     return ExitCode.OK.exit();
   }
-
 }

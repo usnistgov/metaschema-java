@@ -27,10 +27,11 @@
 package gov.nist.secauto.metaschema.cli;
 
 import gov.nist.secauto.metaschema.cli.commands.GenerateSchemaCommand;
-import gov.nist.secauto.metaschema.cli.commands.ValidateCommand;
+import gov.nist.secauto.metaschema.cli.commands.ValidateContentWithMetaschemaCommand;
+import gov.nist.secauto.metaschema.cli.commands.ValidateMetaschemaCommand;
 import gov.nist.secauto.metaschema.cli.processor.CLIProcessor;
-import gov.nist.secauto.metaschema.cli.processor.CommandService;
 import gov.nist.secauto.metaschema.cli.processor.ExitStatus;
+import gov.nist.secauto.metaschema.cli.processor.command.CommandService;
 import gov.nist.secauto.metaschema.model.MetaschemaVersion;
 import gov.nist.secauto.metaschema.model.common.util.IVersionInfo;
 import gov.nist.secauto.metaschema.model.common.util.MetaschemaJavaVersion;
@@ -55,8 +56,9 @@ public final class CLI {
             new MetaschemaJavaVersion(),
             new MetaschemaVersion()));
     CLIProcessor processor = new CLIProcessor("metaschema-cli", versions);
-    processor.addCommandHandler(new ValidateCommand());
+    processor.addCommandHandler(new ValidateMetaschemaCommand());
     processor.addCommandHandler(new GenerateSchemaCommand());
+    processor.addCommandHandler(new ValidateContentWithMetaschemaCommand());
 
     CommandService.getInstance().getCommands().stream().forEach(command -> {
       assert command != null;

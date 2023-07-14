@@ -28,8 +28,10 @@ package gov.nist.secauto.metaschema.cli.processor;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
-import gov.nist.secauto.metaschema.cli.processor.command.Command;
+import gov.nist.secauto.metaschema.cli.processor.command.CommandService;
 import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;
+import gov.nist.secauto.metaschema.cli.processor.command.ICommand;
+import gov.nist.secauto.metaschema.cli.processor.command.ICommandExecutor;
 import gov.nist.secauto.metaschema.model.common.util.IVersionInfo;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
@@ -108,7 +110,7 @@ public class CLIProcessor {
       VERSION_OPTION);
 
   @NonNull
-  private final List<Command> commands = new LinkedList<>();
+  private final List<ICommand> commands = new LinkedList<>();
   @NonNull
   private final String exec;
   @NonNull
@@ -156,7 +158,7 @@ public class CLIProcessor {
     return versionInfos;
   }
 
-  public void addCommandHandler(@NonNull Command handler) {
+  public void addCommandHandler(@NonNull ICommand handler) {
     commands.add(handler);
   }
 
@@ -192,8 +194,8 @@ public class CLIProcessor {
     return status;
   }
 
-  protected List<Command> getTopLevelCommands() {
-    List<Command> retval = Collections.unmodifiableList(commands);
+  protected List<ICommand> getTopLevelCommands() {
+    List<ICommand> retval = Collections.unmodifiableList(commands);
     assert retval != null;
     return retval;
   }
@@ -245,16 +247,16 @@ public class CLIProcessor {
     @NonNull
     private final List<Option> options;
     @NonNull
-    private final Deque<Command> calledCommands;
+    private final Deque<ICommand> calledCommands;
     @NonNull
     private final List<String> extraArgs;
 
     public CallingContext(@NonNull List<String> args) {
-      Map<String, Command> topLevelCommandMap = getTopLevelCommands().stream()
-          .collect(Collectors.toUnmodifiableMap(Command::getName, Function.identity()));
+      Map<String, ICommand> topLevelCommandMap = getTopLevelCommands().stream()
+          .collect(Collectors.toUnmodifiableMap(ICommand::getName, Function.identity()));
 
       List<Option> options = new LinkedList<>(OPTIONS);
-      Deque<Command> calledCommands = new LinkedList<>();
+      Deque<ICommand> calledCommands = new LinkedList<>();
       List<String> extraArgs = new LinkedList<>();
 
       boolean endArgs = false;
@@ -267,7 +269,7 @@ public class CLIProcessor {
           } else if ("--".equals(arg)) {
             endArgs = true;
           } else {
-            Command command;
+            ICommand command;
             if (calledCommands.isEmpty()) {
               command = topLevelCommandMap.get(arg);
             } else {
@@ -292,7 +294,7 @@ public class CLIProcessor {
         LOGGER.debug("Processing command chain: {}", commandChain);
       }
 
-      for (Command cmd : calledCommands) {
+      for (ICommand cmd : calledCommands) {
         options.addAll(cmd.gatherOptions());
       }
 
@@ -308,7 +310,7 @@ public class CLIProcessor {
     }
 
     @Nullable
-    protected Command getTargetCommand() {
+    public ICommand getTargetCommand() {
       return calledCommands.peekLast();
     }
 
@@ -318,7 +320,7 @@ public class CLIProcessor {
     }
 
     @NonNull
-    private Deque<Command> getCalledCommands() {
+    private Deque<ICommand> getCalledCommands() {
       return calledCommands;
     }
 
@@ -378,7 +380,7 @@ public class CLIProcessor {
 
     @SuppressWarnings("PMD.OnlyOneReturn") // readability
     protected ExitStatus invokeCommand(@NonNull CommandLine cmdLine) {
-      for (Command cmd : getCalledCommands()) {
+      for (ICommand cmd : getCalledCommands()) {
         try {
           cmd.validateOptions(this, cmdLine);
         } catch (InvalidArgumentException ex) {
@@ -388,12 +390,13 @@ public class CLIProcessor {
         }
       }
 
-      Command targetCommand = getTargetCommand();
+      ICommand targetCommand = getTargetCommand();
       ExitStatus retval;
       if (targetCommand == null) {
         retval = ExitCode.INVALID_COMMAND.exit();
       } else {
-        retval = targetCommand.executeCommand(this, cmdLine);
+        ICommandExecutor executor = targetCommand.newExecutor(this, cmdLine);
+        retval = executor.execute();
       }
 
       if (ExitCode.INVALID_COMMAND.equals(retval.getExitCode())) {
@@ -434,8 +437,8 @@ public class CLIProcessor {
     @NonNull
     private String buildHelpFooter() {
 
-      Command targetCommand = getTargetCommand();
-      Collection<Command> subCommands;
+      ICommand targetCommand = getTargetCommand();
+      Collection<ICommand> subCommands;
       if (targetCommand == null) {
         subCommands = getTopLevelCommands();
       } else {
@@ -456,7 +459,7 @@ public class CLIProcessor {
             .mapToInt(command -> command.getName().length())
             .max().orElse(0);
 
-        for (Command command : subCommands) {
+        for (ICommand command : subCommands) {
           builder.append(
               ansi()
                   .render(String.format("   @|bold %-" + length + "s|@ %s%n",
@@ -485,19 +488,19 @@ public class CLIProcessor {
       StringBuilder builder = new StringBuilder(64);
       builder.append(getExec());
 
-      Deque<Command> calledCommands = getCalledCommands();
+      Deque<ICommand> calledCommands = getCalledCommands();
       if (!calledCommands.isEmpty()) {
         builder.append(calledCommands.stream()
-            .map(Command::getName)
+            .map(ICommand::getName)
             .collect(Collectors.joining(" ", " ", "")));
       }
 
       // output calling commands
-      Command targetCommand = getTargetCommand();
+      ICommand targetCommand = getTargetCommand();
       if (targetCommand == null) {
         builder.append(" <command>");
       } else {
-        Collection<Command> subCommands = targetCommand.getSubCommands();
+        Collection<ICommand> subCommands = targetCommand.getSubCommands();
 
         if (!subCommands.isEmpty()) {
           builder.append(' ');

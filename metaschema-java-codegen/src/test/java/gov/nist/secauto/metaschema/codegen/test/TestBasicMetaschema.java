@@ -150,13 +150,13 @@ class TestBasicMetaschema {
         }
 
         LOGGER.info("Write XML:");
-        write(Format.XML, ObjectUtils.notNull(Paths.get("out.xml")), root);
+        write(Format.XML, ObjectUtils.notNull(Paths.get("target/out.xml")), root);
 
         LOGGER.info("Write JSON:");
-        write(Format.XML, ObjectUtils.notNull(Paths.get("out.json")), root);
+        write(Format.XML, ObjectUtils.notNull(Paths.get("target/out.json")), root);
       }
 
-      Object root = read(Format.XML, ObjectUtils.notNull(Paths.get("out.xml")), rootClass);
+      Object root = read(Format.XML, ObjectUtils.notNull(Paths.get("target/out.xml")), rootClass);
       if (assertions != null) {
         assertAll("Deserialize XML (roundtrip)", () -> assertions.accept(root));
       }

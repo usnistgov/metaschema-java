@@ -132,6 +132,8 @@ class JsonSuiteTest
   @Test
   void testOSCALComplete() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
     MetaschemaLoader loader = new MetaschemaLoader();
+    loader.allowEntityResolution();
+
     IMetaschema metaschema = loader.load(new URL(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
     ISchemaGenerator schemaGenerator = new JsonSchemaGenerator();
@@ -139,7 +141,7 @@ class JsonSuiteTest
         = new DefaultConfiguration<>();
     features.disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     try (Writer writer = Files.newBufferedWriter(
-        Path.of("oscal-complete_schema.json"),
+        Path.of("target/oscal-complete_schema.json"),
         StandardCharsets.UTF_8,
         getWriteOpenOptions())) {
       assert writer != null;
@@ -151,13 +153,14 @@ class JsonSuiteTest
   @Test
   void testTestMetaschema() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
     MetaschemaLoader loader = new MetaschemaLoader();
+    loader.allowEntityResolution();
     IMetaschema metaschema = loader.load(new URL(
         "https://raw.githubusercontent.com/usnistgov/metaschema/71233f4eb6854e820c7949144e86afa4d7981b22/test-suite/metaschema-xspec/json-schema-gen/json-value-testing-mini-metaschema.xml"));
     ISchemaGenerator schemaGenerator = new JsonSchemaGenerator();
     IMutableConfiguration<SchemaGenerationFeature<?>> features = new DefaultConfiguration<>();
     features.disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     try (Writer writer = Files.newBufferedWriter(
-        Path.of("json-value-testing-mini_schema.json"),
+        Path.of("target/json-value-testing-mini_schema.json"),
         StandardCharsets.UTF_8,
         getWriteOpenOptions())) {
       assert writer != null;
