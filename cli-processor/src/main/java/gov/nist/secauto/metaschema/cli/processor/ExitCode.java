@@ -29,6 +29,9 @@ package gov.nist.secauto.metaschema.cli.processor;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public enum ExitCode {
+  /**
+   * The command executed without issue.
+   */
   OK(0),
   /**
    * The command executed properly, but the operation failed.
