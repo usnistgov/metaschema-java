@@ -24,7 +24,6 @@
         <url>https://github.com/usnistgov/metaschema-java/tree/main</url>
         <connection>scm:git:git@github.com/usnistgov/metaschema-java.git</connection>
         <developerConnection>scm:git:git@github.com:usnistgov/metaschema-java.git</developerConnection>
-        <tag>v0.10.0</tag>
     </scm>
     <distributionManagement>
         <snapshotRepository>
@@ -156,9 +155,7 @@
         <plugin.git-commit-id.version>6.0.0</plugin.git-commit-id.version>
         <plugin.maven-changes.version>2.12.1</plugin.maven-changes.version>
         <plugin.maven-invoker.version>3.6.0</plugin.maven-invoker.version>
-        <plugin.maven-surefire.version>3.1.2</plugin.maven-surefire.version>
         <plugin.maven-toolchains.version>3.1.0</plugin.maven-toolchains.version>
-        <plugin.spotbugs.version>4.7.3.4</plugin.spotbugs.version>
         <plugin.templating.version>1.0.0</plugin.templating.version>
     </properties>
     <repositories>
@@ -253,6 +250,12 @@
                         <artifactId>log4j-api</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <!-- fix for missing xmlbeans runtime dependency -->
+                <groupId>com.github.javaparser</groupId>
+                <artifactId>javaparser-symbol-solver-core</artifactId>
+                <version>3.24.4</version>
             </dependency>
             <dependency>
                 <groupId>org.jdom</groupId>
@@ -599,6 +602,34 @@
                     </configuration>
                 </plugin>
                 <plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<dependencies>
+						<dependency>
+							<groupId>com.google.auto.service</groupId>
+							<artifactId>auto-service</artifactId>
+							<version>${dependency.auto-service.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>com.google.auto.service</groupId>
+							<artifactId>auto-service-annotations</artifactId>
+							<version>${dependency.auto-service.version}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <configuration>
+                        <ignoredDependencies>
+                            <ignoredDependency>com.google.auto.service:auto-service</ignoredDependency>
+                        </ignoredDependencies>
+                        <usedDependencies>
+                            <usedDependency>org.apache.logging.log4j:log4j-core</usedDependency>
+                        </usedDependencies>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <groupId>gov.nist.secauto</groupId>
                     <artifactId>oss-build-support</artifactId>
                     <version>25-SNAPSHOT</version>
@@ -630,11 +661,6 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${plugin.maven-surefire.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <configuration>
 						<excludePackageNames>*.xmlbeans:*.xmlbeans.*:*.antlr</excludePackageNames>
@@ -649,9 +675,18 @@
                     </configuration>
                 </plugin>
                 <plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-checkstyle-plugin</artifactId>
+					<configuration>
+						<sourceDirectories>
+							<sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+							<sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory>
+						</sourceDirectories>
+					</configuration>
+				</plugin>
+                <plugin>
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>${plugin.spotbugs.version}</version>
                     <configuration>
                         <excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
                     </configuration>
@@ -667,7 +702,7 @@
                     <version>${plugin.git-commit-id.version}</version>
                     <configuration>
                         <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
-                        <verbose>true</verbose>
+                        <verbose>false</verbose>
                         <useNativeGit>false</useNativeGit>
                     </configuration>
                 </plugin>
@@ -683,9 +718,16 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
+                    <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
-                        <autoVersionSubmodules>true</autoVersionSubmodules>
+<!--                        <forkCount>1.5C</forkCount>-->
+                        <reuseForks>true</reuseForks>
+                        <argLine>-Xmx1024m</argLine>
+                        <excludedEnvironmentVariables>
+                            <excludedEnvironmentVariable>JAVA_TOOL_OPTIONS</excludedEnvironmentVariable>
+                        </excludedEnvironmentVariables>
+                        <!-- Use of TCP to transmit events to the plugin -->
+                        <forkNode implementation="org.apache.maven.plugin.surefire.extensions.SurefireForkNodeFactory" />
                     </configuration>
                 </plugin>
             </plugins>
@@ -695,47 +737,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-toolchains-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <forkCount>1.5C</forkCount>
-                    <reuseForks>true</reuseForks>
-                    <argLine>-Xmx1024m</argLine>
-                    <excludedEnvironmentVariables>
-                        <excludedEnvironmentVariable>JAVA_TOOL_OPTIONS</excludedEnvironmentVariable>
-                    </excludedEnvironmentVariables>
-                    <!-- Use of TCP to transmit events to the plugin -->
-                    <forkNode implementation="org.apache.maven.plugin.surefire.extensions.SurefireForkNodeFactory" />
-                </configuration>
-            </plugin>
         </plugins>
     </build>
     <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-					<plugin>
-						<!-- build source JAR for release -->
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>attach-sources</id>
-								<goals>
-									<goal>javadoc-no-fork</goal>
-								</goals>
-                                <configuration>
-                                    <excludePackageNames>*.xmlbeans:*.xmlbeans.*:*.antlr</excludePackageNames>
-                                    <failOnWarnings>false</failOnWarnings>
-                                </configuration>
-							</execution>
-						</executions>
-					</plugin>
-                </plugins>
-            </build>
-        </profile>
         <profile>
             <id>reporting</id>
             <build>
@@ -747,6 +751,7 @@
                         <executions>
                             <execution>
                                 <id>attach-descriptor</id>
+                                <inherited>false</inherited>
                                 <goals>
                                     <goal>attach-descriptor</goal>
                                 </goals>
@@ -761,16 +766,6 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
 						<reportSets>
-							<reportSet>
-								<id>default</id>
-								<reports>
-									<report>javadoc-no-fork</report>
-								</reports>
-                                <configuration>
-                                    <excludePackageNames>*.xmlbeans:*.xmlbeans.*:*.antlr</excludePackageNames>
-                                    <failOnWarnings>false</failOnWarnings>
-                                </configuration>
-                            </reportSet>
                 			<reportSet>
 								<id>aggregate</id>
 								<inherited>false</inherited>
@@ -782,33 +777,6 @@
                     </plugin>
                 </plugins>
             </reporting>
-        </profile>
-        <profile>
-            <id>gpg</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                                <configuration>
-                                    <skip>false</skip>
-                                    <gpgArguments>
-                                        <arg>--pinentry-mode</arg>
-                                        <arg>loopback</arg>
-                                    </gpgArguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
     </profiles>
     <modules>

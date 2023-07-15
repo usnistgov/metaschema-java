@@ -10,10 +10,10 @@
 		</Console>
 	</Appenders>
 	<Loggers>
-		<Logger name="gov.nist.secauto.metaschema" level="debug" additivity="false">
+		<Logger name="gov.nist.secauto.metaschema" level="info" additivity="false">
 			<AppenderRef ref="console" />
 		</Logger>
-		<Root level="debug">
+		<Root level="info">
 			<AppenderRef ref="console" />
 		</Root>
 	</Loggers>

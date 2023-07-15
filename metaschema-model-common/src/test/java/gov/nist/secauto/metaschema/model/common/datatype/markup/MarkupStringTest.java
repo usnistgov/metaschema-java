@@ -87,9 +87,9 @@ class MarkupStringTest {
 
     Assertions.assertNotNull(document);
 
-    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(document));
-    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
-    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
+    LOGGER.atDebug().log("AST: {}", AstCollectingVisitor.asString(document));
+    LOGGER.atDebug().log("HTML: {}", ms.toHtml());
+    LOGGER.atDebug().log("Markdown: {}", ms.toMarkdown());
 
     // Document[0, 49]
     List<Node> documentChildren = CollectionUtil.toList(document.getChildren());
@@ -174,9 +174,9 @@ class MarkupStringTest {
         + "<p>A param: <insert type=\"param\" id-ref=\"insert\"/>.</p>";
 
     MarkupMultiline ms = MarkupMultiline.fromMarkdown(markdown);
-    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
-    LOGGER.atInfo().log("HTML: {}", ms.toXHtml(""));
-    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
+    LOGGER.atDebug().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atDebug().log("HTML: {}", ms.toXHtml(""));
+    LOGGER.atDebug().log("Markdown: {}", ms.toMarkdown());
 
     Assertions.assertEquals(markdown, ms.toMarkdown());
     Assertions.assertEquals(html, ms.toXHtml(""));
@@ -207,10 +207,10 @@ class MarkupStringTest {
         + "\n"
         + "Some \"*more*\" **text** ![alt](src)";
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
-    LOGGER.atInfo().log("HTML Source: {}", html);
-    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
-    LOGGER.atInfo().log("HTML: {}", ms.toXHtml(""));
-    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
+    LOGGER.atDebug().log("HTML Source: {}", html);
+    LOGGER.atDebug().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atDebug().log("HTML: {}", ms.toXHtml(""));
+    LOGGER.atDebug().log("Markdown: {}", ms.toMarkdown());
     Assertions.assertEquals(markdown, ms.toMarkdown());
     Assertions.assertEquals(html, ms.toXHtml(""));
   }
@@ -225,10 +225,10 @@ class MarkupStringTest {
     final String html = "<p>a <q><em>b</em></q> <strong>c</strong></p>";
     final String markdown = "a <q>*b*</q> **c**";
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
-    LOGGER.atInfo().log("HTML Source: {}", html);
-    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
-    LOGGER.atInfo().log("HTML: {}", ms.toXHtml(""));
-    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
+    LOGGER.atDebug().log("HTML Source: {}", html);
+    LOGGER.atDebug().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atDebug().log("HTML: {}", ms.toXHtml(""));
+    LOGGER.atDebug().log("Markdown: {}", ms.toMarkdown());
     Assertions.assertNotEquals(markdown, ms.toMarkdown());
     Assertions.assertEquals(html, ms.toXHtml(""));
   }
@@ -244,9 +244,9 @@ class MarkupStringTest {
 
     MarkupMultiline ms = MarkupMultiline.fromHtml(htmlPreOnly);
 
-    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
-    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
-    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
+    LOGGER.atDebug().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atDebug().log("HTML: {}", ms.toHtml());
+    LOGGER.atDebug().log("Markdown: {}", ms.toMarkdown());
 
     Assertions.assertEquals(markdown, ms.toMarkdown());
     Assertions.assertEquals(html, ms.toHtml());
@@ -262,9 +262,9 @@ class MarkupStringTest {
 
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
 
-    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
-    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
-    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
+    LOGGER.atDebug().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atDebug().log("HTML: {}", ms.toHtml());
+    LOGGER.atDebug().log("Markdown: {}", ms.toMarkdown());
 
     Assertions.assertEquals(markdown, ms.toMarkdown());
     Assertions.assertEquals(html, ms.toHtml());
@@ -276,9 +276,9 @@ class MarkupStringTest {
     final String markdown = "Example`**some** *code*`";
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
 
-    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
-    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
-    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
+    LOGGER.atDebug().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atDebug().log("HTML: {}", ms.toHtml());
+    LOGGER.atDebug().log("Markdown: {}", ms.toMarkdown());
 
     Assertions.assertEquals(markdown, ms.toMarkdown());
     Assertions.assertEquals(html, ms.toHtml());
@@ -295,9 +295,9 @@ class MarkupStringTest {
 
     Assertions.assertNotNull(document);
 
-    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
-    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
-    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
+    LOGGER.atDebug().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atDebug().log("HTML: {}", ms.toHtml());
+    LOGGER.atDebug().log("Markdown: {}", ms.toMarkdown());
 
     Assertions.assertEquals(markdown, ms.toMarkdown());
     Assertions.assertEquals(html, ms.toHtml().trim());
@@ -326,9 +326,9 @@ class MarkupStringTest {
 
     Assertions.assertNotNull(document);
 
-    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
-    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
-    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
+    LOGGER.atDebug().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atDebug().log("HTML: {}", ms.toHtml());
+    LOGGER.atDebug().log("Markdown: {}", ms.toMarkdown());
 
     Assertions.assertEquals(markdown, ms.toMarkdown());
 
@@ -353,9 +353,9 @@ class MarkupStringTest {
     document = ms.getDocument();
 
     Assertions.assertNotNull(document);
-    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
-    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
-    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
+    LOGGER.atDebug().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atDebug().log("HTML: {}", ms.toHtml());
+    LOGGER.atDebug().log("Markdown: {}", ms.toMarkdown());
     Assertions.assertEquals(markdown, ms.toMarkdown());
     Assertions.assertEquals(html, ms.toHtml().trim());
   }
@@ -365,10 +365,9 @@ class MarkupStringTest {
     String html = "<p>before &lt;thing[02] text&gt; after</p>";
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
 
-    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
-    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
-    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
-
+    LOGGER.atDebug().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
+    LOGGER.atDebug().log("HTML: {}", ms.toHtml());
+    LOGGER.atDebug().log("Markdown: {}", ms.toMarkdown());
   }
 
   @Test
@@ -380,9 +379,9 @@ class MarkupStringTest {
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
 
     Document doc = ms.getDocument();
-    LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(doc));
-    LOGGER.atInfo().log("HTML: {}", ms.toHtml());
-    LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
+    LOGGER.atDebug().log("AST: {}", AstCollectingVisitor.asString(doc));
+    LOGGER.atDebug().log("HTML: {}", ms.toHtml());
+    LOGGER.atDebug().log("Markdown: {}", ms.toMarkdown());
 
     List<Node> children = CollectionUtil.toList(doc.getChildren());
     // ensure there is only 1 child and that it is a heading

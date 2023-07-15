@@ -159,17 +159,7 @@
 	<build>
 		<pluginManagement>
 			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-checkstyle-plugin</artifactId>
-					<configuration>
-						<sourceDirectories>
-							<sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
-							<sourceDirectory>
-								${project.build.testSourceDirectory}</sourceDirectory>
-						</sourceDirectories>
-					</configuration>
-				</plugin>
+
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
@@ -177,29 +167,6 @@
 						<excludeRoots>
 							<excludeRoot>target/generated-sources/antlr4</excludeRoot>
 						</excludeRoots>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<dependencies>
-						<dependency>
-							<groupId>com.google.auto.service</groupId>
-							<artifactId>auto-service</artifactId>
-							<version>${dependency.auto-service.version}</version>
-						</dependency>
-						<dependency>
-							<groupId>com.google.auto.service</groupId>
-							<artifactId>auto-service-annotations</artifactId>
-							<version>${dependency.auto-service.version}</version>
-						</dependency>
-					</dependencies>
-				</plugin>
-				<plugin>
-					<groupId>com.github.spotbugs</groupId>
-					<artifactId>spotbugs-maven-plugin</artifactId>
-					<configuration>
-						<excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -227,22 +194,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<configuration>
-					<ignoredDependencies>
-						<ignoredDependency>com.google.auto.service:auto-service</ignoredDependency>
-					</ignoredDependencies>
-					<usedDependencies>
-						<usedDependency>org.apache.logging.log4j:log4j-core</usedDependency>
-					</usedDependencies>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>io.github.git-commit-id</groupId>

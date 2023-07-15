@@ -74,8 +74,13 @@ class MarkupParserTest {
         .toString();
 
     XMLEventReader2 reader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(html));
-    LOGGER.atInfo().log("StartDocument: {}", XmlEventUtil.toString(reader.nextEvent()));
-    LOGGER.atInfo().log("StartElement: {}", XmlEventUtil.toString(reader.nextEvent()));
+
+    CharSequence startDocument = XmlEventUtil.toString(reader.nextEvent());
+    LOGGER.atDebug().log("StartDocument: {}", startDocument);
+
+    CharSequence startElement = XmlEventUtil.toString(reader.nextEvent());
+    LOGGER.atDebug().log("StartElement: {}", startElement);
+
     assertDoesNotThrow(() -> {
       MarkupMultiline markupString = XmlMarkupParser.instance().parseMarkupMultiline(reader);
       AstCollectingVisitor visitor = new AstCollectingVisitor();
@@ -100,14 +105,18 @@ class MarkupParserTest {
     factory.configureForXmlConformance();
     factory.setProperty(XMLInputFactory.IS_COALESCING, true);
     XMLEventReader2 reader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(html));
-    LOGGER.atInfo().log("StartDocument: {}", XmlEventUtil.toString(reader.nextEvent()));
-    LOGGER.atInfo().log("StartElement: {}", XmlEventUtil.toString(reader.nextEvent()));
+
+    CharSequence startDocument = XmlEventUtil.toString(reader.nextEvent());
+    LOGGER.atDebug().log("StartDocument: {}", startDocument);
+
+    CharSequence startElement = XmlEventUtil.toString(reader.nextEvent());
+    LOGGER.atDebug().log("StartElement: {}", startElement);
+
     assertDoesNotThrow(() -> {
       MarkupMultiline ms = XmlMarkupParser.instance().parseMarkupMultiline(reader);
-      LOGGER.atInfo().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
-      LOGGER.atInfo().log("HTML: {}", ms.toXHtml(""));
-      LOGGER.atInfo().log("Markdown: {}", ms.toMarkdown());
+      LOGGER.atDebug().log("AST: {}", AstCollectingVisitor.asString(ms.getDocument()));
+      LOGGER.atDebug().log("HTML: {}", ms.toXHtml(""));
+      LOGGER.atDebug().log("Markdown: {}", ms.toMarkdown());
     });
   }
-
 }

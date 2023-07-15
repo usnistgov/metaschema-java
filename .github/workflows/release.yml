@@ -50,7 +50,7 @@ jobs:
     # -------------------------
     - name: Build Website
       run: |
-        mvn -B -e -Pgpg -Prelease -Preporting site site:stage
+        mvn -B -e -Pgpg -Prelease -Preporting install site site:stage
     - name: Run Website Deploy Script
       run: |
         touch target/staging/.nojekyll

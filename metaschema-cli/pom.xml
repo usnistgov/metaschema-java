@@ -73,8 +73,7 @@
 				<targetPath>${project.build.directory}/generated-distro</targetPath>
 			</resource>
 			<resource>
-				<directory>
-					${project.build.directory}/generated-resources/license</directory>
+				<directory>${project.build.directory}/generated-resources/license</directory>
 			</resource>
 		</resources>
 		<plugins>

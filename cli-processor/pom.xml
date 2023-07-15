@@ -9,7 +9,7 @@
 	<artifactId>cli-processor</artifactId>
 	<packaging>jar</packaging>
 
-	<name>OSCAL CLI Framework</name>
+	<name>Metaschema CLI Framework</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>

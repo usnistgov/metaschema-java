@@ -142,17 +142,17 @@ class TestBasicMetaschema {
       String xml;
       {
         Object root = read(Format.XML, xmlExample, rootClass);
-        LOGGER.info("Read XML: Object: {}", root.toString());
+        LOGGER.atDebug().log("Read XML: Object: {}", root.toString());
         if (assertions != null) {
           assertAll("Deserialize XML", () -> {
             assertions.accept(root);
           });
         }
 
-        LOGGER.info("Write XML:");
+        LOGGER.atDebug().log("Write XML:");
         write(Format.XML, ObjectUtils.notNull(Paths.get("target/out.xml")), root);
 
-        LOGGER.info("Write JSON:");
+        LOGGER.atDebug().log("Write JSON:");
         write(Format.XML, ObjectUtils.notNull(Paths.get("target/out.json")), root);
       }
 
