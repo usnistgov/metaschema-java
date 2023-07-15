@@ -6,7 +6,7 @@
     <parent>
         <groupId>gov.nist.secauto</groupId>
         <artifactId>oss-parent</artifactId>
-        <version>25-SNAPSHOT</version>
+        <version>25</version>
     </parent>
     <groupId>gov.nist.secauto.metaschema</groupId>
     <artifactId>metaschema-framework</artifactId>
@@ -720,7 +720,7 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
-<!--                        <forkCount>1.5C</forkCount>-->
+                        <forkCount>1.5C</forkCount>
                         <reuseForks>true</reuseForks>
                         <argLine>-Xmx1024m</argLine>
                         <excludedEnvironmentVariables>
