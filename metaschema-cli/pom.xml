@@ -178,6 +178,7 @@
 								<licenseMerge>The Apache Software License, Version 2.0|Apache
 									License, Version 2.0|Apache Public License 2.0</licenseMerge>
 							</licenseMerges>
+							<excludedGroups>^gov\.nist\.</excludedGroups>
 						</configuration>
 					</execution>
 				</executions>
