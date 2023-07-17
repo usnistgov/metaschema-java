@@ -607,7 +607,7 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
     QName codeQName = asQName("code");
     Map<String, String> attributes = new LinkedHashMap<>(); // NOPMD local use; thread-safe
     if (node.getInfo().isNotNull()) {
-      attributes.put("class", "language-" + node.getInfo().unescape().toString());
+      attributes.put("class", "language-" + node.getInfo().unescape());
     }
 
     writeElementStart(codeQName, attributes);
