@@ -7,13 +7,11 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>metaschema-model</artifactId>
-	<name>Metaschema XML Implementation</name>
-	<url>${site.url}${project.artifactId}/</url>
 	<distributionManagement>
-		<site>
-			<id>nist-pages</id>
-			<url>${site.url}${project.artifactId}/</url>
-		</site>
+		<relocation>
+			<groupId>gov.nist.secauto.metaschema</groupId>
+			<artifactId>metaschema-core</artifactId>
+		</relocation>
 	</distributionManagement>
 	<dependencies>
 		<dependency>
