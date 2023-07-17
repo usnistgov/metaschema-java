@@ -13,4 +13,13 @@
       </discovery>
     </multiModule>
   </configuration>
+  <executionControl>
+    <runAlways>
+      <plugins>
+        <!-- the two following plugins are needed to add sources to the source list -->
+        <plugin groupId="org.antlr" artifactId="antlr4-maven-plugin"/>
+        <plugin groupId="org.codehaus.mojo" artifactId="build-helper-maven-plugin"/>
+      </plugins>
+    </runAlways>
+  </executionControl>
 </cache>
