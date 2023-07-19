@@ -150,21 +150,21 @@
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>       String xml;
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>       {
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>         Object root = read(Format.XML, xmlExample, rootClass);
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>         LOGGER.info(<span class="jxr_string">"Read XML: Object: {}"</span>, root.toString());
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>         LOGGER.atDebug().log(<span class="jxr_string">"Read XML: Object: {}"</span>, root.toString());
 <a class="jxr_linenumber" name="L146" href="#L146">146</a>         <strong class="jxr_keyword">if</strong> (assertions != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L147" href="#L147">147</a>           assertAll(<span class="jxr_string">"Deserialize XML"</span>, () -&gt; {
 <a class="jxr_linenumber" name="L148" href="#L148">148</a>             assertions.accept(root);
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>           });
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>         }
 <a class="jxr_linenumber" name="L151" href="#L151">151</a> 
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>         LOGGER.info(<span class="jxr_string">"Write XML:"</span>);
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>         write(Format.XML, ObjectUtils.notNull(Paths.get(<span class="jxr_string">"out.xml"</span>)), root);
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>         LOGGER.atDebug().log(<span class="jxr_string">"Write XML:"</span>);
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>         write(Format.XML, ObjectUtils.notNull(Paths.get(<span class="jxr_string">"target/out.xml"</span>)), root);
 <a class="jxr_linenumber" name="L154" href="#L154">154</a> 
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>         LOGGER.info(<span class="jxr_string">"Write JSON:"</span>);
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>         write(Format.XML, ObjectUtils.notNull(Paths.get(<span class="jxr_string">"out.json"</span>)), root);
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>         LOGGER.atDebug().log(<span class="jxr_string">"Write JSON:"</span>);
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>         write(Format.XML, ObjectUtils.notNull(Paths.get(<span class="jxr_string">"target/out.json"</span>)), root);
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>       }
 <a class="jxr_linenumber" name="L158" href="#L158">158</a> 
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>       Object root = read(Format.XML, ObjectUtils.notNull(Paths.get(<span class="jxr_string">"out.xml"</span>)), rootClass);
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>       Object root = read(Format.XML, ObjectUtils.notNull(Paths.get(<span class="jxr_string">"target/out.xml"</span>)), rootClass);
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>       <strong class="jxr_keyword">if</strong> (assertions != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L161" href="#L161">161</a>         assertAll(<span class="jxr_string">"Deserialize XML (roundtrip)"</span>, () -&gt; assertions.accept(root));
 <a class="jxr_linenumber" name="L162" href="#L162">162</a>       }

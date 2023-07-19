@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<licensePluginReport goal="FORMAT" timestamp="1689799755168">
+    <module artifactId="metaschema-model" groupId="gov.nist.secauto.metaschema" version="0.12.0"/>
+    <files>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\CommonmarkConformanceTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\ExamplesTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\MetaschemaLoaderTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\XmlbeansMarkupVisitorTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\util\UsedDefinitionModelWalkerTest.java" result="NOOP"/>
+    </files>
+</licensePluginReport>

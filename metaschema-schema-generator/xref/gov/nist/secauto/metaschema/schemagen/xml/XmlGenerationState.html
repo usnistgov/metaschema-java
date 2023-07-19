@@ -90,7 +90,7 @@
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>    <strong class="jxr_keyword">public</strong> <a name="XmlGenerationState" href="../../../../../../gov/nist/secauto/metaschema/schemagen/xml/XmlGenerationState.html#XmlGenerationState">XmlGenerationState</a>(
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>        @NonNull IMetaschema metaschema,
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>        @NonNull AutoCloser&lt;XMLStreamWriter2, SchemaGenerationException&gt; writer,
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>        @NonNull IConfiguration&lt;SchemaGenerationFeature&gt; configuration) {
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>        @NonNull IConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; configuration) {
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>      <strong class="jxr_keyword">super</strong>(metaschema, writer, configuration, <strong class="jxr_keyword">new</strong> <a name="XmlDatatypeManager" href="../../../../../../gov/nist/secauto/metaschema/schemagen/xml/datatype/XmlDatatypeManager.html#XmlDatatypeManager">XmlDatatypeManager</a>());
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>      <strong class="jxr_keyword">this</strong>.defaultNS = ObjectUtils.notNull(metaschema.getXmlNamespace().toASCIIString());
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>    }

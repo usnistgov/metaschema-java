@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"gov.nist.secauto.metaschema.model"},{"l":"gov.nist.secauto.metaschema.model.xmlbeans.handler"},{"l":"gov.nist.secauto.metaschema.model.xmlbeans.impl"}]
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"gov.nist.secauto.metaschema.model"}]

@@ -176,21 +176,23 @@
 <a class="jxr_linenumber" name="L168" href="#L168">168</a>   @Test
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>   <strong class="jxr_keyword">void</strong> testOSCALComplete() <strong class="jxr_keyword">throws</strong> IOException, MetaschemaException { <em class="jxr_comment">// NOPMD - delegated to doTest</em>
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>     MetaschemaLoader loader = <strong class="jxr_keyword">new</strong> MetaschemaLoader();
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>     IMetaschema metaschema = loader.load(<strong class="jxr_keyword">new</strong> URL(
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>         <em class="jxr_comment">// "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));</em>
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>         <span class="jxr_string">"https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"</span>));
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>     ISchemaGenerator schemaGenerator = <strong class="jxr_keyword">new</strong> XmlSchemaGenerator();
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>     IMutableConfiguration&lt;SchemaGenerationFeature&gt; features = <strong class="jxr_keyword">new</strong> DefaultConfiguration&lt;&gt;(SchemaGenerationFeature.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>         .disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>     <strong class="jxr_keyword">try</strong> (Writer writer = Files.newBufferedWriter(
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>         Path.of(<span class="jxr_string">"oscal-complete_schema.xsd"</span>),
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>         StandardCharsets.UTF_8,
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>         getWriteOpenOptions())) {
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>       assert writer != <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>       schemaGenerator.generateFromMetaschema(metaschema, writer, features);
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>     }
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>   }
-<a class="jxr_linenumber" name="L185" href="#L185">185</a> }
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>     loader.allowEntityResolution();
+<a class="jxr_linenumber" name="L172" href="#L172">172</a> 
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>     IMetaschema metaschema = loader.load(<strong class="jxr_keyword">new</strong> URL(
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>         <em class="jxr_comment">// "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));</em>
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>         <span class="jxr_string">"https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"</span>));
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>     ISchemaGenerator schemaGenerator = <strong class="jxr_keyword">new</strong> XmlSchemaGenerator();
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>     IMutableConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; features = <strong class="jxr_keyword">new</strong> DefaultConfiguration&lt;&gt;();
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>     features.disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>     <strong class="jxr_keyword">try</strong> (Writer writer = Files.newBufferedWriter(
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>         Path.of(<span class="jxr_string">"target/oscal-complete_schema.xsd"</span>),
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>         StandardCharsets.UTF_8,
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>         getWriteOpenOptions())) {
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>       assert writer != <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>       schemaGenerator.generateFromMetaschema(metaschema, writer, features);
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>     }
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>   }
+<a class="jxr_linenumber" name="L187" href="#L187">187</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

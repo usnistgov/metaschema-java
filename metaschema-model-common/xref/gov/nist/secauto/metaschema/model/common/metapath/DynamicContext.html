@@ -71,7 +71,7 @@
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;CallingContext, ISequence&lt;?&gt;&gt; functionResultCache;
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>    <strong class="jxr_keyword">private</strong> CachingLoader documentLoader;
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>    @NonNull
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> IMutableConfiguration&lt;MetapathEvaluationFeature&gt; configuration;
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> IMutableConfiguration&lt;MetapathEvaluationFeature&lt;?&gt;&gt; configuration;
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>    @NonNull
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;String, ISequence&lt;?&gt;&gt; letVariableMap;
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  
@@ -85,7 +85,7 @@
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">this</strong>.currentDateTime = ZonedDateTime.now(clock);
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      <strong class="jxr_keyword">this</strong>.availableDocuments = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">this</strong>.functionResultCache = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>      <strong class="jxr_keyword">this</strong>.configuration = <strong class="jxr_keyword">new</strong> DefaultConfiguration&lt;&gt;(MetapathEvaluationFeature.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>      <strong class="jxr_keyword">this</strong>.configuration = <strong class="jxr_keyword">new</strong> DefaultConfiguration&lt;&gt;();
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>      <strong class="jxr_keyword">this</strong>.configuration.enableFeature(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES);
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      <strong class="jxr_keyword">this</strong>.letVariableMap = <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>    }
@@ -130,7 +130,7 @@
 <a class="jxr_linenumber" name="L122" href="#L122">122</a>   }
 <a class="jxr_linenumber" name="L123" href="#L123">123</a> 
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>   @NonNull
-<a class="jxr_linenumber" name="L125" href="#L125">125</a>   <strong class="jxr_keyword">public</strong> IConfiguration&lt;MetapathEvaluationFeature&gt; getConfiguration() {
+<a class="jxr_linenumber" name="L125" href="#L125">125</a>   <strong class="jxr_keyword">public</strong> IConfiguration&lt;MetapathEvaluationFeature&lt;?&gt;&gt; getConfiguration() {
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>     <strong class="jxr_keyword">return</strong> configuration;
 <a class="jxr_linenumber" name="L127" href="#L127">127</a>   }
 <a class="jxr_linenumber" name="L128" href="#L128">128</a> 

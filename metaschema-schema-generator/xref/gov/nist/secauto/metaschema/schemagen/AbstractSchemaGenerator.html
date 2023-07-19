@@ -94,7 +94,7 @@
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> S newGenerationState(
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>        @NonNull IMetaschema metaschema,
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>        @NonNull T schemaWriter,
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>        @NonNull IConfiguration&lt;SchemaGenerationFeature&gt; configuration);
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>        @NonNull IConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; configuration);
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">   * Called to generate the actual schema content.</em>
@@ -108,7 +108,7 @@
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> generateFromMetaschema(
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>       IMetaschema metaschema,
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>       Writer out,
-<a class="jxr_linenumber" name="L103" href="#L103">103</a>       IConfiguration&lt;SchemaGenerationFeature&gt; configuration) {
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>       IConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; configuration) {
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>     <em class="jxr_comment">// IInlineStrategy inlineStrategy = IInlineStrategy.newInlineStrategy(configuration);</em>
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>     <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>       <em class="jxr_comment">// avoid automatically closing streams not owned by the generator</em>

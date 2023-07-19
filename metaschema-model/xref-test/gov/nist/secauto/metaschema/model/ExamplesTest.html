@@ -51,25 +51,27 @@
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>    @Test
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>    <strong class="jxr_keyword">void</strong> testLoadMetaschema() <strong class="jxr_keyword">throws</strong> MetaschemaException, IOException {
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>      MetaschemaLoader loader = <strong class="jxr_keyword">new</strong> MetaschemaLoader();
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>  
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>      URI metaschemaUri = ObjectUtils.notNull(URI.create(
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>          <span class="jxr_string">"https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"</span>));
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>      IMetaschema metaschema = loader.load(metaschemaUri);
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>      assertNotNull(metaschema, <span class="jxr_string">"metaschema not found"</span>);
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>    }
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>  
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>    @Test
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>    <strong class="jxr_keyword">void</strong> testExamineAssemblyDefinitionByName() <strong class="jxr_keyword">throws</strong> MetaschemaException, IOException {
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>      MetaschemaLoader loader = <strong class="jxr_keyword">new</strong> MetaschemaLoader();
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>      URI metaschemaUri = ObjectUtils.notNull(URI.create(
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>          <span class="jxr_string">"https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"</span>));
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>      IMetaschema metaschema = loader.load(metaschemaUri);
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>  
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>      IAssemblyDefinition definition = metaschema.getScopedAssemblyDefinitionByName(<span class="jxr_string">"property"</span>);
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>      assertNotNull(definition, <span class="jxr_string">"definition not found"</span>);
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>    }
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>  
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>  }
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>      loader.allowEntityResolution();
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>      URI metaschemaUri = ObjectUtils.notNull(URI.create(
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>          <span class="jxr_string">"https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"</span>));
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>      IMetaschema metaschema = loader.load(metaschemaUri);
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>      assertNotNull(metaschema, <span class="jxr_string">"metaschema not found"</span>);
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>    }
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>    @Test
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>    <strong class="jxr_keyword">void</strong> testExamineAssemblyDefinitionByName() <strong class="jxr_keyword">throws</strong> MetaschemaException, IOException {
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>      MetaschemaLoader loader = <strong class="jxr_keyword">new</strong> MetaschemaLoader();
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>      loader.allowEntityResolution();
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>      URI metaschemaUri = ObjectUtils.notNull(URI.create(
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>          <span class="jxr_string">"https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"</span>));
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>      IMetaschema metaschema = loader.load(metaschemaUri);
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>      IAssemblyDefinition definition = metaschema.getScopedAssemblyDefinitionByName(<span class="jxr_string">"property"</span>);
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>      assertNotNull(definition, <span class="jxr_string">"definition not found"</span>);
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>    }
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

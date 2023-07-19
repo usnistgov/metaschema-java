@@ -41,27 +41,26 @@
                         <div class="dropdown-menu">
                             <div class="dropdown-submenu">
                                 <a  href="project-info.html"  title="Project Information"  class="dropdown-item" >Project Information</a>                                <div class="dropdown-menu">
-                                    <a href="summary.html" title="Summary"  class="dropdown-item ">Summary</a>
-                                    <a href="licenses.html" title="Licenses"  class="dropdown-item ">Licenses</a>
-                                    <a href="issue-management.html" title="Issue Management"  class="dropdown-item ">Issue Management</a>
-                                    <a href="dependencies.html" title="Dependencies"  class="dropdown-item ">Dependencies</a>
-                                    <a href="dependency-convergence.html" title="Dependency Convergence"  class="dropdown-item ">Dependency Convergence</a>
-                                    <a href="dependency-management.html" title="Dependency Management"  class="dropdown-item ">Dependency Management</a>
-                                    <a href="plugins.html" title="Plugins"  class="dropdown-item ">Plugins</a>
                                     <a href="index.html" title="About"  class="dropdown-item ">About</a>
-                                    <a href="dependency-info.html" title="Dependency Information"  class="dropdown-item ">Dependency Information</a>
                                     <a href="team.html" title="Team"  class="dropdown-item ">Team</a>
                                     <a href="mailing-lists.html" title="Mailing Lists"  class="dropdown-item ">Mailing Lists</a>
                                     <a href="scm.html" title="Source Code Management"  class="dropdown-item ">Source Code Management</a>
+                                    <a href="licenses.html" title="Licenses"  class="dropdown-item ">Licenses</a>
+                                    <a href="issue-management.html" title="Issue Management"  class="dropdown-item ">Issue Management</a>
+                                    <a href="dependencies.html" title="Dependencies"  class="dropdown-item ">Dependencies</a>
+                                    <a href="dependency-info.html" title="Dependency Information"  class="dropdown-item ">Dependency Information</a>
+                                    <a href="dependency-convergence.html" title="Dependency Convergence"  class="dropdown-item ">Dependency Convergence</a>
+                                    <a href="dependency-management.html" title="Dependency Management"  class="dropdown-item ">Dependency Management</a>
+                                    <a href="plugins.html" title="Plugins"  class="dropdown-item ">Plugins</a>
                                 </div>
                             </div>
                             <div class="dropdown-submenu">
                                 <a  href="project-reports.html"  title="Project Reports"  class="dropdown-item active" >Project Reports</a>                                <div class="dropdown-menu">
+                                    <a href="surefire-report.html" title="Surefire"  class="dropdown-item ">Surefire</a>
                                     <a href="xref/index.html" title="Source Xref"  class="dropdown-item ">Source Xref</a>
                                     <a href="xref-test/index.html" title="Test Source Xref"  class="dropdown-item ">Test Source Xref</a>
-                                    <a href="surefire-report.html" title="Surefire"  class="dropdown-item ">Surefire</a>
-                                    <a href="cpd.html" title="CPD"  class="dropdown-item ">CPD</a>
                                     <a href="" title="PMD"  class="dropdown-item active">PMD</a>
+                                    <a href="cpd.html" title="CPD"  class="dropdown-item ">CPD</a>
                                     <a href="taglist.html" title="Tag List"  class="dropdown-item ">Tag List</a>
                                     <a href="checkstyle.html" title="Checkstyle"  class="dropdown-item ">Checkstyle</a>
                                     <a href="spotbugs.html" title="SpotBugs"  class="dropdown-item ">SpotBugs</a>
@@ -105,18 +104,28 @@
      <tbody>
       <tr class="b">
        <td style="text-align: left;"><a class="externalLink" href="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#godclass">GodClass</a></td>
-       <td>Possible God Class (WMC=76, ATFD=32, TCC=6.614%)</td>
-       <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L76">76</a>–<a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L461">461</a></td>
+       <td>Possible God Class (WMC=81, ATFD=30, TCC=2.218%)</td>
+       <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L76">76</a>–<a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L494">494</a></td>
+      </tr>
+      <tr class="a">
+       <td style="text-align: left;"><a class="externalLink" href="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity">CyclomaticComplexity</a></td>
+       <td>The class 'DefaultBoundLoader' has a total cyclomatic complexity of 81 (highest 11).</td>
+       <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L76">76</a>–<a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L494">494</a></td>
+      </tr>
+      <tr class="b">
+       <td style="text-align: left;"><a class="externalLink" href="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_errorprone.html#nullassignment">NullAssignment</a></td>
+       <td>Assigning an Object to null is a code smell. Consider refactoring.</td>
+       <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L138">138</a></td>
       </tr>
       <tr class="a">
        <td style="text-align: left;"><a class="externalLink" href="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity">CyclomaticComplexity</a></td>
        <td>The method 'detectModel(BufferedInputStream, Format)' has a cyclomatic complexity of 11.</td>
-       <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L296">296</a>–<a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L328">328</a></td>
+       <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L326">326</a>–<a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L359">359</a></td>
       </tr>
       <tr class="b">
        <td style="text-align: left;"><a class="externalLink" href="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity">CyclomaticComplexity</a></td>
        <td>The method 'detectModelXmlClass(InputStream)' has a cyclomatic complexity of 10.</td>
-       <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L354">354</a>–<a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L387">387</a></td>
+       <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L385">385</a>–<a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L418">418</a></td>
       </tr>
      </tbody>
     </table>
@@ -146,6 +155,25 @@
        <td style="text-align: left;"><a class="externalLink" href="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#npathcomplexity">NPathComplexity</a></td>
        <td>The method 'write(boolean, IJsonWritingContext)' has an NPath complexity of 12607, current threshold is 200</td>
        <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/json/CollapseKeyBuilder.html#L99">99</a>–<a href="./xref/gov/nist/secauto/metaschema/binding/io/json/CollapseKeyBuilder.html#L188">188</a></td>
+      </tr>
+     </tbody>
+    </table>
+   </section>
+   <section>
+    <h4 id="govnistsecautometaschemabindingiojsondefaultjsonse">gov/nist/secauto/metaschema/binding/io/json/DefaultJsonSerializer.java</h4><a id="gov2fnist2fsecauto2fmetaschema2fbinding2fio2fjson2fdefaultjsonserializerjava"></a>
+    <table class="bodyTable table table-striped table-hover">
+     <thead>
+      <tr class="a">
+       <th>Rule</th>
+       <th>Violation</th>
+       <th>Line</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr class="b">
+       <td style="text-align: left;"><a class="externalLink" href="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_errorprone.html#nullassignment">NullAssignment</a></td>
+       <td>Assigning an Object to null is a code smell. Consider refactoring.</td>
+       <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/json/DefaultJsonSerializer.html#L61">61</a></td>
       </tr>
      </tbody>
     </table>
@@ -285,21 +313,33 @@
     <tbody>
      <tr class="b">
       <td style="text-align: left;"><a class="externalLink" href="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#godclass">GodClass</a></td>
-      <td>Possible God Class (WMC=76, ATFD=32, TCC=6.614%)</td>
+      <td>Possible God Class (WMC=81, ATFD=30, TCC=2.218%)</td>
       <td>3</td>
-      <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L76">76</a>–<a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L461">461</a></td>
+      <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L76">76</a>–<a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L494">494</a></td>
+     </tr>
+     <tr class="a">
+      <td style="text-align: left;"><a class="externalLink" href="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity">CyclomaticComplexity</a></td>
+      <td>The class 'DefaultBoundLoader' has a total cyclomatic complexity of 81 (highest 11).</td>
+      <td>3</td>
+      <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L76">76</a>–<a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L494">494</a></td>
+     </tr>
+     <tr class="b">
+      <td style="text-align: left;"><a class="externalLink" href="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_errorprone.html#nullassignment">NullAssignment</a></td>
+      <td>Assigning an Object to null is a code smell. Consider refactoring.</td>
+      <td>3</td>
+      <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L138">138</a></td>
      </tr>
      <tr class="a">
       <td style="text-align: left;"><a class="externalLink" href="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity">CyclomaticComplexity</a></td>
       <td>The method 'detectModel(BufferedInputStream, Format)' has a cyclomatic complexity of 11.</td>
       <td>3</td>
-      <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L296">296</a>–<a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L328">328</a></td>
+      <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L326">326</a>–<a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L359">359</a></td>
      </tr>
      <tr class="b">
       <td style="text-align: left;"><a class="externalLink" href="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity">CyclomaticComplexity</a></td>
       <td>The method 'detectModelXmlClass(InputStream)' has a cyclomatic complexity of 10.</td>
       <td>3</td>
-      <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L354">354</a>–<a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L387">387</a></td>
+      <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L385">385</a>–<a href="./xref/gov/nist/secauto/metaschema/binding/io/DefaultBoundLoader.html#L418">418</a></td>
      </tr>
     </tbody>
    </table>
@@ -333,6 +373,27 @@
       <td>The method 'write(boolean, IJsonWritingContext)' has an NPath complexity of 12607, current threshold is 200</td>
       <td>3</td>
       <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/json/CollapseKeyBuilder.html#L99">99</a>–<a href="./xref/gov/nist/secauto/metaschema/binding/io/json/CollapseKeyBuilder.html#L188">188</a></td>
+     </tr>
+    </tbody>
+   </table>
+  </section>
+  <section>
+   <h3 id="govnistsecautometaschemabindingiojsondefaultjsonse1">gov/nist/secauto/metaschema/binding/io/json/DefaultJsonSerializer.java</h3><a id="gov2fnist2fsecauto2fmetaschema2fbinding2fio2fjson2fdefaultjsonserializerjava"></a>
+   <table class="bodyTable table table-striped table-hover">
+    <thead>
+     <tr class="a">
+      <th>Rule</th>
+      <th>Violation</th>
+      <th>Priority</th>
+      <th>Line</th>
+     </tr>
+    </thead>
+    <tbody>
+     <tr class="b">
+      <td style="text-align: left;"><a class="externalLink" href="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_errorprone.html#nullassignment">NullAssignment</a></td>
+      <td>Assigning an Object to null is a code smell. Consider refactoring.</td>
+      <td>3</td>
+      <td><a href="./xref/gov/nist/secauto/metaschema/binding/io/json/DefaultJsonSerializer.html#L61">61</a></td>
      </tr>
     </tbody>
    </table>
@@ -889,6 +950,9 @@
         <a class="nav-link" href="#govnistsecautometaschemabindingiojsoncollapsekeybu" title="gov/nist/secauto/metaschema/binding/io/json/CollapseKeyBuilder.java">gov/nist/secauto/metaschema/binding/io/json/CollapseKeyBuilder.java</a>
     </li>
     <li class="h4">
+        <a class="nav-link" href="#govnistsecautometaschemabindingiojsondefaultjsonse" title="gov/nist/secauto/metaschema/binding/io/json/DefaultJsonSerializer.java">gov/nist/secauto/metaschema/binding/io/json/DefaultJsonSerializer.java</a>
+    </li>
+    <li class="h4">
         <a class="nav-link" href="#govnistsecautometaschemabindingmodelabstractclassb" title="gov/nist/secauto/metaschema/binding/model/AbstractClassBinding.java">gov/nist/secauto/metaschema/binding/model/AbstractClassBinding.java</a>
     </li>
     <li class="h4">
@@ -908,6 +972,9 @@
     </li>
     <li class="h3">
         <a class="nav-link" href="#govnistsecautometaschemabindingiojsoncollapsekeybu1" title="gov/nist/secauto/metaschema/binding/io/json/CollapseKeyBuilder.java">gov/nist/secauto/metaschema/binding/io/json/CollapseKeyBuilder.java</a>
+    </li>
+    <li class="h3">
+        <a class="nav-link" href="#govnistsecautometaschemabindingiojsondefaultjsonse1" title="gov/nist/secauto/metaschema/binding/io/json/DefaultJsonSerializer.java">gov/nist/secauto/metaschema/binding/io/json/DefaultJsonSerializer.java</a>
     </li>
     <li class="h3">
         <a class="nav-link" href="#govnistsecautometaschemabindingmodelabstractclassb1" title="gov/nist/secauto/metaschema/binding/model/AbstractClassBinding.java">gov/nist/secauto/metaschema/binding/model/AbstractClassBinding.java</a>
@@ -960,11 +1027,11 @@ Maven Documentation
                     </li>
                                 <li class="nav-item "><a  href="project-info.html"  title="Project Information"  class="nav-link" >Project Information <i class="fas fa-angle-right"></i></a></li>
                                 <li class="nav-item active"><a  href="project-reports.html"  title="Project Reports"  class="nav-link" >Project Reports <i class="fas fa-angle-down"></i></a>        <ul class="nav flex-column nav-list">
+                    <li class="nav-item "><a  href="surefire-report.html"  title="Surefire"  class="nav-link" >Surefire</a></li>
                     <li class="nav-item "><a  href="xref/index.html"  title="Source Xref"  class="nav-link" >Source Xref</a></li>
                     <li class="nav-item "><a  href="xref-test/index.html"  title="Test Source Xref"  class="nav-link" >Test Source Xref</a></li>
-                    <li class="nav-item "><a  href="surefire-report.html"  title="Surefire"  class="nav-link" >Surefire</a></li>
-                    <li class="nav-item "><a  href="cpd.html"  title="CPD"  class="nav-link" >CPD</a></li>
                     <li class="nav-item active"><a  title="PMD"  class="nav-link" >PMD</a></li>
+                    <li class="nav-item "><a  href="cpd.html"  title="CPD"  class="nav-link" >CPD</a></li>
                     <li class="nav-item "><a  href="taglist.html"  title="Tag List"  class="nav-link" >Tag List</a></li>
                     <li class="nav-item "><a  href="checkstyle.html"  title="Checkstyle"  class="nav-link" >Checkstyle</a></li>
                     <li class="nav-item "><a  href="spotbugs.html"  title="SpotBugs"  class="nav-link" >SpotBugs</a></li>
@@ -977,7 +1044,7 @@ Maven Documentation
                 <blockquote class="blockquote"><span class="color-highlight">Metaschema Java tools</span> provide a set of tools and libraries that allow developers to quickly develop applications based on Metaschema models.</blockquote>
 
                                 <blockquote class="version-date">
-                    <span class="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): 0.11.0</span>
+                    <span class="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): 0.12.0</span>
                             </blockquote>
             </div> <!-- col: .container -->
         </div> <!-- END: .row -->

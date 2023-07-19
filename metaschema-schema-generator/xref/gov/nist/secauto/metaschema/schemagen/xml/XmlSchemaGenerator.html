@@ -141,7 +141,7 @@
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>   <strong class="jxr_keyword">protected</strong> <a name="XmlGenerationState" href="../../../../../../gov/nist/secauto/metaschema/schemagen/xml/XmlGenerationState.html#XmlGenerationState">XmlGenerationState</a> newGenerationState(
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>       IMetaschema metaschema,
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>       AutoCloser&lt;XMLStreamWriter2, SchemaGenerationException&gt; schemaWriter,
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>       IConfiguration&lt;SchemaGenerationFeature&gt; configuration) {
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>       IConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; configuration) {
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="XmlGenerationState" href="../../../../../../gov/nist/secauto/metaschema/schemagen/xml/XmlGenerationState.html#XmlGenerationState">XmlGenerationState</a>(metaschema, schemaWriter, configuration);
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>   }
 <a class="jxr_linenumber" name="L139" href="#L139">139</a> 
@@ -149,7 +149,7 @@
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> generateFromMetaschema(
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>       @NonNull IMetaschema metaschema,
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>       @NonNull Writer out,
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>       @NonNull IConfiguration&lt;SchemaGenerationFeature&gt; configuration) {
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>       @NonNull IConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; configuration) {
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>     <strong class="jxr_keyword">try</strong> (StringWriter stringWriter = <strong class="jxr_keyword">new</strong> StringWriter()) {
 <a class="jxr_linenumber" name="L146" href="#L146">146</a>       <strong class="jxr_keyword">super</strong>.generateFromMetaschema(metaschema, stringWriter, configuration);
 <a class="jxr_linenumber" name="L147" href="#L147">147</a>       stringWriter.flush();

@@ -1,0 +1,309 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/*</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * Portions of this software was developed by employees of the National Institute</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * of Standards and Technology (NIST), an agency of the Federal Government and is</a>
+<span class="sourceLineNo">004</span><a id="line.4"> * being made available as a public service. Pursuant to title 17 United States</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * Code Section 105, works of NIST employees are not subject to copyright</a>
+<span class="sourceLineNo">006</span><a id="line.6"> * protection in the United States. This software may be subject to foreign</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * copyright. Permission in the United States and in foreign countries, to the</a>
+<span class="sourceLineNo">008</span><a id="line.8"> * extent that NIST may hold copyright, to use, copy, modify, create derivative</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * works, and distribute this software and its documentation without fee is hereby</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * granted on a non-exclusive basis, provided that this notice and disclaimer</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * of warranty appears in all copies.</a>
+<span class="sourceLineNo">012</span><a id="line.12"> *</a>
+<span class="sourceLineNo">013</span><a id="line.13"> * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE</a>
+<span class="sourceLineNo">018</span><a id="line.18"> * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR</a>
+<span class="sourceLineNo">023</span><a id="line.23"> * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.</a>
+<span class="sourceLineNo">025</span><a id="line.25"> */</a>
+<span class="sourceLineNo">026</span><a id="line.26"></a>
+<span class="sourceLineNo">027</span><a id="line.27">package gov.nist.secauto.metaschema.binding.io.json;</a>
+<span class="sourceLineNo">028</span><a id="line.28"></a>
+<span class="sourceLineNo">029</span><a id="line.29">import com.fasterxml.jackson.core.JsonGenerator;</a>
+<span class="sourceLineNo">030</span><a id="line.30"></a>
+<span class="sourceLineNo">031</span><a id="line.31">import gov.nist.secauto.metaschema.binding.model.IBoundFieldValueInstance;</a>
+<span class="sourceLineNo">032</span><a id="line.32">import gov.nist.secauto.metaschema.binding.model.IBoundFlagInstance;</a>
+<span class="sourceLineNo">033</span><a id="line.33">import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;</a>
+<span class="sourceLineNo">034</span><a id="line.34">import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;</a>
+<span class="sourceLineNo">035</span><a id="line.35"></a>
+<span class="sourceLineNo">036</span><a id="line.36">import java.io.IOException;</a>
+<span class="sourceLineNo">037</span><a id="line.37">import java.util.ArrayList;</a>
+<span class="sourceLineNo">038</span><a id="line.38">import java.util.Arrays;</a>
+<span class="sourceLineNo">039</span><a id="line.39">import java.util.Collection;</a>
+<span class="sourceLineNo">040</span><a id="line.40">import java.util.Collections;</a>
+<span class="sourceLineNo">041</span><a id="line.41">import java.util.LinkedHashMap;</a>
+<span class="sourceLineNo">042</span><a id="line.42">import java.util.LinkedList;</a>
+<span class="sourceLineNo">043</span><a id="line.43">import java.util.List;</a>
+<span class="sourceLineNo">044</span><a id="line.44">import java.util.Map;</a>
+<span class="sourceLineNo">045</span><a id="line.45"></a>
+<span class="sourceLineNo">046</span><a id="line.46">import edu.umd.cs.findbugs.annotations.NonNull;</a>
+<span class="sourceLineNo">047</span><a id="line.47">import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;</a>
+<span class="sourceLineNo">048</span><a id="line.48"></a>
+<span class="sourceLineNo">049</span><a id="line.49">public class CollapseKeyBuilder {</a>
+<span class="sourceLineNo">050</span><a id="line.50">  @NonNull</a>
+<span class="sourceLineNo">051</span><a id="line.51">  private final IFieldClassBinding classBinding;</a>
+<span class="sourceLineNo">052</span><a id="line.52">  @NonNull</a>
+<span class="sourceLineNo">053</span><a id="line.53">  private final List&lt;IBoundFlagInstance&gt; flagProperties;</a>
+<span class="sourceLineNo">054</span><a id="line.54">  @NonNull</a>
+<span class="sourceLineNo">055</span><a id="line.55">  private final Map&lt;CollapseKey, List&lt;Object&gt;&gt; keyToValuesMap;</a>
+<span class="sourceLineNo">056</span><a id="line.56"></a>
+<span class="sourceLineNo">057</span><a id="line.57">  public CollapseKeyBuilder(@NonNull IFieldClassBinding classBinding) {</a>
+<span class="sourceLineNo">058</span><a id="line.58">    this.classBinding = classBinding;</a>
+<span class="sourceLineNo">059</span><a id="line.59">    this.flagProperties = new ArrayList&lt;&gt;(classBinding.getFlagInstances());</a>
+<span class="sourceLineNo">060</span><a id="line.60">    this.keyToValuesMap = new LinkedHashMap&lt;&gt;();</a>
+<span class="sourceLineNo">061</span><a id="line.61">  }</a>
+<span class="sourceLineNo">062</span><a id="line.62"></a>
+<span class="sourceLineNo">063</span><a id="line.63">  @NonNull</a>
+<span class="sourceLineNo">064</span><a id="line.64">  protected IFieldClassBinding getClassBinding() {</a>
+<span class="sourceLineNo">065</span><a id="line.65">    return classBinding;</a>
+<span class="sourceLineNo">066</span><a id="line.66">  }</a>
+<span class="sourceLineNo">067</span><a id="line.67"></a>
+<span class="sourceLineNo">068</span><a id="line.68">  @NonNull</a>
+<span class="sourceLineNo">069</span><a id="line.69">  protected List&lt;IBoundFlagInstance&gt; getFlagProperties() {</a>
+<span class="sourceLineNo">070</span><a id="line.70">    return flagProperties;</a>
+<span class="sourceLineNo">071</span><a id="line.71">  }</a>
+<span class="sourceLineNo">072</span><a id="line.72"></a>
+<span class="sourceLineNo">073</span><a id="line.73">  public void addAll(@NonNull Collection&lt;? extends Object&gt; instances) {</a>
+<span class="sourceLineNo">074</span><a id="line.74">    for (Object instance : instances) {</a>
+<span class="sourceLineNo">075</span><a id="line.75">      add(ObjectUtils.notNull(instance));</a>
+<span class="sourceLineNo">076</span><a id="line.76">    }</a>
+<span class="sourceLineNo">077</span><a id="line.77">  }</a>
+<span class="sourceLineNo">078</span><a id="line.78"></a>
+<span class="sourceLineNo">079</span><a id="line.79">  // TODO: check and handle nullness of values</a>
+<span class="sourceLineNo">080</span><a id="line.80">  public void add(@NonNull Object instance) {</a>
+<span class="sourceLineNo">081</span><a id="line.81">    int size = getFlagProperties().size();</a>
+<span class="sourceLineNo">082</span><a id="line.82">    Object[] flagValues = new Object[size];</a>
+<span class="sourceLineNo">083</span><a id="line.83">    int index = 0;</a>
+<span class="sourceLineNo">084</span><a id="line.84">    for (IBoundFlagInstance flag : getFlagProperties()) {</a>
+<span class="sourceLineNo">085</span><a id="line.85">      flagValues[index++] = flag.getValue(instance);</a>
+<span class="sourceLineNo">086</span><a id="line.86">    }</a>
+<span class="sourceLineNo">087</span><a id="line.87"></a>
+<span class="sourceLineNo">088</span><a id="line.88">    CollapseKey key = new CollapseKey(flagValues);</a>
+<span class="sourceLineNo">089</span><a id="line.89">    List&lt;Object&gt; values = this.keyToValuesMap.get(key);</a>
+<span class="sourceLineNo">090</span><a id="line.90">    if (values == null) {</a>
+<span class="sourceLineNo">091</span><a id="line.91">      values = new LinkedList&lt;&gt;();</a>
+<span class="sourceLineNo">092</span><a id="line.92">      this.keyToValuesMap.put(key, values);</a>
+<span class="sourceLineNo">093</span><a id="line.93">    }</a>
+<span class="sourceLineNo">094</span><a id="line.94"></a>
+<span class="sourceLineNo">095</span><a id="line.95">    Object value = getClassBinding().getFieldValueInstance().getValue(instance);</a>
+<span class="sourceLineNo">096</span><a id="line.96">    values.add(value);</a>
+<span class="sourceLineNo">097</span><a id="line.97">  }</a>
+<span class="sourceLineNo">098</span><a id="line.98"></a>
+<span class="sourceLineNo">099</span><a id="line.99">  public void write(boolean writeObjectWrapper, @NonNull IJsonWritingContext context) throws IOException {</a>
+<span class="sourceLineNo">100</span><a id="line.100">    IFieldClassBinding classBinding = getClassBinding();</a>
+<span class="sourceLineNo">101</span><a id="line.101">    IBoundFlagInstance jsonKey = classBinding.getJsonKeyFlagInstance();</a>
+<span class="sourceLineNo">102</span><a id="line.102">    IBoundFlagInstance jsonValueKey = classBinding.getJsonValueKeyFlagInstance();</a>
+<span class="sourceLineNo">103</span><a id="line.103">    IBoundFieldValueInstance fieldValue = classBinding.getFieldValueInstance();</a>
+<span class="sourceLineNo">104</span><a id="line.104">    List&lt;IBoundFlagInstance&gt; flagProperties = getFlagProperties();</a>
+<span class="sourceLineNo">105</span><a id="line.105"></a>
+<span class="sourceLineNo">106</span><a id="line.106">    // first build an index of the flag properties</a>
+<span class="sourceLineNo">107</span><a id="line.107">    List&lt;Integer&gt; flagIndex;</a>
+<span class="sourceLineNo">108</span><a id="line.108">    Integer jsonKeyIndex = null;</a>
+<span class="sourceLineNo">109</span><a id="line.109">    Integer jsonValueKeyIndex = null;</a>
+<span class="sourceLineNo">110</span><a id="line.110">    if (flagProperties.isEmpty()) {</a>
+<span class="sourceLineNo">111</span><a id="line.111">      flagIndex = Collections.emptyList();</a>
+<span class="sourceLineNo">112</span><a id="line.112">    } else {</a>
+<span class="sourceLineNo">113</span><a id="line.113">      flagIndex = new ArrayList&lt;&gt;(flagProperties.size());</a>
+<span class="sourceLineNo">114</span><a id="line.114">      int index = 0;</a>
+<span class="sourceLineNo">115</span><a id="line.115">      for (IBoundFlagInstance flag : flagProperties) {</a>
+<span class="sourceLineNo">116</span><a id="line.116">        if (jsonKey != null &amp;&amp; jsonKey.equals(flag)) {</a>
+<span class="sourceLineNo">117</span><a id="line.117">          jsonKeyIndex = index++;</a>
+<span class="sourceLineNo">118</span><a id="line.118">        } else if (jsonValueKey != null &amp;&amp; jsonValueKey.equals(flag)) {</a>
+<span class="sourceLineNo">119</span><a id="line.119">          jsonValueKeyIndex = index++;</a>
+<span class="sourceLineNo">120</span><a id="line.120">        } else {</a>
+<span class="sourceLineNo">121</span><a id="line.121">          // regular properties</a>
+<span class="sourceLineNo">122</span><a id="line.122">          flagIndex.add(index++);</a>
+<span class="sourceLineNo">123</span><a id="line.123">        }</a>
+<span class="sourceLineNo">124</span><a id="line.124">      }</a>
+<span class="sourceLineNo">125</span><a id="line.125">    }</a>
+<span class="sourceLineNo">126</span><a id="line.126"></a>
+<span class="sourceLineNo">127</span><a id="line.127">    @SuppressWarnings("resource") // not owned</a>
+<span class="sourceLineNo">128</span><a id="line.128">    JsonGenerator writer = context.getWriter(); // NOPMD - intentional</a>
+<span class="sourceLineNo">129</span><a id="line.129">    // for each key, we need to write the properties</a>
+<span class="sourceLineNo">130</span><a id="line.130">    for (Map.Entry&lt;CollapseKey, List&lt;Object&gt;&gt; entry : keyToValuesMap.entrySet()) {</a>
+<span class="sourceLineNo">131</span><a id="line.131">      CollapseKey key = entry.getKey();</a>
+<span class="sourceLineNo">132</span><a id="line.132"></a>
+<span class="sourceLineNo">133</span><a id="line.133">      Object[] flagValues = key.getFlagValues();</a>
+<span class="sourceLineNo">134</span><a id="line.134"></a>
+<span class="sourceLineNo">135</span><a id="line.135">      if (writeObjectWrapper) {</a>
+<span class="sourceLineNo">136</span><a id="line.136">        writer.writeStartObject();</a>
+<span class="sourceLineNo">137</span><a id="line.137">      }</a>
+<span class="sourceLineNo">138</span><a id="line.138"></a>
+<span class="sourceLineNo">139</span><a id="line.139">      // first write the JSON key if it is configured</a>
+<span class="sourceLineNo">140</span><a id="line.140">      if (jsonKey != null &amp;&amp; jsonKeyIndex != null) {</a>
+<span class="sourceLineNo">141</span><a id="line.141">        // the field</a>
+<span class="sourceLineNo">142</span><a id="line.142">        writer.writeFieldName(jsonKey.getValueAsString(flagValues[jsonKeyIndex]));</a>
+<span class="sourceLineNo">143</span><a id="line.143"></a>
+<span class="sourceLineNo">144</span><a id="line.144">        writer.writeStartObject();</a>
+<span class="sourceLineNo">145</span><a id="line.145">      }</a>
+<span class="sourceLineNo">146</span><a id="line.146"></a>
+<span class="sourceLineNo">147</span><a id="line.147">      // next, write the flags</a>
+<span class="sourceLineNo">148</span><a id="line.148">      for (int index : flagIndex) {</a>
+<span class="sourceLineNo">149</span><a id="line.149">        IBoundFlagInstance flag = flagProperties.get(index);</a>
+<span class="sourceLineNo">150</span><a id="line.150">        Object flagValue = flagValues[index];</a>
+<span class="sourceLineNo">151</span><a id="line.151"></a>
+<span class="sourceLineNo">152</span><a id="line.152">        if (flagValue != null) {</a>
+<span class="sourceLineNo">153</span><a id="line.153">          writer.writeFieldName(flag.getJsonName());</a>
+<span class="sourceLineNo">154</span><a id="line.154">          flag.writeValue(flagValue, context);</a>
+<span class="sourceLineNo">155</span><a id="line.155">        }</a>
+<span class="sourceLineNo">156</span><a id="line.156">      }</a>
+<span class="sourceLineNo">157</span><a id="line.157"></a>
+<span class="sourceLineNo">158</span><a id="line.158">      // finally write the field value</a>
+<span class="sourceLineNo">159</span><a id="line.159">      List&lt;Object&gt; fieldValues = entry.getValue();</a>
+<span class="sourceLineNo">160</span><a id="line.160">      if (!fieldValues.isEmpty()) {</a>
+<span class="sourceLineNo">161</span><a id="line.161">        String valueKeyName;</a>
+<span class="sourceLineNo">162</span><a id="line.162">        if (jsonValueKey == null || jsonValueKeyIndex == null) {</a>
+<span class="sourceLineNo">163</span><a id="line.163">          valueKeyName = fieldValue.getJsonValueKeyName();</a>
+<span class="sourceLineNo">164</span><a id="line.164">        } else {</a>
+<span class="sourceLineNo">165</span><a id="line.165">          valueKeyName = jsonValueKey.getValueAsString(flagValues[jsonValueKeyIndex]);</a>
+<span class="sourceLineNo">166</span><a id="line.166">        }</a>
+<span class="sourceLineNo">167</span><a id="line.167">        writer.writeFieldName(valueKeyName);</a>
+<span class="sourceLineNo">168</span><a id="line.168">        if (fieldValues.size() &gt; 1) {</a>
+<span class="sourceLineNo">169</span><a id="line.169">          writer.writeStartArray();</a>
+<span class="sourceLineNo">170</span><a id="line.170">        }</a>
+<span class="sourceLineNo">171</span><a id="line.171">        for (Object value : fieldValues) {</a>
+<span class="sourceLineNo">172</span><a id="line.172">          fieldValue.writeValue(value, context);</a>
+<span class="sourceLineNo">173</span><a id="line.173">        }</a>
+<span class="sourceLineNo">174</span><a id="line.174">        if (fieldValues.size() &gt; 1) {</a>
+<span class="sourceLineNo">175</span><a id="line.175">          writer.writeEndArray();</a>
+<span class="sourceLineNo">176</span><a id="line.176">        }</a>
+<span class="sourceLineNo">177</span><a id="line.177">      }</a>
+<span class="sourceLineNo">178</span><a id="line.178"></a>
+<span class="sourceLineNo">179</span><a id="line.179">      if (jsonKey != null) {</a>
+<span class="sourceLineNo">180</span><a id="line.180">        // close the JSON key's object</a>
+<span class="sourceLineNo">181</span><a id="line.181">        writer.writeEndObject();</a>
+<span class="sourceLineNo">182</span><a id="line.182">      }</a>
+<span class="sourceLineNo">183</span><a id="line.183"></a>
+<span class="sourceLineNo">184</span><a id="line.184">      if (writeObjectWrapper) {</a>
+<span class="sourceLineNo">185</span><a id="line.185">        writer.writeEndObject();</a>
+<span class="sourceLineNo">186</span><a id="line.186">      }</a>
+<span class="sourceLineNo">187</span><a id="line.187">    }</a>
+<span class="sourceLineNo">188</span><a id="line.188">  }</a>
+<span class="sourceLineNo">189</span><a id="line.189"></a>
+<span class="sourceLineNo">190</span><a id="line.190">  public class CollapseKey {</a>
+<span class="sourceLineNo">191</span><a id="line.191">    private final Object[] flagValues;</a>
+<span class="sourceLineNo">192</span><a id="line.192">    private Integer cachedHashCode;</a>
+<span class="sourceLineNo">193</span><a id="line.193"></a>
+<span class="sourceLineNo">194</span><a id="line.194">    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "access is restricted")</a>
+<span class="sourceLineNo">195</span><a id="line.195">    public CollapseKey(Object... values) {</a>
+<span class="sourceLineNo">196</span><a id="line.196">      this.flagValues = Arrays.copyOf(values, values.length);</a>
+<span class="sourceLineNo">197</span><a id="line.197">    }</a>
+<span class="sourceLineNo">198</span><a id="line.198"></a>
+<span class="sourceLineNo">199</span><a id="line.199">    protected Object[] getFlagValues() {</a>
+<span class="sourceLineNo">200</span><a id="line.200">      return Arrays.copyOf(flagValues, flagValues.length);</a>
+<span class="sourceLineNo">201</span><a id="line.201">    }</a>
+<span class="sourceLineNo">202</span><a id="line.202"></a>
+<span class="sourceLineNo">203</span><a id="line.203">    @Override</a>
+<span class="sourceLineNo">204</span><a id="line.204">    public int hashCode() {</a>
+<span class="sourceLineNo">205</span><a id="line.205">      synchronized (this) {</a>
+<span class="sourceLineNo">206</span><a id="line.206">        if (cachedHashCode == null) {</a>
+<span class="sourceLineNo">207</span><a id="line.207">          final int prime = 31;</a>
+<span class="sourceLineNo">208</span><a id="line.208">          cachedHashCode = 1;</a>
+<span class="sourceLineNo">209</span><a id="line.209">          cachedHashCode = prime * cachedHashCode + getEnclosingInstance().hashCode();</a>
+<span class="sourceLineNo">210</span><a id="line.210">          cachedHashCode = prime * cachedHashCode + Arrays.hashCode(flagValues);</a>
+<span class="sourceLineNo">211</span><a id="line.211">        }</a>
+<span class="sourceLineNo">212</span><a id="line.212">        return cachedHashCode;</a>
+<span class="sourceLineNo">213</span><a id="line.213">      }</a>
+<span class="sourceLineNo">214</span><a id="line.214">    }</a>
+<span class="sourceLineNo">215</span><a id="line.215"></a>
+<span class="sourceLineNo">216</span><a id="line.216">    @Override</a>
+<span class="sourceLineNo">217</span><a id="line.217">    public boolean equals(Object obj) {</a>
+<span class="sourceLineNo">218</span><a id="line.218">      if (this == obj) {</a>
+<span class="sourceLineNo">219</span><a id="line.219">        return true; // NOPMD - readability</a>
+<span class="sourceLineNo">220</span><a id="line.220">      }</a>
+<span class="sourceLineNo">221</span><a id="line.221">      if (!(obj instanceof CollapseKey)) {</a>
+<span class="sourceLineNo">222</span><a id="line.222">        return false; // NOPMD - readability</a>
+<span class="sourceLineNo">223</span><a id="line.223">      }</a>
+<span class="sourceLineNo">224</span><a id="line.224">      CollapseKey other = (CollapseKey) obj;</a>
+<span class="sourceLineNo">225</span><a id="line.225">      if (!getEnclosingInstance().equals(other.getEnclosingInstance())) {</a>
+<span class="sourceLineNo">226</span><a id="line.226">        return false; // NOPMD - readability</a>
+<span class="sourceLineNo">227</span><a id="line.227">      }</a>
+<span class="sourceLineNo">228</span><a id="line.228">      return Arrays.equals(flagValues, other.flagValues);</a>
+<span class="sourceLineNo">229</span><a id="line.229">    }</a>
+<span class="sourceLineNo">230</span><a id="line.230"></a>
+<span class="sourceLineNo">231</span><a id="line.231">    private CollapseKeyBuilder getEnclosingInstance() {</a>
+<span class="sourceLineNo">232</span><a id="line.232">      return CollapseKeyBuilder.this;</a>
+<span class="sourceLineNo">233</span><a id="line.233">    }</a>
+<span class="sourceLineNo">234</span><a id="line.234">  }</a>
+<span class="sourceLineNo">235</span><a id="line.235">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

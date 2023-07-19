@@ -145,7 +145,7 @@
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>     URL url = MetaschemaLoader.<strong class="jxr_keyword">class</strong>.getResource(SCHEMA_CLASSPATH);
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>     <em class="jxr_comment">// System.out.println(url.toString());</em>
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>     SchemaFactory schemafactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>     <strong class="jxr_keyword">try</strong> (InputStream is = MetaschemaLoader.<strong class="jxr_keyword">class</strong>.getResourceAsStream(SCHEMA_CLASSPATH)) {
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>     <strong class="jxr_keyword">try</strong> (InputStream is = ObjectUtils.requireNonNull(MetaschemaLoader.<strong class="jxr_keyword">class</strong>.getResourceAsStream(SCHEMA_CLASSPATH))) {
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>       StreamSource source = <strong class="jxr_keyword">new</strong> StreamSource(is, url.toURI().toString());
 <a class="jxr_linenumber" name="L142" href="#L142">142</a> 
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>       schemafactory.setResourceResolver(<strong class="jxr_keyword">new</strong> Resolver());

@@ -41,27 +41,26 @@
                         <div class="dropdown-menu">
                             <div class="dropdown-submenu">
                                 <a  href="project-info.html"  title="Project Information"  class="dropdown-item" >Project Information</a>                                <div class="dropdown-menu">
-                                    <a href="summary.html" title="Summary"  class="dropdown-item ">Summary</a>
-                                    <a href="licenses.html" title="Licenses"  class="dropdown-item ">Licenses</a>
-                                    <a href="issue-management.html" title="Issue Management"  class="dropdown-item ">Issue Management</a>
-                                    <a href="dependencies.html" title="Dependencies"  class="dropdown-item ">Dependencies</a>
-                                    <a href="dependency-convergence.html" title="Dependency Convergence"  class="dropdown-item ">Dependency Convergence</a>
-                                    <a href="dependency-management.html" title="Dependency Management"  class="dropdown-item ">Dependency Management</a>
-                                    <a href="plugins.html" title="Plugins"  class="dropdown-item ">Plugins</a>
                                     <a href="index.html" title="About"  class="dropdown-item ">About</a>
-                                    <a href="dependency-info.html" title="Dependency Information"  class="dropdown-item ">Dependency Information</a>
                                     <a href="team.html" title="Team"  class="dropdown-item ">Team</a>
                                     <a href="mailing-lists.html" title="Mailing Lists"  class="dropdown-item ">Mailing Lists</a>
                                     <a href="scm.html" title="Source Code Management"  class="dropdown-item ">Source Code Management</a>
+                                    <a href="licenses.html" title="Licenses"  class="dropdown-item ">Licenses</a>
+                                    <a href="issue-management.html" title="Issue Management"  class="dropdown-item ">Issue Management</a>
+                                    <a href="dependencies.html" title="Dependencies"  class="dropdown-item ">Dependencies</a>
+                                    <a href="dependency-info.html" title="Dependency Information"  class="dropdown-item ">Dependency Information</a>
+                                    <a href="dependency-convergence.html" title="Dependency Convergence"  class="dropdown-item ">Dependency Convergence</a>
+                                    <a href="dependency-management.html" title="Dependency Management"  class="dropdown-item ">Dependency Management</a>
+                                    <a href="plugins.html" title="Plugins"  class="dropdown-item ">Plugins</a>
                                 </div>
                             </div>
                             <div class="dropdown-submenu">
                                 <a  href="project-reports.html"  title="Project Reports"  class="dropdown-item active" >Project Reports</a>                                <div class="dropdown-menu">
+                                    <a href="surefire-report.html" title="Surefire"  class="dropdown-item ">Surefire</a>
                                     <a href="xref/index.html" title="Source Xref"  class="dropdown-item ">Source Xref</a>
                                     <a href="xref-test/index.html" title="Test Source Xref"  class="dropdown-item ">Test Source Xref</a>
-                                    <a href="surefire-report.html" title="Surefire"  class="dropdown-item ">Surefire</a>
-                                    <a href="" title="CPD"  class="dropdown-item active">CPD</a>
                                     <a href="pmd.html" title="PMD"  class="dropdown-item ">PMD</a>
+                                    <a href="" title="CPD"  class="dropdown-item active">CPD</a>
                                     <a href="taglist.html" title="Tag List"  class="dropdown-item ">Tag List</a>
                                     <a href="checkstyle.html" title="Checkstyle"  class="dropdown-item ">Checkstyle</a>
                                     <a href="spotbugs.html" title="SpotBugs"  class="dropdown-item ">SpotBugs</a>
@@ -99,49 +98,46 @@
    </thead>
    <tbody>
     <tr class="b">
-     <td style="text-align: left;">gov/nist/secauto/metaschema/cli/commands/AbstractConvertSubcommand.java</td>
-     <td><a href="./xref/gov/nist/secauto/metaschema/cli/commands/AbstractConvertSubcommand.html#L140">140</a></td>
+     <td style="text-align: left;">gov\nist\secauto\metaschema\cli\commands\AbstractConvertSubcommand.java</td>
+     <td><a href="./xref/gov/nist/secauto/metaschema/cli/commands/AbstractConvertSubcommand.html#L157">157</a></td>
     </tr>
     <tr class="a">
-     <td style="text-align: left;">gov/nist/secauto/metaschema/cli/commands/GenerateSchemaCommand.java</td>
-     <td><a href="./xref/gov/nist/secauto/metaschema/cli/commands/GenerateSchemaCommand.html#L156">156</a></td>
+     <td style="text-align: left;">gov\nist\secauto\metaschema\cli\commands\GenerateSchemaCommand.java</td>
+     <td><a href="./xref/gov/nist/secauto/metaschema/cli/commands/GenerateSchemaCommand.html#L170">170</a></td>
     </tr>
     <tr class="b">
      <td colspan="2" style="text-align: left;">
       <div class="source">
-       <pre>@Override
-  public ExitStatus executeCommand(CallingContext callingContext, CommandLine cmdLine) {
+       <pre>List&lt;String&gt; extraArgs = cmdLine.getArgList();
 
-    List&lt;String&gt; extraArgs = cmdLine.getArgList();
+      Path destination = null;
+      if (extraArgs.size() &gt; 1) {
+        destination = Paths.get(extraArgs.get(1)).toAbsolutePath();
+      }
 
-    Path destination = null;
-    if (extraArgs.size() &gt; 1) {
-      destination = Paths.get(extraArgs.get(1)).toAbsolutePath();
-    }
-
-    if (destination != null) {
-      if (Files.exists(destination)) {
-        if (!cmdLine.hasOption(OVERWRITE_OPTION)) {
-          return ExitCode.FAIL.exitMessage(
-              String.format("The provided destination '%s' already exists and the '%s' option was not provided.",
-                  destination,
-                  OptionUtils.toArgument(OVERWRITE_OPTION)));
-        }
-        if (!Files.isWritable(destination)) {
-          return ExitCode.FAIL.exitMessage(
-              "The provided destination '" + destination + "' is not writable.");
-        }
-      } else {
-        Path parent = destination.getParent();
-        if (parent != null) {
-          try {
-            Files.createDirectories(parent);
-          } catch (IOException ex) {
-            return ExitCode.INVALID_TARGET.exit().withThrowable(ex); // NOPMD readability
+      if (destination != null) {
+        if (Files.exists(destination)) {
+          if (!cmdLine.hasOption(OVERWRITE_OPTION)) {
+            return ExitCode.INVALID_ARGUMENTS.exitMessage(
+                String.format("The provided destination '%s' already exists and the '%s' option was not provided.",
+                    destination,
+                    OptionUtils.toArgument(OVERWRITE_OPTION)));
+          }
+          if (!Files.isWritable(destination)) {
+            return ExitCode.IO_ERROR.exitMessage(
+                "The provided destination '" + destination + "' is not writable.");
+          }
+        } else {
+          Path parent = destination.getParent();
+          if (parent != null) {
+            try {
+              Files.createDirectories(parent);
+            } catch (IOException ex) {
+              return ExitCode.INVALID_TARGET.exit().withThrowable(ex); // NOPMD readability
+            }
           }
         }
-      }
-    }</pre>
+      }</pre>
       </div></td>
     </tr>
    </tbody>
@@ -196,11 +192,11 @@ Maven Documentation
                     </li>
                                 <li class="nav-item "><a  href="project-info.html"  title="Project Information"  class="nav-link" >Project Information <i class="fas fa-angle-right"></i></a></li>
                                 <li class="nav-item active"><a  href="project-reports.html"  title="Project Reports"  class="nav-link" >Project Reports <i class="fas fa-angle-down"></i></a>        <ul class="nav flex-column nav-list">
+                    <li class="nav-item "><a  href="surefire-report.html"  title="Surefire"  class="nav-link" >Surefire</a></li>
                     <li class="nav-item "><a  href="xref/index.html"  title="Source Xref"  class="nav-link" >Source Xref</a></li>
                     <li class="nav-item "><a  href="xref-test/index.html"  title="Test Source Xref"  class="nav-link" >Test Source Xref</a></li>
-                    <li class="nav-item "><a  href="surefire-report.html"  title="Surefire"  class="nav-link" >Surefire</a></li>
-                    <li class="nav-item active"><a  title="CPD"  class="nav-link" >CPD</a></li>
                     <li class="nav-item "><a  href="pmd.html"  title="PMD"  class="nav-link" >PMD</a></li>
+                    <li class="nav-item active"><a  title="CPD"  class="nav-link" >CPD</a></li>
                     <li class="nav-item "><a  href="taglist.html"  title="Tag List"  class="nav-link" >Tag List</a></li>
                     <li class="nav-item "><a  href="checkstyle.html"  title="Checkstyle"  class="nav-link" >Checkstyle</a></li>
                     <li class="nav-item "><a  href="spotbugs.html"  title="SpotBugs"  class="nav-link" >SpotBugs</a></li>
@@ -213,7 +209,7 @@ Maven Documentation
                 <blockquote class="blockquote"><span class="color-highlight">Metaschema Java tools</span> provide a set of tools and libraries that allow developers to quickly develop applications based on Metaschema models.</blockquote>
 
                                 <blockquote class="version-date">
-                    <span class="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): 0.11.0</span>
+                    <span class="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): 0.12.0</span>
                             </blockquote>
             </div> <!-- col: .container -->
         </div> <!-- END: .row -->

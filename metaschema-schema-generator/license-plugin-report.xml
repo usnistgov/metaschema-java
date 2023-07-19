@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<licensePluginReport goal="FORMAT" timestamp="1689800037094">
+    <module artifactId="metaschema-schema-generator" groupId="gov.nist.secauto.metaschema" version="0.12.0"/>
+    <files>
+        <file path="src\test\java\gov\nist\secauto\metaschema\schemagen\AbstractSchemaGeneratorTestSuite.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\schemagen\JsonSuiteTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\schemagen\XmlSuiteTest.java" result="NOOP"/>
+    </files>
+</licensePluginReport>

@@ -12,9 +12,9 @@ gov.nist.secauto.metaschema.cli.processor
 gov.nist.secauto.metaschema.cli.processor.command
 gov.nist.secauto.metaschema.cli.util
 gov.nist.secauto.metaschema.codegen
+gov.nist.secauto.metaschema.codegen.binding
 gov.nist.secauto.metaschema.codegen.binding.config
 gov.nist.secauto.metaschema.maven.plugin
-gov.nist.secauto.metaschema.metaschema_maven_plugin
 gov.nist.secauto.metaschema.model
 gov.nist.secauto.metaschema.model.common
 gov.nist.secauto.metaschema.model.common.configuration
@@ -25,7 +25,6 @@ gov.nist.secauto.metaschema.model.common.datatype.markup
 gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark
 gov.nist.secauto.metaschema.model.common.datatype.object
 gov.nist.secauto.metaschema.model.common.metapath
-gov.nist.secauto.metaschema.model.common.metapath.antlr
 gov.nist.secauto.metaschema.model.common.metapath.format
 gov.nist.secauto.metaschema.model.common.metapath.function
 gov.nist.secauto.metaschema.model.common.metapath.function.library

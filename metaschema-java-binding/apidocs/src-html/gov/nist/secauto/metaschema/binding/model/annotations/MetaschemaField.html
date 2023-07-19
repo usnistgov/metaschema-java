@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/*</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * Portions of this software was developed by employees of the National Institute</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * of Standards and Technology (NIST), an agency of the Federal Government and is</a>
+<span class="sourceLineNo">004</span><a id="line.4"> * being made available as a public service. Pursuant to title 17 United States</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * Code Section 105, works of NIST employees are not subject to copyright</a>
+<span class="sourceLineNo">006</span><a id="line.6"> * protection in the United States. This software may be subject to foreign</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * copyright. Permission in the United States and in foreign countries, to the</a>
+<span class="sourceLineNo">008</span><a id="line.8"> * extent that NIST may hold copyright, to use, copy, modify, create derivative</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * works, and distribute this software and its documentation without fee is hereby</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * granted on a non-exclusive basis, provided that this notice and disclaimer</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * of warranty appears in all copies.</a>
+<span class="sourceLineNo">012</span><a id="line.12"> *</a>
+<span class="sourceLineNo">013</span><a id="line.13"> * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE</a>
+<span class="sourceLineNo">018</span><a id="line.18"> * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR</a>
+<span class="sourceLineNo">023</span><a id="line.23"> * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.</a>
+<span class="sourceLineNo">025</span><a id="line.25"> */</a>
+<span class="sourceLineNo">026</span><a id="line.26"></a>
+<span class="sourceLineNo">027</span><a id="line.27">package gov.nist.secauto.metaschema.binding.model.annotations;</a>
+<span class="sourceLineNo">028</span><a id="line.28"></a>
+<span class="sourceLineNo">029</span><a id="line.29">import static java.lang.annotation.ElementType.TYPE;</a>
+<span class="sourceLineNo">030</span><a id="line.30">import static java.lang.annotation.RetentionPolicy.RUNTIME;</a>
+<span class="sourceLineNo">031</span><a id="line.31"></a>
+<span class="sourceLineNo">032</span><a id="line.32">import gov.nist.secauto.metaschema.model.common.IMetaschema;</a>
+<span class="sourceLineNo">033</span><a id="line.33">import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;</a>
+<span class="sourceLineNo">034</span><a id="line.34"></a>
+<span class="sourceLineNo">035</span><a id="line.35">import java.lang.annotation.Documented;</a>
+<span class="sourceLineNo">036</span><a id="line.36">import java.lang.annotation.Retention;</a>
+<span class="sourceLineNo">037</span><a id="line.37">import java.lang.annotation.Target;</a>
+<span class="sourceLineNo">038</span><a id="line.38"></a>
+<span class="sourceLineNo">039</span><a id="line.39">import edu.umd.cs.findbugs.annotations.NonNull;</a>
+<span class="sourceLineNo">040</span><a id="line.40"></a>
+<span class="sourceLineNo">041</span><a id="line.41">/**</a>
+<span class="sourceLineNo">042</span><a id="line.42"> * This annotation indicates that the target class represents a Metaschema field.</a>
+<span class="sourceLineNo">043</span><a id="line.43"> * &lt;p&gt;</a>
+<span class="sourceLineNo">044</span><a id="line.44"> * Classes with this annotation must have a field with the {@link MetaschemaFieldValue} annotation.</a>
+<span class="sourceLineNo">045</span><a id="line.45"> */</a>
+<span class="sourceLineNo">046</span><a id="line.46">@Documented</a>
+<span class="sourceLineNo">047</span><a id="line.47">@Retention(RUNTIME)</a>
+<span class="sourceLineNo">048</span><a id="line.48">@Target(TYPE)</a>
+<span class="sourceLineNo">049</span><a id="line.49">public @interface MetaschemaField {</a>
+<span class="sourceLineNo">050</span><a id="line.50">  /**</a>
+<span class="sourceLineNo">051</span><a id="line.51">   * Get the documentary formal name of the field.</a>
+<span class="sourceLineNo">052</span><a id="line.52">   * &lt;p&gt;</a>
+<span class="sourceLineNo">053</span><a id="line.53">   * If the value is "##none", then the description will be considered {@code null}.</a>
+<span class="sourceLineNo">054</span><a id="line.54">   *</a>
+<span class="sourceLineNo">055</span><a id="line.55">   * @return a markdown string or {@code "##none"} if no formal name is provided</a>
+<span class="sourceLineNo">056</span><a id="line.56">   */</a>
+<span class="sourceLineNo">057</span><a id="line.57">  @NonNull</a>
+<span class="sourceLineNo">058</span><a id="line.58">  String formalName() default Constants.NO_STRING_VALUE;</a>
+<span class="sourceLineNo">059</span><a id="line.59"></a>
+<span class="sourceLineNo">060</span><a id="line.60">  /**</a>
+<span class="sourceLineNo">061</span><a id="line.61">   * Get the documentary description of the field.</a>
+<span class="sourceLineNo">062</span><a id="line.62">   * &lt;p&gt;</a>
+<span class="sourceLineNo">063</span><a id="line.63">   * If the value is "##none", then the description will be considered {@code null}.</a>
+<span class="sourceLineNo">064</span><a id="line.64">   *</a>
+<span class="sourceLineNo">065</span><a id="line.65">   * @return a markdown string or {@code "##none"} if no description is provided</a>
+<span class="sourceLineNo">066</span><a id="line.66">   */</a>
+<span class="sourceLineNo">067</span><a id="line.67">  @NonNull</a>
+<span class="sourceLineNo">068</span><a id="line.68">  String description() default Constants.NO_STRING_VALUE;</a>
+<span class="sourceLineNo">069</span><a id="line.69"></a>
+<span class="sourceLineNo">070</span><a id="line.70">  /**</a>
+<span class="sourceLineNo">071</span><a id="line.71">   * Name of the field.</a>
+<span class="sourceLineNo">072</span><a id="line.72">   *</a>
+<span class="sourceLineNo">073</span><a id="line.73">   * @return the name</a>
+<span class="sourceLineNo">074</span><a id="line.74">   */</a>
+<span class="sourceLineNo">075</span><a id="line.75">  @NonNull</a>
+<span class="sourceLineNo">076</span><a id="line.76">  String name();</a>
+<span class="sourceLineNo">077</span><a id="line.77"></a>
+<span class="sourceLineNo">078</span><a id="line.78">  @NonNull</a>
+<span class="sourceLineNo">079</span><a id="line.79">  String useName() default Constants.NO_STRING_VALUE;</a>
+<span class="sourceLineNo">080</span><a id="line.80"></a>
+<span class="sourceLineNo">081</span><a id="line.81">  /**</a>
+<span class="sourceLineNo">082</span><a id="line.82">   * Get the metaschema class that "owns" this assembly, which is the concrete implementation of the</a>
+<span class="sourceLineNo">083</span><a id="line.83">   * metaschema containing the assembly.</a>
+<span class="sourceLineNo">084</span><a id="line.84">   *</a>
+<span class="sourceLineNo">085</span><a id="line.85">   * @return the class that extends {@link IMetaschema}</a>
+<span class="sourceLineNo">086</span><a id="line.86">   */</a>
+<span class="sourceLineNo">087</span><a id="line.87">  Class&lt;? extends IMetaschema&gt; metaschema();</a>
+<span class="sourceLineNo">088</span><a id="line.88"></a>
+<span class="sourceLineNo">089</span><a id="line.89">  /**</a>
+<span class="sourceLineNo">090</span><a id="line.90">   * If the data type allows it, determines if the field's value must be wrapped with an XML element</a>
+<span class="sourceLineNo">091</span><a id="line.91">   * whose name is the specified {@link #name()} and namespace is derived from the namespace of the</a>
+<span class="sourceLineNo">092</span><a id="line.92">   * instance.</a>
+<span class="sourceLineNo">093</span><a id="line.93">   *</a>
+<span class="sourceLineNo">094</span><a id="line.94">   * @return {@code true} if the field must be wrapped, or {@code false} otherwise</a>
+<span class="sourceLineNo">095</span><a id="line.95">   */</a>
+<span class="sourceLineNo">096</span><a id="line.96">  boolean inXmlWrapped() default MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;</a>
+<span class="sourceLineNo">097</span><a id="line.97"></a>
+<span class="sourceLineNo">098</span><a id="line.98">  /**</a>
+<span class="sourceLineNo">099</span><a id="line.99">   * Defines if the annotated class representing a Metaschema BoundField is collapsible, meaning</a>
+<span class="sourceLineNo">100</span><a id="line.100">   * fields with the same set of flag/values can be combined together, with an array of values</a>
+<span class="sourceLineNo">101</span><a id="line.101">   * containing the combination of corresponding field values.</a>
+<span class="sourceLineNo">102</span><a id="line.102">   * &lt;p&gt;</a>
+<span class="sourceLineNo">103</span><a id="line.103">   * For a Metaschema field to be collapsible, it must have flags, otherwise the collapsible status is</a>
+<span class="sourceLineNo">104</span><a id="line.104">   * ignored.</a>
+<span class="sourceLineNo">105</span><a id="line.105">   *</a>
+<span class="sourceLineNo">106</span><a id="line.106">   * @return {@code true} if the field is collapsible, or {@code false} otherwise</a>
+<span class="sourceLineNo">107</span><a id="line.107">   */</a>
+<span class="sourceLineNo">108</span><a id="line.108">  boolean isCollapsible() default false;</a>
+<span class="sourceLineNo">109</span><a id="line.109"></a>
+<span class="sourceLineNo">110</span><a id="line.110">  /**</a>
+<span class="sourceLineNo">111</span><a id="line.111">   * Get any remarks for this field.</a>
+<span class="sourceLineNo">112</span><a id="line.112">   *</a>
+<span class="sourceLineNo">113</span><a id="line.113">   * @return a markdown string or {@code "##none"} if no remarks are provided</a>
+<span class="sourceLineNo">114</span><a id="line.114">   */</a>
+<span class="sourceLineNo">115</span><a id="line.115">  @NonNull</a>
+<span class="sourceLineNo">116</span><a id="line.116">  String remarks() default Constants.NO_STRING_VALUE;</a>
+<span class="sourceLineNo">117</span><a id="line.117">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

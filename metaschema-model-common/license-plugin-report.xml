@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<licensePluginReport goal="FORMAT" timestamp="1689799593883">
+    <module artifactId="metaschema-model-common" groupId="gov.nist.secauto.metaschema" version="0.12.0"/>
+    <files>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\constraint\DefaultConstraintValidatorTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\datatype\adapter\BooleanAdapterTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\datatype\adapter\DateAdapterTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\datatype\adapter\DateTimeAdapterTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\datatype\adapter\DateTimeWithTZAdapterTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\datatype\adapter\IPv6AddressAdapterTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\datatype\adapter\MetaschemaDataTypeProviderTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\datatype\markup\MarkupStringTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\datatype\markup\flexmark\MarkupParserTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\datatype\markup\flexmark\MarkupXmlStreamWriterTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\metapath\AndTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\metapath\BuildAstVisitorTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\metapath\ExpressionTestBase.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\metapath\ExpressionUtilsTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\metapath\FlagTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\metapath\MetapathExpressionTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\metapath\OperationFunctionsTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\metapath\OrTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\metapath\PredicateTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\metapath\RootSlashOnlyTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\metapath\TestUtils.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\metapath\ValueComparisonTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\metapath\function\CastFunctionsTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\metapath\item\IBase64BinaryItemTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\metapath\item\IBooleanItemTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\metapath\item\INumericItemTest.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\metapath\item\MockItemFactory.java" result="NOOP"/>
+        <file path="src\test\java\gov\nist\secauto\metaschema\model\common\util\ReplacementScannerTest.java" result="NOOP"/>
+    </files>
+</licensePluginReport>

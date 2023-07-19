@@ -85,46 +85,42 @@
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>    @NonNull
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>    <strong class="jxr_keyword">protected</strong> JsonParser newJsonParser(@NonNull Reader reader) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>      JsonParser retval = getJsonFactory().createParser(reader);
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>      <em class="jxr_comment">// avoid automatically closing streams not owned by the parser</em>
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>      retval.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>      <strong class="jxr_keyword">return</strong> retval;
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>  
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>    }
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>  
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>    @Override
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>    <strong class="jxr_keyword">protected</strong> INodeItem deserializeToNodeItemInternal(@NonNull Reader reader, @NonNull URI documentUri)
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>        <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>      INodeItem retval;
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>      <strong class="jxr_keyword">try</strong> (JsonParser parser = newJsonParser(reader)) {
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>        <a name="DefaultJsonParsingContext" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/DefaultJsonParsingContext.html#DefaultJsonParsingContext">DefaultJsonParsingContext</a> parsingContext = <strong class="jxr_keyword">new</strong> <a name="DefaultJsonParsingContext" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/DefaultJsonParsingContext.html#DefaultJsonParsingContext">DefaultJsonParsingContext</a>(parser, <strong class="jxr_keyword">new</strong> <a name="DefaultJsonProblemHandler" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/DefaultJsonProblemHandler.html#DefaultJsonProblemHandler">DefaultJsonProblemHandler</a>());
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>        <a name="IAssemblyClassBinding" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IAssemblyClassBinding.html#IAssemblyClassBinding">IAssemblyClassBinding</a> classBinding = getClassBinding();
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>        IConfiguration&lt;DeserializationFeature&gt; configuration = getConfiguration();
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>  
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>        <strong class="jxr_keyword">if</strong> (classBinding.isRoot()
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>            &amp;&amp; configuration.isFeatureEnabled(DeserializationFeature.DESERIALIZE_JSON_ROOT_PROPERTY)) {
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>      <strong class="jxr_keyword">return</strong> ObjectUtils.notNull(getJsonFactory().createParser(reader));
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>    }
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>    @Override
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>    <strong class="jxr_keyword">protected</strong> INodeItem deserializeToNodeItemInternal(@NonNull Reader reader, @NonNull URI documentUri)
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>        <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>      INodeItem retval;
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>      <strong class="jxr_keyword">try</strong> (JsonParser parser = newJsonParser(reader)) {
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>        <a name="DefaultJsonParsingContext" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/DefaultJsonParsingContext.html#DefaultJsonParsingContext">DefaultJsonParsingContext</a> parsingContext = <strong class="jxr_keyword">new</strong> <a name="DefaultJsonParsingContext" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/DefaultJsonParsingContext.html#DefaultJsonParsingContext">DefaultJsonParsingContext</a>(parser, <strong class="jxr_keyword">new</strong> <a name="DefaultJsonProblemHandler" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/DefaultJsonProblemHandler.html#DefaultJsonProblemHandler">DefaultJsonProblemHandler</a>());
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>        <a name="IAssemblyClassBinding" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IAssemblyClassBinding.html#IAssemblyClassBinding">IAssemblyClassBinding</a> classBinding = getClassBinding();
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>        IConfiguration&lt;DeserializationFeature&lt;?&gt;&gt; configuration = getConfiguration();
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>  
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>        <strong class="jxr_keyword">if</strong> (classBinding.isRoot()
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>            &amp;&amp; configuration.isFeatureEnabled(DeserializationFeature.DESERIALIZE_JSON_ROOT_PROPERTY)) {
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>  
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>          <a name="RootAssemblyDefinition" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/RootAssemblyDefinition.html#RootAssemblyDefinition">RootAssemblyDefinition</a> root = <strong class="jxr_keyword">new</strong> <a name="RootAssemblyDefinition" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/RootAssemblyDefinition.html#RootAssemblyDefinition">RootAssemblyDefinition</a>(classBinding);
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>          <em class="jxr_comment">// now parse the root property</em>
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>          @SuppressWarnings(<span class="jxr_string">"unchecked"</span>) CLASS value = ObjectUtils.requireNonNull((CLASS) root.readRoot(parsingContext));
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>         <a name="RootAssemblyDefinition" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/RootAssemblyDefinition.html#RootAssemblyDefinition">RootAssemblyDefinition</a> root = <strong class="jxr_keyword">new</strong> <a name="RootAssemblyDefinition" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/RootAssemblyDefinition.html#RootAssemblyDefinition">RootAssemblyDefinition</a>(classBinding);
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>         <em class="jxr_comment">// now parse the root property</em>
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>         @SuppressWarnings(<span class="jxr_string">"unchecked"</span>) CLASS value = ObjectUtils.requireNonNull((CLASS) root.readRoot(parsingContext));
-<a class="jxr_linenumber" name="L103" href="#L103">103</a> 
-<a class="jxr_linenumber" name="L104" href="#L104">104</a>         <em class="jxr_comment">// // we should be at the end object</em>
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>         <em class="jxr_comment">// JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);</em>
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>         <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>         <em class="jxr_comment">// // advance past the end object</em>
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>         <em class="jxr_comment">// JsonToken end = parser.nextToken();</em>
-<a class="jxr_linenumber" name="L109" href="#L109">109</a> 
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>         retval = DefaultNodeItemFactory.instance().newDocumentNodeItem(root, value, documentUri);
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>       } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L112" href="#L112">112</a>         @SuppressWarnings(<span class="jxr_string">"unchecked"</span>) CLASS value
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>             = ObjectUtils.requireNonNull((CLASS) classBinding.readObject(parsingContext));
-<a class="jxr_linenumber" name="L114" href="#L114">114</a>         retval = DefaultNodeItemFactory.instance().newAssemblyNodeItem(classBinding, value, documentUri);
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>       }
-<a class="jxr_linenumber" name="L116" href="#L116">116</a>       <strong class="jxr_keyword">return</strong> retval;
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>     }
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>   }
-<a class="jxr_linenumber" name="L119" href="#L119">119</a> }
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>         <em class="jxr_comment">// // we should be at the end object</em>
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>         <em class="jxr_comment">// JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);</em>
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>         <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>         <em class="jxr_comment">// // advance past the end object</em>
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>         <em class="jxr_comment">// JsonToken end = parser.nextToken();</em>
+<a class="jxr_linenumber" name="L105" href="#L105">105</a> 
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>         retval = DefaultNodeItemFactory.instance().newDocumentNodeItem(root, value, documentUri);
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>       } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>         @SuppressWarnings(<span class="jxr_string">"unchecked"</span>) CLASS value
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>             = ObjectUtils.requireNonNull((CLASS) classBinding.readObject(parsingContext));
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>         retval = DefaultNodeItemFactory.instance().newAssemblyNodeItem(classBinding, value, documentUri);
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>       }
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>       <strong class="jxr_keyword">return</strong> retval;
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>     }
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>   }
+<a class="jxr_linenumber" name="L115" href="#L115">115</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2023 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
