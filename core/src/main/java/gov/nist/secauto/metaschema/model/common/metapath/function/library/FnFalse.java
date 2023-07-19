@@ -24,40 +24,41 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath;
+package gov.nist.secauto.metaschema.model.common.metapath.function.library;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class RelativeDoubleSlashPath
-    extends AbstractRelativePathExpression {
+public final class FnFalse {
+  @NonNull
+  static final IFunction SIGNATURE = IFunction.builder()
+      .name("false")
+      .deterministic()
+      .contextIndependent()
+      .focusIndependent()
+      .returnType(IBooleanItem.class)
+      .returnOne()
+      .functionHandler(FnFalse::execute)
+      .build();
 
-  protected RelativeDoubleSlashPath(@NonNull IExpression left, @NonNull IExpression right) {
-    super(left, right);
+  private FnFalse() {
+    // disable construction
   }
 
-  @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitRelativeDoubleSlashPath(this, context);
-  }
+  @SuppressWarnings("unused")
+  @NonNull
+  private static ISequence<IBooleanItem> execute(@NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
+      INodeItem focus) {
 
-  @Override
-  public ISequence<? extends INodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
-    INodeItem contextItem = checkContext(context);
-    @SuppressWarnings("unchecked") ISequence<? extends INodeItem> leftResult
-        = (ISequence<? extends INodeItem>) getLeft().accept(dynamicContext, contextItem);
-
-    Stream<? extends INodeItem> result = ObjectUtils.notNull(leftResult.asStream()
-        .flatMap(item -> {
-          assert item != null;
-          // evaluate the right path in the context of the left
-          return search(getRight(), dynamicContext, item);
-        }));
-
-    return ISequence.of(result);
+    return ISequence.of(IBooleanItem.FALSE);
   }
 }

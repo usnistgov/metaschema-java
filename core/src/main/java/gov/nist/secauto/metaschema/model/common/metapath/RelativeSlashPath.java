@@ -44,11 +44,12 @@ class RelativeSlashPath
 
   @Override
   public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
+    INodeItem contextItem = checkContext(context);
     IExpression left = getLeft();
 
     @SuppressWarnings("unchecked")
     @NonNull ISequence<? extends INodeItem> leftResult
-        = (ISequence<? extends INodeItem>) left.accept(dynamicContext, context);
+        = (ISequence<? extends INodeItem>) left.accept(dynamicContext, contextItem);
 
     return evaluateInNodeContext(getRight(), dynamicContext, leftResult);
   }

@@ -26,8 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
+import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -60,5 +63,35 @@ public class ExpressionTestBase {
     staticContext.setBaseUri(baseUri);
 
     return staticContext.newDynamicContext();
+  }
+
+  @NonNull
+  protected IDocumentNodeItem newDocumentNodeContext() {
+    IDocumentNodeItem retval = getContext().mock(IDocumentNodeItem.class);
+    assert retval != null;
+
+    getContext().checking(new Expectations() {
+      { // NOPMD - intentional
+        allowing(retval).getNodeItem();
+        will(returnValue(retval));
+      }
+    });
+
+    return retval;
+  }
+
+  @NonNull
+  protected INodeItem newNonDocumentNodeContext(@NonNull String mockName) {
+    INodeItem retval = getContext().mock(INodeItem.class, mockName);
+    assert retval != null;
+
+    getContext().checking(new Expectations() {
+      { // NOPMD - intentional
+        allowing(retval).getNodeItem();
+        will(returnValue(retval));
+      }
+    });
+
+    return retval;
   }
 }

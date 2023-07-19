@@ -42,9 +42,9 @@ public interface INodeContext {
   /**
    * Get the current node in this context.
    *
-   * @return the context node
+   * @return the context node or {@code null} if the focus is not on a node
    */
-  @NonNull
+  @Nullable
   INodeItem getNodeItem();
 
   /**

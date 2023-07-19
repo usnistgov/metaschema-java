@@ -32,14 +32,21 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import gov.nist.secauto.metaschema.model.common.metapath.IComparison.Operator;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression.ResultType;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Lexer;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser;
+import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IRootAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUuidItem;
@@ -52,9 +59,13 @@ import org.jmock.Mockery;
 import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -216,6 +227,55 @@ class BuildAstVisitorTest {
         allOf(
             instanceOf(IFieldNodeItem.class),
             hasProperty("name", equalTo("field2"))))); // NOPMD
+  }
+
+  static Stream<Arguments> testComparison() {
+    return Stream.of(
+        Arguments.of("A = B", GeneralComparison.class, Operator.EQ),
+        Arguments.of("A != B", GeneralComparison.class, Operator.NE),
+        Arguments.of("A < B", GeneralComparison.class, Operator.LT),
+        Arguments.of("A <= B", GeneralComparison.class, Operator.LE),
+        Arguments.of("A > B", GeneralComparison.class, Operator.GT),
+        Arguments.of("A >= B", GeneralComparison.class, Operator.GE),
+        Arguments.of("A eq B", ValueComparison.class, Operator.EQ),
+        Arguments.of("A ne B", ValueComparison.class, Operator.NE),
+        Arguments.of("A lt B", ValueComparison.class, Operator.LT),
+        Arguments.of("A le B", ValueComparison.class, Operator.LE),
+        Arguments.of("A gt B", ValueComparison.class, Operator.GT),
+        Arguments.of("A ge B", ValueComparison.class, Operator.GE));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void testComparison(String metapath, Class<?> expectedClass, Operator operator) {
+    IExpression ast = parseExpression(metapath);
+
+    assertAll(
+        () -> assertEquals(expectedClass, ast.getClass()),
+        () -> assertEquals(operator, ((AbstractComparison) ast).getOperator()));
+  }
+
+  static Stream<Arguments> testAnd() {
+    return Stream.of(
+        Arguments.of("true() and false()", IBooleanItem.FALSE),
+        Arguments.of("false() and false()", IBooleanItem.FALSE),
+        Arguments.of("false() and true()", IBooleanItem.FALSE),
+        Arguments.of("true() and true()", IBooleanItem.TRUE));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void testAnd(String metapath, IBooleanItem expectedResult) {
+    IExpression ast = parseExpression(metapath);
+
+    IDocumentNodeItem document = newTestDocument();
+    ISequence<?> result = ast.accept(newDynamicContext(), document);
+    IItem resultItem = FunctionUtils.getFirstItem(result, false);
+    assertAll(
+        () -> assertEquals(And.class, ast.getClass()),
+        () -> assertNotNull(resultItem),
+        () -> assertThat(resultItem, instanceOf(IBooleanItem.class)),
+        () -> assertEquals(expectedResult, resultItem));
   }
 
 }

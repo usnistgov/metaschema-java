@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
@@ -42,7 +43,7 @@ class RootSlashOnlyTest
     DynamicContext dynamicContext = newDynamicContext();
     Mockery context = getContext();
 
-    IDocumentNodeItem nodeContext = context.mock(IDocumentNodeItem.class);
+    IDocumentNodeItem nodeContext = newDocumentNodeContext();
     assert nodeContext != null;
 
     RootSlashOnlyPath expr = new RootSlashOnlyPath();
@@ -56,12 +57,15 @@ class RootSlashOnlyTest
     DynamicContext dynamicContext = newDynamicContext();
     Mockery context = getContext();
 
-    INodeItem nodeContext = context.mock(INodeItem.class);
+    INodeItem nodeContext = newNonDocumentNodeContext("non-document");
     assert nodeContext != null;
 
     RootSlashOnlyPath expr = new RootSlashOnlyPath();
 
-    ISequence<?> result = expr.accept(dynamicContext, nodeContext);
-    assertEquals(ISequence.empty(), result);
+    DynamicMetapathException ex = assertThrows(DynamicMetapathException.class, () -> {
+      expr.accept(dynamicContext, nodeContext);
+    });
+
+    assertEquals(DynamicMetapathException.CONTEXT_NODE_NOT_A_DOCUMENT_NODE, ex.getCode());
   }
 }

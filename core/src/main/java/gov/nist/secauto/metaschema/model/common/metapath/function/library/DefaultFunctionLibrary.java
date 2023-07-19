@@ -91,7 +91,7 @@ public class DefaultFunctionLibrary
     // https://www.w3.org/TR/xpath-functions-31/#func-exactly-one
     // https://www.w3.org/TR/xpath-functions-31/#func-exists
     registerFunction(FnExists.SIGNATURE);
-    // P1: https://www.w3.org/TR/xpath-functions-31/#func-false
+    registerFunction(FnFalse.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-floor
     registerFunction(NumericFunction.signature("floor", INumericItem::floor));
     // https://www.w3.org/TR/xpath-functions-31/#func-format-date
@@ -164,7 +164,7 @@ public class DefaultFunctionLibrary
     // https://www.w3.org/TR/xpath-functions-31/#func-timezone-from-time
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-tokenize
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-translate
-    // P1: https://www.w3.org/TR/xpath-functions-31/#func-true
+    registerFunction(FnTrue.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-unparsed-text
     // https://www.w3.org/TR/xpath-functions-31/#func-unparsed-text-available
     // https://www.w3.org/TR/xpath-functions-31/#func-unparsed-text-lines

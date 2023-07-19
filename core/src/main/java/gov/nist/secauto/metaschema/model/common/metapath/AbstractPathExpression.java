@@ -46,6 +46,15 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
     return getBaseResultType();
   }
 
+  @NonNull
+  protected INodeItem checkContext(INodeContext context) {
+    INodeItem contextItem = context.getNodeItem();
+    if (contextItem == null) {
+      throw new TypeMetapathException(TypeMetapathException.NOT_A_NODE_ITEM_FOR_STEP, "The context node item is null");
+    }
+    return contextItem;
+  }
+
   /**
    * A callback used to evaluate the provided {@code expression} in the context of a set of context
    * items.

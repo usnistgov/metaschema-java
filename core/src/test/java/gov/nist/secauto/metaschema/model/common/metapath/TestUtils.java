@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
@@ -33,13 +34,16 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.net.URI;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public final class TestUtils {
   private TestUtils() {
     // disable construction
   }
 
-  public static IDecimalItem decimal(String value) {
+  public static IDecimalItem decimal(@NonNull String value) {
     return IDecimalItem.valueOf(new BigDecimal(value, MathContext.DECIMAL64));
   }
 
@@ -49,7 +53,18 @@ public final class TestUtils {
   }
 
   @SuppressWarnings("null")
-  public static IStringItem string(String value) {
+  public static IStringItem string(@NonNull String value) {
     return IStringItem.valueOf(value);
   }
+
+  public static IDecimalItem decimal(double value) {
+    return IDecimalItem.valueOf(value);
+  }
+
+  public static IAnyUriItem uri(@NonNull String value) {
+    URI uri = URI.create(value);
+    assert uri != null;
+    return IAnyUriItem.valueOf(uri);
+  }
+
 }

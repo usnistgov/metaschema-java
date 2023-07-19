@@ -58,7 +58,7 @@ class Flag // NOPMD - intentional name
 
   @Override
   public ISequence<? extends IFlagNodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
-    return ISequence.of(matchFlags(context));
+    return ISequence.of(matchFlags(checkContext(context)));
   }
 
   /**

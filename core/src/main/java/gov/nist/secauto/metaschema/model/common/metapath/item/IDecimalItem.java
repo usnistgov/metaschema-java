@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
 import java.math.BigDecimal;
@@ -42,6 +43,10 @@ public interface IDecimalItem extends INumericItem {
   @NonNull
   static IDecimalItem valueOf(long value) {
     return valueOf(BigDecimal.valueOf(value));
+  }
+
+  static IDecimalItem valueOf(double value) {
+    return valueOf(new BigDecimal(value, FunctionUtils.MATH_CONTEXT));
   }
 
   @NonNull

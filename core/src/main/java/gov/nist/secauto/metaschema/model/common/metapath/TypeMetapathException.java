@@ -29,6 +29,10 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 public class TypeMetapathException
     extends AbstractCodedMetapathException {
   public static final int INVALID_TYPE_ERROR = 4;
+  /**
+   * The context item is not a node when evaluating an axis {@link Step}.
+   */
+  public static final int NOT_A_NODE_ITEM_FOR_STEP = 20;
 
   /**
    * the serial version UID.

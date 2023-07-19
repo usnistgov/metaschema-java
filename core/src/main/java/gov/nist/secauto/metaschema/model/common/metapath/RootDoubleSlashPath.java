@@ -42,6 +42,6 @@ class RootDoubleSlashPath
 
   @Override
   public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
-    return ISequence.of(search(getExpression(), dynamicContext, context));
+    return ISequence.of(search(getExpression(), dynamicContext, checkContext(context)));
   }
 }

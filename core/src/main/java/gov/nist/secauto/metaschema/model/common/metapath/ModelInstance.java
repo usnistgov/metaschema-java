@@ -59,7 +59,7 @@ class ModelInstance
 
   @Override
   public ISequence<? extends IModelNodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
-    return ISequence.of(matchModelInstance(context));
+    return ISequence.of(matchModelInstance(checkContext(context)));
   }
 
   /**

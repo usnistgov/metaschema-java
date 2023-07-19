@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import gov.nist.secauto.metaschema.model.common.metapath.IComparison.Operator;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -45,6 +46,17 @@ class ValueComparisonTest
 
   private static Stream<Arguments> testValueComparison() { // NOPMD - false positive
     return Stream.of(
+        // string
+        Arguments.of(IStringItem.valueOf("AbC"), Operator.EQ, IStringItem.valueOf("AbC"), IBooleanItem.TRUE),
+        Arguments.of(IStringItem.valueOf("AbC"), Operator.EQ, IStringItem.valueOf("xYz"), IBooleanItem.FALSE),
+        Arguments.of(IStringItem.valueOf("A.1"), Operator.NE, IStringItem.valueOf("A.2"), IBooleanItem.TRUE),
+        Arguments.of(IStringItem.valueOf("A.1"), Operator.NE, IStringItem.valueOf("A.1"), IBooleanItem.FALSE),
+        Arguments.of(IStringItem.valueOf("A.3"), Operator.GE, IStringItem.valueOf("A.2"), IBooleanItem.TRUE),
+        Arguments.of(IStringItem.valueOf("B\\1"), Operator.GE, IStringItem.valueOf("B\\1"), IBooleanItem.TRUE),
+        Arguments.of(IStringItem.valueOf("A.1"), Operator.GE, IStringItem.valueOf("A.2"), IBooleanItem.FALSE),
+        Arguments.of(IStringItem.valueOf("A"), Operator.LE, IStringItem.valueOf("A.2"), IBooleanItem.TRUE),
+        Arguments.of(IStringItem.valueOf("B\\1"), Operator.LE, IStringItem.valueOf("C\\1"), IBooleanItem.TRUE),
+        Arguments.of(IStringItem.valueOf("X#"), Operator.LE, IStringItem.valueOf("X"), IBooleanItem.FALSE),
         // boolean
         Arguments.of(IBooleanItem.TRUE, Operator.EQ, IBooleanItem.TRUE, IBooleanItem.TRUE),
         Arguments.of(IBooleanItem.FALSE, Operator.EQ, IBooleanItem.FALSE, IBooleanItem.TRUE),
@@ -57,7 +69,9 @@ class ValueComparisonTest
         Arguments.of(IBooleanItem.TRUE, Operator.GE, IBooleanItem.TRUE, IBooleanItem.TRUE),
         Arguments.of(IBooleanItem.TRUE, Operator.GT, IBooleanItem.TRUE, IBooleanItem.FALSE),
         Arguments.of(IBooleanItem.TRUE, Operator.LE, IBooleanItem.TRUE, IBooleanItem.TRUE),
-        Arguments.of(IBooleanItem.TRUE, Operator.LT, IBooleanItem.TRUE, IBooleanItem.FALSE));
+        Arguments.of(IBooleanItem.TRUE, Operator.LT, IBooleanItem.TRUE, IBooleanItem.FALSE)
+
+    );
   }
 
   @SuppressWarnings("null")

@@ -24,40 +24,30 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath;
+package gov.nist.secauto.metaschema.model.common.metapath.function.library;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.model.common.metapath.ExpressionTestBase;
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 
-import java.util.stream.Stream;
+import org.jmock.Expectations;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class RelativeDoubleSlashPath
-    extends AbstractRelativePathExpression {
+public class FunctionTestBase
+    extends ExpressionTestBase {
 
-  protected RelativeDoubleSlashPath(@NonNull IExpression left, @NonNull IExpression right) {
-    super(left, right);
-  }
+  @NonNull
+  protected INodeContext newUnfocusedNodeContext() {
+    INodeContext retval = getContext().mock(INodeContext.class);
+    assert retval != null;
 
-  @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitRelativeDoubleSlashPath(this, context);
-  }
+    getContext().checking(new Expectations() {
+      { // NOPMD - intentional
+        allowing(retval).getNodeItem();
+        will(returnValue(null));
+      }
+    });
 
-  @Override
-  public ISequence<? extends INodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
-    INodeItem contextItem = checkContext(context);
-    @SuppressWarnings("unchecked") ISequence<? extends INodeItem> leftResult
-        = (ISequence<? extends INodeItem>) getLeft().accept(dynamicContext, contextItem);
-
-    Stream<? extends INodeItem> result = ObjectUtils.notNull(leftResult.asStream()
-        .flatMap(item -> {
-          assert item != null;
-          // evaluate the right path in the context of the left
-          return search(getRight(), dynamicContext, item);
-        }));
-
-    return ISequence.of(result);
+    return retval;
   }
 }

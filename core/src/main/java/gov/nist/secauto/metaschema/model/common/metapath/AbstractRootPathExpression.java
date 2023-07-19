@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import java.util.List;
@@ -75,5 +77,19 @@ abstract class AbstractRootPathExpression
   @Override
   public List<? extends IExpression> getChildren() {
     return List.of(expression);
+  }
+
+  @Override
+  protected INodeItem checkContext(INodeContext context) {
+    INodeItem contextItem = super.checkContext(context);
+    if (contextItem instanceof IDocumentNodeItem || contextItem instanceof IMetaschemaNodeItem) {
+      return contextItem;
+    }
+
+    throw new DynamicMetapathException(
+        DynamicMetapathException.CONTEXT_NODE_NOT_A_DOCUMENT_NODE,
+        String.format(
+            "The context node type '%s' is not a document node. Root searching not supported.",
+            contextItem.getClass().getName()));
   }
 }

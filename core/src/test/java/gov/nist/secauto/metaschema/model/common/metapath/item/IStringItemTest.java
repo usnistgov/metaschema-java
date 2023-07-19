@@ -24,40 +24,30 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath;
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class RelativeDoubleSlashPath
-    extends AbstractRelativePathExpression {
-
-  protected RelativeDoubleSlashPath(@NonNull IExpression left, @NonNull IExpression right) {
-    super(left, right);
+class IStringItemTest {
+  private static Stream<Arguments> testCompare() { // NOPMD - false positive
+    return Stream.of(
+        // string
+        Arguments.of(IStringItem.valueOf("A"), IStringItem.valueOf("B"), IIntegerItem.NEGATIVE_ONE));
   }
 
-  @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitRelativeDoubleSlashPath(this, context);
+  @ParameterizedTest
+  @MethodSource
+  void testCompare(@NonNull IStringItem left, @NonNull IStringItem right, @NonNull IIntegerItem expectedResult) {
+    IIntegerItem result = left.compare(right);
+    assertEquals(expectedResult, result);
   }
 
-  @Override
-  public ISequence<? extends INodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
-    INodeItem contextItem = checkContext(context);
-    @SuppressWarnings("unchecked") ISequence<? extends INodeItem> leftResult
-        = (ISequence<? extends INodeItem>) getLeft().accept(dynamicContext, contextItem);
-
-    Stream<? extends INodeItem> result = ObjectUtils.notNull(leftResult.asStream()
-        .flatMap(item -> {
-          assert item != null;
-          // evaluate the right path in the context of the left
-          return search(getRight(), dynamicContext, item);
-        }));
-
-    return ISequence.of(result);
-  }
 }

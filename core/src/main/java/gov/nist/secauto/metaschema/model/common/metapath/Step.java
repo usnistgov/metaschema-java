@@ -116,28 +116,34 @@ class Step implements IExpression { // NOPMD - intentional
 
   @Override
   public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
+    INodeItem focus = context.getNodeItem();
+
+    if (focus == null) {
+      throw new TypeMetapathException(TypeMetapathException.NOT_A_NODE_ITEM_FOR_STEP, "The context node item is null");
+    }
+
     Stream<? extends INodeItem> items;
     switch (getAxis()) {
     case SELF:
-      items = Stream.of(context.getNodeItem());
+      items = Stream.of(focus);
       break;
     case ANCESTOR:
-      items = context.getNodeItem().ancestor();
+      items = focus.ancestor();
       break;
     case ANCESTOR_OR_SELF:
-      items = context.getNodeItem().ancestorOrSelf();
+      items = focus.ancestorOrSelf();
       break;
     case CHILDREN:
-      items = context.getNodeItem().modelItems();
+      items = focus.modelItems();
       break;
     case DESCENDANT:
-      items = context.getNodeItem().descendant();
+      items = focus.descendant();
       break;
     case DESCENDANT_OR_SELF:
-      items = context.getNodeItem().descendantOrSelf();
+      items = focus.descendantOrSelf();
       break;
     case PARENT:
-      items = Stream.ofNullable(context.getNodeItem().getParentNodeItem());
+      items = Stream.ofNullable(focus.getParentNodeItem());
       break;
     default:
       throw new UnsupportedOperationException(getAxis().name());

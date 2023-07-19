@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * This functional interface provides a dispatch method for executing a function call.
@@ -56,7 +57,9 @@ public interface IFunctionExecutor {
    *           if an error occurred while executing the function
    */
   @NonNull
-  ISequence<?> execute(@NonNull IFunction function, @NonNull List<ISequence<?>> arguments,
+  ISequence<?> execute(
+      @NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      INodeItem focus) throws MetapathException;
+      @Nullable INodeItem focus) throws MetapathException;
 }
