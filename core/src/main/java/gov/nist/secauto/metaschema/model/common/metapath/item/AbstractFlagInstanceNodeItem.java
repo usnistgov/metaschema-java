@@ -35,18 +35,15 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A {@link INodeItem} supported by a {@link IFlagInstance}.
- *
- * @param <P>
- *          the parent node item type
  */
-abstract class AbstractFlagInstanceNodeItem<P extends IModelNodeItem>
+abstract class AbstractFlagInstanceNodeItem
     implements IFlagNodeItem {
   @NonNull
   private final IFlagInstance instance;
   @NonNull
-  private final P parent;
+  private final IModelNodeItem parent;
 
-  public AbstractFlagInstanceNodeItem(@NonNull IFlagInstance instance, @NonNull P parent) {
+  public AbstractFlagInstanceNodeItem(@NonNull IFlagInstance instance, @NonNull IModelNodeItem parent) {
     this.instance = instance;
     this.parent = parent;
   }
@@ -64,13 +61,13 @@ abstract class AbstractFlagInstanceNodeItem<P extends IModelNodeItem>
 
   @Override
   @NonNull
-  public P getParentContentNodeItem() {
+  public IModelNodeItem getParentContentNodeItem() {
     return getParentNodeItem();
   }
 
   @Override
   @NonNull
-  public P getParentNodeItem() {
+  public IModelNodeItem getParentNodeItem() {
     return parent;
   }
 

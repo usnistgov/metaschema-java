@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -80,8 +81,8 @@ public class MockItemFactory {
 
     getContext().checking(new Expectations() {
       { // NOPMD - intentional
-        allowing(document).getRootAssemblyNodeItem();
-        will(returnValue(root));
+        allowing(document).modelItems();
+        will(returnValue(Stream.of(root)));
         allowing(document).getDocumentUri();
         will(returnValue(documentURI));
         allowing(document).getNodeItem();

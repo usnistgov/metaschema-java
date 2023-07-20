@@ -20,7 +20,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>gov.nist.secauto.metaschema</groupId>
-			<artifactId>metaschema-model-common</artifactId>
+			<artifactId>metaschema-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.spotbugs</groupId>

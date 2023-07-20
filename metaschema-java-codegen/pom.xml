@@ -23,11 +23,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>metaschema-model-common</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>metaschema-model</artifactId>
+			<artifactId>metaschema-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>

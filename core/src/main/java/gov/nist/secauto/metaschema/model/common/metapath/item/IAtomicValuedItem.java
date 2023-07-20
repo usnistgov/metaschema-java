@@ -39,6 +39,7 @@ public interface IAtomicValuedItem extends IItem {
    *
    * @return the atomic value or {@code null} if the item has no available value
    */
+  // TODO: review all implementations and uses for correct behavior related to null
   @Nullable
   IAnyAtomicItem toAtomicItem();
 }

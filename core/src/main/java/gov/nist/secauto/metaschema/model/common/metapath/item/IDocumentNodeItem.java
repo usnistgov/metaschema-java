@@ -27,17 +27,16 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IDocumentNodeItem extends IRequiredValueNodeItem {
+public interface IDocumentNodeItem extends INodeItem {
   @Override
   default NodeItemType getNodeItemType() {
     return NodeItemType.DOCUMENT;
@@ -48,22 +47,14 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
     return this;
   }
 
-  /**
-   * Get the root assembly associated with this document.
-   *
-   * @return the root assembly
-   */
-  @NonNull
-  IRootAssemblyNodeItem getRootAssemblyNodeItem();
-
   @Override
-  default IRequiredValueModelNodeItem getParentContentNodeItem() {
+  default IModelNodeItem getParentContentNodeItem() {
     // there is no parent
     return null;
   }
 
   @Override
-  default IRequiredValueNodeItem getParentNodeItem() {
+  default INodeItem getParentNodeItem() {
     // there is no parent
     return null;
   }
@@ -71,13 +62,12 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
   /**
    * Get the URI associated with this document.
    *
-   * @return the document's URI
+   * @return the document's URI or {@code null} if unavailable
    */
-  @NonNull
+  @Nullable
   URI getDocumentUri();
 
   @Override
-  @NonNull
   default URI getBaseUri() {
     return getDocumentUri();
   }
@@ -87,7 +77,7 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
    */
   @SuppressWarnings("null")
   @Override
-  default Collection<? extends IRequiredValueFlagNodeItem> getFlags() {
+  default Collection<? extends IFlagNodeItem> getFlags() {
     // a document does not have flags
     return Collections.emptyList();
   }
@@ -96,7 +86,7 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
    * Documents do not have flag items. This call should return {@code null}.
    */
   @Override
-  default IRequiredValueFlagNodeItem getFlagByName(@NonNull String name) {
+  default IFlagNodeItem getFlagByName(@NonNull String name) {
     // a document does not have flags
     return null;
   }
@@ -106,32 +96,32 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
    */
   @SuppressWarnings("null")
   @Override
-  default @NonNull Stream<? extends IRequiredValueFlagNodeItem> flags() {
+  default Stream<? extends IFlagNodeItem> flags() {
     // a document does not have flags
     return Stream.empty();
   }
 
-  @SuppressWarnings("null")
-  @Override
-  default Stream<? extends IModelNodeItem> modelItems() {
-    return Stream.of(getRootAssemblyNodeItem());
-  }
+  // @SuppressWarnings("null")
+  // @Override
+  // default Stream<? extends IModelNodeItem> modelItems() {
+  // return Stream.of(getRootAssemblyNodeItem());
+  // }
+  //
+  // @SuppressWarnings("null")
+  // @Override
+  // default List<? extends IModelNodeItem> getModelItemsByName(String name) {
+  // IRootAssemblyNodeItem root = getRootAssemblyNodeItem();
+  // return root.getName().equals(name) ? Collections.singletonList(root) : Collections.emptyList();
+  // }
+  //
+  // @SuppressWarnings("null")
+  // @Override
+  // default Collection<? extends List<? extends IModelNodeItem>> getModelItems() {
+  // return Collections.singletonList(Collections.singletonList(getRootAssemblyNodeItem()));
+  // }
 
-  @SuppressWarnings("null")
   @Override
-  default @NonNull List<? extends IRequiredValueModelNodeItem> getModelItemsByName(String name) {
-    IRootAssemblyNodeItem root = getRootAssemblyNodeItem();
-    return root.getName().equals(name) ? Collections.singletonList(root) : Collections.emptyList();
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default @NonNull Collection<? extends List<? extends IRequiredValueModelNodeItem>> getModelItems() {
-    return Collections.singletonList(Collections.singletonList(getRootAssemblyNodeItem()));
-  }
-
-  @Override
-  default @NonNull String format(@NonNull IPathFormatter formatter) {
+  default String format(@NonNull IPathFormatter formatter) {
     return formatter.formatDocument(this);
   }
 
@@ -141,8 +131,8 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
   }
 
   @Override
-  @NonNull
   default Object getValue() {
-    return ObjectUtils.requireNonNull(getRootAssemblyNodeItem().getValue());
+    // a document doesn't have a value
+    return null;
   }
 }

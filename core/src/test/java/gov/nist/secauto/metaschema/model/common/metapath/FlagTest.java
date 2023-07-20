@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IRequiredValueFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IRequiredValueModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.NodeItemType;
 
 import org.jmock.Expectations;
@@ -48,9 +48,9 @@ class FlagTest
     Mockery context = getContext();
 
     @SuppressWarnings("null")
-    @NonNull IRequiredValueModelNodeItem nodeContext = context.mock(IRequiredValueModelNodeItem.class);
+    @NonNull IModelNodeItem nodeContext = context.mock(IModelNodeItem.class);
     IFlagInstance instance = context.mock(IFlagInstance.class);
-    IRequiredValueFlagNodeItem flagNode = context.mock(IRequiredValueFlagNodeItem.class);
+    IFlagNodeItem flagNode = context.mock(IFlagNodeItem.class);
 
     String flagName = "test";
 

@@ -7,10 +7,12 @@
 	</parent>
 
 	<artifactId>metaschema-model-common</artifactId>
+
 	<distributionManagement>
 		<relocation>
 			<groupId>gov.nist.secauto.metaschema</groupId>
 			<artifactId>metaschema-core</artifactId>
+			<message>In the 1.0.0 release of this library, a few modules that contain general use code were combined to form a core library.</message>
 		</relocation>
 	</distributionManagement>
 </project>

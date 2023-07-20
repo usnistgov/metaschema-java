@@ -33,24 +33,24 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class RootAssemblyValuedNodeItemImpl
     extends AbstractModelNodeContext<
-        IRequiredValueFlagNodeItem,
-        IRequiredValueModelNodeItem,
-        AbstractModelNodeContext.Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
+        IFlagNodeItem,
+        IModelNodeItem,
+        AbstractModelNodeContext.Model<IFlagNodeItem, IModelNodeItem>>
     implements IRootAssemblyNodeItem {
   @NonNull
   private final IRootAssemblyDefinition definition;
   @NonNull
   private final IDocumentNodeItem parent;
-  @NonNull
   private final Object value;
 
   public RootAssemblyValuedNodeItemImpl(
       @NonNull IRootAssemblyDefinition definition,
       @NonNull IDocumentNodeItem parent,
-      @NonNull Object value,
+      @Nullable Object value,
       @NonNull INodeItemFactory factory) {
     super(factory);
     this.definition = definition;
@@ -59,12 +59,12 @@ class RootAssemblyValuedNodeItemImpl
   }
 
   @Override
-  protected @NonNull Supplier<Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
+  protected @NonNull Supplier<Model<IFlagNodeItem, IModelNodeItem>>
       newModelSupplier(@NonNull INodeItemFactory factory) {
     return () -> {
-      Map<String, IRequiredValueFlagNodeItem> flags = factory.generateFlagsWithValues(this);
-      Map<String, List<IRequiredValueModelNodeItem>> modelItems
-          = factory.generateModelItemsWithValues(this);
+      Map<String, IFlagNodeItem> flags = factory.generateFlags(this);
+      Map<String, List<IModelNodeItem>> modelItems
+          = factory.generateModelItems(this);
       return new AbstractModelNodeContext.Model<>(flags, modelItems);
     };
   }
@@ -80,13 +80,12 @@ class RootAssemblyValuedNodeItemImpl
   }
 
   @Override
-  public IRequiredValueAssemblyNodeItem getParentContentNodeItem() {
+  public IAssemblyNodeItem getParentContentNodeItem() {
     // there is no parent assembly
     return null;
   }
 
   @Override
-  @NonNull
   public Object getValue() {
     return value;
   }

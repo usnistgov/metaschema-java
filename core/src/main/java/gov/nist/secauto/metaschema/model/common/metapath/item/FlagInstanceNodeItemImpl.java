@@ -29,25 +29,43 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * A {@link INodeItem} supported by a {@link IFlagInstance}, that does not have an associated value.
+ * A {@link INodeItem} supported by a {@link IFlagInstance}, that may have an associated value.
  */
 class FlagInstanceNodeItemImpl
-    extends AbstractFlagInstanceNodeItem<IModelNodeItem> {
-  public FlagInstanceNodeItemImpl(@NonNull IFlagInstance instance, @NonNull IModelNodeItem parent) {
-    super(instance, parent);
-  }
+    extends AbstractFlagInstanceNodeItem {
 
-  @Override
-  public IAnyAtomicItem toAtomicItem() {
-    // does not have a value
-    return null;
+  private final Object value;
+
+  /**
+   * Used to cache this object as an atomic item.
+   */
+  private IAnyAtomicItem atomicItem;
+
+  public FlagInstanceNodeItemImpl(
+      @NonNull IFlagInstance instance,
+      @NonNull IModelNodeItem parent,
+      @Nullable Object value) {
+    super(instance, parent);
+    this.value = value;
   }
 
   @Override
   public Object getValue() {
-    // there is no value
-    return null;
+    return value;
+  }
+
+  @Override
+  public IAnyAtomicItem toAtomicItem() {
+    synchronized (this) {
+      Object value = this.value;
+      IAnyAtomicItem retval = this.atomicItem;
+      if (retval == null && value != null) {
+        this.atomicItem = retval = getInstance().getDefinition().getJavaTypeAdapter().newItem(value);
+      }
+      return retval;
+    }
   }
 }

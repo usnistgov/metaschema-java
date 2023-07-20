@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.InvalidTypeMetapathException;
 
 import java.net.URI;
 import java.util.Map;
@@ -37,8 +38,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * a new {@link INodeItem} instance, that is orphaned from any parent nodes, supported by an
- * {@link IFieldDefinition}.
+ * A {@link INodeItem} supported by a {@link IFieldDefinition}, that may have an associated value.
  */
 class FieldDefinitionNodeItemImpl
     extends AbstractNodeContext<
@@ -47,26 +47,21 @@ class FieldDefinitionNodeItemImpl
     implements IFieldNodeItem {
   @NonNull
   private final IFieldDefinition definition;
-  @Nullable
   private final URI baseUri;
-
+  private final Object value;
   /**
-   * Construct a new {@link INodeItem} instance, that is orphaned from any parent nodes, based on the
-   * provided field {@code definition}.
-   *
-   * @param definition
-   *          the field
-   * @param baseUri
-   *          an optional base URI to use for resolving relative URIs
-   * @param factory
-   *          the factory to use to instantiate new node items
+   * Used to cache this object as an atomic item.
    */
+  private IAnyAtomicItem atomicItem;
+
   public FieldDefinitionNodeItemImpl(
       @NonNull IFieldDefinition definition,
+      @Nullable Object value,
       @Nullable URI baseUri,
       @NonNull INodeItemFactory factory) {
     super(factory);
     this.definition = definition;
+    this.value = value;
     this.baseUri = baseUri;
   }
 
@@ -92,13 +87,8 @@ class FieldDefinitionNodeItemImpl
 
   @Override
   public IFieldInstance getInstance() {
-    // there is no instance
+    // this is an orphaned definition
     return null;
-  }
-
-  @Override
-  public URI getBaseUri() {
-    return baseUri;
   }
 
   @Override
@@ -107,14 +97,28 @@ class FieldDefinitionNodeItemImpl
   }
 
   @Override
-  public IAnyAtomicItem toAtomicItem() {
-    // does not have a value
-    return null;
+  public URI getBaseUri() {
+    return baseUri;
   }
 
   @Override
   public Object getValue() {
-    // there is no value
-    return null;
+    return value;
+  }
+
+  @Override
+  public IAnyAtomicItem toAtomicItem() {
+    synchronized (this) {
+      Object value = this.value;
+      IAnyAtomicItem retval = this.atomicItem;
+      if (retval == null && value != null) {
+        Object fieldValue = getDefinition().getFieldValue(value);
+        if (fieldValue == null) {
+          throw new InvalidTypeMetapathException(this, "The field item does not have a field value");
+        }
+        this.atomicItem = retval = getInstance().getDefinition().getJavaTypeAdapter().newItem(fieldValue);
+      }
+      return retval;
+    }
   }
 }

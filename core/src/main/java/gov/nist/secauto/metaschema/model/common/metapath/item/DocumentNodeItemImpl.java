@@ -27,9 +27,12 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import java.net.URI;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -49,7 +52,7 @@ class DocumentNodeItemImpl
     this.documentUri = documentUri;
   }
 
-  @Override
+  @NonNull
   public IRootAssemblyNodeItem getRootAssemblyNodeItem() {
     return root;
   }
@@ -60,8 +63,20 @@ class DocumentNodeItemImpl
   }
 
   @Override
-  @NonNull
-  public Object getValue() {
-    return ObjectUtils.requireNonNull(getRootAssemblyNodeItem().getValue());
+  public Collection<? extends List<? extends IModelNodeItem>> getModelItems() {
+    return CollectionUtil.singletonList(CollectionUtil.singletonList(getRootAssemblyNodeItem()));
   }
+
+  @Override
+  public List<? extends IModelNodeItem> getModelItemsByName(String name) {
+    IRootAssemblyNodeItem root = getRootAssemblyNodeItem();
+    return root.getName().equals(name) ? CollectionUtil.singletonList(root) : CollectionUtil.emptyList();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Stream<? extends IModelNodeItem> modelItems() {
+    return Stream.of(getRootAssemblyNodeItem());
+  }
+
 }

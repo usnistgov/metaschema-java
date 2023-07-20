@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IRequiredValueAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jmock.Expectations;
@@ -55,14 +54,14 @@ class PredicateTest
     @NonNull IExpression stepExpr = context.mock(IExpression.class);
     ISequence<?> stepResult = context.mock(ISequence.class, "stepResult");
     @SuppressWarnings("null")
-    @NonNull IRequiredValueAssemblyNodeItem item = context.mock(IRequiredValueAssemblyNodeItem.class);
+    @NonNull IAssemblyNodeItem item = context.mock(IAssemblyNodeItem.class);
     @SuppressWarnings({ "unchecked", "null" })
     @NonNull List<IExpression> predicates = context.mock(List.class, "predicates");
 
     context.checking(new Expectations() {
       { // NOPMD - intentional
         allowing(stepExpr).getStaticResultType();
-        will(returnValue(IRequiredValueAssemblyNodeItem.class));
+        will(returnValue(IAssemblyNodeItem.class));
         oneOf(stepExpr).accept(dynamicContext, item);
         will(returnValue(stepResult));
 
@@ -103,7 +102,7 @@ class PredicateTest
     context.checking(new Expectations() {
       { // NOPMD - intentional
         allowing(stepExpr).getStaticResultType();
-        will(returnValue(IRequiredValueAssemblyNodeItem.class));
+        will(returnValue(IAssemblyNodeItem.class));
         oneOf(stepExpr).accept(dynamicContext, item);
         will(returnValue(stepResult));
 

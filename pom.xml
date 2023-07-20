@@ -189,12 +189,7 @@
         <dependencies>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>metaschema-model</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>metaschema-model-common</artifactId>
+                <artifactId>metaschema-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -779,16 +774,18 @@
         </profile>
     </profiles>
     <modules>
-        <module>metaschema-model</module>
+        <module>core</module>
         <module>metaschema-java-codegen</module>
         <module>metaschema-maven-plugin</module>
         <module>metaschema-java-binding</module>
-        <module>metaschema-model-common</module>
         <!-- <module>metaschema-freemarker-support</module> -->
         <module>metaschema-schema-generator</module>
         <!-- <module>metaschema-documentation-generator</module> -->
         <module>metaschema-testing</module>
         <module>cli-processor</module>
         <module>metaschema-cli</module>
+		<!-- retired modules -->
+        <module>metaschema-model-common</module>
+        <module>metaschema-model</module>
     </modules>
 </project>

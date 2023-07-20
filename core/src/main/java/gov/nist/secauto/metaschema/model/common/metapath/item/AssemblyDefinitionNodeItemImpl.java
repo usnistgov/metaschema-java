@@ -38,8 +38,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * a new {@link INodeItem} instance, that is orphaned from any parent nodes, supported by an
- * {@link IAssemblyDefinition}.
+ * A {@link INodeItem} supported by a {@link IAssemblyInstance}, that may have an associated value.
  */
 class AssemblyDefinitionNodeItemImpl
     extends AbstractModelNodeContext<
@@ -49,37 +48,28 @@ class AssemblyDefinitionNodeItemImpl
     implements IAssemblyNodeItem {
   @NonNull
   private final IAssemblyDefinition definition;
-
-  @Nullable
   private final URI baseUri;
+  private final Object value;
 
-  /**
-   * Construct a new {@link INodeItem} instance, that is orphaned from any parent nodes, based on the
-   * provided assembly {@code definition}.
-   *
-   * @param definition
-   *          the field
-   * @param baseUri
-   *          an optional base URI to use for resolving relative URIs
-   * @param factory
-   *          the factory to use to instantiate new node items
-   */
   public AssemblyDefinitionNodeItemImpl(
       @NonNull IAssemblyDefinition definition,
+      @Nullable Object value,
       @Nullable URI baseUri,
       @NonNull INodeItemFactory factory) {
     super(factory);
     this.definition = definition;
+    this.value = value;
     this.baseUri = baseUri;
   }
 
   @Override
-  protected @NonNull Supplier<Model<IFlagNodeItem, IModelNodeItem>>
+  protected Supplier<Model<IFlagNodeItem, IModelNodeItem>>
       newModelSupplier(@NonNull INodeItemFactory factory) {
     return () -> {
       Map<String, IFlagNodeItem> flags = factory.generateFlags(this);
-      Map<String, List<IModelNodeItem>> modelItems = factory.generateModelItems(this);
-      return new Model<>(flags, modelItems);
+      Map<String, List<IModelNodeItem>> modelItems
+          = factory.generateModelItems(this);
+      return new AbstractModelNodeContext.Model<>(flags, modelItems);
     };
   }
 
@@ -96,6 +86,11 @@ class AssemblyDefinitionNodeItemImpl
   }
 
   @Override
+  public Object getValue() {
+    return value;
+  }
+
+  @Override
   public IAssemblyDefinition getDefinition() {
     return definition;
   }
@@ -107,18 +102,12 @@ class AssemblyDefinitionNodeItemImpl
   }
 
   @Override
-  public URI getBaseUri() {
-    return baseUri;
-  }
-
-  @Override
   public int getPosition() {
     return 1;
   }
 
   @Override
-  public Object getValue() {
-    // there is no value
-    return null;
+  public URI getBaseUri() {
+    return baseUri;
   }
 }

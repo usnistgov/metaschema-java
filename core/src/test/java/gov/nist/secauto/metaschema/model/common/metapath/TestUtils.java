@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -47,20 +48,22 @@ public final class TestUtils {
     return IDecimalItem.valueOf(new BigDecimal(value, MathContext.DECIMAL64));
   }
 
-  @SuppressWarnings("null")
+  @NonNull
   public static IIntegerItem integer(int value) {
-    return IIntegerItem.valueOf(BigInteger.valueOf(value));
+    return IIntegerItem.valueOf(ObjectUtils.notNull(BigInteger.valueOf(value)));
   }
 
-  @SuppressWarnings("null")
+  @NonNull
   public static IStringItem string(@NonNull String value) {
     return IStringItem.valueOf(value);
   }
 
+  @NonNull
   public static IDecimalItem decimal(double value) {
     return IDecimalItem.valueOf(value);
   }
 
+  @NonNull
   public static IAnyUriItem uri(@NonNull String value) {
     URI uri = URI.create(value);
     assert uri != null;

@@ -63,9 +63,9 @@ class MetaschemaNodeItemImpl
 
       // build model items from Metaschema definitions
       Stream<IFieldNodeItem> fieldStream = getMetaschema().getFieldDefinitions().stream()
-          .map(def -> factory.newFieldNodeItem(ObjectUtils.notNull(def), getBaseUri()));
+          .map(def -> factory.newFieldNodeItem(ObjectUtils.notNull(def), null, getBaseUri()));
       Stream<IAssemblyNodeItem> assemblyStream = getMetaschema().getAssemblyDefinitions().stream()
-          .map(def -> factory.newAssemblyNodeItem(ObjectUtils.notNull(def), getBaseUri()));
+          .map(def -> factory.newAssemblyNodeItem(ObjectUtils.notNull(def), null, getBaseUri()));
 
       Map<String, List<IModelNodeItem>> modelItems
           = ObjectUtils.notNull(Stream.concat(fieldStream, assemblyStream)

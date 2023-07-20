@@ -45,6 +45,7 @@ public interface IDecimalItem extends INumericItem {
     return valueOf(BigDecimal.valueOf(value));
   }
 
+  @NonNull
   static IDecimalItem valueOf(double value) {
     return valueOf(new BigDecimal(value, FunctionUtils.MATH_CONTEXT));
   }

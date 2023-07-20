@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IRootAssemblyNodeItem extends IRequiredValueAssemblyNodeItem {
+public interface IRootAssemblyNodeItem extends IAssemblyNodeItem {
 
   @Override
   default String getName() {
@@ -49,7 +49,7 @@ public interface IRootAssemblyNodeItem extends IRequiredValueAssemblyNodeItem {
   }
 
   @Override
-  default IRequiredValueAssemblyNodeItem getParentContentNodeItem() {
+  default IAssemblyNodeItem getParentContentNodeItem() {
     // there is no assembly parent
     return null;
   }

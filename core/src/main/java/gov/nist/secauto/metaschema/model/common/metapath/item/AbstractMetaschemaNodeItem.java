@@ -46,6 +46,11 @@ public abstract class AbstractMetaschemaNodeItem
     this.metaschema = metaschema;
   }
 
+  @Override
+  public URI getDocumentUri() {
+    return metaschema.getLocation();
+  }
+
   protected IMetaschema getMetaschema() {
     return metaschema;
   }

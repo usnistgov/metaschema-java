@@ -260,12 +260,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
   @Override
   protected IExpression handleComparisonexpr(ComparisonexprContext ctx) { // NOPMD - ok
-    int numChildren = ctx.getChildCount();
-    if (numChildren == 1) {
-      return super.visitComparisonexpr(ctx); // NOPMD - readability
-    } else if (numChildren != 3) {
-      throw new UnsupportedOperationException();
-    }
+    assert ctx.getChildCount() == 3;
 
     IExpression left = visit(ctx.getChild(0));
     IExpression right = visit(ctx.getChild(2));

@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IMetaschemaNodeItem extends INodeItem {
+public interface IMetaschemaNodeItem extends IDocumentNodeItem {
 
   @Override
   default NodeItemType getNodeItemType() {
@@ -43,13 +43,13 @@ public interface IMetaschemaNodeItem extends INodeItem {
   }
 
   @Override
-  default IRequiredValueNodeItem getParentNodeItem() {
+  default INodeItem getParentNodeItem() {
     // doesn't have a parent
     return null;
   }
 
   @Override
-  default IRequiredValueModelNodeItem getParentContentNodeItem() {
+  default IModelNodeItem getParentContentNodeItem() {
     // doesn't have a parent
     return null;
   }

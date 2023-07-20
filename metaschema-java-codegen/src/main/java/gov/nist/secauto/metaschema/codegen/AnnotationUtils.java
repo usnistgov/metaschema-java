@@ -351,7 +351,8 @@ final class AnnotationUtils {
       Integer minOccurs = constraint.getMinOccurs();
       Integer maxOccurs = constraint.getMaxOccurs();
 
-      IAssemblyNodeItem definitionNodeItem = DefaultNodeItemFactory.instance().newAssemblyNodeItem(definition, null);
+      IAssemblyNodeItem definitionNodeItem
+          = DefaultNodeItemFactory.instance().newAssemblyNodeItem(definition, null, null);
 
       ISequence<? extends IDefinitionNodeItem> instanceSet
           = constraint.matchTargets(definitionNodeItem, dynamicContext);

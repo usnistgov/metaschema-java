@@ -32,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import org.jmock.Mockery;
 import org.junit.jupiter.api.Test;
 
 class RootSlashOnlyTest
@@ -40,28 +39,24 @@ class RootSlashOnlyTest
 
   @Test
   void testRootSlashOnlyPathUsingDocument() {
-    DynamicContext dynamicContext = newDynamicContext();
-    Mockery context = getContext();
-
     IDocumentNodeItem nodeContext = newDocumentNodeContext();
     assert nodeContext != null;
 
     RootSlashOnlyPath expr = new RootSlashOnlyPath();
 
+    DynamicContext dynamicContext = newDynamicContext();
     ISequence<?> result = expr.accept(dynamicContext, nodeContext);
     assertEquals(ISequence.of(nodeContext), result);
   }
 
   @Test
   void testRootSlashOnlyPathUsingNonDocument() {
-    DynamicContext dynamicContext = newDynamicContext();
-    Mockery context = getContext();
-
     INodeItem nodeContext = newNonDocumentNodeContext("non-document");
     assert nodeContext != null;
 
     RootSlashOnlyPath expr = new RootSlashOnlyPath();
 
+    DynamicContext dynamicContext = newDynamicContext();
     DynamicMetapathException ex = assertThrows(DynamicMetapathException.class, () -> {
       expr.accept(dynamicContext, nodeContext);
     });

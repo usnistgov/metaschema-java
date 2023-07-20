@@ -33,24 +33,28 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * A {@link INodeItem} supported by a {@link IAssemblyInstance}, that does not have an associated
- * value.
+ * A {@link INodeItem} supported by a {@link IAssemblyInstance}, that may have an associated value.
  */
 class AssemblyInstanceNodeItemImpl
-    extends AbstractAssemblyInstanceNodeItem<
+    extends
+    AbstractAssemblyInstanceNodeItem<
         IFlagNodeItem,
         IModelNodeItem,
         IAssemblyNodeItem,
         AbstractModelNodeContext.Model<IFlagNodeItem, IModelNodeItem>> {
+  private final Object value;
 
   public AssemblyInstanceNodeItemImpl(
       @NonNull IAssemblyInstance instance,
       @NonNull IAssemblyNodeItem parent,
       int position,
+      @Nullable Object value,
       @NonNull INodeItemFactory factory) {
     super(instance, parent, position, factory);
+    this.value = value;
   }
 
   @Override
@@ -64,14 +68,12 @@ class AssemblyInstanceNodeItemImpl
   }
 
   @Override
-  @NonNull
   public IAssemblyNodeItem getParentContentNodeItem() {
     return getParentNodeItem();
   }
 
   @Override
   public Object getValue() {
-    // there is no value
-    return null;
+    return value;
   }
 }

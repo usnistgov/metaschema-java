@@ -247,7 +247,7 @@ class BuildAstVisitorTest {
 
   @ParameterizedTest
   @MethodSource
-  void testComparison(String metapath, Class<?> expectedClass, Operator operator) {
+  void testComparison(@NonNull String metapath, @NonNull Class<?> expectedClass, @NonNull Operator operator) {
     IExpression ast = parseExpression(metapath);
 
     assertAll(
@@ -265,7 +265,7 @@ class BuildAstVisitorTest {
 
   @ParameterizedTest
   @MethodSource
-  void testAnd(String metapath, IBooleanItem expectedResult) {
+  void testAnd(@NonNull String metapath, @NonNull IBooleanItem expectedResult) {
     IExpression ast = parseExpression(metapath);
 
     IDocumentNodeItem document = newTestDocument();

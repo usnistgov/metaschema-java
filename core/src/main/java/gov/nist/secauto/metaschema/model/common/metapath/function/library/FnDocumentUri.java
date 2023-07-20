@@ -40,6 +40,7 @@ import java.net.URI;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public final class FnDocumentUri {
 
@@ -125,11 +126,11 @@ public final class FnDocumentUri {
    *
    * @param document
    *          the document to get the URI for
-   * @return the URI of the document
+   * @return the URI of the document or {@code null} if not available
    */
-  @NonNull
+  @Nullable
   public static IAnyUriItem fnDocumentUri(@NonNull IDocumentNodeItem document) {
     URI documentUri = document.getDocumentUri();
-    return IAnyUriItem.valueOf(documentUri);
+    return documentUri == null ? null : IAnyUriItem.valueOf(documentUri);
   }
 }

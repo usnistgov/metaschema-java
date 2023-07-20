@@ -27,16 +27,16 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import java.net.URI;
 import java.util.Map;
 import java.util.function.Supplier;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * A {@link INodeItem} supported by a {@link IFieldInstance}, that does not have an associated
- * value.
+ * A {@link INodeItem} supported by a {@link IFieldInstance}, that may have an associated value.
  */
 class FieldInstanceNodeItemImpl
     extends AbstractFieldInstanceNodeItem<
@@ -44,12 +44,21 @@ class FieldInstanceNodeItemImpl
         IAssemblyNodeItem,
         AbstractNodeContext.Flags<IFlagNodeItem>> {
 
+  private final Object value;
+
+  /**
+   * Used to cache this object as an atomic item.
+   */
+  private IAnyAtomicItem atomicItem;
+
   public FieldInstanceNodeItemImpl(
       @NonNull IFieldInstance instance,
       @NonNull IAssemblyNodeItem parent,
       int position,
+      @Nullable Object value,
       @NonNull INodeItemFactory factory) {
     super(instance, parent, position, factory);
+    this.value = value;
   }
 
   @Override
@@ -62,19 +71,20 @@ class FieldInstanceNodeItemImpl
   }
 
   @Override
-  public URI getBaseUri() {
-    return getDefinition().getContainingMetaschema().getLocation();
+  public Object getValue() {
+    return value;
   }
 
   @Override
   public IAnyAtomicItem toAtomicItem() {
-    // does not have a value
-    return null;
-  }
-
-  @Override
-  public Object getValue() {
-    // there is no value
-    return null;
+    synchronized (this) {
+      Object value = this.value;
+      IAnyAtomicItem retval = this.atomicItem;
+      if (retval == null && value != null) {
+        this.atomicItem = retval = getInstance().getDefinition().getJavaTypeAdapter().newItem(
+            ObjectUtils.requireNonNull(getDefinition().getFieldValue(value)));
+      }
+      return retval;
+    }
   }
 }
