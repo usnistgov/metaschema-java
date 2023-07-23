@@ -224,14 +224,15 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     targets.asStream()
         .forEachOrdered(item -> {
           assert item != null;
-
-          try {
-            INodeItem oldItem = index.put(item, metapathContext);
-            if (oldItem != null) {
-              getConstraintValidationHandler().handleIndexDuplicateKeyViolation(constraint, node, oldItem, item);
+          if (item.hasValue()) {
+            try {
+              INodeItem oldItem = index.put(item, metapathContext);
+              if (oldItem != null) {
+                getConstraintValidationHandler().handleIndexDuplicateKeyViolation(constraint, node, oldItem, item);
+              }
+            } catch (MetapathException ex) {
+              getConstraintValidationHandler().handleKeyMatchError(constraint, node, item, ex);
             }
-          } catch (MetapathException ex) {
-            getConstraintValidationHandler().handleKeyMatchError(constraint, node, item, ex);
           }
         });
     indexNameToIndexMap.put(indexName, index);
@@ -264,14 +265,16 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     targets.asStream()
         .forEachOrdered(item -> {
           assert item != null;
-          try {
-            INodeItem oldItem = index.put(item, metapathContext);
-            if (oldItem != null) {
-              getConstraintValidationHandler().handleUniqueKeyViolation(constraint, node, oldItem, item);
+          if (item.hasValue()) {
+            try {
+              INodeItem oldItem = index.put(item, metapathContext);
+              if (oldItem != null) {
+                getConstraintValidationHandler().handleUniqueKeyViolation(constraint, node, oldItem, item);
+              }
+            } catch (MetapathException ex) {
+              getConstraintValidationHandler().handleKeyMatchError(constraint, node, item, ex);
+              throw ex;
             }
-          } catch (MetapathException ex) {
-            getConstraintValidationHandler().handleKeyMatchError(constraint, node, item, ex);
-            throw ex;
           }
         });
   }
@@ -294,23 +297,25 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     targets.asStream()
         .forEachOrdered(item -> {
           assert item != null;
-          String value = FnData.fnDataItem(item).asString();
+          if (item.hasValue()) {
+            String value = FnData.fnDataItem(item).asString();
 
-          Pattern pattern = constraint.getPattern();
-          if (pattern != null) {
-            // validate pattern
-            Predicate<String> predicate = pattern.asMatchPredicate();
-            if (!predicate.test(value)) {
-              getConstraintValidationHandler().handleMatchPatternViolation(constraint, node, item, value);
+            Pattern pattern = constraint.getPattern();
+            if (pattern != null) {
+              // validate pattern
+              Predicate<String> predicate = pattern.asMatchPredicate();
+              if (!predicate.test(value)) {
+                getConstraintValidationHandler().handleMatchPatternViolation(constraint, node, item, value);
+              }
             }
-          }
 
-          IDataTypeAdapter<?> adapter = constraint.getDataType();
-          if (adapter != null) {
-            try {
-              adapter.parse(value);
-            } catch (IllegalArgumentException ex) {
-              getConstraintValidationHandler().handleMatchDatatypeViolation(constraint, node, item, value, ex);
+            IDataTypeAdapter<?> adapter = constraint.getDataType();
+            if (adapter != null) {
+              try {
+                adapter.parse(value);
+              } catch (IllegalArgumentException ex) {
+                getConstraintValidationHandler().handleMatchDatatypeViolation(constraint, node, item, value, ex);
+              }
             }
           }
         });
@@ -356,14 +361,16 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
         .map(item -> (INodeItem) item)
         .forEachOrdered(item -> {
           assert item != null;
-          MetapathExpression metapath = constraint.getTest();
-          try {
-            ISequence<?> result = metapath.evaluate(item, getMetapathContext());
-            if (!FnBoolean.fnBoolean(result).toBoolean()) {
-              getConstraintValidationHandler().handleExpectViolation(constraint, node, item, getMetapathContext());
+          if (item.hasValue()) {
+            MetapathExpression metapath = constraint.getTest();
+            try {
+              ISequence<?> result = metapath.evaluate(item, getMetapathContext());
+              if (!FnBoolean.fnBoolean(result).toBoolean()) {
+                getConstraintValidationHandler().handleExpectViolation(constraint, node, item, getMetapathContext());
+              }
+            } catch (MetapathException ex) {
+              rethrowConstraintError(constraint, item, ex);
             }
-          } catch (MetapathException ex) {
-            rethrowConstraintError(constraint, item, ex);
           }
         });
   }
@@ -380,10 +387,12 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
       ISequence<? extends IDefinitionNodeItem> targets) {
     targets.asStream().forEachOrdered(item -> {
       assert item != null;
-      try {
-        updateValueStatus(item, constraint);
-      } catch (MetapathException ex) {
-        rethrowConstraintError(constraint, item, ex);
+      if (item.hasValue()) {
+        try {
+          updateValueStatus(item, constraint);
+        } catch (MetapathException ex) {
+          rethrowConstraintError(constraint, item, ex);
+        }
       }
     });
   }

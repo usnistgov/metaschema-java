@@ -31,10 +31,10 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression.ResultType;
-import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.Collection;
@@ -81,7 +81,7 @@ public interface IConstraintSet {
     Set<IConstraintSet> resolvedConstraintSets = resolveConstraintSets(constraintSets);
 
     ConstraintComposingVisitor visitor = new ConstraintComposingVisitor();
-    IMetaschemaNodeItem item = DefaultNodeItemFactory.instance().newMetaschemaNodeItem(metaschema);
+    IMetaschemaNodeItem item = INodeItemFactory.newMetaschemaNodeItem(metaschema);
 
     for (ITargetedConstaints targeted : getTargetedConstraintsForMetaschema(resolvedConstraintSets, metaschema)) {
       MetapathExpression targetExpression = targeted.getTargetExpression();

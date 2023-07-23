@@ -51,8 +51,8 @@ class RootAssemblyValuedNodeItemImpl
       @NonNull IRootAssemblyDefinition definition,
       @NonNull IDocumentNodeItem parent,
       @Nullable Object value,
-      @NonNull INodeItemFactory factory) {
-    super(factory);
+      @NonNull INodeItemGenerator generator) {
+    super(generator);
     this.definition = definition;
     this.parent = parent;
     this.value = value;
@@ -60,11 +60,11 @@ class RootAssemblyValuedNodeItemImpl
 
   @Override
   protected @NonNull Supplier<Model<IFlagNodeItem, IModelNodeItem>>
-      newModelSupplier(@NonNull INodeItemFactory factory) {
+      newModelSupplier(@NonNull INodeItemGenerator generator) {
     return () -> {
-      Map<String, IFlagNodeItem> flags = factory.generateFlags(this);
+      Map<String, IFlagNodeItem> flags = generator.generateFlags(this);
       Map<String, List<IModelNodeItem>> modelItems
-          = factory.generateModelItems(this);
+          = generator.generateModelItems(this);
       return new AbstractModelNodeContext.Model<>(flags, modelItems);
     };
   }

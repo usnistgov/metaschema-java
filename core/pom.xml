@@ -221,7 +221,7 @@
 						<argument>-package</argument>
 						<argument>gov.nist.secauto.metaschema.model.common.metapath.antlr</argument>
 						<argument>-o</argument>
-						<argument>target/generated-sources/antlr4/gov/nist/secauto/metaschema/model/common/metapath/antlr</argument>
+						<argument>${project.build.directory}/generated-sources/antlr4/gov/nist/secauto/metaschema/model/common/metapath/antlr</argument>
 					</arguments>
 					<visitor>true</visitor>
 					<listener>false</listener>
@@ -285,10 +285,10 @@
 							<goal>generate-xmlbeans</goal>
 						</goals>
 						<configuration>
-	                        <xmlConfigs>src/schema/xmlconfig.xml</xmlConfigs>
-							<sourceDir>metaschema/schema/xml</sourceDir>
-							<javaTargetDir>target/generated-sources/xmlbeans</javaTargetDir>
-							<classTargetDir>target/generated-resources/xmlbeans</classTargetDir>
+	                        <xmlConfigs>${project.basedir}/src/schema/xmlconfig.xml</xmlConfigs>
+							<sourceDir>${project.basedir}/metaschema/schema/xml</sourceDir>
+							<javaTargetDir>${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
+							<classTargetDir>${project.build.directory}/generated-resources/xmlbeans</classTargetDir>
 							<name>metaschema</name>
 						</configuration>
 					</execution>
@@ -299,15 +299,15 @@
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>add-xmlbeans-sources</id>
+						<id>add-generated-sources</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>add-source</goal>
 						</goals>
 						<configuration>
 							<sources>
-								<source>
-									${project.build.directory}/generated-sources/xmlbeans</source>
+								<source>${project.build.directory}/generated-sources/antlr4</source>
+								<source>${project.build.directory}/generated-sources/xmlbeans</source>
 							</sources>
 						</configuration>
 					</execution>

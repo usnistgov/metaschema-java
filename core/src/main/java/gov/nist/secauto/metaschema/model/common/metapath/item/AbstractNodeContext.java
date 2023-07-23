@@ -42,12 +42,12 @@ abstract class AbstractNodeContext<F extends IFlagNodeItem, L extends AbstractNo
   private final Lazy<L> model;
 
   @SuppressWarnings("PMD.ConstructorCallsOverridableMethod") // intentional
-  protected AbstractNodeContext(@NonNull INodeItemFactory factory) {
-    this.model = Lazy.lazy(newModelSupplier(factory));
+  protected AbstractNodeContext(@NonNull INodeItemGenerator generator) {
+    this.model = Lazy.lazy(newModelSupplier(generator));
   }
 
   @NonNull
-  protected abstract Supplier<L> newModelSupplier(@NonNull INodeItemFactory factory);
+  protected abstract Supplier<L> newModelSupplier(@NonNull INodeItemGenerator generator);
 
   @SuppressWarnings("null")
   @NonNull

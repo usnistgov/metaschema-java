@@ -164,11 +164,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *           if the provided {@code url} is malformed
    * @see #detectFormat(URL)
    */
-  @SuppressWarnings("unchecked")
   @NonNull
-  default <CLASS> CLASS load(@NonNull URL url) throws IOException, URISyntaxException {
-    return (CLASS) loadAsNodeItem(url).getValue();
-  }
+  <CLASS> CLASS load(@NonNull URL url) throws IOException, URISyntaxException;
 
   /**
    * Load data from the provided resource into a bound object.
@@ -184,11 +181,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *           if an error occurred while reading the resource
    * @see #detectFormat(File)
    */
-  @SuppressWarnings("unchecked")
   @NonNull
-  default <CLASS> CLASS load(@NonNull Path path) throws IOException {
-    return (CLASS) loadAsNodeItem(path).getValue();
-  }
+  <CLASS> CLASS load(@NonNull Path path) throws IOException;
 
   /**
    * Load data from the provided resource into a bound object.
@@ -204,11 +198,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *           if an error occurred while reading the resource
    * @see #detectFormat(File)
    */
-  @SuppressWarnings("unchecked")
   @NonNull
-  default <CLASS> CLASS load(@NonNull File file) throws IOException {
-    return (CLASS) loadAsNodeItem(file).getValue();
-  }
+  <CLASS> CLASS load(@NonNull File file) throws IOException;
 
   /**
    * Load data from the provided resource into a bound object.
@@ -228,11 +219,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *           if an error occurred while reading the resource
    * @see #detectFormat(InputStream)
    */
-  @SuppressWarnings("unchecked")
   @NonNull
-  default <CLASS> CLASS load(@NonNull InputStream is, @NonNull URI documentUri) throws IOException {
-    return (CLASS) loadAsNodeItem(is, documentUri).getValue();
-  }
+  <CLASS> CLASS load(@NonNull InputStream is, @NonNull URI documentUri) throws IOException;
 
   /**
    * Load data from the provided resource into a bound object.
@@ -251,11 +239,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *           if an error occurred while reading the resource
    * @see #detectFormat(InputSource)
    */
-  @SuppressWarnings("unchecked")
   @NonNull
-  default <CLASS> CLASS load(@NonNull InputSource source) throws IOException {
-    return (CLASS) loadAsNodeItem(source).getValue();
-  }
+  <CLASS> CLASS load(@NonNull InputSource source) throws IOException;
 
   /**
    * Load data from the specified resource into a bound object with the type of the specified Java

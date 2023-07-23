@@ -137,7 +137,8 @@ class CommonmarkConformanceTest {
     URL url = MetaschemaLoader.class.getResource(SCHEMA_CLASSPATH);
     // System.out.println(url.toString());
     SchemaFactory schemafactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-    try (InputStream is = ObjectUtils.requireNonNull(MetaschemaLoader.class.getResourceAsStream(SCHEMA_CLASSPATH))) {
+    try (InputStream is
+        = ObjectUtils.requireNonNull(CommonmarkConformanceTest.class.getResourceAsStream(SCHEMA_CLASSPATH))) {
       StreamSource source = new StreamSource(is, url.toURI().toString());
 
       schemafactory.setResourceResolver(new Resolver());

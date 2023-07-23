@@ -56,16 +56,16 @@ class FieldInstanceNodeItemImpl
       @NonNull IAssemblyNodeItem parent,
       int position,
       @Nullable Object value,
-      @NonNull INodeItemFactory factory) {
-    super(instance, parent, position, factory);
+      @NonNull INodeItemGenerator generator) {
+    super(instance, parent, position, generator);
     this.value = value;
   }
 
   @Override
   protected @NonNull Supplier<Flags<IFlagNodeItem>>
-      newModelSupplier(@NonNull INodeItemFactory factory) {
+      newModelSupplier(@NonNull INodeItemGenerator generator) {
     return () -> {
-      Map<String, IFlagNodeItem> flags = factory.generateFlags(this);
+      Map<String, IFlagNodeItem> flags = generator.generateFlags(this);
       return new Flags<>(flags);
     };
   }

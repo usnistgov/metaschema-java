@@ -56,6 +56,9 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -68,6 +71,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 final class ConstraintFactory {
+  private static final Logger LOGGER = LogManager.getLogger(ConstraintFactory.class);
+
   private ConstraintFactory() {
     // disable
   }
@@ -78,7 +83,25 @@ final class ConstraintFactory {
 
   @NonNull
   static MetapathExpression toMetapath(@NonNull String metapath) {
-    return metapath.isBlank() ? IConstraint.DEFAULT_TARGET : MetapathExpression.compile(metapath);
+    String path = metapath;
+    if (path.startsWith("/")) {
+      String newPath = "." + path;
+
+      if (LOGGER.isInfoEnabled()) {
+        StringBuilder builder = new StringBuilder(48)
+            .append("The path '")
+            .append(path)
+            .append('\'');
+
+        builder.append(" is not properly contextualized using '.'. Using '")
+            .append(newPath)
+            .append("' instead.");
+        LOGGER.atInfo().log(builder.toString());
+      }
+      path = newPath;
+    }
+
+    return path.isBlank() ? IConstraint.DEFAULT_TARGET : MetapathExpression.compile(path);
   }
 
   @NonNull

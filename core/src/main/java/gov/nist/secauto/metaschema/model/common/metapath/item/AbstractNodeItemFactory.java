@@ -33,39 +33,19 @@ import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IModelContainer;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import java.net.URI;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public final class DefaultNodeItemFactory implements INodeItemFactory {
-  @NonNull
-  static final INodeItemFactory SINGLETON = new DefaultNodeItemFactory();
+public abstract class AbstractNodeItemFactory implements INodeItemFactory, INodeItemGenerator {
 
-  /**
-   * Get the singleton instance of this node factory.
-   *
-   * @return the node factory instance
-   */
-  @NonNull
-  public static INodeItemFactory instance() {
-    return SINGLETON;
-  }
-
-  private DefaultNodeItemFactory() {
-    // prevent construction
+  public AbstractNodeItemFactory() {
+    // TODO Auto-generated constructor stub
   }
 
   @Override
@@ -86,8 +66,8 @@ public final class DefaultNodeItemFactory implements INodeItemFactory {
   @Override
   public IFieldNodeItem newFieldNodeItem(
       @NonNull IFieldDefinition definition,
-      @Nullable Object value,
-      @Nullable URI baseUri) {
+      @Nullable URI baseUri,
+      @Nullable Object value) {
     return new FieldDefinitionNodeItemImpl(definition, value, baseUri, this);
   }
 
@@ -103,8 +83,8 @@ public final class DefaultNodeItemFactory implements INodeItemFactory {
   @Override
   public IAssemblyNodeItem newAssemblyNodeItem(
       @NonNull IAssemblyDefinition definition,
-      @Nullable Object value,
-      @Nullable URI baseUri) {
+      @Nullable URI baseUri,
+      @Nullable Object value) {
     return new AssemblyDefinitionNodeItemImpl(definition, value, baseUri, this);
   }
 
@@ -149,62 +129,8 @@ public final class DefaultNodeItemFactory implements INodeItemFactory {
     return retval;
   }
 
-  @Override
-  public IDocumentNodeItem newDocumentNodeItem(@NonNull IRootAssemblyDefinition definition, @NonNull Object value,
-      @NonNull URI documentUri) {
-    return new DocumentNodeItemImpl(definition, value, documentUri, this);
-  }
-
-  @Override
-  public IMetaschemaNodeItem newMetaschemaNodeItem(@NonNull IMetaschema metaschema) {
-    return new MetaschemaNodeItemImpl(metaschema, this);
-  }
-
-  @Override
-  public Map<String, IFlagNodeItem> generateFlags(@NonNull IModelNodeItem parent) {
-    Map<String, IFlagNodeItem> retval = new LinkedHashMap<>(); // NOPMD - intentional
-
-    Object parentValue = parent.getValue();
-    for (IFlagInstance instance : parent.getDefinition().getFlagInstances()) {
-      assert instance != null;
-      Object instanceValue = parentValue == null ? null : instance.getValue(parentValue);
-      IFlagNodeItem item = newFlagNodeItem(instance, parent, instanceValue);
-      retval.put(instance.getEffectiveName(), item);
-    }
-    return retval.isEmpty() ? CollectionUtil.emptyMap() : CollectionUtil.unmodifiableMap(retval);
-  }
-
-  @Override
-  public Map<String, List<IModelNodeItem>> generateModelItems(
-      @NonNull IAssemblyNodeItem parent) {
-    Map<String, List<IModelNodeItem>> retval // NOPMD - intentional
-        = new LinkedHashMap<>();
-
-    Object parentValue = parent.getValue();
-    for (INamedModelInstance instance : CollectionUtil.toIterable(getNamedModelInstances(parent.getDefinition()))) {
-      assert instance != null;
-
-      Object instanceValue = parentValue == null ? null : instance.getValue(parentValue);
-
-      List<IModelNodeItem> items;
-      if (instanceValue != null) {
-        Stream<? extends Object> itemValues = instance.getItemValues(instanceValue).stream();
-        AtomicInteger index = new AtomicInteger(); // NOPMD - intentional
-
-        items = itemValues.map(itemValue -> {
-          assert itemValue != null;
-          return generateModelItem(instance, parent, index.incrementAndGet(), itemValue);
-        }).collect(Collectors.toUnmodifiableList());
-      } else {
-        items = CollectionUtil.singletonList(generateModelItem(instance, parent, 1, null));
-      }
-      retval.put(instance.getEffectiveName(), items);
-    }
-    return retval.isEmpty() ? CollectionUtil.emptyMap() : CollectionUtil.unmodifiableMap(retval);
-  }
-
   @NonNull
-  private IModelNodeItem generateModelItem(
+  protected IModelNodeItem newModelItem(
       @NonNull INamedModelInstance instance,
       @NonNull IAssemblyNodeItem parent,
       int index,
@@ -222,7 +148,7 @@ public final class DefaultNodeItemFactory implements INodeItemFactory {
 
   @SuppressWarnings("null")
   @NonNull
-  private Stream<INamedModelInstance> getNamedModelInstances(@NonNull IModelContainer container) {
+  protected Stream<INamedModelInstance> getNamedModelInstances(@NonNull IModelContainer container) {
     return container.getModelInstances().stream()
         .flatMap(instance -> {
           Stream<INamedModelInstance> retval;

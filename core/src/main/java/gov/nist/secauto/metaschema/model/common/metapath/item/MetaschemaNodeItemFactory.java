@@ -26,54 +26,62 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-/**
- * A {@link INodeItem} supported by a {@link IAssemblyInstance}, that may have an associated value.
- */
-class AssemblyInstanceNodeItemImpl
-    extends
-    AbstractAssemblyInstanceNodeItem<
-        IFlagNodeItem,
-        IModelNodeItem,
-        IAssemblyNodeItem,
-        AbstractModelNodeContext.Model<IFlagNodeItem, IModelNodeItem>> {
-  private final Object value;
+public final class MetaschemaNodeItemFactory
+    extends AbstractNodeItemFactory {
+  @NonNull
+  static final MetaschemaNodeItemFactory SINGLETON = new MetaschemaNodeItemFactory();
 
-  public AssemblyInstanceNodeItemImpl(
-      @NonNull IAssemblyInstance instance,
-      @NonNull IAssemblyNodeItem parent,
-      int position,
-      @Nullable Object value,
-      @NonNull INodeItemGenerator generator) {
-    super(instance, parent, position, generator);
-    this.value = value;
+  /**
+   * Get the singleton instance of this node factory.
+   *
+   * @return the node factory instance
+   */
+  @NonNull
+  public static MetaschemaNodeItemFactory instance() {
+    return SINGLETON;
+  }
+
+  private MetaschemaNodeItemFactory() {
+    // prevent construction
   }
 
   @Override
-  protected @NonNull Supplier<Model<IFlagNodeItem, IModelNodeItem>>
-      newModelSupplier(@NonNull INodeItemGenerator generator) {
-    return () -> {
-      Map<String, IFlagNodeItem> flags = generator.generateFlags(this);
-      Map<String, List<IModelNodeItem>> modelItems = generator.generateModelItems(this);
-      return new AbstractModelNodeContext.Model<>(flags, modelItems);
-    };
+  public INodeItemFactory getNodeItemFactory() {
+    return MetaschemaNodeItemFactory.this;
   }
 
   @Override
-  public IAssemblyNodeItem getParentContentNodeItem() {
-    return getParentNodeItem();
+  public Map<String, IFlagNodeItem> generateFlags(IModelNodeItem parent) {
+    Map<String, IFlagNodeItem> retval = new LinkedHashMap<>(); // NOPMD - intentional
+
+    for (IFlagInstance instance : parent.getDefinition().getFlagInstances()) {
+      assert instance != null;
+      IFlagNodeItem item = newFlagNodeItem(instance, parent, null);
+      retval.put(instance.getEffectiveName(), item);
+    }
+    return retval.isEmpty() ? CollectionUtil.emptyMap() : CollectionUtil.unmodifiableMap(retval);
   }
 
   @Override
-  public Object getValue() {
-    return value;
+  public Map<String, List<IModelNodeItem>> generateModelItems(IAssemblyNodeItem parent) {
+    Map<String, List<IModelNodeItem>> retval = new LinkedHashMap<>(); // NOPMD - intentional
+
+    for (INamedModelInstance instance : CollectionUtil.toIterable(getNamedModelInstances(parent.getDefinition()))) {
+      assert instance != null;
+      IModelNodeItem item = newModelItem(instance, parent, 1, null);
+      retval.put(instance.getEffectiveName(), Collections.singletonList(item));
+    }
+    return retval.isEmpty() ? CollectionUtil.emptyMap() : CollectionUtil.unmodifiableMap(retval);
   }
 }

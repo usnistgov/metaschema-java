@@ -53,8 +53,8 @@ abstract class AbstractFieldInstanceNodeItem<F extends IFlagNodeItem, P extends 
       @NonNull IFieldInstance instance,
       @NonNull P parent,
       int position,
-      @NonNull INodeItemFactory factory) {
-    super(factory);
+      @NonNull INodeItemGenerator generator) {
+    super(generator);
     this.instance = instance;
     this.parent = parent;
     if (position < 1) {

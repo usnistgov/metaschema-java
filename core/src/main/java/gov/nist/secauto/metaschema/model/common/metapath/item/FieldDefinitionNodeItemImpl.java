@@ -58,8 +58,8 @@ class FieldDefinitionNodeItemImpl
       @NonNull IFieldDefinition definition,
       @Nullable Object value,
       @Nullable URI baseUri,
-      @NonNull INodeItemFactory factory) {
-    super(factory);
+      @NonNull INodeItemGenerator generator) {
+    super(generator);
     this.definition = definition;
     this.value = value;
     this.baseUri = baseUri;
@@ -67,9 +67,9 @@ class FieldDefinitionNodeItemImpl
 
   @Override
   protected @NonNull Supplier<Flags<IFlagNodeItem>>
-      newModelSupplier(@NonNull INodeItemFactory factory) {
+      newModelSupplier(@NonNull INodeItemGenerator generator) {
     return () -> {
-      Map<String, IFlagNodeItem> flags = factory.generateFlags(this);
+      Map<String, IFlagNodeItem> flags = generator.generateFlags(this);
       return new Flags<>(flags);
     };
   }

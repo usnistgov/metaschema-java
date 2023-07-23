@@ -44,7 +44,7 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.model.common.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFactory;
+import gov.nist.secauto.metaschema.model.common.metapath.item.DataNodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -246,7 +246,7 @@ public class DefaultBindingContext implements IBindingContext {
     if (classBinding == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", boundObject.getClass().getName()));
     }
-    return DefaultNodeItemFactory.instance().newNodeItem(classBinding, boundObject, baseUri, rootNode);
+    return DataNodeItemFactory.instance().newNodeItem(classBinding, boundObject, baseUri);
   }
 
 }

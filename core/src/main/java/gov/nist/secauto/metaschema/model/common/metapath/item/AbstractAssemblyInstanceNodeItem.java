@@ -52,15 +52,15 @@ public abstract class AbstractAssemblyInstanceNodeItem<F extends IFlagNodeItem, 
    *          the parent assembly
    * @param position
    *          the position relative to this item's siblings
-   * @param factory
+   * @param generator
    *          the factory to use to instantiate new node items
    */
   protected AbstractAssemblyInstanceNodeItem(
       @NonNull IAssemblyInstance instance,
       @NonNull P parent,
       int position,
-      @NonNull INodeItemFactory factory) {
-    super(factory);
+      @NonNull INodeItemGenerator generator) {
+    super(generator);
     this.instance = instance;
     this.position = position;
     this.parent = parent;

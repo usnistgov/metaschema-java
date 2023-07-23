@@ -55,8 +55,8 @@ class AssemblyDefinitionNodeItemImpl
       @NonNull IAssemblyDefinition definition,
       @Nullable Object value,
       @Nullable URI baseUri,
-      @NonNull INodeItemFactory factory) {
-    super(factory);
+      @NonNull INodeItemGenerator generator) {
+    super(generator);
     this.definition = definition;
     this.value = value;
     this.baseUri = baseUri;
@@ -64,11 +64,11 @@ class AssemblyDefinitionNodeItemImpl
 
   @Override
   protected Supplier<Model<IFlagNodeItem, IModelNodeItem>>
-      newModelSupplier(@NonNull INodeItemFactory factory) {
+      newModelSupplier(@NonNull INodeItemGenerator generator) {
     return () -> {
-      Map<String, IFlagNodeItem> flags = factory.generateFlags(this);
+      Map<String, IFlagNodeItem> flags = generator.generateFlags(this);
       Map<String, List<IModelNodeItem>> modelItems
-          = factory.generateModelItems(this);
+          = generator.generateModelItems(this);
       return new AbstractModelNodeContext.Model<>(flags, modelItems);
     };
   }

@@ -31,6 +31,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -119,6 +121,18 @@ public interface IDocumentNodeItem extends INodeItem {
   // default Collection<? extends List<? extends IModelNodeItem>> getModelItems() {
   // return Collections.singletonList(Collections.singletonList(getRootAssemblyNodeItem()));
   // }
+
+  default List<? extends IRootAssemblyNodeItem> getRootNodeItemByName(@NonNull String name) {
+    List<? extends IModelNodeItem> result = getModelItemsByName(name);
+    return result.stream().flatMap(item -> {
+      IRootAssemblyNodeItem retval = null;
+      if (item instanceof IRootAssemblyNodeItem) {
+        retval = (IRootAssemblyNodeItem) item;
+      }
+
+      return retval == null ? null : Stream.of(retval);
+    }).collect(Collectors.toUnmodifiableList());
+  }
 
   @Override
   default String format(@NonNull IPathFormatter formatter) {

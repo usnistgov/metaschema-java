@@ -41,11 +41,11 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
   /**
    * Construct a new assembly node item.
    *
-   * @param factory
+   * @param generator
    *          the factory to use to instantiate new node items
    */
-  protected AbstractModelNodeContext(@NonNull INodeItemFactory factory) {
-    super(factory);
+  protected AbstractModelNodeContext(@NonNull INodeItemGenerator generator) {
+    super(generator);
   }
 
   @Override

@@ -165,7 +165,7 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
   @NonNull
   default CLASS deserialize(@NonNull Reader reader, @NonNull URI documentUri) throws IOException {
     INodeItem nodeItem = deserializeToNodeItem(reader, documentUri);
-    return (CLASS) ObjectUtils.requireNonNull(nodeItem.getValue());
+    return INodeItem.toValue(nodeItem);
   }
 
   /**

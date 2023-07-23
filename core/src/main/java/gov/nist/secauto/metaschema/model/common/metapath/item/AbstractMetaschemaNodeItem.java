@@ -41,8 +41,10 @@ public abstract class AbstractMetaschemaNodeItem
   @NonNull
   private final IMetaschema metaschema;
 
-  public AbstractMetaschemaNodeItem(@NonNull IMetaschema metaschema, @NonNull INodeItemFactory factory) {
-    super(factory);
+  public AbstractMetaschemaNodeItem(
+      @NonNull IMetaschema metaschema,
+      @NonNull INodeItemGenerator generator) {
+    super(generator);
     this.metaschema = metaschema;
   }
 

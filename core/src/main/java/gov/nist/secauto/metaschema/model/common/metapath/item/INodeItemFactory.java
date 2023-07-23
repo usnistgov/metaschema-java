@@ -37,46 +37,71 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
 
 import java.net.URI;
-import java.util.List;
-import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface INodeItemFactory {
-  /**
-   * Get the singleton instance of the default node factory.
-   *
-   * @return the node factory instance
-   */
+
   @NonNull
-  static INodeItemFactory instance() {
-    return DefaultNodeItemFactory.instance();
+  static IDocumentNodeItem newDocumentNodeItem(
+      @NonNull IRootAssemblyDefinition definition,
+      @NonNull URI documentUri,
+      @NonNull Object value) {
+    return new DocumentNodeItemImpl(definition, value, documentUri, DataNodeItemFactory.instance());
   }
 
   @NonNull
-  default INodeItem newNodeItem(@NonNull IDefinition definition, @NonNull Object value, @NonNull URI baseUri,
-      boolean rootNode) {
+  static IMetaschemaNodeItem newMetaschemaNodeItem(@NonNull IMetaschema metaschema) {
+    return new MetaschemaNodeItemImpl(metaschema, MetaschemaNodeItemFactory.instance());
+  }
+
+  @NonNull
+  default INodeItem newNodeItem(
+      @NonNull IDefinition definition,
+      @NonNull Object value,
+      @NonNull URI baseUri) {
     INodeItem retval;
     if (definition instanceof IAssemblyDefinition) {
-      if (rootNode && definition instanceof IRootAssemblyDefinition) {
-        retval = newDocumentNodeItem((IRootAssemblyDefinition) definition, value, baseUri);
+      if (definition instanceof IRootAssemblyDefinition) {
+        retval = newDocumentNodeItem((IRootAssemblyDefinition) definition, baseUri, value);
       } else {
-        retval = newAssemblyNodeItem((IAssemblyDefinition) definition, value, baseUri);
+        retval = newAssemblyNodeItem((IAssemblyDefinition) definition, baseUri, value);
       }
     } else if (definition instanceof IFieldDefinition) {
-      retval = newFieldNodeItem((IFieldDefinition) definition, value, baseUri);
+      retval = newFieldNodeItem((IFieldDefinition) definition, baseUri, value);
     } else {
       throw new UnsupportedOperationException("must be a bound assembly or field");
     }
     return retval;
   }
 
+  /**
+   * Create a new {@link IFlagNodeItem}, with no associated value, based on the provided flag
+   * definition.
+   *
+   * @param definition
+   *          the flag definition
+   * @param baseUri
+   *          the base URI of the definition
+   * @return the new flag node item
+   */
   @NonNull
   IFlagNodeItem newFlagNodeItem(
       @NonNull IFlagDefinition definition,
       @Nullable URI baseUri);
 
+  /**
+   * Create a new {@link IFlagNodeItem} based on the provided flag instance.
+   *
+   * @param instance
+   *          the flag instance
+   * @param parent
+   *          the node item containing the flag
+   * @param value
+   *          the value, which may be {@code null}
+   * @return the new flag node item
+   */
   @NonNull
   IFlagNodeItem newFlagNodeItem(
       @NonNull IFlagInstance instance,
@@ -86,8 +111,8 @@ public interface INodeItemFactory {
   @NonNull
   IFieldNodeItem newFieldNodeItem(
       @NonNull IFieldDefinition definition,
-      @Nullable Object value,
-      @Nullable URI baseUri);
+      @Nullable URI baseUri,
+      @Nullable Object value);
 
   @NonNull
   IFieldNodeItem newFieldNodeItem(
@@ -99,8 +124,8 @@ public interface INodeItemFactory {
   @NonNull
   IAssemblyNodeItem newAssemblyNodeItem(
       @NonNull IAssemblyDefinition definition,
-      @Nullable Object value,
-      @Nullable URI baseUri);
+      @Nullable URI baseUri,
+      @Nullable Object value);
 
   @NonNull
   IAssemblyNodeItem newAssemblyNodeItem(
@@ -108,35 +133,4 @@ public interface INodeItemFactory {
       @NonNull IAssemblyNodeItem parent,
       int position,
       @Nullable Object value);
-
-  @NonNull
-  IDocumentNodeItem newDocumentNodeItem(
-      @NonNull IRootAssemblyDefinition definition,
-      @NonNull Object value,
-      @NonNull URI documentUri);
-
-  @NonNull
-  IMetaschemaNodeItem newMetaschemaNodeItem(@NonNull IMetaschema metaschema);
-
-  /**
-   * Given the provided parent node item, generate a mapping of flag name to flag node item for each
-   * flag on the parent assembly.
-   *
-   * @param parent
-   *          the parent assembly containing flags
-   * @return a mapping of flag name to flag item
-   */
-  @NonNull
-  Map<String, IFlagNodeItem> generateFlags(@NonNull IModelNodeItem parent);
-
-  /**
-   * Given the provided parent node item, generate a mapping of model instance name to model node
-   * item(s) for each model instance on the parent assembly.
-   *
-   * @param parent
-   *          the parent assembly containing model instances
-   * @return a mapping of model instance name to model node item(s)
-   */
-  @NonNull
-  Map<String, List<IModelNodeItem>> generateModelItems(@NonNull IAssemblyNodeItem parent);
 }

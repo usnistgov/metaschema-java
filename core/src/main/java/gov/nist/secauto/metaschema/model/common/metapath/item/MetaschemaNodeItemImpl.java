@@ -43,13 +43,16 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 class MetaschemaNodeItemImpl
     extends AbstractMetaschemaNodeItem {
 
-  public MetaschemaNodeItemImpl(@NonNull IMetaschema metaschema, @NonNull INodeItemFactory factory) {
-    super(metaschema, factory);
+  public MetaschemaNodeItemImpl(
+      @NonNull IMetaschema metaschema,
+      @NonNull INodeItemGenerator generator) {
+    super(metaschema, generator);
   }
 
   @Override
   protected @NonNull Supplier<Model<IFlagNodeItem, IModelNodeItem>>
-      newModelSupplier(@NonNull INodeItemFactory factory) {
+      newModelSupplier(@NonNull INodeItemGenerator generator) {
+    INodeItemFactory factory = generator.getNodeItemFactory();
     return () -> {
       // build flags from Metaschema definitions
       Map<String, IFlagNodeItem> flags = ObjectUtils.notNull(
@@ -63,9 +66,9 @@ class MetaschemaNodeItemImpl
 
       // build model items from Metaschema definitions
       Stream<IFieldNodeItem> fieldStream = getMetaschema().getFieldDefinitions().stream()
-          .map(def -> factory.newFieldNodeItem(ObjectUtils.notNull(def), null, getBaseUri()));
+          .map(def -> factory.newFieldNodeItem(ObjectUtils.notNull(def), getBaseUri(), null));
       Stream<IAssemblyNodeItem> assemblyStream = getMetaschema().getAssemblyDefinitions().stream()
-          .map(def -> factory.newAssemblyNodeItem(ObjectUtils.notNull(def), null, getBaseUri()));
+          .map(def -> factory.newAssemblyNodeItem(ObjectUtils.notNull(def), getBaseUri(), null));
 
       Map<String, List<IModelNodeItem>> modelItems
           = ObjectUtils.notNull(Stream.concat(fieldStream, assemblyStream)

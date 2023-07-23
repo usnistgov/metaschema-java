@@ -35,9 +35,36 @@ import java.net.URI;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemVisitable {
+
+  /**
+   * Gets the value of the provided node item.
+   * <p>
+   * If the provided node item is a document, this method get the first child node item's value, since
+   * a document doesn't have a value.
+   *
+   * @param <CLASS>
+   *          the type of the bound object to return
+   * @param item
+   *          the node item to get the value of
+   * @return a bound object
+   * @throws NullPointerException
+   *           if the node item has no associated value
+   */
+  @SuppressWarnings("unchecked")
+  @NonNull
+  static <CLASS> CLASS toValue(@NonNull INodeItem item) {
+    INodeItem valuedItem;
+    if (item instanceof IDocumentNodeItem) {
+      // get first child item, since the document has no value
+      valuedItem = item.modelItems().findFirst().get();
+    } else {
+      valuedItem = item;
+    }
+    return ObjectUtils.requireNonNull((CLASS) valuedItem.getValue());
+  }
+
   /**
    * Retrieve the parent node item if it exists.
    *
@@ -92,10 +119,6 @@ public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemV
     return ObjectUtils.notNull(
         parent == null ? Stream.of(this) : Stream.concat(getParentNodeItem().getPathStream(), Stream.of(this)));
   }
-
-  @Override
-  @Nullable
-  Object getValue();
 
   @NonNull
   default Stream<? extends INodeItem> ancestor() {

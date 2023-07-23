@@ -188,6 +188,9 @@ public class MockItemFactory {
         allowing(retval).getName();
         will(returnValue(name));
 
+        allowing(retval).hasValue();
+        will(returnValue(true));
+
         allowing(retval).toAtomicItem();
         will(returnValue(value));
 
@@ -215,6 +218,9 @@ public class MockItemFactory {
       { // NOPMD - intentional
         allowing(retval).getName();
         will(returnValue(name));
+
+        allowing(retval).hasValue();
+        will(returnValue(true));
 
         allowing(retval).toAtomicItem();
         will(returnValue(value));

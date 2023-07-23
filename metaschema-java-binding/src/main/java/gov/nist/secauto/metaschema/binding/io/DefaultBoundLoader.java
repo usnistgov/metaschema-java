@@ -53,13 +53,16 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -253,6 +256,75 @@ public class DefaultBoundLoader implements IBoundLoader {
   }
 
   @Override
+  public <CLASS> CLASS load(@NonNull URL url) throws IOException, URISyntaxException {
+    return INodeItem.toValue(loadAsNodeItem(url));
+  }
+
+  @Override
+  @NonNull
+  public <CLASS> CLASS load(@NonNull Path path) throws IOException {
+    return INodeItem.toValue(loadAsNodeItem(path));
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  @NonNull
+  public <CLASS> CLASS load(@NonNull File file) throws IOException {
+    return INodeItem.toValue(loadAsNodeItem(file));
+  }
+
+  @Override
+  @NonNull
+  public <CLASS> CLASS load(@NonNull InputStream is, @NonNull URI documentUri) throws IOException {
+    return INodeItem.toValue(loadAsNodeItem(is, documentUri));
+  }
+
+  @Override
+  @NonNull
+  public <CLASS> CLASS load(@NonNull InputSource source) throws IOException {
+    return INodeItem.toValue(loadAsNodeItem(source));
+  }
+
+  @Override
+  public <CLASS> CLASS load(Class<CLASS> clazz, InputSource source) throws IOException {
+    URI uri = ObjectUtils.notNull(URI.create(source.getSystemId()));
+
+    CLASS retval;
+    if (source.getCharacterStream() != null) {
+      throw new UnsupportedOperationException("Character streams are not supported");
+    } else if (source.getByteStream() != null) {
+      // attempt to use a provided byte stream stream
+      try (BufferedInputStream bis = new BufferedInputStream(source.getByteStream(), LOOK_AHEAD_BYTES)) {
+        retval = loadInternal(clazz, bis, uri);
+      }
+    } else {
+      // fall back to a URL-based connection
+      URL url = uri.toURL();
+      try (InputStream is = url.openStream()) {
+        try (BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES)) {
+          retval = loadInternal(clazz, bis, uri);
+        }
+      }
+    }
+    return retval;
+  }
+
+  @SuppressWarnings("unchecked")
+  @NonNull
+  protected <CLASS> CLASS loadInternal(@NonNull Class<CLASS> clazz, @NonNull BufferedInputStream bis,
+      @NonNull URI documentUri) throws IOException {
+    // we cannot close this stream, since it will cause the underlying stream to be closed
+    bis.mark(LOOK_AHEAD_BYTES);
+
+    Format format = detectFormatInternal(bis);
+    bis.reset();
+
+    IDeserializer<CLASS> deserializer = getDeserializer(clazz, format, getConfiguration());
+    INodeItem nodeItem = deserializer.deserializeToNodeItem(bis, documentUri);
+    return INodeItem.toValue(nodeItem);
+  }
+
+  @Override
   public IDocumentNodeItem loadAsNodeItem(InputSource source) throws IOException {
     URI uri = ObjectUtils.notNull(URI.create(source.getSystemId()));
 
@@ -441,45 +513,6 @@ public class DefaultBoundLoader implements IBoundLoader {
 
   protected Class<?> getBoundClassForJsonName(@NonNull String rootName) {
     return getBindingContext().getBoundClassForJsonName(rootName);
-  }
-
-  @Override
-  public <CLASS> CLASS load(Class<CLASS> clazz, InputSource source) throws IOException {
-    URI uri = ObjectUtils.notNull(URI.create(source.getSystemId()));
-
-    CLASS retval;
-    if (source.getCharacterStream() != null) {
-      throw new UnsupportedOperationException("Character streams are not supported");
-    } else if (source.getByteStream() != null) {
-      // attempt to use a provided byte stream stream
-      try (BufferedInputStream bis = new BufferedInputStream(source.getByteStream(), LOOK_AHEAD_BYTES)) {
-        retval = loadInternal(clazz, bis, uri);
-      }
-    } else {
-      // fall back to a URL-based connection
-      URL url = uri.toURL();
-      try (InputStream is = url.openStream()) {
-        try (BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES)) {
-          retval = loadInternal(clazz, bis, uri);
-        }
-      }
-    }
-    return retval;
-  }
-
-  @SuppressWarnings("unchecked")
-  @NonNull
-  protected <CLASS> CLASS loadInternal(@NonNull Class<CLASS> clazz, @NonNull BufferedInputStream bis,
-      @NonNull URI documentUri) throws IOException {
-    // we cannot close this stream, since it will cause the underlying stream to be closed
-    bis.mark(LOOK_AHEAD_BYTES);
-
-    Format format = detectFormatInternal(bis);
-    bis.reset();
-
-    IDeserializer<CLASS> deserializer = getDeserializer(clazz, format, getConfiguration());
-    INodeItem nodeItem = deserializer.deserializeToNodeItem(bis, documentUri);
-    return (CLASS) ObjectUtils.requireNonNull(nodeItem.getValue());
   }
 
   @NonNull

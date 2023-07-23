@@ -26,29 +26,34 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.IFlagContainer;
+import java.util.List;
+import java.util.Map;
 
-public interface IModelNodeItem extends IDefinitionNodeItem {
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+interface INodeItemGenerator {
+
+  INodeItemFactory getNodeItemFactory();
 
   /**
-   * Retrieve the relative position of the associated instance in a collection of instances. A
-   * singleton instance will have a position value of {@code 1}.
+   * Given the provided parent node item, generate a mapping of flag name to flag node item for each
+   * flag on the parent assembly.
    *
-   * @return a positive integer value designating this instance's position within a collection
+   * @param parent
+   *          the parent assembly containing flags
+   * @return a mapping of flag name to flag item
    */
-  int getPosition();
+  @NonNull
+  Map<String, IFlagNodeItem> generateFlags(@NonNull IModelNodeItem parent);
 
   /**
-   * {@inheritDoc}
-   * <p>
-   * The parent can be an assembly or a document (in the case of a root assembly.
+   * Given the provided parent node item, generate a mapping of model instance name to model node
+   * item(s) for each model instance on the parent assembly.
+   *
+   * @param parent
+   *          the parent assembly containing model instances
+   * @return a mapping of model instance name to model node item(s)
    */
-  @Override
-  INodeItem getParentNodeItem();
-
-  @Override
-  IAssemblyNodeItem getParentContentNodeItem();
-
-  @Override
-  IFlagContainer getDefinition();
+  @NonNull
+  Map<String, List<IModelNodeItem>> generateModelItems(@NonNull IAssemblyNodeItem parent);
 }

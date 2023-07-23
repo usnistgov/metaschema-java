@@ -46,4 +46,8 @@ public interface IItem {
    */
   @Nullable
   Object getValue();
+
+  default boolean hasValue() {
+    return getValue() != null;
+  }
 }

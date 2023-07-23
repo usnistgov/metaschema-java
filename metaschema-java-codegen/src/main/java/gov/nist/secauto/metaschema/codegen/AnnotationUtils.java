@@ -64,7 +64,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
-import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFactory;
+import gov.nist.secauto.metaschema.model.common.metapath.item.DataNodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -352,7 +352,7 @@ final class AnnotationUtils {
       Integer maxOccurs = constraint.getMaxOccurs();
 
       IAssemblyNodeItem definitionNodeItem
-          = DefaultNodeItemFactory.instance().newAssemblyNodeItem(definition, null, null);
+          = DataNodeItemFactory.instance().newAssemblyNodeItem(definition, null, null);
 
       ISequence<? extends IDefinitionNodeItem> instanceSet
           = constraint.matchTargets(definitionNodeItem, dynamicContext);

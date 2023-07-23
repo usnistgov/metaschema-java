@@ -147,7 +147,7 @@ public interface IConstraint {
   /**
    * Based on the provided {@code contextNodeItem}, find all nodes matching the target expression.
    *
-   * @param contextNodeItem
+   * @param item
    *          the node item to evaluate the target expression against
    * @param dynamicContext
    *          the Metapath evaluation context to use
@@ -155,9 +155,9 @@ public interface IConstraint {
    * @see #getTarget()
    */
   @NonNull
-  default ISequence<? extends IDefinitionNodeItem> matchTargets(@NonNull IDefinitionNodeItem contextNodeItem,
+  default ISequence<? extends IDefinitionNodeItem> matchTargets(@NonNull IDefinitionNodeItem item,
       @NonNull DynamicContext dynamicContext) {
-    return getTarget().evaluate(contextNodeItem, dynamicContext);
+    return item.hasValue() ? getTarget().evaluate(item, dynamicContext) : ISequence.empty();
   }
 
   /**

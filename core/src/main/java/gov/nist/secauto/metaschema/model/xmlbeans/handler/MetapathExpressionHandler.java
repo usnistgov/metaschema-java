@@ -30,6 +30,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.xmlbeans.SimpleValue;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlCursor.XmlBookmark;
@@ -37,6 +39,8 @@ import org.apache.xmlbeans.XmlLineNumber;
 import org.apache.xmlbeans.impl.values.XmlValueNotSupportedException;
 
 public final class MetapathExpressionHandler {
+  private static final Logger LOGGER = LogManager.getLogger(MetapathExpressionHandler.class);
+
   private MetapathExpressionHandler() {
     // disable
   }
@@ -50,6 +54,36 @@ public final class MetapathExpressionHandler {
    */
   public static MetapathExpression decodeMetaschemaPathType(SimpleValue value) {
     String path = ObjectUtils.notNull(value.getStringValue());
+
+    if (path.startsWith("/")) {
+      String newPath = "." + path;
+
+      if (LOGGER.isInfoEnabled()) {
+        StringBuilder builder = new StringBuilder(48)
+            .append("The path '")
+            .append(path)
+            .append('\'');
+
+        try (XmlCursor cursor = value.newCursor()) {
+          cursor.toParent();
+          XmlBookmark bookmark = cursor.getBookmark(XmlLineNumber.class);
+          if (bookmark != null) {
+            XmlLineNumber lineNumber = (XmlLineNumber) bookmark;
+            builder.append(" at location ")
+                .append(lineNumber.getLine())
+                .append(':')
+                .append(lineNumber.getColumn());
+          }
+        }
+
+        builder.append(" is not properly contextualized using '.'. Using '")
+            .append(newPath)
+            .append("' instead.");
+        LOGGER.atInfo().log(builder.toString());
+      }
+      path = newPath;
+    }
+
     try {
       return MetapathExpression.compile(path);
     } catch (MetapathException ex) {
