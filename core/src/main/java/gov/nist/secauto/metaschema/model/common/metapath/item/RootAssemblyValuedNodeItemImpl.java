@@ -36,10 +36,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 class RootAssemblyValuedNodeItemImpl
-    extends AbstractModelNodeContext<
-        IFlagNodeItem,
-        IModelNodeItem,
-        AbstractModelNodeContext.Model<IFlagNodeItem, IModelNodeItem>>
+    extends AbstractModelNodeContext<AbstractModelNodeContext.Model>
     implements IRootAssemblyNodeItem {
   @NonNull
   private final IRootAssemblyDefinition definition;
@@ -59,13 +56,13 @@ class RootAssemblyValuedNodeItemImpl
   }
 
   @Override
-  protected @NonNull Supplier<Model<IFlagNodeItem, IModelNodeItem>>
+  protected @NonNull Supplier<Model>
       newModelSupplier(@NonNull INodeItemGenerator generator) {
     return () -> {
       Map<String, IFlagNodeItem> flags = generator.generateFlags(this);
       Map<String, List<IModelNodeItem>> modelItems
           = generator.generateModelItems(this);
-      return new AbstractModelNodeContext.Model<>(flags, modelItems);
+      return new AbstractModelNodeContext.Model(flags, modelItems);
     };
   }
 

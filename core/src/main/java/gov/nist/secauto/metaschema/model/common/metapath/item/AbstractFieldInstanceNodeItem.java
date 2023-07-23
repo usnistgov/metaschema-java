@@ -39,9 +39,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * @param <P>
  *          the parent node item type
  */
-abstract class AbstractFieldInstanceNodeItem<F extends IFlagNodeItem, P extends IAssemblyNodeItem, L extends AbstractNodeContext.Flags<
-    F>>
-    extends AbstractNodeContext<F, L>
+abstract class AbstractFieldInstanceNodeItem<P extends IAssemblyNodeItem, L extends AbstractNodeContext.Flags>
+    extends AbstractNodeContext<L>
     implements IFieldNodeItem {
   @NonNull
   private final IFieldInstance instance;

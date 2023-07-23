@@ -34,9 +34,8 @@ import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extends IModelNodeItem, L extends AbstractModelNodeContext.Model<
-    F, M>>
-    extends AbstractNodeContext<F, L> {
+public abstract class AbstractModelNodeContext<L extends AbstractModelNodeContext.Model>
+    extends AbstractNodeContext<L> {
 
   /**
    * Construct a new assembly node item.
@@ -49,28 +48,23 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
   }
 
   @Override
-  public Collection<? extends List<? extends M>> getModelItems() {
+  public Collection<? extends List<? extends IModelNodeItem>> getModelItems() {
     return getModel().getModelItems();
   }
 
   @SuppressWarnings("null")
   @Override
-  public List<? extends M> getModelItemsByName(String name) {
+  public List<? extends IModelNodeItem> getModelItemsByName(String name) {
     return getModel().getModelItemsByName(
         name);
   }
 
   /**
    * Provides an abstract implementation of a lazy loaded model.
-   *
-   * @param <F>
-   *          the type of the child flag items
-   * @param <M>
-   *          the type of the child model items
    */
-  protected static class Model<F extends IFlagNodeItem, M extends IModelNodeItem>
-      extends Flags<F> {
-    private final Map<String, List<M>> modelItems;
+  protected static class Model
+      extends Flags {
+    private final Map<String, List<IModelNodeItem>> modelItems;
 
     /**
      * Creates a new collection of flags and model items.
@@ -81,8 +75,8 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
      *          a mapping of model item name to a list of model items
      */
     protected Model(
-        @NonNull Map<String, F> flags,
-        @NonNull Map<String, List<M>> modelItems) {
+        @NonNull Map<String, IFlagNodeItem> flags,
+        @NonNull Map<String, List<IModelNodeItem>> modelItems) {
       super(flags);
       this.modelItems = modelItems;
     }
@@ -95,8 +89,8 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
      * @return a lisy of matching model items or {@code null} if no match was found
      */
     @NonNull
-    public List<M> getModelItemsByName(@NonNull String name) {
-      List<M> result = modelItems.get(
+    public List<IModelNodeItem> getModelItemsByName(@NonNull String name) {
+      List<IModelNodeItem> result = modelItems.get(
           name);
       return result == null ? CollectionUtil.emptyList() : result;
     }
@@ -108,7 +102,7 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
      */
     @SuppressWarnings("null")
     @NonNull
-    public Collection<List<M>> getModelItems() {
+    public Collection<List<IModelNodeItem>> getModelItems() {
       return modelItems.values();
     }
 

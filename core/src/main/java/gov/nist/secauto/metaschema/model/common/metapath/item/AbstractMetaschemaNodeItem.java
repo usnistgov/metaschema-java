@@ -33,10 +33,7 @@ import java.net.URI;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractMetaschemaNodeItem
-    extends AbstractModelNodeContext<
-        IFlagNodeItem,
-        IModelNodeItem,
-        AbstractModelNodeContext.Model<IFlagNodeItem, IModelNodeItem>>
+    extends AbstractModelNodeContext<AbstractModelNodeContext.Model>
     implements IMetaschemaNodeItem {
   @NonNull
   private final IMetaschema metaschema;

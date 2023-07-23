@@ -41,9 +41,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * A {@link INodeItem} supported by a {@link IFieldDefinition}, that may have an associated value.
  */
 class FieldDefinitionNodeItemImpl
-    extends AbstractNodeContext<
-        IFlagNodeItem,
-        AbstractNodeContext.Flags<IFlagNodeItem>>
+    extends AbstractNodeContext<AbstractNodeContext.Flags>
     implements IFieldNodeItem {
   @NonNull
   private final IFieldDefinition definition;
@@ -66,11 +64,11 @@ class FieldDefinitionNodeItemImpl
   }
 
   @Override
-  protected @NonNull Supplier<Flags<IFlagNodeItem>>
+  protected @NonNull Supplier<Flags>
       newModelSupplier(@NonNull INodeItemGenerator generator) {
     return () -> {
       Map<String, IFlagNodeItem> flags = generator.generateFlags(this);
-      return new Flags<>(flags);
+      return new Flags(flags);
     };
   }
 

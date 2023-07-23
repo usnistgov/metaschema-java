@@ -31,9 +31,8 @@ import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractAssemblyInstanceNodeItem<F extends IFlagNodeItem, M extends IModelNodeItem, P extends INodeItem, L extends AbstractModelNodeContext.Model<
-    F, M>>
-    extends AbstractModelNodeContext<F, M, L>
+public abstract class AbstractAssemblyInstanceNodeItem<P extends INodeItem, L extends AbstractModelNodeContext.Model>
+    extends AbstractModelNodeContext<L>
     implements IAssemblyNodeItem {
 
   @NonNull

@@ -36,7 +36,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
-abstract class AbstractNodeContext<F extends IFlagNodeItem, L extends AbstractNodeContext.Flags<F>>
+abstract class AbstractNodeContext<L extends AbstractNodeContext.Flags>
     implements INodeContext {
 
   private final Lazy<L> model;
@@ -56,36 +56,33 @@ abstract class AbstractNodeContext<F extends IFlagNodeItem, L extends AbstractNo
   }
 
   @Override
-  public Collection<F> getFlags() {
+  public Collection<IFlagNodeItem> getFlags() {
     return getModel().getFlags();
   }
 
   @Override
-  public F getFlagByName(@NonNull String name) {
+  public IFlagNodeItem getFlagByName(@NonNull String name) {
     return getModel().getFlagByName(name);
   }
 
   /**
    * Provides an abstract implementation of a lazy loaded collection of flags.
-   *
-   * @param <F>
-   *          the type of the flag items
    */
-  protected static class Flags<F extends IFlagNodeItem> {
-    private final Map<String, F> flags;
+  protected static class Flags {
+    private final Map<String, IFlagNodeItem> flags;
 
-    protected Flags(@NonNull Map<String, F> flags) {
+    protected Flags(@NonNull Map<String, IFlagNodeItem> flags) {
       this.flags = flags;
     }
 
     @Nullable
-    public F getFlagByName(@NonNull String name) {
+    public IFlagNodeItem getFlagByName(@NonNull String name) {
       return flags.get(name);
     }
 
     @NonNull
     @SuppressWarnings("null")
-    public Collection<F> getFlags() {
+    public Collection<IFlagNodeItem> getFlags() {
       return flags.values();
     }
   }

@@ -50,7 +50,7 @@ class MetaschemaNodeItemImpl
   }
 
   @Override
-  protected @NonNull Supplier<Model<IFlagNodeItem, IModelNodeItem>>
+  protected @NonNull Supplier<Model>
       newModelSupplier(@NonNull INodeItemGenerator generator) {
     INodeItemFactory factory = generator.getNodeItemFactory();
     return () -> {
@@ -76,7 +76,7 @@ class MetaschemaNodeItemImpl
                   Collectors.collectingAndThen(
                       Collectors.groupingBy(IModelNodeItem::getName),
                       Collections::unmodifiableMap)));
-      return new Model<>(flags, modelItems);
+      return new Model(flags, modelItems);
     };
   }
 }

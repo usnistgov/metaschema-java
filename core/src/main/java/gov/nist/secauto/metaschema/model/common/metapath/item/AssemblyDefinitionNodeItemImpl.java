@@ -42,9 +42,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  */
 class AssemblyDefinitionNodeItemImpl
     extends AbstractModelNodeContext<
-        IFlagNodeItem,
-        IModelNodeItem,
-        AbstractModelNodeContext.Model<IFlagNodeItem, IModelNodeItem>>
+        AbstractModelNodeContext.Model>
     implements IAssemblyNodeItem {
   @NonNull
   private final IAssemblyDefinition definition;
@@ -63,13 +61,13 @@ class AssemblyDefinitionNodeItemImpl
   }
 
   @Override
-  protected Supplier<Model<IFlagNodeItem, IModelNodeItem>>
+  protected Supplier<Model>
       newModelSupplier(@NonNull INodeItemGenerator generator) {
     return () -> {
       Map<String, IFlagNodeItem> flags = generator.generateFlags(this);
       Map<String, List<IModelNodeItem>> modelItems
           = generator.generateModelItems(this);
-      return new AbstractModelNodeContext.Model<>(flags, modelItems);
+      return new AbstractModelNodeContext.Model(flags, modelItems);
     };
   }
 

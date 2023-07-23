@@ -40,9 +40,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  */
 class FieldInstanceNodeItemImpl
     extends AbstractFieldInstanceNodeItem<
-        IFlagNodeItem,
         IAssemblyNodeItem,
-        AbstractNodeContext.Flags<IFlagNodeItem>> {
+        AbstractNodeContext.Flags> {
 
   private final Object value;
 
@@ -62,11 +61,11 @@ class FieldInstanceNodeItemImpl
   }
 
   @Override
-  protected @NonNull Supplier<Flags<IFlagNodeItem>>
+  protected @NonNull Supplier<Flags>
       newModelSupplier(@NonNull INodeItemGenerator generator) {
     return () -> {
       Map<String, IFlagNodeItem> flags = generator.generateFlags(this);
-      return new Flags<>(flags);
+      return new Flags(flags);
     };
   }
 
