@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model.common.datatype.markup;
 import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.XmlMarkupParser;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IMarkupItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IMarkupItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLEventReader2;

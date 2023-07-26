@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBooleanItem;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;

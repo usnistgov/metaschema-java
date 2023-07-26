@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyAtomicItem;
 
 /**
  * This marker interface identifies a valued {@link IItem} type that has an associated
@@ -40,6 +40,5 @@ public interface IAtomicValuedItem extends IItem {
    * @return the atomic value or {@code null} if the item has no available value
    */
   // TODO: review all implementations and uses for correct behavior related to null
-  @Nullable
   IAnyAtomicItem toAtomicItem();
 }

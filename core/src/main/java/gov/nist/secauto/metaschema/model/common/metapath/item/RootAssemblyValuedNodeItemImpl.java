@@ -27,43 +27,32 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
-
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 class RootAssemblyValuedNodeItemImpl
-    extends AbstractModelNodeContext<AbstractModelNodeContext.Model>
-    implements IRootAssemblyNodeItem {
+    implements IRootAssemblyNodeItem, IFeatureModelContainerItem {
   @NonNull
   private final IRootAssemblyDefinition definition;
   @NonNull
   private final IDocumentNodeItem parent;
+
+  @NonNull
+  private final Lazy<ModelContainer> model;
+  @NonNull
   private final Object value;
 
   public RootAssemblyValuedNodeItemImpl(
       @NonNull IRootAssemblyDefinition definition,
       @NonNull IDocumentNodeItem parent,
-      @Nullable Object value,
+      @NonNull Object value,
       @NonNull INodeItemGenerator generator) {
-    super(generator);
     this.definition = definition;
     this.parent = parent;
+    this.model = ObjectUtils.notNull(Lazy.lazy(generator.newDataModelSupplier((IAssemblyNodeItem) this)));
     this.value = value;
-  }
-
-  @Override
-  protected @NonNull Supplier<Model>
-      newModelSupplier(@NonNull INodeItemGenerator generator) {
-    return () -> {
-      Map<String, IFlagNodeItem> flags = generator.generateFlags(this);
-      Map<String, List<IModelNodeItem>> modelItems
-          = generator.generateModelItems(this);
-      return new AbstractModelNodeContext.Model(flags, modelItems);
-    };
   }
 
   @Override
@@ -83,7 +72,14 @@ class RootAssemblyValuedNodeItemImpl
   }
 
   @Override
+  @NonNull
   public Object getValue() {
     return value;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public ModelContainer getModel() {
+    return model.get();
   }
 }

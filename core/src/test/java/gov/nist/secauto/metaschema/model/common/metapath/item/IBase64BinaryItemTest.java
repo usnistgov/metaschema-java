@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBase64BinaryItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.junit.jupiter.api.Assertions;

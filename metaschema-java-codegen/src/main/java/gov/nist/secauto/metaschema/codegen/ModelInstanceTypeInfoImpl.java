@@ -155,7 +155,7 @@ class ModelInstanceTypeInfoImpl
     } else if (modelInstance instanceof IAssemblyInstance) {
       javaFieldAnnoation = AnnotationSpec.builder(BoundAssembly.class);
     } else {
-      throw new UnsupportedOperationException(String.format("Model instance '%s' of type '%s' is not supported.",
+      throw new UnsupportedOperationException(String.format("ModelContainer instance '%s' of type '%s' is not supported.",
           modelInstance.getName(), modelInstance.getClass().getName()));
     }
 

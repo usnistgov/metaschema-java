@@ -33,13 +33,10 @@ import java.util.Collection;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-class CycledAssemblyInstanceNodeItemImpl implements ICycledAssemblyNodeItem {
-  @NonNull
-  private final IAssemblyInstance instance;
-  @NonNull
-  private final IAssemblyNodeItem parent;
+class CycledAssemblyInstanceNodeItemImpl
+    extends AbstractModelInstanceNodeItem<IAssemblyDefinition, IAssemblyInstance>
+    implements ICycledAssemblyNodeItem, IFeatureNoDataItem {
   @NonNull
   private final IAssemblyNodeItem cycledNodeItem;
 
@@ -57,30 +54,13 @@ class CycledAssemblyInstanceNodeItemImpl implements ICycledAssemblyNodeItem {
       @NonNull IAssemblyInstance instance,
       @NonNull IAssemblyNodeItem parent,
       @NonNull IAssemblyNodeItem cycledNodeItem) {
-    this.instance = instance;
-    this.parent = parent;
+    super(instance, parent);
     this.cycledNodeItem = cycledNodeItem;
   }
 
   @Override
   public IAssemblyNodeItem getCycledNodeItem() {
     return cycledNodeItem;
-  }
-
-  @Override
-  public int getPosition() {
-    return 1;
-  }
-
-  @Override
-  public IAssemblyNodeItem getParentNodeItem() {
-    return parent;
-  }
-
-  @Override
-  public @Nullable Object getValue() {
-    // there is no value
-    return null;
   }
 
   @Override
@@ -94,23 +74,18 @@ class CycledAssemblyInstanceNodeItemImpl implements ICycledAssemblyNodeItem {
   }
 
   @Override
-  public Collection<? extends List<? extends IModelNodeItem>> getModelItems() {
+  public Collection<? extends List<? extends IModelNodeItem<?, ?>>> getModelItems() {
     return getCycledNodeItem().getModelItems();
   }
 
   @Override
-  public List<? extends IModelNodeItem> getModelItemsByName(String name) {
+  public List<? extends IModelNodeItem<?, ?>> getModelItemsByName(String name) {
     return getCycledNodeItem().getModelItemsByName(name);
   }
 
   @Override
-  public IAssemblyDefinition getDefinition() {
-    return getInstance().getDefinition();
+  public int getPosition() {
+    // always a singleton as a non-valued item
+    return 1;
   }
-
-  @Override
-  public IAssemblyInstance getInstance() {
-    return instance;
-  }
-
 }

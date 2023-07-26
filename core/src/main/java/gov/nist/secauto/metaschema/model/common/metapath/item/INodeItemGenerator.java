@@ -26,34 +26,31 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import java.util.List;
-import java.util.Map;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFeatureFlagContainerItem.FlagContainer;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFeatureModelContainerItem.ModelContainer;
+
+import java.util.function.Supplier;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 interface INodeItemGenerator {
 
-  INodeItemFactory getNodeItemFactory();
-
-  /**
-   * Given the provided parent node item, generate a mapping of flag name to flag node item for each
-   * flag on the parent assembly.
-   *
-   * @param parent
-   *          the parent assembly containing flags
-   * @return a mapping of flag name to flag item
-   */
   @NonNull
-  Map<String, IFlagNodeItem> generateFlags(@NonNull IModelNodeItem parent);
+  Supplier<FlagContainer> newDataModelSupplier(@NonNull IFieldNodeItem item);
 
-  /**
-   * Given the provided parent node item, generate a mapping of model instance name to model node
-   * item(s) for each model instance on the parent assembly.
-   *
-   * @param parent
-   *          the parent assembly containing model instances
-   * @return a mapping of model instance name to model node item(s)
-   */
   @NonNull
-  Map<String, List<IModelNodeItem>> generateModelItems(@NonNull IAssemblyNodeItem parent);
+  Supplier<ModelContainer> newDataModelSupplier(@NonNull IAssemblyNodeItem item);
+
+  @NonNull
+  Supplier<ModelContainer> newDataModelSupplier(@NonNull IRootAssemblyNodeItem item);
+
+  @NonNull
+  Supplier<FlagContainer> newMetaschemaModelSupplier(@NonNull IFieldNodeItem item);
+
+  @NonNull
+  Supplier<ModelContainer> newMetaschemaModelSupplier(@NonNull IAssemblyNodeItem item);
+
+  @NonNull
+  Supplier<ModelContainer> newMetaschemaModelSupplier(@NonNull IMetaschemaNodeItem item);
+
 }

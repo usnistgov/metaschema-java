@@ -31,6 +31,8 @@ import static gov.nist.secauto.metaschema.model.common.metapath.TestUtils.intege
 import static gov.nist.secauto.metaschema.model.common.metapath.TestUtils.string;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.junit.jupiter.api.Assertions;

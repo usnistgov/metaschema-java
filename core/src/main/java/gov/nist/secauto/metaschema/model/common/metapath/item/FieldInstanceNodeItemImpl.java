@@ -26,47 +26,60 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import java.util.Map;
-import java.util.function.Supplier;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 /**
  * A {@link INodeItem} supported by a {@link IFieldInstance}, that may have an associated value.
  */
 class FieldInstanceNodeItemImpl
-    extends AbstractFieldInstanceNodeItem<
-        IAssemblyNodeItem,
-        AbstractNodeContext.Flags> {
+    extends AbstractModelInstanceNodeItem<
+        IFieldDefinition,
+        IFieldInstance>
+    implements IFieldNodeItem,
+    IFeatureNullableAtomicValuedItem,
+    IFeatureFlagContainerItem {
 
+  private final int position;
+
+  @NonNull
+  private final Lazy<FlagContainer> model;
+  @NonNull
   private final Object value;
 
   /**
    * Used to cache this object as an atomic item.
    */
-  private IAnyAtomicItem atomicItem;
+  @NonNull
+  private Lazy<IAnyAtomicItem> atomicItem;
 
   public FieldInstanceNodeItemImpl(
       @NonNull IFieldInstance instance,
       @NonNull IAssemblyNodeItem parent,
       int position,
-      @Nullable Object value,
+      @NonNull Object value,
       @NonNull INodeItemGenerator generator) {
-    super(instance, parent, position, generator);
+    super(instance, parent);
+    this.model = ObjectUtils.notNull(Lazy.lazy(generator.newDataModelSupplier(this)));
+    this.position = position;
     this.value = value;
+    this.atomicItem = ObjectUtils.notNull(Lazy.lazy(this::newAtomicItem));
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public FlagContainer getModel() {
+    return model.get();
   }
 
   @Override
-  protected @NonNull Supplier<Flags>
-      newModelSupplier(@NonNull INodeItemGenerator generator) {
-    return () -> {
-      Map<String, IFlagNodeItem> flags = generator.generateFlags(this);
-      return new Flags(flags);
-    };
+  public int getPosition() {
+    return position;
   }
 
   @Override
@@ -75,15 +88,13 @@ class FieldInstanceNodeItemImpl
   }
 
   @Override
+  public Object getAtomicValue() {
+    Object value = getValue();
+    return getDefinition().getFieldValue(value);
+  }
+
+  @Override
   public IAnyAtomicItem toAtomicItem() {
-    synchronized (this) {
-      Object value = this.value;
-      IAnyAtomicItem retval = this.atomicItem;
-      if (retval == null && value != null) {
-        this.atomicItem = retval = getInstance().getDefinition().getJavaTypeAdapter().newItem(
-            ObjectUtils.requireNonNull(getDefinition().getFieldValue(value)));
-      }
-      return retval;
-    }
+    return atomicItem.get();
   }
 }

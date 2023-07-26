@@ -78,7 +78,7 @@ public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemV
    * @return the parent content node item, or {@code null} if this node item has no known parent
    *         content node item
    */
-  IModelNodeItem getParentContentNodeItem();
+  IModelNodeItem<?, ?> getParentContentNodeItem();
 
   /**
    * Get the type of node item this is.

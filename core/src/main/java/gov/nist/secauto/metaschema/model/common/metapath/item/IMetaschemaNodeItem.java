@@ -26,11 +26,22 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
+
+import java.net.URI;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IMetaschemaNodeItem extends IDocumentNodeItem {
+
+  @NonNull
+  IMetaschema getMetaschema();
+
+  @Override
+  default URI getDocumentUri() {
+    return getMetaschema().getLocation();
+  }
 
   @Override
   default NodeItemType getNodeItemType() {
@@ -40,18 +51,6 @@ public interface IMetaschemaNodeItem extends IDocumentNodeItem {
   @Override
   default IMetaschemaNodeItem getNodeItem() {
     return this;
-  }
-
-  @Override
-  default INodeItem getParentNodeItem() {
-    // doesn't have a parent
-    return null;
-  }
-
-  @Override
-  default IModelNodeItem getParentContentNodeItem() {
-    // doesn't have a parent
-    return null;
   }
 
   @Override

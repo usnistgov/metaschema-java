@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDayTimeDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IYearMonthDurationItem;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 

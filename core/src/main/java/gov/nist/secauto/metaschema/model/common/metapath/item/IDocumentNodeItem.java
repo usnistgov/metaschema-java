@@ -29,8 +29,6 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
 import java.net.URI;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -50,7 +48,7 @@ public interface IDocumentNodeItem extends INodeItem {
   }
 
   @Override
-  default IModelNodeItem getParentContentNodeItem() {
+  default IModelNodeItem<?, ?> getParentContentNodeItem() {
     // there is no parent
     return null;
   }
@@ -74,56 +72,8 @@ public interface IDocumentNodeItem extends INodeItem {
     return getDocumentUri();
   }
 
-  /**
-   * Documents do not have flag items. This call should return an empty collection.
-   */
-  @SuppressWarnings("null")
-  @Override
-  default Collection<? extends IFlagNodeItem> getFlags() {
-    // a document does not have flags
-    return Collections.emptyList();
-  }
-
-  /**
-   * Documents do not have flag items. This call should return {@code null}.
-   */
-  @Override
-  default IFlagNodeItem getFlagByName(@NonNull String name) {
-    // a document does not have flags
-    return null;
-  }
-
-  /**
-   * Documents do not have flag items. This call should return an empty stream.
-   */
-  @SuppressWarnings("null")
-  @Override
-  default Stream<? extends IFlagNodeItem> flags() {
-    // a document does not have flags
-    return Stream.empty();
-  }
-
-  // @SuppressWarnings("null")
-  // @Override
-  // default Stream<? extends IModelNodeItem> modelItems() {
-  // return Stream.of(getRootAssemblyNodeItem());
-  // }
-  //
-  // @SuppressWarnings("null")
-  // @Override
-  // default List<? extends IModelNodeItem> getModelItemsByName(String name) {
-  // IRootAssemblyNodeItem root = getRootAssemblyNodeItem();
-  // return root.getName().equals(name) ? Collections.singletonList(root) : Collections.emptyList();
-  // }
-  //
-  // @SuppressWarnings("null")
-  // @Override
-  // default Collection<? extends List<? extends IModelNodeItem>> getModelItems() {
-  // return Collections.singletonList(Collections.singletonList(getRootAssemblyNodeItem()));
-  // }
-
   default List<? extends IRootAssemblyNodeItem> getRootNodeItemByName(@NonNull String name) {
-    List<? extends IModelNodeItem> result = getModelItemsByName(name);
+    List<? extends IModelNodeItem<?, ?>> result = getModelItemsByName(name);
     return result.stream().flatMap(item -> {
       IRootAssemblyNodeItem retval = null;
       if (item instanceof IRootAssemblyNodeItem) {

@@ -31,9 +31,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.INumericItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
@@ -90,9 +90,10 @@ public final class FnRound {
       return ISequence.empty(); // NOPMD - readability
     }
 
-    @NonNull IIntegerItem precision = ObjectUtils.notNull(
-        FunctionUtils.getFirstItem(FunctionUtils.asType(
-            ObjectUtils.requireNonNull(arguments.get(1))), true));
+    @NonNull IIntegerItem precision = FunctionUtils.asType(
+        FunctionUtils.requireFirstItem(
+            ObjectUtils.requireNonNull(arguments.get(1)),
+            true));
 
     INumericItem result = item.round(precision);
     return ISequence.of(result);

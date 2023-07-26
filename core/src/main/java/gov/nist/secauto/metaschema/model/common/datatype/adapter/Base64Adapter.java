@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBase64BinaryItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBase64BinaryItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.nio.ByteBuffer;

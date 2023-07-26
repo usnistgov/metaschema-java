@@ -28,8 +28,6 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 public interface IItem {
   /**
    * Get the item's "wrapped" value. This "wrapped" value may be:
@@ -44,9 +42,13 @@ public interface IItem {
    *
    * @return the value or {@code null} if the item has no available value
    */
-  @Nullable
   Object getValue();
 
+  /**
+   * Determine if the item has an associated value.
+   *
+   * @return {@code true} if the item has a non-{@code null} value or {@code false} otherwise
+   */
   default boolean hasValue() {
     return getValue() != null;
   }

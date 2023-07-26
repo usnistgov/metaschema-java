@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

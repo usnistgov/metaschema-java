@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.model.common.INamedInstance;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IDefinitionNodeItem extends INodeItem {
+public interface IDefinitionNodeItem<D extends IDefinition, I extends INamedInstance> extends INodeItem {
 
   @NonNull
   default String getName() {
@@ -45,12 +45,12 @@ public interface IDefinitionNodeItem extends INodeItem {
    * @return the definition
    */
   @NonNull
-  IDefinition getDefinition();
+  D getDefinition();
 
   /**
    * Retrieve the instance associated with this path segment.
    *
    * @return the instance of the segment, or {@code null} if it doesn't have one
    */
-  INamedInstance getInstance();
+  I getInstance();
 }

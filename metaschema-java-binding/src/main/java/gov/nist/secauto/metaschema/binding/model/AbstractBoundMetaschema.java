@@ -231,20 +231,20 @@ public abstract class AbstractBoundMetaschema
 
   @NonNull
   public Map<String, ? extends IFlagDefinition> getFlagDefinitionMap() {
-    // Flags are always inline
+    // FlagContainer are always inline
     return CollectionUtil.emptyMap();
   }
 
   @SuppressWarnings("null")
   @Override
   public Collection<? extends IFlagDefinition> getFlagDefinitions() {
-    // Flags are always inline
+    // FlagContainer are always inline
     return Collections.emptyList();
   }
 
   @Override
   public IFlagDefinition getFlagDefinitionByName(@NonNull String name) { // NOPMD - intentional
-    // Flags are always inline
+    // FlagContainer are always inline
     return null;
   }
 }

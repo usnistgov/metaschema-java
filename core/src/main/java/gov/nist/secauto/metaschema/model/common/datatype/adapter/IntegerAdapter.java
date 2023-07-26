@@ -26,11 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.INumericItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.math.BigInteger;

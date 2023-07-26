@@ -35,7 +35,7 @@ import java.net.URI;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IAssemblyNodeItem extends IModelNodeItem {
+public interface IAssemblyNodeItem extends IModelNodeItem<IAssemblyDefinition, IAssemblyInstance> {
   @Override
   default NodeItemType getNodeItemType() {
     return NodeItemType.ASSEMBLY;
@@ -45,18 +45,6 @@ public interface IAssemblyNodeItem extends IModelNodeItem {
   default IAssemblyNodeItem getNodeItem() {
     return this;
   }
-
-  @Override
-  default IAssemblyNodeItem getParentContentNodeItem() {
-    INodeItem parent = getParentNodeItem();
-    return parent instanceof IAssemblyNodeItem ? (IAssemblyNodeItem) parent : null;
-  }
-
-  @Override
-  IAssemblyDefinition getDefinition();
-
-  @Override
-  IAssemblyInstance getInstance();
 
   @Override
   @Nullable

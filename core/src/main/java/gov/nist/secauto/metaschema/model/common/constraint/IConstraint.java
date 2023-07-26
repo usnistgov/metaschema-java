@@ -140,7 +140,8 @@ public interface IConstraint {
    * @see #getTarget()
    */
   @NonNull
-  default ISequence<? extends IDefinitionNodeItem> matchTargets(@NonNull IDefinitionNodeItem contextNodeItem) {
+  default ISequence<? extends IDefinitionNodeItem<?, ?>> matchTargets(
+      @NonNull IDefinitionNodeItem<?, ?> contextNodeItem) {
     return getTarget().evaluate(contextNodeItem);
   }
 
@@ -155,7 +156,7 @@ public interface IConstraint {
    * @see #getTarget()
    */
   @NonNull
-  default ISequence<? extends IDefinitionNodeItem> matchTargets(@NonNull IDefinitionNodeItem item,
+  default ISequence<? extends IDefinitionNodeItem<?, ?>> matchTargets(@NonNull IDefinitionNodeItem item,
       @NonNull DynamicContext dynamicContext) {
     return item.hasValue() ? getTarget().evaluate(item, dynamicContext) : ISequence.empty();
   }

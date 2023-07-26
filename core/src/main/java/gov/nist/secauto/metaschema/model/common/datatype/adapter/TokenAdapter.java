@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.ITokenItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.ITokenItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;

@@ -81,7 +81,7 @@ public interface IConstraintSet {
     Set<IConstraintSet> resolvedConstraintSets = resolveConstraintSets(constraintSets);
 
     ConstraintComposingVisitor visitor = new ConstraintComposingVisitor();
-    IMetaschemaNodeItem item = INodeItemFactory.newMetaschemaNodeItem(metaschema);
+    IMetaschemaNodeItem item = INodeItemFactory.instance().newMetaschemaNodeItem(metaschema);
 
     for (ITargetedConstaints targeted : getTargetedConstraintsForMetaschema(resolvedConstraintSets, metaschema)) {
       MetapathExpression targetExpression = targeted.getTargetExpression();
@@ -91,7 +91,7 @@ public interface IConstraintSet {
             targetExpression.getPath(),
             metaschema.getQName()));
       } else if (node instanceof IDefinitionNodeItem) {
-        IDefinition nodeDefinition = ((IDefinitionNodeItem) node).getDefinition();
+        IDefinition nodeDefinition = ((IDefinitionNodeItem<?, ?>) node).getDefinition();
         IMetaschema nodeMetaschema = nodeDefinition.getContainingMetaschema();
         if (!metaschema.equals(nodeMetaschema)) {
           throw new MetaschemaException(

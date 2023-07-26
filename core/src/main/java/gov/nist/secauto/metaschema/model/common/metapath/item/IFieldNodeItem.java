@@ -31,26 +31,16 @@ import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
 import java.net.URI;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedItem {
+public interface IFieldNodeItem
+    extends IModelNodeItem<IFieldDefinition, IFieldInstance>,
+    IAtomicValuedItem {
   @Override
   default NodeItemType getNodeItemType() {
     return NodeItemType.FIELD;
-  }
-
-  @Override
-  IAssemblyNodeItem getParentNodeItem();
-
-  @Override
-  default IAssemblyNodeItem getParentContentNodeItem() {
-    return getParentNodeItem();
   }
 
   @Override
@@ -59,46 +49,10 @@ public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedItem {
   }
 
   @Override
-  IFieldDefinition getDefinition();
-
-  @Override
-  IFieldInstance getInstance();
-
-  @Override
   @Nullable
   default URI getBaseUri() {
     INodeItem parent = getParentNodeItem();
     return parent == null ? null : parent.getBaseUri();
-  }
-
-  /**
-   * Fields do not have model items. This call should return an empty collection.
-   */
-  @SuppressWarnings("null")
-  @Override
-  default Collection<? extends List<? extends IModelNodeItem>> getModelItems() {
-    // a field does not have model items
-    return Collections.emptyList();
-  }
-
-  /**
-   * Fields do not have model items. This call should return an empty list.
-   */
-  @SuppressWarnings("null")
-  @Override
-  default List<? extends IModelNodeItem> getModelItemsByName(String name) {
-    // a field does not have model items
-    return Collections.emptyList();
-  }
-
-  /**
-   * Fields do not have model items. This call should return an empty stream.
-   */
-  @SuppressWarnings("null")
-  @NonNull
-  @Override
-  default Stream<? extends IModelNodeItem> modelItems() {
-    return Stream.empty();
   }
 
   @Override

@@ -26,48 +26,51 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
-
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 /**
  * A {@link INodeItem} supported by a {@link IAssemblyInstance}, that may have an associated value.
  */
 class AssemblyInstanceNodeItemImpl
-    extends
-    AbstractAssemblyInstanceNodeItem<
-        IAssemblyNodeItem,
-        AbstractModelNodeContext.Model> {
+    extends AbstractModelInstanceNodeItem<
+        IAssemblyDefinition,
+        IAssemblyInstance>
+    implements IAssemblyNodeItem,
+    IFeatureModelContainerItem {
+
+  private final int position;
+
+  @NonNull
+  private final Lazy<ModelContainer> model;
+  @NonNull
   private final Object value;
 
   public AssemblyInstanceNodeItemImpl(
       @NonNull IAssemblyInstance instance,
       @NonNull IAssemblyNodeItem parent,
       int position,
-      @Nullable Object value,
+      @NonNull Object value,
       @NonNull INodeItemGenerator generator) {
-    super(instance, parent, position, generator);
+    super(instance, parent);
+    this.model = ObjectUtils.notNull(Lazy.lazy(generator.newDataModelSupplier(this)));
+    this.position = position;
     this.value = value;
   }
 
+  @SuppressWarnings("null")
   @Override
-  protected @NonNull Supplier<Model>
-      newModelSupplier(@NonNull INodeItemGenerator generator) {
-    return () -> {
-      Map<String, IFlagNodeItem> flags = generator.generateFlags(this);
-      Map<String, List<IModelNodeItem>> modelItems = generator.generateModelItems(this);
-      return new AbstractModelNodeContext.Model(flags, modelItems);
-    };
+  public ModelContainer getModel() {
+    return model.get();
   }
 
   @Override
-  public IAssemblyNodeItem getParentContentNodeItem() {
-    return getParentNodeItem();
+  public int getPosition() {
+    return position;
   }
 
   @Override

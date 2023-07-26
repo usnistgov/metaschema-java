@@ -44,12 +44,9 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.model.common.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.item.DataNodeItemFactory;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -239,14 +236,4 @@ public class DefaultBindingContext implements IBindingContext {
     @SuppressWarnings("unchecked") CLASS retval = (CLASS) classBinding.copyBoundObject(other, parentInstance);
     return retval;
   }
-
-  @Override
-  public INodeItem toNodeItem(@NonNull Object boundObject, URI baseUri, boolean rootNode) {
-    IClassBinding classBinding = getClassBinding(boundObject.getClass());
-    if (classBinding == null) {
-      throw new IllegalStateException(String.format("Class '%s' is not bound", boundObject.getClass().getName()));
-    }
-    return DataNodeItemFactory.instance().newNodeItem(classBinding, boundObject, baseUri);
-  }
-
 }

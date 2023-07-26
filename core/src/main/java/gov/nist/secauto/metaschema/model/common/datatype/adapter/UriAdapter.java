@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyUriItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.net.URI;

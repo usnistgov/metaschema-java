@@ -64,9 +64,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
-import gov.nist.secauto.metaschema.model.common.metapath.item.DataNodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
@@ -352,12 +352,12 @@ final class AnnotationUtils {
       Integer maxOccurs = constraint.getMaxOccurs();
 
       IAssemblyNodeItem definitionNodeItem
-          = DataNodeItemFactory.instance().newAssemblyNodeItem(definition, null, null);
+          = INodeItemFactory.instance().newAssemblyNodeItem(definition);
 
-      ISequence<? extends IDefinitionNodeItem> instanceSet
+      ISequence<? extends IDefinitionNodeItem<?, ?>> instanceSet
           = constraint.matchTargets(definitionNodeItem, dynamicContext);
 
-      for (IDefinitionNodeItem item : instanceSet.asList()) {
+      for (IDefinitionNodeItem<?, ?> item : instanceSet.asList()) {
         INamedInstance instance = item.getInstance();
         if (instance instanceof INamedModelInstance) {
           INamedModelInstance modelInstance = (INamedModelInstance) instance;

@@ -35,7 +35,6 @@ import gov.nist.secauto.metaschema.binding.io.DeserializationFeature;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.RootAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
-import gov.nist.secauto.metaschema.model.common.metapath.item.DataNodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -104,11 +103,11 @@ public class DefaultJsonDeserializer<CLASS>
         // // advance past the end object
         // JsonToken end = parser.nextToken();
 
-        retval = INodeItemFactory.newDocumentNodeItem(root, documentUri, value);
+        retval = INodeItemFactory.instance().newDocumentNodeItem(root, documentUri, value);
       } else {
         @SuppressWarnings("unchecked") CLASS value
             = ObjectUtils.requireNonNull((CLASS) classBinding.readObject(parsingContext));
-        retval = DataNodeItemFactory.instance().newAssemblyNodeItem(classBinding, documentUri, value);
+        retval = INodeItemFactory.instance().newAssemblyNodeItem(classBinding, documentUri, value);
       }
       return retval;
     }

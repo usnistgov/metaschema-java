@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
 
 /**
  * Provides a common base class for string-based data types.

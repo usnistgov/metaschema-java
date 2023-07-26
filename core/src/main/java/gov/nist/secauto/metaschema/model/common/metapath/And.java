@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnBoolean;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBooleanItem;
 
 import java.util.List;
 

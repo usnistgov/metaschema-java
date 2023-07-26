@@ -85,10 +85,10 @@ public interface INodeContext {
    * @return a collection of list(s), with each list containing the items for a given model instance
    */
   @NonNull
-  Collection<? extends List<? extends IModelNodeItem>> getModelItems();
+  Collection<? extends List<? extends IModelNodeItem<?, ?>>> getModelItems();
 
   @NonNull
-  List<? extends IModelNodeItem> getModelItemsByName(String name);
+  List<? extends IModelNodeItem<?, ?>> getModelItemsByName(@NonNull String name);
 
   /**
    * Get the model items (i.e., fields, assemblies) and value data associated this node as a stream.
@@ -97,7 +97,7 @@ public interface INodeContext {
    */
   @SuppressWarnings("null")
   @NonNull
-  default Stream<? extends IModelNodeItem> modelItems() {
+  default Stream<? extends IModelNodeItem<?, ?>> modelItems() {
     return getModelItems().stream().flatMap(list -> list.stream());
   }
 }

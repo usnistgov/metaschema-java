@@ -29,20 +29,15 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 
-import java.net.URI;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * a new {@link INodeItem} instance, that is orphaned from any parent nodes, supported by an
  * {@link IFlagDefinition}.
  */
-class FlagDefinitionNodeItemImpl implements IFlagNodeItem {
-  @NonNull
-  private final IFlagDefinition definition;
-  @Nullable
-  private final URI baseUri;
+class FlagDefinitionNodeItemImpl
+    extends AbstractGlobalDefinitionNodeItem<IFlagDefinition, IFlagInstance>
+    implements IFlagNodeItem, IFeatureNoDataAtomicValuedItem {
 
   /**
    * Construct a new {@link INodeItem} instance, that is orphaned from any parent nodes, based on the
@@ -50,44 +45,17 @@ class FlagDefinitionNodeItemImpl implements IFlagNodeItem {
    *
    * @param definition
    *          the flag
-   * @param baseUri
-   *          an optional base URI to use for resolving relative URIs
+   * @param parent
+   *          the item for the Metaschema containing this definition
    */
-  public FlagDefinitionNodeItemImpl(@NonNull IFlagDefinition definition, @Nullable URI baseUri) {
-    this.definition = definition;
-    this.baseUri = baseUri;
-  }
-
-  @Override
-  public IModelNodeItem getParentNodeItem() {
-    // this is an orphaned definition
-    return null;
-  }
-
-  @Override
-  public IFlagDefinition getDefinition() {
-    return definition;
+  public FlagDefinitionNodeItemImpl(
+      @NonNull IFlagDefinition definition,
+      @NonNull IMetaschemaNodeItem parent) {
+    super(definition, parent);
   }
 
   @Override
   public IFlagInstance getInstance() {
-    return null;
-  }
-
-  @Override
-  public URI getBaseUri() {
-    return baseUri;
-  }
-
-  @Override
-  public IAnyAtomicItem toAtomicItem() {
-    // does not have a value
-    return null;
-  }
-
-  @Override
-  public Object getValue() {
-    // there is no value
     return null;
   }
 }

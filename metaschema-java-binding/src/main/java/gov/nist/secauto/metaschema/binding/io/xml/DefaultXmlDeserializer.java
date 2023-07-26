@@ -116,6 +116,6 @@ public class DefaultXmlDeserializer<CLASS>
 
     RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
 
-    return INodeItemFactory.newDocumentNodeItem(root, documentUri, root.readRoot(parsingContext));
+    return INodeItemFactory.instance().newDocumentNodeItem(root, documentUri, root.readRoot(parsingContext));
   }
 }

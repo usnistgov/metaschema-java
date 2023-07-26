@@ -31,10 +31,11 @@ import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
-import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IModelContainer;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.net.URI;
 import java.util.stream.Stream;
@@ -43,61 +44,100 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public abstract class AbstractNodeItemFactory implements INodeItemFactory, INodeItemGenerator {
-
-  public AbstractNodeItemFactory() {
-    // TODO Auto-generated constructor stub
+  @Override
+  public IDocumentNodeItem newDocumentNodeItem(
+      IRootAssemblyDefinition definition,
+      URI documentUri,
+      Object value) {
+    return new DocumentNodeItemImpl(
+        definition,
+        value,
+        documentUri,
+        this);
   }
 
   @Override
-  public IFlagNodeItem newFlagNodeItem(
-      @NonNull IFlagDefinition definition,
-      @Nullable URI baseUri) {
-    return new FlagDefinitionNodeItemImpl(definition, baseUri);
-  }
-
-  @Override
-  public IFlagNodeItem newFlagNodeItem(
-      @NonNull IFlagInstance instance,
-      @NonNull IModelNodeItem parent,
-      @Nullable Object value) {
-    return new FlagInstanceNodeItemImpl(instance, parent, value);
-  }
-
-  @Override
-  public IFieldNodeItem newFieldNodeItem(
-      @NonNull IFieldDefinition definition,
-      @Nullable URI baseUri,
-      @Nullable Object value) {
-    return new FieldDefinitionNodeItemImpl(definition, value, baseUri, this);
+  public IMetaschemaNodeItem newMetaschemaNodeItem(
+      IMetaschema metaschema) {
+    return new MetaschemaNodeItemImpl(
+        metaschema,
+        this);
   }
 
   @Override
   public IFieldNodeItem newFieldNodeItem(
-      @NonNull IFieldInstance instance,
-      @NonNull IAssemblyNodeItem parent,
+      IFieldDefinition definition,
+      IMetaschemaNodeItem metaschema) {
+    return new FieldGlobalDefinitionNodeItemImpl(
+        definition,
+        metaschema,
+        this);
+  }
+
+  @Override
+  public IFieldNodeItem newFieldNodeItem(
+      IFieldDefinition definition,
+      URI baseUri) {
+    return new FieldOrphanedDefinitionNodeItemImpl(
+        definition,
+        baseUri,
+        this);
+  }
+
+  @Override
+  public IFieldNodeItem newFieldNodeItem(
+      IFieldInstance instance,
+      IAssemblyNodeItem parent) {
+    return new FieldInstanceNoValueNodeItemImpl(instance, parent, this);
+  }
+
+  @Override
+  public IFieldNodeItem newFieldNodeItem(
+      IFieldInstance instance,
+      IAssemblyNodeItem parent,
       int position,
-      @Nullable Object value) {
+      Object value) {
     return new FieldInstanceNodeItemImpl(instance, parent, position, value, this);
   }
 
   @Override
   public IAssemblyNodeItem newAssemblyNodeItem(
-      @NonNull IAssemblyDefinition definition,
-      @Nullable URI baseUri,
-      @Nullable Object value) {
-    return new AssemblyDefinitionNodeItemImpl(definition, value, baseUri, this);
+      IAssemblyDefinition definition,
+      IMetaschemaNodeItem metaschema) {
+    return new AssemblyGlobalDefinitionNodeItemImpl(
+        definition,
+        metaschema,
+        this);
   }
 
   @Override
   public IAssemblyNodeItem newAssemblyNodeItem(
-      @NonNull IAssemblyInstance instance,
-      @NonNull IAssemblyNodeItem parent,
-      int position,
-      @Nullable Object value) {
-    // return new AssemblyInstanceNodeItemImpl(instance, parent, position, value, this);
+      IAssemblyDefinition definition,
+      URI baseUri) {
+    return new AssemblyOrphanedDefinitionNodeItemImpl(
+        definition,
+        baseUri,
+        this);
+  }
 
+  @Override
+  public IAssemblyNodeItem newAssemblyNodeItem(
+      IAssemblyDefinition definition,
+      URI baseUri,
+      Object value) {
+    return new AssemblyOrphanedDefinitionDataNodeItemImpl(
+        definition,
+        baseUri,
+        value,
+        this);
+  }
+
+  @Override
+  public IAssemblyNodeItem newAssemblyNodeItem(
+      IAssemblyInstance instance,
+      IAssemblyNodeItem parent) {
     IAssemblyNodeItem retval = null;
-    if (value == null && !instance.getDefinition().isInline()) {
+    if (!instance.getDefinition().isInline()) {
       // if not inline, need to check for a cycle
       IAssemblyNodeItem cycle = getCycledInstance(instance.getEffectiveName(), instance.getDefinition(), parent);
       if (cycle != null) {
@@ -107,13 +147,24 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
     }
 
     if (retval == null) {
-      retval = new AssemblyInstanceNodeItemImpl(instance, parent, position, value, this);
+      retval = new AssemblyInstanceNoValueNodeItemImpl(instance, parent, this);
     }
     return retval;
   }
 
+  @Override
+  public IAssemblyNodeItem newAssemblyNodeItem(
+      IAssemblyInstance instance,
+      IAssemblyNodeItem parent,
+      int position,
+      Object value) {
+    return new AssemblyInstanceNodeItemImpl(instance, parent, position, value, this);
+  }
+
   @Nullable
-  private IAssemblyNodeItem getCycledInstance(@NonNull String effectiveName, @NonNull IAssemblyDefinition definition,
+  private IAssemblyNodeItem getCycledInstance(
+      @NonNull String effectiveName,
+      @NonNull IAssemblyDefinition definition,
       @NonNull IAssemblyNodeItem parent) {
     IAssemblyNodeItem retval = null;
 
@@ -130,12 +181,12 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
   }
 
   @NonNull
-  protected IModelNodeItem newModelItem(
+  protected IModelNodeItem<?, ?> newModelItem(
       @NonNull INamedModelInstance instance,
       @NonNull IAssemblyNodeItem parent,
       int index,
-      @Nullable Object value) {
-    @NonNull IModelNodeItem item;
+      @NonNull Object value) {
+    @NonNull IModelNodeItem<?, ?> item;
     if (instance instanceof IAssemblyInstance) {
       item = newAssemblyNodeItem((IAssemblyInstance) instance, parent, index, value);
     } else if (instance instanceof IFieldInstance) {
@@ -146,10 +197,24 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
     return item;
   }
 
-  @SuppressWarnings("null")
+  @NonNull
+  protected IModelNodeItem<?, ?> newModelItem(
+      @NonNull INamedModelInstance instance,
+      @NonNull IAssemblyNodeItem parent) {
+    @NonNull IModelNodeItem<?, ?> item;
+    if (instance instanceof IAssemblyInstance) {
+      item = newAssemblyNodeItem((IAssemblyInstance) instance, parent);
+    } else if (instance instanceof IFieldInstance) {
+      item = newFieldNodeItem((IFieldInstance) instance, parent);
+    } else {
+      throw new UnsupportedOperationException("unsupported instance type: " + instance.getClass().getName());
+    }
+    return item;
+  }
+
   @NonNull
   protected Stream<INamedModelInstance> getNamedModelInstances(@NonNull IModelContainer container) {
-    return container.getModelInstances().stream()
+    return ObjectUtils.notNull(container.getModelInstances().stream()
         .flatMap(instance -> {
           Stream<INamedModelInstance> retval;
           if (instance instanceof IAssemblyInstance || instance instanceof IFieldInstance) {
@@ -161,7 +226,7 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
             throw new UnsupportedOperationException("unsupported instance type: " + instance.getClass().getName());
           }
           return retval;
-        });
+        }));
   }
 
 }

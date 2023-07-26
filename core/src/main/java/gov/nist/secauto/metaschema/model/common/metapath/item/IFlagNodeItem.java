@@ -39,7 +39,8 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IFlagNodeItem extends IDefinitionNodeItem, IAtomicValuedItem {
+public interface IFlagNodeItem
+    extends IDefinitionNodeItem<IFlagDefinition, IFlagInstance>, IAtomicValuedItem {
   @Override
   default NodeItemType getNodeItemType() {
     return NodeItemType.FLAG;
@@ -49,14 +50,6 @@ public interface IFlagNodeItem extends IDefinitionNodeItem, IAtomicValuedItem {
   default IFlagNodeItem getNodeItem() {
     return this;
   }
-
-  @Override
-  default IModelNodeItem getParentContentNodeItem() {
-    return getParentNodeItem();
-  }
-
-  @Override
-  IModelNodeItem getParentNodeItem();
 
   @Override
   IFlagDefinition getDefinition();
@@ -72,7 +65,7 @@ public interface IFlagNodeItem extends IDefinitionNodeItem, IAtomicValuedItem {
   }
 
   /**
-   * Flags do not have flag items. This call should return an empty collection.
+   * FlagContainer do not have flag items. This call should return an empty collection.
    */
   @SuppressWarnings("null")
   @Override
@@ -82,7 +75,7 @@ public interface IFlagNodeItem extends IDefinitionNodeItem, IAtomicValuedItem {
   }
 
   /**
-   * Flags do not have flag items. This call should return {@code null}.
+   * FlagContainer do not have flag items. This call should return {@code null}.
    */
   @Override
   default IFlagNodeItem getFlagByName(@NonNull String name) {
@@ -91,7 +84,7 @@ public interface IFlagNodeItem extends IDefinitionNodeItem, IAtomicValuedItem {
   }
 
   /**
-   * Flags do not have flag items. This call should return an empty stream.
+   * FlagContainer do not have flag items. This call should return an empty stream.
    */
   @SuppressWarnings("null")
   @Override
@@ -101,32 +94,32 @@ public interface IFlagNodeItem extends IDefinitionNodeItem, IAtomicValuedItem {
   }
 
   /**
-   * Flags do not have model items. This call should return an empty collection.
+   * FlagContainer do not have model items. This call should return an empty collection.
    */
   @SuppressWarnings("null")
   @Override
-  default @NonNull Collection<? extends List<? extends IModelNodeItem>> getModelItems() {
+  default @NonNull Collection<? extends List<? extends IModelNodeItem<?, ?>>> getModelItems() {
     // a flag does not have model items
     return Collections.emptyList();
   }
 
   /**
-   * Flags do not have model items. This call should return an empty list.
+   * FlagContainer do not have model items. This call should return an empty list.
    */
   @SuppressWarnings("null")
   @Override
-  default @NonNull List<? extends IModelNodeItem> getModelItemsByName(String name) {
+  default @NonNull List<? extends IModelNodeItem<?, ?>> getModelItemsByName(String name) {
     // a flag does not have model items
     return Collections.emptyList();
   }
 
   /**
-   * Flags do not have model items. This call should return an empty stream.
+   * FlagContainer do not have model items. This call should return an empty stream.
    */
   @SuppressWarnings("null")
   @NonNull
   @Override
-  default Stream<? extends IModelNodeItem> modelItems() {
+  default Stream<? extends IModelNodeItem<?, ?>> modelItems() {
     // a flag does not have model items
     return Stream.empty();
   }

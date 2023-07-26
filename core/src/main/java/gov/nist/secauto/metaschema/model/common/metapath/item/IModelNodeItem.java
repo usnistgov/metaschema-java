@@ -27,8 +27,10 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IFlagContainer;
+import gov.nist.secauto.metaschema.model.common.INamedInstance;
 
-public interface IModelNodeItem extends IDefinitionNodeItem {
+public interface IModelNodeItem<D extends IFlagContainer, I extends INamedInstance>
+    extends IDefinitionNodeItem<D, I> {
 
   /**
    * Retrieve the relative position of the associated instance in a collection of instances. A
@@ -48,7 +50,4 @@ public interface IModelNodeItem extends IDefinitionNodeItem {
 
   @Override
   IAssemblyNodeItem getParentContentNodeItem();
-
-  @Override
-  IFlagContainer getDefinition();
 }

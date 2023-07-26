@@ -27,21 +27,22 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.net.URI;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 class DocumentNodeItemImpl
-    implements IDocumentNodeItem {
+    implements IDocumentNodeItem, IFeatureModelContainerItem {
   @NonNull
   private final IRootAssemblyNodeItem root;
   @NonNull
   private final URI documentUri;
+
+  @NonNull
+  private final Lazy<ModelContainer> model;
 
   public DocumentNodeItemImpl(
       @NonNull IRootAssemblyDefinition root,
@@ -50,6 +51,7 @@ class DocumentNodeItemImpl
       @NonNull INodeItemGenerator generator) {
     this.root = new RootAssemblyValuedNodeItemImpl(root, this, rootValue, generator);
     this.documentUri = documentUri;
+    this.model = ObjectUtils.notNull(Lazy.lazy(generator.newDataModelSupplier(this.root)));
   }
 
   @NonNull
@@ -62,21 +64,9 @@ class DocumentNodeItemImpl
     return documentUri;
   }
 
-  @Override
-  public Collection<? extends List<? extends IModelNodeItem>> getModelItems() {
-    return CollectionUtil.singletonList(CollectionUtil.singletonList(getRootAssemblyNodeItem()));
-  }
-
-  @Override
-  public List<? extends IModelNodeItem> getModelItemsByName(String name) {
-    IRootAssemblyNodeItem root = getRootAssemblyNodeItem();
-    return root.getName().equals(name) ? CollectionUtil.singletonList(root) : CollectionUtil.emptyList();
-  }
-
   @SuppressWarnings("null")
   @Override
-  public Stream<? extends IModelNodeItem> modelItems() {
-    return Stream.of(getRootAssemblyNodeItem());
+  public ModelContainer getModel() {
+    return model.get();
   }
-
 }

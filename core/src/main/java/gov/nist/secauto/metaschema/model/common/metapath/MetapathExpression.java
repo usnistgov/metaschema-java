@@ -31,10 +31,10 @@ import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnBoolean;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.INumericItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.antlr.v4.runtime.CharStreams;

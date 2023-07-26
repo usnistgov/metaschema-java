@@ -27,16 +27,16 @@
 package gov.nist.secauto.metaschema.model.common.metapath.function; // NOPMD - intentional
 
 import gov.nist.secauto.metaschema.model.common.metapath.InvalidTypeMetapathException;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBase64BinaryItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDurationItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBase64BinaryItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDateItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDayTimeDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IYearMonthDurationItem;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

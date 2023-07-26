@@ -41,9 +41,9 @@ abstract class AbstractFlagInstanceNodeItem
   @NonNull
   private final IFlagInstance instance;
   @NonNull
-  private final IModelNodeItem parent;
+  private final IModelNodeItem<?, ?> parent;
 
-  public AbstractFlagInstanceNodeItem(@NonNull IFlagInstance instance, @NonNull IModelNodeItem parent) {
+  public AbstractFlagInstanceNodeItem(@NonNull IFlagInstance instance, @NonNull IModelNodeItem<?, ?> parent) {
     this.instance = instance;
     this.parent = parent;
   }

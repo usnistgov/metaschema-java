@@ -32,6 +32,9 @@ import static gov.nist.secauto.metaschema.model.common.metapath.TestUtils.string
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.INumericItem;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;

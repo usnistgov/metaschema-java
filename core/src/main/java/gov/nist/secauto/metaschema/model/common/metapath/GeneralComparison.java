@@ -27,14 +27,14 @@
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDayTimeDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IUntypedAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IYearMonthDurationItem;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 

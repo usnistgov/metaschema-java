@@ -168,7 +168,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
   protected void validateHasCardinality(@NonNull List<? extends ICardinalityConstraint> constraints,
       @NonNull IAssemblyNodeItem item) {
     for (ICardinalityConstraint constraint : constraints) {
-      ISequence<? extends IDefinitionNodeItem> targets = constraint.matchTargets(item, getMetapathContext());
+      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, getMetapathContext());
       try {
         validateHasCardinality(constraint, item, targets);
       } catch (MetapathException ex) {
@@ -203,7 +203,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
   protected void validateIndex(@NonNull List<? extends IIndexConstraint> constraints,
       @NonNull IAssemblyNodeItem item) {
     for (IIndexConstraint constraint : constraints) {
-      ISequence<? extends IDefinitionNodeItem> targets = constraint.matchTargets(item, getMetapathContext());
+      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, getMetapathContext());
       try {
         validateIndex(constraint, item, targets);
       } catch (MetapathException ex) {
@@ -250,7 +250,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
   protected void validateUnique(@NonNull List<? extends IUniqueConstraint> constraints,
       @NonNull IAssemblyNodeItem item) {
     for (IUniqueConstraint constraint : constraints) {
-      ISequence<? extends IDefinitionNodeItem> targets = constraint.matchTargets(item, getMetapathContext());
+      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, getMetapathContext());
       try {
         validateUnique(constraint, item, targets);
       } catch (MetapathException ex) {
@@ -280,10 +280,10 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
   }
 
   protected void validateMatches(@NonNull List<? extends IMatchesConstraint> constraints,
-      @NonNull IDefinitionNodeItem item) {
+      @NonNull IDefinitionNodeItem<?, ?> item) {
 
     for (IMatchesConstraint constraint : constraints) {
-      ISequence<? extends IDefinitionNodeItem> targets = constraint.matchTargets(item, getMetapathContext());
+      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, getMetapathContext());
       try {
         validateMatches(constraint, item, targets);
       } catch (MetapathException ex) {
@@ -323,17 +323,17 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
 
   protected void validateIndexHasKey(
       @NonNull List<? extends IIndexHasKeyConstraint> constraints,
-      @NonNull IDefinitionNodeItem node) {
+      @NonNull IDefinitionNodeItem<?, ?> node) {
 
     for (IIndexHasKeyConstraint constraint : constraints) {
-      ISequence<? extends IDefinitionNodeItem> targets = constraint.matchTargets(node, getMetapathContext());
+      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(node, getMetapathContext());
       validateIndexHasKey(constraint, node, targets);
     }
   }
 
   protected void validateIndexHasKey(
       @NonNull IIndexHasKeyConstraint constraint,
-      @NonNull IDefinitionNodeItem node,
+      @NonNull IDefinitionNodeItem<?, ?> node,
       @NonNull ISequence<? extends INodeItem> targets) {
     String indexName = constraint.getIndexName();
 
@@ -348,9 +348,9 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
   }
 
   protected void validateExpect(@NonNull List<? extends IExpectConstraint> constraints,
-      @NonNull IDefinitionNodeItem item) {
+      @NonNull IDefinitionNodeItem<?, ?> item) {
     for (IExpectConstraint constraint : constraints) {
-      ISequence<? extends IDefinitionNodeItem> targets = constraint.matchTargets(item, getMetapathContext());
+      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, getMetapathContext());
       validateExpect(constraint, item, targets);
     }
   }
@@ -376,15 +376,15 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
   }
 
   protected void validateAllowedValues(@NonNull List<? extends IAllowedValuesConstraint> constraints,
-      @NonNull IDefinitionNodeItem item) {
+      @NonNull IDefinitionNodeItem<?, ?> item) {
     for (IAllowedValuesConstraint constraint : constraints) {
-      ISequence<? extends IDefinitionNodeItem> targets = constraint.matchTargets(item, getMetapathContext());
+      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, getMetapathContext());
       validateAllowedValues(constraint, targets);
     }
   }
 
   protected void validateAllowedValues(@NonNull IAllowedValuesConstraint constraint,
-      ISequence<? extends IDefinitionNodeItem> targets) {
+      ISequence<? extends IDefinitionNodeItem<?, ?>> targets) {
     targets.asStream().forEachOrdered(item -> {
       assert item != null;
       if (item.hasValue()) {

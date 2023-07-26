@@ -28,17 +28,17 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnNot;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBase64BinaryItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDurationItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBase64BinaryItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDateItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDayTimeDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IYearMonthDurationItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.Locale;

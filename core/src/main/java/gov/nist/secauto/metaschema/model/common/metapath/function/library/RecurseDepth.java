@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
@@ -98,7 +98,7 @@ public final class RecurseDepth {
     ISequence<INodeItem> initalContext = ISequence.of(ObjectUtils.requireNonNull(focus));
 
     ISequence<? extends IStringItem> arg = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
-    IStringItem recursionPath = ObjectUtils.requireNonNull(FunctionUtils.getFirstItem(arg, true));
+    IStringItem recursionPath = FunctionUtils.requireFirstItem(arg, true);
 
     return recurseDepth(initalContext, recursionPath, dynamicContext);
   }
@@ -114,7 +114,7 @@ public final class RecurseDepth {
     ISequence<INodeItem> initalContext = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
 
     ISequence<? extends IStringItem> arg = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1)));
-    IStringItem recursionPath = ObjectUtils.requireNonNull(FunctionUtils.getFirstItem(arg, true));
+    IStringItem recursionPath = FunctionUtils.requireFirstItem(arg, true);
 
     return recurseDepth(initalContext, recursionPath, dynamicContext);
   }

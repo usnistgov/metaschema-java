@@ -30,10 +30,12 @@ import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.TypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.INumericItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.math.BigInteger;
 import java.math.MathContext;
@@ -99,6 +101,40 @@ public final class FunctionUtils {
    */
   public static long asLong(@NonNull BigInteger value) {
     return value.longValueExact();
+  }
+
+  /**
+   * Retrieves the first item in a sequence. If the sequence is empty, a {@link TypeMetapathException}
+   * exception is thrown. If requireSingleton is {@code true} and the sequence contains more than one
+   * item, a {@link TypeMetapathException} is thrown.
+   *
+   * @param <ITEM>
+   *          the item type to return derived from the provided sequence
+   * @param sequence
+   *          the sequence to retrieve the first item from
+   * @param requireSingleton
+   *          if {@code true} then a {@link TypeMetapathException} is thrown if the sequence contains
+   *          more than one item
+   * @return {@code null} if the sequence is empty, or the item otherwise
+   * @throws TypeMetapathException
+   *           if the sequence is empty, or contains more than one item and requireSingleton is
+   *           {@code true}
+   */
+  @NonNull
+  public static <ITEM extends IItem> ITEM requireFirstItem(@NonNull ISequence<ITEM> sequence,
+      boolean requireSingleton) {
+    if (sequence.isEmpty()) {
+      throw new InvalidTypeMetapathException(
+          null,
+          "Expected a non-empty sequence, but sequence was empty.");
+    }
+    List<ITEM> items = sequence.asList();
+    if (requireSingleton && items.size() != 1) {
+      throw new InvalidTypeMetapathException(
+          null,
+          String.format("sequence expected to contain one item, but found '%d'", items.size()));
+    }
+    return ObjectUtils.notNull(items.iterator().next());
   }
 
   /**
@@ -213,5 +249,22 @@ public final class FunctionUtils {
   @NonNull
   public static <TYPE extends IItem> ISequence<TYPE> asType(@NonNull ISequence<?> sequence) {
     return (ISequence<TYPE>) sequence;
+  }
+
+  @NonNull
+  public static <TYPE> TYPE requireType(Class<TYPE> clazz, INodeItem node) {
+    if (node == null) {
+      throw new InvalidTypeMetapathException(
+          node,
+          String.format("Expected non-null type '%s', but the node was null.",
+              clazz.getName()));
+    } else if (!clazz.isInstance(node)) {
+      throw new InvalidTypeMetapathException(
+          node,
+          String.format("Expected type '%s', but the node was type '%s'.",
+              clazz.getName(),
+              node.getClass().getName()));
+    }
+    return FunctionUtils.asType(node);
   }
 }

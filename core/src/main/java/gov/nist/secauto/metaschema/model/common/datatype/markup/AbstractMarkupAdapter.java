@@ -30,7 +30,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractCustomJavaDataTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IMarkupItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IMarkupItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLStreamWriter2;

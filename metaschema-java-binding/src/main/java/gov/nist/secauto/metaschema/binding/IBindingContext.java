@@ -42,7 +42,6 @@ import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidation
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidator;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
@@ -57,7 +56,6 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.net.URI;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -214,39 +212,6 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   <CLASS> CLASS copyBoundObject(@NonNull CLASS other, Object parentInstance) throws BindingException;
 
   /**
-   * Wraps a bound object in an {@link INodeItem} for use in the Metapath engine.
-   *
-   * @param boundObject
-   *          the bound object to wrap
-   * @param baseUri
-   *          the base URI of the bound object, which may be used to resolve relative URIs
-   * @return the wrapped node item
-   * @throws IllegalArgumentException
-   *           if the provided class is not bound to a Metaschema assembly or field
-   * @see MetapathExpression
-   */
-  // TODO: add method to IAssemblyInstance, etc to do this instead
-  default INodeItem toNodeItem(@NonNull Object boundObject, @NonNull URI baseUri) {
-    return toNodeItem(boundObject, baseUri, false);
-  }
-
-  /**
-   * Wraps a bound object in an {@link INodeItem} for use in the Metapath engine.
-   *
-   * @param boundObject
-   *          the bound object to wrap
-   * @param baseUri
-   *          the base URI of the bound object, which may be used to resolve relative URIs
-   * @param rootNode
-   *          if {@code true}, the bound object will be considered at the root of a node tree
-   * @return the wrapped node item
-   * @throws IllegalArgumentException
-   *           if the provided class is not bound to a Metaschema assembly or field
-   * @see MetapathExpression
-   */
-  INodeItem toNodeItem(@NonNull Object boundObject, @NonNull URI baseUri, boolean rootNode);
-
-  /**
    * Get a new single use constraint validator.
    *
    * @param handler
@@ -266,7 +231,6 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
 
   /**
    * Perform constraint validation on the provided bound object represented as an {@link INodeItem}.
-   * The bound object can be turned into a {@link INodeItem} using {@link #toNodeItem(Object, URI)}.
    *
    * @param nodeItem
    *          the node item to validate

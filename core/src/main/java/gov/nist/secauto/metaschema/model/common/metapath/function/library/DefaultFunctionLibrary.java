@@ -30,17 +30,17 @@ import com.google.auto.service.AutoService;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionLibrary;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionLibrary;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDurationItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INcNameItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INonNegativeIntegerItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IPositiveIntegerItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDateItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.INcNameItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.INonNegativeIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IPositiveIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
 
 @AutoService(IFunctionLibrary.class)
 public class DefaultFunctionLibrary

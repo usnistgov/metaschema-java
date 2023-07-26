@@ -76,9 +76,10 @@ class Name // NOPMD - intentional
   @Override
   public ISequence<? extends INodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
     INodeItem node = context.getNodeItem();
-    return node instanceof IDefinitionNodeItem && getValue().equals(((IDefinitionNodeItem) node).getName())
-        ? ISequence.of(node)
-        : ISequence.empty();
+    return node instanceof IDefinitionNodeItem
+        && getValue().equals(((IDefinitionNodeItem<?, ?>) node).getName())
+            ? ISequence.of(node)
+            : ISequence.empty();
   }
 
   @SuppressWarnings("null")

@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.INonNegativeIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.INonNegativeIntegerItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.math.BigInteger;
