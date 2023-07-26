@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 
 import org.junit.jupiter.api.Test;
 

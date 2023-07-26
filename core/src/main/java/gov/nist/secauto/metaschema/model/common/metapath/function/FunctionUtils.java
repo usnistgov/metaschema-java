@@ -31,10 +31,10 @@ import gov.nist.secauto.metaschema.model.common.metapath.InvalidTypeMetapathExce
 import gov.nist.secauto.metaschema.model.common.metapath.TypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.math.BigInteger;
@@ -255,7 +255,7 @@ public final class FunctionUtils {
   public static <TYPE> TYPE requireType(Class<TYPE> clazz, INodeItem node) {
     if (node == null) {
       throw new InvalidTypeMetapathException(
-          node,
+          null,
           String.format("Expected non-null type '%s', but the node was null.",
               clazz.getName()));
     } else if (!clazz.isInstance(node)) {

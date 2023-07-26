@@ -27,11 +27,11 @@
 package gov.nist.secauto.metaschema.model.common.validation;
 
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidator;
-import gov.nist.secauto.metaschema.model.common.metapath.item.AbstractNodeItemVisitor;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.AbstractNodeItemVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFieldNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IMetaschemaNodeItem;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 

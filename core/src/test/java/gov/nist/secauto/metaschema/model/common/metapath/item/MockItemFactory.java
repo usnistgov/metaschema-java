@@ -27,6 +27,13 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFieldNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IRootAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.hamcrest.Description;
@@ -76,7 +83,7 @@ public class MockItemFactory {
 
   public IDocumentNodeItem document(@NonNull URI documentURI, @NonNull String name,
       @NonNull List<IFlagNodeItem> flags,
-      @NonNull List<IModelNodeItem> modelItems) {
+      @NonNull List<IModelNodeItem<?, ?>> modelItems) {
     IDocumentNodeItem document = newMock(IDocumentNodeItem.class, name);
     IRootAssemblyNodeItem root = newMock(IRootAssemblyNodeItem.class, name);
 
@@ -110,7 +117,7 @@ public class MockItemFactory {
   protected <T extends INodeItem> void handleChildren(
       @NonNull T item,
       @NonNull List<IFlagNodeItem> flags,
-      @NonNull List<IModelNodeItem> modelItems) {
+      @NonNull List<IModelNodeItem<?, ?>> modelItems) {
     getContext().checking(new Expectations() {
       { // NOPMD - intentional
         allowing(item).getFlags();
@@ -124,7 +131,7 @@ public class MockItemFactory {
           will(returnValue(item));
         });
 
-        Map<String, List<IModelNodeItem>> modelItemsMap = toModelItemsMap(modelItems);
+        Map<String, List<IModelNodeItem<?, ?>>> modelItemsMap = toModelItemsMap(modelItems);
         allowing(item).getModelItems();
         will(returnValue(modelItemsMap.values()));
         modelItemsMap.entrySet().forEach(entry -> {
@@ -164,13 +171,13 @@ public class MockItemFactory {
 
   @SuppressWarnings("static-method")
   @NonNull
-  private Map<String, List<IModelNodeItem>>
-      toModelItemsMap(@NonNull List<IModelNodeItem> modelItems) {
+  private Map<String, List<IModelNodeItem<?, ?>>>
+      toModelItemsMap(@NonNull List<IModelNodeItem<?, ?>> modelItems) {
 
-    Map<String, List<IModelNodeItem>> retval = new LinkedHashMap<>(); // NOPMD - intentional
-    for (IModelNodeItem item : modelItems) {
+    Map<String, List<IModelNodeItem<?, ?>>> retval = new LinkedHashMap<>(); // NOPMD - intentional
+    for (IModelNodeItem<?, ?> item : modelItems) {
       String name = item.getName();
-      List<IModelNodeItem> namedItems = retval.get(name);
+      List<IModelNodeItem<?, ?>> namedItems = retval.get(name);
       if (namedItems == null) {
         namedItems = new LinkedList<>(); // NOPMD - intentional
         retval.put(name, namedItems);
@@ -237,7 +244,7 @@ public class MockItemFactory {
 
   @NonNull
   public IAssemblyNodeItem assembly(@NonNull String name, @NonNull List<IFlagNodeItem> flags,
-      @NonNull List<IModelNodeItem> modelItems) {
+      @NonNull List<IModelNodeItem<?, ?>> modelItems) {
     IAssemblyNodeItem retval = newMock(IAssemblyNodeItem.class, name);
 
     getContext().checking(new Expectations() {

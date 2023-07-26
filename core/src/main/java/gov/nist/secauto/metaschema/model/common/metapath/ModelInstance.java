@@ -26,13 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IModelNodeItem;
 
 import java.util.List;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+@SuppressWarnings("rawtypes")
 class ModelInstance
     extends AbstractNamedInstanceExpression<IModelNodeItem> {
 
@@ -58,7 +59,7 @@ class ModelInstance
   }
 
   @Override
-  public ISequence<? extends IModelNodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
+  public ISequence<? extends IModelNodeItem<?, ?>> accept(DynamicContext dynamicContext, INodeContext context) {
     return ISequence.of(matchModelInstance(checkContext(context)));
   }
 
@@ -71,11 +72,11 @@ class ModelInstance
    */
   @SuppressWarnings("null")
   @NonNull
-  protected Stream<? extends IModelNodeItem> matchModelInstance(@NonNull INodeContext context) {
-    Stream<? extends IModelNodeItem> retval;
+  protected Stream<? extends IModelNodeItem<?, ?>> matchModelInstance(@NonNull INodeContext context) {
+    Stream<? extends IModelNodeItem<?, ?>> retval;
     if (getTest() instanceof Name) {
       String name = ((Name) getTest()).getValue();
-      List<? extends IModelNodeItem> items = context.getModelItemsByName(name);
+      List<? extends IModelNodeItem<?, ?>> items = context.getModelItemsByName(name);
       retval = items.stream();
     } else {
       // wildcard

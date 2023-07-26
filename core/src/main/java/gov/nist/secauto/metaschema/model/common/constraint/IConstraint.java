@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IDefinitionNodeItem;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -156,7 +156,7 @@ public interface IConstraint {
    * @see #getTarget()
    */
   @NonNull
-  default ISequence<? extends IDefinitionNodeItem<?, ?>> matchTargets(@NonNull IDefinitionNodeItem item,
+  default ISequence<? extends IDefinitionNodeItem<?, ?>> matchTargets(@NonNull IDefinitionNodeItem<?, ?> item,
       @NonNull DynamicContext dynamicContext) {
     return item.hasValue() ? getTarget().evaluate(item, dynamicContext) : ISequence.empty();
   }

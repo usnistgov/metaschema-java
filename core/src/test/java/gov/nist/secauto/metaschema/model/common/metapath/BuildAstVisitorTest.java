@@ -42,15 +42,15 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression.Resu
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Lexer;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IRootAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.MockItemFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IUuidItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFieldNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IRootAssemblyNodeItem;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

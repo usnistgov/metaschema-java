@@ -32,8 +32,8 @@ import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.RootAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItemFactory;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.util.AutoCloser;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 

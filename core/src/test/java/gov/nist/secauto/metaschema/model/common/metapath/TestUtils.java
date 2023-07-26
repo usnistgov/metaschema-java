@@ -49,6 +49,11 @@ public final class TestUtils {
   }
 
   @NonNull
+  public static IDecimalItem decimal(double value) {
+    return IDecimalItem.valueOf(value);
+  }
+
+  @NonNull
   public static IIntegerItem integer(int value) {
     return IIntegerItem.valueOf(ObjectUtils.notNull(BigInteger.valueOf(value)));
   }
@@ -56,11 +61,6 @@ public final class TestUtils {
   @NonNull
   public static IStringItem string(@NonNull String value) {
     return IStringItem.valueOf(value);
-  }
-
-  @NonNull
-  public static IDecimalItem decimal(double value) {
-    return IDecimalItem.valueOf(value);
   }
 
   @NonNull

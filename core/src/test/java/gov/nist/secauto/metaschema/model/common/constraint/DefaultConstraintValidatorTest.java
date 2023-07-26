@@ -41,9 +41,9 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.MockItemFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jmock.Expectations;

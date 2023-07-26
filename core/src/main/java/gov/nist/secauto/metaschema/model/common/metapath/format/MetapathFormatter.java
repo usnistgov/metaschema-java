@@ -26,14 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.format;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IRootAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFieldNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IMetaschemaNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IRootAssemblyNodeItem;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -78,7 +78,7 @@ public class MetapathFormatter implements IPathFormatter {
 
   @SuppressWarnings("null")
   @NonNull
-  private static String formatModelPathSegment(@NonNull IModelNodeItem item) {
+  private static String formatModelPathSegment(@NonNull IModelNodeItem<?, ?> item) {
     StringBuilder builder = new StringBuilder(item.getName())
         .append('[')
         .append(item.getPosition())

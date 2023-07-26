@@ -29,9 +29,9 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.NodeItemType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.NodeItemType;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -48,7 +48,7 @@ class FlagTest
     Mockery context = getContext();
 
     @SuppressWarnings("null")
-    @NonNull IModelNodeItem nodeContext = context.mock(IModelNodeItem.class);
+    @NonNull IModelNodeItem<?, ?> nodeContext = context.mock(IModelNodeItem.class);
     IFlagInstance instance = context.mock(IFlagInstance.class);
     IFlagNodeItem flagNode = context.mock(IFlagNodeItem.class);
 

@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidation
 import gov.nist.secauto.metaschema.model.common.constraint.LoggingConstraintValidationHandler;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.io.IOException;

@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,6 +37,7 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+// TODO: determine if this is needed, or if this class can be combined with INodeItem
 public interface INodeContext {
 
   /**
@@ -50,6 +51,8 @@ public interface INodeContext {
   /**
    * Get the flags and value data associated this node. The resulting collection is expected to be
    * ordered, with the results in document order.
+   * <p>
+   * The resulting collection may be modified, but such modification is not thread safe
    *
    * @return a collection of flags
    */
@@ -81,12 +84,24 @@ public interface INodeContext {
    * Get the model items (i.e., fields, assemblies) and value data associated this node. A given model
    * instance can be multi-valued, so the value of each instance will be a list. The resulting
    * collection is expected to be ordered, with the results in document order.
+   * <p>
+   * The resulting collection may be modified, but such modification is not thread safe
    *
    * @return a collection of list(s), with each list containing the items for a given model instance
    */
   @NonNull
   Collection<? extends List<? extends IModelNodeItem<?, ?>>> getModelItems();
 
+  /**
+   * Get the collection of model items associated with the instance having the provided {@code name}.
+   * <p>
+   * The resulting collection may be modified, but such modification is not thread safe
+   *
+   * @param name
+   *          the instance name to get model items for
+   * @return the sequence of items associated with the named model instance, or an empty list if an
+   *         instance with that name is not present
+   */
   @NonNull
   List<? extends IModelNodeItem<?, ?>> getModelItemsByName(@NonNull String name);
 
