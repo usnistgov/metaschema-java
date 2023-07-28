@@ -24,72 +24,22 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.item.node;
+package gov.nist.secauto.metaschema.core.testing;
 
-import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
-import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
+import org.jmock.Mockery;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-/**
- * A marker interface used to expose root node functionality for an assembly node that has root
- * information.
- */
-public interface IRootAssemblyNodeItem extends IAssemblyNodeItem {
-
-  /**
-   * Get the name of this node.
-   * <p>
-   * This overrides the default behavior using the root name for the assembly.
-   */
-  @Override
-  default String getName() {
-    return getDefinition().getRootName();
-  }
-
-  /**
-   * Get the parent document node item for this root.
-   *
-   * @return the parent document item
-   */
+public interface IMockFactory {
   @NonNull
-  IDocumentNodeItem getDocumentNodeItem();
+  Mockery getContext();
 
-  @Override
   @NonNull
-  default IDocumentNodeItem getParentNodeItem() {
-    return getDocumentNodeItem();
+  default <T> T mock(@NonNull Class<T> clazz) {
+    return mock(clazz, null);
   }
 
-  @Override
-  default IAssemblyNodeItem getParentContentNodeItem() {
-    // there is no assembly parent
-    return null;
-  }
-
-  @Override
-  IRootAssemblyDefinition getDefinition();
-
-  @Override
-  default IAssemblyInstance getInstance() {
-    // there is no instance
-    return null;
-  }
-
-  @Override
-  default IRootAssemblyNodeItem getNodeItem() {
-    return this;
-  }
-
-  @Override
-  default int getPosition() {
-    // a root is always in the first position
-    return 1;
-  }
-
-  @Override
-  default String format(@NonNull IPathFormatter formatter) {
-    return formatter.formatRootAssembly(this);
-  }
+  @NonNull
+  <T> T mock(@NonNull Class<T> clazz, @Nullable String name);
 }

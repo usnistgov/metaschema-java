@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.item;
+package gov.nist.secauto.metaschema.model.common.metapath.item.node;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.node.IAssemblyNodeItem;
@@ -55,12 +55,12 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
-public class MockItemFactory {
+public class MockNodeItemFactory {
 
   @NonNull
   private final Mockery context;
 
-  public MockItemFactory(@NonNull Mockery ctx) {
+  public MockNodeItemFactory(@NonNull Mockery ctx) {
     this.context = ctx;
   }
 

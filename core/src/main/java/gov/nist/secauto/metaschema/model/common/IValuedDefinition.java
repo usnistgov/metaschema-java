@@ -44,6 +44,11 @@ public interface IValuedDefinition extends IDefinition {
   @NonNull
   IDataTypeAdapter<?> getJavaTypeAdapter();
 
+  /**
+   * Retrieves the default data value for this model construct.
+   *
+   * @return the default value or {@code null} if there is no default
+   */
   @Nullable
   Object getDefaultValue();
 }

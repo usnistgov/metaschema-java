@@ -41,6 +41,11 @@ import java.net.URI;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+/**
+ * This factory interface is used to create {@link INodeItem} objects of various types.
+ * <p>
+ * A singleton instance of this factory can be acquired using the {@link #instance()} method.
+ */
 public interface INodeItemFactory {
 
   /**
@@ -70,6 +75,13 @@ public interface INodeItemFactory {
       @NonNull URI documentUri,
       @NonNull Object value);
 
+  /**
+   * Create a new Metaschema node item for the provided {@code metaschema}.
+   *
+   * @param metaschema
+   *          the Metaschema to create the item for.
+   * @return the new node item
+   */
   @NonNull
   IMetaschemaNodeItem newMetaschemaNodeItem(@NonNull IMetaschema metaschema);
 

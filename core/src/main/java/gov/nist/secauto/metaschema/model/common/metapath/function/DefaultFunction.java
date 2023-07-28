@@ -310,7 +310,9 @@ public class DefaultFunction
   }
 
   @Override
-  public ISequence<?> execute(@NonNull List<ISequence<?>> arguments, @NonNull DynamicContext dynamicContext,
+  public ISequence<?> execute(
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
       INodeContext focus) {
     try {
       List<ISequence<?>> convertedArguments = convertArguments(this, arguments);
@@ -327,6 +329,13 @@ public class DefaultFunction
       if (result == null) {
         // logger.info(String.format("Executing function '%s' with arguments '%s'.", toSignature(),
         // convertedArguments.toString()));
+
+        // INodeItem actualFocus = focus == null ? null : focus.getNodeItem();
+        // if (isFocusDepenent() && actualFocus == null) {
+        // throw new DynamicMetapathException(DynamicMetapathException.DYNAMIC_CONTEXT_ABSENT, "Null
+        // focus");
+        // }
+        // result = handler.execute(this, convertedArguments, dynamicContext, actualFocus);
         result = handler.execute(this, convertedArguments, dynamicContext, focus.getNodeItem());
 
         if (callingContext != null) {

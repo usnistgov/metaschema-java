@@ -24,72 +24,82 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.item.node;
+package gov.nist.secauto.metaschema.core.testing;
 
-import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
-import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
+import gov.nist.secauto.metaschema.model.common.IFlagContainer;
+import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
+
+import org.jmock.Expectations;
+import org.jmock.Mockery;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-/**
- * A marker interface used to expose root node functionality for an assembly node that has root
- * information.
- */
-public interface IRootAssemblyNodeItem extends IAssemblyNodeItem {
+public class FlagBuilder
+    extends AbstractModelBuilder<FlagBuilder> {
 
-  /**
-   * Get the name of this node.
-   * <p>
-   * This overrides the default behavior using the root name for the assembly.
-   */
-  @Override
-  default String getName() {
-    return getDefinition().getRootName();
+  private boolean required;
+
+  private FlagBuilder(@NonNull Mockery ctx) {
+    super(ctx);
   }
 
-  /**
-   * Get the parent document node item for this root.
-   *
-   * @return the parent document item
-   */
-  @NonNull
-  IDocumentNodeItem getDocumentNodeItem();
-
-  @Override
-  @NonNull
-  default IDocumentNodeItem getParentNodeItem() {
-    return getDocumentNodeItem();
+  public static FlagBuilder builder(@NonNull Mockery ctx) {
+    return new FlagBuilder(ctx).reset();
   }
 
   @Override
-  default IAssemblyNodeItem getParentContentNodeItem() {
-    // there is no assembly parent
-    return null;
-  }
-
-  @Override
-  IRootAssemblyDefinition getDefinition();
-
-  @Override
-  default IAssemblyInstance getInstance() {
-    // there is no instance
-    return null;
-  }
-
-  @Override
-  default IRootAssemblyNodeItem getNodeItem() {
+  public FlagBuilder reset() {
+    this.required = MetaschemaModelConstants.DEFAULT_FLAG_REQUIRED;
     return this;
   }
 
-  @Override
-  default int getPosition() {
-    // a root is always in the first position
-    return 1;
+  public FlagBuilder required(boolean required) {
+    this.required = required;
+    return this;
   }
 
-  @Override
-  default String format(@NonNull IPathFormatter formatter) {
-    return formatter.formatRootAssembly(this);
+  @NonNull
+  public IFlagInstance toInstance(
+      @NonNull IFlagContainer parent) {
+    IFlagDefinition def = toDefinition();
+    return toInstance(parent, def);
   }
+
+  @NonNull
+  public IFlagInstance toInstance(
+      @NonNull IFlagContainer parent,
+      @NonNull IFlagDefinition definition) {
+    validate();
+
+    IFlagInstance retval = mock(IFlagInstance.class);
+
+    applyNamedInstance(retval, definition, parent);
+
+    getContext().checking(new Expectations() {
+      {
+        allowing(retval).isRequired();
+        will(returnValue(required));
+      }
+    });
+
+    return retval;
+  }
+
+  @NonNull
+  public IFlagDefinition toDefinition() {
+    validate();
+
+    IFlagDefinition retval = mock(IFlagDefinition.class);
+    applyDefinition(retval);
+    return retval;
+  }
+
+  // @Override
+  // public Object getValue(Object parentInstance) {
+  // // TODO Auto-generated method stub
+  // return null;
+  // }
+  // }
 }

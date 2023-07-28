@@ -276,7 +276,7 @@ public class MetapathExpression {
    * @param <T>
    *          the type of items contained in the resulting sequence
    * @param nodeContext
-   *          the initial evaluation context
+   *          the initial evaluation context or {@code null}
    * @return a sequence of Metapath items representing the result of the evaluation
    * @throws MetapathException
    *           if an error occurred during evaluation
@@ -296,7 +296,7 @@ public class MetapathExpression {
    * @param <T>
    *          the type of items contained in the resulting sequence
    * @param nodeContext
-   *          the initial evaluation context
+   *          the initial evaluation context or {@code null}
    * @param dynamicContext
    *          the dynamic context to use for evaluation
    * @return a sequence of Metapath items representing the result of the evaluation

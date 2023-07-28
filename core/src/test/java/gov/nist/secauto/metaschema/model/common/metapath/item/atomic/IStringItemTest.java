@@ -24,48 +24,33 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.item;
+package gov.nist.secauto.metaschema.model.common.metapath.item.atomic;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBase64BinaryItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.nio.ByteBuffer;
+import java.util.stream.Stream;
 
-class IBase64BinaryItemTest {
-  private static final long MIN_LONG = -9_223_372_036_854_775_808L;
-  private static final long MAX_LONG = 9_223_372_036_854_775_807L;
-  private static final String BASE_64 = "gAAAAAAAAAB//////////w==";
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-  @Test
-  void testValueOf() {
-    IBase64BinaryItem item = IBase64BinaryItem.valueOf(ObjectUtils.notNull(
-        ByteBuffer.allocate(16).putLong(MIN_LONG).putLong(MAX_LONG)));
-    assertEquals(BASE_64, item.asString());
+class IStringItemTest {
+  private static Stream<Arguments> testCompare() { // NOPMD - false positive
+    return Stream.of(
+        // string
+        Arguments.of(IStringItem.valueOf("A"), IStringItem.valueOf("B"), IIntegerItem.NEGATIVE_ONE));
   }
 
-  @Test
-  void testCastSame() {
-    ByteBuffer buf
-        = ObjectUtils.notNull(ByteBuffer.allocate(16).putLong(MIN_LONG).putLong(MAX_LONG));
-    IBase64BinaryItem item = IBase64BinaryItem.valueOf(buf);
-    assertEquals(IBase64BinaryItem.cast(item), item);
+  @ParameterizedTest
+  @MethodSource
+  void testCompare(@NonNull IStringItem left, @NonNull IStringItem right, @NonNull IIntegerItem expectedResult) {
+    IIntegerItem result = left.compare(right);
+    assertEquals(expectedResult, result);
   }
 
-  @Test
-  void testCastString() {
-    ByteBuffer buf
-        = ObjectUtils.notNull(ByteBuffer.allocate(16).putLong(MIN_LONG).putLong(MAX_LONG));
-    IBase64BinaryItem expected = IBase64BinaryItem.valueOf(buf);
-    IBase64BinaryItem actual = IBase64BinaryItem.cast(IStringItem.valueOf(BASE_64));
-    Assertions.assertAll(
-        () -> assertArrayEquals(actual.getValue().array(), expected.getValue().array()),
-        () -> assertEquals(actual.asString(), expected.asString()));
-  }
 }

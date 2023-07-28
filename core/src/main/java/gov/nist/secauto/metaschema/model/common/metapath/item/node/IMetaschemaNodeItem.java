@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item.node;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
 import java.net.URI;
@@ -34,10 +35,11 @@ import java.net.URI;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * This item represents a Metaschema. Its children represent the global definitions defined in the
- * metaschema's scope.
+ * Supports querying of global definitions and associated instances in a Metaschema by effective
+ * name.
  * <p>
- * This allows the structure of the Metaschema to be queried.
+ * All definitions in the {@link ModuleScopeEnum#INHERITED} scope. This allows the exported
+ * structure of the Metaschema to be queried.
  */
 public interface IMetaschemaNodeItem extends IDocumentNodeItem {
 

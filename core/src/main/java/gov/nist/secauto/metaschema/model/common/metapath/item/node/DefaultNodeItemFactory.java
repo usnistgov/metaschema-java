@@ -102,9 +102,10 @@ final class DefaultNodeItemFactory
    *          the parent assembly containing flags
    * @return a mapping of flag name to flag item
    */
+  @SuppressWarnings("PMD.UseConcurrentHashMap") // need an ordered Map
   @NonNull
   protected Map<String, IFlagNodeItem> generateFlags(@NonNull IModelNodeItem<?, ?> parent) {
-    Map<String, IFlagNodeItem> retval = new LinkedHashMap<>(); // NOPMD - intentional
+    Map<String, IFlagNodeItem> retval = new LinkedHashMap<>();
 
     Object parentValue = parent.getValue();
     assert parentValue != null;
@@ -155,7 +156,7 @@ final class DefaultNodeItemFactory
 
       // build flags from Metaschema definitions
       Map<String, IFlagNodeItem> flags = ObjectUtils.notNull(
-          Collections.unmodifiableMap(metaschema.getFlagDefinitions().stream()
+          Collections.unmodifiableMap(metaschema.getExportedFlagDefinitions().stream()
               .collect(
                   Collectors.toMap(
                       IFlagDefinition::getEffectiveName,
@@ -164,9 +165,9 @@ final class DefaultNodeItemFactory
                       LinkedHashMap::new))));
 
       // build model items from Metaschema definitions
-      Stream<IFieldNodeItem> fieldStream = metaschema.getFieldDefinitions().stream()
+      Stream<IFieldNodeItem> fieldStream = metaschema.getExportedFieldDefinitions().stream()
           .map(def -> newFieldNodeItem(ObjectUtils.notNull(def), item));
-      Stream<IAssemblyNodeItem> assemblyStream = metaschema.getAssemblyDefinitions().stream()
+      Stream<IAssemblyNodeItem> assemblyStream = metaschema.getExportedAssemblyDefinitions().stream()
           .map(def -> newAssemblyNodeItem(ObjectUtils.notNull(def), item));
 
       Map<String, List<? extends IModelNodeItem<?, ?>>> modelItems

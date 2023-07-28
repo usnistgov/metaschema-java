@@ -24,72 +24,48 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.item.node;
+package gov.nist.secauto.metaschema.model.common.metapath.item.atomic;
 
-import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
-import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBase64BinaryItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-/**
- * A marker interface used to expose root node functionality for an assembly node that has root
- * information.
- */
-public interface IRootAssemblyNodeItem extends IAssemblyNodeItem {
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-  /**
-   * Get the name of this node.
-   * <p>
-   * This overrides the default behavior using the root name for the assembly.
-   */
-  @Override
-  default String getName() {
-    return getDefinition().getRootName();
+import java.nio.ByteBuffer;
+
+class IBase64BinaryItemTest {
+  private static final long MIN_LONG = -9_223_372_036_854_775_808L;
+  private static final long MAX_LONG = 9_223_372_036_854_775_807L;
+  private static final String BASE_64 = "gAAAAAAAAAB//////////w==";
+
+  @Test
+  void testValueOf() {
+    IBase64BinaryItem item = IBase64BinaryItem.valueOf(ObjectUtils.notNull(
+        ByteBuffer.allocate(16).putLong(MIN_LONG).putLong(MAX_LONG)));
+    assertEquals(BASE_64, item.asString());
   }
 
-  /**
-   * Get the parent document node item for this root.
-   *
-   * @return the parent document item
-   */
-  @NonNull
-  IDocumentNodeItem getDocumentNodeItem();
-
-  @Override
-  @NonNull
-  default IDocumentNodeItem getParentNodeItem() {
-    return getDocumentNodeItem();
+  @Test
+  void testCastSame() {
+    ByteBuffer buf
+        = ObjectUtils.notNull(ByteBuffer.allocate(16).putLong(MIN_LONG).putLong(MAX_LONG));
+    IBase64BinaryItem item = IBase64BinaryItem.valueOf(buf);
+    assertEquals(IBase64BinaryItem.cast(item), item);
   }
 
-  @Override
-  default IAssemblyNodeItem getParentContentNodeItem() {
-    // there is no assembly parent
-    return null;
-  }
-
-  @Override
-  IRootAssemblyDefinition getDefinition();
-
-  @Override
-  default IAssemblyInstance getInstance() {
-    // there is no instance
-    return null;
-  }
-
-  @Override
-  default IRootAssemblyNodeItem getNodeItem() {
-    return this;
-  }
-
-  @Override
-  default int getPosition() {
-    // a root is always in the first position
-    return 1;
-  }
-
-  @Override
-  default String format(@NonNull IPathFormatter formatter) {
-    return formatter.formatRootAssembly(this);
+  @Test
+  void testCastString() {
+    ByteBuffer buf
+        = ObjectUtils.notNull(ByteBuffer.allocate(16).putLong(MIN_LONG).putLong(MAX_LONG));
+    IBase64BinaryItem expected = IBase64BinaryItem.valueOf(buf);
+    IBase64BinaryItem actual = IBase64BinaryItem.cast(IStringItem.valueOf(BASE_64));
+    Assertions.assertAll(
+        () -> assertArrayEquals(actual.getValue().array(), expected.getValue().array()),
+        () -> assertEquals(actual.asString(), expected.asString()));
   }
 }

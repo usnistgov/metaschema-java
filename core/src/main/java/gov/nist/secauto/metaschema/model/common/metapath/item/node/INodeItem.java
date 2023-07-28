@@ -37,7 +37,22 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Represents a queryable Metapath model node.
+ */
 public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemVisitable {
+
+  /**
+   * Get this node item.
+   */
+  @Override
+  INodeItem getNodeItem();
+
+  /**
+   * Generate a path for this node in the directed node graph, using the provided path formatter.
+   */
+  @Override
+  String format(IPathFormatter formatter);
 
   /**
    * Gets the value of the provided node item.

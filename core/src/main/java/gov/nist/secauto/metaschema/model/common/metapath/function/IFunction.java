@@ -163,7 +163,9 @@ public interface IFunction {
   // boolean isSupported(List<IExpression<?>> arguments);
 
   @NonNull
-  ISequence<?> execute(@NonNull List<ISequence<?>> arguments, @NonNull DynamicContext dynamicContext,
+  ISequence<?> execute(
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
       @NonNull INodeContext focus) throws MetapathException;
 
   /**

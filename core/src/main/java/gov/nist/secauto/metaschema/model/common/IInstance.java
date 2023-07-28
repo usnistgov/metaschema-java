@@ -40,6 +40,11 @@ public interface IInstance extends IModelElement {
   @NonNull
   IDefinition getContainingDefinition();
 
+  /**
+   * Get the parent model definition that serves as the container of this instance.
+   *
+   * @return the container
+   */
   @NonNull
   IContainer getParentContainer();
 

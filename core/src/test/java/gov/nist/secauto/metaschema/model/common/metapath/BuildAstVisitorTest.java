@@ -43,7 +43,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Lexer;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.MockItemFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IUuidItem;
@@ -51,6 +50,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.node.IDocumentNode
 import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFieldNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.node.IRootAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.MockNodeItemFactory;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -77,7 +77,7 @@ class BuildAstVisitorTest {
   @SuppressWarnings("null")
   @NonNull
   private IDocumentNodeItem newTestDocument() {
-    MockItemFactory factory = new MockItemFactory(context);
+    MockNodeItemFactory factory = new MockNodeItemFactory(context);
     return factory.document(URI.create("http://example.com/content"), "root",
         List.of(
             factory.flag("uuid", IUuidItem.random())),
@@ -123,6 +123,7 @@ class BuildAstVisitorTest {
         allOf(
             instanceOf(IFieldNodeItem.class),
             hasProperty("name", equalTo("field2"))))); // NOPMD
+
   }
 
   @Test

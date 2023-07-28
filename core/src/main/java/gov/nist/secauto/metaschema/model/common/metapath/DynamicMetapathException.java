@@ -34,6 +34,7 @@ public class DynamicMetapathException
    */
   private static final long serialVersionUID = 1L;
 
+  public static final int DYNAMIC_CONTEXT_ABSENT = 2;
   public static final int INVALID_PATH_GRAMMAR = 3;
   public static final int CONTEXT_NODE_NOT_A_DOCUMENT_NODE = 50;
 

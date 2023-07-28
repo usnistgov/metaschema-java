@@ -24,33 +24,41 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.item;
+package gov.nist.secauto.metaschema.core.testing;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IIntegerItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
-
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
+import org.jmock.Mockery;
+import org.jmock.junit5.JUnit5Mockery;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class IStringItemTest {
-  private static Stream<Arguments> testCompare() { // NOPMD - false positive
-    return Stream.of(
-        // string
-        Arguments.of(IStringItem.valueOf("A"), IStringItem.valueOf("B"), IIntegerItem.NEGATIVE_ONE));
+public class MockedModelTestSupport implements IMockFactory {
+  @RegisterExtension
+  @NonNull
+  Mockery context = new JUnit5Mockery();
+
+  @NonNull
+  protected FlagBuilder flag() {
+    return FlagBuilder.builder(context);
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void testCompare(@NonNull IStringItem left, @NonNull IStringItem right, @NonNull IIntegerItem expectedResult) {
-    IIntegerItem result = left.compare(right);
-    assertEquals(expectedResult, result);
+  @NonNull
+  protected FieldBuilder field() {
+    return FieldBuilder.builder(context);
   }
 
+  @NonNull
+  protected AssemblyBuilder assembly() {
+    return AssemblyBuilder.builder(context);
+  }
+
+  @Override
+  public Mockery getContext() {
+    return context;
+  }
+
+  @Override
+  public <T> T mock(Class<T> clazz, String name) {
+    return new MockFactory(getContext()).mock(clazz, name);
+  }
 }

@@ -33,8 +33,11 @@ public interface IModelNodeItem<D extends IFlagContainer, I extends INamedInstan
     extends IDefinitionNodeItem<D, I> {
 
   /**
-   * Retrieve the relative position of the associated instance in a collection of instances. A
-   * singleton instance will have a position value of {@code 1}.
+   * Retrieve the relative position of this node relative to sibling nodes.
+   * <p>
+   * A singleton item in a sequence will have a position value of {@code 1}.
+   * <p>
+   * The value {@code 1} is used as the starting value to align with the XPath specification.
    *
    * @return a positive integer value designating this instance's position within a collection
    */

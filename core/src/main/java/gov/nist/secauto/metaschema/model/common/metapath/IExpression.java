@@ -85,7 +85,7 @@ public interface IExpression {
    * @param dynamicContext
    *          the dynamic evaluation context
    * @param context
-   *          the initial focus node item
+   *          the initial focus node item or {@code null}
    * @return the result of evaluation
    */
   @NonNull

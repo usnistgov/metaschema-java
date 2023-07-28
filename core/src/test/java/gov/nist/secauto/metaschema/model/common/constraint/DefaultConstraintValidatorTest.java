@@ -41,9 +41,9 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
-import gov.nist.secauto.metaschema.model.common.metapath.item.MockItemFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.MockNodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jmock.Expectations;
@@ -64,7 +64,7 @@ class DefaultConstraintValidatorTest {
   @SuppressWarnings("null")
   @Test
   void testAllowedValuesAllowOther() {
-    MockItemFactory itemFactory = new MockItemFactory(context);
+    MockNodeItemFactory itemFactory = new MockNodeItemFactory(context);
 
     IFlagNodeItem flag = itemFactory.flag("value", IStringItem.valueOf("value"));
 
@@ -110,7 +110,7 @@ class DefaultConstraintValidatorTest {
   @SuppressWarnings("null")
   @Test
   void testAllowedValuesMultipleAllowOther() {
-    MockItemFactory itemFactory = new MockItemFactory(context);
+    MockNodeItemFactory itemFactory = new MockNodeItemFactory(context);
 
     IFlagNodeItem flag = itemFactory.flag("value", IStringItem.valueOf("value"));
 
@@ -166,7 +166,7 @@ class DefaultConstraintValidatorTest {
   @SuppressWarnings("null")
   @Test
   void testMultipleAllowedValuesConflictingAllowOther() {
-    MockItemFactory itemFactory = new MockItemFactory(context);
+    MockNodeItemFactory itemFactory = new MockNodeItemFactory(context);
 
     IFlagNodeItem flag1 = itemFactory.flag("value", IStringItem.valueOf("value"));
     IFlagNodeItem flag2 = itemFactory.flag("other2", IStringItem.valueOf("other2"));

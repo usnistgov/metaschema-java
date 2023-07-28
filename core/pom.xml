@@ -334,6 +334,15 @@
 									</includes>
 									<filtering>false</filtering>
 								</resource>
+								<resource>
+									<directory>metaschema/support</directory>
+									<includes>
+										<include>**/xml/*.xsd</include>
+										<include>**/xml/*.dtd</include>
+										<include>**/json/*.json</include>
+									</includes>
+									<filtering>false</filtering>
+								</resource>
 							</resources>
 						</configuration>
 					</execution>

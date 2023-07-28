@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.item;
+package gov.nist.secauto.metaschema.model.common.metapath.item.atomic;
 
 import static gov.nist.secauto.metaschema.model.common.metapath.TestUtils.decimal;
 import static gov.nist.secauto.metaschema.model.common.metapath.TestUtils.integer;
