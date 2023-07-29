@@ -26,12 +26,12 @@
 
 package gov.nist.secauto.metaschema.maven.plugin;
 
-import gov.nist.secauto.metaschema.codegen.JavaGenerator;
-import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;
-import gov.nist.secauto.metaschema.model.MetaschemaLoader;
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.MetaschemaException;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.codegen.JavaGenerator;
+import gov.nist.secauto.metaschema.databind.codegen.config.DefaultBindingConfiguration;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;

@@ -1,0 +1,10 @@
+<xb:config
+	xmlns:xb="http://xml.apache.org/xmlbeans/2004/02/xbean/config"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xml.apache.org/xmlbeans/2004/02/xbean/config
+                      http://svn.apache.org/viewvc/xmlbeans/trunk/src/main/schema/config/xmlconfig.xsd?view=co">
+	<xb:namespace
+		uri="https://csrc.nist.gov/ns/metaschema-binding/1.0">
+		<xb:package>gov.nist.secauto.metaschema.databind.codegen.xmlbeans</xb:package>
+	</xb:namespace>
+</xb:config>

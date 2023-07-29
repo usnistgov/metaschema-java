@@ -26,16 +26,16 @@
 
 package gov.nist.secauto.metaschema.schemagen.xml.schematype;
 
-import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
-import gov.nist.secauto.metaschema.model.common.IFieldInstance;
-import gov.nist.secauto.metaschema.model.common.IFlagContainer;
-import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.IModelInstance;
-import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupDataTypeProvider;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupDataTypeProvider;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
 import gov.nist.secauto.metaschema.schemagen.xml.DocumentationGenerator;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlGenerationState;

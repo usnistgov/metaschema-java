@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.model.common.IDefinition;
+import gov.nist.secauto.metaschema.core.model.IDefinition;
 
 public class ChoiceNotInlineStrategy implements IInlineStrategy {
   @Override

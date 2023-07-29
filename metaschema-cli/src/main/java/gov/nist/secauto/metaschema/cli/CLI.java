@@ -32,10 +32,10 @@ import gov.nist.secauto.metaschema.cli.commands.ValidateMetaschemaCommand;
 import gov.nist.secauto.metaschema.cli.processor.CLIProcessor;
 import gov.nist.secauto.metaschema.cli.processor.ExitStatus;
 import gov.nist.secauto.metaschema.cli.processor.command.CommandService;
-import gov.nist.secauto.metaschema.model.MetaschemaVersion;
-import gov.nist.secauto.metaschema.model.common.util.IVersionInfo;
-import gov.nist.secauto.metaschema.model.common.util.MetaschemaJavaVersion;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.MetaschemaJavaVersion;
+import gov.nist.secauto.metaschema.core.model.MetaschemaVersion;
+import gov.nist.secauto.metaschema.core.util.IVersionInfo;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.List;
 

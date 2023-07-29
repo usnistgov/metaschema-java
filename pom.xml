@@ -201,22 +201,12 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>metaschema-java-datatypes</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>metaschema-java-binding</artifactId>
+                <artifactId>metaschema-databind</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>metaschema-freemarker-support</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>metaschema-java-codegen</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -744,6 +734,36 @@
         <profile>
             <id>reporting</id>
             <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-pmd-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <id>pmd-verify</id>
+                                    <goals>
+                                        <goal>check</goal>
+                                    </goals>
+                                    <configuration>
+                                        <failurePriority>2</failurePriority>
+                                        <!-- fail on error for all builds -->
+                                        <failOnViolation>true</failOnViolation>
+                                        <printFailingErrors>true</printFailingErrors>
+                                        <format>sarif</format>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <plugin>
+                            <groupId>com.github.spotbugs</groupId>
+                            <artifactId>spotbugs-maven-plugin</artifactId>
+                            <configuration>
+                                <sarifOutput>true</sarifOutput>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -782,17 +802,19 @@
     </profiles>
     <modules>
         <module>core</module>
-        <module>metaschema-java-codegen</module>
+        <module>databind</module>
         <module>metaschema-maven-plugin</module>
-        <module>metaschema-java-binding</module>
-        <!-- <module>metaschema-freemarker-support</module> -->
         <module>metaschema-schema-generator</module>
-        <!-- <module>metaschema-documentation-generator</module> -->
         <module>metaschema-testing</module>
         <module>cli-processor</module>
         <module>metaschema-cli</module>
-		<!-- retired modules -->
-        <module>metaschema-model-common</module>
-        <module>metaschema-model</module>
+        <!-- <module>metaschema-freemarker-support</module> -->
+        <!-- <module>metaschema-documentation-generator</module> -->
+
+        <!-- retired modules -->
+        <module>metaschema-model-common</module><!-- moved to core -->
+        <module>metaschema-model</module><!-- moved to core -->
+        <module>metaschema-java-codegen</module><!-- moved to databind -->
+        <module>metaschema-java-binding</module><!-- moved to databind -->
     </modules>
 </project>

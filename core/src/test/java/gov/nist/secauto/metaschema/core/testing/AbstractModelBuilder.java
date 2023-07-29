@@ -26,12 +26,12 @@
 
 package gov.nist.secauto.metaschema.core.testing;
 
-import gov.nist.secauto.metaschema.model.common.IDefinition;
-import gov.nist.secauto.metaschema.model.common.IFlagContainer;
-import gov.nist.secauto.metaschema.model.common.IModelElement;
-import gov.nist.secauto.metaschema.model.common.INamedInstance;
-import gov.nist.secauto.metaschema.model.common.INamedModelElement;
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IModelElement;
+import gov.nist.secauto.metaschema.core.model.INamedInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelElement;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.jmock.Expectations;
@@ -48,6 +48,7 @@ public abstract class AbstractModelBuilder<T extends AbstractModelBuilder<T>>
     super(ctx);
   }
 
+  @NonNull
   @SuppressWarnings("unchecked")
   public T reset() {
     this.name = null;

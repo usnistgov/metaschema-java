@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.core.testing;
 
-import gov.nist.secauto.metaschema.model.common.IFlagContainer;
-import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -45,6 +45,7 @@ public class FlagBuilder
     super(ctx);
   }
 
+  @NonNull
   public static FlagBuilder builder(@NonNull Mockery ctx) {
     return new FlagBuilder(ctx).reset();
   }

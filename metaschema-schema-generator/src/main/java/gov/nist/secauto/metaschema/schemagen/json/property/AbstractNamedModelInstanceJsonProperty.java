@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.schemagen.json.property;
 
-import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 

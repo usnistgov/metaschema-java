@@ -27,15 +27,14 @@
 package gov.nist.secauto.metaschema.schemagen;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import gov.nist.secauto.metaschema.binding.io.Format;
-import gov.nist.secauto.metaschema.model.MetaschemaLoader;
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.MetaschemaException;
-import gov.nist.secauto.metaschema.model.common.configuration.DefaultConfiguration;
-import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
-import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
-import gov.nist.secauto.metaschema.model.common.validation.XmlSchemaContentValidator;
+import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
+import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
+import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.model.validation.IContentValidator;
+import gov.nist.secauto.metaschema.core.model.validation.XmlSchemaContentValidator;
+import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
+import gov.nist.secauto.metaschema.databind.io.Format;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 
 import org.jdom2.Document;

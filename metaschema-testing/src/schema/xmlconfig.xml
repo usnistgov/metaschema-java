@@ -6,19 +6,19 @@
                       http://svn.apache.org/viewvc/xmlbeans/trunk/src/main/schema/config/xmlconfig.xsd?view=co">
 	<xb:namespace
 		uri="http://csrc.nist.gov/ns/metaschema/test-suite/1.0">
-		<xb:package>gov.nist.secauto.metaschema.model.testing.xmlbeans</xb:package>
+		<xb:package>gov.nist.secauto.metaschema.model.testing.xml.xmlbeans</xb:package>
 	</xb:namespace>
 
 	<xb:usertype name="test:GenerationResultType"
 		javaname="java.lang.Boolean">
-		<xb:staticHandler>gov.nist.secauto.metaschema.model.testing.xmlbeans.handler.GenerationResultType</xb:staticHandler>
+		<xb:staticHandler>gov.nist.secauto.metaschema.model.testing.xml.xmlbeans.handler.GenerationResultType</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="test:ValidationResultType"
 		javaname="java.lang.Boolean">
-		<xb:staticHandler>gov.nist.secauto.metaschema.model.testing.xmlbeans.handler.ValidationResultType</xb:staticHandler>
+		<xb:staticHandler>gov.nist.secauto.metaschema.model.testing.xml.xmlbeans.handler.ValidationResultType</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="test:FormatType"
-		javaname="gov.nist.secauto.metaschema.binding.io.Format">
-		<xb:staticHandler>gov.nist.secauto.metaschema.model.testing.xmlbeans.handler.FormatType</xb:staticHandler>
+		javaname="gov.nist.secauto.metaschema.databind.io.Format">
+		<xb:staticHandler>gov.nist.secauto.metaschema.model.testing.xml.xmlbeans.handler.FormatType</xb:staticHandler>
 	</xb:usertype>
 </xb:config>

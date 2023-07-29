@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.testing;
 
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.jmock.Mockery;
 

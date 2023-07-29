@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.schemagen.json.property;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.schemagen.json.JsonGenerationState;
 
 import edu.umd.cs.findbugs.annotations.NonNull;

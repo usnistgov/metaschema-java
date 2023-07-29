@@ -56,14 +56,14 @@ public class CLITest {
   @Test
   void testMetaschemaValidate() {
     String[] args = { "validate",
-        "../metaschema-java-codegen/src/test/resources/metaschema/fields_with_flags/metaschema.xml" };
+        "../databind/src/test/resources/metaschema/fields_with_flags/metaschema.xml" };
     evaluateResult(CLI.runCli(args), ExitCode.OK);
   }
 
   @Test
   void testMetaschemaGenerateSchema() {
     String[] args = { "generate-schema", "--overwrite", "--as", "JSON",
-        "../metaschema-java-codegen/src/test/resources/metaschema/fields_with_flags/metaschema.xml",
+        "../databind/src/test/resources/metaschema/fields_with_flags/metaschema.xml",
         "target/schema-test.json" };
     evaluateResult(CLI.runCli(args), ExitCode.OK);
   }

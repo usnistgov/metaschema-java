@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>metaschema-java-codegen</artifactId>
+			<artifactId>metaschema-databind</artifactId>
 			<scope>test</scope>
 		</dependency>
 <!--		<dependency>-->

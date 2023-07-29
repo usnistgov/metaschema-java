@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.schemagen.xml.schematype;
 
-import gov.nist.secauto.metaschema.model.common.IValuedDefinition;
-import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValue;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.model.IValuedDefinition;
+import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.AbstractGenerationState.AllowedValueCollection;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlGenerationState;

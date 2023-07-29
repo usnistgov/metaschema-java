@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.schemagen.xml.schematype;
 
-import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlGenerationState;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 

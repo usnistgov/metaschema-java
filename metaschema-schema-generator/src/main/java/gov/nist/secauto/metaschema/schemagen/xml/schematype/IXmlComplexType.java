@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.schemagen.xml.schematype;
 
-import gov.nist.secauto.metaschema.model.common.IDefinition;
+import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.schemagen.MetaschemaIndex.DefinitionEntry;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlGenerationState;
 

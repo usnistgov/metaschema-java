@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.model.common.configuration.AbstractConfigurationFeature;
+import gov.nist.secauto.metaschema.core.configuration.AbstractConfigurationFeature;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 

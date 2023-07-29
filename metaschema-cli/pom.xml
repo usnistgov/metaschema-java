@@ -33,11 +33,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>metaschema-java-binding</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>metaschema-java-codegen</artifactId>
+			<artifactId>metaschema-databind</artifactId>
 		</dependency>
 
 		<dependency>

@@ -32,8 +32,8 @@ import gov.nist.secauto.metaschema.cli.processor.command.CommandService;
 import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;
 import gov.nist.secauto.metaschema.cli.processor.command.ICommand;
 import gov.nist.secauto.metaschema.cli.processor.command.ICommandExecutor;
-import gov.nist.secauto.metaschema.model.common.util.IVersionInfo;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.util.IVersionInfo;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -205,9 +205,9 @@ public class CLIProcessor {
     AnsiConsole.systemUninstall();
   }
 
+  @SuppressWarnings("resource")
   public static void handleQuiet() {
-    @SuppressWarnings("resource") LoggerContext ctx = (LoggerContext) LogManager.getContext(false); // NOPMD not
-                                                                                                    // closable here
+    LoggerContext ctx = (LoggerContext) LogManager.getContext(false); // NOPMD not closable here
     Configuration config = ctx.getConfiguration();
     LoggerConfig loggerConfig = config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
     Level oldLevel = loggerConfig.getLevel();
@@ -578,9 +578,8 @@ public class CLIProcessor {
       AnsiPrintStream out = AnsiConsole.out();
       int terminalWidth = Math.max(out.getTerminalWidth(), 40);
 
-      @SuppressWarnings("resource") PrintWriter writer = new PrintWriter(out, true, StandardCharsets.UTF_8); // NOPMD -
-                                                                                                             // not
-                                                                                                             // owned
+      @SuppressWarnings("resource") PrintWriter writer
+          = new PrintWriter(out, true, StandardCharsets.UTF_8); // NOPMD not owned
       formatter.printHelp(
           writer,
           terminalWidth,

@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.schemagen.datatype;
 
-import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 
 import java.util.Set;
 

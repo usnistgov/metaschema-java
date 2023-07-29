@@ -52,7 +52,7 @@ public interface ICommandExecutor {
   }
 
   @FunctionalInterface
-  public interface ExecutionFunction {
+  interface ExecutionFunction {
     @NonNull
     ExitStatus execute(
         @NonNull CallingContext callingContext,

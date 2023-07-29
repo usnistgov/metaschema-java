@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.cli.commands;
 
-import gov.nist.secauto.metaschema.binding.io.xml.XmlUtil;
 import gov.nist.secauto.metaschema.cli.processor.CLIProcessor;
 import gov.nist.secauto.metaschema.cli.processor.CLIProcessor.CallingContext;
 import gov.nist.secauto.metaschema.cli.processor.ExitCode;
@@ -37,11 +36,12 @@ import gov.nist.secauto.metaschema.cli.processor.command.DefaultExtraArgument;
 import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;
 import gov.nist.secauto.metaschema.cli.processor.command.ICommandExecutor;
 import gov.nist.secauto.metaschema.cli.util.LoggingValidationHandler;
-import gov.nist.secauto.metaschema.model.MetaschemaLoader;
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
-import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
+import gov.nist.secauto.metaschema.core.model.validation.IContentValidator;
+import gov.nist.secauto.metaschema.core.model.validation.IValidationResult;
+import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.io.xml.XmlUtil;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.logging.log4j.LogManager;
@@ -116,7 +116,7 @@ public class ValidateMetaschemaCommand
     return ICommandExecutor.using(callingContext, cmdLine, this::executeCommand);
   }
 
-  @SuppressWarnings("PMD.OnlyOneReturn") // readability
+  @SuppressWarnings({ "PMD.OnlyOneReturn", "unused" }) // readability
   @NonNull
   protected ExitStatus executeCommand(CallingContext callingContext, CommandLine cmdLine) {
     List<String> extraArgs = cmdLine.getArgList();

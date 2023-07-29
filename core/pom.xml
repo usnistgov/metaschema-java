@@ -219,9 +219,9 @@
 				<configuration>
 					<arguments>
 						<argument>-package</argument>
-						<argument>gov.nist.secauto.metaschema.model.common.metapath.antlr</argument>
+						<argument>gov.nist.secauto.metaschema.core.metapath.antlr</argument>
 						<argument>-o</argument>
-						<argument>${project.build.directory}/generated-sources/antlr4/gov/nist/secauto/metaschema/model/common/metapath/antlr</argument>
+						<argument>${project.build.directory}/generated-sources/antlr4/gov/nist/secauto/metaschema/core/metapath/antlr</argument>
 					</arguments>
 					<visitor>true</visitor>
 					<listener>false</listener>

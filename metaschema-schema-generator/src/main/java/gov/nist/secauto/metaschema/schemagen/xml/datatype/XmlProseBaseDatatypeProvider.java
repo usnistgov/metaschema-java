@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.schemagen.xml.datatype;
 
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.schemagen.datatype.IDatatypeContent;
 
 import org.jdom2.Element;

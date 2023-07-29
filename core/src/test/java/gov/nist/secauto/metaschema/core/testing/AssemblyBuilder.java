@@ -26,11 +26,11 @@
 
 package gov.nist.secauto.metaschema.core.testing;
 
-import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
-import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -54,6 +54,7 @@ public class AssemblyBuilder
     super(ctx);
   }
 
+  @NonNull
   public static AssemblyBuilder builder(@NonNull Mockery ctx) {
     return new AssemblyBuilder(ctx).reset();
   }
