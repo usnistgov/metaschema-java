@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
 import java.util.List;
 
@@ -61,5 +61,5 @@ public interface IFunctionExecutor {
       @NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      @Nullable INodeItem focus) throws MetapathException;
+      @Nullable IItem focus) throws MetapathException;
 }

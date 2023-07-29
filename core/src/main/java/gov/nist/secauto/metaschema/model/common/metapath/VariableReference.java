@@ -64,7 +64,7 @@ class VariableReference implements IExpression {
   }
 
   @Override
-  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, INodeContext context) {
+  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
     return dynamicContext.getVariableValue(ObjectUtils.notNull(getName().getValue()));
   }
 

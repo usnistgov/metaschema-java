@@ -32,8 +32,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionExecutor;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.INumericItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
@@ -78,7 +78,7 @@ public final class NumericFunction implements IFunctionExecutor {
   public ISequence<INumericItem> execute(@NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      INodeItem focus) {
+      IItem focus) {
 
     ISequence<? extends INumericItem> sequence = FunctionUtils.asType(
         ObjectUtils.requireNonNull(arguments.get(0)));

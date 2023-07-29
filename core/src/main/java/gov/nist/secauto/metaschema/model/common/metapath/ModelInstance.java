@@ -26,7 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.ItemUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.item.node.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -59,28 +61,36 @@ class ModelInstance
   }
 
   @Override
-  public ISequence<? extends IModelNodeItem<?, ?>> accept(DynamicContext dynamicContext, INodeContext context) {
-    return ISequence.of(matchModelInstance(checkContext(context)));
+  public ISequence<? extends IModelNodeItem<?, ?>> accept(
+      DynamicContext dynamicContext,
+      ISequence<?> focus) {
+    return ISequence.of(focus.asStream()
+        .map(item -> ItemUtils.checkItemIsNodeItemForStep(item))
+        .flatMap(item -> {
+          assert item != null;
+          return match(item);
+        }));
   }
 
   /**
    * Get a stream of matching child node items for the provided {@code context}.
    *
-   * @param context
-   *          the context to match child items of
+   * @param focusedItem
+   *          the node item to match child items of
    * @return the stream of matching node items
    */
   @SuppressWarnings("null")
   @NonNull
-  protected Stream<? extends IModelNodeItem<?, ?>> matchModelInstance(@NonNull INodeContext context) {
+  protected Stream<? extends IModelNodeItem<?, ?>> match(
+      @NonNull INodeItem focusedItem) {
     Stream<? extends IModelNodeItem<?, ?>> retval;
     if (getTest() instanceof Name) {
       String name = ((Name) getTest()).getValue();
-      List<? extends IModelNodeItem<?, ?>> items = context.getModelItemsByName(name);
+      List<? extends IModelNodeItem<?, ?>> items = focusedItem.getModelItemsByName(name);
       retval = items.stream();
     } else {
       // wildcard
-      retval = context.modelItems();
+      retval = focusedItem.modelItems();
     }
     return retval;
   }

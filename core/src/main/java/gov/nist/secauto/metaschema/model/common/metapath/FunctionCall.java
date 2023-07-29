@@ -99,13 +99,13 @@ class FunctionCall implements IExpression {
   }
 
   @Override
-  public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
+  public ISequence<?> accept(DynamicContext dynamicContext, ISequence<?> focus) {
     List<ISequence<?>> arguments = ObjectUtils.notNull(getChildren().stream().map(expression -> {
-      @NonNull ISequence<?> result = expression.accept(dynamicContext, context);
+      @NonNull ISequence<?> result = expression.accept(dynamicContext, focus);
       return result;
     }).collect(Collectors.toList()));
 
     IFunction function = getFunction();
-    return function.execute(arguments, dynamicContext, context);
+    return function.execute(arguments, dynamicContext, focus);
   }
 }

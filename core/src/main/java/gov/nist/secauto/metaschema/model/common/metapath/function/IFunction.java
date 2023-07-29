@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
@@ -166,7 +165,7 @@ public interface IFunction {
   ISequence<?> execute(
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      @NonNull INodeContext focus) throws MetapathException;
+      @NonNull ISequence<?> focus) throws MetapathException;
 
   /**
    * Get the signature of the function as a string.

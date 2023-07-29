@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
@@ -36,7 +35,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyUriItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -313,15 +311,17 @@ public class DefaultFunction
   public ISequence<?> execute(
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      INodeContext focus) {
+      @NonNull ISequence<?> focus) {
     try {
       List<ISequence<?>> convertedArguments = convertArguments(this, arguments);
+
+      IItem contextItem = isFocusDepenent() ? FunctionUtils.requireFirstItem(focus, true) : null;
 
       CallingContext callingContext = null;
       ISequence<?> result = null;
       if (isDeterministic()) {
         // check cache
-        callingContext = newCallingContext(arguments, focus);
+        callingContext = new CallingContext(arguments, contextItem);
         // attempt to get the result from the cache
         result = dynamicContext.getCachedResult(callingContext);
       }
@@ -336,7 +336,7 @@ public class DefaultFunction
         // focus");
         // }
         // result = handler.execute(this, convertedArguments, dynamicContext, actualFocus);
-        result = handler.execute(this, convertedArguments, dynamicContext, focus.getNodeItem());
+        result = handler.execute(this, convertedArguments, dynamicContext, contextItem);
 
         if (callingContext != null) {
           // add result to cache
@@ -402,32 +402,22 @@ public class DefaultFunction
     return builder.toString();
   }
 
-  /**
-   * Set up the execution context for this function.
-   *
-   * @param arguments
-   *          the function arguments
-   * @param focus
-   *          the current node context
-   * @return the calling context
-   */
-  @NonNull
-  public CallingContext newCallingContext(@NonNull List<ISequence<?>> arguments, @NonNull INodeContext focus) {
-    return new CallingContext(arguments, focus);
-  }
-
   public final class CallingContext {
     @Nullable
-    private final INodeItem contextNodeItem;
+    private final IItem contextItem;
     @NonNull
     private final List<ISequence<?>> arguments;
 
-    private CallingContext(@NonNull List<ISequence<?>> arguments, @NonNull INodeContext focus) {
-      if (isFocusDepenent()) {
-        contextNodeItem = focus.getNodeItem();
-      } else {
-        contextNodeItem = null;
-      }
+    /**
+     * Set up the execution context for this function.
+     *
+     * @param arguments
+     *          the function arguments
+     * @param contextItem
+     *          the current node context
+     */
+    private CallingContext(@NonNull List<ISequence<?>> arguments, @Nullable IItem contextItem) {
+      this.contextItem = contextItem;
       this.arguments = arguments;
     }
 
@@ -447,8 +437,8 @@ public class DefaultFunction
      * @return the function instance
      */
     @Nullable
-    public INodeItem getContextNodeItem() {
-      return contextNodeItem;
+    public IItem getContextItem() {
+      return contextItem;
     }
 
     /**
@@ -466,7 +456,7 @@ public class DefaultFunction
       final int prime = 31;
       int result = 1;
       result = prime * result + getFunction().hashCode();
-      result = prime * result + Objects.hash(contextNodeItem, arguments);
+      result = prime * result + Objects.hash(contextItem, arguments);
       return result;
     }
 
@@ -485,7 +475,7 @@ public class DefaultFunction
       if (!getFunction().equals(other.getFunction())) {
         return false; // NOPMD - readability
       }
-      return Objects.equals(arguments, other.arguments) && Objects.equals(contextNodeItem, other.contextNodeItem);
+      return Objects.equals(arguments, other.arguments) && Objects.equals(contextItem, other.contextItem);
     }
   }
 }

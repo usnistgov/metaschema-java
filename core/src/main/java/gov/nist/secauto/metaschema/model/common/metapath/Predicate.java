@@ -86,9 +86,9 @@ class Predicate implements IExpression {
 
   @Override
   public @NonNull ISequence<? extends IItem> accept(@NonNull DynamicContext dynamicContext,
-      @NonNull INodeContext context) {
+      @NonNull ISequence<?> focus) {
 
-    ISequence<?> retval = getBase().accept(dynamicContext, context);
+    ISequence<?> retval = getBase().accept(dynamicContext, focus);
 
     if (dynamicContext.getConfiguration().isFeatureEnabled(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES)) {
       // evaluate the predicates for this step
@@ -116,8 +116,8 @@ class Predicate implements IExpression {
                     // it is a match if the position matches
                     bool = position.equals(predicateIndex);
                   } else {
-                    INodeContext childContext = (INodeContext) item;
-                    ISequence<?> predicateResult = predicateExpr.accept(dynamicContext, childContext);
+                    ISequence<?> innerFocus = ISequence.of(item);
+                    ISequence<?> predicateResult = predicateExpr.accept(dynamicContext, innerFocus);
                     bool = FnBoolean.fnBoolean(predicateResult).toBoolean();
                   }
                   return bool;

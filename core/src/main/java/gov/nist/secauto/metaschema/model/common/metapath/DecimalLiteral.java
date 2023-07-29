@@ -56,7 +56,7 @@ class DecimalLiteral
   }
 
   @Override
-  public ISequence<? extends IDecimalItem> accept(DynamicContext dynamicContext, INodeContext context) {
+  public ISequence<? extends IDecimalItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
     return ISequence.of(IDecimalItem.valueOf(getValue()));
   }
 }

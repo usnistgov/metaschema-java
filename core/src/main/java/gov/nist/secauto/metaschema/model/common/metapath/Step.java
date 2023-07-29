@@ -26,14 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Lexer;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -42,28 +39,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * a series of predicate expressions that filter the result of the evaluation.
  */
 class Step implements IExpression { // NOPMD - intentional
-  public enum Axis {
-    SELF(metapath10Lexer.KW_SELF),
-    PARENT(metapath10Lexer.KW_PARENT),
-    ANCESTOR(metapath10Lexer.KW_ANCESTOR),
-    ANCESTOR_OR_SELF(metapath10Lexer.KW_ANCESTOR_OR_SELF),
-    CHILDREN(metapath10Lexer.KW_CHILD),
-    DESCENDANT(metapath10Lexer.KW_DESCENDANT),
-    DESCENDANT_OR_SELF(metapath10Lexer.KW_DESCENDANT_OR_SELF);
-
-    private final int keywordIndex;
-
-    Axis(int keywordIndex) {
-      this.keywordIndex = keywordIndex;
-    }
-
-    public int getKeywordIndex() {
-      return keywordIndex;
-    }
-  }
 
   @NonNull
-  private final Axis axis;
+  private final Axis axisExpression;
   @NonNull
   private final IExpression stepExpression;
   @NonNull
@@ -79,14 +57,14 @@ class Step implements IExpression { // NOPMD - intentional
    */
   @SuppressWarnings("null")
   protected Step(@NonNull Axis axis, @NonNull IExpression step) {
-    this.axis = axis;
+    this.axisExpression = axis;
     this.stepExpression = step;
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, List.of(step));
   }
 
   @NonNull
   public Axis getAxis() {
-    return axis;
+    return axisExpression;
   }
 
   /**
@@ -106,7 +84,7 @@ class Step implements IExpression { // NOPMD - intentional
 
   @Override
   public List<? extends IExpression> getChildren() {
-    return CollectionUtil.singletonList(getStep());
+    return ObjectUtils.notNull(List.of(getAxis(), getStep()));
   }
 
   @Override
@@ -115,48 +93,10 @@ class Step implements IExpression { // NOPMD - intentional
   }
 
   @Override
-  public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
-    INodeItem focus = context.getNodeItem();
+  public ISequence<?> accept(DynamicContext dynamicContext, ISequence<?> focus) {
 
-    if (focus == null) {
-      throw new TypeMetapathException(TypeMetapathException.NOT_A_NODE_ITEM_FOR_STEP, "The context node item is null");
-    }
-
-    Stream<? extends INodeItem> items;
-    switch (getAxis()) {
-    case SELF:
-      items = Stream.of(focus);
-      break;
-    case ANCESTOR:
-      items = focus.ancestor();
-      break;
-    case ANCESTOR_OR_SELF:
-      items = focus.ancestorOrSelf();
-      break;
-    case CHILDREN:
-      items = focus.modelItems();
-      break;
-    case DESCENDANT:
-      items = focus.descendant();
-      break;
-    case DESCENDANT_OR_SELF:
-      items = focus.descendantOrSelf();
-      break;
-    case PARENT:
-      items = Stream.ofNullable(focus.getParentNodeItem());
-      break;
-    default:
-      throw new UnsupportedOperationException(getAxis().name());
-    }
-
-    IExpression step = getStep();
-
-    return ISequence.of(ObjectUtils.notNull(
-        items.flatMap(item -> {
-          assert item != null;
-          ISequence<?> result = step.accept(dynamicContext, item);
-          return result.asStream();
-        })));
+    ISequence<? extends INodeItem> axisResult = getAxis().accept(dynamicContext, focus);
+    return getStep().accept(dynamicContext, axisResult);
   }
 
   @SuppressWarnings("null")

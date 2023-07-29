@@ -27,15 +27,25 @@
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface ISequence<ITEM_TYPE extends IItem> {
+public interface ISequence<ITEM_TYPE extends IItem> extends Iterable<ITEM_TYPE> {
   @SuppressWarnings("rawtypes")
   ISequence EMPTY = new EmptyListImpl<>();
 
@@ -105,10 +115,16 @@ public interface ISequence<ITEM_TYPE extends IItem> {
    *          the items to add to the sequence
    * @return the new sequence
    */
+  // TODO: remove null check on callers
   @NonNull
   public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
-      @NonNull Stream<ITEM_TYPE> items) {
-    return new StreamSequenceImpl<>(items);
+      Stream<ITEM_TYPE> items) {
+    return items == null ? empty() : new StreamSequenceImpl<>(items);
+  }
+
+  @Override
+  default Iterator<ITEM_TYPE> iterator() {
+    return asList().listIterator();
   }
 
   /**
@@ -148,52 +164,53 @@ public interface ISequence<ITEM_TYPE extends IItem> {
    * @param action
    *          code to execute for each item
    */
+  @Override
   void forEach(Consumer<? super ITEM_TYPE> action);
-  //
-  // @NonNull
-  // static <ITEM_TYPE extends IItem> Collector<ITEM_TYPE, ?, ISequence<ITEM_TYPE>> toSequence() {
-  //
-  // return new Collector<ITEM_TYPE, List<ITEM_TYPE>, ISequence<ITEM_TYPE>>() {
-  //
-  // @Override
-  // public Supplier<List<ITEM_TYPE>> supplier() {
-  // return ArrayList::new;
-  // }
-  //
-  // @Override
-  // public BiConsumer<List<ITEM_TYPE>, ITEM_TYPE> accumulator() {
-  // return (list, value) -> list.add(value);
-  // }
-  //
-  // @Override
-  // public BinaryOperator<List<ITEM_TYPE>> combiner() {
-  // return (list1, list2) -> {
-  // list1.addAll(list2);
-  // return list1;
-  // };
-  // }
-  //
-  // @Override
-  // public Function<List<ITEM_TYPE>, ISequence<ITEM_TYPE>> finisher() {
-  // return list -> {
-  // ISequence<ITEM_TYPE> retval;
-  // if (list.isEmpty()) {
-  // retval = empty();
-  // } else if (list.size() == 1) {
-  // retval = new SingletonSequenceImpl<>(ObjectUtils.notNull(list.iterator().next()));
-  // } else {
-  // retval = new ListSequenceImpl<>(list, false);
-  // }
-  // return retval;
-  // };
-  // }
-  //
-  // @Override
-  // public Set<Characteristics> characteristics() {
-  // return Collections.emptySet();
-  // }
-  //
-  // };
-  // }
+
+  @NonNull
+  static <ITEM_TYPE extends IItem> Collector<ITEM_TYPE, ?, ISequence<ITEM_TYPE>> toSequence() {
+
+    return new Collector<ITEM_TYPE, List<ITEM_TYPE>, ISequence<ITEM_TYPE>>() {
+
+      @Override
+      public Supplier<List<ITEM_TYPE>> supplier() {
+        return ArrayList::new;
+      }
+
+      @Override
+      public BiConsumer<List<ITEM_TYPE>, ITEM_TYPE> accumulator() {
+        return (list, value) -> list.add(value);
+      }
+
+      @Override
+      public BinaryOperator<List<ITEM_TYPE>> combiner() {
+        return (list1, list2) -> {
+          list1.addAll(list2);
+          return list1;
+        };
+      }
+
+      @Override
+      public Function<List<ITEM_TYPE>, ISequence<ITEM_TYPE>> finisher() {
+        return list -> {
+          ISequence<ITEM_TYPE> retval;
+          if (list.isEmpty()) {
+            retval = empty();
+          } else if (list.size() == 1) {
+            retval = new SingletonSequenceImpl<>(ObjectUtils.notNull(list.iterator().next()));
+          } else {
+            retval = new ListSequenceImpl<>(list, false);
+          }
+          return retval;
+        };
+      }
+
+      @Override
+      public Set<Characteristics> characteristics() {
+        return Collections.emptySet();
+      }
+
+    };
+  }
 
 }

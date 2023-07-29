@@ -30,9 +30,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyUriItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 
 import java.net.URI;
 import java.util.List;
@@ -59,7 +59,7 @@ public final class FnStaticBaseUri {
   private static ISequence<IAnyUriItem> execute(@NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      INodeItem focus) {
+      IItem focus) {
 
     IAnyUriItem uri = fnStaticBaseUri(dynamicContext);
     return ISequence.of(uri);

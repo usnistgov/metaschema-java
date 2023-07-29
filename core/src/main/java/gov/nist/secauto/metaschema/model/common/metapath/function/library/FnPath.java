@@ -85,9 +85,9 @@ public final class FnPath {
   private static ISequence<IStringItem> executeNoArg(@NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      INodeItem focus) {
+      IItem focus) {
 
-    INodeItem item = focus;
+    INodeItem item = FunctionUtils.requireTypeOrNull(INodeItem.class, focus);
 
     ISequence<IStringItem> retval;
     if (item == null) {
@@ -103,7 +103,7 @@ public final class FnPath {
   private static ISequence<IStringItem> executeOneArg(@NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      INodeItem focus) {
+      IItem focus) {
 
     return fnPath(ObjectUtils.requireNonNull(arguments.get(0)));
   }

@@ -26,36 +26,60 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Lexer;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ItemUtils;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class Name // NOPMD - intentional
-    implements IExpression {
+@SuppressWarnings("PMD.ShortClassName") // intentional
+public enum Axis implements IExpression {
+  SELF(metapath10Lexer.KW_SELF, focus -> Stream.of(focus)),
+  PARENT(metapath10Lexer.KW_PARENT, focus -> Stream.ofNullable(focus.getParentNodeItem())),
+  ANCESTOR(metapath10Lexer.KW_ANCESTOR, INodeItem::ancestor),
+  ANCESTOR_OR_SELF(metapath10Lexer.KW_ANCESTOR_OR_SELF, INodeItem::ancestorOrSelf),
+  CHILDREN(metapath10Lexer.KW_CHILD, INodeItem::modelItems),
+  DESCENDANT(metapath10Lexer.KW_DESCENDANT, INodeItem::descendant),
+  DESCENDANT_OR_SELF(metapath10Lexer.KW_DESCENDANT_OR_SELF, INodeItem::descendantOrSelf);
 
-  private final String value;
+  private final int keywordIndex;
+  @NonNull
+  private final Function<INodeItem, Stream<? extends INodeItem>> action;
 
-  /**
-   * Create a new literal expression.
-   *
-   * @param value
-   *          the literal value
-   */
-  protected Name(@NonNull String value) {
-    this.value = value;
+  Axis(int keywordIndex, @NonNull Function<INodeItem, Stream<? extends INodeItem>> action) {
+    this.keywordIndex = keywordIndex;
+    this.action = action;
   }
 
-  public String getValue() {
-    return value;
+  /**
+   * The ANTLR keyword for this axis type.
+   *
+   * @return the keyword
+   */
+  public int getKeywordIndex() {
+    return keywordIndex;
+  }
+
+  /**
+   * Execute the axis operation on the provided {@code focus}.
+   *
+   * @param focus
+   *          the node to operate on
+   * @return the result of the axis operation
+   */
+  @NonNull
+  public Stream<? extends INodeItem> execute(@NonNull INodeItem focus) {
+    return ObjectUtils.notNull(action.apply(focus));
   }
 
   @Override
-  public List<IExpression> getChildren() {
+  public List<? extends IExpression> getChildren() {
     return CollectionUtil.emptyList();
   }
 
@@ -71,27 +95,24 @@ class Name // NOPMD - intentional
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitName(this, context);
+    return visitor.visitAxis(this, context);
   }
 
   @Override
   public ISequence<? extends INodeItem> accept(
       DynamicContext dynamicContext,
-      ISequence<?> focus) {
-    return ISequence.of(focus.asStream()
-        .map(item -> ItemUtils.checkItemIsNodeItemForStep(item))
-        .filter(this::match));
+      ISequence<?> outerFocus) {
+    ISequence<? extends INodeItem> retval;
+    if (outerFocus.isEmpty()) {
+      retval = ISequence.empty();
+    } else {
+      retval = ISequence.of(outerFocus.asStream()
+          .map(item -> ItemUtils.checkItemIsNodeItemForStep(item))
+          .flatMap(item -> {
+            assert item != null;
+            return execute(item);
+          }).distinct());
+    }
+    return retval;
   }
-
-  private boolean match(INodeItem item) {
-    return item instanceof IDefinitionNodeItem
-        && getValue().equals(((IDefinitionNodeItem<?, ?>) item).getName());
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public String toASTString() {
-    return String.format("%s[value=%s]", getClass().getName(), getValue());
-  }
-
 }

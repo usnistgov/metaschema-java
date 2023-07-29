@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.function.library;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import gov.nist.secauto.metaschema.model.common.metapath.ExpressionTestBase;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
@@ -37,7 +38,7 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import org.junit.jupiter.api.Test;
 
 class FnTrueTest
-    extends FunctionTestBase {
+    extends ExpressionTestBase {
 
   @Test
   void test() {
@@ -45,7 +46,7 @@ class FnTrueTest
     ISequence<?> result = FnFalse.SIGNATURE.execute(
         CollectionUtil.emptyList(),
         newDynamicContext(),
-        newUnfocusedNodeContext());
+        ISequence.empty());
 
     IItem resultItem = FunctionUtils.getFirstItem(result, false);
     assertEquals(IBooleanItem.FALSE, resultItem);

@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.function.library;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 
 import java.util.List;
 
@@ -57,7 +57,7 @@ public final class FnTrue {
   private static ISequence<IBooleanItem> execute(@NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      INodeItem focus) {
+      IItem focus) {
 
     return ISequence.of(IBooleanItem.TRUE);
   }

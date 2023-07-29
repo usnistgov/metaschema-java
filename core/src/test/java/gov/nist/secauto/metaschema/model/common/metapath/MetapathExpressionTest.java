@@ -26,10 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.adelean.inject.resources.junit.jupiter.GivenTextResource;
 import com.adelean.inject.resources.junit.jupiter.TestWithResources;
+
+import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBooleanItem;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -76,5 +81,16 @@ class MetapathExpressionTest {
     assertThrows(MetapathException.class, () -> {
       MetapathExpression.compile("**");
     });
+  }
+
+  @Test
+  void test() {
+    MetapathExpression path = MetapathExpression.compile("2 eq 1 + 1");
+    DynamicContext dynamicContext = new StaticContext().newDynamicContext();
+    ISequence<?> result = path.evaluate(null, dynamicContext);
+    assertNotNull(result, "null result");
+    assertTrue(!result.isEmpty(), "result was empty");
+    assertEquals(1, result.size(), "unexpected size");
+    assertEquals(true, ((IBooleanItem) result.asList().iterator().next()).toBoolean(), "unexpected result");
   }
 }

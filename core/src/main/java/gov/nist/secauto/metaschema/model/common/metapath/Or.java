@@ -61,10 +61,10 @@ class Or // NOPMD - intentional name
   }
 
   @Override
-  public ISequence<? extends IBooleanItem> accept(DynamicContext dynamicContext, INodeContext context) {
+  public ISequence<? extends IBooleanItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
     boolean retval = false;
     for (IExpression child : getChildren()) {
-      ISequence<?> result = child.accept(dynamicContext, context);
+      ISequence<?> result = child.accept(dynamicContext, focus);
       if (FnBoolean.fnBooleanAsPrimitive(result)) {
         retval = true;
         break;

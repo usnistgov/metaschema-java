@@ -62,7 +62,7 @@ class PredicateTest
       { // NOPMD - intentional
         allowing(stepExpr).getStaticResultType();
         will(returnValue(IAssemblyNodeItem.class));
-        oneOf(stepExpr).accept(dynamicContext, item);
+        oneOf(stepExpr).accept(dynamicContext, ISequence.of(item));
         will(returnValue(stepResult));
 
         atMost(1).of(stepResult).asStream();
@@ -82,7 +82,7 @@ class PredicateTest
 
     Predicate expr = new Predicate(stepExpr, predicates);
 
-    ISequence<?> result = expr.accept(dynamicContext, item);
+    ISequence<?> result = expr.accept(dynamicContext, ISequence.of(item));
     assertEquals(ISequence.of(item), result, "Sequence does not match");
   }
 
@@ -103,7 +103,7 @@ class PredicateTest
       { // NOPMD - intentional
         allowing(stepExpr).getStaticResultType();
         will(returnValue(IAssemblyNodeItem.class));
-        oneOf(stepExpr).accept(dynamicContext, item);
+        oneOf(stepExpr).accept(dynamicContext, ISequence.of(item));
         will(returnValue(stepResult));
 
         atMost(1).of(stepResult).asStream();
@@ -121,7 +121,7 @@ class PredicateTest
 
     Predicate expr = new Predicate(stepExpr, predicates);
 
-    ISequence<?> result = expr.accept(dynamicContext, item);
+    ISequence<?> result = expr.accept(dynamicContext, ISequence.of(item));
     assertEquals(ISequence.of(item), result, "Sequence does not match");
   }
 }

@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyUriItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -83,8 +84,9 @@ public final class FnBaseUri {
   private static ISequence<IAnyUriItem> executeNoArg(@NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      INodeItem focus) {
-    return ISequence.of(fnBaseUri(focus));
+      IItem focus) {
+    return ISequence.of(fnBaseUri(
+        FunctionUtils.requireTypeOrNull(INodeItem.class, focus)));
   }
 
   @SuppressWarnings("unused")
@@ -92,7 +94,7 @@ public final class FnBaseUri {
   private static ISequence<IAnyUriItem> executeOneArg(@NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      INodeItem focus) {
+      IItem focus) {
 
     ISequence<? extends INodeItem> arg = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
 

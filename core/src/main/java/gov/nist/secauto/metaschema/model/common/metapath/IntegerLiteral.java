@@ -56,7 +56,7 @@ class IntegerLiteral
   }
 
   @Override
-  public ISequence<? extends IIntegerItem> accept(DynamicContext dynamicContext, INodeContext context) {
+  public ISequence<? extends IIntegerItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
     return ISequence.of(IIntegerItem.valueOf(getValue()));
   }
 }

@@ -48,7 +48,8 @@ class FlagTest
     Mockery context = getContext();
 
     @SuppressWarnings("null")
-    @NonNull IModelNodeItem<?, ?> nodeContext = context.mock(IModelNodeItem.class);
+    @NonNull IModelNodeItem<?, ?> focusItem = context.mock(IModelNodeItem.class);
+
     IFlagInstance instance = context.mock(IFlagInstance.class);
     IFlagNodeItem flagNode = context.mock(IFlagNodeItem.class);
 
@@ -56,11 +57,11 @@ class FlagTest
 
     context.checking(new Expectations() {
       { // NOPMD - intentional
-        allowing(nodeContext).getNodeItem();
-        will(returnValue(nodeContext));
-        allowing(nodeContext).getNodeItemType();
+        allowing(focusItem).getNodeItem();
+        will(returnValue(focusItem));
+        allowing(focusItem).getNodeItemType();
         will(returnValue(NodeItemType.ASSEMBLY));
-        allowing(nodeContext).getFlagByName(flagName);
+        allowing(focusItem).getFlagByName(flagName);
         will(returnValue(flagNode));
 
         allowing(flagNode).getInstance();
@@ -74,7 +75,7 @@ class FlagTest
 
     Flag expr = new Flag(new Name(flagName));
 
-    ISequence<?> result = expr.accept(dynamicContext, nodeContext);
+    ISequence<?> result = expr.accept(dynamicContext, ISequence.of(focusItem));
     assertEquals(ISequence.of(flagNode), result, "Sequence does not match");
   }
 }

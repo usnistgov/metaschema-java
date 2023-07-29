@@ -62,10 +62,10 @@ class Metapath
   }
 
   @Override
-  public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
+  public ISequence<?> accept(DynamicContext dynamicContext, ISequence<?> focus) {
     Stream<? extends IItem> retval = ObjectUtils.notNull(getChildren().stream()
         .flatMap(child -> {
-          ISequence<?> result = child.accept(dynamicContext, context);
+          ISequence<?> result = child.accept(dynamicContext, focus);
           return result.asStream();
         }));
     return ISequence.of(retval);

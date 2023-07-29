@@ -52,9 +52,9 @@ abstract class AbstractBasicArithmeticExpression
   }
 
   @Override
-  public ISequence<? extends IAnyAtomicItem> accept(DynamicContext dynamicContext, INodeContext context) {
-    IAnyAtomicItem leftItem = getFirstDataItem(getLeft().accept(dynamicContext, context), true);
-    IAnyAtomicItem rightItem = getFirstDataItem(getRight().accept(dynamicContext, context), true);
+  public ISequence<? extends IAnyAtomicItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
+    IAnyAtomicItem leftItem = getFirstDataItem(getLeft().accept(dynamicContext, focus), true);
+    IAnyAtomicItem rightItem = getFirstDataItem(getRight().accept(dynamicContext, focus), true);
 
     return resultOrEmpty(leftItem, rightItem);
   }

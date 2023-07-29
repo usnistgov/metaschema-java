@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class RelativeSlashPath
@@ -43,14 +41,11 @@ class RelativeSlashPath
   }
 
   @Override
-  public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
-    INodeItem contextItem = checkContext(context);
-    IExpression left = getLeft();
+  public ISequence<?> accept(
+      DynamicContext dynamicContext,
+      ISequence<?> focus) {
+    ISequence<?> leftResult = getLeft().accept(dynamicContext, focus);
 
-    @SuppressWarnings("unchecked")
-    @NonNull ISequence<? extends INodeItem> leftResult
-        = (ISequence<? extends INodeItem>) left.accept(dynamicContext, contextItem);
-
-    return evaluateInNodeContext(getRight(), dynamicContext, leftResult);
+    return getRight().accept(dynamicContext, leftResult);
   }
 }

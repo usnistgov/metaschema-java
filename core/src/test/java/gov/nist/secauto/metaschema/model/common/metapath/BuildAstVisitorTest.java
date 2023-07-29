@@ -34,6 +34,7 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -118,7 +119,7 @@ class BuildAstVisitorTest {
     assert field != null;
 
     // evaluate
-    ISequence<?> result = ast.accept(newDynamicContext(), field);
+    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(field));
     assertThat(result.asList(), contains(
         allOf(
             instanceOf(IFieldNodeItem.class),
@@ -134,15 +135,12 @@ class BuildAstVisitorTest {
     assert field != null;
 
     // compile expression
-    String path = "parent::root";
-    IExpression ast = parseExpression(path);
+    IItem result = MetapathExpression.compile("parent::root").evaluateAs(field, ResultType.NODE);
+    assert result != null;
 
-    // evaluate
-    ISequence<?> result = ast.accept(newDynamicContext(), field);
-    assertThat(result.asList(), contains(
-        allOf(
-            instanceOf(IRootAssemblyNodeItem.class),
-            hasProperty("name", equalTo("root"))))); // NOPMD
+    assertAll(
+        () -> assertInstanceOf(IRootAssemblyNodeItem.class, result),
+        () -> assertEquals("root", ((IRootAssemblyNodeItem) result).getName()));
   }
 
   @Test
@@ -157,7 +155,7 @@ class BuildAstVisitorTest {
     IExpression ast = parseExpression(path);
 
     // evaluate
-    ISequence<?> result = ast.accept(newDynamicContext(), field);
+    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(field));
     assertTrue(result.isEmpty());
   }
 
@@ -171,7 +169,7 @@ class BuildAstVisitorTest {
     IDocumentNodeItem document = newTestDocument();
 
     // evaluate
-    ISequence<?> result = ast.accept(newDynamicContext(), document);
+    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(document));
     assertTrue(result.isEmpty());
   }
 
@@ -184,7 +182,7 @@ class BuildAstVisitorTest {
     IDocumentNodeItem document = newTestDocument();
 
     // evaluate
-    ISequence<?> result = ast.accept(newDynamicContext(), document);
+    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(document));
     assertThat(result.asList(), contains(
         allOf(
             instanceOf(IRootAssemblyNodeItem.class),
@@ -202,7 +200,7 @@ class BuildAstVisitorTest {
     assert field != null;
 
     // evaluate
-    ISequence<?> result = ast.accept(newDynamicContext(), field);
+    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(field));
     assertThat(result.asList(), contains(
         allOf(
             instanceOf(IFlagNodeItem.class),
@@ -220,7 +218,7 @@ class BuildAstVisitorTest {
     assert root != null;
 
     // evaluate
-    ISequence<?> result = ast.accept(newDynamicContext(), root);
+    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(root));
     assertThat(result.asList(), contains(
         allOf(
             instanceOf(IFieldNodeItem.class),
@@ -270,7 +268,7 @@ class BuildAstVisitorTest {
     IExpression ast = parseExpression(metapath);
 
     IDocumentNodeItem document = newTestDocument();
-    ISequence<?> result = ast.accept(newDynamicContext(), document);
+    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(document));
     IItem resultItem = FunctionUtils.getFirstItem(result, false);
     assertAll(
         () -> assertEquals(And.class, ast.getClass()),

@@ -27,13 +27,6 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item.node;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.IDocumentNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFieldNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.IModelNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.IRootAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.hamcrest.Description;
@@ -54,6 +47,7 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+// TODO: Integrate with classes in gov.nist.secauto.metaschema.core.testing
 @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
 public class MockNodeItemFactory {
 
@@ -97,6 +91,8 @@ public class MockNodeItemFactory {
         will(returnValue(document));
         allowing(document).getParentNodeItem();
         will(returnValue(null));
+        allowing(document).ancestorOrSelf();
+        will(returnValue(Stream.of(document)));
 
         allowing(root).getName();
         will(returnValue(name));

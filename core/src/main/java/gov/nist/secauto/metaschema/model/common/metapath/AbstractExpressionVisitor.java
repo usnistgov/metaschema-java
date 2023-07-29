@@ -135,6 +135,11 @@ abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpression
   }
 
   @Override
+  public RESULT visitAxis(@NonNull Axis expr, @NonNull CONTEXT context) {
+    return visitChildren(expr, context);
+  }
+
+  @Override
   public RESULT visitStep(Step expr, CONTEXT context) {
     return visitChildren(expr, context);
   }
@@ -226,11 +231,6 @@ abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpression
 
   @Override
   public RESULT visitOr(Or expr, CONTEXT context) {
-    return visitChildren(expr, context);
-  }
-
-  @Override
-  public RESULT visitParentItem(ParentItem expr, CONTEXT context) {
     return visitChildren(expr, context);
   }
 

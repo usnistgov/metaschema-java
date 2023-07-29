@@ -26,25 +26,28 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item.node;
 
-import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.net.URI;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Represents a queryable Metapath model node.
  */
-public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemVisitable {
+public interface INodeItem extends IItem, IPathSegment, INodeItemVisitable {
 
   /**
    * Get this node item.
    */
+  // TODO: remove this item
   @Override
   INodeItem getNodeItem();
 
@@ -212,5 +215,73 @@ public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemV
   @NonNull
   default Stream<? extends INodeItem> descendantOrSelf() {
     return ObjectUtils.notNull(Stream.concat(Stream.of(this), descendant()));
+  }
+
+  /**
+   * Get the flags and value data associated this node. The resulting collection is expected to be
+   * ordered, with the results in document order.
+   * <p>
+   * The resulting collection may be modified, but such modification is not thread safe
+   *
+   * @return a collection of flags
+   */
+  @NonNull
+  Collection<? extends IFlagNodeItem> getFlags();
+
+  /**
+   * Lookup a flag and value data on this node by it's effective name.
+   *
+   * @param name
+   *          the effective name of the flag
+   * @return the flag with the matching effective name or {@code null} if no match was found
+   */
+  @Nullable
+  IFlagNodeItem getFlagByName(@NonNull String name);
+
+  /**
+   * Get the flags and value data associated with this node as a stream.
+   *
+   * @return the stream of flags or an empty stream if none exist
+   */
+  @SuppressWarnings("null")
+  @NonNull
+  default Stream<? extends IFlagNodeItem> flags() {
+    return getFlags().stream();
+  }
+
+  /**
+   * Get the model items (i.e., fields, assemblies) and value data associated this node. A given model
+   * instance can be multi-valued, so the value of each instance will be a list. The resulting
+   * collection is expected to be ordered, with the results in document order.
+   * <p>
+   * The resulting collection may be modified, but such modification is not thread safe
+   *
+   * @return a collection of list(s), with each list containing the items for a given model instance
+   */
+  @NonNull
+  Collection<? extends List<? extends IModelNodeItem<?, ?>>> getModelItems();
+
+  /**
+   * Get the collection of model items associated with the instance having the provided {@code name}.
+   * <p>
+   * The resulting collection may be modified, but such modification is not thread safe
+   *
+   * @param name
+   *          the instance name to get model items for
+   * @return the sequence of items associated with the named model instance, or an empty list if an
+   *         instance with that name is not present
+   */
+  @NonNull
+  List<? extends IModelNodeItem<?, ?>> getModelItemsByName(@NonNull String name);
+
+  /**
+   * Get the model items (i.e., fields, assemblies) and value data associated this node as a stream.
+   *
+   * @return the stream of model items or an empty stream if none exist
+   */
+  @SuppressWarnings("null")
+  @NonNull
+  default Stream<? extends IModelNodeItem<?, ?>> modelItems() {
+    return getModelItems().stream().flatMap(list -> list.stream());
   }
 }

@@ -75,13 +75,13 @@ class Let implements IExpression { // NOPMD class name ok
   }
 
   @Override
-  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, INodeContext context) {
-    ISequence<?> result = getBoundExpression().accept(dynamicContext, context);
+  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
+    ISequence<?> result = getBoundExpression().accept(dynamicContext, focus);
 
     String name = getName().getValue();
     dynamicContext.setVariableValue(name, result);
 
-    ISequence<?> retval = getReturnExpression().accept(dynamicContext, context);
+    ISequence<?> retval = getReturnExpression().accept(dynamicContext, focus);
 
     dynamicContext.clearVariableValue(name);
 

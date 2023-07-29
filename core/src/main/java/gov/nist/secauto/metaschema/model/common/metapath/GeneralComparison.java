@@ -61,9 +61,9 @@ class GeneralComparison
   }
 
   @Override
-  public ISequence<? extends IBooleanItem> accept(DynamicContext dynamicContext, INodeContext context) {
-    ISequence<? extends IAnyAtomicItem> leftItems = FnData.fnData(getLeft().accept(dynamicContext, context));
-    ISequence<? extends IAnyAtomicItem> rightItems = FnData.fnData(getRight().accept(dynamicContext, context));
+  public ISequence<? extends IBooleanItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
+    ISequence<? extends IAnyAtomicItem> leftItems = FnData.fnData(getLeft().accept(dynamicContext, focus));
+    ISequence<? extends IAnyAtomicItem> rightItems = FnData.fnData(getRight().accept(dynamicContext, focus));
     return ISequence.of(valueCompairison(leftItems, getOperator(), rightItems));
   }
 

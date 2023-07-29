@@ -27,8 +27,8 @@
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ItemUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.item.node.ICycledAssemblyNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 
 import java.util.stream.Stream;
@@ -46,44 +46,6 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
     return getBaseResultType();
   }
 
-  @NonNull
-  protected INodeItem checkContext(INodeContext context) {
-    INodeItem contextItem = context.getNodeItem();
-    if (contextItem == null) {
-      throw new TypeMetapathException(TypeMetapathException.NOT_A_NODE_ITEM_FOR_STEP, "The context node item is null");
-    }
-    return contextItem;
-  }
-
-  /**
-   * A callback used to evaluate the provided {@code expression} in the context of a set of context
-   * items.
-   *
-   * @param expression
-   *          the expression to evaluate
-   * @param dynamicContext
-   *          the evaluation context
-   * @param contextItems
-   *          the set of items to evaluate the expression against
-   * @return the resulting set of items produced by evaluating each context item against the
-   *         expression
-   */
-  @SuppressWarnings("null")
-  @NonNull
-  protected ISequence<?> evaluateInNodeContext(@NonNull IExpression expression, @NonNull DynamicContext dynamicContext,
-      @NonNull ISequence<? extends INodeItem> contextItems) {
-    ISequence<?> retval;
-    if (contextItems.isEmpty()) {
-      retval = ISequence.empty();
-    } else {
-      // evaluate the right path in the context of the left's children
-      Stream<? extends IItem> result = contextItems.asStream()
-          .flatMap(node -> expression.accept(dynamicContext, node).asStream());
-      retval = ISequence.of(result);
-    }
-    return retval;
-  }
-
   /**
    * Evaluate the {@code nodeContext} and its ancestors against the provided {@code expression},
    * keeping any matching nodes.
@@ -92,32 +54,41 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
    *          the expression to evaluate
    * @param dynamicContext
    *          the evaluation context
-   * @param nodeContext
+   * @param outerFocus
    *          the current context node
    * @return the matching nodes
    */
   @NonNull
-  protected Stream<? extends INodeItem> searchExpression(@NonNull IExpression expression,
-      @NonNull DynamicContext dynamicContext, @NonNull INodeContext nodeContext) {
+  protected Stream<? extends INodeItem> searchExpression(
+      @NonNull IExpression expression,
+      @NonNull DynamicContext dynamicContext,
+      @NonNull ISequence<?> outerFocus) {
 
-    // check the current node
+    // check the current focus
     @SuppressWarnings("unchecked") Stream<? extends INodeItem> nodeMatches
-        = (Stream<? extends INodeItem>) expression.accept(dynamicContext, nodeContext).asStream();
+        = (Stream<? extends INodeItem>) expression.accept(dynamicContext, outerFocus).asStream();
 
-    Stream<? extends INodeItem> childMatches;
-    if (nodeContext instanceof ICycledAssemblyNodeItem) {
-      // hack to prevent stack overflow
-      childMatches = Stream.empty();
-    } else {
-      // create a stream of flags and model elements to check
-      Stream<? extends IFlagNodeItem> flags = nodeContext.flags();
-      Stream<? extends INodeItem> modelItems = nodeContext.modelItems();
-      childMatches = Stream.concat(flags, modelItems)
-          .flatMap(instance -> {
-            assert instance != null;
-            return searchExpression(expression, dynamicContext, instance);
-          });
-    }
+    Stream<? extends INodeItem> childMatches = outerFocus.asStream()
+        .map(item -> ItemUtils.checkItemIsNodeItemForStep(item))
+        .flatMap(focusedNode -> {
+
+          Stream<? extends INodeItem> matches;
+          if (focusedNode instanceof ICycledAssemblyNodeItem) {
+            // prevent stack overflow
+            matches = Stream.empty();
+          } else {
+            assert focusedNode != null; // may be null?
+            // create a stream of flags and model elements to check
+            Stream<? extends INodeItem> flags = focusedNode.flags();
+            Stream<? extends INodeItem> modelItems = focusedNode.modelItems();
+
+            matches = searchExpression(
+                expression,
+                dynamicContext,
+                ISequence.of(Stream.concat(flags, modelItems)));
+          }
+          return matches;
+        });
 
     @SuppressWarnings("null")
     @NonNull Stream<? extends INodeItem> result = Stream.concat(nodeMatches, childMatches);
@@ -132,13 +103,15 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
    *          the expression to evaluate
    * @param dynamicContext
    *          the evaluation context
-   * @param nodeContext
+   * @param focus
    *          the current context node
    * @return the matching nodes
    */
   @NonNull
-  protected Stream<? extends INodeItem> search(@NonNull IExpression expression, @NonNull DynamicContext dynamicContext,
-      @NonNull INodeContext nodeContext) {
+  protected Stream<? extends INodeItem> search(
+      @NonNull IExpression expression,
+      @NonNull DynamicContext dynamicContext,
+      @NonNull ISequence<?> focus) {
     // Stream<? extends INodeItem> retval;
     // if (expr instanceof Flag) {
     // // check instances as a flag
@@ -152,7 +125,7 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
     // retval = searchExpression(expr, dynamicContext, context);
     // }
     // return retval;
-    return searchExpression(expression, dynamicContext, nodeContext);
+    return searchExpression(expression, dynamicContext, focus);
 
   }
 
@@ -171,7 +144,7 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
   // @NonNull
   // protected Stream<? extends IModelNodeItem> searchModelInstances(@NonNull ModelInstance
   // modelInstance,
-  // @NonNull INodeContext context) {
+  // @NonNull IFocus context) {
   //
   // // check if the current node context matches the expression
   // Stream<? extends IModelNodeItem> nodeMatches = matchModelInstance(modelInstance, context);
@@ -203,7 +176,7 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
   // * @return a stream of matching flag node items
   // */
   // @NonNull
-  // private Stream<? extends IRequiredValueFlagNodeItem> searchFlags(Flag expr, INodeContext context)
+  // private Stream<? extends IRequiredValueFlagNodeItem> searchFlags(Flag expr, IFocus context)
   // {
   //
   // // check if any flags on the the current node context matches the expression

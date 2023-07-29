@@ -30,6 +30,10 @@ public class TypeMetapathException
     extends AbstractCodedMetapathException {
   public static final int INVALID_TYPE_ERROR = 4;
   /**
+   * E1 in a path expression E1/E2 does not evaluate to a sequence of nodes.
+   */
+  public static final int BASE_PATH_NOT_A_SEQUENCE = 19;
+  /**
    * The context item is not a node when evaluating an axis {@link Step}.
    */
   public static final int NOT_A_NODE_ITEM_FOR_STEP = 20;

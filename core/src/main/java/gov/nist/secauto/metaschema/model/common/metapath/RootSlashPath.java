@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.ItemUtils;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class RootSlashPath
@@ -41,7 +44,15 @@ class RootSlashPath
   }
 
   @Override
-  public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
-    return getExpression().accept(dynamicContext, checkContext(context));
+  public ISequence<?> accept(
+      DynamicContext dynamicContext,
+      ISequence<?> focus) {
+
+    ISequence<?> roots = ObjectUtils.notNull(focus.asStream()
+        .map(item -> ItemUtils.checkItemIsNodeItemForStep(item))
+        .map(item -> Axis.ANCESTOR_OR_SELF.execute(ObjectUtils.notNull(item)).findFirst().get())
+        .collect(ISequence.toSequence()));
+
+    return getExpression().accept(dynamicContext, roots);
   }
 }

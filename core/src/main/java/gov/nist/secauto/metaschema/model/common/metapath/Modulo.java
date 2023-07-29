@@ -60,9 +60,9 @@ class Modulo
   }
 
   @Override
-  public ISequence<? extends INumericItem> accept(DynamicContext dynamicContext, INodeContext context) {
-    INumericItem dividend = FunctionUtils.toNumeric(getLeft().accept(dynamicContext, context), true);
-    INumericItem divisor = FunctionUtils.toNumeric(getRight().accept(dynamicContext, context), true);
+  public ISequence<? extends INumericItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
+    INumericItem dividend = FunctionUtils.toNumeric(getLeft().accept(dynamicContext, focus), true);
+    INumericItem divisor = FunctionUtils.toNumeric(getRight().accept(dynamicContext, focus), true);
     return resultOrEmpty(dividend, divisor);
   }
 

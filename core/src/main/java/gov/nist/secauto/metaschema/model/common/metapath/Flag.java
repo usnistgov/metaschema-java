@@ -26,7 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.ItemUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.item.node.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 
 import java.util.stream.Stream;
 
@@ -57,28 +59,36 @@ class Flag // NOPMD - intentional name
   }
 
   @Override
-  public ISequence<? extends IFlagNodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
-    return ISequence.of(matchFlags(checkContext(context)));
+  public ISequence<? extends IFlagNodeItem> accept(
+      DynamicContext dynamicContext,
+      ISequence<?> focus) {
+    return ISequence.of(focus.asStream()
+        .map(item -> ItemUtils.checkItemIsNodeItemForStep(item))
+        .flatMap(item -> {
+          assert item != null;
+          return match(item);
+        }));
   }
 
   /**
    * Get a stream of matching child node items for the provided {@code context}.
    *
-   * @param context
-   *          the context to match child items of
+   * @param focusedItem
+   *          the node item to match child items of
    * @return the stream of matching node items
    */
   @SuppressWarnings("null")
   @NonNull
-  protected Stream<? extends IFlagNodeItem> matchFlags(@NonNull INodeContext context) {
+  protected Stream<? extends IFlagNodeItem> match(@NonNull INodeItem focusedItem) {
     Stream<? extends IFlagNodeItem> retval;
     if (getTest() instanceof Name) {
       String name = ((Name) getTest()).getValue();
-      IFlagNodeItem item = context.getFlagByName(name);
+
+      IFlagNodeItem item = focusedItem.getFlagByName(name);
       retval = item == null ? Stream.empty() : Stream.of(item);
     } else {
       // wildcard
-      retval = context.flags();
+      retval = focusedItem.flags();
     }
     return retval;
   }

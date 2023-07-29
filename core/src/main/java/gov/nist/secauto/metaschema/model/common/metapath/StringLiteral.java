@@ -75,7 +75,7 @@ class StringLiteral
   }
 
   @Override
-  public ISequence<? extends IStringItem> accept(DynamicContext dynamicContext, INodeContext context) {
+  public ISequence<? extends IStringItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
     return ISequence.of(IStringItem.valueOf(getValue()));
   }
 }

@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -93,9 +94,9 @@ public final class RecurseDepth {
       @NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      INodeItem focus) {
+      IItem focus) {
 
-    ISequence<INodeItem> initalContext = ISequence.of(ObjectUtils.requireNonNull(focus));
+    ISequence<INodeItem> initalContext = ISequence.of(FunctionUtils.requireType(INodeItem.class, focus));
 
     ISequence<? extends IStringItem> arg = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
     IStringItem recursionPath = FunctionUtils.requireFirstItem(arg, true);
@@ -109,7 +110,7 @@ public final class RecurseDepth {
       @NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      INodeItem focus) {
+      IItem focus) {
 
     ISequence<INodeItem> initalContext = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
 
@@ -144,9 +145,9 @@ public final class RecurseDepth {
     return ISequence.of(ObjectUtils.notNull(initialContext.asStream()
         .flatMap(item -> {
           @NonNull ISequence<INodeItem> metapathResult
-              = recursionMetapath.evaluate(ObjectUtils.requireNonNull(item), dynamicContext);
+              = recursionMetapath.evaluate(item, dynamicContext);
           ISequence<INodeItem> result = recurseDepth(metapathResult, recursionMetapath, dynamicContext);
-          return Stream.concat(result.asStream(), Stream.of(item));
+          return ObjectUtils.notNull(Stream.concat(result.asStream(), Stream.of(item)));
         })));
   }
 }

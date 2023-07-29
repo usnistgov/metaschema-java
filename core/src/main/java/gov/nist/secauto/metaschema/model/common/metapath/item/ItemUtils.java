@@ -24,30 +24,45 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.function.library;
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.metapath.ExpressionTestBase;
-import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-
-import org.jmock.Expectations;
+import gov.nist.secauto.metaschema.model.common.metapath.TypeMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class FunctionTestBase
-    extends ExpressionTestBase {
+public final class ItemUtils {
+
+  private ItemUtils() {
+    // disable construction
+  }
 
   @NonNull
-  protected INodeContext newUnfocusedNodeContext() {
-    INodeContext retval = getContext().mock(INodeContext.class);
-    assert retval != null;
+  public static INodeItem checkItemIsNodeItemForStep(@Nullable IItem item) {
+    if (item instanceof INodeItem) {
+      return (INodeItem) item;
+    }
+    if (item == null) {
+      throw new TypeMetapathException(TypeMetapathException.NOT_A_NODE_ITEM_FOR_STEP,
+          "Item is null.");
+    }
+    throw new TypeMetapathException(TypeMetapathException.NOT_A_NODE_ITEM_FOR_STEP,
+        String.format(
+            "The item of type '%s' is not a INodeItem.",
+            item.getClass().getName()));
+  }
 
-    getContext().checking(new Expectations() {
-      { // NOPMD - intentional
-        allowing(retval).getNodeItem();
-        will(returnValue(null));
-      }
-    });
-
-    return retval;
+  @SuppressWarnings("unchecked")
+  @NonNull
+  public static <TYPE> TYPE checkItemType(@NonNull IItem item, @NonNull Class<TYPE> clazz) {
+    if (clazz.isInstance(item)) {
+      return (TYPE) item;
+    }
+    throw new TypeMetapathException(TypeMetapathException.INVALID_TYPE_ERROR,
+        String.format(
+            "The item of type '%s' is not the required type '%s'.",
+            item.getClass().getName(),
+            clazz.getName()));
   }
 }

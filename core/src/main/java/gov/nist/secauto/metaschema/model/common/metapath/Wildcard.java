@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.ItemUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 
 import java.util.Collections;
@@ -59,7 +60,9 @@ class Wildcard implements IExpression {
   }
 
   @Override
-  public ISequence<? extends INodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
-    return ISequence.of(context.getNodeItem());
+  public ISequence<? extends INodeItem> accept(
+      DynamicContext dynamicContext, ISequence<?> focus) {
+    return ISequence.of(focus.asStream()
+        .map(item -> ItemUtils.checkItemIsNodeItemForStep(item)));
   }
 }

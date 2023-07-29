@@ -26,15 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.IDocumentNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.IMetaschemaNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ItemUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
 
 class RootSlashOnlyPath
-    extends AbstractPathExpression<IDocumentNodeItem> {
+    extends AbstractPathExpression<INodeItem> {
 
   protected RootSlashOnlyPath() {
     // reduce visibility
@@ -46,8 +46,8 @@ class RootSlashOnlyPath
   }
 
   @Override
-  public Class<IDocumentNodeItem> getBaseResultType() {
-    return IDocumentNodeItem.class;
+  public Class<INodeItem> getBaseResultType() {
+    return INodeItem.class;
   }
 
   @Override
@@ -56,22 +56,13 @@ class RootSlashOnlyPath
   }
 
   @Override
-  public ISequence<? extends IDocumentNodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
-    INodeItem contextItem = checkContext(context);
-    return ISequence.of((IDocumentNodeItem) contextItem);
-  }
+  public ISequence<? extends INodeItem> accept(
+      DynamicContext dynamicContext,
+      ISequence<?> focus) {
 
-  @Override
-  protected INodeItem checkContext(INodeContext context) {
-    INodeItem contextItem = super.checkContext(context);
-    if (contextItem instanceof IDocumentNodeItem || contextItem instanceof IMetaschemaNodeItem) {
-      return contextItem;
-    }
-
-    throw new DynamicMetapathException(
-        DynamicMetapathException.CONTEXT_NODE_NOT_A_DOCUMENT_NODE,
-        String.format(
-            "The context node type '%s' is not a document node. Root searching not supported.",
-            contextItem.getClass().getName()));
+    return ObjectUtils.notNull(focus.asStream()
+        .map(item -> ItemUtils.checkItemIsNodeItemForStep(item))
+        .map(item -> Axis.ANCESTOR_OR_SELF.execute(ObjectUtils.notNull(item)).findFirst().get())
+        .collect(ISequence.toSequence()));
   }
 }

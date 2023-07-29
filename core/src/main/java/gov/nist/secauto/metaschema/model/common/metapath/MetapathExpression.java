@@ -162,14 +162,11 @@ public class MetapathExpression {
   }
 
   /**
-   * Evaluate this Metapath expression using the provided {@code nodeContext} as the initial
-   * evaluation context. The specific result type will be determined by the {@code resultType}
-   * argument.
+   * Evaluate this Metapath expression without a specific focus. The required result type will be
+   * determined by the {@code resultType} argument.
    *
    * @param <T>
    *          the expected result type
-   * @param nodeContext
-   *          the initial evaluation context
    * @param resultType
    *          the type of result to produce
    * @return the converted result
@@ -180,22 +177,45 @@ public class MetapathExpression {
    * @see #toResultType(ISequence, ResultType)
    */
   @Nullable
-  public <T> T evaluateAs(@NonNull INodeContext nodeContext, @NonNull ResultType resultType) {
-    ISequence<?> result = evaluate(nodeContext);
+  public <T> T evaluateAs(@NonNull ResultType resultType) {
+    return evaluateAs(null, resultType);
+  }
+
+  /**
+   * Evaluate this Metapath expression using the provided {@code focus} as the initial evaluation
+   * context. The required result type will be determined by the {@code resultType} argument.
+   *
+   * @param <T>
+   *          the expected result type
+   * @param focus
+   *          the outer focus of the expression
+   * @param resultType
+   *          the type of result to produce
+   * @return the converted result
+   * @throws TypeMetapathException
+   *           if the provided sequence is incompatible with the requested result type
+   * @throws MetapathException
+   *           if an error occurred during evaluation
+   * @see #toResultType(ISequence, ResultType)
+   */
+  @Nullable
+  public <T> T evaluateAs(
+      @Nullable IItem focus,
+      @NonNull ResultType resultType) {
+    ISequence<?> result = evaluate(focus);
     return toResultType(result, resultType);
   }
 
   /**
-   * Evaluate this Metapath expression using the provided {@code nodeContext} as the initial
-   * evaluation context. The specific result type will be determined by the {@code resultType}
-   * argument.
+   * Evaluate this Metapath expression using the provided {@code focus} as the initial evaluation
+   * context. The specific result type will be determined by the {@code resultType} argument.
    * <p>
    * This variant allow for reuse of a provided {@code dynamicContext}.
    *
    * @param <T>
    *          the expected result type
-   * @param nodeContext
-   *          the initial evaluation context
+   * @param focus
+   *          the outer focus of the expression
    * @param resultType
    *          the type of result to produce
    * @param dynamicContext
@@ -208,9 +228,11 @@ public class MetapathExpression {
    * @see #toResultType(ISequence, ResultType)
    */
   @Nullable
-  public <T> T evaluateAs(@NonNull INodeContext nodeContext, @NonNull ResultType resultType,
+  public <T> T evaluateAs(
+      @NonNull IItem focus,
+      @NonNull ResultType resultType,
       @NonNull DynamicContext dynamicContext) {
-    ISequence<?> result = evaluate(nodeContext, dynamicContext);
+    ISequence<?> result = evaluate(focus, dynamicContext);
     return toResultType(result, resultType);
   }
 
@@ -270,33 +292,48 @@ public class MetapathExpression {
   }
 
   /**
-   * Evaluate this Metapath expression using the provided {@code nodeContext} as the initial
-   * evaluation context.
+   * Evaluate this Metapath expression without a specific focus.
    *
    * @param <T>
    *          the type of items contained in the resulting sequence
-   * @param nodeContext
-   *          the initial evaluation context or {@code null}
+   * @return a sequence of Metapath items representing the result of the evaluation
+   * @throws MetapathException
+   *           if an error occurred during evaluation
+   */
+  @NonNull
+  public <T extends IItem> ISequence<T> evaluate() {
+    return evaluate(null);
+  }
+
+  /**
+   * Evaluate this Metapath expression using the provided {@code focus} as the initial evaluation
+   * context.
+   *
+   * @param <T>
+   *          the type of items contained in the resulting sequence
+   * @param focus
+   *          the outer focus of the expression
    * @return a sequence of Metapath items representing the result of the evaluation
    * @throws MetapathException
    *           if an error occurred during evaluation
    */
   @SuppressWarnings("unchecked")
   @NonNull
-  public <T extends IItem> ISequence<T> evaluate(@NonNull INodeContext nodeContext) {
-    return (ISequence<T>) evaluate(nodeContext, new StaticContext().newDynamicContext());
+  public <T extends IItem> ISequence<T> evaluate(
+      @Nullable IItem focus) {
+    return (ISequence<T>) evaluate(focus, new StaticContext().newDynamicContext());
   }
 
   /**
-   * Evaluate this Metapath expression using the provided {@code nodeContext} as the initial
-   * evaluation context.
+   * Evaluate this Metapath expression using the provided {@code focus} as the initial evaluation
+   * context.
    * <p>
    * This variant allow for reuse of a provided {@code dynamicContext}.
    *
    * @param <T>
    *          the type of items contained in the resulting sequence
-   * @param nodeContext
-   *          the initial evaluation context or {@code null}
+   * @param focus
+   *          the outer focus of the expression
    * @param dynamicContext
    *          the dynamic context to use for evaluation
    * @return a sequence of Metapath items representing the result of the evaluation
@@ -305,11 +342,11 @@ public class MetapathExpression {
    */
   @SuppressWarnings("unchecked")
   @NonNull
-  public <T extends IItem> ISequence<T> evaluate(@NonNull INodeContext nodeContext,
+  public <T extends IItem> ISequence<T> evaluate(
+      @Nullable IItem focus,
       @NonNull DynamicContext dynamicContext) {
     try {
-      return (ISequence<T>) getASTNode().accept(dynamicContext,
-          nodeContext);
+      return (ISequence<T>) getASTNode().accept(dynamicContext, ISequence.of(focus));
     } catch (MetapathException ex) { // NOPMD - intentional
       throw new MetapathException(
           String.format("An error occurred while evaluating the expression '%s'.", getPath()), ex);

@@ -34,7 +34,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.INumericItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.math.BigInteger;
@@ -246,25 +245,43 @@ public final class FunctionUtils {
   }
 
   @SuppressWarnings("unchecked")
+  @Nullable
+  public static <TYPE extends IItem> TYPE asTypeOrNull(@Nullable IItem item) {
+    return (TYPE) item;
+  }
+
+  @SuppressWarnings("unchecked")
   @NonNull
   public static <TYPE extends IItem> ISequence<TYPE> asType(@NonNull ISequence<?> sequence) {
     return (ISequence<TYPE>) sequence;
   }
 
   @NonNull
-  public static <TYPE> TYPE requireType(Class<TYPE> clazz, INodeItem node) {
-    if (node == null) {
+  public static <TYPE extends IItem> TYPE requireType(Class<TYPE> clazz, IItem item) {
+    if (item == null) {
       throw new InvalidTypeMetapathException(
           null,
           String.format("Expected non-null type '%s', but the node was null.",
               clazz.getName()));
-    } else if (!clazz.isInstance(node)) {
+    } else if (!clazz.isInstance(item)) {
       throw new InvalidTypeMetapathException(
-          node,
+          item,
           String.format("Expected type '%s', but the node was type '%s'.",
               clazz.getName(),
-              node.getClass().getName()));
+              item.getClass().getName()));
     }
-    return FunctionUtils.asType(node);
+    return FunctionUtils.asType(item);
+  }
+
+  @Nullable
+  public static <TYPE extends IItem> TYPE requireTypeOrNull(Class<TYPE> clazz, @Nullable IItem item) {
+    if (item == null || clazz.isInstance(item)) {
+      return FunctionUtils.asTypeOrNull(item);
+    }
+    throw new InvalidTypeMetapathException(
+        item,
+        String.format("Expected type '%s', but the node was type '%s'.",
+            clazz.getName(),
+            item.getClass().getName()));
   }
 }

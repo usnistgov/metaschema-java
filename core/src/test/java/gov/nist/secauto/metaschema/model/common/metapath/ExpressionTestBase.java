@@ -37,6 +37,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.io.File;
 import java.net.URI;
+import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -74,6 +75,8 @@ public class ExpressionTestBase {
       { // NOPMD - intentional
         allowing(retval).getNodeItem();
         will(returnValue(retval));
+        allowing(retval).ancestorOrSelf();
+        will(returnValue(Stream.of(retval)));
       }
     });
 
@@ -89,6 +92,8 @@ public class ExpressionTestBase {
       { // NOPMD - intentional
         allowing(retval).getNodeItem();
         will(returnValue(retval));
+        allowing(retval).ancestorOrSelf();
+        will(returnValue(Stream.of(retval)));
       }
     });
 

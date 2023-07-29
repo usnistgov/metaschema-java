@@ -81,23 +81,23 @@ class ValueComparisonTest
     DynamicContext dynamicContext = newDynamicContext();
     Mockery context = getContext();
 
-    INodeContext nodeContext = context.mock(INodeContext.class);
+    ISequence<?> focus = ISequence.empty();
 
     IExpression exp1 = context.mock(IExpression.class, "exp1");
     IExpression exp2 = context.mock(IExpression.class, "exp2");
 
     context.checking(new Expectations() {
       { // NOPMD - intentional
-        atMost(1).of(exp1).accept(dynamicContext, nodeContext);
+        atMost(1).of(exp1).accept(dynamicContext, focus);
         will(returnValue(ISequence.of(leftItem)));
-        atMost(1).of(exp2).accept(dynamicContext, nodeContext);
+        atMost(1).of(exp2).accept(dynamicContext, focus);
         will(returnValue(ISequence.of(rightItem)));
       }
     });
 
     ValueComparison expr = new ValueComparison(exp1, operator, exp2);
 
-    ISequence<?> result = expr.accept(dynamicContext, nodeContext);
+    ISequence<?> result = expr.accept(dynamicContext, focus);
     assertEquals(ISequence.of(expectedResult), result, "Sequence does not match");
   }
 }

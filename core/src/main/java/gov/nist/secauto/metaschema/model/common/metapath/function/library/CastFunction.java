@@ -32,8 +32,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionExecutor;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
@@ -74,7 +74,7 @@ public final class CastFunction<ITEM extends IAnyAtomicItem> implements IFunctio
   public ISequence<ITEM> execute(@NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      INodeItem focus) {
+      IItem focus) {
 
     ISequence<? extends IAnyAtomicItem> arg = FunctionUtils.asType(
         ObjectUtils.notNull(arguments.get(0)));

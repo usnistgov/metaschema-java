@@ -31,9 +31,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IStringItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
@@ -65,7 +65,7 @@ public final class FnStartsWith {
   private static ISequence<IBooleanItem> execute(@NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      INodeItem focus) {
+      IItem focus) {
     IStringItem arg1 = FunctionUtils.getFirstItem(
         FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0))), true);
     IStringItem arg2 = FunctionUtils.getFirstItem(

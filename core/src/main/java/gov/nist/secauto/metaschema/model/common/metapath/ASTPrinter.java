@@ -217,8 +217,8 @@ final class ASTPrinter
   }
 
   @Override
-  public String visitParentItem(ParentItem expr, State context) {
-    return appendNode(expr, super.visitParentItem(expr, context), context);
+  public String visitAxis(Axis expr, State context) {
+    return appendNode(expr, super.visitAxis(expr, context), context);
   }
 
   @Override

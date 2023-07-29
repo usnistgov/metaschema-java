@@ -69,7 +69,10 @@ final class ContextItem
   }
 
   @Override
-  public ISequence<? extends INodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
-    return ISequence.of(checkContext(context));
+  public ISequence<?> accept(DynamicContext dynamicContext, ISequence<?> focus) {
+    if (focus.isEmpty()) {
+      throw new DynamicMetapathException(DynamicMetapathException.DYNAMIC_CONTEXT_ABSENT, "The context is empty");
+    }
+    return focus;
   }
 }

@@ -610,19 +610,19 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
     Token token = (Token) ctx.forwardaxis().getChild(0).getPayload();
 
-    Step.Axis axis;
+    Axis axis;
     switch (token.getType()) {
     case metapath10Lexer.KW_SELF:
-      axis = Step.Axis.SELF;
+      axis = Axis.SELF;
       break;
     case metapath10Lexer.KW_CHILD:
-      axis = Step.Axis.CHILDREN;
+      axis = Axis.CHILDREN;
       break;
     case metapath10Lexer.KW_DESCENDANT:
-      axis = Step.Axis.DESCENDANT;
+      axis = Axis.DESCENDANT;
       break;
     case metapath10Lexer.KW_DESCENDANT_OR_SELF:
-      axis = Step.Axis.DESCENDANT_OR_SELF;
+      axis = Axis.DESCENDANT_OR_SELF;
       break;
     default:
       throw new UnsupportedOperationException(token.getText());
@@ -653,16 +653,16 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
     Token token = (Token) ctx.reverseaxis().getChild(0).getPayload();
 
-    Step.Axis axis;
+    Axis axis;
     switch (token.getType()) {
     case metapath10Lexer.KW_PARENT:
-      axis = Step.Axis.PARENT;
+      axis = Axis.PARENT;
       break;
     case metapath10Lexer.KW_ANCESTOR:
-      axis = Step.Axis.ANCESTOR;
+      axis = Axis.ANCESTOR;
       break;
     case metapath10Lexer.KW_ANCESTOR_OR_SELF:
-      axis = Step.Axis.ANCESTOR_OR_SELF;
+      axis = Axis.ANCESTOR_OR_SELF;
       break;
     default:
       throw new UnsupportedOperationException(token.getText());
@@ -672,7 +672,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
   @Override
   protected IExpression handleAbbrevreversestep(AbbrevreversestepContext ctx) {
-    return ParentItem.instance();
+    return Axis.PARENT;
   }
 
   @Override

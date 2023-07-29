@@ -85,9 +85,9 @@ public final class FnData {
   private static ISequence<IAnyAtomicItem> executeNoArg(@NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      INodeItem focus) {
+      IItem focus) {
 
-    INodeItem item = focus;
+    INodeItem item = FunctionUtils.requireTypeOrNull(INodeItem.class, focus);
 
     ISequence<IAnyAtomicItem> retval;
     if (item == null) {
@@ -104,7 +104,7 @@ public final class FnData {
   private static ISequence<IAnyAtomicItem> executeOneArg(@NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      INodeItem focus) {
+      IItem focus) {
 
     ISequence<?> sequence = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
     return fnData(sequence);

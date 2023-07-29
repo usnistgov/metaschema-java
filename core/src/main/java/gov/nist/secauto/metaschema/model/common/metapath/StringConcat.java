@@ -64,11 +64,11 @@ class StringConcat
   }
 
   @Override
-  public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
+  public ISequence<?> accept(DynamicContext dynamicContext, ISequence<?> focus) {
     // TODO: replace with concat function when implemented
     StringBuilder builder = new StringBuilder();
     for (IExpression child : getChildren()) {
-      ISequence<?> result = child.accept(dynamicContext, context);
+      ISequence<?> result = child.accept(dynamicContext, focus);
       FnData.fnData(result).asStream()
           .forEachOrdered(item -> {
             builder.append(item.asString());

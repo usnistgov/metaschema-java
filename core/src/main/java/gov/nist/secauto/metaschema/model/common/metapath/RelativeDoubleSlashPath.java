@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.node.INodeItem;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.stream.Stream;
 
@@ -46,18 +45,13 @@ class RelativeDoubleSlashPath
   }
 
   @Override
-  public ISequence<? extends INodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
-    INodeItem contextItem = checkContext(context);
-    @SuppressWarnings("unchecked") ISequence<? extends INodeItem> leftResult
-        = (ISequence<? extends INodeItem>) getLeft().accept(dynamicContext, contextItem);
+  public ISequence<? extends INodeItem> accept(
+      DynamicContext dynamicContext,
+      ISequence<?> focus) {
+    ISequence<?> leftResult = getLeft().accept(dynamicContext, focus);
 
-    Stream<? extends INodeItem> result = ObjectUtils.notNull(leftResult.asStream()
-        .flatMap(item -> {
-          assert item != null;
-          // evaluate the right path in the context of the left
-          return search(getRight(), dynamicContext, item);
-        }));
-
+    // evaluate the right path in the context of the left
+    Stream<? extends INodeItem> result = search(getRight(), dynamicContext, leftResult);
     return ISequence.of(result);
   }
 }

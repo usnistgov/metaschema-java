@@ -26,7 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -35,8 +38,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 class OrTest
     extends ExpressionTestBase {
@@ -55,31 +56,32 @@ class OrTest
     DynamicContext dynamicContext = newDynamicContext();
     Mockery context = getContext();
 
-    @SuppressWarnings("null")
-    @NonNull INodeContext nodeContext = context.mock(INodeContext.class);
+    ISequence<?> focus = ISequence.empty();
 
     IExpression exp1 = context.mock(IExpression.class, "exp1");
     IExpression exp2 = context.mock(IExpression.class, "exp2");
 
     context.checking(new Expectations() {
       { // NOPMD - intentional
-        atMost(1).of(exp1).accept(dynamicContext, nodeContext);
+        atMost(1).of(exp1).accept(dynamicContext, focus);
         will(returnValue(ISequence.of(bool1)));
-        atMost(1).of(exp2).accept(dynamicContext, nodeContext);
+        atMost(1).of(exp2).accept(dynamicContext, focus);
         will(returnValue(ISequence.of(bool2)));
       }
     });
 
     Or expr = new Or(exp1, exp2);
 
-    // ISequence<?> result = expr.accept(dynamicContext, nodeContext);
-    // assertEquals(ISequence.of(expectedResult), result, "Sequence does not match");
-    //
-    // result = MetapathExpression.compile(new StringBuilder()
-    // .append(bool1.toBoolean() ? "true()" : "false()")
-    // .append("|")
-    // .append(bool2.toBoolean() ? "true()" : "false()")
-    // .toString()).evaluate();
-    // assertEquals(ISequence.of(expectedResult), result, "Sequence does not match");
+    ISequence<?> result = expr.accept(dynamicContext, focus);
+    assertEquals(ISequence.of(expectedResult), result, "Sequence does not match");
+
+    result = MetapathExpression.compile(ObjectUtils.notNull(
+        new StringBuilder()
+            .append(bool1.toBoolean() ? "true()" : "false()")
+            .append(" or ")
+            .append(bool2.toBoolean() ? "true()" : "false()")
+            .toString()))
+        .evaluate();
+    assertEquals(ISequence.of(expectedResult), result, "Sequence does not match");
   }
 }

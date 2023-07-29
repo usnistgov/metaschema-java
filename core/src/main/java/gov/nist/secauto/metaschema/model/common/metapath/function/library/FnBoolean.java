@@ -71,7 +71,7 @@ public final class FnBoolean {
   private static ISequence<IBooleanItem> execute(@NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      INodeItem focus) {
+      IItem focus) {
 
     ISequence<?> items = ObjectUtils.requireNonNull(arguments.iterator().next());
 

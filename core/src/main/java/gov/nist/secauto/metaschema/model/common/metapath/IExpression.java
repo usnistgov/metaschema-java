@@ -84,12 +84,12 @@ public interface IExpression {
    *
    * @param dynamicContext
    *          the dynamic evaluation context
-   * @param context
-   *          the initial focus node item or {@code null}
+   * @param focus
+   *          the outer focus of the expression
    * @return the result of evaluation
    */
   @NonNull
-  ISequence<? extends IItem> accept(@NonNull DynamicContext dynamicContext, @NonNull INodeContext context);
+  ISequence<? extends IItem> accept(@NonNull DynamicContext dynamicContext, @NonNull ISequence<?> focus);
 
   /**
    * Provides a double dispatch callback for visitor handling.

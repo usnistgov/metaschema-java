@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.atomic.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -57,17 +58,16 @@ class AndTest
 
     Mockery context = getContext();
 
-    INodeContext nodeContext = context.mock(INodeContext.class);
-    assert nodeContext != null;
+    ISequence<?> focus = ISequence.empty();
 
     IExpression exp1 = context.mock(IExpression.class, "exp1");
     IExpression exp2 = context.mock(IExpression.class, "exp2");
 
     context.checking(new Expectations() {
       { // NOPMD - intentional
-        atMost(1).of(exp1).accept(dynamicContext, nodeContext);
+        atMost(1).of(exp1).accept(dynamicContext, focus);
         will(returnValue(ISequence.of(bool1)));
-        atMost(1).of(exp2).accept(dynamicContext, nodeContext);
+        atMost(1).of(exp2).accept(dynamicContext, focus);
         will(returnValue(ISequence.of(bool2)));
       }
     });
@@ -76,7 +76,16 @@ class AndTest
     assert list != null;
     And expr = new And(list);
 
-    ISequence<?> result = expr.accept(dynamicContext, nodeContext);
+    ISequence<?> result = expr.accept(dynamicContext, focus);
     assertEquals(ISequence.of(expectedResult), result);
+
+    result = MetapathExpression.compile(ObjectUtils.notNull(
+        new StringBuilder()
+            .append(bool1.toBoolean() ? "true()" : "false()")
+            .append(" and ")
+            .append(bool2.toBoolean() ? "true()" : "false()")
+            .toString()))
+        .evaluate();
+    assertEquals(ISequence.of(expectedResult), result, "Sequence does not match");
   }
 }

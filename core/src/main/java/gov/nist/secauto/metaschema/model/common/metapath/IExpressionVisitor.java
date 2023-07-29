@@ -47,6 +47,8 @@ interface IExpressionVisitor<RESULT, CONTEXT> {
 
   RESULT visitExcept(@NonNull Except except, @NonNull CONTEXT context);
 
+  RESULT visitAxis(@NonNull Axis expr, @NonNull CONTEXT context);
+
   RESULT visitStep(@NonNull Step expr, @NonNull CONTEXT context);
 
   RESULT visitValueComparison(@NonNull ValueComparison expr, @NonNull CONTEXT context);
@@ -82,8 +84,6 @@ interface IExpressionVisitor<RESULT, CONTEXT> {
   RESULT visitNegate(@NonNull Negate expr, @NonNull CONTEXT context);
 
   RESULT visitOr(@NonNull Or expr, @NonNull CONTEXT context);
-
-  RESULT visitParentItem(@NonNull ParentItem parentContextItem, @NonNull CONTEXT context);
 
   RESULT visitPredicate(@NonNull Predicate predicate, @NonNull CONTEXT context);
 

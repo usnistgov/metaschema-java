@@ -58,11 +58,12 @@ abstract class AbstractFilterExpression
   }
 
   @Override
-  public ISequence<? extends IItem> accept(@NonNull DynamicContext dynamicContext,
-      @NonNull INodeContext context) {
+  public ISequence<? extends IItem> accept(
+      @NonNull DynamicContext dynamicContext,
+      @NonNull ISequence<?> focus) {
 
-    ISequence<?> left = getLeft().accept(dynamicContext, context);
-    ISequence<?> right = getRight().accept(dynamicContext, context);
+    ISequence<?> left = getLeft().accept(dynamicContext, focus);
+    ISequence<?> right = getRight().accept(dynamicContext, focus);
     List<? extends IItem> rightList = right.asList();
 
     return applyFilterTo(left, rightList);
@@ -78,6 +79,7 @@ abstract class AbstractFilterExpression
    * @return the filtered result set
    */
   @NonNull
-  protected abstract ISequence<?> applyFilterTo(@NonNull ISequence<?> result,
+  protected abstract ISequence<?> applyFilterTo(
+      @NonNull ISequence<?> result,
       @NonNull List<? extends IItem> items);
 }
