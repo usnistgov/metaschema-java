@@ -63,6 +63,9 @@ public interface IModelPropertyInfo {
   Class<?> getItemType();
 
   @NonNull
+  IDataTypeHandler getDataTypeHandler();
+
+  @NonNull
   IPropertyCollector newPropertyCollector();
 
   // TODO is the following needed?
@@ -84,7 +87,10 @@ public interface IModelPropertyInfo {
       @NonNull IJsonParsingContext context)
       throws IOException;
 
-  boolean readValue(@NonNull IPropertyCollector collector, @Nullable Object parentInstance, @NonNull StartElement start,
+  boolean readValue(
+      @NonNull IPropertyCollector collector,
+      @NonNull Object parentInstance,
+      @NonNull StartElement start,
       @NonNull IXmlParsingContext context)
       throws IOException, XMLStreamException;
 
@@ -120,4 +126,29 @@ public interface IModelPropertyInfo {
 
   void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
       throws BindingException;
+  //
+  // @FunctionalInterface
+  // interface ItemXmlReader {
+  // /**
+  // * Reads an individual XML item from the XML stream.
+  // *
+  // * @param parentInstance
+  // * the object the data is parsed into
+  // * @param start
+  // * the current containing XML element
+  // * @param context
+  // * the XML parsing context
+  // * @return the item read, or {@code null} if no item was read
+  // * @throws XMLStreamException
+  // * if an error occurred while generating an {@link XMLEvent}
+  // * @throws IOException
+  // * if an error occurred reading the underlying XML file
+  // */
+  // Object readItem(
+  // @NonNull IBoundNamedModelInstance instance,
+  // @NonNull Object parentObject,
+  // @NonNull StartElement start)
+  // throws XMLStreamException, IOException;
+  // }
+
 }

@@ -453,7 +453,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
     QName name = toQName(retval);
     assert eventType == presumedEventType
         && (presumedName == null
-            || presumedName.equals(name)) : generateAssertMessage(
+            || presumedName.equals(name)) : generateExpectedMessage(
                 retval,
                 presumedEventType,
                 presumedName);
@@ -468,12 +468,17 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    *          the event reader
    * @param presumedEventType
    *          the expected event type as defined by {@link XMLStreamConstants}
+   * @return the next event
    * @throws XMLStreamException
    *           if an error occurred while looking at the next event
+   * @throws AssertionError
+   *           if the next event does not match the presumed event
    */
-  public static void assertNext(XMLEventReader2 reader, int presumedEventType)
+  public static XMLEvent assertNext(
+      @NonNull XMLEventReader2 reader,
+      int presumedEventType)
       throws XMLStreamException {
-    assertNext(reader, presumedEventType, null);
+    return assertNext(reader, presumedEventType, null);
   }
 
   /**
@@ -486,22 +491,31 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    *          the expected event type as defined by {@link XMLStreamConstants}
    * @param presumedName
    *          the expected name of the node associated with the event
+   * @return the next event
    * @throws XMLStreamException
    *           if an error occurred while looking at the next event
+   * @throws AssertionError
+   *           if the next event does not match the presumed event
    */
-  public static void assertNext(XMLEventReader2 reader, int presumedEventType, QName presumedName)
+  public static XMLEvent assertNext(
+      @NonNull XMLEventReader2 reader,
+      int presumedEventType,
+      @Nullable QName presumedName)
       throws XMLStreamException {
     XMLEvent nextEvent = reader.peek();
 
     int eventType = nextEvent.getEventType();
-    QName name = toQName(nextEvent);
     assert eventType == presumedEventType
-        && (presumedName == null || presumedName.equals(name)) : generateAssertMessage(nextEvent, presumedEventType,
-            presumedName);
+        && (presumedName == null
+            || presumedName.equals(toQName(nextEvent))) : generateExpectedMessage(
+                nextEvent,
+                presumedEventType,
+                presumedName);
+    return nextEvent;
   }
 
-  private static CharSequence generateAssertMessage(
-      @NonNull XMLEvent event,
+  public static CharSequence generateExpectedMessage(
+      @Nullable XMLEvent event,
       int presumedEventType,
       @Nullable QName presumedName) {
     StringBuilder builder = new StringBuilder(64);
@@ -513,12 +527,17 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
       builder.append(" for QName '")
           .append(presumedName.toString());
     }
-    builder.append("', instead found ")
-        .append(toString(event));
 
-    Location location = toLocation(event);
-    if (location != null) {
-      builder.append(" at ").append(toString(location));
+    if (event == null) {
+      builder.append("', instead found null event");
+    } else {
+      builder.append("', instead found ")
+          .append(toString(event));
+
+      Location location = toLocation(event);
+      if (location != null) {
+        builder.append(" at ").append(toString(location));
+      }
     }
     return builder;
   }

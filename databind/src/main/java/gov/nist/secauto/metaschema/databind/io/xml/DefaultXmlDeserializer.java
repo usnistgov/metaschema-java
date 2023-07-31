@@ -55,8 +55,16 @@ public class DefaultXmlDeserializer<CLASS>
     extends AbstractDeserializer<CLASS> {
   private XMLInputFactory2 xmlInputFactory;
 
+  @NonNull
+  private final RootAssemblyDefinition rootDefinition;
+
   public DefaultXmlDeserializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
+    if (!classBinding.isRoot()) {
+      throw new UnsupportedOperationException(
+          String.format("The assembly '%s' is not a root assembly.", classBinding.getBoundClass().getName()));
+    }
+    this.rootDefinition = new RootAssemblyDefinition(classBinding);
   }
 
   // @Override
@@ -91,8 +99,19 @@ public class DefaultXmlDeserializer<CLASS>
     return ObjectUtils.notNull((XMLEventReader2) getXMLInputFactory().createFilteredReader(eventReader, filter));
   }
 
+  @NonNull
+  protected RootAssemblyDefinition getRootAssemblyDefinition() throws IOException {
+    return rootDefinition;
+  }
+
   @Override
   protected IDocumentNodeItem deserializeToNodeItemInternal(Reader reader, URI documentUri) throws IOException {
+    Object value = deserializeToValue(reader, documentUri);
+    return INodeItemFactory.instance().newDocumentNodeItem(getRootAssemblyDefinition(), documentUri, value);
+  }
+
+  @Override
+  public CLASS deserializeToValue(Reader reader, URI documentUri) throws IOException {
     // doesn't auto close the underlying reader
     try (AutoCloser<XMLEventReader2, XMLStreamException> closer
         = new AutoCloser<>(newXMLEventReader2(reader), event -> event.close())) {
@@ -103,19 +122,11 @@ public class DefaultXmlDeserializer<CLASS>
   }
 
   @NonNull
-  protected IDocumentNodeItem parseXmlInternal(@NonNull XMLEventReader2 reader, @NonNull URI documentUri)
+  protected CLASS parseXmlInternal(@NonNull XMLEventReader2 reader, @NonNull URI documentUri)
       throws IOException, XMLStreamException {
 
-    IAssemblyClassBinding classBinding = getClassBinding();
-    if (!classBinding.isRoot()) {
-      throw new IOException(
-          String.format("The assembly '%s' is not a root assembly.", classBinding.getBoundClass().getName()));
-    }
+    XmlParser parser = new XmlParser(reader, new DefaultXmlProblemHandler());
 
-    DefaultXmlParsingContext parsingContext = new DefaultXmlParsingContext(reader, new DefaultXmlProblemHandler());
-
-    RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
-
-    return INodeItemFactory.instance().newDocumentNodeItem(root, documentUri, root.readRoot(parsingContext));
+    return parser.read(getRootAssemblyDefinition());
   }
 }

@@ -41,6 +41,7 @@ import org.codehaus.stax2.XMLEventReader2;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Characters;
@@ -177,7 +178,7 @@ public class XmlMarkupParser { // NOPMD - acceptable
           .append('>');
 
       // the next event should be the start's END_ELEMENT
-      assert XmlEventUtil.isNextEventEndElement(reader, name) : XmlEventUtil.toString(next);
+      XmlEventUtil.assertNext(reader, XMLStreamConstants.END_ELEMENT, name);
 
       // consume the start's END_ELEMENT
       reader.nextEvent();
@@ -225,7 +226,7 @@ public class XmlMarkupParser { // NOPMD - acceptable
 
     assert start == null
         || XmlEventUtil.isNextEventEndElement(reader, ObjectUtils.notNull(start.getName())) : XmlEventUtil
-            .toString(reader.peek());
+            .generateExpectedMessage(reader.peek(), XMLStreamConstants.END_ELEMENT, start.getName());
 
     // if (LOGGER.isDebugEnabled()) {
     // LOGGER.debug("parseContents(exit): {}", reader.peek() != null ?

@@ -24,37 +24,41 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.test;
 
-import com.fasterxml.jackson.core.JsonToken;
+import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-
-import java.io.IOException;
 import java.util.List;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-@FunctionalInterface
-public interface IJsonBindingSupplier {
-  /**
-   * Parse and return the set of items from the JSON stream.
-   * <p>
-   * An item is a complete value, which can be a {@link JsonToken#START_OBJECT}, or a value token.
-   *
-   * @param parentInstance
-   *          an optional parent object to use for serialization callbacks
-   * @param requiresJsonKey
-   *          when {@code true} indicates that the item will have a JSON key, or {@code false}
-   *          otherwise
-   * @param context
-   *          the JSON/YAML parser
-   * @return the set of parsed items
-   * @throws IOException
-   *           if an error occurred while parsing
-   */
-  @NonNull
-  List<Object> get(@Nullable Object parentInstance, boolean requiresJsonKey, @NonNull IJsonParsingContext context)
-      throws IOException;
+// Used
+@SuppressWarnings("PMD")
+@MetaschemaAssembly(name = "test-field", metaschema = TestMetaschema.class)
+public class MultiFieldAssembly {
+  @BoundField
+  private String field1;
+
+  @BoundField(useName = "field2",
+      maxOccurs = -1)
+  @GroupAs(name = "fields2",
+      inXml = XmlGroupAsBehavior.GROUPED,
+      inJson = JsonGroupAsBehavior.LIST)
+  private List<String> _field2;
+
+  public MultiFieldAssembly() {
+  }
+
+  public String getField1() {
+    return field1;
+  }
+
+  @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "this is a data holder")
+  public List<String> getField2() {
+    return _field2;
+  }
 }

@@ -26,29 +26,18 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import com.ctc.wstx.stax.WstxInputFactory;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 
-import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.DefaultBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
-import gov.nist.secauto.metaschema.databind.model.test.CollapsibleFlaggedBoundField;
-import gov.nist.secauto.metaschema.databind.model.test.EmptyBoundAssembly;
-import gov.nist.secauto.metaschema.databind.model.test.FlaggedBoundAssembly;
-import gov.nist.secauto.metaschema.databind.model.test.FlaggedBoundField;
-import gov.nist.secauto.metaschema.databind.model.test.OnlyModelBoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.test.RootBoundAssembly;
-import gov.nist.secauto.metaschema.databind.model.test.TestMetaschema;
 
-import org.codehaus.stax2.XMLEventReader2;
 import org.jmock.Expectations;
-import org.jmock.auto.Mock;
 import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -56,113 +45,53 @@ import java.io.IOException;
 import java.io.Reader;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 
 public class AbstractBoundModelTestSupport {
   @RegisterExtension
   private final JUnit5Mockery context = new JUnit5Mockery();
 
-  @Mock
-  private IBindingContext bindingContext; // NOPMD - auto mocked
+  @NonNull
+  private IBindingContext bindingContext = DefaultBindingContext.instance();
+  //
+  // @BeforeAll
+  // void initContext() {
+  // /**
+  // * Setup bound classes
+  // */
+  // registerMetaschema(TestMetaschema.class);
+  // registerClassBinding(CollapsibleFlaggedBoundField.class);
+  // registerClassBinding(EmptyBoundAssembly.class);
+  // registerClassBinding(FlaggedBoundAssembly.class);
+  // registerClassBinding(FlaggedBoundField.class);
+  // registerClassBinding(OnlyModelBoundAssembly.class);
+  // registerClassBinding(RootBoundAssembly.class);
+  // }
 
   @NonNull
   protected JUnit5Mockery getJUnit5Mockery() {
     return ObjectUtils.requireNonNull(context);
   }
 
-  protected void registerDatatype(@NonNull IDataTypeAdapter<?> adapter) {
-    context.checking(new Expectations() {
-      { // NOPMD - intentional
-        allowing(bindingContext).getJavaTypeAdapterInstance(adapter.getClass());
-        will(returnValue(adapter));
-        allowing(bindingContext).getClassBinding(adapter.getJavaClass());
-        will(returnValue(null));
-      }
-    });
+  @SuppressWarnings("null")
+  @NonNull
+  protected IBindingContext getBindingContext() {
+    return bindingContext;
   }
 
   @NonNull
-  protected IFieldClassBinding registerFieldBinding(@NonNull Class<?> clazz) {
-    IFieldClassBinding retval = DefaultFieldClassBinding.createInstance(
-        clazz,
-        ObjectUtils.notNull(bindingContext));
-    context.checking(new Expectations() {
-      { // NOPMD - intentional
-        allowing(bindingContext).getClassBinding(clazz);
-        will(returnValue(retval));
-      }
-    });
-    return retval;
-  }
-
-  @NonNull
-  protected IAssemblyClassBinding registerAssemblyBinding(@NonNull Class<?> clazz) {
-    IAssemblyClassBinding retval = DefaultAssemblyClassBinding.createInstance(
-        clazz,
-        ObjectUtils.notNull(bindingContext));
-    context.checking(new Expectations() {
-      { // NOPMD - intentional
-        allowing(bindingContext).getClassBinding(clazz);
-        will(returnValue(retval));
-      }
-    });
-    return retval;
+  protected IClassBinding registerClassBinding(@NonNull Class<?> clazz) {
+    return ObjectUtils.requireNonNull(getBindingContext().getClassBinding(clazz));
   }
 
   @NonNull
   protected IMetaschema registerMetaschema(@NonNull Class<? extends AbstractBoundMetaschema> clazz) {
-    IMetaschema retval = AbstractBoundMetaschema.createInstance(
-        clazz,
-        ObjectUtils.notNull(bindingContext));
-    context.checking(new Expectations() {
-      { // NOPMD - intentional
-        allowing(bindingContext).getMetaschemaInstanceByClass(clazz);
-        will(returnValue(retval));
-      }
-    });
-    return retval;
+    return getBindingContext().getMetaschemaInstanceByClass(clazz);
   }
 
+  @SuppressWarnings("null")
   @NonNull
   protected IAssemblyClassBinding getRootAssemblyClassBinding() {
-    /**
-     * Setup data types
-     */
-    registerDatatype(MetaschemaDataTypeProvider.BOOLEAN);
-    registerDatatype(MetaschemaDataTypeProvider.STRING);
-    registerDatatype(MetaschemaDataTypeProvider.TOKEN);
-    registerDatatype(MetaschemaDataTypeProvider.UUID);
-
-    /**
-     * Setup bound classes
-     */
-    registerMetaschema(TestMetaschema.class);
-    registerFieldBinding(CollapsibleFlaggedBoundField.class);
-    registerAssemblyBinding(EmptyBoundAssembly.class);
-    registerAssemblyBinding(FlaggedBoundAssembly.class);
-    registerFieldBinding(FlaggedBoundField.class);
-    registerAssemblyBinding(OnlyModelBoundAssembly.class);
-    return registerAssemblyBinding(RootBoundAssembly.class);
-  }
-
-  @NonNull
-  protected IXmlParsingContext newXmlParsingContext(Reader reader) throws XMLStreamException {
-
-    XMLInputFactory factory = XMLInputFactory.newInstance();
-    assert factory instanceof WstxInputFactory;
-    XMLEventReader2 parser = (XMLEventReader2) factory.createXMLEventReader(reader);
-
-    IXmlParsingContext retval = context.mock(IXmlParsingContext.class);
-
-    context.checking(new Expectations() {
-      { // NOPMD - intentional
-        allowing(retval).getReader();
-        will(returnValue(parser));
-      }
-    });
-
-    return ObjectUtils.notNull(retval);
+    return (IAssemblyClassBinding) getBindingContext().getClassBinding(RootBoundAssembly.class);
   }
 
   @SuppressWarnings("resource")

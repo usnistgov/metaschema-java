@@ -37,7 +37,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.json.JsonUtil;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldValue;
 
@@ -49,7 +48,6 @@ import java.lang.reflect.Field;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -200,14 +198,6 @@ class DefaultFieldValueProperty
   }
 
   @Override
-  public boolean read(Object parentInstance, StartElement start, IXmlParsingContext context)
-      throws IOException, XMLStreamException {
-    Object value = readInternal(context);
-    setValue(parentInstance, value);
-    return true;
-  }
-
-  @Override
   public Object readValue(IJsonParsingContext context) throws IOException {
     return readInternal(context);
   }
@@ -232,11 +222,6 @@ class DefaultFieldValueProperty
 
   @SuppressWarnings("resource") // not owned
   protected Object readInternal(IJsonParsingContext context) throws IOException {
-    // parse the value
-    return getJavaTypeAdapter().parse(context.getReader());
-  }
-
-  protected Object readInternal(IXmlParsingContext context) throws IOException {
     // parse the value
     return getJavaTypeAdapter().parse(context.getReader());
   }

@@ -29,11 +29,9 @@ package gov.nist.secauto.metaschema.databind.model;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
-import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
@@ -55,9 +53,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -265,8 +261,9 @@ abstract class AbstractClassBinding implements IClassBinding {
    * @throws BindingException
    *           if the instance cannot be created due to a binding error
    */
+  @Override
   @NonNull
-  protected <CLASS> CLASS newInstance() throws BindingException {
+  public <CLASS> CLASS newInstance() throws BindingException {
     Class<?> clazz = getBoundClass();
     try {
       @SuppressWarnings("unchecked") Constructor<CLASS> constructor
@@ -282,21 +279,24 @@ abstract class AbstractClassBinding implements IClassBinding {
   }
 
   /**
-   * Calls the method named "beforeDeserialize" on each class in the class's hierarchy if the method
-   * exists. These methods can be used to set the initial state of a bound class before data is
-   * applied during deserialization.
+   * Calls the method named "beforeDeserialize" on each class in the object's hierarchy if the method
+   * exists on the class.
+   * <p>
+   * These methods can be used to set the initial state of the target bound object before data is read
+   * and applied during deserialization.
    *
-   * @param objectInstance
-   *          the object instance
-   * @param parentInstance
-   *          the object's parent object instance
+   * @param targetObject
+   *          the data object target to call the method(s) on
+   * @param parentObject
+   *          the object target's parent object, which is used as the method argument
    * @throws BindingException
-   *           if an error occurs while calling a deserialization method
+   *           if an error occurs while calling the method
    */
-  protected void callBeforeDeserialize(Object objectInstance, Object parentInstance) throws BindingException {
+  @Override
+  public void callBeforeDeserialize(Object targetObject, Object parentObject) throws BindingException {
     if (beforeDeserializeMethod != null) {
       try {
-        beforeDeserializeMethod.invoke(objectInstance, parentInstance);
+        beforeDeserializeMethod.invoke(targetObject, parentObject);
       } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
         throw new BindingException(ex);
       }
@@ -304,57 +304,29 @@ abstract class AbstractClassBinding implements IClassBinding {
   }
 
   /**
-   * Calls the method named "afterDeserialize" on each class in the class's hierarchy if the method
-   * exists. These methods can be used to modify the state of a bound class after data is applied
-   * during deserialization.
+   * Calls the method named "afterDeserialize" on each class in the object's hierarchy if the method
+   * exists.
+   * <p>
+   * These methods can be used to modify the state of the target bound object after data is read and
+   * applied during deserialization.
    *
-   * @param objectInstance
-   *          the object instance
-   * @param parentInstance
-   *          the object's parent object instance
+   * @param targetObject
+   *          the data object target to call the method(s) on
+   * @param parentObject
+   *          the object target's parent object, which is used as the method argument
    * @throws BindingException
-   *           if an error occurs while calling a deserialization method
+   *           if an error occurs while calling the method
    */
-  protected void callAfterDeserialize(Object objectInstance, Object parentInstance) throws BindingException {
+  @Override
+  public void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
     if (afterDeserializeMethod != null) {
       try {
-        afterDeserializeMethod.invoke(objectInstance, parentInstance);
+        afterDeserializeMethod.invoke(targetObject, parentObject);
       } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
         throw new BindingException(ex);
       }
     }
   }
-
-  @Override
-  public Object readItem(Object parentInstance, StartElement start,
-      IXmlParsingContext context) throws IOException, XMLStreamException {
-
-    try {
-      Object instance = newInstance();
-      callBeforeDeserialize(instance, parentInstance);
-      readInternal(instance, start, context);
-      callAfterDeserialize(instance, parentInstance);
-      return instance;
-    } catch (BindingException ex) {
-      throw new IOException(ex);
-    }
-  }
-
-  protected void readInternal(@NonNull Object instance, @NonNull StartElement start,
-      @NonNull IXmlParsingContext context) throws IOException, XMLStreamException {
-    for (IBoundFlagInstance flag : getFlagInstances()) {
-      flag.read(instance, start, context);
-    }
-    readBody(instance, start, context);
-
-    XmlEventUtil.skipWhitespace(context.getReader());
-
-    XmlEventUtil.assertNext(context.getReader(), XMLStreamConstants.END_ELEMENT, start.getName());
-  }
-
-  protected abstract void readBody(@NonNull Object instance, @NonNull StartElement start,
-      @NonNull IXmlParsingContext context)
-      throws IOException, XMLStreamException;
 
   @Override
   public void writeItem(Object instance, QName parentName, IXmlWritingContext context)

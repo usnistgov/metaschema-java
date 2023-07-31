@@ -257,24 +257,28 @@ public class DefaultBoundLoader implements IBoundLoader {
 
   @Override
   public <CLASS> CLASS load(@NonNull URL url) throws IOException, URISyntaxException {
+    // TODO: avoid node item
     return INodeItem.toValue(loadAsNodeItem(url));
   }
 
   @Override
   @NonNull
   public <CLASS> CLASS load(@NonNull Path path) throws IOException {
+    // TODO: avoid node item
     return INodeItem.toValue(loadAsNodeItem(path));
   }
 
   @Override
   @NonNull
   public <CLASS> CLASS load(@NonNull File file) throws IOException {
+    // TODO: avoid node item
     return INodeItem.toValue(loadAsNodeItem(file));
   }
 
   @Override
   @NonNull
   public <CLASS> CLASS load(@NonNull InputStream is, @NonNull URI documentUri) throws IOException {
+    // TODO: avoid node item
     return INodeItem.toValue(loadAsNodeItem(is, documentUri));
   }
 
@@ -318,8 +322,7 @@ public class DefaultBoundLoader implements IBoundLoader {
     bis.reset();
 
     IDeserializer<CLASS> deserializer = getDeserializer(clazz, format, getConfiguration());
-    INodeItem nodeItem = deserializer.deserializeToNodeItem(bis, documentUri);
-    return INodeItem.toValue(nodeItem);
+    return deserializer.deserialize(bis, documentUri);
   }
 
   @Override

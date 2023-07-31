@@ -29,17 +29,28 @@ package gov.nist.secauto.metaschema.databind.model.test;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 
+// Used
 @MetaschemaAssembly(name = "flagged-assembly", metaschema = TestMetaschema.class)
 public class FlaggedAssembly {
   @BoundFlag(useName = "id")
   private String id;
+  @BoundFlag(useName = "number")
+  private int number;
 
-  protected String getId() {
+  public String getId() {
     return id;
   }
 
-  protected void setId(String id) {
+  public void setId(String id) {
     this.id = id;
+  }
+
+  public int getNumber() {
+    return number;
+  }
+
+  public void setNumber(int number) {
+    this.number = number;
   }
 
 }

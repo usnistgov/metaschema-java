@@ -46,6 +46,7 @@ import org.codehaus.stax2.XMLEventReader2;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -57,8 +58,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 class ListPropertyInfo
     extends AbstractModelPropertyInfo {
 
-  public ListPropertyInfo(@NonNull IBoundNamedModelInstance property) {
-    super(property);
+  public ListPropertyInfo(
+      @NonNull IBoundNamedModelInstance property,
+      @NonNull Supplier<IDataTypeHandler> dataTypeHandlerSupplier) {
+    super(property, dataTypeHandlerSupplier);
   }
 
   @Override
@@ -90,7 +93,10 @@ class ListPropertyInfo
   }
 
   @Override
-  public boolean readValue(IPropertyCollector collector, Object parentInstance, StartElement start,
+  public boolean readValue(
+      IPropertyCollector collector,
+      Object parentInstance,
+      StartElement start,
       IXmlParsingContext context) throws IOException, XMLStreamException {
     XMLEventReader2 eventReader = context.getReader();
 
@@ -106,7 +112,7 @@ class ListPropertyInfo
     while ((event = eventReader.peek()).isStartElement()
         && expectedFieldItemQName.equals(event.asStartElement().getName())) {
 
-      Object value = getProperty().readItem(parentInstance, start, context);
+      Object value = context.readItem(getProperty(), parentInstance, start);
       if (value != null) {
         collector.add(value);
         handled = true;
@@ -135,8 +141,7 @@ class ListPropertyInfo
       // }
 
       // this is a singleton, just parse the value as a single item
-      IBoundNamedModelInstance property = getProperty();
-      List<Object> values = property.readItem(parentInstance, false, context);
+      List<Object> values = getDataTypeHandler().get(parentInstance, false, context);
       collector.addAll(values);
 
       // if (isObject) {
@@ -158,7 +163,7 @@ class ListPropertyInfo
         // JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
         // }
 
-        List<Object> values = getProperty().readItem(parentInstance, false, context);
+        List<Object> values = getDataTypeHandler().get(parentInstance, false, context);
         collector.addAll(values);
 
         // if (isObject) {
@@ -197,7 +202,7 @@ class ListPropertyInfo
       writer.writeStartArray();
     } // only other option is a singleton value, write item
 
-    getProperty().getDataTypeHandler().writeItems(items, true, context);
+    getDataTypeHandler().writeItems(items, true, context);
 
     if (writeArray) {
       // write the end array

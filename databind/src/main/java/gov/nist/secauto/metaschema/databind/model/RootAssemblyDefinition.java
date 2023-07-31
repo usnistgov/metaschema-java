@@ -31,21 +31,17 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.core.model.RootAssemblyDefinitionWrapper;
-import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.json.JsonUtil;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import java.io.IOException;
@@ -56,9 +52,7 @@ import java.util.function.Predicate;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -99,15 +93,19 @@ public class RootAssemblyDefinition
   }
 
   @Override
-  public List<Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
-      throws IOException {
-    return getRootDefinition().readItem(parentInstance, requiresJsonKey, context);
+  public void callBeforeDeserialize(Object targetObject, Object parentObject) throws BindingException {
+    getRootDefinition().callBeforeDeserialize(targetObject, parentObject);
   }
 
   @Override
-  public Object readItem(Object parentInstance, StartElement start, IXmlParsingContext context)
-      throws IOException, XMLStreamException {
-    return getRootDefinition().readItem(parentInstance, start, context);
+  public void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
+    getRootDefinition().callAfterDeserialize(targetObject, parentObject);
+  }
+
+  @Override
+  public List<Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
+      throws IOException {
+    return getRootDefinition().readItem(parentInstance, requiresJsonKey, context);
   }
 
   @Override
@@ -172,39 +170,9 @@ public class RootAssemblyDefinition
     return getRootDefinition().getAssemblyInstanceByName(name);
   }
 
-  // TODO: this is unused, remove it
   @Override
-  public Object readRoot(IXmlParsingContext context) throws IOException, XMLStreamException {
-
-    XMLEventReader2 reader = context.getReader();
-
-    // we may be at the START_DOCUMENT
-    if (reader.peek().isStartDocument()) {
-      XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.START_DOCUMENT);
-    }
-
-    XmlEventUtil.skipEvents(reader, XMLStreamConstants.CHARACTERS, XMLStreamConstants.PROCESSING_INSTRUCTION);
-
-    QName rootQName = getRootXmlQName();
-    if (!reader.peek().isStartElement()) {
-      throw new IOException(
-          String.format("Expected an element named '%s', but found a '%s' instead.",
-              rootQName,
-              XmlEventUtil.toString(reader.peek())));
-    }
-
-    XmlEventUtil.assertNext(reader, XMLStreamConstants.START_ELEMENT, rootQName);
-
-    StartElement start = ObjectUtils.notNull(reader.nextEvent().asStartElement());
-    Object result = ObjectUtils.requireNonNull(readItem(null, start, context));
-
-    XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, rootQName);
-
-    // if (reader.hasNext() && LOGGER.isDebugEnabled()) {
-    // LOGGER.debug("After Parse: {}", XmlEventUtil.toString(reader.peek()));
-    // }
-
-    return result;
+  public <CLASS> CLASS newInstance() throws BindingException {
+    return getRootDefinition().newInstance();
   }
 
   @SuppressWarnings("resource") // not owned
@@ -303,5 +271,4 @@ public class RootAssemblyDefinition
     // end of root object
     writer.writeEndObject();
   }
-
 }

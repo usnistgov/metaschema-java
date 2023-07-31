@@ -33,7 +33,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
 import java.io.IOException;
@@ -45,8 +44,6 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -202,26 +199,6 @@ public interface IBoundNamedInstance extends INamedInstance {
    *           if there was an error when reading JSON data
    */
   Object read(@NonNull IJsonParsingContext context) throws IOException;
-
-  /**
-   * Read the XML data associated with this property and apply it to the provided
-   * {@code objectInstance} on which this property exists.
-   *
-   * @param objectInstance
-   *          an instance of the class on which this property exists
-   * @param parent
-   *          the containing XML element that was previously parsed
-   * @param context
-   *          the XML parsing context
-   * @return {@code true} if the property was parsed, or {@code false} if the data did not contain
-   *         information for this property
-   * @throws IOException
-   *           if there was an error when reading XML data
-   * @throws XMLStreamException
-   *           if there was an error generating an {@link XMLEvent} from the XML
-   */
-  boolean read(@NonNull Object objectInstance, @NonNull StartElement parent, @NonNull IXmlParsingContext context)
-      throws IOException, XMLStreamException;
 
   // /**
   // * Get a supplier that can continually parse the underlying stream loading multiple values.

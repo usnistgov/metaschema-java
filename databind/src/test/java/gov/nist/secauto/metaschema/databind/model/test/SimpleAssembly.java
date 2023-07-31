@@ -24,37 +24,33 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.test;
 
-import com.fasterxml.jackson.core.JsonToken;
+import gov.nist.secauto.metaschema.core.datatype.adapter.IntegerAdapter;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
+import java.math.BigInteger;
 
-import java.io.IOException;
-import java.util.List;
+@SuppressWarnings("PMD")
+@MetaschemaAssembly(name = "simple-assembly", metaschema = TestMetaschema.class, rootName = "test",
+    rootNamespace = "http://example.com/ns")
+public class SimpleAssembly {
+  @BoundFlag(useName = "id")
+  private String _id;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+  @BoundFlag(useName = "number", typeAdapter = IntegerAdapter.class)
+  private BigInteger _number;
 
-@FunctionalInterface
-public interface IJsonBindingSupplier {
-  /**
-   * Parse and return the set of items from the JSON stream.
-   * <p>
-   * An item is a complete value, which can be a {@link JsonToken#START_OBJECT}, or a value token.
-   *
-   * @param parentInstance
-   *          an optional parent object to use for serialization callbacks
-   * @param requiresJsonKey
-   *          when {@code true} indicates that the item will have a JSON key, or {@code false}
-   *          otherwise
-   * @param context
-   *          the JSON/YAML parser
-   * @return the set of parsed items
-   * @throws IOException
-   *           if an error occurred while parsing
-   */
-  @NonNull
-  List<Object> get(@Nullable Object parentInstance, boolean requiresJsonKey, @NonNull IJsonParsingContext context)
-      throws IOException;
+  public SimpleAssembly() {
+  }
+
+  public String getId() {
+    return _id;
+  }
+
+  @SuppressWarnings("unused")
+  public BigInteger getNumber() {
+    return _number;
+  }
 }

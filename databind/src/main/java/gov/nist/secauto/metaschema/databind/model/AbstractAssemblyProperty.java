@@ -26,12 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
-import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import java.io.IOException;
@@ -39,10 +35,7 @@ import java.lang.reflect.Field;
 import java.util.Locale;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -66,30 +59,6 @@ abstract class AbstractAssemblyProperty
   }
 
   @Override
-  public Object readItem(Object parentInstance, StartElement start,
-      IXmlParsingContext context) throws XMLStreamException, IOException {
-    XMLEventReader2 eventReader = context.getReader();
-
-    // consume extra whitespace between elements
-    XmlEventUtil.skipWhitespace(eventReader);
-
-    Object retval = null;
-    XMLEvent event = eventReader.peek();
-    if (event.isStartElement() && getXmlQName().equals(event.asStartElement().getName())) {
-      // Consume the start element
-      event = eventReader.nextEvent();
-      StartElement propertyStartElement = ObjectUtils.notNull(event.asStartElement());
-
-      // consume the value
-      retval = getDataTypeHandler().get(parentInstance, propertyStartElement, context);
-
-      // consume the end element
-      XmlEventUtil.consumeAndAssert(eventReader, XMLStreamConstants.END_ELEMENT, propertyStartElement.getName());
-    }
-    return retval;
-  }
-
-  @Override
   public void writeItem(Object item, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     XMLStreamWriter2 writer = context.getWriter();
@@ -100,7 +69,7 @@ abstract class AbstractAssemblyProperty
     writer.writeStartElement(currentParentName.getNamespaceURI(), currentParentName.getLocalPart());
 
     // write the value
-    getDataTypeHandler().accept(item, currentParentName, context);
+    getPropertyInfo().getDataTypeHandler().accept(item, currentParentName, context);
 
     // write the end element
     writer.writeEndElement();

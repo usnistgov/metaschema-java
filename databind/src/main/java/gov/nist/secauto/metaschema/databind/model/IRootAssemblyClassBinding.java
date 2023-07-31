@@ -32,7 +32,6 @@ import gov.nist.secauto.metaschema.core.model.IRootAssemblyDefinition;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonProblemHandler;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
 import java.io.IOException;
@@ -42,6 +41,8 @@ import javax.xml.stream.XMLStreamException;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IRootAssemblyClassBinding extends IAssemblyClassBinding, IRootAssemblyDefinition {
+  @NonNull
+  IAssemblyClassBinding getRootDefinition();
 
   /**
    * Parses JSON into a bound object. This assembly must be a root assembly for which a call to
@@ -77,22 +78,6 @@ public interface IRootAssemblyClassBinding extends IAssemblyClassBinding, IRootA
    */
   @NonNull
   Object readRoot(@NonNull IJsonParsingContext context) throws IOException;
-
-  /**
-   * Parses XML into a bound object. This assembly must be a root assembly for which a call to
-   * {@link IAssemblyClassBinding#isRoot()} will return {@code true}.
-   *
-   * @param context
-   *          the XML parser
-   * @return the bound object instance representing the JSON object
-   * @throws XMLStreamException
-   *           if an error occurred while parsing into XML
-   * @throws IOException
-   *           if an error occurred while reading the input
-   */
-  // TODO: merge the XMLStreamException into IOException
-  @NonNull
-  Object readRoot(@NonNull IXmlParsingContext context) throws XMLStreamException, IOException;
 
   /**
    * Writes data in a bound object to JSON. This assembly must be a root assembly for which a call to

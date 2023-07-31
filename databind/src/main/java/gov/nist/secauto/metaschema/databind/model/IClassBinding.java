@@ -34,10 +34,7 @@ import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
-
-import org.codehaus.stax2.XMLStreamReader2;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -46,10 +43,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -58,6 +52,9 @@ public interface IClassBinding extends IBoundModelDefinition {
   @NonNull
   IBindingContext getBindingContext();
 
+  @NonNull
+  <CLASS> CLASS newInstance() throws BindingException;
+
   /**
    * The class this binding is for.
    *
@@ -65,6 +62,14 @@ public interface IClassBinding extends IBoundModelDefinition {
    */
   @NonNull
   Class<?> getBoundClass();
+
+  void callBeforeDeserialize(
+      @NonNull Object targetObject,
+      @Nullable Object parentObject) throws BindingException;
+
+  void callAfterDeserialize(
+      @NonNull Object targetObject,
+      @Nullable Object parentObject) throws BindingException;
 
   // Provides a compatible return value
   @Override
@@ -106,34 +111,6 @@ public interface IClassBinding extends IBoundModelDefinition {
   List<Object> readItem(@Nullable Object parentInstance, boolean requiresJsonKey,
       @NonNull IJsonParsingContext context)
       throws IOException;
-
-  /**
-   * Reads a XML element storing the associated data in a Java class instance, returning the resulting
-   * instance.
-   * <p>
-   * When called the next {@link XMLEvent} of the {@link XMLStreamReader2} is expected to be a
-   * {@link XMLStreamConstants#START_ELEMENT} that is the XML element associated with the Java class.
-   * <p>
-   * After returning the next {@link XMLEvent} of the {@link XMLStreamReader2} is expected to be a the
-   * next event after the {@link XMLStreamConstants#END_ELEMENT} for the XML
-   * {@link XMLStreamConstants#START_ELEMENT} element associated with the Java class.
-   *
-   * @param parentInstance
-   *          the Java instance for the object containing this object, which can be {@code null} if
-   *          there is no parent
-   * @param start
-   *          the containing start element
-   * @param context
-   *          the parsing context
-   * @return the instance or {@code null} if no data was parsed
-   * @throws IOException
-   *           if an error occurred while reading the parsed content
-   * @throws XMLStreamException
-   *           if an error occurred while parsing the content as XML
-   */
-  @NonNull
-  Object readItem(@Nullable Object parentInstance, @NonNull StartElement start, @NonNull IXmlParsingContext context)
-      throws IOException, XMLStreamException;
 
   void writeItem(@NonNull Object item, @NonNull QName parentName, @NonNull IXmlWritingContext context)
       throws IOException, XMLStreamException;

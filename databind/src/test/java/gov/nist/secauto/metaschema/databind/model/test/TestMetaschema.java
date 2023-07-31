@@ -44,11 +44,15 @@ import edu.umd.cs.findbugs.annotations.NonNull;
         EmptyBoundAssembly.class,
         FlaggedBoundAssembly.class,
         OnlyModelBoundAssembly.class,
-        RootBoundAssembly.class
+        RootBoundAssembly.class,
+        MultiFieldAssembly.class,
+        SimpleAssembly.class
     },
     fields = {
         CollapsibleFlaggedBoundField.class,
-        FlaggedBoundField.class
+        FlaggedBoundField.class,
+        SimpleField2.class,
+        TestSimpleField.class
     })
 public class TestMetaschema
     extends AbstractBoundMetaschema {

@@ -29,47 +29,27 @@ package gov.nist.secauto.metaschema.databind.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.ctc.wstx.stax.WstxInputFactory;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import gov.nist.secauto.metaschema.core.datatype.adapter.IntegerAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
-import gov.nist.secauto.metaschema.databind.model.annotations.Metaschema;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
+import gov.nist.secauto.metaschema.databind.model.test.SimpleAssembly;
 
-import org.codehaus.stax2.XMLEventReader2;
 import org.jmock.Expectations;
 import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.lang.reflect.Field;
-import java.math.BigInteger;
-import java.net.URI;
-import java.util.List;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 
 class DefaultFlagPropertyTest {
   @RegisterExtension
@@ -78,7 +58,6 @@ class DefaultFlagPropertyTest {
   private final IClassBinding classBinding = context.mock(IClassBinding.class);
   private final IBindingContext bindingContext = context.mock(IBindingContext.class);
   private final IJsonParsingContext jsonParsingContext = context.mock(IJsonParsingContext.class);
-  private final IXmlParsingContext xmlParsingContext = context.mock(IXmlParsingContext.class);
 
   @SuppressWarnings("resource") // mocked
   @Test
@@ -121,116 +100,6 @@ class DefaultFlagPropertyTest {
       assertTrue(idProperty.read(obj, ObjectUtils.notNull(jsonParsingContext)));
 
       assertEquals("theId", obj.getId());
-    }
-  }
-
-  @Test
-  @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
-  void testXmlRead()
-      throws JsonParseException, IOException, NoSuchFieldException, XMLStreamException {
-    String xml = "<test xmlns='http://example.com/ns' id='theId' number='1'/>";
-    XMLInputFactory factory = XMLInputFactory.newInstance();
-    assert factory instanceof WstxInputFactory;
-    XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
-
-    Field field = SimpleAssembly.class.getDeclaredField("_id");
-
-    context.checking(new Expectations() {
-      { // NOPMD - intentional
-        atMost(1).of(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-        will(returnValue(MetaschemaDataTypeProvider.STRING));
-
-        allowing(classBinding).getBoundClass();
-        will(returnValue(SimpleAssembly.class));
-        allowing(classBinding).getBindingContext();
-        will(returnValue(bindingContext));
-
-        allowing(xmlParsingContext).getReader();
-        will(returnValue(eventReader));
-      }
-    });
-
-    DefaultFlagProperty idProperty = new DefaultFlagProperty(
-        ObjectUtils.notNull(field),
-        ObjectUtils.notNull(classBinding));
-
-    assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
-    XMLEvent event = eventReader.nextEvent();
-    assertEquals(XMLStreamConstants.START_ELEMENT, event.getEventType());
-    StartElement start = event.asStartElement();
-    // assertEquals("test", jsonParser.nextFieldName());
-    // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
-
-    SimpleAssembly obj = new SimpleAssembly();
-    assert start != null;
-    assert xmlParsingContext != null;
-    assertTrue(idProperty.read(obj, start, xmlParsingContext));
-
-    assertEquals("theId", obj.getId());
-  }
-
-  @Metaschema
-  public static class TestMetaschema
-      extends AbstractBoundMetaschema {
-
-    public TestMetaschema(@NonNull List<? extends IMetaschema> importedMetaschema,
-        @NonNull IBindingContext bindingContext) {
-      super(importedMetaschema, bindingContext);
-    }
-
-    @Override
-    public MarkupLine getName() {
-      return MarkupLine.fromMarkdown("Test Metaschema");
-    }
-
-    @Override
-    public String getVersion() {
-      return "1.0";
-    }
-
-    @Override
-    public MarkupMultiline getRemarks() {
-      return null;
-    }
-
-    @Override
-    public String getShortName() {
-      return "test-metaschema";
-    }
-
-    @Override
-    public URI getXmlNamespace() {
-      return ObjectUtils.notNull(URI.create("https://csrc.nist.gov/ns/test/xml"));
-    }
-
-    @Override
-    public URI getJsonBaseUri() {
-      return ObjectUtils.notNull(URI.create("https://csrc.nist.gov/ns/test/json"));
-    }
-
-  }
-
-  @SuppressWarnings("PMD")
-  @MetaschemaAssembly(name = "simple-assembly", metaschema = TestMetaschema.class, rootName = "test",
-      rootNamespace = "http://example.com/ns")
-  private static class SimpleAssembly {
-    @BoundFlag(useName = "id")
-    private String _id;
-
-    @BoundFlag(useName = "number", typeAdapter = IntegerAdapter.class)
-    private BigInteger _number;
-
-    public SimpleAssembly() {
-    }
-
-    public String getId() {
-      return _id;
-    }
-
-    @SuppressWarnings("unused")
-    public BigInteger getNumber() {
-      return _number;
     }
   }
 }

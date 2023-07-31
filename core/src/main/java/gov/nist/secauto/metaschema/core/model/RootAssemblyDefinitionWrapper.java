@@ -79,7 +79,7 @@ public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implem
    * @return the definition
    */
   @NonNull
-  protected T getRootDefinition() {
+  public T getRootDefinition() {
     return rootDefinition;
   }
 

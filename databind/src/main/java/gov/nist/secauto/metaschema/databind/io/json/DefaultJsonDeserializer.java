@@ -112,4 +112,9 @@ public class DefaultJsonDeserializer<CLASS>
       return retval;
     }
   }
+
+  @Override
+  public CLASS deserializeToValue(@NonNull Reader reader, @NonNull URI documentUri) throws IOException {
+    return INodeItem.toValue(deserializeToNodeItemInternal(reader, documentUri));
+  }
 }

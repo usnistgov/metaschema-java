@@ -34,9 +34,8 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
-import gov.nist.secauto.metaschema.core.model.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
-import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
@@ -45,7 +44,6 @@ import gov.nist.secauto.metaschema.databind.io.json.CollapseKeyBuilder;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.json.JsonUtil;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
@@ -70,7 +68,6 @@ import java.util.function.Supplier;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -285,14 +282,6 @@ public class DefaultFieldClassBinding
   @Override
   public boolean isCollapsible() {
     return getMetaschemaFieldAnnotation().isCollapsible();
-  }
-
-  @Override
-  protected void readBody(Object instance, StartElement start, IXmlParsingContext context)
-      throws IOException, XMLStreamException {
-    if (!getFieldValueInstance().read(instance, start, context)) {
-      throw new IOException(String.format("Missing field value at '%s", XmlEventUtil.toLocation(start)));
-    }
   }
 
   @SuppressWarnings("resource") // not owned

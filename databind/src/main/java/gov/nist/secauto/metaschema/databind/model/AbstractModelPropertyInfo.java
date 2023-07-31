@@ -28,20 +28,34 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import java.util.function.Supplier;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 abstract class AbstractModelPropertyInfo
     implements IModelPropertyInfo {
 
   @NonNull
   private final IBoundNamedModelInstance property;
+  @NonNull
+  private final Lazy<IDataTypeHandler> dataTypeHandler;
 
-  public AbstractModelPropertyInfo(@NonNull IBoundNamedModelInstance property) {
+  public AbstractModelPropertyInfo(
+      @NonNull IBoundNamedModelInstance property,
+      @NonNull Supplier<IDataTypeHandler> dataTypeHandlerSupplier) {
     this.property = ObjectUtils.requireNonNull(property, "property");
+    this.dataTypeHandler = Lazy.lazy(dataTypeHandlerSupplier);
   }
 
   @Override
   public IBoundNamedModelInstance getProperty() {
     return property;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public IDataTypeHandler getDataTypeHandler() {
+    return dataTypeHandler.get();
   }
 }

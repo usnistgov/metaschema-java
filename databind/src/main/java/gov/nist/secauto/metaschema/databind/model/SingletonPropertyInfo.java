@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -46,8 +47,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 class SingletonPropertyInfo
     extends AbstractModelPropertyInfo {
 
-  public SingletonPropertyInfo(@NonNull IBoundNamedModelInstance property) {
-    super(property);
+  public SingletonPropertyInfo(
+      @NonNull IBoundNamedModelInstance property,
+      @NonNull Supplier<IDataTypeHandler> dataTypeHandlerSupplier) {
+    super(property, dataTypeHandlerSupplier);
   }
 
   @SuppressWarnings("null")
@@ -64,7 +67,6 @@ class SingletonPropertyInfo
   @Override
   public void readValue(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
       throws IOException {
-    IBoundNamedModelInstance property = getProperty();
 
     // JsonParser parser = context.getReader();
     //
@@ -75,7 +77,7 @@ class SingletonPropertyInfo
     // JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
     // }
 
-    List<Object> values = property.readItem(parentInstance, false, context);
+    List<Object> values = getDataTypeHandler().get(parentInstance, false, context);
     collector.addAll(values);
 
     // if (isObject) {
@@ -88,7 +90,7 @@ class SingletonPropertyInfo
   public boolean readValue(IPropertyCollector collector, Object parentInstance, StartElement start,
       IXmlParsingContext context) throws IOException, XMLStreamException {
     boolean handled = true;
-    Object value = getProperty().readItem(parentInstance, start, context);
+    Object value = context.readItem(getProperty(), parentInstance, start);
     if (value != null) {
       collector.add(value);
       handled = true;
@@ -115,7 +117,7 @@ class SingletonPropertyInfo
   @Override
   public void writeValue(Object parentInstance, IJsonWritingContext context) throws IOException {
     IBoundNamedModelInstance property = getProperty();
-    getProperty().getDataTypeHandler().writeItems(
+    getDataTypeHandler().writeItems(
         CollectionUtil.singleton(ObjectUtils.requireNonNull(property.getValue(parentInstance))), true,
         context);
   }

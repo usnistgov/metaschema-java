@@ -71,6 +71,7 @@ class ClassDataTypeHandler implements IDataTypeHandler {
   }
 
   @Override
+  @NonNull
   public IClassBinding getClassBinding() {
     return classBinding;
   }
@@ -102,7 +103,7 @@ class ClassDataTypeHandler implements IDataTypeHandler {
   @Override
   public Object get(Object parentInstance, StartElement start, IXmlParsingContext context)
       throws IOException, XMLStreamException {
-    return classBinding.readItem(parentInstance, start, context);
+    return context.readItem(getClassBinding(), parentInstance, start);
   }
 
   @Override

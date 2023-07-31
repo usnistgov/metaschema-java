@@ -31,29 +31,22 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.json.JsonUtil;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 
-import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.List;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -91,8 +84,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
   private final Field field;
   @NonNull
   private final IGroupAs groupAs;
-  private IModelPropertyInfo propertyInfo;
-  private IDataTypeHandler dataTypeHandler;
+  private Lazy<IModelPropertyInfo> propertyInfo;
 
   /**
    * Construct a new bound model instance based on a Java property. The name of the property is bound
@@ -115,7 +107,10 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
     // field.getName(), parentClassBinding.getBoundClass().getName(), GroupAs.class.getName()));
     // }
     this.groupAs = annotation == null ? SINGLETON_GROUP_AS : new SimpleGroupAs(annotation, parentClassBinding);
+    this.propertyInfo = Lazy.lazy(() -> newPropertyInfo(() -> newDataTypeHandler()));
   }
+
+  protected abstract IDataTypeHandler newDataTypeHandler();
 
   @Override
   public Field getField() {
@@ -157,65 +152,12 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
   @Override
   @NonNull
   public IModelPropertyInfo getPropertyInfo() {
-    synchronized (this) {
-      if (propertyInfo == null) {
-        propertyInfo = newPropertyInfo();
-      }
-      return propertyInfo;
-    }
+    return propertyInfo.get();
   }
 
   @Override
   public Collection<? extends Object> getItemValues(Object value) {
     return getPropertyInfo().getItemsFromValue(value);
-  }
-
-  protected abstract IDataTypeHandler newDataTypeHandler();
-
-  @Override
-  public IDataTypeHandler getDataTypeHandler() {
-    synchronized (this) {
-      if (dataTypeHandler == null) {
-        dataTypeHandler = newDataTypeHandler();
-      }
-      return ObjectUtils.notNull(dataTypeHandler);
-    }
-  }
-
-  public boolean isNextProperty(@NonNull IXmlParsingContext context) throws XMLStreamException {
-    XMLEventReader2 eventReader = context.getReader();
-
-    XmlEventUtil.skipWhitespace(eventReader);
-
-    boolean handled = false;
-    QName groupQName = getXmlGroupAsQName();
-    if (groupQName != null) {
-      // we are to parse the grouping element, if the next token matches
-      XMLEvent event = eventReader.peek();
-      if (event.isStartElement() && groupQName.equals(event.asStartElement().getName())) {
-        handled = true;
-      }
-    }
-
-    if (!handled) {
-      XMLEvent event = eventReader.peek();
-      QName xmlQName = getXmlQName();
-      if (xmlQName != null && event.isStartElement() && xmlQName.equals(event.asStartElement().getName())) {
-        handled = true;
-      }
-    }
-    return handled;
-  }
-
-  @Override
-  public boolean read(Object parentInstance, StartElement start, IXmlParsingContext context)
-      throws IOException, XMLStreamException {
-    boolean handled = isNextProperty(context);
-    if (handled) {
-      Object value = readInternal(parentInstance, start, context);
-      setValue(parentInstance, value);
-    }
-    return handled;
   }
 
   @SuppressWarnings("resource")
@@ -238,49 +180,9 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
     return collector.getValue();
   }
 
-  protected Object readInternal(@Nullable Object parentInstance, @NonNull StartElement start,
-      @NonNull IXmlParsingContext context)
-      throws IOException, XMLStreamException {
-    XMLEventReader2 eventReader = context.getReader();
-
-    XmlEventUtil.skipWhitespace(eventReader);
-
-    StartElement currentStart = start;
-
-    QName groupQName = getXmlGroupAsQName();
-    if (groupQName != null) {
-      // we are to parse the grouping element, if the next token matches
-      XMLEvent groupEvent = XmlEventUtil.consumeAndAssert(eventReader, XMLStreamConstants.START_ELEMENT, groupQName);
-      currentStart = ObjectUtils.notNull(groupEvent.asStartElement());
-    }
-
-    IPropertyCollector collector = newPropertyCollector();
-    // There are zero or more named values based on cardinality
-    getPropertyInfo().readValue(collector, parentInstance, currentStart, context);
-
-    Object value = collector.getValue();
-
-    // consume extra whitespace between elements
-    XmlEventUtil.skipWhitespace(eventReader);
-
-    if (groupQName != null) {
-      // consume the end of the group
-      XmlEventUtil.consumeAndAssert(eventReader, XMLStreamConstants.END_ELEMENT, groupQName);
-    }
-
-    return value;
-  }
-
   @Override
   public IPropertyCollector newPropertyCollector() {
     return getPropertyInfo().newPropertyCollector();
-  }
-
-  @Override
-  public List<Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
-      throws IOException {
-    IDataTypeHandler supplier = getDataTypeHandler();
-    return supplier.get(parentInstance, requiresJsonKey, context);
   }
 
   @Override
@@ -354,7 +256,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
 
   @Override
   public Object copyItem(Object fromItem, Object toInstance) throws BindingException {
-    return getDataTypeHandler().copyItem(fromItem, toInstance);
+    return getPropertyInfo().getDataTypeHandler().copyItem(fromItem, toInstance);
   }
 
   /**

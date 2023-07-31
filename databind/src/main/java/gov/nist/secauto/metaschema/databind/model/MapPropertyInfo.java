@@ -47,6 +47,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -71,8 +72,10 @@ class MapPropertyInfo
     return value == null ? 0 : ((Map<?, ?>) value).size();
   }
 
-  public MapPropertyInfo(@NonNull IBoundNamedModelInstance property) {
-    super(property);
+  public MapPropertyInfo(
+      @NonNull IBoundNamedModelInstance property,
+      @NonNull Supplier<IDataTypeHandler> dataTypeHandlerSupplier) {
+    super(property, dataTypeHandlerSupplier);
   }
 
   @SuppressWarnings("null")
@@ -98,7 +101,7 @@ class MapPropertyInfo
 
   @Override
   public IPropertyCollector newPropertyCollector() {
-    return new MapPropertyCollector(getProperty());
+    return new MapPropertyCollector();
   }
 
   @Override
@@ -110,14 +113,13 @@ class MapPropertyInfo
     // A map value is always wrapped in a START_OBJECT, since fields are used for the keys
     JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
 
-    IBoundNamedModelInstance property = getProperty();
     // process all map items
     while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
 
       // a map item will always start with a FIELD_NAME, since this represents the key
       JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME);
 
-      List<Object> values = property.readItem(parentInstance, true, context);
+      List<Object> values = getDataTypeHandler().get(parentInstance, true, context);
       collector.addAll(values);
 
       // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all items have been
@@ -143,7 +145,7 @@ class MapPropertyInfo
     while ((event = eventReader.peek()).isStartElement() && qname.equals(event.asStartElement().getName())) {
 
       // Consume the start element
-      Object value = getProperty().readItem(parentInstance, start, context);
+      Object value = context.readItem(getProperty(), parentInstance, start);
       if (value != null) {
         collector.add(value);
         handled = true;
@@ -166,14 +168,14 @@ class MapPropertyInfo
     }
   }
 
-  public static class MapPropertyCollector implements IPropertyCollector {
+  public class MapPropertyCollector implements IPropertyCollector {
     @NonNull
     private final Map<String, Object> map = new LinkedHashMap<>(); // NOPMD - single threaded
     @Nullable
     private final IBoundFlagInstance jsonKey;
 
-    protected MapPropertyCollector(IBoundNamedModelInstance property) {
-      IClassBinding classBinding = property.getDataTypeHandler().getClassBinding();
+    protected MapPropertyCollector() {
+      IClassBinding classBinding = getDataTypeHandler().getClassBinding();
       this.jsonKey = classBinding == null ? null : classBinding.getJsonKeyFlagInstance();
       if (this.jsonKey == null) {
         throw new IllegalStateException("No JSON key found");
@@ -218,7 +220,7 @@ class MapPropertyInfo
 
       writer.writeStartObject();
 
-      getProperty().getDataTypeHandler().writeItems(items, false, context);
+      getDataTypeHandler().writeItems(items, false, context);
 
       writer.writeEndObject();
     }

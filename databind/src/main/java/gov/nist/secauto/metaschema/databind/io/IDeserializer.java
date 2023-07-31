@@ -163,8 +163,7 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
    */
   @NonNull
   default CLASS deserialize(@NonNull Reader reader, @NonNull URI documentUri) throws IOException {
-    INodeItem nodeItem = deserializeToNodeItem(reader, documentUri);
-    return INodeItem.toValue(nodeItem);
+    return deserializeToValue(reader, documentUri);
   }
 
   /**
@@ -197,4 +196,18 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
    */
   @NonNull
   INodeItem deserializeToNodeItem(@NonNull Reader reader, @NonNull URI documentUri) throws IOException;
+
+  /**
+   * Read data from the {@link Reader} into a node item instance.
+   *
+   * @param reader
+   *          the reader to read from
+   * @param documentUri
+   *          the URI of the document to read from
+   * @return a new node item
+   * @throws IOException
+   *           if an error occurred while reading data from the stream
+   */
+  @NonNull
+  CLASS deserializeToValue(@NonNull Reader reader, @NonNull URI documentUri) throws IOException;
 }

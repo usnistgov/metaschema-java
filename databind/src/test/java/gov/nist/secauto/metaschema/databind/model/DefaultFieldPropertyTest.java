@@ -32,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.ctc.wstx.stax.WstxInputFactory;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -40,22 +39,13 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
-import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
-import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
-import gov.nist.secauto.metaschema.databind.model.annotations.Metaschema;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
+import gov.nist.secauto.metaschema.databind.model.test.MultiFieldAssembly;
 
-import org.codehaus.stax2.XMLEventReader2;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.junit5.JUnit5Mockery;
@@ -63,20 +53,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.URI;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 class DefaultFieldPropertyTest {
   @RegisterExtension
@@ -101,7 +80,7 @@ class DefaultFieldPropertyTest {
     String json = "{ \"field1\": \"field1value\", \"fields2\": [ \"field2value\" ] } }";
     JsonFactory factory = new JsonFactory();
     try (JsonParser jsonParser = factory.createParser(json)) {
-      Class<?> theClass = TestField.class;
+      Class<?> theClass = MultiFieldAssembly.class;
 
       context.checking(new Expectations() {
         { // NOPMD - intentional
@@ -137,7 +116,7 @@ class DefaultFieldPropertyTest {
           field2,
           ObjectUtils.notNull(classBinding));
 
-      TestField obj = new TestField();
+      MultiFieldAssembly obj = new MultiFieldAssembly();
 
       assertAll(
           () -> assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken()),
@@ -158,122 +137,6 @@ class DefaultFieldPropertyTest {
     }
   }
 
-  @Test
-  void testXmlRead() throws JsonParseException, IOException, NoSuchFieldException, XMLStreamException {
-    String xml = "<test xmlns='http://example.com/ns'>" + "  <field1>field1value</field1>" + "</test>";
-    XMLInputFactory factory = XMLInputFactory.newInstance();
-    assert factory instanceof WstxInputFactory;
-    XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
-    Class<?> theClass = TestField.class;
-
-    IMetaschema metaschema = new TestMetaschema(CollectionUtil.emptyList(), ObjectUtils.notNull(bindingContext));
-
-    context.checking(new Expectations() {
-      { // NOPMD - intentional
-        allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-        will(returnValue(MetaschemaDataTypeProvider.STRING));
-        allowing(bindingContext).getClassBinding(String.class);
-        will(returnValue(null));
-        allowing(classBinding).getBoundClass();
-        will(returnValue(theClass));
-
-        allowing(classBinding).getBindingContext();
-        will(returnValue(bindingContext));
-        allowing(classBinding).getContainingMetaschema();
-        will(returnValue(metaschema));
-
-        allowing(xmlParsingContext).getReader();
-        will(returnValue(eventReader));
-      }
-    });
-
-    java.lang.reflect.Field field1 = theClass.getDeclaredField("field1");
-    IBoundFieldInstance field1Property = IBoundFieldInstance.newInstance(
-        ObjectUtils.notNull(field1),
-        ObjectUtils.notNull(classBinding));
-    java.lang.reflect.Field field2 = theClass.getDeclaredField("_field2");
-    IBoundFieldInstance field2Property = IBoundFieldInstance.newInstance(
-        ObjectUtils.notNull(field2),
-        ObjectUtils.notNull(classBinding));
-
-    TestField obj = new TestField();
-
-    assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
-    XMLEvent event = eventReader.nextEvent();
-    assertEquals(XMLStreamConstants.START_ELEMENT, event.getEventType());
-    StartElement start = event.asStartElement();
-    // assertEquals("test", jsonParser.nextFieldName());
-    // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
-
-    assert start != null;
-
-    assertTrue(field1Property.read(obj, start, ObjectUtils.notNull(xmlParsingContext)));
-    assertFalse(field2Property.read(obj, start, ObjectUtils.notNull(xmlParsingContext)));
-
-    assertEquals("field1value", obj.getField1());
-    assertEquals(null, obj.getField2());
-  }
-
-  @Test
-  void testXmlReadNoFieldValue() throws JsonParseException, IOException, NoSuchFieldException, XMLStreamException {
-    String xml = "<test xmlns='http://example.com/ns'>\n" + "  <fields2>\n" + "    <field2>field2value</field2>\n"
-        + "  </fields2>\n" + "</test>";
-    XMLInputFactory factory = XMLInputFactory.newInstance();
-    assert factory instanceof WstxInputFactory;
-    XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
-    Class<?> theClass = TestField.class;
-
-    IMetaschema metaschema = new TestMetaschema(CollectionUtil.emptyList(), ObjectUtils.notNull(bindingContext));
-
-    context.checking(new Expectations() {
-      { // NOPMD - intentional
-        allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-        will(returnValue(MetaschemaDataTypeProvider.STRING));
-        allowing(bindingContext).getClassBinding(String.class);
-        will(returnValue(null));
-
-        allowing(classBinding).getBoundClass();
-        will(returnValue(theClass));
-        allowing(classBinding).getBindingContext();
-        will(returnValue(bindingContext));
-        allowing(classBinding).getContainingMetaschema();
-        will(returnValue(metaschema));
-
-        allowing(xmlParsingContext).getReader();
-        will(returnValue(eventReader));
-      }
-    });
-
-    java.lang.reflect.Field field1 = theClass.getDeclaredField("field1");
-    IBoundFieldInstance field1Property = IBoundFieldInstance.newInstance(
-        ObjectUtils.notNull(field1),
-        ObjectUtils.notNull(classBinding));
-    java.lang.reflect.Field field2 = theClass.getDeclaredField("_field2");
-    IBoundFieldInstance field2Property = IBoundFieldInstance.newInstance(
-        ObjectUtils.notNull(field2),
-        ObjectUtils.notNull(classBinding));
-
-    TestField obj = new TestField();
-
-    assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
-    XMLEvent event = eventReader.nextEvent();
-    assertEquals(XMLStreamConstants.START_ELEMENT, event.getEventType());
-    StartElement start = event.asStartElement();
-    // assertEquals("test", jsonParser.nextFieldName());
-    // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
-
-    assert start != null;
-    assert xmlParsingContext != null;
-
-    assertFalse(field1Property.read(obj, start, ObjectUtils.notNull(xmlParsingContext)));
-    assertTrue(field2Property.read(obj, start, ObjectUtils.notNull(xmlParsingContext)));
-
-    assertEquals(null, obj.getField1());
-    assertIterableEquals(Collections.singleton("field2value"), obj.getField2());
-  }
-
   @SuppressWarnings("resource") // mocked
   @Test
   void testJsonReadMissingFieldValue()
@@ -281,7 +144,7 @@ class DefaultFieldPropertyTest {
     String json = "{ \"test\":\n" + "  { \"fields2\": [\n" + "    \"field2value\"\n" + "    ]\n" + "  }\n" + "}\n";
     JsonFactory factory = new JsonFactory();
     try (JsonParser jsonParser = factory.createParser(json)) {
-      Class<?> theClass = TestField.class;
+      Class<?> theClass = MultiFieldAssembly.class;
 
       context.checking(new Expectations() {
         { // NOPMD - intentional
@@ -316,7 +179,7 @@ class DefaultFieldPropertyTest {
           ObjectUtils.notNull(field2),
           ObjectUtils.notNull(classBinding));
 
-      TestField obj = new TestField();
+      MultiFieldAssembly obj = new MultiFieldAssembly();
 
       // Advance to first property to parse
       assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
@@ -335,73 +198,6 @@ class DefaultFieldPropertyTest {
       assertTrue(field2Property.read(obj, ObjectUtils.notNull(jsonParsingContext)));
       assertTrue(obj.getField2() instanceof LinkedList);
       assertIterableEquals(Collections.singleton("field2value"), obj.getField2());
-    }
-  }
-
-  @Metaschema
-  public static class TestMetaschema
-      extends AbstractBoundMetaschema {
-
-    public TestMetaschema(@NonNull List<? extends IMetaschema> importedMetaschema,
-        @NonNull IBindingContext bindingContext) {
-      super(importedMetaschema, bindingContext);
-    }
-
-    @Override
-    public MarkupLine getName() {
-      return MarkupLine.fromMarkdown("Test Metaschema");
-    }
-
-    @Override
-    public String getVersion() {
-      return "1.0";
-    }
-
-    @Override
-    public MarkupMultiline getRemarks() {
-      return null;
-    }
-
-    @Override
-    public String getShortName() {
-      return "test-metaschema";
-    }
-
-    @Override
-    public URI getXmlNamespace() {
-      return ObjectUtils.notNull(URI.create("http://example.com/ns"));
-    }
-
-    @Override
-    public URI getJsonBaseUri() {
-      return ObjectUtils.notNull(URI.create("https://csrc.nist.gov/ns/test/json"));
-    }
-
-  }
-
-  @SuppressWarnings("PMD")
-  @MetaschemaAssembly(name = "test-field", metaschema = TestMetaschema.class)
-  public static class TestField {
-    @BoundField
-    private String field1;
-
-    @BoundField(useName = "field2",
-        maxOccurs = -1)
-    @GroupAs(name = "fields2",
-        inXml = XmlGroupAsBehavior.GROUPED,
-        inJson = JsonGroupAsBehavior.LIST)
-    private List<String> _field2;
-
-    public TestField() {
-    }
-
-    public String getField1() {
-      return field1;
-    }
-
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "this is a data holder")
-    public List<String> getField2() {
-      return _field2;
     }
   }
 

@@ -26,14 +26,10 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import com.fasterxml.jackson.core.JsonToken;
-
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
 import java.io.IOException;
@@ -43,14 +39,12 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * This marker interface provides common methods for interacting with bound object values.
@@ -89,7 +83,8 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
   IBoundModelDefinition getDefinition();
 
   @NonNull
-  default IModelPropertyInfo newPropertyInfo() { // NOPMD - cyclomatic complexity is unavoidable
+  default IModelPropertyInfo newPropertyInfo(
+      @NonNull Supplier<IDataTypeHandler> dataTypeHandlerSupplier) {
     // create the property info
     Type type = getType();
 
@@ -116,7 +111,6 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
         }
       }
 
-      // collection case
       Class<?> rawType = (Class<?>) ((ParameterizedType) type).getRawType();
       if (JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())) {
         if (!Map.class.isAssignableFrom(rawType)) {
@@ -125,7 +119,7 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
               getField().getName(), getParentClassBinding().getBoundClass().getName(),
               getField().getType().getName(), Map.class.getName()));
         }
-        retval = new MapPropertyInfo(this);
+        retval = new MapPropertyInfo(this, dataTypeHandlerSupplier);
       } else {
         if (!List.class.isAssignableFrom(rawType)) {
           throw new IllegalArgumentException(String.format(
@@ -133,7 +127,7 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
               getField().getName(), getParentClassBinding().getBoundClass().getName(),
               getField().getType().getName(), List.class.getName()));
         }
-        retval = new ListPropertyInfo(this);
+        retval = new ListPropertyInfo(this, dataTypeHandlerSupplier);
       }
     } else {
       // single value case
@@ -143,16 +137,13 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
                 + " but the occurance is not multi-valued.",
             getField().getName(), getParentClassBinding().getBoundClass().getName(), getField().getType().getName()));
       }
-      retval = new SingletonPropertyInfo(this);
+      retval = new SingletonPropertyInfo(this, dataTypeHandlerSupplier);
     }
     return retval;
   }
 
   @NonNull
   IModelPropertyInfo getPropertyInfo();
-
-  @NonNull
-  IDataTypeHandler getDataTypeHandler();
 
   /**
    * Get the item values associated with the provided value.
@@ -165,43 +156,6 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
   @NonNull
   Collection<? extends Object> getItemValues(Object value);
 
-  /**
-   * Reads an individual XML item from the XML stream.
-   *
-   * @param parentInstance
-   *          the object the data is parsed into
-   * @param start
-   *          the current containing XML element
-   * @param context
-   *          the XML parsing context
-   * @return the item read, or {@code null} if no item was read
-   * @throws XMLStreamException
-   *           if an error occurred while generating an {@link XMLEvent}
-   * @throws IOException
-   *           if an error occurred reading the underlying XML file
-   */
-  Object readItem(@Nullable Object parentInstance, @NonNull StartElement start, @NonNull IXmlParsingContext context)
-      throws XMLStreamException, IOException;
-
-  /**
-   * Reads a set of JSON items from the JSON stream.
-   * <p>
-   * An item is a complete value, which can be a {@link JsonToken#START_OBJECT}, or a value token.
-   *
-   * @param parentInstance
-   *          the object the data is parsed into
-   * @param requiresJsonKey
-   *          when {@code true} indicates that the item will have a JSON key
-   * @param context
-   *          the JSON/YAML parsing context
-   * @return the items read, or {@code null} if no item was read
-   * @throws IOException
-   *           if an error occurred reading the underlying XML file
-   */
-  @NonNull
-  List<Object> readItem(@Nullable Object parentInstance, boolean requiresJsonKey,
-      @NonNull IJsonParsingContext context) throws IOException;
-
   void writeItem(@NonNull Object itemValue, @NonNull QName parentName, @NonNull IXmlWritingContext context)
       throws XMLStreamException, IOException;
 
@@ -213,5 +167,4 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
   // Collection<? extends WritableItem> getItemsToWrite(Collection<? extends Object> items);
 
   // void writeItem(Object instance, IJsonWritingContext context);
-
 }

@@ -44,7 +44,6 @@ import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.json.JsonUtil;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.AssemblyConstraints;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
@@ -72,7 +71,6 @@ import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -351,23 +349,6 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
       return instance;
     } catch (BindingException ex) {
       throw new IOException(String.format("Failed to parse JSON object for '%s'", getBoundClass().getName()), ex);
-    }
-  }
-
-  @Override
-  protected void readBody(Object instance, StartElement start, IXmlParsingContext context)
-      throws IOException, XMLStreamException {
-    Set<IBoundNamedModelInstance> unhandledProperties = new HashSet<>();
-    for (IBoundNamedModelInstance modelProperty : getModelInstances()) {
-      if (!modelProperty.read(instance, start, context)) {
-        unhandledProperties.add(modelProperty);
-      }
-    }
-
-    // process all properties that did not get a value
-    for (IBoundNamedModelInstance property : unhandledProperties) {
-      // use the default value of the collector
-      property.setValue(instance, property.newPropertyCollector().getValue());
     }
   }
 

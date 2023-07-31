@@ -24,37 +24,24 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.test;
 
-import com.fasterxml.jackson.core.JsonToken;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldValue;
 
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
+@SuppressWarnings("PMD")
+@MetaschemaField(
+    name = "simple-field2",
+    metaschema = TestMetaschema.class,
+    isCollapsible = true)
+public class SimpleField2 {
+  @MetaschemaFieldValue
+  private String _value;
 
-import java.io.IOException;
-import java.util.List;
+  public SimpleField2() {
+  }
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
-
-@FunctionalInterface
-public interface IJsonBindingSupplier {
-  /**
-   * Parse and return the set of items from the JSON stream.
-   * <p>
-   * An item is a complete value, which can be a {@link JsonToken#START_OBJECT}, or a value token.
-   *
-   * @param parentInstance
-   *          an optional parent object to use for serialization callbacks
-   * @param requiresJsonKey
-   *          when {@code true} indicates that the item will have a JSON key, or {@code false}
-   *          otherwise
-   * @param context
-   *          the JSON/YAML parser
-   * @return the set of parsed items
-   * @throws IOException
-   *           if an error occurred while parsing
-   */
-  @NonNull
-  List<Object> get(@Nullable Object parentInstance, boolean requiresJsonKey, @NonNull IJsonParsingContext context)
-      throws IOException;
+  public String getValue() {
+    return _value;
+  }
 }

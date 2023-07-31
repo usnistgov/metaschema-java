@@ -30,10 +30,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -44,8 +42,6 @@ import java.util.function.Supplier;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -67,25 +63,6 @@ abstract class AbstractFlagProperty
     Object value = getValue(fromInstance);
     IDataTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();
     setValue(toInstance, value == null ? null : adapter.copy(value));
-  }
-
-  @Override
-  public boolean read(Object parentInstance, StartElement parent, IXmlParsingContext context) throws IOException {
-
-    // when reading an attribute:
-    // - "parent" will contain the attributes to read
-    // - the event reader "peek" will be on the end element or the next start element
-    boolean handled = false;
-    Attribute attribute = parent.getAttributeByName(getXmlQName());
-    if (attribute != null) {
-      // get the attribute value
-      Object value = getDefinition().getJavaTypeAdapter().parse(ObjectUtils.notNull(attribute.getValue()));
-      // apply the value to the parentObject
-      setValue(parentInstance, value);
-
-      handled = true;
-    }
-    return handled;
   }
 
   @SuppressWarnings("resource") // not owned

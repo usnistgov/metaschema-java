@@ -26,16 +26,11 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 
-import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import java.io.IOException;
@@ -43,10 +38,7 @@ import java.lang.reflect.Field;
 import java.util.Locale;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -124,69 +116,10 @@ public abstract class AbstractFieldProperty
   }
 
   @Override
-  public boolean isNextProperty(IXmlParsingContext context) throws XMLStreamException {
-    boolean retval = super.isNextProperty(context);
-    if (!retval) {
-      XMLEventReader2 eventReader = context.getReader();
-      XMLEvent event = eventReader.peek();
-      if (event.isStartElement()) {
-        QName qname = ObjectUtils.notNull(event.asStartElement().getName());
-        IDataTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();
-        retval = !isInXmlWrapped() && adapter.isUnrappedValueAllowedInXml() && adapter.canHandleQName(qname);
-      }
-    }
-    return retval;
-  }
-
-  @Override
-  public Object readItem(Object parentInstance, StartElement start,
-      IXmlParsingContext context) throws XMLStreamException, IOException {
-    // figure out if we need to parse the wrapper or not
-    IDataTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();
-    boolean parseWrapper = true;
-    if (!isInXmlWrapped() && adapter.isUnrappedValueAllowedInXml()) {
-      parseWrapper = false;
-    }
-
-    XMLEventReader2 eventReader = context.getReader();
-
-    StartElement currentStart = start;
-    if (parseWrapper) {
-      // TODO: not sure this is needed, since there is a peek just before this
-      // parse any whitespace before the element
-      XmlEventUtil.skipWhitespace(eventReader);
-
-      XMLEvent event = eventReader.peek();
-      if (event.isStartElement() && getXmlQName().equals(event.asStartElement().getName())) {
-        // Consume the start element
-        currentStart
-            = ObjectUtils.notNull(
-                XmlEventUtil.consumeAndAssert(eventReader, XMLStreamConstants.START_ELEMENT, getXmlQName())
-                    .asStartElement());
-      } else {
-        throw new IOException(String.format("Did not find expected element '%s'.", getXmlQName()));
-      }
-    }
-
-    // figure out how to parse the item
-    IXmlBindingSupplier supplier = getDataTypeHandler();
-
-    // consume the value
-    Object retval = supplier.get(parentInstance, currentStart, context);
-
-    if (parseWrapper) {
-      // consume the end element
-      XmlEventUtil.consumeAndAssert(context.getReader(), XMLStreamConstants.END_ELEMENT, currentStart.getName());
-    }
-
-    return retval;
-  }
-
-  @Override
   public void writeItem(Object item, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     // figure out how to parse the item
-    IDataTypeHandler handler = getDataTypeHandler();
+    IDataTypeHandler handler = getPropertyInfo().getDataTypeHandler();
 
     // figure out if we need to parse the wrapper or not
     boolean writeWrapper = isInXmlWrapped() || !handler.isUnwrappedValueAllowedInXml();

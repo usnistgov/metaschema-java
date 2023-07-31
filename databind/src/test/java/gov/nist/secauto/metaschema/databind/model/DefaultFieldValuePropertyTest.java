@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.ctc.wstx.stax.WstxInputFactory;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -36,36 +35,20 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
-import gov.nist.secauto.metaschema.databind.model.annotations.Metaschema;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldValue;
+import gov.nist.secauto.metaschema.databind.model.test.SimpleField2;
+import gov.nist.secauto.metaschema.databind.model.test.TestSimpleField;
 
-import org.codehaus.stax2.XMLEventReader2;
 import org.jmock.Expectations;
 import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.lang.reflect.Field;
-import java.net.URI;
-import java.util.List;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DefaultFieldValuePropertyTest {
   @RegisterExtension
@@ -83,7 +66,7 @@ class DefaultFieldValuePropertyTest {
     String json = "{ \"a-value\": \"theValue\" }";
     JsonFactory factory = new JsonFactory();
     try (JsonParser jsonParser = factory.createParser(json)) {
-      Class<?> theClass = SimpleField.class;
+      Class<?> theClass = TestSimpleField.class;
 
       Field field = theClass.getDeclaredField("_value");
 
@@ -116,115 +99,11 @@ class DefaultFieldValuePropertyTest {
       // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
       // assertEquals("id", jsonParser.currentName());
 
-      SimpleField obj = new SimpleField();
+      TestSimpleField obj = new TestSimpleField();
 
       idProperty.read(obj, ObjectUtils.notNull(jsonParsingContext));
 
       assertEquals("theValue", obj.getValue());
-    }
-  }
-
-  @Test
-  void testXmlRead()
-      throws JsonParseException, IOException, NoSuchFieldException, XMLStreamException {
-    String xml = "<field xmlns='http://example.com/ns'>theValue</field>";
-    XMLInputFactory factory = XMLInputFactory.newInstance();
-    assert factory instanceof WstxInputFactory;
-    XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
-    Class<?> theClass = SimpleField.class;
-
-    Field field = theClass.getDeclaredField("_value");
-
-    context.checking(new Expectations() {
-      { // NOPMD - intentional
-        atMost(1).of(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-        will(returnValue(MetaschemaDataTypeProvider.STRING));
-
-        allowing(classBinding).getBoundClass();
-        will(returnValue(theClass));
-        allowing(classBinding).getBindingContext();
-        will(returnValue(bindingContext));
-
-        allowing(xmlParsingContext).getReader();
-        will(returnValue(eventReader));
-      }
-    });
-
-    DefaultFieldValueProperty idProperty = new DefaultFieldValueProperty(
-        ObjectUtils.notNull(classBinding),
-        ObjectUtils.notNull(field));
-
-    assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
-    XMLEvent event = eventReader.nextEvent();
-    assertEquals(XMLStreamConstants.START_ELEMENT, event.getEventType());
-    StartElement start = event.asStartElement();
-    // assertEquals("test", jsonParser.nextFieldName());
-    // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
-
-    SimpleField obj = new SimpleField();
-    assert start != null;
-    assert xmlParsingContext != null;
-    idProperty.read(obj, start, xmlParsingContext);
-
-    assertEquals("theValue", obj.getValue());
-  }
-
-  @Metaschema
-  public static class TestMetaschema
-      extends AbstractBoundMetaschema {
-
-    public TestMetaschema(@NonNull List<? extends IMetaschema> importedMetaschema,
-        @NonNull IBindingContext bindingContext) {
-      super(importedMetaschema, bindingContext);
-    }
-
-    @Override
-    public MarkupLine getName() {
-      return MarkupLine.fromMarkdown("Test Metaschema");
-    }
-
-    @Override
-    public String getVersion() {
-      return "1.0";
-    }
-
-    @Override
-    public MarkupMultiline getRemarks() {
-      return null;
-    }
-
-    @Override
-    public String getShortName() {
-      return "test-metaschema";
-    }
-
-    @Override
-    public URI getXmlNamespace() {
-      return ObjectUtils.notNull(URI.create("https://csrc.nist.gov/ns/test/xml"));
-    }
-
-    @Override
-    public URI getJsonBaseUri() {
-      return ObjectUtils.notNull(URI.create("https://csrc.nist.gov/ns/test/json"));
-    }
-
-  }
-
-  @SuppressWarnings("PMD")
-  @MetaschemaField(
-      name = "simple-field",
-      metaschema = TestMetaschema.class,
-      isCollapsible = true)
-  public static class SimpleField {
-    @MetaschemaFieldValue(valueKeyName = "a-value")
-    private String _value;
-
-    public SimpleField() {
-    }
-
-    public String getValue() {
-      return _value;
     }
   }
 
@@ -272,69 +151,6 @@ class DefaultFieldValuePropertyTest {
       idProperty.read(obj, ObjectUtils.notNull(jsonParsingContext));
 
       assertEquals("theValue", obj.getValue());
-    }
-  }
-
-  @Test
-  void testXmlDefaultNameRead()
-      throws JsonParseException, IOException, NoSuchFieldException, XMLStreamException {
-    String xml = "<field xmlns='http://example.com/ns'>theValue</field>";
-    XMLInputFactory factory = XMLInputFactory.newInstance();
-    assert factory instanceof WstxInputFactory;
-    XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
-    Class<?> theClass = SimpleField2.class;
-
-    Field field = theClass.getDeclaredField("_value");
-
-    context.checking(new Expectations() {
-      { // NOPMD - intentional
-        atMost(1).of(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-        will(returnValue(MetaschemaDataTypeProvider.STRING));
-
-        allowing(classBinding).getBoundClass();
-        will(returnValue(theClass));
-        allowing(classBinding).getBindingContext();
-        will(returnValue(bindingContext));
-
-        allowing(xmlParsingContext).getReader();
-        will(returnValue(eventReader));
-      }
-    });
-
-    DefaultFieldValueProperty idProperty = new DefaultFieldValueProperty(
-        ObjectUtils.notNull(classBinding),
-        ObjectUtils.notNull(field));
-
-    assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
-    XMLEvent event = eventReader.nextEvent();
-    assertEquals(XMLStreamConstants.START_ELEMENT, event.getEventType());
-    StartElement start = event.asStartElement();
-    // assertEquals("test", jsonParser.nextFieldName());
-    // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
-
-    SimpleField2 obj = new SimpleField2();
-    assert start != null;
-    assert xmlParsingContext != null;
-    idProperty.read(obj, start, xmlParsingContext);
-
-    assertEquals("theValue", obj.getValue());
-  }
-
-  @SuppressWarnings("PMD")
-  @MetaschemaField(
-      name = "simple-field2",
-      metaschema = TestMetaschema.class,
-      isCollapsible = true)
-  public static class SimpleField2 {
-    @MetaschemaFieldValue
-    private String _value;
-
-    public SimpleField2() {
-    }
-
-    public String getValue() {
-      return _value;
     }
   }
 
