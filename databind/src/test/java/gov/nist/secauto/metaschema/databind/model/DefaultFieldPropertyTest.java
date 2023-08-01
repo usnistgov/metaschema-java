@@ -42,8 +42,7 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.databind.io.json.MetaschemaJsonParser;
 import gov.nist.secauto.metaschema.databind.model.test.MultiFieldAssembly;
 
 import org.jmock.Expectations;
@@ -56,6 +55,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 class DefaultFieldPropertyTest {
   @RegisterExtension
@@ -67,12 +67,7 @@ class DefaultFieldPropertyTest {
   private IAssemblyClassBinding classBinding; // NOPMD - it's injected
   @Mock
   private IBindingContext bindingContext; // NOPMD - it's injected
-  @Mock
-  private IJsonParsingContext jsonParsingContext; // NOPMD - it's injected
-  @Mock
-  private IXmlParsingContext xmlParsingContext; // NOPMD - it's injected
 
-  @SuppressWarnings("resource") // mocked
   @Test
   void testJsonRead()
       throws JsonParseException, IOException, NoSuchFieldException {
@@ -80,6 +75,8 @@ class DefaultFieldPropertyTest {
     String json = "{ \"field1\": \"field1value\", \"fields2\": [ \"field2value\" ] } }";
     JsonFactory factory = new JsonFactory();
     try (JsonParser jsonParser = factory.createParser(json)) {
+      assert jsonParser != null;
+
       Class<?> theClass = MultiFieldAssembly.class;
 
       context.checking(new Expectations() {
@@ -97,9 +94,6 @@ class DefaultFieldPropertyTest {
           will(returnValue(bindingContext));
           allowing(classBinding).getContainingMetaschema();
           will(returnValue(metaschema));
-
-          allowing(jsonParsingContext).getReader();
-          will(returnValue(jsonParser));
 
           allowing(metaschema).getLocation();
           will(returnValue(URI.create("relativeLocation")));
@@ -118,16 +112,18 @@ class DefaultFieldPropertyTest {
 
       MultiFieldAssembly obj = new MultiFieldAssembly();
 
+      MetaschemaJsonParser parser = new MetaschemaJsonParser(jsonParser);
+
       assertAll(
           () -> assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken()),
           () -> assertEquals("field1", jsonParser.nextFieldName()),
-          () -> assertTrue(field1Property.read(obj, ObjectUtils.notNull(jsonParsingContext))),
+          () -> assertTrue(parser.readInstanceValues(field1Property, obj)),
           () -> assertEquals("field1value", obj.getField1()),
 
           () -> assertEquals(JsonToken.FIELD_NAME, jsonParser.currentToken()),
           () -> assertEquals("fields2", jsonParser.currentName()),
 
-          () -> assertTrue(field2Property.read(obj, ObjectUtils.notNull(jsonParsingContext))),
+          () -> assertTrue(parser.readInstanceValues(field2Property, obj)),
           () -> assertTrue(obj.getField2() instanceof LinkedList),
           () -> assertIterableEquals(Collections.singleton("field2value"), obj.getField2()));
 
@@ -137,13 +133,14 @@ class DefaultFieldPropertyTest {
     }
   }
 
-  @SuppressWarnings("resource") // mocked
   @Test
   void testJsonReadMissingFieldValue()
       throws JsonParseException, IOException, NoSuchFieldException {
     String json = "{ \"test\":\n" + "  { \"fields2\": [\n" + "    \"field2value\"\n" + "    ]\n" + "  }\n" + "}\n";
     JsonFactory factory = new JsonFactory();
     try (JsonParser jsonParser = factory.createParser(json)) {
+      assert jsonParser != null;
+
       Class<?> theClass = MultiFieldAssembly.class;
 
       context.checking(new Expectations() {
@@ -162,9 +159,6 @@ class DefaultFieldPropertyTest {
           allowing(classBinding).getContainingMetaschema();
           will(returnValue(metaschema));
 
-          allowing(jsonParsingContext).getReader();
-          will(returnValue(jsonParser));
-
           allowing(metaschema).getLocation();
           will(returnValue(URI.create("relativeLocation")));
         }
@@ -181,6 +175,8 @@ class DefaultFieldPropertyTest {
 
       MultiFieldAssembly obj = new MultiFieldAssembly();
 
+      MetaschemaJsonParser parser = new MetaschemaJsonParser(jsonParser);
+
       // Advance to first property to parse
       assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
       assertEquals("test", jsonParser.nextFieldName());
@@ -188,16 +184,16 @@ class DefaultFieldPropertyTest {
       assertEquals("fields2", jsonParser.nextFieldName());
 
       // attempt to parse the missing property
-      assertFalse(field1Property.read(obj, ObjectUtils.notNull(jsonParsingContext)));
+      assertFalse(parser.readInstanceValues(field1Property, obj));
       assertEquals(null, obj.getField1());
 
       // attempt to parse the existing property
       assertEquals(JsonToken.FIELD_NAME, jsonParser.currentToken());
       assertEquals("fields2", jsonParser.currentName());
 
-      assertTrue(field2Property.read(obj, ObjectUtils.notNull(jsonParsingContext)));
+      assertTrue(parser.readInstanceValues(field2Property, obj));
       assertTrue(obj.getField2() instanceof LinkedList);
-      assertIterableEquals(Collections.singleton("field2value"), obj.getField2());
+      assertEquals(List.of("field2value"), obj.getField2());
     }
   }
 

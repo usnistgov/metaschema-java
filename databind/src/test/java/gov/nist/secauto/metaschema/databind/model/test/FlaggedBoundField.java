@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.databind.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldValue;
 
-@MetaschemaField(name = "flagged-bound-field", isCollapsible = false, metaschema = TestMetaschema.class)
+@MetaschemaField(name = "flagged-bound-field", metaschema = TestMetaschema.class)
 public class FlaggedBoundField {
   @JsonKey
   @BoundFlag(useName = "field-required-flag", typeAdapter = TokenAdapter.class, required = true)

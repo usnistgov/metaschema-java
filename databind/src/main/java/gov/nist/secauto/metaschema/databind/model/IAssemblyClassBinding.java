@@ -26,15 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import com.fasterxml.jackson.core.JsonToken;
-
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 
-import java.io.IOException;
 import java.util.Collection;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Represents a Metaschema assembly bound to a Java plain old java object (POJO) class.
@@ -61,26 +55,4 @@ public interface IAssemblyClassBinding extends IClassBinding, IAssemblyDefinitio
 
   @Override
   IBoundNamedModelInstance getModelInstanceByName(String name);
-
-  /**
-   * Parses JSON into a bound object.
-   * <p>
-   * This method expects the parser's current token to be:
-   * <ul>
-   * <li>{@code null} indicating that the parser has not yet parsed a JSON node, or</li>
-   * <li>a {@link JsonToken#START_OBJECT} which represents the object containing the data of this
-   * assembly.</li>
-   * </ul>
-   * <p>
-   * After parsing the current token will be the {@link JsonToken#END_OBJECT} corresponding to the
-   * initial {@link JsonToken#START_OBJECT} parsed by this method.
-   *
-   * @param context
-   *          the JSON parser
-   * @return the bound object instance representing the JSON object
-   * @throws IOException
-   *           if an error occurred while reading the JSON
-   */
-  @NonNull
-  Object readObject(@NonNull IJsonParsingContext context) throws IOException;
 }

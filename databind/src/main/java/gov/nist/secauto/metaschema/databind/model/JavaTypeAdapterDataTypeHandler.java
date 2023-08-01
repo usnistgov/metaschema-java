@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
@@ -37,7 +36,6 @@ import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -75,14 +73,14 @@ class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
     return getJavaTypeAdapter().isUnrappedValueAllowedInXml();
   }
 
+  @SuppressWarnings("resource") // not owned
   @Override
-  public List<Object> get(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
+  public Object get(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
       throws IOException {
     if (requiresJsonKey) {
       throw new IOException("A scalar datatype cannot have a JSON key.");
     }
-    Object value = getJavaTypeAdapter().parse(context.getReader());
-    return CollectionUtil.singletonList(value);
+    return getJavaTypeAdapter().parse(context.getReader());
   }
 
   @Override

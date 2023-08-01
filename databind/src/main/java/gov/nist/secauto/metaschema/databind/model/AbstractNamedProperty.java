@@ -26,19 +26,12 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.databind.io.json.JsonUtil;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+// REFACTOR: remove this class
 abstract class AbstractNamedProperty<CLASS_BINDING extends IClassBinding>
     extends AbstractProperty<CLASS_BINDING> {
   private static final Logger LOGGER = LogManager.getLogger(AbstractNamedProperty.class);
@@ -53,47 +46,4 @@ abstract class AbstractNamedProperty<CLASS_BINDING extends IClassBinding>
   public AbstractNamedProperty(@NonNull CLASS_BINDING parentClassBinding) {
     super(parentClassBinding);
   }
-
-  @SuppressWarnings("resource") // not owned
-  public boolean isNextProperty(IJsonParsingContext context) throws IOException {
-    JsonParser parser = context.getReader(); // NOPMD - intentional
-
-    // the parser's current token should be the JSON field name
-    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
-
-    String propertyName = parser.currentName();
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("reading property {}", propertyName);
-    }
-
-    return getJsonName().equals(propertyName);
-  }
-
-  @Override
-  public Object read(IJsonParsingContext context) throws IOException {
-    Object retval = null;
-    if (isNextProperty(context)) {
-      retval = readInternal(null, context);
-    }
-    return retval;
-  }
-
-  @SuppressWarnings("resource") // not owned
-  @Override
-  public boolean read(Object objectInstance, IJsonParsingContext context) throws IOException {
-    JsonParser parser = context.getReader(); // NOPMD - intentional
-    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
-
-    boolean handled = isNextProperty(context);
-    if (handled) {
-      Object value = readInternal(objectInstance, context);
-      setValue(objectInstance, value);
-    }
-
-    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
-    return handled;
-  }
-
-  protected abstract Object readInternal(Object parentInstance, IJsonParsingContext context)
-      throws IOException;
 }

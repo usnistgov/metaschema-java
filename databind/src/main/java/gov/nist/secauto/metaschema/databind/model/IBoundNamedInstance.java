@@ -26,12 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import com.fasterxml.jackson.core.JsonToken;
-
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
@@ -161,64 +158,10 @@ public interface IBoundNamedInstance extends INamedInstance {
     }
   }
 
+  // TODO: refactor and remove using the property info method instead; problem is a flag has no
+  // property info
   @NonNull
   IPropertyCollector newPropertyCollector();
-
-  /**
-   * Read JSON data associated with this property and apply it to the provided {@code objectInstance}
-   * on which this property exists.
-   * <p>
-   * The parser's current token is expected to be the {@link JsonToken#FIELD_NAME} for the field value
-   * being parsed.
-   * <p>
-   * After parsing the parser's current token will be the next token after the field's value.
-   *
-   * @param objectInstance
-   *          an instance of the class on which this property exists
-   * @param context
-   *          the JSON parsing context
-   * @return {@code true} if the property was parsed, or {@code false} if the data did not contain
-   *         information for this property
-   * @throws IOException
-   *           if there was an error when reading JSON data
-   */
-  boolean read(@NonNull Object objectInstance, @NonNull IJsonParsingContext context) throws IOException;
-
-  /**
-   * Read JSON data associated with this property and return it.
-   * <p>
-   * The parser's current token is expected to be the {@link JsonToken#FIELD_NAME} for the field value
-   * being parsed.
-   * <p>
-   * After parsing the parser's current token will be the next token after the field's value.
-   *
-   * @param context
-   *          the JSON parsing context
-   * @return the instance value or {@code null} if no data was available to read
-   * @throws IOException
-   *           if there was an error when reading JSON data
-   */
-  Object read(@NonNull IJsonParsingContext context) throws IOException;
-
-  // /**
-  // * Get a supplier that can continually parse the underlying stream loading multiple values.
-  // *
-  // * @param context
-  // * @return
-  // * @throws BindingException
-  // */
-  // IJsonBindingSupplier getJsonItemSupplier(IBindingContext context)
-  // throws BindingException;
-  //
-  // /**
-  // * Get a supplier that can continually parse the underlying stream loading multiple values.
-  // *
-  // * @param context
-  // * @return
-  // * @throws BindingException
-  // */
-  // IXmlBindingSupplier getXmlItemSupplier(IBindingContext context)
-  // throws BindingException;
 
   boolean write(@NonNull Object parentInstance, @NonNull QName parentName, @NonNull IXmlWritingContext context)
       throws XMLStreamException, IOException;

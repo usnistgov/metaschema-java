@@ -45,7 +45,7 @@ abstract class AbstractModelPropertyInfo
       @NonNull IBoundNamedModelInstance property,
       @NonNull Supplier<IDataTypeHandler> dataTypeHandlerSupplier) {
     this.property = ObjectUtils.requireNonNull(property, "property");
-    this.dataTypeHandler = Lazy.lazy(dataTypeHandlerSupplier);
+    this.dataTypeHandler = ObjectUtils.notNull(Lazy.lazy(dataTypeHandlerSupplier));
   }
 
   @Override

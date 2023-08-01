@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 
 import java.io.IOException;
@@ -49,11 +48,12 @@ public interface IBoundFieldValueInstance extends IBoundNamedInstance {
   @NonNull
   String getJsonValueKeyName();
 
-  Object readValue(@NonNull IJsonParsingContext context)
-      throws IOException;
-
   void writeValue(Object value, @NonNull IJsonWritingContext context) throws IOException;
 
   @Nullable
   Object getDefaultValue();
+
+  @Override
+  @NonNull
+  IFieldClassBinding getParentClassBinding();
 }

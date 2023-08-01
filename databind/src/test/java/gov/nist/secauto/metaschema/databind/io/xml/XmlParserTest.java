@@ -45,7 +45,7 @@ import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.test.FlaggedAssembly;
 import gov.nist.secauto.metaschema.databind.model.test.MultiFieldAssembly;
-import gov.nist.secauto.metaschema.databind.model.test.TestSimpleField;
+import gov.nist.secauto.metaschema.databind.model.test.ValueKeyField;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.junit.jupiter.api.Test;
@@ -96,10 +96,10 @@ class XmlParserTest
 
     assert start != null;
 
-    XmlParser parser = new XmlParser(eventReader);
+    MetaschemaXmlParser parser = new MetaschemaXmlParser(eventReader);
 
-    assertTrue(parser.read(field1Property, obj, start));
-    assertFalse(parser.read(field2Property, obj, start));
+    assertTrue(parser.readModelInstanceValues(field1Property, obj, start));
+    assertFalse(parser.readModelInstanceValues(field2Property, obj, start));
 
     assertEquals("field1value", obj.getField1());
     assertEquals(null, obj.getField2());
@@ -131,9 +131,9 @@ class XmlParserTest
     FlaggedAssembly obj = new FlaggedAssembly();
     assert start != null;
 
-    XmlParser parser = new XmlParser(eventReader);
+    MetaschemaXmlParser parser = new MetaschemaXmlParser(eventReader);
 
-    assertTrue(parser.read(idProperty, obj, start));
+    assertTrue(parser.readFlagInstanceValue(idProperty, obj, start));
 
     assertEquals("theId", obj.getId());
   }
@@ -170,10 +170,10 @@ class XmlParserTest
 
     assert start != null;
 
-    XmlParser parser = new XmlParser(eventReader);
+    MetaschemaXmlParser parser = new MetaschemaXmlParser(eventReader);
 
-    assertFalse(parser.read(field1Property, obj, start));
-    assertTrue(parser.read(field2Property, obj, start));
+    assertFalse(parser.readModelInstanceValues(field1Property, obj, start));
+    assertTrue(parser.readModelInstanceValues(field2Property, obj, start));
 
     assertEquals(null, obj.getField1());
     assertIterableEquals(Collections.singleton("field2value"),
@@ -191,7 +191,7 @@ class XmlParserTest
     IBindingContext bindingContext = getBindingContext();
 
     IFieldClassBinding field
-        = ObjectUtils.requireNonNull((IFieldClassBinding) bindingContext.getClassBinding(TestSimpleField.class));
+        = ObjectUtils.requireNonNull((IFieldClassBinding) bindingContext.getClassBinding(ValueKeyField.class));
 
     IBoundFieldValueInstance valueProperty = field.getFieldValueInstance();
 
@@ -204,9 +204,9 @@ class XmlParserTest
     // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
     assert start != null;
 
-    XmlParser parser = new XmlParser(eventReader);
+    MetaschemaXmlParser parser = new MetaschemaXmlParser(eventReader);
 
-    TestSimpleField obj = (TestSimpleField) parser.readItem(field, null, start);
+    ValueKeyField obj = (ValueKeyField) parser.readDefinitionValue(field, null, start);
 
     assertNotNull(obj);
     assertEquals("theValue", obj.getValue());

@@ -34,10 +34,8 @@ import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.DefaultBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.model.test.RootBoundAssembly;
 
-import org.jmock.Expectations;
 import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -96,18 +94,9 @@ public class AbstractBoundModelTestSupport {
 
   @SuppressWarnings("resource")
   @NonNull
-  protected IJsonParsingContext newJsonParsingContext(Reader reader) throws JsonParseException, IOException {
+  protected JsonParser newJsonParser(@NonNull Reader reader) throws JsonParseException, IOException {
     JsonFactory factory = new JsonFactory();
     JsonParser jsonParser = factory.createParser(reader); // NOPMD - reader not owned by this method
-
-    IJsonParsingContext retval = context.mock(IJsonParsingContext.class);
-
-    context.checking(new Expectations() {
-      { // NOPMD - intentional
-        allowing(retval).getReader();
-        will(returnValue(jsonParser));
-      }
-    });
-    return ObjectUtils.notNull(retval);
+    return ObjectUtils.notNull(jsonParser);
   }
 }

@@ -31,10 +31,8 @@ import com.fasterxml.jackson.core.JsonToken;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 
 import java.io.IOException;
-import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 @FunctionalInterface
 public interface IJsonBindingSupplier {
@@ -55,6 +53,6 @@ public interface IJsonBindingSupplier {
    *           if an error occurred while parsing
    */
   @NonNull
-  List<Object> get(@Nullable Object parentInstance, boolean requiresJsonKey, @NonNull IJsonParsingContext context)
+  Object get(@NonNull Object parentInstance, boolean requiresJsonKey, @NonNull IJsonParsingContext context)
       throws IOException;
 }

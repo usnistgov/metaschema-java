@@ -85,7 +85,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
   protected static final Function<Path, XmlSchemaContentValidator> XML_CONTENT_VALIDATOR_PROVIDER;
 
   private static final String UNIT_TEST_CONFIG
-      = "../metaschema-model/metaschema/test-suite/schema-generation/unit-tests.xml";
+      = "../core/metaschema/test-suite/schema-generation/unit-tests.xml";
 
   static {
     IMutableConfiguration<SchemaGenerationFeature<?>> features = new DefaultConfiguration<>();

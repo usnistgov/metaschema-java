@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.io.json;
 
+import com.fasterxml.jackson.core.JsonParser;
+
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.IProblemHandler;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
@@ -39,15 +41,21 @@ import java.util.Map;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IJsonProblemHandler extends IProblemHandler {
-  boolean handleUnknownRootProperty(@NonNull IAssemblyClassBinding classBinding, @NonNull String fieldName,
-      @NonNull IJsonParsingContext parsingContext) throws IOException;
+  boolean handleUnknownRootProperty(
+      @NonNull IAssemblyClassBinding classBinding,
+      @NonNull String fieldName,
+      @NonNull JsonParser parser) throws IOException;
 
-  boolean canHandleUnknownProperty(@NonNull IClassBinding classBinding, @NonNull String propertyName,
-      @NonNull IJsonParsingContext parsingContext)
+  boolean canHandleUnknownProperty(
+      @NonNull IClassBinding classBinding,
+      @NonNull String propertyName,
+      @NonNull JsonParser parser)
       throws IOException;
 
-  boolean handleUnknownProperty(@NonNull IClassBinding classBinding, @NonNull String propertyName,
-      IJsonParsingContext parsingContext) throws IOException;
+  boolean handleUnknownProperty(
+      @NonNull IClassBinding classBinding,
+      @NonNull String propertyName,
+      @NonNull JsonParser parser) throws IOException;
 
   /**
    * A callback used to handle bound properties for which no data was found when the content was
@@ -59,13 +67,15 @@ public interface IJsonProblemHandler extends IProblemHandler {
    *          the bound class on which the missing properties are found
    * @param missingPropertyBindings
    *          a map of field names to property bindings for missing fields
-   * @param context
-   *          the parser context used for deserialziation
+   * @param parser
+   *          the parser used for deserialziation
    * @return a mapping of property to suppliers for any properties handled by this method
    * @throws BindingException
    *           if an unhandled binding error has occurred for any reason
    */
-  Map<IBoundNamedInstance, IJsonBindingSupplier> handleMissingFields(@NonNull IClassBinding classBinding,
-      @NonNull Map<String, IBoundNamedInstance> missingPropertyBindings, @NonNull IJsonParsingContext context)
+  Map<IBoundNamedInstance, IJsonBindingSupplier> handleMissingFields(
+      @NonNull IClassBinding classBinding,
+      @NonNull Map<String, IBoundNamedInstance> missingPropertyBindings,
+      @NonNull JsonParser parser)
       throws BindingException;
 }

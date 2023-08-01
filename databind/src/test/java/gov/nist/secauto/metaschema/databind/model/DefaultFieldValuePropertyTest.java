@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -37,10 +38,9 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvi
 import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
-import gov.nist.secauto.metaschema.databind.model.test.SimpleField2;
-import gov.nist.secauto.metaschema.databind.model.test.TestSimpleField;
+import gov.nist.secauto.metaschema.databind.io.json.MetaschemaJsonParser;
+import gov.nist.secauto.metaschema.databind.model.test.DefaultValueKeyField;
+import gov.nist.secauto.metaschema.databind.model.test.ValueKeyField;
 
 import org.jmock.Expectations;
 import org.jmock.junit5.JUnit5Mockery;
@@ -56,17 +56,16 @@ class DefaultFieldValuePropertyTest {
 
   private final IFieldClassBinding classBinding = context.mock(IFieldClassBinding.class);
   private final IBindingContext bindingContext = context.mock(IBindingContext.class);
-  private final IJsonParsingContext jsonParsingContext = context.mock(IJsonParsingContext.class);
-  private final IXmlParsingContext xmlParsingContext = context.mock(IXmlParsingContext.class);
 
-  @SuppressWarnings("resource") // mocked
   @Test
   void testJsonRead()
       throws JsonParseException, IOException, NoSuchFieldException {
     String json = "{ \"a-value\": \"theValue\" }";
     JsonFactory factory = new JsonFactory();
     try (JsonParser jsonParser = factory.createParser(json)) {
-      Class<?> theClass = TestSimpleField.class;
+      assert jsonParser != null;
+
+      Class<?> theClass = ValueKeyField.class;
 
       Field field = theClass.getDeclaredField("_value");
 
@@ -83,9 +82,6 @@ class DefaultFieldValuePropertyTest {
           will(returnValue(bindingContext));
           allowing(classBinding).getJsonValueKeyFlagInstance();
           will(returnValue(null));
-
-          allowing(jsonParsingContext).getReader();
-          will(returnValue(jsonParser));
         }
       });
 
@@ -99,21 +95,23 @@ class DefaultFieldValuePropertyTest {
       // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
       // assertEquals("id", jsonParser.currentName());
 
-      TestSimpleField obj = new TestSimpleField();
+      ValueKeyField obj = new ValueKeyField();
 
-      idProperty.read(obj, ObjectUtils.notNull(jsonParsingContext));
+      assertTrue(new MetaschemaJsonParser(jsonParser).readFieldValueInstanceValue(idProperty, obj));
 
       assertEquals("theValue", obj.getValue());
     }
   }
 
-  @SuppressWarnings("resource") // mocked
+  // TODO: check if the default name is actually tested
   @Test
   void testJsonDefaultNameRead() throws JsonParseException, IOException, NoSuchFieldException {
     String json = "{ \"STRVALUE\": \"theValue\" }";
     JsonFactory factory = new JsonFactory();
     try (JsonParser jsonParser = factory.createParser(json)) {
-      Class<?> theClass = SimpleField2.class;
+      assert jsonParser != null;
+
+      Class<?> theClass = DefaultValueKeyField.class;
 
       Field field = theClass.getDeclaredField("_value");
 
@@ -130,9 +128,6 @@ class DefaultFieldValuePropertyTest {
           will(returnValue(null));
           allowing(classBinding).getBindingContext();
           will(returnValue(bindingContext));
-
-          allowing(jsonParsingContext).getReader();
-          will(returnValue(jsonParser));
         }
       });
 
@@ -146,9 +141,9 @@ class DefaultFieldValuePropertyTest {
       // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
       // assertEquals("id", jsonParser.currentName());
 
-      SimpleField2 obj = new SimpleField2();
+      DefaultValueKeyField obj = new DefaultValueKeyField();
 
-      idProperty.read(obj, ObjectUtils.notNull(jsonParsingContext));
+      assertTrue(new MetaschemaJsonParser(jsonParser).readFieldValueInstanceValue(idProperty, obj));
 
       assertEquals("theValue", obj.getValue());
     }

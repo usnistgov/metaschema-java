@@ -81,16 +81,6 @@ public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IFi
   String getJsonValueKeyName();
 
   /**
-   * Determines if the field is collapsible. If a field is collapsible, then in JSON the values for
-   * all fields that have the same flag values can be represented as a single object with a "value"
-   * property that contains an array of values. This packing of values can make the resulting JSON
-   * more concise.
-   *
-   * @return {@code true} if the field is eligible for collapsing, or {@code false} otherwise
-   */
-  boolean isCollapsible();
-
-  /**
    * Get the value of the field's value from the field item object.
    *
    * @param item

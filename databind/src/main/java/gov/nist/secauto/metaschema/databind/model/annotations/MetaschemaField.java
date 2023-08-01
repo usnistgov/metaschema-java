@@ -96,18 +96,6 @@ public @interface MetaschemaField {
   boolean inXmlWrapped() default MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
 
   /**
-   * Defines if the annotated class representing a Metaschema BoundField is collapsible, meaning
-   * fields with the same set of flag/values can be combined together, with an array of values
-   * containing the combination of corresponding field values.
-   * <p>
-   * For a Metaschema field to be collapsible, it must have flags, otherwise the collapsible status is
-   * ignored.
-   *
-   * @return {@code true} if the field is collapsible, or {@code false} otherwise
-   */
-  boolean isCollapsible() default false;
-
-  /**
    * Get any remarks for this field.
    *
    * @return a markdown string or {@code "##none"} if no remarks are provided

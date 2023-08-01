@@ -29,7 +29,17 @@ package gov.nist.secauto.metaschema.databind.io.json;
 import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.databind.io.IParsingContext;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+
+import java.io.IOException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IJsonParsingContext extends IParsingContext<JsonParser, IJsonProblemHandler> {
-  // no extra methods
+
+  @NonNull
+  Object readDefinitionValue(
+      @NonNull IClassBinding classBinding,
+      @NonNull Object parentInstance,
+      boolean requiresJsonKey) throws IOException;
 }

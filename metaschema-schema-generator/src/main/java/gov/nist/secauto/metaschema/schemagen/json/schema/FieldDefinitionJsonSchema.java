@@ -87,11 +87,7 @@ public class FieldDefinitionJsonSchema
 
       // generate value property
       if (jsonValueKeyFlag == null) {
-        if (definition.isCollapsible()) {
-          generateCollapsibleFieldValueInstance(properties, state);
-        } else {
-          generateSimpleFieldValueInstance(properties, state);
-        }
+        generateSimpleFieldValueInstance(properties, state);
       }
 
       properties.generate(obj);
@@ -101,13 +97,9 @@ public class FieldDefinitionJsonSchema
       } else {
         ObjectNode additionalPropertiesTypeNode;
 
-        if (definition.isCollapsible()) {
-          additionalPropertiesTypeNode = generateCollapsibleFieldValueType(state);
-        } else {
-          additionalPropertiesTypeNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
-          // the type of the additional properties must be the datatype of the field value
-          state.getDataTypeSchemaForDefinition(definition).generateSchemaOrRef(state, additionalPropertiesTypeNode);
-        }
+        additionalPropertiesTypeNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
+        // the type of the additional properties must be the datatype of the field value
+        state.getDataTypeSchemaForDefinition(definition).generateSchemaOrRef(state, additionalPropertiesTypeNode);
 
         ObjectNode additionalPropertiesNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
         ArrayNode allOf = additionalPropertiesNode.putArray("allOf");
@@ -134,33 +126,5 @@ public class FieldDefinitionJsonSchema
 
     properties.addProperty(propertyName, propertyObject);
     properties.addRequired(propertyName);
-  }
-
-  public void generateCollapsibleFieldValueInstance(
-      @NonNull PropertyCollection properties,
-      @NonNull JsonGenerationState state) {
-    String propertyName = getDefinition().getJsonValueKeyName();
-
-    properties.addProperty(propertyName, generateCollapsibleFieldValueType(state));
-    properties.addRequired(propertyName);
-  }
-
-  @NonNull
-  public ObjectNode generateCollapsibleFieldValueType(
-      @NonNull JsonGenerationState state) {
-    IJsonSchema schema = state.getDataTypeSchemaForDefinition(getDefinition());
-
-    ObjectNode retval = JsonNodeFactory.instance.objectNode();
-
-    ArrayNode oneOf = retval.putArray("oneOf");
-    schema.generateSchemaOrRef(state, ObjectUtils.notNull(oneOf.addObject()));
-
-    ObjectNode itemsObj = ObjectUtils.notNull(oneOf.addObject()
-        .put("type", "array")
-        .put("minItems", 1)
-        .putObject("items"));
-
-    schema.generateSchemaOrRef(state, itemsObj);
-    return retval;
   }
 }

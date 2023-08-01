@@ -39,6 +39,7 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
+import gov.nist.secauto.metaschema.databind.io.json.MetaschemaJsonParser;
 import gov.nist.secauto.metaschema.databind.model.test.SimpleAssembly;
 
 import org.jmock.Expectations;
@@ -97,7 +98,7 @@ class DefaultFlagPropertyTest {
 
       SimpleAssembly obj = new SimpleAssembly();
 
-      assertTrue(idProperty.read(obj, ObjectUtils.notNull(jsonParsingContext)));
+      assertTrue(new MetaschemaJsonParser(jsonParser).readInstanceValues(idProperty, obj));
 
       assertEquals("theId", obj.getId());
     }

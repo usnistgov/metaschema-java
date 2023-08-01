@@ -59,7 +59,7 @@ import javax.xml.stream.events.XMLEvent;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class XmlParser
+public class MetaschemaXmlParser
     extends AbstractParser
     implements IXmlParsingContext {
   @NonNull
@@ -67,12 +67,12 @@ public class XmlParser
   @NonNull
   private final IXmlProblemHandler problemHandler;
 
-  public XmlParser(
+  public MetaschemaXmlParser(
       @NonNull XMLEventReader2 reader) {
     this(reader, new DefaultXmlProblemHandler());
   }
 
-  public XmlParser(
+  public MetaschemaXmlParser(
       @NonNull XMLEventReader2 reader,
       @NonNull IXmlProblemHandler problemHandler) {
     this.reader = reader;
@@ -121,7 +121,7 @@ public class XmlParser
     StartElement start = ObjectUtils.notNull(event.asStartElement());
 
     @SuppressWarnings("unchecked") CLASS retval = (CLASS) ObjectUtils.requireNonNull(
-        readItem(definition.getRootDefinition(), null, start));
+        readDefinitionValue(definition.getRootDefinition(), null, start));
 
     XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, rootQName);
 
@@ -157,7 +157,7 @@ public class XmlParser
    */
   @Override
   @NonNull
-  public Object readItem(
+  public Object readDefinitionValue(
       @NonNull IClassBinding targetDefinition,
       @Nullable Object parentObject,
       @NonNull StartElement start) throws IOException, XMLStreamException {
@@ -168,13 +168,13 @@ public class XmlParser
 
       for (IBoundFlagInstance flag : targetDefinition.getFlagInstances()) {
         assert flag != null;
-        read(flag, targetObject, start);
+        readFlagInstanceValue(flag, targetObject, start);
       }
 
       if (targetDefinition instanceof IAssemblyClassBinding) {
-        readBody((IAssemblyClassBinding) targetDefinition, targetObject, start);
+        readDefinitionContents((IAssemblyClassBinding) targetDefinition, targetObject, start);
       } else if (targetDefinition instanceof IFieldClassBinding) {
-        readBody((IFieldClassBinding) targetDefinition, targetObject, start);
+        readDefinitionContents((IFieldClassBinding) targetDefinition, targetObject);
       } else {
         throw new UnsupportedOperationException(
             String.format("Unsupported class binding type: %s", targetDefinition.getClass().getName()));
@@ -190,7 +190,7 @@ public class XmlParser
     }
   }
 
-  protected void readBody(
+  protected void readDefinitionContents(
       @NonNull IAssemblyClassBinding assembly,
       @NonNull Object targetObject,
       @NonNull StartElement start)
@@ -198,7 +198,7 @@ public class XmlParser
     Set<IBoundNamedModelInstance> unhandledProperties = new HashSet<>();
     for (IBoundNamedModelInstance modelProperty : assembly.getModelInstances()) {
       assert modelProperty != null;
-      if (!read(modelProperty, targetObject, start)) {
+      if (!readModelInstanceValues(modelProperty, targetObject, start)) {
         unhandledProperties.add(modelProperty);
       }
     }
@@ -210,14 +210,26 @@ public class XmlParser
     }
   }
 
-  protected void readBody(
+  /**
+   * Read the XML data associated with this property and apply it to the provided
+   * {@code objectInstance} on which this property exists.
+   *
+   * @param field
+   *          the field instance to parse
+   * @param targetObject
+   *          an instance of the class on which this property exists
+   * @throws IOException
+   *           if there was an error when reading XML data
+   */
+  protected void readDefinitionContents(
       @NonNull IFieldClassBinding field,
-      @NonNull Object targetObject,
-      @NonNull StartElement start)
-      throws IOException, XMLStreamException {
-    if (!read(field.getFieldValueInstance(), targetObject, start)) {
-      throw new IOException(String.format("Missing field value at '%s", XmlEventUtil.toLocation(start)));
-    }
+      @NonNull Object targetObject)
+      throws IOException {
+    IBoundFieldValueInstance fieldValue = field.getFieldValueInstance();
+
+    // parse the value
+    Object value = fieldValue.getJavaTypeAdapter().parse(reader);
+    fieldValue.setValue(targetObject, value);
   }
 
   /**
@@ -236,7 +248,7 @@ public class XmlParser
    * @throws IOException
    *           if there was an error when reading XML data
    */
-  protected boolean read(
+  protected boolean readFlagInstanceValue(
       @NonNull IBoundFlagInstance flag,
       @NonNull Object parentObject,
       @NonNull StartElement start) throws IOException {
@@ -308,7 +320,7 @@ public class XmlParser
    * @throws XMLStreamException
    *           if there was an error generating an {@link XMLEvent} from the XML
    */
-  protected boolean read(
+  protected boolean readModelInstanceValues(
       @NonNull IBoundNamedModelInstance instance,
       @NonNull Object parentObject,
       @NonNull StartElement start)
@@ -345,32 +357,20 @@ public class XmlParser
     return handled;
   }
 
-  /**
-   * Read the XML data associated with this property and apply it to the provided
-   * {@code objectInstance} on which this property exists.
-   *
-   * @param instance
-   *          the instance to parse
-   * @param parentObject
-   *          an instance of the class on which this property exists
-   * @param start
-   *          the containing XML element that was previously parsed
-   * @return {@code true} if the property was parsed, or {@code false} if the data did not contain
-   *         information for this property
-   * @throws IOException
-   *           if there was an error when reading XML data
-   * @throws XMLStreamException
-   *           if there was an error generating an {@link XMLEvent} from the XML
-   */
-  protected boolean read(
-      @NonNull IBoundFieldValueInstance instance,
-      @NonNull Object parentObject,
-      @NonNull StartElement start)
-      throws IOException, XMLStreamException {
-    // parse the value
-    Object value = instance.getJavaTypeAdapter().parse(reader);
-    instance.setValue(parentObject, value);
-    return true;
+  // TODO: figure out how to call the type specific readItem directly
+  @Override
+  public Object readModelInstanceValue(IBoundNamedModelInstance instance, Object parentObject, StartElement start)
+      throws XMLStreamException, IOException {
+    Object retval;
+    if (instance instanceof IBoundAssemblyInstance) {
+      retval = readModelInstanceValue((IBoundAssemblyInstance) instance, parentObject, start);
+    } else if (instance instanceof IBoundFieldInstance) {
+      retval = readModelInstanceValue((IBoundFieldInstance) instance, parentObject, start);
+    } else {
+      throw new UnsupportedOperationException(
+          String.format("Unsupported instance type: %s", instance.getClass().getName()));
+    }
+    return retval;
   }
 
   /**
@@ -389,7 +389,7 @@ public class XmlParser
    *           if an error occurred reading the underlying XML file
    */
   @Nullable
-  protected Object readItem(
+  protected Object readModelInstanceValue(
       @NonNull IBoundAssemblyInstance instance,
       @NonNull Object parentObject,
       @NonNull StartElement start) throws XMLStreamException, IOException {
@@ -415,22 +415,6 @@ public class XmlParser
     return retval;
   }
 
-  // TODO: figure out how to call the type specific readItem directly
-  @Override
-  public Object readItem(IBoundNamedModelInstance instance, Object parentObject, StartElement start)
-      throws XMLStreamException, IOException {
-    Object retval;
-    if (instance instanceof IBoundAssemblyInstance) {
-      retval = readItem((IBoundAssemblyInstance) instance, parentObject, start);
-    } else if (instance instanceof IBoundFieldInstance) {
-      retval = readItem((IBoundFieldInstance) instance, parentObject, start);
-    } else {
-      throw new UnsupportedOperationException(
-          String.format("Unsupported instance type: %s", instance.getClass().getName()));
-    }
-    return retval;
-  }
-
   /**
    * Reads an individual XML item from the XML stream.
    *
@@ -447,7 +431,7 @@ public class XmlParser
    *           if an error occurred reading the underlying XML file
    */
   @NonNull
-  protected Object readItem(
+  protected Object readModelInstanceValue(
       @NonNull IBoundFieldInstance instance,
       @NonNull Object parentObject,
       @NonNull StartElement start) throws XMLStreamException, IOException {

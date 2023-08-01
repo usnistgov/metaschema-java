@@ -35,7 +35,6 @@ import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
@@ -288,12 +287,6 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
       retval = getFlagInstanceByName(getXmlField().getJsonKey().getFlagRef());
     }
     return retval;
-  }
-
-  @Override
-  public boolean isCollapsible() {
-    return getXmlField().isSetCollapsible() ? getXmlField().getCollapsible()
-        : MetaschemaModelConstants.DEFAULT_FIELD_COLLAPSIBLE;
   }
 
   @SuppressWarnings("null")

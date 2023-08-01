@@ -26,17 +26,12 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.ModelType;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldValue;
 
@@ -145,85 +140,6 @@ class DefaultFieldValueProperty
   @Override
   public IPropertyCollector newPropertyCollector() {
     return new SingletonPropertyCollector();
-  }
-
-  @SuppressWarnings("resource") // not owned
-  @Override
-  public Object read(IJsonParsingContext context) throws IOException {
-    if (getParentClassBinding().hasJsonValueKeyFlagInstance()) {
-      throw new UnsupportedOperationException("for a JSON value key, use the read(Object, IJsonParsingContext) method");
-    }
-
-    Object retval = null;
-    if (isNextProperty(context)) {
-      JsonParser parser = context.getReader(); // NOPMD - intentional
-      // advance past the property name
-      parser.nextFieldName();
-
-      retval = readInternal(context);
-    }
-    return retval;
-  }
-
-  @SuppressWarnings("resource") // not owned
-  @Override
-  public boolean read(Object objectInstance, IJsonParsingContext context) throws IOException {
-    boolean handled = isNextProperty(context);
-    if (handled) {
-      JsonParser parser = context.getReader();// NOPMD - intentional
-      // There are two modes:
-      // 1) use of a JSON value key, or
-      // 2) a simple value named "value"
-      IBoundFlagInstance jsonValueKey = getParentClassBinding().getJsonValueKeyFlagInstance();
-      if (jsonValueKey != null) {
-        // this is the JSON value key case
-        String fieldName = ObjectUtils.notNull(parser.currentName());
-        jsonValueKey.setValue(objectInstance, jsonValueKey.readValueFromString(fieldName));
-      } else {
-        String valueKeyName = getJsonValueKeyName();
-        String fieldName = parser.getCurrentName();
-        if (!fieldName.equals(valueKeyName)) {
-          throw new IOException(
-              String.format("Expecteded to parse the value property named '%s', but found a property named '%s'.",
-                  valueKeyName, fieldName));
-        }
-      }
-      // advance past the property name
-      parser.nextToken();
-
-      Object retval = readInternal(context);
-      setValue(objectInstance, retval);
-    }
-    return handled;
-  }
-
-  @Override
-  public Object readValue(IJsonParsingContext context) throws IOException {
-    return readInternal(context);
-  }
-
-  @SuppressWarnings("resource") // not owned
-  public boolean isNextProperty(IJsonParsingContext context) throws IOException {
-    JsonParser parser = context.getReader(); // NOPMD - intentional
-
-    // the parser's current token should be the JSON field name
-    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
-
-    boolean handled;
-    IBoundFlagInstance jsonValueKey = getParentClassBinding().getJsonValueKeyFlagInstance();
-    if (jsonValueKey != null) {
-      // assume this is the JSON value key case
-      handled = true;
-    } else {
-      handled = getJsonValueKeyName().equals(parser.currentName());
-    }
-    return handled;
-  }
-
-  @SuppressWarnings("resource") // not owned
-  protected Object readInternal(IJsonParsingContext context) throws IOException {
-    // parse the value
-    return getJavaTypeAdapter().parse(context.getReader());
   }
 
   @Override

@@ -127,50 +127,6 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
   private List<FlaggedBoundField> flaggedSingletonOrArrayField;
 
   /*
-   * ============================= = flagged collapsible field = =============================
-   */
-  /**
-   * An optional singleton flagged field.
-   */
-  @BoundField(useName = "collapsible-singleton-field")
-  private CollapsibleFlaggedBoundField collapsibleSingletonField;
-
-  /**
-   * A required singleton flagged field.
-   */
-  @BoundField(useName = "collapsible-required-singleton-field",
-      minOccurs = 1)
-  private CollapsibleFlaggedBoundField collapsibleRequiredSingletonField;
-
-  /**
-   * An optional array flagged field.
-   */
-  @BoundField(useName = "collapsible-array-field",
-      maxOccurs = -1)
-  @GroupAs(name = "collapsible-array-field-items",
-      inJson = JsonGroupAsBehavior.LIST)
-  private List<CollapsibleFlaggedBoundField> collapsibleArrayField;
-
-  /**
-   * An required array flagged field.
-   */
-  @BoundField(useName = "collapsible-required-array-field",
-      minOccurs = 1,
-      maxOccurs = -1)
-  @GroupAs(name = "collapsible-required-array-field-items",
-      inJson = JsonGroupAsBehavior.LIST)
-  private List<CollapsibleFlaggedBoundField> collapsibleRequiredArrayField;
-
-  /**
-   * An optional singleton or array flagged field.
-   */
-  @BoundField(useName = "collapsible-singleton-or-array-field",
-      maxOccurs = -1)
-  @GroupAs(name = "collapsible-singleton-or-array-field-items",
-      inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST)
-  private List<CollapsibleFlaggedBoundField> collapsibleSingletonOrArrayField;
-
-  /*
    * ============== = assemblies = ==============
    */
   /**

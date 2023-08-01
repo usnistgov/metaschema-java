@@ -49,10 +49,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
         SimpleAssembly.class
     },
     fields = {
-        CollapsibleFlaggedBoundField.class,
         FlaggedBoundField.class,
-        SimpleField2.class,
-        TestSimpleField.class
+        DefaultValueKeyField.class,
+        ValueKeyField.class
     })
 public class TestMetaschema
     extends AbstractBoundMetaschema {

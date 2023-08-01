@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.databind.io.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
@@ -85,8 +86,8 @@ public class DefaultJsonDeserializer<CLASS>
   protected INodeItem deserializeToNodeItemInternal(@NonNull Reader reader, @NonNull URI documentUri)
       throws IOException {
     INodeItem retval;
-    try (JsonParser parser = newJsonParser(reader)) {
-      DefaultJsonParsingContext parsingContext = new DefaultJsonParsingContext(parser, new DefaultJsonProblemHandler());
+    try (JsonParser jsonParser = newJsonParser(reader)) {
+      MetaschemaJsonParser parser = new MetaschemaJsonParser(jsonParser);
       IAssemblyClassBinding classBinding = getClassBinding();
       IConfiguration<DeserializationFeature<?>> configuration = getConfiguration();
 
@@ -95,7 +96,7 @@ public class DefaultJsonDeserializer<CLASS>
 
         RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
         // now parse the root property
-        @SuppressWarnings("unchecked") CLASS value = ObjectUtils.requireNonNull((CLASS) root.readRoot(parsingContext));
+        @SuppressWarnings("unchecked") CLASS value = ObjectUtils.requireNonNull((CLASS) parser.read(root));
 
         // // we should be at the end object
         // JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
@@ -105,8 +106,14 @@ public class DefaultJsonDeserializer<CLASS>
 
         retval = INodeItemFactory.instance().newDocumentNodeItem(root, documentUri, value);
       } else {
+        JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
+
         @SuppressWarnings("unchecked") CLASS value
-            = ObjectUtils.requireNonNull((CLASS) classBinding.readObject(parsingContext));
+            = (CLASS) parser.readAssemblyDefinitionValue(classBinding, null);
+
+        // advance past the end object
+        JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
+
         retval = INodeItemFactory.instance().newAssemblyNodeItem(classBinding, documentUri, value);
       }
       return retval;

@@ -77,8 +77,8 @@ class SingletonPropertyInfo
     // JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
     // }
 
-    List<Object> values = getDataTypeHandler().get(parentInstance, false, context);
-    collector.addAll(values);
+    Object value = getDataTypeHandler().get(parentInstance, false, context);
+    collector.add(value);
 
     // if (isObject) {
     // // read the object's END_OBJECT
@@ -90,7 +90,7 @@ class SingletonPropertyInfo
   public boolean readValue(IPropertyCollector collector, Object parentInstance, StartElement start,
       IXmlParsingContext context) throws IOException, XMLStreamException {
     boolean handled = true;
-    Object value = context.readItem(getProperty(), parentInstance, start);
+    Object value = context.readModelInstanceValue(getProperty(), parentInstance, start);
     if (value != null) {
       collector.add(value);
       handled = true;

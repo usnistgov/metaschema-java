@@ -119,8 +119,8 @@ class MapPropertyInfo
       // a map item will always start with a FIELD_NAME, since this represents the key
       JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME);
 
-      List<Object> values = getDataTypeHandler().get(parentInstance, true, context);
-      collector.addAll(values);
+      Object value = getDataTypeHandler().get(parentInstance, true, context);
+      collector.add(value);
 
       // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all items have been
       // read
@@ -145,7 +145,7 @@ class MapPropertyInfo
     while ((event = eventReader.peek()).isStartElement() && qname.equals(event.asStartElement().getName())) {
 
       // Consume the start element
-      Object value = context.readItem(getProperty(), parentInstance, start);
+      Object value = context.readModelInstanceValue(getProperty(), parentInstance, start);
       if (value != null) {
         collector.add(value);
         handled = true;

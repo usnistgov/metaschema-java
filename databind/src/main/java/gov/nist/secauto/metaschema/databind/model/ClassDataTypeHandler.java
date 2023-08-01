@@ -40,7 +40,6 @@ import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -84,7 +83,7 @@ class ClassDataTypeHandler implements IDataTypeHandler {
 
   @SuppressWarnings("resource") // not owned
   @Override
-  public List<Object> get(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
+  public Object get(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
       throws IOException {
     JsonParser parser = context.getReader(); // NOPMD - intentional
     boolean objectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
@@ -92,7 +91,7 @@ class ClassDataTypeHandler implements IDataTypeHandler {
       JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
     }
 
-    List<Object> retval = classBinding.readItem(parentInstance, requiresJsonKey, context);
+    Object retval = context.readDefinitionValue(getClassBinding(), parentInstance, requiresJsonKey);
 
     if (objectWrapper) {
       JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
@@ -103,7 +102,7 @@ class ClassDataTypeHandler implements IDataTypeHandler {
   @Override
   public Object get(Object parentInstance, StartElement start, IXmlParsingContext context)
       throws IOException, XMLStreamException {
-    return context.readItem(getClassBinding(), parentInstance, start);
+    return context.readDefinitionValue(getClassBinding(), parentInstance, start);
   }
 
   @Override

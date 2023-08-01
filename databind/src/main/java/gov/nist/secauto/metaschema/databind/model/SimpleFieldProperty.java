@@ -33,8 +33,8 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
-import gov.nist.secauto.metaschema.core.model.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
@@ -227,11 +227,6 @@ class SimpleFieldProperty
     public String getJsonValueKeyName() {
       // this will never be used
       return getJavaTypeAdapter().getDefaultJsonValueKey();
-    }
-
-    @Override
-    public boolean isCollapsible() {
-      return false;
     }
 
     @Override

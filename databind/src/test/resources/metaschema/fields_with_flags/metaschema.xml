@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <METASCHEMA xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../../../../metaschema-model/metachema/schema/xml/metaschema.xsd"
+ xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../../../core/metaschema/schema/xml/metaschema.xsd"
  xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0">
   <schema-name>Metaschema with complex field</schema-name>
   <schema-version>1.0</schema-version>
@@ -24,9 +24,6 @@
       </field>
       <field ref="complex-field4" max-occurs="unbounded">
         <group-as name="complex-fields4" in-json="BY_KEY" />
-      </field>
-      <field ref="complex-field5" max-occurs="unbounded">
-        <group-as name="complex-fields5" />
       </field>
     </model>
   </define-assembly>
@@ -57,15 +54,6 @@
     <description>A complex field with a flag</description>
     <json-key flag-ref="id2"/>
     <define-flag name="id2">
-      <formal-name>A flag</formal-name>
-      <description>A simple flag</description>
-    </define-flag>
-  </define-field>
-  
-  <define-field name="complex-field5" collapsible="yes">
-    <formal-name>Complex Field 5</formal-name>
-    <description>A complex field with a flag that is collapsible</description>
-    <define-flag name="name">
       <formal-name>A flag</formal-name>
       <description>A simple flag</description>
     </define-flag>

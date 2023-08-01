@@ -27,26 +27,18 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.core.model.RootAssemblyDefinitionWrapper;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -59,15 +51,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class RootAssemblyDefinition
     extends RootAssemblyDefinitionWrapper<IAssemblyClassBinding>
     implements IRootAssemblyClassBinding {
-  private static final Logger LOGGER = LogManager.getLogger(RootAssemblyDefinition.class);
 
   public RootAssemblyDefinition(@NonNull IAssemblyClassBinding rootDefinition) {
     super(rootDefinition);
-  }
-
-  @Override
-  public Object readObject(@NonNull IJsonParsingContext context) throws IOException {
-    return getRootDefinition().readObject(context);
   }
 
   @Override
@@ -100,12 +86,6 @@ public class RootAssemblyDefinition
   @Override
   public void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
     getRootDefinition().callAfterDeserialize(targetObject, parentObject);
-  }
-
-  @Override
-  public List<Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
-      throws IOException {
-    return getRootDefinition().readItem(parentInstance, requiresJsonKey, context);
   }
 
   @Override
@@ -173,65 +153,6 @@ public class RootAssemblyDefinition
   @Override
   public <CLASS> CLASS newInstance() throws BindingException {
     return getRootDefinition().newInstance();
-  }
-
-  @SuppressWarnings("resource") // not owned
-  @Override
-  public Object readRoot(IJsonParsingContext context) throws IOException {
-    if (!isRoot()) {
-      throw new IOException(
-          String.format("The bound assembly '%s' does not have a root defined in the '%s' annotation.",
-              getBoundClass().getName(),
-              MetaschemaAssembly.class.getName()));
-    }
-
-    JsonParser parser = context.getReader(); // NOPMD - intentional
-
-    boolean objectWrapper = false;
-    if (parser.currentToken() == null) {
-      parser.nextToken();
-    }
-
-    if (JsonToken.START_OBJECT.equals(parser.currentToken())) {
-      // advance past the start object to the field name
-      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-      objectWrapper = true;
-    }
-
-    String rootFieldName = getRootJsonName();
-    JsonToken token;
-    Object instance = null;
-    while (!(JsonToken.END_OBJECT.equals(token = parser.currentToken()) || token == null)) {
-      if (!JsonToken.FIELD_NAME.equals(token)) {
-        throw new IOException(String.format("Expected FIELD_NAME token, found '%s'", token.toString()));
-      }
-
-      String fieldName = parser.currentName();
-      if (fieldName.equals(rootFieldName)) {
-        // process the object value, bound to the requested class
-        JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
-        instance = readObject(context);
-
-        // stop now, since we found the root field
-        break;
-      }
-
-      if (!context.getProblemHandler().handleUnknownRootProperty(this, fieldName, context)) {
-        LOGGER.warn("Skipping unhandled top-level JSON field '{}'.", fieldName);
-        JsonUtil.skipNextValue(parser);
-      }
-    }
-
-    if (instance == null) {
-      throw new IOException(String.format("Failed to find root field '%s'.", rootFieldName));
-    }
-
-    if (objectWrapper) {
-      // advance past the end object
-      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
-    }
-
-    return instance;
   }
 
   @Override

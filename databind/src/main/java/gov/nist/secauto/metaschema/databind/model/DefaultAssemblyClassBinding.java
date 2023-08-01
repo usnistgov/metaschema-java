@@ -27,8 +27,6 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
@@ -41,9 +39,7 @@ import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.AssemblyConstraints;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
@@ -58,12 +54,10 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -330,144 +324,6 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   @Override
   public IAssemblyConstraintSupport getConstraintSupport() {
     return constraints.get();
-  }
-
-  @SuppressWarnings("resource") // not owned
-  @Override
-  public Object readObject(IJsonParsingContext context) throws IOException {
-    JsonParser parser = context.getReader(); // NOPMD - intentional
-
-    JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-
-    try {
-      Object instance = newInstance();
-
-      readInternal(instance, null, context);
-
-      // advance past the end object
-      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
-      return instance;
-    } catch (BindingException ex) {
-      throw new IOException(String.format("Failed to parse JSON object for '%s'", getBoundClass().getName()), ex);
-    }
-  }
-
-  @SuppressWarnings("resource") // not owned
-  @Override
-  public List<Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
-      throws IOException {
-
-    JsonUtil.assertCurrent(context.getReader(), JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
-
-    try {
-      Object instance = newInstance();
-
-      readInternal(instance, parentInstance, context);
-
-      return CollectionUtil.singletonList(instance);
-    } catch (BindingException ex) {
-      throw new IOException(ex);
-    }
-  }
-
-  /**
-   * Parses the JSON field contents related to the bound assembly.
-   * <p>
-   * This method expects the parser's current token to be at the first field name to parse.
-   * <p>
-   * After parsing the current token will be the token at the end object immediately after all the
-   * fields and values.
-   *
-   * @param instance
-   *          the bound object to read data into
-   * @param parentInstance
-   *          the parent object used for deserialization callbacks
-   * @param context
-   *          the JSON parser
-   * @throws IOException
-   *           if an error occurred while reading the JSON
-   */
-  @SuppressWarnings("resource") // not owned
-  protected void readInternal( // NOPMD - ok
-      @NonNull Object instance,
-      @Nullable Object parentInstance,
-      @NonNull IJsonParsingContext context) throws IOException {
-    JsonParser parser = context.getReader(); // NOPMD - intentional
-
-    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
-
-    try {
-      callBeforeDeserialize(instance, parentInstance);
-    } catch (BindingException ex) {
-      throw new IOException("an error occured calling the beforeDeserialize() method", ex);
-    }
-
-    IBoundFlagInstance jsonKey = getJsonKeyFlagInstance();
-    Map<String, ? extends IBoundNamedInstance> properties;
-    if (jsonKey == null) {
-      properties = getNamedInstances(null);
-    } else {
-      properties = getNamedInstances((flag) -> {
-        return !jsonKey.equals(flag);
-      });
-
-      // if there is a json key, the first field will be the key
-      String key = ObjectUtils.notNull(parser.getCurrentName());
-
-      Object value = jsonKey.readValueFromString(key);
-      jsonKey.setValue(instance, value.toString());
-
-      // advance past the FIELD_NAME
-      // next the value will be a start object
-      JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
-      //
-      // JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
-    }
-
-    Set<String> handledProperties = new HashSet<>();
-    while (!JsonToken.END_OBJECT.equals(parser.currentToken())) {
-      String propertyName = parser.getCurrentName();
-      IBoundNamedInstance property = properties.get(propertyName);
-
-      boolean handled = false;
-      if (property != null) {
-        handled = property.read(instance, context);
-      }
-
-      if (handled) {
-        handledProperties.add(propertyName);
-      } else {
-        if (LOGGER.isWarnEnabled()) {
-          LOGGER.warn("Unrecognized property named '{}' at '{}'", propertyName,
-              JsonUtil.toString(ObjectUtils.notNull(parser.getCurrentLocation())));
-        }
-        JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
-        JsonUtil.skipNextValue(parser);
-      }
-    }
-
-    // set undefined properties
-    // TODO: re-implement this by removing the parsed properties from the properties map to speed up
-    for (Map.Entry<String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
-      if (!handledProperties.contains(entry.getKey())) {
-        // use the default value of the collector
-        IBoundNamedInstance property = ObjectUtils.notNull(entry.getValue());
-        property.setValue(instance, property.newPropertyCollector().getValue());
-      }
-    }
-
-    if (jsonKey != null) {
-      // read the END_OBJECT for the JSON key value
-      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
-    }
-
-    try {
-      callAfterDeserialize(instance, parentInstance);
-    } catch (BindingException ex) {
-      throw new IOException("an error occured calling the afterDeserialize() method", ex);
-    }
-
-    JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
   }
 
   /**

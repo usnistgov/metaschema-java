@@ -29,9 +29,10 @@ package gov.nist.secauto.metaschema.databind.model;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
+import gov.nist.secauto.metaschema.databind.io.json.MetaschemaJsonParser;
 
 import org.junit.jupiter.api.Test;
 
@@ -47,28 +48,16 @@ class DefaultAssemblyClassBindingTest
     File testContent
         = new File(getClass().getResource("/content/minimal.json").getFile());
     try (BufferedReader reader = Files.newBufferedReader(testContent.toPath())) {
-      IJsonParsingContext context = newJsonParsingContext(reader);
+      assert reader != null;
+
       IAssemblyClassBinding classBinding = getRootAssemblyClassBinding();
 
       RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
 
-      Object value = root.readRoot(context);
-      assertNotNull(value, "root was null");
-    }
-  }
-
-  @Test
-  void testCollapseJsonParse() throws JsonParseException, IOException {
-    File testContent
-        = new File(getClass().getResource("/content/collapse.json").getFile());
-    try (BufferedReader reader = Files.newBufferedReader(testContent.toPath())) {
-      IJsonParsingContext context = newJsonParsingContext(reader);
-      IAssemblyClassBinding classBinding = getRootAssemblyClassBinding();
-
-      RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
-
-      Object value = root.readRoot(context);
-      assertNotNull(value, "root was null");
+      try (JsonParser parser = newJsonParser(reader)) {
+        Object value = new MetaschemaJsonParser(parser).read(root);
+        assertNotNull(value, "root was null");
+      }
     }
   }
 

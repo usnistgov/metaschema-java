@@ -31,7 +31,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public final class MetaschemaModelConstants {
   public static final boolean DEFAULT_FLAG_REQUIRED = false;
   public static final boolean DEFAULT_FIELD_IN_XML_WRAPPED = true;
-  public static final boolean DEFAULT_FIELD_COLLAPSIBLE = false;
   // TODO: rename to DEFAULT_MIN_OCCURS
   public static final int DEFAULT_GROUP_AS_MIN_OCCURS = 0;
   // TODO: rename to DEFAULT_MAX_OCCURS

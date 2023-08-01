@@ -26,19 +26,14 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -85,32 +80,6 @@ public interface IClassBinding extends IBoundModelDefinition {
   @NonNull
   Map<String, ? extends IBoundNamedInstance>
       getNamedInstances(@Nullable Predicate<IBoundFlagInstance> flagFilter);
-
-  /**
-   * Reads a JSON/YAML object storing the associated data in the Java object {@code parentInstance}.
-   * <p>
-   * When called the current {@link JsonToken} of the {@link JsonParser} is expected to be a
-   * {@link JsonToken#START_OBJECT}.
-   * <p>
-   * After returning the current {@link JsonToken} of the {@link JsonParser} is expected to be the
-   * next token after the {@link JsonToken#END_OBJECT} for this class.
-   *
-   * @param parentInstance
-   *          the parent Java object to store the data in, which can be {@code null} if there is no
-   *          parent
-   * @param requiresJsonKey
-   *          when {@code true} indicates that the item will have a JSON key
-   * @param context
-   *          the parsing context
-   * @return the instances or an empty list if no data was parsed
-   * @throws IOException
-   *           if an error occurred while reading the parsed content
-   */
-  // TODO: check if a boolean return value is needed
-  @NonNull
-  List<Object> readItem(@Nullable Object parentInstance, boolean requiresJsonKey,
-      @NonNull IJsonParsingContext context)
-      throws IOException;
 
   void writeItem(@NonNull Object item, @NonNull QName parentName, @NonNull IXmlWritingContext context)
       throws IOException, XMLStreamException;

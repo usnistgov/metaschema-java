@@ -27,10 +27,8 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
@@ -38,7 +36,6 @@ import org.codehaus.stax2.XMLStreamWriter2;
 
 import java.io.IOException;
 import java.util.Locale;
-import java.util.function.Supplier;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -63,35 +60,6 @@ abstract class AbstractFlagProperty
     Object value = getValue(fromInstance);
     IDataTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();
     setValue(toInstance, value == null ? null : adapter.copy(value));
-  }
-
-  @SuppressWarnings("resource") // not owned
-  @Override
-  protected Object readInternal(Object parentInstance, IJsonParsingContext context) throws IOException {
-    JsonParser parser = context.getReader();// NOPMD - intentional
-
-    // advance past the property name
-    parser.nextFieldName();
-
-    // parse the value
-    return readValueAndSupply(context).get();
-  }
-
-  // TODO: implement collector?
-  @Override
-  public Object readValueFromString(String value) throws IOException {
-    return getDefinition().getJavaTypeAdapter().parse(value);
-  }
-
-  @Override
-  public Supplier<?> readValueAndSupply(String value) throws IOException {
-    return getDefinition().getJavaTypeAdapter().parseAndSupply(value);
-  }
-
-  @SuppressWarnings("resource")
-  @Override
-  public Supplier<?> readValueAndSupply(IJsonParsingContext context) throws IOException {
-    return getDefinition().getJavaTypeAdapter().parseAndSupply(context.getReader());
   }
 
   @Override

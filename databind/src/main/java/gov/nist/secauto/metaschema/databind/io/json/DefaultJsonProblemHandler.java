@@ -49,13 +49,13 @@ public class DefaultJsonProblemHandler implements IJsonProblemHandler {
     IGNORED_ROOT_FIELD_NAMES.add(JSON_SCHEMA_ROOT_FIELD_NAME);
   }
 
-  @SuppressWarnings("resource") // not owned
   @Override
-  public boolean handleUnknownRootProperty(IAssemblyClassBinding classBinding, String fieldName,
-      IJsonParsingContext context) throws IOException {
+  public boolean handleUnknownRootProperty(
+      IAssemblyClassBinding classBinding,
+      String fieldName,
+      JsonParser parser) throws IOException {
     boolean retval = false;
     if (IGNORED_ROOT_FIELD_NAMES.contains(fieldName)) {
-      JsonParser parser = context.getReader(); // NOPMD - intentional
       JsonUtil.skipNextValue(parser);
       retval = true;
     }
@@ -64,21 +64,27 @@ public class DefaultJsonProblemHandler implements IJsonProblemHandler {
 
   // TODO: implement this
   @Override
-  public boolean canHandleUnknownProperty(IClassBinding classBinding, String propertyName,
-      IJsonParsingContext parsingContext) throws IOException {
+  public boolean canHandleUnknownProperty(
+      IClassBinding classBinding,
+      String propertyName,
+      JsonParser parser) throws IOException {
     return false;
   }
 
   @Override
-  public boolean handleUnknownProperty(IClassBinding classBinding, String propertyName,
-      IJsonParsingContext parsingContext) throws IOException {
+  public boolean handleUnknownProperty(
+      IClassBinding classBinding,
+      String propertyName,
+      JsonParser parser) throws IOException {
     return false;
   }
 
   // TODO: implement this
   @Override
-  public Map<IBoundNamedInstance, IJsonBindingSupplier> handleMissingFields(IClassBinding classBinding,
-      Map<String, IBoundNamedInstance> missingPropertyBindings, IJsonParsingContext context) throws BindingException {
+  public Map<IBoundNamedInstance, IJsonBindingSupplier> handleMissingFields(
+      IClassBinding classBinding,
+      Map<String, IBoundNamedInstance> missingPropertyBindings,
+      JsonParser parser) throws BindingException {
     return Collections.emptyMap();
   }
 

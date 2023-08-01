@@ -294,12 +294,6 @@ class XmlInlineFieldDefinition
       return retval;
     }
 
-    @Override
-    public boolean isCollapsible() {
-      return getXmlField().isSetCollapsible() ? getXmlField().getCollapsible()
-          : MetaschemaModelConstants.DEFAULT_FIELD_COLLAPSIBLE;
-    }
-
     /**
      * Lazy initialize the flag instances associated with this definition.
      *

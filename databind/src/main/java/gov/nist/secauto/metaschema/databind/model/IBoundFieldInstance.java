@@ -35,6 +35,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundFieldInstance extends IBoundNamedModelInstance, IFieldInstance {
 
+  @NonNull
   static IBoundFieldInstance newInstance(
       @NonNull Field field,
       @NonNull IAssemblyClassBinding parentDefinition) {

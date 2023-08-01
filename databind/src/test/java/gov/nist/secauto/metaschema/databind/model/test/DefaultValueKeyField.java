@@ -32,13 +32,12 @@ import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldVal
 @SuppressWarnings("PMD")
 @MetaschemaField(
     name = "simple-field",
-    metaschema = TestMetaschema.class,
-    isCollapsible = true)
-public class TestSimpleField {
-  @MetaschemaFieldValue(valueKeyName = "a-value")
+    metaschema = TestMetaschema.class)
+public class DefaultValueKeyField {
+  @MetaschemaFieldValue
   private String _value;
 
-  public TestSimpleField() {
+  public DefaultValueKeyField() {
   }
 
   public String getValue() {

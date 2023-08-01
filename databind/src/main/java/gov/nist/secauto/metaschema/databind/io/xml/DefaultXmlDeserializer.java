@@ -125,7 +125,7 @@ public class DefaultXmlDeserializer<CLASS>
   protected CLASS parseXmlInternal(@NonNull XMLEventReader2 reader, @NonNull URI documentUri)
       throws IOException, XMLStreamException {
 
-    XmlParser parser = new XmlParser(reader, new DefaultXmlProblemHandler());
+    MetaschemaXmlParser parser = new MetaschemaXmlParser(reader, new DefaultXmlProblemHandler());
 
     return parser.read(getRootAssemblyDefinition());
   }

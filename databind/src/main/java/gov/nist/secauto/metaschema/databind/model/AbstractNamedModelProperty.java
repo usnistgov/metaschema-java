@@ -26,16 +26,11 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 
@@ -158,26 +153,6 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
   @Override
   public Collection<? extends Object> getItemValues(Object value) {
     return getPropertyInfo().getItemsFromValue(value);
-  }
-
-  @SuppressWarnings("resource")
-  @Override
-  protected Object readInternal(Object parentInstance, IJsonParsingContext context)
-      throws IOException {
-    JsonParser parser = context.getReader(); // NOPMD - intentional
-
-    // the parser's current token should be the JSON field name
-    // advance past the property name
-    JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
-
-    // parse the value
-    IPropertyCollector collector = newPropertyCollector();
-    IModelPropertyInfo info = getPropertyInfo();
-    info.readValue(collector, parentInstance, context);
-
-    JsonUtil.assertCurrent(context.getReader(), JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
-
-    return collector.getValue();
   }
 
   @Override

@@ -27,24 +27,13 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 
 import java.io.IOException;
-import java.util.function.Supplier;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundFlagInstance extends IBoundNamedInstance, IFlagInstance {
-
-  @NonNull
-  Object readValueFromString(@NonNull String value) throws IOException;
-
-  @NonNull
-  Supplier<?> readValueAndSupply(@NonNull String value) throws IOException;
-
-  @NonNull
-  Supplier<?> readValueAndSupply(@NonNull IJsonParsingContext context) throws IOException;
 
   /**
    * Given a bound flag value, get that value as a {@link String}.

@@ -83,7 +83,9 @@ public interface IModelPropertyInfo {
    * @throws IOException
    *           if there was an error when reading JSON data
    */
-  void readValue(@NonNull IPropertyCollector collector, @Nullable Object parentInstance,
+  void readValue(
+      @NonNull IPropertyCollector collector,
+      @NonNull Object parentInstance,
       @NonNull IJsonParsingContext context)
       throws IOException;
 
