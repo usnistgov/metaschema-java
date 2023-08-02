@@ -75,7 +75,7 @@
 				<script type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NIST&amp;subagency=github&amp;pua=UA-42404149-54&amp;yt=true&amp;exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c" async="async"></script>
 			</endContent>
 			<pages>
-				<index project="metaschema-java-binding">
+				<index project="metaschema-databind">
 					<shortTitle>Java Metaschema Binding Library</shortTitle>
 					<sections>
 						<body />
@@ -95,14 +95,11 @@
 		</head>
 
 		<links>
-			<item name="GitHub project"
-				href="http://github.com/usnistgov/metaschema-java/" />
-			<item name="Javadoc"
-				href="apidocs/" />
+			<item name="GitHub project" href="http://github.com/usnistgov/metaschema-java/" />
 		</links>
 
 		<breadcrumbs>
-			<item name="Java Tools" href="./" />
+			<item name="Summary" href="./" />
 		</breadcrumbs>
 
 		<menu name="Main" inherit="top">
@@ -118,7 +115,5 @@
 		</menu>
 		<menu name="Modules" ref="modules" />
 		<menu name="Maven Documentation" ref="reports" inherit="bottom" />
-		<footer>
-		</footer>
 	</body>
 </project>

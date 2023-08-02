@@ -777,23 +777,6 @@
                     </plugin>
                 </plugins>
             </build>
-            <reporting>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-						<reportSets>
-                			<reportSet>
-								<id>aggregate</id>
-								<inherited>false</inherited>
-								<reports>
-									<report>aggregate-no-fork</report>
-								</reports>
-							</reportSet>
-                        </reportSets>
-                    </plugin>
-                </plugins>
-            </reporting>
         </profile>
     </profiles>
     <modules>
