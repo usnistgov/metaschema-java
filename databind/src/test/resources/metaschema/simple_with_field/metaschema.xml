@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <METASCHEMA xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../../../../metaschema-model/metachema/schema/xml/metaschema.xsd"
+ xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../../../core/metaschema/schema/xml/metaschema.xsd"
  xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0">
   <schema-name>Simple Metaschema</schema-name>
   <schema-version>1.0</schema-version>
@@ -59,13 +59,13 @@
     <json-value-key>text4</json-value-key>
   </define-field>
   
-  <define-field name="field5" collapsible="yes">
+  <define-field name="field5">
     <formal-name>A Field</formal-name>
     <description>A field with no flags.</description>
     <json-value-key>text5</json-value-key>
   </define-field>
   
-  <define-field name="field6" collapsible="yes" as-type="boolean">
+  <define-field name="field6" as-type="boolean">
     <formal-name>A Field</formal-name>
     <description>A field with no flags.</description>
   </define-field>

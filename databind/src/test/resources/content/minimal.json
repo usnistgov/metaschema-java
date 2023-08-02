@@ -17,16 +17,6 @@
 			 		"field-required-flag": "id2",
 			 		"field-value": "field value 2"
 		 		} 
-		 	],
-		 	"collapsible-required-singleton-field": {
-		 		"field-required-flag": "id3",
-		 		"field-value": "field value 3"
-		 	},
-		 	"collapsible-required-array-field-items": [
-		 		{ 
-			 		"field-required-flag": "id4",
-			 		"field-value": "field value 4"
-		 		} 
 		 	]
 		}
 	}

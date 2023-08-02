@@ -1,5 +1,4 @@
 {
-  "$schema": "schema.json",
   "top-level": {
     "id": "test",
     "field": "field-value",

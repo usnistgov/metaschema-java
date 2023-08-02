@@ -29,7 +29,7 @@
 
 		<dependency>
 			<groupId>com.google.auto.service</groupId>
-			<artifactId>auto-service</artifactId>
+			<artifactId>auto-service-annotations</artifactId>
 			<optional>true</optional>
 		</dependency>
 
@@ -115,7 +115,6 @@
 						<excludes>**/gov/nist/secauto/metaschema/databind/model/**/*</excludes>
 					</configuration>
 				</plugin>
-
 			</plugins>
 		</pluginManagement>
 		<plugins>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <METASCHEMA
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../../../../metaschema-model/metachema/schema/xml/metaschema.xsd"
+    xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../../../core/metaschema/schema/xml/metaschema.xsd"
 	xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0"
 	xmlns:binding="http://csrc.nist.gov/ns/oscal/metaschema-binding/1.0">
 	<schema-name>Metaschema with assembly</schema-name>

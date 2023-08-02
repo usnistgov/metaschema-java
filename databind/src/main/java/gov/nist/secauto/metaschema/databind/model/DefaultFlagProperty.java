@@ -33,8 +33,8 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
-import gov.nist.secauto.metaschema.core.model.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.Constants;
@@ -56,7 +56,8 @@ import nl.talsmasoftware.lazy4j.Lazy;
 
 class DefaultFlagProperty
     extends AbstractFlagProperty {
-  // private static final Logger logger = LogManager.getLogger(DefaultFlagProperty.class);
+  // private static final Logger logger =
+  // LogManager.getLogger(DefaultFlagProperty.class);
   @NonNull
   private final Field field;
   @NonNull

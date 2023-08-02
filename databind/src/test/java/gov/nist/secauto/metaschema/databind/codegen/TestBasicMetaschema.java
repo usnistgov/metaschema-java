@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.codegen.config.DefaultBindingConfiguration;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.Format;
+import gov.nist.secauto.metaschema.databind.io.IDeserializer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,7 +46,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ReflectionUtils;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -95,11 +95,10 @@ class TestBasicMetaschema {
       throws IOException {
     IBindingContext context = IBindingContext.instance();
 
-    try (Reader reader = Files.newBufferedReader(file)) {
-      assert reader != null;
-      Object value = context.newDeserializer(format, rootClass).deserialize(reader, ObjectUtils.notNull(file.toUri()));
-      return value;
-    }
+    IDeserializer<?> deserializer = context.newDeserializer(format, rootClass);
+    LOGGER.info("Reading content: {}", file);
+    Object value = deserializer.deserialize(file);
+    return value;
   }
 
   private static <CLASS> void write(@NonNull Format format, @NonNull Path file, CLASS rootObject) throws IOException {
@@ -165,7 +164,8 @@ class TestBasicMetaschema {
   @Test
   void testSimpleMetaschema() throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
     runTests("simple", "gov.nist.csrc.ns.metaschema.testing.simple.TopLevel", generationDir);
-    // runTests("simple", "gov.nist.csrc.ns.metaschema.testing.simple.TopLevel", generationDir, (obj) ->
+    // runTests("simple", "gov.nist.csrc.ns.metaschema.testing.simple.TopLevel",
+    // generationDir, (obj) ->
     // {
     // try {
     // Assertions.assertEquals("test", reflectMethod(obj, "getId"));
@@ -201,8 +201,6 @@ class TestBasicMetaschema {
   @Test
   void testFieldsWithFlagMetaschema()
       throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-    // runTests("fields_with_flags", "gov.nist.csrc.ns.metaschema.testing.fields.with.flags.TopLevel",
-    // generationDir);
     runTests("fields_with_flags", "gov.nist.csrc.ns.metaschema.testing.fields.with.flags.TopLevel",
         generationDir,
         (obj) -> {
