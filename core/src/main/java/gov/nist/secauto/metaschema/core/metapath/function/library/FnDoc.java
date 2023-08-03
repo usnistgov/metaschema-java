@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath.function.library;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.function.DocumentFunctionException;
 import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
@@ -50,6 +51,7 @@ public final class FnDoc {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("doc")
+      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
       .deterministic()
       .contextDependent()
       .focusIndependent()
@@ -80,10 +82,11 @@ public final class FnDoc {
   }
 
   /**
-   * Dynamically load the document associated with the URI, and return a {@link IDocumentNodeItem}
-   * containing the result.
+   * Dynamically load the document associated with the URI, and return a
+   * {@link IDocumentNodeItem} containing the result.
    * <p>
-   * Based on the XPath 3.1 <a href="https://www.w3.org/TR/xpath-functions-31/#func-doc">fn:doc</a>
+   * Based on the XPath 3.1
+   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-doc">fn:doc</a>
    * function.
    *
    * @param uri

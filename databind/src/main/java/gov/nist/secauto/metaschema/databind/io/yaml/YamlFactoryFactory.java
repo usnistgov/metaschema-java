@@ -62,6 +62,7 @@ public final class YamlFactoryFactory {
     return retval;
   }
 
+  @SuppressWarnings("unused")
   @NonNull
   public static YAMLFactory
       newGeneratorFactoryInstance(@NonNull IMutableConfiguration<SerializationFeature<?>> config) {

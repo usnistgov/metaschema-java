@@ -53,7 +53,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  */
 public class DefaultFunction
     extends AbstractFunction {
-  // private static final Logger logger = LogManager.getLogger(AbstractFunction.class);
+  // private static final Logger logger =
+  // LogManager.getLogger(AbstractFunction.class);
 
   @NonNull
   private final Set<FunctionProperty> properties;
@@ -79,11 +80,12 @@ public class DefaultFunction
   @SuppressWarnings({ "null", "PMD.LooseCoupling" })
   DefaultFunction(
       @NonNull String name,
+      @NonNull String namespace,
       @NonNull EnumSet<FunctionProperty> properties,
       @NonNull List<IArgument> arguments,
       @NonNull ISequenceType result,
       @NonNull IFunctionExecutor handler) {
-    super(name, arguments);
+    super(name, namespace, arguments);
     this.properties = Collections.unmodifiableSet(properties);
     this.result = result;
     this.handler = handler;
@@ -110,7 +112,8 @@ public class DefaultFunction
   // // // TODO: check the context item for type compatibility
   // // retval = true;
   // } else if ((expressionArguments.size() == getArguments().size())
-  // || (isArityUnbounded() && expressionArguments.size() > getArguments().size())) {
+  // || (isArityUnbounded() && expressionArguments.size() >
+  // getArguments().size())) {
   // retval = true;
   // // check that argument requirements are satisfied
   // Iterator<IArgument> argumentIterator = getArguments().iterator();
@@ -119,7 +122,8 @@ public class DefaultFunction
   // IArgument argument = null;
   // while (argumentIterator.hasNext()) {
   // argument = argumentIterator.next();
-  // IExpression<?> expression = expressionIterator.hasNext() ? expressionIterator.next() : null;
+  // IExpression<?> expression = expressionIterator.hasNext() ?
+  // expressionIterator.next() : null;
   //
   // if (expression != null) {
   // // is the expression supported by the argument?
@@ -128,7 +132,8 @@ public class DefaultFunction
   // break;
   // }
   // } else {
-  // // there are no more expression arguments. Make sure that the remaining arguments are optional
+  // // there are no more expression arguments. Make sure that the remaining
+  // arguments are optional
   // if (!argument.getSequenceType().getOccurrence().isOptional()) {
   // retval = false;
   // break;
@@ -256,7 +261,8 @@ public class DefaultFunction
   }
 
   /**
-   * Based on XPath 3.1 <a href="https://www.w3.org/TR/xpath-31/#dt-function-conversion">function
+   * Based on XPath 3.1
+   * <a href="https://www.w3.org/TR/xpath-31/#dt-function-conversion">function
    * conversion</a> rules.
    *
    * @param argument
@@ -327,15 +333,19 @@ public class DefaultFunction
       }
 
       if (result == null) {
-        // logger.info(String.format("Executing function '%s' with arguments '%s'.", toSignature(),
+        // logger.info(String.format("Executing function '%s' with arguments '%s'.",
+        // toSignature(),
         // convertedArguments.toString()));
 
         // INodeItem actualFocus = focus == null ? null : focus.getNodeItem();
         // if (isFocusDepenent() && actualFocus == null) {
-        // throw new DynamicMetapathException(DynamicMetapathException.DYNAMIC_CONTEXT_ABSENT, "Null
+        // throw new
+        // DynamicMetapathException(DynamicMetapathException.DYNAMIC_CONTEXT_ABSENT,
+        // "Null
         // focus");
         // }
-        // result = handler.execute(this, convertedArguments, dynamicContext, actualFocus);
+        // result = handler.execute(this, convertedArguments, dynamicContext,
+        // actualFocus);
         result = handler.execute(this, convertedArguments, dynamicContext, contextItem);
 
         if (callingContext != null) {
@@ -344,7 +354,8 @@ public class DefaultFunction
         }
       }
 
-      // logger.info(String.format("Executed function '%s' with arguments '%s' producing result '%s'",
+      // logger.info(String.format("Executed function '%s' with arguments '%s'
+      // producing result '%s'",
       // toSignature(), convertedArguments.toString(), result.asList().toString()));
       return result;
     } catch (MetapathException ex) {
@@ -354,7 +365,7 @@ public class DefaultFunction
 
   @Override
   public int hashCode() {
-    return Objects.hash(getArguments(), handler, getName(), properties, result);
+    return Objects.hash(getName(), getNamespace(), getArguments(), handler, properties, result);
   }
 
   @Override
@@ -369,8 +380,11 @@ public class DefaultFunction
       return false; // NOPMD - readability
     }
     DefaultFunction other = (DefaultFunction) obj;
-    return Objects.equals(getArguments(), other.getArguments()) && Objects.equals(handler, other.handler)
-        && Objects.equals(getName(), other.getName()) && Objects.equals(properties, other.properties)
+    return Objects.equals(getName(), other.getName())
+        && Objects.equals(getNamespace(), other.getNamespace())
+        && Objects.equals(getArguments(), other.getArguments())
+        && Objects.equals(handler, other.handler)
+        && Objects.equals(properties, other.properties)
         && Objects.equals(result, other.result);
   }
 
@@ -382,6 +396,9 @@ public class DefaultFunction
   @Override
   public String toSignature() {
     StringBuilder builder = new StringBuilder()
+        .append("Q{")
+        .append(getNamespace())
+        .append('}')
         .append(getName()) // name
         .append('('); // arguments
 

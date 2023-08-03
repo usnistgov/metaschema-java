@@ -24,44 +24,29 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeSpec;
-
-import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class FieldDefinitionTypeInfoImpl
-    extends AbstractModelDefinitionTypeInfo<IFieldDefinition>
-    implements IFieldDefinitionTypeInfo {
-
-  public FieldDefinitionTypeInfoImpl(@NonNull IFieldDefinition definition, @NonNull ITypeResolver typeResolver) {
-    super(definition, typeResolver);
-    addPropertyTypeInfo(IFieldValueTypeInfo.newTypeInfo(this));
+public interface IFlagInstanceTypeInfo extends IInstanceTypeInfo {
+  /**
+   * Construct a new type information object for the provided {@code instance}.
+   *
+   * @param instance
+   *          the instance to provide type information for
+   * @param parentDefinition
+   *          the definition containing the instance
+   * @return the type information
+   */
+  @NonNull
+  static IFlagInstanceTypeInfo newTypeInfo(
+      @NonNull IFlagInstance instance,
+      @NonNull IDefinitionTypeInfo parentDefinition) {
+    return new FlagInstanceTypeInfoImpl(instance, parentDefinition);
   }
 
   @Override
-  protected Set<IFlagContainer> buildClass(@NonNull TypeSpec.Builder builder, @NonNull ClassName className)
-      throws IOException {
-    Set<IFlagContainer> retval = new HashSet<>();
-    retval.addAll(super.buildClass(builder, className));
-
-    AnnotationSpec.Builder metaschemaField = ObjectUtils.notNull(AnnotationSpec.builder(MetaschemaField.class));
-
-    buildCommonProperties(metaschemaField);
-
-    builder.addAnnotation(metaschemaField.build());
-    buildConstraints(builder);
-    return retval;
-  }
+  IFlagInstance getInstance();
 }

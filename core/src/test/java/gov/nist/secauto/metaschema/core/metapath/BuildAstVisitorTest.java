@@ -90,7 +90,8 @@ class BuildAstVisitorTest {
 
   @NonNull
   private static DynamicContext newDynamicContext() {
-    return new StaticContext().newDynamicContext();
+    return StaticContext.builder()
+        .build().newDynamicContext();
   }
 
   private static IExpression parseExpression(@NonNull String path) {

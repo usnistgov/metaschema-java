@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import java.net.URI;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -45,14 +46,31 @@ public final class CastFunction<ITEM extends IAnyAtomicItem> implements IFunctio
   private final ICastExecutor<ITEM> castExecutor;
 
   @NonNull
-  static <ITEM extends IAnyAtomicItem> IFunction signature(@NonNull String name,
-      @NonNull Class<ITEM> resulingAtomicType, @NonNull ICastExecutor<ITEM> executor) {
+  static <ITEM extends IAnyAtomicItem> IFunction signature(
+      @NonNull URI namespace,
+      @NonNull String name,
+      @NonNull Class<ITEM> resulingAtomicType,
+      @NonNull ICastExecutor<ITEM> executor) {
+    return signature(
+        ObjectUtils.notNull(namespace.toASCIIString()),
+        name,
+        resulingAtomicType,
+        executor);
+  }
+
+  @NonNull
+  static <ITEM extends IAnyAtomicItem> IFunction signature(
+      @NonNull String namespace,
+      @NonNull String name,
+      @NonNull Class<ITEM> resulingAtomicType,
+      @NonNull ICastExecutor<ITEM> executor) {
     return IFunction.builder()
         .name(name)
+        .namespace(namespace)
         .argument(IArgument.newBuilder()
             .name("arg1")
             .type(IAnyAtomicItem.class)
-            .one()
+            .zeroOrOne()
             .build())
         .returnType(resulingAtomicType)
         .returnZeroOrOne()

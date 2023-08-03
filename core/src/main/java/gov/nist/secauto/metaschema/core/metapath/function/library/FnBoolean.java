@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath.function.library;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.core.metapath.function.InvalidArgumentFunctionException;
@@ -49,6 +50,7 @@ public final class FnBoolean {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("boolean")
+      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
       .focusIndependent()
@@ -82,8 +84,9 @@ public final class FnBoolean {
   /**
    * Get the effective boolean value of the provided sequence.
    * <p>
-   * Based on the XPath 3.1
-   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-boolean">fn:boolean</a> function.
+   * Based on the XPath 3.1 <a href=
+   * "https://www.w3.org/TR/xpath-functions-31/#func-boolean">fn:boolean</a>
+   * function.
    *
    * @param sequence
    *          the sequence to evaluate
@@ -101,8 +104,9 @@ public final class FnBoolean {
   }
 
   /**
-   * A helper method that gets the effective boolean value of the provided sequence based on
-   * <a href="https://www.w3.org/TR/xpath-31/#id-ebv">XPath 3.1</a>.
+   * A helper method that gets the effective boolean value of the provided
+   * sequence based on <a href="https://www.w3.org/TR/xpath-31/#id-ebv">XPath
+   * 3.1</a>.
    *
    * @param sequence
    *          the sequence to evaluate
@@ -123,8 +127,8 @@ public final class FnBoolean {
   }
 
   /**
-   * A helper method that gets the effective boolean value of the provided item based on
-   * <a href="https://www.w3.org/TR/xpath-31/#id-ebv">XPath 3.1</a>.
+   * A helper method that gets the effective boolean value of the provided item
+   * based on <a href="https://www.w3.org/TR/xpath-31/#id-ebv">XPath 3.1</a>.
    *
    * @param item
    *          the item to evaluate

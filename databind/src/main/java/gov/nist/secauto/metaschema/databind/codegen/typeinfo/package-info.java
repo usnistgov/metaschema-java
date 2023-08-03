@@ -24,31 +24,4 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
-
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-
-/**
- * Information about a Java class generated for a specific definition.
- */
-public interface IDefinitionProduction {
-
-  /**
-   * Get the definition for which the Java class was produced.
-   *
-   * @return the definition
-   */
-  @NonNull
-  IFlagContainer getDefinition();
-
-  /**
-   * Get information about the Java class generated from the definition.
-   *
-   * @return the class information
-   */
-  @NonNull
-  IGeneratedDefinitionClass getGeneratedClass();
-
-}
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo;

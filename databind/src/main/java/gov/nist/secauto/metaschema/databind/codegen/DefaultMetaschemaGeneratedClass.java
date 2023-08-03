@@ -26,81 +26,53 @@
 
 package gov.nist.secauto.metaschema.databind.codegen;
 
-import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.ClassName;
 
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
-import java.util.Set;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface ITypeInfo {
-
-  /**
-   * Get the name to use for the property. If the property is a collection type, then this will be the
-   * group-as name, else this will be the use name or the name if not use name is set.
-   *
-   * @return the name
-   */
+class DefaultMetaschemaGeneratedClass
+    extends DefaultGeneratedClass
+    implements IGeneratedMetaschemaClass {
   @NonNull
-  String getBaseName();
-
-  /**
-   * The name to use for Java constructs that refer to the item. This is used for when a field is
-   * collection-based and there is a need to refer to a single item, such as in an add/remove method
-   * name.
-   *
-   * @return the item base name
-   */
+  private final IMetaschema module;
   @NonNull
-  default String getItemBaseName() {
-    return getBaseName();
+  private final Map<IFlagContainer, IGeneratedDefinitionClass> definitionClassMap;
+  @NonNull
+  private final String packageName;
+
+  public DefaultMetaschemaGeneratedClass(
+      @NonNull IMetaschema module,
+      @NonNull ClassName className,
+      @NonNull Path classFile,
+      @NonNull Map<IFlagContainer, IGeneratedDefinitionClass> definitionClassMap,
+      @NonNull String packageName) {
+    super(classFile, className);
+    this.module = module;
+    this.definitionClassMap = CollectionUtil.unmodifiableMap(definitionClassMap);
+    this.packageName = packageName;
   }
 
-  /**
-   * Get the Java property name for the property.
-   *
-   * @return the Java property name
-   */
-  @NonNull
-  String getPropertyName();
-
-  /**
-   * Gets the name of the Java field for this property.
-   *
-   * @return the Java field name
-   */
-  @NonNull
-  String getJavaFieldName();
-
-  /**
-   * Gets the type of the associated Java field for the property.
-   *
-   * @return the Java type for the field
-   */
-  @NonNull
-  TypeName getJavaFieldType();
-
-  /**
-   * Gets the type of the property's item.
-   *
-   * @return the Java type for the item
-   */
-  @NonNull
-  default TypeName getJavaItemType() {
-    return getJavaFieldType();
+  @Override
+  public IMetaschema getMetaschema() {
+    return module;
   }
 
-  /**
-   * Build the Java class data for the property.
-   *
-   * @param builder
-   *          the class builder
-   * @param typeResolver
-   *          the resolver used to get type information
-   * @return the set of additional child definitions that need to be built
-   */
-  @NonNull
-  Set<IFlagContainer> build(@NonNull TypeSpec.Builder builder, @NonNull ITypeResolver typeResolver);
+  @Override
+  public Collection<IGeneratedDefinitionClass> getGeneratedDefinitionClasses() {
+    return ObjectUtils.notNull(definitionClassMap.values());
+  }
+
+  @Override
+  public String getPackageName() {
+    return packageName;
+  }
 }

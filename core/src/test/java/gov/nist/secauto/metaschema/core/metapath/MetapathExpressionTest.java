@@ -86,8 +86,7 @@ class MetapathExpressionTest {
   @Test
   void test() {
     MetapathExpression path = MetapathExpression.compile("2 eq 1 + 1");
-    DynamicContext dynamicContext = new StaticContext().newDynamicContext();
-    ISequence<?> result = path.evaluate(null, dynamicContext);
+    ISequence<?> result = path.evaluate(null);
     assertNotNull(result, "null result");
     assertTrue(!result.isEmpty(), "result was empty");
     assertEquals(1, result.size(), "unexpected size");

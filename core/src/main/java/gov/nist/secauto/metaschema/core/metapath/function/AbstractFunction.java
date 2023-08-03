@@ -34,18 +34,27 @@ public abstract class AbstractFunction implements IFunction {
   @NonNull
   private final String name;
   @NonNull
+  private final String namespace;
+  @NonNull
   private final List<IArgument> arguments;
 
   AbstractFunction(
       @NonNull String name,
+      @NonNull String namespace,
       @NonNull List<IArgument> arguments) {
     this.name = name;
+    this.namespace = namespace;
     this.arguments = arguments;
   }
 
   @Override
   public String getName() {
     return name;
+  }
+
+  @Override
+  public String getNamespace() {
+    return namespace;
   }
 
   @Override

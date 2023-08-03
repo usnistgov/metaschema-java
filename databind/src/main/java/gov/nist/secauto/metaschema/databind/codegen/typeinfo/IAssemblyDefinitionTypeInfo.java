@@ -24,65 +24,33 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
-
-import com.squareup.javapoet.ClassName;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface ITypeResolver {
-  @NonNull
-  IAssemblyDefinitionTypeInfo getTypeInfo(@NonNull IAssemblyDefinition definition);
-
-  @NonNull
-  IFieldDefinitionTypeInfo getTypeInfo(@NonNull IFieldDefinition definition);
-
-  @NonNull
-  IModelDefinitionTypeInfo getTypeInfo(@NonNull IFlagContainer definition);
+/**
+ * Java class type information for an {@link IAssemblyDefinition} used for generating a Java class
+ * for the definition.
+ */
+public interface IAssemblyDefinitionTypeInfo extends IModelDefinitionTypeInfo {
 
   /**
-   * Get the name of the class associated with the provided metaschema.
-   *
-   * @param metaschema
-   *          a metaschema that will be built as a class
-   * @return the class name information for the metaschema
-   */
-  @NonNull
-  ClassName getClassName(@NonNull IMetaschema metaschema);
-
-  /**
-   * Get the name of the class associated with the provided definition.
+   * Construct a new type info based on the provided definition.
    *
    * @param definition
-   *          a definition that may be built as a subclass
-   * @return the class name information for the definition
+   *          the definition associated with the type info
+   * @param typeResolver
+   *          a resolver used to look up related type information
+   * @return the type info for the definition
    */
   @NonNull
-  ClassName getClassName(@NonNull IFlagContainer definition);
+  static IAssemblyDefinitionTypeInfo newTypeInfo(@NonNull IAssemblyDefinition definition,
+      @NonNull ITypeResolver typeResolver) {
+    return new AssemblyDefinitionTypeInfoImpl(definition, typeResolver);
+  }
 
-  /**
-   * Get the name of the base class to use for the class associated with the provided definition.
-   *
-   * @param definition
-   *          a definition that may be built as a class
-   * @return the name of the base class or {@code null} if no base class is to be used
-   */
-  @Nullable
-  ClassName getBaseClassName(@NonNull IFlagContainer definition);
-
-  /**
-   * Get the Java package name to use for the provided Metaschema.
-   *
-   * @param metaschema
-   *          the Metaschema
-   * @return the Java package name
-   */
-  @NonNull
-  String getPackageName(@NonNull IMetaschema metaschema);
+  @Override
+  IAssemblyDefinition getDefinition();
 }

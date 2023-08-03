@@ -24,41 +24,18 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
-import com.squareup.javapoet.FieldSpec;
-
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.INamedInstance;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
-
-import java.util.Set;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-abstract class AbstractInstanceTypeInfo<INSTANCE extends INamedInstance, PARENT extends IDefinitionTypeInfo>
-    extends AbstractTypeInfo<PARENT>
-    implements IInstanceTypeInfo {
-  @NonNull
-  private final INSTANCE instance;
+class FieldDefinitionTypeInfoImpl
+    extends AbstractModelDefinitionTypeInfo<IFieldDefinition>
+    implements IFieldDefinitionTypeInfo {
 
-  public AbstractInstanceTypeInfo(@NonNull INSTANCE instance, @NonNull PARENT parentDefinition) {
-    super(parentDefinition);
-    this.instance = instance;
-  }
-
-  @Override
-  public INSTANCE getInstance() {
-    return instance;
-  }
-
-  @Override
-  protected Set<IFlagContainer> buildField(@NonNull FieldSpec.Builder builder) {
-    MarkupLine description = getInstance().getDescription();
-    if (description != null) {
-      builder.addJavadoc("$S", description.toHtml());
-    }
-    return CollectionUtil.emptySet();
+  public FieldDefinitionTypeInfoImpl(@NonNull IFieldDefinition definition, @NonNull ITypeResolver typeResolver) {
+    super(definition, typeResolver);
+    addPropertyTypeInfo(IFieldValueTypeInfo.newTypeInfo(this));
   }
 }

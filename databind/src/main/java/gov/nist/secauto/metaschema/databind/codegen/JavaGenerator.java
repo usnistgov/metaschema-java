@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.databind.codegen;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,7 +42,8 @@ import java.util.Objects;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides methods for generating Java classes based on a single or a collection of Metaschemas.
+ * Provides methods for generating Java classes based on a single or a
+ * collection of Metaschemas.
  */
 public final class JavaGenerator {
   private static final Logger LOGGER = LogManager.getLogger(JavaGenerator.class);
@@ -61,7 +63,7 @@ public final class JavaGenerator {
    *          the binding customizations to use when generating the Java classes
    * @return information about all the produced classes
    * @throws IOException
-   *           if a build error occurred while generating the class
+   *           if an error occurred while generating the class
    */
   public static IProduction generate(
       @NonNull IMetaschema metaschema,
@@ -78,8 +80,8 @@ public final class JavaGenerator {
    * @param targetDirectory
    *          the directory to generate classes in
    * @param bindingConfiguration
-   *          binding customizations that can be used to set namespaces, class names, and other
-   *          aspects of generated classes
+   *          binding customizations that can be used to set namespaces, class
+   *          names, and other aspects of generated classes
    * @return information about all the produced classes
    * @throws IOException
    *           if a build error occurred while generating the class
@@ -96,7 +98,7 @@ public final class JavaGenerator {
       LOGGER.info("Generating Java classes in: {}", targetDirectory);
     }
 
-    ITypeResolver typeResolver = new DefaultTypeResolver(bindingConfiguration);
+    ITypeResolver typeResolver = ITypeResolver.newTypeResolver(bindingConfiguration);
 
     return IProduction.of(metaschemas, typeResolver, targetDirectory);
   }

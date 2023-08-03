@@ -34,12 +34,12 @@ import java.util.Map;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides immutable access to configuration state.
+ * Provides a basic configuration management implementation that allows mutable
+ * access to configuration state.
  *
  * @param <T>
  *          the type of managed features
  */
-@SuppressWarnings({ "PMD.ReplaceVectorWithList", "PMD.DoNotUseThreads" })
 public class DefaultConfiguration<T extends IConfigurationFeature<?>>
     implements IMutableConfiguration<T> {
   @NonNull
@@ -49,7 +49,6 @@ public class DefaultConfiguration<T extends IConfigurationFeature<?>>
    * Create a new configuration.
    *
    */
-  @SuppressWarnings("PMD.CloseResource")
   public DefaultConfiguration() {
     this.featureValues = new HashMap<>();
   }

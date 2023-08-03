@@ -24,26 +24,41 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.core.metapath;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.net.URI;
+
+import javax.xml.XMLConstants;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-// REFACTOR: remove this class
-abstract class AbstractNamedProperty<CLASS_BINDING extends IClassBinding>
-    extends AbstractProperty<CLASS_BINDING> {
-  private static final Logger LOGGER = LogManager.getLogger(AbstractNamedProperty.class);
+public final class MetapathConstants {
+  @NonNull
+  public static final URI NS_METAPATH = ObjectUtils.requireNonNull(
+      URI.create("http://csrc.nist.gov/ns/metaschema/metapath"));
+  @NonNull
+  public static final URI NS_XML_SCHEMA = ObjectUtils.requireNonNull(
+      URI.create(XMLConstants.W3C_XML_SCHEMA_NS_URI));
+  @NonNull
+  public static final URI NS_XPATH_FUNCTIONS = ObjectUtils.requireNonNull(
+      URI.create("http://www.w3.org/2005/xpath-functions"));
+  @NonNull
+  public static final URI NS_XPATH_FUNCTIONS_MATH = ObjectUtils.requireNonNull(
+      URI.create("http://www.w3.org/2005/xpath-functions/math"));
 
-  /**
-   * Construct a new bound instance based on a Java property. The name of the property is bound to the
-   * name of the instance.
-   *
-   * @param parentClassBinding
-   *          the class binding for the field's containing class
-   */
-  public AbstractNamedProperty(@NonNull CLASS_BINDING parentClassBinding) {
-    super(parentClassBinding);
+  @NonNull
+  public static final String PREFIX_METAPATH = "mp";
+  @NonNull
+  public static final String PREFIX_XML_SCHEMA = "xs";
+  @NonNull
+  public static final String PREFIX_XPATH_FUNCTIONS = "mp";
+  @NonNull
+  public static final String PREFIX_XPATH_FUNCTIONS_MATH = "math";
+
+  private MetapathConstants() {
+    // disable construction
   }
+
 }

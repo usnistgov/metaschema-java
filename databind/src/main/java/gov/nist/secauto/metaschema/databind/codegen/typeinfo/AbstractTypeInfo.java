@@ -24,19 +24,10 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
-import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
-import com.squareup.javapoet.TypeSpec;
-
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-
-import java.util.Set;
-
-import javax.lang.model.element.Modifier;
+import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -51,7 +42,7 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
   }
 
   @NonNull
-  protected PARENT getParentDefinitionTypeInfo() {
+  public PARENT getParentDefinitionTypeInfo() {
     return parentDefinition;
   }
 
@@ -100,93 +91,5 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
       }
       return ObjectUtils.notNull(this.fieldName);
     }
-  }
-
-  @Override
-  public Set<IFlagContainer> build(@NonNull TypeSpec.Builder builder, ITypeResolver typeResolver) {
-    FieldSpec.Builder field = FieldSpec.builder(getJavaFieldType(), getJavaFieldName())
-        .addModifiers(Modifier.PRIVATE);
-    assert field != null;
-
-    final Set<IFlagContainer> retval = buildField(field);
-
-    FieldSpec valueField = ObjectUtils.notNull(field.build());
-    builder.addField(valueField);
-
-    {
-      MethodSpec.Builder method = MethodSpec.methodBuilder("get" + getPropertyName())
-          .returns(getJavaFieldType())
-          .addModifiers(Modifier.PUBLIC);
-      assert method != null;
-      buildGetter(method, valueField);
-      builder.addMethod(method.build());
-    }
-
-    {
-      ParameterSpec valueParam = ParameterSpec.builder(getJavaFieldType(), "value").build();
-
-      MethodSpec.Builder method = MethodSpec.methodBuilder("set" + getPropertyName())
-          .addModifiers(Modifier.PUBLIC)
-          .addParameter(valueParam);
-      assert method != null;
-      buildSetter(method, valueParam, valueField);
-      builder.addMethod(method.build());
-    }
-
-    buildExtraMethods(builder, valueField, typeResolver);
-    return retval;
-  }
-
-  /**
-   * This method can be implemented by subclasses to create additional methods.
-   *
-   * @param builder
-   *          the class builder
-   * @param valueField
-   *          the field corresponding to this property
-   * @param typeResolver
-   *          the resolver used to get type information
-   */
-  protected void buildExtraMethods( // NOPMD - intentional
-      @NonNull TypeSpec.Builder builder,
-      @NonNull FieldSpec valueField,
-      @NonNull ITypeResolver typeResolver) {
-    // do nothing by default
-  }
-
-  /**
-   * Generate the Java field associated with this property.
-   *
-   * @param builder
-   *          the field builder
-   * @return the set of definitions used by this field
-   */
-  @NonNull
-  protected abstract Set<IFlagContainer> buildField(@NonNull FieldSpec.Builder builder);
-
-  /**
-   * Generate the getter for the property.
-   *
-   * @param builder
-   *          the method builder
-   * @param valueField
-   *          the field containing the value to get
-   */
-  protected void buildGetter(@NonNull MethodSpec.Builder builder, @NonNull FieldSpec valueField) {
-    builder.addStatement("return $N", valueField);
-  }
-
-  /**
-   * Generate the setter for the property.
-   *
-   * @param builder
-   *          the method builder
-   * @param valueParam
-   *          the parameter value to set
-   * @param valueField
-   *          the field containing the value to set
-   */
-  protected void buildSetter(MethodSpec.Builder builder, ParameterSpec valueParam, FieldSpec valueField) {
-    builder.addStatement("$N = $N", valueField, valueParam);
   }
 }

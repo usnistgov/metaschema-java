@@ -59,9 +59,9 @@ import java.util.Set;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-class TestBasicMetaschema {
+class BasicMetaschemaTest {
   private static final MetaschemaLoader LOADER = new MetaschemaLoader();
-  private static final Logger LOGGER = LogManager.getLogger(TestBasicMetaschema.class);
+  private static final Logger LOGGER = LogManager.getLogger(BasicMetaschemaTest.class);
   // @TempDir
   // Path generationDir;
   @NonNull

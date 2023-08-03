@@ -62,7 +62,8 @@ public abstract class AbstractDeserializer<CLASS>
    * @param bindingContext
    *          the binding context used to supply bound Java classes while writing
    * @param classBinding
-   *          the bound class information for the Java type this deserializer is operating on
+   *          the bound class information for the Java type this deserializer is
+   *          operating on
    */
   protected AbstractDeserializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
@@ -96,7 +97,7 @@ public abstract class AbstractDeserializer<CLASS>
     }
 
     if (isValidating()) {
-      StaticContext staticContext = new StaticContext();
+      StaticContext staticContext = StaticContext.newInstance();
       DynamicContext dynamicContext = staticContext.newDynamicContext();
       dynamicContext.setDocumentLoader(getBindingContext().newBoundLoader());
       DefaultConstraintValidator validator = new DefaultConstraintValidator(

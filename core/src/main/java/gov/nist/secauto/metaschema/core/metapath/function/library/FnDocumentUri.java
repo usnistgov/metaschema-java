@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath.function.library;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
@@ -48,6 +49,7 @@ public final class FnDocumentUri {
   @NonNull
   static final IFunction SIGNATURE_NO_ARG = IFunction.builder()
       .name("document-uri")
+      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
       .deterministic()
       .contextDependent()
       .focusDependent()
@@ -59,6 +61,7 @@ public final class FnDocumentUri {
   @NonNull
   static final IFunction SIGNATURE_ONE_ARG = IFunction.builder()
       .name("document-uri")
+      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
       .focusIndependent()
@@ -121,8 +124,8 @@ public final class FnDocumentUri {
   /**
    * Get the URI of the document.
    * <p>
-   * Based on the XPath 3.1
-   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-document-uri">fn:document-uri</a>
+   * Based on the XPath 3.1 <a href=
+   * "https://www.w3.org/TR/xpath-functions-31/#func-document-uri">fn:document-uri</a>
    * function.
    *
    * @param document

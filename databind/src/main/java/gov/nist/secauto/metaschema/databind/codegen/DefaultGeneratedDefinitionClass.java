@@ -38,7 +38,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * Contains information about a generated class for a Metaschema definition.
  */
-class DefaultGeneratedDefinitionClass
+// TODO: make package private
+public class DefaultGeneratedDefinitionClass
     extends DefaultGeneratedClass
     implements IGeneratedDefinitionClass {
   @NonNull

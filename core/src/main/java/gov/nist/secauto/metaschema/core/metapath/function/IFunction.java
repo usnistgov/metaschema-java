@@ -32,6 +32,7 @@ import gov.nist.secauto.metaschema.core.metapath.MetapathException;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedList;
@@ -39,30 +40,37 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IFunction {
   enum FunctionProperty {
     /**
-     * Indicates that the function will produce identical results for the same arguments (see XPath 3.1
-     * <a href="https://www.w3.org/TR/xpath-functions-31/#dt-deterministic">deterministic</a>). If not
-     * assigned to a function definition, a function call with the same arguments is not guaranteed to
-     * produce the same results in the same order for subsequent calls within the same execution
-     * context.
+     * Indicates that the function will produce identical results for the same
+     * arguments (see XPath 3.1 <a href=
+     * "https://www.w3.org/TR/xpath-functions-31/#dt-deterministic">deterministic</a>).
+     * If not assigned to a function definition, a function call with the same
+     * arguments is not guaranteed to produce the same results in the same order for
+     * subsequent calls within the same execution context.
      */
     DETERMINISTIC,
     /**
-     * Indicates that the result of the function depends on property values within the static or dynamic
-     * context and the provided arguments (see XPath 3.1
-     * <a href="https://www.w3.org/TR/xpath-functions-31/#dt-context-dependent">context-dependent</a>).
-     * If not assigned to a function definition, a call will not be affected by the property values
-     * within the static or dynamic context and will not have any arguments.
+     * Indicates that the result of the function depends on property values within
+     * the static or dynamic context and the provided arguments (see XPath 3.1
+     * <a href=
+     * "https://www.w3.org/TR/xpath-functions-31/#dt-context-dependent">context-dependent</a>).
+     * If not assigned to a function definition, a call will not be affected by the
+     * property values within the static or dynamic context and will not have any
+     * arguments.
      */
     CONTEXT_DEPENDENT,
     /**
-     * Indicates that the result of the function depends on the current focus (see XPath 3.1
-     * <a href="https://www.w3.org/TR/xpath-functions-31/#dt-focus-independent">focus-dependent</a>). If
-     * not assigned to a function definition, a call will not be affected by the current focus.
+     * Indicates that the result of the function depends on the current focus (see
+     * XPath 3.1 <a href=
+     * "https://www.w3.org/TR/xpath-functions-31/#dt-focus-independent">focus-dependent</a>).
+     * If not assigned to a function definition, a call will not be affected by the
+     * current focus.
      */
     FOCUS_DEPENDENT,
     /**
@@ -78,6 +86,24 @@ public interface IFunction {
    */
   @NonNull
   String getName();
+
+  /**
+   * Retrieve the namespace of the function.
+   *
+   * @return the function's namespace
+   */
+  @NonNull
+  String getNamespace();
+
+  /**
+   * Retrieve the namespace qualified name of the function.
+   *
+   * @return the namespace qualified name
+   */
+  @NonNull
+  default QName getQName() {
+    return new QName(getNamespace(), getName());
+  }
 
   /**
    * Retrieve the set of assigned function properties.
@@ -103,8 +129,8 @@ public interface IFunction {
   int arity();
 
   /**
-   * Determines if the result of the function call will produce identical results when provided the
-   * same implicit or explicit arguments.
+   * Determines if the result of the function call will produce identical results
+   * when provided the same implicit or explicit arguments.
    *
    * @return {@code true} if function is deterministic or {@code false} otherwise
    * @see FunctionProperty#DETERMINISTIC
@@ -114,10 +140,11 @@ public interface IFunction {
   }
 
   /**
-   * Determines if the result of the function call depends on property values within the static or
-   * dynamic context and the provided arguments.
+   * Determines if the result of the function call depends on property values
+   * within the static or dynamic context and the provided arguments.
    *
-   * @return {@code true} if function is context dependent or {@code false} otherwise
+   * @return {@code true} if function is context dependent or {@code false}
+   *         otherwise
    * @see FunctionProperty#CONTEXT_DEPENDENT
    */
   default boolean isContextDepenent() {
@@ -127,7 +154,8 @@ public interface IFunction {
   /**
    * Determines if the result of the function call depends on the current focus.
    *
-   * @return {@code true} if function is focus dependent or {@code false} otherwise
+   * @return {@code true} if function is focus dependent or {@code false}
+   *         otherwise
    * @see FunctionProperty#FOCUS_DEPENDENT
    */
   default boolean isFocusDepenent() {
@@ -137,7 +165,8 @@ public interface IFunction {
   /**
    * Determines if the final argument can be repeated.
    *
-   * @return {@code true} if the final argument can be repeated or {@code false} otherwise
+   * @return {@code true} if the final argument can be repeated or {@code false}
+   *         otherwise
    * @see FunctionProperty#UNBOUNDED_ARITY
    */
   default boolean isArityUnbounded() {
@@ -153,11 +182,13 @@ public interface IFunction {
   ISequenceType getResult();
 
   // /**
-  // * Determines by static analysis if the function supports the expression arguments provided.
+  // * Determines by static analysis if the function supports the expression
+  // arguments provided.
   // *
   // * @param arguments
   // * the expression arguments to evaluate
-  // * @return {@code true} if the arguments are supported or {@code false} otherwise
+  // * @return {@code true} if the arguments are supported or {@code false}
+  // otherwise
   // */
   // boolean isSupported(List<IExpression<?>> arguments);
 
@@ -182,6 +213,7 @@ public interface IFunction {
   @SuppressWarnings("PMD.LooseCoupling")
   class Builder {
     private String name;
+    private String namespace;
     @SuppressWarnings("null")
     @NonNull
     private final EnumSet<FunctionProperty> properties = EnumSet.noneOf(FunctionProperty.class);
@@ -198,6 +230,21 @@ public interface IFunction {
         throw new IllegalArgumentException("the name must be non-blank");
       }
       this.name = name.trim();
+      return this;
+    }
+
+    @NonNull
+    public Builder namespace(@NonNull URI uri) {
+      return namespace(ObjectUtils.notNull(uri.toASCIIString()));
+    }
+
+    @NonNull
+    public Builder namespace(@NonNull String name) {
+      Objects.requireNonNull(name, "name");
+      if (name.isBlank()) {
+        throw new IllegalArgumentException("the name must be non-blank");
+      }
+      this.namespace = name.trim();
       return this;
     }
 
@@ -317,6 +364,7 @@ public interface IFunction {
 
       return new DefaultFunction(
           ObjectUtils.requireNonNull(name, "the name must not be null"),
+          ObjectUtils.requireNonNull(namespace, "the namespace must not be null"),
           properties,
           new ArrayList<>(arguments),
           sequenceType,

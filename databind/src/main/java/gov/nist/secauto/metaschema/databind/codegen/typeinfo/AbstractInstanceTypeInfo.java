@@ -24,43 +24,25 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
-import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
 
-import java.util.Collection;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IDefinitionTypeInfo {
+abstract class AbstractInstanceTypeInfo<INSTANCE extends INamedInstance, PARENT extends IDefinitionTypeInfo>
+    extends AbstractTypeInfo<PARENT>
+    implements IInstanceTypeInfo {
   @NonNull
-  IDefinition getDefinition();
+  private final INSTANCE instance;
 
-  /**
-   * Gets the resolver which can be used to lookup Java type information for Metaschema objects.
-   *
-   * @return the type resolver
-   */
-  @NonNull
-  ITypeResolver getTypeResolver();
+  public AbstractInstanceTypeInfo(@NonNull INSTANCE instance, @NonNull PARENT parentDefinition) {
+    super(parentDefinition);
+    this.instance = instance;
+  }
 
-  /**
-   * Check's if the Java class to be generated will have a property with the given name.
-   *
-   * @param propertyName
-   *          the property name to look for
-   * @return {@code true} if there is an associated property with the name or {@code false} otherwise
-   */
-  boolean hasPropertyWithName(@NonNull String propertyName);
-
-  @Nullable
-  IInstanceTypeInfo getInstanceTypeInfo(@NonNull INamedInstance instance);
-
-  @NonNull
-  Collection<ITypeInfo> getPropertyTypeInfos();
-
-  @NonNull
-  Collection<IInstanceTypeInfo> getInstanceTypeInfos();
+  @Override
+  public INSTANCE getInstance() {
+    return instance;
+  }
 }

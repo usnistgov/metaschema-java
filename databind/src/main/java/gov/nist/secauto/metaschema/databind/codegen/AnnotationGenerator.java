@@ -69,6 +69,7 @@ import gov.nist.secauto.metaschema.databind.model.annotations.KeyField;
 import gov.nist.secauto.metaschema.databind.model.annotations.Matches;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
+import org.apache.logging.log4j.LogBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -78,10 +79,16 @@ import java.util.regex.Pattern;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-final class AnnotationUtils {
-  private static final Logger LOGGER = LogManager.getLogger(AnnotationUtils.class);
+/**
+ * A variety of utility functions for creating Metaschema annotations.
+ */
+@SuppressWarnings({
+    "PMD.GodClass" // utility class
+})
+final class AnnotationGenerator {
+  private static final Logger LOGGER = LogManager.getLogger(AnnotationGenerator.class);
 
-  private AnnotationUtils() {
+  private AnnotationGenerator() {
     // disable construction
   }
 
@@ -339,17 +346,96 @@ final class AnnotationUtils {
     }
   }
 
+  @SuppressWarnings({
+      "PMD.GuardLogStatement" // guarded in outer calls
+  })
+  private static void checkCardinalities(
+      @NonNull IAssemblyDefinition definition,
+      @NonNull ICardinalityConstraint constraint,
+      @NonNull ISequence<? extends IDefinitionNodeItem<?, ?>> instanceSet,
+      @NonNull LogBuilder logBuilder) {
+
+    LogBuilder warn = LOGGER.atWarn();
+    for (IDefinitionNodeItem<?, ?> item : instanceSet.asList()) {
+      INamedInstance instance = item.getInstance();
+      if (instance instanceof INamedModelInstance) {
+        INamedModelInstance modelInstance = (INamedModelInstance) instance;
+
+        checkMinOccurs(definition, constraint, modelInstance, logBuilder);
+        checkMaxOccurs(definition, constraint, modelInstance, logBuilder);
+      } else {
+        warn.log(String.format(
+            "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that is not a model instance",
+            definition.getName(), constraint.getMinOccurs(), constraint.getTarget().getPath()));
+      }
+    }
+  }
+
+  @SuppressWarnings({
+      "PMD.GuardLogStatement" // guarded in outer calls
+  })
+  private static void checkMinOccurs(
+      @NonNull IAssemblyDefinition definition,
+      @NonNull ICardinalityConstraint constraint,
+      @NonNull INamedModelInstance modelInstance,
+      @NonNull LogBuilder logBuilder) {
+    Integer minOccurs = constraint.getMinOccurs();
+    if (minOccurs != null) {
+      if (minOccurs == modelInstance.getMinOccurs()) {
+        logBuilder.log(String.format(
+            "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that is redundant with a"
+                + " targeted instance named '%s' that requires min-occurs=%d",
+            definition.getName(), minOccurs, constraint.getTarget().getPath(),
+            modelInstance.getName(),
+            modelInstance.getMinOccurs()));
+      } else if (minOccurs < modelInstance.getMinOccurs()) {
+        logBuilder.log(String.format(
+            "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that conflicts with a"
+                + " targeted instance named '%s' that requires min-occurs=%d",
+            definition.getName(), minOccurs, constraint.getTarget().getPath(),
+            modelInstance.getName(),
+            modelInstance.getMinOccurs()));
+      }
+    }
+  }
+
+  @SuppressWarnings({
+      "PMD.GuardLogStatement" // guarded in outer calls
+  })
+  private static void checkMaxOccurs(
+      @NonNull IAssemblyDefinition definition,
+      @NonNull ICardinalityConstraint constraint,
+      @NonNull INamedModelInstance modelInstance,
+      @NonNull LogBuilder logBuilder) {
+    Integer maxOccurs = constraint.getMaxOccurs();
+    if (maxOccurs != null) {
+      if (maxOccurs == modelInstance.getMaxOccurs()) {
+        logBuilder.log(String.format(
+            "Definition '%s' has max-occurs=%d cardinality constraint targeting '%s' that is redundant with a"
+                + " targeted instance named '%s' that requires max-occurs=%d",
+            definition.getName(), maxOccurs, constraint.getTarget().getPath(),
+            modelInstance.getName(),
+            modelInstance.getMaxOccurs()));
+      } else if (maxOccurs < modelInstance.getMaxOccurs()) {
+        logBuilder.log(String.format(
+            "Definition '%s' has max-occurs=%d cardinality constraint targeting '%s' that conflicts with a"
+                + " targeted instance named '%s' that requires max-occurs=%d",
+            definition.getName(), maxOccurs, constraint.getTarget().getPath(),
+            modelInstance.getName(),
+            modelInstance.getMaxOccurs()));
+      }
+    }
+  }
+
   private static void applyHasCardinalityConstraints(
       @NonNull IAssemblyDefinition definition,
       @NonNull AnnotationSpec.Builder annotation,
       @NonNull List<? extends ICardinalityConstraint> constraints) {
 
-    DynamicContext dynamicContext = new StaticContext().newDynamicContext();
+    DynamicContext dynamicContext = StaticContext.newInstance().newDynamicContext();
     dynamicContext.disablePredicateEvaluation();
 
     for (ICardinalityConstraint constraint : constraints) {
-      Integer minOccurs = constraint.getMinOccurs();
-      Integer maxOccurs = constraint.getMaxOccurs();
 
       IAssemblyNodeItem definitionNodeItem
           = INodeItemFactory.instance().newAssemblyNodeItem(definition);
@@ -357,69 +443,20 @@ final class AnnotationUtils {
       ISequence<? extends IDefinitionNodeItem<?, ?>> instanceSet
           = constraint.matchTargets(definitionNodeItem, dynamicContext);
 
-      for (IDefinitionNodeItem<?, ?> item : instanceSet.asList()) {
-        INamedInstance instance = item.getInstance();
-        if (instance instanceof INamedModelInstance) {
-          INamedModelInstance modelInstance = (INamedModelInstance) instance;
-
-          if (minOccurs != null) {
-            if (minOccurs == modelInstance.getMinOccurs()) {
-              if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn(String.format(
-                    "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that is redundant with a"
-                        + " targeted instance named '%s' that requires min-occurs=%d",
-                    definition.getName(), minOccurs, constraint.getTarget().getPath(),
-                    modelInstance.getName(),
-                    modelInstance.getMinOccurs()));
-              }
-            } else if (minOccurs < modelInstance.getMinOccurs()) {
-              if (LOGGER.isWarnEnabled()) { // NOPMD - readability
-                LOGGER.warn(String.format(
-                    "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that conflicts with a"
-                        + " targeted instance named '%s' that requires min-occurs=%d",
-                    definition.getName(), minOccurs, constraint.getTarget().getPath(),
-                    modelInstance.getName(),
-                    modelInstance.getMinOccurs()));
-              }
-            }
-          }
-
-          if (maxOccurs != null) {
-            if (maxOccurs == modelInstance.getMaxOccurs()) {
-              if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn(String.format(
-                    "Definition '%s' has max-occurs=%d cardinality constraint targeting '%s' that is redundant with a"
-                        + " targeted instance named '%s' that requires max-occurs=%d",
-                    definition.getName(), maxOccurs, constraint.getTarget().getPath(),
-                    modelInstance.getName(),
-                    modelInstance.getMaxOccurs()));
-              }
-            } else if (maxOccurs < modelInstance.getMaxOccurs()) {
-              if (LOGGER.isWarnEnabled()) { // NOPMD - readability
-                LOGGER.warn(String.format(
-                    "Definition '%s' has max-occurs=%d cardinality constraint targeting '%s' that conflicts with a"
-                        + " targeted instance named '%s' that requires max-occurs=%d",
-                    definition.getName(), maxOccurs, constraint.getTarget().getPath(),
-                    modelInstance.getName(),
-                    modelInstance.getMaxOccurs()));
-              }
-            }
-          }
-        } else if (LOGGER.isWarnEnabled()) {
-          LOGGER.warn(String.format(
-              "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that is not a model instance",
-              definition.getName(), minOccurs, constraint.getTarget().getPath()));
-        }
+      if (LOGGER.isWarnEnabled()) {
+        checkCardinalities(definition, constraint, instanceSet, ObjectUtils.notNull(LOGGER.atWarn()));
       }
 
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(HasCardinality.class);
 
       buildConstraint(HasCardinality.class, constraintAnnotation, constraint);
 
+      Integer minOccurs = constraint.getMinOccurs();
       if (minOccurs != null && !minOccurs.equals(getDefaultValue(HasCardinality.class, "minOccurs"))) {
         constraintAnnotation.addMember("minOccurs", "$L", minOccurs);
       }
 
+      Integer maxOccurs = constraint.getMaxOccurs();
       if (maxOccurs != null && !maxOccurs.equals(getDefaultValue(HasCardinality.class, "maxOccurs"))) {
         constraintAnnotation.addMember("maxOccurs", "$L", maxOccurs);
       }

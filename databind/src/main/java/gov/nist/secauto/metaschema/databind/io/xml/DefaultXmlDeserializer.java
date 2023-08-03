@@ -100,7 +100,7 @@ public class DefaultXmlDeserializer<CLASS>
   }
 
   @NonNull
-  protected RootAssemblyDefinition getRootAssemblyDefinition() throws IOException {
+  protected RootAssemblyDefinition getRootAssemblyDefinition() {
     return rootDefinition;
   }
 
@@ -115,14 +115,14 @@ public class DefaultXmlDeserializer<CLASS>
     // doesn't auto close the underlying reader
     try (AutoCloser<XMLEventReader2, XMLStreamException> closer
         = new AutoCloser<>(newXMLEventReader2(reader), event -> event.close())) {
-      return parseXmlInternal(closer.getResource(), documentUri);
+      return parseXmlInternal(closer.getResource());
     } catch (XMLStreamException ex) {
       throw new IOException("Unable to create a new XMLEventReader2 instance.", ex);
     }
   }
 
   @NonNull
-  protected CLASS parseXmlInternal(@NonNull XMLEventReader2 reader, @NonNull URI documentUri)
+  protected CLASS parseXmlInternal(@NonNull XMLEventReader2 reader)
       throws IOException, XMLStreamException {
 
     MetaschemaXmlParser parser = new MetaschemaXmlParser(reader, new DefaultXmlProblemHandler());

@@ -43,7 +43,7 @@ import javax.xml.stream.XMLStreamException;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractFlagProperty
-    extends AbstractNamedProperty<IClassBinding>
+    extends AbstractProperty<IClassBinding>
     implements IBoundFlagInstance {
 
   public AbstractFlagProperty(@NonNull IClassBinding parentClassBinding) {

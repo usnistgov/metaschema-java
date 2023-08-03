@@ -24,25 +24,13 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeSpec;
-
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.IModelInstance;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -82,8 +70,8 @@ class AssemblyDefinitionTypeInfoImpl
   }
 
   /**
-   * Creates a new {@link IModelInstanceTypeInfo} for the provided {@link INamedModelInstance} and
-   * registers it with this class generator.
+   * Creates a new {@link IModelInstanceTypeInfo} for the provided
+   * {@link INamedModelInstance} and registers it with this class generator.
    *
    * @param instance
    *          the model instance to generate the property for
@@ -93,38 +81,6 @@ class AssemblyDefinitionTypeInfoImpl
   protected IModelInstanceTypeInfo newObjectModelInstance(@NonNull INamedModelInstance instance) {
     IModelInstanceTypeInfo retval = new ModelInstanceTypeInfoImpl(instance, this);
     addPropertyTypeInfo(retval);
-    return retval;
-  }
-
-  @Override
-  protected void buildConstraints(@NonNull TypeSpec.Builder builder) {
-    super.buildConstraints(builder);
-
-    IAssemblyDefinition definition = getDefinition();
-    AnnotationUtils.buildAssemblyConstraints(builder, definition);
-  }
-
-  @Override
-  protected Set<IFlagContainer> buildClass(TypeSpec.Builder builder, ClassName className) throws IOException {
-    Set<IFlagContainer> retval = new HashSet<>();
-    retval.addAll(super.buildClass(builder, className));
-
-    AnnotationSpec.Builder metaschemaAssembly = ObjectUtils.notNull(AnnotationSpec.builder(MetaschemaAssembly.class));
-
-    buildCommonProperties(metaschemaAssembly);
-
-    IAssemblyDefinition definition = getDefinition();
-    if (definition.isRoot()) {
-      metaschemaAssembly.addMember("rootName", "$S", definition.getRootName());
-    }
-
-    MarkupMultiline remarks = definition.getRemarks();
-    if (remarks != null) {
-      metaschemaAssembly.addMember("remarks", "$S", remarks.toMarkdown());
-    }
-
-    builder.addAnnotation(metaschemaAssembly.build());
-    buildConstraints(builder);
     return retval;
   }
 }

@@ -32,15 +32,20 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IGeneratedDefinitionClass extends IGeneratedClass {
 
+  /**
+   * Get the Metaschema definition associated with this class.
+   *
+   * @return the definition
+   */
   @NonNull
   IFlagContainer getDefinition();
 
   /**
-   * Indicates if the class represents a root Metaschema assembly which can be the top-level
-   * element/property of an XML, JSON, or YAML instance.
+   * Indicates if the class represents a root Metaschema assembly which can be the
+   * top-level element/property of an XML, JSON, or YAML instance.
    *
-   * @return {@code true} if the class is a root assembly, or {@code false} otherwise
+   * @return {@code true} if the class is a root assembly, or {@code false}
+   *         otherwise
    */
   boolean isRootClass();
-
 }

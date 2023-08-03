@@ -54,6 +54,7 @@ public class MockNodeItemFactory {
   @NonNull
   private final Mockery context;
 
+  @SuppressWarnings("exports")
   public MockNodeItemFactory(@NonNull Mockery ctx) {
     this.context = ctx;
   }

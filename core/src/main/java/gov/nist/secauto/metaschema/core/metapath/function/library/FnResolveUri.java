@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath.function.library;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
@@ -48,6 +49,7 @@ public final class FnResolveUri {
   @NonNull
   static final IFunction SIGNATURE_ONE_ARG = IFunction.builder()
       .name("resolve-uri")
+      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
       .deterministic()
       .contextDependent()
       .focusIndependent()
@@ -64,6 +66,7 @@ public final class FnResolveUri {
   @NonNull
   static final IFunction SIGNATURE_TWO_ARG = IFunction.builder()
       .name("resolve-uri")
+      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
       .focusIndependent()
@@ -113,8 +116,8 @@ public final class FnResolveUri {
   }
 
   /**
-   * Implements the two argument version of the XPath 3.1 function
-   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-resolve-uri">resolve-uri</a>.
+   * Implements the two argument version of the XPath 3.1 function <a href=
+   * "https://www.w3.org/TR/xpath-functions-31/#func-resolve-uri">resolve-uri</a>.
    *
    * @param function
    *          the function definition
@@ -124,8 +127,8 @@ public final class FnResolveUri {
    *          the evaluation context
    * @param focus
    *          the current focus item
-   * @return a sequence containing the resolved URI or and empty sequence if either the base or
-   *         relative URI is {@code null}
+   * @return a sequence containing the resolved URI or and empty sequence if
+   *         either the base or relative URI is {@code null}
    */
   @SuppressWarnings("PMD.UnusedPrivateMethod") // used in lambda
   @NonNull
@@ -167,7 +170,8 @@ public final class FnResolveUri {
    *          the relative URI to resolve
    * @param base
    *          the base URI to resolve against
-   * @return the resolved URI or {@code null} if the {@code relative} URI in {@code null}
+   * @return the resolved URI or {@code null} if the {@code relative} URI in
+   *         {@code null}
    */
   @Nullable
   public static IAnyUriItem fnResolveUri(@Nullable IStringItem relative, @NonNull IAnyUriItem base) {
@@ -183,7 +187,8 @@ public final class FnResolveUri {
    *          the relative URI to resolve
    * @param base
    *          the base URI to resolve against
-   * @return the resolved URI or {@code null} if the {@code relative} URI in {@code null}
+   * @return the resolved URI or {@code null} if the {@code relative} URI in
+   *         {@code null}
    */
   @Nullable
   public static IAnyUriItem fnResolveUri(@Nullable IAnyUriItem relative, @NonNull IAnyUriItem base) {

@@ -26,31 +26,20 @@
 
 package gov.nist.secauto.metaschema.databind.codegen;
 
-import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IMetaschema;
+
+import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-/**
- * Java class type information for an {@link IFieldDefinition} used for generating a Java class for
- * the definition.
- */
-public interface IFieldDefinitionTypeInfo extends IModelDefinitionTypeInfo {
+public interface IGeneratedMetaschemaClass extends IGeneratedClass {
 
-  /**
-   * Construct a new type info based on the provided definition.
-   *
-   * @param definition
-   *          the definition associated with the type info
-   * @param typeResolver
-   *          a resolver used to look up related type information
-   * @return the type info for the definition
-   */
   @NonNull
-  static IFieldDefinitionTypeInfo newTypeInfo(@NonNull IFieldDefinition definition,
-      @NonNull ITypeResolver typeResolver) {
-    return new FieldDefinitionTypeInfoImpl(definition, typeResolver);
-  }
+  IMetaschema getMetaschema();
 
-  @Override
-  IFieldDefinition getDefinition();
+  @NonNull
+  String getPackageName();
+
+  @NonNull
+  Collection<IGeneratedDefinitionClass> getGeneratedDefinitionClasses();
 }

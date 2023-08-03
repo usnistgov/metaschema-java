@@ -34,23 +34,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class FunctionLibrary implements IFunctionLibrary {
 
   @NonNull
-  private final Map<String, NamedFunctionSet> library = new HashMap<>(); // NOPMD - intentional
-
-  /**
-   * Get the map of function name to function signatures.
-   *
-   * @return the mapping
-   */
+  private final Map<QName, NamedFunctionSet> libraryByQName = new HashMap<>(); // NOPMD - intentional
   @NonNull
-  protected Map<String, NamedFunctionSet> getLibrary() {
-    return library;
-  }
+  private final Map<String, NamedFunctionSet> libraryByName = new HashMap<>(); // NOPMD - intentional
 
   /**
    * Register the provided function signature.
@@ -58,18 +52,22 @@ public class FunctionLibrary implements IFunctionLibrary {
    * @param function
    *          the function signature to register
    * @throws IllegalArgumentException
-   *           if the provided function has the same arity as a previously registered function with
-   *           the same name
+   *           if the provided function has the same arity as a previously
+   *           registered function with the same name
    */
   public void registerFunction(@NonNull IFunction function) {
-    String name = function.getName();
+    registerFunctionByQName(function);
+    registerFunctionByName(function);
+  }
 
+  protected void registerFunctionByQName(@NonNull IFunction function) {
+    QName qname = function.getQName();
     IFunction duplicate;
     synchronized (this) {
-      NamedFunctionSet functions = getLibrary().get(name);
+      NamedFunctionSet functions = libraryByQName.get(qname);
       if (functions == null) {
         functions = new NamedFunctionSet();
-        library.put(name, functions);
+        libraryByQName.put(qname, functions);
       }
       duplicate = functions.addFunction(function);
     }
@@ -79,27 +77,44 @@ public class FunctionLibrary implements IFunctionLibrary {
     }
   }
 
+  protected void registerFunctionByName(@NonNull IFunction function) {
+    String name = function.getName();
+    synchronized (this) {
+      NamedFunctionSet functions = libraryByName.get(name);
+      if (functions == null) {
+        functions = new NamedFunctionSet();
+        libraryByName.put(name, functions);
+      }
+      // replace duplicates
+      functions.addFunction(function);
+    }
+  }
+
   @Override
   public Stream<IFunction> getFunctionsAsStream() {
     synchronized (this) {
       return ObjectUtils.notNull(
-          getLibrary().values().stream().flatMap(set -> {
+          libraryByQName.values().stream().flatMap(set -> {
             return set.getFunctionsAsStream();
           }));
     }
   }
 
   @Override
-  public boolean hasFunction(@NonNull String name, @NonNull List<IExpression> args) {
-    return getFunction(name, args) != null;
-  }
-
-  @SuppressWarnings("PMD.NullAssignment") // for readability
-  @Override
   public IFunction getFunction(@NonNull String name, @NonNull List<IExpression> args) {
     IFunction retval;
     synchronized (this) {
-      NamedFunctionSet functions = getLibrary().get(name);
+      NamedFunctionSet functions = libraryByName.get(name);
+      retval = functions == null ? null : functions.getFunctionWithArity(args.size());
+    }
+    return retval;
+  }
+
+  @Override
+  public IFunction getFunction(@NonNull QName name, @NonNull List<IExpression> args) {
+    IFunction retval;
+    synchronized (this) {
+      NamedFunctionSet functions = libraryByQName.get(name);
       retval = functions == null ? null : functions.getFunctionWithArity(args.size());
     }
     return retval;

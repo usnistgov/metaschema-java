@@ -24,27 +24,33 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
-
+  /**
+   * Construct a new type information object for the provided {@code definition}.
+   *
+   * @param definition
+   *          the definition to provide type information for
+   * @param typeResolver
+   *          use to resolve type information for composite instances
+   * @return the type information
+   */
   @NonNull
-  static IModelDefinitionTypeInfo newTypeInfo(@NonNull IFlagContainer definition,
+  static IModelDefinitionTypeInfo newTypeInfo(
+      @NonNull IFlagContainer definition,
       @NonNull ITypeResolver typeResolver) {
     IModelDefinitionTypeInfo retval;
     switch (definition.getModelType()) {
@@ -74,40 +80,54 @@ public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
   ClassName getBaseClassName();
 
   /**
-   * Gets the class type information for the object definition for which this class is being
-   * generated.
+   * Gets the class type information for the object definition for which this
+   * class is being generated.
    *
    * @return the class's type information
    */
   @NonNull
   ClassName getClassName();
 
+  /**
+   * Get the type information for the provided {@code instance} value.
+   *
+   * @param instance
+   *          the instance to get type information for
+   * @return the type information
+   */
   @Nullable
   IFlagInstanceTypeInfo getFlagInstanceTypeInfo(@NonNull IFlagInstance instance);
 
+  /**
+   * Get the type information for all flag instance values on this definition.
+   *
+   * @return the type information
+   */
   @NonNull
   Collection<IFlagInstanceTypeInfo> getFlagInstanceTypeInfos();
-
-  /**
-   * Generates the associated Java class and saves it using the provided file.
-   *
-   * @param dir
-   *          the directory to generate the class in
-   * @return the qualified class name for the generated class
-   * @throws IOException
-   *           if a build error occurred while generating the class
-   */
-  @NonNull
-  IGeneratedDefinitionClass generateClass(@NonNull Path dir) throws IOException;
-
-  /**
-   * This method is responsible for generating the Java class using a builder that is returned for
-   * further customization.
-   *
-   * @return the class definition for the generated class
-   * @throws IOException
-   *           if a build error occurred while generating the class
-   */
-  @NonNull
-  TypeSpec generateChildClass() throws IOException;
+  //
+  // /**
+  // * Generates the associated Java class and saves it using the provided file.
+  // *
+  // * @param dir
+  // * the directory to generate the class in
+  // * @return the qualified class name for the generated class
+  // * @throws IOException
+  // * if a build error occurred while generating the class
+  // */
+  // @NonNull
+  // IGeneratedDefinitionClass generateClass(@NonNull Path dir) throws
+  // IOException;
+  //
+  // /**
+  // * This method is responsible for generating the Java class using a builder
+  // that
+  // * is returned for further customization.
+  // *
+  // * @return the class definition for the generated class
+  // * @throws IOException
+  // * if a build error occurred while generating the class
+  // */
+  // @NonNull
+  // TypeSpec generateChildClass() throws IOException;
 }

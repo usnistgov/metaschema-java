@@ -31,6 +31,8 @@ import gov.nist.secauto.metaschema.core.metapath.IExpression;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IFunctionLibrary {
@@ -44,26 +46,60 @@ public interface IFunctionLibrary {
   Stream<IFunction> getFunctionsAsStream();
 
   /**
-   * Determine if there is a function with the provided name that supports the signature of the
-   * provided methods.
+   * Determine if there is a function with the provided name that supports the
+   * signature of the provided methods.
    *
    * @param name
    *          the name of a group of functions
    * @param arguments
-   *          a list of argument expressions for use in determining an argument signature match
-   * @return {@code true} if a function signature matches or {@code false} otherwise
+   *          a list of argument expressions for use in determining an argument
+   *          signature match
+   * @return {@code true} if a function signature matches or {@code false}
+   *         otherwise
    */
-  boolean hasFunction(@NonNull String name, @NonNull List<IExpression> arguments);
+  default boolean hasFunction(@NonNull String name, @NonNull List<IExpression> arguments) {
+    return getFunction(name, arguments) != null;
+  }
 
   /**
-   * Retrieve the function with the provided name that supports the signature of the provided methods,
-   * if such a function exists.
+   * Determine if there is a function with the provided namespace qualified name
+   * that supports the signature of the provided methods.
+   *
+   * @param name
+   *          the namespace qualified name of a group of functions
+   * @param arguments
+   *          a list of argument expressions for use in determining an argument
+   *          signature match
+   * @return {@code true} if a function signature matches or {@code false}
+   *         otherwise
+   */
+  default boolean hasFunction(@NonNull QName name, @NonNull List<IExpression> arguments) {
+    return getFunction(name, arguments) != null;
+  }
+
+  /**
+   * Retrieve the function with the provided name that supports the signature of
+   * the provided methods, if such a function exists.
    *
    * @param name
    *          the name of a group of functions
    * @param arguments
-   *          a list of argument expressions for use in determining an argument signature match
+   *          a list of argument expressions for use in determining an argument
+   *          signature match
    * @return the matching function or {@code null} if no match exists
    */
   IFunction getFunction(@NonNull String name, @NonNull List<IExpression> arguments);
+
+  /**
+   * Retrieve the function with the provided namespace qualified name that
+   * supports the signature of the provided methods, if such a function exists.
+   *
+   * @param name
+   *          the namespace qualified name of a group of functions
+   * @param arguments
+   *          a list of argument expressions for use in determining an argument
+   *          signature match
+   * @return the matching function or {@code null} if no match exists
+   */
+  IFunction getFunction(@NonNull QName name, @NonNull List<IExpression> arguments);
 }

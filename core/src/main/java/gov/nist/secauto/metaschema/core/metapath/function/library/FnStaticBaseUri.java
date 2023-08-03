@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath.function.library;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
@@ -44,6 +45,7 @@ public final class FnStaticBaseUri {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("static-base-uri")
+      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
       .argument(IArgument.newBuilder()
           .name("arg1")
           .type(IStringItem.class)

@@ -55,6 +55,7 @@ public class DefaultJsonSerializer<CLASS>
     return JsonFactoryFactory.instance();
   }
 
+  @SuppressWarnings("PMD.NullAssignment")
   @Override
   protected void configurationChanged(IMutableConfiguration<SerializationFeature<?>> config) {
     synchronized (this) {

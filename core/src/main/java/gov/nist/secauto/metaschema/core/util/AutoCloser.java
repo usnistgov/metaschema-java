@@ -29,6 +29,14 @@ package gov.nist.secauto.metaschema.core.util;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+/**
+ * Wraps a resource to make it {@link AutoCloseable}.
+ *
+ * @param <T>
+ *          the resource type
+ * @param <E>
+ *          the exception type that may be thrown if an error occurs when closing the resource
+ */
 public class AutoCloser<T, E extends Exception> implements AutoCloseable {
   @NonNull
   private final T resource;
@@ -42,7 +50,7 @@ public class AutoCloser<T, E extends Exception> implements AutoCloseable {
    * @param <T>
    *          the resource's type
    * @param <E>
-   *          the exception that can be thrown when closing
+   *          the exception type that can be thrown when closing
    * @param resource
    *          the object to adapt
    * @param lambda
@@ -70,6 +78,11 @@ public class AutoCloser<T, E extends Exception> implements AutoCloseable {
     this.closeLambda = lambda;
   }
 
+  /**
+   * Get the wrapped resource.
+   *
+   * @return the resource object
+   */
   @NonNull
   public T getResource() {
     return resource;
@@ -83,6 +96,14 @@ public class AutoCloser<T, E extends Exception> implements AutoCloseable {
 
   @FunctionalInterface
   public interface Closer<T, E extends Exception> {
+    /**
+     * This method is called to auto-close the resource.
+     *
+     * @param object
+     *          the resource to auto-close
+     * @throws E
+     *           the exception type that can be thrown when closing
+     */
     @SuppressFBWarnings("THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION")
     void close(@NonNull T object) throws E;
   }

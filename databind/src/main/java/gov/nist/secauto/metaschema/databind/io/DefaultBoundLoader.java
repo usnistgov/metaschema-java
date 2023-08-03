@@ -99,7 +99,8 @@ public class DefaultBoundLoader implements IBoundLoader {
   private EntityResolver entityResolver;
 
   /**
-   * Construct a new OSCAL loader instance, using the provided {@link IBindingContext}.
+   * Construct a new OSCAL loader instance, using the provided
+   * {@link IBindingContext}.
    *
    * @param bindingContext
    *          the Metaschema binding context to use to load Java types
@@ -136,6 +137,7 @@ public class DefaultBoundLoader implements IBoundLoader {
     return this;
   }
 
+  @SuppressWarnings("PMD.NullAssignment")
   private void resetDetector() {
     // reset the detector
     detectorFactory = null;
@@ -315,7 +317,8 @@ public class DefaultBoundLoader implements IBoundLoader {
   @NonNull
   protected <CLASS> CLASS loadInternal(@NonNull Class<CLASS> clazz, @NonNull BufferedInputStream bis,
       @NonNull URI documentUri) throws IOException {
-    // we cannot close this stream, since it will cause the underlying stream to be closed
+    // we cannot close this stream, since it will cause the underlying stream to be
+    // closed
     bis.mark(LOOK_AHEAD_BYTES);
 
     Format format = detectFormatInternal(bis);

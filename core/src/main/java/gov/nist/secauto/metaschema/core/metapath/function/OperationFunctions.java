@@ -65,9 +65,13 @@ public final class OperationFunctions { // NOPMD - intentional
 
   @NonNull
   private static IDateItem addDurationToDate(@NonNull ZonedDateTime dateTime, @NonNull TemporalAmount duration) {
-
-    @SuppressWarnings("null")
-    @NonNull ZonedDateTime result = dateTime.plus(duration);
+    ZonedDateTime result;
+    try {
+      result = dateTime.plus(duration);
+    } catch (ArithmeticException ex) {
+      throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);
+    }
+    assert result != null;
     return IDateItem.valueOf(result);
   }
 
@@ -77,8 +81,14 @@ public final class OperationFunctions { // NOPMD - intentional
     Period duration1 = arg1.getValue();
     Period duration2 = arg2.getValue();
 
-    @SuppressWarnings("null") IYearMonthDurationItem retval = IYearMonthDurationItem.valueOf(duration1.plus(duration2));
-    return retval;
+    Period result;
+    try {
+      result = duration1.plus(duration2);
+    } catch (ArithmeticException ex) {
+      throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);
+    }
+    assert result != null;
+    return IYearMonthDurationItem.valueOf(result);
   }
 
   @NonNull
@@ -87,24 +97,40 @@ public final class OperationFunctions { // NOPMD - intentional
     Duration duration1 = arg1.getValue();
     Duration duration2 = arg2.getValue();
 
-    @SuppressWarnings("null") IDayTimeDurationItem retval = IDayTimeDurationItem.valueOf(duration1.plus(duration2));
-    return retval;
+    Duration result;
+    try {
+      result = duration1.plus(duration2);
+    } catch (ArithmeticException ex) {
+      throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);
+    }
+    assert result != null;
+    return IDayTimeDurationItem.valueOf(result);
   }
 
   @NonNull
   public static IDateTimeItem opAddYearMonthDurationToDateTime(@NonNull IDateTimeItem arg1,
       @NonNull IYearMonthDurationItem arg2) {
-    @SuppressWarnings("null") IDateTimeItem retval
-        = IDateTimeItem.valueOf(arg1.asZonedDateTime().plus(arg2.getValue()));
-    return retval;
+    ZonedDateTime result;
+    try {
+      result = arg1.asZonedDateTime().plus(arg2.getValue());
+    } catch (ArithmeticException ex) {
+      throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);
+    }
+    assert result != null;
+    return IDateTimeItem.valueOf(result);
   }
 
   @NonNull
   public static IDateTimeItem opAddDayTimeDurationToDateTime(@NonNull IDateTimeItem arg1,
       @NonNull IDayTimeDurationItem arg2) {
-    @SuppressWarnings("null") IDateTimeItem retval
-        = IDateTimeItem.valueOf(arg1.asZonedDateTime().plus(arg2.getValue()));
-    return retval;
+    ZonedDateTime result;
+    try {
+      result = arg1.asZonedDateTime().plus(arg2.getValue());
+    } catch (ArithmeticException ex) {
+      throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);
+    }
+    assert result != null;
+    return IDateTimeItem.valueOf(result);
   }
 
   @NonNull
@@ -484,8 +510,8 @@ public final class OperationFunctions { // NOPMD - intentional
   }
 
   /**
-   * Based on XPath 3.1
-   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-numeric-mod">func:numeric-mod</a>.
+   * Based on XPath 3.1 <a href=
+   * "https://www.w3.org/TR/xpath-functions-31/#func-numeric-mod">func:numeric-mod</a>.
    *
    * @param dividend
    *          the number to be divided

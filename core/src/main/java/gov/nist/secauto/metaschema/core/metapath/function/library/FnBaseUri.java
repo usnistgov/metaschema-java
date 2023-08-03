@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath.function.library;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
@@ -43,14 +44,15 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Since a node doesn't have a base URI in Metaschema, this is an alias for the document-uri
- * function.
+ * Since a node doesn't have a base URI in Metaschema, this is an alias for the
+ * document-uri function.
  */
 public final class FnBaseUri {
 
   @NonNull
   static final IFunction SIGNATURE_NO_ARG = IFunction.builder()
       .name("base-uri")
+      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
       .deterministic()
       .contextDependent()
       .focusDependent()
@@ -62,6 +64,7 @@ public final class FnBaseUri {
   @NonNull
   static final IFunction SIGNATURE_ONE_ARG = IFunction.builder()
       .name("base-uri")
+      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
       .focusIndependent()
@@ -106,12 +109,14 @@ public final class FnBaseUri {
   /**
    * Get the base URI for the provided {@code nodeItem}.
    * <p>
-   * Based on the XPath 3.1
-   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-base-uri">fn:base-uri</a> function.
+   * Based on the XPath 3.1 <a href=
+   * "https://www.w3.org/TR/xpath-functions-31/#func-base-uri">fn:base-uri</a>
+   * function.
    *
    * @param nodeItem
    *          the node to get the base URI from
-   * @return the base URI, or {@code null} if the node is either null or doesn't have a base URI
+   * @return the base URI, or {@code null} if the node is either null or doesn't
+   *         have a base URI
    */
   @SuppressWarnings("PMD.NullAssignment") // for readability
   @Nullable

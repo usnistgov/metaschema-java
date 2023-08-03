@@ -30,12 +30,10 @@ import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -44,47 +42,46 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 class ProductionImpl implements IProduction {
 
   @NonNull
-  private final Map<IMetaschema, MetaschemaProductionImpl> metaschemaToProductionMap // NOPMD - immutable
+  private final Map<IMetaschema, IGeneratedMetaschemaClass> metaschemaToProductionMap // NOPMD - immutable
       = new HashMap<>();
   @NonNull
   private final Map<String, IPackageProduction> packageNameToProductionMap // NOPMD - immutable
       = new HashMap<>();
 
-  public void processMetaschema(@NonNull IMetaschema metaschema,
-      @NonNull ITypeResolver typeResolver, @NonNull Path targetDirectory) throws IOException {
+  public void addMetaschema(
+      @NonNull IMetaschema metaschema,
+      @NonNull IMetaschemaClassFactory classFactory,
+      @NonNull Path targetDirectory) throws IOException {
     for (IMetaschema importedMetaschema : metaschema.getImportedMetaschemas()) {
       assert importedMetaschema != null;
-      processMetaschema(importedMetaschema, typeResolver, targetDirectory);
+      addMetaschema(importedMetaschema, classFactory, targetDirectory);
     }
 
-    if (getMetaschemaProduction(metaschema) == null) {
-      addMetaschema(metaschema, typeResolver, targetDirectory);
+    if (metaschemaToProductionMap.get(metaschema) == null) {
+      IGeneratedMetaschemaClass metaschemaClass = classFactory.generateClass(metaschema, targetDirectory);
+      metaschemaToProductionMap.put(metaschema, metaschemaClass);
     }
   }
 
-  public IMetaschemaProduction addMetaschema(@NonNull IMetaschema metaschema, @NonNull ITypeResolver typeResolver,
-      @NonNull Path targetDirectory) throws IOException {
-    IMetaschemaProduction retval = metaschemaToProductionMap.get(metaschema);
-    if (retval == null) {
-      metaschemaToProductionMap.put(metaschema,
-          new MetaschemaProductionImpl(metaschema, typeResolver, targetDirectory));
-    }
-
-    return retval;
-  }
-
-  public IPackageProduction addPackage(@NonNull String javaPackage, @NonNull URI xmlNamespace,
-      @NonNull List<IMetaschemaProduction> metaschemaProductions, @NonNull Path targetDirectory)
+  protected IPackageProduction addPackage(
+      @NonNull PackageMetadata metadata,
+      @NonNull IMetaschemaClassFactory classFactory,
+      @NonNull Path targetDirectory)
       throws IOException {
+    String javaPackage = metadata.getPackageName();
+
     IPackageProduction retval
-        = new PackageProductionImpl(javaPackage, xmlNamespace, metaschemaProductions, targetDirectory);
+        = new PackageProductionImpl(
+            metadata,
+            classFactory,
+            targetDirectory);
     packageNameToProductionMap.put(javaPackage, retval);
     return retval;
   }
 
   @Override
   @SuppressWarnings("null")
-  public Collection<IMetaschemaProduction> getMetaschemaProductions() {
+  public Collection<IGeneratedMetaschemaClass> getMetaschemaProductions() {
     return Collections.unmodifiableCollection(metaschemaToProductionMap.values());
   }
 
@@ -95,21 +92,25 @@ class ProductionImpl implements IProduction {
   }
 
   @Override
-  public IMetaschemaProduction getMetaschemaProduction(IMetaschema metaschema) {
+  public IGeneratedMetaschemaClass getMetaschemaProduction(IMetaschema metaschema) {
     return metaschemaToProductionMap.get(metaschema);
   }
 
   @Override
-  public Stream<IDefinitionProduction> getDefinitionProductionsAsStream() {
+  public Stream<IGeneratedDefinitionClass> getGlobalDefinitionClassesAsStream() {
     return ObjectUtils.notNull(getMetaschemaProductions().stream()
-        .flatMap(metaschema -> metaschema.getDefinitionProductions().stream()));
+        .flatMap(metaschema -> metaschema.getGeneratedDefinitionClasses().stream()));
   }
 
   @Override
-  public Stream<IGeneratedClass> getGeneratedClasses() {
+  public Stream<? extends IGeneratedClass> getGeneratedClasses() {
     return ObjectUtils.notNull(Stream.concat(
+        // generated definitions and metaschema
         getMetaschemaProductions().stream()
-            .flatMap(metaschema -> metaschema.getGeneratedClasses()),
+            .flatMap(metaschema -> Stream.concat(
+                Stream.of(metaschema),
+                metaschema.getGeneratedDefinitionClasses().stream())),
+        // generated package-info.java
         getPackageProductions().stream()
             .flatMap(javaPackage -> Stream.of(javaPackage.getGeneratedClass()))));
   }

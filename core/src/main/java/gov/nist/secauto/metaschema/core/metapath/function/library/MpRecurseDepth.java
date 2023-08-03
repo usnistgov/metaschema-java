@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.metapath.function.library;
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.DynamicMetapathException;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.MetapathException;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
@@ -44,12 +45,13 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public final class RecurseDepth {
+public final class MpRecurseDepth {
   // private static final Logger logger = LogManager.getLogger(FnDoc.class);
 
   @NonNull
   static final IFunction SIGNATURE_ONE_ARG = IFunction.builder()
       .name("recurse-depth")
+      .namespace(MetapathConstants.NS_METAPATH)
       .deterministic()
       .contextDependent()
       .focusDependent()
@@ -60,12 +62,13 @@ public final class RecurseDepth {
           .build())
       .returnType(INodeItem.class)
       .returnZeroOrMore()
-      .functionHandler(RecurseDepth::executeOneArg)
+      .functionHandler(MpRecurseDepth::executeOneArg)
       .build();
 
   @NonNull
   static final IFunction SIGNATURE_TWO_ARG = IFunction.builder()
       .name("recurse-depth")
+      .namespace(MetapathConstants.NS_METAPATH)
       .deterministic()
       .contextDependent()
       .focusIndependent()
@@ -81,10 +84,10 @@ public final class RecurseDepth {
           .build())
       .returnType(INodeItem.class)
       .returnZeroOrMore()
-      .functionHandler(RecurseDepth::executeTwoArg)
+      .functionHandler(MpRecurseDepth::executeTwoArg)
       .build();
 
-  private RecurseDepth() {
+  private MpRecurseDepth() {
     // disable construction
   }
 

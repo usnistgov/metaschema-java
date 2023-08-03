@@ -60,13 +60,15 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * The implementation of a {@link IBindingContext} provided by this library.
  * <p>
- * This implementation caches Metaschema information, which can dramatically improve read and write
- * performance at the cost of some memory use. Thus, using the same singleton of this class across
- * multiple I/O operations will improve overall read and write performance when processing the same
- * types of data.
+ * This implementation caches Metaschema information, which can dramatically
+ * improve read and write performance at the cost of some memory use. Thus,
+ * using the same singleton of this class across multiple I/O operations will
+ * improve overall read and write performance when processing the same types of
+ * data.
  * <p>
  * Serializers and deserializers provided by this class using the
- * {@link #newSerializer(Format, Class)} and {@link #newDeserializer(Format, Class)} methods will
+ * {@link #newSerializer(Format, Class)} and
+ * {@link #newDeserializer(Format, Class)} methods will
  * <p>
  * This class is synchronized and is thread-safe.
  */
@@ -77,6 +79,11 @@ public class DefaultBindingContext implements IBindingContext {
   @NonNull
   private final List<IBindingMatcher> bindingMatchers = new LinkedList<>();
 
+  /**
+   * Get the singleton instance of this binding context.
+   *
+   * @return the binding context
+   */
   @NonNull
   public static DefaultBindingContext instance() {
     synchronized (DefaultBindingContext.class) {
@@ -164,7 +171,7 @@ public class DefaultBindingContext implements IBindingContext {
   public <CLASS> IDeserializer<CLASS> newDeserializer(@NonNull Format format, @NonNull Class<CLASS> clazz) {
     IAssemblyClassBinding classBinding = (IAssemblyClassBinding) getClassBinding(clazz);
     if (classBinding == null) {
-      throw new IllegalStateException(String.format("Class '%s' is not bound", clazz.getClass().getName()));
+      throw new IllegalStateException(String.format("Class '%s' is not bound", clazz.getName()));
     }
     IDeserializer<CLASS> retval;
     switch (format) {
@@ -191,6 +198,12 @@ public class DefaultBindingContext implements IBindingContext {
     }
   }
 
+  /**
+   * Get the binding matchers that are associated with this class.
+   *
+   * @return the list of matchers
+   * @see #registerBindingMatcher(IBindingMatcher)
+   */
   @NonNull
   protected List<? extends IBindingMatcher> getBindingMatchers() {
     synchronized (this) {

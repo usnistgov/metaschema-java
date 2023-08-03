@@ -45,9 +45,6 @@ import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
@@ -66,7 +63,6 @@ import nl.talsmasoftware.lazy4j.Lazy;
 public class DefaultFieldClassBinding
     extends AbstractClassBinding
     implements IFieldClassBinding, IValueConstraintFeature {
-  private static final Logger LOGGER = LogManager.getLogger(DefaultFieldClassBinding.class);
 
   @NonNull
   private final MetaschemaField metaschemaField;
@@ -75,8 +71,8 @@ public class DefaultFieldClassBinding
   private final Lazy<IValueConstraintSupport> constraints;
 
   /**
-   * Create a new {@link IClassBinding} for a Java bean annotated with the {@link BoundField}
-   * annotation.
+   * Create a new {@link IClassBinding} for a Java bean annotated with the
+   * {@link BoundField} annotation.
    *
    * @param clazz
    *          the Java bean class
@@ -98,8 +94,8 @@ public class DefaultFieldClassBinding
   }
 
   /**
-   * Construct a new {@link IClassBinding} for a Java bean annotated with the {@link BoundField}
-   * annotation.
+   * Construct a new {@link IClassBinding} for a Java bean annotated with the
+   * {@link BoundField} annotation.
    *
    * @param clazz
    *          the Java bean class

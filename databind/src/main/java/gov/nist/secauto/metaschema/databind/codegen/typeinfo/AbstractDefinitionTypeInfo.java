@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
@@ -70,7 +70,8 @@ abstract class AbstractDefinitionTypeInfo<DEF extends IDefinition> implements ID
   /**
    * Lazy initialize instance information.
    *
-   * @return {@code true} if instance information was initialized or {@code false} otherwise
+   * @return {@code true} if instance information was initialized or {@code false}
+   *         otherwise
    */
   protected abstract boolean initInstanceTypeInfos();
 

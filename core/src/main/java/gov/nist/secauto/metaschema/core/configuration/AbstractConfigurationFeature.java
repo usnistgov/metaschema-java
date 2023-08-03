@@ -28,6 +28,14 @@ package gov.nist.secauto.metaschema.core.configuration;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Provides a complete, abstract implementation of a generalized feature.
+ * Feature implementations can extend this class the implement configuration
+ * sets for a given purpose.
+ *
+ * @param <V>
+ *          the feature value type
+ */
 public abstract class AbstractConfigurationFeature<V> implements IConfigurationFeature<V> {
   @NonNull
   private final Class<V> valueClass;

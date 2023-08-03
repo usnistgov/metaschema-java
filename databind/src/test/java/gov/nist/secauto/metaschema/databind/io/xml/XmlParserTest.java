@@ -40,7 +40,6 @@ import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.AbstractBoundModelTestSupport;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.test.FlaggedAssembly;
@@ -73,6 +72,18 @@ class XmlParserTest
     assert factory instanceof WstxInputFactory;
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
 
+    assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
+    XMLEvent event = eventReader.nextEvent();
+    assertEquals(XMLStreamConstants.START_ELEMENT, event.getEventType());
+    StartElement start = event.asStartElement();
+    // assertEquals("test", jsonParser.nextFieldName());
+    // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
+    // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
+
+    assert start != null;
+
+    MetaschemaXmlParser parser = new MetaschemaXmlParser(eventReader);
+
     IBindingContext bindingContext = getBindingContext();
 
     IAssemblyClassBinding assembly
@@ -85,18 +96,6 @@ class XmlParserTest
         = ObjectUtils.requireNonNull((IBoundFieldInstance) assembly.getModelInstanceByName("field2"));
 
     MultiFieldAssembly obj = new MultiFieldAssembly();
-
-    assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
-    XMLEvent event = eventReader.nextEvent();
-    assertEquals(XMLStreamConstants.START_ELEMENT, event.getEventType());
-    StartElement start = event.asStartElement();
-    // assertEquals("test", jsonParser.nextFieldName());
-    // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
-
-    assert start != null;
-
-    MetaschemaXmlParser parser = new MetaschemaXmlParser(eventReader);
 
     assertTrue(parser.readModelInstanceValues(field1Property, obj, start));
     assertFalse(parser.readModelInstanceValues(field2Property, obj, start));
@@ -146,19 +145,6 @@ class XmlParserTest
     assert factory instanceof WstxInputFactory;
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
 
-    IBindingContext bindingContext = getBindingContext();
-
-    IAssemblyClassBinding assembly
-        = ObjectUtils.requireNonNull((IAssemblyClassBinding) bindingContext.getClassBinding(MultiFieldAssembly.class));
-
-    IBoundFieldInstance field1Property
-        = ObjectUtils.requireNonNull((IBoundFieldInstance) assembly.getModelInstanceByName("field1"));
-
-    IBoundFieldInstance field2Property
-        = ObjectUtils.requireNonNull((IBoundFieldInstance) assembly.getModelInstanceByName("field2"));
-
-    MultiFieldAssembly obj = new MultiFieldAssembly();
-
     assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
     XMLEvent event = eventReader.nextEvent();
     assertEquals(XMLStreamConstants.START_ELEMENT,
@@ -172,6 +158,19 @@ class XmlParserTest
 
     MetaschemaXmlParser parser = new MetaschemaXmlParser(eventReader);
 
+    IBindingContext bindingContext = getBindingContext();
+
+    IAssemblyClassBinding assembly
+        = ObjectUtils.requireNonNull((IAssemblyClassBinding) bindingContext.getClassBinding(MultiFieldAssembly.class));
+
+    IBoundFieldInstance field1Property
+        = ObjectUtils.requireNonNull((IBoundFieldInstance) assembly.getModelInstanceByName("field1"));
+
+    IBoundFieldInstance field2Property
+        = ObjectUtils.requireNonNull((IBoundFieldInstance) assembly.getModelInstanceByName("field2"));
+
+    MultiFieldAssembly obj = new MultiFieldAssembly();
+
     assertFalse(parser.readModelInstanceValues(field1Property, obj, start));
     assertTrue(parser.readModelInstanceValues(field2Property, obj, start));
 
@@ -181,19 +180,11 @@ class XmlParserTest
   }
 
   @Test
-  void testReadField() throws JsonParseException, IOException, NoSuchFieldException,
-      XMLStreamException {
+  void testReadField() throws JsonParseException, IOException, XMLStreamException {
     String xml = "<simple-field xmlns='http://example.com/ns'>theValue</simple-field>";
     XMLInputFactory factory = XMLInputFactory.newInstance();
     assert factory instanceof WstxInputFactory;
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
-
-    IBindingContext bindingContext = getBindingContext();
-
-    IFieldClassBinding field
-        = ObjectUtils.requireNonNull((IFieldClassBinding) bindingContext.getClassBinding(ValueKeyField.class));
-
-    IBoundFieldValueInstance valueProperty = field.getFieldValueInstance();
 
     assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
     XMLEvent event = eventReader.nextEvent();
@@ -205,6 +196,11 @@ class XmlParserTest
     assert start != null;
 
     MetaschemaXmlParser parser = new MetaschemaXmlParser(eventReader);
+
+    IBindingContext bindingContext = getBindingContext();
+
+    IFieldClassBinding field
+        = ObjectUtils.requireNonNull((IFieldClassBinding) bindingContext.getClassBinding(ValueKeyField.class));
 
     ValueKeyField obj = (ValueKeyField) parser.readDefinitionValue(field, null, start);
 

@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath.function.library;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
@@ -42,6 +43,7 @@ public final class FnNot {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("not")
+      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
       .focusIndependent()
@@ -75,7 +77,8 @@ public final class FnNot {
   /**
    * Get the negated, effective boolean value of the provided item.
    * <p>
-   * Based on the XPath 3.1 <a href="https://www.w3.org/TR/xpath-functions-31/#func-not">fn:not</a>
+   * Based on the XPath 3.1
+   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-not">fn:not</a>
    * function.
    *
    * @param item
@@ -90,7 +93,8 @@ public final class FnNot {
   /**
    * Get the negated, effective boolean value of the provided item.
    * <p>
-   * Based on the XPath 3.1 <a href="https://www.w3.org/TR/xpath-functions-31/#func-not">fn:not</a>
+   * Based on the XPath 3.1
+   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-not">fn:not</a>
    * function.
    *
    * @param sequence

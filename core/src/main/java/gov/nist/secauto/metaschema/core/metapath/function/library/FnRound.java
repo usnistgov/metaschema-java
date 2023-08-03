@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath.function.library;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
@@ -44,29 +45,29 @@ public final class FnRound {
   private static final String NAME = "round";
 
   @NonNull
-  static IFunction signature() {
-    return NumericFunction.signature(NAME, INumericItem::round);
-  }
+  static final IFunction SIGNATURE = NumericFunction.signature(
+      MetapathConstants.NS_XPATH_FUNCTIONS,
+      NAME,
+      INumericItem::round);
 
   @NonNull
-  static IFunction signatureWithPrecision() {
-    return IFunction.builder()
-        .name(NAME)
-        .argument(IArgument.newBuilder()
-            .name("arg1")
-            .type(INumericItem.class)
-            .zeroOrOne()
-            .build())
-        .argument(IArgument.newBuilder()
-            .name("precision")
-            .type(IIntegerItem.class)
-            .one()
-            .build())
-        .returnType(INumericItem.class)
-        .returnZeroOrOne()
-        .functionHandler(FnRound::executeTwoArg)
-        .build();
-  }
+  static final IFunction SIGNATURE_WITH_PRECISION = IFunction.builder()
+      .name(NAME)
+      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .argument(IArgument.newBuilder()
+          .name("arg1")
+          .type(INumericItem.class)
+          .zeroOrOne()
+          .build())
+      .argument(IArgument.newBuilder()
+          .name("precision")
+          .type(IIntegerItem.class)
+          .one()
+          .build())
+      .returnType(INumericItem.class)
+      .returnZeroOrOne()
+      .functionHandler(FnRound::executeTwoArg)
+      .build();
 
   private FnRound() {
     // disable construction

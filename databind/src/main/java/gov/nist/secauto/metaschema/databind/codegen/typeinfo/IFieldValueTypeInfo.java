@@ -24,33 +24,33 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
-
-import java.util.Collection;
-import java.util.stream.Stream;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IMetaschemaProduction {
-
+/**
+ * Provides type information related to the value of a {@link IFieldDefinition}.
+ */
+public interface IFieldValueTypeInfo extends ITypeInfo {
+  /**
+   * Construct a new type info based on the provided parent field definition which
+   * contains the field value.
+   *
+   * @param parentDefinition
+   *          the definition associated with the field value type info
+   * @return the type info for the definition
+   */
   @NonNull
-  IMetaschema getMetaschema();
+  static IFieldValueTypeInfo newTypeInfo(@NonNull IFieldDefinitionTypeInfo parentDefinition) {
+    return new FieldValueTypeInfoImpl(parentDefinition);
+  }
 
-  @NonNull
-  IGeneratedClass getGeneratedMetaschema();
-
-  @NonNull
-  Collection<? extends IFlagContainer> getGlobalDefinitions();
-
-  @NonNull
-  Collection<IDefinitionProduction> getDefinitionProductions();
-
-  @NonNull
-  String getPackageName();
-
-  @NonNull
-  Stream<IGeneratedClass> getGeneratedClasses();
+  /**
+   * Get the type information for this field value's containing field definition.
+   *
+   * @return the containing field's type information
+   */
+  IFieldDefinitionTypeInfo getParentDefinitionTypeInfo();
 }

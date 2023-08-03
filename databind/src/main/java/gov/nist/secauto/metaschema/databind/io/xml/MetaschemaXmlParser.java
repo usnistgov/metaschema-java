@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.databind.io.xml;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.io.AbstractParser;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
@@ -60,7 +59,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class MetaschemaXmlParser
-    extends AbstractParser
     implements IXmlParsingContext {
   @NonNull
   private final XMLEventReader2 reader;
@@ -133,20 +131,24 @@ public class MetaschemaXmlParser
   }
 
   /**
-   * Reads a XML element storing the associated data in a Java class instance, returning the resulting
-   * instance.
+   * Reads a XML element storing the associated data in a Java class instance,
+   * returning the resulting instance.
    * <p>
-   * When called the next {@link XMLEvent} of the {@link XMLStreamReader2} is expected to be a
-   * {@link XMLStreamConstants#START_ELEMENT} that is the XML element associated with the Java class.
+   * When called the next {@link XMLEvent} of the {@link XMLStreamReader2} is
+   * expected to be a {@link XMLStreamConstants#START_ELEMENT} that is the XML
+   * element associated with the Java class.
    * <p>
-   * After returning the next {@link XMLEvent} of the {@link XMLStreamReader2} is expected to be a the
-   * next event after the {@link XMLStreamConstants#END_ELEMENT} for the XML
-   * {@link XMLStreamConstants#START_ELEMENT} element associated with the Java class.
+   * After returning the next {@link XMLEvent} of the {@link XMLStreamReader2} is
+   * expected to be a the next event after the
+   * {@link XMLStreamConstants#END_ELEMENT} for the XML
+   * {@link XMLStreamConstants#START_ELEMENT} element associated with the Java
+   * class.
    *
    * @param targetDefinition
    *          the Metaschema definition for the target object being read
    * @param parentObject
-   *          the object target's parent object, which can be {@code null} if there is no parent
+   *          the object target's parent object, which can be {@code null} if
+   *          there is no parent
    * @param start
    *          the containing start element
    * @return the instance or {@code null} if no data was parsed
@@ -243,8 +245,8 @@ public class MetaschemaXmlParser
    *          the parent object to store this parsed attribute in
    * @param start
    *          the containing XML element that was previously parsed
-   * @return {@code true} if the property was parsed, or {@code false} if the data did not contain
-   *         information for this property
+   * @return {@code true} if the property was parsed, or {@code false} if the data
+   *         did not contain information for this property
    * @throws IOException
    *           if there was an error when reading XML data
    */
@@ -255,7 +257,8 @@ public class MetaschemaXmlParser
 
     // when reading an attribute:
     // - "parent" will contain the attributes to read
-    // - the event reader "peek" will be on the end element or the next start element
+    // - the event reader "peek" will be on the end element or the next start
+    // element
     boolean handled = false;
     Attribute attribute = start.getAttributeByName(flag.getXmlQName());
     if (attribute != null) {
@@ -269,6 +272,7 @@ public class MetaschemaXmlParser
     return handled;
   }
 
+  @SuppressWarnings("PMD.OnlyOneReturn")
   protected boolean isNextProperty(
       @NonNull IBoundNamedModelInstance instance)
       throws XMLStreamException {
@@ -313,8 +317,8 @@ public class MetaschemaXmlParser
    *          an instance of the class on which this property exists
    * @param start
    *          the containing XML element that was previously parsed
-   * @return {@code true} if the property was parsed, or {@code false} if the data did not contain
-   *         information for this property
+   * @return {@code true} if the property was parsed, or {@code false} if the data
+   *         did not contain information for this property
    * @throws IOException
    *           if there was an error when reading XML data
    * @throws XMLStreamException

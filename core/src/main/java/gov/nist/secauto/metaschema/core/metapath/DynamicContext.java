@@ -169,21 +169,22 @@ public class DynamicContext { // NOPMD - intentional data class
     public class ContextEntityResolver implements EntityResolver {
 
       /**
-       * Provides an {@link InputSource} for the provided {@code systemId} after attempting to resolve
-       * this system identifier.
+       * Provides an {@link InputSource} for the provided {@code systemId} after
+       * attempting to resolve this system identifier.
        * <p>
-       * This implementation of an {@link EntityResolver} will perform the following operations in order:
+       * This implementation of an {@link EntityResolver} will perform the following
+       * operations in order:
        * <ol>
        * <li>Resolves the {@code systemId} against the base URI provided by the
-       * {@link StaticContext#getBaseUri()} method, if this method returns a non-{@code null} result, to
-       * get a localized resource identifier.</li>
+       * {@link StaticContext#getBaseUri()} method, if this method returns a
+       * non-{@code null} result, to get a localized resource identifier.</li>
        * <li>It will then delegate to the EntityResolver provided by the
-       * {@link IDocumentLoader#getEntityResolver()} method, if the result is not-{@code null}, to get the
-       * {@link InputSource}.</li>
-       * <li>If no InputSource is provided by the previous step, then an InputSource will be created from
-       * the URI resolved in the first step, if possible.
-       * <li>If an InputSource is still not provided, then an InputSource will be created from the
-       * provided {@code systemId}.
+       * {@link IDocumentLoader#getEntityResolver()} method, if the result is
+       * not-{@code null}, to get the {@link InputSource}.</li>
+       * <li>If no InputSource is provided by the previous step, then an InputSource
+       * will be created from the URI resolved in the first step, if possible.
+       * <li>If an InputSource is still not provided, then an InputSource will be
+       * created from the provided {@code systemId}.
        * </ol>
        */
       @Override

@@ -38,9 +38,9 @@ class PackageMetadata {
   @NonNull
   private final URI xmlNamespace;
   @NonNull
-  private final List<IMetaschemaProduction> metaschemaProductions = new LinkedList<>();
+  private final List<IGeneratedMetaschemaClass> metaschemaProductions = new LinkedList<>();
 
-  public PackageMetadata(@NonNull IMetaschemaProduction metaschemaProduction) {
+  public PackageMetadata(@NonNull IGeneratedMetaschemaClass metaschemaProduction) {
     packageName = metaschemaProduction.getPackageName();
     xmlNamespace = metaschemaProduction.getMetaschema().getXmlNamespace();
     metaschemaProductions.add(metaschemaProduction);
@@ -57,11 +57,11 @@ class PackageMetadata {
   }
 
   @NonNull
-  protected List<IMetaschemaProduction> getMetaschemaProductions() {
+  protected List<IGeneratedMetaschemaClass> getMetaschemaProductions() {
     return metaschemaProductions;
   }
 
-  public void addMetaschema(@NonNull IMetaschemaProduction metaschemaProduction) {
+  public void addMetaschema(@NonNull IGeneratedMetaschemaClass metaschemaProduction) {
     URI nextXmlNamespace = metaschemaProduction.getMetaschema().getXmlNamespace();
     if (!xmlNamespace.equals(nextXmlNamespace)) {
       throw new IllegalStateException(String.format(

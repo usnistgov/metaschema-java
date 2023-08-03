@@ -30,7 +30,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.io.AbstractParser;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
@@ -56,7 +55,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class MetaschemaJsonParser
-    extends AbstractParser
     implements IJsonParsingContext {
   private static final Logger LOGGER = LogManager.getLogger(MetaschemaJsonParser.class);
 
@@ -88,15 +86,18 @@ public class MetaschemaJsonParser
   }
 
   /**
-   * Parses JSON into a bound object. This assembly must be a root assembly for which a call to
-   * {@link IAssemblyClassBinding#isRoot()} will return {@code true}.
+   * Parses JSON into a bound object. This assembly must be a root assembly for
+   * which a call to {@link IAssemblyClassBinding#isRoot()} will return
+   * {@code true}.
    * <p>
    * This method expects the parser's current token to be:
    * <ul>
-   * <li>{@code null} indicating that the parser has not yet parsed a JSON node;</li>
-   * <li>a {@link JsonToken#START_OBJECT} which represents the object wrapper containing the root
-   * field,</li>
-   * <li>a {@link JsonToken#FIELD_NAME} representing the root field to parse, or</li>
+   * <li>{@code null} indicating that the parser has not yet parsed a JSON
+   * node;</li>
+   * <li>a {@link JsonToken#START_OBJECT} which represents the object wrapper
+   * containing the root field,</li>
+   * <li>a {@link JsonToken#FIELD_NAME} representing the root field to parse,
+   * or</li>
    * <li>a peer field to the root field that will be handled by the
    * {@link IJsonProblemHandler#handleUnknownRootProperty(IAssemblyClassBinding, String, JsonParser)}
    * method.</li>
@@ -104,12 +105,14 @@ public class MetaschemaJsonParser
    * <p>
    * After parsing the current token will be:
    * <ul>
-   * <li>the next token after the {@link JsonToken#END_OBJECT} corresponding to the initial
-   * {@link JsonToken#START_OBJECT} parsed by this method;</li>
-   * <li>the next token after the {@link JsonToken#END_OBJECT} for the root field's value; or</li>
-   * <li>the next token after all fields and associated values have been parsed looking for the root
-   * field. This next token will be the {@link JsonToken#END_OBJECT} for the object containing the
-   * fields. In this case the method will throw an {@link IOException} indicating the root was not
+   * <li>the next token after the {@link JsonToken#END_OBJECT} corresponding to
+   * the initial {@link JsonToken#START_OBJECT} parsed by this method;</li>
+   * <li>the next token after the {@link JsonToken#END_OBJECT} for the root
+   * field's value; or</li>
+   * <li>the next token after all fields and associated values have been parsed
+   * looking for the root field. This next token will be the
+   * {@link JsonToken#END_OBJECT} for the object containing the fields. In this
+   * case the method will throw an {@link IOException} indicating the root was not
    * found.</li>
    * </ul>
    *
@@ -191,19 +194,21 @@ public class MetaschemaJsonParser
   }
 
   /**
-   * Reads a JSON/YAML object storing the associated data in the Java object {@code parentInstance}.
+   * Reads a JSON/YAML object storing the associated data in the Java object
+   * {@code parentInstance}.
    * <p>
-   * When called the current {@link JsonToken} of the {@link JsonParser} is expected to be a
-   * {@link JsonToken#START_OBJECT}.
+   * When called the current {@link JsonToken} of the {@link JsonParser} is
+   * expected to be a {@link JsonToken#START_OBJECT}.
    * <p>
-   * After returning the current {@link JsonToken} of the {@link JsonParser} is expected to be the
-   * next token after the {@link JsonToken#END_OBJECT} for this class.
+   * After returning the current {@link JsonToken} of the {@link JsonParser} is
+   * expected to be the next token after the {@link JsonToken#END_OBJECT} for this
+   * class.
    *
    * @param targetDefinition
    *          the definition to parse
    * @param targetObject
-   *          the parent Java object to store the data in, which can be {@code null} if there is no
-   *          parent
+   *          the parent Java object to store the data in, which can be
+   *          {@code null} if there is no parent
    * @return the instance
    * @throws IOException
    *           if an error occurred while reading the parsed content
@@ -230,10 +235,11 @@ public class MetaschemaJsonParser
   /**
    * Parses the JSON field contents related to the bound assembly.
    * <p>
-   * This method expects the parser's current token to be at the first field name to parse.
+   * This method expects the parser's current token to be at the first field name
+   * to parse.
    * <p>
-   * After parsing the current token will be the token at the end object immediately after all the
-   * fields and values.
+   * After parsing the current token will be the token at the end object
+   * immediately after all the fields and values.
    *
    * @param targetDefinition
    *          the Metaschema definition for the target object being read
@@ -299,7 +305,8 @@ public class MetaschemaJsonParser
     }
 
     // set undefined properties
-    // TODO: re-implement this by removing the parsed properties from the properties map to speed up
+    // TODO: re-implement this by removing the parsed properties from the properties
+    // map to speed up
     for (Map.Entry<String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
       if (!handledProperties.contains(entry.getKey())) {
         // use the default value of the collector
@@ -323,19 +330,21 @@ public class MetaschemaJsonParser
   }
 
   /**
-   * Reads a JSON/YAML object storing the associated data in the Java object {@code parentInstance}.
+   * Reads a JSON/YAML object storing the associated data in the Java object
+   * {@code parentInstance}.
    * <p>
-   * When called the current {@link JsonToken} of the {@link JsonParser} is expected to be a
-   * {@link JsonToken#START_OBJECT}.
+   * When called the current {@link JsonToken} of the {@link JsonParser} is
+   * expected to be a {@link JsonToken#START_OBJECT}.
    * <p>
-   * After returning the current {@link JsonToken} of the {@link JsonParser} is expected to be the
-   * next token after the {@link JsonToken#END_OBJECT} for this class.
+   * After returning the current {@link JsonToken} of the {@link JsonParser} is
+   * expected to be the next token after the {@link JsonToken#END_OBJECT} for this
+   * class.
    *
    * @param targetDefinition
    *          the definition to parse
    * @param targetObject
-   *          the parent Java object to store the data in, which can be {@code null} if there is no
-   *          parent
+   *          the parent Java object to store the data in, which can be
+   *          {@code null} if there is no parent
    * @param requiresJsonKey
    *          when {@code true} indicates that the item will have a JSON key
    * @return the instance
@@ -352,7 +361,8 @@ public class MetaschemaJsonParser
       JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
     } else {
       // JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
-      // This could be an empty assembly signified by a END_OBJECT, or a series of properties signified by
+      // This could be an empty assembly signified by a END_OBJECT, or a series of
+      // properties signified by
       // a FIELD_NAME
       JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
     }
@@ -429,7 +439,8 @@ public class MetaschemaJsonParser
         fieldValue.setValue(instance, value);
         handledProperties.add(fieldValue.getJsonValueKeyName());
       } else {
-        // This could be an empty assembly signified by a END_OBJECT, or a series of properties signified by
+        // This could be an empty assembly signified by a END_OBJECT, or a series of
+        // properties signified by
         // a FIELD_NAME
         JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
 
@@ -513,20 +524,21 @@ public class MetaschemaJsonParser
   }
 
   /**
-   * Read JSON data associated with this property and apply it to the provided {@code objectInstance}
-   * on which this property exists.
+   * Read JSON data associated with this property and apply it to the provided
+   * {@code objectInstance} on which this property exists.
    * <p>
-   * The parser's current token is expected to be the {@link JsonToken#FIELD_NAME} for the field value
-   * being parsed.
+   * The parser's current token is expected to be the {@link JsonToken#FIELD_NAME}
+   * for the field value being parsed.
    * <p>
-   * After parsing the parser's current token will be the next token after the field's value.
+   * After parsing the parser's current token will be the next token after the
+   * field's value.
    *
    * @param instance
    *          the instance to parse data for
    * @param objectInstance
    *          an instance of the class on which this property exists
-   * @return {@code true} if the property was parsed, or {@code false} if the data did not contain
-   *         information for this property
+   * @return {@code true} if the property was parsed, or {@code false} if the data
+   *         did not contain information for this property
    * @throws IOException
    *           if there was an error when reading JSON data
    */
@@ -589,20 +601,21 @@ public class MetaschemaJsonParser
   }
 
   /**
-   * Read JSON data associated with this property and apply it to the provided {@code objectInstance}
-   * on which this property exists.
+   * Read JSON data associated with this property and apply it to the provided
+   * {@code objectInstance} on which this property exists.
    * <p>
-   * The parser's current token is expected to be the {@link JsonToken#FIELD_NAME} for the field value
-   * being parsed.
+   * The parser's current token is expected to be the {@link JsonToken#FIELD_NAME}
+   * for the field value being parsed.
    * <p>
-   * After parsing the parser's current token will be the next token after the field's value.
+   * After parsing the parser's current token will be the next token after the
+   * field's value.
    *
    * @param instance
    *          the instance to parse data for
    * @param objectInstance
    *          an instance of the class on which this property exists
-   * @return {@code true} if the property was parsed, or {@code false} if the data did not contain
-   *         information for this property
+   * @return {@code true} if the property was parsed, or {@code false} if the data
+   *         did not contain information for this property
    * @throws IOException
    *           if there was an error when reading JSON data
    */

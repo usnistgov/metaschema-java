@@ -70,7 +70,6 @@ public class AbstractBoundModelTestSupport {
     return ObjectUtils.requireNonNull(context);
   }
 
-  @SuppressWarnings("null")
   @NonNull
   protected IBindingContext getBindingContext() {
     return bindingContext;

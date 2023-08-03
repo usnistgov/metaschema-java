@@ -26,20 +26,42 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class StaticContext {
+public final class StaticContext {
   @Nullable
-  private URI baseUri;
+  private final URI baseUri;
+  @NonNull
+  private final Map<String, URI> knownNamespaces;
+
+  @NonNull
+  public static StaticContext newInstance() {
+    return builder().build();
+  }
+
+  @NonNull
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  private StaticContext(
+      @Nullable URI baseUri,
+      @NonNull Map<String, URI> knownNamespaces) {
+    this.baseUri = baseUri;
+    this.knownNamespaces = knownNamespaces;
+  }
 
   /**
-   * Get the static base URI to use in resolving URIs handled by the Metapath processor. This URI, if
-   * provided, will be used when a document base URI is not available.
+   * Get the static base URI to use in resolving URIs handled by the Metapath
+   * processor. This URI, if provided, will be used when a document base URI is
+   * not available.
    *
    * @return the base URI or {@code null} if not defined
    */
@@ -50,18 +72,9 @@ public class StaticContext {
     }
   }
 
-  /**
-   * Sets the static base URI to use in resolving URIs handled by the Metapath processor, when a
-   * document base URI is not available. There is only a single base URI. Subsequent calls to this
-   * method will change the base URI.
-   *
-   * @param baseUri
-   *          the base URI to use
-   */
-  public void setBaseUri(@NonNull URI baseUri) {
-    synchronized (this) {
-      this.baseUri = ObjectUtils.requireNonNull(baseUri, "baseUri");
-    }
+  @Nullable
+  public URI getUriForPrefix(@NonNull String prefix) {
+    return knownNamespaces.get(prefix);
   }
 
   /**
@@ -74,4 +87,52 @@ public class StaticContext {
     return new DynamicContext(this);
   }
 
+  public static class Builder {
+    private URI baseUri;
+    @NonNull
+    private final Map<String, URI> knownNamespaces = new HashMap<>();
+
+    private Builder() {
+      knownNamespaces.put(
+          MetapathConstants.PREFIX_METAPATH,
+          MetapathConstants.NS_METAPATH);
+      knownNamespaces.put(
+          MetapathConstants.PREFIX_XML_SCHEMA,
+          MetapathConstants.NS_XML_SCHEMA);
+      knownNamespaces.put(
+          MetapathConstants.PREFIX_XPATH_FUNCTIONS,
+          MetapathConstants.NS_XPATH_FUNCTIONS);
+      knownNamespaces.put(
+          MetapathConstants.PREFIX_XPATH_FUNCTIONS_MATH,
+          MetapathConstants.NS_XPATH_FUNCTIONS_MATH);
+    }
+
+    /**
+     * Sets the static base URI to use in resolving URIs handled by the Metapath
+     * processor, when a document base URI is not available. There is only a single
+     * base URI. Subsequent calls to this method will change the base URI.
+     *
+     * @param uri
+     *          the base URI to use
+     * @return this builder
+     */
+    @NonNull
+    public Builder baseUri(@NonNull URI uri) {
+      this.baseUri = uri;
+      return this;
+    }
+
+    @NonNull
+    public Builder namespace(@NonNull String prefix, @NonNull URI uri) {
+      this.knownNamespaces.put(prefix, uri);
+      return this;
+    }
+
+    @NonNull
+    public StaticContext build() {
+      return new StaticContext(
+          baseUri,
+          CollectionUtil.unmodifiableMap(knownNamespaces));
+    }
+  }
 }

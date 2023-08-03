@@ -48,9 +48,10 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 abstract class AbstractNamedModelProperty // NOPMD - intentional
-    extends AbstractNamedProperty<IAssemblyClassBinding>
+    extends AbstractProperty<IAssemblyClassBinding>
     implements IBoundNamedModelInstance {
-  // private static final Logger logger = LogManager.getLogger(AbstractNamedModelProperty.class);
+  // private static final Logger logger =
+  // LogManager.getLogger(AbstractNamedModelProperty.class);
 
   @NonNull
   private static final IGroupAs SINGLETON_GROUP_AS = new IGroupAs() {
@@ -79,11 +80,11 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
   private final Field field;
   @NonNull
   private final IGroupAs groupAs;
-  private Lazy<IModelPropertyInfo> propertyInfo;
+  private final Lazy<IModelPropertyInfo> propertyInfo;
 
   /**
-   * Construct a new bound model instance based on a Java property. The name of the property is bound
-   * to the name of the instance.
+   * Construct a new bound model instance based on a Java property. The name of
+   * the property is bound to the name of the instance.
    *
    * @param field
    *          the field instance associated with this property
@@ -97,9 +98,11 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
 
     GroupAs annotation = field.getAnnotation(GroupAs.class);
     // if (annotation == null && (getMaxOccurs() == -1 || getMaxOccurs() > 1)) {
-    // throw new IllegalStateException(String.format("Field '%s' on class '%s' is missing the '%s'
+    // throw new IllegalStateException(String.format("Field '%s' on class '%s' is
+    // missing the '%s'
     // annotation.",
-    // field.getName(), parentClassBinding.getBoundClass().getName(), GroupAs.class.getName()));
+    // field.getName(), parentClassBinding.getBoundClass().getName(),
+    // GroupAs.class.getName()));
     // }
     this.groupAs = annotation == null ? SINGLETON_GROUP_AS : new SimpleGroupAs(annotation, parentClassBinding);
     this.propertyInfo = Lazy.lazy(() -> newPropertyInfo(() -> newDataTypeHandler()));

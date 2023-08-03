@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.databind.codegen;
 
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -40,21 +41,22 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Information about Java classes generated for definitions from a collection of Metaschema.
+ * Information about Java classes generated for definitions from a collection of
+ * Metaschema.
  */
 public interface IProduction {
 
   @NonNull
-  Collection<IMetaschemaProduction> getMetaschemaProductions();
+  Collection<IGeneratedMetaschemaClass> getMetaschemaProductions();
 
   @Nullable
-  IMetaschemaProduction getMetaschemaProduction(@NonNull IMetaschema metaschema);
+  IGeneratedMetaschemaClass getMetaschemaProduction(@NonNull IMetaschema metaschema);
 
   @NonNull
-  Stream<IDefinitionProduction> getDefinitionProductionsAsStream();
+  Stream<IGeneratedDefinitionClass> getGlobalDefinitionClassesAsStream();
 
   @NonNull
-  Stream<IGeneratedClass> getGeneratedClasses();
+  Stream<? extends IGeneratedClass> getGeneratedClasses();
 
   @NonNull
   static IProduction of( // NOPMD - intentional
@@ -69,14 +71,17 @@ public interface IProduction {
       @NonNull Collection<? extends IMetaschema> metaschemas,
       @NonNull ITypeResolver typeResolver,
       @NonNull Path targetDirectory) throws IOException {
+
+    IMetaschemaClassFactory classFactory = IMetaschemaClassFactory.newInstance(typeResolver);
+
     ProductionImpl retval = new ProductionImpl();
     for (IMetaschema metaschema : metaschemas) {
       assert metaschema != null;
-      retval.processMetaschema(metaschema, typeResolver, targetDirectory);
+      retval.addMetaschema(metaschema, classFactory, targetDirectory);
     }
 
     Map<String, PackageMetadata> packageNameToPackageMetadataMap = new HashMap<>(); // NOPMD - no concurrency
-    for (IMetaschemaProduction metaschemaProduction : retval.getMetaschemaProductions()) {
+    for (IGeneratedMetaschemaClass metaschemaProduction : retval.getMetaschemaProductions()) {
       String packageName = metaschemaProduction.getPackageName();
 
       PackageMetadata metadata = packageNameToPackageMetadataMap.get(packageName);
@@ -89,7 +94,10 @@ public interface IProduction {
     }
 
     for (PackageMetadata metadata : packageNameToPackageMetadataMap.values()) {
-      retval.addPackage(metadata.getPackageName(), metadata.getXmlNamespace(), metadata.getMetaschemaProductions(),
+      assert metadata != null;
+      retval.addPackage(
+          metadata,
+          classFactory,
           targetDirectory);
     }
     return retval;

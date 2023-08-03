@@ -24,26 +24,69 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
-import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.core.model.INamedInstance;
+
+import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-/**
- * Provides type information related to the value of a {@link IFieldDefinition}.
- */
-public interface IFieldValueTypeInfo extends ITypeInfo {
+public interface IDefinitionTypeInfo {
   /**
-   * Construct a new type info based on the provided parent field definition which contains the field
-   * value.
+   * Get the definition associated with this type info.
    *
-   * @param parentDefinition
-   *          the definition associated with the field value type info
-   * @return the type info for the definition
+   * @return the definition
    */
   @NonNull
-  static IFieldValueTypeInfo newTypeInfo(@NonNull IFieldDefinitionTypeInfo parentDefinition) {
-    return new FieldValueTypeInfoImpl(parentDefinition);
-  }
+  IDefinition getDefinition();
+
+  /**
+   * Gets the resolver which can be used to lookup Java type information for
+   * Metaschema objects.
+   *
+   * @return the type resolver
+   */
+  @NonNull
+  ITypeResolver getTypeResolver();
+
+  /**
+   * Check's if the Java class to be generated will have a property with the given
+   * name.
+   *
+   * @param propertyName
+   *          the property name to look for
+   * @return {@code true} if there is an associated property with the name or
+   *         {@code false} otherwise
+   */
+  boolean hasPropertyWithName(@NonNull String propertyName);
+
+  /**
+   * Get the type information for the provided {@code instance} value.
+   *
+   * @param instance
+   *          the instance to get type information for
+   * @return the type information
+   */
+  @Nullable
+  IInstanceTypeInfo getInstanceTypeInfo(@NonNull INamedInstance instance);
+
+  /**
+   * Get the type information for all instance values on this definition.
+   *
+   * @return the type information
+   */
+  @NonNull
+  Collection<IInstanceTypeInfo> getInstanceTypeInfos();
+
+  /**
+   * Get the type information for all Java class properties associated with a
+   * given instance.
+   *
+   * @return the type information
+   */
+  @NonNull
+  Collection<ITypeInfo> getPropertyTypeInfos();
 }

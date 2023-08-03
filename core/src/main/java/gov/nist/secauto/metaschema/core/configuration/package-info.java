@@ -24,4 +24,10 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
+/**
+ * Provides support for generalized configuration based on a set of
+ * {@link gov.nist.secauto.metaschema.core.configuration.IConfigurationFeature}
+ * values.
+ */
+
 package gov.nist.secauto.metaschema.core.configuration;

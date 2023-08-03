@@ -24,20 +24,67 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import com.squareup.javapoet.TypeName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IFlagInstanceTypeInfo extends IInstanceTypeInfo {
+public interface ITypeInfo {
+
+  /**
+   * Get the name to use for the property. If the property is a collection type,
+   * then this will be the group-as name, else this will be the use name or the
+   * name if not use name is set.
+   *
+   * @return the name
+   */
   @NonNull
-  static IFlagInstanceTypeInfo newTypeInfo(
-      @NonNull IFlagInstance instance,
-      @NonNull IDefinitionTypeInfo parentDefinition) {
-    return new FlagInstanceTypeInfoImpl(instance, parentDefinition);
+  String getBaseName();
+
+  /**
+   * The name to use for Java constructs that refer to the item. This is used for
+   * when a field is collection-based and there is a need to refer to a single
+   * item, such as in an add/remove method name.
+   *
+   * @return the item base name
+   */
+  @NonNull
+  default String getItemBaseName() {
+    return getBaseName();
   }
 
-  @Override
-  IFlagInstance getInstance();
+  /**
+   * Get the Java property name for the property.
+   *
+   * @return the Java property name
+   */
+  @NonNull
+  String getPropertyName();
+
+  /**
+   * Gets the name of the Java field for this property.
+   *
+   * @return the Java field name
+   */
+  @NonNull
+  String getJavaFieldName();
+
+  /**
+   * Gets the type of the associated Java field for the property.
+   *
+   * @return the Java type for the field
+   */
+  @NonNull
+  TypeName getJavaFieldType();
+
+  /**
+   * Gets the type of the property's item.
+   *
+   * @return the Java type for the item
+   */
+  @NonNull
+  default TypeName getJavaItemType() {
+    return getJavaFieldType();
+  }
 }

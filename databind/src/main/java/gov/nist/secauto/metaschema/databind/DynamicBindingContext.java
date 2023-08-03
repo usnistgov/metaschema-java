@@ -43,13 +43,31 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+/**
+ * Used to dynamically load a Generate, compile, and load a set of generated
+ * Metaschema annotated Java classes.
+ */
 public class DynamicBindingContext
     extends DefaultBindingContext {
 
+  /**
+   * Generate, compile, and load a set of generated Metaschema annotated Java
+   * classes based on the provided Metaschema {@code module}. Then construct a new
+   * {@link DynamicBindingContext} using these classes.
+   *
+   * @param module
+   *          the Metaschema module to generate classes for
+   * @param tempPath
+   *          the path to the directory to generate classes in or {@code null} to
+   *          use the system temporary directory
+   * @return a new binding context
+   * @throws IOException
+   *           if an error occurred while generating or loading the classes
+   */
   @SuppressWarnings("PMD.UseProperClassLoader") // false positive
   @NonNull
   public static DynamicBindingContext forMetaschema(
-      @NonNull IMetaschema metaschema,
+      @NonNull IMetaschema module,
       @Nullable Path tempPath) throws IOException {
     Path classDir;
     if (tempPath == null) {
@@ -59,41 +77,50 @@ public class DynamicBindingContext
     }
     classDir.toFile().deleteOnExit();
 
-    IProduction production = MetaschemaCompilerHelper.compileMetaschema(metaschema, classDir);
+    IProduction production = MetaschemaCompilerHelper.compileMetaschema(module, classDir);
     return new DynamicBindingContext(production,
         MetaschemaCompilerHelper.getClassLoader(classDir,
             ObjectUtils.notNull(Thread.currentThread().getContextClassLoader())));
   }
 
-  public DynamicBindingContext(@NonNull IProduction production, ClassLoader classLoader) {
-    production.getDefinitionProductionsAsStream()
-        .filter(
-            definitionProduction -> {
-              boolean retval = false;
-              IFlagContainer definition = definitionProduction.getDefinition();
-              if (definition instanceof IAssemblyDefinition) {
-                IAssemblyDefinition assembly = (IAssemblyDefinition) definition;
-                if (assembly.isRoot()) {
-                  retval = true;
-                }
-              }
-              return retval;
-            })
+  /**
+   * Construct a new binding context that is based on a collection of generated
+   * Metaschema annotated Java classes.
+   *
+   * @param production
+   *          the class generation result
+   * @param classLoader
+   *          the class loader to use to load the generated classes
+   * @see IProduction#of(IMetaschema,
+   *      gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver,
+   *      Path)
+   */
+  protected DynamicBindingContext(@NonNull IProduction production, ClassLoader classLoader) {
+    production.getGlobalDefinitionClassesAsStream()
+        .filter(definitionInfo -> {
+          boolean retval = false;
+          IFlagContainer definition = definitionInfo.getDefinition();
+          if (definition instanceof IAssemblyDefinition) {
+            IAssemblyDefinition assembly = (IAssemblyDefinition) definition;
+            if (assembly.isRoot()) {
+              retval = true;
+            }
+          }
+          return retval;
+        })
         .map(
-            definitionProduction -> {
-              IAssemblyDefinition definition = (IAssemblyDefinition) definitionProduction.getDefinition();
+            generatedClass -> {
               try {
                 @SuppressWarnings("unchecked") Class<IAssemblyClassBinding> clazz
-                    = ObjectUtils.notNull(
-                        (Class<IAssemblyClassBinding>) classLoader
-                            .loadClass(
-                                definitionProduction.getGeneratedClass().getClassName().reflectionName()));
+                    = ObjectUtils.notNull((Class<IAssemblyClassBinding>) classLoader
+                        .loadClass(generatedClass.getClassName().reflectionName()));
+
+                IAssemblyDefinition definition = (IAssemblyDefinition) generatedClass.getDefinition();
                 return new DynamicBindingMatcher(
                     definition,
                     clazz);
               } catch (ClassNotFoundException ex) {
-                throw new IllegalStateException(
-                    ex);
+                throw new IllegalStateException(ex);
               }
             })
         .forEachOrdered(

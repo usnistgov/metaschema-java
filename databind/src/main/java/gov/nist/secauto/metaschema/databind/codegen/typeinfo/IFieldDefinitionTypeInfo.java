@@ -24,32 +24,33 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class DefinitionProductionImpl implements IDefinitionProduction {
+/**
+ * Java class type information for an {@link IFieldDefinition} used for generating a Java class for
+ * the definition.
+ */
+public interface IFieldDefinitionTypeInfo extends IModelDefinitionTypeInfo {
 
+  /**
+   * Construct a new type info based on the provided definition.
+   *
+   * @param definition
+   *          the definition associated with the type info
+   * @param typeResolver
+   *          a resolver used to look up related type information
+   * @return the type info for the definition
+   */
   @NonNull
-  private final IFlagContainer definition;
-  @NonNull
-  private final IGeneratedDefinitionClass generatedClass;
-
-  public DefinitionProductionImpl(@NonNull IFlagContainer definition,
-      @NonNull IGeneratedDefinitionClass generatedClass) {
-    this.definition = definition;
-    this.generatedClass = generatedClass;
+  static IFieldDefinitionTypeInfo newTypeInfo(@NonNull IFieldDefinition definition,
+      @NonNull ITypeResolver typeResolver) {
+    return new FieldDefinitionTypeInfoImpl(definition, typeResolver);
   }
 
   @Override
-  public IFlagContainer getDefinition() {
-    return definition;
-  }
-
-  @Override
-  public IGeneratedDefinitionClass getGeneratedClass() {
-    return generatedClass;
-  }
+  IFieldDefinition getDefinition();
 }

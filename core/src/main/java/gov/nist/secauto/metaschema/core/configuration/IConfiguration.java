@@ -31,29 +31,41 @@ import java.util.Map;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * The base feature interface for getting the configuration of processors and parsers in this
- * library. This provides an immutable view of the current configuration.
+ * The base interface for getting the configuration of processors and parsers in
+ * this library. This provides an immutable view of the current configuration.
  *
  * @param <T>
  *          the type of the feature set
  */
-@SuppressWarnings({ "PMD.DoNotUseThreads", "PMD.ReplaceVectorWithList" })
 public interface IConfiguration<T extends IConfigurationFeature<?>> {
   /**
-   * Determines if a specific serialization/deserialization feature is enabled.
+   * Determines if a specific feature is enabled.
    *
    * @param feature
    *          the feature to check for
    * @return {@code true} if the feature is enabled, or {@code false} otherwise
+   * @throws UnsupportedOperationException
+   *           if the feature is not a boolean valued feature
+   * @see IConfigurationFeature#getValueClass()
    */
   boolean isFeatureEnabled(@NonNull T feature);
 
+  /**
+   * Get the configuration value of the provided {@code feature}.
+   *
+   * @param <V>
+   *          the value type
+   * @param feature
+   *          the requested feature
+   * @return the value of the feature
+   */
+  @NonNull
   <V> V get(@NonNull T feature);
 
   /**
-   * Get the mapping of feature to feature value.
+   * Get the mapping of each feature mapped to its value.
    *
-   * @return the mapping.
+   * @return the mapping
    */
   @NonNull
   Map<T, Object> getFeatureValues();

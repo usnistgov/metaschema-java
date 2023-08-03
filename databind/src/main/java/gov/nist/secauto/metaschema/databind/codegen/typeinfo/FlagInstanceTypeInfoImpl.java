@@ -24,13 +24,30 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.TypeName;
 
-public interface IModelInstanceTypeInfo extends IInstanceTypeInfo {
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+class FlagInstanceTypeInfoImpl
+    extends AbstractInstanceTypeInfo<IFlagInstance, IDefinitionTypeInfo>
+    implements IFlagInstanceTypeInfo {
+  public FlagInstanceTypeInfoImpl(@NonNull IFlagInstance instance, @NonNull IDefinitionTypeInfo parentDefinition) {
+    super(instance, parentDefinition);
+  }
 
   @Override
-  INamedModelInstance getInstance();
+  public String getBaseName() {
+    return getInstance().getEffectiveName();
+  }
 
+  @Override
+  public TypeName getJavaFieldType() {
+    return ObjectUtils.notNull(ClassName.get(getInstance().getDefinition().getJavaTypeAdapter().getJavaClass()));
+  }
 }
