@@ -138,11 +138,6 @@ class DefaultFieldValueProperty
   }
 
   @Override
-  public IPropertyCollector newPropertyCollector() {
-    return new SingletonPropertyCollector();
-  }
-
-  @Override
   public boolean write(Object instance, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     Object value = getValue(instance);
@@ -194,5 +189,10 @@ class DefaultFieldValueProperty
     Object value = getValue(fromInstance);
     IDataTypeAdapter<?> adapter = getJavaTypeAdapter();
     setValue(toInstance, value == null ? null : adapter.copy(value));
+  }
+
+  @Override
+  public Object defaultValue() {
+    return getDefaultValue();
   }
 }

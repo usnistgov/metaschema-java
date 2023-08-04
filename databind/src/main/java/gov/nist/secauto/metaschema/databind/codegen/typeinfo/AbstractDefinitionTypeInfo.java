@@ -70,8 +70,7 @@ abstract class AbstractDefinitionTypeInfo<DEF extends IDefinition> implements ID
   /**
    * Lazy initialize instance information.
    *
-   * @return {@code true} if instance information was initialized or {@code false}
-   *         otherwise
+   * @return {@code true} if instance information was initialized or {@code false} otherwise
    */
   protected abstract boolean initInstanceTypeInfos();
 

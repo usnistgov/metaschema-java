@@ -100,7 +100,8 @@ public class XmlMarkupParser { // NOPMD - acceptable
   protected void parseToString(XMLEventReader2 reader, StringBuilder buffer) // NOPMD - acceptable
       throws XMLStreamException {
     // if (LOGGER.isDebugEnabled()) {
-    // LOGGER.debug("parseToString(enter): {}", XmlEventUtil.toString(reader.peek()));
+    // LOGGER.debug("parseToString(enter): {}",
+    // XmlEventUtil.toString(reader.peek()));
     // }
 
     outer: while (reader.hasNextEvent() && !reader.peek().isEndElement()) {
@@ -121,7 +122,8 @@ public class XmlMarkupParser { // NOPMD - acceptable
           parseStartElement(reader, start, buffer);
 
           // the next event should be the event after the start's END_ELEMENT
-          // assert XmlEventUtil.isNextEventEndElement(reader, name) : XmlEventUtil.toString(reader.peek());
+          // assert XmlEventUtil.isNextEventEndElement(reader, name) :
+          // XmlEventUtil.toString(reader.peek());
         } else {
           // throw new IllegalStateException();
           // stop parsing on first unrecognized event
@@ -192,7 +194,8 @@ public class XmlMarkupParser { // NOPMD - acceptable
   private void parseContents(XMLEventReader2 reader, StartElement start, StringBuilder buffer)
       throws XMLStreamException {
     // if (LOGGER.isDebugEnabled()) {
-    // LOGGER.debug("parseContents(enter): {}", XmlEventUtil.toString(reader.peek()));
+    // LOGGER.debug("parseContents(enter): {}",
+    // XmlEventUtil.toString(reader.peek()));
     // }
 
     XMLEvent event;
@@ -210,7 +213,8 @@ public class XmlMarkupParser { // NOPMD - acceptable
         parseStartElement(reader, nextStart, buffer);
 
         // if (LOGGER.isDebugEnabled()) {
-        // LOGGER.debug("parseContents(after): {}", XmlEventUtil.toString(reader.peek()));
+        // LOGGER.debug("parseContents(after): {}",
+        // XmlEventUtil.toString(reader.peek()));
         // }
 
         // assert XmlEventUtil.isNextEventEndElement(reader, nextName) :
@@ -225,7 +229,7 @@ public class XmlMarkupParser { // NOPMD - acceptable
     }
 
     assert start == null
-        || XmlEventUtil.isNextEventEndElement(reader, ObjectUtils.notNull(start.getName())) : XmlEventUtil
+        || XmlEventUtil.isEventEndElement(reader.peek(), ObjectUtils.notNull(start.getName())) : XmlEventUtil
             .generateExpectedMessage(reader.peek(), XMLStreamConstants.END_ELEMENT, start.getName());
 
     // if (LOGGER.isDebugEnabled()) {

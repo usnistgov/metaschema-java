@@ -99,8 +99,7 @@ public class DefaultBoundLoader implements IBoundLoader {
   private EntityResolver entityResolver;
 
   /**
-   * Construct a new OSCAL loader instance, using the provided
-   * {@link IBindingContext}.
+   * Construct a new OSCAL loader instance, using the provided {@link IBindingContext}.
    *
    * @param bindingContext
    *          the Metaschema binding context to use to load Java types

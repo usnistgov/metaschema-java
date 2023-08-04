@@ -117,12 +117,11 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
   private final ITypeResolver typeResolver;
 
   /**
-   * Get a new instance of the this class generation factory that uses the
-   * provided {@code typeResolver}.
+   * Get a new instance of the this class generation factory that uses the provided
+   * {@code typeResolver}.
    *
    * @param typeResolver
-   *          the resolver used to generate type information for Metasschema
-   *          constructs
+   *          the resolver used to generate type information for Metasschema constructs
    * @return the new class factory
    */
   @NonNull
@@ -131,12 +130,11 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
   }
 
   /**
-   * Construct a new instance of the this class ganeration factory that uses the
-   * provided {@code typeResolver}.
+   * Construct a new instance of the this class ganeration factory that uses the provided
+   * {@code typeResolver}.
    *
    * @param typeResolver
-   *          the resolver used to generate type information for Metasschema
-   *          constructs
+   *          the resolver used to generate type information for Metasschema constructs
    */
   protected DefaultMetaschemaClassFactory(@NonNull ITypeResolver typeResolver) {
     this.typeResolver = typeResolver;
@@ -268,8 +266,8 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
   }
 
   /**
-   * Creates and configures a builder, for a Metaschema module, that can be used
-   * to generate a Java class.
+   * Creates and configures a builder, for a Metaschema module, that can be used to generate a Java
+   * class.
    *
    * @param metaschema
    *          a parsed Metaschema module
@@ -419,14 +417,13 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
   }
 
   /**
-   * Creates and configures a builder, for a Metaschema model definition, that can
-   * be used to generate a Java class.
+   * Creates and configures a builder, for a Metaschema model definition, that can be used to generate
+   * a Java class.
    *
    * @param typeInfo
    *          the type information for the class to generate
    * @param isChild
-   *          {@code true} if the class to be generated is a child class, or
-   *          {@code false} otherwise
+   *          {@code true} if the class to be generated is a child class, or {@code false} otherwise
    * @return the class builder
    * @throws IOException
    *           if an error occurred while building the Java class
@@ -469,15 +466,13 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
   }
 
   /**
-   * Generate the contents of the class represented by the provided
-   * {@code builder}.
+   * Generate the contents of the class represented by the provided {@code builder}.
    *
    * @param typeInfo
    *          the type information for the class to build
    * @param builder
    *          the builder to use for generating the class content
-   * @return the set of additional definitions for which child classes need to be
-   *         generated
+   * @return the set of additional definitions for which child classes need to be generated
    */
   protected Set<IFlagContainer> buildClass(
       @NonNull IAssemblyDefinitionTypeInfo typeInfo,
@@ -508,15 +503,13 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
   }
 
   /**
-   * Generate the contents of the class represented by the provided
-   * {@code builder}.
+   * Generate the contents of the class represented by the provided {@code builder}.
    *
    * @param typeInfo
    *          the type information for the class to build
    * @param builder
    *          the builder to use for generating the class content
-   * @return the set of additional definitions for which child classes need to be
-   *         generated
+   * @return the set of additional definitions for which child classes need to be generated
    */
   protected Set<IFlagContainer> buildClass(
       @NonNull IFieldDefinitionTypeInfo typeInfo,
@@ -536,15 +529,13 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
   }
 
   /**
-   * Generate the contents of the class represented by the provided
-   * {@code builder}.
+   * Generate the contents of the class represented by the provided {@code builder}.
    *
    * @param typeInfo
    *          the type information for the class to build
    * @param builder
    *          the builder to use for generating the class content
-   * @return the set of additional definitions for which child classes need to be
-   *         generated
+   * @return the set of additional definitions for which child classes need to be generated
    */
   @NonNull
   protected Set<IFlagContainer> buildClass(
@@ -636,8 +627,7 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
   }
 
   /**
-   * Build the core property annotations that are common to all Metaschema
-   * classes.
+   * Build the core property annotations that are common to all Metaschema classes.
    *
    * @param typeInfo
    *          the type information for the Java property to build

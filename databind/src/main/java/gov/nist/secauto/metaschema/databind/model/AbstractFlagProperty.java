@@ -51,11 +51,6 @@ abstract class AbstractFlagProperty
   }
 
   @Override
-  public IPropertyCollector newPropertyCollector() {
-    return new SingletonPropertyCollector();
-  }
-
-  @Override
   public void copyBoundObject(Object fromInstance, Object toInstance) {
     Object value = getValue(fromInstance);
     IDataTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();

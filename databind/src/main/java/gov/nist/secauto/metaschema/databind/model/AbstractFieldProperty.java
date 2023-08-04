@@ -72,7 +72,8 @@ public abstract class AbstractFieldProperty
   // IDataTypeHandler retval;
   // if (itemClass.isAnnotationPresent(MetaschemaField.class)) {
   // IClassBinding classBinding
-  // = getParentClassBinding().getBindingContext().getClassBinding(getPropertyInfo().getItemType());
+  // =
+  // getParentClassBinding().getBindingContext().getClassBinding(getPropertyInfo().getItemType());
   // retval = new ClassDataTypeHandler(classBinding, this);
   // } else {
   // retval = new JavaTypeAdapterDataTypeHandler(this);

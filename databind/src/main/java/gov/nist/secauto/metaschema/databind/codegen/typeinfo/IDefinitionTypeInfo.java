@@ -44,8 +44,7 @@ public interface IDefinitionTypeInfo {
   IDefinition getDefinition();
 
   /**
-   * Gets the resolver which can be used to lookup Java type information for
-   * Metaschema objects.
+   * Gets the resolver which can be used to lookup Java type information for Metaschema objects.
    *
    * @return the type resolver
    */
@@ -53,13 +52,11 @@ public interface IDefinitionTypeInfo {
   ITypeResolver getTypeResolver();
 
   /**
-   * Check's if the Java class to be generated will have a property with the given
-   * name.
+   * Check's if the Java class to be generated will have a property with the given name.
    *
    * @param propertyName
    *          the property name to look for
-   * @return {@code true} if there is an associated property with the name or
-   *         {@code false} otherwise
+   * @return {@code true} if there is an associated property with the name or {@code false} otherwise
    */
   boolean hasPropertyWithName(@NonNull String propertyName);
 
@@ -82,8 +79,7 @@ public interface IDefinitionTypeInfo {
   Collection<IInstanceTypeInfo> getInstanceTypeInfos();
 
   /**
-   * Get the type information for all Java class properties associated with a
-   * given instance.
+   * Get the type information for all Java class properties associated with a given instance.
    *
    * @return the type information
    */

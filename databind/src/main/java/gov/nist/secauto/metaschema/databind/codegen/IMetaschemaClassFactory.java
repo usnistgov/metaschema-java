@@ -39,12 +39,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IMetaschemaClassFactory {
   /**
-   * Get a new instance of the default class generation factory that uses the
-   * provided {@code typeResolver}.
+   * Get a new instance of the default class generation factory that uses the provided
+   * {@code typeResolver}.
    *
    * @param typeResolver
-   *          the resolver used to generate type information for Metasschema
-   *          constructs
+   *          the resolver used to generate type information for Metasschema constructs
    * @return the new class factory
    */
   @NonNull
@@ -53,8 +52,8 @@ public interface IMetaschemaClassFactory {
   }
 
   /**
-   * Get the type resolver used to generate type information for Metasschema
-   * constructs represented as Java classes, fields, and methods.
+   * Get the type resolver used to generate type information for Metasschema constructs represented as
+   * Java classes, fields, and methods.
    *
    * @return the type resolver
    */
@@ -62,8 +61,8 @@ public interface IMetaschemaClassFactory {
   ITypeResolver getTypeResolver();
 
   /**
-   * Generate a class in the provided {@code targetDirectory} that represents the
-   * provided Metaschema {@code module}.
+   * Generate a class in the provided {@code targetDirectory} that represents the provided Metaschema
+   * {@code module}.
    *
    * @param module
    *          the Metaschema module to generate the class for
@@ -79,8 +78,8 @@ public interface IMetaschemaClassFactory {
       @NonNull Path targetDirectory) throws IOException;
 
   /**
-   * Generate a class in the provided {@code targetDirectory} that represents the
-   * provided Metaschema definition's {@code typeInfo}.
+   * Generate a class in the provided {@code targetDirectory} that represents the provided Metaschema
+   * definition's {@code typeInfo}.
    *
    * @param typeInfo
    *          the type information for the class to generate
@@ -96,17 +95,16 @@ public interface IMetaschemaClassFactory {
       @NonNull Path targetDirectory) throws IOException;
 
   /**
-   * Generate a package-info.java class in the provided {@code targetDirectory}
-   * that represents a collection of Metaschema modules.
+   * Generate a package-info.java class in the provided {@code targetDirectory} that represents a
+   * collection of Metaschema modules.
    *
    * @param javaPackage
    *          the Java package name to use
    * @param xmlNamespace
-   *          the default XML namespace for all bound Metaschema information
-   *          elements in the generated package
+   *          the default XML namespace for all bound Metaschema information elements in the generated
+   *          package
    * @param metaschemaProductions
-   *          a collection of previously generated Metaschema modules and
-   *          definition classes
+   *          a collection of previously generated Metaschema modules and definition classes
    * @param targetDirectory
    *          the directory to generate the Java class in
    * @return the generated class details

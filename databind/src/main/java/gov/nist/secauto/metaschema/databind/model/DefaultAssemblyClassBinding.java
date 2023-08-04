@@ -77,8 +77,8 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   private final Lazy<IAssemblyConstraintSupport> constraints;
 
   /**
-   * Create a new {@link IClassBinding} for a Java bean annotated with the
-   * {@link BoundAssembly} annotation.
+   * Create a new {@link IClassBinding} for a Java bean annotated with the {@link BoundAssembly}
+   * annotation.
    *
    * @param clazz
    *          the Java bean class
@@ -93,8 +93,8 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   }
 
   /**
-   * Construct a new {@link IClassBinding} for a Java bean annotated with the
-   * {@link BoundAssembly} annotation.
+   * Construct a new {@link IClassBinding} for a Java bean annotated with the {@link BoundAssembly}
+   * annotation.
    *
    * @param clazz
    *          the Java bean class
@@ -123,9 +123,8 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   }
 
   /**
-   * Get the {@link MetaschemaAssembly} annotation associated with this class.
-   * This annotation provides information used by this class binding to control
-   * binding behavior.
+   * Get the {@link MetaschemaAssembly} annotation associated with this class. This annotation
+   * provides information used by this class binding to control binding behavior.
    *
    * @return the annotation
    */
@@ -330,15 +329,13 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
    * @param instance
    *          the instance to serialize
    * @param writeObjectWrapper
-   *          {@code true} if the start and end object should be written, or
-   *          {@code false} otherwise
+   *          {@code true} if the start and end object should be written, or {@code false} otherwise
    * @param context
    *          the JSON writing context used to generate output
    * @throws IOException
    *           if an error occurs while writing to the output context
    * @throws NullPointerException
-   *           if there is a JSON key configured and the key property's value is
-   *           {@code null}
+   *           if there is a JSON key configured and the key property's value is {@code null}
    */
   @SuppressWarnings("resource") // not owned
   protected void writeInternal(@NonNull Object instance, boolean writeObjectWrapper,

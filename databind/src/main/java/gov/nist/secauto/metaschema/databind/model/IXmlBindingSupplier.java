@@ -34,11 +34,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 @FunctionalInterface
 interface IXmlBindingSupplier {
   @NonNull
-  Object get(@Nullable Object parentInstance, @NonNull StartElement start, @NonNull IXmlParsingContext context)
+  Object get(@NonNull Object parentInstance, @NonNull StartElement start, @NonNull IXmlParsingContext context)
       throws IOException, XMLStreamException;
 }

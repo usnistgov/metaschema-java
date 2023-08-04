@@ -29,9 +29,8 @@ package gov.nist.secauto.metaschema.core.configuration;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * This interface provides methods for retrieving and updating the configuration
- * of processors and parsers in this library. This provides a mutable view of
- * the current configuration.
+ * This interface provides methods for retrieving and updating the configuration of processors and
+ * parsers in this library. This provides a mutable view of the current configuration.
  *
  * @param <T>
  *          the type of the feature set
@@ -87,8 +86,7 @@ public interface IMutableConfiguration<T extends IConfigurationFeature<?>>
    *          the value to set
    * @return the updated configuration
    * @throws UnsupportedOperationException
-   *           if the provided feature value is not assignment compatible with the
-   *           features value type
+   *           if the provided feature value is not assignment compatible with the features value type
    * @see IConfigurationFeature#getValueClass()
    */
   @NonNull

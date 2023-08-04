@@ -34,8 +34,8 @@ import java.util.Map;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides a basic configuration management implementation that allows mutable
- * access to configuration state.
+ * Provides a basic configuration management implementation that allows mutable access to
+ * configuration state.
  *
  * @param <T>
  *          the type of managed features

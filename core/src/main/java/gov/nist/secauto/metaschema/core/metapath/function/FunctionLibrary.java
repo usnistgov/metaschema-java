@@ -52,8 +52,8 @@ public class FunctionLibrary implements IFunctionLibrary {
    * @param function
    *          the function signature to register
    * @throws IllegalArgumentException
-   *           if the provided function has the same arity as a previously
-   *           registered function with the same name
+   *           if the provided function has the same arity as a previously registered function with
+   *           the same name
    */
   public void registerFunction(@NonNull IFunction function) {
     registerFunctionByQName(function);

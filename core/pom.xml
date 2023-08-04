@@ -197,6 +197,7 @@
 						<excludeRoots>
 							<excludeRoot>target/generated-sources/antlr4</excludeRoot>
 							<excludeRoot>target/generated-sources/xmlbeans</excludeRoot>
+							<excludeRoot>qt3tests</excludeRoot>
 						</excludeRoots>
 					</configuration>
 				</plugin>

@@ -35,8 +35,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  */
 public interface IFieldValueTypeInfo extends ITypeInfo {
   /**
-   * Construct a new type info based on the provided parent field definition which
-   * contains the field value.
+   * Construct a new type info based on the provided parent field definition which contains the field
+   * value.
    *
    * @param parentDefinition
    *          the definition associated with the field value type info

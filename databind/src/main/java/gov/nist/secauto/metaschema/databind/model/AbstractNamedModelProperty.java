@@ -159,11 +159,6 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
   }
 
   @Override
-  public IPropertyCollector newPropertyCollector() {
-    return getPropertyInfo().newPropertyCollector();
-  }
-
-  @Override
   public boolean write(Object parentInstance, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     Object value = getValue(parentInstance);
@@ -223,7 +218,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
     Object value = getValue(fromInstance);
     if (value != null) {
       IModelPropertyInfo propertyInfo = getPropertyInfo();
-      IPropertyCollector collector = newPropertyCollector();
+      IPropertyCollector collector = propertyInfo.newPropertyCollector();
 
       propertyInfo.copy(fromInstance, toInstance, collector);
 

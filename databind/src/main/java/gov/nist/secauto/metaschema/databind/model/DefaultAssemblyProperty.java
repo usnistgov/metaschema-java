@@ -101,4 +101,10 @@ class DefaultAssemblyProperty
   public int getMaxOccurs() {
     return getAssemblyAnnotation().maxOccurs();
   }
+
+  @Override
+  public Object defaultValue() {
+    return getPropertyInfo().newPropertyCollector().getValue();
+  }
+
 }

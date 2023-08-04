@@ -109,4 +109,15 @@ public final class ObjectUtils {
   public static <T> Stream<T> filterNull(T item) {
     return Objects.nonNull(item) ? Stream.of(item) : Stream.empty();
   }
+
+  @SuppressWarnings("unchecked")
+  @NonNull
+  public static <T> T asType(@NonNull Object obj) {
+    return (T) obj;
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T> T asNullableType(Object obj) {
+    return (T) obj;
+  }
 }

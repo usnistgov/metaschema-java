@@ -58,6 +58,16 @@ public class DefaultXmlDeserializer<CLASS>
   @NonNull
   private final RootAssemblyDefinition rootDefinition;
 
+  /**
+   * Construct a new Metaschema binding-based deserializer that reads XML-based
+   * Metaschema content.
+   *
+   * @param bindingContext
+   *          the Metaschema data binding context
+   * @param classBinding
+   *          the assembly class binding describing the Java objects this
+   *          deserializer parses data into
+   */
   public DefaultXmlDeserializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
     if (!classBinding.isRoot()) {
@@ -67,13 +77,16 @@ public class DefaultXmlDeserializer<CLASS>
     this.rootDefinition = new RootAssemblyDefinition(classBinding);
   }
 
-  // @Override
-  // public Format supportedFromat() {
-  // return Format.XML;
-  // }
-
+  /**
+   * Get the XML input factory instance used to create XML parser instances.
+   * <p>
+   * Uses a built-in default if a user specified factory is not provided.
+   *
+   * @return the factory instance
+   * @see #setXMLInputFactory(XMLInputFactory2)
+   */
   @NonNull
-  protected XMLInputFactory2 getXMLInputFactory() {
+  private XMLInputFactory2 getXMLInputFactory() {
     synchronized (this) {
       if (xmlInputFactory == null) {
         xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
@@ -86,6 +99,13 @@ public class DefaultXmlDeserializer<CLASS>
     }
   }
 
+  /**
+   * Provide a XML input factory instance that will be used to create XML parser
+   * instances.
+   *
+   * @param factory
+   *          the factory instance
+   */
   protected void setXMLInputFactory(@NonNull XMLInputFactory2 factory) {
     synchronized (this) {
       this.xmlInputFactory = factory;
@@ -93,25 +113,20 @@ public class DefaultXmlDeserializer<CLASS>
   }
 
   @NonNull
-  protected XMLEventReader2 newXMLEventReader2(@NonNull Reader reader) throws XMLStreamException {
+  private XMLEventReader2 newXMLEventReader2(@NonNull Reader reader) throws XMLStreamException {
     XMLEventReader eventReader = getXMLInputFactory().createXMLEventReader(reader);
     EventFilter filter = new CommentFilter();
     return ObjectUtils.notNull((XMLEventReader2) getXMLInputFactory().createFilteredReader(eventReader, filter));
   }
 
-  @NonNull
-  protected RootAssemblyDefinition getRootAssemblyDefinition() {
-    return rootDefinition;
-  }
-
   @Override
-  protected IDocumentNodeItem deserializeToNodeItemInternal(Reader reader, URI documentUri) throws IOException {
+  protected final IDocumentNodeItem deserializeToNodeItemInternal(Reader reader, URI documentUri) throws IOException {
     Object value = deserializeToValue(reader, documentUri);
-    return INodeItemFactory.instance().newDocumentNodeItem(getRootAssemblyDefinition(), documentUri, value);
+    return INodeItemFactory.instance().newDocumentNodeItem(rootDefinition, documentUri, value);
   }
 
   @Override
-  public CLASS deserializeToValue(Reader reader, URI documentUri) throws IOException {
+  public final CLASS deserializeToValue(Reader reader, URI documentUri) throws IOException {
     // doesn't auto close the underlying reader
     try (AutoCloser<XMLEventReader2, XMLStreamException> closer
         = new AutoCloser<>(newXMLEventReader2(reader), event -> event.close())) {
@@ -122,11 +137,11 @@ public class DefaultXmlDeserializer<CLASS>
   }
 
   @NonNull
-  protected CLASS parseXmlInternal(@NonNull XMLEventReader2 reader)
+  private CLASS parseXmlInternal(@NonNull XMLEventReader2 reader)
       throws IOException, XMLStreamException {
 
     MetaschemaXmlParser parser = new MetaschemaXmlParser(reader, new DefaultXmlProblemHandler());
 
-    return parser.read(getRootAssemblyDefinition());
+    return parser.read(rootDefinition);
   }
 }

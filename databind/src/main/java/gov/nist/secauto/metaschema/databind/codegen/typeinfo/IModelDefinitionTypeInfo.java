@@ -80,8 +80,8 @@ public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
   ClassName getBaseClassName();
 
   /**
-   * Gets the class type information for the object definition for which this
-   * class is being generated.
+   * Gets the class type information for the object definition for which this class is being
+   * generated.
    *
    * @return the class's type information
    */

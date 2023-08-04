@@ -82,11 +82,10 @@ public final class FnDoc {
   }
 
   /**
-   * Dynamically load the document associated with the URI, and return a
-   * {@link IDocumentNodeItem} containing the result.
+   * Dynamically load the document associated with the URI, and return a {@link IDocumentNodeItem}
+   * containing the result.
    * <p>
-   * Based on the XPath 3.1
-   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-doc">fn:doc</a>
+   * Based on the XPath 3.1 <a href="https://www.w3.org/TR/xpath-functions-31/#func-doc">fn:doc</a>
    * function.
    *
    * @param uri

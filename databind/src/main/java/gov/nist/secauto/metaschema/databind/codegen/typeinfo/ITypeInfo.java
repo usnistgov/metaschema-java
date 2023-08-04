@@ -33,9 +33,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface ITypeInfo {
 
   /**
-   * Get the name to use for the property. If the property is a collection type,
-   * then this will be the group-as name, else this will be the use name or the
-   * name if not use name is set.
+   * Get the name to use for the property. If the property is a collection type, then this will be the
+   * group-as name, else this will be the use name or the name if not use name is set.
    *
    * @return the name
    */
@@ -43,9 +42,9 @@ public interface ITypeInfo {
   String getBaseName();
 
   /**
-   * The name to use for Java constructs that refer to the item. This is used for
-   * when a field is collection-based and there is a need to refer to a single
-   * item, such as in an add/remove method name.
+   * The name to use for Java constructs that refer to the item. This is used for when a field is
+   * collection-based and there is a need to refer to a single item, such as in an add/remove method
+   * name.
    *
    * @return the item base name
    */

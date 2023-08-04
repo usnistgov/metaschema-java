@@ -44,22 +44,22 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Used to dynamically load a Generate, compile, and load a set of generated
- * Metaschema annotated Java classes.
+ * Used to dynamically generate, compile, and load a set of Metaschema annotated
+ * Java classes.
  */
 public class DynamicBindingContext
     extends DefaultBindingContext {
 
   /**
-   * Generate, compile, and load a set of generated Metaschema annotated Java
-   * classes based on the provided Metaschema {@code module}. Then construct a new
-   * {@link DynamicBindingContext} using these classes.
+   * Generate, compile, and load a set of generated Metaschema annotated Java classes based on the
+   * provided Metaschema {@code module}. Then construct a new {@link DynamicBindingContext} using
+   * these classes.
    *
    * @param module
    *          the Metaschema module to generate classes for
    * @param tempPath
-   *          the path to the directory to generate classes in or {@code null} to
-   *          use the system temporary directory
+   *          the path to the directory to generate classes in or {@code null} to use the system
+   *          temporary directory
    * @return a new binding context
    * @throws IOException
    *           if an error occurred while generating or loading the classes
@@ -84,16 +84,15 @@ public class DynamicBindingContext
   }
 
   /**
-   * Construct a new binding context that is based on a collection of generated
-   * Metaschema annotated Java classes.
+   * Construct a new binding context that is based on a collection of generated Metaschema annotated
+   * Java classes.
    *
    * @param production
    *          the class generation result
    * @param classLoader
    *          the class loader to use to load the generated classes
    * @see IProduction#of(IMetaschema,
-   *      gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver,
-   *      Path)
+   *      gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver, Path)
    */
   protected DynamicBindingContext(@NonNull IProduction production, ClassLoader classLoader) {
     production.getGlobalDefinitionClassesAsStream()

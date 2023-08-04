@@ -123,16 +123,14 @@ class XmlParserTest
     XMLEvent event = eventReader.nextEvent();
     assertEquals(XMLStreamConstants.START_ELEMENT, event.getEventType());
     StartElement start = event.asStartElement();
+    assert start != null;
+
     // assertEquals("test", jsonParser.nextFieldName());
     // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
     // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
 
-    FlaggedAssembly obj = new FlaggedAssembly();
-    assert start != null;
-
     MetaschemaXmlParser parser = new MetaschemaXmlParser(eventReader);
-
-    assertTrue(parser.readFlagInstanceValue(idProperty, obj, start));
+    FlaggedAssembly obj = parser.readDefinitionValue(assembly, null, start);
 
     assertEquals("theId", obj.getId());
   }

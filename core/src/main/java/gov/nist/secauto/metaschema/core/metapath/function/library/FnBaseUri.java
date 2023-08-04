@@ -44,8 +44,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Since a node doesn't have a base URI in Metaschema, this is an alias for the
- * document-uri function.
+ * Since a node doesn't have a base URI in Metaschema, this is an alias for the document-uri
+ * function.
  */
 public final class FnBaseUri {
 
@@ -109,14 +109,12 @@ public final class FnBaseUri {
   /**
    * Get the base URI for the provided {@code nodeItem}.
    * <p>
-   * Based on the XPath 3.1 <a href=
-   * "https://www.w3.org/TR/xpath-functions-31/#func-base-uri">fn:base-uri</a>
-   * function.
+   * Based on the XPath 3.1
+   * <a href= "https://www.w3.org/TR/xpath-functions-31/#func-base-uri">fn:base-uri</a> function.
    *
    * @param nodeItem
    *          the node to get the base URI from
-   * @return the base URI, or {@code null} if the node is either null or doesn't
-   *         have a base URI
+   * @return the base URI, or {@code null} if the node is either null or doesn't have a base URI
    */
   @SuppressWarnings("PMD.NullAssignment") // for readability
   @Nullable

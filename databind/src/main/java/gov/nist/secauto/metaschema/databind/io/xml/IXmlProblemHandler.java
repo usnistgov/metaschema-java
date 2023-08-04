@@ -27,21 +27,109 @@
 package gov.nist.secauto.metaschema.databind.io.xml;
 
 import gov.nist.secauto.metaschema.databind.io.IProblemHandler;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundModelDefinition;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
-import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.util.Collection;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IXmlProblemHandler extends IProblemHandler {
   /**
-   * Callback used to handle an attribute that is unknown to the model being parsed.
+   * Callback used to handle an attribute that is unknown to the model being
+   * parsed.
    *
-   * @param instance
-   *          the Java instance that data is to be deserialized to
-   * @param attributeName
-   *          the name of the unknown attribute
+   * @param parentDefinition
+   *          the bound assembly class on which the missing instances are found
+   * @param targetObject
+   *          the Java object for the {@code parentDefinition}
+   * @param attribute
+   *          the unknown attribute
    * @param parsingContext
-   *          the context used for parsing
-   * @return {@code true} if the attribute was processed by this handler, or {@code false} otherwise
+   *          the XML parsing context used for parsing
+   * @return {@code true} if the attribute was handled by this method, or
+   *         {@code false} otherwise
    */
-  // TODO: implement this
-  boolean handleUnknownAttribute(Object instance, QName attributeName, IXmlParsingContext parsingContext);
+  boolean handleUnknownAttribute(
+      @NonNull IBoundModelDefinition parentDefinition,
+      @NonNull Object targetObject,
+      @NonNull Attribute attribute,
+      @NonNull IXmlParsingContext parsingContext);
+
+  /**
+   * Callback used to handle an element that is unknown to the model being parsed.
+   *
+   * @param parentDefinition
+   *          the bound assembly class on which the missing instances are found
+   * @param targetObject
+   *          the Java object for the {@code parentDefinition}
+   * @param start
+   *          the parsed XML start element
+   * @param parsingContext
+   *          the XML parsing context used for parsing
+   * @return {@code true} if the element was handled by this method, or
+   *         {@code false} otherwise
+   */
+  boolean handleUnknownElement(
+      @NonNull IAssemblyClassBinding parentDefinition,
+      @NonNull Object targetObject,
+      @NonNull StartElement start,
+      @NonNull IXmlParsingContext parsingContext);
+
+  /**
+   * A callback used to handle bound flag instances for which no data was found
+   * when the content was parsed.
+   * <p>
+   * This can be used to supply default or prescribed values based on application
+   * logic.
+   *
+   * @param parentDefinition
+   *          the bound assembly class on which the missing instances are found
+   * @param targetObject
+   *          the Java object for the {@code parentDefinition}
+   * @param unhandledFlags
+   *          the set of instances that had no data to parse
+   * @throws IOException
+   *           if there was an error when reading XML data
+   * @throws XMLStreamException
+   *           if there was an error generating an {@link XMLEvent} from the XML
+   */
+  void handleMissingFlagInstances(
+      @NonNull IClassBinding parentDefinition,
+      @NonNull Object targetObject,
+      @NonNull Collection<IBoundFlagInstance> unhandledFlags)
+      throws IOException, XMLStreamException;
+
+  /**
+   * A callback used to handle bound model instances for which no data was found
+   * when the content was parsed.
+   * <p>
+   * This can be used to supply default or prescribed values based on application
+   * logic.
+   *
+   * @param parentDefinition
+   *          the bound assembly class on which the missing instances are found
+   * @param targetObject
+   *          the Java object for the {@code parentDefinition}
+   * @param unhandledInstances
+   *          the set of instances that had no data to parse
+   * @throws IOException
+   *           if there was an error when reading XML data
+   * @throws XMLStreamException
+   *           if there was an error generating an {@link XMLEvent} from the XML
+   */
+  void handleMissingModelInstances(
+      @NonNull IAssemblyClassBinding parentDefinition,
+      @NonNull Object targetObject,
+      @NonNull Collection<IBoundNamedModelInstance> unhandledInstances)
+      throws IOException, XMLStreamException;
 }

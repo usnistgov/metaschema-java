@@ -26,16 +26,19 @@
 
 package gov.nist.secauto.metaschema.databind.model.test;
 
+import gov.nist.secauto.metaschema.core.datatype.adapter.IntegerAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
+
+import java.math.BigInteger;
 
 // Used
 @MetaschemaAssembly(name = "flagged-assembly", metaschema = TestMetaschema.class)
 public class FlaggedAssembly {
   @BoundFlag(useName = "id")
   private String id;
-  @BoundFlag(useName = "number")
-  private int number;
+  @BoundFlag(useName = "number", typeAdapter = IntegerAdapter.class)
+  private BigInteger number;
 
   public String getId() {
     return id;
@@ -45,11 +48,11 @@ public class FlaggedAssembly {
     this.id = id;
   }
 
-  public int getNumber() {
+  public BigInteger getNumber() {
     return number;
   }
 
-  public void setNumber(int number) {
+  public void setNumber(BigInteger number) {
     this.number = number;
   }
 

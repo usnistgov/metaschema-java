@@ -309,9 +309,14 @@ public class MetaschemaJsonParser
     // map to speed up
     for (Map.Entry<String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
       if (!handledProperties.contains(entry.getKey())) {
+        // REFACTOR: Implement problem handler
         // use the default value of the collector
         IBoundNamedInstance property = ObjectUtils.notNull(entry.getValue());
-        property.setValue(instance, property.newPropertyCollector().getValue());
+        try {
+          property.setValue(instance, property.defaultValue());
+        } catch (BindingException ex) {
+          throw new IOException(ex);
+        }
       }
     }
 
@@ -498,7 +503,8 @@ public class MetaschemaJsonParser
         if (!handledProperties.contains(entry.getKey())) {
           IBoundNamedInstance property = ObjectUtils.notNull(entry.getValue());
           // use the default value of the collector
-          property.setValue(instance, property.newPropertyCollector().getValue());
+          // REFACTOR: Implement problem handler
+          property.setValue(instance, property.defaultValue());
         }
 
       }

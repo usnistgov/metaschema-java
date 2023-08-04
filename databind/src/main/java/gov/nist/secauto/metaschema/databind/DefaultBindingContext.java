@@ -60,15 +60,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * The implementation of a {@link IBindingContext} provided by this library.
  * <p>
- * This implementation caches Metaschema information, which can dramatically
- * improve read and write performance at the cost of some memory use. Thus,
- * using the same singleton of this class across multiple I/O operations will
- * improve overall read and write performance when processing the same types of
- * data.
+ * This implementation caches Metaschema information, which can dramatically improve read and write
+ * performance at the cost of some memory use. Thus, using the same singleton of this class across
+ * multiple I/O operations will improve overall read and write performance when processing the same
+ * types of data.
  * <p>
  * Serializers and deserializers provided by this class using the
- * {@link #newSerializer(Format, Class)} and
- * {@link #newDeserializer(Format, Class)} methods will
+ * {@link #newSerializer(Format, Class)} and {@link #newDeserializer(Format, Class)} methods will
  * <p>
  * This class is synchronized and is thread-safe.
  */

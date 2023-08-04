@@ -24,31 +24,34 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.io;
+package gov.nist.secauto.metaschema.core.model.xml;
 
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import java.io.IOException;
+import java.net.URL;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 
-public class AbstractParsingContext<READER, PROBLEM_HANDLER extends IProblemHandler>
-    implements IParsingContext<READER, PROBLEM_HANDLER> {
-  @NonNull
-  private final READER parser;
-  @NonNull
-  private final PROBLEM_HANDLER problemHandler;
+public final class XmlUtil {
 
-  public AbstractParsingContext(@NonNull READER parser, @NonNull PROBLEM_HANDLER problemHandler) {
-    this.parser = ObjectUtils.requireNonNull(parser, "parser");
-    this.problemHandler = ObjectUtils.requireNonNull(problemHandler, "problemHandler");
+  private XmlUtil() {
+    // disable construction
   }
 
-  @Override
-  public READER getReader() {
-    return parser;
-  }
-
-  @Override
-  public PROBLEM_HANDLER getProblemHandler() {
-    return problemHandler;
+  /**
+   * Create a {@link Source} based on the provided {@code url}.
+   * <p>
+   * The caller of this method must ensure that the stream associated with this
+   * source is closed.
+   *
+   * @param url
+   *          the URL to use for the source
+   * @return a new source
+   * @throws IOException
+   *           if an error occurred while creating the underlying stream
+   */
+  @SuppressWarnings("resource") // user of source is expected to close
+  public static StreamSource getStreamSource(URL url) throws IOException {
+    return new StreamSource(url.openStream(), url.toString());
   }
 }

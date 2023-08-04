@@ -124,8 +124,8 @@ public final class FnDocumentUri {
   /**
    * Get the URI of the document.
    * <p>
-   * Based on the XPath 3.1 <a href=
-   * "https://www.w3.org/TR/xpath-functions-31/#func-document-uri">fn:document-uri</a>
+   * Based on the XPath 3.1
+   * <a href= "https://www.w3.org/TR/xpath-functions-31/#func-document-uri">fn:document-uri</a>
    * function.
    *
    * @param document

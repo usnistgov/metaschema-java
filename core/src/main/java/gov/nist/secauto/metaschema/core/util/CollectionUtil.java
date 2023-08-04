@@ -34,7 +34,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -53,6 +52,20 @@ public final class CollectionUtil {
   }
 
   /**
+   * Get a {@link Stream} for the provided {@link Iterable}.
+   *
+   * @param <T>
+   *          the type to iterate on
+   * @param iterator
+   *          the iterator
+   * @return the stream
+   */
+  public static <T> Stream<T> toStream(@NonNull Iterator<T> iterator) {
+    Iterable<T> iterable = toIterable(iterator);
+    return StreamSupport.stream(iterable.spliterator(), false);
+  }
+
+  /**
    * Get an {@link Iterable} for the provided {@link Stream}.
    *
    * @param <T>
@@ -63,7 +76,6 @@ public final class CollectionUtil {
    */
   @NonNull
   public static <T> Iterable<T> toIterable(@NonNull Stream<T> stream) {
-    Objects.requireNonNull(stream, "stream");
     return toIterable(stream.iterator());
   }
 
@@ -77,14 +89,8 @@ public final class CollectionUtil {
    * @return the resulting iterable instance
    */
   @NonNull
-  public static <T> Iterable<T> toIterable(Iterator<T> iterator) {
-    Objects.requireNonNull(iterator, "iterator");
-    return new Iterable<>() {
-      @Override
-      public Iterator<T> iterator() {
-        return iterator;
-      }
-    };
+  public static <T> Iterable<T> toIterable(@NonNull Iterator<T> iterator) {
+    return () -> iterator;
   }
 
   /**

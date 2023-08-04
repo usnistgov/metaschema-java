@@ -71,8 +71,8 @@ public class DefaultFieldClassBinding
   private final Lazy<IValueConstraintSupport> constraints;
 
   /**
-   * Create a new {@link IClassBinding} for a Java bean annotated with the
-   * {@link BoundField} annotation.
+   * Create a new {@link IClassBinding} for a Java bean annotated with the {@link BoundField}
+   * annotation.
    *
    * @param clazz
    *          the Java bean class
@@ -94,8 +94,8 @@ public class DefaultFieldClassBinding
   }
 
   /**
-   * Construct a new {@link IClassBinding} for a Java bean annotated with the
-   * {@link BoundField} annotation.
+   * Construct a new {@link IClassBinding} for a Java bean annotated with the {@link BoundField}
+   * annotation.
    *
    * @param clazz
    *          the Java bean class

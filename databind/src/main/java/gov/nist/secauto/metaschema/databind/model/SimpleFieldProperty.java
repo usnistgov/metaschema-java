@@ -57,8 +57,8 @@ class SimpleFieldProperty
   private final Lazy<ScalarFieldDefinition> definition;
 
   /**
-   * Construct a new bound flag instance based on a Java property. The name of the property is bound
-   * to the name of the instance.
+   * Construct a new bound flag instance based on a Java property. The name of the
+   * property is bound to the name of the instance.
    *
    * @param field
    *          the Java field to bind to
@@ -126,6 +126,11 @@ class SimpleFieldProperty
   @Override
   public String getUseName() {
     return ModelUtil.resolveToString(getFieldAnnotation().useName());
+  }
+
+  @Override
+  public Object defaultValue() {
+    return getMaxOccurs() == 1 ? getDefaultValue() : getPropertyInfo().newPropertyCollector().getValue();
   }
 
   private final class ScalarFieldDefinition implements IBoundFieldDefinition, IValueConstraintFeature {

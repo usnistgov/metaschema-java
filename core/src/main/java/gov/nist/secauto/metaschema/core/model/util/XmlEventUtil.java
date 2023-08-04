@@ -31,7 +31,6 @@ import org.codehaus.stax2.XMLStreamReader2;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -50,7 +49,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public final class XmlEventUtil { // NOPMD this is a set of utility methods
-  // private static final Logger LOGGER = LogManager.getLogger(XmlEventUtil.class);
+  // private static final Logger LOGGER =
+  // LogManager.getLogger(XmlEventUtil.class);
 
   private static final Pattern WHITESPACE_ONLY = Pattern.compile("^\\s+$");
 
@@ -335,83 +335,49 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   }
 
   /**
-   * Determine if the next event from {@code reader} is an end element whose name matches the provided
-   * {@code name}.
+   * Determine if the {@code event} is an end element whose name matches the provided
+   * {@code expectedQName}.
    *
-   * @param reader
-   *          the event reader
-   * @param name
+   * @param event
+   *          the event
+   * @param expectedQName
    *          the expected element name
-   * @return {@code true} if the next event matches the {@code name}
-   * @throws XMLStreamException
-   *           if an error occurred while looking at the next event
+   * @return {@code true} if the next event matches the {@code expectedQName}
    */
-  @SuppressWarnings("null")
-  public static boolean isNextEventEndElement(@NonNull XMLEventReader2 reader, @NonNull QName name)
-      throws XMLStreamException {
-    return isNextEventEndElement(reader, name.getLocalPart(), name.getNamespaceURI());
+  public static boolean isEventEndElement(XMLEvent event, @NonNull QName expectedQName) {
+    return event != null
+        && event.isEndElement()
+        && expectedQName.equals(event.asEndElement().getName());
   }
 
   /**
-   * Determine if the next event from {@code reader} is an end element whose name matches the provided
-   * {@code expectedLocalName} and {@code expectedNamespace}.
+   * Determine if the {@code event} is an end of document event.
    *
-   * @param reader
-   *          the event reader
-   * @param expectedLocalName
-   *          the expected element name
-   * @param expectedNamespace
-   *          the expected element namespace
-   * @return {@code true} if the next event matches the {@code name}
-   * @throws XMLStreamException
-   *           if an error occurred while looking at the next event
-   */
-  public static boolean isNextEventEndElement(@NonNull XMLEventReader2 reader, @NonNull String expectedLocalName,
-      String expectedNamespace) throws XMLStreamException {
-    Objects.requireNonNull(reader, "reader");
-    Objects.requireNonNull(expectedLocalName, "expectedLocalName");
-    XMLEvent event = reader.peek();
-
-    boolean retval;
-    if (event.isEndElement()) {
-      EndElement endElement = event.asEndElement();
-      QName name = endElement.getName();
-      retval = expectedLocalName.equals(name.getLocalPart())
-          && (expectedNamespace == null || expectedNamespace.equals(name.getNamespaceURI()));
-    } else {
-      retval = false;
-    }
-    return retval;
-  }
-
-  /**
-   * Determine if the next event from {@code reader} is a start element whose name matches the
-   * provided {@code name}.
-   *
-   * @param reader
-   *          the event reader
-   * @param name
-   *          the expected element name
-   * @return {@code true} if the next event is a start element that matches the {@code name}
-   * @throws XMLStreamException
-   *           if an error occurred while looking at the next event
-   */
-  public static boolean isNextEventStartElement(XMLEventReader2 reader, QName name) throws XMLStreamException {
-    XMLEvent nextEvent = reader.peek();
-    return nextEvent.isStartElement() && name.equals(nextEvent.asStartElement().getName());
-  }
-
-  /**
-   * Determine if the next event from {@code reader} is an end of document event.
-   *
-   * @param reader
-   *          the event reader
+   * @param event
+   *          the event
    * @return {@code true} if the next event is an end of document event
+   */
+  public static boolean isEventEndDocument(XMLEvent event) {
+    return event != null
+        && event.isEndElement();
+  }
+
+  /**
+   * Determine if the {@code event} is a start element whose name matches the provided
+   * {@code expectedQName}.
+   *
+   * @param event
+   *          the event
+   * @param expectedQName
+   *          the expected element name
+   * @return {@code true} if the next event is a start element that matches the {@code expectedQName}
    * @throws XMLStreamException
    *           if an error occurred while looking at the next event
    */
-  public static boolean isNextEventEndDocument(XMLEventReader2 reader) throws XMLStreamException {
-    return reader.peek().isEndDocument();
+  public static boolean isEventStartElement(XMLEvent event, @NonNull QName expectedQName) throws XMLStreamException {
+    return event != null
+        && event.isStartElement()
+        && expectedQName.equals(event.asStartElement().getName());
   }
 
   /**
@@ -514,6 +480,17 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
     return nextEvent;
   }
 
+  public static CharSequence generateLocationMessage(@NonNull XMLEvent event) {
+    Location location = XmlEventUtil.toLocation(event);
+    return location == null ? "" : generateLocationMessage(location);
+  }
+
+  public static CharSequence generateLocationMessage(@NonNull Location location) {
+    return new StringBuilder(12)
+        .append(" at ")
+        .append(XmlEventUtil.toString(location));
+  }
+
   public static CharSequence generateExpectedMessage(
       @Nullable XMLEvent event,
       int presumedEventType,
@@ -532,12 +509,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
       builder.append("', instead found null event");
     } else {
       builder.append("', instead found ")
-          .append(toString(event));
-
-      Location location = toLocation(event);
-      if (location != null) {
-        builder.append(" at ").append(toString(location));
-      }
+          .append(toString(event))
+          .append(generateLocationMessage(event));
     }
     return builder;
   }

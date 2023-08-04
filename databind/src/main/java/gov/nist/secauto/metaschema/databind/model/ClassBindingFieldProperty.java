@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.databind.io.BindingException;
+
 import java.lang.reflect.Field;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -37,8 +39,8 @@ class ClassBindingFieldProperty
   private final IFieldClassBinding definition;
 
   /**
-   * Construct a new bound flag instance based on a Java property. The name of the property is bound
-   * to the name of the instance.
+   * Construct a new bound flag instance based on a Java property. The name of the
+   * property is bound to the name of the instance.
    *
    * @param field
    *          the Java field to bind to
@@ -85,5 +87,30 @@ class ClassBindingFieldProperty
   @Override
   public final boolean isSimple() {
     return getDefinition().isSimple();
+  }
+
+  @Override
+  public Object defaultValue() throws BindingException {
+    Object retval = null;
+    if (getMaxOccurs() == 1) {
+      IFieldClassBinding definition = getDefinition();
+      IBoundFieldValueInstance fieldValue = definition.getFieldValueInstance();
+
+      Object defaultValue = fieldValue.getDefaultValue();
+      if (defaultValue != null) {
+        retval = definition.newInstance();
+        fieldValue.setValue(retval, defaultValue);
+
+        for (IBoundFlagInstance flag : definition.getFlagInstances()) {
+          Object flagDefault = flag.defaultValue();
+          if (flagDefault != null) {
+            flag.setValue(retval, flagDefault);
+          }
+        }
+      }
+    } else {
+      retval = getPropertyInfo().newPropertyCollector().getValue();
+    }
+    return retval;
   }
 }
