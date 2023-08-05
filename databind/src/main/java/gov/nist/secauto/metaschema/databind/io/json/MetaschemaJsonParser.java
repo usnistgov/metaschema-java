@@ -46,13 +46,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Predicate;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class MetaschemaJsonParser
     implements IJsonParsingContext {
@@ -63,11 +65,27 @@ public class MetaschemaJsonParser
   @NonNull
   private final IJsonProblemHandler problemHandler;
 
+  /**
+   * Construct a new Metaschema-aware JSON parser using the default problem
+   * handler.
+   *
+   * @param parser
+   *          the JSON parser to parse with
+   * @see DefaultJsonProblemHandler
+   */
   public MetaschemaJsonParser(
       @NonNull JsonParser parser) {
     this(parser, new DefaultJsonProblemHandler());
   }
 
+  /**
+   * Construct a new Metaschema-aware JSON parser.
+   *
+   * @param parser
+   *          the JSON parser to parse with
+   * @param problemHandler
+   *          the problem handler implementation to use
+   */
   public MetaschemaJsonParser(
       @NonNull JsonParser parser,
       @NonNull IJsonProblemHandler problemHandler) {
@@ -99,7 +117,7 @@ public class MetaschemaJsonParser
    * <li>a {@link JsonToken#FIELD_NAME} representing the root field to parse,
    * or</li>
    * <li>a peer field to the root field that will be handled by the
-   * {@link IJsonProblemHandler#handleUnknownRootProperty(IAssemblyClassBinding, String, JsonParser)}
+   * {@link IJsonProblemHandler#handleUnknownProperty(IClassBinding, Object, String, IJsonParsingContext)}
    * method.</li>
    * </ul>
    * <p>
@@ -116,14 +134,19 @@ public class MetaschemaJsonParser
    * found.</li>
    * </ul>
    *
+   * @param <T>
+   *          the Java type of the resulting bound instance
    * @param definition
    *          the root definition to parse
    * @return the bound object instance representing the JSON object
    * @throws IOException
-   *           if an error occurred while reading the JSON
+   *           if an error occurred while parsing the JSON
    */
+  @SuppressWarnings({
+      "PMD.CyclomaticComplexity" // acceptable
+  })
   @Nullable
-  public Object read(@NonNull IRootAssemblyClassBinding definition) throws IOException {
+  public <T> T read(@NonNull IRootAssemblyClassBinding definition) throws IOException {
     boolean objectWrapper = false;
     if (parser.currentToken() == null) {
       parser.nextToken();
@@ -149,9 +172,10 @@ public class MetaschemaJsonParser
         JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
         JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
 
-        instance = readAssemblyDefinitionValue(
+        instance = readDefinitionValue(
             definition.getRootDefinition(),
-            null);
+            null,
+            false);
 
         // advance past the end object
         JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
@@ -160,7 +184,7 @@ public class MetaschemaJsonParser
         break;
       }
 
-      if (!getProblemHandler().handleUnknownRootProperty(definition, fieldName, parser)) {
+      if (!getProblemHandler().handleUnknownProperty(definition, instance, fieldName, this)) {
         LOGGER.warn("Skipping unhandled top-level JSON field '{}'.", fieldName);
         JsonUtil.skipNextValue(parser);
       }
@@ -175,382 +199,29 @@ public class MetaschemaJsonParser
       JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
     }
 
-    return instance;
-  }
-
-  @Override
-  public Object readDefinitionValue(IClassBinding targetDefinition, Object targetObject, boolean requiresJsonKey)
-      throws IOException {
-    Object retval;
-    if (targetDefinition instanceof IAssemblyClassBinding) {
-      retval = readAssemblyDefinitionValue((IAssemblyClassBinding) targetDefinition, targetObject);
-    } else if (targetDefinition instanceof IFieldClassBinding) {
-      retval = readFieldDefinitionValue((IFieldClassBinding) targetDefinition, targetObject, requiresJsonKey);
-    } else {
-      throw new UnsupportedOperationException(
-          String.format("Unsupported class binding type: %s", targetDefinition.getClass().getName()));
-    }
-    return retval;
+    return ObjectUtils.asType(instance);
   }
 
   /**
-   * Reads a JSON/YAML object storing the associated data in the Java object
-   * {@code parentInstance}.
+   * Read the data associated with the {@code instance} and apply it to the
+   * provided {@code parentObject}.
    * <p>
-   * When called the current {@link JsonToken} of the {@link JsonParser} is
-   * expected to be a {@link JsonToken#START_OBJECT}.
-   * <p>
-   * After returning the current {@link JsonToken} of the {@link JsonParser} is
-   * expected to be the next token after the {@link JsonToken#END_OBJECT} for this
-   * class.
-   *
-   * @param targetDefinition
-   *          the definition to parse
-   * @param targetObject
-   *          the parent Java object to store the data in, which can be
-   *          {@code null} if there is no parent
-   * @return the instance
-   * @throws IOException
-   *           if an error occurred while reading the parsed content
-   */
-  @NonNull
-  protected Object readAssemblyDefinitionValue(
-      @NonNull IAssemblyClassBinding targetDefinition,
-      @Nullable Object targetObject) throws IOException {
-    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
-
-    try {
-      Object instance = targetDefinition.newInstance();
-
-      readAssemblyDefinitionContents(targetDefinition, instance, targetObject);
-
-      return instance;
-    } catch (BindingException ex) {
-      throw new IOException(
-          String.format("Failed to parse JSON object for '%s'", targetDefinition.getBoundClass().getName()), ex);
-
-    }
-  }
-
-  /**
-   * Parses the JSON field contents related to the bound assembly.
-   * <p>
-   * This method expects the parser's current token to be at the first field name
-   * to parse.
-   * <p>
-   * After parsing the current token will be the token at the end object
-   * immediately after all the fields and values.
-   *
-   * @param targetDefinition
-   *          the Metaschema definition for the target object being read
-   * @param instance
-   *          the bound object to read data into
-   * @param parentInstance
-   *          the parent object used for deserialization callbacks
-   * @throws IOException
-   *           if an error occurred while reading the JSON
-   */
-  protected void readAssemblyDefinitionContents(
-      @NonNull IAssemblyClassBinding targetDefinition,
-      @NonNull Object instance,
-      @Nullable Object parentInstance) throws IOException {
-    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
-
-    try {
-      targetDefinition.callBeforeDeserialize(instance, parentInstance);
-    } catch (BindingException ex) {
-      throw new IOException("an error occured calling the beforeDeserialize() method", ex);
-    }
-
-    IBoundFlagInstance jsonKey = targetDefinition.getJsonKeyFlagInstance();
-    Map<String, ? extends IBoundNamedInstance> properties;
-    if (jsonKey == null) {
-      properties = targetDefinition.getNamedInstances(null);
-    } else {
-      properties = targetDefinition.getNamedInstances((flag) -> !jsonKey.equals(flag));
-
-      // if there is a json key, the first field will be the key
-      String key = ObjectUtils.notNull(parser.getCurrentName());
-
-      Object value = jsonKey.getDefinition().getJavaTypeAdapter().parse(key);
-      jsonKey.setValue(instance, value.toString());
-
-      // advance past the FIELD_NAME
-      // next the value will be a start object
-      JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
-      //
-      // JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
-    }
-
-    Set<String> handledProperties = new HashSet<>();
-    while (!JsonToken.END_OBJECT.equals(parser.currentToken())) {
-      String propertyName = parser.getCurrentName();
-      IBoundNamedInstance property = properties.get(propertyName);
-
-      boolean handled = false;
-      if (property != null) {
-        handled = readInstanceValues(property, instance);
-      }
-
-      if (handled) {
-        handledProperties.add(propertyName);
-      } else {
-        if (LOGGER.isWarnEnabled()) {
-          LOGGER.warn("Unrecognized property named '{}' at '{}'", propertyName,
-              JsonUtil.toString(ObjectUtils.notNull(parser.getCurrentLocation())));
-        }
-        JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
-        JsonUtil.skipNextValue(parser);
-      }
-    }
-
-    // set undefined properties
-    // TODO: re-implement this by removing the parsed properties from the properties
-    // map to speed up
-    for (Map.Entry<String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
-      if (!handledProperties.contains(entry.getKey())) {
-        // REFACTOR: Implement problem handler
-        // use the default value of the collector
-        IBoundNamedInstance property = ObjectUtils.notNull(entry.getValue());
-        try {
-          property.setValue(instance, property.defaultValue());
-        } catch (BindingException ex) {
-          throw new IOException(ex);
-        }
-      }
-    }
-
-    if (jsonKey != null) {
-      // read the END_OBJECT for the JSON key value
-      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
-    }
-
-    try {
-      targetDefinition.callAfterDeserialize(instance, parentInstance);
-    } catch (BindingException ex) {
-      throw new IOException("an error occured calling the afterDeserialize() method", ex);
-    }
-
-    JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
-  }
-
-  /**
-   * Reads a JSON/YAML object storing the associated data in the Java object
-   * {@code parentInstance}.
-   * <p>
-   * When called the current {@link JsonToken} of the {@link JsonParser} is
-   * expected to be a {@link JsonToken#START_OBJECT}.
-   * <p>
-   * After returning the current {@link JsonToken} of the {@link JsonParser} is
-   * expected to be the next token after the {@link JsonToken#END_OBJECT} for this
-   * class.
-   *
-   * @param targetDefinition
-   *          the definition to parse
-   * @param targetObject
-   *          the parent Java object to store the data in, which can be
-   *          {@code null} if there is no parent
-   * @param requiresJsonKey
-   *          when {@code true} indicates that the item will have a JSON key
-   * @return the instance
-   * @throws IOException
-   *           if an error occurred while reading the parsed content
-   */
-  @NonNull
-  protected Object readFieldDefinitionValue(
-      @NonNull IFieldClassBinding targetDefinition,
-      @NonNull Object targetObject,
-      boolean requiresJsonKey) throws IOException {
-    if (requiresJsonKey) {
-      // the start object has already been parsed, the next field name is the JSON key
-      JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
-    } else {
-      // JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
-      // This could be an empty assembly signified by a END_OBJECT, or a series of
-      // properties signified by
-      // a FIELD_NAME
-      JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
-    }
-
-    return readNormal(targetDefinition, targetObject, requiresJsonKey);
-  }
-
-  @NonNull
-  private Object readNormal(
-      @NonNull IFieldClassBinding targetDefinition,
-      @NonNull Object parentInstance,
-      boolean requiresJsonKey)
-      throws IOException {
-    Predicate<IBoundFlagInstance> flagFilter = null;
-
-    IBoundFlagInstance jsonKey = null;
-    if (requiresJsonKey) {
-      IBoundFlagInstance instance = targetDefinition.getJsonKeyFlagInstance();
-      if (instance == null) {
-        throw new IOException("This property is configured to use a JSON key, but no JSON key was found");
-      }
-
-      flagFilter = (flag) -> {
-        return !instance.equals(flag);
-      };
-      jsonKey = instance;
-    }
-
-    IBoundFlagInstance jsonValueKey = targetDefinition.getJsonValueKeyFlagInstance();
-    if (jsonValueKey != null) {
-      if (flagFilter == null) {
-        flagFilter = (flag) -> {
-          return !jsonValueKey.equals(flag);
-        };
-      } else {
-        flagFilter = flagFilter.and((flag) -> {
-          return !jsonValueKey.equals(flag);
-        });
-      }
-    }
-
-    Map<String, ? extends IBoundNamedInstance> properties = targetDefinition.getNamedInstances(flagFilter);
-
-    try {
-      Object instance = targetDefinition.newInstance();
-
-      targetDefinition.callBeforeDeserialize(instance, parentInstance);
-
-      if (jsonKey != null) {
-        // if there is a json key, the first field will be the key
-        String key = parser.currentName();
-        assert key != null;
-        jsonKey.setValue(instance, jsonKey.getDefinition().getJavaTypeAdapter().parse(key));
-
-        // advance past the field name
-        if (properties.isEmpty()) {
-          // the value will be a standard value
-          // advance past the field name
-          JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
-        } else {
-          // the value will be a start object
-          JsonUtil.advanceAndAssert(parser, JsonToken.START_OBJECT);
-          // advance past the start object
-          parser.nextToken();
-        }
-      }
-
-      Set<String> handledProperties = new HashSet<>();
-      if (properties.isEmpty()) {
-        // this may be a value key value, an unrecognized flag, or the field value
-        IBoundFieldValueInstance fieldValue = targetDefinition.getFieldValueInstance();
-        // parse the value
-        Object value = fieldValue.getJavaTypeAdapter().parse(parser);
-        fieldValue.setValue(instance, value);
-        handledProperties.add(fieldValue.getJsonValueKeyName());
-      } else {
-        // This could be an empty assembly signified by a END_OBJECT, or a series of
-        // properties signified by
-        // a FIELD_NAME
-        JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
-
-        boolean parsedValueKey = false;
-        // now parse each property until the end object is reached
-        while (!parser.hasTokenId(JsonToken.END_OBJECT.id())) {
-          String propertyName = parser.getCurrentName();
-          assert propertyName != null;
-          // JsonUtil.assertAndAdvance(jsonParser, JsonToken.FIELD_NAME);
-
-          IBoundNamedInstance namedProperty = properties.get(propertyName);
-
-          boolean handled = false;
-          if (namedProperty != null) {
-            // this is a recognized flag
-
-            if (namedProperty.equals(jsonValueKey)) {
-              throw new IOException(
-                  String.format("JSON value key configured, but found standard flag for the value key '%s'",
-                      namedProperty.toCoordinates()));
-            }
-
-            // Now parse
-            handled = readInstanceValues(namedProperty, instance);
-          }
-
-          if (namedProperty == null && !parsedValueKey) {
-            // this may be a value key value, an unrecognized flag, or the field value
-            IBoundFieldValueInstance fieldValueInstance = targetDefinition.getFieldValueInstance();
-            parsedValueKey = readFieldValueInstanceValue(fieldValueInstance, instance);
-
-            if (parsedValueKey) {
-              handled = true;
-            } else {
-              if (getProblemHandler().canHandleUnknownProperty(targetDefinition, propertyName, parser)) {
-                handled = getProblemHandler().handleUnknownProperty(targetDefinition, propertyName, parser);
-              }
-            }
-          }
-
-          if (handled) {
-            handledProperties.add(propertyName);
-          } else {
-            if (LOGGER.isWarnEnabled()) {
-              LOGGER.warn("Unrecognized property named '{}' at '{}'", propertyName,
-                  JsonUtil.toString(ObjectUtils.notNull(parser.getCurrentLocation())));
-            }
-            JsonUtil.skipNextValue(parser);
-          }
-        }
-      }
-
-      // set undefined properties
-      for (Map.Entry<String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
-        if (!handledProperties.contains(entry.getKey())) {
-          IBoundNamedInstance property = ObjectUtils.notNull(entry.getValue());
-          // use the default value of the collector
-          // REFACTOR: Implement problem handler
-          property.setValue(instance, property.defaultValue());
-        }
-
-      }
-
-      if (jsonKey != null && !properties.isEmpty()) {
-        // read the END_OBJECT for the JSON key value
-        JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
-      }
-
-      if (properties.isEmpty()) {
-        // this is the next field or the end of the containing object of this field
-        JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
-      } else {
-        // this is the current end element, but we are not responsible for parsing it.
-        JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
-      }
-
-      targetDefinition.callAfterDeserialize(instance, parentInstance);
-      return instance;
-    } catch (BindingException ex) {
-      throw new IOException(ex);
-    }
-  }
-
-  /**
-   * Read JSON data associated with this property and apply it to the provided
-   * {@code objectInstance} on which this property exists.
-   * <p>
-   * The parser's current token is expected to be the {@link JsonToken#FIELD_NAME}
-   * for the field value being parsed.
-   * <p>
-   * After parsing the parser's current token will be the next token after the
-   * field's value.
+   * Consumes the field if the field's name matches. If it matches, then
+   * {@code true} is returned after parsing the value. Otherwise, {@code false} is
+   * returned to indicate the property was not parsed.
    *
    * @param instance
    *          the instance to parse data for
-   * @param objectInstance
-   *          an instance of the class on which this property exists
-   * @return {@code true} if the property was parsed, or {@code false} if the data
-   *         did not contain information for this property
+   * @param parentObject
+   *          the Java object that data parsed by this method will be stored in
+   * @return {@code true} if the instance was parsed, or {@code false} if the data
+   *         did not contain information for this instance
    * @throws IOException
-   *           if there was an error when reading JSON data
+   *           if an error occurred while parsing the input
    */
-  public boolean readInstanceValues(
+  protected boolean readInstance(
       @NonNull IBoundNamedInstance instance,
-      @NonNull Object objectInstance) throws IOException {
+      @NonNull Object parentObject) throws IOException {
     // the parser's current token should be the JSON field name
     JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
 
@@ -561,110 +232,249 @@ public class MetaschemaJsonParser
 
     boolean handled = instance.getJsonName().equals(propertyName);
     if (handled) {
-      Object value;
-      if (instance instanceof IBoundFlagInstance) {
-        value = readFlagInstanceValue((IBoundFlagInstance) instance);
-      } else if (instance instanceof IBoundNamedModelInstance) {
-        value = readModelInstanceValue((IBoundNamedModelInstance) instance, objectInstance);
-      } else {
-        throw new UnsupportedOperationException(
-            String.format("Unsupported instance type: %s", instance.getClass().getName()));
+      // advance past the field name
+      parser.nextToken();
+
+      Object value = readInstanceValue(instance, parentObject);
+
+      if (value != null) {
+        instance.setValue(parentObject, value);
       }
-      instance.setValue(objectInstance, value);
     }
 
+    // the current token will be either the next instance field name or the end of
+    // the parent object
     JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
     return handled;
-  }
-
-  @NonNull
-  protected Object readFlagInstanceValue(
-      @NonNull IBoundFlagInstance instance) throws IOException {
-    // advance past the property name
-    parser.nextFieldName();
-
-    // parse the value
-    return instance.getDefinition().getJavaTypeAdapter().parse(parser);
-  }
-
-  @Nullable
-  protected Object readModelInstanceValue(
-      @NonNull IBoundNamedModelInstance instance,
-      @NonNull Object parentInstance) throws IOException {
-    // the parser's current token should be the JSON field name
-    // advance past the property name
-    JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
-
-    IModelPropertyInfo info = instance.getPropertyInfo();
-    IPropertyCollector collector = info.newPropertyCollector();
-
-    // parse the value
-    info.readValue(collector, parentInstance, this);
-
-    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
-
-    return collector.getValue();
   }
 
   /**
-   * Read JSON data associated with this property and apply it to the provided
-   * {@code objectInstance} on which this property exists.
-   * <p>
-   * The parser's current token is expected to be the {@link JsonToken#FIELD_NAME}
-   * for the field value being parsed.
-   * <p>
-   * After parsing the parser's current token will be the next token after the
-   * field's value.
+   * Read the data associated with the {@code instance}.
    *
    * @param instance
-   *          the instance to parse data for
-   * @param objectInstance
-   *          an instance of the class on which this property exists
-   * @return {@code true} if the property was parsed, or {@code false} if the data
-   *         did not contain information for this property
+   *          the instance that describes the syntax of the data to read
+   * @param parentObject
+   *          the Java object that data parsed by this method will be stored in
+   * @return the parsed value(s)
    * @throws IOException
-   *           if there was an error when reading JSON data
+   *           if an error occurred while parsing the input
    */
-  public boolean readFieldValueInstanceValue(
-      @NonNull IBoundFieldValueInstance instance,
-      @NonNull Object objectInstance) throws IOException {
-    // the parser's current token should be the JSON field name
-    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
+  protected Object readInstanceValue(
+      @NonNull IBoundNamedInstance instance,
+      @NonNull Object parentObject) throws IOException {
+    Object value;
+    if (instance instanceof IBoundNamedModelInstance) {
 
-    boolean handled;
-    IBoundFlagInstance jsonValueKey = instance.getParentClassBinding().getJsonValueKeyFlagInstance();
-    if (jsonValueKey != null) {
-      // assume this is the JSON value key case
-      handled = true;
+      // Deal with the collection or value type
+      IModelPropertyInfo info = ((IBoundNamedModelInstance) instance).getPropertyInfo();
+      IPropertyCollector collector = info.newPropertyCollector();
+
+      // let the property info parse the value
+      info.readValue(collector, parentObject, this);
+
+      // get the underlying value
+      value = collector.getValue();
+    } else if (instance instanceof IBoundFlagInstance) {
+      // just read the value directly
+      value = ((IBoundFlagInstance) instance).getDefinition().getJavaTypeAdapter().parse(parser);
+    } else if (instance instanceof IBoundFieldValueInstance) {
+      // just read the value directly
+      value = ((IBoundFieldValueInstance) instance).getJavaTypeAdapter().parse(parser);
     } else {
-      handled = instance.getJsonValueKeyName().equals(parser.currentName());
+      throw new UnsupportedOperationException(
+          String.format("Unsupported instance type: %s", instance.getClass().getName()));
     }
-
-    if (handled) {
-      // There are two modes:
-      // 1) use of a JSON value key, or
-      // 2) a simple value named "value"
-      if (jsonValueKey != null) {
-        // this is the JSON value key case
-        String fieldName = ObjectUtils.notNull(parser.currentName());
-        jsonValueKey.setValue(objectInstance, jsonValueKey.getDefinition().getJavaTypeAdapter().parse(fieldName));
-      } else {
-        String valueKeyName = instance.getJsonValueKeyName();
-        String fieldName = parser.getCurrentName();
-        if (!fieldName.equals(valueKeyName)) {
-          throw new IOException(
-              String.format("Expecteded to parse the value property named '%s', but found a property named '%s'.",
-                  valueKeyName, fieldName));
-        }
-      }
-      // advance past the property name
-      parser.nextToken();
-
-      // parse the value
-      Object retval = instance.getJavaTypeAdapter().parse(parser);
-      instance.setValue(objectInstance, retval);
-    }
-    return handled;
+    return value;
   }
 
+  @NonNull
+  private static Map<String, ? extends IBoundNamedInstance> getInstancesToParse(
+      @NonNull IClassBinding targetDefinition,
+      boolean requiresJsonKey) {
+    Collection<? extends IBoundFlagInstance> flags = targetDefinition.getFlagInstances();
+    int flagCount = flags.size() - (requiresJsonKey ? 1 : 0);
+
+    @SuppressWarnings("resource") Stream<? extends IBoundNamedInstance> instanceStream;
+    if (targetDefinition instanceof IAssemblyClassBinding) {
+      instanceStream = ((IAssemblyClassBinding) targetDefinition).getModelInstances().stream();
+      // .flatMap((instance) -> {
+      // return instance instanceof IChoiceInstance ?
+      // ((IChoiceInstance)instance).getNamedModelInstances().stream()
+      // });
+    } else if (targetDefinition instanceof IFieldClassBinding) {
+      IFieldClassBinding targetFieldDefinition = (IFieldClassBinding) targetDefinition;
+
+      IBoundFlagInstance jsonValueKeyFlag = targetFieldDefinition.getJsonValueKeyFlagInstance();
+      if (jsonValueKeyFlag == null && flagCount > 0) {
+        // the field value is handled as named field
+        IBoundFieldValueInstance fieldValue = targetFieldDefinition.getFieldValueInstance();
+        instanceStream = Stream.of(fieldValue);
+      } else {
+        // only the value, with no flags or a JSON value key flag
+        instanceStream = Stream.empty();
+      }
+    } else {
+      throw new UnsupportedOperationException(
+          String.format("Unsupported class binding type: %s", targetDefinition.getClass().getName()));
+    }
+
+    if (requiresJsonKey) {
+      IBoundFlagInstance jsonKey = targetDefinition.getJsonKeyFlagInstance();
+      assert jsonKey != null;
+      instanceStream = Stream.concat(
+          flags.stream().filter((flag) -> !jsonKey.equals(flag)),
+          instanceStream);
+    } else {
+      instanceStream = Stream.concat(
+          flags.stream(),
+          instanceStream);
+    }
+    return ObjectUtils.notNull(instanceStream.collect(
+        Collectors.toMap(
+            IBoundNamedInstance::getJsonName,
+            Function.identity())));
+  }
+
+  @Override
+  public <T> T readDefinitionValue(IClassBinding targetDefinition, Object parentObject, boolean requiresJsonKey)
+      throws IOException {
+    Object targetObject;
+    try {
+      targetObject = targetDefinition.newInstance();
+      targetDefinition.callBeforeDeserialize(targetObject, parentObject);
+    } catch (BindingException ex) {
+      throw new IOException(ex);
+    }
+
+    readDefinitionValueContents(targetDefinition, targetObject, requiresJsonKey);
+
+    try {
+      targetDefinition.callAfterDeserialize(targetObject, parentObject);
+    } catch (BindingException ex) {
+      throw new IOException(ex);
+    }
+    return ObjectUtils.asType(targetObject);
+  }
+
+  @SuppressFBWarnings(value = "UC_USELESS_CONDITION", justification = "false positive")
+  private void readDefinitionValueContents(
+      @NonNull IClassBinding targetDefinition,
+      @NonNull Object targetObject,
+      boolean requiresJsonKey) throws IOException {
+    boolean keyObjectWrapper = false;
+    if (requiresJsonKey) {
+      readDefinitionJsonKey(targetDefinition, targetObject);
+
+      keyObjectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
+      if (keyObjectWrapper) {
+        JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
+      }
+    }
+
+    if (keyObjectWrapper || JsonToken.FIELD_NAME.equals(parser.currentToken())) {
+      Map<String, ? extends IBoundNamedInstance> properties = getInstancesToParse(targetDefinition, requiresJsonKey);
+      readDefinitionContents(targetDefinition, targetObject, properties);
+    } else if (parser.currentToken().isScalarValue()) {
+      // this is a value
+      IFieldClassBinding fieldDefinition = (IFieldClassBinding) targetDefinition;
+      Object fieldValue = fieldDefinition.getJavaTypeAdapter().parse(parser);
+      fieldDefinition.getFieldValueInstance().setValue(targetObject, fieldValue);
+    }
+
+    if (keyObjectWrapper) {
+      // advance past the END_OBJECT for the JSON key
+      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
+    }
+  }
+
+  private void readDefinitionJsonKey(
+      @NonNull IClassBinding targetDefinition,
+      @NonNull Object targetObject) throws IOException {
+    IBoundFlagInstance jsonKey = targetDefinition.getJsonKeyFlagInstance();
+    if (jsonKey == null) {
+      throw new IOException(String.format("JSON key not defined for object '%s'%s",
+          targetDefinition.toCoordinates(), JsonUtil.generateLocationMessage(parser)));
+    }
+
+    // the field will be the JSON key
+    String key = ObjectUtils.notNull(parser.getCurrentName());
+
+    Object value = jsonKey.getDefinition().getJavaTypeAdapter().parse(key);
+    jsonKey.setValue(targetObject, value.toString());
+
+    // advance past the FIELD_NAME
+    JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
+  }
+
+  @SuppressWarnings({
+      "PMD.NullAssignment", // readability
+      "PMD.CyclomaticComplexity", // acceptable
+      "PMD.CognitiveComplexity" // acceptable
+  })
+  private void readDefinitionContents(
+      @NonNull IClassBinding targetDefinition,
+      @NonNull Object targetObject,
+      @NonNull Map<String, ? extends IBoundNamedInstance> instances) throws IOException {
+
+    IBoundFlagInstance valueKeyFlag = null;
+    if (targetDefinition instanceof IFieldClassBinding) {
+      IFieldClassBinding targetFieldDefinition = (IFieldClassBinding) targetDefinition;
+      valueKeyFlag = targetFieldDefinition.getJsonValueKeyFlagInstance();
+    }
+
+    while (!JsonToken.END_OBJECT.equals(parser.currentToken())) {
+
+      boolean handled = false;
+      String propertyName = parser.getCurrentName();
+      assert propertyName != null;
+
+      if (JsonToken.FIELD_NAME.equals(parser.currentToken())) {
+        IBoundNamedInstance property = instances.get(propertyName);
+        if (property != null) {
+          handled = readInstance(property, targetObject);
+          instances.remove(propertyName);
+        }
+      } else {
+        throw new IOException(
+            String.format("Unexpected token: " + JsonUtil.toString(parser)));
+      }
+
+      if (!handled) {
+        // LOGGER.atInfo().log("Current token: " + JsonUtil.toString(parser));
+        if (valueKeyFlag != null) {
+          // Handle JSON value key flag case
+          IFieldClassBinding targetFieldDefinition = (IFieldClassBinding) targetDefinition;
+          valueKeyFlag.setValue(targetObject,
+              valueKeyFlag.getDefinition().getJavaTypeAdapter().parse(propertyName));
+
+          // advance past the FIELD_NAME to get the value
+          JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
+
+          IBoundFieldValueInstance fieldValue = targetFieldDefinition.getFieldValueInstance();
+          fieldValue.setValue(
+              targetObject,
+              fieldValue.getJavaTypeAdapter().parse(parser));
+          valueKeyFlag = null;
+        } else if (!getProblemHandler().handleUnknownProperty(
+            targetDefinition,
+            targetObject,
+            propertyName,
+            this)) {
+          if (LOGGER.isWarnEnabled()) {
+            LOGGER.warn("Unrecognized property named '{}' at '{}'", propertyName,
+                JsonUtil.toString(ObjectUtils.notNull(parser.getCurrentLocation())));
+          }
+          JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
+          JsonUtil.skipNextValue(parser);
+        }
+      }
+    }
+
+    if (!instances.isEmpty()) {
+      getProblemHandler().handleMissingInstances(
+          targetDefinition,
+          targetObject,
+          ObjectUtils.notNull(instances.values()));
+    }
+  }
 }

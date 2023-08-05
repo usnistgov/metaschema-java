@@ -154,7 +154,8 @@ public class XmlMarkupParser { // NOPMD - acceptable
     QName name = start.getName();
     buffer.append('<')
         .append(name.getLocalPart());
-    for (Attribute attribute : CollectionUtil.toIterable(start.getAttributes())) {
+    for (Attribute attribute : CollectionUtil.toIterable(
+        ObjectUtils.notNull(start.getAttributes()))) {
       buffer
           .append(' ')
           .append(attribute.getName().getLocalPart())

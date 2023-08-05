@@ -44,6 +44,7 @@ import java.util.Collection;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public final class JsonUtil {
   private static final Logger LOGGER = LogManager.getLogger(JsonUtil.class);
@@ -52,33 +53,54 @@ public final class JsonUtil {
     // disable construction
   }
 
+  /**
+   * Generate an informational string describing the token at the current location
+   * of the provided {@code parser}.
+   *
+   * @param parser
+   *          the JSON parser
+   * @return the informational string
+   * @throws IOException
+   *           if an error occurred while getting the information from the parser
+   */
+  @SuppressWarnings("null")
+  @NonNull
   public static String toString(@NonNull JsonParser parser) throws IOException {
-    StringBuilder builder = new StringBuilder(32);
-    builder
+    return new StringBuilder(32)
         .append(parser.currentToken().name())
         .append(" '")
         .append(parser.getText())
-        .append("' at location '")
-        .append(toString(ObjectUtils.notNull(parser.getCurrentLocation())))
-        .append('\'');
-    return builder.toString();
+        .append('\'')
+        .append(generateLocationMessage(parser))
+        .toString();
   }
 
+  /**
+   * Generate an informational string describing the provided {@code location}.
+   *
+   * @param location
+   *          a JSON parser location
+   * @return the informational string
+   */
+  @SuppressWarnings("null")
+  @NonNull
   public static String toString(@NonNull JsonLocation location) {
-    StringBuilder builder = new StringBuilder();
-    builder
+    return new StringBuilder(8)
         .append(location.getLineNr())
         .append(':')
-        .append(location.getColumnNr());
-    return builder.toString();
+        .append(location.getColumnNr())
+        .toString();
   }
 
+  @Nullable
   public static JsonToken advanceTo(@NonNull JsonParser parser, JsonToken token) throws IOException {
     JsonToken currentToken = null;
     while (parser.hasCurrentToken() && !token.equals(currentToken = parser.currentToken())) {
       currentToken = parser.nextToken();
       if (LOGGER.isWarnEnabled()) {
-        LOGGER.warn("skipping over: {}", toString(parser));
+        LOGGER.warn("skipping over: {}{}",
+            toString(parser),
+            generateLocationMessage(parser));
       }
     }
     return currentToken;
@@ -88,6 +110,7 @@ public final class JsonUtil {
       "resource", // parser not owned
       "PMD.CyclomaticComplexity" // acceptable
   })
+  @Nullable
   public static JsonToken skipNextValue(@NonNull JsonParser parser) throws IOException {
 
     JsonToken currentToken = parser.currentToken();
@@ -111,7 +134,9 @@ public final class JsonUtil {
       break;
     default:
       // error
-      String msg = String.format("Unhandled JsonToken %s", toString(parser));
+      String msg = String.format("Unhandled JsonToken %s%s.",
+          toString(parser),
+          generateLocationMessage(parser));
       LOGGER.error(msg);
       throw new UnsupportedOperationException(msg);
     }
@@ -147,79 +172,113 @@ public final class JsonUtil {
     return retval;
   }
 
-  public static void assertCurrent(@NonNull JsonParser parser, @NonNull JsonToken... expectedTokens) {
+  public static void assertCurrent(
+      @NonNull JsonParser parser,
+      @NonNull JsonToken... expectedTokens) {
     JsonToken current = parser.currentToken();
-    assert Arrays.stream(expectedTokens).anyMatch(expected -> expected.equals(current)) : getAssertMessage(
-        expectedTokens, parser.currentToken(), ObjectUtils.notNull(parser.getCurrentLocation()));
+    assert Arrays.stream(expectedTokens)
+        .anyMatch(expected -> expected.equals(current)) : getAssertMessage(
+            parser,
+            expectedTokens,
+            parser.currentToken());
   }
 
   public static void assertCurrentIsFieldValue(@NonNull JsonParser parser) {
     JsonToken token = parser.currentToken();
     assert token.isStructStart() || token.isScalarValue() : String.format(
-        "Expected a START_OBJECT, START_ARRAY, or VALUE_xxx token, but found JsonToken '%s' at '%s'.",
+        "Expected a START_OBJECT, START_ARRAY, or VALUE_xxx token, but found JsonToken '%s'%s.",
         token,
-        JsonUtil.toString(ObjectUtils.notNull(parser.getCurrentLocation())));
+        generateLocationMessage(parser));
   }
 
-  public static JsonToken assertAndAdvance(@NonNull JsonParser parser, @NonNull JsonToken expectedToken)
+  @Nullable
+  public static JsonToken assertAndAdvance(
+      @NonNull JsonParser parser,
+      @NonNull JsonToken expectedToken)
       throws IOException {
     JsonToken token = parser.currentToken();
-    assert expectedToken.equals(token) : getAssertMessage(expectedToken, token,
-        ObjectUtils.notNull(parser.getCurrentLocation()));
+    assert expectedToken.equals(token) : getAssertMessage(
+        parser,
+        expectedToken,
+        token);
     return parser.nextToken();
   }
 
-  public static JsonToken advanceAndAssert(@NonNull JsonParser parser, @NonNull JsonToken expectedToken)
+  @Nullable
+  public static JsonToken advanceAndAssert(
+      @NonNull JsonParser parser,
+      @NonNull JsonToken expectedToken)
       throws IOException {
     JsonToken token = parser.nextToken();
-    assert expectedToken.equals(token) : getAssertMessage(expectedToken, token,
-        ObjectUtils.notNull(parser.getCurrentLocation()));
+    assert expectedToken.equals(token) : getAssertMessage(
+        parser,
+        expectedToken,
+        token);
     return token;
   }
 
   @NonNull
-  public static String getAssertMessage(@NonNull JsonToken expected, JsonToken actual, @NonNull JsonLocation location) {
+  public static String getAssertMessage(
+      @NonNull JsonParser parser,
+      @NonNull JsonToken expected,
+      JsonToken actual) {
     return ObjectUtils.notNull(
-        String.format("Expected JsonToken '%s', but found JsonToken '%s' at '%s'.",
+        String.format("Expected JsonToken '%s', but found JsonToken '%s'%s.",
             expected,
             actual,
-            JsonUtil.toString(location)));
+            generateLocationMessage(parser)));
   }
 
   @NonNull
-  public static String getAssertMessage(@NonNull JsonToken[] expected, JsonToken actual,
-      @NonNull JsonLocation location) {
+  public static String getAssertMessage(
+      @NonNull JsonParser parser,
+      @NonNull JsonToken[] expected,
+      JsonToken actual) {
     List<JsonToken> expectedTokens = ObjectUtils.notNull(Arrays.asList(expected));
-    return getAssertMessage(expectedTokens, actual, location);
+    return getAssertMessage(parser, expectedTokens, actual);
   }
 
   @NonNull
-  public static String getAssertMessage(@NonNull Collection<JsonToken> expected, JsonToken actual,
-      @NonNull JsonLocation location) {
+  public static String getAssertMessage(
+      @NonNull JsonParser parser,
+      @NonNull Collection<JsonToken> expected,
+      JsonToken actual) {
     return ObjectUtils.notNull(
-        String.format("Expected JsonToken(s) '%s', but found JsonToken '%s' at '%s'.",
+        String.format("Expected JsonToken(s) '%s', but found JsonToken '%s'%s.",
             expected.stream().map(token -> token.name()).collect(CustomCollectors.joiningWithOxfordComma("and")),
             actual,
-            JsonUtil.toString(location)));
+            generateLocationMessage(parser)));
   }
 
   @NonNull
-  public static String toLocationContext(@NonNull JsonParser parser, @NonNull IClassBinding classBinding,
-      IBoundNamedInstance property) {
-    StringBuilder builder = new StringBuilder(64);
-    builder
-        .append("property '")
-        .append(property.getEffectiveName())
-        .append("' on class '")
-        .append(classBinding.getBoundClass().getName())
-        .append("' at location '");
+  public static CharSequence generateLocationMessage(@NonNull JsonParser parser) {
     JsonLocation location = parser.getCurrentLocation();
-    builder
+    return location == null ? "" : generateLocationMessage(location);
+  }
+
+  @SuppressWarnings("null")
+  @NonNull
+  public static CharSequence generateLocationMessage(@NonNull JsonLocation location) {
+    return new StringBuilder()
+        .append(" at location '")
         .append(location.getLineNr())
         .append(':')
         .append(location.getColumnNr())
         .append('\'');
-    return ObjectUtils.notNull(builder.toString());
   }
 
+  @SuppressWarnings("null")
+  @NonNull
+  public static String toLocationContext(
+      @NonNull JsonParser parser,
+      @NonNull IClassBinding classBinding,
+      IBoundNamedInstance property) {
+    return new StringBuilder()
+        .append("property '")
+        .append(property.getEffectiveName())
+        .append("' on class '")
+        .append(classBinding.getBoundClass().getName())
+        .append('\'')
+        .append(generateLocationMessage(parser)).toString();
+  }
 }

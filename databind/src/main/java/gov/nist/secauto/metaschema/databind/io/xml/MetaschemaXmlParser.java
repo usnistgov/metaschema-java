@@ -69,7 +69,8 @@ public class MetaschemaXmlParser
   private final IXmlProblemHandler problemHandler;
 
   /**
-   * Construct a new Metaschema-aware parser using the default problem handler.
+   * Construct a new Metaschema-aware XML parser using the default problem
+   * handler.
    *
    * @param reader
    *          the XML reader to parse with
@@ -345,7 +346,7 @@ public class MetaschemaXmlParser
   }
 
   /**
-   * Read the XML data associated with the {@code instance} and apply it to the
+   * Read the data associated with the {@code instance} and apply it to the
    * provided {@code parentObject}.
    *
    * @param instance
@@ -361,6 +362,7 @@ public class MetaschemaXmlParser
    * @throws XMLStreamException
    *           if an error occurred while parsing XML events
    */
+  // REFACTOR: rename to readModelInstance
   protected boolean readModelInstanceValues(
       @NonNull IBoundNamedModelInstance instance,
       @NonNull Object parentObject,
@@ -498,7 +500,10 @@ public class MetaschemaXmlParser
         reader.nextEvent();
         currentStart = ObjectUtils.notNull(event.asStartElement());
       } else {
-        throw new IOException(String.format("Did not find expected element '%s'.", xmlQName));
+        throw new IOException(String.format("Found '%s' instead of expected element '%s'%s.",
+            event.asStartElement().getName(),
+            xmlQName,
+            XmlEventUtil.generateLocationMessage(event)));
       }
     }
 

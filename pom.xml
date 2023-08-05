@@ -486,6 +486,7 @@
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
                 <version>${dependency.spotbugs-annotations.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>

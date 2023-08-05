@@ -59,7 +59,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 abstract class AbstractClassBinding implements IClassBinding {
-  // private static final Logger logger = LogManager.getLogger(AbstractClassBinding.class);
+  // private static final Logger logger =
+  // LogManager.getLogger(AbstractClassBinding.class);
 
   @NonNull
   private final IBindingContext bindingContext;
@@ -240,6 +241,7 @@ abstract class AbstractClassBinding implements IClassBinding {
     return jsonKeyFlag;
   }
 
+  // REFACTOR: remove
   @Override
   public Map<String, ? extends IBoundNamedInstance> getNamedInstances(Predicate<IBoundFlagInstance> filter) {
     Map<String, ? extends IBoundFlagInstance> retval;

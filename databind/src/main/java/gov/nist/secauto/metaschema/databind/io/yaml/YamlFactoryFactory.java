@@ -45,8 +45,17 @@ public final class YamlFactoryFactory {
     // disable construction
   }
 
+  /**
+   * Create a new {@link YAMLFactory} configured to parse YAML.
+   *
+   * @param config
+   *          the deserialization configuration
+   *
+   * @return the factory
+   */
   @NonNull
-  public static YAMLFactory newParserFactoryInstance(@NonNull IMutableConfiguration<DeserializationFeature<?>> config) {
+  public static YAMLFactory newParserFactoryInstance(
+      @NonNull IMutableConfiguration<DeserializationFeature<?>> config) {
     YAMLFactoryBuilder builder = YAMLFactory.builder();
     LoaderOptions loaderOptions = builder.loaderOptions();
     if (loaderOptions == null) {
@@ -62,10 +71,17 @@ public final class YamlFactoryFactory {
     return retval;
   }
 
-  @SuppressWarnings("unused")
+  /**
+   * Create a new {@link YAMLFactory} configured to generate YAML.
+   *
+   * @param config
+   *          the serialization configuration
+   *
+   * @return the factory
+   */
   @NonNull
-  public static YAMLFactory
-      newGeneratorFactoryInstance(@NonNull IMutableConfiguration<SerializationFeature<?>> config) {
+  public static YAMLFactory newGeneratorFactoryInstance(
+      @NonNull IMutableConfiguration<SerializationFeature<?>> config) {
     YAMLFactoryBuilder builder = YAMLFactory.builder();
     YAMLFactory retval = ObjectUtils.notNull(builder
         .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)

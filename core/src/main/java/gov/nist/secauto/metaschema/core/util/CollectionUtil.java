@@ -76,7 +76,7 @@ public final class CollectionUtil {
    */
   @NonNull
   public static <T> Iterable<T> toIterable(@NonNull Stream<T> stream) {
-    return toIterable(stream.iterator());
+    return toIterable(ObjectUtils.notNull(stream.iterator()));
   }
 
   /**

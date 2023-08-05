@@ -50,34 +50,61 @@ public class DefaultJsonDeserializer<CLASS>
     extends AbstractDeserializer<CLASS> {
   private JsonFactory jsonFactory;
 
-  public DefaultJsonDeserializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
+  /**
+   * Construct a new JSON deserializer that will parse the bound class identified by the
+   * {@code classBinding}.
+   *
+   * @param bindingContext
+   *          the binding context used to supply bound Java classes while writing
+   * @param classBinding
+   *          the bound class information for the Java type this deserializer is operating on
+   */
+  public DefaultJsonDeserializer(
+      @NonNull IBindingContext bindingContext,
+      @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 
+  /**
+   * Get a JSON factory instance.
+   * <p>
+   * This method can be used by sub-classes to create a customized factory instance.
+   *
+   * @return the factory
+   */
   @NonNull
-  protected JsonFactory getJsonFactoryInstance() {
+  protected JsonFactory newJsonFactoryInstance() {
     return JsonFactoryFactory.instance();
   }
 
+  /**
+   * Get the parser factory associated with this deserializer.
+   *
+   * @return the factory instance
+   */
   @NonNull
   protected JsonFactory getJsonFactory() {
     synchronized (this) {
       if (jsonFactory == null) {
-        jsonFactory = getJsonFactoryInstance();
+        jsonFactory = newJsonFactoryInstance();
       }
       assert jsonFactory != null;
       return jsonFactory;
     }
   }
 
-  protected void setJsonFactory(@NonNull JsonFactory jsonFactory) {
-    synchronized (this) {
-      this.jsonFactory = jsonFactory;
-    }
-  }
-
+  /**
+   * Using the managed JSON factory, create a new JSON parser instance using the provided reader.
+   *
+   * @param reader
+   *          the reader for the parser to read data from
+   * @return the new parser
+   * @throws IOException
+   *           if an error occurred while creating the parser
+   */
+  @SuppressWarnings("resource") // reader resource not owned
   @NonNull
-  protected JsonParser newJsonParser(@NonNull Reader reader) throws IOException {
+  protected final JsonParser newJsonParser(@NonNull Reader reader) throws IOException {
     return ObjectUtils.notNull(getJsonFactory().createParser(reader));
   }
 
@@ -96,7 +123,7 @@ public class DefaultJsonDeserializer<CLASS>
 
         RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
         // now parse the root property
-        @SuppressWarnings("unchecked") CLASS value = ObjectUtils.requireNonNull((CLASS) parser.read(root));
+        CLASS value = ObjectUtils.requireNonNull(parser.read(root));
 
         // // we should be at the end object
         // JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
@@ -109,7 +136,7 @@ public class DefaultJsonDeserializer<CLASS>
         JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
 
         @SuppressWarnings("unchecked") CLASS value
-            = (CLASS) parser.readAssemblyDefinitionValue(classBinding, null);
+            = (CLASS) parser.readDefinitionValue(classBinding, null, false);
 
         // advance past the end object
         JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);

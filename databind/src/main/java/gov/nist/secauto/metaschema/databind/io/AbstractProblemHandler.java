@@ -24,34 +24,30 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml;
+package gov.nist.secauto.metaschema.databind.io;
+
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
 
 import java.io.IOException;
-import java.net.URL;
+import java.util.Collection;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-public final class XmlUtil {
+public abstract class AbstractProblemHandler implements IProblemHandler {
 
-  private XmlUtil() {
-    // disable construction
-  }
-
-  /**
-   * Create a {@link Source} based on the provided {@code url}.
-   * <p>
-   * The caller of this method must ensure that the stream associated with this
-   * source is closed.
-   *
-   * @param url
-   *          the URL to use for the source
-   * @return a new source
-   * @throws IOException
-   *           if an error occurred while creating the underlying stream
-   */
-  @SuppressWarnings("resource") // user of source is expected to close
-  public static StreamSource getStreamSource(URL url) throws IOException {
-    return new StreamSource(url.openStream(), url.toString());
+  protected static <TYPE extends IBoundNamedInstance> void applyDefaults(
+      @NonNull Object targetObject,
+      @NonNull Collection<TYPE> unhandledInstances) throws IOException {
+    for (TYPE instance : unhandledInstances) {
+      Object value;
+      try {
+        value = instance.defaultValue();
+      } catch (BindingException ex) {
+        throw new IOException(ex);
+      }
+      if (value != null) {
+        instance.setValue(targetObject, value);
+      }
+    }
   }
 }

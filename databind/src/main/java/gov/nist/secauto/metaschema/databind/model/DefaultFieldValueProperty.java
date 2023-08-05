@@ -61,6 +61,7 @@ class DefaultFieldValueProperty
   @Nullable
   private final Object defaultValue;
 
+  @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   public DefaultFieldValueProperty(
       @NonNull IFieldClassBinding fieldClassBinding,
       @NonNull Field field) {
@@ -129,6 +130,11 @@ class DefaultFieldValueProperty
   public MarkupMultiline getRemarks() {
     // a field value doesn't have a formal name
     return null;
+  }
+
+  @Override
+  public String getName() {
+    return getJsonValueKeyName();
   }
 
   @Override

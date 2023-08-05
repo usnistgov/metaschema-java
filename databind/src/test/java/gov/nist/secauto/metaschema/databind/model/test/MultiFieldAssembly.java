@@ -29,8 +29,11 @@ package gov.nist.secauto.metaschema.databind.model.test;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldValue;
 
 import java.util.List;
 
@@ -50,6 +53,12 @@ public class MultiFieldAssembly {
       inJson = JsonGroupAsBehavior.LIST)
   private List<String> _field2;
 
+  @BoundField
+  private ValueKeyField field3;
+
+  @BoundField
+  private DefaultValueKeyField field4;
+
   public MultiFieldAssembly() {
   }
 
@@ -60,5 +69,59 @@ public class MultiFieldAssembly {
   @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "this is a data holder")
   public List<String> getField2() {
     return _field2;
+  }
+
+  public ValueKeyField getField3() {
+    return field3;
+  }
+
+  public void setField3(ValueKeyField field3) {
+    this.field3 = field3;
+  }
+
+  public DefaultValueKeyField getField4() {
+    return field4;
+  }
+
+  public void setField4(DefaultValueKeyField field4) {
+    this.field4 = field4;
+  }
+
+  @SuppressWarnings("PMD")
+  @MetaschemaField(
+      name = "field-value-key",
+      metaschema = TestMetaschema.class)
+  public static class ValueKeyField {
+    @BoundFlag
+    private String flag;
+
+    @MetaschemaFieldValue(valueKeyName = "a-value")
+    private String _value;
+
+    public ValueKeyField() {
+    }
+
+    public String getValue() {
+      return _value;
+    }
+  }
+
+  @SuppressWarnings("PMD")
+  @MetaschemaField(
+      name = "field-default-value-key",
+      metaschema = TestMetaschema.class)
+  public static class DefaultValueKeyField {
+    @BoundFlag
+    private String flag;
+
+    @MetaschemaFieldValue
+    private String _value;
+
+    public DefaultValueKeyField() {
+    }
+
+    public String getValue() {
+      return _value;
+    }
   }
 }

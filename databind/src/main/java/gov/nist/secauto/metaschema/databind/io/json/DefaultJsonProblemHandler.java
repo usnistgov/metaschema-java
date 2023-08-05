@@ -26,66 +26,46 @@
 
 package gov.nist.secauto.metaschema.databind.io.json;
 
-import com.fasterxml.jackson.core.JsonParser;
-
-import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.io.AbstractProblemHandler;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IJsonBindingSupplier;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-public class DefaultJsonProblemHandler implements IJsonProblemHandler {
-  private static final String JSON_SCHEMA_ROOT_FIELD_NAME = "$schema";
-  private static final Set<String> IGNORED_ROOT_FIELD_NAMES;
+public class DefaultJsonProblemHandler
+    extends AbstractProblemHandler
+    implements IJsonProblemHandler {
+  private static final String JSON_SCHEMA_FIELD_NAME = "$schema";
+  private static final Set<String> IGNORED_FIELD_NAMES;
 
   static {
-    IGNORED_ROOT_FIELD_NAMES = new HashSet<>();
-    IGNORED_ROOT_FIELD_NAMES.add(JSON_SCHEMA_ROOT_FIELD_NAME);
+    IGNORED_FIELD_NAMES = new HashSet<>();
+    IGNORED_FIELD_NAMES.add(JSON_SCHEMA_FIELD_NAME);
   }
 
+  @SuppressWarnings("resource")
   @Override
-  public boolean handleUnknownRootProperty(
-      IAssemblyClassBinding classBinding,
+  public boolean handleUnknownProperty(
+      IClassBinding classBinding,
+      Object targetObject,
       String fieldName,
-      JsonParser parser) throws IOException {
+      IJsonParsingContext parsingContext) throws IOException {
     boolean retval = false;
-    if (IGNORED_ROOT_FIELD_NAMES.contains(fieldName)) {
-      JsonUtil.skipNextValue(parser);
+    if (IGNORED_FIELD_NAMES.contains(fieldName)) {
+      JsonUtil.skipNextValue(parsingContext.getReader());
       retval = true;
     }
     return retval;
   }
 
-  // TODO: implement this
   @Override
-  public boolean canHandleUnknownProperty(
-      IClassBinding classBinding,
-      String propertyName,
-      JsonParser parser) throws IOException {
-    return false;
+  public void handleMissingInstances(
+      IClassBinding parentDefinition,
+      Object targetObject,
+      Collection<? extends IBoundNamedInstance> unhandledInstances) throws IOException {
+    applyDefaults(targetObject, unhandledInstances);
   }
-
-  @Override
-  public boolean handleUnknownProperty(
-      IClassBinding classBinding,
-      String propertyName,
-      JsonParser parser) throws IOException {
-    return false;
-  }
-
-  // TODO: implement this
-  @Override
-  public Map<IBoundNamedInstance, IJsonBindingSupplier> handleMissingFields(
-      IClassBinding classBinding,
-      Map<String, IBoundNamedInstance> missingPropertyBindings,
-      JsonParser parser) throws BindingException {
-    return Collections.emptyMap();
-  }
-
 }

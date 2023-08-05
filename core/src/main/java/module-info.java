@@ -51,7 +51,7 @@ module gov.nist.secauto.metaschema.core {
   requires org.apache.commons.text;
   requires org.apache.logging.log4j;
   requires org.apache.xmlbeans;
-  requires org.json;
+  requires transitive org.json;
   requires org.jsoup;
 
   requires transitive com.fasterxml.jackson.databind;
@@ -67,7 +67,7 @@ module gov.nist.secauto.metaschema.core {
   requires flexmark.ext.tables;
   requires transitive flexmark.ext.typographic;
   requires flexmark.html2md.converter;
-  requires flexmark.util.ast;
+  requires transitive flexmark.util.ast;
   requires flexmark.util.builder;
   requires flexmark.util.collection;
   requires flexmark.util.data;

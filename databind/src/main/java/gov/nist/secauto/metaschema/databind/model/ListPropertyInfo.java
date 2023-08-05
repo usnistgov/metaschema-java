@@ -125,55 +125,42 @@ class ListPropertyInfo
     return handled;
   }
 
-  @SuppressWarnings("resource") // not owned
+  @SuppressWarnings({
+      "resource", // not owned
+      "PMD.ImplicitSwitchFallThrough" // false positive
+  })
+
   @Override
-  public void readValue(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
+  public void readValue(
+      IPropertyCollector collector,
+      Object parentInstance,
+      IJsonParsingContext context)
       throws IOException {
-    JsonParser parser = context.getReader(); // NOPMD - intentional
+    JsonParser parser = context.getReader();
 
-    if (JsonGroupAsBehavior.SINGLETON_OR_LIST.equals(getProperty().getJsonGroupAsBehavior())
-        && !JsonToken.START_ARRAY.equals(parser.currentToken())) {
-      // boolean isObject = JsonToken.START_OBJECT.equals(parser.currentToken());
-      //
-      // if (isObject) {
-      // // read the object's START_OBJECT
-      // JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-      // }
-
-      // this is a singleton, just parse the value as a single item
-      Object value = getDataTypeHandler().get(parentInstance, false, context);
-      collector.add(value);
-
-      // if (isObject) {
-      // // read the object's END_OBJECT
-      // JsonUtil.assertAndAdvance(context.getReader(), JsonToken.END_OBJECT);
-      // }
-    } else if (JsonToken.VALUE_NULL.equals(parser.currentToken())) {
-      JsonUtil.assertAndAdvance(parser, JsonToken.VALUE_NULL);
-    } else {
+    switch (parser.currentToken()) {
+    case START_ARRAY: {
       // this is an array, we need to parse the array wrapper then each item
       JsonUtil.assertAndAdvance(parser, JsonToken.START_ARRAY);
 
       // parse items
       while (!JsonToken.END_ARRAY.equals(parser.currentToken())) {
-        //
-        // boolean isObject = JsonToken.START_OBJECT.equals(parser.currentToken());
-        // if (isObject) {
-        // // read the object's START_OBJECT
-        // JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-        // }
-
         Object value = getDataTypeHandler().get(parentInstance, false, context);
         collector.add(value);
-
-        // if (isObject) {
-        // // read the object's END_OBJECT
-        // JsonUtil.assertAndAdvance(context.getReader(), JsonToken.END_OBJECT);
-        // }
       }
 
       // this is the other side of the array wrapper, advance past it
       JsonUtil.assertAndAdvance(parser, JsonToken.END_ARRAY);
+      break;
+    }
+    case VALUE_NULL: {
+      JsonUtil.assertAndAdvance(parser, JsonToken.VALUE_NULL);
+      break;
+    }
+    default:
+      // this is a singleton, just parse the value as a single item
+      Object value = getDataTypeHandler().get(parentInstance, false, context);
+      collector.add(value);
     }
   }
 

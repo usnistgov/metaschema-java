@@ -95,6 +95,7 @@ class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
     getJavaTypeAdapter().writeXmlValue(item, currentParentName, context.getWriter());
   }
 
+  @SuppressWarnings("resource") // resource not owned
   @Override
   public void writeItems(
       Collection<? extends Object> items,

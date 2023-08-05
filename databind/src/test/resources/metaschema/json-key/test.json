@@ -1,0 +1,70 @@
+{
+    "$schema": "file:/C:/Users/davidwal/git/github/david-waltermire-nist/metaschema-java/databind/src/test/resources/metaschema/json-key/schema.json",
+    "top": {
+        "middle": [
+            {"field-value": "value1"},
+            {
+                "field-value": "value2",
+                "field-key-flag-values": {
+                    "no-other": {"STRVALUE": "value3"}
+                },
+                "bottom-keys": {
+                    "id1": {}
+                }
+            },
+            {
+                "field-value": "value4",
+                "field-key-values": {"id2": "value5"},
+                "field-key-flag-values": {
+                    "other": {
+                        "other": "other-value",
+                        "STRVALUE": "value6"
+                    }
+                },
+                "bottom-keys": {
+                    "id3": {}
+                },
+                "bottom-flag-keys": {
+                    "id4": {"other": "value7"}
+                },
+                "bottom-flag-key-values": {
+                    "id5": {
+                        "other": "value8",
+                        "values": ["value9"]
+                    }
+                }
+            },
+            {
+                "field-value": "value10",
+                "field-key-values": {
+                    "id6": "value11",
+                    "id7": "value12"
+                },
+                "field-key-flag-values": {
+                    "no-other": {"STRVALUE": "value13"},
+                    "other": {
+                        "other": "other-value",
+                        "STRVALUE": "value14"
+                    }
+                },
+                "bottom-keys": {
+                    "id8": {},
+                    "id9": {}
+                },
+                "bottom-flag-keys": {
+                    "id10": {"other": "value15"},
+                    "id11": {"other": "value16"}
+                },
+                "bottom-flag-key-values": {
+                    "id12": {
+                        "other": "value17",
+                        "values": [
+                            "value18",
+                            "value19"
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+}

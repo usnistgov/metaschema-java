@@ -26,39 +26,40 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.DynamicBindingContext;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
+
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IBoundFieldValueInstance extends IBoundNamedInstance {
-
+class JsonKeyTest
+    extends AbstractBoundModelTestSupport {
+  // @TempDir
+  // Path generationDir;
   @NonNull
-  IDataTypeAdapter<?> getJavaTypeAdapter();
+  Path generationDir = ObjectUtils.notNull(Paths.get("target/generated-test-sources/metaschema"));
 
-  /**
-   * Get the JSON value key name based on either the configured value key name or the default for the
-   * data type.
-   *
-   * @return the value key name
-   */
-  @NonNull
-  String getJsonValueKeyName();
+  @Test
+  void testJsonKey() throws IOException, MetaschemaException {
+    IMetaschema module = new MetaschemaLoader().load(ObjectUtils.requireNonNull(
+        Paths.get("src/test/resources/metaschema/json-key/metaschema.xml")));
 
-  @Override
-  default String getJsonName() {
-    return getJsonValueKeyName();
+    IBindingContext bindingContext = DynamicBindingContext.forMetaschema(module, generationDir);
+
+    Object obj = bindingContext.newBoundLoader().load(
+        ObjectUtils.requireNonNull(Paths.get("src/test/resources/metaschema/json-key/test.json")));
+
+    assertNotNull(obj);
   }
-
-  void writeValue(Object value, @NonNull IJsonWritingContext context) throws IOException;
-
-  @Nullable
-  Object getDefaultValue();
-
-  @Override
-  @NonNull
-  IFieldClassBinding getParentClassBinding();
 }

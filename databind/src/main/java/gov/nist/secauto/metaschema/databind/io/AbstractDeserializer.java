@@ -62,13 +62,14 @@ public abstract class AbstractDeserializer<CLASS>
    * @param bindingContext
    *          the binding context used to supply bound Java classes while writing
    * @param classBinding
-   *          the bound class information for the Java type this deserializer is operating on
+   *          the bound class information for the Java type this deserializer is
+   *          operating on
    */
   protected AbstractDeserializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 
-  @Override
+  @NonNull
   public IConstraintValidationHandler getConstraintValidationHandler() {
     synchronized (this) {
       if (constraintValidationHandler == null) {

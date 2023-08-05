@@ -40,22 +40,38 @@ public final class JsonFactoryFactory {
     // disable construction
   }
 
+  /**
+   * Create a new {@link JsonFactory}.
+   *
+   * @return the factory
+   */
   @NonNull
-  public static JsonFactory newJsonFactoryInstance() {
+  private static JsonFactory newJsonFactoryInstance() {
     JsonFactory retval = new JsonFactory();
     configureJsonFactory(retval);
     return retval;
   }
 
+  /**
+   * Get the cached {@link JsonFactory} instance.
+   *
+   * @return the factory
+   */
   @NonNull
   public static JsonFactory instance() {
     return SINGLETON;
   }
 
+  /**
+   * Apply a standard configuration to the provided JSON {@code factory}.
+   *
+   * @param factory
+   *          the factory to configure
+   */
   public static void configureJsonFactory(@NonNull JsonFactory factory) {
-    // avoid automatically closing streams not owned by the reader
+    // avoid automatically closing parsing streams not owned by the reader
     factory.disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
-    // avoid automatically closing streams not owned by the reader
+    // avoid automatically closing generation streams not owned by the reader
     factory.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
   }
 }

@@ -44,8 +44,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Used to dynamically generate, compile, and load a set of Metaschema annotated
- * Java classes.
+ * Used to dynamically generate, compile, and load a set of Metaschema annotated Java classes.
  */
 public class DynamicBindingContext
     extends DefaultBindingContext {

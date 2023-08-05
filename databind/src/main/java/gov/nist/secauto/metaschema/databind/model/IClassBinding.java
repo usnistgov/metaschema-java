@@ -77,6 +77,7 @@ public interface IClassBinding extends IBoundModelDefinition {
    *          a filter to apply or {@code null} if no filtering is needed
    * @return a collection of properties
    */
+  // REFACTOR: remove
   @NonNull
   Map<String, ? extends IBoundNamedInstance>
       getNamedInstances(@Nullable Predicate<IBoundFlagInstance> flagFilter);
@@ -89,7 +90,8 @@ public interface IClassBinding extends IBoundModelDefinition {
     writeItems(CollectionUtil.singleton(item), writeObjectWrapper, context);
   }
 
-  // for JSON, the entire value needs to be processed to deal with collapsable fields
+  // for JSON, the entire value needs to be processed to deal with collapsable
+  // fields
   void writeItems(@NonNull Collection<? extends Object> items, boolean writeObjectWrapper,
       @NonNull IJsonWritingContext context)
       throws IOException;

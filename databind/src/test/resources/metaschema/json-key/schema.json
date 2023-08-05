@@ -1,0 +1,165 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "$id" : "http://csrc.nist.gov/ns/metaschema/testing/json-key/assembly-1.0-schema.json",
+  "$comment" : "JSON key test Metaschema",
+  "type" : "object",
+  "definitions" : {
+    "FlagAssemblyOtherType" : {
+      "$id" : "#/definitions/FlagAssemblyOtherType",
+      "$ref" : "#/definitions/StringDatatype"
+    },
+    "FieldAssemblyFieldKeyValueType" : {
+      "$id" : "#/definitions/FieldAssemblyFieldKeyValueType",
+      "$ref" : "#/definitions/StringDatatype"
+    },
+    "FlagAssemblyIdType" : {
+      "$id" : "#/definitions/FlagAssemblyIdType",
+      "$ref" : "#/definitions/StringDatatype"
+    },
+    "FieldAssemblyFieldKeyFlagValueType" : {
+      "$id" : "#/definitions/FieldAssemblyFieldKeyFlagValueType",
+      "type" : "object",
+      "properties" : {
+        "other" : {
+          "$ref" : "#/definitions/FlagAssemblyOtherType"
+        },
+        "STRVALUE" : {
+          "$ref" : "#/definitions/StringDatatype"
+        }
+      },
+      "required" : [ "STRVALUE" ],
+      "additionalProperties" : false
+    },
+    "AssemblyAssemblyBottomFlagKeyType" : {
+      "$id" : "#/definitions/AssemblyAssemblyBottomFlagKeyType",
+      "type" : "object",
+      "properties" : {
+        "other" : {
+          "$ref" : "#/definitions/FlagAssemblyOtherType"
+        }
+      },
+      "additionalProperties" : false
+    },
+    "AssemblyAssemblyTopType" : {
+      "$id" : "#/definitions/AssemblyAssemblyTopType",
+      "type" : "object",
+      "properties" : {
+        "middle" : {
+          "oneOf" : [ {
+            "$ref" : "#/definitions/AssemblyAssemblyMiddleType"
+          }, {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/AssemblyAssemblyMiddleType"
+            },
+            "minItems" : 2
+          } ]
+        }
+      },
+      "required" : [ "middle" ],
+      "additionalProperties" : false
+    },
+    "AssemblyAssemblyMiddleType" : {
+      "$id" : "#/definitions/AssemblyAssemblyMiddleType",
+      "type" : "object",
+      "properties" : {
+        "field-value" : {
+          "$ref" : "#/definitions/FieldAssemblyFieldValueType"
+        },
+        "field-key-values" : {
+          "type" : "object",
+          "minProperties" : 1,
+          "propertyNames" : {
+            "$ref" : "#/definitions/StringDatatype"
+          },
+          "additionalProperties" : {
+            "$ref" : "#/definitions/FieldAssemblyFieldKeyValueType"
+          }
+        },
+        "field-key-flag-values" : {
+          "type" : "object",
+          "minProperties" : 1,
+          "propertyNames" : {
+            "$ref" : "#/definitions/StringDatatype"
+          },
+          "additionalProperties" : {
+            "$ref" : "#/definitions/FieldAssemblyFieldKeyFlagValueType"
+          }
+        },
+        "bottom-keys" : {
+          "type" : "object",
+          "minProperties" : 1,
+          "propertyNames" : {
+            "$ref" : "#/definitions/StringDatatype"
+          },
+          "additionalProperties" : {
+            "$ref" : "#/definitions/AssemblyAssemblyBottomKeyType"
+          }
+        },
+        "bottom-flag-keys" : {
+          "type" : "object",
+          "minProperties" : 1,
+          "propertyNames" : {
+            "$ref" : "#/definitions/StringDatatype"
+          },
+          "additionalProperties" : {
+            "$ref" : "#/definitions/AssemblyAssemblyBottomFlagKeyType"
+          }
+        },
+        "bottom-flag-key-values" : {
+          "type" : "object",
+          "minProperties" : 1,
+          "propertyNames" : {
+            "$ref" : "#/definitions/StringDatatype"
+          },
+          "additionalProperties" : {
+            "$ref" : "#/definitions/AssemblyAssemblyBottomFlagKeyValueType"
+          }
+        }
+      },
+      "additionalProperties" : false
+    },
+    "FieldAssemblyFieldValueType" : {
+      "$id" : "#/definitions/FieldAssemblyFieldValueType",
+      "$ref" : "#/definitions/StringDatatype"
+    },
+    "AssemblyAssemblyBottomKeyType" : {
+      "$id" : "#/definitions/AssemblyAssemblyBottomKeyType",
+      "type" : "object",
+      "additionalProperties" : false
+    },
+    "AssemblyAssemblyBottomFlagKeyValueType" : {
+      "$id" : "#/definitions/AssemblyAssemblyBottomFlagKeyValueType",
+      "type" : "object",
+      "properties" : {
+        "other" : {
+          "$ref" : "#/definitions/FlagAssemblyOtherType"
+        },
+        "values" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/FieldAssemblyFieldValueType"
+          },
+          "minItems" : 1
+        }
+      },
+      "additionalProperties" : false
+    },
+    "StringDatatype" : {
+      "description" : "A non-empty string with leading and trailing whitespace disallowed. Whitespace is: U+9, U+10, U+32 or [ \n\t]+",
+      "type" : "string",
+      "pattern" : "^\\S(.*\\S)?$"
+    }
+  },
+  "properties" : {
+    "$schema" : {
+      "type" : "string",
+      "format" : "uri-reference"
+    },
+    "top" : {
+      "$ref" : "#/definitions/AssemblyAssemblyTopType"
+    }
+  },
+  "required" : [ "top" ],
+  "additionalProperties" : false
+}

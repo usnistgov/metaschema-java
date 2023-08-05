@@ -59,14 +59,13 @@ public class DefaultXmlDeserializer<CLASS>
   private final RootAssemblyDefinition rootDefinition;
 
   /**
-   * Construct a new Metaschema binding-based deserializer that reads XML-based
-   * Metaschema content.
+   * Construct a new Metaschema binding-based deserializer that reads XML-based Metaschema content.
    *
    * @param bindingContext
    *          the Metaschema data binding context
    * @param classBinding
-   *          the assembly class binding describing the Java objects this
-   *          deserializer parses data into
+   *          the assembly class binding describing the Java objects this deserializer parses data
+   *          into
    */
   public DefaultXmlDeserializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
@@ -100,8 +99,7 @@ public class DefaultXmlDeserializer<CLASS>
   }
 
   /**
-   * Provide a XML input factory instance that will be used to create XML parser
-   * instances.
+   * Provide a XML input factory instance that will be used to create XML parser instances.
    *
    * @param factory
    *          the factory instance
@@ -128,8 +126,8 @@ public class DefaultXmlDeserializer<CLASS>
   @Override
   public final CLASS deserializeToValue(Reader reader, URI documentUri) throws IOException {
     // doesn't auto close the underlying reader
-    try (AutoCloser<XMLEventReader2, XMLStreamException> closer
-        = new AutoCloser<>(newXMLEventReader2(reader), event -> event.close())) {
+    try (AutoCloser<XMLEventReader2, XMLStreamException> closer = new AutoCloser<>(
+        newXMLEventReader2(reader), event -> event.close())) {
       return parseXmlInternal(closer.getResource());
     } catch (XMLStreamException ex) {
       throw new IOException("Unable to create a new XMLEventReader2 instance.", ex);
@@ -138,10 +136,16 @@ public class DefaultXmlDeserializer<CLASS>
 
   @NonNull
   private CLASS parseXmlInternal(@NonNull XMLEventReader2 reader)
-      throws IOException, XMLStreamException {
+      throws IOException {
 
     MetaschemaXmlParser parser = new MetaschemaXmlParser(reader, new DefaultXmlProblemHandler());
 
-    return parser.read(rootDefinition);
+    try {
+      return parser.read(rootDefinition);
+    } catch (IOException | XMLStreamException | AssertionError ex) {
+      throw new IOException(
+          String.format("An unexpected error occured during parsing: %s", ex.getMessage()),
+          ex);
+    }
   }
 }

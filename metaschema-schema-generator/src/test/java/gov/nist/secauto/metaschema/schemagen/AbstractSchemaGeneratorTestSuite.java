@@ -178,7 +178,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
       @NonNull ContentCase... contentCases) throws IOException, MetaschemaException {
     Path generationDir = getGenerationPath();
 
-    Path testSuite = Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/");
+    Path testSuite = Paths.get("../core/metaschema/test-suite/schema-generation/");
     Path collectionPath = testSuite.resolve(collectionName);
 
     MetaschemaLoader loader = new MetaschemaLoader();
@@ -221,7 +221,10 @@ public abstract class AbstractSchemaGeneratorTestSuite
   }
 
   @NonNull
-  protected ContentCase contentCase(@NonNull Format actualFormat, @NonNull String contentName, boolean valid) {
+  protected ContentCase contentCase(
+      @NonNull Format actualFormat,
+      @NonNull String contentName,
+      boolean valid) {
     return new ContentCase(contentName, actualFormat, valid);
   }
 

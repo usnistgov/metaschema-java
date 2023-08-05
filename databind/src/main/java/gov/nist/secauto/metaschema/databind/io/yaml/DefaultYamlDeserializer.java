@@ -37,6 +37,15 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class DefaultYamlDeserializer<CLASS>
     extends DefaultJsonDeserializer<CLASS> {
 
+  /**
+   * Construct a new YAML deserializer that will parse the bound class identified by the
+   * {@code classBinding}.
+   *
+   * @param bindingContext
+   *          the binding context used to supply bound Java classes while writing
+   * @param classBinding
+   *          the bound class information for the Java type this deserializer is operating on
+   */
   public DefaultYamlDeserializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
@@ -46,8 +55,15 @@ public class DefaultYamlDeserializer<CLASS>
   // return Format.YAML;
   // }
 
+  /**
+   * {@inheritDoc}
+   * <p>
+   * This method provides a YAML version of the JSON factory.
+   *
+   * @return the factory
+   */
   @Override
-  protected YAMLFactory getJsonFactoryInstance() {
+  protected YAMLFactory newJsonFactoryInstance() {
     return YamlFactoryFactory.newParserFactoryInstance(getConfiguration());
   }
 

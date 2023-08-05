@@ -82,6 +82,7 @@ public class GenerateSchemaCommand
   private static final Option AS_OPTION = ObjectUtils.notNull(
       Option.builder()
           .longOpt("as")
+          .required()
           .hasArg()
           .argName("FORMAT")
           .desc("source format: xml, json, or yaml")
@@ -127,8 +128,10 @@ public class GenerateSchemaCommand
   @Override
   public void validateOptions(CallingContext callingContext, CommandLine cmdLine) throws InvalidArgumentException {
     try {
-      String toFormatText = cmdLine.getOptionValue(AS_OPTION);
-      SchemaFormat.valueOf(toFormatText.toUpperCase(Locale.ROOT));
+      String asFormatText = cmdLine.getOptionValue(AS_OPTION);
+      if (asFormatText != null) {
+        SchemaFormat.valueOf(asFormatText.toUpperCase(Locale.ROOT));
+      }
     } catch (IllegalArgumentException ex) {
       InvalidArgumentException newEx = new InvalidArgumentException( // NOPMD - intentional
           String.format("Invalid '%s' argument. The format must be one of: %s.",

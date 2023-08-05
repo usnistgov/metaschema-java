@@ -26,56 +26,60 @@
 
 package gov.nist.secauto.metaschema.databind.io.json;
 
-import com.fasterxml.jackson.core.JsonParser;
-
-import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.IProblemHandler;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IJsonBindingSupplier;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IJsonProblemHandler extends IProblemHandler {
-  boolean handleUnknownRootProperty(
-      @NonNull IAssemblyClassBinding classBinding,
-      @NonNull String fieldName,
-      @NonNull JsonParser parser) throws IOException;
-
-  boolean canHandleUnknownProperty(
-      @NonNull IClassBinding classBinding,
-      @NonNull String propertyName,
-      @NonNull JsonParser parser)
-      throws IOException;
-
-  boolean handleUnknownProperty(
-      @NonNull IClassBinding classBinding,
-      @NonNull String propertyName,
-      @NonNull JsonParser parser) throws IOException;
 
   /**
-   * A callback used to handle bound properties for which no data was found when the content was
+   * Callback used to handle a JSON property that is unknown to the model being
    * parsed.
-   * <p>
-   * This can be used to supply default or prescribed values based on application logic.
    *
    * @param classBinding
-   *          the bound class on which the missing properties are found
-   * @param missingPropertyBindings
-   *          a map of field names to property bindings for missing fields
-   * @param parser
-   *          the parser used for deserialziation
-   * @return a mapping of property to suppliers for any properties handled by this method
-   * @throws BindingException
-   *           if an unhandled binding error has occurred for any reason
+   *          the bound class currently describing the data being parsed
+   * @param targetObject
+   *          the Java object for the {@code parentDefinition}
+   * @param fieldName
+   *          the unknown JSON field name
+   * @param parsingContext
+   *          the JSON parsing context used for parsing
+   * @return {@code true} if the attribute was handled by this method, or
+   *         {@code false} otherwise
+   * @throws IOException
+   *           if an error occurred while handling the unrecognized data
    */
-  Map<IBoundNamedInstance, IJsonBindingSupplier> handleMissingFields(
+  boolean handleUnknownProperty(
       @NonNull IClassBinding classBinding,
-      @NonNull Map<String, IBoundNamedInstance> missingPropertyBindings,
-      @NonNull JsonParser parser)
-      throws BindingException;
+      @Nullable Object targetObject,
+      @NonNull String fieldName,
+      @NonNull IJsonParsingContext parsingContext) throws IOException;
+
+  /**
+   * A callback used to handle bound properties for which no data was found when
+   * the content was parsed.
+   * <p>
+   * This can be used to supply default or prescribed values based on application
+   * logic.
+   *
+   * @param parentDefinition
+   *          the bound class on which the missing properties are found
+   * @param targetObject
+   *          the Java object for the {@code parentDefinition}
+   * @param unhandledInstances
+   *          the set of instances that had no data to parse
+   * @throws IOException
+   *           if an error occurred while handling the missing instances
+   */
+  void handleMissingInstances(
+      @NonNull IClassBinding parentDefinition,
+      @NonNull Object targetObject,
+      @NonNull Collection<? extends IBoundNamedInstance> unhandledInstances)
+      throws IOException;
 }

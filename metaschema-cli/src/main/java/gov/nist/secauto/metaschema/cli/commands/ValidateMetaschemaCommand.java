@@ -36,10 +36,10 @@ import gov.nist.secauto.metaschema.cli.processor.command.DefaultExtraArgument;
 import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;
 import gov.nist.secauto.metaschema.cli.processor.command.ICommandExecutor;
 import gov.nist.secauto.metaschema.cli.util.LoggingValidationHandler;
+import gov.nist.secauto.metaschema.core.model.util.XmlUtil;
 import gov.nist.secauto.metaschema.core.model.validation.IContentValidator;
 import gov.nist.secauto.metaschema.core.model.validation.IValidationResult;
 import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
-import gov.nist.secauto.metaschema.core.model.xml.XmlUtil;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -91,7 +91,9 @@ public class ValidateMetaschemaCommand
   protected List<Source> getXmlSchemaSources() throws IOException {
     List<Source> retval = new LinkedList<>();
     retval.add(XmlUtil.getStreamSource(
-        MetaschemaLoader.class.getResource("/schema/xml/metaschema.xsd")));
+        ObjectUtils.requireNonNull(
+            MetaschemaLoader.class.getResource("/schema/xml/metaschema.xsd"),
+            "Unable to load '/schema/xml/metaschema.xsd' on the classpath")));
     return CollectionUtil.unmodifiableList(retval);
   }
 

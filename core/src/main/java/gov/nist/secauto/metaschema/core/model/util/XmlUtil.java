@@ -24,41 +24,37 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
-
-import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
+package gov.nist.secauto.metaschema.core.model.util;
 
 import java.io.IOException;
+import java.net.URL;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IBoundFieldValueInstance extends IBoundNamedInstance {
+public final class XmlUtil {
 
-  @NonNull
-  IDataTypeAdapter<?> getJavaTypeAdapter();
-
-  /**
-   * Get the JSON value key name based on either the configured value key name or the default for the
-   * data type.
-   *
-   * @return the value key name
-   */
-  @NonNull
-  String getJsonValueKeyName();
-
-  @Override
-  default String getJsonName() {
-    return getJsonValueKeyName();
+  private XmlUtil() {
+    // disable construction
   }
 
-  void writeValue(Object value, @NonNull IJsonWritingContext context) throws IOException;
-
-  @Nullable
-  Object getDefaultValue();
-
-  @Override
+  /**
+   * Create a {@link Source} based on the provided {@code url}.
+   * <p>
+   * The caller of this method must ensure that the stream associated with this
+   * source is closed.
+   *
+   * @param url
+   *          the URL to use for the source
+   * @return a new source
+   * @throws IOException
+   *           if an error occurred while creating the underlying stream
+   */
+  @SuppressWarnings("resource") // user of source is expected to close
   @NonNull
-  IFieldClassBinding getParentClassBinding();
+  public static StreamSource getStreamSource(@NonNull URL url) throws IOException {
+    return new StreamSource(url.openStream(), url.toString());
+  }
 }

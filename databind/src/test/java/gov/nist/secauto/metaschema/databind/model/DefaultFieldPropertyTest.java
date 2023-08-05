@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -37,25 +37,21 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
-import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.databind.io.json.MetaschemaJsonParser;
 import gov.nist.secauto.metaschema.databind.model.test.MultiFieldAssembly;
+import gov.nist.secauto.metaschema.databind.model.test.SimpleAssembly;
 
-import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 
 class DefaultFieldPropertyTest {
   @RegisterExtension
@@ -69,61 +65,51 @@ class DefaultFieldPropertyTest {
   private IBindingContext bindingContext; // NOPMD - it's injected
 
   @Test
-  void testJsonRead()
-      throws JsonParseException, IOException, NoSuchFieldException {
-
-    String json = "{ \"field1\": \"field1value\", \"fields2\": [ \"field2value\" ] } }";
+  void testJsonReadFlag()
+      throws JsonParseException, IOException {
+    String json = "{ \"test\": { \"id\": \"theId\", \"number\": 1 } }";
     JsonFactory factory = new JsonFactory();
     try (JsonParser jsonParser = factory.createParser(json)) {
       assert jsonParser != null;
 
-      Class<?> theClass = MultiFieldAssembly.class;
-
-      context.checking(new Expectations() {
-        { // NOPMD - intentional
-          allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-          will(returnValue(MetaschemaDataTypeProvider.STRING));
-          allowing(bindingContext).getClassBinding(String.class);
-          will(returnValue(null));
-
-          allowing(classBinding).getBoundClass();
-          will(returnValue(theClass));
-          allowing(classBinding).getName();
-          will(returnValue(null));
-          allowing(classBinding).getBindingContext();
-          will(returnValue(bindingContext));
-          allowing(classBinding).getContainingMetaschema();
-          will(returnValue(metaschema));
-
-          allowing(metaschema).getLocation();
-          will(returnValue(URI.create("relativeLocation")));
-        }
-      });
-
-      java.lang.reflect.Field field1 = ObjectUtils.requireNonNull(theClass.getDeclaredField("field1"));
-      IBoundFieldInstance field1Property = IBoundFieldInstance.newInstance(
-          field1,
-          ObjectUtils.notNull(classBinding));
-
-      java.lang.reflect.Field field2 = ObjectUtils.requireNonNull(theClass.getDeclaredField("_field2"));
-      IBoundFieldInstance field2Property = IBoundFieldInstance.newInstance(
-          field2,
-          ObjectUtils.notNull(classBinding));
-
-      MultiFieldAssembly obj = new MultiFieldAssembly();
+      IBindingContext bindingContext = IBindingContext.instance();
+      IAssemblyClassBinding classBinding = (IAssemblyClassBinding) bindingContext.getClassBinding(SimpleAssembly.class);
+      assert classBinding != null;
+      IRootAssemblyClassBinding root = new RootAssemblyDefinition(classBinding);
 
       MetaschemaJsonParser parser = new MetaschemaJsonParser(jsonParser);
 
+      SimpleAssembly obj = parser.read(root);
+      assert obj != null;
+
       assertAll(
-          () -> assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken()),
-          () -> assertEquals("field1", jsonParser.nextFieldName()),
-          () -> assertTrue(parser.readInstanceValues(field1Property, obj)),
+          () -> assertEquals("theId", obj.getId()));
+    }
+  }
+
+  @Test
+  void testJsonReadField()
+      throws JsonParseException, IOException {
+
+    String json = "{ \"field1\": \"field1value\", \"fields2\": [ \"field2value\" ] }";
+    JsonFactory factory = new JsonFactory();
+    try (JsonParser jsonParser = factory.createParser(json)) {
+      assert jsonParser != null;
+      // get first token
+      jsonParser.nextToken();
+
+      IBindingContext bindingContext = IBindingContext.instance();
+      IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
+      assert classBinding != null;
+
+      MetaschemaJsonParser parser = new MetaschemaJsonParser(jsonParser);
+
+      JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
+      MultiFieldAssembly obj = parser.readDefinitionValue(classBinding, null, false);
+      JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
+
+      assertAll(
           () -> assertEquals("field1value", obj.getField1()),
-
-          () -> assertEquals(JsonToken.FIELD_NAME, jsonParser.currentToken()),
-          () -> assertEquals("fields2", jsonParser.currentName()),
-
-          () -> assertTrue(parser.readInstanceValues(field2Property, obj)),
           () -> assertTrue(obj.getField2() instanceof LinkedList),
           () -> assertIterableEquals(Collections.singleton("field2value"), obj.getField2()));
 
@@ -135,66 +121,81 @@ class DefaultFieldPropertyTest {
 
   @Test
   void testJsonReadMissingFieldValue()
-      throws JsonParseException, IOException, NoSuchFieldException {
-    String json = "{ \"test\":\n" + "  { \"fields2\": [\n" + "    \"field2value\"\n" + "    ]\n" + "  }\n" + "}\n";
+      throws JsonParseException, IOException {
+    String json = "{ \"fields2\": [\n"
+        + "    \"field2value\"\n"
+        + "    ]\n"
+        + "}\n";
     JsonFactory factory = new JsonFactory();
     try (JsonParser jsonParser = factory.createParser(json)) {
       assert jsonParser != null;
+      // get first token
+      jsonParser.nextToken();
 
-      Class<?> theClass = MultiFieldAssembly.class;
-
-      context.checking(new Expectations() {
-        { // NOPMD - intentional
-          allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-          will(returnValue(MetaschemaDataTypeProvider.STRING));
-          allowing(bindingContext).getClassBinding(String.class);
-          will(returnValue(null));
-
-          allowing(classBinding).getBoundClass();
-          will(returnValue(theClass));
-          allowing(classBinding).getName();
-          will(returnValue(null));
-          allowing(classBinding).getBindingContext();
-          will(returnValue(bindingContext));
-          allowing(classBinding).getContainingMetaschema();
-          will(returnValue(metaschema));
-
-          allowing(metaschema).getLocation();
-          will(returnValue(URI.create("relativeLocation")));
-        }
-      });
-
-      java.lang.reflect.Field field1 = theClass.getDeclaredField("field1");
-      IBoundFieldInstance field1Property = IBoundFieldInstance.newInstance(
-          ObjectUtils.notNull(field1),
-          ObjectUtils.notNull(classBinding));
-      java.lang.reflect.Field field2 = theClass.getDeclaredField("_field2");
-      IBoundFieldInstance field2Property = IBoundFieldInstance.newInstance(
-          ObjectUtils.notNull(field2),
-          ObjectUtils.notNull(classBinding));
-
-      MultiFieldAssembly obj = new MultiFieldAssembly();
+      IBindingContext bindingContext = IBindingContext.instance();
+      IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
+      assert classBinding != null;
 
       MetaschemaJsonParser parser = new MetaschemaJsonParser(jsonParser);
 
-      // Advance to first property to parse
-      assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-      assertEquals("test", jsonParser.nextFieldName());
-      assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-      assertEquals("fields2", jsonParser.nextFieldName());
+      JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
+      MultiFieldAssembly obj = parser.readDefinitionValue(classBinding, null, false);
+      JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
 
-      // attempt to parse the missing property
-      assertFalse(parser.readInstanceValues(field1Property, obj));
-      assertEquals(null, obj.getField1());
-
-      // attempt to parse the existing property
-      assertEquals(JsonToken.FIELD_NAME, jsonParser.currentToken());
-      assertEquals("fields2", jsonParser.currentName());
-
-      assertTrue(parser.readInstanceValues(field2Property, obj));
-      assertTrue(obj.getField2() instanceof LinkedList);
-      assertEquals(List.of("field2value"), obj.getField2());
+      assertAll(
+          () -> assertNull(obj.getField1()),
+          () -> assertTrue(obj.getField2() instanceof LinkedList),
+          () -> assertIterableEquals(Collections.singleton("field2value"), obj.getField2()));
     }
   }
 
+  @Test
+  void testJsonReadFieldValueKey()
+      throws JsonParseException, IOException {
+    String json = "{ \"field-value-key\": { \"a-value\": \"theValue\" } }";
+    JsonFactory factory = new JsonFactory();
+    try (JsonParser jsonParser = factory.createParser(json)) {
+      assert jsonParser != null;
+      // get first token
+      jsonParser.nextToken();
+
+      IBindingContext bindingContext = IBindingContext.instance();
+      IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
+      assert classBinding != null;
+
+      MetaschemaJsonParser parser = new MetaschemaJsonParser(jsonParser);
+
+      JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
+      MultiFieldAssembly obj = parser.readDefinitionValue(classBinding, null, false);
+      JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
+
+      assertAll(
+          () -> assertEquals("theValue", obj.getField3().getValue()));
+    }
+  }
+
+  @Test
+  void testJsonReadFieldDefaultValueKey()
+      throws JsonParseException, IOException {
+    String json = "{ \"field-default-value-key\": { \"STRVALUE\": \"theValue\" } }";
+    JsonFactory factory = new JsonFactory();
+    try (JsonParser jsonParser = factory.createParser(json)) {
+      assert jsonParser != null;
+      // get first token
+      jsonParser.nextToken();
+
+      IBindingContext bindingContext = IBindingContext.instance();
+      IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
+      assert classBinding != null;
+
+      MetaschemaJsonParser parser = new MetaschemaJsonParser(jsonParser);
+
+      JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
+      MultiFieldAssembly obj = parser.readDefinitionValue(classBinding, null, false);
+      JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
+
+      assertAll(
+          () -> assertEquals("theValue", obj.getField4().getValue()));
+    }
+  }
 }

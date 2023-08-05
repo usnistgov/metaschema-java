@@ -27,11 +27,10 @@
 package gov.nist.secauto.metaschema.databind.io.xml;
 
 import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
-import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.io.AbstractProblemHandler;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelDefinition;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
@@ -44,20 +43,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Handles problems identified in the parsed XML.
  * <p>
- * The default problem handler will report unknown attributes, and provide empty
- * collections for multi-valued model items and default values for flags and
- * single valued fields.
+ * The default problem handler will report unknown attributes, and provide empty collections for
+ * multi-valued model items and default values for flags and single valued fields.
  */
-public class DefaultXmlProblemHandler implements IXmlProblemHandler {
+public class DefaultXmlProblemHandler
+    extends AbstractProblemHandler
+    implements IXmlProblemHandler {
   private static final Logger LOGGER = LogManager.getLogger(DefaultXmlProblemHandler.class);
 
   private static final QName XSI_SCHEMA_LOCATION
@@ -94,8 +91,10 @@ public class DefaultXmlProblemHandler implements IXmlProblemHandler {
   }
 
   @Override
-  public void handleMissingFlagInstances(IClassBinding classBinding, Object targetObject,
-      Collection<IBoundFlagInstance> unhandledFlags) throws IOException, XMLStreamException {
+  public void handleMissingFlagInstances(
+      IClassBinding classBinding,
+      Object targetObject,
+      Collection<IBoundFlagInstance> unhandledFlags) throws IOException {
     applyDefaults(targetObject, unhandledFlags);
   }
 
@@ -103,23 +102,8 @@ public class DefaultXmlProblemHandler implements IXmlProblemHandler {
   public void handleMissingModelInstances(
       IAssemblyClassBinding classBinding,
       Object targetObject,
-      Collection<IBoundNamedModelInstance> unhandledInstances) throws IOException, XMLStreamException {
+      Collection<IBoundNamedModelInstance> unhandledInstances) throws IOException {
     applyDefaults(targetObject, unhandledInstances);
   }
 
-  private static <TYPE extends IBoundNamedInstance> void applyDefaults(
-      @NonNull Object targetObject,
-      @NonNull Collection<TYPE> unhandledInstances) throws IOException {
-    for (TYPE instance : unhandledInstances) {
-      Object value;
-      try {
-        value = instance.defaultValue();
-      } catch (BindingException ex) {
-        throw new IOException(ex);
-      }
-      if (value != null) {
-        instance.setValue(targetObject, value);
-      }
-    }
-  }
 }

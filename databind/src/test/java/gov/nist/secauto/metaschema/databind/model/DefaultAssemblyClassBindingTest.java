@@ -69,7 +69,8 @@ class DefaultAssemblyClassBindingTest
   }
 
   // @Test
-  // void testSimpleJson() throws JsonParseException, IOException, BindingException {
+  // void testSimpleJson() throws JsonParseException, IOException,
+  // BindingException {
   // File testContent
   // = new
   // File(getClass().getClassLoader().getResource("test-content/bound-class-simple.json").getFile());
@@ -89,7 +90,8 @@ class DefaultAssemblyClassBindingTest
   // }
   //
   // @Test
-  // void testSimpleXml() throws BindingException, XMLStreamException, IOException {
+  // void testSimpleXml() throws BindingException, XMLStreamException, IOException
+  // {
   // File testContent
   // = new
   // File(getClass().getClassLoader().getResource("test-content/bound-class-simple.xml").getFile());
@@ -145,7 +147,8 @@ class DefaultAssemblyClassBindingTest
   // }
   //
   // @Test
-  // void testComplexXml() throws BindingException, XMLStreamException, IOException {
+  // void testComplexXml() throws BindingException, XMLStreamException,
+  // IOException {
   // File testContent
   // = new
   // File(getClass().getClassLoader().getResource("test-content/bound-class-complex.xml").getFile());

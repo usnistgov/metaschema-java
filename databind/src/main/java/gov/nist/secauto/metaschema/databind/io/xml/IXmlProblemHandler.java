@@ -36,10 +36,8 @@ import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import java.io.IOException;
 import java.util.Collection;
 
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -49,7 +47,7 @@ public interface IXmlProblemHandler extends IProblemHandler {
    * parsed.
    *
    * @param parentDefinition
-   *          the bound assembly class on which the missing instances are found
+   *          the bound class currently describing the data being parsed
    * @param targetObject
    *          the Java object for the {@code parentDefinition}
    * @param attribute
@@ -58,12 +56,14 @@ public interface IXmlProblemHandler extends IProblemHandler {
    *          the XML parsing context used for parsing
    * @return {@code true} if the attribute was handled by this method, or
    *         {@code false} otherwise
+   * @throws IOException
+   *           if an error occurred while handling the unrecognized data
    */
   boolean handleUnknownAttribute(
       @NonNull IBoundModelDefinition parentDefinition,
       @NonNull Object targetObject,
       @NonNull Attribute attribute,
-      @NonNull IXmlParsingContext parsingContext);
+      @NonNull IXmlParsingContext parsingContext) throws IOException;
 
   /**
    * Callback used to handle an element that is unknown to the model being parsed.
@@ -78,12 +78,14 @@ public interface IXmlProblemHandler extends IProblemHandler {
    *          the XML parsing context used for parsing
    * @return {@code true} if the element was handled by this method, or
    *         {@code false} otherwise
+   * @throws IOException
+   *           if an error occurred while handling the unrecognized data
    */
   boolean handleUnknownElement(
       @NonNull IAssemblyClassBinding parentDefinition,
       @NonNull Object targetObject,
       @NonNull StartElement start,
-      @NonNull IXmlParsingContext parsingContext);
+      @NonNull IXmlParsingContext parsingContext) throws IOException;
 
   /**
    * A callback used to handle bound flag instances for which no data was found
@@ -99,15 +101,13 @@ public interface IXmlProblemHandler extends IProblemHandler {
    * @param unhandledFlags
    *          the set of instances that had no data to parse
    * @throws IOException
-   *           if there was an error when reading XML data
-   * @throws XMLStreamException
-   *           if there was an error generating an {@link XMLEvent} from the XML
+   *           if an error occurred while handling the missing instances
    */
   void handleMissingFlagInstances(
       @NonNull IClassBinding parentDefinition,
       @NonNull Object targetObject,
       @NonNull Collection<IBoundFlagInstance> unhandledFlags)
-      throws IOException, XMLStreamException;
+      throws IOException;
 
   /**
    * A callback used to handle bound model instances for which no data was found
@@ -123,13 +123,11 @@ public interface IXmlProblemHandler extends IProblemHandler {
    * @param unhandledInstances
    *          the set of instances that had no data to parse
    * @throws IOException
-   *           if there was an error when reading XML data
-   * @throws XMLStreamException
-   *           if there was an error generating an {@link XMLEvent} from the XML
+   *           if an error occurred while handling the missing instances
    */
   void handleMissingModelInstances(
       @NonNull IAssemblyClassBinding parentDefinition,
       @NonNull Object targetObject,
       @NonNull Collection<IBoundNamedModelInstance> unhandledInstances)
-      throws IOException, XMLStreamException;
+      throws IOException;
 }

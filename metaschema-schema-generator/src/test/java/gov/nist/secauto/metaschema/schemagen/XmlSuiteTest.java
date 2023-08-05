@@ -76,7 +76,8 @@ class XmlSuiteTest
   // private static final XmlSchemaContentValidator SCHEMA_VALIDATOR;
 
   // static {
-  // URL schemaResource = MetaschemaLoader.class.getResource("/schema/xml/XMLSchema.xsd");
+  // URL schemaResource =
+  // MetaschemaLoader.class.getResource("/schema/xml/XMLSchema.xsd");
   // try {
   // List<? extends Source> schemaSources = Collections.singletonList(
   // new StreamSource(schemaResource.openStream(), schemaResource.toString()));
@@ -136,7 +137,6 @@ class XmlSuiteTest
         contentCase(Format.JSON, "collapsible_test_singleton_PASS.json", true));
   }
 
-  @Disabled
   @Test
   void testJsonValueKeyField() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
     doTest(
@@ -173,8 +173,10 @@ class XmlSuiteTest
         "allowed-values",
         "allowed-values-basic_metaschema.xml",
         "allowed-values-basic-schema",
-        // contentCase(Format.JSON, "allowed-values-basic_test_baddates_FAIL.json", false),
-        // contentCase(Format.JSON, "allowed-values-basic_test_badvalues_FAIL.json", false),
+        // contentCase(Format.JSON, "allowed-values-basic_test_baddates_FAIL.json",
+        // false),
+        // contentCase(Format.JSON, "allowed-values-basic_test_badvalues_FAIL.json",
+        // false),
         contentCase(Format.XML, "allowed-values-basic_test_valid_FAIL.xml", false),
         // contentCase(Format.JSON, "allowed-values-basic_test_valid_PASS.json", true),
         contentCase(Format.XML, "allowed-values-basic_test_valid_PASS.xml", true));

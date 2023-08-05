@@ -385,8 +385,11 @@ public class DefaultBoundLoader implements IBoundLoader {
   }
 
   @NonNull
-  protected IDocumentNodeItem deserializeToNodeItem(@NonNull Class<?> clazz, @NonNull Format format,
-      @NonNull BufferedInputStream bis, @NonNull URI documentUri) throws IOException {
+  protected IDocumentNodeItem deserializeToNodeItem(
+      @NonNull Class<?> clazz,
+      @NonNull Format format,
+      @NonNull BufferedInputStream bis,
+      @NonNull URI documentUri) throws IOException {
     try {
       bis.reset();
     } catch (IOException ex) {

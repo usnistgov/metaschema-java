@@ -47,8 +47,7 @@ import javax.xml.stream.XMLStreamException;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * This marker interface provides common methods for interacting with bound
- * object values.
+ * This marker interface provides common methods for interacting with bound object values.
  */
 public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedModelInstance {
 
