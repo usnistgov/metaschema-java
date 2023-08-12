@@ -46,6 +46,15 @@ jobs:
         MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         MAVEN_CENTRAL_TOKEN: ${{ secrets.SONATYPE_PASSWORD }}
         MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+    - name: Create release
+      uses: softprops/action-gh-release@v1
+      with:
+        token: ${{ secrets.COMMIT_TOKEN }}
+        draft: true
+        generate_release_notes: true
+        fail_on_unmatched_files: true
+        files: |
+          metaschema-cli/target/metaschema-cli-*-metaschema-cli.*
     # -------------------------
     # Maven Site
     # -------------------------
