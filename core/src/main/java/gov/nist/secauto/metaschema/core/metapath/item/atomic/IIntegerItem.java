@@ -33,7 +33,7 @@ import java.math.BigInteger;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IIntegerItem extends IDecimalItem {
+public interface IIntegerItem extends INumericItem {
 
   @SuppressWarnings("null")
   @NonNull
@@ -59,7 +59,8 @@ public interface IIntegerItem extends IDecimalItem {
    *          an integer value
    * @return the item
    * @throws NumberFormatException
-   *           if the provided value is not a valid representation of a {@link BigInteger}
+   *           if the provided value is not a valid representation of a
+   *           {@link BigInteger}
    */
   @NonNull
   static IIntegerItem valueOf(@NonNull String value) {
@@ -98,4 +99,7 @@ public interface IIntegerItem extends IDecimalItem {
   default IIntegerItem floor() {
     return this;
   }
+
+  @Override
+  BigInteger getValue();
 }

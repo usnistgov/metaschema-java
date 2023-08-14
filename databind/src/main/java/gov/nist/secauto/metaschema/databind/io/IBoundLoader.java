@@ -34,8 +34,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.DefaultBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 
-import org.xml.sax.InputSource;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -54,10 +52,14 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<DeserializationFeature<?>> {
 
   @Override
-  IBoundLoader enableFeature(DeserializationFeature<?> feature);
+  default IBoundLoader enableFeature(DeserializationFeature<?> feature) {
+    return set(feature, true);
+  }
 
   @Override
-  IBoundLoader disableFeature(DeserializationFeature<?> feature);
+  default IBoundLoader disableFeature(DeserializationFeature<?> feature) {
+    return set(feature, false);
+  }
 
   @Override
   IBoundLoader applyConfiguration(IConfiguration<DeserializationFeature<?>> other);
@@ -68,17 +70,15 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   /**
    * Determine the format of the provided resource.
    *
-   * @param url
+   * @param file
    *          the resource
-   * @return the format of the provided resource
+   * @return the format information for the provided resource
    * @throws IOException
    *           if an error occurred while reading the resource
-   * @throws URISyntaxException
-   *           if the provided {@code url} is malformed
    */
   @NonNull
-  default Format detectFormat(@NonNull URL url) throws IOException, URISyntaxException {
-    return detectFormat(toInputSource(ObjectUtils.notNull(url.toURI())));
+  default FormatDetector.Result detectFormat(@NonNull File file) throws IOException {
+    return detectFormat(ObjectUtils.notNull(file.toPath()));
   }
 
   /**
@@ -86,28 +86,44 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *
    * @param path
    *          the resource
-   * @return the format of the provided resource
+   * @return the format information for the provided resource
    * @throws IOException
    *           if an error occurred while reading the resource
    */
   @NonNull
-  default Format detectFormat(@NonNull Path path) throws IOException {
-    return detectFormat(toInputSource(ObjectUtils.notNull(path.toUri())));
+  default FormatDetector.Result detectFormat(@NonNull Path path) throws IOException {
+    return detectFormat(ObjectUtils.notNull(path.toUri()));
   }
 
   /**
    * Determine the format of the provided resource.
    *
-   * @param file
+   * @param url
    *          the resource
-   * @return the format of the provided resource
+   * @return the format information for the provided resource
    * @throws IOException
    *           if an error occurred while reading the resource
    */
   @NonNull
-  default Format detectFormat(@NonNull File file) throws IOException {
-    return detectFormat(ObjectUtils.notNull(file.toPath()));
+  default FormatDetector.Result detectFormat(@NonNull URL url) throws IOException {
+    try {
+      return detectFormat(ObjectUtils.notNull(url.toURI()));
+    } catch (URISyntaxException ex) {
+      throw new IOException(ex);
+    }
   }
+
+  /**
+   * Determine the format of the resource identified by the provided {@code uri}.
+   *
+   * @param uri
+   *          the resource
+   * @return the format information for the provided resource
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   */
+  @NonNull
+  FormatDetector.Result detectFormat(@NonNull URI uri) throws IOException;
 
   /**
    * Determine the format of the provided resource.
@@ -121,34 +137,71 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *
    * @param is
    *          an input stream for the resource
-   * @return the format of the provided resource
+   * @return the format information for the provided resource
    * @throws IOException
    *           if an error occurred while reading the resource
    */
   @NonNull
-  default Format detectFormat(@NonNull InputStream is) throws IOException {
-    return detectFormat(new InputSource(is));
+  FormatDetector.Result detectFormat(@NonNull InputStream is) throws IOException;
+
+  //
+  // /**
+  // * Determine the format of the provided resource.
+  // * <p>
+  // * This method will consume data from any {@link InputStream} provided by the
+  // * {@link InputSource}. If the caller of this method intends to read data from
+  // * the stream after determining the format, the caller should pass in a stream
+  // * that can be reset.
+  // * <p>
+  // * This method will not close any {@link InputStream} provided by the
+  // * {@link InputSource}, since it does not own the stream.
+  // *
+  // * @param source
+  // * information about how to access the resource
+  // * @return the format of the provided resource
+  // * @throws IOException
+  // * if an error occurred while reading the resource
+  // */
+  // @NonNull
+  // Format detectFormat(@NonNull InputSource source) throws IOException;
+
+  /**
+   * Load data from the provided resource into a bound object.
+   * <p>
+   * This method will auto-detect the format of the provided resource.
+   *
+   * @param <CLASS>
+   *          the type of the bound object to return
+   * @param file
+   *          the resource
+   * @return a bound object containing the loaded data
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   * @see #detectFormat(File)
+   */
+  @NonNull
+  default <CLASS> CLASS load(@NonNull File file) throws IOException {
+    return load(ObjectUtils.notNull(file.toPath()));
   }
 
   /**
-   * Determine the format of the provided resource.
+   * Load data from the provided resource into a bound object.
    * <p>
-   * This method will consume data from any {@link InputStream} provided by the
-   * {@link InputSource}. If the caller of this method intends to read data from
-   * the stream after determining the format, the caller should pass in a stream
-   * that can be reset.
-   * <p>
-   * This method will not close any {@link InputStream} provided by the
-   * {@link InputSource}, since it does not own the stream.
+   * This method will auto-detect the format of the provided resource.
    *
-   * @param source
-   *          information about how to access the resource
-   * @return the format of the provided resource
+   * @param <CLASS>
+   *          the type of the bound object to return
+   * @param path
+   *          the resource
+   * @return a bound object containing the loaded data
    * @throws IOException
    *           if an error occurred while reading the resource
+   * @see #detectFormat(File)
    */
   @NonNull
-  Format detectFormat(@NonNull InputSource source) throws IOException;
+  default <CLASS> CLASS load(@NonNull Path path) throws IOException {
+    return load(ObjectUtils.notNull(path.toUri()));
+  }
 
   /**
    * Load data from the provided resource into a bound object.
@@ -167,41 +220,27 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @see #detectFormat(URL)
    */
   @NonNull
-  <CLASS> CLASS load(@NonNull URL url) throws IOException, URISyntaxException;
+  default <CLASS> CLASS load(@NonNull URL url) throws IOException, URISyntaxException {
+    return load(ObjectUtils.notNull(url.toURI()));
+  }
 
   /**
-   * Load data from the provided resource into a bound object.
+   * Load data from the resource identified by the provided {@code uri} into a
+   * bound object.
    * <p>
    * This method will auto-detect the format of the provided resource.
    *
    * @param <CLASS>
    *          the type of the bound object to return
-   * @param path
+   * @param uri
    *          the resource
    * @return a bound object containing the loaded data
    * @throws IOException
    *           if an error occurred while reading the resource
-   * @see #detectFormat(File)
+   * @see #detectFormat(URL)
    */
   @NonNull
-  <CLASS> CLASS load(@NonNull Path path) throws IOException;
-
-  /**
-   * Load data from the provided resource into a bound object.
-   * <p>
-   * This method will auto-detect the format of the provided resource.
-   *
-   * @param <CLASS>
-   *          the type of the bound object to return
-   * @param file
-   *          the resource
-   * @return a bound object containing the loaded data
-   * @throws IOException
-   *           if an error occurred while reading the resource
-   * @see #detectFormat(File)
-   */
-  @NonNull
-  <CLASS> CLASS load(@NonNull File file) throws IOException;
+  <CLASS> CLASS load(@NonNull URI uri) throws IOException;
 
   /**
    * Load data from the provided resource into a bound object.
@@ -214,7 +253,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @param <CLASS>
    *          the type of the bound object to return
    * @param is
-   *          the resource
+   *          the resource stream
    * @param documentUri
    *          the URI of the resource
    * @return a bound object containing the loaded data
@@ -224,51 +263,6 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    */
   @NonNull
   <CLASS> CLASS load(@NonNull InputStream is, @NonNull URI documentUri) throws IOException;
-
-  /**
-   * Load data from the provided resource into a bound object.
-   * <p>
-   * This method will auto-detect the format of the provided resource.
-   * <p>
-   * This method will not close any {@link InputStream} provided by the
-   * {@link InputSource}, since it does not own the stream.
-   *
-   * @param <CLASS>
-   *          the type of the bound object to return
-   * @param source
-   *          information about how to access the resource
-   * @return a bound object containing the loaded data
-   * @throws IOException
-   *           if an error occurred while reading the resource
-   * @see #detectFormat(InputSource)
-   */
-  @NonNull
-  <CLASS> CLASS load(@NonNull InputSource source) throws IOException;
-
-  /**
-   * Load data from the specified resource into a bound object with the type of
-   * the specified Java class.
-   *
-   * @param <CLASS>
-   *          the Java type to load data into
-   * @param clazz
-   *          the class for the java type
-   * @param path
-   *          the resource to load
-   * @return the loaded instance data
-   * @throws IOException
-   *           if an error occurred while loading the data in the specified file
-   */
-  @NonNull
-  default <CLASS> CLASS load(
-      @NonNull Class<CLASS> clazz,
-      @NonNull Path path) throws IOException {
-    try {
-      return load(clazz, ObjectUtils.notNull(path.toUri()));
-    } catch (URISyntaxException ex) {
-      throw new IOException(ex);
-    }
-  }
 
   /**
    * Load data from the specified resource into a bound object with the type of
@@ -289,6 +283,27 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
       @NonNull Class<CLASS> clazz,
       @NonNull File file) throws IOException {
     return load(clazz, ObjectUtils.notNull(file.toPath()));
+  }
+
+  /**
+   * Load data from the specified resource into a bound object with the type of
+   * the specified Java class.
+   *
+   * @param <CLASS>
+   *          the Java type to load data into
+   * @param clazz
+   *          the class for the java type
+   * @param path
+   *          the resource to load
+   * @return the loaded instance data
+   * @throws IOException
+   *           if an error occurred while loading the data in the specified file
+   */
+  @NonNull
+  default <CLASS> CLASS load(
+      @NonNull Class<CLASS> clazz,
+      @NonNull Path path) throws IOException {
+    return load(clazz, ObjectUtils.notNull(path.toUri()));
   }
 
   /**
@@ -327,15 +342,11 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @return the loaded instance data
    * @throws IOException
    *           if an error occurred while loading the data in the specified file
-   * @throws URISyntaxException
-   *           if the provided {@code url} is malformed
    */
   @NonNull
-  default <CLASS> CLASS load(
+  <CLASS> CLASS load(
       @NonNull Class<CLASS> clazz,
-      @NonNull URI uri) throws IOException, URISyntaxException {
-    return load(clazz, toInputSource(ObjectUtils.requireNonNull(uri)));
-  }
+      @NonNull URI uri) throws IOException;
 
   /**
    * Load data from the specified resource into a bound object with the type of
@@ -354,6 +365,10 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *          the Java type to load data into
    * @param clazz
    *          the class for the java type
+   * @param is
+   *          the resource stream
+   * @param documentUri
+   *          the URI of the resource
    * @param source
    *          information about how to access the resource
    * @return the loaded data
@@ -364,7 +379,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   @NonNull
   <CLASS> CLASS load(
       @NonNull Class<CLASS> clazz,
-      @NonNull InputSource source) throws IOException;
+      @NonNull InputStream is,
+      @NonNull URI documentUri) throws IOException;
 
   /**
    * Load data expressed using the provided {@code format} and return that data as
@@ -375,8 +391,31 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *
    * @param format
    *          the expected format of the data to parse
-   * @param source
-   *          information about how to access the resource
+   * @param path
+   *          the resource
+   * @return the Metapath node item for the parsed data
+   * @throws IOException
+   *           if an error occurred while loading the data from the specified
+   *           resource
+   */
+  @NonNull
+  default IDocumentNodeItem loadAsNodeItem(
+      @NonNull Format format,
+      @NonNull Path path) throws IOException {
+    return loadAsNodeItem(format, ObjectUtils.notNull(path.toUri()));
+  }
+
+  /**
+   * Load data expressed using the provided {@code format} and return that data as
+   * a Metapath node item.
+   * <p>
+   * The specific Metaschema model is auto-detected by analyzing the source. The
+   * class reported is implementation specific.
+   *
+   * @param format
+   *          the expected format of the data to parse
+   * @param uri
+   *          the resource
    * @return the Metapath node item for the parsed data
    * @throws IOException
    *           if an error occurred while loading the data from the specified
@@ -385,13 +424,38 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   @NonNull
   IDocumentNodeItem loadAsNodeItem(
       @NonNull Format format,
-      @NonNull InputSource source) throws IOException;
+      @NonNull URI uri) throws IOException;
+
+  /**
+   * Load data expressed using the provided {@code format} and return that data as
+   * a Metapath node item.
+   * <p>
+   * The specific Metaschema model is auto-detected by analyzing the source. The
+   * class reported is implementation specific.
+   *
+   * @param format
+   *          the expected format of the data to parse
+   * @param is
+   *          the resource stream
+   * @param documentUri
+   *          the URI of the resource
+   * @return the Metapath node item for the parsed data
+   * @throws IOException
+   *           if an error occurred while loading the data from the specified
+   *           resource
+   */
+  @NonNull
+  IDocumentNodeItem loadAsNodeItem(
+      @NonNull Format format,
+      @NonNull InputStream is,
+      @NonNull URI documentUri) throws IOException;
 
   /**
    * Get the configured Metaschema binding context to use to load Java types.
    *
    * @return the binding context
    */
+  @NonNull
   IBindingContext getBindingContext();
 
   /**

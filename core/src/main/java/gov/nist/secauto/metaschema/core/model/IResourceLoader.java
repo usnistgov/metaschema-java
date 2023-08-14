@@ -26,15 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.model.util.InputSourceUtils;
-
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-
-import java.io.IOException;
-import java.net.URI;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
@@ -47,23 +38,9 @@ public interface IResourceLoader {
    * @return the entity resolver
    */
   @Nullable
-  default EntityResolver getEntityResolver() {
-    // by default, do not support an entity resolver extension mechanism
-    // Subclasses can override this behavior
+  default IUriResolver getUriResolver() {
+    // by default, do not support external URI resolution. Subclasses can override
+    // this behavior
     return null;
-  }
-
-  /**
-   * Create a new input source based on the provided URI.
-   *
-   * @param uri
-   *          the resource to use as input
-   * @return the created input source
-   * @throws IOException
-   *           if an error occurred while accessing the resource identified by the URI
-   */
-  @NonNull
-  default InputSource toInputSource(@NonNull URI uri) throws IOException {
-    return InputSourceUtils.toInputSource(uri, getEntityResolver());
   }
 }

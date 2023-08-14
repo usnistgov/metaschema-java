@@ -34,8 +34,8 @@ import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
+import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.core.model.util.XmlUtil;
-import gov.nist.secauto.metaschema.core.model.validation.JsonSchemaContentValidator;
 import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -175,7 +175,7 @@ public class ValidateContentWithMetaschemaCommand
       IMutableConfiguration<SchemaGenerationFeature<?>> configuration = new DefaultConfiguration<>();
       ISchemaGenerator.generateSchema(getMetaschema(), schemaFile, SchemaFormat.JSON, configuration);
       try (BufferedReader reader = ObjectUtils.notNull(Files.newBufferedReader(schemaFile, StandardCharsets.UTF_8))) {
-        return JsonSchemaContentValidator.toJsonObject(reader);
+        return JsonUtil.toJsonObject(reader);
       }
     }
   }

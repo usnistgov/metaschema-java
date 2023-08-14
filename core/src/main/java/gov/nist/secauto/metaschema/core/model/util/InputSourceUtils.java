@@ -36,6 +36,7 @@ import java.net.URI;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+// REFACTOR: remove
 public final class InputSourceUtils {
   private InputSourceUtils() {
     // disable construction

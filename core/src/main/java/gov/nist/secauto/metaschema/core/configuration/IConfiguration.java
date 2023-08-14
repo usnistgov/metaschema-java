@@ -31,8 +31,8 @@ import java.util.Map;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * The base interface for getting the configuration of processors and parsers in this library. This
- * provides an immutable view of the current configuration.
+ * The base interface for getting the configuration of processors and parsers in
+ * this library. This provides an immutable view of the current configuration.
  *
  * @param <T>
  *          the type of the feature set
@@ -59,8 +59,15 @@ public interface IConfiguration<T extends IConfigurationFeature<?>> {
    *          the requested feature
    * @return the value of the feature
    */
+  @SuppressWarnings("unchecked")
   @NonNull
-  <V> V get(@NonNull T feature);
+  default <V> V get(@NonNull T feature) {
+    V value = (V) getFeatureValues().get(feature);
+    if (value == null) {
+      value = (V) feature.getDefault();
+    }
+    return value;
+  }
 
   /**
    * Get the mapping of each feature mapped to its value.

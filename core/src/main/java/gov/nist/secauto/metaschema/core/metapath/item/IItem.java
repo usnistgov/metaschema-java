@@ -32,12 +32,13 @@ public interface IItem {
   /**
    * Get the item's "wrapped" value. This "wrapped" value may be:
    * <ul>
-   * <li>In the case of an Assembly, a Java object representing the fields and flags of the
-   * assembly.</li>
-   * <li>In the case of a Field with flags, a Java object representing the field value and flags of
-   * the field.
+   * <li>In the case of an Assembly, a Java object representing the fields and
+   * flags of the assembly.</li>
+   * <li>In the case of a Field with flags, a Java object representing the field
+   * value and flags of the field.
    * <li>In the case of a Field without flags or a flag, a Java type managed by a
-   * {@link IDataTypeAdapter} or a primitive type provided by the Java standard library.
+   * {@link IDataTypeAdapter} or a primitive type provided by the Java standard
+   * library.
    * </ul>
    *
    * @return the value or {@code null} if the item has no available value
@@ -47,7 +48,8 @@ public interface IItem {
   /**
    * Determine if the item has an associated value.
    *
-   * @return {@code true} if the item has a non-{@code null} value or {@code false} otherwise
+   * @return {@code true} if the item has a non-{@code null} value or
+   *         {@code false} otherwise
    */
   default boolean hasValue() {
     return getValue() != null;

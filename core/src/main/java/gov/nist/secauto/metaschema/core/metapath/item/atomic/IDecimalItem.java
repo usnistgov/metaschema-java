@@ -69,4 +69,7 @@ public interface IDecimalItem extends INumericItem {
       throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.DECIMAL.cast(item);
   }
+
+  @Override
+  BigDecimal getValue();
 }

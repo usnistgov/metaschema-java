@@ -35,13 +35,11 @@ import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.xml.sax.InputSource;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URI;
-import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -50,61 +48,40 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class JsonSchemaContentValidator implements IContentValidator {
+public class JsonSchemaContentValidator
+    extends AbstractContentValidator {
   @NonNull
   private final Schema schema;
 
-  @NonNull
-  public static JSONObject toJsonObject(@NonNull InputStream schemaInputStream) {
-    return new JSONObject(new JSONTokener(schemaInputStream));
+  public JsonSchemaContentValidator(@NonNull Reader reader) {
+    this(new JSONTokener(reader));
   }
 
-  @NonNull
-  public static JSONObject toJsonObject(@NonNull Reader reader) {
-    return new JSONObject(new JSONTokener(reader));
+  public JsonSchemaContentValidator(@NonNull InputStream is) {
+    this(new JSONTokener(is));
   }
 
-  public JsonSchemaContentValidator(@NonNull InputStream schemaInputStream) {
-    this(toJsonObject(Objects.requireNonNull(schemaInputStream, "schemaInputStream")));
-  }
-
-  @SuppressWarnings("null")
   public JsonSchemaContentValidator(@NonNull JSONObject jsonSchema) {
-    this(SchemaLoader.load(Objects.requireNonNull(jsonSchema, "jsonSchema")));
+    this(ObjectUtils.notNull(SchemaLoader.load(jsonSchema)));
+  }
+
+  protected JsonSchemaContentValidator(@NonNull JSONTokener tokenizer) {
+    this(new JSONObject(tokenizer));
   }
 
   protected JsonSchemaContentValidator(@NonNull Schema schema) {
     this.schema = ObjectUtils.requireNonNull(schema, "schema");
   }
 
-  @NonNull
-  public Schema getSchema() {
-    return schema;
-  }
-
   @Override
-  public IValidationResult validate(@NonNull InputSource source) throws IOException {
-    URI uri = ObjectUtils.notNull(URI.create(source.getSystemId()));
-
+  public IValidationResult validate(InputStream is, URI documentUri) throws IOException {
     JSONObject json;
     try {
-      if (source.getCharacterStream() != null) {
-        // attempt to use a provided character stream
-        json = new JSONObject(new JSONTokener(source.getCharacterStream()));
-      } else if (source.getByteStream() != null) {
-        // attempt to use a provided byte stream stream
-        json = new JSONObject(new JSONTokener(source.getByteStream()));
-      } else {
-        // fall back to a URL-based connection
-        URL url = uri.toURL();
-        try (InputStream is = url.openStream()) {
-          json = new JSONObject(new JSONTokener(is));
-        }
-      }
+      json = new JSONObject(new JSONTokener(is));
     } catch (JSONException ex) {
-      throw new IOException(String.format("Unable to parse JSON from '%s'", uri), ex);
+      throw new IOException(String.format("Unable to parse JSON from '%s'", documentUri), ex);
     }
-    return validate(json, uri);
+    return validate(json, documentUri);
   }
 
   @SuppressWarnings("null")
@@ -189,5 +166,4 @@ public class JsonSchemaContentValidator implements IContentValidator {
     }
 
   }
-
 }

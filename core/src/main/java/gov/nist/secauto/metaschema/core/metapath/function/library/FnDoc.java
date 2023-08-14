@@ -40,7 +40,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -82,10 +81,11 @@ public final class FnDoc {
   }
 
   /**
-   * Dynamically load the document associated with the URI, and return a {@link IDocumentNodeItem}
-   * containing the result.
+   * Dynamically load the document associated with the URI, and return a
+   * {@link IDocumentNodeItem} containing the result.
    * <p>
-   * Based on the XPath 3.1 <a href="https://www.w3.org/TR/xpath-functions-31/#func-doc">fn:doc</a>
+   * Based on the XPath 3.1
+   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-doc">fn:doc</a>
    * function.
    *
    * @param uri
@@ -115,8 +115,8 @@ public final class FnDoc {
     }
 
     try {
-      return context.getDocumentLoader().loadAsNodeItem(ObjectUtils.notNull(documentUri.toURL()));
-    } catch (IOException | URISyntaxException ex) {
+      return context.getDocumentLoader().loadAsNodeItem(ObjectUtils.notNull(documentUri));
+    } catch (IOException ex) {
       throw new DocumentFunctionException(DocumentFunctionException.ERROR_RETRIEVING_RESOURCE, String
           .format("Unable to retrieve the resource identified by the URI '%s'.", documentUri.toString()), ex);
     }

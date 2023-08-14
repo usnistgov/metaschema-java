@@ -34,6 +34,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public final class DeserializationFeature<V>
     extends AbstractConfigurationFeature<V> {
   public static final int YAML_CODEPOINT_LIMIT_DEFAULT = Integer.MAX_VALUE - 1; // 2 GB
+  public static final int FORMAT_DETECTION_LOOKAHEAD = 32_768; // 2 GB
 
   /**
    * If enabled, perform constraint validation on the deserialized bound objects.
@@ -44,18 +45,27 @@ public final class DeserializationFeature<V>
 
   /**
    * If enabled, process the next JSON node as a field, whose name must match the
-   * {@link IAssemblyDefinition#getRootJsonName()}. If not enabled, the next JSON node is expected to
-   * be an object containing the data of the {@link IAssemblyDefinition}.
+   * {@link IAssemblyDefinition#getRootJsonName()}. If not enabled, the next JSON
+   * node is expected to be an object containing the data of the
+   * {@link IAssemblyDefinition}.
    */
   public static final DeserializationFeature<Boolean> DESERIALIZE_JSON_ROOT_PROPERTY
       = new DeserializationFeature<>(Boolean.class, true);
 
   /**
-   * If enabled, perform constraint validation on the deserialized bound objects.
+   * Determines the max YAML codepoints that can be read.
    */
   @NonNull
   public static final DeserializationFeature<Integer> YAML_CODEPOINT_LIMIT
       = new DeserializationFeature<>(Integer.class, YAML_CODEPOINT_LIMIT_DEFAULT);
+
+  /**
+   * Determines how many bytes can be looked at to identify the format of a
+   * document.
+   */
+  @NonNull
+  public static final DeserializationFeature<Integer> FORMAT_DETECTION_LOOKAHEAD_LIMIT
+      = new DeserializationFeature<>(Integer.class, FORMAT_DETECTION_LOOKAHEAD);
 
   private DeserializationFeature(
       @NonNull Class<V> valueClass,

@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.io.json;
+package gov.nist.secauto.metaschema.core.model.util;
 
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonParser;
@@ -32,13 +32,15 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -51,6 +53,16 @@ public final class JsonUtil {
 
   private JsonUtil() {
     // disable construction
+  }
+
+  @NonNull
+  public static JSONObject toJsonObject(@NonNull InputStream schemaInputStream) {
+    return new JSONObject(new JSONTokener(schemaInputStream));
+  }
+
+  @NonNull
+  public static JSONObject toJsonObject(@NonNull Reader reader) {
+    return new JSONObject(new JSONTokener(reader));
   }
 
   /**
@@ -265,20 +277,5 @@ public final class JsonUtil {
         .append(':')
         .append(location.getColumnNr())
         .append('\'');
-  }
-
-  @SuppressWarnings("null")
-  @NonNull
-  public static String toLocationContext(
-      @NonNull JsonParser parser,
-      @NonNull IClassBinding classBinding,
-      IBoundNamedInstance property) {
-    return new StringBuilder()
-        .append("property '")
-        .append(property.getEffectiveName())
-        .append("' on class '")
-        .append(classBinding.getBoundClass().getName())
-        .append('\'')
-        .append(generateLocationMessage(parser)).toString();
   }
 }

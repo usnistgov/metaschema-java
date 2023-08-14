@@ -30,15 +30,12 @@ import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.Level;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.net.URI;
-import java.net.URL;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,7 +49,8 @@ import javax.xml.validation.Validator;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class XmlSchemaContentValidator implements IContentValidator {
+public class XmlSchemaContentValidator
+    extends AbstractContentValidator {
   private final Schema schema;
 
   @SuppressWarnings("null")
@@ -83,35 +81,10 @@ public class XmlSchemaContentValidator implements IContentValidator {
     return schema;
   }
 
-  @SuppressWarnings("resource")
   @Override
-  public IValidationResult validate(@NonNull InputSource source) throws IOException {
-    String systemId = source.getSystemId();
-    URI uri = ObjectUtils.notNull(URI.create(source.getSystemId()));
+  public IValidationResult validate(InputStream is, URI documentUri) throws IOException {
+    Source xmlSource = new StreamSource(is, documentUri.toASCIIString());
 
-    IValidationResult retval;
-    if (source.getCharacterStream() != null) {
-      // attempt to use a provided character stream
-      try (Reader reader = source.getCharacterStream()) {
-        retval = validate(new StreamSource(reader, systemId), uri);
-      }
-    } else if (source.getByteStream() != null) {
-      // attempt to use a provided byte stream stream
-      try (InputStream inputStream = source.getByteStream()) {
-        retval = validate(new StreamSource(inputStream, systemId), uri);
-      }
-    } else {
-      // fall back to a URL-based connection
-      URL url = uri.toURL();
-      try (InputStream is = url.openStream()) {
-        retval = validate(new StreamSource(is, systemId), uri);
-      }
-    }
-    return retval;
-  }
-
-  @NonNull
-  public IValidationResult validate(Source xmlSource, @NonNull URI documentUri) throws IOException {
     Validator validator = schema.newValidator();
     XmlValidationErrorHandler errorHandler = new XmlValidationErrorHandler(documentUri);
     validator.setErrorHandler(errorHandler);

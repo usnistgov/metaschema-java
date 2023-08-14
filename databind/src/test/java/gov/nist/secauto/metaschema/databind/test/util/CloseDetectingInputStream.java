@@ -24,81 +24,107 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.metapath.item.node;
+package gov.nist.secauto.metaschema.databind.test.util;
 
-import gov.nist.secauto.metaschema.core.metapath.format.IPathFormatter;
-
-import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IDocumentNodeItem extends INodeItem, IFeatureNoDataItem {
-  @Override
-  default NodeItemType getNodeItemType() {
-    return NodeItemType.DOCUMENT;
+public class CloseDetectingInputStream
+    extends InputStream {
+
+  private final InputStream delegate;
+  private boolean closed;
+
+  public CloseDetectingInputStream(@NonNull InputStream delegate) {
+    this.delegate = delegate;
+  }
+
+  public boolean isClosed() {
+    return closed;
   }
 
   @Override
-  default IDocumentNodeItem getNodeItem() {
-    return this;
+  public int read() throws IOException {
+    return delegate.read();
   }
 
   @Override
-  default IModelNodeItem<?, ?> getParentContentNodeItem() {
-    // there is no parent
-    return null;
+  public int read(byte[] b) throws IOException {
+    return delegate.read(b);
   }
 
   @Override
-  default INodeItem getParentNodeItem() {
-    // there is no parent
-    return null;
-  }
-
-  /**
-   * Get the URI associated with this document.
-   *
-   * @return the document's URI or {@code null} if unavailable
-   */
-  @Nullable
-  URI getDocumentUri();
-
-  @Override
-  default URI getBaseUri() {
-    return getDocumentUri();
-  }
-
-  /**
-   * Get the root items having the provided {@code name}.
-   *
-   * @param name
-   *          the root item's name to retrieve
-   * @return a list of matching root items
-   */
-  default List<? extends IRootAssemblyNodeItem> getRootNodeItemByName(@NonNull String name) {
-    List<? extends IModelNodeItem<?, ?>> result = getModelItemsByName(name);
-    return result.stream().flatMap(item -> {
-      IRootAssemblyNodeItem retval = null;
-      if (item instanceof IRootAssemblyNodeItem) {
-        retval = (IRootAssemblyNodeItem) item;
-      }
-
-      return retval == null ? null : Stream.of(retval);
-    }).collect(Collectors.toUnmodifiableList());
+  public int read(byte[] b, int off, int len) throws IOException {
+    return delegate.read(b, off, len);
   }
 
   @Override
-  default String format(@NonNull IPathFormatter formatter) {
-    return formatter.formatDocument(this);
+  public byte[] readAllBytes() throws IOException {
+    return delegate.readAllBytes();
   }
 
   @Override
-  default <RESULT, CONTEXT> RESULT accept(@NonNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitDocument(this, context);
+  public byte[] readNBytes(int len) throws IOException {
+    return delegate.readNBytes(len);
+  }
+
+  @Override
+  public int readNBytes(byte[] b, int off, int len) throws IOException {
+    return delegate.readNBytes(b, off, len);
+  }
+
+  @Override
+  public long skip(long n) throws IOException {
+    return delegate.skip(n);
+  }
+
+  @Override
+  public int available() throws IOException {
+    return delegate.available();
+  }
+
+  @Override
+  public void close() throws IOException {
+    delegate.close();
+    closed = true;
+  }
+
+  @Override
+  public synchronized void mark(int readlimit) {
+    delegate.mark(readlimit);
+  }
+
+  @Override
+  public synchronized void reset() throws IOException {
+    delegate.reset();
+  }
+
+  @Override
+  public boolean markSupported() {
+    return delegate.markSupported();
+  }
+
+  @Override
+  public long transferTo(OutputStream out) throws IOException {
+    return delegate.transferTo(out);
+  }
+
+  @Override
+  public int hashCode() {
+    return delegate.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return delegate.equals(obj);
+  }
+
+  @Override
+  public String toString() {
+    return delegate.toString();
   }
 
 }

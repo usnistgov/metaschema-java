@@ -34,8 +34,8 @@ import java.util.Map;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides a basic configuration management implementation that allows mutable access to
- * configuration state.
+ * Provides a basic configuration management implementation that allows mutable
+ * access to configuration state.
  *
  * @param <T>
  *          the type of managed features
@@ -110,16 +110,6 @@ public class DefaultConfiguration<T extends IConfigurationFeature<?>>
   public IMutableConfiguration<T> applyConfiguration(@NonNull IConfiguration<T> original) {
     this.featureValues.putAll(original.getFeatureValues());
     return this;
-  }
-
-  @SuppressWarnings("unchecked")
-  @Override
-  public <V> V get(T feature) {
-    V value = (V) featureValues.get(feature);
-    if (value == null) {
-      value = (V) feature.getDefault();
-    }
-    return value;
   }
 
   @Override

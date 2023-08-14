@@ -60,7 +60,8 @@ class DocumentNodeItemImpl
   }
 
   @Override
-  public @NonNull URI getDocumentUri() {
+  @NonNull
+  public URI getDocumentUri() {
     return documentUri;
   }
 

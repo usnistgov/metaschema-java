@@ -30,6 +30,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactoryBuilder;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 
+import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
@@ -55,7 +56,7 @@ public final class YamlFactoryFactory {
    */
   @NonNull
   public static YAMLFactory newParserFactoryInstance(
-      @NonNull IMutableConfiguration<DeserializationFeature<?>> config) {
+      @NonNull IConfiguration<DeserializationFeature<?>> config) {
     YAMLFactoryBuilder builder = YAMLFactory.builder();
     LoaderOptions loaderOptions = builder.loaderOptions();
     if (loaderOptions == null) {

@@ -24,47 +24,27 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.metapath;
+package gov.nist.secauto.metaschema.core.model.validation;
 
-import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
-import gov.nist.secauto.metaschema.core.model.IResourceLoader;
-import gov.nist.secauto.metaschema.core.model.IUriResolver;
+import gov.nist.secauto.metaschema.core.resource.AbstractResourceLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+public abstract class AbstractContentValidator
+    extends AbstractResourceLoader
+    implements IContentValidator {
 
-public interface IDocumentLoader extends IResourceLoader {
-  void setUriResolver(@NonNull IUriResolver resolver);
+  @Override
+  public IValidationResult validate(URI uri) throws IOException {
+    URI resourceUri = resolve(uri);
+    URL resource = resourceUri.toURL();
 
-  @NonNull
-  default IDocumentNodeItem loadAsNodeItem(@NonNull File file) throws IOException {
-    return loadAsNodeItem(ObjectUtils.notNull(file.toPath()));
-  }
-
-  @NonNull
-  default IDocumentNodeItem loadAsNodeItem(@NonNull Path path) throws IOException {
-    try (InputStream is = ObjectUtils.notNull(Files.newInputStream(path))) {
-      return loadAsNodeItem(is, ObjectUtils.notNull(path.toUri()));
+    try (InputStream is = ObjectUtils.notNull(resource.openStream())) {
+      return validate(is, resourceUri);
     }
   }
-
-  @NonNull
-  default IDocumentNodeItem loadAsNodeItem(@NonNull URL url) throws IOException, URISyntaxException {
-    return loadAsNodeItem(ObjectUtils.notNull(url.toURI()));
-  }
-
-  @NonNull
-  IDocumentNodeItem loadAsNodeItem(@NonNull URI uri) throws IOException;
-
-  @NonNull
-  IDocumentNodeItem loadAsNodeItem(@NonNull InputStream is, @NonNull URI documentUri) throws IOException;
 }

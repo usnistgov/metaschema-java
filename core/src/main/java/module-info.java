@@ -59,7 +59,7 @@ module gov.nist.secauto.metaschema.core {
   requires transitive org.codehaus.stax2;
 
   // dependencies without a module descriptor
-  requires everit.json.schema;
+  requires transitive everit.json.schema; // needed for validation details
   requires transitive flexmark;
   requires flexmark.ext.escaped.character;
   requires flexmark.ext.gfm.strikethrough;

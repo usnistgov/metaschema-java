@@ -128,7 +128,9 @@ public class ValidateMetaschemaCommand
     IValidationResult schemaValidationResult;
     try {
       List<Source> schemaSources = getXmlSchemaSources();
-      schemaValidationResult = IContentValidator.validateWithXmlSchema(target, schemaSources);
+      schemaValidationResult = IContentValidator.validateWithXmlSchema(
+          ObjectUtils.notNull(target.toUri()),
+          schemaSources);
     } catch (IOException | SAXException ex) {
       return ExitCode.PROCESSING_ERROR.exit().withThrowable(ex);
     }

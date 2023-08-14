@@ -47,6 +47,7 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext.IValidationSchemaProvider;
 import gov.nist.secauto.metaschema.databind.io.Format;
+import gov.nist.secauto.metaschema.databind.io.FormatDetector;
 import gov.nist.secauto.metaschema.databind.io.IBoundLoader;
 
 import org.apache.commons.cli.CommandLine;
@@ -230,8 +231,9 @@ public abstract class AbstractValidateContentCommand
         }
       } else {
         // attempt to determine the format
+        FormatDetector.Result formatResult;
         try {
-          asFormat = loader.detectFormat(source);
+          formatResult = loader.detectFormat(source);
         } catch (FileNotFoundException ex) {
           // this case was already checked for
           return ExitCode.IO_ERROR.exitMessage("The provided source file '" + source + "' does not exist.");
@@ -244,6 +246,7 @@ public abstract class AbstractValidateContentCommand
                       .map(format -> format.name())
                       .collect(CustomCollectors.joiningWithOxfordComma("or")));
         }
+        asFormat = formatResult.getFormat();
       }
 
       if (LOGGER.isInfoEnabled()) {

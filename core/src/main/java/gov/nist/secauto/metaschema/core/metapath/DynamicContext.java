@@ -32,14 +32,15 @@ import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.metapath.function.DefaultFunction.CallingContext;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.model.IUriResolver;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
 import java.time.Clock;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -49,7 +50,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class DynamicContext { // NOPMD - intentional data class
   @NonNull
@@ -131,85 +131,6 @@ public class DynamicContext { // NOPMD - intentional data class
     assert old == null;
   }
 
-  private class CachingLoader implements IDocumentLoader {
-    @NonNull
-    private final IDocumentLoader proxy;
-
-    public CachingLoader(@NonNull IDocumentLoader proxy) {
-      this.proxy = proxy;
-    }
-
-    @Override
-    public @Nullable EntityResolver getEntityResolver() {
-      return new ContextEntityResolver();
-    }
-
-    @Override
-    public void setEntityResolver(@NonNull EntityResolver resolver) {
-      // we delegate to the document loader proxy, so the resolver should be set there
-      throw new UnsupportedOperationException("Set the resolver on the proxy");
-    }
-
-    protected IDocumentLoader getProxiedDocumentLoader() {
-      return proxy;
-    }
-
-    @Override
-    public @NonNull IDocumentNodeItem loadAsNodeItem(@NonNull InputSource source) throws IOException {
-      String systemId = source.getSystemId();
-      URI uri = ObjectUtils.notNull(URI.create(systemId));
-      IDocumentNodeItem retval = availableDocuments.get(uri);
-      if (retval == null) {
-        retval = getProxiedDocumentLoader().loadAsNodeItem(source);
-        availableDocuments.put(uri, retval);
-      }
-      return retval;
-    }
-
-    public class ContextEntityResolver implements EntityResolver {
-
-      /**
-       * Provides an {@link InputSource} for the provided {@code systemId} after attempting to resolve
-       * this system identifier.
-       * <p>
-       * This implementation of an {@link EntityResolver} will perform the following operations in order:
-       * <ol>
-       * <li>Resolves the {@code systemId} against the base URI provided by the
-       * {@link StaticContext#getBaseUri()} method, if this method returns a non-{@code null} result, to
-       * get a localized resource identifier.</li>
-       * <li>It will then delegate to the EntityResolver provided by the
-       * {@link IDocumentLoader#getEntityResolver()} method, if the result is not-{@code null}, to get the
-       * {@link InputSource}.</li>
-       * <li>If no InputSource is provided by the previous step, then an InputSource will be created from
-       * the URI resolved in the first step, if possible.
-       * <li>If an InputSource is still not provided, then an InputSource will be created from the
-       * provided {@code systemId}.
-       * </ol>
-       */
-      @Override
-      public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-        URI baseUri = getStaticContext().getBaseUri();
-
-        String uri;
-        if (baseUri == null) {
-          uri = systemId;
-        } else {
-          URI resolvedUri = baseUri.resolve(systemId);
-          uri = resolvedUri.toASCIIString();
-        }
-
-        EntityResolver resolver = getProxiedDocumentLoader().getEntityResolver();
-        InputSource retval = resolver == null ? null : resolver.resolveEntity(null, uri);
-        if (retval == null) {
-          retval = new InputSource(uri);
-        }
-
-        return retval;
-      }
-
-    }
-  }
-
   @NonNull
   public ISequence<?> getVariableValue(String name) {
     return ObjectUtils.requireNonNull(letVariableMap.get(name));
@@ -221,5 +142,94 @@ public class DynamicContext { // NOPMD - intentional data class
 
   public void clearVariableValue(String name) {
     letVariableMap.remove(name);
+  }
+
+  private class CachingLoader implements IDocumentLoader {
+    @NonNull
+    private final IDocumentLoader proxy;
+
+    public CachingLoader(@NonNull IDocumentLoader proxy) {
+      this.proxy = proxy;
+    }
+
+    @Override
+    public IUriResolver getUriResolver() {
+      return new ContextUriResolver();
+    }
+
+    @Override
+    public void setUriResolver(@NonNull IUriResolver resolver) {
+      // we delegate to the document loader proxy, so the resolver should be set there
+      throw new UnsupportedOperationException("Set the resolver on the proxy");
+    }
+
+    @NonNull
+    protected IDocumentLoader getProxiedDocumentLoader() {
+      return proxy;
+    }
+
+    @Override
+    public IDocumentNodeItem loadAsNodeItem(Path path) throws IOException {
+      URI uri = path.toUri();
+      IDocumentNodeItem retval = availableDocuments.get(uri);
+      if (retval == null) {
+        retval = getProxiedDocumentLoader().loadAsNodeItem(path);
+        availableDocuments.put(uri, retval);
+      }
+      return retval;
+    }
+
+    @Override
+    public IDocumentNodeItem loadAsNodeItem(URL url) throws IOException, URISyntaxException {
+      URI uri = ObjectUtils.notNull(url.toURI());
+      IDocumentNodeItem retval = availableDocuments.get(uri);
+      if (retval == null) {
+        retval = getProxiedDocumentLoader().loadAsNodeItem(uri);
+        availableDocuments.put(uri, retval);
+      }
+      return retval;
+    }
+
+    @Override
+    public IDocumentNodeItem loadAsNodeItem(URI uri) throws IOException {
+      IDocumentNodeItem retval = availableDocuments.get(uri);
+      if (retval == null) {
+        retval = getProxiedDocumentLoader().loadAsNodeItem(uri);
+        availableDocuments.put(uri, retval);
+      }
+      return retval;
+    }
+
+    @Override
+    public @NonNull IDocumentNodeItem loadAsNodeItem(
+        @NonNull InputStream is,
+        @NonNull URI documentUri) throws IOException {
+      throw new UnsupportedOperationException();
+      // return getProxiedDocumentLoader().loadAsNodeItem(is, documentUri);
+    }
+
+    public class ContextUriResolver implements IUriResolver {
+
+      /**
+       * {@inheritDoc}
+       * <p>
+       * This method first resolves the provided URI against the static context's base
+       * URI.
+       */
+      @Override
+      public URI resolve(URI uri) {
+        URI baseUri = getStaticContext().getBaseUri();
+
+        URI resolvedUri;
+        if (baseUri == null) {
+          resolvedUri = uri;
+        } else {
+          resolvedUri = ObjectUtils.notNull(baseUri.resolve(uri));
+        }
+
+        IUriResolver resolver = getProxiedDocumentLoader().getUriResolver();
+        return resolver == null ? resolvedUri : resolver.resolve(resolvedUri);
+      }
+    }
   }
 }

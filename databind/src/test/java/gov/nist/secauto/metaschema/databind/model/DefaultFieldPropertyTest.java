@@ -38,8 +38,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.databind.io.json.MetaschemaJsonParser;
 import gov.nist.secauto.metaschema.databind.model.test.MultiFieldAssembly;
 import gov.nist.secauto.metaschema.databind.model.test.SimpleAssembly;
