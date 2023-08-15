@@ -68,8 +68,7 @@ public class DefaultBoundLoader
   private final IMutableConfiguration<DeserializationFeature<?>> configuration;
 
   /**
-   * Construct a new OSCAL loader instance, using the provided
-   * {@link IBindingContext}.
+   * Construct a new OSCAL loader instance, using the provided {@link IBindingContext}.
    *
    * @param bindingContext
    *          the Metaschema binding context to use to load Java types
@@ -80,7 +79,7 @@ public class DefaultBoundLoader
   }
 
   @NonNull
-  protected IMutableConfiguration<DeserializationFeature<?>> getConfiguration() {
+  private IMutableConfiguration<DeserializationFeature<?>> getConfiguration() {
     return configuration;
   }
 

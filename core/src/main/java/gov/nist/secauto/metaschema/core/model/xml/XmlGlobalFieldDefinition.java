@@ -36,19 +36,12 @@ import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
-import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
-import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFieldDefinitionType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,20 +49,22 @@ import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 @SuppressWarnings({ "PMD.GodClass", "PMD.CouplingBetweenObjects" })
-class XmlGlobalFieldDefinition implements IFieldDefinition {
+class XmlGlobalFieldDefinition implements IFieldDefinition, IFeatureFlagContainer {
   @NonNull
   private final GlobalFieldDefinitionType xmlField;
   @NonNull
   private final IMetaschema metaschema;
   @Nullable
   private final Object defaultValue;
-  private XmlFlagContainerSupport flagContainer;
-  private IValueConstraintSupport constraints;
+  private final Lazy<XmlFlagContainerSupport> flagContainer;
+  private final Lazy<IValueConstrained> constraints;
 
   /**
-   * Constructs a new Metaschema field definition from an XML representation bound to Java objects.
+   * Constructs a new Metaschema field definition from an XML representation bound
+   * to Java objects.
    *
    * @param xmlField
    *          the XML representation bound to Java objects
@@ -84,6 +79,19 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
       defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlField.getDefault()));
     }
     this.defaultValue = defaultValue;
+    this.flagContainer = Lazy.lazy(() -> new XmlFlagContainerSupport(xmlField, this));
+    this.constraints = Lazy.lazy(() -> {
+      IValueConstrained retval;
+      if (getXmlField().isSetConstraint()) {
+        retval = new ValueConstraintSupport(
+            ObjectUtils.notNull(xmlField.getConstraint()),
+            ExternalModelSource.instance(
+                ObjectUtils.requireNonNull(metaschema.getLocation())));
+      } else {
+        retval = new ValueConstraintSupport();
+      }
+      return retval;
+    });
   }
 
   /**
@@ -107,70 +115,15 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
   }
 
   /**
-   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
-   * first accessed.
+   * Used to generate the instances for the constraints in a lazy fashion when the
+   * constraints are first accessed.
    *
    * @return the constraints instance
    */
   @SuppressWarnings("null")
-  protected IValueConstraintSupport initModelConstraints() {
-    synchronized (this) {
-      if (constraints == null) {
-        if (getXmlField().isSetConstraint()) {
-          constraints = new ValueConstraintSupport(
-              ObjectUtils.notNull(getXmlField().getConstraint()),
-              ExternalModelSource.instance(getContainingMetaschema().getLocation()));
-        } else {
-          constraints = new ValueConstraintSupport();
-        }
-      }
-      return constraints;
-    }
-  }
-
   @Override
-  public List<? extends IConstraint> getConstraints() {
-    return initModelConstraints().getConstraints();
-  }
-
-  @Override
-  public List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
-    return initModelConstraints().getAllowedValuesConstraints();
-  }
-
-  @Override
-  public List<? extends IMatchesConstraint> getMatchesConstraints() {
-    return initModelConstraints().getMatchesConstraints();
-  }
-
-  @Override
-  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-    return initModelConstraints().getIndexHasKeyConstraints();
-  }
-
-  @Override
-  public List<? extends IExpectConstraint> getExpectConstraints() {
-    return initModelConstraints().getExpectConstraints();
-  }
-
-  @Override
-  public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
-    initModelConstraints().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IMatchesConstraint constraint) {
-    initModelConstraints().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
-    initModelConstraints().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IExpectConstraint constraint) {
-    initModelConstraints().addConstraint(constraint);
+  public IValueConstrained getConstraintSupport() {
+    return constraints.get();
   }
 
   @Override
@@ -216,29 +169,10 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
    *
    * @return the flag container
    */
-  protected XmlFlagContainerSupport initFlagContainer() {
-    synchronized (this) {
-      if (flagContainer == null) {
-        flagContainer = new XmlFlagContainerSupport(getXmlField(), this);
-      }
-      return flagContainer;
-    }
-  }
-
-  @NonNull
-  private Map<String, ? extends IFlagInstance> getFlagInstanceMap() {
-    return initFlagContainer().getFlagInstanceMap();
-  }
-
-  @Override
-  public IFlagInstance getFlagInstanceByName(String name) {
-    return getFlagInstanceMap().get(name);
-  }
-
   @SuppressWarnings("null")
   @Override
-  public Collection<? extends IFlagInstance> getFlagInstances() {
-    return getFlagInstanceMap().values();
+  public XmlFlagContainerSupport getFlagContainer() {
+    return flagContainer.get();
   }
 
   @SuppressWarnings("null")
@@ -271,20 +205,6 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
 
     if (retval == null || retval.isEmpty()) {
       retval = getJavaTypeAdapter().getDefaultJsonValueKey();
-    }
-    return retval;
-  }
-
-  @Override
-  public boolean hasJsonKey() {
-    return getXmlField().isSetJsonKey();
-  }
-
-  @Override
-  public IFlagInstance getJsonKeyFlagInstance() {
-    IFlagInstance retval = null;
-    if (hasJsonKey()) {
-      retval = getFlagInstanceByName(getXmlField().getJsonKey().getFlagRef());
     }
     return retval;
   }

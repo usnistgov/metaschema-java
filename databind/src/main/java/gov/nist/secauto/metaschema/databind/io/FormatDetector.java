@@ -48,26 +48,42 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class FormatDetector {
 
-  private final int lookaheadBytes;
   private final DataFormatDetector detector;
 
+  /**
+   * Construct a new format detector using the default configuration.
+   */
   public FormatDetector() {
     this(new DefaultConfiguration<>());
   }
 
+  /**
+   * Construct a new format detector using the provided {@code configuration}.
+   *
+   * @param configuration
+   *          the deserialization configuration to use for detection
+   */
   public FormatDetector(
-      @NonNull IConfiguration<DeserializationFeature<?>> config) {
-    this(config, newDetectorFactory(config));
+      @NonNull IConfiguration<DeserializationFeature<?>> configuration) {
+    this(configuration, newDetectorFactory(configuration));
   }
 
+  /**
+   * Construct a new format detector using the provided {@code configuration}.
+   *
+   * @param configuration
+   *          the deserialization configuration to use for detection
+   * @param detectors
+   *          the JSON parser instances to use for format detection
+   */
   protected FormatDetector(
-      @NonNull IConfiguration<DeserializationFeature<?>> config,
+      @NonNull IConfiguration<DeserializationFeature<?>> configuration,
       @NonNull JsonFactory... detectors) {
-    this.lookaheadBytes = config.get(DeserializationFeature.FORMAT_DETECTION_LOOKAHEAD_LIMIT);
+    int lookaheadBytes = configuration.get(DeserializationFeature.FORMAT_DETECTION_LOOKAHEAD_LIMIT);
     this.detector = new DataFormatDetector(detectors)
         .withMinimalMatch(MatchStrength.INCONCLUSIVE)
         .withOptimalMatch(MatchStrength.SOLID_MATCH)
-        .withMaxInputLookahead(this.lookaheadBytes - 1);
+        .withMaxInputLookahead(lookaheadBytes - 1);
 
   }
 

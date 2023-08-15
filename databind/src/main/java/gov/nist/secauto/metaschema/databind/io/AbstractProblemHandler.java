@@ -35,6 +35,18 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractProblemHandler implements IProblemHandler {
 
+  /**
+   * A utility method for applying default values for the provided {@code unhandledInstances}.
+   *
+   * @param <TYPE>
+   *          the instance Java type to handle
+   * @param targetObject
+   *          the Java object to apply default values to
+   * @param unhandledInstances
+   *          the collection of unhandled instances to assign default values for
+   * @throws IOException
+   *           if an error occurred while determining the default value for an instance
+   */
   protected static <TYPE extends IBoundNamedInstance> void applyDefaults(
       @NonNull Object targetObject,
       @NonNull Collection<TYPE> unhandledInstances) throws IOException {

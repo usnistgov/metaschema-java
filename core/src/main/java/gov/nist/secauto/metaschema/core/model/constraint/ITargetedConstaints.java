@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface ITargetedConstaints extends IValueConstraintSupport {
+public interface ITargetedConstaints extends IValueConstrained {
   @NonNull
   MetapathExpression getTargetExpression();
 

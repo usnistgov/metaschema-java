@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
 import gov.nist.secauto.metaschema.schemagen.datatype.AbstractDatatypeManager;
 
@@ -80,8 +81,9 @@ public class JsonDatatypeManager
 
   private static Stream<String> getDependencies(@NonNull JsonNode node) {
     Stream<String> retval = Stream.empty();
-    for (Map.Entry<String, JsonNode> entry : CollectionUtil.toIterable(node.fields())) {
+    for (Map.Entry<String, JsonNode> entry : CollectionUtil.toIterable(ObjectUtils.notNull(node.fields()))) {
       JsonNode value = entry.getValue();
+      assert value != null;
       if ("$ref".equals(entry.getKey())) {
         Matcher matcher = DEFINITION_REF_PATTERN.matcher(value.asText());
         if (matcher.matches()) {
@@ -91,7 +93,7 @@ public class JsonDatatypeManager
       }
 
       if (value.isArray()) {
-        for (JsonNode child : CollectionUtil.toIterable(value.elements())) {
+        for (JsonNode child : CollectionUtil.toIterable(ObjectUtils.notNull(value.elements()))) {
           assert child != null;
           retval = Stream.concat(retval, getDependencies(child));
         }
@@ -103,19 +105,20 @@ public class JsonDatatypeManager
   public void generateDatatypes(@NonNull ObjectNode definitionsObject) {
     Set<String> requiredJsonDatatypes = getUsedTypes();
     // resolve dependencies
-    for (String datatype : CollectionUtil.toIterable(requiredJsonDatatypes.stream()
-        .flatMap(datatype -> {
-          Stream<String> result;
-          List<String> dependencies = DATATYPE_DEPENDENCY_MAP.get(datatype);
-          if (dependencies == null) {
-            result = Stream.of(datatype);
-          } else {
-            result = Stream.concat(Stream.of(datatype), dependencies.stream());
-          }
-          return result;
-        }).distinct()
-        .sorted()
-        .iterator())) {
+    for (String datatype : CollectionUtil.toIterable(ObjectUtils.notNull(
+        requiredJsonDatatypes.stream()
+            .flatMap(datatype -> {
+              Stream<String> result;
+              List<String> dependencies = DATATYPE_DEPENDENCY_MAP.get(datatype);
+              if (dependencies == null) {
+                result = Stream.of(datatype);
+              } else {
+                result = Stream.concat(Stream.of(datatype), dependencies.stream());
+              }
+              return result;
+            }).distinct()
+            .sorted()
+            .iterator()))) {
 
       JsonNode definition = JSON_DATATYPES.get(datatype);
       if (definition == null) {

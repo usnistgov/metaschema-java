@@ -29,11 +29,11 @@ package gov.nist.secauto.metaschema.databind.model;
 import gov.nist.secauto.metaschema.core.metapath.MetapathException;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IValueConstraintSupport;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ISource;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
@@ -48,7 +48,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 /**
  * Support for constraints on valued objects (i.e., fields and flags).
  */
-class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - intentional data class
+class ValueConstraintSupport implements IValueConstrained { // NOPMD - intentional data class
   @NonNull
   private final List<IConstraint> constraints;
   @NonNull

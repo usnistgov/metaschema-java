@@ -24,21 +24,28 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.core.model.impl;
 
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-interface IValueConstraintFeature extends IValueConstraintSupport {
-  IValueConstraintSupport getConstraintSupport();
+public interface IFeatureValueConstrained extends IValueConstrained {
+  /**
+   * Lazy initialize the instances for the constraints when the constraints are
+   * first accessed.
+   *
+   * @return the constraints instance
+   */
+  @NonNull
+  IValueConstrained getConstraintSupport();
 
   @Override
   default List<? extends IConstraint> getConstraints() {

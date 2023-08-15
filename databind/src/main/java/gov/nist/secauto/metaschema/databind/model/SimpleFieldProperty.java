@@ -34,7 +34,8 @@ import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
-import gov.nist.secauto.metaschema.core.model.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.model.xml.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
@@ -57,8 +58,8 @@ class SimpleFieldProperty
   private final Lazy<ScalarFieldDefinition> definition;
 
   /**
-   * Construct a new bound flag instance based on a Java property. The name of the property is bound
-   * to the name of the instance.
+   * Construct a new bound flag instance based on a Java property. The name of the
+   * property is bound to the name of the instance.
    *
    * @param field
    *          the Java field to bind to
@@ -133,8 +134,8 @@ class SimpleFieldProperty
     return getMaxOccurs() == 1 ? getDefaultValue() : getPropertyInfo().newPropertyCollector().getValue();
   }
 
-  private final class ScalarFieldDefinition implements IBoundFieldDefinition, IValueConstraintFeature {
-    private final Lazy<IValueConstraintSupport> constraints;
+  private final class ScalarFieldDefinition implements IBoundFieldDefinition {
+    private final Lazy<IValueConstrained> constraints;
 
     private ScalarFieldDefinition() {
       this.constraints = Lazy.lazy(() -> new ValueConstraintSupport(
@@ -143,7 +144,13 @@ class SimpleFieldProperty
     }
 
     @Override
-    public IValueConstraintSupport getConstraintSupport() {
+    public IFlagContainerSupport<IBoundFlagInstance> getFlagContainer() {
+      return IFlagContainerSupport.empty();
+    }
+
+    @SuppressWarnings("null")
+    @Override
+    public IValueConstrained getConstraintSupport() {
       return constraints.get();
     }
 
@@ -212,16 +219,6 @@ class SimpleFieldProperty
     public boolean hasJsonKey() {
       return false;
     }
-
-    @Override
-    public IFlagInstance getJsonKeyFlagInstance() {
-      return null;
-    }
-
-    // @Override
-    // public boolean hasJsonValueKey() {
-    // return false;
-    // }
 
     @Override
     public IFlagInstance getJsonValueKeyFlagInstance() {

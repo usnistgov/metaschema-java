@@ -29,15 +29,16 @@ package gov.nist.secauto.metaschema.core.model.xml;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractTargetedConstraints;
-import gov.nist.secauto.metaschema.core.model.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class FieldTargetedConstraints
-    extends AbstractTargetedConstraints<IValueConstraintSupport> {
+    extends AbstractTargetedConstraints<IValueConstrained> {
 
-  public FieldTargetedConstraints(@NonNull MetapathExpression targetExpression,
-      @NonNull IValueConstraintSupport constraints) {
+  public FieldTargetedConstraints(
+      @NonNull MetapathExpression targetExpression,
+      @NonNull IValueConstrained constraints) {
     super(targetExpression, constraints);
   }
 

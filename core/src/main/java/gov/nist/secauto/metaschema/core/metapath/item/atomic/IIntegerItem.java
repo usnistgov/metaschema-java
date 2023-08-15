@@ -59,8 +59,7 @@ public interface IIntegerItem extends INumericItem {
    *          an integer value
    * @return the item
    * @throws NumberFormatException
-   *           if the provided value is not a valid representation of a
-   *           {@link BigInteger}
+   *           if the provided value is not a valid representation of a {@link BigInteger}
    */
   @NonNull
   static IIntegerItem valueOf(@NonNull String value) {

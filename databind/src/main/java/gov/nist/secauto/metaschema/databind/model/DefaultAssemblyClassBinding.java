@@ -32,8 +32,9 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
-import gov.nist.secauto.metaschema.core.model.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
+import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
+import gov.nist.secauto.metaschema.core.model.xml.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -69,16 +70,17 @@ import nl.talsmasoftware.lazy4j.Lazy;
 
 public class DefaultAssemblyClassBinding // NOPMD - ok
     extends AbstractClassBinding
-    implements IAssemblyClassBinding, IAssemblyConstraintFeature {
+    implements IAssemblyClassBinding {
 
   private final MetaschemaAssembly metaschemaAssembly;
-  private Map<String, IBoundNamedModelInstance> modelInstances;
   private final QName xmlRootQName;
-  private final Lazy<IAssemblyConstraintSupport> constraints;
+  private final Lazy<ClassBindingFlagContainerSupport> flagContainer;
+  private Map<String, IBoundNamedModelInstance> modelInstances;
+  private final Lazy<IModelConstrained> constraints;
 
   /**
-   * Create a new {@link IClassBinding} for a Java bean annotated with the {@link BoundAssembly}
-   * annotation.
+   * Create a new {@link IClassBinding} for a Java bean annotated with the
+   * {@link BoundAssembly} annotation.
    *
    * @param clazz
    *          the Java bean class
@@ -87,14 +89,15 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
    * @return the Metaschema assembly binding for the class
    */
   @NonNull
-  public static DefaultAssemblyClassBinding createInstance(@NonNull Class<?> clazz,
+  public static DefaultAssemblyClassBinding createInstance(
+      @NonNull Class<?> clazz,
       @NonNull IBindingContext bindingContext) {
     return new DefaultAssemblyClassBinding(clazz, bindingContext);
   }
 
   /**
-   * Construct a new {@link IClassBinding} for a Java bean annotated with the {@link BoundAssembly}
-   * annotation.
+   * Construct a new {@link IClassBinding} for a Java bean annotated with the
+   * {@link BoundAssembly} annotation.
    *
    * @param clazz
    *          the Java bean class
@@ -116,15 +119,23 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
 
     this.xmlRootQName = localName == null ? null : new QName(namespace, localName);
 
+    this.flagContainer = Lazy.lazy(() -> new ClassBindingFlagContainerSupport(this, null));
     this.constraints = Lazy.lazy(() -> new AssemblyConstraintSupport(
         clazz.getAnnotation(ValueConstraints.class),
         clazz.getAnnotation(AssemblyConstraints.class),
         InternalModelSource.instance()));
   }
 
+  @SuppressWarnings("null")
+  @Override
+  public IFlagContainerSupport<IBoundFlagInstance> getFlagContainer() {
+    return flagContainer.get();
+  }
+
   /**
-   * Get the {@link MetaschemaAssembly} annotation associated with this class. This annotation
-   * provides information used by this class binding to control binding behavior.
+   * Get the {@link MetaschemaAssembly} annotation associated with this class.
+   * This annotation provides information used by this class binding to control
+   * binding behavior.
    *
    * @return the annotation
    */
@@ -318,8 +329,9 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
     return CollectionUtil.emptyList();
   }
 
+  @SuppressWarnings("null")
   @Override
-  public IAssemblyConstraintSupport getConstraintSupport() {
+  public IModelConstrained getConstraintSupport() {
     return constraints.get();
   }
 
@@ -329,13 +341,15 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
    * @param instance
    *          the instance to serialize
    * @param writeObjectWrapper
-   *          {@code true} if the start and end object should be written, or {@code false} otherwise
+   *          {@code true} if the start and end object should be written, or
+   *          {@code false} otherwise
    * @param context
    *          the JSON writing context used to generate output
    * @throws IOException
    *           if an error occurs while writing to the output context
    * @throws NullPointerException
-   *           if there is a JSON key configured and the key property's value is {@code null}
+   *           if there is a JSON key configured and the key property's value is
+   *           {@code null}
    */
   @SuppressWarnings("resource") // not owned
   protected void writeInternal(@NonNull Object instance, boolean writeObjectWrapper,

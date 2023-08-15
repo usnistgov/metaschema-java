@@ -69,8 +69,7 @@ public class MetaschemaXmlParser
   private final IXmlProblemHandler problemHandler;
 
   /**
-   * Construct a new Metaschema-aware XML parser using the default problem
-   * handler.
+   * Construct a new Metaschema-aware XML parser using the default problem handler.
    *
    * @param reader
    *          the XML reader to parse with
@@ -109,8 +108,8 @@ public class MetaschemaXmlParser
   /**
    * Parses XML into a bound object based on the provided {@code definition}.
    * <p>
-   * Parses the {@link XMLStreamConstants#START_DOCUMENT}, the root element, and
-   * the {@link XMLStreamConstants#END_DOCUMENT}.
+   * Parses the {@link XMLStreamConstants#START_DOCUMENT}, the root element, and the
+   * {@link XMLStreamConstants#END_DOCUMENT}.
    *
    * @param <CLASS>
    *          the returned object type
@@ -193,12 +192,11 @@ public class MetaschemaXmlParser
   }
 
   /**
-   * Read the XML attribute data described by the {@code targetDefinition} and
-   * apply it to the provided {@code targetObject}.
+   * Read the XML attribute data described by the {@code targetDefinition} and apply it to the
+   * provided {@code targetObject}.
    *
    * @param targetDefinition
-   *          the Metaschema definition that describes the syntax of the data to
-   *          read
+   *          the Metaschema definition that describes the syntax of the data to read
    * @param targetObject
    *          the Java object that data parsed by this method will be stored in
    * @param start
@@ -245,12 +243,11 @@ public class MetaschemaXmlParser
   }
 
   /**
-   * Read the XML element data described by the {@code targetDefinition} and apply
-   * it to the provided {@code targetObject}.
+   * Read the XML element data described by the {@code targetDefinition} and apply it to the provided
+   * {@code targetObject}.
    *
    * @param targetDefinition
-   *          the Metaschema definition that describes the syntax of the data to
-   *          read
+   *          the Metaschema definition that describes the syntax of the data to read
    * @param targetObject
    *          the Java object that data parsed by this method will be stored in
    * @param start
@@ -278,12 +275,11 @@ public class MetaschemaXmlParser
   }
 
   /**
-   * Read the XML element and text data described by the {@code targetDefinition}
-   * and apply it to the provided {@code targetObject}.
+   * Read the XML element and text data described by the {@code targetDefinition} and apply it to the
+   * provided {@code targetObject}.
    *
    * @param targetDefinition
-   *          the Metaschema definition that describes the syntax of the data to
-   *          read
+   *          the Metaschema definition that describes the syntax of the data to read
    * @param targetObject
    *          the Java object that data parsed by this method will be stored in
    * @throws IOException
@@ -305,8 +301,7 @@ public class MetaschemaXmlParser
    *
    * @param instance
    *          the model instance that describes the syntax of the data to read
-   * @return {@code true} if the Metaschema instance needs to be parsed, or
-   *         {@code false} otherwise
+   * @return {@code true} if the Metaschema instance needs to be parsed, or {@code false} otherwise
    * @throws XMLStreamException
    *           if an error occurred while parsing XML events
    */
@@ -346,8 +341,8 @@ public class MetaschemaXmlParser
   }
 
   /**
-   * Read the data associated with the {@code instance} and apply it to the
-   * provided {@code parentObject}.
+   * Read the data associated with the {@code instance} and apply it to the provided
+   * {@code parentObject}.
    *
    * @param instance
    *          the instance to parse data for
@@ -355,8 +350,8 @@ public class MetaschemaXmlParser
    *          the Java object that data parsed by this method will be stored in
    * @param start
    *          the XML element start and attribute data previously parsed
-   * @return {@code true} if the instance was parsed, or {@code false} if the data
-   *         did not contain information for this instance
+   * @return {@code true} if the instance was parsed, or {@code false} if the data did not contain
+   *         information for this instance
    * @throws IOException
    *           if an error occurred while parsing the input
    * @throws XMLStreamException
@@ -416,8 +411,8 @@ public class MetaschemaXmlParser
   }
 
   /**
-   * Read the XML data associated with the {@code instance} and apply it to the
-   * provided {@code parentObject}.
+   * Read the XML data associated with the {@code instance} and apply it to the provided
+   * {@code parentObject}.
    *
    * @param instance
    *          the instance to parse data for

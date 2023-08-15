@@ -62,6 +62,11 @@ public enum Format {
         .collect(Collectors.toUnmodifiableList());
   }
 
+  /**
+   * Get a list of all format names in lowercase.
+   *
+   * @return the list of names
+   */
   @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Exposes names provided by the enum")
   public static List<String> names() {
     return NAMES;
@@ -71,6 +76,11 @@ public enum Format {
     this.defaultExtension = defaultExtension;
   }
 
+  /**
+   * Get the default extension to use for the format.
+   *
+   * @return the default extension
+   */
   @NonNull
   public String getDefaultExtension() {
     return defaultExtension;

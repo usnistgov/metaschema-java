@@ -33,7 +33,8 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
-import gov.nist.secauto.metaschema.core.model.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.model.xml.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
@@ -62,17 +63,18 @@ import nl.talsmasoftware.lazy4j.Lazy;
 @SuppressWarnings("PMD.GodClass")
 public class DefaultFieldClassBinding
     extends AbstractClassBinding
-    implements IFieldClassBinding, IValueConstraintFeature {
+    implements IFieldClassBinding {
 
   @NonNull
   private final MetaschemaField metaschemaField;
   private IBoundFieldValueInstance fieldValue;
   private IBoundFlagInstance jsonValueKeyFlagInstance;
-  private final Lazy<IValueConstraintSupport> constraints;
+  private final Lazy<ClassBindingFlagContainerSupport> flagContainer;
+  private final Lazy<IValueConstrained> constraints;
 
   /**
-   * Create a new {@link IClassBinding} for a Java bean annotated with the {@link BoundField}
-   * annotation.
+   * Create a new {@link IClassBinding} for a Java bean annotated with the
+   * {@link BoundField} annotation.
    *
    * @param clazz
    *          the Java bean class
@@ -81,7 +83,8 @@ public class DefaultFieldClassBinding
    * @return the Metaschema field binding for the class
    */
   @NonNull
-  public static DefaultFieldClassBinding createInstance(@NonNull Class<?> clazz,
+  public static DefaultFieldClassBinding createInstance(
+      @NonNull Class<?> clazz,
       @NonNull IBindingContext bindingContext) {
     Objects.requireNonNull(clazz, "clazz");
     if (!clazz.isAnnotationPresent(MetaschemaField.class)) {
@@ -94,30 +97,40 @@ public class DefaultFieldClassBinding
   }
 
   /**
-   * Construct a new {@link IClassBinding} for a Java bean annotated with the {@link BoundField}
-   * annotation.
+   * Construct a new {@link IClassBinding} for a Java bean annotated with the
+   * {@link BoundField} annotation.
    *
    * @param clazz
    *          the Java bean class
    * @param bindingContext
    *          the class binding context for which this class is participating
    */
-  protected DefaultFieldClassBinding(@NonNull Class<?> clazz, @NonNull IBindingContext bindingContext) {
+  protected DefaultFieldClassBinding(
+      @NonNull Class<?> clazz,
+      @NonNull IBindingContext bindingContext) {
     super(clazz, bindingContext);
     this.metaschemaField = ObjectUtils.notNull(clazz.getAnnotation(MetaschemaField.class));
+    this.flagContainer = Lazy.lazy(() -> new ClassBindingFlagContainerSupport(this, this::handleFlagInstance));
     this.constraints = Lazy.lazy(() -> new ValueConstraintSupport(
         clazz.getAnnotation(ValueConstraints.class),
         InternalModelSource.instance()));
   }
 
+  @SuppressWarnings("null")
+  @Override
+  public IFlagContainerSupport<IBoundFlagInstance> getFlagContainer() {
+    return flagContainer.get();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public IValueConstrained getConstraintSupport() {
+    return constraints.get();
+  }
+
   @NonNull
   public MetaschemaField getMetaschemaFieldAnnotation() {
     return metaschemaField;
-  }
-
-  @Override
-  public IValueConstraintSupport getConstraintSupport() {
-    return constraints.get();
   }
 
   @Override
@@ -223,10 +236,7 @@ public class DefaultFieldClassBinding
     return ObjectUtils.requireNonNull(getFieldValueInstance().getValue(item));
   }
 
-  @Override
-  protected void initializeFlagInstance(IBoundFlagInstance instance) {
-    super.initializeFlagInstance(instance);
-
+  protected void handleFlagInstance(IBoundFlagInstance instance) {
     if (instance.isJsonValueKey()) {
       this.jsonValueKeyFlagInstance = instance;
     }
@@ -235,7 +245,8 @@ public class DefaultFieldClassBinding
   @Override
   @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "access is restricted using interface")
   public IBoundFlagInstance getJsonValueKeyFlagInstance() {
-    initalizeFlagInstances();
+    // lazy load flags
+    flagContainer.get();
     return jsonValueKeyFlagInstance;
   }
 

@@ -30,39 +30,23 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
-import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IAssemblyConstraintSupport;
-import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
-import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IIndexConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 @SuppressWarnings("PMD.CouplingBetweenObjects")
-class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - intentional
+class XmlGlobalAssemblyDefinition implements IAssemblyDefinition, IFeatureModelContainer {
 
   @NonNull
   private final GlobalAssemblyDefinitionType xmlAssembly;
@@ -73,7 +57,8 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
   private final Lazy<AssemblyConstraintSupport> constraints;
 
   /**
-   * Constructs a new Metaschema Assembly definition from an XML representation bound to Java objects.
+   * Constructs a new Metaschema Assembly definition from an XML representation
+   * bound to Java objects.
    *
    * @param xmlAssembly
    *          the XML representation bound to Java objects
@@ -107,162 +92,22 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
     return metaschema;
   }
 
-  protected XmlFlagContainerSupport getFlagContainer() {
+  @SuppressWarnings("null")
+  @Override
+  public XmlFlagContainerSupport getFlagContainer() {
     return flagContainer.get();
   }
 
-  @NonNull
-  private Map<String, ? extends IFlagInstance> getFlagInstanceMap() {
-    return getFlagContainer().getFlagInstanceMap();
-  }
-
-  @Override
-  public IFlagInstance getFlagInstanceByName(String name) {
-    return getFlagInstanceMap().get(name);
-  }
-
   @SuppressWarnings("null")
   @Override
-  public Collection<? extends IFlagInstance> getFlagInstances() {
-    return getFlagInstanceMap().values();
-  }
-
-  protected XmlModelContainerSupport getModelContainer() {
+  public XmlModelContainerSupport getModelContainer() {
     return modelContainer.get();
   }
 
-  private Map<String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
-    return getModelContainer().getNamedModelInstanceMap();
-  }
-
-  @Override
-  public @Nullable INamedModelInstance getModelInstanceByName(String name) {
-    return getNamedModelInstanceMap().get(name);
-  }
-
   @SuppressWarnings("null")
   @Override
-  public @NonNull Collection<? extends INamedModelInstance> getNamedModelInstances() {
-    return getNamedModelInstanceMap().values();
-  }
-
-  private Map<String, ? extends IFieldInstance> getFieldInstanceMap() {
-    return getModelContainer().getFieldInstanceMap();
-  }
-
-  @Override
-  public IFieldInstance getFieldInstanceByName(String name) {
-    return getFieldInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public Collection<? extends IFieldInstance> getFieldInstances() {
-    return getFieldInstanceMap().values();
-  }
-
-  private Map<String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
-    return getModelContainer().getAssemblyInstanceMap();
-  }
-
-  @Override
-  public IAssemblyInstance getAssemblyInstanceByName(String name) {
-    return getAssemblyInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public Collection<? extends IAssemblyInstance> getAssemblyInstances() {
-    return getAssemblyInstanceMap().values();
-  }
-
-  @Override
-  public List<? extends IChoiceInstance> getChoiceInstances() {
-    return getModelContainer().getChoiceInstances();
-  }
-
-  @Override
-  public List<? extends IModelInstance> getModelInstances() {
-    return getModelContainer().getModelInstances();
-  }
-
-  protected IAssemblyConstraintSupport getConstraintSupport() {
+  public IModelConstrained getConstraintSupport() {
     return constraints.get();
-  }
-
-  @Override
-  public List<? extends IConstraint> getConstraints() {
-    return getConstraintSupport().getConstraints();
-  }
-
-  @Override
-  public List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
-    return getConstraintSupport().getAllowedValuesConstraints();
-  }
-
-  @Override
-  public List<? extends IMatchesConstraint> getMatchesConstraints() {
-    return getConstraintSupport().getMatchesConstraints();
-  }
-
-  @Override
-  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-    return getConstraintSupport().getIndexHasKeyConstraints();
-  }
-
-  @Override
-  public List<? extends IExpectConstraint> getExpectConstraints() {
-    return getConstraintSupport().getExpectConstraints();
-  }
-
-  @Override
-  public List<? extends IIndexConstraint> getIndexConstraints() {
-    return getConstraintSupport().getIndexConstraints();
-  }
-
-  @Override
-  public List<? extends IUniqueConstraint> getUniqueConstraints() {
-    return getConstraintSupport().getUniqueConstraints();
-  }
-
-  @Override
-  public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
-    return getConstraintSupport().getHasCardinalityConstraints();
-  }
-
-  @Override
-  public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IMatchesConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IExpectConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IIndexConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IUniqueConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull ICardinalityConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
   }
 
   @Override
@@ -301,20 +146,6 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
   @Override
   public Map<QName, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlAssembly().getPropList()));
-  }
-
-  @Override
-  public boolean hasJsonKey() {
-    return getXmlAssembly().isSetJsonKey();
-  }
-
-  @Override
-  public IFlagInstance getJsonKeyFlagInstance() {
-    IFlagInstance retval = null;
-    if (hasJsonKey()) {
-      retval = getFlagInstanceByName(getXmlAssembly().getJsonKey().getFlagRef());
-    }
-    return retval;
   }
 
   @Override

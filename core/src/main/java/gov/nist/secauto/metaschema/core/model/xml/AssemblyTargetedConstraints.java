@@ -30,9 +30,9 @@ import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractTargetedConstraints;
-import gov.nist.secauto.metaschema.core.model.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IIndexConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
 
 import java.util.List;
@@ -41,9 +41,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 class AssemblyTargetedConstraints
     extends AbstractTargetedConstraints<AssemblyConstraintSupport>
-    implements IAssemblyConstraintSupport {
+    implements IModelConstrained {
 
-  public AssemblyTargetedConstraints(@NonNull MetapathExpression targetExpression,
+  public AssemblyTargetedConstraints(
+      @NonNull MetapathExpression targetExpression,
       @NonNull AssemblyConstraintSupport constraints) {
     super(targetExpression, constraints);
   }

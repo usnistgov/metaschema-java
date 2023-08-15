@@ -40,7 +40,6 @@ import gov.nist.secauto.metaschema.core.model.constraint.DefaultMatchesConstrain
 import gov.nist.secauto.metaschema.core.model.constraint.DefaultUniqueConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ISource;
@@ -51,6 +50,7 @@ import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IKeyConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IKeyField;
 import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ConstraintType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.DefineAssemblyConstraintsType;
@@ -85,11 +85,11 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides support for parsing and maintaining a set of Metaschema constraints. Constraints are
- * parsed from XML.
+ * Provides support for parsing and maintaining a set of Metaschema constraints.
+ * Constraints are parsed from XML.
  */
 @SuppressWarnings("PMD.CouplingBetweenObjects")
-class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
+class AssemblyConstraintSupport implements IModelConstrained {
   @NonNull
   private static final String PATH = "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
       + "$this/m:allowed-values|$this/m:index|$this/m:index-has-key|$this/m:is-unique|"

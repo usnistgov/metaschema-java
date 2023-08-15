@@ -29,16 +29,16 @@ package gov.nist.secauto.metaschema.core.model.xml;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractTargetedConstraints;
-import gov.nist.secauto.metaschema.core.model.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class FlagTargetedConstraints
-    extends AbstractTargetedConstraints<IValueConstraintSupport> {
+    extends AbstractTargetedConstraints<IValueConstrained> {
 
   public FlagTargetedConstraints(
       @NonNull MetapathExpression targetExpression,
-      @NonNull IValueConstraintSupport constraints) {
+      @NonNull IValueConstrained constraints) {
     super(targetExpression, constraints);
   }
 

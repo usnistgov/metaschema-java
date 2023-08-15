@@ -24,50 +24,20 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.core.model.impl;
 
-import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IIndexConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
 
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IAssemblyConstraintFeature extends IValueConstraintFeature, IAssemblyConstraintSupport {
+public interface IFeatureModelConstrained extends IModelConstrained, IFeatureValueConstrained {
   @Override
-  IAssemblyConstraintSupport getConstraintSupport();
-
-  @Override
-  default List<? extends IConstraint> getConstraints() {
-    return getConstraintSupport().getConstraints();
-  }
-
-  @Override
-  default List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
-    return getConstraintSupport().getAllowedValuesConstraints();
-  }
-
-  @Override
-  default List<? extends IMatchesConstraint> getMatchesConstraints() {
-    return getConstraintSupport().getMatchesConstraints();
-  }
-
-  @Override
-  default List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-    return getConstraintSupport().getIndexHasKeyConstraints();
-  }
-
-  @Override
-  default List<? extends IExpectConstraint> getExpectConstraints() {
-    return getConstraintSupport().getExpectConstraints();
-  }
+  IModelConstrained getConstraintSupport();
 
   @Override
   default List<? extends IIndexConstraint> getIndexConstraints() {
@@ -82,26 +52,6 @@ public interface IAssemblyConstraintFeature extends IValueConstraintFeature, IAs
   @Override
   default List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
     return getConstraintSupport().getHasCardinalityConstraints();
-  }
-
-  @Override
-  default void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  default void addConstraint(@NonNull IMatchesConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  default void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  default void addConstraint(@NonNull IExpectConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
   }
 
   @Override

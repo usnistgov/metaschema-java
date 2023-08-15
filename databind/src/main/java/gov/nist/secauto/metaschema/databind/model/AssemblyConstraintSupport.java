@@ -28,15 +28,15 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.metapath.MetapathException;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ISource;
 import gov.nist.secauto.metaschema.databind.model.annotations.AssemblyConstraints;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
@@ -51,7 +51,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 /**
  * Support for constraints on Metaschema assembly bound objects.
  */
-class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
+class AssemblyConstraintSupport implements IModelConstrained {
   @NonNull
   private final List<IConstraint> constraints;
   @NonNull

@@ -66,8 +66,8 @@ public final class JsonUtil {
   }
 
   /**
-   * Generate an informational string describing the token at the current location
-   * of the provided {@code parser}.
+   * Generate an informational string describing the token at the current location of the provided
+   * {@code parser}.
    *
    * @param parser
    *          the JSON parser

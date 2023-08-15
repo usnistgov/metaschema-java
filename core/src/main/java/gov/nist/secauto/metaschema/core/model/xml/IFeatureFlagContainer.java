@@ -24,44 +24,44 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.constraint;
+package gov.nist.secauto.metaschema.core.model.xml;
 
-import java.util.List;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+
+import java.util.Collection;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-/**
- * Represents a container of rules constraining the effective model of a Metaschema assembly data
- * instance.
- */
-public interface IAssemblyConstraintSupport extends IValueConstraintSupport {
+public interface IFeatureFlagContainer<F extends IFlagInstance> extends IFlagContainer {
   /**
-   * Get the collection of index constraints, if any.
+   * Lazy initialize the flag instances associated with this definition.
    *
-   * @return the constraints or an empty list
+   * @return the flag container
    */
   @NonNull
-  List<? extends IIndexConstraint> getIndexConstraints();
+  IFlagContainerSupport<F> getFlagContainer();
 
-  /**
-   * Get the collection of unique constraints, if any.
-   *
-   * @return the constraints or an empty list
-   */
+  // REFACTOR: remove
   @NonNull
-  List<? extends IUniqueConstraint> getUniqueConstraints();
+  default Map<String, ? extends F> getFlagInstanceMap() {
+    return getFlagContainer().getFlagInstanceMap();
+  }
 
-  /**
-   * Get the collection of cardinality constraints, if any.
-   *
-   * @return the constraints or an empty list
-   */
-  @NonNull
-  List<? extends ICardinalityConstraint> getHasCardinalityConstraints();
+  @Override
+  default F getFlagInstanceByName(String name) {
+    return getFlagContainer().getFlagInstanceMap().get(name);
+  }
 
-  void addConstraint(@NonNull IIndexConstraint constraint);
+  @SuppressWarnings("null")
+  @Override
+  default Collection<? extends F> getFlagInstances() {
+    return getFlagContainer().getFlagInstanceMap().values();
+  }
 
-  void addConstraint(@NonNull IUniqueConstraint constraint);
-
-  void addConstraint(@NonNull ICardinalityConstraint constraint);
+  @Override
+  default F getJsonKeyFlagInstance() {
+    return getFlagContainer().getJsonKeyFlagInstance();
+  }
 }

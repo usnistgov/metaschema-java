@@ -41,20 +41,14 @@ import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
-import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFieldDefinitionType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,6 +56,7 @@ import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 class XmlInlineFieldDefinition
     extends AbstractFieldInstance {
@@ -71,7 +66,8 @@ class XmlInlineFieldDefinition
   private final InternalFieldDefinition fieldDefinition;
 
   /**
-   * Constructs a new Metaschema field definition from an XML representation bound to Java objects.
+   * Constructs a new Metaschema field definition from an XML representation bound
+   * to Java objects.
    *
    * @param xmlField
    *          the XML representation bound to Java objects
@@ -83,7 +79,7 @@ class XmlInlineFieldDefinition
       @NonNull IModelContainer parent) {
     super(parent);
     this.xmlField = xmlField;
-    this.fieldDefinition = new InternalFieldDefinition();
+    this.fieldDefinition = new InternalFieldDefinition(xmlField);
   }
 
   /**
@@ -200,18 +196,33 @@ class XmlInlineFieldDefinition
   /**
    * The corresponding definition for the local flag instance.
    */
-  private final class InternalFieldDefinition implements IFieldDefinition, IInlineDefinition<XmlInlineFieldDefinition> {
+  private final class InternalFieldDefinition
+      implements IFieldDefinition, IInlineDefinition<XmlInlineFieldDefinition>, IFeatureFlagContainer {
     @Nullable
     private final Object defaultValue;
-    private XmlFlagContainerSupport flagContainer;
-    private IValueConstraintSupport constraints;
+    private final Lazy<XmlFlagContainerSupport> flagContainer;
+    private final Lazy<IValueConstrained> constraints;
 
-    private InternalFieldDefinition() {
+    private InternalFieldDefinition(
+        @NonNull InlineFieldDefinitionType xmlField) {
       Object defaultValue = null;
-      if (getXmlField().isSetDefault()) {
-        defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(getXmlField().getDefault()));
+      if (xmlField.isSetDefault()) {
+        defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlField.getDefault()));
       }
       this.defaultValue = defaultValue;
+      this.flagContainer = Lazy.lazy(() -> new XmlFlagContainerSupport(xmlField, this));
+      this.constraints = Lazy.lazy(() -> {
+        IValueConstrained retval;
+        if (xmlField.isSetConstraint()) {
+          retval = new ValueConstraintSupport(
+              ObjectUtils.notNull(xmlField.getConstraint()),
+              ExternalModelSource.instance(
+                  ObjectUtils.requireNonNull(getContainingMetaschema().getLocation())));
+        } else {
+          retval = new ValueConstraintSupport();
+        }
+        return retval;
+      });
     }
 
     @Override
@@ -294,117 +305,22 @@ class XmlInlineFieldDefinition
       return retval;
     }
 
-    /**
-     * Lazy initialize the flag instances associated with this definition.
-     *
-     * @return the flag container
-     */
-    private XmlFlagContainerSupport initFlagContainer() {
-      synchronized (this) {
-        if (flagContainer == null) {
-          flagContainer = new XmlFlagContainerSupport(getXmlField(), this);
-        }
-        return flagContainer;
-      }
-    }
-
-    @NonNull
-    private Map<String, ? extends IFlagInstance> getFlagInstanceMap() {
-      return initFlagContainer().getFlagInstanceMap();
-    }
-
-    @Override
-    public @Nullable IFlagInstance getFlagInstanceByName(String name) {
-      return getFlagInstanceMap().get(name);
-    }
-
     @SuppressWarnings("null")
     @Override
-    public @NonNull Collection<? extends IFlagInstance> getFlagInstances() {
-      return getFlagInstanceMap().values();
-    }
-
-    @Override
-    public boolean hasJsonKey() {
-      return getXmlField().isSetJsonKey();
-    }
-
-    @Override
-    public IFlagInstance getJsonKeyFlagInstance() {
-      IFlagInstance retval = null;
-      if (hasJsonKey()) {
-        retval = getFlagInstanceByName(getXmlField().getJsonKey().getFlagRef());
-      }
-      return retval;
+    public XmlFlagContainerSupport getFlagContainer() {
+      return flagContainer.get();
     }
 
     /**
-     * Used to generate the instances for the constraints in a lazy fashion when the constraints are
-     * first accessed.
+     * Used to generate the instances for the constraints in a lazy fashion when the
+     * constraints are first accessed.
      *
      * @return the constraints instance
      */
     @SuppressWarnings("null")
-    @NonNull
-    private IValueConstraintSupport initModelConstraints() {
-      synchronized (this) {
-        if (constraints == null) {
-          if (getXmlField().isSetConstraint()) {
-            constraints = new ValueConstraintSupport(
-                ObjectUtils.notNull(getXmlField().getConstraint()),
-                ExternalModelSource.instance(
-                    ObjectUtils.requireNonNull(getContainingMetaschema().getLocation())));
-          } else {
-            constraints = new ValueConstraintSupport();
-          }
-        }
-        return constraints;
-      }
-    }
-
     @Override
-    public List<? extends IConstraint> getConstraints() {
-      return initModelConstraints().getConstraints();
-    }
-
-    @Override
-    public List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
-      return initModelConstraints().getAllowedValuesConstraints();
-    }
-
-    @Override
-    public List<? extends IMatchesConstraint> getMatchesConstraints() {
-      return initModelConstraints().getMatchesConstraints();
-    }
-
-    @Override
-    public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-      return initModelConstraints().getIndexHasKeyConstraints();
-    }
-
-    @Override
-    public List<? extends IExpectConstraint> getExpectConstraints() {
-      return initModelConstraints().getExpectConstraints();
-    }
-
-    @Override
-    public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
-      initModelConstraints().addConstraint(constraint);
-    }
-
-    @Override
-    public void addConstraint(@NonNull IMatchesConstraint constraint) {
-      initModelConstraints().addConstraint(constraint);
-    }
-
-    @Override
-    public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
-      initModelConstraints().addConstraint(constraint);
-    }
-
-    @Override
-    public void addConstraint(@NonNull IExpectConstraint constraint) {
-      initModelConstraints().addConstraint(constraint);
+    public IValueConstrained getConstraintSupport() {
+      return constraints.get();
     }
 
     @Override

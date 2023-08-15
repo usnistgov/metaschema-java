@@ -24,22 +24,37 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.core.model.xml;
 
-import gov.nist.secauto.metaschema.core.model.xml.IFeatureFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 
 import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IBoundModelDefinition extends IFeatureFlagContainer<IBoundFlagInstance> {
-
-  @Override
-  default @NonNull Map<QName, Set<String>> getProperties() {
-    // TODO: implement
-    throw new UnsupportedOperationException();
+public interface IFlagContainerSupport<F extends IFlagInstance> {
+  @SuppressWarnings("unchecked")
+  @NonNull
+  static <T extends IFlagInstance> IFlagContainerSupport<T> empty() {
+    return EmptyFlagContainer.EMPTY;
   }
+
+  /**
+   * Get a mapping of flag effective name to flag instance.
+   *
+   * @return the mapping of flag effective name to flag instance
+   */
+  @NonNull
+  Map<String, ? extends F> getFlagInstanceMap();
+
+  /**
+   * Retrieves the flag instance to use as as the property name for the containing
+   * object in JSON who's value will be the object containing the flag.
+   *
+   * @return the flag instance if a JSON key is configured, or {@code null}
+   *         otherwise
+   */
+  @Nullable
+  F getJsonKeyFlagInstance();
 }

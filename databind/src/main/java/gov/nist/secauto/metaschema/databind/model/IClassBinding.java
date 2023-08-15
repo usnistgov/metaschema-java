@@ -66,10 +66,6 @@ public interface IClassBinding extends IBoundModelDefinition {
       @NonNull Object targetObject,
       @Nullable Object parentObject) throws BindingException;
 
-  // Provides a compatible return value
-  @Override
-  IBoundFlagInstance getJsonKeyFlagInstance();
-
   /**
    * Get the class's properties that match the filter.
    *

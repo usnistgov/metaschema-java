@@ -24,22 +24,4 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
-
-import gov.nist.secauto.metaschema.core.model.xml.IFeatureFlagContainer;
-
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-
-public interface IBoundModelDefinition extends IFeatureFlagContainer<IBoundFlagInstance> {
-
-  @Override
-  default @NonNull Map<QName, Set<String>> getProperties() {
-    // TODO: implement
-    throw new UnsupportedOperationException();
-  }
-}
+package gov.nist.secauto.metaschema.core.model.xml.impl;

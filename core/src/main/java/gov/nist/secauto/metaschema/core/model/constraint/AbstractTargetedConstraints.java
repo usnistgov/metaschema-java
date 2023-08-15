@@ -31,26 +31,29 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.impl.IFeatureValueConstrained;
 
-import java.util.List;
 import java.util.Locale;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides an base implementation for a set of external constraints that target a given definition
- * using a target Metapath expression.
+ * Provides an base implementation for a set of external constraints that target
+ * a given definition using a target Metapath expression.
  *
  * @param <T>
  *          the type of the constraint container
  */
-public abstract class AbstractTargetedConstraints<T extends IValueConstraintSupport> implements ITargetedConstaints {
+public abstract class AbstractTargetedConstraints<T extends IValueConstrained>
+    implements ITargetedConstaints, IFeatureValueConstrained {
   @NonNull
   private final MetapathExpression targetExpression;
   @NonNull
   private final T constraints;
 
-  public AbstractTargetedConstraints(@NonNull MetapathExpression targetExpression, @NonNull T constraints) {
+  public AbstractTargetedConstraints(
+      @NonNull MetapathExpression targetExpression,
+      @NonNull T constraints) {
     this.targetExpression = targetExpression;
     this.constraints = constraints;
   }
@@ -60,54 +63,9 @@ public abstract class AbstractTargetedConstraints<T extends IValueConstraintSupp
     return targetExpression;
   }
 
-  @NonNull
-  protected T getConstraintSupport() {
+  @Override
+  public T getConstraintSupport() {
     return constraints;
-  }
-
-  @Override
-  public List<? extends IConstraint> getConstraints() {
-    return getConstraintSupport().getConstraints();
-  }
-
-  @Override
-  public List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
-    return getConstraintSupport().getAllowedValuesConstraints();
-  }
-
-  @Override
-  public List<? extends IMatchesConstraint> getMatchesConstraints() {
-    return getConstraintSupport().getMatchesConstraints();
-  }
-
-  @Override
-  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-    return getConstraintSupport().getIndexHasKeyConstraints();
-  }
-
-  @Override
-  public List<? extends IExpectConstraint> getExpectConstraints() {
-    return getConstraintSupport().getExpectConstraints();
-  }
-
-  @Override
-  public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IMatchesConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IExpectConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
   }
 
   @SuppressWarnings("null")

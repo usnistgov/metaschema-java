@@ -33,19 +33,11 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
-import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
@@ -56,7 +48,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 abstract class AbstractClassBinding implements IClassBinding {
   // private static final Logger logger =
@@ -69,8 +60,6 @@ abstract class AbstractClassBinding implements IClassBinding {
   private final Method beforeDeserializeMethod;
   private final Method afterDeserializeMethod;
   private IMetaschema metaschema;
-  private Map<String, IBoundFlagInstance> flagInstances;
-  private IBoundFlagInstance jsonKeyFlag;
 
   /**
    * Construct a new class binding for the provided class.
@@ -140,107 +129,6 @@ abstract class AbstractClassBinding implements IClassBinding {
     return initMetaschema();
   }
 
-  /**
-   * Collect all fields that are flag instances on this class.
-   *
-   * @param clazz
-   *          the class
-   * @return an immutable collection of flag instances
-   */
-  @SuppressWarnings("PMD.UseArraysAsList")
-  @NonNull
-  protected Collection<Field> getFlagInstanceFields(Class<?> clazz) {
-    Field[] fields = clazz.getDeclaredFields();
-
-    List<Field> retval = new LinkedList<>();
-
-    Class<?> superClass = clazz.getSuperclass();
-    if (superClass != null) {
-      // get flags from superclass
-      retval.addAll(getFlagInstanceFields(superClass));
-    }
-
-    for (Field field : fields) {
-      if (!field.isAnnotationPresent(BoundFlag.class)) {
-        // skip non-flag fields
-        continue;
-      }
-
-      if (field.isAnnotationPresent(Ignore.class)) {
-        // skip this field, since it is ignored
-        continue;
-      }
-
-      retval.add(field);
-    }
-    return ObjectUtils.notNull(Collections.unmodifiableCollection(retval));
-  }
-
-  /**
-   * Initialize the flag instances for this class.
-   *
-   * @return the initialized flag instances
-   */
-  @NonNull
-  protected Map<String, IBoundFlagInstance> initalizeFlagInstances() {
-    synchronized (this) {
-      if (this.flagInstances == null) {
-        Map<String, IBoundFlagInstance> flags = new LinkedHashMap<>(); // NOPMD - intentional use
-        for (Field field : getFlagInstanceFields(clazz)) {
-
-          if (field.isAnnotationPresent(BoundFlag.class)) {
-            IBoundFlagInstance flagBinding
-                = new DefaultFlagProperty(field, this); // NOPMD - intentional
-            initializeFlagInstance(flagBinding);
-            flags.put(flagBinding.getEffectiveName(), flagBinding);
-          }
-        }
-        this.flagInstances = flags.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flags);
-      }
-      return ObjectUtils.notNull(this.flagInstances);
-    }
-  }
-
-  /**
-   * Used to delegate flag instance initialization to subclasses.
-   *
-   * @param instance
-   *          the flag instance to process
-   */
-  protected void initializeFlagInstance(IBoundFlagInstance instance) {
-    if (instance.isJsonKey()) {
-      this.jsonKeyFlag = instance;
-    }
-  }
-
-  @NonNull
-  private Map<String, IBoundFlagInstance> getFlagInstanceMap() {
-    // check that the flag instances are lazy loaded
-    return initalizeFlagInstances();
-  }
-
-  @Override
-  public @Nullable IBoundFlagInstance getFlagInstanceByName(String name) {
-    return getFlagInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public @NonNull Collection<? extends IBoundFlagInstance> getFlagInstances() {
-    return getFlagInstanceMap().values();
-  }
-
-  @Override
-  public boolean hasJsonKey() {
-    return getJsonKeyFlagInstance() != null;
-  }
-
-  @Override
-  public IBoundFlagInstance getJsonKeyFlagInstance() {
-    initalizeFlagInstances();
-    return jsonKeyFlag;
-  }
-
   // REFACTOR: remove
   @Override
   public Map<String, ? extends IBoundNamedInstance> getNamedInstances(Predicate<IBoundFlagInstance> filter) {
@@ -281,16 +169,17 @@ abstract class AbstractClassBinding implements IClassBinding {
   }
 
   /**
-   * Calls the method named "beforeDeserialize" on each class in the object's hierarchy if the method
-   * exists on the class.
+   * Calls the method named "beforeDeserialize" on each class in the object's
+   * hierarchy if the method exists on the class.
    * <p>
-   * These methods can be used to set the initial state of the target bound object before data is read
-   * and applied during deserialization.
+   * These methods can be used to set the initial state of the target bound object
+   * before data is read and applied during deserialization.
    *
    * @param targetObject
    *          the data object target to call the method(s) on
    * @param parentObject
-   *          the object target's parent object, which is used as the method argument
+   *          the object target's parent object, which is used as the method
+   *          argument
    * @throws BindingException
    *           if an error occurs while calling the method
    */
@@ -306,16 +195,17 @@ abstract class AbstractClassBinding implements IClassBinding {
   }
 
   /**
-   * Calls the method named "afterDeserialize" on each class in the object's hierarchy if the method
-   * exists.
+   * Calls the method named "afterDeserialize" on each class in the object's
+   * hierarchy if the method exists.
    * <p>
-   * These methods can be used to modify the state of the target bound object after data is read and
-   * applied during deserialization.
+   * These methods can be used to modify the state of the target bound object
+   * after data is read and applied during deserialization.
    *
    * @param targetObject
    *          the data object target to call the method(s) on
    * @param parentObject
-   *          the object target's parent object, which is used as the method argument
+   *          the object target's parent object, which is used as the method
+   *          argument
    * @throws BindingException
    *           if an error occurs while calling the method
    */

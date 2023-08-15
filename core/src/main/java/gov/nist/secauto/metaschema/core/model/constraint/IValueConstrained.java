@@ -31,14 +31,47 @@ import java.util.List;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * This marker interface is used to indicate the implementation class is a provider of constraints.
+ * Represents a container of rules constraining the effective model of a Metaschema field or flag
+ * data instance.
  */
-public interface IConstraintSupport {
+public interface IValueConstrained extends IConstrained {
   /**
-   * Retrieve the ordered collection of constraints.
+   * Get the collection of allowed value constraints, if any.
    *
    * @return the constraints or an empty list
    */
   @NonNull
-  List<? extends IConstraint> getConstraints();
+  List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints();
+
+  /**
+   * Get the collection of matches constraints, if any.
+   *
+   * @return the constraints or an empty list
+   */
+  @NonNull
+  List<? extends IMatchesConstraint> getMatchesConstraints();
+
+  /**
+   * Get the collection of index key reference constraints, if any.
+   *
+   * @return the constraints or an empty list
+   */
+  @NonNull
+  List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints();
+
+  /**
+   * Get the collection of expect constraints, if any.
+   *
+   * @return the constraints or an empty list
+   */
+  @NonNull
+  List<? extends IExpectConstraint> getExpectConstraints();
+
+  void addConstraint(@NonNull IAllowedValuesConstraint constraint);
+
+  void addConstraint(@NonNull IMatchesConstraint constraint);
+
+  void addConstraint(@NonNull IIndexHasKeyConstraint constraint);
+
+  void addConstraint(@NonNull IExpectConstraint constraint);
 }

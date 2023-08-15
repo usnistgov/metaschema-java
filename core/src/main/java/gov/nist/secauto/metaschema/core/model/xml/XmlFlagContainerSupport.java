@@ -46,11 +46,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-class XmlFlagContainerSupport {
+class XmlFlagContainerSupport implements IFlagContainerSupport<IFlagInstance> {
 
   @NonNull
   private final Map<String, IFlagInstance> flagInstances;
+  @Nullable
+  private IFlagInstance jsonKeyFlag;
 
   /**
    * Generate a set of constraints from the provided XMLBeans instance.
@@ -68,6 +71,9 @@ class XmlFlagContainerSupport {
       this.flagInstances = parseLocalFlags(xmlField, container);
     } else {
       this.flagInstances = CollectionUtil.emptyMap();
+    }
+    if (xmlField.isSetJsonKey()) {
+      jsonKeyFlag = flagInstances.get(xmlField.getJsonKey().getFlagRef());
     }
   }
 
@@ -88,6 +94,9 @@ class XmlFlagContainerSupport {
     } else {
       this.flagInstances = CollectionUtil.emptyMap();
     }
+    if (xmlField.isSetJsonKey()) {
+      jsonKeyFlag = flagInstances.get(xmlField.getJsonKey().getFlagRef());
+    }
   }
 
   /**
@@ -106,6 +115,9 @@ class XmlFlagContainerSupport {
       this.flagInstances = parseLocalFlags(xmlAssembly, container);
     } else {
       this.flagInstances = CollectionUtil.emptyMap();
+    }
+    if (xmlAssembly.isSetJsonKey()) {
+      jsonKeyFlag = flagInstances.get(xmlAssembly.getJsonKey().getFlagRef());
     }
   }
 
@@ -126,6 +138,9 @@ class XmlFlagContainerSupport {
     } else {
       this.flagInstances = CollectionUtil.emptyMap();
     }
+    if (xmlAssembly.isSetJsonKey()) {
+      jsonKeyFlag = flagInstances.get(xmlAssembly.getJsonKey().getFlagRef());
+    }
   }
 
   /**
@@ -133,9 +148,15 @@ class XmlFlagContainerSupport {
    *
    * @return the mapping of flag effective name to flag instance
    */
+  @Override
   @NonNull
   public Map<String, ? extends IFlagInstance> getFlagInstanceMap() {
     return flagInstances;
+  }
+
+  @Override
+  public IFlagInstance getJsonKeyFlagInstance() {
+    return jsonKeyFlag;
   }
 
   @NonNull

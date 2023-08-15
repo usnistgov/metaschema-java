@@ -24,22 +24,29 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.core.model.xml;
 
-import gov.nist.secauto.metaschema.core.model.xml.IFeatureFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
 import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundModelDefinition extends IFeatureFlagContainer<IBoundFlagInstance> {
+class EmptyFlagContainer<F extends IFlagInstance> implements IFlagContainerSupport<F> {
+  @SuppressWarnings("rawtypes")
+  @NonNull
+  public static final EmptyFlagContainer EMPTY = new EmptyFlagContainer();
 
   @Override
-  default @NonNull Map<QName, Set<String>> getProperties() {
-    // TODO: implement
-    throw new UnsupportedOperationException();
+  public Map<String, ? extends F> getFlagInstanceMap() {
+    return CollectionUtil.emptyMap();
   }
+
+  @Override
+  public F getJsonKeyFlagInstance() {
+    // no JSON key
+    return null;
+  }
+
 }

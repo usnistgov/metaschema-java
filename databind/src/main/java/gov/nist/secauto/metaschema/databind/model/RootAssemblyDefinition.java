@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.databind.model;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import gov.nist.secauto.metaschema.core.model.RootAssemblyDefinitionWrapper;
+import gov.nist.secauto.metaschema.core.model.xml.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
@@ -103,6 +104,11 @@ public class RootAssemblyDefinition
   @Override
   public Object copyBoundObject(Object item, Object parentInstance) throws BindingException {
     return getRootDefinition().copyBoundObject(item, parentInstance);
+  }
+
+  @Override
+  public IFlagContainerSupport<IBoundFlagInstance> getFlagContainer() {
+    return getRootDefinition().getFlagContainer();
   }
 
   @Override

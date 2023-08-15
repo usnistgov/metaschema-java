@@ -24,22 +24,44 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.core.model.constraint;
 
-import gov.nist.secauto.metaschema.core.model.xml.IFeatureFlagContainer;
-
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundModelDefinition extends IFeatureFlagContainer<IBoundFlagInstance> {
+/**
+ * Represents a container of rules constraining the effective model of a Metaschema assembly data
+ * instance.
+ */
+public interface IModelConstrained extends IValueConstrained {
+  /**
+   * Get the collection of index constraints, if any.
+   *
+   * @return the constraints or an empty list
+   */
+  @NonNull
+  List<? extends IIndexConstraint> getIndexConstraints();
 
-  @Override
-  default @NonNull Map<QName, Set<String>> getProperties() {
-    // TODO: implement
-    throw new UnsupportedOperationException();
-  }
+  /**
+   * Get the collection of unique constraints, if any.
+   *
+   * @return the constraints or an empty list
+   */
+  @NonNull
+  List<? extends IUniqueConstraint> getUniqueConstraints();
+
+  /**
+   * Get the collection of cardinality constraints, if any.
+   *
+   * @return the constraints or an empty list
+   */
+  @NonNull
+  List<? extends ICardinalityConstraint> getHasCardinalityConstraints();
+
+  void addConstraint(@NonNull IIndexConstraint constraint);
+
+  void addConstraint(@NonNull IUniqueConstraint constraint);
+
+  void addConstraint(@NonNull ICardinalityConstraint constraint);
 }

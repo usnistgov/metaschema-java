@@ -37,18 +37,12 @@ import gov.nist.secauto.metaschema.core.model.IInlineDefinition;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
-import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
-import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFlagDefinitionType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,6 +50,7 @@ import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 class XmlInlineFlagDefinition
     extends AbstractFlagInstance {
@@ -63,39 +58,34 @@ class XmlInlineFlagDefinition
   private final InlineFlagDefinitionType xmlFlag;
   @NonNull
   private final InternalFlagDefinition flagDefinition;
-  private IValueConstraintSupport constraints;
+  private final Lazy<IValueConstrained> constraints;
 
   /**
-   * Constructs a new Metaschema flag definition from an XML representation bound to Java objects.
+   * Constructs a new Metaschema flag definition from an XML representation bound
+   * to Java objects.
    *
    * @param xmlFlag
    *          the XML representation bound to Java objects
    * @param parent
-   *          the parent definition, which must be a definition type that can contain flags.
+   *          the parent definition, which must be a definition type that can
+   *          contain flags.
    */
   public XmlInlineFlagDefinition(@NonNull InlineFlagDefinitionType xmlFlag, @NonNull IFlagContainer parent) {
     super(parent);
     this.xmlFlag = xmlFlag;
     this.flagDefinition = new InternalFlagDefinition();
-  }
-
-  /**
-   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
-   * first accessed.
-   */
-  protected void checkModelConstraints() {
-    synchronized (this) {
-      if (constraints == null) {
-        if (getXmlFlag().isSetConstraint()) {
-          constraints = new ValueConstraintSupport(
-              ObjectUtils.notNull(getXmlFlag().getConstraint()),
-              ExternalModelSource.instance(
-                  ObjectUtils.requireNonNull(getContainingMetaschema().getLocation())));
-        } else {
-          constraints = new ValueConstraintSupport();
-        }
+    this.constraints = Lazy.lazy(() -> {
+      IValueConstrained retval;
+      if (getXmlFlag().isSetConstraint()) {
+        retval = new ValueConstraintSupport(
+            ObjectUtils.notNull(getXmlFlag().getConstraint()),
+            ExternalModelSource.instance(
+                ObjectUtils.requireNonNull(getContainingMetaschema().getLocation())));
+      } else {
+        retval = new ValueConstraintSupport();
       }
-    }
+      return retval;
+    });
   }
 
   /**
@@ -234,58 +224,14 @@ class XmlInlineFlagDefinition
       return getXmlFlag().isSetAsType() ? getXmlFlag().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
     }
 
+    /**
+     * Used to generate the instances for the constraints in a lazy fashion when the
+     * constraints are first accessed.
+     */
+    @SuppressWarnings("null")
     @Override
-    public List<? extends IConstraint> getConstraints() {
-      checkModelConstraints();
-      return constraints.getConstraints();
-    }
-
-    @Override
-    public List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
-      checkModelConstraints();
-      return constraints.getAllowedValuesConstraints();
-    }
-
-    @Override
-    public List<? extends IMatchesConstraint> getMatchesConstraints() {
-      checkModelConstraints();
-      return constraints.getMatchesConstraints();
-    }
-
-    @Override
-    public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-      checkModelConstraints();
-      return constraints.getIndexHasKeyConstraints();
-    }
-
-    @Override
-    public List<? extends IExpectConstraint> getExpectConstraints() {
-      checkModelConstraints();
-      return constraints.getExpectConstraints();
-    }
-
-    @Override
-    public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
-      checkModelConstraints();
-      constraints.addConstraint(constraint);
-    }
-
-    @Override
-    public void addConstraint(@NonNull IMatchesConstraint constraint) {
-      checkModelConstraints();
-      constraints.addConstraint(constraint);
-    }
-
-    @Override
-    public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
-      checkModelConstraints();
-      constraints.addConstraint(constraint);
-    }
-
-    @Override
-    public void addConstraint(@NonNull IExpectConstraint constraint) {
-      checkModelConstraints();
-      constraints.addConstraint(constraint);
+    public IValueConstrained getConstraintSupport() {
+      return constraints.get();
     }
 
     @Override

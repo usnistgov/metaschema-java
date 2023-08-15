@@ -72,6 +72,7 @@ public class DynamicBindingContext
     if (tempPath == null) {
       classDir = Files.createTempDirectory("classes-");
     } else {
+      Files.createDirectories(tempPath);
       classDir = Files.createTempDirectory(tempPath, "classes-");
     }
     classDir.toFile().deleteOnExit();

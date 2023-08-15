@@ -45,9 +45,8 @@ public final class DeserializationFeature<V>
 
   /**
    * If enabled, process the next JSON node as a field, whose name must match the
-   * {@link IAssemblyDefinition#getRootJsonName()}. If not enabled, the next JSON
-   * node is expected to be an object containing the data of the
-   * {@link IAssemblyDefinition}.
+   * {@link IAssemblyDefinition#getRootJsonName()}. If not enabled, the next JSON node is expected to
+   * be an object containing the data of the {@link IAssemblyDefinition}.
    */
   public static final DeserializationFeature<Boolean> DESERIALIZE_JSON_ROOT_PROPERTY
       = new DeserializationFeature<>(Boolean.class, true);
@@ -60,8 +59,7 @@ public final class DeserializationFeature<V>
       = new DeserializationFeature<>(Integer.class, YAML_CODEPOINT_LIMIT_DEFAULT);
 
   /**
-   * Determines how many bytes can be looked at to identify the format of a
-   * document.
+   * Determines how many bytes can be looked at to identify the format of a document.
    */
   @NonNull
   public static final DeserializationFeature<Integer> FORMAT_DETECTION_LOOKAHEAD_LIMIT

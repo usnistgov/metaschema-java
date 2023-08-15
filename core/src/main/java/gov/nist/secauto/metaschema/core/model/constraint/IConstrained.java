@@ -24,22 +24,21 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.core.model.constraint;
 
-import gov.nist.secauto.metaschema.core.model.xml.IFeatureFlagContainer;
-
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundModelDefinition extends IFeatureFlagContainer<IBoundFlagInstance> {
-
-  @Override
-  default @NonNull Map<QName, Set<String>> getProperties() {
-    // TODO: implement
-    throw new UnsupportedOperationException();
-  }
+/**
+ * This marker interface is used to indicate the implementation class is a provider of constraints.
+ */
+public interface IConstrained {
+  /**
+   * Retrieve the ordered collection of constraints.
+   *
+   * @return the constraints or an empty list
+   */
+  @NonNull
+  List<? extends IConstraint> getConstraints();
 }

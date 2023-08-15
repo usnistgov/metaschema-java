@@ -28,14 +28,7 @@ package gov.nist.secauto.metaschema.core.model;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IIndexConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 
 import java.util.Collection;
 import java.util.List;
@@ -47,19 +40,21 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Wraps an {@link IAssemblyDefinition} that is a {@link IRootAssemblyDefinition}.
+ * Wraps an {@link IAssemblyDefinition} that is a
+ * {@link IRootAssemblyDefinition}.
  *
  * @param <T>
  *          the type of the wrapped definition
  */
-public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implements IRootAssemblyDefinition {
+public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition>
+    implements IRootAssemblyDefinition {
   // TODO: find a better way to support this, e.g. abstract class
   @NonNull
   private final T rootDefinition;
 
   /**
-   * Construct a new wrapper that delgates method calls to the underlying definition implementing root
-   * semantics.
+   * Construct a new wrapper that delgates method calls to the underlying
+   * definition implementing root semantics.
    *
    * @param rootDefinition
    *          the definition to wrap
@@ -211,77 +206,7 @@ public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implem
   }
 
   @Override
-  public List<? extends IConstraint> getConstraints() {
-    return getRootDefinition().getConstraints();
-  }
-
-  @Override
-  public List<? extends IIndexConstraint> getIndexConstraints() {
-    return getRootDefinition().getIndexConstraints();
-  }
-
-  @Override
-  public List<? extends IUniqueConstraint> getUniqueConstraints() {
-    return getRootDefinition().getUniqueConstraints();
-  }
-
-  @Override
-  public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
-    return getRootDefinition().getHasCardinalityConstraints();
-  }
-
-  @Override
-  public List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
-    return getRootDefinition().getAllowedValuesConstraints();
-  }
-
-  @Override
-  public List<? extends IMatchesConstraint> getMatchesConstraints() {
-    return getRootDefinition().getMatchesConstraints();
-  }
-
-  @Override
-  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-    return getRootDefinition().getIndexHasKeyConstraints();
-  }
-
-  @Override
-  public List<? extends IExpectConstraint> getExpectConstraints() {
-    return getRootDefinition().getExpectConstraints();
-  }
-
-  @Override
-  public void addConstraint(@NonNull IIndexConstraint constraint) {
-    getRootDefinition().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IUniqueConstraint constraint) {
-    getRootDefinition().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull ICardinalityConstraint constraint) {
-    getRootDefinition().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
-    getRootDefinition().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IMatchesConstraint constraint) {
-    getRootDefinition().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
-    getRootDefinition().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IExpectConstraint constraint) {
-    getRootDefinition().addConstraint(constraint);
+  public IModelConstrained getConstraintSupport() {
+    return getRootDefinition().getConstraintSupport();
   }
 }

@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
-import gov.nist.secauto.metaschema.core.model.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.Constants;
@@ -69,8 +69,8 @@ class DefaultFlagProperty
   private InternalFlagDefinition definition;
 
   /**
-   * Construct a new bound flag instance based on a Java property. The name of the property is bound
-   * to the name of the instance.
+   * Construct a new bound flag instance based on a Java property. The name of the
+   * property is bound to the name of the instance.
    *
    * @param field
    *          the Java field to bind to
@@ -183,8 +183,8 @@ class DefaultFlagProperty
         getField().getName());
   }
 
-  private final class InternalFlagDefinition implements IFlagDefinition, IValueConstraintFeature {
-    private final Lazy<IValueConstraintSupport> constraints;
+  private final class InternalFlagDefinition implements IFlagDefinition {
+    private final Lazy<IValueConstrained> constraints;
 
     private InternalFlagDefinition() {
       this.constraints = Lazy.lazy(() -> new ValueConstraintSupport(
@@ -192,8 +192,9 @@ class DefaultFlagProperty
           InternalModelSource.instance()));
     }
 
+    @SuppressWarnings("null")
     @Override
-    public IValueConstraintSupport getConstraintSupport() {
+    public IValueConstrained getConstraintSupport() {
       return constraints.get();
     }
 

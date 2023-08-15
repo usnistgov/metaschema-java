@@ -32,8 +32,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IUriResolver {
   /**
-   * Resolve the provided URI, producing a resolved URI, which may point to a
-   * different resource than the provided URI.
+   * Resolve the provided URI, producing a resolved URI, which may point to a different resource than
+   * the provided URI.
    *
    * @param uri
    *          the URI to resolve

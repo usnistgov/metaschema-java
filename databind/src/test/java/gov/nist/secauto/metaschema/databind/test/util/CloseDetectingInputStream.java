@@ -52,13 +52,13 @@ public class CloseDetectingInputStream
   }
 
   @Override
-  public int read(byte[] b) throws IOException {
-    return delegate.read(b);
+  public int read(byte[] byteArray) throws IOException {
+    return delegate.read(byteArray);
   }
 
   @Override
-  public int read(byte[] b, int off, int len) throws IOException {
-    return delegate.read(b, off, len);
+  public int read(byte[] byteArray, int off, int len) throws IOException {
+    return delegate.read(byteArray, off, len);
   }
 
   @Override
@@ -72,13 +72,13 @@ public class CloseDetectingInputStream
   }
 
   @Override
-  public int readNBytes(byte[] b, int off, int len) throws IOException {
-    return delegate.readNBytes(b, off, len);
+  public int readNBytes(byte[] byteArray, int off, int len) throws IOException {
+    return delegate.readNBytes(byteArray, off, len);
   }
 
   @Override
-  public long skip(long n) throws IOException {
-    return delegate.skip(n);
+  public long skip(long numBytes) throws IOException {
+    return delegate.skip(numBytes);
   }
 
   @Override

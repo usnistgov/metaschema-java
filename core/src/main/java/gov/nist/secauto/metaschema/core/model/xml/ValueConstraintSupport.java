@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.AllowedValuesType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.DefineFieldConstraintsType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.DefineFlagConstraintsType;
@@ -58,7 +58,7 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - intentional
+class ValueConstraintSupport implements IValueConstrained { // NOPMD - intentional
   private static final String PATH = "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
       + "$this/m:allowed-values|$this/m:matches|$this/m:index-has-key|$this/m:expect";
 

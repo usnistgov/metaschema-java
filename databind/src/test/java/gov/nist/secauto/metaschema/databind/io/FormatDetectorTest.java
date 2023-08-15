@@ -43,41 +43,43 @@ class FormatDetectorTest {
 
   @Test
   void testDetectXml() throws IOException {
-    try (InputStream is = FormatDetectorTest.class.getResourceAsStream(
-        "/test-content/bound-class-simple.xml")) {
+    try (InputStream is = FormatDetectorTest.class.getResourceAsStream("/test-content/bound-class-simple.xml")) {
+      assert is != null;
 
-      CloseDetectingInputStream cis = new CloseDetectingInputStream(is);
-      FormatDetector detector = new FormatDetector();
-      FormatDetector.Result result = detector.detect(cis);
+      try (CloseDetectingInputStream cis = new CloseDetectingInputStream(is)) {
+        FormatDetector detector = new FormatDetector();
+        FormatDetector.Result result = detector.detect(cis);
 
-      assertAll(
-          () -> assertNotNull(is),
-          () -> assertEquals(Format.XML, result.getFormat()),
-          () -> assertFalse(cis.isClosed(), "primary closed"),
-          () -> {
-            result.getDataStream().close();
-            assertTrue(cis.isClosed(), "secondary closed");
-          });
+        assertAll(
+            () -> assertNotNull(is),
+            () -> assertEquals(Format.XML, result.getFormat()),
+            () -> assertFalse(cis.isClosed(), "primary closed"),
+            () -> {
+              result.getDataStream().close();
+              assertTrue(cis.isClosed(), "secondary closed");
+            });
+      }
     }
   }
 
   @Test
   void testDetectJson() throws IOException {
-    try (InputStream is = FormatDetectorTest.class.getResourceAsStream(
-        "/test-content/bound-class-simple.json")) {
+    try (InputStream is = FormatDetectorTest.class.getResourceAsStream("/test-content/bound-class-simple.json")) {
+      assert is != null;
 
-      CloseDetectingInputStream cis = new CloseDetectingInputStream(is);
-      FormatDetector detector = new FormatDetector();
-      FormatDetector.Result result = detector.detect(cis);
+      try (CloseDetectingInputStream cis = new CloseDetectingInputStream(is)) {
+        FormatDetector detector = new FormatDetector();
+        FormatDetector.Result result = detector.detect(cis);
 
-      assertAll(
-          () -> assertNotNull(is),
-          () -> assertEquals(Format.JSON, result.getFormat()),
-          () -> assertFalse(cis.isClosed(), "primary closed"),
-          () -> {
-            result.getDataStream().close();
-            assertTrue(cis.isClosed(), "secondary closed");
-          });
+        assertAll(
+            () -> assertNotNull(is),
+            () -> assertEquals(Format.JSON, result.getFormat()),
+            () -> assertFalse(cis.isClosed(), "primary closed"),
+            () -> {
+              result.getDataStream().close();
+              assertTrue(cis.isClosed(), "secondary closed");
+            });
+      }
     }
   }
 
