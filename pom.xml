@@ -8,7 +8,7 @@
     </parent>
     <groupId>gov.nist.secauto.metaschema</groupId>
     <artifactId>metaschema-framework</artifactId>
-    <version>0.12.1</version>
+    <version>0.12.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Metaschema Framework Parent</name>
     <description>A common build root for all NIST Java projects related to the
@@ -22,7 +22,7 @@
         <url>https://github.com/usnistgov/metaschema-java/tree/main</url>
         <connection>scm:git:git@github.com/usnistgov/metaschema-java.git</connection>
         <developerConnection>scm:git:git@github.com:usnistgov/metaschema-java.git</developerConnection>
-      <tag>v0.12.1</tag>
+      <tag>v0.12.0</tag>
   </scm>
     <distributionManagement>
         <snapshotRepository>
