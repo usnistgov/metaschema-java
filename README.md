@@ -47,6 +47,6 @@ mvn install
 
 Maintainer: [David Waltermire](https://www.nist.gov/people/david-waltermire) - [@david-waltermire-nist](https://github.com/david-waltermire-nist), [NIST](https://www.nist.gov/) [Information Technology Labratory](https://www.nist.gov/itl), [Computer Security Division](https://www.nist.gov/itl/csd), [Security Components and Mechanisms Group](https://www.nist.gov/itl/csd/security-components-and-mechanisms)
 
-Email us: [oscal@nist.gov](mailto:metaschema@nist.gov)
+Email us: [metaschema@nist.gov](mailto:metaschema@nist.gov)
 
 Chat with us: [Gitter OSCAL/metaschema](https://gitter.im/usnistgov-OSCAL/metaschema)
