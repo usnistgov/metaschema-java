@@ -2,7 +2,7 @@
 
 This open-source, Metaschema Java framework offers a set of Java libraries providing a programatic means to work with models defined by the [Metaschema modeling language](https://github.com/usnistgov/metaschema). This framework also supports programatically creating, modifying, parsing, and writing XML, JSON, and YAML instance data that conforms to a given Metaschema model. This work is intended to make it easier for Java software developers to incorporate Metaschema-based capabilities into their applications.
 
-This effort is part of the National Institute of Standards and Technology (NIST) OSCAL Program.
+This an effort by the National Institute of Standards and Technology (NIST) Metaschema Project.
 
 The Metaschema Java framework provides:
 
@@ -47,6 +47,6 @@ mvn install
 
 Maintainer: [David Waltermire](https://www.nist.gov/people/david-waltermire) - [@david-waltermire-nist](https://github.com/david-waltermire-nist), [NIST](https://www.nist.gov/) [Information Technology Labratory](https://www.nist.gov/itl), [Computer Security Division](https://www.nist.gov/itl/csd), [Security Components and Mechanisms Group](https://www.nist.gov/itl/csd/security-components-and-mechanisms)
 
-Email us: [oscal@nist.gov](mailto:oscal@nist.gov)
+Email us: [oscal@nist.gov](mailto:metaschema@nist.gov)
 
 Chat with us: [Gitter OSCAL/metaschema](https://gitter.im/usnistgov-OSCAL/metaschema)
