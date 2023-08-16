@@ -110,7 +110,8 @@ class MapPropertyInfo
     @SuppressWarnings("resource") // not owned
     JsonParser jsonParser = context.getReader(); // NOPMD - intentional
 
-    // A map value is always wrapped in a START_OBJECT, since fields are used for the keys
+    // A map value is always wrapped in a START_OBJECT, since fields are used for
+    // the keys
     JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
 
     // process all map items
@@ -119,10 +120,11 @@ class MapPropertyInfo
       // a map item will always start with a FIELD_NAME, since this represents the key
       JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME);
 
-      Object value = getDataTypeHandler().get(parentInstance, true, context);
+      Object value = getDataTypeHandler().read(parentInstance, true, context);
       collector.add(value);
 
-      // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all items have been
+      // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all
+      // items have been
       // read
       JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
     }
@@ -159,12 +161,12 @@ class MapPropertyInfo
   }
 
   @Override
-  public void writeValue(Object value, QName parentName, IXmlWritingContext context)
+  public void writeValues(Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     IBoundNamedModelInstance property = getProperty();
     @SuppressWarnings("unchecked") Map<String, ? extends Object> items = (Map<String, ? extends Object>) value;
     for (Object item : items.values()) {
-      property.writeItem(ObjectUtils.notNull(item), parentName, context);
+      context.writeInstanceValue(property, ObjectUtils.notNull(item), parentName);
     }
   }
 
@@ -211,7 +213,7 @@ class MapPropertyInfo
   }
 
   @Override
-  public void writeValue(Object parentInstance, IJsonWritingContext context) throws IOException {
+  public void writeValues(Object parentInstance, IJsonWritingContext context) throws IOException {
     Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
 
     if (!items.isEmpty()) {

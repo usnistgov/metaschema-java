@@ -31,6 +31,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.databind.io.SerializationFeature;
@@ -80,23 +81,24 @@ public class DefaultJsonSerializer<CLASS>
     }
   }
 
+  @SuppressWarnings("resource")
   @NonNull
   protected JsonGenerator newJsonGenerator(@NonNull Writer writer) throws IOException {
     JsonFactory factory = getJsonFactory();
-    JsonGenerator retval = factory.createGenerator(writer);
-    retval.setPrettyPrinter(new DefaultPrettyPrinter());
-    return retval;
+    return ObjectUtils.notNull(factory.createGenerator(writer)
+        .setPrettyPrinter(new DefaultPrettyPrinter()));
   }
 
   @Override
   public void serialize(CLASS data, Writer writer) throws IOException {
     try (JsonGenerator generator = newJsonGenerator(writer)) {
       IAssemblyClassBinding classBinding = getClassBinding();
-      IJsonWritingContext writingContext = new DefaultJsonWritingContext(generator);
 
       RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
 
-      root.writeRoot(data, writingContext);
+      MetaschemaJsonWriter jsonWriter = new MetaschemaJsonWriter(generator);
+
+      jsonWriter.write(root, data);
     }
   }
 

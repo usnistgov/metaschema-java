@@ -66,8 +66,7 @@ class XmlInlineFieldDefinition
   private final InternalFieldDefinition fieldDefinition;
 
   /**
-   * Constructs a new Metaschema field definition from an XML representation bound
-   * to Java objects.
+   * Constructs a new Metaschema field definition from an XML representation bound to Java objects.
    *
    * @param xmlField
    *          the XML representation bound to Java objects
@@ -312,8 +311,8 @@ class XmlInlineFieldDefinition
     }
 
     /**
-     * Used to generate the instances for the constraints in a lazy fashion when the
-     * constraints are first accessed.
+     * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+     * first accessed.
      *
      * @return the constraints instance
      */

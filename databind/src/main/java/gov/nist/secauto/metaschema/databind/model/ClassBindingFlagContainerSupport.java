@@ -47,7 +47,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class ClassBindingFlagContainerSupport implements IFlagContainerSupport<IBoundFlagInstance> {
   @NonNull
-  private Map<String, IBoundFlagInstance> flagInstances;
+  private final Map<String, IBoundFlagInstance> flagInstances;
   @Nullable
   private IBoundFlagInstance jsonKeyFlag;
 

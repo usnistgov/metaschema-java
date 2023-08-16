@@ -26,26 +26,14 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-
 import gov.nist.secauto.metaschema.core.model.RootAssemblyDefinitionWrapper;
 import gov.nist.secauto.metaschema.core.model.xml.IFlagContainerSupport;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
-import org.codehaus.stax2.XMLStreamWriter2;
-
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
-
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -87,18 +75,6 @@ public class RootAssemblyDefinition
   @Override
   public void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
     getRootDefinition().callAfterDeserialize(targetObject, parentObject);
-  }
-
-  @Override
-  public void writeItem(Object item, QName parentName, IXmlWritingContext context)
-      throws IOException, XMLStreamException {
-    getRootDefinition().writeItem(item, parentName, context);
-  }
-
-  @Override
-  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper,
-      IJsonWritingContext context) throws IOException {
-    getRootDefinition().writeItems(items, writeObjectWrapper, context);
   }
 
   @Override
@@ -159,43 +135,5 @@ public class RootAssemblyDefinition
   @Override
   public <CLASS> CLASS newInstance() throws BindingException {
     return getRootDefinition().newInstance();
-  }
-
-  @Override
-  public void writeRoot(Object instance, IXmlWritingContext context) throws XMLStreamException, IOException {
-
-    XMLStreamWriter2 writer = context.getWriter();
-
-    writer.writeStartDocument("UTF-8", "1.0");
-
-    QName rootQName = getRootXmlQName();
-
-    NamespaceContext nsContext = writer.getNamespaceContext();
-    String prefix = nsContext.getPrefix(rootQName.getNamespaceURI());
-    if (prefix == null) {
-      prefix = "";
-    }
-
-    writer.writeStartElement(prefix, rootQName.getLocalPart(), rootQName.getNamespaceURI());
-
-    writeItem(instance, rootQName, context);
-
-    writer.writeEndElement();
-  }
-
-  @Override
-  public void writeRoot(Object instance, IJsonWritingContext context) throws IOException {
-
-    @SuppressWarnings("resource") JsonGenerator writer = context.getWriter(); // NOPMD - intentional
-
-    // first read the initial START_OBJECT
-    writer.writeStartObject();
-
-    writer.writeFieldName(getRootJsonName());
-
-    writeItems(CollectionUtil.singleton(instance), true, context);
-
-    // end of root object
-    writer.writeEndObject();
   }
 }

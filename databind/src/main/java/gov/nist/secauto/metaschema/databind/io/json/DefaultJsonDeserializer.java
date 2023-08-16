@@ -115,7 +115,7 @@ public class DefaultJsonDeserializer<CLASS>
       throws IOException {
     INodeItem retval;
     try (JsonParser jsonParser = newJsonParser(reader)) {
-      MetaschemaJsonParser parser = new MetaschemaJsonParser(jsonParser);
+      MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
       IAssemblyClassBinding classBinding = getClassBinding();
       IConfiguration<DeserializationFeature<?>> configuration = getConfiguration();
 

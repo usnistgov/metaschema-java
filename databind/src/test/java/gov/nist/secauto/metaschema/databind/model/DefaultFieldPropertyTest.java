@@ -40,7 +40,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.io.json.MetaschemaJsonParser;
+import gov.nist.secauto.metaschema.databind.io.json.MetaschemaJsonReader;
 import gov.nist.secauto.metaschema.databind.model.test.MultiFieldAssembly;
 import gov.nist.secauto.metaschema.databind.model.test.SimpleAssembly;
 
@@ -77,7 +77,7 @@ class DefaultFieldPropertyTest {
       assert classBinding != null;
       IRootAssemblyClassBinding root = new RootAssemblyDefinition(classBinding);
 
-      MetaschemaJsonParser parser = new MetaschemaJsonParser(jsonParser);
+      MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
       SimpleAssembly obj = parser.read(root);
       assert obj != null;
@@ -102,7 +102,7 @@ class DefaultFieldPropertyTest {
       IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
       assert classBinding != null;
 
-      MetaschemaJsonParser parser = new MetaschemaJsonParser(jsonParser);
+      MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
       JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
       MultiFieldAssembly obj = parser.readDefinitionValue(classBinding, null, false);
@@ -136,7 +136,7 @@ class DefaultFieldPropertyTest {
       IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
       assert classBinding != null;
 
-      MetaschemaJsonParser parser = new MetaschemaJsonParser(jsonParser);
+      MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
       JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
       MultiFieldAssembly obj = parser.readDefinitionValue(classBinding, null, false);
@@ -163,7 +163,7 @@ class DefaultFieldPropertyTest {
       IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
       assert classBinding != null;
 
-      MetaschemaJsonParser parser = new MetaschemaJsonParser(jsonParser);
+      MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
       JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
       MultiFieldAssembly obj = parser.readDefinitionValue(classBinding, null, false);
@@ -188,7 +188,7 @@ class DefaultFieldPropertyTest {
       IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
       assert classBinding != null;
 
-      MetaschemaJsonParser parser = new MetaschemaJsonParser(jsonParser);
+      MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
       JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
       MultiFieldAssembly obj = parser.readDefinitionValue(classBinding, null, false);

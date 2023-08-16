@@ -41,24 +41,22 @@ public interface IAssemblyDefinition
   /**
    * Check if the assembly is a top-level root assembly.
    *
-   * @return {@code true} if the assembly is a top-level root, or {@code false}
-   *         otherwise
+   * @return {@code true} if the assembly is a top-level root, or {@code false} otherwise
    */
   boolean isRoot();
 
   /**
    * Get the root name if this assembly is a top-level root.
    *
-   * @return the root name if this assembly is a top-level root, or {@code null}
-   *         otherwise
+   * @return the root name if this assembly is a top-level root, or {@code null} otherwise
    */
   String getRootName();
 
   /**
    * Get the XML qualified name to use in XML as the root element.
    *
-   * @return the root XML qualified name if this assembly is a top-level root, or
-   *         {@code null} otherwise
+   * @return the root XML qualified name if this assembly is a top-level root, or {@code null}
+   *         otherwise
    */
   default QName getRootXmlQName() {
     QName retval = null;
@@ -75,8 +73,8 @@ public interface IAssemblyDefinition
   /**
    * Get the name used for the associated property in JSON/YAML.
    *
-   * @return the root JSON property name if this assembly is a top-level root, or
-   *         {@code null} otherwise
+   * @return the root JSON property name if this assembly is a top-level root, or {@code null}
+   *         otherwise
    */
   default String getRootJsonName() {
     return getRootName();

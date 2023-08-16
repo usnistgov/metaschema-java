@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
@@ -38,22 +36,13 @@ import gov.nist.secauto.metaschema.core.model.xml.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Map;
 import java.util.Objects;
-import java.util.function.Predicate;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -253,97 +242,6 @@ public class DefaultFieldClassBinding
   @Override
   public String getJsonValueKeyName() {
     return getFieldValueInstance().getJsonValueKeyName();
-  }
-
-  @Override
-  protected void writeBody(Object instance, QName parentName, IXmlWritingContext context)
-      throws XMLStreamException, IOException {
-    getFieldValueInstance().write(instance, parentName, context);
-  }
-
-  @Override
-  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, IJsonWritingContext context)
-      throws IOException {
-    writeNormal(items, writeObjectWrapper, context);
-  }
-
-  @SuppressWarnings("resource") // not owned
-  private void writeNormal(Collection<? extends Object> items, boolean writeObjectWrapper,
-      IJsonWritingContext context)
-      throws IOException {
-    if (items.isEmpty()) {
-      return;
-    }
-
-    Predicate<IBoundFlagInstance> flagFilter = null;
-
-    IBoundFlagInstance jsonKey = getJsonKeyFlagInstance();
-    if (jsonKey != null) {
-      flagFilter = (flag) -> {
-        return !jsonKey.equals(flag);
-      };
-    }
-
-    IBoundFlagInstance jsonValueKey = getJsonValueKeyFlagInstance();
-    if (jsonValueKey != null) {
-      if (flagFilter == null) {
-        flagFilter = (flag) -> {
-          return !jsonValueKey.equals(flag);
-        };
-      } else {
-        flagFilter = flagFilter.and((flag) -> {
-          return !jsonValueKey.equals(flag);
-        });
-      }
-    }
-
-    Map<String, ? extends IBoundNamedInstance> properties = getNamedInstances(flagFilter);
-
-    JsonGenerator writer = context.getWriter(); // NOPMD - intentional
-
-    for (Object item : items) {
-      assert item != null;
-      if (writeObjectWrapper) {
-        writer.writeStartObject();
-      }
-
-      if (jsonKey != null) {
-        // if there is a json key, the first field will be the key
-        Object flagValue = jsonKey.getValue(item);
-        String key = jsonKey.getValueAsString(flagValue);
-        if (key == null) {
-          throw new IOException(new NullPointerException("Null key value")); // NOPMD - intentional
-        }
-        writer.writeFieldName(key);
-
-        // next the value will be a start object
-        writer.writeStartObject();
-      }
-
-      for (IBoundNamedInstance property : properties.values()) {
-        ObjectUtils.notNull(property).write(item, context);
-      }
-
-      Object fieldValue = getFieldValueInstance().getValue(item);
-      if (fieldValue != null) {
-        String valueKeyName;
-        if (jsonValueKey != null) {
-          valueKeyName = jsonValueKey.getValueAsString(jsonValueKey.getValue(item));
-        } else {
-          valueKeyName = getFieldValueInstance().getJsonValueKeyName();
-        }
-        writer.writeFieldName(valueKeyName);
-        getFieldValueInstance().writeValue(fieldValue, context);
-      }
-
-      if (jsonKey != null) {
-        writer.writeEndObject();
-      }
-
-      if (writeObjectWrapper) {
-        writer.writeEndObject();
-      }
-    }
   }
 
   @Override

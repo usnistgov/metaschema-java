@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.databind.io;
 
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -35,8 +36,17 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractProblemHandler implements IProblemHandler {
 
+  @Override
+  public void handleMissingInstances(
+      IClassBinding parentDefinition,
+      Object targetObject,
+      Collection<? extends IBoundNamedInstance> unhandledInstances) throws IOException {
+    applyDefaults(targetObject, unhandledInstances);
+  }
+
   /**
-   * A utility method for applying default values for the provided {@code unhandledInstances}.
+   * A utility method for applying default values for the provided
+   * {@code unhandledInstances}.
    *
    * @param <TYPE>
    *          the instance Java type to handle
@@ -45,7 +55,8 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
    * @param unhandledInstances
    *          the collection of unhandled instances to assign default values for
    * @throws IOException
-   *           if an error occurred while determining the default value for an instance
+   *           if an error occurred while determining the default value for an
+   *           instance
    */
   protected static <TYPE extends IBoundNamedInstance> void applyDefaults(
       @NonNull Object targetObject,

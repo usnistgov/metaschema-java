@@ -27,9 +27,29 @@
 package gov.nist.secauto.metaschema.databind.io.xml;
 
 import gov.nist.secauto.metaschema.databind.io.IWritingContext;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 
+import java.io.IOException;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IXmlWritingContext extends IWritingContext<XMLStreamWriter2> {
-  // no extra methods
+  // REFACTOR: is IOException needed?
+  void writeDefinitionValue(
+      @NonNull IClassBinding targetDefinition,
+      @NonNull Object targetObject,
+      @NonNull QName parentName) throws IOException, XMLStreamException;
+
+  // REFACTOR: is IOException needed?
+  void writeInstanceValue(
+      @NonNull IBoundNamedModelInstance targetInstance,
+      @NonNull Object itemValue,
+      @NonNull QName parentName)
+      throws XMLStreamException, IOException;
 }

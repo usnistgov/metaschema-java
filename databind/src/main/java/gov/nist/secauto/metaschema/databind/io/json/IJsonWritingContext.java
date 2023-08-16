@@ -29,7 +29,16 @@ package gov.nist.secauto.metaschema.databind.io.json;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import gov.nist.secauto.metaschema.databind.io.IWritingContext;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+
+import java.io.IOException;
+import java.util.Collection;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IJsonWritingContext extends IWritingContext<JsonGenerator> {
-  // no extra methods
+  void writeDefinitionValues(
+      @NonNull IClassBinding targetDefinition,
+      @NonNull Collection<? extends Object> targetObjects,
+      boolean writeObjectWrapper) throws IOException;
 }

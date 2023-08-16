@@ -38,8 +38,8 @@ import java.util.Locale;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides an base implementation for a set of external constraints that target
- * a given definition using a target Metapath expression.
+ * Provides an base implementation for a set of external constraints that target a given definition
+ * using a target Metapath expression.
  *
  * @param <T>
  *          the type of the constraint container

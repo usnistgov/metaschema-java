@@ -27,45 +27,10 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IRootAssemblyDefinition;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
-
-import java.io.IOException;
-
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IRootAssemblyClassBinding extends IAssemblyClassBinding, IRootAssemblyDefinition {
   @NonNull
   IAssemblyClassBinding getRootDefinition();
-
-  /**
-   * Writes data in a bound object to JSON. This assembly must be a root assembly for which a call to
-   * {@link IAssemblyClassBinding#isRoot()} will return {@code true}.
-   *
-   * @param instance
-   *          the bound object
-   * @param context
-   *          the JSON serializer
-   * @throws IOException
-   *           if an error occurred while reading the JSON
-   */
-  void writeRoot(@NonNull Object instance, @NonNull IJsonWritingContext context) throws IOException;
-
-  /**
-   * Writes data in a bound object to XML. This assembly must be a root assembly for which a call to
-   * {@link IAssemblyClassBinding#isRoot()} will return {@code true}.
-   *
-   * @param instance
-   *          the bound object
-   * @param context
-   *          the XML serializer
-   * @throws XMLStreamException
-   *           if an error occurred while parsing into XML
-   * @throws IOException
-   *           if an error occurred while writing the output
-   */
-  // TODO: merge the XMLStreamException into IOException
-  void writeRoot(@NonNull Object instance, @NonNull IXmlWritingContext context) throws XMLStreamException, IOException;
 }

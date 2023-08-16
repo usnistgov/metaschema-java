@@ -82,7 +82,7 @@ class XmlParserTest
 
     assert start != null;
 
-    MetaschemaXmlParser parser = new MetaschemaXmlParser(eventReader);
+    MetaschemaXmlReader parser = new MetaschemaXmlReader(eventReader);
 
     IBindingContext bindingContext = getBindingContext();
 
@@ -129,7 +129,7 @@ class XmlParserTest
     // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
     // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
 
-    MetaschemaXmlParser parser = new MetaschemaXmlParser(eventReader);
+    MetaschemaXmlReader parser = new MetaschemaXmlReader(eventReader);
     FlaggedAssembly obj = parser.readDefinitionValue(assembly, null, start);
 
     assertEquals("theId", obj.getId());
@@ -154,7 +154,7 @@ class XmlParserTest
 
     assert start != null;
 
-    MetaschemaXmlParser parser = new MetaschemaXmlParser(eventReader);
+    MetaschemaXmlReader parser = new MetaschemaXmlReader(eventReader);
 
     IBindingContext bindingContext = getBindingContext();
 
@@ -193,7 +193,7 @@ class XmlParserTest
     // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
     assert start != null;
 
-    MetaschemaXmlParser parser = new MetaschemaXmlParser(eventReader);
+    MetaschemaXmlReader parser = new MetaschemaXmlReader(eventReader);
 
     IBindingContext bindingContext = getBindingContext();
 

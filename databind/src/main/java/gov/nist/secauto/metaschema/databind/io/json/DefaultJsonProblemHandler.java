@@ -28,11 +28,9 @@ package gov.nist.secauto.metaschema.databind.io.json;
 
 import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.databind.io.AbstractProblemHandler;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -60,13 +58,5 @@ public class DefaultJsonProblemHandler
       retval = true;
     }
     return retval;
-  }
-
-  @Override
-  public void handleMissingInstances(
-      IClassBinding parentDefinition,
-      Object targetObject,
-      Collection<? extends IBoundNamedInstance> unhandledInstances) throws IOException {
-    applyDefaults(targetObject, unhandledInstances);
   }
 }

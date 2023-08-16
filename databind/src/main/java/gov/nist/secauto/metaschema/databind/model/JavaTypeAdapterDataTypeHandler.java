@@ -75,7 +75,7 @@ class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
 
   @SuppressWarnings("resource") // not owned
   @Override
-  public Object get(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
+  public Object read(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
       throws IOException {
     if (requiresJsonKey) {
       throw new IOException("A scalar datatype cannot have a JSON key.");
@@ -84,13 +84,13 @@ class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
   }
 
   @Override
-  public Object get(Object parentInstance, StartElement start, IXmlParsingContext context)
+  public Object read(Object parentInstance, StartElement start, IXmlParsingContext context)
       throws IOException, XMLStreamException {
     return getJavaTypeAdapter().parse(context.getReader());
   }
 
   @Override
-  public void accept(Object item, QName currentParentName, IXmlWritingContext context)
+  public void write(Object item, QName currentParentName, IXmlWritingContext context)
       throws IOException, XMLStreamException {
     getJavaTypeAdapter().writeXmlValue(item, currentParentName, context.getWriter());
   }

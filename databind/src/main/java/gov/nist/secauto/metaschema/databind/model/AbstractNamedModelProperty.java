@@ -30,18 +30,10 @@ import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 
-import org.codehaus.stax2.XMLStreamWriter2;
-
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collection;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -83,8 +75,8 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
   private final Lazy<IModelPropertyInfo> propertyInfo;
 
   /**
-   * Construct a new bound model instance based on a Java property. The name of the property is bound
-   * to the name of the instance.
+   * Construct a new bound model instance based on a Java property. The name of
+   * the property is bound to the name of the instance.
    *
    * @param field
    *          the field instance associated with this property
@@ -158,36 +150,6 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
     return getPropertyInfo().getItemsFromValue(value);
   }
 
-  @Override
-  public boolean write(Object parentInstance, QName parentName, IXmlWritingContext context)
-      throws XMLStreamException, IOException {
-    Object value = getValue(parentInstance);
-    if (value == null) {
-      return false; // NOPMD - intentional
-    }
-
-    IModelPropertyInfo propertyInfo = getPropertyInfo();
-
-    if (propertyInfo.getProperty().getMinOccurs() > 0 || propertyInfo.getItemCount(value) > 0) {
-      // only write a property if the wrapper is required or if it has contents
-      QName currentStart = parentName;
-      XMLStreamWriter2 writer = context.getWriter();
-      QName groupQName = getXmlGroupAsQName();
-      if (groupQName != null) {
-        // write the grouping element
-        writer.writeStartElement(groupQName.getNamespaceURI(), groupQName.getLocalPart());
-        currentStart = groupQName;
-      }
-
-      // There are one or more named values based on cardinality
-      propertyInfo.writeValue(value, currentStart, context);
-
-      if (groupQName != null) {
-        writer.writeEndElement();
-      }
-    }
-    return true;
-  }
   //
   // @Override
   // public void writeItem(Object parentInstance, IJsonParsingContext context) {
@@ -200,18 +162,6 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
   // IModelPropertyInfo info = getPropertyInfo();
   // return info.writeValue(parentInstance, context);
   // }
-
-  @SuppressWarnings("resource")
-  @Override
-  public void write(Object parentInstance, IJsonWritingContext context) throws IOException {
-    if (getPropertyInfo().isValueSet(parentInstance)) {
-      // write the field name
-      context.getWriter().writeFieldName(getJsonName());
-
-      // dispatch to the property info implementation to address cardinality
-      getPropertyInfo().writeValue(parentInstance, context);
-    }
-  }
 
   @Override
   public void copyBoundObject(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException {

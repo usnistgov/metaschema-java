@@ -27,9 +27,6 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-
-import java.io.IOException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -40,8 +37,8 @@ public interface IBoundFieldValueInstance extends IBoundNamedInstance {
   IDataTypeAdapter<?> getJavaTypeAdapter();
 
   /**
-   * Get the JSON value key name based on either the configured value key name or the default for the
-   * data type.
+   * Get the JSON value key name based on either the configured value key name or
+   * the default for the data type.
    *
    * @return the value key name
    */
@@ -52,8 +49,6 @@ public interface IBoundFieldValueInstance extends IBoundNamedInstance {
   default String getJsonName() {
     return getJsonValueKeyName();
   }
-
-  void writeValue(Object value, @NonNull IJsonWritingContext context) throws IOException;
 
   @Nullable
   Object getDefaultValue();

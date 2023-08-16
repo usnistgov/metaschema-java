@@ -53,7 +53,7 @@ class XmlFlagContainerSupport implements IFlagContainerSupport<IFlagInstance> {
   @NonNull
   private final Map<String, IFlagInstance> flagInstances;
   @Nullable
-  private IFlagInstance jsonKeyFlag;
+  private final IFlagInstance jsonKeyFlag;
 
   /**
    * Generate a set of constraints from the provided XMLBeans instance.
@@ -72,9 +72,7 @@ class XmlFlagContainerSupport implements IFlagContainerSupport<IFlagInstance> {
     } else {
       this.flagInstances = CollectionUtil.emptyMap();
     }
-    if (xmlField.isSetJsonKey()) {
-      jsonKeyFlag = flagInstances.get(xmlField.getJsonKey().getFlagRef());
-    }
+    this.jsonKeyFlag = xmlField.isSetJsonKey() ? flagInstances.get(xmlField.getJsonKey().getFlagRef()) : null;
   }
 
   /**
@@ -94,9 +92,7 @@ class XmlFlagContainerSupport implements IFlagContainerSupport<IFlagInstance> {
     } else {
       this.flagInstances = CollectionUtil.emptyMap();
     }
-    if (xmlField.isSetJsonKey()) {
-      jsonKeyFlag = flagInstances.get(xmlField.getJsonKey().getFlagRef());
-    }
+    this.jsonKeyFlag = xmlField.isSetJsonKey() ? flagInstances.get(xmlField.getJsonKey().getFlagRef()) : null;
   }
 
   /**
@@ -116,9 +112,7 @@ class XmlFlagContainerSupport implements IFlagContainerSupport<IFlagInstance> {
     } else {
       this.flagInstances = CollectionUtil.emptyMap();
     }
-    if (xmlAssembly.isSetJsonKey()) {
-      jsonKeyFlag = flagInstances.get(xmlAssembly.getJsonKey().getFlagRef());
-    }
+    this.jsonKeyFlag = xmlAssembly.isSetJsonKey() ? flagInstances.get(xmlAssembly.getJsonKey().getFlagRef()) : null;
   }
 
   /**
@@ -138,9 +132,7 @@ class XmlFlagContainerSupport implements IFlagContainerSupport<IFlagInstance> {
     } else {
       this.flagInstances = CollectionUtil.emptyMap();
     }
-    if (xmlAssembly.isSetJsonKey()) {
-      jsonKeyFlag = flagInstances.get(xmlAssembly.getJsonKey().getFlagRef());
-    }
+    this.jsonKeyFlag = xmlAssembly.isSetJsonKey() ? flagInstances.get(xmlAssembly.getJsonKey().getFlagRef()) : null;
   }
 
   /**

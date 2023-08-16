@@ -70,14 +70,15 @@ class SingletonPropertyInfo
 
     // JsonParser parser = context.getReader();
     //
-    // boolean isObject = JsonToken.START_OBJECT.equals(parser.currentToken()); // TODO: is this object
+    // boolean isObject = JsonToken.START_OBJECT.equals(parser.currentToken()); //
+    // TODO: is this object
     // check needed?
     // if (isObject) {
     // // read the object's START_OBJECT
     // JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
     // }
 
-    Object value = getDataTypeHandler().get(parentInstance, false, context);
+    Object value = getDataTypeHandler().read(parentInstance, false, context);
     collector.add(value);
 
     // if (isObject) {
@@ -109,13 +110,13 @@ class SingletonPropertyInfo
   }
 
   @Override
-  public void writeValue(@NonNull Object value, QName parentName, IXmlWritingContext context)
+  public void writeValues(@NonNull Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
-    getProperty().writeItem(value, parentName, context);
+    context.writeInstanceValue(getProperty(), value, parentName);
   }
 
   @Override
-  public void writeValue(Object parentInstance, IJsonWritingContext context) throws IOException {
+  public void writeValues(Object parentInstance, IJsonWritingContext context) throws IOException {
     IBoundNamedModelInstance property = getProperty();
     getDataTypeHandler().writeItems(
         CollectionUtil.singleton(ObjectUtils.requireNonNull(property.getValue(parentInstance))), true,

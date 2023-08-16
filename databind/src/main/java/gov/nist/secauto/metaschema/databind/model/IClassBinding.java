@@ -26,19 +26,11 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
-import java.io.IOException;
-import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -77,20 +69,6 @@ public interface IClassBinding extends IBoundModelDefinition {
   @NonNull
   Map<String, ? extends IBoundNamedInstance>
       getNamedInstances(@Nullable Predicate<IBoundFlagInstance> flagFilter);
-
-  void writeItem(@NonNull Object item, @NonNull QName parentName, @NonNull IXmlWritingContext context)
-      throws IOException, XMLStreamException;
-
-  default void writeItem(@NonNull Object item, boolean writeObjectWrapper, @NonNull IJsonWritingContext context)
-      throws IOException {
-    writeItems(CollectionUtil.singleton(item), writeObjectWrapper, context);
-  }
-
-  // for JSON, the entire value needs to be processed to deal with collapsable
-  // fields
-  void writeItems(@NonNull Collection<? extends Object> items, boolean writeObjectWrapper,
-      @NonNull IJsonWritingContext context)
-      throws IOException;
 
   /**
    * Create a deep copy of the provided bound object.

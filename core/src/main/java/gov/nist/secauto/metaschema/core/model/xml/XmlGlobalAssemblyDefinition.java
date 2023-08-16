@@ -57,8 +57,7 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition, IFeatureModelC
   private final Lazy<AssemblyConstraintSupport> constraints;
 
   /**
-   * Constructs a new Metaschema Assembly definition from an XML representation
-   * bound to Java objects.
+   * Constructs a new Metaschema Assembly definition from an XML representation bound to Java objects.
    *
    * @param xmlAssembly
    *          the XML representation bound to Java objects

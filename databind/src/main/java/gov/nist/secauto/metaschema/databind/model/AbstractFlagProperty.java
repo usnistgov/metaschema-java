@@ -26,19 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
-import org.codehaus.stax2.XMLStreamWriter2;
-
-import java.io.IOException;
 import java.util.Locale;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -58,47 +48,8 @@ abstract class AbstractFlagProperty
   }
 
   @Override
-  public boolean write(Object instance, QName parentName, IXmlWritingContext context)
-      throws XMLStreamException, IOException {
-    Object objectValue = getValue(instance);
-    String value = objectValue == null ? null : getDefinition().getJavaTypeAdapter().asString(objectValue);
-
-    if (value != null) {
-      QName name = getXmlQName();
-      XMLStreamWriter2 writer = context.getWriter();
-      if (name.getNamespaceURI().isEmpty()) {
-        writer.writeAttribute(name.getLocalPart(), value);
-      } else {
-        writer.writeAttribute(name.getNamespaceURI(), name.getLocalPart(), value);
-      }
-    }
-    return true;
-  }
-
-  @Override
-  public void write(Object instance, IJsonWritingContext context) throws IOException {
-    @SuppressWarnings("resource") // not owned
-    JsonGenerator writer = context.getWriter(); // NOPMD - intentional
-
-    Object value = getValue(instance);
-    if (value != null) {
-      // write the field name
-      writer.writeFieldName(getJsonName());
-
-      // write the value
-      writeValue(value, context);
-    }
-  }
-
-  @Override
   public String getValueAsString(Object value) {
     return value == null ? null : getDefinition().getJavaTypeAdapter().asString(value);
-  }
-
-  @SuppressWarnings("resource")
-  @Override
-  public void writeValue(@NonNull Object value, IJsonWritingContext context) throws IOException {
-    getDefinition().getJavaTypeAdapter().writeJsonValue(value, context.getWriter());
   }
 
   @SuppressWarnings("null")

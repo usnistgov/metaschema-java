@@ -43,7 +43,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IXmlProblemHandler extends IProblemHandler {
   /**
-   * Callback used to handle an attribute that is unknown to the model being parsed.
+   * Callback used to handle an attribute that is unknown to the model being
+   * parsed.
    *
    * @param parentDefinition
    *          the bound class currently describing the data being parsed
@@ -53,15 +54,18 @@ public interface IXmlProblemHandler extends IProblemHandler {
    *          the unknown attribute
    * @param parsingContext
    *          the XML parsing context used for parsing
-   * @return {@code true} if the attribute was handled by this method, or {@code false} otherwise
+   * @return {@code true} if the attribute was handled by this method, or
+   *         {@code false} otherwise
    * @throws IOException
    *           if an error occurred while handling the unrecognized data
    */
-  boolean handleUnknownAttribute(
+  default boolean handleUnknownAttribute(
       @NonNull IBoundModelDefinition parentDefinition,
       @NonNull Object targetObject,
       @NonNull Attribute attribute,
-      @NonNull IXmlParsingContext parsingContext) throws IOException;
+      @NonNull IXmlParsingContext parsingContext) throws IOException {
+    return false;
+  }
 
   /**
    * Callback used to handle an element that is unknown to the model being parsed.
@@ -74,42 +78,25 @@ public interface IXmlProblemHandler extends IProblemHandler {
    *          the parsed XML start element
    * @param parsingContext
    *          the XML parsing context used for parsing
-   * @return {@code true} if the element was handled by this method, or {@code false} otherwise
+   * @return {@code true} if the element was handled by this method, or
+   *         {@code false} otherwise
    * @throws IOException
    *           if an error occurred while handling the unrecognized data
    */
-  boolean handleUnknownElement(
+  default boolean handleUnknownElement(
       @NonNull IAssemblyClassBinding parentDefinition,
       @NonNull Object targetObject,
       @NonNull StartElement start,
-      @NonNull IXmlParsingContext parsingContext) throws IOException;
+      @NonNull IXmlParsingContext parsingContext) throws IOException {
+    return false;
+  }
 
   /**
-   * A callback used to handle bound flag instances for which no data was found when the content was
-   * parsed.
+   * A callback used to handle bound flag instances for which no data was found
+   * when the content was parsed.
    * <p>
-   * This can be used to supply default or prescribed values based on application logic.
-   *
-   * @param parentDefinition
-   *          the bound assembly class on which the missing instances are found
-   * @param targetObject
-   *          the Java object for the {@code parentDefinition}
-   * @param unhandledFlags
-   *          the set of instances that had no data to parse
-   * @throws IOException
-   *           if an error occurred while handling the missing instances
-   */
-  void handleMissingFlagInstances(
-      @NonNull IClassBinding parentDefinition,
-      @NonNull Object targetObject,
-      @NonNull Collection<IBoundFlagInstance> unhandledFlags)
-      throws IOException;
-
-  /**
-   * A callback used to handle bound model instances for which no data was found when the content was
-   * parsed.
-   * <p>
-   * This can be used to supply default or prescribed values based on application logic.
+   * This can be used to supply default or prescribed values based on application
+   * logic.
    *
    * @param parentDefinition
    *          the bound assembly class on which the missing instances are found
@@ -120,9 +107,36 @@ public interface IXmlProblemHandler extends IProblemHandler {
    * @throws IOException
    *           if an error occurred while handling the missing instances
    */
-  void handleMissingModelInstances(
+  default void handleMissingFlagInstances(
+      @NonNull IClassBinding parentDefinition,
+      @NonNull Object targetObject,
+      @NonNull Collection<IBoundFlagInstance> unhandledInstances)
+      throws IOException {
+    handleMissingInstances(parentDefinition, targetObject, unhandledInstances);
+  }
+
+  /**
+   * A callback used to handle bound model instances for which no data was found
+   * when the content was parsed.
+   * <p>
+   * This can be used to supply default or prescribed values based on application
+   * logic.
+   *
+   * @param parentDefinition
+   *          the bound assembly class on which the missing instances are found
+   * @param targetObject
+   *          the Java object for the {@code parentDefinition}
+   * @param unhandledInstances
+   *          the set of instances that had no data to parse
+   * @throws IOException
+   *           if an error occurred while handling the missing instances
+   */
+  default void handleMissingModelInstances(
       @NonNull IAssemblyClassBinding parentDefinition,
       @NonNull Object targetObject,
       @NonNull Collection<IBoundNamedModelInstance> unhandledInstances)
-      throws IOException;
+      throws IOException {
+    handleMissingInstances(parentDefinition, targetObject, unhandledInstances);
+
+  }
 }

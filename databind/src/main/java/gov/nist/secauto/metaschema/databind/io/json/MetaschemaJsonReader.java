@@ -57,9 +57,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-public class MetaschemaJsonParser
+public class MetaschemaJsonReader
     implements IJsonParsingContext {
-  private static final Logger LOGGER = LogManager.getLogger(MetaschemaJsonParser.class);
+  private static final Logger LOGGER = LogManager.getLogger(MetaschemaJsonReader.class);
 
   @NonNull
   private final JsonParser parser;
@@ -73,7 +73,7 @@ public class MetaschemaJsonParser
    *          the JSON parser to parse with
    * @see DefaultJsonProblemHandler
    */
-  public MetaschemaJsonParser(
+  public MetaschemaJsonReader(
       @NonNull JsonParser parser) {
     this(parser, new DefaultJsonProblemHandler());
   }
@@ -86,7 +86,7 @@ public class MetaschemaJsonParser
    * @param problemHandler
    *          the problem handler implementation to use
    */
-  public MetaschemaJsonParser(
+  public MetaschemaJsonReader(
       @NonNull JsonParser parser,
       @NonNull IJsonProblemHandler problemHandler) {
     this.parser = parser;

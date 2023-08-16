@@ -39,8 +39,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IFeatureValueConstrained extends IValueConstrained {
   /**
-   * Lazy initialize the instances for the constraints when the constraints are
-   * first accessed.
+   * Lazy initialize the instances for the constraints when the constraints are first accessed.
    *
    * @return the constraints instance
    */

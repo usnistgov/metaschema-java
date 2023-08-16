@@ -110,10 +110,10 @@ public interface IModelPropertyInfo {
    * @throws IOException
    *           if an error occurred while writing to the output stream
    */
-  void writeValue(@NonNull Object value, @NonNull QName parentName, @NonNull IXmlWritingContext context)
+  void writeValues(@NonNull Object value, @NonNull QName parentName, @NonNull IXmlWritingContext context)
       throws XMLStreamException, IOException;
 
-  void writeValue(@NonNull Object parentInstance, @NonNull IJsonWritingContext context) throws IOException;
+  void writeValues(@NonNull Object parentInstance, @NonNull IJsonWritingContext context) throws IOException;
 
   boolean isValueSet(@NonNull Object parentInstance) throws IOException;
 

@@ -81,9 +81,10 @@ class ClassDataTypeHandler implements IDataTypeHandler {
     return false;
   }
 
+  // REFACTOR: rename to read
   @SuppressWarnings("resource") // not owned
   @Override
-  public Object get(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
+  public Object read(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
       throws IOException {
     JsonParser parser = context.getReader(); // NOPMD - intentional
     boolean objectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
@@ -99,23 +100,24 @@ class ClassDataTypeHandler implements IDataTypeHandler {
     return retval;
   }
 
+  // REFACTOR: rename to read
   @Override
-  public Object get(Object parentInstance, StartElement start, IXmlParsingContext context)
+  public Object read(Object parentInstance, StartElement start, IXmlParsingContext context)
       throws IOException, XMLStreamException {
     return context.readDefinitionValue(getClassBinding(), parentInstance, start);
   }
 
   @Override
-  public void accept(Object item, QName currentParentName, IXmlWritingContext context)
+  public void write(Object item, QName currentParentName, IXmlWritingContext context)
       throws IOException, XMLStreamException {
-    classBinding.writeItem(item, currentParentName, context);
+    context.writeDefinitionValue(classBinding, item, currentParentName);
   }
 
   @Override
   public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper,
       IJsonWritingContext context)
       throws IOException {
-    classBinding.writeItems(items, writeObjectWrapper, context);
+    context.writeDefinitionValues(classBinding, items, writeObjectWrapper);
   }
 
   @Override

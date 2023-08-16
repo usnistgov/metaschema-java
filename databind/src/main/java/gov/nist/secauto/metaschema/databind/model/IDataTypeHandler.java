@@ -26,18 +26,27 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import com.fasterxml.jackson.core.JsonToken;
+
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
+import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
 import java.io.IOException;
 import java.util.Collection;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 // TODO: get rid of functional interfaces
-public interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSupplier, IXmlBindingConsumer {
+public interface IDataTypeHandler {
   /**
    * Get the model instance associated with this handler.
    *
@@ -49,48 +58,110 @@ public interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSuppl
   /**
    * Get the class binding associated with this handler.
    *
-   * @return the class binding or {@code null} if the property's item type is not a bound class
+   * @return the class binding or {@code null} if the property's item type is not
+   *         a bound class
    */
   IClassBinding getClassBinding();
 
   /**
-   * Get the associated {@link IDataTypeAdapter}, if the data type is not a complex bound object.
+   * Get the associated {@link IDataTypeAdapter}, if the data type is not a
+   * complex bound object.
    *
    * @return the adpater, or {@code null} otherwise
    */
   IDataTypeAdapter<?> getJavaTypeAdapter();
 
   /**
-   * Indicate if the value supported by this handler allows values without an XML element wrapper.
+   * Indicate if the value supported by this handler allows values without an XML
+   * element wrapper.
    * <p>
-   * Implementations may proxy this request to the JavaTypeAdapter if it is used or return
-   * {@code false} otherwise.
+   * Implementations may proxy this request to the JavaTypeAdapter if it is used
+   * or return {@code false} otherwise.
    *
-   * @return {@code true} if the underlying data type is allowed to be unwrapped, or {@code false}
-   *         otherwise
+   * @return {@code true} if the underlying data type is allowed to be unwrapped,
+   *         or {@code false} otherwise
    */
   boolean isUnwrappedValueAllowedInXml();
 
-  // void writeProxyWritableItem(ProxyWritableItem item, IJsonWritingContext context) throws
-  // IOException;
-  //
-  // void writeCollapsedWritableItem(CollapsedWritableItem proxy, IJsonWritingContext context);
+  /**
+   * Parse and return the set of items from the JSON stream.
+   * <p>
+   * An item is a complete value, which can be a {@link JsonToken#START_OBJECT},
+   * or a value token.
+   *
+   * @param parentObject
+   *          the parent Java object to use for serialization callbacks
+   * @param requiresJsonKey
+   *          when {@code true} indicates that the item will have a JSON key, or
+   *          {@code false} otherwise
+   * @param context
+   *          the JSON/YAML parser
+   * @return the Java object representing the set of parsed items
+   * @throws IOException
+   *           if an error occurred while parsing
+   */
+  @NonNull
+  Object read(
+      @NonNull Object parentObject,
+      boolean requiresJsonKey,
+      @NonNull IJsonParsingContext context) throws IOException;
 
   /**
-   * Write the provided collection of items to JSON.
+   * Parse and return the set of items from the XML stream.
+   *
+   * @param parentObject
+   *          the parent Java object to use for serialization callbacks
+   * @param parentName
+   *          the name of the parent (containing) element
+   * @param context
+   *          the XML writing context
+   * @return the Java object representing the set of parsed items
+   * @throws IOException
+   *           if an error occurred while writing
+   * @throws XMLStreamException
+   *           if an error occurred while generating the XML
+   */
+  @NonNull
+  Object read(
+      @NonNull Object parentObject,
+      @NonNull StartElement parentName,
+      @NonNull IXmlParsingContext context) throws IOException, XMLStreamException;
+
+  /**
+   * Write the provided collection of items as JSON.
    *
    * @param items
    *          the collection of items to write
    * @param writeObjectWrapper
    *          if {@code true} an object should be written before writing the item
    * @param context
-   *          the JSON serializer
+   *          the JSON writing context
    * @throws IOException
    *           if an error occurred while writing
    */
-  void writeItems(@NonNull Collection<? extends Object> items, boolean writeObjectWrapper,
-      @NonNull IJsonWritingContext context)
-      throws IOException;
+  void writeItems(
+      @NonNull Collection<? extends Object> items,
+      boolean writeObjectWrapper,
+      @NonNull IJsonWritingContext context) throws IOException;
+
+  /**
+   * Write the provided value as XML.
+   *
+   * @param value
+   *          the item to write
+   * @param currentParentName
+   *          the name of the parent (containing) element
+   * @param context
+   *          the JSON serializer
+   * @throws IOException
+   *           if an error occurred while writing
+   * @throws XMLStreamException
+   *           if an error occurred while generating the XML
+   */
+  void write(
+      @NonNull Object value,
+      @NonNull QName currentParentName,
+      @NonNull IXmlWritingContext context) throws IOException, XMLStreamException;
 
   /**
    * Build and return a deep copy of the provided item.
@@ -105,4 +176,5 @@ public interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSuppl
    */
   @NonNull
   Object copyItem(@NonNull Object item, @Nullable Object parentInstance) throws BindingException;
+
 }

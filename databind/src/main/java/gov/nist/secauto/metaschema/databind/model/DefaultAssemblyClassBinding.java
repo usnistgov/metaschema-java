@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
@@ -40,8 +38,6 @@ import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.AssemblyConstraints;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
@@ -49,7 +45,6 @@ import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -62,7 +57,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -333,85 +327,6 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   @Override
   public IModelConstrained getConstraintSupport() {
     return constraints.get();
-  }
-
-  /**
-   * Serializes the provided instance in JSON.
-   *
-   * @param instance
-   *          the instance to serialize
-   * @param writeObjectWrapper
-   *          {@code true} if the start and end object should be written, or
-   *          {@code false} otherwise
-   * @param context
-   *          the JSON writing context used to generate output
-   * @throws IOException
-   *           if an error occurs while writing to the output context
-   * @throws NullPointerException
-   *           if there is a JSON key configured and the key property's value is
-   *           {@code null}
-   */
-  @SuppressWarnings("resource") // not owned
-  protected void writeInternal(@NonNull Object instance, boolean writeObjectWrapper,
-      @NonNull IJsonWritingContext context)
-      throws IOException {
-    JsonGenerator writer = context.getWriter(); // NOPMD - intentional
-
-    if (writeObjectWrapper) {
-      writer.writeStartObject();
-    }
-
-    IBoundFlagInstance jsonKey = getJsonKeyFlagInstance();
-    Map<String, ? extends IBoundNamedInstance> properties;
-    if (jsonKey == null) {
-      properties = getNamedInstances(null);
-    } else {
-      properties = getNamedInstances((flag) -> {
-        return !jsonKey.equals(flag);
-      });
-
-      // if there is a json key, the first field will be the key
-      Object flagValue = jsonKey.getValue(instance);
-      String key = jsonKey.getValueAsString(flagValue);
-      if (key == null) {
-        throw new IOException(new NullPointerException("Null key value"));
-      }
-      writer.writeFieldName(key);
-
-      // next the value will be a start object
-      writer.writeStartObject();
-    }
-
-    for (IBoundNamedInstance property : properties.values()) {
-      ObjectUtils.notNull(property).write(instance, context);
-    }
-
-    if (jsonKey != null) {
-      // write the END_OBJECT for the JSON key value
-      writer.writeEndObject();
-    }
-
-    if (writeObjectWrapper) {
-      writer.writeEndObject();
-    }
-  }
-
-  @Override
-  protected void writeBody(Object instance, QName parentName, IXmlWritingContext context)
-      throws XMLStreamException, IOException {
-    for (IBoundNamedModelInstance modelProperty : getModelInstances()) {
-      modelProperty.write(instance, parentName, context);
-    }
-  }
-
-  @Override
-  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper,
-      IJsonWritingContext context)
-      throws IOException {
-    for (Object item : items) {
-      assert item != null;
-      writeInternal(item, writeObjectWrapper, context);
-    }
   }
 
   @Override

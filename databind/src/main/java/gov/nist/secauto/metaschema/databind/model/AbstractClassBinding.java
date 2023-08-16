@@ -32,9 +32,7 @@ import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -43,9 +41,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -169,17 +164,16 @@ abstract class AbstractClassBinding implements IClassBinding {
   }
 
   /**
-   * Calls the method named "beforeDeserialize" on each class in the object's
-   * hierarchy if the method exists on the class.
+   * Calls the method named "beforeDeserialize" on each class in the object's hierarchy if the method
+   * exists on the class.
    * <p>
-   * These methods can be used to set the initial state of the target bound object
-   * before data is read and applied during deserialization.
+   * These methods can be used to set the initial state of the target bound object before data is read
+   * and applied during deserialization.
    *
    * @param targetObject
    *          the data object target to call the method(s) on
    * @param parentObject
-   *          the object target's parent object, which is used as the method
-   *          argument
+   *          the object target's parent object, which is used as the method argument
    * @throws BindingException
    *           if an error occurs while calling the method
    */
@@ -195,17 +189,16 @@ abstract class AbstractClassBinding implements IClassBinding {
   }
 
   /**
-   * Calls the method named "afterDeserialize" on each class in the object's
-   * hierarchy if the method exists.
+   * Calls the method named "afterDeserialize" on each class in the object's hierarchy if the method
+   * exists.
    * <p>
-   * These methods can be used to modify the state of the target bound object
-   * after data is read and applied during deserialization.
+   * These methods can be used to modify the state of the target bound object after data is read and
+   * applied during deserialization.
    *
    * @param targetObject
    *          the data object target to call the method(s) on
    * @param parentObject
-   *          the object target's parent object, which is used as the method
-   *          argument
+   *          the object target's parent object, which is used as the method argument
    * @throws BindingException
    *           if an error occurs while calling the method
    */
@@ -219,25 +212,6 @@ abstract class AbstractClassBinding implements IClassBinding {
       }
     }
   }
-
-  @Override
-  public void writeItem(Object instance, QName parentName, IXmlWritingContext context)
-      throws IOException, XMLStreamException {
-    writeInternal(instance, parentName, context);
-  }
-
-  protected void writeInternal(@NonNull Object instance, @NonNull QName parentName, @NonNull IXmlWritingContext context)
-      throws IOException, XMLStreamException {
-    // write flags
-    for (IBoundFlagInstance flag : getFlagInstances()) {
-      flag.write(instance, parentName, context);
-    }
-    writeBody(instance, parentName, context);
-  }
-
-  protected abstract void writeBody(@NonNull Object instance, @NonNull QName parentName,
-      @NonNull IXmlWritingContext context)
-      throws XMLStreamException, IOException;
 
   @Override
   public Object copyBoundObject(Object item, Object parentInstance) throws BindingException {

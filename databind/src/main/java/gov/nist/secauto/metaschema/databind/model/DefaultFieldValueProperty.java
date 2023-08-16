@@ -31,18 +31,9 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.ModelType;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldValue;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.io.IOException;
 import java.lang.reflect.Field;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -50,8 +41,6 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 class DefaultFieldValueProperty
     extends AbstractProperty<IFieldClassBinding>
     implements IBoundFieldValueInstance {
-  private static final Logger LOGGER = LogManager.getLogger(DefaultFieldValueProperty.class);
-
   @NonNull
   private final Field field;
   @NonNull
@@ -141,47 +130,6 @@ class DefaultFieldValueProperty
   public String getUseName() {
     // TODO: implement?
     return null;
-  }
-
-  @Override
-  public boolean write(Object instance, QName parentName, IXmlWritingContext context)
-      throws XMLStreamException, IOException {
-    Object value = getValue(instance);
-    if (value != null) {
-      getJavaTypeAdapter().writeXmlValue(value, parentName, context.getWriter());
-    }
-    return true;
-  }
-
-  @SuppressWarnings("resource") // not owned
-  @Override
-  public void write(Object instance, IJsonWritingContext context) throws IOException {
-    Object value = getValue(instance);
-    if (value != null) {
-      // There are two modes:
-      // 1) use of a JSON value key, or
-      // 2) a simple value named "value"
-      IBoundFlagInstance jsonValueKey = getParentClassBinding().getJsonValueKeyFlagInstance();
-
-      String valueKeyName;
-      if (jsonValueKey != null) {
-        // this is the JSON value key case
-        valueKeyName = jsonValueKey.getValue(instance).toString();
-      } else {
-        valueKeyName = getJsonValueKeyName();
-      }
-      context.getWriter().writeFieldName(valueKeyName);
-      LOGGER.info("FIELD: {}", valueKeyName);
-      writeValue(value, context);
-    }
-  }
-
-  @SuppressWarnings("resource") // not owned
-  @Override
-  public void writeValue(Object value, IJsonWritingContext context) throws IOException {
-    if (value != null) {
-      getJavaTypeAdapter().writeJsonValue(value, context.getWriter());
-    }
   }
 
   @Override

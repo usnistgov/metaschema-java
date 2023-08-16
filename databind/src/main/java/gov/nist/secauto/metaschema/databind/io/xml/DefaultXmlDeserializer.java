@@ -138,7 +138,7 @@ public class DefaultXmlDeserializer<CLASS>
   private CLASS parseXmlInternal(@NonNull XMLEventReader2 reader)
       throws IOException {
 
-    MetaschemaXmlParser parser = new MetaschemaXmlParser(reader, new DefaultXmlProblemHandler());
+    MetaschemaXmlReader parser = new MetaschemaXmlReader(reader, new DefaultXmlProblemHandler());
 
     try {
       return parser.read(rootDefinition);

@@ -28,17 +28,10 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 
-import org.codehaus.stax2.XMLStreamWriter2;
-
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Locale;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -114,33 +107,6 @@ public abstract class AbstractFieldProperty
   @Override
   public MarkupMultiline getRemarks() {
     return ModelUtil.resolveToMarkupMultiline(getFieldAnnotation().remarks());
-  }
-
-  @Override
-  public void writeItem(Object item, QName parentName, IXmlWritingContext context)
-      throws XMLStreamException, IOException {
-    // figure out how to parse the item
-    IDataTypeHandler handler = getPropertyInfo().getDataTypeHandler();
-
-    // figure out if we need to parse the wrapper or not
-    boolean writeWrapper = isInXmlWrapped() || !handler.isUnwrappedValueAllowedInXml();
-
-    XMLStreamWriter2 writer = context.getWriter();
-
-    QName currentParentName;
-    if (writeWrapper) {
-      currentParentName = getXmlQName();
-      writer.writeStartElement(currentParentName.getNamespaceURI(), currentParentName.getLocalPart());
-    } else {
-      currentParentName = parentName;
-    }
-
-    // write the value
-    handler.accept(item, currentParentName, context);
-
-    if (writeWrapper) {
-      writer.writeEndElement();
-    }
   }
 
   @Override

@@ -145,7 +145,7 @@ class ListPropertyInfo
 
       // parse items
       while (!JsonToken.END_ARRAY.equals(parser.currentToken())) {
-        Object value = getDataTypeHandler().get(parentInstance, false, context);
+        Object value = getDataTypeHandler().read(parentInstance, false, context);
         collector.add(value);
       }
 
@@ -159,23 +159,23 @@ class ListPropertyInfo
     }
     default:
       // this is a singleton, just parse the value as a single item
-      Object value = getDataTypeHandler().get(parentInstance, false, context);
+      Object value = getDataTypeHandler().read(parentInstance, false, context);
       collector.add(value);
     }
   }
 
   @Override
-  public void writeValue(Object value, QName parentName, IXmlWritingContext context)
+  public void writeValues(Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     IBoundNamedModelInstance property = getProperty();
     List<? extends Object> items = getItemsFromValue(value);
     for (Object item : items) {
-      property.writeItem(ObjectUtils.requireNonNull(item), parentName, context);
+      context.writeInstanceValue(property, ObjectUtils.requireNonNull(item), parentName);
     }
   }
 
   @Override
-  public void writeValue(Object parentInstance, IJsonWritingContext context) throws IOException {
+  public void writeValues(Object parentInstance, IJsonWritingContext context) throws IOException {
     List<? extends Object> items = getItemsFromParentInstance(parentInstance);
 
     @SuppressWarnings("resource") // not owned

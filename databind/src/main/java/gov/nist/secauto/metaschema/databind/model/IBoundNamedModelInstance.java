@@ -30,9 +30,7 @@ import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -40,9 +38,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -155,9 +150,6 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
   @Override
   @NonNull
   Collection<? extends Object> getItemValues(Object value);
-
-  void writeItem(@NonNull Object itemValue, @NonNull QName parentName, @NonNull IXmlWritingContext context)
-      throws XMLStreamException, IOException;
 
   @NonNull
   Object copyItem(@NonNull Object fromItem, @NonNull Object toInstance) throws BindingException;

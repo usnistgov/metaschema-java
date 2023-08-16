@@ -29,10 +29,7 @@ package gov.nist.secauto.metaschema.databind.model;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -40,7 +37,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -60,7 +56,8 @@ public interface IBoundNamedInstance extends INamedInstance {
   }
 
   /**
-   * Get the {@link IClassBinding} for the Java class within which this property exists.
+   * Get the {@link IClassBinding} for the Java class within which this property
+   * exists.
    *
    * @return the containing class's binding
    */
@@ -83,8 +80,8 @@ public interface IBoundNamedInstance extends INamedInstance {
   /**
    * Get the actual Java type of the underlying bound object.
    * <p>
-   * This may be the same as the what is returned by {@link #getItemType()}, or may be a Java
-   * collection class.
+   * This may be the same as the what is returned by {@link #getItemType()}, or
+   * may be a Java collection class.
    *
    * @return the raw type of the bound object
    */
@@ -95,8 +92,8 @@ public interface IBoundNamedInstance extends INamedInstance {
   }
 
   /**
-   * Get the item type of the bound object. An item type is the primitive or specialized type that
-   * represents that data associated with this binding.
+   * Get the item type of the bound object. An item type is the primitive or
+   * specialized type that represents that data associated with this binding.
    *
    * @return the item type of the bound object
    */
@@ -106,8 +103,9 @@ public interface IBoundNamedInstance extends INamedInstance {
   }
 
   /**
-   * Get the current value from the provided {@code parentInstance} object. The provided object must
-   * be of the type associated with the definition containing this property.
+   * Get the current value from the provided {@code parentInstance} object. The
+   * provided object must be of the type associated with the definition containing
+   * this property.
    *
    * @param parentInstance
    *          the object associated with the definition containing this property
@@ -134,14 +132,14 @@ public interface IBoundNamedInstance extends INamedInstance {
   }
 
   /**
-   * Set the provided value on the provided object. The provided object must be of the item's type
-   * associated with this property.
+   * Set the provided value on the provided object. The provided object must be of
+   * the item's type associated with this property.
    *
    * @param parentInstance
    *          the object
    * @param value
-   *          a value, which may be a simple {@link Type} or a {@link ParameterizedType} for a
-   *          collection
+   *          a value, which may be a simple {@link Type} or a
+   *          {@link ParameterizedType} for a collection
    */
   default void setValue(@NonNull Object parentInstance, Object value) {
     Field field = getField();
@@ -163,11 +161,6 @@ public interface IBoundNamedInstance extends INamedInstance {
 
   @Nullable
   Object defaultValue() throws BindingException;
-
-  boolean write(@NonNull Object parentInstance, @NonNull QName parentName, @NonNull IXmlWritingContext context)
-      throws XMLStreamException, IOException;
-
-  void write(@NonNull Object parentInstance, @NonNull IJsonWritingContext context) throws IOException;
 
   /**
    * Copy this instance from one parent object to another.

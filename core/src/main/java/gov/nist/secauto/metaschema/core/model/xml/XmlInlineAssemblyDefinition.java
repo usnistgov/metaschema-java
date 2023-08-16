@@ -63,8 +63,7 @@ class XmlInlineAssemblyDefinition
   private final InternalAssemblyDefinition assemblyDefinition;
 
   /**
-   * Constructs a new Metaschema assembly definition from an XML representation
-   * bound to Java objects.
+   * Constructs a new Metaschema assembly definition from an XML representation bound to Java objects.
    *
    * @param xmlAssembly
    *          the XML representation bound to Java objects

@@ -365,8 +365,6 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *          the resource stream
    * @param documentUri
    *          the URI of the resource
-   * @param source
-   *          information about how to access the resource
    * @return the loaded data
    * @throws IOException
    *           if an error occurred while loading the data from the specified resource

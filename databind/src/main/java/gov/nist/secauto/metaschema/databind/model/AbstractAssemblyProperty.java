@@ -26,16 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
-
-import org.codehaus.stax2.XMLStreamWriter2;
-
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Locale;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -56,23 +48,6 @@ abstract class AbstractAssemblyProperty
           String.format("Class '%s' is not bound", getPropertyInfo().getItemType().getClass().getName()));
     }
     return new ClassDataTypeHandler(classBinding, this);
-  }
-
-  @Override
-  public void writeItem(Object item, QName parentName, IXmlWritingContext context)
-      throws XMLStreamException, IOException {
-    XMLStreamWriter2 writer = context.getWriter();
-
-    QName currentParentName = getXmlQName();
-
-    // write the start element
-    writer.writeStartElement(currentParentName.getNamespaceURI(), currentParentName.getLocalPart());
-
-    // write the value
-    getPropertyInfo().getDataTypeHandler().accept(item, currentParentName, context);
-
-    // write the end element
-    writer.writeEndElement();
   }
 
   @Override

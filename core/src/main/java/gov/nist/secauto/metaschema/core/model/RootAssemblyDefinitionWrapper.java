@@ -40,8 +40,7 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Wraps an {@link IAssemblyDefinition} that is a
- * {@link IRootAssemblyDefinition}.
+ * Wraps an {@link IAssemblyDefinition} that is a {@link IRootAssemblyDefinition}.
  *
  * @param <T>
  *          the type of the wrapped definition
@@ -53,8 +52,8 @@ public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition>
   private final T rootDefinition;
 
   /**
-   * Construct a new wrapper that delgates method calls to the underlying
-   * definition implementing root semantics.
+   * Construct a new wrapper that delgates method calls to the underlying definition implementing root
+   * semantics.
    *
    * @param rootDefinition
    *          the definition to wrap

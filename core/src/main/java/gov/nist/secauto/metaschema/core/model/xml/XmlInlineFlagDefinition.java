@@ -61,14 +61,12 @@ class XmlInlineFlagDefinition
   private final Lazy<IValueConstrained> constraints;
 
   /**
-   * Constructs a new Metaschema flag definition from an XML representation bound
-   * to Java objects.
+   * Constructs a new Metaschema flag definition from an XML representation bound to Java objects.
    *
    * @param xmlFlag
    *          the XML representation bound to Java objects
    * @param parent
-   *          the parent definition, which must be a definition type that can
-   *          contain flags.
+   *          the parent definition, which must be a definition type that can contain flags.
    */
   public XmlInlineFlagDefinition(@NonNull InlineFlagDefinitionType xmlFlag, @NonNull IFlagContainer parent) {
     super(parent);
@@ -225,8 +223,8 @@ class XmlInlineFlagDefinition
     }
 
     /**
-     * Used to generate the instances for the constraints in a lazy fashion when the
-     * constraints are first accessed.
+     * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+     * first accessed.
      */
     @SuppressWarnings("null")
     @Override

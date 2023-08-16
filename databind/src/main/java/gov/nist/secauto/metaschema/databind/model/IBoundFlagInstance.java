@@ -27,11 +27,6 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-
-import java.io.IOException;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundFlagInstance extends IBoundNamedInstance, IFlagInstance {
 
@@ -40,19 +35,8 @@ public interface IBoundFlagInstance extends IBoundNamedInstance, IFlagInstance {
    *
    * @param value
    *          the bound flag value, which may be {@code null}
-   * @return the bound flag value as a string, or {@code null} if the flag is not defined
+   * @return the bound flag value as a string, or {@code null} if the flag is not
+   *         defined
    */
   String getValueAsString(Object value);
-
-  /**
-   * Write the provided value as a JSON property.
-   *
-   * @param value
-   *          the value of the property to write
-   * @param context
-   *          the writing context used for serializing JSON
-   * @throws IOException
-   *           if an error occured while writing
-   */
-  void writeValue(@NonNull Object value, @NonNull IJsonWritingContext context) throws IOException;
 }

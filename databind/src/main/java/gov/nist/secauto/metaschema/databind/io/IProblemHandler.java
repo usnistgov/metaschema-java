@@ -26,7 +26,35 @@
 
 package gov.nist.secauto.metaschema.databind.io;
 
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+
+import java.io.IOException;
+import java.util.Collection;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 // TODO: consider what methods can be defined here
 public interface IProblemHandler {
-  // no extra methods
+  /**
+   * A callback used to handle bound properties for which no data was found when
+   * the content was parsed.
+   * <p>
+   * This can be used to supply default or prescribed values based on application
+   * logic.
+   *
+   * @param parentDefinition
+   *          the bound class on which the missing properties are found
+   * @param targetObject
+   *          the Java object for the {@code parentDefinition}
+   * @param unhandledInstances
+   *          the set of instances that had no data to parse
+   * @throws IOException
+   *           if an error occurred while handling the missing instances
+   */
+  void handleMissingInstances(
+      @NonNull IClassBinding parentDefinition,
+      @NonNull Object targetObject,
+      @NonNull Collection<? extends IBoundNamedInstance> unhandledInstances)
+      throws IOException;
 }

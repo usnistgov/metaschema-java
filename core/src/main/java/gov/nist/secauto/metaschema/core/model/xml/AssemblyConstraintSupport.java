@@ -85,8 +85,8 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides support for parsing and maintaining a set of Metaschema constraints.
- * Constraints are parsed from XML.
+ * Provides support for parsing and maintaining a set of Metaschema constraints. Constraints are
+ * parsed from XML.
  */
 @SuppressWarnings("PMD.CouplingBetweenObjects")
 class AssemblyConstraintSupport implements IModelConstrained {

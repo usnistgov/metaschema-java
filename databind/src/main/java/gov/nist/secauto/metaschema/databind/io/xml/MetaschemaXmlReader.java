@@ -61,7 +61,7 @@ import javax.xml.stream.events.XMLEvent;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class MetaschemaXmlParser
+public class MetaschemaXmlReader
     implements IXmlParsingContext {
   @NonNull
   private final XMLEventReader2 reader;
@@ -75,7 +75,7 @@ public class MetaschemaXmlParser
    *          the XML reader to parse with
    * @see DefaultXmlProblemHandler
    */
-  public MetaschemaXmlParser(
+  public MetaschemaXmlReader(
       @NonNull XMLEventReader2 reader) {
     this(reader, new DefaultXmlProblemHandler());
   }
@@ -88,7 +88,7 @@ public class MetaschemaXmlParser
    * @param problemHandler
    *          the problem handler implementation to use
    */
-  public MetaschemaXmlParser(
+  public MetaschemaXmlReader(
       @NonNull XMLEventReader2 reader,
       @NonNull IXmlProblemHandler problemHandler) {
     this.reader = reader;
@@ -444,7 +444,7 @@ public class MetaschemaXmlParser
         reader.nextEvent();
 
         // consume the value
-        retval = instance.getPropertyInfo().getDataTypeHandler().get(parentObject, nextStart, this);
+        retval = instance.getPropertyInfo().getDataTypeHandler().read(parentObject, nextStart, this);
 
         // consume the end element
         XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, nextQName);
@@ -503,7 +503,7 @@ public class MetaschemaXmlParser
     }
 
     // consume the value
-    Object retval = instance.getPropertyInfo().getDataTypeHandler().get(parentObject, currentStart, this);
+    Object retval = instance.getPropertyInfo().getDataTypeHandler().read(parentObject, currentStart, this);
 
     if (parseWrapper) {
       // consume the end element

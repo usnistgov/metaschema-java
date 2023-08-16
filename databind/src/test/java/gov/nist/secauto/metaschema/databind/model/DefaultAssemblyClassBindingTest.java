@@ -32,7 +32,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
-import gov.nist.secauto.metaschema.databind.io.json.MetaschemaJsonParser;
+import gov.nist.secauto.metaschema.databind.io.json.MetaschemaJsonReader;
 
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +55,7 @@ class DefaultAssemblyClassBindingTest
       RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
 
       try (JsonParser parser = newJsonParser(reader)) {
-        Object value = new MetaschemaJsonParser(parser).read(root);
+        Object value = new MetaschemaJsonReader(parser).read(root);
         assertNotNull(value, "root was null");
       }
     }

@@ -93,12 +93,13 @@ public class DefaultXmlSerializer<CLASS>
     XMLStreamWriter2 streamWriter = newXMLStreamWriter(writer);
     IOException caughtException = null;
     IAssemblyClassBinding classBinding = getClassBinding();
-    IXmlWritingContext writingContext = new DefaultXmlWritingContext(streamWriter);
+
+    MetaschemaXmlWriter xmlGenerator = new MetaschemaXmlWriter(streamWriter);
 
     RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
 
     try {
-      root.writeRoot(data, writingContext);
+      xmlGenerator.write(root, data);
       streamWriter.flush();
     } catch (XMLStreamException ex) {
       caughtException = new IOException(ex);
