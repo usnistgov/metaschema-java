@@ -49,8 +49,8 @@ class XmlFlagInstance
   private final FlagReferenceType xmlFlag;
 
   /**
-   * Constructs a new Metaschema flag instance definition from an XML representation bound to Java
-   * objects.
+   * Constructs a new Metaschema flag instance definition from an XML
+   * representation bound to Java objects.
    *
    * @param xmlFlag
    *          the XML representation bound to Java objects
@@ -73,8 +73,8 @@ class XmlFlagInstance
 
   @Override
   public IFlagDefinition getDefinition() {
-    // this will always be not null
-    return ObjectUtils.notNull(getContainingDefinition().getContainingMetaschema()
+    // this should always be not null
+    return ObjectUtils.requireNonNull(getContainingDefinition().getContainingMetaschema()
         .getScopedFlagDefinitionByName(getName()));
   }
 
@@ -98,11 +98,6 @@ class XmlFlagInstance
   @Override
   public String getName() {
     return getXmlFlag().getRef();
-  }
-
-  @Override
-  public String getXmlNamespace() {
-    return null;
   }
 
   @SuppressWarnings("null")

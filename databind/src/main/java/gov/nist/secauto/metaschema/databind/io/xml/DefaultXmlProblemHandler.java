@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.io.xml;
 
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.databind.io.AbstractProblemHandler;
-import gov.nist.secauto.metaschema.databind.model.IBoundModelDefinition;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,9 +42,8 @@ import javax.xml.stream.events.Attribute;
 /**
  * Handles problems identified in the parsed XML.
  * <p>
- * The default problem handler will report unknown attributes, and provide empty
- * collections for multi-valued model items and default values for flags and
- * single valued fields.
+ * The default problem handler will report unknown attributes, and provide empty collections for
+ * multi-valued model items and default values for flags and single valued fields.
  */
 public class DefaultXmlProblemHandler
     extends AbstractProblemHandler
@@ -62,7 +61,7 @@ public class DefaultXmlProblemHandler
 
   @Override
   public boolean handleUnknownAttribute(
-      IBoundModelDefinition parentDefinition,
+      IFlagContainer parentDefinition,
       Object targetObject,
       Attribute attribute,
       IXmlParsingContext parsingContext) {

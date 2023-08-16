@@ -29,6 +29,10 @@ package gov.nist.secauto.metaschema.databind.model;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 /**
  * Represents a Metaschema assembly bound to a Java plain old java object (POJO) class.
@@ -55,4 +59,14 @@ public interface IAssemblyClassBinding extends IClassBinding, IAssemblyDefinitio
 
   @Override
   IBoundNamedModelInstance getModelInstanceByName(String name);
+
+  @Override
+  default IAssemblyClassBinding getOwningDefinition() {
+    return this;
+  }
+
+  @Override
+  default Map<QName, Set<String>> getProperties() {
+    throw new UnsupportedOperationException();
+  }
 }

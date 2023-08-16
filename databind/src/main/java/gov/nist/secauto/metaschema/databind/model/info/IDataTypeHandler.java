@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.info;
 
 import com.fasterxml.jackson.core.JsonToken;
 
@@ -34,6 +34,8 @@ import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -47,53 +49,53 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 // TODO: get rid of functional interfaces
 public interface IDataTypeHandler {
-  /**
-   * Get the model instance associated with this handler.
-   *
-   * @return the model instance
-   */
   @NonNull
-  IBoundNamedModelInstance getProperty();
+  static IDataTypeHandler newDataTypeHandler(
+      @NonNull IClassBinding classBinding) {
+    return new ClassDataTypeHandler(classBinding);
+  }
+
+  @NonNull
+  static IDataTypeHandler newDataTypeHandler(
+      @NonNull IBoundFieldInstance property) {
+    return new JavaTypeAdapterDataTypeHandler(property);
+  }
 
   /**
    * Get the class binding associated with this handler.
    *
-   * @return the class binding or {@code null} if the property's item type is not
-   *         a bound class
+   * @return the class binding or {@code null} if the property's item type is not a bound class
    */
   IClassBinding getClassBinding();
 
   /**
-   * Get the associated {@link IDataTypeAdapter}, if the data type is not a
-   * complex bound object.
+   * Get the associated {@link IDataTypeAdapter}, if the data type is not a complex bound object.
    *
    * @return the adpater, or {@code null} otherwise
    */
   IDataTypeAdapter<?> getJavaTypeAdapter();
 
   /**
-   * Indicate if the value supported by this handler allows values without an XML
-   * element wrapper.
+   * Indicate if the value supported by this handler allows values without an XML element wrapper.
    * <p>
-   * Implementations may proxy this request to the JavaTypeAdapter if it is used
-   * or return {@code false} otherwise.
+   * Implementations may proxy this request to the JavaTypeAdapter if it is used or return
+   * {@code false} otherwise.
    *
-   * @return {@code true} if the underlying data type is allowed to be unwrapped,
-   *         or {@code false} otherwise
+   * @return {@code true} if the underlying data type is allowed to be unwrapped, or {@code false}
+   *         otherwise
    */
   boolean isUnwrappedValueAllowedInXml();
 
   /**
    * Parse and return the set of items from the JSON stream.
    * <p>
-   * An item is a complete value, which can be a {@link JsonToken#START_OBJECT},
-   * or a value token.
+   * An item is a complete value, which can be a {@link JsonToken#START_OBJECT}, or a value token.
    *
    * @param parentObject
    *          the parent Java object to use for serialization callbacks
    * @param requiresJsonKey
-   *          when {@code true} indicates that the item will have a JSON key, or
-   *          {@code false} otherwise
+   *          when {@code true} indicates that the item will have a JSON key, or {@code false}
+   *          otherwise
    * @param context
    *          the JSON/YAML parser
    * @return the Java object representing the set of parsed items

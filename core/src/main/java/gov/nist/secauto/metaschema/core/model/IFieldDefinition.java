@@ -32,12 +32,21 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IField {
 
   @Override
-  default IFieldDefinition getContainingDefinition() {
+  default IFieldDefinition getOwningDefinition() {
     return this;
   }
 
   @Override
-  IFieldInstance getInlineInstance();
+  default boolean isInline() {
+    // reasonable default
+    return false;
+  }
+
+  @Override
+  default IFieldInstance getInlineInstance() {
+    // reasonable default
+    return null;
+  }
 
   /**
    * Retrieves the key to use as the field name for this field's value in JSON.
@@ -56,7 +65,8 @@ public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IFi
   /**
    * Check if a JSON value key flag is configured.
    *
-   * @return {@code true} if a JSON value key flag is configured, or {@code false} otherwise
+   * @return {@code true} if a JSON value key flag is configured, or {@code false}
+   *         otherwise
    */
   default boolean hasJsonValueKeyFlagInstance() {
     return getJsonValueKeyFlagInstance() != null;
@@ -65,15 +75,15 @@ public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IFi
   /**
    * Retrieves the flag instance who's value will be used as the "value key".
    *
-   * @return the configured flag instance, or {@code null} if a flag is not configured as the "value
-   *         key"
+   * @return the configured flag instance, or {@code null} if a flag is not
+   *         configured as the "value key"
    */
   @Nullable
   IFlagInstance getJsonValueKeyFlagInstance();
 
   /**
-   * Retrieves the configured static label to use as the value key, or the type specific name if a
-   * label is not configured.
+   * Retrieves the configured static label to use as the value key, or the type
+   * specific name if a label is not configured.
    *
    * @return the value key label
    */

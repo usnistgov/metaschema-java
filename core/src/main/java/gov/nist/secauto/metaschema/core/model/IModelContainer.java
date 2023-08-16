@@ -44,7 +44,7 @@ public interface IModelContainer extends IContainer {
    */
   @Override
   @NonNull
-  IAssemblyDefinition getContainingDefinition();
+  IAssemblyDefinition getOwningDefinition();
 
   /**
    * Get the model instance contained within the model with the associated use name.

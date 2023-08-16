@@ -87,7 +87,7 @@ class XmlChoiceInstance
   protected void initModelContainer() {
     synchronized (this) {
       if (modelContainer == null) {
-        modelContainer = new XmlModelContainerSupport(getXmlChoice(), getContainingDefinition());
+        modelContainer = new XmlModelContainerSupport(getXmlChoice(), getOwningDefinition());
       }
     }
   }

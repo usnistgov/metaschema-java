@@ -31,9 +31,10 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvi
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
-import gov.nist.secauto.metaschema.core.model.IInlineDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
@@ -61,12 +62,14 @@ class XmlInlineFlagDefinition
   private final Lazy<IValueConstrained> constraints;
 
   /**
-   * Constructs a new Metaschema flag definition from an XML representation bound to Java objects.
+   * Constructs a new Metaschema flag definition from an XML representation bound
+   * to Java objects.
    *
    * @param xmlFlag
    *          the XML representation bound to Java objects
    * @param parent
-   *          the parent definition, which must be a definition type that can contain flags.
+   *          the parent definition, which must be a definition type that can
+   *          contain flags.
    */
   public XmlInlineFlagDefinition(@NonNull InlineFlagDefinitionType xmlFlag, @NonNull IFlagContainer parent) {
     super(parent);
@@ -134,11 +137,6 @@ class XmlInlineFlagDefinition
   }
 
   @Override
-  public String getXmlNamespace() {
-    return null;
-  }
-
-  @Override
   public boolean isRequired() {
     return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : MetaschemaModelConstants.DEFAULT_FLAG_REQUIRED;
   }
@@ -158,7 +156,9 @@ class XmlInlineFlagDefinition
   /**
    * The corresponding definition for the local flag instance.
    */
-  private final class InternalFlagDefinition implements IFlagDefinition, IInlineDefinition<XmlInlineFlagDefinition> {
+  private final class InternalFlagDefinition
+      implements IFlagDefinition,
+      IFeatureInlinedDefinition<IFlagInstance> {
     @Nullable
     private final Object defaultValue;
 
@@ -181,7 +181,8 @@ class XmlInlineFlagDefinition
     }
 
     @Override
-    public XmlInlineFlagDefinition getInlineInstance() {
+    @NonNull
+    public IFlagInstance getInlineInstance() {
       return XmlInlineFlagDefinition.this;
     }
 
@@ -223,8 +224,8 @@ class XmlInlineFlagDefinition
     }
 
     /**
-     * Used to generate the instances for the constraints in a lazy fashion when the constraints are
-     * first accessed.
+     * Used to generate the instances for the constraints in a lazy fashion when the
+     * constraints are first accessed.
      */
     @SuppressWarnings("null")
     @Override

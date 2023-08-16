@@ -24,48 +24,24 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.impl;
-
-import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IIndexConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
-import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
-
-import java.util.List;
+package gov.nist.secauto.metaschema.core.model;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IFeatureModelConstrained extends IModelConstrained, IFeatureValueConstrained {
+/**
+ * A trait indicating that the implementation is a localized definition that is
+ * declared in-line as an instance.
+ *
+ * @param <INSTANCE>
+ *          the associated instance type
+ */
+public interface IFeatureInlinedDefinition<INSTANCE extends INamedInstance> extends IDefinition {
   @Override
-  IModelConstrained getConstraintSupport();
-
-  @Override
-  default List<? extends IIndexConstraint> getIndexConstraints() {
-    return getConstraintSupport().getIndexConstraints();
+  default boolean isInline() {
+    return true;
   }
 
   @Override
-  default List<? extends IUniqueConstraint> getUniqueConstraints() {
-    return getConstraintSupport().getUniqueConstraints();
-  }
-
-  @Override
-  default List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
-    return getConstraintSupport().getHasCardinalityConstraints();
-  }
-
-  @Override
-  default void addConstraint(@NonNull IIndexConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  default void addConstraint(@NonNull IUniqueConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  default void addConstraint(@NonNull ICardinalityConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
+  @NonNull
+  INSTANCE getInlineInstance();
 }

@@ -24,29 +24,37 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml;
+package gov.nist.secauto.metaschema.databind.model.info;
 
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
-
-import java.util.Map;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class EmptyFlagContainer<F extends IFlagInstance> implements IFlagContainerSupport<F> {
-  @SuppressWarnings("rawtypes")
+class ListPropertyCollector
+    implements IPropertyCollector {
   @NonNull
-  public static final EmptyFlagContainer EMPTY = new EmptyFlagContainer();
+  private final List<Object> collection;
 
-  @Override
-  public Map<String, ? extends F> getFlagInstanceMap() {
-    return CollectionUtil.emptyMap();
+  public ListPropertyCollector() {
+    this.collection = new LinkedList<>();
   }
 
   @Override
-  public F getJsonKeyFlagInstance() {
-    // no JSON key
-    return null;
+  public void add(Object item) {
+    assert item != null;
+    collection.add(item);
   }
 
+  @NonNull
+  @Override
+  public List<?> getValue() {
+    return collection;
+  }
+
+  @Override
+  public void addAll(Collection<? extends Object> items) {
+    collection.addAll(items);
+  }
 }

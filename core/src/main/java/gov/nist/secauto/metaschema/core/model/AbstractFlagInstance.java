@@ -36,7 +36,8 @@ public abstract class AbstractFlagInstance
    * Create a new flag instance.
    *
    * @param parent
-   *          the parent definition, which must be a definition type that can contain flags.
+   *          the parent definition, which must be a definition type that can
+   *          contain flags.
    */
   public AbstractFlagInstance(@NonNull IFlagContainer parent) {
     super(parent);
@@ -70,7 +71,8 @@ public abstract class AbstractFlagInstance
   // @Override
   // public FlagDefinition getDefinition() {
   // FlagDefinition localFlagDefinition = getLocalFlagDefinition();
-  // return localFlagDefinition == null ? getContainingMetaschema().getFlagDefinitionByName(getName())
+  // return localFlagDefinition == null ?
+  // getContainingMetaschema().getFlagDefinitionByName(getName())
   // : localFlagDefinition;
   // }
 }

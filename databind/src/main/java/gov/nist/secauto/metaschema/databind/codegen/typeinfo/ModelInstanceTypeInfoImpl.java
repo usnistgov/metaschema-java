@@ -79,7 +79,7 @@ class ModelInstanceTypeInfoImpl
     TypeName retval;
     if (instance instanceof IFieldInstance) {
       IFieldInstance fieldInstance = (IFieldInstance) instance;
-      if (fieldInstance.isSimple()) {
+      if (fieldInstance.getDefinition().isSimple()) {
         IDataTypeAdapter<?> dataType = fieldInstance.getDefinition().getJavaTypeAdapter();
         // this is a simple value
         retval = ObjectUtils.notNull(ClassName.get(dataType.getJavaClass()));

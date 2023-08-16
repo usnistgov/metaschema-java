@@ -24,16 +24,24 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.info;
 
+import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -44,6 +52,77 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 // TODO: make all read and write methods take the value, not the parent instance as an argument
 public interface IModelPropertyInfo {
+
+  @NonNull
+  static IModelPropertyInfo newPropertyInfo(
+      @NonNull IBoundNamedModelInstance instance,
+      @NonNull Supplier<IDataTypeHandler> dataTypeHandlerSupplier) {
+    // create the property info
+    Type type = instance.getType();
+    Field field = instance.getField();
+
+    IModelPropertyInfo retval;
+    if (instance.getMaxOccurs() == -1 || instance.getMaxOccurs() > 1) {
+      // collection case
+      JsonGroupAsBehavior jsonGroupAs = instance.getJsonGroupAsBehavior();
+
+      // expect a ParameterizedType
+      if (!(type instanceof ParameterizedType)) {
+        switch (jsonGroupAs) {
+        case KEYED:
+          throw new IllegalStateException(
+              String.format("The field '%s' on class '%s' has data type of '%s'," + " but should have a type of '%s'.",
+                  field.getName(), instance.getParentClassBinding().getBoundClass().getName(),
+                  field.getType().getName(), Map.class.getName()));
+        case LIST:
+        case SINGLETON_OR_LIST:
+          throw new IllegalStateException(
+              String.format("The field '%s' on class '%s' has data type of '%s'," + " but should have a type of '%s'.",
+                  field.getName(), instance.getParentClassBinding().getBoundClass().getName(),
+                  field.getType().getName(), List.class.getName()));
+        default:
+          // this should not occur
+          throw new IllegalStateException(jsonGroupAs.name());
+        }
+      }
+
+      Class<?> rawType = (Class<?>) ((ParameterizedType) type).getRawType();
+      if (JsonGroupAsBehavior.KEYED.equals(jsonGroupAs)) {
+        if (!Map.class.isAssignableFrom(rawType)) {
+          throw new IllegalArgumentException(String.format(
+              "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
+              field.getName(),
+              instance.getParentClassBinding().getBoundClass().getName(),
+              field.getType().getName(),
+              Map.class.getName()));
+        }
+        retval = new MapPropertyInfo(instance, dataTypeHandlerSupplier);
+      } else {
+        if (!List.class.isAssignableFrom(rawType)) {
+          throw new IllegalArgumentException(String.format(
+              "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
+              field.getName(),
+              instance.getParentClassBinding().getBoundClass().getName(),
+              field.getType().getName(),
+              List.class.getName()));
+        }
+        retval = new ListPropertyInfo(instance, dataTypeHandlerSupplier);
+      }
+    } else {
+      // single value case
+      if (type instanceof ParameterizedType) {
+        throw new IllegalStateException(String.format(
+            "The field '%s' on class '%s' has a data parmeterized type of '%s',"
+                + " but the occurance is not multi-valued.",
+            field.getName(),
+            instance.getParentClassBinding().getBoundClass().getName(),
+            field.getType().getName()));
+      }
+      retval = new SingletonPropertyInfo(instance, dataTypeHandlerSupplier);
+    }
+    return retval;
+  }
+
   /**
    * Get the associated property for which this info is for.
    *
@@ -128,29 +207,4 @@ public interface IModelPropertyInfo {
 
   void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
       throws BindingException;
-  //
-  // @FunctionalInterface
-  // interface ItemXmlReader {
-  // /**
-  // * Reads an individual XML item from the XML stream.
-  // *
-  // * @param parentInstance
-  // * the object the data is parsed into
-  // * @param start
-  // * the current containing XML element
-  // * @param context
-  // * the XML parsing context
-  // * @return the item read, or {@code null} if no item was read
-  // * @throws XMLStreamException
-  // * if an error occurred while generating an {@link XMLEvent}
-  // * @throws IOException
-  // * if an error occurred reading the underlying XML file
-  // */
-  // Object readItem(
-  // @NonNull IBoundNamedModelInstance instance,
-  // @NonNull Object parentObject,
-  // @NonNull StartElement start)
-  // throws XMLStreamException, IOException;
-  // }
-
 }

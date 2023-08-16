@@ -37,8 +37,8 @@ public interface IBoundFieldValueInstance extends IBoundNamedInstance {
   IDataTypeAdapter<?> getJavaTypeAdapter();
 
   /**
-   * Get the JSON value key name based on either the configured value key name or
-   * the default for the data type.
+   * Get the JSON value key name based on either the configured value key name or the default for the
+   * data type.
    *
    * @return the value key name
    */

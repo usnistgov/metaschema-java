@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.info;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -38,6 +38,9 @@ import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import org.codehaus.stax2.XMLEventReader2;
 
@@ -170,6 +173,38 @@ class MapPropertyInfo
     }
   }
 
+  @Override
+  public void writeValues(Object parentInstance, IJsonWritingContext context) throws IOException {
+    Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
+
+    if (!items.isEmpty()) {
+      @SuppressWarnings("resource") // not owned
+      JsonGenerator writer = context.getWriter(); // NOPMD not closable here
+
+      writer.writeStartObject();
+
+      getDataTypeHandler().writeItems(items, false, context);
+
+      writer.writeEndObject();
+    }
+  }
+
+  @Override
+  public boolean isValueSet(Object parentInstance) throws IOException {
+    Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
+    return !items.isEmpty();
+  }
+
+  @Override
+  public void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
+      throws BindingException {
+    IBoundNamedModelInstance property = getProperty();
+
+    for (Object item : getItemsFromParentInstance(fromInstance)) {
+      collector.add(property.copyItem(ObjectUtils.requireNonNull(item), toInstance));
+    }
+  }
+
   public class MapPropertyCollector implements IPropertyCollector {
     @NonNull
     private final Map<String, Object> map = new LinkedHashMap<>(); // NOPMD - single threaded
@@ -209,38 +244,6 @@ class MapPropertyInfo
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "this is a data holder")
     public Map<String, Object> getValue() {
       return map;
-    }
-  }
-
-  @Override
-  public void writeValues(Object parentInstance, IJsonWritingContext context) throws IOException {
-    Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
-
-    if (!items.isEmpty()) {
-      @SuppressWarnings("resource") // not owned
-      JsonGenerator writer = context.getWriter(); // NOPMD not closable here
-
-      writer.writeStartObject();
-
-      getDataTypeHandler().writeItems(items, false, context);
-
-      writer.writeEndObject();
-    }
-  }
-
-  @Override
-  public boolean isValueSet(Object parentInstance) throws IOException {
-    Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
-    return !items.isEmpty();
-  }
-
-  @Override
-  public void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
-      throws BindingException {
-    IBoundNamedModelInstance property = getProperty();
-
-    for (Object item : getItemsFromParentInstance(fromInstance)) {
-      collector.add(property.copyItem(ObjectUtils.requireNonNull(item), toInstance));
     }
   }
 }

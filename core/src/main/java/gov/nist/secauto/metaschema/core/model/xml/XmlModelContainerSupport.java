@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IModelInstance;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ChoiceType;
@@ -42,7 +43,9 @@ import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class XmlModelContainerSupport {
+class XmlModelContainerSupport
+    implements
+    IModelContainerSupport<IModelInstance, INamedModelInstance, IFieldInstance, IAssemblyInstance, IChoiceInstance> {
 
   @NonNull
   private final List<? extends IModelInstance> modelInstances;
@@ -79,6 +82,7 @@ class XmlModelContainerSupport {
    *
    * @return the listing
    */
+  @Override
   @NonNull
   public List<? extends IModelInstance> getModelInstances() {
     return modelInstances;
@@ -89,6 +93,7 @@ class XmlModelContainerSupport {
    *
    * @return the mapping
    */
+  @Override
   @NonNull
   public Map<String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
     return namedModelInstances;
@@ -99,6 +104,7 @@ class XmlModelContainerSupport {
    *
    * @return the mapping
    */
+  @Override
   @NonNull
   public Map<String, ? extends IFieldInstance> getFieldInstanceMap() {
     return fieldInstances;
@@ -109,6 +115,7 @@ class XmlModelContainerSupport {
    *
    * @return the mapping
    */
+  @Override
   @NonNull
   public Map<String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
     return assemblyInstances;
@@ -119,10 +126,12 @@ class XmlModelContainerSupport {
    *
    * @return the listing
    */
+  @Override
   @SuppressWarnings("null")
   @NonNull
   public List<? extends IChoiceInstance> getChoiceInstances() {
-    // this shouldn't get called all that often, so this is better than allocating memory
+    // this shouldn't get called all that often, so this is better than allocating
+    // memory
     return getModelInstances().stream()
         .filter(obj -> obj instanceof IChoiceInstance)
         .map(obj -> (IChoiceInstance) obj)

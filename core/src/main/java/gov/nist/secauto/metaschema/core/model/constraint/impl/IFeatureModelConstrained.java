@@ -24,40 +24,48 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.util;
+package gov.nist.secauto.metaschema.core.model.constraint.impl;
 
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IIndexConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
+import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
 
-import java.io.IOException;
-import java.net.URI;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-// REFACTOR: remove
-public final class InputSourceUtils {
-  private InputSourceUtils() {
-    // disable construction
+public interface IFeatureModelConstrained extends IModelConstrained, IFeatureValueConstrained {
+  @Override
+  IModelConstrained getConstraintSupport();
+
+  @Override
+  default List<? extends IIndexConstraint> getIndexConstraints() {
+    return getConstraintSupport().getIndexConstraints();
   }
 
-  @NonNull
-  public static InputSource toInputSource(@NonNull URI uri, @Nullable EntityResolver entityResolver)
-      throws IOException {
-    InputSource retval = null;
-    if (entityResolver != null) {
-      // attempt to resolve the entity
-      try {
-        retval = entityResolver.resolveEntity(null, uri.toASCIIString());
-      } catch (SAXException ex) {
-        throw new IOException(ex);
-      }
-    }
-    if (retval == null) {
-      // fall back to using the provided URI
-      retval = new InputSource(uri.toASCIIString());
-    }
-    return retval;
+  @Override
+  default List<? extends IUniqueConstraint> getUniqueConstraints() {
+    return getConstraintSupport().getUniqueConstraints();
+  }
+
+  @Override
+  default List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
+    return getConstraintSupport().getHasCardinalityConstraints();
+  }
+
+  @Override
+  default void addConstraint(@NonNull IIndexConstraint constraint) {
+    getConstraintSupport().addConstraint(constraint);
+  }
+
+  @Override
+  default void addConstraint(@NonNull IUniqueConstraint constraint) {
+    getConstraintSupport().addConstraint(constraint);
+  }
+
+  @Override
+  default void addConstraint(@NonNull ICardinalityConstraint constraint) {
+    getConstraintSupport().addConstraint(constraint);
   }
 }

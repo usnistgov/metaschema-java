@@ -27,9 +27,9 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
-import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -37,7 +37,6 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -73,69 +72,6 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
 
   @Override
   IAssemblyClassBinding getParentClassBinding();
-
-  @Override
-  IBoundModelDefinition getDefinition();
-
-  @NonNull
-  default IModelPropertyInfo newPropertyInfo(
-      @NonNull Supplier<IDataTypeHandler> dataTypeHandlerSupplier) {
-    // create the property info
-    Type type = getType();
-
-    IModelPropertyInfo retval;
-    if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-      // collection case
-      // expect a ParameterizedType
-      if (!(type instanceof ParameterizedType)) {
-        switch (getJsonGroupAsBehavior()) {
-        case KEYED:
-          throw new IllegalStateException(
-              String.format("The field '%s' on class '%s' has data type of '%s'," + " but should have a type of '%s'.",
-                  getField().getName(), getParentClassBinding().getBoundClass().getName(),
-                  getField().getType().getName(), Map.class.getName()));
-        case LIST:
-        case SINGLETON_OR_LIST:
-          throw new IllegalStateException(
-              String.format("The field '%s' on class '%s' has data type of '%s'," + " but should have a type of '%s'.",
-                  getField().getName(), getParentClassBinding().getBoundClass().getName(),
-                  getField().getType().getName(), List.class.getName()));
-        default:
-          // this should not occur
-          throw new IllegalStateException(getJsonGroupAsBehavior().name());
-        }
-      }
-
-      Class<?> rawType = (Class<?>) ((ParameterizedType) type).getRawType();
-      if (JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())) {
-        if (!Map.class.isAssignableFrom(rawType)) {
-          throw new IllegalArgumentException(String.format(
-              "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
-              getField().getName(), getParentClassBinding().getBoundClass().getName(),
-              getField().getType().getName(), Map.class.getName()));
-        }
-        retval = new MapPropertyInfo(this, dataTypeHandlerSupplier);
-      } else {
-        if (!List.class.isAssignableFrom(rawType)) {
-          throw new IllegalArgumentException(String.format(
-              "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
-              getField().getName(), getParentClassBinding().getBoundClass().getName(),
-              getField().getType().getName(), List.class.getName()));
-        }
-        retval = new ListPropertyInfo(this, dataTypeHandlerSupplier);
-      }
-    } else {
-      // single value case
-      if (type instanceof ParameterizedType) {
-        throw new IllegalStateException(String.format(
-            "The field '%s' on class '%s' has a data parmeterized type of '%s',"
-                + " but the occurance is not multi-valued.",
-            getField().getName(), getParentClassBinding().getBoundClass().getName(), getField().getType().getName()));
-      }
-      retval = new SingletonPropertyInfo(this, dataTypeHandlerSupplier);
-    }
-    return retval;
-  }
 
   @NonNull
   IModelPropertyInfo getPropertyInfo();

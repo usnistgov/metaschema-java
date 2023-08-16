@@ -141,7 +141,7 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
     StringBuilder builder = new StringBuilder();
     if (definition.isInline()) {
       INamedInstance inlineInstance = definition.getInlineInstance();
-      IDefinition parentDefinition = inlineInstance.getContainingDefinition();
+      IDefinition parentDefinition = inlineInstance.getOwningDefinition();
 
       builder
           .append(getTypeContext(parentDefinition, childMetaschema))

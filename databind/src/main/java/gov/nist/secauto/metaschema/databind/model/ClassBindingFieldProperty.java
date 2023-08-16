@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 
 import java.lang.reflect.Field;
 
@@ -58,7 +59,7 @@ class ClassBindingFieldProperty
     this.definition = definition;
 
     if (!isInXmlWrapped()) {
-      if (!isSimple()) { // NOPMD efficiency
+      if (!definition.isSimple()) { // NOPMD efficiency
         throw new IllegalStateException(
             String.format("Field '%s' on class '%s' is requested to be unwrapped, but it has flags preventing this.",
                 field.getName(),
@@ -81,12 +82,7 @@ class ClassBindingFieldProperty
 
   @Override
   protected IDataTypeHandler newDataTypeHandler() {
-    return new ClassDataTypeHandler(getDefinition(), this);
-  }
-
-  @Override
-  public final boolean isSimple() {
-    return getDefinition().isSimple();
+    return IDataTypeHandler.newDataTypeHandler(getDefinition());
   }
 
   @Override

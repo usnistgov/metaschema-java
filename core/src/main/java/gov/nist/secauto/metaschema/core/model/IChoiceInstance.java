@@ -44,7 +44,7 @@ public interface IChoiceInstance extends IModelInstance, IModelContainer {
   IModelContainer getParentContainer();
 
   @Override
-  default IAssemblyDefinition getContainingDefinition() {
-    return getParentContainer().getContainingDefinition();
+  default IAssemblyDefinition getOwningDefinition() {
+    return getParentContainer().getOwningDefinition();
   }
 }

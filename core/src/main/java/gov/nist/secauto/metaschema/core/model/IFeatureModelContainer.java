@@ -24,38 +24,63 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
-
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+package gov.nist.secauto.metaschema.core.model;
 
 import java.util.Collection;
+import java.util.List;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-class SingletonPropertyCollector implements IPropertyCollector {
-  private Object object;
+public interface IFeatureModelContainer<MI extends IModelInstance, NMI extends INamedModelInstance, FI extends IFieldInstance, AI extends IAssemblyInstance, CI extends IChoiceInstance>
+    extends IModelContainer {
+  /**
+   * Lazy initialize the model instances associated with this definition.
+   *
+   * @return the flag container
+   */
+  @NonNull
+  IModelContainerSupport<MI, NMI, FI, AI, CI> getModelContainer();
 
   @Override
-  public void add(Object item) {
-    if (object != null) {
-      throw new IllegalStateException("A value has already been set for this singleton");
-    }
-    object = item;
+  default NMI getModelInstanceByName(String name) {
+    return getModelContainer().getNamedModelInstanceMap().get(name);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default Collection<? extends NMI> getNamedModelInstances() {
+    return getModelContainer().getNamedModelInstanceMap().values();
   }
 
   @Override
-  public void addAll(Collection<?> items) {
-    int size = items.size();
-    if (size > 1) {
-      throw new IllegalStateException("Multiple values cannot be set for this singleton");
-    } else if (size == 1) {
-      add(ObjectUtils.notNull(items.iterator().next()));
-    }
+  default FI getFieldInstanceByName(String name) {
+    return getModelContainer().getFieldInstanceMap().get(name);
   }
 
-  @Nullable
+  @SuppressWarnings("null")
   @Override
-  public Object getValue() {
-    return object;
+  default Collection<? extends FI> getFieldInstances() {
+    return getModelContainer().getFieldInstanceMap().values();
+  }
+
+  @Override
+  default AI getAssemblyInstanceByName(String name) {
+    return getModelContainer().getAssemblyInstanceMap().get(name);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default Collection<? extends AI> getAssemblyInstances() {
+    return getModelContainer().getAssemblyInstanceMap().values();
+  }
+
+  @Override
+  default List<? extends CI> getChoiceInstances() {
+    return getModelContainer().getChoiceInstances();
+  }
+
+  @Override
+  default List<? extends MI> getModelInstances() {
+    return getModelContainer().getModelInstances();
   }
 }

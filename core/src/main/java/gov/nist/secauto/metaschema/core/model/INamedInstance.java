@@ -33,8 +33,9 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * This marker interface indicates that the instance has a flag, field, or assembly name associated
- * with it which will be used in JSON/YAML or XML to identify the data.
+ * This marker interface indicates that the instance has a flag, field, or
+ * assembly name associated with it which will be used in JSON/YAML or XML to
+ * identify the data.
  *
  */
 public interface INamedInstance extends IInstance, INamedModelElement {
@@ -66,8 +67,9 @@ public interface INamedInstance extends IInstance, INamedModelElement {
   }
 
   /**
-   * Get the current value from the provided {@code parentInstance} object. The provided object must
-   * be of the type associated with the definition containing this property.
+   * Get the current value from the provided {@code parentInstance} object. The
+   * provided object must be of the type associated with the definition containing
+   * this property.
    *
    * @param parentInstance
    *          the object associated with the definition containing this property
@@ -76,7 +78,8 @@ public interface INamedInstance extends IInstance, INamedModelElement {
   Object getValue(@NonNull Object parentInstance);
 
   /**
-   * Generates a "coordinate" string for the provided information element instance.
+   * Generates a "coordinate" string for the provided information element
+   * instance.
    *
    * A coordinate consists of the element's:
    * <ul>
@@ -93,10 +96,8 @@ public interface INamedInstance extends IInstance, INamedModelElement {
   @Override
   default String toCoordinates() {
     IDefinition definition = getDefinition();
-
-    IDefinition containingDefinition = getContainingDefinition();
     return String.format("%s:%s:%s@%d(%d)",
-        containingDefinition.getContainingMetaschema().getShortName(),
+        getContainingDefinition().getContainingMetaschema().getShortName(),
         getModelType(),
         definition.getName(),
         hashCode(),

@@ -24,15 +24,19 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.info;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -43,71 +47,71 @@ import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-// TODO: implement can handle QName for XML parsing
-class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
+class ClassDataTypeHandler implements IDataTypeHandler {
   @NonNull
-  private final AbstractFieldProperty property;
+  private final IClassBinding classBinding;
 
-  public JavaTypeAdapterDataTypeHandler(AbstractFieldProperty property) {
-    this.property = ObjectUtils.requireNonNull(property, "property");
-  }
-
-  @Override
-  public AbstractFieldProperty getProperty() {
-    return property;
+  public ClassDataTypeHandler(@NonNull IClassBinding classBinding) {
+    this.classBinding = classBinding;
   }
 
   @Override
   public IDataTypeAdapter<?> getJavaTypeAdapter() {
-    return getProperty().getDefinition().getJavaTypeAdapter();
-  }
-
-  @Override
-  public IClassBinding getClassBinding() {
     // this is always null
     return null;
   }
 
   @Override
+  @NonNull
+  public IClassBinding getClassBinding() {
+    return classBinding;
+  }
+
+  @Override
   public boolean isUnwrappedValueAllowedInXml() {
-    return getJavaTypeAdapter().isUnrappedValueAllowedInXml();
+    // classes are always wrapped
+    return false;
   }
 
   @SuppressWarnings("resource") // not owned
   @Override
   public Object read(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
       throws IOException {
-    if (requiresJsonKey) {
-      throw new IOException("A scalar datatype cannot have a JSON key.");
+    JsonParser parser = context.getReader(); // NOPMD - intentional
+    boolean objectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
+    if (objectWrapper) {
+      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
     }
-    return getJavaTypeAdapter().parse(context.getReader());
+
+    Object retval = context.readDefinitionValue(getClassBinding(), parentInstance, requiresJsonKey);
+
+    if (objectWrapper) {
+      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
+    }
+    return retval;
   }
 
   @Override
   public Object read(Object parentInstance, StartElement start, IXmlParsingContext context)
       throws IOException, XMLStreamException {
-    return getJavaTypeAdapter().parse(context.getReader());
+    return context.readDefinitionValue(getClassBinding(), parentInstance, start);
   }
 
   @Override
   public void write(Object item, QName currentParentName, IXmlWritingContext context)
       throws IOException, XMLStreamException {
-    getJavaTypeAdapter().writeXmlValue(item, currentParentName, context.getWriter());
+    context.writeDefinitionValue(classBinding, item, currentParentName);
   }
 
-  @SuppressWarnings("resource") // resource not owned
   @Override
-  public void writeItems(
-      Collection<? extends Object> items,
-      boolean writeObjectWrapper,
-      IJsonWritingContext context) throws IOException {
-    for (Object item : items) {
-      getJavaTypeAdapter().writeJsonValue(ObjectUtils.requireNonNull(item), context.getWriter());
-    }
+  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper,
+      IJsonWritingContext context)
+      throws IOException {
+    context.writeDefinitionValues(classBinding, items, writeObjectWrapper);
   }
 
   @Override
   public Object copyItem(@NonNull Object fromItem, Object parentInstance) throws BindingException {
-    return getJavaTypeAdapter().copy(fromItem);
+    return classBinding.copyBoundObject(fromItem, parentInstance);
   }
 }

@@ -39,8 +39,8 @@ import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IPropertyCollector;
 import gov.nist.secauto.metaschema.databind.model.IRootAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.info.IPropertyCollector;
 
 import org.codehaus.stax2.XMLEventReader2;
 
@@ -357,7 +357,6 @@ public class MetaschemaXmlReader
    * @throws XMLStreamException
    *           if an error occurred while parsing XML events
    */
-  // REFACTOR: rename to readModelInstance
   protected boolean readModelInstanceValues(
       @NonNull IBoundNamedModelInstance instance,
       @NonNull Object parentObject,

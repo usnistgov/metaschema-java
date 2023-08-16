@@ -43,4 +43,9 @@ public interface IFieldClassBinding extends IClassBinding, IBoundFieldDefinition
    */
   @NonNull
   IBoundFieldValueInstance getFieldValueInstance();
+
+  @Override
+  default IFieldClassBinding getOwningDefinition() {
+    return this;
+  }
 }

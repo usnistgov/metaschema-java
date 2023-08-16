@@ -31,8 +31,8 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvi
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
@@ -63,7 +63,8 @@ class XmlGlobalFieldDefinition implements IFieldDefinition, IFeatureFlagContaine
   private final Lazy<IValueConstrained> constraints;
 
   /**
-   * Constructs a new Metaschema field definition from an XML representation bound to Java objects.
+   * Constructs a new Metaschema field definition from an XML representation bound
+   * to Java objects.
    *
    * @param xmlField
    *          the XML representation bound to Java objects
@@ -114,8 +115,8 @@ class XmlGlobalFieldDefinition implements IFieldDefinition, IFeatureFlagContaine
   }
 
   /**
-   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
-   * first accessed.
+   * Used to generate the instances for the constraints in a lazy fashion when the
+   * constraints are first accessed.
    *
    * @return the constraints instance
    */
@@ -123,16 +124,6 @@ class XmlGlobalFieldDefinition implements IFieldDefinition, IFeatureFlagContaine
   @Override
   public IValueConstrained getConstraintSupport() {
     return constraints.get();
-  }
-
-  @Override
-  public boolean isInline() {
-    return false;
-  }
-
-  @Override
-  public IFieldInstance getInlineInstance() {
-    return null;
   }
 
   @SuppressWarnings({ "null", "CPD-START" })

@@ -35,5 +35,5 @@ public interface IContainer {
    * @return the containing Metaschema definition
    */
   @NonNull
-  IDefinition getContainingDefinition();
+  IFlagContainer getOwningDefinition();
 }

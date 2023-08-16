@@ -24,30 +24,38 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model;
+package gov.nist.secauto.metaschema.databind.model.info;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
-/**
- * A trait indicating that the implementation is a localized definition that is declared in-line as
- * an instance.
- *
- * @param <INSTANCE>
- *          the associated instance type
- */
-// TODO: rename to IInlineDefinition
-public interface IInlineDefinition<INSTANCE extends INamedInstance> extends IDefinition {
+import java.util.Collection;
+
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+class SingletonPropertyCollector implements IPropertyCollector {
+  private Object object;
+
   @Override
-  default boolean isInline() {
-    return true;
+  public void add(Object item) {
+    if (object != null) {
+      throw new IllegalStateException("A value has already been set for this singleton");
+    }
+    object = item;
   }
 
-  /**
-   * Retrieves the {@link INamedInstance} associated with this definition.
-   *
-   * @return the associated instance
-   */
   @Override
-  @NonNull
-  INSTANCE getInlineInstance();
+  public void addAll(Collection<?> items) {
+    int size = items.size();
+    if (size > 1) {
+      throw new IllegalStateException("Multiple values cannot be set for this singleton");
+    } else if (size == 1) {
+      add(ObjectUtils.notNull(items.iterator().next()));
+    }
+  }
+
+  @Nullable
+  @Override
+  public Object getValue() {
+    return object;
+  }
 }

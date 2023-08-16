@@ -26,37 +26,34 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.model.impl.IFeatureModelConstrained;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.IFeatureModelConstrained;
 
 import javax.xml.namespace.QName;
 
 public interface IAssemblyDefinition
     extends IFlagContainer, IModelContainer, IAssembly, IFeatureModelConstrained {
 
-  @Override
-  default IAssemblyDefinition getContainingDefinition() {
-    return this;
-  }
-
   /**
    * Check if the assembly is a top-level root assembly.
    *
-   * @return {@code true} if the assembly is a top-level root, or {@code false} otherwise
+   * @return {@code true} if the assembly is a top-level root, or {@code false}
+   *         otherwise
    */
   boolean isRoot();
 
   /**
    * Get the root name if this assembly is a top-level root.
    *
-   * @return the root name if this assembly is a top-level root, or {@code null} otherwise
+   * @return the root name if this assembly is a top-level root, or {@code null}
+   *         otherwise
    */
   String getRootName();
 
   /**
    * Get the XML qualified name to use in XML as the root element.
    *
-   * @return the root XML qualified name if this assembly is a top-level root, or {@code null}
-   *         otherwise
+   * @return the root XML qualified name if this assembly is a top-level root, or
+   *         {@code null} otherwise
    */
   default QName getRootXmlQName() {
     QName retval = null;
@@ -67,16 +64,36 @@ public interface IAssemblyDefinition
     return retval;
   }
 
-  @Override
-  IAssemblyInstance getInlineInstance();
-
   /**
    * Get the name used for the associated property in JSON/YAML.
    *
-   * @return the root JSON property name if this assembly is a top-level root, or {@code null}
-   *         otherwise
+   * @return the root JSON property name if this assembly is a top-level root, or
+   *         {@code null} otherwise
    */
   default String getRootJsonName() {
     return getRootName();
   }
+
+  @Override
+  default boolean isInline() {
+    // reasonable default
+    return false;
+  }
+
+  @Override
+  default IAssemblyInstance getInlineInstance() {
+    // reasonable default
+    return null;
+  }
+
+  @Override
+  default IAssemblyDefinition getOwningDefinition() {
+    return this;
+  }
+
+  @Override
+  default boolean isSimple() {
+    return IFlagContainer.super.isSimple() && getModelInstances().isEmpty();
+  }
+
 }

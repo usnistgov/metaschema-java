@@ -30,16 +30,18 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
-import gov.nist.secauto.metaschema.core.model.xml.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
+import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -58,8 +60,8 @@ class SimpleFieldProperty
   private final Lazy<ScalarFieldDefinition> definition;
 
   /**
-   * Construct a new bound flag instance based on a Java property. The name of the property is bound
-   * to the name of the instance.
+   * Construct a new bound flag instance based on a Java property. The name of the
+   * property is bound to the name of the instance.
    *
    * @param field
    *          the Java field to bind to
@@ -107,17 +109,12 @@ class SimpleFieldProperty
 
   @Override
   protected IDataTypeHandler newDataTypeHandler() {
-    return new JavaTypeAdapterDataTypeHandler(this);
+    return IDataTypeHandler.newDataTypeHandler(this);
   }
 
   @Override
   public boolean isInXmlWrapped() {
     return getFieldAnnotation().inXmlWrapped();
-  }
-
-  @Override
-  public boolean isSimple() {
-    return true;
   }
 
   protected Object getDefaultValue() {
@@ -134,7 +131,8 @@ class SimpleFieldProperty
     return getMaxOccurs() == 1 ? getDefaultValue() : getPropertyInfo().newPropertyCollector().getValue();
   }
 
-  private final class ScalarFieldDefinition implements IBoundFieldDefinition {
+  private final class ScalarFieldDefinition
+      implements IBoundFieldDefinition, IFeatureFlagContainer<IBoundFlagInstance> {
     private final Lazy<IValueConstrained> constraints;
 
     private ScalarFieldDefinition() {

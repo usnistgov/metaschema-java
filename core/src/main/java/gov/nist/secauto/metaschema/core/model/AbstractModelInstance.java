@@ -38,6 +38,6 @@ public abstract class AbstractModelInstance
 
   @Override
   public IAssemblyDefinition getContainingDefinition() {
-    return getParentContainer().getContainingDefinition();
+    return getParentContainer().getOwningDefinition();
   }
 }

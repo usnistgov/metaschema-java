@@ -24,45 +24,39 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.info;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+
+import java.util.function.Supplier;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
-/**
- * The class is used to "collect" items together to assign to the property's field. For fields with
- * a collection type, implementations of this class will handle managing the underlying collection.
- */
-public interface IPropertyCollector {
-  /**
-   * Add an item to the "collection", who's type depends on the property configuration.
-   *
-   * @param item
-   *          the item to add
-   * @throws IllegalStateException
-   *           if the item cannot be added due to a model inconsistency
-   */
-  void add(@NonNull Object item);
+abstract class AbstractModelPropertyInfo
+    implements IModelPropertyInfo {
 
-  /**
-   * Add a collection of item to the "collection", who's type depends on the property configuration.
-   *
-   * @param items
-   *          the items to add
-   * @throws IllegalStateException
-   *           if the item cannot be added due to a model inconsistency
-   */
-  void addAll(@NonNull Collection<?> items);
+  @NonNull
+  private final IBoundNamedModelInstance property;
+  @NonNull
+  private final Lazy<IDataTypeHandler> dataTypeHandler;
 
-  /**
-   * Get the current state of the "collection". For single valued "non-collections" this may return a
-   * {@code null} value. For any collection type, such as {@link List} or {@link Map}, this must
-   * return a non-{@code null} empty collection.
-   *
-   * @return the "collection" value or {@code null} for a single valued instance that is not defined
-   */
-  Object getValue();
+  public AbstractModelPropertyInfo(
+      @NonNull IBoundNamedModelInstance property,
+      @NonNull Supplier<IDataTypeHandler> dataTypeHandlerSupplier) {
+    this.property = ObjectUtils.requireNonNull(property, "property");
+    this.dataTypeHandler = ObjectUtils.notNull(Lazy.lazy(dataTypeHandlerSupplier));
+  }
+
+  @Override
+  public IBoundNamedModelInstance getProperty() {
+    return property;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public IDataTypeHandler getDataTypeHandler() {
+    return dataTypeHandler.get();
+  }
 }

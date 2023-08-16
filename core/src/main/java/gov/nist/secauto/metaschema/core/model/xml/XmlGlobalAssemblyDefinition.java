@@ -29,8 +29,10 @@ package gov.nist.secauto.metaschema.core.model.xml;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFeatureModelContainer;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
@@ -46,7 +48,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 @SuppressWarnings("PMD.CouplingBetweenObjects")
-class XmlGlobalAssemblyDefinition implements IAssemblyDefinition, IFeatureModelContainer {
+class XmlGlobalAssemblyDefinition
+    implements IAssemblyDefinition, IFeatureModelContainer, IFeatureFlagContainer<IFlagInstance> {
 
   @NonNull
   private final GlobalAssemblyDefinitionType xmlAssembly;
@@ -57,7 +60,8 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition, IFeatureModelC
   private final Lazy<AssemblyConstraintSupport> constraints;
 
   /**
-   * Constructs a new Metaschema Assembly definition from an XML representation bound to Java objects.
+   * Constructs a new Metaschema Assembly definition from an XML representation
+   * bound to Java objects.
    *
    * @param xmlAssembly
    *          the XML representation bound to Java objects
@@ -107,16 +111,6 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition, IFeatureModelC
   @Override
   public IModelConstrained getConstraintSupport() {
     return constraints.get();
-  }
-
-  @Override
-  public boolean isInline() {
-    return false;
-  }
-
-  @Override
-  public IAssemblyInstance getInlineInstance() {
-    return null;
   }
 
   @SuppressWarnings("null")

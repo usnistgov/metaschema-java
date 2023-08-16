@@ -32,7 +32,6 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
@@ -60,7 +59,8 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   private final Lazy<IValueConstrained> constraints;
 
   /**
-   * Constructs a new Metaschema flag definition from an XML representation bound to Java objects.
+   * Constructs a new Metaschema flag definition from an XML representation bound
+   * to Java objects.
    *
    * @param xmlFlag
    *          the XML representation bound to Java objects
@@ -112,8 +112,8 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   }
 
   /**
-   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
-   * first accessed.
+   * Used to generate the instances for the constraints in a lazy fashion when the
+   * constraints are first accessed.
    *
    * @return the constraints instance
    */
@@ -127,16 +127,6 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   @Override
   public ModuleScopeEnum getModuleScope() {
     return getXmlFlag().isSetScope() ? getXmlFlag().getScope() : IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
-  }
-
-  @Override
-  public boolean isInline() {
-    return false;
-  }
-
-  @Override
-  public IFlagInstance getInlineInstance() {
-    return null;
   }
 
   @SuppressWarnings("null")

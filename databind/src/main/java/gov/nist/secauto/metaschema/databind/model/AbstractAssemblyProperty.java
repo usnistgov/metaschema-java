@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
+
 import java.lang.reflect.Field;
 import java.util.Locale;
 
@@ -47,12 +49,7 @@ abstract class AbstractAssemblyProperty
       throw new IllegalStateException(
           String.format("Class '%s' is not bound", getPropertyInfo().getItemType().getClass().getName()));
     }
-    return new ClassDataTypeHandler(classBinding, this);
-  }
-
-  @Override
-  public IAssemblyClassBinding getContainingDefinition() {
-    return getParentClassBinding();
+    return IDataTypeHandler.newDataTypeHandler(classBinding);
   }
 
   @SuppressWarnings("null")

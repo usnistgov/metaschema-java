@@ -31,6 +31,9 @@ import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
+import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
+import gov.nist.secauto.metaschema.databind.model.info.IPropertyCollector;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -75,8 +78,8 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
   private final Lazy<IModelPropertyInfo> propertyInfo;
 
   /**
-   * Construct a new bound model instance based on a Java property. The name of
-   * the property is bound to the name of the instance.
+   * Construct a new bound model instance based on a Java property. The name of the property is bound
+   * to the name of the instance.
    *
    * @param field
    *          the field instance associated with this property
@@ -84,7 +87,9 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */
-  protected AbstractNamedModelProperty(@NonNull Field field, @NonNull IAssemblyClassBinding parentClassBinding) {
+  protected AbstractNamedModelProperty(
+      @NonNull Field field,
+      @NonNull IAssemblyClassBinding parentClassBinding) {
     super(parentClassBinding);
     this.field = ObjectUtils.requireNonNull(field, "field");
 
@@ -97,9 +102,10 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
     // GroupAs.class.getName()));
     // }
     this.groupAs = annotation == null ? SINGLETON_GROUP_AS : new SimpleGroupAs(annotation, parentClassBinding);
-    this.propertyInfo = Lazy.lazy(() -> newPropertyInfo(() -> newDataTypeHandler()));
+    this.propertyInfo = Lazy.lazy(() -> IModelPropertyInfo.newPropertyInfo(this, () -> newDataTypeHandler()));
   }
 
+  // REFACTOR: remove this method if possible
   protected abstract IDataTypeHandler newDataTypeHandler();
 
   @Override

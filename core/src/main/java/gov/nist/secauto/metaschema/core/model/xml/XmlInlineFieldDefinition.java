@@ -32,9 +32,11 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IInlineDefinition;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
@@ -66,7 +68,8 @@ class XmlInlineFieldDefinition
   private final InternalFieldDefinition fieldDefinition;
 
   /**
-   * Constructs a new Metaschema field definition from an XML representation bound to Java objects.
+   * Constructs a new Metaschema field definition from an XML representation bound
+   * to Java objects.
    *
    * @param xmlField
    *          the XML representation bound to Java objects
@@ -101,7 +104,6 @@ class XmlInlineFieldDefinition
     return getContainingDefinition().getContainingMetaschema();
   }
 
-  @SuppressWarnings("CPD-START")
   @Override
   public boolean isInXmlWrapped() {
     boolean retval;
@@ -178,7 +180,6 @@ class XmlInlineFieldDefinition
     return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
   }
 
-  @SuppressWarnings("CPD-END")
   @Override
   public Object getValue(@NonNull Object parentValue) {
     // there is no value
@@ -196,7 +197,9 @@ class XmlInlineFieldDefinition
    * The corresponding definition for the local flag instance.
    */
   private final class InternalFieldDefinition
-      implements IFieldDefinition, IInlineDefinition<XmlInlineFieldDefinition>, IFeatureFlagContainer {
+      implements IFieldDefinition,
+      IFeatureInlinedDefinition<IFieldInstance>,
+      IFeatureFlagContainer<IFlagInstance> {
     @Nullable
     private final Object defaultValue;
     private final Lazy<XmlFlagContainerSupport> flagContainer;
@@ -235,7 +238,8 @@ class XmlInlineFieldDefinition
     }
 
     @Override
-    public XmlInlineFieldDefinition getInlineInstance() {
+    @NonNull
+    public IFieldInstance getInlineInstance() {
       return XmlInlineFieldDefinition.this;
     }
 
@@ -285,7 +289,7 @@ class XmlInlineFieldDefinition
     public IFlagInstance getJsonValueKeyFlagInstance() {
       IFlagInstance retval = null;
       if (getXmlField().isSetJsonValueKeyFlag() && getXmlField().getJsonValueKeyFlag().isSetFlagRef()) {
-        retval = getFlagInstanceByName(getXmlField().getJsonValueKeyFlag().getFlagRef());
+        retval = getFlagInstanceByName(ObjectUtils.notNull(getXmlField().getJsonValueKeyFlag().getFlagRef()));
       }
       return retval;
     }
@@ -311,8 +315,8 @@ class XmlInlineFieldDefinition
     }
 
     /**
-     * Used to generate the instances for the constraints in a lazy fashion when the constraints are
-     * first accessed.
+     * Used to generate the instances for the constraints in a lazy fashion when the
+     * constraints are first accessed.
      *
      * @return the constraints instance
      */

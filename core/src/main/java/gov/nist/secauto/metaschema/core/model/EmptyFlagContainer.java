@@ -24,44 +24,28 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml;
+package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
-import java.util.Collection;
 import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IFeatureFlagContainer<F extends IFlagInstance> extends IFlagContainer {
-  /**
-   * Lazy initialize the flag instances associated with this definition.
-   *
-   * @return the flag container
-   */
+class EmptyFlagContainer<F extends IFlagInstance> implements IFlagContainerSupport<F> {
+  @SuppressWarnings("rawtypes")
   @NonNull
-  IFlagContainerSupport<F> getFlagContainer();
+  public static final EmptyFlagContainer EMPTY = new EmptyFlagContainer();
 
-  // REFACTOR: remove
-  @NonNull
-  default Map<String, ? extends F> getFlagInstanceMap() {
-    return getFlagContainer().getFlagInstanceMap();
+  @Override
+  public Map<String, ? extends F> getFlagInstanceMap() {
+    return CollectionUtil.emptyMap();
   }
 
   @Override
-  default F getFlagInstanceByName(String name) {
-    return getFlagContainer().getFlagInstanceMap().get(name);
+  public F getJsonKeyFlagInstance() {
+    // no JSON key
+    return null;
   }
 
-  @SuppressWarnings("null")
-  @Override
-  default Collection<? extends F> getFlagInstances() {
-    return getFlagContainer().getFlagInstanceMap().values();
-  }
-
-  @Override
-  default F getJsonKeyFlagInstance() {
-    return getFlagContainer().getJsonKeyFlagInstance();
-  }
 }

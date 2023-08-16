@@ -33,10 +33,10 @@ import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IDataTypeHandler;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IModelPropertyInfo;
 import gov.nist.secauto.metaschema.databind.model.IRootAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 
@@ -63,9 +63,8 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
   }
 
   /**
-   * Writes data in a bound object to XML. This assembly must be a root assembly
-   * for which a call to {@link IAssemblyClassBinding#isRoot()} will return
-   * {@code true}.
+   * Writes data in a bound object to XML. This assembly must be a root assembly for which a call to
+   * {@link IAssemblyClassBinding#isRoot()} will return {@code true}.
    *
    * @param targetDefinition
    *          the definition describing the root element data to write

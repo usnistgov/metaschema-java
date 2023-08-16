@@ -32,28 +32,30 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * This marker interface is used to identify a field or assembly instance that is a member of an
- * assembly's model.
+ * This marker interface is used to identify a field or assembly instance that
+ * is a member of an assembly's model.
  */
 public interface IModelInstance extends IInstance {
   @Override
   IModelContainer getParentContainer();
 
   /**
-   * Retrieve the Metaschema assembly definition on which the info element was declared.
+   * Retrieve the Metaschema assembly definition on which this instance is
+   * declared.
    *
-   * @return the Metaschema assembly definition on which the info element was declared
+   * @return the parent Metaschema assembly definition
    */
   @Override
   IAssemblyDefinition getContainingDefinition();
 
   /**
-   * Get the name used for the associated element wrapping a collection of elements in XML. This value
-   * is required when {@link #getXmlGroupAsBehavior()} = {@link XmlGroupAsBehavior#GROUPED}. This name
-   * will be the element name wrapping a collection of elements.
+   * Get the name used for the associated element wrapping a collection of
+   * elements in XML. This value is required when {@link #getXmlGroupAsBehavior()}
+   * = {@link XmlGroupAsBehavior#GROUPED}. This name will be the element name
+   * wrapping a collection of elements.
    *
-   * @return the groupAs QName or {@code null} if no name is configured, such as when
-   *         {@link #getMaxOccurs()} = 1.
+   * @return the groupAs QName or {@code null} if no name is configured, such as
+   *         when {@link #getMaxOccurs()} = 1.
    */
   @Nullable
   default QName getXmlGroupAsQName() {
@@ -70,27 +72,29 @@ public interface IModelInstance extends IInstance {
   }
 
   /**
-   * Get the minimum cardinality for this associated instance. This value must be less than or equal
-   * to the maximum cardinality returned by {@link #getMaxOccurs()}.
+   * Get the minimum cardinality for this associated instance. This value must be
+   * less than or equal to the maximum cardinality returned by
+   * {@link #getMaxOccurs()}.
    *
    * @return {@code 0} or a positive integer value
    */
   int getMinOccurs();
 
   /**
-   * Get the maximum cardinality for this associated instance. This value must be greater than or
-   * equal to the minimum cardinality returned by {@link #getMinOccurs()}, or {@code -1} if unbounded.
+   * Get the maximum cardinality for this associated instance. This value must be
+   * greater than or equal to the minimum cardinality returned by
+   * {@link #getMinOccurs()}, or {@code -1} if unbounded.
    *
    * @return a positive integer value or {@code -1} if unbounded
    */
   int getMaxOccurs();
 
   /**
-   * Get the name provided for grouping. An instance in Metaschema must have a group name if the
-   * instance has a cardinality greater than {@code 1}.
+   * Get the name provided for grouping. An instance in Metaschema must have a
+   * group name if the instance has a cardinality greater than {@code 1}.
    *
-   * @return the group-as name or {@code null} if no name is configured, such as when
-   *         {@link #getMaxOccurs()} = 1
+   * @return the group-as name or {@code null} if no name is configured, such as
+   *         when {@link #getMaxOccurs()} = 1
    */
   @Nullable
   String getGroupAsName();
@@ -104,8 +108,8 @@ public interface IModelInstance extends IInstance {
   String getGroupAsXmlNamespace();
 
   /**
-   * Gets the configured JSON group-as strategy. A JSON group-as strategy is only required when
-   * {@link #getMaxOccurs()} &gt; 1.
+   * Gets the configured JSON group-as strategy. A JSON group-as strategy is only
+   * required when {@link #getMaxOccurs()} &gt; 1.
    *
    * @return the JSON group-as strategy, or {@code JsonGroupAsBehavior#NONE} if
    *         {@link #getMaxOccurs()} = 1
@@ -114,11 +118,11 @@ public interface IModelInstance extends IInstance {
   JsonGroupAsBehavior getJsonGroupAsBehavior();
 
   /**
-   * Gets the configured XML group-as strategy. A XML group-as strategy is only required when
-   * {@link #getMaxOccurs()} &gt; 1.
+   * Gets the configured XML group-as strategy. A XML group-as strategy is only
+   * required when {@link #getMaxOccurs()} &gt; 1.
    *
-   * @return the JSON group-as strategy, or {@code XmlGroupAsBehavior#UNGROUPED} if
-   *         {@link #getMaxOccurs()} = 1
+   * @return the JSON group-as strategy, or {@code XmlGroupAsBehavior#UNGROUPED}
+   *         if {@link #getMaxOccurs()} = 1
    */
   @NonNull
   XmlGroupAsBehavior getXmlGroupAsBehavior();

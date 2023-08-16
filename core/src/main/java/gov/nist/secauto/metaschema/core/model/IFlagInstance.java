@@ -26,27 +26,28 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IFlagInstance extends INamedInstance, IFlag {
-  @Override
-  IFlagContainer getContainingDefinition();
 
   @Override
   IFlagContainer getParentContainer();
 
   @Override
   default String getXmlNamespace() {
-    return INamedInstance.super.getXmlNamespace();
+    // by default, flags do not have namespaces
+    return null;
   }
 
-  @SuppressWarnings("null")
   @NonNull
   @Override
   default QName getXmlQName() {
-    return INamedInstance.super.getXmlQName();
+    // flags always have a qname
+    return ObjectUtils.requireNonNull(INamedInstance.super.getXmlQName());
   }
 
   @Override
@@ -60,10 +61,12 @@ public interface IFlagInstance extends INamedInstance, IFlag {
   boolean isRequired();
 
   /**
-   * Determines if this flag's value is used as the property name for the JSON object that holds the
-   * remaining data based on this flag's containing definition.
+   * Determines if this flag's value is used as the property name for the JSON
+   * object that holds the remaining data based on this flag's containing
+   * definition.
    *
-   * @return {@code true} if this flag is used as a JSON key, or {@code false} otherwise
+   * @return {@code true} if this flag is used as a JSON key, or {@code false}
+   *         otherwise
    */
   default boolean isJsonKey() {
     IFlagInstance flagInstance = getContainingDefinition().getJsonKeyFlagInstance();
@@ -71,20 +74,16 @@ public interface IFlagInstance extends INamedInstance, IFlag {
   }
 
   /**
-   * Determines if this flag is used as a JSON "value key". A "value key" is a flag who's value is
-   * used as the property name for the containing objects value.
+   * Determines if this flag is used as a JSON "value key". A "value key" is a
+   * flag who's value is used as the property name for the containing objects
+   * value.
    *
-   * @return {@code true} if the flag is used as a JSON "value key", or {@code false} otherwise
+   * @return {@code true} if the flag is used as a JSON "value key", or
+   *         {@code false} otherwise
    */
   default boolean isJsonValueKey() {
-    boolean retval;
-    if (ModelType.FIELD.equals(getContainingDefinition().getModelType())) {
-      IFieldDefinition containingDefinition = (IFieldDefinition) getContainingDefinition();
-      IFlagInstance flagInstance = containingDefinition.getJsonValueKeyFlagInstance();
-      retval = this.equals(flagInstance);
-    } else {
-      retval = false;
-    }
-    return retval;
+    IFlagContainer containingDefinition = getContainingDefinition();
+    return containingDefinition instanceof IFieldDefinition
+        && this.equals(((IFieldDefinition) containingDefinition).getJsonValueKeyFlagInstance());
   }
 }

@@ -41,4 +41,10 @@ public abstract class AbstractInstance<P extends IContainer> implements IInstanc
   public P getParentContainer() {
     return parent;
   }
+
+  @Override
+  public IFlagContainer getContainingDefinition() {
+    return getParentContainer().getOwningDefinition();
+  }
+
 }

@@ -24,37 +24,52 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.core.model;
 
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class ListPropertyCollector
-    implements IPropertyCollector {
+public interface IModelContainerSupport<MI extends IModelInstance, NMI extends INamedModelInstance, FI extends IFieldInstance, AI extends IAssemblyInstance, CI extends IChoiceInstance> {
+
+  /**
+   * Get a listing of all model instances.
+   *
+   * @return the listing
+   */
   @NonNull
-  private final List<Object> collection;
+  List<? extends MI> getModelInstances();
 
-  public ListPropertyCollector() {
-    this.collection = new LinkedList<>();
-  }
-
-  @Override
-  public void add(Object item) {
-    assert item != null;
-    collection.add(item);
-  }
-
+  /**
+   * Get a mapping of all named model instances, mapped from their effective name to the instance.
+   *
+   * @return the mapping
+   */
   @NonNull
-  @Override
-  public List<?> getValue() {
-    return collection;
-  }
+  Map<String, ? extends NMI> getNamedModelInstanceMap();
 
-  @Override
-  public void addAll(Collection<? extends Object> items) {
-    collection.addAll(items);
-  }
+  /**
+   * Get a mapping of all field instances, mapped from their effective name to the instance.
+   *
+   * @return the mapping
+   */
+  @NonNull
+  Map<String, ? extends FI> getFieldInstanceMap();
+
+  /**
+   * Get a mapping of all assembly instances, mapped from their effective name to the instance.
+   *
+   * @return the mapping
+   */
+  @NonNull
+  Map<String, ? extends AI> getAssemblyInstanceMap();
+
+  /**
+   * Get a listing of all choice instances.
+   *
+   * @return the listing
+   */
+  @NonNull
+  List<? extends CI> getChoiceInstances();
 }

@@ -49,14 +49,12 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 class XmlFieldInstance
     extends AbstractFieldInstance {
-  // private static final Logger logger = LogManager.getLogger(XmlFieldInstance.class);
-
   @NonNull
   private final FieldReferenceType xmlField;
 
   /**
-   * Constructs a new Metaschema field instance definition from an XML representation bound to Java
-   * objects.
+   * Constructs a new Metaschema field instance definition from an XML
+   * representation bound to Java objects.
    *
    * @param xmlField
    *          the XML representation bound to Java objects
@@ -131,18 +129,8 @@ class XmlFieldInstance
   }
 
   @Override
-  public String getXmlNamespace() {
-    return getContainingDefinition().getContainingMetaschema().getXmlNamespace().toASCIIString();
-  }
-
-  @Override
   public String getGroupAsName() {
     return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : null;
-  }
-
-  @Override
-  public String getGroupAsXmlNamespace() {
-    return getContainingDefinition().getContainingMetaschema().getXmlNamespace().toASCIIString();
   }
 
   @Override

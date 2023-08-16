@@ -232,5 +232,4 @@ abstract class AbstractClassBinding implements IClassBinding {
       property.copyBoundObject(fromInstance, toInstance);
     }
   }
-
 }

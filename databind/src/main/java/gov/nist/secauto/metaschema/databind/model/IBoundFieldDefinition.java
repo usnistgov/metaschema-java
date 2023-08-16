@@ -28,11 +28,26 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundFieldDefinition extends IBoundModelDefinition, IFieldDefinition {
+public interface IBoundFieldDefinition extends IFieldDefinition {
 
   @Override
   @NonNull
   Object getFieldValue(@NonNull Object item);
+
+  @Override
+  default IBoundFieldDefinition getOwningDefinition() {
+    return this;
+  }
+
+  @Override
+  default Map<QName, Set<String>> getProperties() {
+    throw new UnsupportedOperationException();
+  }
 }

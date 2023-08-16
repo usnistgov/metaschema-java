@@ -53,14 +53,4 @@ public interface IFieldInstance extends INamedModelInstance, IField {
    * @return {@code true} if an XML wrapper is required, or {@code false} otherwise
    */
   boolean isInXmlWrapped();
-
-  /**
-   * Determines if the instance is a simple field value without flags, or if it has a complex
-   * structure (i.e, flags, model).
-   *
-   * @return {@code true} if the instance contains only a value, or {@code false} otherwise
-   */
-  default boolean isSimple() {
-    return getDefinition().isSimple();
-  }
 }

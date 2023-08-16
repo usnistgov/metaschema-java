@@ -24,22 +24,42 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.model.xml.IFeatureFlagContainer;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundModelDefinition extends IFeatureFlagContainer<IBoundFlagInstance> {
+public interface IFeatureFlagContainer<F extends IFlagInstance> extends IFlagContainer {
+  /**
+   * Lazy initialize the flag instances associated with this definition.
+   *
+   * @return the flag container
+   */
+  @NonNull
+  IFlagContainerSupport<F> getFlagContainer();
+
+  // REFACTOR: remove
+  @NonNull
+  default Map<String, ? extends F> getFlagInstanceMap() {
+    return getFlagContainer().getFlagInstanceMap();
+  }
 
   @Override
-  default @NonNull Map<QName, Set<String>> getProperties() {
-    // TODO: implement
-    throw new UnsupportedOperationException();
+  default F getFlagInstanceByName(String name) {
+    return getFlagContainer().getFlagInstanceMap().get(name);
+  }
+
+  @Override
+  default Collection<? extends F> getFlagInstances() {
+    return ObjectUtils.notNull(getFlagContainer().getFlagInstanceMap().values());
+  }
+
+  @Override
+  default F getJsonKeyFlagInstance() {
+    return getFlagContainer().getJsonKeyFlagInstance();
   }
 }

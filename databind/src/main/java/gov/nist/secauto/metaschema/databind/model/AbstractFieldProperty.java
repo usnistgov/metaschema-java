@@ -109,11 +109,6 @@ public abstract class AbstractFieldProperty
     return ModelUtil.resolveToMarkupMultiline(getFieldAnnotation().remarks());
   }
 
-  @Override
-  public IAssemblyClassBinding getContainingDefinition() {
-    return getParentClassBinding();
-  }
-
   @SuppressWarnings("null")
   @Override
   public String toCoordinates() {

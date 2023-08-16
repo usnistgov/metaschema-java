@@ -153,7 +153,7 @@ public class MetaschemaIndex {
     }
 
     private static boolean isChoiceSibling(@NonNull INamedInstance instance) {
-      IDefinition containingDefinition = instance.getContainingDefinition();
+      IDefinition containingDefinition = instance.getOwningDefinition();
       return containingDefinition instanceof IAssemblyDefinition
           && !((IAssemblyDefinition) containingDefinition).getChoiceInstances().isEmpty();
     }

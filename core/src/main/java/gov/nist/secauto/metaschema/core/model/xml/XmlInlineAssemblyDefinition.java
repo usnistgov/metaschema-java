@@ -30,9 +30,17 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IInlineDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureModelContainer;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
@@ -63,7 +71,8 @@ class XmlInlineAssemblyDefinition
   private final InternalAssemblyDefinition assemblyDefinition;
 
   /**
-   * Constructs a new Metaschema assembly definition from an XML representation bound to Java objects.
+   * Constructs a new Metaschema assembly definition from an XML representation
+   * bound to Java objects.
    *
    * @param xmlAssembly
    *          the XML representation bound to Java objects
@@ -171,7 +180,10 @@ class XmlInlineAssemblyDefinition
    */
   @SuppressWarnings("PMD.GodClass")
   private final class InternalAssemblyDefinition
-      implements IAssemblyDefinition, IInlineDefinition<XmlInlineAssemblyDefinition>, IFeatureModelContainer {
+      implements IAssemblyDefinition,
+      IFeatureInlinedDefinition<IAssemblyInstance>,
+      IFeatureModelContainer<IModelInstance, INamedModelInstance, IFieldInstance, IAssemblyInstance, IChoiceInstance>,
+      IFeatureFlagContainer<IFlagInstance> {
     private final Lazy<XmlFlagContainerSupport> flagContainer;
     private final Lazy<XmlModelContainerSupport> modelContainer;
     private final Lazy<IModelConstrained> constraints;
@@ -199,7 +211,8 @@ class XmlInlineAssemblyDefinition
     }
 
     @Override
-    public XmlInlineAssemblyDefinition getInlineInstance() {
+    @NonNull
+    public IAssemblyInstance getInlineInstance() {
       return XmlInlineAssemblyDefinition.this;
     }
 
@@ -242,6 +255,7 @@ class XmlInlineAssemblyDefinition
 
     @Override
     public String getRootName() {
+      // a local assembly is never a root
       return null;
     }
 

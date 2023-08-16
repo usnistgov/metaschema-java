@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.model;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,7 +41,8 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Wraps an {@link IAssemblyDefinition} that is a {@link IRootAssemblyDefinition}.
+ * Wraps an {@link IAssemblyDefinition} that is a
+ * {@link IRootAssemblyDefinition}.
  *
  * @param <T>
  *          the type of the wrapped definition
@@ -52,8 +54,8 @@ public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition>
   private final T rootDefinition;
 
   /**
-   * Construct a new wrapper that delgates method calls to the underlying definition implementing root
-   * semantics.
+   * Construct a new wrapper that delgates method calls to the underlying
+   * definition implementing root semantics.
    *
    * @param rootDefinition
    *          the definition to wrap
@@ -118,22 +120,9 @@ public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition>
     return true;
   }
 
-  @SuppressWarnings("null")
   @Override
   public String getRootName() {
-    return getRootDefinition().getRootName();
-  }
-
-  @Override
-  public boolean isInline() {
-    // always false, since this is a root
-    return false;
-  }
-
-  @Override
-  public IAssemblyInstance getInlineInstance() {
-    // always null, since this is a root
-    return null;
+    return ObjectUtils.requireNonNull(getRootDefinition().getRootName());
   }
 
   @Override

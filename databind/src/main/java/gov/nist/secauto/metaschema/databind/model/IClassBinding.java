@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 
@@ -35,7 +36,7 @@ import java.util.function.Predicate;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IClassBinding extends IBoundModelDefinition {
+public interface IClassBinding extends IFeatureFlagContainer<IBoundFlagInstance> {
   @NonNull
   IBindingContext getBindingContext();
 
@@ -67,8 +68,8 @@ public interface IClassBinding extends IBoundModelDefinition {
    */
   // REFACTOR: remove
   @NonNull
-  Map<String, ? extends IBoundNamedInstance>
-      getNamedInstances(@Nullable Predicate<IBoundFlagInstance> flagFilter);
+  Map<String, ? extends IBoundNamedInstance> getNamedInstances(
+      @Nullable Predicate<IBoundFlagInstance> flagFilter);
 
   /**
    * Create a deep copy of the provided bound object.
