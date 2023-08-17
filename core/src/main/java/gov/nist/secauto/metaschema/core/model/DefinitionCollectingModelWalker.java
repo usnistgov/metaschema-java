@@ -39,8 +39,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Supports walking a portion of a metaschema model collecting a set of definitions that match the
- * provided filter. For a definition to be collected, the filter must return {@code true}.
+ * Supports walking a portion of a metaschema model collecting a set of
+ * definitions that match the provided filter. For a definition to be collected,
+ * the filter must return {@code true}.
  */
 public abstract class DefinitionCollectingModelWalker
     extends ModelWalker<Void> {

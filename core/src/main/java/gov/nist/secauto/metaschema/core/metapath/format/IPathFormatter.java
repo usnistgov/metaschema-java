@@ -38,10 +38,11 @@ import java.util.stream.Collectors;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * This interface provides an implementation contract for all path formatters. When
- * {@link #format(IPathSegment)} is called on a formatter implementation, the formatter will render
- * the path segments based on the implemented path syntax. This allows a collection of path segments
- * to be rendered in different forms by swapping out the formatter used.
+ * This interface provides an implementation contract for all path formatters.
+ * When {@link #format(IPathSegment)} is called on a formatter implementation,
+ * the formatter will render the path segments based on the implemented path
+ * syntax. This allows a collection of path segments to be rendered in different
+ * forms by swapping out the formatter used.
  *
  * A path formatter is expected to be stateless and thus thread safe.
  */
@@ -53,9 +54,10 @@ public interface IPathFormatter {
   IPathFormatter METAPATH_PATH_FORMATER = new MetapathFormatter();
 
   /**
-   * Format the path represented by the provided path segment. The provided segment is expected to be
-   * the last node in this path. A call to {@link IPathSegment#getPathStream()} or
-   * {@link IPathSegment#getPath()} can be used to walk the path tree in descending order.
+   * Format the path represented by the provided path segment. The provided
+   * segment is expected to be the last node in this path. A call to
+   * {@link IPathSegment#getPathStream()} or {@link IPathSegment#getPath()} can be
+   * used to walk the path tree in descending order.
    *
    * @param segment
    *          The last segment in a sequence of path segments
@@ -122,7 +124,8 @@ public interface IPathFormatter {
   String formatDocument(@NonNull IDocumentNodeItem document);
 
   /**
-   * This visitor callback is used to format an individual metaschema path segment.
+   * This visitor callback is used to format an individual metaschema path
+   * segment.
    *
    * @param metaschema
    *          the node to format

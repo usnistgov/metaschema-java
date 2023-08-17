@@ -95,6 +95,7 @@ public class AssemblyBuilder
     return retval;
   }
 
+  @SuppressWarnings("null")
   @NonNull
   public IAssemblyDefinition toDefinition() {
     validate();

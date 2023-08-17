@@ -33,8 +33,8 @@ import java.net.URI;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides information about an individual finding that is the result of a completed content
- * validation.
+ * Provides information about an individual finding that is the result of a
+ * completed content validation.
  */
 public interface IValidationFinding {
   /**
@@ -78,7 +78,8 @@ public interface IValidationFinding {
   /**
    * Get the exception associated with the finding.
    *
-   * @return the {@link Throwable} or {@code null} if no thowable is associated with the finding
+   * @return the {@link Throwable} or {@code null} if no thowable is associated
+   *         with the finding
    */
   Throwable getCause();
 }

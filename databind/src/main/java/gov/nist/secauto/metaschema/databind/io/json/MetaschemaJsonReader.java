@@ -136,17 +136,22 @@ public class MetaschemaJsonReader
    *
    * @param <T>
    *          the Java type of the resulting bound instance
-   * @param definition
-   *          the root definition to parse
+   * @param targetDefinition
+   *          the definition describing the root element data to parse
    * @return the bound object instance representing the JSON object
    * @throws IOException
    *           if an error occurred while parsing the JSON
    */
   @SuppressWarnings({
-      "PMD.CyclomaticComplexity" // acceptable
+      "PMD.CyclomaticComplexity", "PMD.NPathComplexity" // acceptable
   })
   @Nullable
-  public <T> T read(@NonNull IAssemblyClassBinding definition) throws IOException {
+  public <T> T read(@NonNull IAssemblyClassBinding targetDefinition) throws IOException {
+    if (!targetDefinition.isRoot()) {
+      throw new UnsupportedOperationException(
+          String.format("The assembly '%s' is not a root assembly.", targetDefinition.getBoundClass().getName()));
+    }
+
     boolean objectWrapper = false;
     if (parser.currentToken() == null) {
       parser.nextToken();
@@ -158,7 +163,7 @@ public class MetaschemaJsonReader
       objectWrapper = true;
     }
 
-    String rootFieldName = definition.getRootJsonName();
+    String rootFieldName = targetDefinition.getRootJsonName();
     JsonToken token;
     Object instance = null;
     while (!(JsonToken.END_OBJECT.equals(token = parser.currentToken()) || token == null)) {
@@ -173,7 +178,7 @@ public class MetaschemaJsonReader
         JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
 
         instance = readDefinitionValue(
-            definition,
+            targetDefinition,
             null,
             false);
 
@@ -184,7 +189,7 @@ public class MetaschemaJsonReader
         break;
       }
 
-      if (!getProblemHandler().handleUnknownProperty(definition, instance, fieldName, this)) {
+      if (!getProblemHandler().handleUnknownProperty(targetDefinition, instance, fieldName, this)) {
         LOGGER.warn("Skipping unhandled top-level JSON field '{}'.", fieldName);
         JsonUtil.skipNextValue(parser);
       }
@@ -210,17 +215,17 @@ public class MetaschemaJsonReader
    * {@code true} is returned after parsing the value. Otherwise, {@code false} is
    * returned to indicate the property was not parsed.
    *
-   * @param instance
+   * @param targetInstance
    *          the instance to parse data for
    * @param parentObject
    *          the Java object that data parsed by this method will be stored in
    * @return {@code true} if the instance was parsed, or {@code false} if the data
    *         did not contain information for this instance
    * @throws IOException
-   *           if an error occurred while parsing the input
+   *           if an error occurred while parsing the data
    */
   protected boolean readInstance(
-      @NonNull IBoundNamedInstance instance,
+      @NonNull IBoundNamedInstance targetInstance,
       @NonNull Object parentObject) throws IOException {
     // the parser's current token should be the JSON field name
     JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
@@ -230,15 +235,15 @@ public class MetaschemaJsonReader
       LOGGER.trace("reading property {}", propertyName);
     }
 
-    boolean handled = instance.getJsonName().equals(propertyName);
+    boolean handled = targetInstance.getJsonName().equals(propertyName);
     if (handled) {
       // advance past the field name
       parser.nextToken();
 
-      Object value = readInstanceValue(instance, parentObject);
+      Object value = readInstanceValue(targetInstance, parentObject);
 
       if (value != null) {
-        instance.setValue(parentObject, value);
+        targetInstance.setValue(parentObject, value);
       }
     }
 

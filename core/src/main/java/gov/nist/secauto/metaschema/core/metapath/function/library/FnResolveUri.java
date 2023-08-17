@@ -116,8 +116,8 @@ public final class FnResolveUri {
   }
 
   /**
-   * Implements the two argument version of the XPath 3.1 function
-   * <a href= "https://www.w3.org/TR/xpath-functions-31/#func-resolve-uri">resolve-uri</a>.
+   * Implements the two argument version of the XPath 3.1 function <a href=
+   * "https://www.w3.org/TR/xpath-functions-31/#func-resolve-uri">resolve-uri</a>.
    *
    * @param function
    *          the function definition
@@ -127,8 +127,8 @@ public final class FnResolveUri {
    *          the evaluation context
    * @param focus
    *          the current focus item
-   * @return a sequence containing the resolved URI or and empty sequence if either the base or
-   *         relative URI is {@code null}
+   * @return a sequence containing the resolved URI or and empty sequence if
+   *         either the base or relative URI is {@code null}
    */
   @SuppressWarnings("PMD.UnusedPrivateMethod") // used in lambda
   @NonNull
@@ -170,7 +170,8 @@ public final class FnResolveUri {
    *          the relative URI to resolve
    * @param base
    *          the base URI to resolve against
-   * @return the resolved URI or {@code null} if the {@code relative} URI in {@code null}
+   * @return the resolved URI or {@code null} if the {@code relative} URI in
+   *         {@code null}
    */
   @Nullable
   public static IAnyUriItem fnResolveUri(@Nullable IStringItem relative, @NonNull IAnyUriItem base) {
@@ -186,7 +187,8 @@ public final class FnResolveUri {
    *          the relative URI to resolve
    * @param base
    *          the base URI to resolve against
-   * @return the resolved URI or {@code null} if the {@code relative} URI in {@code null}
+   * @return the resolved URI or {@code null} if the {@code relative} URI in
+   *         {@code null}
    */
   @Nullable
   public static IAnyUriItem fnResolveUri(@Nullable IAnyUriItem relative, @NonNull IAnyUriItem base) {

@@ -37,7 +37,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface IJsonProblemHandler extends IProblemHandler {
 
   /**
-   * Callback used to handle a JSON property that is unknown to the model being parsed.
+   * Callback used to handle a JSON property that is unknown to the model being
+   * parsed.
    *
    * @param classBinding
    *          the bound class currently describing the data being parsed
@@ -47,7 +48,8 @@ public interface IJsonProblemHandler extends IProblemHandler {
    *          the unknown JSON field name
    * @param parsingContext
    *          the JSON parsing context used for parsing
-   * @return {@code true} if the attribute was handled by this method, or {@code false} otherwise
+   * @return {@code true} if the attribute was handled by this method, or
+   *         {@code false} otherwise
    * @throws IOException
    *           if an error occurred while handling the unrecognized data
    */

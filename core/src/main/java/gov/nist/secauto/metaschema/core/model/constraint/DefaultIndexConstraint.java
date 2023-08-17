@@ -54,7 +54,8 @@ public final class DefaultIndexConstraint
    * @param formalName
    *          the constraint's formal name or {@code null} if not provided
    * @param description
-   *          the constraint's semantic description or {@code null} if not provided
+   *          the constraint's semantic description or {@code null} if not
+   *          provided
    * @param source
    *          information about the constraint source
    * @param level

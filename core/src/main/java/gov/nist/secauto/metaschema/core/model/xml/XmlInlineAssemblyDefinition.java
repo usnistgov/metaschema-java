@@ -87,6 +87,15 @@ class XmlInlineAssemblyDefinition
     this.assemblyDefinition = new InternalAssemblyDefinition();
   }
 
+  @Override
+  public InternalAssemblyDefinition getDefinition() {
+    return assemblyDefinition;
+  }
+
+  // ----------------------------------------
+  // - Start Annotation driven code - CPD-OFF
+  // ----------------------------------------
+
   /**
    * Get the underlying XML model.
    *
@@ -94,11 +103,6 @@ class XmlInlineAssemblyDefinition
    */
   protected InlineAssemblyDefinitionType getXmlAssembly() {
     return xmlAssembly;
-  }
-
-  @Override
-  public InternalAssemblyDefinition getDefinition() {
-    return assemblyDefinition;
   }
 
   @Override
@@ -123,12 +127,6 @@ class XmlInlineAssemblyDefinition
   @Override
   public String getName() {
     return getXmlAssembly().getName();
-  }
-
-  @Override
-  public String getUseName() {
-    // an inline definition doesn't have a use name
-    return null;
   }
 
   @Override
@@ -160,6 +158,16 @@ class XmlInlineAssemblyDefinition
   @Override
   public MarkupMultiline getRemarks() {
     return getXmlAssembly().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getRemarks()) : null;
+  }
+
+  // --------------------------------------
+  // - End Annotation driven code - CPD-ON
+  // --------------------------------------
+
+  @Override
+  public String getUseName() {
+    // an inline definition doesn't have a use name
+    return null;
   }
 
   @Override

@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.core.model.xml;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.metapath.MetapathException;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.constraint.DefaultAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.DefaultCardinalityConstraint;
@@ -71,7 +70,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.impl.values.XmlValueNotSupportedException;
 
 import java.math.BigInteger;
 import java.util.LinkedList;
@@ -85,25 +83,17 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides support for parsing and maintaining a set of Metaschema constraints. Constraints are
- * parsed from XML.
+ * Provides support for parsing and maintaining a set of Metaschema constraints.
+ * Constraints are parsed from XML.
  */
 @SuppressWarnings("PMD.CouplingBetweenObjects")
-class AssemblyConstraintSupport implements IModelConstrained {
+class AssemblyConstraintSupport
+    extends ValueConstraintSupport
+    implements IModelConstrained {
   @NonNull
   private static final String PATH = "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
       + "$this/m:allowed-values|$this/m:index|$this/m:index-has-key|$this/m:is-unique|"
       + "$this/m:has-cardinality|$this/m:matches|$this/m:expect";
-  @NonNull
-  private final List<IConstraint> constraints = new LinkedList<>();
-  @NonNull
-  private final List<IAllowedValuesConstraint> allowedValuesConstraints = new LinkedList<>();
-  @NonNull
-  private final List<IMatchesConstraint> matchesConstraints = new LinkedList<>();
-  @NonNull
-  private final List<IIndexHasKeyConstraint> indexHasKeyConstraints = new LinkedList<>();
-  @NonNull
-  private final List<IExpectConstraint> expectConstraints = new LinkedList<>();
   @NonNull
   private final List<IIndexConstraint> indexConstraints = new LinkedList<>();
   @NonNull
@@ -139,83 +129,53 @@ class AssemblyConstraintSupport implements IModelConstrained {
       @NonNull DefineAssemblyConstraintsType xmlConstraints,
       @NonNull ISource source) {
     try (XmlCursor cursor = xmlConstraints.newCursor()) {
-      cursor.selectPath(PATH);
-
-      while (cursor.toNextSelection()) {
-        XmlObject obj = cursor.getObject();
-        if (obj instanceof ScopedAllowedValuesType) {
-          DefaultAllowedValuesConstraint constraint
-              = ModelFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj, source);
-          addConstraint(constraint);
-        } else if (obj instanceof ScopedIndexConstraintType) {
-          DefaultIndexConstraint constraint
-              = ModelFactory.newIndexConstraint((ScopedIndexConstraintType) obj, source);
-          addConstraint(constraint);
-        } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
-          DefaultIndexHasKeyConstraint constraint
-              = ModelFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj, source);
-          addConstraint(constraint);
-        } else if (obj instanceof ScopedKeyConstraintType) {
-          DefaultUniqueConstraint constraint
-              = ModelFactory.newUniqueConstraint((ScopedKeyConstraintType) obj, source);
-          addConstraint(constraint);
-        } else if (obj instanceof HasCardinalityConstraintType) {
-          DefaultCardinalityConstraint constraint
-              = ModelFactory.newCardinalityConstraint((HasCardinalityConstraintType) obj, source);
-          addConstraint(constraint);
-        } else if (obj instanceof ScopedMatchesConstraintType) {
-          DefaultMatchesConstraint constraint
-              = ModelFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj, source);
-          addConstraint(constraint);
-        } else if (obj instanceof ScopedExpectConstraintType) {
-          DefaultExpectConstraint constraint
-              = ModelFactory.newExpectConstraint((ScopedExpectConstraintType) obj, source);
-          addConstraint(constraint);
-        }
-      }
-    } catch (MetapathException | XmlValueNotSupportedException ex) {
-      if (ex.getCause() instanceof MetapathException) {
-        throw new MetapathException(
-            String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()),
-            ex);
-      }
-      throw ex;
+      assert cursor != null;
+      parse(source, cursor, PATH);
     }
   }
 
   @Override
-  public List<IConstraint> getConstraints() {
-    synchronized (this) {
-      return constraints;
+  protected boolean parseXmlObject(
+      @NonNull ISource source,
+      @NonNull XmlObject obj) {
+    boolean handled = false;
+    if (obj instanceof ScopedAllowedValuesType) {
+      DefaultAllowedValuesConstraint constraint
+          = ModelFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj, source);
+      addConstraint(constraint);
+      handled = true;
+    } else if (obj instanceof ScopedIndexConstraintType) {
+      DefaultIndexConstraint constraint
+          = ModelFactory.newIndexConstraint((ScopedIndexConstraintType) obj, source);
+      addConstraint(constraint);
+      handled = true;
+    } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
+      DefaultIndexHasKeyConstraint constraint
+          = ModelFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj, source);
+      addConstraint(constraint);
+      handled = true;
+    } else if (obj instanceof ScopedKeyConstraintType) {
+      DefaultUniqueConstraint constraint
+          = ModelFactory.newUniqueConstraint((ScopedKeyConstraintType) obj, source);
+      addConstraint(constraint);
+      handled = true;
+    } else if (obj instanceof HasCardinalityConstraintType) {
+      DefaultCardinalityConstraint constraint
+          = ModelFactory.newCardinalityConstraint((HasCardinalityConstraintType) obj, source);
+      addConstraint(constraint);
+      handled = true;
+    } else if (obj instanceof ScopedMatchesConstraintType) {
+      DefaultMatchesConstraint constraint
+          = ModelFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj, source);
+      addConstraint(constraint);
+      handled = true;
+    } else if (obj instanceof ScopedExpectConstraintType) {
+      DefaultExpectConstraint constraint
+          = ModelFactory.newExpectConstraint((ScopedExpectConstraintType) obj, source);
+      addConstraint(constraint);
+      handled = true;
     }
-  }
-
-  @Override
-  public List<IAllowedValuesConstraint> getAllowedValuesConstraints() {
-    synchronized (this) {
-      return allowedValuesConstraints;
-    }
-  }
-
-  @Override
-  public List<IMatchesConstraint> getMatchesConstraints() {
-    synchronized (this) {
-      return matchesConstraints;
-    }
-  }
-
-  @Override
-  public List<IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-    synchronized (this) {
-      return indexHasKeyConstraints;
-    }
-  }
-
-  @Override
-  public List<IExpectConstraint> getExpectConstraints() {
-    synchronized (this) {
-      return expectConstraints;
-    }
+    return handled;
   }
 
   @Override
@@ -240,41 +200,9 @@ class AssemblyConstraintSupport implements IModelConstrained {
   }
 
   @Override
-  public final void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
-    synchronized (this) {
-      constraints.add(constraint);
-      allowedValuesConstraints.add(constraint);
-    }
-  }
-
-  @Override
-  public final void addConstraint(@NonNull IMatchesConstraint constraint) {
-    synchronized (this) {
-      constraints.add(constraint);
-      matchesConstraints.add(constraint);
-    }
-  }
-
-  @Override
-  public final void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
-    synchronized (this) {
-      constraints.add(constraint);
-      indexHasKeyConstraints.add(constraint);
-    }
-  }
-
-  @Override
-  public final void addConstraint(@NonNull IExpectConstraint constraint) {
-    synchronized (this) {
-      constraints.add(constraint);
-      expectConstraints.add(constraint);
-    }
-  }
-
-  @Override
   public final void addConstraint(@NonNull IIndexConstraint constraint) {
     synchronized (this) {
-      constraints.add(constraint);
+      getConstraints().add(constraint);
       indexConstraints.add(constraint);
     }
   }
@@ -282,7 +210,7 @@ class AssemblyConstraintSupport implements IModelConstrained {
   @Override
   public final void addConstraint(@NonNull IUniqueConstraint constraint) {
     synchronized (this) {
-      constraints.add(constraint);
+      getConstraints().add(constraint);
       uniqueConstraints.add(constraint);
     }
   }
@@ -290,7 +218,7 @@ class AssemblyConstraintSupport implements IModelConstrained {
   @Override
   public final void addConstraint(@NonNull ICardinalityConstraint constraint) {
     synchronized (this) {
-      constraints.add(constraint);
+      getConstraints().add(constraint);
       cardinalityConstraints.add(constraint);
     }
   }

@@ -103,7 +103,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   }
 
   /**
-   * Generate a message suitable for logging that describes the provided {@link XMLEvent}.
+   * Generate a message suitable for logging that describes the provided
+   * {@link XMLEvent}.
    *
    * @param xmlEvent
    *          the event to generate the message for
@@ -155,7 +156,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   }
 
   /**
-   * Generates a string containing the current event and location of the stream reader.
+   * Generates a string containing the current event and location of the stream
+   * reader.
    *
    * @param reader
    *          the stream reader
@@ -212,7 +214,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    *
    * @param event
    *          the event to get the {@link QName} for
-   * @return the name of the node or {@code null} if the event is not a start or end element
+   * @return the name of the node or {@code null} if the event is not a start or
+   *         end element
    */
   @Nullable
   public static QName toQName(@NonNull XMLEvent event) {
@@ -240,11 +243,12 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   }
 
   /**
-   * Get the event name of the {@code eventType}, which is one of the types defined by
-   * {@link XMLStreamConstants}.
+   * Get the event name of the {@code eventType}, which is one of the types
+   * defined by {@link XMLStreamConstants}.
    *
    * @param eventType
-   *          the event constant to get the event name for as defined by {@link XMLStreamConstants}
+   *          the event constant to get the event name for as defined by
+   *          {@link XMLStreamConstants}
    * @return the event name
    */
   @NonNull
@@ -257,14 +261,15 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   }
 
   /**
-   * Advance through XMLEvents until the event type identified by {@code eventType} is reached or the
-   * end of stream is found.
+   * Advance through XMLEvents until the event type identified by
+   * {@code eventType} is reached or the end of stream is found.
    *
    * @param reader
    *          the event reader to advance
    * @param eventType
    *          the event type to stop on as defined by {@link XMLStreamConstants}
-   * @return the next event of the specified type or {@code null} if the end of stream is reached
+   * @return the next event of the specified type or {@code null} if the end of
+   *         stream is reached
    * @throws XMLStreamException
    *           if an error occurred while advancing the stream
    */
@@ -294,8 +299,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    *
    * @param reader
    *          the event reader to advance
-   * @return the last processing instruction event or the reader's next event if no processing
-   *         instruction was found
+   * @return the last processing instruction event or the reader's next event if
+   *         no processing instruction was found
    * @throws XMLStreamException
    *           if an error occurred while advancing the stream
    */
@@ -313,8 +318,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    *
    * @param reader
    *          the event reader to advance
-   * @return the last character event containing whitespace or the reader's next event if no character
-   *         event was found
+   * @return the last character event containing whitespace or the reader's next
+   *         event if no character event was found
    * @throws XMLStreamException
    *           if an error occurred while advancing the stream
    */
@@ -335,8 +340,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   }
 
   /**
-   * Determine if the {@code event} is an end element whose name matches the provided
-   * {@code expectedQName}.
+   * Determine if the {@code event} is an end element whose name matches the
+   * provided {@code expectedQName}.
    *
    * @param event
    *          the event
@@ -363,14 +368,15 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   }
 
   /**
-   * Determine if the {@code event} is a start element whose name matches the provided
-   * {@code expectedQName}.
+   * Determine if the {@code event} is a start element whose name matches the
+   * provided {@code expectedQName}.
    *
    * @param event
    *          the event
    * @param expectedQName
    *          the expected element name
-   * @return {@code true} if the next event is a start element that matches the {@code expectedQName}
+   * @return {@code true} if the next event is a start element that matches the
+   *         {@code expectedQName}
    * @throws XMLStreamException
    *           if an error occurred while looking at the next event
    */
@@ -381,8 +387,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   }
 
   /**
-   * Consume the next event from {@code reader} and assert that this event is of the type identified
-   * by {@code presumedEventType}.
+   * Consume the next event from {@code reader} and assert that this event is of
+   * the type identified by {@code presumedEventType}.
    *
    * @param reader
    *          the event reader
@@ -398,8 +404,9 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   }
 
   /**
-   * Consume the next event from {@code reader} and assert that this event is of the type identified
-   * by {@code presumedEventType} and has the name identified by {@code presumedName}.
+   * Consume the next event from {@code reader} and assert that this event is of
+   * the type identified by {@code presumedEventType} and has the name identified
+   * by {@code presumedName}.
    *
    * @param reader
    *          the event reader
@@ -449,7 +456,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
 
   /**
    * Assert that the next event from {@code reader} is of the type identified by
-   * {@code presumedEventType} and has the name identified by {@code presumedName}.
+   * {@code presumedEventType} and has the name identified by
+   * {@code presumedName}.
    *
    * @param reader
    *          the event reader
@@ -522,8 +530,9 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    *          the event reader
    * @param events
    *          the events to skip
-   * @return the next non-mataching event returned by {@link XMLEventReader2#peek()}, or {@code null}
-   *         if there was no next event
+   * @return the next non-mataching event returned by
+   *         {@link XMLEventReader2#peek()}, or {@code null} if there was no next
+   *         event
    * @throws XMLStreamException
    *           if an error occurred while reading
    */

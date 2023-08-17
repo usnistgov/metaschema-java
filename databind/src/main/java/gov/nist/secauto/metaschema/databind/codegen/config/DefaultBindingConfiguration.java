@@ -73,7 +73,8 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
    *
    * @param definition
    *          the definition to get the config for
-   * @return the binding configuration or {@code null} if there is not configuration
+   * @return the binding configuration or {@code null} if there is not
+   *         configuration
    */
   @Nullable
   public IDefinitionBindingConfiguration
@@ -133,16 +134,16 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   }
 
   /**
-   * Binds an XML namespace, which is normally associated with one or more Metaschema, with a provided
-   * Java package name.
+   * Binds an XML namespace, which is normally associated with one or more
+   * Metaschema, with a provided Java package name.
    *
    * @param namespace
    *          an XML namespace URI
    * @param packageName
    *          the package name to associate with the namespace
    * @throws IllegalStateException
-   *           if the binding configuration is changing a previously changed namespace to package
-   *           binding
+   *           if the binding configuration is changing a previously changed
+   *           namespace to package binding
    */
   public void addModelBindingConfig(String namespace, String packageName) {
     if (namespaceToPackageNameMap.containsKey(namespace)) {
@@ -158,10 +159,11 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   }
 
   /**
-   * Based on the current binding configuration, generate a Java package name for the provided
-   * namespace. If the namespace is already mapped, such as through the use of
-   * {@link #addModelBindingConfig(String, String)}, then the provided package name will be used. If
-   * the namespace is not mapped, then the namespace URI will be translated into a Java package name.
+   * Based on the current binding configuration, generate a Java package name for
+   * the provided namespace. If the namespace is already mapped, such as through
+   * the use of {@link #addModelBindingConfig(String, String)}, then the provided
+   * package name will be used. If the namespace is not mapped, then the namespace
+   * URI will be translated into a Java package name.
    *
    * @param namespace
    *          the namespace to generate a Java package name for
@@ -181,7 +183,8 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
    *
    * @param metaschema
    *          the Metaschema
-   * @return the configuration for the Metaschema or {@code null} if there is no configuration
+   * @return the configuration for the Metaschema or {@code null} if there is no
+   *         configuration
    */
   protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(@NonNull IMetaschema metaschema) {
     String metaschemaUri = ObjectUtils.notNull(metaschema.getLocation().toString());
@@ -190,11 +193,13 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   }
 
   /**
-   * Get the binding configuration for the Metaschema located at the provided {@code metaschemaUri}.
+   * Get the binding configuration for the Metaschema located at the provided
+   * {@code metaschemaUri}.
    *
    * @param metaschemaUri
    *          the location of the Metaschema
-   * @return the configuration for the Metaschema or {@code null} if there is no configuration
+   * @return the configuration for the Metaschema or {@code null} if there is no
+   *         configuration
    */
   @Nullable
   protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(@NonNull String metaschemaUri) {
@@ -202,14 +207,15 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   }
 
   /**
-   * Set the binding configuration for the Metaschema located at the provided {@code metaschemaUri}.
+   * Set the binding configuration for the Metaschema located at the provided
+   * {@code metaschemaUri}.
    *
    * @param metaschemaUri
    *          the location of the Metaschema
    * @param config
    *          the Metaschema binding configuration
-   * @return the old configuration for the Metaschema or {@code null} if there was no previous
-   *         configuration
+   * @return the old configuration for the Metaschema or {@code null} if there was
+   *         no previous configuration
    */
   public MetaschemaBindingConfiguration addMetaschemaBindingConfiguration(@NonNull String metaschemaUri,
       @NonNull MetaschemaBindingConfiguration config) {
@@ -348,11 +354,13 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
     }
 
     /**
-     * Get the binding configuration for the {@link IAssemblyDefinition} with the provided {@code name}.
+     * Get the binding configuration for the {@link IAssemblyDefinition} with the
+     * provided {@code name}.
      *
      * @param name
      *          the definition name
-     * @return the definition's binding configuration or {@code null} if no configuration is provided
+     * @return the definition's binding configuration or {@code null} if no
+     *         configuration is provided
      */
     @Nullable
     public IDefinitionBindingConfiguration getAssemblyDefinitionBindingConfig(@NonNull String name) {
@@ -360,11 +368,13 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
     }
 
     /**
-     * Get the binding configuration for the {@link IFieldDefinition} with the provided {@code name}.
+     * Get the binding configuration for the {@link IFieldDefinition} with the
+     * provided {@code name}.
      *
      * @param name
      *          the definition name
-     * @return the definition's binding configuration or {@code null} if no configuration is provided
+     * @return the definition's binding configuration or {@code null} if no
+     *         configuration is provided
      */
     @Nullable
     public IDefinitionBindingConfiguration getFieldDefinitionBindingConfig(@NonNull String name) {
@@ -372,14 +382,15 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
     }
 
     /**
-     * Set the binding configuration for the {@link IAssemblyDefinition} with the provided {@code name}.
+     * Set the binding configuration for the {@link IAssemblyDefinition} with the
+     * provided {@code name}.
      *
      * @param name
      *          the definition name
      * @param config
      *          the new binding configuration for the definition
-     * @return the definition's old binding configuration or {@code null} if no configuration was
-     *         previously provided
+     * @return the definition's old binding configuration or {@code null} if no
+     *         configuration was previously provided
      */
     @Nullable
     public IDefinitionBindingConfiguration addAssemblyDefinitionBindingConfig(@NonNull String name,
@@ -388,14 +399,15 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
     }
 
     /**
-     * Set the binding configuration for the {@link IFieldDefinition} with the provided {@code name}.
+     * Set the binding configuration for the {@link IFieldDefinition} with the
+     * provided {@code name}.
      *
      * @param name
      *          the definition name
      * @param config
      *          the new binding configuration for the definition
-     * @return the definition's old binding configuration or {@code null} if no configuration was
-     *         previously provided
+     * @return the definition's old binding configuration or {@code null} if no
+     *         configuration was previously provided
      */
     @Nullable
     public IDefinitionBindingConfiguration addFieldDefinitionBindingConfig(@NonNull String name,

@@ -32,8 +32,8 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * This interface provides an entry point for performing validations over Metapath items associated
- * with a Metaschema model.
+ * This interface provides an entry point for performing validations over
+ * Metapath items associated with a Metaschema model.
  */
 public interface IConstraintValidator {
   /**
@@ -42,7 +42,8 @@ public interface IConstraintValidator {
    * @param item
    *          the item to validate
    * @throws MetapathException
-   *           if an error occurred while evaluating a Metapath used in a constraint
+   *           if an error occurred while evaluating a Metapath used in a
+   *           constraint
    */
   void validate(@NonNull INodeItem item);
 
@@ -50,7 +51,8 @@ public interface IConstraintValidator {
    * Complete any validations that require full analysis of the content model.
    *
    * @throws MetapathException
-   *           if an error occurred while evaluating a Metapath used in a constraint
+   *           if an error occurred while evaluating a Metapath used in a
+   *           constraint
    */
   void finalizeValidation();
 }

@@ -41,7 +41,8 @@ class Examples { // NOPMD
   // @SuppressWarnings("PMD")
   // @Test
   // void testLoadJson() throws FileNotFoundException, IOException {
-  // // get the binding context instance, which manages Metaschema-to-object binding information
+  // // get the binding context instance, which manages Metaschema-to-object
+  // binding information
   // IBindingContext bindingContext = IBindingContext.instance();
   //
   // // create a loader which is used to parse the content
@@ -57,7 +58,8 @@ class Examples { // NOPMD
   //
   // @Test
   // void test() throws FileNotFoundException, IOException {
-  // // get the binding context instance, which manages Metaschema-to-object binding information
+  // // get the binding context instance, which manages Metaschema-to-object
+  // binding information
   // IBindingContext bindingContext = IBindingContext.instance();
   //
   // // create a loader which is used to parse the content
@@ -70,7 +72,8 @@ class Examples { // NOPMD
   // File("src/test/resources/test-content/bound-class-simple.json"));
   //
   // // create a serializer to write the object
-  // ISerializer<Object> serializer = bindingContext.newSerializer(Format.XML, Object.class);
+  // ISerializer<Object> serializer = bindingContext.newSerializer(Format.XML,
+  // Object.class);
   // serializer.serialize(object, new File("target/bound-class-simple.xml"));
   // }
 

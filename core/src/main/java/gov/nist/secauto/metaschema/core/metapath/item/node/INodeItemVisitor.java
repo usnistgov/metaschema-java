@@ -29,9 +29,11 @@ package gov.nist.secauto.metaschema.core.metapath.item.node;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides a set of callbacks used when iterating over node items in a directed graph.
+ * Provides a set of callbacks used when iterating over node items in a directed
+ * graph.
  * <p>
- * The {@link AbstractNodeItemVisitor} provides an abstract implementation of this visitor pattern.
+ * The {@link AbstractNodeItemVisitor} provides an abstract implementation of
+ * this visitor pattern.
  *
  * @param <RESULT>
  *          the type of result produced by visitation

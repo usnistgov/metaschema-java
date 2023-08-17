@@ -66,7 +66,8 @@ public interface IFlagNodeItem
   }
 
   /**
-   * FlagContainer do not have flag items. This call should return an empty collection.
+   * FlagContainer do not have flag items. This call should return an empty
+   * collection.
    */
   @SuppressWarnings("null")
   @Override
@@ -85,7 +86,8 @@ public interface IFlagNodeItem
   }
 
   /**
-   * FlagContainer do not have flag items. This call should return an empty stream.
+   * FlagContainer do not have flag items. This call should return an empty
+   * stream.
    */
   @SuppressWarnings("null")
   @Override
@@ -95,7 +97,8 @@ public interface IFlagNodeItem
   }
 
   /**
-   * FlagContainer do not have model items. This call should return an empty collection.
+   * FlagContainer do not have model items. This call should return an empty
+   * collection.
    */
   @SuppressWarnings("null")
   @Override
@@ -115,7 +118,8 @@ public interface IFlagNodeItem
   }
 
   /**
-   * FlagContainer do not have model items. This call should return an empty stream.
+   * FlagContainer do not have model items. This call should return an empty
+   * stream.
    */
   @SuppressWarnings("null")
   @NonNull

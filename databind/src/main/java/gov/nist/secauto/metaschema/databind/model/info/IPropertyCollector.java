@@ -33,12 +33,14 @@ import java.util.Map;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * The class is used to "collect" items together to assign to the property's field. For fields with
- * a collection type, implementations of this class will handle managing the underlying collection.
+ * The class is used to "collect" items together to assign to the property's
+ * field. For fields with a collection type, implementations of this class will
+ * handle managing the underlying collection.
  */
 public interface IPropertyCollector {
   /**
-   * Add an item to the "collection", who's type depends on the property configuration.
+   * Add an item to the "collection", who's type depends on the property
+   * configuration.
    *
    * @param item
    *          the item to add
@@ -48,7 +50,8 @@ public interface IPropertyCollector {
   void add(@NonNull Object item);
 
   /**
-   * Add a collection of item to the "collection", who's type depends on the property configuration.
+   * Add a collection of item to the "collection", who's type depends on the
+   * property configuration.
    *
    * @param items
    *          the items to add
@@ -58,11 +61,13 @@ public interface IPropertyCollector {
   void addAll(@NonNull Collection<?> items);
 
   /**
-   * Get the current state of the "collection". For single valued "non-collections" this may return a
-   * {@code null} value. For any collection type, such as {@link List} or {@link Map}, this must
-   * return a non-{@code null} empty collection.
+   * Get the current state of the "collection". For single valued
+   * "non-collections" this may return a {@code null} value. For any collection
+   * type, such as {@link List} or {@link Map}, this must return a
+   * non-{@code null} empty collection.
    *
-   * @return the "collection" value or {@code null} for a single valued instance that is not defined
+   * @return the "collection" value or {@code null} for a single valued instance
+   *         that is not defined
    */
   Object getValue();
 }

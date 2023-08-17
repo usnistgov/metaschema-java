@@ -78,8 +78,8 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
   private final Lazy<IModelPropertyInfo> propertyInfo;
 
   /**
-   * Construct a new bound model instance based on a Java property. The name of the property is bound
-   * to the name of the instance.
+   * Construct a new bound model instance based on a Java property. The name of
+   * the property is bound to the name of the instance.
    *
    * @param field
    *          the field instance associated with this property

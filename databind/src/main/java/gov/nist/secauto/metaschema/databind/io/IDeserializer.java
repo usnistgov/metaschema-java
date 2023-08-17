@@ -47,8 +47,8 @@ import java.nio.file.Path;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Implementations of this interface are able to read structured data into a bound object instance
- * of the parameterized type.
+ * Implementations of this interface are able to read structured data into a
+ * bound object instance of the parameterized type.
  *
  * @param <CLASS>
  *          the Java type into which data can be read
@@ -70,15 +70,21 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
   /**
    * Determine if the serializer is performing validation.
    *
-   * @return {@code true} if the serializer is performing content validation, or {@code false}
-   *         otherwise
+   * @return {@code true} if the serializer is performing content validation, or
+   *         {@code false} otherwise
    */
   default boolean isValidating() {
     return isFeatureEnabled(DeserializationFeature.DESERIALIZE_VALIDATE_CONSTRAINTS);
   }
-  //
-  // @NonNull
-  // IConstraintValidationHandler getConstraintValidationHandler();
+
+  /**
+   * Get the constraint validation handler configured for this deserializer, which
+   * will be used to validate loaded data.
+   *
+   * @return the validation handler
+   */
+  @NonNull
+  IConstraintValidationHandler getConstraintValidationHandler();
 
   /**
    * Set the constraint violation handler for constraint validation.
@@ -111,8 +117,8 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
    *          the file to read from
    * @return the instance data
    * @throws IOException
-   *           if an error occurred while writing data to the file indicated by the {@code path}
-   *           parameter
+   *           if an error occurred while writing data to the file indicated by
+   *           the {@code path} parameter
    */
   @NonNull
   default CLASS deserialize(@NonNull Path path) throws IOException {
@@ -145,8 +151,8 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
    * @throws IOException
    *           if an error occurred while reading data from the stream
    * @throws URISyntaxException
-   *           if the provided URL is not formatted strictly according to to RFC2396 and cannot be
-   *           converted to a URI.
+   *           if the provided URL is not formatted strictly according to to
+   *           RFC2396 and cannot be converted to a URI.
    */
   @NonNull
   default CLASS deserialize(@NonNull URL url) throws IOException, URISyntaxException {

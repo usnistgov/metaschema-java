@@ -27,8 +27,8 @@
 package gov.nist.secauto.metaschema.core.metapath;
 
 /**
- * This Metapath exception base class is used for all exceptions that have a defined error code
- * family and value.
+ * This Metapath exception base class is used for all exceptions that have a
+ * defined error code family and value.
  */
 public abstract class AbstractCodedMetapathException
     extends MetapathException {
@@ -44,7 +44,8 @@ public abstract class AbstractCodedMetapathException
   private final int code;
 
   /**
-   * Constructs a new Metapath exception with the provided {@code message} and no cause.
+   * Constructs a new Metapath exception with the provided {@code message} and no
+   * cause.
    *
    * @param code
    *          the error code value
@@ -57,7 +58,8 @@ public abstract class AbstractCodedMetapathException
   }
 
   /**
-   * Constructs a new Metapath exception with the provided {@code message} and {@code cause}.
+   * Constructs a new Metapath exception with the provided {@code message} and
+   * {@code cause}.
    *
    * @param code
    *          the error code value
@@ -72,7 +74,8 @@ public abstract class AbstractCodedMetapathException
   }
 
   /**
-   * Constructs a new Metapath exception with a {@code null} message and the provided {@code cause}.
+   * Constructs a new Metapath exception with a {@code null} message and the
+   * provided {@code cause}.
    *
    * @param code
    *          the error code value

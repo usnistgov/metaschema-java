@@ -37,7 +37,8 @@ public class DefaultAllowedValue implements IAllowedValue {
   private final MarkupLine description;
 
   /**
-   * Construct a new allowed value entry for use in an {@link IAllowedValuesConstraint}.
+   * Construct a new allowed value entry for use in an
+   * {@link IAllowedValuesConstraint}.
    *
    * @param value
    *          the allowed value

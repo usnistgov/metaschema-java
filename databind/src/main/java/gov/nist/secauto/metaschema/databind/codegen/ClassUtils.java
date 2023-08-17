@@ -39,7 +39,8 @@ public final class ClassUtils {
   }
 
   /**
-   * Transforms the provided name into a string suitable for use as a Java property name.
+   * Transforms the provided name into a string suitable for use as a Java
+   * property name.
    *
    * @param name
    *          the name of an information element definition
@@ -52,7 +53,8 @@ public final class ClassUtils {
   }
 
   /**
-   * Transforms the provided name into a string suitable for use as a Java variable name.
+   * Transforms the provided name into a string suitable for use as a Java
+   * variable name.
    *
    * @param name
    *          the name of an information element definition
@@ -65,7 +67,8 @@ public final class ClassUtils {
   }
 
   /**
-   * Transforms the provided name into a string suitable for use as a Java class name.
+   * Transforms the provided name into a string suitable for use as a Java class
+   * name.
    *
    * @param name
    *          the name of an information element definition
@@ -78,7 +81,8 @@ public final class ClassUtils {
   }
 
   /**
-   * Transforms the provided name into a string suitable for use as a Java package name.
+   * Transforms the provided name into a string suitable for use as a Java package
+   * name.
    *
    * @param name
    *          the name of an information element definition

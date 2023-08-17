@@ -24,8 +24,8 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 /**
- * Provides interfaces, abstract implementation classes, and exceptions that are used in Metaschema
- * APIs for processing Metaschema-based models.
+ * Provides interfaces, abstract implementation classes, and exceptions that are
+ * used in Metaschema APIs for processing Metaschema-based models.
  */
 
 package gov.nist.secauto.metaschema.core.model;

@@ -101,11 +101,13 @@ public interface ITypeResolver {
   ClassName getClassName(@NonNull IFlagContainer definition);
 
   /**
-   * Get the name of the base class to use for the class associated with the provided definition.
+   * Get the name of the base class to use for the class associated with the
+   * provided definition.
    *
    * @param definition
    *          a definition that may be built as a class
-   * @return the name of the base class or {@code null} if no base class is to be used
+   * @return the name of the base class or {@code null} if no base class is to be
+   *         used
    */
   @Nullable
   ClassName getBaseClassName(@NonNull IFlagContainer definition);

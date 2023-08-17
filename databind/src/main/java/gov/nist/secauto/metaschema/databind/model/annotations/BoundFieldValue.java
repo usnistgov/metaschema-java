@@ -38,8 +38,8 @@ import java.lang.annotation.Target;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Identifies that the annotation target is a bound property that represents a Metaschema field
- * value with no flags.
+ * Identifies that the annotation target is a bound property that represents a
+ * Metaschema field value with no flags.
  */
 @Documented
 @Retention(RUNTIME)
@@ -56,7 +56,8 @@ public @interface BoundFieldValue {
   /**
    * The default value of the flag represented as a string.
    * <p>
-   * The value {@link Constants#NULL_VALUE} is used to indicate if no default value is provided.
+   * The value {@link Constants#NULL_VALUE} is used to indicate if no default
+   * value is provided.
    *
    * @return the default value
    */

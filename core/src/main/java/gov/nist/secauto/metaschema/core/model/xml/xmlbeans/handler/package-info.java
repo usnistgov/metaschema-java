@@ -24,7 +24,8 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 /**
- * XMLBeans generated class binding data type handlers for the Metaschema XML format.
+ * XMLBeans generated class binding data type handlers for the Metaschema XML
+ * format.
  */
 
 package gov.nist.secauto.metaschema.core.model.xml.xmlbeans.handler;

@@ -89,15 +89,6 @@ class XmlInlineFlagDefinition
     });
   }
 
-  /**
-   * Get the underlying XML model.
-   *
-   * @return the XML model
-   */
-  protected final InlineFlagDefinitionType getXmlFlag() {
-    return xmlFlag;
-  }
-
   @Override
   public InternalFlagDefinition getDefinition() {
     return flagDefinition;
@@ -106,6 +97,19 @@ class XmlInlineFlagDefinition
   @Override
   public IMetaschema getContainingMetaschema() {
     return getContainingDefinition().getContainingMetaschema();
+  }
+
+  // ----------------------------------------
+  // - Start Annotation driven code - CPD-OFF
+  // ----------------------------------------
+
+  /**
+   * Get the underlying XML model.
+   *
+   * @return the XML model
+   */
+  protected final InlineFlagDefinitionType getXmlFlag() {
+    return xmlFlag;
   }
 
   @Override
@@ -132,11 +136,6 @@ class XmlInlineFlagDefinition
   }
 
   @Override
-  public String getUseName() {
-    return null;
-  }
-
-  @Override
   public boolean isRequired() {
     return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : MetaschemaModelConstants.DEFAULT_FLAG_REQUIRED;
   }
@@ -145,6 +144,16 @@ class XmlInlineFlagDefinition
   @Override
   public MarkupMultiline getRemarks() {
     return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
+  }
+
+  // --------------------------------------
+  // - End Annotation driven code - CPD-ON
+  // --------------------------------------
+
+  @Override
+  public String getUseName() {
+    // flags cannot use a use-name
+    return null;
   }
 
   @Override
@@ -169,6 +178,20 @@ class XmlInlineFlagDefinition
       }
       this.defaultValue = defaultValue;
     }
+
+    // ----------------------------------------
+    // - Start annotation driven code - CPD-OFF
+    // ----------------------------------------
+
+    @SuppressWarnings("null")
+    @Override
+    public IDataTypeAdapter<?> getJavaTypeAdapter() {
+      return getXmlFlag().isSetAsType() ? getXmlFlag().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
+    }
+
+    // --------------------------------------
+    // - End annotation driven code - CPD-ON
+    // --------------------------------------
 
     @Override
     public Object getDefaultValue() {
@@ -215,12 +238,6 @@ class XmlInlineFlagDefinition
     @Override
     public Map<QName, Set<String>> getProperties() {
       return XmlInlineFlagDefinition.this.getProperties();
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    public IDataTypeAdapter<?> getJavaTypeAdapter() {
-      return getXmlFlag().isSetAsType() ? getXmlFlag().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
     }
 
     /**

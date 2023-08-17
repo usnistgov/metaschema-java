@@ -33,7 +33,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IDefinitionBindingConfiguration {
   /**
-   * Get the class name to use for the generated class associated with this binding.
+   * Get the class name to use for the generated class associated with this
+   * binding.
    *
    * @return a class name
    */
@@ -49,7 +50,8 @@ public interface IDefinitionBindingConfiguration {
   String getQualifiedBaseClassName();
 
   /**
-   * A collection of interfaces that the associated generated class will implement.
+   * A collection of interfaces that the associated generated class will
+   * implement.
    *
    * @return a list of fully qualified type names for interfaces
    */

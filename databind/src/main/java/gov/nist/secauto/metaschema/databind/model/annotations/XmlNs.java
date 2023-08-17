@@ -33,7 +33,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Used to identify the XML namespace to use for a set of annotated Java classes.
+ * Used to identify the XML namespace to use for a set of annotated Java
+ * classes.
  */
 @Retention(RUNTIME)
 @Target(ANNOTATION_TYPE)

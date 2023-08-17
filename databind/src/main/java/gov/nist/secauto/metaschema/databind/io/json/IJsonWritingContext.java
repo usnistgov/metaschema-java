@@ -37,6 +37,21 @@ import java.util.Collection;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IJsonWritingContext extends IWritingContext<JsonGenerator> {
+  /**
+   * Write a set of JSON values described by the provided
+   * {@code targetDefinition}.
+   *
+   * @param targetDefinition
+   *          the bound Metaschema definition describing the structure of the JSON
+   *          data to write
+   * @param targetObjects
+   *          the Java object data to write
+   * @param writeObjectWrapper
+   *          if {@code true} the JSON values will be wrapped in a JSON start and
+   *          end object, or {@code false} otherwise
+   * @throws IOException
+   *           if an error occurred while writing the JSON
+   */
   void writeDefinitionValues(
       @NonNull IClassBinding targetDefinition,
       @NonNull Collection<? extends Object> targetObjects,

@@ -38,8 +38,8 @@ class StringConcat
     extends AbstractNAryExpression {
 
   /**
-   * Create a new expression that concatenates the results of evaluating the provided
-   * {@code expressions} as strings.
+   * Create a new expression that concatenates the results of evaluating the
+   * provided {@code expressions} as strings.
    *
    * @param expressions
    *          the expressions to evaluate

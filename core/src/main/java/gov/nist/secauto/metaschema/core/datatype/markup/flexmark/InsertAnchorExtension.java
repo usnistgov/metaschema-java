@@ -140,10 +140,13 @@ public class InsertAnchorExtension
 
     // @Override
     // public Set<NodeRenderingHandler<?>> getNodeRenderingHandlers() {
-    // HashSet<NodeRenderingHandler<?>> set = new HashSet<NodeRenderingHandler<?>>();
-    // set.add(new NodeRenderingHandler<Macro>(Macro.class, new CustomNodeRenderer<Macro>() {
+    // HashSet<NodeRenderingHandler<?>> set = new
+    // HashSet<NodeRenderingHandler<?>>();
+    // set.add(new NodeRenderingHandler<Macro>(Macro.class, new
+    // CustomNodeRenderer<Macro>() {
     // @Override
-    // public void render(Macro node, NodeRendererContext context, HtmlWriter html) {
+    // public void render(Macro node, NodeRendererContext context, HtmlWriter html)
+    // {
     // MacroNodeRenderer.this.render(node, context, html); }
     // }));
     public static class Factory implements NodeRendererFactory {

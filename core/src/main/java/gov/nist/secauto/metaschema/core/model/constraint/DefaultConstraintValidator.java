@@ -55,7 +55,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -108,7 +107,8 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
    * @param item
    *          the flag item to validate
    * @throws MetapathException
-   *           if an error occurred while evaluating a Metapath used in a constraint
+   *           if an error occurred while evaluating a Metapath used in a
+   *           constraint
    */
   protected void validateFlag(@NonNull IFlagNodeItem item) {
     IFlagDefinition definition = item.getDefinition();
@@ -125,7 +125,8 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
    * @param item
    *          the field item to validate
    * @throws MetapathException
-   *           if an error occurred while evaluating a Metapath used in a constraint
+   *           if an error occurred while evaluating a Metapath used in a
+   *           constraint
    */
   protected void validateField(@NonNull IFieldNodeItem item) {
     IFieldDefinition definition = item.getDefinition();
@@ -142,7 +143,8 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
    * @param item
    *          the assembly item to validate
    * @throws MetapathException
-   *           if an error occurred while evaluating a Metapath used in a constraint
+   *           if an error occurred while evaluating a Metapath used in a
+   *           constraint
    */
   protected void validateAssembly(@NonNull IAssemblyNodeItem item) {
     IAssemblyDefinition definition = item.getDefinition();
@@ -301,12 +303,9 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
             String value = FnData.fnDataItem(item).asString();
 
             Pattern pattern = constraint.getPattern();
-            if (pattern != null) {
-              // validate pattern
-              Predicate<String> predicate = pattern.asMatchPredicate();
-              if (!predicate.test(value)) {
-                getConstraintValidationHandler().handleMatchPatternViolation(constraint, node, item, value);
-              }
+            if (pattern != null && !pattern.asMatchPredicate().test(value)) {
+              // failed pattern match
+              getConstraintValidationHandler().handleMatchPatternViolation(constraint, node, item, value);
             }
 
             IDataTypeAdapter<?> adapter = constraint.getDataType();

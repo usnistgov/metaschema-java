@@ -43,7 +43,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IXmlProblemHandler extends IProblemHandler {
   /**
-   * Callback used to handle an attribute that is unknown to the model being parsed.
+   * Callback used to handle an attribute that is unknown to the model being
+   * parsed.
    *
    * @param parentDefinition
    *          the bound class currently describing the data being parsed
@@ -53,7 +54,8 @@ public interface IXmlProblemHandler extends IProblemHandler {
    *          the unknown attribute
    * @param parsingContext
    *          the XML parsing context used for parsing
-   * @return {@code true} if the attribute was handled by this method, or {@code false} otherwise
+   * @return {@code true} if the attribute was handled by this method, or
+   *         {@code false} otherwise
    * @throws IOException
    *           if an error occurred while handling the unrecognized data
    */
@@ -76,7 +78,8 @@ public interface IXmlProblemHandler extends IProblemHandler {
    *          the parsed XML start element
    * @param parsingContext
    *          the XML parsing context used for parsing
-   * @return {@code true} if the element was handled by this method, or {@code false} otherwise
+   * @return {@code true} if the element was handled by this method, or
+   *         {@code false} otherwise
    * @throws IOException
    *           if an error occurred while handling the unrecognized data
    */
@@ -89,10 +92,11 @@ public interface IXmlProblemHandler extends IProblemHandler {
   }
 
   /**
-   * A callback used to handle bound flag instances for which no data was found when the content was
-   * parsed.
+   * A callback used to handle bound flag instances for which no data was found
+   * when the content was parsed.
    * <p>
-   * This can be used to supply default or prescribed values based on application logic.
+   * This can be used to supply default or prescribed values based on application
+   * logic.
    *
    * @param parentDefinition
    *          the bound assembly class on which the missing instances are found
@@ -112,10 +116,11 @@ public interface IXmlProblemHandler extends IProblemHandler {
   }
 
   /**
-   * A callback used to handle bound model instances for which no data was found when the content was
-   * parsed.
+   * A callback used to handle bound model instances for which no data was found
+   * when the content was parsed.
    * <p>
-   * This can be used to supply default or prescribed values based on application logic.
+   * This can be used to supply default or prescribed values based on application
+   * logic.
    *
    * @param parentDefinition
    *          the bound assembly class on which the missing instances are found

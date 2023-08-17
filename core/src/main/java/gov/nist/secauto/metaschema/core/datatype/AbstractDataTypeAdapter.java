@@ -49,13 +49,14 @@ import javax.xml.stream.events.XMLEvent;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides a basic Java type adapter implementation. This implementation should be the parent class
- * of all Java type adapter implementations.
+ * Provides a basic Java type adapter implementation. This implementation should
+ * be the parent class of all Java type adapter implementations.
  *
  * @param <TYPE>
  *          the raw Java type this adapter supports
  * @param <ITEM_TYPE>
- *          the metapath item type corresponding to the raw Java type supported by the adapter
+ *          the metapath item type corresponding to the raw Java type supported
+ *          by the adapter
  */
 public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomicItem>
     implements IDataTypeAdapter<TYPE> {
@@ -137,8 +138,8 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
   }
 
   /**
-   * This default implementation will parse the value as a string and delegate to the string-based
-   * parsing method.
+   * This default implementation will parse the value as a string and delegate to
+   * the string-based parsing method.
    */
   @Override
   public TYPE parse(JsonParser parser) throws IOException {
@@ -207,16 +208,16 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
   /**
    * Attempt to cast the provided item to this adapter's item type.
    * <p>
-   * The default implementation of this will attempt to parse the provided item as a string using the
-   * {@link #parse(String)} method. If this behavior is undesirable, then a subclass should override
-   * this method.
+   * The default implementation of this will attempt to parse the provided item as
+   * a string using the {@link #parse(String)} method. If this behavior is
+   * undesirable, then a subclass should override this method.
    *
    * @param item
    *          the item to cast
    * @return the item casted to this adapter's item type
    * @throws InvalidValueForCastFunctionException
-   *           if the casting of the item is not possible because the item represents an invalid value
-   *           for this adapter's item type
+   *           if the casting of the item is not possible because the item
+   *           represents an invalid value for this adapter's item type
    */
   @NonNull
   protected ITEM_TYPE castInternal(@NonNull IAnyAtomicItem item) {

@@ -47,10 +47,11 @@ public interface IFlagContainerSupport<F extends IFlagInstance> {
   Map<String, ? extends F> getFlagInstanceMap();
 
   /**
-   * Retrieves the flag instance to use as as the property name for the containing object in JSON
-   * who's value will be the object containing the flag.
+   * Retrieves the flag instance to use as as the property name for the containing
+   * object in JSON who's value will be the object containing the flag.
    *
-   * @return the flag instance if a JSON key is configured, or {@code null} otherwise
+   * @return the flag instance if a JSON key is configured, or {@code null}
+   *         otherwise
    */
   @Nullable
   F getJsonKeyFlagInstance();

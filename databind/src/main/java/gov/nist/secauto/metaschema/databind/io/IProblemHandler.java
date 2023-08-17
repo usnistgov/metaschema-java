@@ -37,10 +37,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 // TODO: consider what methods can be defined here
 public interface IProblemHandler {
   /**
-   * A callback used to handle bound properties for which no data was found when the content was
-   * parsed.
+   * A callback used to handle bound properties for which no data was found when
+   * the content was parsed.
    * <p>
-   * This can be used to supply default or prescribed values based on application logic.
+   * This can be used to supply default or prescribed values based on application
+   * logic.
    *
    * @param parentDefinition
    *          the bound class on which the missing properties are found

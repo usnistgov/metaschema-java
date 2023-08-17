@@ -38,18 +38,20 @@ import java.lang.annotation.Target;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Identifies that the annotation target is a bound property that references a Metaschema field.
+ * Identifies that the annotation target is a bound property that references a
+ * Metaschema field.
  * <p>
- * For XML serialization, the {@link #useName()} identifies the name of the element to use and the
- * {@link #namespace()} identifies the namespace of this element.
+ * For XML serialization, the {@link #useName()} identifies the name of the
+ * element to use and the {@link #namespace()} identifies the namespace of this
+ * element.
  * <p>
- * For JSON and YAML serializations, the {@link #useName()} identifies the property/item name to
- * use.
+ * For JSON and YAML serializations, the {@link #useName()} identifies the
+ * property/item name to use.
  * <p>
  * The field must be either:
  * <ol>
- * <li>A Metaschema data type or a collection whose item value is Metaschema data type, with a
- * {@link BoundFieldValue} annotation on the field.
+ * <li>A Metaschema data type or a collection whose item value is Metaschema
+ * data type, with a {@link BoundFieldValue} annotation on the field.
  * <li>A type or a collection whose item value is a type based on a class with a
  * {@link MetaschemaField} annotation.</li>
  * </ol>
@@ -61,7 +63,8 @@ public @interface BoundField {
   /**
    * Get the documentary formal name of the field.
    * <p>
-   * If the value is "##none", then the description will be considered {@code null}.
+   * If the value is "##none", then the description will be considered
+   * {@code null}.
    *
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
@@ -71,7 +74,8 @@ public @interface BoundField {
   /**
    * Get the documentary description of the field.
    * <p>
-   * If the value is "##none", then the description will be considered {@code null}.
+   * If the value is "##none", then the description will be considered
+   * {@code null}.
    *
    * @return a markdown string or {@code "##none"} if no description is provided
    */
@@ -79,10 +83,12 @@ public @interface BoundField {
   String description() default Constants.NO_STRING_VALUE;
 
   /**
-   * The model name to use for JSON/YAML singleton values and associated XML elements.
+   * The model name to use for JSON/YAML singleton values and associated XML
+   * elements.
    * <p>
-   * If the value is "##none", then the use name will be provided by the definition or by the field
-   * name if the item value class is missing the {@link MetaschemaField} annotation.
+   * If the value is "##none", then the use name will be provided by the
+   * definition or by the field name if the item value class is missing the
+   * {@link MetaschemaField} annotation.
    *
    * @return the name
    */
@@ -92,22 +98,24 @@ public @interface BoundField {
   /**
    * The namespace to use for associated XML elements.
    * <p>
-   * If the value is "##default", then element name is derived from the namespace provided in the
-   * package-info.
+   * If the value is "##default", then element name is derived from the namespace
+   * provided in the package-info.
    *
    * @return the namespace
    */
   String namespace() default Constants.DEFAULT_STRING_VALUE;
 
   /**
-   * If the data type allows it, determines if the field's value must be wrapped with an XML element.
+   * If the data type allows it, determines if the field's value must be wrapped
+   * with an XML element.
    *
    * @return {@code true} if the field must be wrapped, or {@code false} otherwise
    */
   boolean inXmlWrapped() default MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
 
   /**
-   * A non-negative number that indicates the minimum occurrence of the model instance.
+   * A non-negative number that indicates the minimum occurrence of the model
+   * instance.
    *
    * @return a non-negative number
    */

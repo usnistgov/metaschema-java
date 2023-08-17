@@ -198,7 +198,8 @@ public class XmlComplexTypeAssemblyDefinition
     // : ObjectUtils.notNull(Integer.toString(fieldInstance.getMaxOccurs())));
     // }
 
-    // unwrapped fields always have a max-occurance of 1. Since the markup multiline is unbounded, this
+    // unwrapped fields always have a max-occurance of 1. Since the markup multiline
+    // is unbounded, this
     // value is unbounded.
     state.writeAttribute("maxOccurs", "unbounded");
 

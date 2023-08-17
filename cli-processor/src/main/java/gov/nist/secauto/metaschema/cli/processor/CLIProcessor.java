@@ -183,7 +183,8 @@ public class CLIProcessor {
     CallingContext callingContext = new CallingContext(commandArgs);
 
     ExitStatus status;
-    // the first two arguments should be the <command> and <operation>, where <type> is the object type
+    // the first two arguments should be the <command> and <operation>, where <type>
+    // is the object type
     // the <operation> is performed against.
     if (commandArgs.isEmpty()) {
       status = ExitCode.INVALID_COMMAND.exit();
@@ -240,7 +241,8 @@ public class CLIProcessor {
   // @SuppressWarnings("null")
   // @NonNull
   // public String[] getArgArray() {
-  // return Stream.concat(options.stream(), extraArgs.stream()).toArray(size -> new String[size]);
+  // return Stream.concat(options.stream(), extraArgs.stream()).toArray(size ->
+  // new String[size]);
   // }
 
   public class CallingContext {
@@ -367,7 +369,8 @@ public class CLIProcessor {
         retval = ExitCode.OK.exit();
         // } else {
         // retval = handleInvalidCommand(commandResult, options,
-        // "Invalid command arguments: " + cmdLine.getArgList().stream().collect(Collectors.joining(" ")));
+        // "Invalid command arguments: " +
+        // cmdLine.getArgList().stream().collect(Collectors.joining(" ")));
       }
 
       if (retval == null) {
@@ -578,8 +581,10 @@ public class CLIProcessor {
       AnsiPrintStream out = AnsiConsole.out();
       int terminalWidth = Math.max(out.getTerminalWidth(), 40);
 
-      @SuppressWarnings("resource") PrintWriter writer
-          = new PrintWriter(out, true, StandardCharsets.UTF_8); // NOPMD not owned
+      @SuppressWarnings("resource") PrintWriter writer = new PrintWriter( // NOPMD not owned
+          out,
+          true,
+          StandardCharsets.UTF_8);
       formatter.printHelp(
           writer,
           terminalWidth,

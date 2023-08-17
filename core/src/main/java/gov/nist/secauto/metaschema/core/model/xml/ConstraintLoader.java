@@ -62,8 +62,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * Provides methods to load a constraint set expressed in XML.
  * <p>
- * Loaded constraint instances are cached to avoid the need to load them for every use. Any
- * constraint set imported is also loaded and cached automatically.
+ * Loaded constraint instances are cached to avoid the need to load them for
+ * every use. Any constraint set imported is also loaded and cached
+ * automatically.
  */
 public class ConstraintLoader
     extends AbstractLoader<IConstraintSet> {

@@ -31,8 +31,8 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import java.util.regex.Pattern;
 
 /**
- * Represents a rule requiring the value of a field or flag to match a pattern and/or conform to an
- * identified data type.
+ * Represents a rule requiring the value of a field or flag to match a pattern
+ * and/or conform to an identified data type.
  */
 public interface IMatchesConstraint extends IConstraint {
   Pattern getPattern();

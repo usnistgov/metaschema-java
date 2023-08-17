@@ -49,13 +49,14 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 class XmlAssemblyInstance
     extends AbstractAssemblyInstance {
-  // private static final Logger logger = LogManager.getLogger(XmlAssemblyInstance.class);
+  // private static final Logger logger =
+  // LogManager.getLogger(XmlAssemblyInstance.class);
 
   private final AssemblyReferenceType xmlAssembly;
 
   /**
-   * Constructs a new Metaschema Assembly instance definition from an XML representation bound to Java
-   * objects.
+   * Constructs a new Metaschema Assembly instance definition from an XML
+   * representation bound to Java objects.
    *
    * @param xmlAssembly
    *          the XML representation bound to Java objects

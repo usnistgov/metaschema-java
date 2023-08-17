@@ -35,8 +35,9 @@ import java.util.List;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * An immutable expression that combines the evaluation of a sub-expression, with the evaluation of
- * a series of predicate expressions that filter the result of the evaluation.
+ * An immutable expression that combines the evaluation of a sub-expression,
+ * with the evaluation of a series of predicate expressions that filter the
+ * result of the evaluation.
  */
 class Step implements IExpression { // NOPMD - intentional
 

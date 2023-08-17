@@ -152,16 +152,18 @@ public abstract class AbstractLoader<T> {
   /**
    * Loads a resource from the provided URI.
    * <p>
-   * If the resource imports other resources, the provided {@code visitedResources} can be used to
-   * track circular imports. This is useful when this method recurses into included resources.
+   * If the resource imports other resources, the provided
+   * {@code visitedResources} can be used to track circular imports. This is
+   * useful when this method recurses into included resources.
    * <p>
-   * Previously loaded resources are provided by the cache. This method will add the resource to the
-   * cache after all imported resources have been loaded.
+   * Previously loaded resources are provided by the cache. This method will add
+   * the resource to the cache after all imported resources have been loaded.
    *
    * @param resource
    *          the resource to load
    * @param visitedResources
-   *          a LIFO queue representing previously visited resources in an import chain
+   *          a LIFO queue representing previously visited resources in an import
+   *          chain
    * @return the loaded resource
    * @throws MetaschemaException
    *           if an error occurred while processing the resource
@@ -204,8 +206,8 @@ public abstract class AbstractLoader<T> {
    * @param resource
    *          the resource to parse
    * @param visitedResources
-   *          a stack representing previously parsed resources imported by the provided
-   *          {@code resource}
+   *          a stack representing previously parsed resources imported by the
+   *          provided {@code resource}
    * @return the parsed resource
    * @throws IOException
    *           if an error occurred while parsing the resource

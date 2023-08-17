@@ -41,33 +41,41 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 @Target({ TYPE, FIELD })
 public @interface ValueConstraints {
   /**
-   * Get the allowed value constraints for the type or field this annotation is applied to.
+   * Get the allowed value constraints for the type or field this annotation is
+   * applied to.
    *
-   * @return the allowed values or an empty array if no allowed values constraints are defined
+   * @return the allowed values or an empty array if no allowed values constraints
+   *         are defined
    */
   @NonNull
   AllowedValues[] allowedValues() default {};
 
   /**
-   * Get the matches constraints for the type or field this annotation is applied to.
+   * Get the matches constraints for the type or field this annotation is applied
+   * to.
    *
-   * @return the allowed values or an empty array if no allowed values constraints are defined
+   * @return the allowed values or an empty array if no allowed values constraints
+   *         are defined
    */
   @NonNull
   Matches[] matches() default {};
 
   /**
-   * Get the index-has-key constraints for the type or field this annotation is applied to.
+   * Get the index-has-key constraints for the type or field this annotation is
+   * applied to.
    *
-   * @return the allowed values or an empty array if no allowed values constraints are defined
+   * @return the allowed values or an empty array if no allowed values constraints
+   *         are defined
    */
   @NonNull
   IndexHasKey[] indexHasKey() default {};
 
   /**
-   * Get the expect constraints for the type or field this annotation is applied to.
+   * Get the expect constraints for the type or field this annotation is applied
+   * to.
    *
-   * @return the expected constraints or an empty array if no expected constraints are defined
+   * @return the expected constraints or an empty array if no expected constraints
+   *         are defined
    */
   @NonNull
   Expect[] expect() default {};

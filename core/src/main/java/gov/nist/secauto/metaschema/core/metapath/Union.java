@@ -41,8 +41,8 @@ class Union
   private final Class<? extends IItem> staticResultType;
 
   /**
-   * Create a new expression that gets the union of the results of evaluating the provided
-   * {@code expressions}.
+   * Create a new expression that gets the union of the results of evaluating the
+   * provided {@code expressions}.
    *
    * @param expressions
    *          the expressions to evaluate

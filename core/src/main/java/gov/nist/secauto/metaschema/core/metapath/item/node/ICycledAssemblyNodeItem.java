@@ -29,10 +29,11 @@ package gov.nist.secauto.metaschema.core.metapath.item.node;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * A marker interface used to identify an {@link IAssemblyNodeItem} as the head of a cycle of item
- * that loop back to the head.
+ * A marker interface used to identify an {@link IAssemblyNodeItem} as the head
+ * of a cycle of item that loop back to the head.
  * <p>
- * This is needed to prevent infinite recursion when searching {@link IMetaschemaNodeItem} graphs.
+ * This is needed to prevent infinite recursion when searching
+ * {@link IMetaschemaNodeItem} graphs.
  */
 public interface ICycledAssemblyNodeItem extends IAssemblyNodeItem {
   /**

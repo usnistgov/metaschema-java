@@ -84,16 +84,6 @@ class XmlInlineFieldDefinition
     this.fieldDefinition = new InternalFieldDefinition(xmlField);
   }
 
-  /**
-   * Get the underlying XML model.
-   *
-   * @return the XML model
-   */
-  @NonNull
-  protected final InlineFieldDefinitionType getXmlField() {
-    return xmlField;
-  }
-
   @Override
   public InternalFieldDefinition getDefinition() {
     return fieldDefinition;
@@ -102,6 +92,20 @@ class XmlInlineFieldDefinition
   @Override
   public IMetaschema getContainingMetaschema() {
     return getContainingDefinition().getContainingMetaschema();
+  }
+
+  // ----------------------------------------
+  // - Start annotation driven code - CPD-OFF
+  // ----------------------------------------
+
+  /**
+   * Get the underlying XML model.
+   *
+   * @return the XML model
+   */
+  @NonNull
+  protected final InlineFieldDefinitionType getXmlField() {
+    return xmlField;
   }
 
   @Override
@@ -144,12 +148,6 @@ class XmlInlineFieldDefinition
   }
 
   @Override
-  public String getUseName() {
-    // an inline definition doesn't have a use name
-    return null;
-  }
-
-  @Override
   public String getGroupAsName() {
     return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : null;
   }
@@ -178,6 +176,16 @@ class XmlInlineFieldDefinition
   @Override
   public MarkupMultiline getRemarks() {
     return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
+  }
+
+  // --------------------------------------
+  // - End annotation driven code - CPD-ON
+  // --------------------------------------
+
+  @Override
+  public String getUseName() {
+    // an inline definition doesn't have a use name
+    return null;
   }
 
   @Override
@@ -227,6 +235,48 @@ class XmlInlineFieldDefinition
       });
     }
 
+    // ----------------------------------------
+    // - Start annotation driven code - CPD-OFF
+    // ----------------------------------------
+
+    @SuppressWarnings("null")
+    @Override
+    public IDataTypeAdapter<?> getJavaTypeAdapter() {
+      return getXmlField().isSetAsType() ? getXmlField().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
+    }
+
+    @Override
+    public boolean hasJsonValueKeyFlagInstance() {
+      return getXmlField().isSetJsonValueKeyFlag() && getXmlField().getJsonValueKeyFlag().isSetFlagRef();
+    }
+
+    @Override
+    public IFlagInstance getJsonValueKeyFlagInstance() {
+      IFlagInstance retval = null;
+      if (getXmlField().isSetJsonValueKeyFlag() && getXmlField().getJsonValueKeyFlag().isSetFlagRef()) {
+        retval = getFlagInstanceByName(ObjectUtils.notNull(getXmlField().getJsonValueKeyFlag().getFlagRef()));
+      }
+      return retval;
+    }
+
+    @Override
+    public String getJsonValueKeyName() {
+      String retval = null;
+
+      if (getXmlField().isSetJsonValueKey()) {
+        retval = getXmlField().getJsonValueKey();
+      }
+
+      if (retval == null || retval.isEmpty()) {
+        retval = getJavaTypeAdapter().getDefaultJsonValueKey();
+      }
+      return retval;
+    }
+
+    // --------------------------------------
+    // - End annotation driven code - CPD-ON
+    // --------------------------------------
+
     @Override
     public Object getDefaultValue() {
       return defaultValue;
@@ -272,40 +322,6 @@ class XmlInlineFieldDefinition
     public String getUseName() {
       // always use the name instead
       return null;
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    public IDataTypeAdapter<?> getJavaTypeAdapter() {
-      return getXmlField().isSetAsType() ? getXmlField().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
-    }
-
-    @Override
-    public boolean hasJsonValueKeyFlagInstance() {
-      return getXmlField().isSetJsonValueKeyFlag() && getXmlField().getJsonValueKeyFlag().isSetFlagRef();
-    }
-
-    @Override
-    public IFlagInstance getJsonValueKeyFlagInstance() {
-      IFlagInstance retval = null;
-      if (getXmlField().isSetJsonValueKeyFlag() && getXmlField().getJsonValueKeyFlag().isSetFlagRef()) {
-        retval = getFlagInstanceByName(ObjectUtils.notNull(getXmlField().getJsonValueKeyFlag().getFlagRef()));
-      }
-      return retval;
-    }
-
-    @Override
-    public String getJsonValueKeyName() {
-      String retval = null;
-
-      if (getXmlField().isSetJsonValueKey()) {
-        retval = getXmlField().getJsonValueKey();
-      }
-
-      if (retval == null || retval.isEmpty()) {
-        retval = getJavaTypeAdapter().getDefaultJsonValueKey();
-      }
-      return retval;
     }
 
     @SuppressWarnings("null")

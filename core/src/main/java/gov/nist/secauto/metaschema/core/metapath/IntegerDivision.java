@@ -38,8 +38,8 @@ class IntegerDivision
     extends AbstractArithmeticExpression<IIntegerItem> {
 
   /**
-   * Create an expression that gets the whole number quotient result by dividing the dividend by the
-   * divisor.
+   * Create an expression that gets the whole number quotient result by dividing
+   * the dividend by the divisor.
    *
    * @param dividend
    *          the expression whose item result will be divided
@@ -77,7 +77,8 @@ class IntegerDivision
    *          the item to be divided
    * @param divisor
    *          the item to divide by
-   * @return the quotient result or an empty {@link ISequence} if either item is {@code null}
+   * @return the quotient result or an empty {@link ISequence} if either item is
+   *         {@code null}
    */
   @NonNull
   protected static ISequence<? extends IIntegerItem> resultOrEmpty(@Nullable INumericItem dividend,

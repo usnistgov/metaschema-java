@@ -47,25 +47,30 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IFunction {
   enum FunctionProperty {
     /**
-     * Indicates that the function will produce identical results for the same arguments (see XPath 3.1
-     * <a href= "https://www.w3.org/TR/xpath-functions-31/#dt-deterministic">deterministic</a>). If not
-     * assigned to a function definition, a function call with the same arguments is not guaranteed to
-     * produce the same results in the same order for subsequent calls within the same execution
-     * context.
+     * Indicates that the function will produce identical results for the same
+     * arguments (see XPath 3.1 <a href=
+     * "https://www.w3.org/TR/xpath-functions-31/#dt-deterministic">deterministic</a>).
+     * If not assigned to a function definition, a function call with the same
+     * arguments is not guaranteed to produce the same results in the same order for
+     * subsequent calls within the same execution context.
      */
     DETERMINISTIC,
     /**
-     * Indicates that the result of the function depends on property values within the static or dynamic
-     * context and the provided arguments (see XPath 3.1
-     * <a href= "https://www.w3.org/TR/xpath-functions-31/#dt-context-dependent">context-dependent</a>).
-     * If not assigned to a function definition, a call will not be affected by the property values
-     * within the static or dynamic context and will not have any arguments.
+     * Indicates that the result of the function depends on property values within
+     * the static or dynamic context and the provided arguments (see XPath 3.1
+     * <a href=
+     * "https://www.w3.org/TR/xpath-functions-31/#dt-context-dependent">context-dependent</a>).
+     * If not assigned to a function definition, a call will not be affected by the
+     * property values within the static or dynamic context and will not have any
+     * arguments.
      */
     CONTEXT_DEPENDENT,
     /**
-     * Indicates that the result of the function depends on the current focus (see XPath 3.1
-     * <a href= "https://www.w3.org/TR/xpath-functions-31/#dt-focus-independent">focus-dependent</a>).
-     * If not assigned to a function definition, a call will not be affected by the current focus.
+     * Indicates that the result of the function depends on the current focus (see
+     * XPath 3.1 <a href=
+     * "https://www.w3.org/TR/xpath-functions-31/#dt-focus-independent">focus-dependent</a>).
+     * If not assigned to a function definition, a call will not be affected by the
+     * current focus.
      */
     FOCUS_DEPENDENT,
     /**
@@ -124,8 +129,8 @@ public interface IFunction {
   int arity();
 
   /**
-   * Determines if the result of the function call will produce identical results when provided the
-   * same implicit or explicit arguments.
+   * Determines if the result of the function call will produce identical results
+   * when provided the same implicit or explicit arguments.
    *
    * @return {@code true} if function is deterministic or {@code false} otherwise
    * @see FunctionProperty#DETERMINISTIC
@@ -135,10 +140,11 @@ public interface IFunction {
   }
 
   /**
-   * Determines if the result of the function call depends on property values within the static or
-   * dynamic context and the provided arguments.
+   * Determines if the result of the function call depends on property values
+   * within the static or dynamic context and the provided arguments.
    *
-   * @return {@code true} if function is context dependent or {@code false} otherwise
+   * @return {@code true} if function is context dependent or {@code false}
+   *         otherwise
    * @see FunctionProperty#CONTEXT_DEPENDENT
    */
   default boolean isContextDepenent() {
@@ -148,7 +154,8 @@ public interface IFunction {
   /**
    * Determines if the result of the function call depends on the current focus.
    *
-   * @return {@code true} if function is focus dependent or {@code false} otherwise
+   * @return {@code true} if function is focus dependent or {@code false}
+   *         otherwise
    * @see FunctionProperty#FOCUS_DEPENDENT
    */
   default boolean isFocusDepenent() {
@@ -158,7 +165,8 @@ public interface IFunction {
   /**
    * Determines if the final argument can be repeated.
    *
-   * @return {@code true} if the final argument can be repeated or {@code false} otherwise
+   * @return {@code true} if the final argument can be repeated or {@code false}
+   *         otherwise
    * @see FunctionProperty#UNBOUNDED_ARITY
    */
   default boolean isArityUnbounded() {

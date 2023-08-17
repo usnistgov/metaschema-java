@@ -34,10 +34,11 @@ import gov.nist.secauto.metaschema.schemagen.json.JsonGenerationState;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * A type of {@link IJsonSchema} that can represent a schema that is a global definition.
+ * A type of {@link IJsonSchema} that can represent a schema that is a global
+ * definition.
  * <p>
- * A schema of this type will be a global definition if {@link #isInline(JsonGenerationState)} is
- * {@code false}.
+ * A schema of this type will be a global definition if
+ * {@link #isInline(JsonGenerationState)} is {@code false}.
  */
 public interface IDefineableJsonSchema extends IJsonSchema {
   /**
@@ -45,7 +46,8 @@ public interface IDefineableJsonSchema extends IJsonSchema {
    *
    * @param state
    *          the schema generation state used for context and writing
-   * @return {@code true} if the SON schema object is a definition or {@code false} otherwise
+   * @return {@code true} if the SON schema object is a definition or
+   *         {@code false} otherwise
    */
   default boolean isDefinition(@NonNull JsonGenerationState state) {
     return !isInline(state);

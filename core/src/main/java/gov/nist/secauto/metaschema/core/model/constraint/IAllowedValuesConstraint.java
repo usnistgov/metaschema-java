@@ -32,8 +32,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Represents a rule requiring the value of a field or flag to match the name of one entry in a set
- * of enumerated values.
+ * Represents a rule requiring the value of a field or flag to match the name of
+ * one entry in a set of enumerated values.
  */
 public interface IAllowedValuesConstraint extends IConstraint {
   boolean DEFAULT_ALLOW_OTHER = false;
@@ -76,17 +76,19 @@ public interface IAllowedValuesConstraint extends IConstraint {
   }
 
   /**
-   * Determines if this allowed value constraint is open-ended ({@code true}) or closed. If
-   * "open-ended", the constraint allows the target's value to by any additional unspecified value. If
-   * "closed", the constraint requries the target's value to be one of the specified values.
+   * Determines if this allowed value constraint is open-ended ({@code true}) or
+   * closed. If "open-ended", the constraint allows the target's value to by any
+   * additional unspecified value. If "closed", the constraint requries the
+   * target's value to be one of the specified values.
    *
-   * @return {@code true} if the constraint is "open-ended", or {@code false} otherwise
+   * @return {@code true} if the constraint is "open-ended", or {@code false}
+   *         otherwise
    */
   boolean isAllowedOther();
 
   /**
-   * Determines the degree to which this constraint can be extended by other constraints applied to
-   * the same value.
+   * Determines the degree to which this constraint can be extended by other
+   * constraints applied to the same value.
    *
    * @return the enumeration value
    */

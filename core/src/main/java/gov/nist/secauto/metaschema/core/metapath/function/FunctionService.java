@@ -97,13 +97,14 @@ public final class FunctionService {
   }
 
   /**
-   * Retrieve the function with the provided name that supports the signature of the provided methods,
-   * if such a function exists.
+   * Retrieve the function with the provided name that supports the signature of
+   * the provided methods, if such a function exists.
    *
    * @param name
    *          the name of a group of functions
    * @param arguments
-   *          a list of argument expressions for use in determining an argument signature match
+   *          a list of argument expressions for use in determining an argument
+   *          signature match
    * @return the matching function or {@code null} if no match exists
    * @throws StaticMetapathException
    *           if a matching function was not found
@@ -114,13 +115,14 @@ public final class FunctionService {
   }
 
   /**
-   * Retrieve the function with the provided name that supports the signature of the provided methods,
-   * if such a function exists.
+   * Retrieve the function with the provided name that supports the signature of
+   * the provided methods, if such a function exists.
    *
    * @param name
    *          the name of a group of functions
    * @param arguments
-   *          a list of argument expressions for use in determining an argument signature match
+   *          a list of argument expressions for use in determining an argument
+   *          signature match
    * @return the matching function
    * @throws StaticMetapathException
    *           if a matching function was not found

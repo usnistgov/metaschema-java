@@ -38,8 +38,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * A marker interface for Metaschema constructs that can be members of a Metaschema definition's
- * model that are named.
+ * A marker interface for Metaschema constructs that can be members of a
+ * Metaschema definition's model that are named.
  */
 public interface INamedModelElement extends IModelElement {
   /**
@@ -51,7 +51,8 @@ public interface INamedModelElement extends IModelElement {
   String getFormalName();
 
   /**
-   * The resolved formal display name, which allows an instance to override a definition's name.
+   * The resolved formal display name, which allows an instance to override a
+   * definition's name.
    *
    * @return the formal name or {@code null} if not defined
    */
@@ -69,8 +70,8 @@ public interface INamedModelElement extends IModelElement {
   MarkupLine getDescription();
 
   /**
-   * Get the text that describes the basic use of the element, which allows an instance to override a
-   * definition's description.
+   * Get the text that describes the basic use of the element, which allows an
+   * instance to override a definition's description.
    *
    * @return a line of markup text or {@code null} if not defined
    */
@@ -115,13 +116,15 @@ public interface INamedModelElement extends IModelElement {
   }
 
   /**
-   * Determine if a given property, with a given {@code qname}, has the identified {@code value}.
+   * Determine if a given property, with a given {@code qname}, has the identified
+   * {@code value}.
    *
    * @param qname
    *          the qualified name of the property
    * @param value
    *          the expected property value
-   * @return {@code true} if the property value is defined or {@code false} otherwise
+   * @return {@code true} if the property value is defined or {@code false}
+   *         otherwise
    */
   default boolean hasPropertyValue(@NonNull QName qname, @NonNull String value) {
     Set<String> values = getProperties().get(qname);
@@ -153,10 +156,11 @@ public interface INamedModelElement extends IModelElement {
   }
 
   /**
-   * Get the name to use based on the provided names. This method will return the use name provided by
-   * {@link #getUseName()} if the call is not {@code null}, and fall back to the name provided by
-   * {@link #getName()} otherwise. This is the model name to use for the for an instance where the
-   * instance is referenced.
+   * Get the name to use based on the provided names. This method will return the
+   * use name provided by {@link #getUseName()} if the call is not {@code null},
+   * and fall back to the name provided by {@link #getName()} otherwise. This is
+   * the model name to use for the for an instance where the instance is
+   * referenced.
    *
    * @return the use name if available, or the name if not
    *

@@ -44,10 +44,6 @@ import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.DefineFlagConstraints
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ExpectConstraintType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.IndexHasKeyConstraintType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.MatchesConstraintType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedAllowedValuesType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedExpectConstraintType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedIndexHasKeyConstraintType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedMatchesConstraintType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -74,7 +70,7 @@ class ValueConstraintSupport implements IValueConstrained { // NOPMD - intention
   private final List<IExpectConstraint> expectConstraints = new LinkedList<>();
 
   public ValueConstraintSupport() {
-    // do nothing
+    // empty constraints
   }
 
   /**
@@ -85,29 +81,45 @@ class ValueConstraintSupport implements IValueConstrained { // NOPMD - intention
    * @param source
    *          information about the source of the constraints
    */
+  @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   public ValueConstraintSupport( // NOPMD - intentional
       @NonNull DefineFlagConstraintsType xmlConstraints,
       @NonNull ISource source) {
     try (XmlCursor cursor = xmlConstraints.newCursor()) {
-      cursor.selectPath(PATH);
+      assert cursor != null;
+      parse(source, cursor, PATH);
+    }
+  }
+
+  /**
+   * Generate a set of constraints from the provided XMLBeans instance.
+   *
+   * @param xmlConstraints
+   *          the XMLBeans instance
+   * @param source
+   *          information about the source of the constraints
+   */
+  @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
+  public ValueConstraintSupport( // NOPMD - intentional
+      @NonNull DefineFieldConstraintsType xmlConstraints,
+      @NonNull ISource source) {
+    try (XmlCursor cursor = xmlConstraints.newCursor()) {
+      assert cursor != null;
+      parse(source, cursor, PATH);
+    }
+  }
+
+  protected final void parse(
+      @NonNull ISource source,
+      @NonNull XmlCursor cursor,
+      @NonNull String path) {
+    try {
+      assert cursor != null;
+      cursor.selectPath(path);
       while (cursor.toNextSelection()) {
         XmlObject obj = cursor.getObject();
-        if (obj instanceof AllowedValuesType) {
-          DefaultAllowedValuesConstraint constraint
-              = ModelFactory.newAllowedValuesConstraint((AllowedValuesType) obj, source);
-          addConstraint(constraint);
-        } else if (obj instanceof MatchesConstraintType) {
-          DefaultMatchesConstraint constraint
-              = ModelFactory.newMatchesConstraint((MatchesConstraintType) obj, source);
-          addConstraint(constraint);
-        } else if (obj instanceof IndexHasKeyConstraintType) {
-          DefaultIndexHasKeyConstraint constraint
-              = ModelFactory.newIndexHasKeyConstraint((IndexHasKeyConstraintType) obj, source);
-          addConstraint(constraint);
-        } else if (obj instanceof ExpectConstraintType) {
-          DefaultExpectConstraint constraint = ModelFactory.newExpectConstraint((ExpectConstraintType) obj, source);
-          addConstraint(constraint);
-        }
+        assert obj != null;
+        parseXmlObject(source, obj);
       }
     } catch (MetapathException | XmlValueNotSupportedException ex) {
       if (ex.getCause() instanceof MetapathException) {
@@ -121,51 +133,31 @@ class ValueConstraintSupport implements IValueConstrained { // NOPMD - intention
     }
   }
 
-  /**
-   * Generate a set of constraints from the provided XMLBeans instance.
-   *
-   * @param xmlConstraints
-   *          the XMLBeans instance
-   * @param source
-   *          information about the source of the constraints
-   */
-  public ValueConstraintSupport( // NOPMD - intentional
-      @NonNull DefineFieldConstraintsType xmlConstraints,
-      @NonNull ISource source) {
-    try (XmlCursor cursor = xmlConstraints.newCursor()) {
-      cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
-          + "$this/m:allowed-values|$this/m:matches|$this/m:index-has-key|$this/m:expect");
-
-      while (cursor.toNextSelection()) {
-        XmlObject obj = cursor.getObject();
-        if (obj instanceof ScopedAllowedValuesType) {
-          DefaultAllowedValuesConstraint constraint
-              = ModelFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj, source);
-          addConstraint(constraint);
-        } else if (obj instanceof ScopedMatchesConstraintType) {
-          DefaultMatchesConstraint constraint
-              = ModelFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj, source);
-          addConstraint(constraint);
-        } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
-          DefaultIndexHasKeyConstraint constraint
-              = ModelFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj, source);
-          addConstraint(constraint);
-        } else if (obj instanceof ScopedExpectConstraintType) {
-          DefaultExpectConstraint constraint
-              = ModelFactory.newExpectConstraint((ScopedExpectConstraintType) obj, source);
-          addConstraint(constraint);
-        }
-      }
-    } catch (MetapathException | XmlValueNotSupportedException ex) {
-      if (ex.getCause() instanceof MetapathException) {
-        throw new MetapathException(
-            String.format("Unable to compile a Metapath in '%s'. %s",
-                source.getSource(),
-                ex.getLocalizedMessage()),
-            ex);
-      }
-      throw ex;
+  protected boolean parseXmlObject(
+      @NonNull ISource source,
+      @NonNull XmlObject obj) {
+    boolean handled = false;
+    if (obj instanceof AllowedValuesType) {
+      DefaultAllowedValuesConstraint constraint
+          = ModelFactory.newAllowedValuesConstraint((AllowedValuesType) obj, source);
+      addConstraint(constraint);
+      handled = true;
+    } else if (obj instanceof MatchesConstraintType) {
+      DefaultMatchesConstraint constraint
+          = ModelFactory.newMatchesConstraint((MatchesConstraintType) obj, source);
+      addConstraint(constraint);
+      handled = true;
+    } else if (obj instanceof IndexHasKeyConstraintType) {
+      DefaultIndexHasKeyConstraint constraint
+          = ModelFactory.newIndexHasKeyConstraint((IndexHasKeyConstraintType) obj, source);
+      addConstraint(constraint);
+      handled = true;
+    } else if (obj instanceof ExpectConstraintType) {
+      DefaultExpectConstraint constraint = ModelFactory.newExpectConstraint((ExpectConstraintType) obj, source);
+      addConstraint(constraint);
+      handled = true;
     }
+    return handled;
   }
 
   @Override

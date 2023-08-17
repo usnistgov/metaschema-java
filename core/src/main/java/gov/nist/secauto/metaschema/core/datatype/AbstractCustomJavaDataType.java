@@ -33,8 +33,8 @@ import java.util.Objects;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * A common base implementation of a custom Java object providing an underlying implementation of a
- * data type.
+ * A common base implementation of a custom Java object providing an underlying
+ * implementation of a data type.
  *
  * @param <TYPE>
  *          the bound object type supported by this data type

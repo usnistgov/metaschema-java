@@ -32,8 +32,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * A marker interface for Metaschema constructs that can be members of a Metaschema definition's
- * model.
+ * A marker interface for Metaschema constructs that can be members of a
+ * Metaschema definition's model.
  */
 public interface IModelElement {
 
@@ -46,9 +46,9 @@ public interface IModelElement {
   ModelType getModelType();
 
   /**
-   * Retrieves a string that uniquely identifies the model element in the overall collection of model
-   * elements. This should the type of element, it's name, and any additional information needed to
-   * uniquely identify it.
+   * Retrieves a string that uniquely identifies the model element in the overall
+   * collection of model elements. This should the type of element, it's name, and
+   * any additional information needed to uniquely identify it.
    *
    * @return the coordinates
    */
@@ -64,7 +64,8 @@ public interface IModelElement {
   MarkupMultiline getRemarks();
 
   /**
-   * Retrieves the Metaschema instance that contains for the information element's declaration.
+   * Retrieves the Metaschema instance that contains for the information element's
+   * declaration.
    *
    * @return the Metaschema instance
    */

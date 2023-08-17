@@ -30,24 +30,25 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureModelContainer;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.IModelInstance;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ChoiceType;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 class XmlChoiceInstance
-    extends AbstractChoiceInstance {
+    extends AbstractChoiceInstance
+    implements IFeatureModelContainer<
+        IModelInstance, INamedModelInstance, IFieldInstance, IAssemblyInstance, IChoiceInstance> {
   @NonNull
   private final ChoiceType xmlChoice;
-  private XmlModelContainerSupport modelContainer;
+  @NonNull
+  private final Lazy<XmlModelContainerSupport> modelContainer;
 
   /**
    * Constructs a mutually exclusive choice between two possible objects.
@@ -62,7 +63,12 @@ class XmlChoiceInstance
       @NonNull IModelContainer parent) {
     super(parent);
     this.xmlChoice = xmlChoice;
+    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlModelContainerSupport(xmlChoice, this)));
+  }
 
+  @Override
+  public XmlModelContainerSupport getModelContainer() {
+    return ObjectUtils.notNull(modelContainer.get());
   }
 
   @Override
@@ -79,77 +85,6 @@ class XmlChoiceInstance
   @NonNull
   protected ChoiceType getXmlChoice() {
     return xmlChoice;
-  }
-
-  /**
-   * Lazy initialize the model for this choice.
-   */
-  protected void initModelContainer() {
-    synchronized (this) {
-      if (modelContainer == null) {
-        modelContainer = new XmlModelContainerSupport(getXmlChoice(), getOwningDefinition());
-      }
-    }
-  }
-
-  private Map<String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
-    initModelContainer();
-    return modelContainer.getNamedModelInstanceMap();
-  }
-
-  @Override
-  public @Nullable INamedModelInstance getModelInstanceByName(String name) {
-    return getNamedModelInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public @NonNull Collection<? extends INamedModelInstance> getNamedModelInstances() {
-    return getNamedModelInstanceMap().values();
-  }
-
-  private Map<String, ? extends IFieldInstance> getFieldInstanceMap() {
-    initModelContainer();
-    return modelContainer.getFieldInstanceMap();
-  }
-
-  @Override
-  public IFieldInstance getFieldInstanceByName(String name) {
-    return getFieldInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public Collection<? extends IFieldInstance> getFieldInstances() {
-    return getFieldInstanceMap().values();
-  }
-
-  private Map<String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
-    initModelContainer();
-    return modelContainer.getAssemblyInstanceMap();
-  }
-
-  @Override
-  public IAssemblyInstance getAssemblyInstanceByName(String name) {
-    return getAssemblyInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public Collection<? extends IAssemblyInstance> getAssemblyInstances() {
-    return getAssemblyInstanceMap().values();
-  }
-
-  @Override
-  public List<? extends IChoiceInstance> getChoiceInstances() {
-    initModelContainer();
-    return modelContainer.getChoiceInstances();
-  }
-
-  @Override
-  public Collection<? extends IModelInstance> getModelInstances() {
-    initModelContainer();
-    return modelContainer.getModelInstances();
   }
 
   @Override

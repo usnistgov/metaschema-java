@@ -45,22 +45,26 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 /**
  * The API for accessing information about a given Metaschema.
  * <p>
- * A Metaschema may import another Metaschema. This import graph can be accessed using
- * {@link #getImportedMetaschemas()}.
+ * A Metaschema may import another Metaschema. This import graph can be accessed
+ * using {@link #getImportedMetaschemas()}.
  * <p>
  * Global scoped Metaschema definitions can be accessed using
  * {@link #getScopedAssemblyDefinitionByName(String)},
  * {@link #getScopedFieldDefinitionByName(String)}, and
- * {@link #getScopedFlagDefinitionByName(String)}. These methods take into consideration the import
- * order to provide the global definitions that are in scope within the given Metschema.
+ * {@link #getScopedFlagDefinitionByName(String)}. These methods take into
+ * consideration the import order to provide the global definitions that are in
+ * scope within the given Metschema.
  * <p>
- * Global scoped definitions exported by this Metaschema, available for use by importing
- * Metaschemas, can be accessed using {@link #getExportedAssemblyDefinitions()},
- * {@link #getExportedFieldDefinitions()}, and {@link #getExportedFlagDefinitions()}.
+ * Global scoped definitions exported by this Metaschema, available for use by
+ * importing Metaschemas, can be accessed using
+ * {@link #getExportedAssemblyDefinitions()},
+ * {@link #getExportedFieldDefinitions()}, and
+ * {@link #getExportedFlagDefinitions()}.
  * <p>
- * Global scoped definitions defined direclty within the given Metaschema can be accessed using
- * {@link #getAssemblyDefinitions()}, {@link #getFieldDefinitions()}, and
- * {@link #getFlagDefinitions()}, along with similarly named accessors.
+ * Global scoped definitions defined direclty within the given Metaschema can be
+ * accessed using {@link #getAssemblyDefinitions()},
+ * {@link #getFieldDefinitions()}, and {@link #getFlagDefinitions()}, along with
+ * similarly named accessors.
  */
 public interface IMetaschema {
   String METASCHEMA_XML_NS = "http://csrc.nist.gov/ns/oscal/metaschema/1.0";
@@ -124,8 +128,8 @@ public interface IMetaschema {
   MarkupMultiline getRemarks();
 
   /**
-   * Retrieves the unique short name for the Metaschema, which provides a textual identifier for the
-   * Metaschema instance.
+   * Retrieves the unique short name for the Metaschema, which provides a textual
+   * identifier for the Metaschema instance.
    *
    * @return the short name
    */
@@ -184,8 +188,8 @@ public interface IMetaschema {
   Collection<? extends IAssemblyDefinition> getAssemblyDefinitions();
 
   /**
-   * Retrieves the top-level assembly definition in this Metaschema with the matching name, if it
-   * exists.
+   * Retrieves the top-level assembly definition in this Metaschema with the
+   * matching name, if it exists.
    *
    * @param name
    *          the definition name
@@ -204,7 +208,8 @@ public interface IMetaschema {
   Collection<? extends IFieldDefinition> getFieldDefinitions();
 
   /**
-   * Retrieves the top-level field definition in this Metaschema with the matching name, if it exists.
+   * Retrieves the top-level field definition in this Metaschema with the matching
+   * name, if it exists.
    *
    * @param name
    *          the definition name
@@ -235,7 +240,8 @@ public interface IMetaschema {
   Collection<? extends IFlagDefinition> getFlagDefinitions();
 
   /**
-   * Retrieves the top-level flag definition in this Metaschema with the matching name, if it exists.
+   * Retrieves the top-level flag definition in this Metaschema with the matching
+   * name, if it exists.
    *
    * @param name
    *          the definition name
@@ -253,12 +259,13 @@ public interface IMetaschema {
   // * @return the matching information elements or an empty collection
   // */
   // @NonNull
-  // Collection<@NonNull ? extends IModelElement> getInfoElementsByMetapath(@NonNull String path);
+  // Collection<@NonNull ? extends IModelElement>
+  // getInfoElementsByMetapath(@NonNull String path);
 
   /**
-   * Retrieves the assembly definition with a matching name from either: 1) the top-level assembly
-   * definitions from this Metaschema, or 2) global assembly definitions from each imported Metaschema
-   * in reverse order of import.
+   * Retrieves the assembly definition with a matching name from either: 1) the
+   * top-level assembly definitions from this Metaschema, or 2) global assembly
+   * definitions from each imported Metaschema in reverse order of import.
    *
    * @param name
    *          the name of the assembly to find
@@ -276,9 +283,9 @@ public interface IMetaschema {
   }
 
   /**
-   * Retrieves the field definition with a matching name from either: 1) the top-level field
-   * definitions from this Metaschema, or 2) global field definitions from each imported Metaschema in
-   * reverse order of import.
+   * Retrieves the field definition with a matching name from either: 1) the
+   * top-level field definitions from this Metaschema, or 2) global field
+   * definitions from each imported Metaschema in reverse order of import.
    *
    * @param name
    *          the name of the field definition to find
@@ -296,9 +303,9 @@ public interface IMetaschema {
   }
 
   /**
-   * Retrieves the flag definition with a matching name from either: 1) the top-level flag definitions
-   * from this Metaschema, or 2) global flag definitions from each imported Metaschema in reverse
-   * order of import.
+   * Retrieves the flag definition with a matching name from either: 1) the
+   * top-level flag definitions from this Metaschema, or 2) global flag
+   * definitions from each imported Metaschema in reverse order of import.
    *
    * @param name
    *          the name of the flag definition to find
@@ -316,8 +323,8 @@ public interface IMetaschema {
   }
 
   /**
-   * Retrieves the top-level assembly definitions that are marked as roots from the current Metaschema
-   * and any imported Metaschema.
+   * Retrieves the top-level assembly definitions that are marked as roots from
+   * the current Metaschema and any imported Metaschema.
    *
    * @return a listing of assembly definitions marked as root
    */
@@ -329,8 +336,8 @@ public interface IMetaschema {
   }
 
   /**
-   * Retrieves the top-level assembly definitions that are marked as roots from the current
-   * Metaschema.
+   * Retrieves the top-level assembly definitions that are marked as roots from
+   * the current Metaschema.
    *
    * @return a listing of assembly definitions marked as root
    */
@@ -342,11 +349,13 @@ public interface IMetaschema {
   }
 
   /**
-   * Retrieve the top-level flag definitions that are marked global in this Metaschema or in any
-   * imported Metaschema. The resulting collection is built by adding global definitions from each
-   * imported Metaschema in order of import, then adding global definitions from the current
-   * Metaschema. Such a map is built in this way for each imported Metaschema in the chain. Values for
-   * clashing keys will be replaced in this order, giving preference to the "closest" definition.
+   * Retrieve the top-level flag definitions that are marked global in this
+   * Metaschema or in any imported Metaschema. The resulting collection is built
+   * by adding global definitions from each imported Metaschema in order of
+   * import, then adding global definitions from the current Metaschema. Such a
+   * map is built in this way for each imported Metaschema in the chain. Values
+   * for clashing keys will be replaced in this order, giving preference to the
+   * "closest" definition.
    *
    * @return the collection of exported flag definitions
    */
@@ -367,11 +376,13 @@ public interface IMetaschema {
   IFlagDefinition getExportedFlagDefinitionByName(String name);
 
   /**
-   * Retrieve the top-level field definitions that are marked global in this Metaschema or in any
-   * imported Metaschema. The resulting collection is built by adding global definitions from each
-   * imported Metaschema in order of import, then adding global definitions from the current
-   * Metaschema. Such a map is built in this way for each imported Metaschema in the chain. Values for
-   * clashing keys will be replaced in this order, giving preference to the "closest" definition
+   * Retrieve the top-level field definitions that are marked global in this
+   * Metaschema or in any imported Metaschema. The resulting collection is built
+   * by adding global definitions from each imported Metaschema in order of
+   * import, then adding global definitions from the current Metaschema. Such a
+   * map is built in this way for each imported Metaschema in the chain. Values
+   * for clashing keys will be replaced in this order, giving preference to the
+   * "closest" definition
    *
    * @return the collection of exported field definitions
    */
@@ -392,12 +403,13 @@ public interface IMetaschema {
   IFieldDefinition getExportedFieldDefinitionByName(String name);
 
   /**
-   * Retrieve the top-level assembly definitions that are marked global in this Metaschema or in any
-   * imported Metaschema. The resulting collection is built by adding global definitions from each
-   * imported Metaschema in order of import, then adding global definitions from the current
-   * Metaschema. This collection is built in this way for each imported Metaschema in the chain. Items
-   * with duplicate names will be replaced in this order, giving preference to the "closest"
-   * definition
+   * Retrieve the top-level assembly definitions that are marked global in this
+   * Metaschema or in any imported Metaschema. The resulting collection is built
+   * by adding global definitions from each imported Metaschema in order of
+   * import, then adding global definitions from the current Metaschema. This
+   * collection is built in this way for each imported Metaschema in the chain.
+   * Items with duplicate names will be replaced in this order, giving preference
+   * to the "closest" definition
    *
    * @return the collection of exported assembly definitions
    */

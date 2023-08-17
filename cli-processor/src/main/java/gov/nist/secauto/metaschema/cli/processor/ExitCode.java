@@ -42,7 +42,8 @@ public enum ExitCode {
    */
   IO_ERROR(2),
   /**
-   * A command was requested by name that doesn't exist or required arguments are missing.
+   * A command was requested by name that doesn't exist or required arguments are
+   * missing.
    */
   INVALID_COMMAND(3),
   /**
@@ -58,7 +59,8 @@ public enum ExitCode {
    */
   RUNTIME_ERROR(6),
   /**
-   * The provided argument information for a command fails to match argument use requirements.
+   * The provided argument information for a command fails to match argument use
+   * requirements.
    */
   INVALID_ARGUMENTS(7);
 

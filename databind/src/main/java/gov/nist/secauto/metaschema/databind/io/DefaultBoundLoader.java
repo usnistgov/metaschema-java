@@ -35,7 +35,6 @@ import gov.nist.secauto.metaschema.core.resource.AbstractResourceLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -68,7 +67,8 @@ public class DefaultBoundLoader
   private final IMutableConfiguration<DeserializationFeature<?>> configuration;
 
   /**
-   * Construct a new OSCAL loader instance, using the provided {@link IBindingContext}.
+   * Construct a new OSCAL loader instance, using the provided
+   * {@link IBindingContext}.
    *
    * @param bindingContext
    *          the Metaschema binding context to use to load Java types
@@ -264,23 +264,7 @@ public class DefaultBoundLoader
   }
 
   @NonNull
-  protected IDocumentNodeItem deserializeToNodeItem(
-      @NonNull Class<?> clazz,
-      @NonNull Format format,
-      @NonNull BufferedInputStream bis,
-      @NonNull URI documentUri) throws IOException {
-    try {
-      bis.reset();
-    } catch (IOException ex) {
-      throw new IOException("Unable to reset input stream before parsing", ex);
-    }
-
-    IDeserializer<?> deserializer = getDeserializer(clazz, format, getConfiguration());
-    return (IDocumentNodeItem) deserializer.deserializeToNodeItem(bis, documentUri);
-  }
-
-  @NonNull
-  protected <CLASS> IDeserializer<CLASS> getDeserializer(
+  private <CLASS> IDeserializer<CLASS> getDeserializer(
       @NonNull Class<CLASS> clazz,
       @NonNull Format format,
       @NonNull IConfiguration<DeserializationFeature<?>> config) {
@@ -288,5 +272,4 @@ public class DefaultBoundLoader
     retval.applyConfiguration(config);
     return retval;
   }
-
 }

@@ -80,7 +80,8 @@ public class XmlSimpleTypeDataTypeRestriction
             description,
             ObjectUtils.notNull(getQName().getNamespaceURI()),
             state);
-        // LOGGER.info(String.format("Field:%s:%s: %s", definition.getContainingMetaschema().getLocation(),
+        // LOGGER.info(String.format("Field:%s:%s: %s",
+        // definition.getContainingMetaschema().getLocation(),
         // definition.getName(), allowedValue.getValue()));
         state.writeEndElement(); // xs:enumeration
       }

@@ -31,13 +31,14 @@ import gov.nist.secauto.metaschema.core.model.IModelInstance;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Represents a rule requiring a Metaschema assembly data instance to have elements with a minimum
- * and/or maximum occurrence.
+ * Represents a rule requiring a Metaschema assembly data instance to have
+ * elements with a minimum and/or maximum occurrence.
  */
 public interface ICardinalityConstraint extends IConstraint {
   /**
-   * Retrieve the required minimum occurrence of the target instance. If specified, this value must be
-   * less than or equal to the value of {@link IModelInstance#getMaxOccurs()} and greater than
+   * Retrieve the required minimum occurrence of the target instance. If
+   * specified, this value must be less than or equal to the value of
+   * {@link IModelInstance#getMaxOccurs()} and greater than
    * {@link IModelInstance#getMinOccurs()}.
    *
    * @return a non-negative integer or {@code null} if not defined
@@ -46,8 +47,9 @@ public interface ICardinalityConstraint extends IConstraint {
   Integer getMinOccurs();
 
   /**
-   * Retrieve the required maximum occurrence of the target instance. If specified, this value must be
-   * less than the value of {@link IModelInstance#getMaxOccurs()} and greater than or equal to
+   * Retrieve the required maximum occurrence of the target instance. If
+   * specified, this value must be less than the value of
+   * {@link IModelInstance#getMaxOccurs()} and greater than or equal to
    * {@link IModelInstance#getMinOccurs()}.
    *
    * @return a non-negative integer or {@code null} if not defined

@@ -57,7 +57,8 @@ class DefaultAssemblyProperty
     this.definition = definition;
   }
 
-  protected BoundAssembly getAssemblyAnnotation() {
+  @NonNull
+  private BoundAssembly getAssemblyAnnotation() {
     return assembly;
   }
 

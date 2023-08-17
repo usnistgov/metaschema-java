@@ -67,14 +67,14 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Provides information supporting a binding between a set of Metaschema models and corresponding
- * Java classes.
+ * Provides information supporting a binding between a set of Metaschema models
+ * and corresponding Java classes.
  */
 public interface IBindingContext extends IMetaschemaLoaderStrategy {
 
   /**
-   * Get the singleton {@link IBindingContext} instance, which can be used to load information that
-   * binds a model to a set of Java classes.
+   * Get the singleton {@link IBindingContext} instance, which can be used to load
+   * information that binds a model to a set of Java classes.
    *
    * @return a new binding context
    */
@@ -103,8 +103,8 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   Class<?> getBoundClassForXmlQName(@NonNull QName rootQName);
 
   /**
-   * Determine the bound class for the provided JSON/YAML property/item name using any registered
-   * matchers.
+   * Determine the bound class for the provided JSON/YAML property/item name using
+   * any registered matchers.
    *
    * @param rootName
    *          the JSON/YAML property/item name
@@ -115,17 +115,19 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   Class<?> getBoundClassForJsonName(@NonNull String rootName);
 
   /**
-   * Get's the {@link IDataTypeAdapter} associated with the specified Java class, which is used to
-   * read and write XML, JSON, and YAML data to and from instances of that class. Thus, this adapter
-   * supports a direct binding between the Java class and structured data in one of the supported
-   * formats. Adapters are used to support bindings for simple data objects (e.g., {@link String},
+   * Get's the {@link IDataTypeAdapter} associated with the specified Java class,
+   * which is used to read and write XML, JSON, and YAML data to and from
+   * instances of that class. Thus, this adapter supports a direct binding between
+   * the Java class and structured data in one of the supported formats. Adapters
+   * are used to support bindings for simple data objects (e.g., {@link String},
    * {@link BigInteger}, {@link ZonedDateTime}, etc).
    *
    * @param <TYPE>
    *          the class type of the adapter
    * @param clazz
    *          the Java {@link Class} for the bound type
-   * @return the adapter instance or {@code null} if the provided class is not bound
+   * @return the adapter instance or {@code null} if the provided class is not
+   *         bound
    */
   @Nullable
   <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NonNull Class<TYPE> clazz);
@@ -137,10 +139,10 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   // TYPE> replacementClass);
 
   /**
-   * Gets a data {@link ISerializer} which can be used to write Java instance data for the provided
-   * class to the requested format. The provided class must be a bound Java class with a
-   * {@link MetaschemaAssembly} or {@link MetaschemaField} annotation for which a
-   * {@link IClassBinding} exists.
+   * Gets a data {@link ISerializer} which can be used to write Java instance data
+   * for the provided class to the requested format. The provided class must be a
+   * bound Java class with a {@link MetaschemaAssembly} or {@link MetaschemaField}
+   * annotation for which a {@link IClassBinding} exists.
    *
    * @param <CLASS>
    *          the Java type this deserializer can write data from
@@ -150,9 +152,11 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    *          the Java data type to serialize
    * @return the serializer instance
    * @throws NullPointerException
-   *           if any of the provided arguments, except the configuration, are {@code null}
+   *           if any of the provided arguments, except the configuration, are
+   *           {@code null}
    * @throws IllegalArgumentException
-   *           if the provided class is not bound to a Metaschema assembly or field
+   *           if the provided class is not bound to a Metaschema assembly or
+   *           field
    * @throws UnsupportedOperationException
    *           if the requested format is not supported by the implementation
    * @see #getClassBinding(Class)
@@ -161,10 +165,10 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   <CLASS> ISerializer<CLASS> newSerializer(@NonNull Format format, @NonNull Class<CLASS> clazz);
 
   /**
-   * Gets a data {@link IDeserializer} which can be used to read Java instance data for the provided
-   * class from the requested format. The provided class must be a bound Java class with a
-   * {@link MetaschemaAssembly} or {@link MetaschemaField} annotation for which a
-   * {@link IClassBinding} exists.
+   * Gets a data {@link IDeserializer} which can be used to read Java instance
+   * data for the provided class from the requested format. The provided class
+   * must be a bound Java class with a {@link MetaschemaAssembly} or
+   * {@link MetaschemaField} annotation for which a {@link IClassBinding} exists.
    *
    * @param <CLASS>
    *          the Java type this deserializer can read data into
@@ -174,9 +178,11 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    *          the Java data type to serialize
    * @return the deserializer instance
    * @throws NullPointerException
-   *           if any of the provided arguments, except the configuration, are {@code null}
+   *           if any of the provided arguments, except the configuration, are
+   *           {@code null}
    * @throws IllegalArgumentException
-   *           if the provided class is not bound to a Metaschema assembly or field
+   *           if the provided class is not bound to a Metaschema assembly or
+   *           field
    * @throws UnsupportedOperationException
    *           if the requested format is not supported by the implementation
    * @see #getClassBinding(Class)
@@ -207,7 +213,8 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    * @throws NullPointerException
    *           if the provided object is {@code null}
    * @throws IllegalArgumentException
-   *           if the provided class is not bound to a Metaschema assembly or field
+   *           if the provided class is not bound to a Metaschema assembly or
+   *           field
    */
   @NonNull
   <CLASS> CLASS copyBoundObject(@NonNull CLASS other, Object parentInstance) throws BindingException;
@@ -231,13 +238,15 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   }
 
   /**
-   * Perform constraint validation on the provided bound object represented as an {@link INodeItem}.
+   * Perform constraint validation on the provided bound object represented as an
+   * {@link INodeItem}.
    *
    * @param nodeItem
    *          the node item to validate
    * @return the validation result
    * @throws IllegalArgumentException
-   *           if the provided class is not bound to a Metaschema assembly or field
+   *           if the provided class is not bound to a Metaschema assembly or
+   *           field
    */
   default IValidationResult validate(@NonNull INodeItem nodeItem) {
     FindingCollectingConstraintValidationHandler handler = new FindingCollectingConstraintValidationHandler();
@@ -248,8 +257,8 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   }
 
   /**
-   * Load and perform schema and constraint validation on the target. The constraint validation will
-   * only be performed if the schema validation passes.
+   * Load and perform schema and constraint validation on the target. The
+   * constraint validation will only be performed if the schema validation passes.
    *
    * @param target
    *          the target to validate
@@ -294,7 +303,8 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   }
 
   /**
-   * Load and validate the provided {@code target} using the associated Metaschema module constraints.
+   * Load and validate the provided {@code target} using the associated Metaschema
+   * module constraints.
    *
    * @param target
    *          the file to load and validate

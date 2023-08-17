@@ -61,7 +61,8 @@ import java.util.stream.Collectors;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Goal which generates Java source files for a given set of Metaschema definitions.
+ * Goal which generates Java source files for a given set of Metaschema
+ * definitions.
  */
 @Mojo(name = "generate-schemas", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
 public class GenerateSchemaMojo
@@ -80,10 +81,12 @@ public class GenerateSchemaMojo
   private static final JsonSchemaGenerator JSON_SCHEMA_GENERATOR = new JsonSchemaGenerator();
 
   /**
-   * Specifies the formats of the schemas to generate. Multiple formats can be supplied and this
-   * plugin will generate a schema for each of the desired formats.
+   * Specifies the formats of the schemas to generate. Multiple formats can be
+   * supplied and this plugin will generate a schema for each of the desired
+   * formats.
    * <p>
-   * A format is specified by supplying one of the following values in a &lt;format&gt; subelement:
+   * A format is specified by supplying one of the following values in a
+   * &lt;format&gt; subelement:
    * <ul>
    * <li><em>json</em> - Creates a JSON Schema</li>
    * <li><em>xsd</em> - Creates an XML Schema Definition</li>
@@ -93,16 +96,17 @@ public class GenerateSchemaMojo
   private List<String> formats;
 
   /**
-   * If enabled, definitions that are defined inline will be generated as inline types. If disabled,
-   * definitions will always be generated as global types.
+   * If enabled, definitions that are defined inline will be generated as inline
+   * types. If disabled, definitions will always be generated as global types.
    */
   @Parameter(defaultValue = "true")
   private boolean inlineDefinitions = true;
 
   /**
-   * If enabled, child definitions of a choice that are defined inline will be generated as inline
-   * types. If disabled, child definitions of a choice will always be generated as global types. This
-   * option will only be used if <code>inlineDefinitions</code> is also enabled.
+   * If enabled, child definitions of a choice that are defined inline will be
+   * generated as inline types. If disabled, child definitions of a choice will
+   * always be generated as global types. This option will only be used if
+   * <code>inlineDefinitions</code> is also enabled.
    */
   @Parameter(defaultValue = "false")
   private boolean inlineChoiceDefinitions = false;
@@ -110,7 +114,8 @@ public class GenerateSchemaMojo
   /**
    * Determine if inlining definitions is required.
    *
-   * @return {@code true} if inlining definitions is required, or {@code false} otherwise
+   * @return {@code true} if inlining definitions is required, or {@code false}
+   *         otherwise
    */
   protected boolean isInlineDefinitions() {
     return inlineDefinitions;
@@ -119,7 +124,8 @@ public class GenerateSchemaMojo
   /**
    * Determine if inlining choice definitions is required.
    *
-   * @return {@code true} if inlining choice definitions is required, or {@code false} otherwise
+   * @return {@code true} if inlining choice definitions is required, or
+   *         {@code false} otherwise
    */
   protected boolean isInlineChoiceDefinitions() {
     return inlineChoiceDefinitions;
@@ -308,7 +314,8 @@ public class GenerateSchemaMojo
     // try {
     // getMavenProject()..addCompileSourceRoot(getOutputDirectory().getCanonicalFile().getPath());
     // } catch (IOException ex) {
-    // throw new MojoExecutionException("Unable to add output directory to maven sources.", ex);
+    // throw new MojoExecutionException("Unable to add output directory to maven
+    // sources.", ex);
     // }
   }
 }

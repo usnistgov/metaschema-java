@@ -38,7 +38,8 @@ import java.lang.annotation.Target;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * This annotation indicates that the target class represents a Metaschema assembly.
+ * This annotation indicates that the target class represents a Metaschema
+ * assembly.
  */
 @Documented
 @Retention(RUNTIME)
@@ -47,7 +48,8 @@ public @interface MetaschemaAssembly {
   /**
    * Get the documentary formal name of the assembly.
    * <p>
-   * If the value is "##none", then the description will be considered {@code null}.
+   * If the value is "##none", then the description will be considered
+   * {@code null}.
    *
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
@@ -57,7 +59,8 @@ public @interface MetaschemaAssembly {
   /**
    * Get the documentary description of the assembly.
    * <p>
-   * If the value is "##none", then the description will be considered {@code null}.
+   * If the value is "##none", then the description will be considered
+   * {@code null}.
    *
    * @return a markdown string or {@code "##none"} if no description is provided
    */
@@ -65,8 +68,8 @@ public @interface MetaschemaAssembly {
   String description() default Constants.NO_STRING_VALUE;
 
   /**
-   * Get the metaschema class that "owns" this assembly, which is the concrete implementation of the
-   * metaschema containing the assembly.
+   * Get the metaschema class that "owns" this assembly, which is the concrete
+   * implementation of the metaschema containing the assembly.
    *
    * @return the {@link IMetaschema} class
    */
@@ -93,8 +96,8 @@ public @interface MetaschemaAssembly {
   /**
    * XML target namespace of the XML element.
    * <p>
-   * If the value is "##default", then namespace is derived from the namespace provided in the
-   * package-info.
+   * If the value is "##default", then namespace is derived from the namespace
+   * provided in the package-info.
    *
    * @return the namespace
    */

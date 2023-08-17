@@ -35,7 +35,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @param <T>
  *          the resource type
  * @param <E>
- *          the exception type that may be thrown if an error occurs when closing the resource
+ *          the exception type that may be thrown if an error occurs when
+ *          closing the resource
  */
 public class AutoCloser<T, E extends Exception> implements AutoCloseable {
   @NonNull
@@ -44,8 +45,8 @@ public class AutoCloser<T, E extends Exception> implements AutoCloseable {
   private final Closer<T, E> closeLambda;
 
   /**
-   * Adapt the the provided {@code resource} to be {@link AutoCloseable}, using a provided closer
-   * {@code lambda}.
+   * Adapt the the provided {@code resource} to be {@link AutoCloseable}, using a
+   * provided closer {@code lambda}.
    *
    * @param <T>
    *          the resource's type
@@ -65,8 +66,8 @@ public class AutoCloser<T, E extends Exception> implements AutoCloseable {
   }
 
   /**
-   * Adapt the provided {@code resource} to be {@link AutoCloseable}, using a provided closer
-   * {@code lambda}.
+   * Adapt the provided {@code resource} to be {@link AutoCloseable}, using a
+   * provided closer {@code lambda}.
    *
    * @param resource
    *          the object to adapt

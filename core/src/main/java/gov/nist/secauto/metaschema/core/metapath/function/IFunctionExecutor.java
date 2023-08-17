@@ -37,12 +37,14 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * This functional interface provides a dispatch method for executing a function call.
+ * This functional interface provides a dispatch method for executing a function
+ * call.
  */
 @FunctionalInterface
 public interface IFunctionExecutor {
   /**
-   * Execute the provided function using the provided arguments, dynamic context, and focus.
+   * Execute the provided function using the provided arguments, dynamic context,
+   * and focus.
    *
    * @param function
    *          the signature of the function

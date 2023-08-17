@@ -49,6 +49,7 @@ import java.util.Map;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+@SuppressWarnings("PMD.NullAssignment") // readability
 class XmlFlagContainerSupport implements IFlagContainerSupport<IFlagInstance> {
 
   @NonNull

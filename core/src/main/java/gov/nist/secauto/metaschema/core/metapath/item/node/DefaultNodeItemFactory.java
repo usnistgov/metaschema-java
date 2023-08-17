@@ -95,8 +95,8 @@ final class DefaultNodeItemFactory
   }
 
   /**
-   * Given the provided parent node item, generate a mapping of flag name to flag node item for each
-   * flag on the parent assembly.
+   * Given the provided parent node item, generate a mapping of flag name to flag
+   * node item for each flag on the parent assembly.
    *
    * @param parent
    *          the parent assembly containing flags
@@ -120,8 +120,8 @@ final class DefaultNodeItemFactory
   }
 
   /**
-   * Given the provided parent node item, generate a mapping of model instance name to model node
-   * item(s) for each model instance on the parent assembly.
+   * Given the provided parent node item, generate a mapping of model instance
+   * name to model node item(s) for each model instance on the parent assembly.
    *
    * @param parent
    *          the parent assembly containing model instances

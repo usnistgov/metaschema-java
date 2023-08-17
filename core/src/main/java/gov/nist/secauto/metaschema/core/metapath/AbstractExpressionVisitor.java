@@ -30,7 +30,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Provides base support for processing a Metapath expression based on the visitor pattern.
+ * Provides base support for processing a Metapath expression based on the
+ * visitor pattern.
  *
  * @param <RESULT>
  *          the result of processing any node
@@ -54,7 +55,8 @@ abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpression
   }
 
   /**
-   * Visit each child expression of the provided {@code expr}, aggregating the results.
+   * Visit each child expression of the provided {@code expr}, aggregating the
+   * results.
    *
    * @param expr
    *          the expression whoose children should be visited
@@ -89,7 +91,8 @@ abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpression
    *          the current result of evaluating any previous children
    * @param context
    *          additional state to pass between nodes visited
-   * @return {@code true} if the child should be visited, or {@code false} otherwise
+   * @return {@code true} if the child should be visited, or {@code false}
+   *         otherwise
    */
   protected boolean shouldVisitNextChild(
       @NonNull IExpression parent,
@@ -101,7 +104,8 @@ abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpression
   }
 
   /**
-   * Aggregates the results produced by a visitation with an existing result into a single result.
+   * Aggregates the results produced by a visitation with an existing result into
+   * a single result.
    *
    * @param result
    *          the existing result

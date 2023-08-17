@@ -99,7 +99,8 @@ public class DefaultIndex implements IIndex {
   }
 
   /**
-   * Evaluates the provided key field component against the item to generate a key value.
+   * Evaluates the provided key field component against the item to generate a key
+   * value.
    *
    * @param item
    *          the item to generate the key value from

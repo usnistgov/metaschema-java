@@ -45,15 +45,16 @@ public class DefaultUniqueConstraint
     implements IUniqueConstraint {
 
   /**
-   * Create a new key-based constraint, which uses a set of key fields to build a key used to identify
-   * non-unique items.
+   * Create a new key-based constraint, which uses a set of key fields to build a
+   * key used to identify non-unique items.
    *
    * @param id
    *          the optional identifier for the constraint
    * @param formalName
    *          the constraint's formal name or {@code null} if not provided
    * @param description
-   *          the constraint's semantic description or {@code null} if not provided
+   *          the constraint's semantic description or {@code null} if not
+   *          provided
    * @param source
    *          information about the constraint source
    * @param level

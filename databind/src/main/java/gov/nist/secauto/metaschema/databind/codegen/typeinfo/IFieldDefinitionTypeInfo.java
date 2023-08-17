@@ -31,8 +31,8 @@ import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Java class type information for an {@link IFieldDefinition} used for generating a Java class for
- * the definition.
+ * Java class type information for an {@link IFieldDefinition} used for
+ * generating a Java class for the definition.
  */
 public interface IFieldDefinitionTypeInfo extends IModelDefinitionTypeInfo {
 

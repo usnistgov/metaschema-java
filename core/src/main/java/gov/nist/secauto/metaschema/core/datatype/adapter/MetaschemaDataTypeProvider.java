@@ -34,7 +34,8 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeProvider;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides for runtime discovery of built-in implementations of the core Metaschema data types.
+ * Provides for runtime discovery of built-in implementations of the core
+ * Metaschema data types.
  */
 @AutoService(IDataTypeProvider.class)
 public final class MetaschemaDataTypeProvider // NOPMD - Used for service initialization
@@ -94,8 +95,10 @@ public final class MetaschemaDataTypeProvider // NOPMD - Used for service initia
    * Initialize the built-in data types.
    */
   public MetaschemaDataTypeProvider() {
-    // The data type "string" must be first since this is the default data type for the {@link String}
-    // Java type. This ensures that when a data type is resolved that this data type is matched first
+    // The data type "string" must be first since this is the default data type for
+    // the {@link String}
+    // Java type. This ensures that when a data type is resolved that this data type
+    // is matched first
     // before other String-based data types.
     registerDatatype(STRING);
 

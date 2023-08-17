@@ -62,7 +62,8 @@ class Multiplication
    *          the first item to multiply
    * @param right
    *          the second item to multiply
-   * @return the product of both items or an empty {@link ISequence} if either item is {@code null}
+   * @return the product of both items or an empty {@link ISequence} if either
+   *         item is {@code null}
    */
   @Override
   @NonNull

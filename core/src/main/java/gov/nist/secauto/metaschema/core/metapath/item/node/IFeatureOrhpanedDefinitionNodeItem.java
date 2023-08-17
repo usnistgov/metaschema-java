@@ -30,9 +30,10 @@ import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
 
 /**
- * A mixin interface used to identify that the implementation is a {@link IDefinitionNodeItem} that
- * is based on a {@link IDefinition} that is an orphan in it's hierarchy. As a result, this item has
- * no other siblings, since definitions cannot be instantiated.
+ * A mixin interface used to identify that the implementation is a
+ * {@link IDefinitionNodeItem} that is based on a {@link IDefinition} that is an
+ * orphan in it's hierarchy. As a result, this item has no other siblings, since
+ * definitions cannot be instantiated.
  *
  * @param <D>
  *          the definition's type

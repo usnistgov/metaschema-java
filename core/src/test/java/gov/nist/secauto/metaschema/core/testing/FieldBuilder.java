@@ -104,6 +104,7 @@ public class FieldBuilder
     return retval;
   }
 
+  @SuppressWarnings("null")
   @NonNull
   public IFieldDefinition toDefinition() {
     validate();

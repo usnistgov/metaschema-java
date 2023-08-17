@@ -36,7 +36,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 /**
- * A {@link INodeItem} supported by a {@link IFieldDefinition}, that may have an associated value.
+ * A {@link INodeItem} supported by a {@link IFieldDefinition}, that may have an
+ * associated value.
  */
 class FieldOrphanedDefinitionNodeItemImpl
     extends AbstractOrphanedDefinitionNodeItem<IFieldDefinition, IFieldInstance>

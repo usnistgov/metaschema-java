@@ -43,7 +43,8 @@ public final class XmlUtil {
   /**
    * Create a {@link Source} based on the provided {@code url}.
    * <p>
-   * The caller of this method must ensure that the stream associated with this source is closed.
+   * The caller of this method must ensure that the stream associated with this
+   * source is closed.
    *
    * @param url
    *          the URL to use for the source

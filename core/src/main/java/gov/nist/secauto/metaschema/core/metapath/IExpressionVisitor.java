@@ -30,8 +30,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Used to support processing a Metapath expression based on the visitor pattern. Each type of
- * expression node in the Metapath abstract syntax tree (AST) is represented.
+ * Used to support processing a Metapath expression based on the visitor
+ * pattern. Each type of expression node in the Metapath abstract syntax tree
+ * (AST) is represented.
  *
  * @param <RESULT>
  *          the result of processing any node

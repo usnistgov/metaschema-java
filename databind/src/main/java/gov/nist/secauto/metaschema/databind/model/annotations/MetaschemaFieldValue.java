@@ -38,8 +38,8 @@ import java.lang.annotation.Target;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Identifies a field on a class annotated with the {@link MetaschemaField} annotation as the
- * Metaschema field's value.
+ * Identifies a field on a class annotated with the {@link MetaschemaField}
+ * annotation as the Metaschema field's value.
  */
 @Documented
 @Retention(RUNTIME)
@@ -55,7 +55,8 @@ public @interface MetaschemaFieldValue {
   /**
    * The default value of the flag represented as a string.
    * <p>
-   * The value {@link Constants#NULL_VALUE} is used to indicate if no default value is provided.
+   * The value {@link Constants#NULL_VALUE} is used to indicate if no default
+   * value is provided.
    *
    * @return the default value
    */
@@ -63,11 +64,12 @@ public @interface MetaschemaFieldValue {
   String defaultValue() default Constants.NULL_VALUE;
 
   /**
-   * The name of the JSON property that contains the field's value. If this value is provided, the the
-   * name will be used as the property name. Otherwise, the property name will default to a value
-   * defined by the data type.
+   * The name of the JSON property that contains the field's value. If this value
+   * is provided, the the name will be used as the property name. Otherwise, the
+   * property name will default to a value defined by the data type.
    * <p>
-   * Use of this annotation is mutually exclusive with the {@link JsonFieldValueKeyFlag} annotation.
+   * Use of this annotation is mutually exclusive with the
+   * {@link JsonFieldValueKeyFlag} annotation.
    *
    * @return the name
    */

@@ -164,16 +164,17 @@ abstract class AbstractClassBinding implements IClassBinding {
   }
 
   /**
-   * Calls the method named "beforeDeserialize" on each class in the object's hierarchy if the method
-   * exists on the class.
+   * Calls the method named "beforeDeserialize" on each class in the object's
+   * hierarchy if the method exists on the class.
    * <p>
-   * These methods can be used to set the initial state of the target bound object before data is read
-   * and applied during deserialization.
+   * These methods can be used to set the initial state of the target bound object
+   * before data is read and applied during deserialization.
    *
    * @param targetObject
    *          the data object target to call the method(s) on
    * @param parentObject
-   *          the object target's parent object, which is used as the method argument
+   *          the object target's parent object, which is used as the method
+   *          argument
    * @throws BindingException
    *           if an error occurs while calling the method
    */
@@ -189,16 +190,17 @@ abstract class AbstractClassBinding implements IClassBinding {
   }
 
   /**
-   * Calls the method named "afterDeserialize" on each class in the object's hierarchy if the method
-   * exists.
+   * Calls the method named "afterDeserialize" on each class in the object's
+   * hierarchy if the method exists.
    * <p>
-   * These methods can be used to modify the state of the target bound object after data is read and
-   * applied during deserialization.
+   * These methods can be used to modify the state of the target bound object
+   * after data is read and applied during deserialization.
    *
    * @param targetObject
    *          the data object target to call the method(s) on
    * @param parentObject
-   *          the object target's parent object, which is used as the method argument
+   *          the object target's parent object, which is used as the method
+   *          argument
    * @throws BindingException
    *           if an error occurs while calling the method
    */

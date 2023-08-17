@@ -45,7 +45,7 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class ClassBindingFlagContainerSupport implements IFlagContainerSupport<IBoundFlagInstance> {
+class ClassBindingFlagContainerSupport implements IFlagContainerSupport<IBoundFlagInstance> {
   @NonNull
   private final Map<String, IBoundFlagInstance> flagInstances;
   @Nullable

@@ -39,7 +39,8 @@ class Division
     extends AbstractBasicArithmeticExpression {
 
   /**
-   * An expression that gets the quotient result by dividing the dividend by the divisor.
+   * An expression that gets the quotient result by dividing the dividend by the
+   * divisor.
    *
    * @param dividend
    *          the expression whose result is to be divided
@@ -62,7 +63,8 @@ class Division
    *          the item to be divided
    * @param divisor
    *          the item to divide by
-   * @return the quotient result or an empty {@link ISequence} if either item is {@code null}
+   * @return the quotient result or an empty {@link ISequence} if either item is
+   *         {@code null}
    */
   @Override
   @NonNull

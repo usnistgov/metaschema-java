@@ -134,8 +134,8 @@ public abstract class AbstractMetaschema
   }
 
   /**
-   * Processes the definitions exported by the Metaschema, saving a list of all exported by specific
-   * model types.
+   * Processes the definitions exported by the Metaschema, saving a list of all
+   * exported by specific model types.
    */
   protected void initExports() {
     synchronized (this) {
@@ -167,8 +167,10 @@ public abstract class AbstractMetaschema
           assemblies = Stream.concat(importedAssemblies, assemblies);
         }
 
-        // Build the maps. Definitions from this Metaschema will take priority, with shadowing being
-        // reported when a definition from this Metaschema has the same name as an imported one
+        // Build the maps. Definitions from this Metaschema will take priority, with
+        // shadowing being
+        // reported when a definition from this Metaschema has the same name as an
+        // imported one
         Map<String, IFlagDefinition> exportedFlagDefinitions = flags.collect(
             CustomCollectors.toMap(
                 IFlagDefinition::getName,

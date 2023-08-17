@@ -64,7 +64,8 @@ class Subtraction
    *          the item being subtracted from
    * @param subtrahend
    *          the item being subtracted
-   * @return the difference of the items or an empty {@link ISequence} if either item is {@code null}
+   * @return the difference of the items or an empty {@link ISequence} if either
+   *         item is {@code null}
    */
   @Override
   @NonNull

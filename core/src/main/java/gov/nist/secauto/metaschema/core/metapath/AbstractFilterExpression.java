@@ -70,7 +70,8 @@ abstract class AbstractFilterExpression
   }
 
   /**
-   * A callback used to apply the filter to the result of evaluating the left expression.
+   * A callback used to apply the filter to the result of evaluating the left
+   * expression.
    *
    * @param result
    *          the set of items to filter

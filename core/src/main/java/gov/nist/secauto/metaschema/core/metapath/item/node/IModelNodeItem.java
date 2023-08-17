@@ -37,9 +37,11 @@ public interface IModelNodeItem<D extends IFlagContainer, I extends INamedInstan
    * <p>
    * A singleton item in a sequence will have a position value of {@code 1}.
    * <p>
-   * The value {@code 1} is used as the starting value to align with the XPath specification.
+   * The value {@code 1} is used as the starting value to align with the XPath
+   * specification.
    *
-   * @return a positive integer value designating this instance's position within a collection
+   * @return a positive integer value designating this instance's position within
+   *         a collection
    */
   int getPosition();
 

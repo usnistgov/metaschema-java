@@ -45,7 +45,8 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
   }
 
   /**
-   * A utility method for applying default values for the provided {@code unhandledInstances}.
+   * A utility method for applying default values for the provided
+   * {@code unhandledInstances}.
    *
    * @param <TYPE>
    *          the instance Java type to handle
@@ -54,7 +55,8 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
    * @param unhandledInstances
    *          the collection of unhandled instances to assign default values for
    * @throws IOException
-   *           if an error occurred while determining the default value for an instance
+   *           if an error occurred while determining the default value for an
+   *           instance
    */
   protected static <TYPE extends IBoundNamedInstance> void applyDefaults(
       @NonNull Object targetObject,

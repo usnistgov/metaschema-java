@@ -35,7 +35,8 @@ public interface IBoundFlagInstance extends IBoundNamedInstance, IFlagInstance {
    *
    * @param value
    *          the bound flag value, which may be {@code null}
-   * @return the bound flag value as a string, or {@code null} if the flag is not defined
+   * @return the bound flag value as a string, or {@code null} if the flag is not
+   *         defined
    */
   String getValueAsString(Object value);
 }

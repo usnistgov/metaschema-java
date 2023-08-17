@@ -47,8 +47,8 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
   }
 
   /**
-   * Evaluate the {@code nodeContext} and its ancestors against the provided {@code expression},
-   * keeping any matching nodes.
+   * Evaluate the {@code nodeContext} and its ancestors against the provided
+   * {@code expression}, keeping any matching nodes.
    *
    * @param expression
    *          the expression to evaluate
@@ -98,8 +98,8 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
   }
 
   /**
-   * Evaluate the {@code nodeContext} and its ancestors against the provided {@code expression},
-   * keeping any matching nodes.
+   * Evaluate the {@code nodeContext} and its ancestors against the provided
+   * {@code expression}, keeping any matching nodes.
    *
    * @param expression
    *          the expression to evaluate
@@ -132,9 +132,11 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
   }
 
   // /**
-  // * Recursively searches the node graph for {@link IRequiredValueModelNodeItem} instances that
+  // * Recursively searches the node graph for {@link IRequiredValueModelNodeItem}
+  // instances that
   // match
-  // * the provided {@link ModelInstance} expression. The resulting nodes are returned in document
+  // * the provided {@link ModelInstance} expression. The resulting nodes are
+  // returned in document
   // * order.
   // *
   // * @param modelInstance
@@ -144,14 +146,17 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
   // * @return a stream of matching model node items
   // */
   // @NonNull
-  // protected Stream<? extends IModelNodeItem> searchModelInstances(@NonNull ModelInstance
+  // protected Stream<? extends IModelNodeItem> searchModelInstances(@NonNull
+  // ModelInstance
   // modelInstance,
   // @NonNull IFocus context) {
   //
   // // check if the current node context matches the expression
-  // Stream<? extends IModelNodeItem> nodeMatches = matchModelInstance(modelInstance, context);
+  // Stream<? extends IModelNodeItem> nodeMatches =
+  // matchModelInstance(modelInstance, context);
   //
-  // // next iterate over the child model instances, if the context item is an assembly
+  // // next iterate over the child model instances, if the context item is an
+  // assembly
   // @SuppressWarnings("null")
   // Stream<? extends IModelNodeItem> childMatches
   // = context.modelItems().flatMap(modelItem -> {
@@ -162,14 +167,17 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
   // // combine the results
   // @SuppressWarnings("null")
   // @NonNull
-  // Stream<? extends IModelNodeItem> retval = Stream.concat(nodeMatches, childMatches);
+  // Stream<? extends IModelNodeItem> retval = Stream.concat(nodeMatches,
+  // childMatches);
   // return retval;
   // }
 
   // /**
-  // * Recursively searches the node graph for {@link IRequiredValueFlagNodeItem} instances that match
+  // * Recursively searches the node graph for {@link IRequiredValueFlagNodeItem}
+  // instances that match
   // the provided
-  // * {@link Flag} expression. The resulting nodes are returned in document order.
+  // * {@link Flag} expression. The resulting nodes are returned in document
+  // order.
   // *
   // * @param expr
   // * the search expression
@@ -178,17 +186,21 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
   // * @return a stream of matching flag node items
   // */
   // @NonNull
-  // private Stream<? extends IRequiredValueFlagNodeItem> searchFlags(Flag expr, IFocus context)
+  // private Stream<? extends IRequiredValueFlagNodeItem> searchFlags(Flag expr,
+  // IFocus context)
   // {
   //
   // // check if any flags on the the current node context matches the expression
-  // Stream<? extends IRequiredValueFlagNodeItem> retval = context.getMatchingChildFlags(expr);
+  // Stream<? extends IRequiredValueFlagNodeItem> retval =
+  // context.getMatchingChildFlags(expr);
   //
-  // // next iterate over the child model instances, if the context item is an assembly
+  // // next iterate over the child model instances, if the context item is an
+  // assembly
   // INodeItem contextItem = context.getContextNodeItem();
   //
   // if (contextItem instanceof IRequiredValueAssemblyNodeItem) {
-  // IRequiredValueAssemblyNodeItem assemblyContextItem = (IRequiredValueAssemblyNodeItem)
+  // IRequiredValueAssemblyNodeItem assemblyContextItem =
+  // (IRequiredValueAssemblyNodeItem)
   // contextItem;
   //
   // Stream<? extends IRequiredValueFlagNodeItem> childFlagInstances =

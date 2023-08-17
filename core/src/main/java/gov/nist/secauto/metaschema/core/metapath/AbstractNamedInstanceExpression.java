@@ -38,7 +38,8 @@ abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeItem>
   private final IExpression test;
 
   /**
-   * Construct a new expression that finds children that match the provided {@code test} expression.
+   * Construct a new expression that finds children that match the provided
+   * {@code test} expression.
    *
    * @param test
    *          the expression to use to determine a match

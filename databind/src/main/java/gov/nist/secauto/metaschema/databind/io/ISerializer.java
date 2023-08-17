@@ -44,8 +44,8 @@ import java.nio.file.StandardOpenOption;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Implementations of this interface are able to write data in a bound object instance of the
- * parameterized type to a structured data format.
+ * Implementations of this interface are able to write data in a bound object
+ * instance of the parameterized type to a structured data format.
  *
  * @param <CLASS>
  *          the Java type from which data can be written
@@ -67,7 +67,8 @@ public interface ISerializer<CLASS> extends IMutableConfiguration<SerializationF
   /**
    * Write data from a bound class instance to the {@link OutputStream}.
    * <p>
-   * This method does not have ownership of the the provided output stream and will not close it.
+   * This method does not have ownership of the the provided output stream and
+   * will not close it.
    *
    * @param data
    *          the instance data
@@ -92,8 +93,8 @@ public interface ISerializer<CLASS> extends IMutableConfiguration<SerializationF
    * @param openOptions
    *          options specifying how the file is opened
    * @throws IOException
-   *           if an error occurred while writing data to the file indicated by the {@code path}
-   *           parameter
+   *           if an error occurred while writing data to the file indicated by
+   *           the {@code path} parameter
    */
   default void serialize(@NonNull CLASS data, @NonNull Path path, OpenOption... openOptions) throws IOException {
     try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, openOptions)) {

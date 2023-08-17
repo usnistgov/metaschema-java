@@ -71,7 +71,8 @@ public enum Occurrence {
   /**
    * Determine if providing a value is optional based on the occurrence.
    *
-   * @return {@code true} if providing a value is optional or {@code false} if required
+   * @return {@code true} if providing a value is optional or {@code false} if
+   *         required
    */
   public boolean isOptional() {
     return optional;

@@ -24,7 +24,8 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 /**
- * Provides core functionality for reading and writing instance data to and from bound objects.
+ * Provides core functionality for reading and writing instance data to and from
+ * bound objects.
  */
 
 package gov.nist.secauto.metaschema.databind.io;

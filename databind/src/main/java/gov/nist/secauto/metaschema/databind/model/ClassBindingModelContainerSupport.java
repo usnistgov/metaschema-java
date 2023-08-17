@@ -48,7 +48,7 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class ClassBindingModelContainerSupport
+class ClassBindingModelContainerSupport
     implements IModelContainerSupport<IBoundNamedModelInstance, IBoundNamedModelInstance, IBoundFieldInstance,
         IBoundAssemblyInstance, IChoiceInstance> {
   @NonNull

@@ -37,8 +37,8 @@ class Modulo
     extends AbstractArithmeticExpression<INumericItem> {
 
   /**
-   * Create an expression that gets the numeric remainder from dividing the dividend by the divisor,
-   * also called the "modulo operation".
+   * Create an expression that gets the numeric remainder from dividing the
+   * dividend by the divisor, also called the "modulo operation".
    *
    * @param dividend
    *          the item to be divided
@@ -73,7 +73,8 @@ class Modulo
    *          the item to be divided
    * @param divisor
    *          the item to divide by
-   * @return the remainder or an empty {@link ISequence} if either item is {@code null}
+   * @return the remainder or an empty {@link ISequence} if either item is
+   *         {@code null}
    */
   @NonNull
   protected static ISequence<? extends INumericItem> resultOrEmpty(@Nullable INumericItem dividend,

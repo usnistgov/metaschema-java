@@ -32,7 +32,8 @@ import java.util.Objects;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * An immutable representation of an {@link IExpression} that has two sub-expression children.
+ * An immutable representation of an {@link IExpression} that has two
+ * sub-expression children.
  *
  * @param <L>
  *          the type of the left expression

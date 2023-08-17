@@ -42,8 +42,9 @@ import javax.xml.stream.events.Attribute;
 /**
  * Handles problems identified in the parsed XML.
  * <p>
- * The default problem handler will report unknown attributes, and provide empty collections for
- * multi-valued model items and default values for flags and single valued fields.
+ * The default problem handler will report unknown attributes, and provide empty
+ * collections for multi-valued model items and default values for flags and
+ * single valued fields.
  */
 public class DefaultXmlProblemHandler
     extends AbstractProblemHandler

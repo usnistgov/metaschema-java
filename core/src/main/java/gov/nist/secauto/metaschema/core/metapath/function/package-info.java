@@ -24,8 +24,8 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 /**
- * Support for rendering paths to bound object nodes and Metaschema definitions resulting from
- * evaluating a Metapath.
+ * Support for rendering paths to bound object nodes and Metaschema definitions
+ * resulting from evaluating a Metapath.
  */
 
 package gov.nist.secauto.metaschema.core.metapath.function;

@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>26</version>
+		<version>27-SNAPSHOT</version>
 	</parent>
 	<groupId>gov.nist.secauto.metaschema</groupId>
 	<artifactId>metaschema-framework</artifactId>
@@ -538,7 +538,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
+			<artifactId>junit-jupiter</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

@@ -48,14 +48,16 @@ public abstract class AbstractKeyConstraint
   private final List<DefaultKeyField> keyFields;
 
   /**
-   * Create a new key-based constraint, which uses a set of key fields to build a key.
+   * Create a new key-based constraint, which uses a set of key fields to build a
+   * key.
    *
    * @param id
    *          the optional identifier for the constraint
    * @param formalName
    *          the constraint's formal name or {@code null} if not provided
    * @param description
-   *          the constraint's semantic description or {@code null} if not provided
+   *          the constraint's semantic description or {@code null} if not
+   *          provided
    * @param source
    *          information about the constraint source
    * @param level
@@ -91,8 +93,10 @@ public abstract class AbstractKeyConstraint
     return keyFields;
   }
 
-  public abstract static class AbstractKeyConstraintBuilder<T extends AbstractKeyConstraintBuilder<T,
-      R>, R extends AbstractKeyConstraint>
+  public abstract static class AbstractKeyConstraintBuilder<
+      T extends AbstractKeyConstraintBuilder<T,
+          R>,
+      R extends AbstractKeyConstraint>
       extends AbstractConstraintBuilder<T, R> {
     @NonNull
     private final List<DefaultKeyField> keyFields = new LinkedList<>();

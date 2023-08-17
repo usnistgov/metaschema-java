@@ -96,11 +96,12 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
   // TODO: verify javadocs are accurate for the following n-ary functions.
 
   /**
-   * Parse the provided context as a simple n-ary phrase, which will be one of the following.
+   * Parse the provided context as a simple n-ary phrase, which will be one of the
+   * following.
    * <ol>
    * <li><code>expr</code> for which the expr will be returned</li>
-   * <li><code>left (operator right)*</code> for which a collection of the left and right members will
-   * be returned based on what is provided by the supplier.
+   * <li><code>left (operator right)*</code> for which a collection of the left
+   * and right members will be returned based on what is provided by the supplier.
    * </ol>
    *
    * @param <CONTEXT>
@@ -110,7 +111,8 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
    * @param context
    *          the context instance
    * @param supplier
-   *          a supplier that will instantiate an expression based on the provided collection
+   *          a supplier that will instantiate an expression based on the provided
+   *          collection
    * @return the left expression or the supplied expression for a collection
    */
   @NonNull
@@ -128,11 +130,12 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
   }
 
   /**
-   * Parse the provided context as a simple n-ary phrase, which will be one of the following.
+   * Parse the provided context as a simple n-ary phrase, which will be one of the
+   * following.
    * <ol>
    * <li><code>expr</code> for which the expr will be returned</li>
-   * <li><code>left (operator right)*</code> for which a collection of the left and right members will
-   * be returned based on what is provided by the supplier.
+   * <li><code>left (operator right)*</code> for which a collection of the left
+   * and right members will be returned based on what is provided by the supplier.
    * </ol>
    *
    * @param <CONTEXT>
@@ -148,7 +151,8 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
    * @param parser
    *          a binary function used to parse the context children
    * @param supplier
-   *          a supplier that will instantiate an expression based on the provided collection
+   *          a supplier that will instantiate an expression based on the provided
+   *          collection
    * @return the left expression or the supplied expression for a collection
    */
   @NonNull
@@ -188,11 +192,12 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
   }
 
   /**
-   * Parse the provided context as a simple n-ary phrase, which will be one of the following.
+   * Parse the provided context as a simple n-ary phrase, which will be one of the
+   * following.
    * <ol>
    * <li><code>expr</code> for which the expr will be returned</li>
-   * <li><code>left (operator right)*</code> for which a collection of the left and right members will
-   * be returned based on what is provided by the supplier.
+   * <li><code>left (operator right)*</code> for which a collection of the left
+   * and right members will be returned based on what is provided by the supplier.
    * </ol>
    *
    * @param <CONTEXT>
@@ -200,12 +205,13 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
    * @param context
    *          the context instance
    * @param startingIndex
-   *          the index of the first child expression, which must be a non-negative value that is less
-   *          than the number of children
+   *          the index of the first child expression, which must be a
+   *          non-negative value that is less than the number of children
    * @param step
    *          the amount to advance the loop over the context children
    * @param parser
-   *          a trinary function used to parse the context children and supply a result
+   *          a trinary function used to parse the context children and supply a
+   *          result
    * @return the left expression or the supplied expression
    */
   protected <CONTEXT extends ParserRuleContext> IExpression handleGroupedNAiry(

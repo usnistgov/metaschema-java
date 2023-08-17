@@ -42,7 +42,8 @@ import java.util.Objects;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides methods for generating Java classes based on a single or a collection of Metaschemas.
+ * Provides methods for generating Java classes based on a single or a
+ * collection of Metaschemas.
  */
 public final class JavaGenerator {
   private static final Logger LOGGER = LogManager.getLogger(JavaGenerator.class);
@@ -79,8 +80,8 @@ public final class JavaGenerator {
    * @param targetDirectory
    *          the directory to generate classes in
    * @param bindingConfiguration
-   *          binding customizations that can be used to set namespaces, class names, and other
-   *          aspects of generated classes
+   *          binding customizations that can be used to set namespaces, class
+   *          names, and other aspects of generated classes
    * @return information about all the produced classes
    * @throws IOException
    *           if a build error occurred while generating the class

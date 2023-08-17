@@ -37,11 +37,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * This mixin interface indicates that the implementation is a {@link INodeItem} that is based on an
- * {@link IFlagContainer}. This means it has flag children.
+ * This mixin interface indicates that the implementation is a {@link INodeItem}
+ * that is based on an {@link IFlagContainer}. This means it has flag children.
  * <p>
- * If an implementation may have flag and model children, or model children only, then the
- * {@link IFeatureModelContainerItem} should be used instead.
+ * If an implementation may have flag and model children, or model children
+ * only, then the {@link IFeatureModelContainerItem} should be used instead.
  */
 interface IFeatureFlagContainerItem extends INodeItem {
 

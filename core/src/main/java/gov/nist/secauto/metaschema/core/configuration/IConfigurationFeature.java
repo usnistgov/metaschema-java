@@ -32,7 +32,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * The common interface that all configuration features must implement.
  * <p>
  * This approach is inspired by the configuration implementation in the
- * <a href="https://github.com/FasterXML/jackson-databind">Jackson databind library</a>.
+ * <a href="https://github.com/FasterXML/jackson-databind">Jackson databind
+ * library</a>.
  *
  * @param <V>
  *          the value type of the feature

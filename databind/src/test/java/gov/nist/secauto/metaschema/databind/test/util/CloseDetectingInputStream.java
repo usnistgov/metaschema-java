@@ -38,10 +38,23 @@ public class CloseDetectingInputStream
   private final InputStream delegate;
   private boolean closed;
 
+  /**
+   * Create a new input stream that will proxy calls to the provided
+   * {@code delegate}.
+   *
+   * @param delegate
+   *          the underlying input stream
+   */
   public CloseDetectingInputStream(@NonNull InputStream delegate) {
     this.delegate = delegate;
   }
 
+  /**
+   * Indicates if {@link #close()} has been called.
+   *
+   * @return {@code true} if {@link #close()} has been called, or {@code false}
+   *         otherwise
+   */
   public boolean isClosed() {
     return closed;
   }

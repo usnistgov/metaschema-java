@@ -27,14 +27,9 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.metapath.MetapathException;
-import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ISource;
-import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IIndexConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.databind.model.annotations.AssemblyConstraints;
@@ -51,17 +46,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 /**
  * Support for constraints on Metaschema assembly bound objects.
  */
-class AssemblyConstraintSupport implements IModelConstrained {
-  @NonNull
-  private final List<IConstraint> constraints;
-  @NonNull
-  private final List<IAllowedValuesConstraint> allowedValuesConstraints;
-  @NonNull
-  private final List<IMatchesConstraint> matchesConstraints;
-  @NonNull
-  private final List<IIndexHasKeyConstraint> indexHasKeyConstraints;
-  @NonNull
-  private final List<IExpectConstraint> expectConstraints;
+class AssemblyConstraintSupport
+    extends ValueConstraintSupport
+    implements IModelConstrained {
   @NonNull
   private final List<IIndexConstraint> indexConstraints;
   @NonNull
@@ -70,11 +57,6 @@ class AssemblyConstraintSupport implements IModelConstrained {
   private final List<ICardinalityConstraint> cardinalityConstraints;
 
   public AssemblyConstraintSupport() {
-    this.constraints = new LinkedList<>();
-    this.allowedValuesConstraints = new LinkedList<>();
-    this.matchesConstraints = new LinkedList<>();
-    this.indexHasKeyConstraints = new LinkedList<>();
-    this.expectConstraints = new LinkedList<>();
     this.indexConstraints = new LinkedList<>();
     this.uniqueConstraints = new LinkedList<>();
     this.cardinalityConstraints = new LinkedList<>();
@@ -85,35 +67,7 @@ class AssemblyConstraintSupport implements IModelConstrained {
       @Nullable ValueConstraints valueAnnotation,
       @Nullable AssemblyConstraints assemblyAnnotation,
       @NonNull ISource source) {
-    if (valueAnnotation == null) {
-      this.allowedValuesConstraints = new LinkedList<>();
-      this.matchesConstraints = new LinkedList<>();
-      this.indexHasKeyConstraints = new LinkedList<>();
-      this.expectConstraints = new LinkedList<>();
-    } else {
-      try {
-        allowedValuesConstraints = Arrays.stream(valueAnnotation.allowedValues())
-            .map(annotation -> ConstraintFactory.newAllowedValuesConstraint(annotation, source))
-            .collect(Collectors.toCollection(LinkedList::new));
-
-        matchesConstraints = Arrays.stream(valueAnnotation.matches())
-            .map(annotation -> ConstraintFactory.newMatchesConstraint(annotation, source))
-            .collect(Collectors.toCollection(LinkedList::new));
-
-        indexHasKeyConstraints = Arrays.stream(valueAnnotation.indexHasKey())
-            .map(annotation -> ConstraintFactory.newIndexHasKeyConstraint(annotation, source))
-            .collect(Collectors.toCollection(LinkedList::new));
-
-        expectConstraints = Arrays.stream(valueAnnotation.expect())
-            .map(annotation -> ConstraintFactory.newExpectConstraint(annotation, source))
-            .collect(Collectors.toCollection(LinkedList::new));
-      } catch (MetapathException ex) {
-        throw new MetapathException(
-            String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()),
-            ex);
-      }
-    }
-
+    super(valueAnnotation, source);
     if (assemblyAnnotation == null) {
       this.indexConstraints = new LinkedList<>();
       this.uniqueConstraints = new LinkedList<>();
@@ -137,40 +91,9 @@ class AssemblyConstraintSupport implements IModelConstrained {
             ex);
       }
     }
-
-    constraints = new LinkedList<>();
-    constraints.addAll(allowedValuesConstraints);
-    constraints.addAll(matchesConstraints);
-    constraints.addAll(indexHasKeyConstraints);
-    constraints.addAll(expectConstraints);
-    constraints.addAll(indexConstraints);
-    constraints.addAll(uniqueConstraints);
-    constraints.addAll(cardinalityConstraints);
-  }
-
-  @Override
-  public List<IConstraint> getConstraints() {
-    return constraints;
-  }
-
-  @Override
-  public List<IAllowedValuesConstraint> getAllowedValuesConstraints() {
-    return allowedValuesConstraints;
-  }
-
-  @Override
-  public List<IMatchesConstraint> getMatchesConstraints() {
-    return matchesConstraints;
-  }
-
-  @Override
-  public List<IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-    return indexHasKeyConstraints;
-  }
-
-  @Override
-  public List<IExpectConstraint> getExpectConstraints() {
-    return expectConstraints;
+    getConstraints().addAll(indexConstraints);
+    getConstraints().addAll(uniqueConstraints);
+    getConstraints().addAll(cardinalityConstraints);
   }
 
   @Override
@@ -189,44 +112,20 @@ class AssemblyConstraintSupport implements IModelConstrained {
   }
 
   @Override
-  public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
-    constraints.add(constraint);
-    allowedValuesConstraints.add(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IMatchesConstraint constraint) {
-    constraints.add(constraint);
-    matchesConstraints.add(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
-    constraints.add(constraint);
-    indexHasKeyConstraints.add(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IExpectConstraint constraint) {
-    constraints.add(constraint);
-    expectConstraints.add(constraint);
-  }
-
-  @Override
   public void addConstraint(@NonNull IIndexConstraint constraint) {
-    constraints.add(constraint);
+    getConstraints().add(constraint);
     indexConstraints.add(constraint);
   }
 
   @Override
   public void addConstraint(@NonNull IUniqueConstraint constraint) {
-    constraints.add(constraint);
+    getConstraints().add(constraint);
     uniqueConstraints.add(constraint);
   }
 
   @Override
   public void addConstraint(@NonNull ICardinalityConstraint constraint) {
-    constraints.add(constraint);
+    getConstraints().add(constraint);
     cardinalityConstraints.add(constraint);
   }
 }

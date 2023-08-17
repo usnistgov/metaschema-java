@@ -42,8 +42,8 @@ public interface IExpression {
   List<? extends IExpression> getChildren();
 
   /**
-   * The minimum expected result type to be produced when evaluating the expression. The result may be
-   * a sub-class or sub-interface of this value.
+   * The minimum expected result type to be produced when evaluating the
+   * expression. The result may be a sub-class or sub-interface of this value.
    *
    * @return the base result type
    */
@@ -53,11 +53,12 @@ public interface IExpression {
   }
 
   /**
-   * The expected result type produced by evaluating the expression. The result must be the same or a
-   * sub-class or sub-interface of the value provided by {@link #getBaseResultType()}.
+   * The expected result type produced by evaluating the expression. The result
+   * must be the same or a sub-class or sub-interface of the value provided by
+   * {@link #getBaseResultType()}.
    * <p>
-   * This method can be overloaded to provide static analysis of the expression to determine a more
-   * specific result type.
+   * This method can be overloaded to provide static analysis of the expression to
+   * determine a more specific result type.
    *
    * @return the result type
    */
@@ -67,9 +68,11 @@ public interface IExpression {
   }
 
   /**
-   * Produce a string representation of this expression including the expression's name.
+   * Produce a string representation of this expression including the expression's
+   * name.
    * <p>
-   * This method can be overloaded to provide a more appropriate representation of the expression.
+   * This method can be overloaded to provide a more appropriate representation of
+   * the expression.
    *
    * @return a string representing the data elements of the expression
    */

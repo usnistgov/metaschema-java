@@ -57,15 +57,16 @@ public final class DefaultExpectConstraint
   private final String message;
 
   /**
-   * Construct a new expect constraint which requires that the associated test evaluates to
-   * {@link IBooleanItem#TRUE} against the target.
+   * Construct a new expect constraint which requires that the associated test
+   * evaluates to {@link IBooleanItem#TRUE} against the target.
    *
    * @param id
    *          the optional identifier for the constraint
    * @param formalName
    *          the constraint's formal name or {@code null} if not provided
    * @param description
-   *          the constraint's semantic description or {@code null} if not provided
+   *          the constraint's semantic description or {@code null} if not
+   *          provided
    * @param source
    *          information about the constraint source
    * @param level
@@ -75,8 +76,8 @@ public final class DefaultExpectConstraint
    * @param properties
    *          a collection of associated properties
    * @param test
-   *          a Metapath expression that is evaluated against the target node to determine if the
-   *          constraint passes
+   *          a Metapath expression that is evaluated against the target node to
+   *          determine if the constraint passes
    * @param message
    *          an optional message to emit when the constraint is violated
    * @param remarks

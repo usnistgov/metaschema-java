@@ -39,9 +39,11 @@ import java.lang.annotation.Target;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * This annotation indicates that the target class represents a Metaschema field.
+ * This annotation indicates that the target class represents a Metaschema
+ * field.
  * <p>
- * Classes with this annotation must have a field with the {@link MetaschemaFieldValue} annotation.
+ * Classes with this annotation must have a field with the
+ * {@link MetaschemaFieldValue} annotation.
  */
 @Documented
 @Retention(RUNTIME)
@@ -50,7 +52,8 @@ public @interface MetaschemaField {
   /**
    * Get the documentary formal name of the field.
    * <p>
-   * If the value is "##none", then the description will be considered {@code null}.
+   * If the value is "##none", then the description will be considered
+   * {@code null}.
    *
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
@@ -60,7 +63,8 @@ public @interface MetaschemaField {
   /**
    * Get the documentary description of the field.
    * <p>
-   * If the value is "##none", then the description will be considered {@code null}.
+   * If the value is "##none", then the description will be considered
+   * {@code null}.
    *
    * @return a markdown string or {@code "##none"} if no description is provided
    */
@@ -79,17 +83,17 @@ public @interface MetaschemaField {
   String useName() default Constants.NO_STRING_VALUE;
 
   /**
-   * Get the metaschema class that "owns" this assembly, which is the concrete implementation of the
-   * metaschema containing the assembly.
+   * Get the metaschema class that "owns" this assembly, which is the concrete
+   * implementation of the metaschema containing the assembly.
    *
    * @return the class that extends {@link IMetaschema}
    */
   Class<? extends IMetaschema> metaschema();
 
   /**
-   * If the data type allows it, determines if the field's value must be wrapped with an XML element
-   * whose name is the specified {@link #name()} and namespace is derived from the namespace of the
-   * instance.
+   * If the data type allows it, determines if the field's value must be wrapped
+   * with an XML element whose name is the specified {@link #name()} and namespace
+   * is derived from the namespace of the instance.
    *
    * @return {@code true} if the field must be wrapped, or {@code false} otherwise
    */

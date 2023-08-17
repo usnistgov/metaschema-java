@@ -27,11 +27,11 @@
 package gov.nist.secauto.metaschema.core.model.constraint;
 
 /**
- * Represents a rule that requires all matching data items found in a Metaschema data instance to
- * have a unique key.
+ * Represents a rule that requires all matching data items found in a Metaschema
+ * data instance to have a unique key.
  * <p>
- * This rule is similar to the {@link IIndexConstraint} in how the keys are generated, but this
- * constraint type does not persist a named index.
+ * This rule is similar to the {@link IIndexConstraint} in how the keys are
+ * generated, but this constraint type does not persist a named index.
  */
 public interface IUniqueConstraint extends IKeyConstraint {
   // this interface has no additional methods

@@ -33,9 +33,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public final class SerializationFeature<V>
     extends AbstractConfigurationFeature<V> {
   /**
-   * If enabled, generate document level constructs in the underlying data format. In XML this would
-   * include XML declarations. In JSON or YAML, this would include an outer object and field with the
-   * name associated with the root node.
+   * If enabled, generate document level constructs in the underlying data format.
+   * In XML this would include XML declarations. In JSON or YAML, this would
+   * include an outer object and field with the name associated with the root
+   * node.
    */
   @NonNull
   public static final SerializationFeature<Boolean> SERIALIZE_ROOT

@@ -29,8 +29,9 @@ package gov.nist.secauto.metaschema.core.model.constraint;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Represents a rule that checks that a key generated for a Metaschema data object exists in a named
- * index that was generated using an {@link IIndexConstraint}.
+ * Represents a rule that checks that a key generated for a Metaschema data
+ * object exists in a named index that was generated using an
+ * {@link IIndexConstraint}.
  */
 public interface IIndexHasKeyConstraint extends IKeyConstraint {
   @NonNull

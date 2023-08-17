@@ -46,8 +46,9 @@ import java.util.Locale;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * A common base class for all comparison nodes, which consist of two expressions representing the
- * left and right sides of the comparison, and a comparison operator.
+ * A common base class for all comparison nodes, which consist of two
+ * expressions representing the left and right sides of the comparison, and a
+ * comparison operator.
  */
 abstract class AbstractComparison // NOPMD - unavoidable
     extends AbstractBinaryExpression<IExpression, IExpression>
@@ -57,8 +58,9 @@ abstract class AbstractComparison // NOPMD - unavoidable
   private final Operator operator;
 
   /**
-   * Construct an expression that compares the result of the {@code right} expression with the result
-   * of the {@code left} expression using the specified {@code operator}.
+   * Construct an expression that compares the result of the {@code right}
+   * expression with the result of the {@code left} expression using the specified
+   * {@code operator}.
    *
    * @param left
    *          the expression to compare against
@@ -89,7 +91,8 @@ abstract class AbstractComparison // NOPMD - unavoidable
   }
 
   /**
-   * Compare the {@code right} item with the {@code left} item using the specified {@code operator}.
+   * Compare the {@code right} item with the {@code left} item using the specified
+   * {@code operator}.
    *
    * @param left
    *          the value to compare against
@@ -129,8 +132,8 @@ abstract class AbstractComparison // NOPMD - unavoidable
   }
 
   /**
-   * Perform a string-based comparison of the {@code right} item against the {@code left} item using
-   * the specified {@code operator}.
+   * Perform a string-based comparison of the {@code right} item against the
+   * {@code left} item using the specified {@code operator}.
    *
    * @param left
    *          the value to compare against
@@ -171,8 +174,8 @@ abstract class AbstractComparison // NOPMD - unavoidable
   }
 
   /**
-   * Perform a number-based comparison of the {@code right} item against the {@code left} item using
-   * the specified {@code operator}.
+   * Perform a number-based comparison of the {@code right} item against the
+   * {@code left} item using the specified {@code operator}.
    *
    * @param left
    *          the value to compare against
@@ -218,8 +221,8 @@ abstract class AbstractComparison // NOPMD - unavoidable
   }
 
   /**
-   * Perform a boolean-based comparison of the {@code right} item against the {@code left} item using
-   * the specified {@code operator}.
+   * Perform a boolean-based comparison of the {@code right} item against the
+   * {@code left} item using the specified {@code operator}.
    *
    * @param left
    *          the value to compare against
@@ -265,8 +268,8 @@ abstract class AbstractComparison // NOPMD - unavoidable
   }
 
   /**
-   * Perform a date and time-based comparison of the {@code right} item against the {@code left} item
-   * using the specified {@code operator}.
+   * Perform a date and time-based comparison of the {@code right} item against
+   * the {@code left} item using the specified {@code operator}.
    *
    * @param left
    *          the value to compare against
@@ -312,8 +315,8 @@ abstract class AbstractComparison // NOPMD - unavoidable
   }
 
   /**
-   * Perform a date-based comparison of the {@code right} item against the {@code left} item using the
-   * specified {@code operator}.
+   * Perform a date-based comparison of the {@code right} item against the
+   * {@code left} item using the specified {@code operator}.
    *
    * @param left
    *          the value to compare against
@@ -359,8 +362,8 @@ abstract class AbstractComparison // NOPMD - unavoidable
   }
 
   /**
-   * Perform a duration-based comparison of the {@code right} item against the {@code left} item using
-   * the specified {@code operator}.
+   * Perform a duration-based comparison of the {@code right} item against the
+   * {@code left} item using the specified {@code operator}.
    *
    * @param left
    *          the value to compare against
@@ -450,8 +453,8 @@ abstract class AbstractComparison // NOPMD - unavoidable
   }
 
   /**
-   * Perform a binary data-based comparison of the {@code right} item against the {@code left} item
-   * using the specified {@code operator}.
+   * Perform a binary data-based comparison of the {@code right} item against the
+   * {@code left} item using the specified {@code operator}.
    *
    * @param left
    *          the value to compare against

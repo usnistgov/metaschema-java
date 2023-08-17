@@ -62,8 +62,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * Provides methods to load a Metaschema expressed in XML.
  * <p>
- * Loaded Metaschema instances are cached to avoid the need to load them for every use. Any
- * Metaschema imported is also loaded and cached automatically.
+ * Loaded Metaschema instances are cached to avoid the need to load them for
+ * every use. Any Metaschema imported is also loaded and cached automatically.
  */
 public class MetaschemaLoader
     extends AbstractLoader<IMetaschema> {
@@ -80,8 +80,8 @@ public class MetaschemaLoader
   }
 
   /**
-   * Construct a new Metaschema loader, which will incorporate the additional provided constraints
-   * into matching loaded definitions.
+   * Construct a new Metaschema loader, which will incorporate the additional
+   * provided constraints into matching loaded definitions.
    *
    * @param additionalConstraintSets
    *          additional constraints to associate with loaded definitions
@@ -101,9 +101,9 @@ public class MetaschemaLoader
   }
 
   /**
-   * Enable a mode that allows XML entity resolution. This may be needed to parse some resource files
-   * that contain entities. Enabling entity resolution is a less secure, which requires trust in the
-   * resource content being parsed.
+   * Enable a mode that allows XML entity resolution. This may be needed to parse
+   * some resource files that contain entities. Enabling entity resolution is a
+   * less secure, which requires trust in the resource content being parsed.
    */
   public void allowEntityResolution() {
     resolveEntities = true;
@@ -117,7 +117,8 @@ public class MetaschemaLoader
    * @param xmlObject
    *          the XML beans object to parse
    * @param importedMetaschemas
-   *          previously parsed Metaschema resources imported by the provided {@code resource}
+   *          previously parsed Metaschema resources imported by the provided
+   *          {@code resource}
    * @return the parsed resource as a Metaschema instance
    * @throws MetaschemaException
    *           if an error occurred while parsing the XML beans object

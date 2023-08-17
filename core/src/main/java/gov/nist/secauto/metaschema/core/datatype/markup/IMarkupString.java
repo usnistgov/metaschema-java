@@ -56,7 +56,8 @@ public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
   Document getDocument();
 
   // /**
-  // * Write HTML content to the provided {@code xmlStreamWriter} using the provided {@code
+  // * Write HTML content to the provided {@code xmlStreamWriter} using the
+  // provided {@code
   // namespace}.
   // *
   // * @param writer
@@ -66,7 +67,8 @@ public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
   // * @throws XMLStreamException
   // * if an error occurred while writing
   // */
-  // void writeHtml(@NonNull XMLStreamWriter2 writer, @NonNull String namespace) throws
+  // void writeHtml(@NonNull XMLStreamWriter2 writer, @NonNull String namespace)
+  // throws
   // XMLStreamException;
 
   @NonNull
@@ -95,8 +97,8 @@ public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
   }
 
   /**
-   * Retrieve all insert statements that are contained within this markup text that match the provided
-   * filter.
+   * Retrieve all insert statements that are contained within this markup text
+   * that match the provided filter.
    *
    * @param filter
    *          a filter used to identify matching insert statements
@@ -109,7 +111,8 @@ public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
   /**
    * Determine if the Markup consists of block elements.
    *
-   * @return {@code true} if the markup consists of block elements, or {@code false} otherwise
+   * @return {@code true} if the markup consists of block elements, or
+   *         {@code false} otherwise
    */
   boolean isBlock();
 

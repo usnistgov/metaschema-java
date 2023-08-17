@@ -64,7 +64,8 @@ class Addition
    *          the first item to sum
    * @param right
    *          the second item to sum
-   * @return the sum of both items or an empty {@link ISequence} if either item is {@code null}
+   * @return the sum of both items or an empty {@link ISequence} if either item is
+   *         {@code null}
    */
   @Override
   protected IAnyAtomicItem operation(@NonNull IAnyAtomicItem left, @NonNull IAnyAtomicItem right) {

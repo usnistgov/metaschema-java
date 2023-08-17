@@ -73,9 +73,9 @@ public final class CustomCollectors {
   }
 
   /**
-   * Produce a new stream with duplicates removed based on the provided {@code keyMapper}. When a
-   * duplicate key is encountered, the second item is used. The original sequencing is preserved if
-   * the input stream is sequential.
+   * Produce a new stream with duplicates removed based on the provided
+   * {@code keyMapper}. When a duplicate key is encountered, the second item is
+   * used. The original sequencing is preserved if the input stream is sequential.
    *
    * @param <V>
    *          the item value for the streams
@@ -94,9 +94,10 @@ public final class CustomCollectors {
   }
 
   /**
-   * Produce a new stream with duplicates removed based on the provided {@code keyMapper}. When a
-   * duplicate key is encountered, the provided {@code duplicateHandler} is used to determine which
-   * item to keep. The original sequencing is preserved if the input stream is sequential.
+   * Produce a new stream with duplicates removed based on the provided
+   * {@code keyMapper}. When a duplicate key is encountered, the provided
+   * {@code duplicateHandler} is used to determine which item to keep. The
+   * original sequencing is preserved if the input stream is sequential.
    *
    * @param <V>
    *          the item value for the streams

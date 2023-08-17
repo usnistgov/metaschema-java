@@ -51,7 +51,8 @@ public class DefaultDefinitionBindingConfiguration implements IMutableDefinition
   }
 
   /**
-   * Create a new definition binding configuration based on a previous configuration.
+   * Create a new definition binding configuration based on a previous
+   * configuration.
    *
    * @param config
    *          the previous configuration

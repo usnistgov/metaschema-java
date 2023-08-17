@@ -39,7 +39,8 @@ import java.lang.annotation.Target;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Identifies that the annotation target is a bound property that represents a Metaschema flag.
+ * Identifies that the annotation target is a bound property that represents a
+ * Metaschema flag.
  */
 @Documented
 @Retention(RUNTIME)
@@ -48,7 +49,8 @@ public @interface BoundFlag {
   /**
    * Get the documentary formal name of the flag.
    * <p>
-   * If the value is "##none", then the description will be considered {@code null}.
+   * If the value is "##none", then the description will be considered
+   * {@code null}.
    *
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
@@ -58,7 +60,8 @@ public @interface BoundFlag {
   /**
    * Get the documentary description of the flag.
    * <p>
-   * If the value is "##none", then the description will be considered {@code null}.
+   * If the value is "##none", then the description will be considered
+   * {@code null}.
    *
    * @return a markdown string or {@code "##none"} if no description is provided
    */
@@ -66,10 +69,11 @@ public @interface BoundFlag {
   String description() default Constants.NO_STRING_VALUE;
 
   /**
-   * The model name to use for singleton values. This name will be used for associated XML attributes
-   * and JSON properties.
+   * The model name to use for singleton values. This name will be used for
+   * associated XML attributes and JSON properties.
    * <p>
-   * If the value is "##none", then element name is derived from the JavaBean property name.
+   * If the value is "##none", then element name is derived from the JavaBean
+   * property name.
    *
    * @return the name
    */
@@ -79,8 +83,9 @@ public @interface BoundFlag {
   /**
    * XML target namespace of the XML Schema element.
    * <p>
-   * If the value is "##default", then namespace is derived from the namespace provided in the
-   * package-info. If the value is "##none", the namespace will be {@code null}.
+   * If the value is "##default", then namespace is derived from the namespace
+   * provided in the package-info. If the value is "##none", the namespace will be
+   * {@code null}.
    *
    * @return the namespace
    */
@@ -90,7 +95,8 @@ public @interface BoundFlag {
   /**
    * The default value of the flag represented as a string.
    * <p>
-   * The value {@link Constants#NULL_VALUE} is used to indicate if no default value is provided.
+   * The value {@link Constants#NULL_VALUE} is used to indicate if no default
+   * value is provided.
    *
    * @return the default value
    */
@@ -98,9 +104,9 @@ public @interface BoundFlag {
   String defaultValue() default Constants.NULL_VALUE;
 
   /**
-   * Specifies if the XML Schema attribute is optional or required. If true, then the JavaBean
-   * property is mapped to a XML Schema attribute that is required. Otherwise it is mapped to a XML
-   * Schema attribute that is optional.
+   * Specifies if the XML Schema attribute is optional or required. If true, then
+   * the JavaBean property is mapped to a XML Schema attribute that is required.
+   * Otherwise it is mapped to a XML Schema attribute that is optional.
    *
    * @return {@code true} if the flag must occur, or {@code false} otherwise
    */

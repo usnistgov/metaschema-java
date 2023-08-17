@@ -51,19 +51,22 @@ public final class DefaultAllowedValuesConstraint
   private final Map<String, DefaultAllowedValue> allowedValues;
 
   /**
-   * Construct a new allowed values constraint which ensures that a target instance's value match one
-   * of the allowed values. This match is required if {@link #isAllowedOther()} is {@code false},
-   * otherwise the constraint will generate a validation warning message if the target instance's
-   * value does not match any of the associated allowed value constraints targeting it.
+   * Construct a new allowed values constraint which ensures that a target
+   * instance's value match one of the allowed values. This match is required if
+   * {@link #isAllowedOther()} is {@code false}, otherwise the constraint will
+   * generate a validation warning message if the target instance's value does not
+   * match any of the associated allowed value constraints targeting it.
    *
-   * the associated test evaluates to {@link IBooleanItem#TRUE} against the target.
+   * the associated test evaluates to {@link IBooleanItem#TRUE} against the
+   * target.
    *
    * @param id
    *          the optional identifier for the constraint
    * @param formalName
    *          the constraint's formal name or {@code null} if not provided
    * @param description
-   *          the constraint's semantic description or {@code null} if not provided
+   *          the constraint's semantic description or {@code null} if not
+   *          provided
    * @param source
    *          information about the constraint source
    * @param level
@@ -75,8 +78,8 @@ public final class DefaultAllowedValuesConstraint
    * @param allowedValues
    *          the list of allowed values for this constraint
    * @param allowedOther
-   *          when {@code true} values other than the values specified by {@code allowedValues} are
-   *          allowed, or disallowed if {@code false}
+   *          when {@code true} values other than the values specified by
+   *          {@code allowedValues} are allowed, or disallowed if {@code false}
    * @param extensible
    *          indicates the degree to which extended values should be allowed
    * @param remarks

@@ -54,10 +54,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IDataTypeAdapter<TYPE> {
 
   /**
-   * Get the metaschema type names associated with this adapter. This name must be unique with respect
-   * to all other metaschema types.
+   * Get the metaschema type names associated with this adapter. This name must be
+   * unique with respect to all other metaschema types.
    * <p>
-   * At least one name must be provided, with the first name being the most preferred name.
+   * At least one name must be provided, with the first name being the most
+   * preferred name.
    *
    * @return the name
    */
@@ -100,9 +101,10 @@ public interface IDataTypeAdapter<TYPE> {
   TYPE toValue(@NonNull Object value);
 
   /**
-   * Gets the value as a string suitable for writing as text. This is intended for data types that
-   * have a simple string-based structure in XML and JSON, such as for XML attributes or JSON keys. An
-   * adapter for a complex data structures that consist of XML elements will throw an
+   * Gets the value as a string suitable for writing as text. This is intended for
+   * data types that have a simple string-based structure in XML and JSON, such as
+   * for XML attributes or JSON keys. An adapter for a complex data structures
+   * that consist of XML elements will throw an
    * {@link UnsupportedOperationException} when this is called.
    *
    * @param value
@@ -125,10 +127,11 @@ public interface IDataTypeAdapter<TYPE> {
   TYPE copy(@NonNull Object obj);
 
   /**
-   * Determines if the data type is an atomic, scalar value. Complex structures such as Markup are not
-   * considered atomic.
+   * Determines if the data type is an atomic, scalar value. Complex structures
+   * such as Markup are not considered atomic.
    *
-   * @return {@code true} if the data type is an atomic scalar value, or {@code false} otherwise
+   * @return {@code true} if the data type is an atomic scalar value, or
+   *         {@code false} otherwise
    */
   default boolean isAtomic() {
     return true;
@@ -149,7 +152,8 @@ public interface IDataTypeAdapter<TYPE> {
    *          the item's value
    * @return a new item
    */
-  // TODO: markup types are not atomic values. Figure out a better base type (i.e., IValuedItem)
+  // TODO: markup types are not atomic values. Figure out a better base type
+  // (i.e., IValuedItem)
   @NonNull
   IAnyAtomicItem newItem(@NonNull Object value);
 
@@ -166,32 +170,33 @@ public interface IDataTypeAdapter<TYPE> {
   IAnyAtomicItem cast(IAnyAtomicItem item);
 
   /**
-   * Indicates if the adapter will parse the {@link XMLEvent#START_ELEMENT} before parsing the value
-   * data.
+   * Indicates if the adapter will parse the {@link XMLEvent#START_ELEMENT} before
+   * parsing the value data.
    *
-   * @return {@code true} if the adapter requires the start element for parsing, or {@code false}
-   *         otherwise
+   * @return {@code true} if the adapter requires the start element for parsing,
+   *         or {@code false} otherwise
    */
   // TODO; implement or remove this
   boolean isParsingStartElement();
 
   /**
-   * Determines if adapter can parse the next element. The next element's {@link QName} is provided
-   * for this purpose.
+   * Determines if adapter can parse the next element. The next element's
+   * {@link QName} is provided for this purpose.
    * <p>
-   * This will be called when the parser encounter's an element it does not recognize. This gives the
-   * adapter a chance to request parsing of the data.
+   * This will be called when the parser encounter's an element it does not
+   * recognize. This gives the adapter a chance to request parsing of the data.
    *
    * @param nextElementQName
    *          the next element's namespace-qualified name
-   * @return {@code true} if the adapter will parse the element, or {@code false} otherwise
+   * @return {@code true} if the adapter will parse the element, or {@code false}
+   *         otherwise
    */
   // TODO: implement this
   boolean canHandleQName(@NonNull QName nextElementQName);
 
   /**
-   * Parses a provided string. Used to parse XML attributes, simple XML character data, and JSON/YAML
-   * property values.
+   * Parses a provided string. Used to parse XML attributes, simple XML character
+   * data, and JSON/YAML property values.
    *
    * @param value
    *          the string value to parse
@@ -203,18 +208,21 @@ public interface IDataTypeAdapter<TYPE> {
   TYPE parse(@NonNull String value);
 
   /**
-   * This method is expected to parse content starting at the next event. Parsing will continue until
-   * the next event represents content that is not handled by this adapter. This means the event
-   * stream should be positioned after any {@link XMLEvent#END_ELEMENT} that corresponds to an
+   * This method is expected to parse content starting at the next event. Parsing
+   * will continue until the next event represents content that is not handled by
+   * this adapter. This means the event stream should be positioned after any
+   * {@link XMLEvent#END_ELEMENT} that corresponds to an
    * {@link XMLEvent#START_ELEMENT} parsed by this adapter.
    * <p>
-   * If {@link #isParsingStartElement()} returns {@code true}, then the first event to parse will be
-   * the {@link XMLEvent#START_ELEMENT} for the element that contains the value data, then the value
-   * data. If this is the case, this method must also parse the corresponding
-   * {@link XMLEvent#END_ELEMENT}. Otherwise, the first event to parse will be the value data.
+   * If {@link #isParsingStartElement()} returns {@code true}, then the first
+   * event to parse will be the {@link XMLEvent#START_ELEMENT} for the element
+   * that contains the value data, then the value data. If this is the case, this
+   * method must also parse the corresponding {@link XMLEvent#END_ELEMENT}.
+   * Otherwise, the first event to parse will be the value data.
    * <p>
-   * The value data is expected to be parsed completely, leaving the event stream on a peeked event
-   * corresponding to content that is not handled by this method.
+   * The value data is expected to be parsed completely, leaving the event stream
+   * on a peeked event corresponding to content that is not handled by this
+   * method.
    *
    * @param eventReader
    *          the XML parser used to read the parsed value
@@ -240,8 +248,8 @@ public interface IDataTypeAdapter<TYPE> {
   /**
    * Parses a provided string using {@link #parse(String)}.
    * <p>
-   * This method may pre-parse the data and then return copies, since the data can only be parsed
-   * once, but the supplier might be called multiple times.
+   * This method may pre-parse the data and then return copies, since the data can
+   * only be parsed once, but the supplier might be called multiple times.
    *
    * @param value
    *          the string value to parse
@@ -257,10 +265,11 @@ public interface IDataTypeAdapter<TYPE> {
   }
 
   /**
-   * Parses a provided string using {@link IDataTypeAdapter#parse(XMLEventReader2)}.
+   * Parses a provided string using
+   * {@link IDataTypeAdapter#parse(XMLEventReader2)}.
    * <p>
-   * This method may pre-parse the data and then return copies, since the data can only be parsed
-   * once, but the supplier might be called multiple times.
+   * This method may pre-parse the data and then return copies, since the data can
+   * only be parsed once, but the supplier might be called multiple times.
    *
    * @param eventReader
    *          the XML parser used to read the parsed value
@@ -279,8 +288,8 @@ public interface IDataTypeAdapter<TYPE> {
   /**
    * Parses a provided string using {@link #parse(JsonParser)}.
    * <p>
-   * This method may pre-parse the data and then return copies, since the data can only be parsed
-   * once, but the supplier might be called multiple times.
+   * This method may pre-parse the data and then return copies, since the data can
+   * only be parsed once, but the supplier might be called multiple times.
    *
    * @param parser
    *          the JSON parser used to read the parsed value
@@ -297,16 +306,17 @@ public interface IDataTypeAdapter<TYPE> {
   }
 
   /**
-   * Writes the provided Java class instance data as XML. The parent element information is provided
-   * as a {@link StartElement} event, which allows namespace information to be obtained from the
-   * parent element using the {@link StartElement#getName()} and
-   * {@link StartElement#getNamespaceContext()} methods, which can be used when writing the provided
-   * instance value.
+   * Writes the provided Java class instance data as XML. The parent element
+   * information is provided as a {@link StartElement} event, which allows
+   * namespace information to be obtained from the parent element using the
+   * {@link StartElement#getName()} and {@link StartElement#getNamespaceContext()}
+   * methods, which can be used when writing the provided instance value.
    *
    * @param instance
    *          the {@link Field} instance value to write
    * @param parent
-   *          the {@link StartElement} XML event that is the parent of the data to write
+   *          the {@link StartElement} XML event that is the parent of the data to
+   *          write
    * @param eventFactory
    *          the XML event factory used to generate XML writing events
    * @param eventWriter
@@ -321,11 +331,12 @@ public interface IDataTypeAdapter<TYPE> {
       throws IOException, XMLStreamException;
 
   /**
-   * Writes the provided Java class instance data as XML. The parent element information is provided
-   * as an XML {@link QName}, which allows namespace information to be obtained from the parent
-   * element. Additional namespace information can be gathered using the
-   * {@link XMLStreamWriter2#getNamespaceContext()} method, which can be used when writing the
-   * provided instance value.
+   * Writes the provided Java class instance data as XML. The parent element
+   * information is provided as an XML {@link QName}, which allows namespace
+   * information to be obtained from the parent element. Additional namespace
+   * information can be gathered using the
+   * {@link XMLStreamWriter2#getNamespaceContext()} method, which can be used when
+   * writing the provided instance value.
    *
    * @param instance
    *          the {@link Field} instance value to write
@@ -352,8 +363,8 @@ public interface IDataTypeAdapter<TYPE> {
   void writeJsonValue(@NonNull Object instance, @NonNull JsonGenerator writer) throws IOException;
 
   /**
-   * Gets the default value to use as the JSON/YAML field name for a Metaschema field value if no JSON
-   * value key flag or name is configured.
+   * Gets the default value to use as the JSON/YAML field name for a Metaschema
+   * field value if no JSON value key flag or name is configured.
    *
    * @return the default field name to use
    */
@@ -361,8 +372,8 @@ public interface IDataTypeAdapter<TYPE> {
   String getDefaultJsonValueKey();
 
   /**
-   * Determines if the data type's value is allowed to be unwrapped in XML when the value is a field
-   * value.
+   * Determines if the data type's value is allowed to be unwrapped in XML when
+   * the value is a field value.
    *
    * @return {@code true} if allowed, or {@code false} otherwise.
    */
@@ -371,8 +382,8 @@ public interface IDataTypeAdapter<TYPE> {
   /**
    * Determines if the datatype uses mixed text and element content in XML.
    *
-   * @return {@code true} if the datatype uses mixed text and element content in XML, or {@code false}
-   *         otherwise
+   * @return {@code true} if the datatype uses mixed text and element content in
+   *         XML, or {@code false} otherwise
    */
   boolean isXmlMixed();
 }

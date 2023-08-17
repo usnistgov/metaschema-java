@@ -86,8 +86,9 @@ abstract class AbstractAstVisitor<R> // NOPMD
     extends metapath10BaseVisitor<R> {
 
   /**
-   * This dispatch method will call the node handler on a leaf node or if multiple child expressions
-   * exist. Otherwise, it will delegate to the single child expression.
+   * This dispatch method will call the node handler on a leaf node or if multiple
+   * child expressions exist. Otherwise, it will delegate to the single child
+   * expression.
    *
    * @param <T>
    *          the visitor context type
@@ -102,7 +103,8 @@ abstract class AbstractAstVisitor<R> // NOPMD
 
     R retval;
     if (context.getChildCount() == 1 && context.getChild(0) instanceof ParserRuleContext) {
-      // delegate to the child expression, since this expression doesn't require any action
+      // delegate to the child expression, since this expression doesn't require any
+      // action
       retval = context.getChild(0).accept(this);
     } else {
       retval = handler.apply(context);
@@ -111,8 +113,8 @@ abstract class AbstractAstVisitor<R> // NOPMD
   }
 
   /**
-   * This dispatch method expects a single child expression which will be called. Other cases will
-   * result in an exception.
+   * This dispatch method expects a single child expression which will be called.
+   * Other cases will result in an exception.
    *
    * @param <T>
    *          the visitor context type

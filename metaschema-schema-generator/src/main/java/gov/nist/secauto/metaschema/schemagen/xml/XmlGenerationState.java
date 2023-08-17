@@ -207,7 +207,8 @@ public class XmlGenerationState
             allowedValuesCollection);
 
         if (!allowedValuesCollection.isClosed()) {
-          // if other values are allowed, we need to make a union of the restriction type and the base
+          // if other values are allowed, we need to make a union of the restriction type
+          // and the base
           // built-in type
           simpleType = new XmlSimpleTypeUnion(
               newQName(definition, "Union"),

@@ -38,8 +38,8 @@ class Flag // NOPMD - intentional name
     extends AbstractNamedInstanceExpression<IFlagNodeItem> {
 
   /**
-   * Construct a new expression that finds any child {@link IFlagNodeItem} that matches the provided
-   * {@code test}.
+   * Construct a new expression that finds any child {@link IFlagNodeItem} that
+   * matches the provided {@code test}.
    *
    * @param test
    *          the test to use to match

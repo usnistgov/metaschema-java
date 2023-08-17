@@ -49,7 +49,6 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.talsmasoftware.lazy4j.Lazy;
 
-@SuppressWarnings("PMD.GodClass")
 public class DefaultFieldClassBinding
     extends AbstractClassBinding
     implements IFieldClassBinding {
@@ -118,7 +117,7 @@ public class DefaultFieldClassBinding
   }
 
   @NonNull
-  public MetaschemaField getMetaschemaFieldAnnotation() {
+  private MetaschemaField getMetaschemaFieldAnnotation() {
     return metaschemaField;
   }
 

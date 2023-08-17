@@ -36,8 +36,8 @@ import java.lang.annotation.Target;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * This annotation provides an enumerated value that is used as part of an {@link AllowedValues}
- * annotation.
+ * This annotation provides an enumerated value that is used as part of an
+ * {@link AllowedValues} annotation.
  */
 @Documented
 @Retention(RUNTIME)

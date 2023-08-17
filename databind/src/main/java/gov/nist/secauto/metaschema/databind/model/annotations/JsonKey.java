@@ -35,8 +35,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the target of this annotation is a Java property that is to be used as the JSON or
- * YAML property/item name in for a collection of similar objects/items.
+ * Indicates that the target of this annotation is a Java property that is to be
+ * used as the JSON or YAML property/item name in for a collection of similar
+ * objects/items.
  */
 // TODO: remove this and move this to MetaschemaField/MetaschemaAssembly
 @Documented

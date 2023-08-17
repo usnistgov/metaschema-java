@@ -30,20 +30,26 @@ import java.net.URI;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Provides information about a generated package-info.java class, that
+ * represents a collection of Metaschema constructs generated from one or more
+ * Metaschema modules.
+ */
 public interface IPackageProduction {
-
-  @NonNull
-  String getJavaPackage();
-
+  /**
+   * Get the XML namespace associated with the package-info.java class.
+   *
+   * @return the namespace
+   */
   @NonNull
   URI getXmlNamespace();
 
   /**
-   * Get the generated package-info class associated with this package.
+   * Get information about the generated package-info.java class associated with
+   * this package.
    *
-   * @return the package-info class
+   * @return the package-info.java class information
    */
   @NonNull
   IGeneratedClass getGeneratedClass();
-
 }

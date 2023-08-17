@@ -87,7 +87,8 @@ class ListSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> 
 
   @Override
   public boolean equals(Object other) {
-    // must either be the same instance or a sequence that has the same list contents
+    // must either be the same instance or a sequence that has the same list
+    // contents
     return other == this
         || other instanceof ISequence && asList().equals(((ISequence<?>) other).asList());
   }

@@ -45,9 +45,10 @@ public final class ModelUtil {
   }
 
   /**
-   * Resolves a provided local name value. If the value is {@code null} or "##default", then the
-   * provided default value will be used instead. If the value is "##none", then the value will be
-   * {@code null}. Otherwise, the value is returned.
+   * Resolves a provided local name value. If the value is {@code null} or
+   * "##default", then the provided default value will be used instead. If the
+   * value is "##none", then the value will be {@code null}. Otherwise, the value
+   * is returned.
    *
    * @param value
    *          the requested value
@@ -78,9 +79,10 @@ public final class ModelUtil {
   }
 
   /**
-   * Resolves a provided namespace value. If the value is {@code null} or "##default", then the
-   * provided default value will be used instead. If the value is {@code null} or "##none", then a
-   * {@code null} value will be used if allowNone is {@code true}. Otherwise, the value is returned.
+   * Resolves a provided namespace value. If the value is {@code null} or
+   * "##default", then the provided default value will be used instead. If the
+   * value is {@code null} or "##none", then a {@code null} value will be used if
+   * allowNone is {@code true}. Otherwise, the value is returned.
    *
    * @param value
    *          the requested value
@@ -108,7 +110,8 @@ public final class ModelUtil {
    *
    * @param annotationValue
    *          markdown text or {@code "##none"} if no text is provided
-   * @return the markup line content or {@code null} if no markup content was provided
+   * @return the markup line content or {@code null} if no markup content was
+   *         provided
    */
   @Nullable
   public static MarkupLine resolveToMarkupLine(@NonNull String annotationValue) {
@@ -120,7 +123,8 @@ public final class ModelUtil {
    *
    * @param annotationValue
    *          markdown text or {@code "##none"} if no text is provided
-   * @return the markup line content or {@code null} if no markup content was provided
+   * @return the markup line content or {@code null} if no markup content was
+   *         provided
    */
   @Nullable
   public static MarkupMultiline resolveToMarkupMultiline(@NonNull String annotationValue) {

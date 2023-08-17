@@ -31,8 +31,8 @@ import java.util.List;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Used by implementations of this class to visit a sequence of node items in a directed graph,
- * using depth-first ordering.
+ * Used by implementations of this class to visit a sequence of node items in a
+ * directed graph, using depth-first ordering.
  *
  * @param <RESULT>
  *          the type of result produced by visitation
@@ -113,8 +113,8 @@ public abstract class AbstractNodeItemVisitor<RESULT, CONTEXT> implements INodeI
    *          the current visitation result
    * @param context
    *          provides contextual information for use by the visitor
-   * @return {@code true} if the child should be visited, or {@code false} if the child should be
-   *         skipped
+   * @return {@code true} if the child should be visited, or {@code false} if the
+   *         child should be skipped
    */
   protected boolean shouldVisitNextChild(
       @NonNull INodeItem parent,
@@ -136,8 +136,8 @@ public abstract class AbstractNodeItemVisitor<RESULT, CONTEXT> implements INodeI
    *          the current visitation result
    * @param context
    *          provides contextual information for use by the visitor
-   * @return {@code true} if the child should be visited, or {@code false} if the child should be
-   *         skipped
+   * @return {@code true} if the child should be visited, or {@code false} if the
+   *         child should be skipped
    */
   protected boolean shouldVisitNextChild(
       @NonNull INodeItem parent,
@@ -149,8 +149,8 @@ public abstract class AbstractNodeItemVisitor<RESULT, CONTEXT> implements INodeI
   }
 
   /**
-   * The initial, default visitation result, which will be used as the basis for aggregating results
-   * produced when visiting.
+   * The initial, default visitation result, which will be used as the basis for
+   * aggregating results produced when visiting.
    *
    * @return the default result
    * @see #aggregateResult(Object, Object, Object)

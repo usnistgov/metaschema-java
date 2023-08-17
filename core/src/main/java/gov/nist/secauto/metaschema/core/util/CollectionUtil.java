@@ -178,8 +178,8 @@ public final class CollectionUtil {
   }
 
   /**
-   * A wrapper of the {@link Collections#unmodifiableCollection(Collection)} method that ensure a
-   * {@link NonNull} result is returned.
+   * A wrapper of the {@link Collections#unmodifiableCollection(Collection)}
+   * method that ensure a {@link NonNull} result is returned.
    *
    * @param <T>
    *          the collection's item type

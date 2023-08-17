@@ -57,7 +57,8 @@ class CSTPrinter {
    * Set the behavior for handling wrapper nodes in the CST hierarchy.
    *
    * @param ignoringWrappers
-   *          {@code true} if wrappers should be ignored or {@code false} otherwise
+   *          {@code true} if wrappers should be ignored or {@code false}
+   *          otherwise
    */
   public void setIgnoringWrappers(boolean ignoringWrappers) {
     this.ignoringWrappers = ignoringWrappers;

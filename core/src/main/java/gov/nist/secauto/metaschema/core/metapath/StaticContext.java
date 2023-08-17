@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.core.metapath;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -59,8 +59,9 @@ public final class StaticContext {
   }
 
   /**
-   * Get the static base URI to use in resolving URIs handled by the Metapath processor. This URI, if
-   * provided, will be used when a document base URI is not available.
+   * Get the static base URI to use in resolving URIs handled by the Metapath
+   * processor. This URI, if provided, will be used when a document base URI is
+   * not available.
    *
    * @return the base URI or {@code null} if not defined
    */
@@ -89,7 +90,7 @@ public final class StaticContext {
   public static class Builder {
     private URI baseUri;
     @NonNull
-    private final Map<String, URI> knownNamespaces = new HashMap<>();
+    private final Map<String, URI> knownNamespaces = new ConcurrentHashMap<>();
 
     private Builder() {
       knownNamespaces.put(
@@ -107,9 +108,9 @@ public final class StaticContext {
     }
 
     /**
-     * Sets the static base URI to use in resolving URIs handled by the Metapath processor, when a
-     * document base URI is not available. There is only a single base URI. Subsequent calls to this
-     * method will change the base URI.
+     * Sets the static base URI to use in resolving URIs handled by the Metapath
+     * processor, when a document base URI is not available. There is only a single
+     * base URI. Subsequent calls to this method will change the base URI.
      *
      * @param uri
      *          the base URI to use

@@ -44,9 +44,9 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides a generic implementation of methods defined by
- * <a href= "https://www.w3.org/TR/xpath-functions-31/#numeric-value-functions">XPath 3.1 Functions
- * on numeric values</a>.
+ * Provides a generic implementation of methods defined by <a href=
+ * "https://www.w3.org/TR/xpath-functions-31/#numeric-value-functions">XPath 3.1
+ * Functions on numeric values</a>.
  */
 public final class NumericFunction implements IFunctionExecutor {
 

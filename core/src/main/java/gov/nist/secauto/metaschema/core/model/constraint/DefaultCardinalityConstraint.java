@@ -48,16 +48,17 @@ public final class DefaultCardinalityConstraint
   private final Integer maxOccurs;
 
   /**
-   * Construct a new cardinality constraint which enforces that the number of items matching the
-   * target fall within the inclusive range described by the {@code minOccurs} or {@code maxOccurs}
-   * values.
+   * Construct a new cardinality constraint which enforces that the number of
+   * items matching the target fall within the inclusive range described by the
+   * {@code minOccurs} or {@code maxOccurs} values.
    *
    * @param id
    *          the optional identifier for the constraint
    * @param formalName
    *          the constraint's formal name or {@code null} if not provided
    * @param description
-   *          the constraint's semantic description or {@code null} if not provided
+   *          the constraint's semantic description or {@code null} if not
+   *          provided
    * @param source
    *          information about the constraint source
    * @param level
@@ -67,9 +68,11 @@ public final class DefaultCardinalityConstraint
    * @param properties
    *          a collection of associated properties
    * @param minOccurs
-   *          if provided, the constraint ensures that the count of targets is at least this value
+   *          if provided, the constraint ensures that the count of targets is at
+   *          least this value
    * @param maxOccurs
-   *          if provided, the constraint ensures that the count of targets is at most this value
+   *          if provided, the constraint ensures that the count of targets is at
+   *          most this value
    * @param remarks
    *          optional remarks describing the intent of the constraint
    */

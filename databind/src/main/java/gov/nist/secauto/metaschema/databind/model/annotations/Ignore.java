@@ -33,7 +33,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the property is to be ignored by the Metaschema binding system.
+ * Indicates that the property is to be ignored by the Metaschema binding
+ * system.
  */
 @Retention(RUNTIME)
 @Target({ FIELD })

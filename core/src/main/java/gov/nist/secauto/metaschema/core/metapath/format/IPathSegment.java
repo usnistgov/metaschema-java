@@ -52,8 +52,8 @@ public interface IPathSegment {
   }
 
   /**
-   * Apply formatting for the path segment. This is a visitor pattern that will be called to format
-   * each segment in a larger path.
+   * Apply formatting for the path segment. This is a visitor pattern that will be
+   * called to format each segment in a larger path.
    *
    * @param formatter
    *          the path formatter

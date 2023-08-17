@@ -60,15 +60,17 @@ public interface IValidationResult {
   /**
    * Determines if the result of validation was valid or not.
    *
-   * @return {@code true} if the result was determined to be valid or {@code false} otherwise
+   * @return {@code true} if the result was determined to be valid or
+   *         {@code false} otherwise
    */
   default boolean isPassing() {
     return getHighestSeverity().ordinal() < Level.ERROR.ordinal();
   }
 
   /**
-   * Get the highest finding severity level for the validation. The level {@link Level#INFORMATIONAL}
-   * will be returned if no validation findings were identified.
+   * Get the highest finding severity level for the validation. The level
+   * {@link Level#INFORMATIONAL} will be returned if no validation findings were
+   * identified.
    *
    * @return the highest finding severity level
    */

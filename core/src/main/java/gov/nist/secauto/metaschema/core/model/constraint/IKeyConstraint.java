@@ -35,7 +35,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  */
 public interface IKeyConstraint extends IConstraint {
   /**
-   * Retrieve the list of keys to use in creating and looking up an entry in a given index.
+   * Retrieve the list of keys to use in creating and looking up an entry in a
+   * given index.
    *
    * @return one or more keys
    */

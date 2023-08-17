@@ -103,21 +103,22 @@ public final class FunctionUtils {
   }
 
   /**
-   * Retrieves the first item in a sequence. If the sequence is empty, a {@link TypeMetapathException}
-   * exception is thrown. If requireSingleton is {@code true} and the sequence contains more than one
-   * item, a {@link TypeMetapathException} is thrown.
+   * Retrieves the first item in a sequence. If the sequence is empty, a
+   * {@link TypeMetapathException} exception is thrown. If requireSingleton is
+   * {@code true} and the sequence contains more than one item, a
+   * {@link TypeMetapathException} is thrown.
    *
    * @param <ITEM>
    *          the item type to return derived from the provided sequence
    * @param sequence
    *          the sequence to retrieve the first item from
    * @param requireSingleton
-   *          if {@code true} then a {@link TypeMetapathException} is thrown if the sequence contains
-   *          more than one item
+   *          if {@code true} then a {@link TypeMetapathException} is thrown if
+   *          the sequence contains more than one item
    * @return {@code null} if the sequence is empty, or the item otherwise
    * @throws TypeMetapathException
-   *           if the sequence is empty, or contains more than one item and requireSingleton is
-   *           {@code true}
+   *           if the sequence is empty, or contains more than one item and
+   *           requireSingleton is {@code true}
    */
   @NonNull
   public static <ITEM extends IItem> ITEM requireFirstItem(@NonNull ISequence<ITEM> sequence,
@@ -137,20 +138,22 @@ public final class FunctionUtils {
   }
 
   /**
-   * Retrieves the first item in a sequence. If the sequence is empty, a {@code null} result is
-   * returned. If requireSingleton is {@code true} and the sequence contains more than one item, a
-   * {@link TypeMetapathException} is thrown.
+   * Retrieves the first item in a sequence. If the sequence is empty, a
+   * {@code null} result is returned. If requireSingleton is {@code true} and the
+   * sequence contains more than one item, a {@link TypeMetapathException} is
+   * thrown.
    *
    * @param <ITEM>
    *          the item type to return derived from the provided sequence
    * @param sequence
    *          the sequence to retrieve the first item from
    * @param requireSingleton
-   *          if {@code true} then a {@link TypeMetapathException} is thrown if the sequence contains
-   *          more than one item
+   *          if {@code true} then a {@link TypeMetapathException} is thrown if
+   *          the sequence contains more than one item
    * @return {@code null} if the sequence is empty, or the item otherwise
    * @throws TypeMetapathException
-   *           if the sequence contains more than one item and requireSingleton is {@code true}
+   *           if the sequence contains more than one item and requireSingleton is
+   *           {@code true}
    */
   @Nullable
   public static <ITEM extends IItem> ITEM getFirstItem(@NonNull ISequence<ITEM> sequence, boolean requireSingleton) {
@@ -168,18 +171,19 @@ public final class FunctionUtils {
   }
 
   /**
-   * Gets the first item of the provided sequence as a {@link INumericItem} value. If the sequence is
-   * empty, then a {@code null} value is returned.
+   * Gets the first item of the provided sequence as a {@link INumericItem} value.
+   * If the sequence is empty, then a {@code null} value is returned.
    *
    * @param sequence
    *          a Metapath sequence containing the value to convert
    * @param requireSingleton
-   *          if {@code true} then a {@link TypeMetapathException} is thrown if the sequence contains
-   *          more than one item
-   * @return the numeric item value, or {@code null} if the result is an empty sequence
+   *          if {@code true} then a {@link TypeMetapathException} is thrown if
+   *          the sequence contains more than one item
+   * @return the numeric item value, or {@code null} if the result is an empty
+   *         sequence
    * @throws TypeMetapathException
-   *           if the sequence contains more than one item, or the item cannot be cast to a numeric
-   *           value
+   *           if the sequence contains more than one item, or the item cannot be
+   *           cast to a numeric value
    *
    */
   @Nullable
@@ -195,8 +199,8 @@ public final class FunctionUtils {
    *          the value to convert
    * @return the numeric item value
    * @throws TypeMetapathException
-   *           if the sequence contains more than one item, or the item cannot be cast to a numeric
-   *           value
+   *           if the sequence contains more than one item, or the item cannot be
+   *           cast to a numeric value
    */
   @NonNull
   public static INumericItem toNumeric(@NonNull IItem item) {
@@ -224,8 +228,8 @@ public final class FunctionUtils {
   }
 
   /**
-   * Gets the provided item value as a {@link INumericItem} value. If the item is {@code null}, then a
-   * {@code null} value is returned.
+   * Gets the provided item value as a {@link INumericItem} value. If the item is
+   * {@code null}, then a {@code null} value is returned.
    *
    * @param item
    *          the value to convert

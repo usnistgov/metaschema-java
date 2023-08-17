@@ -35,16 +35,20 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * {@link ICustomJavaDataType}.
  *
  * @param <TYPE>
- *          the Java type this adapter supports, which is based on {@link ICustomJavaDataType}
+ *          the Java type this adapter supports, which is based on
+ *          {@link ICustomJavaDataType}
  * @param <ITEM_TYPE>
  *          the Metapath item type associated with the adapter
  */
-public abstract class AbstractCustomJavaDataTypeAdapter<TYPE extends ICustomJavaDataType<
-    TYPE>, ITEM_TYPE extends IAnyAtomicItem>
+public abstract class AbstractCustomJavaDataTypeAdapter<
+    TYPE extends ICustomJavaDataType<
+        TYPE>,
+    ITEM_TYPE extends IAnyAtomicItem>
     extends AbstractDataTypeAdapter<TYPE, ITEM_TYPE> {
 
   /**
-   * Construct a new Java type adapter for the class based on {@link ICustomJavaDataType}.
+   * Construct a new Java type adapter for the class based on
+   * {@link ICustomJavaDataType}.
    *
    * @param clazz
    *          a data type class based on {@link ICustomJavaDataType}
@@ -56,7 +60,8 @@ public abstract class AbstractCustomJavaDataTypeAdapter<TYPE extends ICustomJava
   @SuppressWarnings("unchecked")
   @Override
   public TYPE copy(Object obj) {
-    // Datatype-based types are required to provide a copy method. Delegate to this method.
+    // Datatype-based types are required to provide a copy method. Delegate to this
+    // method.
     return ((TYPE) obj).copy();
   }
 

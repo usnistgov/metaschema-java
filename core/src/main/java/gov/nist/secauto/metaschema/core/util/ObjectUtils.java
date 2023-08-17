@@ -39,8 +39,8 @@ public final class ObjectUtils {
   /**
    * Assert that the provided object is not {@code null}.
    * <p>
-   * This method sets the expectation that the provided object is not {@code null} in cases where a
-   * non-null value is required.
+   * This method sets the expectation that the provided object is not {@code null}
+   * in cases where a non-null value is required.
    *
    * @param <T>
    *          the object type

@@ -54,6 +54,13 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
   @NonNull
   private final JsonGenerator writer;
 
+  /**
+   * Construct a new Metaschema-aware JSON writer.
+   *
+   * @param generator
+   *          the JSON generator to write with
+   * @see DefaultJsonProblemHandler
+   */
   public MetaschemaJsonWriter(
       @NonNull JsonGenerator generator) {
     this.writer = generator;
@@ -79,8 +86,11 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
   public void write(
       @NonNull IAssemblyClassBinding targetDefinition,
       @NonNull Object targetObject) throws IOException {
-
-    // first read the initial START_OBJECT
+    if (!targetDefinition.isRoot()) {
+      throw new UnsupportedOperationException(
+          String.format("The assembly '%s' is not a root assembly.", targetDefinition.getBoundClass().getName()));
+    }
+    // first write the initial START_OBJECT
     writer.writeStartObject();
 
     writer.writeFieldName(targetDefinition.getRootJsonName());
@@ -107,6 +117,21 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
     }
   }
 
+  /**
+   * Write a set of JSON values described by the provided
+   * {@code targetDefinition}.
+   *
+   * @param targetDefinition
+   *          the bound Metaschema definition describing the structure of the JSON
+   *          data to write
+   * @param targetObjects
+   *          the Java object data to write
+   * @param writeObjectWrapper
+   *          if {@code true} the JSON values will be wrapped in a JSON start and
+   *          end object, or {@code false} otherwise
+   * @throws IOException
+   *           if an error occurred while writing the JSON
+   */
   protected void writeDefinitionValues(
       @NonNull IAssemblyClassBinding targetDefinition,
       Collection<? extends Object> targetObjects,
@@ -118,12 +143,29 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
     }
   }
 
-  protected void writeDefinitionValues(
+  /**
+   * Write a set of JSON values described by the provided
+   * {@code targetDefinition}.
+   *
+   * @param targetDefinition
+   *          the bound Metaschema definition describing the structure of the JSON
+   *          data to write
+   * @param targetObjects
+   *          the Java object data to write
+   * @param writeObjectWrapper
+   *          if {@code true} the JSON values will be wrapped in a JSON start and
+   *          end object, or {@code false} otherwise
+   * @throws IOException
+   *           if an error occurred while writing the JSON
+   */
+  protected void writeDefinitionValues(// NOPMD
       @NonNull IFieldClassBinding targetDefinition,
-      @NonNull Collection<? extends Object> items,
+      @NonNull Collection<? extends Object> targetObjects,
       boolean writeObjectWrapper)
       throws IOException {
-    if (items.isEmpty()) {
+
+    // REFACTOR: reduce the complexity of this method
+    if (targetObjects.isEmpty()) {
       return;
     }
 
@@ -151,7 +193,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
 
     Map<String, ? extends IBoundNamedInstance> properties = targetDefinition.getNamedInstances(flagFilter);
 
-    for (Object item : items) {
+    for (Object item : targetObjects) {
       assert item != null;
       if (writeObjectWrapper) {
         writer.writeStartObject();
@@ -259,6 +301,17 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
     }
   }
 
+  /**
+   * Write the instance data contained in the {@code parentObject} based on the
+   * structure described by the {@code targetInstance}.
+   *
+   * @param targetInstance
+   *          the instance to write data for
+   * @param parentObject
+   *          the Java object containing the instance data to write
+   * @throws IOException
+   *           if an error occurred while writing the data
+   */
   protected void writeInstance(
       @NonNull IBoundNamedInstance targetInstance,
       @NonNull Object parentObject)
@@ -275,6 +328,17 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
     }
   }
 
+  /**
+   * Write the instance data contained in the {@code parentObject} based on the
+   * structure described by the {@code targetInstance}.
+   *
+   * @param targetInstance
+   *          the instance to write data for
+   * @param parentObject
+   *          the Java object containing the instance data to write
+   * @throws IOException
+   *           if an error occurred while writing the data
+   */
   protected void writeFlagInstanceValue(
       @NonNull IBoundFlagInstance targetInstance,
       @NonNull Object parentObject) throws IOException {
@@ -288,23 +352,45 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
     }
   }
 
+  /**
+   * Write the instance data contained in the {@code parentObject} based on the
+   * structure described by the {@code targetInstance}.
+   *
+   * @param targetInstance
+   *          the instance to write data for
+   * @param parentObject
+   *          the Java object containing the instance data to write
+   * @throws IOException
+   *           if an error occurred while writing the data
+   */
   protected void writeModelInstanceValues(
       @NonNull IBoundNamedModelInstance targetInstance,
-      @NonNull Object parentInstance) throws IOException {
+      @NonNull Object parentObject) throws IOException {
     IModelPropertyInfo propertyInfo = targetInstance.getPropertyInfo();
-    if (propertyInfo.isValueSet(parentInstance)) {
+    if (propertyInfo.isValueSet(parentObject)) {
       // write the field name
       writer.writeFieldName(targetInstance.getJsonName());
 
       // dispatch to the property info implementation to address cardinality
-      propertyInfo.writeValues(parentInstance, this);
+      propertyInfo.writeValues(parentObject, this);
     }
   }
 
+  /**
+   * Write the instance data contained in the {@code parentObject} based on the
+   * structure described by the {@code targetInstance}.
+   *
+   * @param targetInstance
+   *          the instance to write data for
+   * @param parentObject
+   *          the Java object containing the instance data to write
+   * @throws IOException
+   *           if an error occurred while writing the data
+   */
   protected void writeFieldValueInstanceValue(
       @NonNull IBoundFieldValueInstance targetInstance,
-      @NonNull Object instance) throws IOException {
-    Object value = targetInstance.getValue(instance);
+      @NonNull Object parentObject) throws IOException {
+    Object value = targetInstance.getValue(parentObject);
     if (value != null) {
       // There are two modes:
       // 1) use of a JSON value key, or
@@ -314,7 +400,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       String valueKeyName;
       if (jsonValueKey != null) {
         // this is the JSON value key case
-        valueKeyName = jsonValueKey.getValue(instance).toString();
+        valueKeyName = jsonValueKey.getValue(parentObject).toString();
       } else {
         valueKeyName = targetInstance.getJsonValueKeyName();
       }

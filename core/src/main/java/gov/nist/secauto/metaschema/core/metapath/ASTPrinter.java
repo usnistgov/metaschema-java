@@ -85,7 +85,8 @@ final class ASTPrinter
    *          the output generated for the curren't node's children
    * @param context
    *          the output context state
-   * @return the string representation of the node tree for the current node and its children
+   * @return the string representation of the node tree for the current node and
+   *         its children
    */
   @SuppressWarnings("static-method")
   protected String appendNode(@NonNull IExpression expr, @Nullable String childResult, @NonNull State context) {
@@ -104,8 +105,8 @@ final class ASTPrinter
    *
    * @param expression
    *          the node to build the node tree for
-   * @return the string representation of the node tree for the provided expression node and its
-   *         children
+   * @return the string representation of the node tree for the provided
+   *         expression node and its children
    */
   public String visit(@NonNull IExpression expression) {
     return visit(expression, new State());

@@ -34,7 +34,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 /**
- * A {@link INodeItem} supported by a {@link IFlagInstance}, that may have an associated value.
+ * A {@link INodeItem} supported by a {@link IFlagInstance}, that may have an
+ * associated value.
  */
 class FlagInstanceNodeItemImpl
     extends AbstractFlagInstanceNodeItem

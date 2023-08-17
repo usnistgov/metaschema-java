@@ -45,8 +45,8 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Since a node doesn't have a base URI in Metaschema, this is an alias for the document-uri
- * function.
+ * Since a node doesn't have a base URI in Metaschema, this is an alias for the
+ * document-uri function.
  */
 public final class FnData {
 
@@ -115,8 +115,9 @@ public final class FnData {
 
   /**
    * An implementation of XPath 3.1
-   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-data">fn:data</a> supporting
-   * <a href="https://www.w3.org/TR/xpath-31/#id-atomization">item atomization</a>.
+   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-data">fn:data</a>
+   * supporting <a href="https://www.w3.org/TR/xpath-31/#id-atomization">item
+   * atomization</a>.
    *
    * @param sequence
    *          the sequence of items to atomize
@@ -132,7 +133,8 @@ public final class FnData {
   }
 
   /**
-   * An implementation of <a href="https://www.w3.org/TR/xpath-31/#id-atomization">item
+   * An implementation of
+   * <a href="https://www.w3.org/TR/xpath-31/#id-atomization">item
    * atomization</a>.
    *
    * @param item

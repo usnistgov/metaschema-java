@@ -46,10 +46,28 @@ public class DefaultJsonSerializer<CLASS>
     extends AbstractSerializer<CLASS> {
   private JsonFactory jsonFactory;
 
+  /**
+   * Construct a new Metaschema binding-based deserializer that reads JSON-based
+   * Metaschema content.
+   *
+   * @param bindingContext
+   *          the Metaschema data binding context
+   * @param classBinding
+   *          the assembly class binding describing the Java objects this
+   *          deserializer parses data into
+   */
   public DefaultJsonSerializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 
+  /**
+   * Constructs a new JSON factory.
+   * <p>
+   * Subclasses can override this method to create a JSON factory with a specific
+   * configuration.
+   *
+   * @return the factory
+   */
   @NonNull
   protected JsonFactory getJsonFactoryInstance() {
     return JsonFactoryFactory.instance();
@@ -64,7 +82,7 @@ public class DefaultJsonSerializer<CLASS>
   }
 
   @NonNull
-  protected JsonFactory getJsonFactory() {
+  private JsonFactory getJsonFactory() {
     synchronized (this) {
       if (jsonFactory == null) {
         jsonFactory = getJsonFactoryInstance();
@@ -74,15 +92,9 @@ public class DefaultJsonSerializer<CLASS>
     }
   }
 
-  protected void setJsonFactory(@NonNull JsonFactory jsonFactory) {
-    synchronized (this) {
-      this.jsonFactory = jsonFactory;
-    }
-  }
-
   @SuppressWarnings("resource")
   @NonNull
-  protected JsonGenerator newJsonGenerator(@NonNull Writer writer) throws IOException {
+  private JsonGenerator newJsonGenerator(@NonNull Writer writer) throws IOException {
     JsonFactory factory = getJsonFactory();
     return ObjectUtils.notNull(factory.createGenerator(writer)
         .setPrettyPrinter(new DefaultPrettyPrinter()));

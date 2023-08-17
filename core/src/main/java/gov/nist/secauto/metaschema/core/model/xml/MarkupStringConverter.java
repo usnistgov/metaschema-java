@@ -85,7 +85,8 @@ final class MarkupStringConverter {
   }
 
   /**
-   * Converts a set of XML tokens, which represent HTML content, into an HTML string.
+   * Converts a set of XML tokens, which represent HTML content, into an HTML
+   * string.
    *
    * @param content
    *          the content to convert

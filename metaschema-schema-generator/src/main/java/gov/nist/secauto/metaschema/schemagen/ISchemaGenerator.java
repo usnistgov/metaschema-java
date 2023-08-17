@@ -44,8 +44,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface ISchemaGenerator {
   /**
-   * Generate and write a schema for the provided {@code metaschema} to the {@link Writer} provided by
-   * {@code writer} using the provided {@code configuration}.
+   * Generate and write a schema for the provided {@code metaschema} to the
+   * {@link Writer} provided by {@code writer} using the provided
+   * {@code configuration}.
    *
    * @param metaschema
    *          the Metaschema to generate the schema for

@@ -40,17 +40,18 @@ public final class SchemaGenerationFeature<V>
     extends AbstractConfigurationFeature<V> {
 
   /**
-   * If enabled, definitions that are defined inline will be generated as inline types. If disabled,
-   * definitions will always be generated as global types.
+   * If enabled, definitions that are defined inline will be generated as inline
+   * types. If disabled, definitions will always be generated as global types.
    */
   @NonNull
   public static final SchemaGenerationFeature<Boolean> INLINE_DEFINITIONS
       = new SchemaGenerationFeature<>(Boolean.class, false);
 
   /**
-   * If enabled, child definitions of a choice that are defined inline will be generated as inline
-   * types. If disabled, child definitions of a choice will always be generated as global types. This
-   * option will only be used if {@link #INLINE_DEFINITIONS} is also enabled.
+   * If enabled, child definitions of a choice that are defined inline will be
+   * generated as inline types. If disabled, child definitions of a choice will
+   * always be generated as global types. This option will only be used if
+   * {@link #INLINE_DEFINITIONS} is also enabled.
    */
   @NonNull
   public static final SchemaGenerationFeature<Boolean> INLINE_CHOICE_DEFINITIONS

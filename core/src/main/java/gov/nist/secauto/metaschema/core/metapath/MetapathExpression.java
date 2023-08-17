@@ -162,8 +162,8 @@ public class MetapathExpression {
   }
 
   /**
-   * Evaluate this Metapath expression without a specific focus. The required result type will be
-   * determined by the {@code resultType} argument.
+   * Evaluate this Metapath expression without a specific focus. The required
+   * result type will be determined by the {@code resultType} argument.
    *
    * @param <T>
    *          the expected result type
@@ -171,7 +171,8 @@ public class MetapathExpression {
    *          the type of result to produce
    * @return the converted result
    * @throws TypeMetapathException
-   *           if the provided sequence is incompatible with the requested result type
+   *           if the provided sequence is incompatible with the requested result
+   *           type
    * @throws MetapathException
    *           if an error occurred during evaluation
    * @see #toResultType(ISequence, ResultType)
@@ -182,8 +183,9 @@ public class MetapathExpression {
   }
 
   /**
-   * Evaluate this Metapath expression using the provided {@code focus} as the initial evaluation
-   * context. The required result type will be determined by the {@code resultType} argument.
+   * Evaluate this Metapath expression using the provided {@code focus} as the
+   * initial evaluation context. The required result type will be determined by
+   * the {@code resultType} argument.
    *
    * @param <T>
    *          the expected result type
@@ -193,7 +195,8 @@ public class MetapathExpression {
    *          the type of result to produce
    * @return the converted result
    * @throws TypeMetapathException
-   *           if the provided sequence is incompatible with the requested result type
+   *           if the provided sequence is incompatible with the requested result
+   *           type
    * @throws MetapathException
    *           if an error occurred during evaluation
    * @see #toResultType(ISequence, ResultType)
@@ -207,8 +210,9 @@ public class MetapathExpression {
   }
 
   /**
-   * Evaluate this Metapath expression using the provided {@code focus} as the initial evaluation
-   * context. The specific result type will be determined by the {@code resultType} argument.
+   * Evaluate this Metapath expression using the provided {@code focus} as the
+   * initial evaluation context. The specific result type will be determined by
+   * the {@code resultType} argument.
    * <p>
    * This variant allow for reuse of a provided {@code dynamicContext}.
    *
@@ -222,7 +226,8 @@ public class MetapathExpression {
    *          the dynamic context to use for evaluation
    * @return the converted result
    * @throws TypeMetapathException
-   *           if the provided sequence is incompatible with the requested result type
+   *           if the provided sequence is incompatible with the requested result
+   *           type
    * @throws MetapathException
    *           if an error occurred during evaluation
    * @see #toResultType(ISequence, ResultType)
@@ -239,8 +244,8 @@ public class MetapathExpression {
   /**
    * Converts the provided {@code sequence} to the requested {@code resultType}.
    * <p>
-   * The {@code resultType} determines the returned result, which is derived from the evaluation
-   * result sequence, as follows:
+   * The {@code resultType} determines the returned result, which is derived from
+   * the evaluation result sequence, as follows:
    * <ul>
    * <li>BOOLEAN - the effective boolean result is produced using
    * {@link FnBoolean#fnBoolean(ISequence)}.</li>
@@ -259,7 +264,8 @@ public class MetapathExpression {
    *          the type of result to produce
    * @return the converted result
    * @throws TypeMetapathException
-   *           if the provided sequence is incompatible with the requested result type
+   *           if the provided sequence is incompatible with the requested result
+   *           type
    */
   @SuppressWarnings("PMD.NullAssignment") // for readability
   @Nullable
@@ -296,7 +302,8 @@ public class MetapathExpression {
    *
    * @param <T>
    *          the type of items contained in the resulting sequence
-   * @return a sequence of Metapath items representing the result of the evaluation
+   * @return a sequence of Metapath items representing the result of the
+   *         evaluation
    * @throws MetapathException
    *           if an error occurred during evaluation
    */
@@ -306,14 +313,15 @@ public class MetapathExpression {
   }
 
   /**
-   * Evaluate this Metapath expression using the provided {@code focus} as the initial evaluation
-   * context.
+   * Evaluate this Metapath expression using the provided {@code focus} as the
+   * initial evaluation context.
    *
    * @param <T>
    *          the type of items contained in the resulting sequence
    * @param focus
    *          the outer focus of the expression
-   * @return a sequence of Metapath items representing the result of the evaluation
+   * @return a sequence of Metapath items representing the result of the
+   *         evaluation
    * @throws MetapathException
    *           if an error occurred during evaluation
    */
@@ -328,8 +336,8 @@ public class MetapathExpression {
   }
 
   /**
-   * Evaluate this Metapath expression using the provided {@code focus} as the initial evaluation
-   * context.
+   * Evaluate this Metapath expression using the provided {@code focus} as the
+   * initial evaluation context.
    * <p>
    * This variant allow for reuse of a provided {@code dynamicContext}.
    *
@@ -339,7 +347,8 @@ public class MetapathExpression {
    *          the outer focus of the expression
    * @param dynamicContext
    *          the dynamic context to use for evaluation
-   * @return a sequence of Metapath items representing the result of the evaluation
+   * @return a sequence of Metapath items representing the result of the
+   *         evaluation
    * @throws MetapathException
    *           if an error occurred during evaluation
    */

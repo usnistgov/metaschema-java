@@ -60,7 +60,8 @@ class FunctionCall implements IExpression {
   /**
    * Retrieve the associated function.
    *
-   * @return the function or {@code null} if no function matched the defined name and arguments
+   * @return the function or {@code null} if no function matched the defined name
+   *         and arguments
    * @throws StaticMetapathException
    *           if the function was not found
    */

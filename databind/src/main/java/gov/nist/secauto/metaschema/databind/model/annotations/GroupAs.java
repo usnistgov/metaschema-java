@@ -43,7 +43,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 @Target({ FIELD })
 public @interface GroupAs {
   /**
-   * The name to use for an XML grouping element wrapper or a JSON/YAML grouping property.
+   * The name to use for an XML grouping element wrapper or a JSON/YAML grouping
+   * property.
    *
    * @return the name
    */
@@ -53,8 +54,8 @@ public @interface GroupAs {
   /**
    * XML target namespace of the XML grouping element.
    * <p>
-   * If the value is "##default", then element name is derived from the namespace provided in the
-   * package-info.
+   * If the value is "##default", then element name is derived from the namespace
+   * provided in the package-info.
    *
    * @return the namespace
    */

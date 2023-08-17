@@ -29,7 +29,8 @@ package gov.nist.secauto.metaschema.databind.model;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Represents a Metaschema field bound to a Java plain old java object (POJO) class.
+ * Represents a Metaschema field bound to a Java plain old java object (POJO)
+ * class.
  */
 public interface IFieldClassBinding extends IClassBinding, IBoundFieldDefinition {
 

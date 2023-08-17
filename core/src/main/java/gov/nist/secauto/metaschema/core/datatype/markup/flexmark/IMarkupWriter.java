@@ -117,7 +117,8 @@ public interface IMarkupWriter<T, E extends Throwable> { // NOPMD
   void writeText(@NonNull Text node) throws E;
 
   /**
-   * Handle a combination of {@link Text} and {@link EscapedCharacter} node children.
+   * Handle a combination of {@link Text} and {@link EscapedCharacter} node
+   * children.
    *
    * @param node
    *          the text node to write

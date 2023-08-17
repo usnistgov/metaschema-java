@@ -118,12 +118,13 @@ public class BooleanAdapter
   }
 
   /**
-   * Cast the provided numeric value to a boolean. Any non-zero value will be {@code true}, or
-   * {@code false} otherwise.
+   * Cast the provided numeric value to a boolean. Any non-zero value will be
+   * {@code true}, or {@code false} otherwise.
    *
    * @param item
    *          the item to cast
-   * @return {@code true} if the item value is non-zero, or {@code false} otherwise
+   * @return {@code true} if the item value is non-zero, or {@code false}
+   *         otherwise
    */
   @NonNull
   protected IBooleanItem castToBoolean(@NonNull INumericItem item) {
@@ -131,7 +132,8 @@ public class BooleanAdapter
   }
 
   /**
-   * If the string is a numeric value, treat it as so. Otherwise parse the value as a boolean string.
+   * If the string is a numeric value, treat it as so. Otherwise parse the value
+   * as a boolean string.
    *
    * @param item
    *          the item to cast

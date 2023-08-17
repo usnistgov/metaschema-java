@@ -517,8 +517,8 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
   }
 
   /**
-   * Normalize whitespace according to https://spec.commonmark.org/0.30/#code-spans. Based on code
-   * from Flexmark.
+   * Normalize whitespace according to
+   * https://spec.commonmark.org/0.30/#code-spans. Based on code from Flexmark.
    *
    * @param text
    *          text to process

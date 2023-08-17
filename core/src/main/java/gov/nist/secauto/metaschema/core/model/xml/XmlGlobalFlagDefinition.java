@@ -93,15 +93,6 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
     });
   }
 
-  /**
-   * Get the underlying XML representation.
-   *
-   * @return the underlying XML data
-   */
-  protected final GlobalFlagDefinitionType getXmlFlag() {
-    return xmlFlag;
-  }
-
   @Override
   public IMetaschema getContainingMetaschema() {
     return metaschema;
@@ -122,6 +113,19 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   @Override
   public IValueConstrained getConstraintSupport() {
     return constraints.get();
+  }
+
+  // ----------------------------------------
+  // - Start annotation driven code - CPD-OFF
+  // ----------------------------------------
+
+  /**
+   * Get the underlying XML representation.
+   *
+   * @return the underlying XML data
+   */
+  protected final GlobalFlagDefinitionType getXmlFlag() {
+    return xmlFlag;
   }
 
   @SuppressWarnings("null")
@@ -172,6 +176,10 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   public MarkupMultiline getRemarks() {
     return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
   }
+
+  // --------------------------------------
+  // - End annotation driven code - CPD-ON
+  // --------------------------------------
 
   @Override
   public boolean isInline() {

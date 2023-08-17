@@ -48,7 +48,8 @@ public @interface Metaschema {
   Class<?>[] fields() default {};
 
   /**
-   * Get the classes representing the global assemblies defined on this Metaschema.
+   * Get the classes representing the global assemblies defined on this
+   * Metaschema.
    *
    * @return an array of assembly classes
    */

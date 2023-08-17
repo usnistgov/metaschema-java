@@ -128,11 +128,12 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   /**
    * Determine the format of the provided resource.
    * <p>
-   * This method will consume data from the provided {@link InputStream}. If the caller of this method
-   * intends to read data from the stream after determining the format, the caller should pass in a
-   * stream that can be reset.
+   * This method will consume data from the provided {@link InputStream}. If the
+   * caller of this method intends to read data from the stream after determining
+   * the format, the caller should pass in a stream that can be reset.
    * <p>
-   * This method will not close the provided {@link InputStream}, since it does not own the stream.
+   * This method will not close the provided {@link InputStream}, since it does
+   * not own the stream.
    *
    * @param is
    *          an input stream for the resource
@@ -224,7 +225,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   }
 
   /**
-   * Load data from the resource identified by the provided {@code uri} into a bound object.
+   * Load data from the resource identified by the provided {@code uri} into a
+   * bound object.
    * <p>
    * This method will auto-detect the format of the provided resource.
    *
@@ -245,7 +247,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * <p>
    * This method should auto-detect the format of the provided resource.
    * <p>
-   * This method will not close the provided {@link InputStream}, since it does not own the stream.
+   * This method will not close the provided {@link InputStream}, since it does
+   * not own the stream.
    *
    * @param <CLASS>
    *          the type of the bound object to return
@@ -262,8 +265,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   <CLASS> CLASS load(@NonNull InputStream is, @NonNull URI documentUri) throws IOException;
 
   /**
-   * Load data from the specified resource into a bound object with the type of the specified Java
-   * class.
+   * Load data from the specified resource into a bound object with the type of
+   * the specified Java class.
    *
    * @param <CLASS>
    *          the Java type to load data into
@@ -283,8 +286,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   }
 
   /**
-   * Load data from the specified resource into a bound object with the type of the specified Java
-   * class.
+   * Load data from the specified resource into a bound object with the type of
+   * the specified Java class.
    *
    * @param <CLASS>
    *          the Java type to load data into
@@ -304,8 +307,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   }
 
   /**
-   * Load data from the specified resource into a bound object with the type of the specified Java
-   * class.
+   * Load data from the specified resource into a bound object with the type of
+   * the specified Java class.
    *
    * @param <CLASS>
    *          the Java type to load data into
@@ -327,8 +330,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   }
 
   /**
-   * Load data from the specified resource into a bound object with the type of the specified Java
-   * class.
+   * Load data from the specified resource into a bound object with the type of
+   * the specified Java class.
    *
    * @param <CLASS>
    *          the Java type to load data into
@@ -346,16 +349,17 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
       @NonNull URI uri) throws IOException;
 
   /**
-   * Load data from the specified resource into a bound object with the type of the specified Java
-   * class.
+   * Load data from the specified resource into a bound object with the type of
+   * the specified Java class.
    * <p>
-   * This method will not close the provided {@link InputStream}, since it does not own the stream.
+   * This method will not close the provided {@link InputStream}, since it does
+   * not own the stream.
    * <p>
-   * Implementations of this method will do format detection. This process might leave the provided
-   * {@link InputStream} at a position beyond the last parsed location. If you want to avoid this
-   * possibility, use and implementation of {@link IDeserializer#deserialize(InputStream, URI)}
-   * instead, such as what is provided by
-   * {@link DefaultBindingContext#newDeserializer(Format, Class)}.
+   * Implementations of this method will do format detection. This process might
+   * leave the provided {@link InputStream} at a position beyond the last parsed
+   * location. If you want to avoid this possibility, use and implementation of
+   * {@link IDeserializer#deserialize(InputStream, URI)} instead, such as what is
+   * provided by {@link DefaultBindingContext#newDeserializer(Format, Class)}.
    *
    * @param <CLASS>
    *          the Java type to load data into
@@ -367,7 +371,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *          the URI of the resource
    * @return the loaded data
    * @throws IOException
-   *           if an error occurred while loading the data from the specified resource
+   *           if an error occurred while loading the data from the specified
+   *           resource
    */
   @NonNull
   <CLASS> CLASS load(
@@ -376,11 +381,11 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
       @NonNull URI documentUri) throws IOException;
 
   /**
-   * Load data expressed using the provided {@code format} and return that data as a Metapath node
-   * item.
+   * Load data expressed using the provided {@code format} and return that data as
+   * a Metapath node item.
    * <p>
-   * The specific Metaschema model is auto-detected by analyzing the source. The class reported is
-   * implementation specific.
+   * The specific Metaschema model is auto-detected by analyzing the source. The
+   * class reported is implementation specific.
    *
    * @param format
    *          the expected format of the data to parse
@@ -388,7 +393,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *          the resource
    * @return the Metapath node item for the parsed data
    * @throws IOException
-   *           if an error occurred while loading the data from the specified resource
+   *           if an error occurred while loading the data from the specified
+   *           resource
    */
   @NonNull
   default IDocumentNodeItem loadAsNodeItem(
@@ -398,11 +404,11 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   }
 
   /**
-   * Load data expressed using the provided {@code format} and return that data as a Metapath node
-   * item.
+   * Load data expressed using the provided {@code format} and return that data as
+   * a Metapath node item.
    * <p>
-   * The specific Metaschema model is auto-detected by analyzing the source. The class reported is
-   * implementation specific.
+   * The specific Metaschema model is auto-detected by analyzing the source. The
+   * class reported is implementation specific.
    *
    * @param format
    *          the expected format of the data to parse
@@ -410,7 +416,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *          the resource
    * @return the Metapath node item for the parsed data
    * @throws IOException
-   *           if an error occurred while loading the data from the specified resource
+   *           if an error occurred while loading the data from the specified
+   *           resource
    */
   @NonNull
   IDocumentNodeItem loadAsNodeItem(
@@ -418,11 +425,11 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
       @NonNull URI uri) throws IOException;
 
   /**
-   * Load data expressed using the provided {@code format} and return that data as a Metapath node
-   * item.
+   * Load data expressed using the provided {@code format} and return that data as
+   * a Metapath node item.
    * <p>
-   * The specific Metaschema model is auto-detected by analyzing the source. The class reported is
-   * implementation specific.
+   * The specific Metaschema model is auto-detected by analyzing the source. The
+   * class reported is implementation specific.
    *
    * @param format
    *          the expected format of the data to parse
@@ -432,7 +439,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *          the URI of the resource
    * @return the Metapath node item for the parsed data
    * @throws IOException
-   *           if an error occurred while loading the data from the specified resource
+   *           if an error occurred while loading the data from the specified
+   *           resource
    */
   @NonNull
   IDocumentNodeItem loadAsNodeItem(
@@ -449,10 +457,11 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   IBindingContext getBindingContext();
 
   /**
-   * Auto convert the provided {@code source} to the provided {@code toFormat}. Write the converted
-   * content to the provided {@code destination}.
+   * Auto convert the provided {@code source} to the provided {@code toFormat}.
+   * Write the converted content to the provided {@code destination}.
    * <p>
-   * The format of the source is expected to be auto detected using {@link #detectFormat(Path)}.
+   * The format of the source is expected to be auto detected using
+   * {@link #detectFormat(Path)}.
    *
    * @param <CLASS>
    *          the Java type to load data into
@@ -467,8 +476,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @throws FileNotFoundException
    *           the the provided source file was not found
    * @throws IOException
-   *           if an error occurred while loading the data from the specified resource or writing the
-   *           converted data to the specified destination
+   *           if an error occurred while loading the data from the specified
+   *           resource or writing the converted data to the specified destination
    */
   default <CLASS> void convert(
       @NonNull Path source,
@@ -482,10 +491,11 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   }
 
   /**
-   * Auto convert the provided {@code source} to the provided {@code toFormat}. Write the converted
-   * content to the provided {@code destination}.
+   * Auto convert the provided {@code source} to the provided {@code toFormat}.
+   * Write the converted content to the provided {@code destination}.
    * <p>
-   * The format of the source is expected to be auto detected using {@link #detectFormat(Path)}.
+   * The format of the source is expected to be auto detected using
+   * {@link #detectFormat(Path)}.
    *
    * @param <CLASS>
    *          the Java type to load data into
@@ -500,8 +510,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @throws FileNotFoundException
    *           the the provided source file was not found
    * @throws IOException
-   *           if an error occurred while loading the data from the specified resource or writing the
-   *           converted data to the specified destination
+   *           if an error occurred while loading the data from the specified
+   *           resource or writing the converted data to the specified destination
    */
   default <CLASS> void convert(
       @NonNull Path source,

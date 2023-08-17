@@ -47,15 +47,16 @@ public final class DefaultIndexHasKeyConstraint
   private final String indexName;
 
   /**
-   * Create a key reference constraint, which uses a set of key fields to build a key to match against
-   * an index.
+   * Create a key reference constraint, which uses a set of key fields to build a
+   * key to match against an index.
    *
    * @param id
    *          the optional identifier for the constraint
    * @param formalName
    *          the constraint's formal indexName or {@code null} if not provided
    * @param description
-   *          the constraint's semantic description or {@code null} if not provided
+   *          the constraint's semantic description or {@code null} if not
+   *          provided
    * @param source
    *          information about the constraint source
    * @param level

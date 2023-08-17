@@ -46,8 +46,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface IXmlParsingContext extends IParsingContext<XMLEventReader2, IXmlProblemHandler> {
 
   /**
-   * Read the XML data associated with the {@code targetInstance} and apply it to the provided
-   * {@code parentObject}.
+   * Read the XML data associated with the {@code targetInstance} and apply it to
+   * the provided {@code parentObject}.
    *
    * @param <T>
    *          the resulting object type
@@ -70,23 +70,27 @@ public interface IXmlParsingContext extends IParsingContext<XMLEventReader2, IXm
       @NonNull StartElement start) throws XMLStreamException, IOException;
 
   /**
-   * Reads a XML element storing the associated data in a Java class instance, returning the resulting
-   * instance.
+   * Reads a XML element storing the associated data in a Java class instance,
+   * returning the resulting instance.
    * <p>
-   * When called the next {@link XMLEvent} of the {@link XMLStreamReader2} is expected to be a
-   * {@link XMLStreamConstants#START_ELEMENT} that is the XML element associated with the Java class.
+   * When called the next {@link XMLEvent} of the {@link XMLStreamReader2} is
+   * expected to be a {@link XMLStreamConstants#START_ELEMENT} that is the XML
+   * element associated with the Java class.
    * <p>
-   * After returning the next {@link XMLEvent} of the {@link XMLStreamReader2} is expected to be a the
-   * next event after the {@link XMLStreamConstants#END_ELEMENT} for the XML
-   * {@link XMLStreamConstants#START_ELEMENT} element associated with the Java class.
+   * After returning the next {@link XMLEvent} of the {@link XMLStreamReader2} is
+   * expected to be a the next event after the
+   * {@link XMLStreamConstants#END_ELEMENT} for the XML
+   * {@link XMLStreamConstants#START_ELEMENT} element associated with the Java
+   * class.
    *
    * @param <T>
    *          the resulting object type
    * @param targetDefinition
-   *          the Metaschema definition that describes the syntax of the data to read
+   *          the Metaschema definition that describes the syntax of the data to
+   *          read
    * @param parentObject
-   *          the Java object parent of the target object, which can be {@code null} if there is no
-   *          parent
+   *          the Java object parent of the target object, which can be
+   *          {@code null} if there is no parent
    * @param start
    *          the XML element start and attribute data previously parsed
    * @return the Java object containing the data parsed by this method

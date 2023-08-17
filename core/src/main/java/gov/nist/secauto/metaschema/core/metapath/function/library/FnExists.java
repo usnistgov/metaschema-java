@@ -77,7 +77,8 @@ public final class FnExists {
    *
    * @param sequence
    *          the sequence to check
-   * @return {@code true} if the sequence contains at least one item, or {@code false} otherwise
+   * @return {@code true} if the sequence contains at least one item, or
+   *         {@code false} otherwise
    */
   public static IBooleanItem fnExists(ISequence<?> sequence) {
     return IBooleanItem.valueOf(!sequence.isEmpty());

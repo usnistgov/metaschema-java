@@ -43,20 +43,21 @@ public interface IJsonParsingContext extends IParsingContext<JsonParser, IJsonPr
    *
    * @param <T>
    *          the resulting value type
-   * @param definition
-   *          the bound Metaschema definition describing the structure of the JSON data to parse
+   * @param targetDefinition
+   *          the bound Metaschema definition describing the structure of the JSON
+   *          data to parse
    * @param parentInstance
    *          the parent Java object that will contain this data
    * @param requiresJsonKey
-   *          if {@code true} the data will have a JSON key, or {@code false} the data will not have a
-   *          JSON key
+   *          if {@code true} the data will have a JSON key, or {@code false} the
+   *          data will not have a JSON key
    * @return the Java object containing the parsed data
    * @throws IOException
    *           if an error occurred while parsing the JSON
    */
   @NonNull
   <T> T readDefinitionValue(
-      @NonNull IClassBinding definition,
+      @NonNull IClassBinding targetDefinition,
       @Nullable Object parentInstance,
       boolean requiresJsonKey) throws IOException;
 }

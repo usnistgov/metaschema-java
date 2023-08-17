@@ -45,7 +45,8 @@ package gov.nist.secauto.metaschema.core.metapath.format;
 // }
 //
 // @Override
-// public @NonNull String formatPathSegment(@NonNull IDocumentPathSegment segment) {
+// public @NonNull String formatPathSegment(@NonNull IDocumentPathSegment
+// segment) {
 // return "$";
 // }
 //
@@ -97,7 +98,8 @@ package gov.nist.secauto.metaschema.core.metapath.format;
 // builder.append(getEffectiveName(segment));
 // retval = builder.toString();
 // } else {
-// // TODO: does it make sense to use this for an intermediate that has no parent?
+// // TODO: does it make sense to use this for an intermediate that has no
+// parent?
 // retval = formatModelPathSegment(segment);
 // }
 // return retval;
@@ -105,7 +107,8 @@ package gov.nist.secauto.metaschema.core.metapath.format;
 //
 // @SuppressWarnings("null")
 // @NonNull
-// protected String formatModelPathSegment(IModelPositionalPathSegment segment) {
+// protected String formatModelPathSegment(IModelPositionalPathSegment segment)
+// {
 // StringBuilder builder = new StringBuilder(getEffectiveName(segment));
 // builder.append('[');
 // builder.append(segment.getPosition());

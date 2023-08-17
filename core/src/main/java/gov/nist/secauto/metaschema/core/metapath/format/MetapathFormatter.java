@@ -38,20 +38,22 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.IRootAssemblyNodeItem
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * An {@link IPathFormatter} that produces a Metapath expression for the path to a given
- * {@link INodeItem}.
+ * An {@link IPathFormatter} that produces a Metapath expression for the path to
+ * a given {@link INodeItem}.
  */
 public class MetapathFormatter implements IPathFormatter {
 
   @Override
   public @NonNull String formatMetaschema(IMetaschemaNodeItem metaschema) {
-    // this will result in a slash being generated using the join in the format method
+    // this will result in a slash being generated using the join in the format
+    // method
     return "";
   }
 
   @Override
   public String formatDocument(IDocumentNodeItem document) {
-    // this will result in a slash being generated using the join in the format method
+    // this will result in a slash being generated using the join in the format
+    // method
     return "";
   }
 

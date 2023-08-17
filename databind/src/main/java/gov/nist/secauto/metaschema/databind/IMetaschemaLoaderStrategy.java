@@ -44,7 +44,8 @@ interface IMetaschemaLoaderStrategy {
    *          the Metaschema class
    * @return the Metaschema instance
    * @throws IllegalStateException
-   *           if an error occured while processing the associated Metaschema information
+   *           if an error occured while processing the associated Metaschema
+   *           information
    */
   @NonNull
   IMetaschema getMetaschemaInstanceByClass(@NonNull Class<? extends IMetaschema> clazz);
@@ -55,7 +56,8 @@ interface IMetaschemaLoaderStrategy {
    *
    * @param clazz
    *          the class binding to load
-   * @return the associated class binding instance or {@code null} if the class is not bound
+   * @return the associated class binding instance or {@code null} if the class is
+   *         not bound
    */
   @Nullable
   IClassBinding getClassBinding(@NonNull Class<?> clazz);

@@ -43,6 +43,7 @@ import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalMod
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.Map;
 import java.util.Set;
@@ -62,8 +63,11 @@ class XmlGlobalAssemblyDefinition
   private final GlobalAssemblyDefinitionType xmlAssembly;
   @NonNull
   private final XmlMetaschema metaschema;
+  @NonNull
   private final Lazy<XmlFlagContainerSupport> flagContainer;
+  @NonNull
   private final Lazy<XmlModelContainerSupport> modelContainer;
+  @NonNull
   private final Lazy<AssemblyConstraintSupport> constraints;
 
   /**
@@ -80,12 +84,36 @@ class XmlGlobalAssemblyDefinition
       @NonNull XmlMetaschema metaschema) {
     this.xmlAssembly = xmlAssembly;
     this.metaschema = metaschema;
-    this.flagContainer = Lazy.lazy(() -> new XmlFlagContainerSupport(xmlAssembly, this));
-    this.modelContainer = Lazy.lazy(() -> new XmlModelContainerSupport(xmlAssembly, this));
-    this.constraints = Lazy.lazy(() -> AssemblyConstraintSupport.newInstance(
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlAssembly, this)));
+    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlModelContainerSupport(xmlAssembly, this)));
+    this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> AssemblyConstraintSupport.newInstance(
         xmlAssembly,
-        ExternalModelSource.instance(metaschema.getLocation())));
+        ExternalModelSource.instance(metaschema.getLocation()))));
   }
+
+  @Override
+  public XmlFlagContainerSupport getFlagContainer() {
+    return ObjectUtils.notNull(flagContainer.get());
+  }
+
+  @Override
+  public XmlModelContainerSupport getModelContainer() {
+    return ObjectUtils.notNull(modelContainer.get());
+  }
+
+  @Override
+  public IModelConstrained getConstraintSupport() {
+    return ObjectUtils.notNull(constraints.get());
+  }
+
+  @Override
+  public XmlMetaschema getContainingMetaschema() {
+    return metaschema;
+  }
+
+  // ----------------------------------------
+  // - Start Annotation driven code - CPD-OFF
+  // ----------------------------------------
 
   /**
    * Get the underlying XML data.
@@ -98,32 +126,8 @@ class XmlGlobalAssemblyDefinition
   }
 
   @Override
-  public XmlMetaschema getContainingMetaschema() {
-    return metaschema;
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public XmlFlagContainerSupport getFlagContainer() {
-    return flagContainer.get();
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public XmlModelContainerSupport getModelContainer() {
-    return modelContainer.get();
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public IModelConstrained getConstraintSupport() {
-    return constraints.get();
-  }
-
-  @SuppressWarnings("null")
-  @Override
   public String getName() {
-    return getXmlAssembly().getName();
+    return ObjectUtils.requireNonNull(getXmlAssembly().getName());
   }
 
   @Override
@@ -154,18 +158,6 @@ class XmlGlobalAssemblyDefinition
   }
 
   @Override
-  public boolean isInline() {
-    // global
-    return false;
-  }
-
-  @Override
-  public IAssemblyInstance getInlineInstance() {
-    // global
-    return null;
-  }
-
-  @Override
   public String getRootName() {
     return getXmlAssembly().isSetRootName() ? getXmlAssembly().getRootName() : null;
   }
@@ -180,5 +172,21 @@ class XmlGlobalAssemblyDefinition
   @Override
   public MarkupMultiline getRemarks() {
     return getXmlAssembly().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getRemarks()) : null;
+  }
+
+  // --------------------------------------
+  // - End Annotation driven code - CPD-ON
+  // --------------------------------------
+
+  @Override
+  public boolean isInline() {
+    // global
+    return false;
+  }
+
+  @Override
+  public IAssemblyInstance getInlineInstance() {
+    // global
+    return null;
   }
 }

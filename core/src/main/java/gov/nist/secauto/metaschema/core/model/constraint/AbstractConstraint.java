@@ -69,7 +69,8 @@ public abstract class AbstractConstraint implements IConstraint { // NOPMD - int
    * @param formalName
    *          the constraint's formal name or {@code null} if not provided
    * @param description
-   *          the constraint's semantic description or {@code null} if not provided
+   *          the constraint's semantic description or {@code null} if not
+   *          provided
    * @param source
    *          information about the constraint source
    * @param level
@@ -142,8 +143,10 @@ public abstract class AbstractConstraint implements IConstraint { // NOPMD - int
     return remarks;
   }
 
-  public abstract static class AbstractConstraintBuilder<T extends AbstractConstraintBuilder<T,
-      R>, R extends AbstractConstraint> {
+  public abstract static class AbstractConstraintBuilder<
+      T extends AbstractConstraintBuilder<T,
+          R>,
+      R extends AbstractConstraint> {
     private String id;
     private String formalName;
     private MarkupLine description;

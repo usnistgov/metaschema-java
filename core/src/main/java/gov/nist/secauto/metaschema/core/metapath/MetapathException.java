@@ -27,8 +27,8 @@
 package gov.nist.secauto.metaschema.core.metapath;
 
 /**
- * {@code MetapathException} is the superclass of all exceptions that can be thrown during the
- * compilation and evaluation of a Metapath.
+ * {@code MetapathException} is the superclass of all exceptions that can be
+ * thrown during the compilation and evaluation of a Metapath.
  */
 public class MetapathException
     extends RuntimeException {
@@ -46,7 +46,8 @@ public class MetapathException
   }
 
   /**
-   * Constructs a new Metapath exception with the provided {@code message} and no cause.
+   * Constructs a new Metapath exception with the provided {@code message} and no
+   * cause.
    *
    * @param message
    *          the exception message
@@ -56,7 +57,8 @@ public class MetapathException
   }
 
   /**
-   * Constructs a new Metapath exception with a {@code null} message and the provided {@code cause}.
+   * Constructs a new Metapath exception with a {@code null} message and the
+   * provided {@code cause}.
    *
    * @param cause
    *          the exception cause
@@ -66,7 +68,8 @@ public class MetapathException
   }
 
   /**
-   * Constructs a new Metapath exception with the provided {@code message} and {@code cause}.
+   * Constructs a new Metapath exception with the provided {@code message} and
+   * {@code cause}.
    *
    * @param message
    *          the exception message

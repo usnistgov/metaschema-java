@@ -24,8 +24,8 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 /**
- * Support for managing Metaschema data type implementations aligned with the JSON schema format for
- * use in schema generation.
+ * Support for managing Metaschema data type implementations aligned with the
+ * JSON schema format for use in schema generation.
  */
 
 package gov.nist.secauto.metaschema.schemagen.json.datatype;

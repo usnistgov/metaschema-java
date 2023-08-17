@@ -34,7 +34,8 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeProvider;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides for runtime discovery of built-in implementations of the markup Metaschema data types.
+ * Provides for runtime discovery of built-in implementations of the markup
+ * Metaschema data types.
  */
 @AutoService(IDataTypeProvider.class)
 public final class MarkupDataTypeProvider

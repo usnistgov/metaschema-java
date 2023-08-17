@@ -66,11 +66,12 @@ class DefaultFlagProperty
   private final IDataTypeAdapter<?> javaTypeAdapter;
   @Nullable
   private final Object defaultValue;
-  private InternalFlagDefinition definition;
+  @NonNull
+  private final Lazy<InternalFlagDefinition> definition;
 
   /**
-   * Construct a new bound flag instance based on a Java property. The name of the property is bound
-   * to the name of the instance.
+   * Construct a new bound flag instance based on a Java property. The name of the
+   * property is bound to the name of the instance.
    *
    * @param field
    *          the Java field to bind to
@@ -95,6 +96,7 @@ class DefaultFlagProperty
     String defaultString = this.flag.defaultValue();
     this.defaultValue = Constants.NULL_VALUE.equals(defaultString) ? null // NOPMD readability
         : getJavaTypeAdapter().parse(defaultString);
+    this.definition = ObjectUtils.notNull(Lazy.lazy(() -> new InternalFlagDefinition()));
   }
 
   @Override
@@ -104,7 +106,7 @@ class DefaultFlagProperty
   }
 
   @NonNull
-  protected BoundFlag getFlagAnnotation() {
+  private BoundFlag getFlagAnnotation() {
     return flag;
   }
 
@@ -157,15 +159,9 @@ class DefaultFlagProperty
     return ModelUtil.resolveToMarkupMultiline(getFlagAnnotation().remarks());
   }
 
-  @SuppressWarnings("null")
   @Override
   public IFlagDefinition getDefinition() {
-    synchronized (this) {
-      if (definition == null) {
-        definition = new InternalFlagDefinition();
-      }
-      return definition;
-    }
+    return ObjectUtils.notNull(definition.get());
   }
 
   @Override

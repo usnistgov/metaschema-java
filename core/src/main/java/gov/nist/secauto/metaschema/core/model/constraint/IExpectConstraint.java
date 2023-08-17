@@ -33,8 +33,8 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Represents a rule requiring a Metaschema assembly, field, or flag data instance to pass a
- * Metapath-based test.
+ * Represents a rule requiring a Metaschema assembly, field, or flag data
+ * instance to pass a Metapath-based test.
  * <p>
  * A custom message can be used to indicate what a test failure signifies.
  */
@@ -44,8 +44,8 @@ public interface IExpectConstraint extends IConstraint {
   MetapathExpression getTest();
 
   /**
-   * A message to emit when the constraint is violated. Allows embedded Metapath expressions using the
-   * syntax {@code \{path\}}.
+   * A message to emit when the constraint is violated. Allows embedded Metapath
+   * expressions using the syntax {@code \{path\}}.
    *
    * @return the message if defined or {@code null} otherwise
    */

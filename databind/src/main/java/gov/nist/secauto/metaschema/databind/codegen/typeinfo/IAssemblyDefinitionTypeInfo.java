@@ -31,8 +31,8 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Java class type information for an {@link IAssemblyDefinition} used for generating a Java class
- * for the definition.
+ * Java class type information for an {@link IAssemblyDefinition} used for
+ * generating a Java class for the definition.
  */
 public interface IAssemblyDefinitionTypeInfo extends IModelDefinitionTypeInfo {
 

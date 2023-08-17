@@ -98,7 +98,8 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   }
 
   // @Override
-  // public void writeHtml(@NonNull XMLStreamWriter2 xmlStreamWriter, @NonNull String namespace)
+  // public void writeHtml(@NonNull XMLStreamWriter2 xmlStreamWriter, @NonNull
+  // String namespace)
   // throws XMLStreamException {
   //
   //
@@ -111,18 +112,23 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   // }
   //
   // @Override
-  // public void writeHtml(@NonNull OutputStream os, @Nullable String namespace, @Nullable String
+  // public void writeHtml(@NonNull OutputStream os, @Nullable String namespace,
+  // @Nullable String
   // prefix)
   // throws XMLStreamException {
-  // XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
+  // XMLOutputFactory2 factory = (XMLOutputFactory2)
+  // XMLOutputFactory.newInstance();
   // assert factory instanceof WstxOutputFactory;
   // factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
-  // XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
+  // XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2)
+  // factory.createXMLStreamWriter(os);
   //
   // String effectiveNamespace = namespace == null ? DEFAULT_HTML_NS : namespace;
   // String effectivePrefix = prefix == null ? DEFAULT_HTML_PREFIX : prefix;
-  // NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
-  // List.of(NamespaceEventImpl.constructNamespace(null, effectivePrefix, effectiveNamespace)));
+  // NamespaceContext nsContext =
+  // MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
+  // List.of(NamespaceEventImpl.constructNamespace(null, effectivePrefix,
+  // effectiveNamespace)));
   // xmlStreamWriter.setNamespaceContext(nsContext);
   //
   //
@@ -275,8 +281,8 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   }
 
   /**
-   * Retrieve all insert statements that are contained within this markup text that match the provided
-   * filter.
+   * Retrieve all insert statements that are contained within this markup text
+   * that match the provided filter.
    *
    * @param filter
    *          a filter used to identify matching insert statements

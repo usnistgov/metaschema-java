@@ -50,7 +50,8 @@ public interface IFieldInstance extends INamedModelInstance, IField {
   /**
    * Determines if the field is configured to have a wrapper in XML.
    *
-   * @return {@code true} if an XML wrapper is required, or {@code false} otherwise
+   * @return {@code true} if an XML wrapper is required, or {@code false}
+   *         otherwise
    */
   boolean isInXmlWrapped();
 }

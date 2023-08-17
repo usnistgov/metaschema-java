@@ -35,11 +35,11 @@ import java.net.URI;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Supports querying of global definitions and associated instances in a Metaschema by effective
- * name.
+ * Supports querying of global definitions and associated instances in a
+ * Metaschema by effective name.
  * <p>
- * All definitions in the {@link ModuleScopeEnum#INHERITED} scope. This allows the exported
- * structure of the Metaschema to be queried.
+ * All definitions in the {@link ModuleScopeEnum#INHERITED} scope. This allows
+ * the exported structure of the Metaschema to be queried.
  */
 public interface IMetaschemaNodeItem extends IDocumentNodeItem {
 

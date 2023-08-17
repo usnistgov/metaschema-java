@@ -80,7 +80,8 @@ class DefaultFieldValueProperty
     return defaultValue;
   }
 
-  protected final MetaschemaFieldValue getFieldValueAnnotation() {
+  @NonNull
+  private MetaschemaFieldValue getFieldValueAnnotation() {
     return fieldValue;
   }
 

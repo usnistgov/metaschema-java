@@ -38,6 +38,8 @@ import org.apache.xmlbeans.XmlCursor.XmlBookmark;
 import org.apache.xmlbeans.XmlLineNumber;
 import org.apache.xmlbeans.impl.values.XmlValueNotSupportedException;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public final class MetapathExpressionHandler {
   private static final Logger LOGGER = LogManager.getLogger(MetapathExpressionHandler.class);
 
@@ -59,27 +61,7 @@ public final class MetapathExpressionHandler {
       String newPath = "." + path;
 
       if (LOGGER.isInfoEnabled()) {
-        StringBuilder builder = new StringBuilder(48)
-            .append("The path '")
-            .append(path)
-            .append('\'');
-
-        try (XmlCursor cursor = value.newCursor()) {
-          cursor.toParent();
-          XmlBookmark bookmark = cursor.getBookmark(XmlLineNumber.class);
-          if (bookmark != null) {
-            XmlLineNumber lineNumber = (XmlLineNumber) bookmark;
-            builder.append(" at location ")
-                .append(lineNumber.getLine())
-                .append(':')
-                .append(lineNumber.getColumn());
-          }
-        }
-
-        builder.append(" is not properly contextualized using '.'. Using '")
-            .append(newPath)
-            .append("' instead.");
-        LOGGER.atInfo().log(builder.toString());
+        logContextError(path, newPath, value);
       }
       path = newPath;
     }
@@ -108,6 +90,33 @@ public final class MetapathExpressionHandler {
       exNew.initCause(ex);
       throw exNew;
     }
+  }
+
+  private static void logContextError(
+      @NonNull String path,
+      @NonNull String newPath,
+      @NonNull SimpleValue value) {
+    StringBuilder builder = new StringBuilder(96)
+        .append("The path '")
+        .append(path)
+        .append('\'');
+
+    try (XmlCursor cursor = value.newCursor()) {
+      cursor.toParent();
+      XmlBookmark bookmark = cursor.getBookmark(XmlLineNumber.class);
+      if (bookmark != null) {
+        XmlLineNumber lineNumber = (XmlLineNumber) bookmark;
+        builder.append(" at location ")
+            .append(lineNumber.getLine())
+            .append(':')
+            .append(lineNumber.getColumn());
+      }
+    }
+
+    builder.append(" is not properly contextualized using '.'. Using '")
+        .append(newPath)
+        .append("' instead.");
+    LOGGER.atInfo().log(builder.toString());
   }
 
   /**

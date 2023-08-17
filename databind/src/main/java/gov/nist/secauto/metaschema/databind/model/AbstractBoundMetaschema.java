@@ -58,8 +58,8 @@ public abstract class AbstractBoundMetaschema
   private Map<String, IFieldClassBinding> fieldDefinitions;
 
   /**
-   * Create a new Metaschema instance for a given class annotated by the {@link Metaschema}
-   * annotation.
+   * Create a new Metaschema instance for a given class annotated by the
+   * {@link Metaschema} annotation.
    * <p>
    * Will also load any imported Metaschemas.
    *

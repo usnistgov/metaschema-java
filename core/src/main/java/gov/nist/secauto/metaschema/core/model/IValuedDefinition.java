@@ -32,8 +32,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * This marker interface identifies Metaschema definition types that have associated values (i.e.,
- * field, flag).
+ * This marker interface identifies Metaschema definition types that have
+ * associated values (i.e., field, flag).
  */
 public interface IValuedDefinition extends IDefinition {
   /**

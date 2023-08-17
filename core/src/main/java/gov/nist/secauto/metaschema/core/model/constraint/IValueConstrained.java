@@ -31,8 +31,8 @@ import java.util.List;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Represents a container of rules constraining the effective model of a Metaschema field or flag
- * data instance.
+ * Represents a container of rules constraining the effective model of a
+ * Metaschema field or flag data instance.
  */
 public interface IValueConstrained extends IConstrained {
   /**

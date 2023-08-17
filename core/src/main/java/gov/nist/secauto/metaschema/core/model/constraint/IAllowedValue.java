@@ -31,11 +31,13 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Represents an individual enumerated value associated with an {@link IAllowedValuesConstraint}.
+ * Represents an individual enumerated value associated with an
+ * {@link IAllowedValuesConstraint}.
  */
 public interface IAllowedValue {
   /**
-   * Retrieves the enumerated value associated with this allowed value constraint entry.
+   * Retrieves the enumerated value associated with this allowed value constraint
+   * entry.
    *
    * @return the value
    */
@@ -43,7 +45,8 @@ public interface IAllowedValue {
   String getValue();
 
   /**
-   * Retrieves the enumerated value's description associated with this allowed value constraint entry.
+   * Retrieves the enumerated value's description associated with this allowed
+   * value constraint entry.
    *
    * @return the description
    */

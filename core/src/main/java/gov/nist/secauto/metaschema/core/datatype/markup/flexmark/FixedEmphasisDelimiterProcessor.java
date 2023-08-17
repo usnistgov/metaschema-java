@@ -37,7 +37,8 @@ import com.vladsch.flexmark.util.misc.Utils;
 import com.vladsch.flexmark.util.sequence.BasedSequence;
 
 /**
- * Provides a temporary fix for the broken {@link EmphasisDelimiterProcessor} in Flexmark.
+ * Provides a temporary fix for the broken {@link EmphasisDelimiterProcessor} in
+ * Flexmark.
  */
 public class FixedEmphasisDelimiterProcessor
     extends AsteriskDelimiterProcessor {

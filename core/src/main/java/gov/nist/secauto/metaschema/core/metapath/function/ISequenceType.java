@@ -71,7 +71,8 @@ public interface ISequenceType {
   /**
    * Get the occurrence of the sequence.
    *
-   * @return the occurrence of the sequence or {@code null} if the sequence is empty
+   * @return the occurrence of the sequence or {@code null} if the sequence is
+   *         empty
    */
   Occurrence getOccurrence();
 

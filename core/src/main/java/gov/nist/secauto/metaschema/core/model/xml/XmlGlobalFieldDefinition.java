@@ -98,35 +98,14 @@ class XmlGlobalFieldDefinition
   }
 
   /**
-   * Get the underlying XML data.
+   * Lazy initialize the flag instances associated with this definition.
    *
-   * @return the underlying XML data
+   * @return the flag container
    */
-  @NonNull
-  protected final GlobalFieldDefinitionType getXmlField() {
-    return xmlField;
-  }
-
+  @SuppressWarnings("null")
   @Override
-  public IMetaschema getContainingMetaschema() {
-    return metaschema;
-  }
-
-  @Override
-  public Object getDefaultValue() {
-    return defaultValue;
-  }
-
-  @Override
-  public boolean isInline() {
-    // global
-    return false;
-  }
-
-  @Override
-  public IFieldInstance getInlineInstance() {
-    // global
-    return null;
+  public XmlFlagContainerSupport getFlagContainer() {
+    return flagContainer.get();
   }
 
   /**
@@ -139,6 +118,20 @@ class XmlGlobalFieldDefinition
   @Override
   public IValueConstrained getConstraintSupport() {
     return constraints.get();
+  }
+
+  // ----------------------------------------
+  // - Start Annotation driven code - CPD-OFF
+  // ----------------------------------------
+
+  /**
+   * Get the underlying XML data.
+   *
+   * @return the underlying XML data
+   */
+  @NonNull
+  protected final GlobalFieldDefinitionType getXmlField() {
+    return xmlField;
   }
 
   @SuppressWarnings({ "null" })
@@ -167,17 +160,6 @@ class XmlGlobalFieldDefinition
   @Override
   public Map<QName, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlField().getPropList()));
-  }
-
-  /**
-   * Lazy initialize the flag instances associated with this definition.
-   *
-   * @return the flag container
-   */
-  @SuppressWarnings("null")
-  @Override
-  public XmlFlagContainerSupport getFlagContainer() {
-    return flagContainer.get();
   }
 
   @SuppressWarnings("null")
@@ -226,9 +208,35 @@ class XmlGlobalFieldDefinition
     return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
   }
 
+  // --------------------------------------
+  // - End Annotation driven code - CPD-ON
+  // --------------------------------------
+
   @Override
   public Object getFieldValue(@NonNull Object parentFieldValue) {
     // there is no value
+    return null;
+  }
+
+  @Override
+  public IMetaschema getContainingMetaschema() {
+    return metaschema;
+  }
+
+  @Override
+  public Object getDefaultValue() {
+    return defaultValue;
+  }
+
+  @Override
+  public boolean isInline() {
+    // global
+    return false;
+  }
+
+  @Override
+  public IFieldInstance getInlineInstance() {
+    // global
     return null;
   }
 }

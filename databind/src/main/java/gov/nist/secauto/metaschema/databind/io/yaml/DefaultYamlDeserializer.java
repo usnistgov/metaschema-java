@@ -38,22 +38,18 @@ public class DefaultYamlDeserializer<CLASS>
     extends DefaultJsonDeserializer<CLASS> {
 
   /**
-   * Construct a new YAML deserializer that will parse the bound class identified by the
-   * {@code classBinding}.
+   * Construct a new YAML deserializer that will parse the bound class identified
+   * by the {@code classBinding}.
    *
    * @param bindingContext
-   *          the binding context used to supply bound Java classes while writing
+   *          the binding context used to supply bound Java classes while parsing
    * @param classBinding
-   *          the bound class information for the Java type this deserializer is operating on
+   *          the bound class information for the Java type this deserializer is
+   *          operating on
    */
   public DefaultYamlDeserializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
-
-  // @Override
-  // public Format supportedFromat() {
-  // return Format.YAML;
-  // }
 
   /**
    * {@inheritDoc}

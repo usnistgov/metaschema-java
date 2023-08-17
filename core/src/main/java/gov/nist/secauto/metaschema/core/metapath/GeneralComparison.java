@@ -118,7 +118,8 @@ class GeneralComparison
   }
 
   /**
-   * Attempts to cast the provided {@code other} item to the type of the {@code item}.
+   * Attempts to cast the provided {@code other} item to the type of the
+   * {@code item}.
    *
    * @param item
    *          the item whose type the other item is to be cast to

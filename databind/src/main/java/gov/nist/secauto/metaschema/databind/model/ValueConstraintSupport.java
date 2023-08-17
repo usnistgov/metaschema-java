@@ -108,7 +108,6 @@ class ValueConstraintSupport implements IValueConstrained { // NOPMD - intention
             ex);
       }
     }
-
     constraints = new LinkedList<>();
     constraints.addAll(allowedValuesConstraints);
     constraints.addAll(matchesConstraints);

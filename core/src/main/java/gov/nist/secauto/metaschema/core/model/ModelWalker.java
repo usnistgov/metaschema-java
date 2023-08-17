@@ -31,8 +31,8 @@ import java.util.Collection;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Walks a Metaschema model. The "visit" methods can be implemented by child classes to perform
- * processing on a visited node.
+ * Walks a Metaschema model. The "visit" methods can be implemented by child
+ * classes to perform processing on a visited node.
  *
  * @param <DATA>
  *          state information that is carried through the walk
@@ -68,7 +68,8 @@ public abstract class ModelWalker<DATA> {
   }
 
   /**
-   * Will visit the provided metaschema field definition, and then walk the associated flag instances.
+   * Will visit the provided metaschema field definition, and then walk the
+   * associated flag instances.
    *
    * @param field
    *          the metaschema field definition to walk
@@ -78,7 +79,8 @@ public abstract class ModelWalker<DATA> {
   }
 
   /**
-   * Will visit the provided metaschema field definition, and then walk the associated flag instances.
+   * Will visit the provided metaschema field definition, and then walk the
+   * associated flag instances.
    *
    * @param field
    *          the metaschema field definition to walk
@@ -92,8 +94,8 @@ public abstract class ModelWalker<DATA> {
   }
 
   /**
-   * Will visit the provided metaschema assembly definition, and then walk the associated flag and
-   * model instances.
+   * Will visit the provided metaschema assembly definition, and then walk the
+   * associated flag and model instances.
    *
    * @param assembly
    *          the metaschema assembly definition to walk
@@ -103,8 +105,8 @@ public abstract class ModelWalker<DATA> {
   }
 
   /**
-   * Will visit the provided metaschema assembly definition, and then walk the associated flag and
-   * model instances.
+   * Will visit the provided metaschema assembly definition, and then walk the
+   * associated flag and model instances.
    *
    * @param assembly
    *          the metaschema assembly definition to walk
@@ -119,7 +121,8 @@ public abstract class ModelWalker<DATA> {
   }
 
   /**
-   * Will visit the provided metaschema flag instance, and then walk the associated flag definition.
+   * Will visit the provided metaschema flag instance, and then walk the
+   * associated flag definition.
    *
    * @param instance
    *          the metaschema flag instance to walk
@@ -133,7 +136,8 @@ public abstract class ModelWalker<DATA> {
   }
 
   /**
-   * Will visit the provided metaschema field instance, and then walk the associated field definition.
+   * Will visit the provided metaschema field instance, and then walk the
+   * associated field definition.
    *
    * @param instance
    *          the metaschema field instance to walk
@@ -147,8 +151,8 @@ public abstract class ModelWalker<DATA> {
   }
 
   /**
-   * Will visit the provided metaschema assembly instance, and then walk the associated assembly
-   * definition.
+   * Will visit the provided metaschema assembly instance, and then walk the
+   * associated assembly definition.
    *
    * @param instance
    *          the metaschema assembly instance to walk
@@ -162,8 +166,8 @@ public abstract class ModelWalker<DATA> {
   }
 
   /**
-   * Will visit the provided metaschema choice instance, and then walk the choice's child model
-   * instances.
+   * Will visit the provided metaschema choice instance, and then walk the
+   * choice's child model instances.
    *
    * @param instance
    *          the metaschema choice instance to walk
@@ -253,8 +257,8 @@ public abstract class ModelWalker<DATA> {
   }
 
   /**
-   * Called when the provided definition is walked. This can be overridden by child classes to enable
-   * processing of the visited definition.
+   * Called when the provided definition is walked. This can be overridden by
+   * child classes to enable processing of the visited definition.
    *
    * @param def
    *          the definition that is visited
@@ -264,84 +268,90 @@ public abstract class ModelWalker<DATA> {
   protected abstract void visit(@NonNull IFlagDefinition def, DATA data);
 
   /**
-   * Called when the provided definition is walked. This can be overridden by child classes to enable
-   * processing of the visited definition.
+   * Called when the provided definition is walked. This can be overridden by
+   * child classes to enable processing of the visited definition.
    *
    * @param def
    *          the definition that is visited
    * @param data
    *          additional state information to operate on
-   * @return {@code true} if child instances are to be walked, or {@code false} otherwise
+   * @return {@code true} if child instances are to be walked, or {@code false}
+   *         otherwise
    */
   protected boolean visit(@NonNull IFieldDefinition def, DATA data) {
     return true;
   }
 
   /**
-   * Called when the provided definition is walked. This can be overridden by child classes to enable
-   * processing of the visited definition.
+   * Called when the provided definition is walked. This can be overridden by
+   * child classes to enable processing of the visited definition.
    *
    * @param def
    *          the definition that is visited
    * @param data
    *          additional state information to operate on
-   * @return {@code true} if child instances are to be walked, or {@code false} otherwise
+   * @return {@code true} if child instances are to be walked, or {@code false}
+   *         otherwise
    */
   protected boolean visit(@NonNull IAssemblyDefinition def, DATA data) {
     return true;
   }
 
   /**
-   * Called when the provided instance is walked. This can be overridden by child classes to enable
-   * processing of the visited instance.
+   * Called when the provided instance is walked. This can be overridden by child
+   * classes to enable processing of the visited instance.
    *
    * @param instance
    *          the instance that is visited
    * @param data
    *          additional state information to operate on
-   * @return {@code true} if the associated definition is to be walked, or {@code false} otherwise
+   * @return {@code true} if the associated definition is to be walked, or
+   *         {@code false} otherwise
    */
   protected boolean visit(@NonNull IFlagInstance instance, DATA data) {
     return true;
   }
 
   /**
-   * Called when the provided instance is walked. This can be overridden by child classes to enable
-   * processing of the visited instance.
+   * Called when the provided instance is walked. This can be overridden by child
+   * classes to enable processing of the visited instance.
    *
    * @param instance
    *          the instance that is visited
    * @param data
    *          additional state information to operate on
-   * @return {@code true} if the associated definition is to be walked, or {@code false} otherwise
+   * @return {@code true} if the associated definition is to be walked, or
+   *         {@code false} otherwise
    */
   protected boolean visit(@NonNull IFieldInstance instance, DATA data) {
     return true;
   }
 
   /**
-   * Called when the provided instance is walked. This can be overridden by child classes to enable
-   * processing of the visited instance.
+   * Called when the provided instance is walked. This can be overridden by child
+   * classes to enable processing of the visited instance.
    *
    * @param instance
    *          the instance that is visited
    * @param data
    *          additional state information to operate on
-   * @return {@code true} if the associated definition is to be walked, or {@code false} otherwise
+   * @return {@code true} if the associated definition is to be walked, or
+   *         {@code false} otherwise
    */
   protected boolean visit(@NonNull IAssemblyInstance instance, DATA data) {
     return true;
   }
 
   /**
-   * Called when the provided instance is walked. This can be overridden by child classes to enable
-   * processing of the visited instance.
+   * Called when the provided instance is walked. This can be overridden by child
+   * classes to enable processing of the visited instance.
    *
    * @param instance
    *          the instance that is visited
    * @param data
    *          additional state information to operate on
-   * @return {@code true} if the child instances are to be walked, or {@code false} otherwise
+   * @return {@code true} if the child instances are to be walked, or
+   *         {@code false} otherwise
    */
   protected boolean visit(@NonNull IChoiceInstance instance, DATA data) {
     return true;

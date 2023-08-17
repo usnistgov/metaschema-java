@@ -68,7 +68,8 @@ public class FieldDefinitionJsonSchema
     Collection<? extends IFlagInstance> flags = definition.getFlagInstances();
     IFlagInstance jsonKeyFlag = definition.getJsonKeyFlagInstance();
     if (flags.isEmpty() || (jsonKeyFlag != null && flags.size() == 1)) { // NOPMD - readability
-      // field is a simple data type value if there are no flags or if the only flag is a JSON key
+      // field is a simple data type value if there are no flags or if the only flag
+      // is a JSON key
       state.getDataTypeSchemaForDefinition(definition).generateSchemaOrRef(state, obj);
     } else {
       obj.put("type", "object");

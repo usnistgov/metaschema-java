@@ -44,8 +44,8 @@ public class DefaultKeyField implements IKeyField {
   private final MarkupMultiline remarks;
 
   /**
-   * Construct a new key field based on the provided target. An optional pattern can be used to
-   * extract a portion of the resulting key value.
+   * Construct a new key field based on the provided target. An optional pattern
+   * can be used to extract a portion of the resulting key value.
    *
    * @param target
    *          a Metapath expression identifying the target of the key field

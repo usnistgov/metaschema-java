@@ -44,8 +44,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Represents a rule constraining the model of a Metaschema assembly, field or flag. Provides a
- * common interface for all constraint definitions.
+ * Represents a rule constraining the model of a Metaschema assembly, field or
+ * flag. Provides a common interface for all constraint definitions.
  */
 public interface IConstraint {
   /**
@@ -63,13 +63,13 @@ public interface IConstraint {
      */
     WARNING,
     /**
-     * A violation of the constraint represents a fault in the content. This may include issues around
-     * compatibility, integrity, consistency, etc.
+     * A violation of the constraint represents a fault in the content. This may
+     * include issues around compatibility, integrity, consistency, etc.
      */
     ERROR,
     /**
-     * A violation of the constraint represents a serious fault in the content that will prevent typical
-     * use of the content.
+     * A violation of the constraint represents a serious fault in the content that
+     * will prevent typical use of the content.
      */
     CRITICAL;
   }
@@ -124,7 +124,8 @@ public interface IConstraint {
   Map<QName, Set<String>> getProperties();
 
   /**
-   * Retrieve the Metapath expression to use to query the targets of the constraint.
+   * Retrieve the Metapath expression to use to query the targets of the
+   * constraint.
    *
    * @return a Metapath expression
    */
@@ -132,7 +133,8 @@ public interface IConstraint {
   MetapathExpression getTarget();
 
   /**
-   * Based on the provided {@code contextNodeItem}, find all nodes matching the target expression.
+   * Based on the provided {@code contextNodeItem}, find all nodes matching the
+   * target expression.
    *
    * @param contextNodeItem
    *          the node item to evaluate the target expression against
@@ -146,7 +148,8 @@ public interface IConstraint {
   }
 
   /**
-   * Based on the provided {@code contextNodeItem}, find all nodes matching the target expression.
+   * Based on the provided {@code contextNodeItem}, find all nodes matching the
+   * target expression.
    *
    * @param item
    *          the node item to evaluate the target expression against

@@ -34,8 +34,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 class PackageProductionImpl implements IPackageProduction {
   @NonNull
-  private final String javaPackage;
-  @NonNull
   private final URI xmlNamespace;
   @NonNull
   private final IGeneratedClass packageInfoClass;
@@ -45,10 +43,9 @@ class PackageProductionImpl implements IPackageProduction {
       @NonNull IMetaschemaClassFactory classFactory,
       @NonNull Path targetDirectory)
       throws IOException {
-    this.javaPackage = metadata.getPackageName();
     this.xmlNamespace = metadata.getXmlNamespace();
     this.packageInfoClass = classFactory.generatePackageInfoClass(
-        this.javaPackage,
+        metadata.getPackageName(),
         this.xmlNamespace,
         metadata.getMetaschemaProductions(),
         targetDirectory);
@@ -68,11 +65,6 @@ class PackageProductionImpl implements IPackageProduction {
   // markdown = markdown.replace("\"", "\\\"");
   // return markdown;
   // }
-
-  @Override
-  public String getJavaPackage() {
-    return javaPackage;
-  }
 
   @Override
   public URI getXmlNamespace() {

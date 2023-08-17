@@ -32,8 +32,11 @@ import gov.nist.secauto.metaschema.core.model.INamedInstance;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-abstract class AbstractInstanceNodeItem<D extends IDefinition, I extends INamedInstance, P extends IModelNodeItem<
-    ? extends IFlagContainer, ? extends INamedInstance>>
+abstract class AbstractInstanceNodeItem<
+    D extends IDefinition,
+    I extends INamedInstance,
+    P extends IModelNodeItem<
+        ? extends IFlagContainer, ? extends INamedInstance>>
     implements IDefinitionNodeItem<D, I> {
 
   @NonNull

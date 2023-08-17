@@ -38,13 +38,15 @@ import java.lang.annotation.Target;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Identifies that the annotation target is a bound property that references a Metaschema assembly.
+ * Identifies that the annotation target is a bound property that references a
+ * Metaschema assembly.
  * <p>
- * For XML serialization, the {@link #useName()} identifies the name of the element to use and the
- * {@link #namespace()} identifies the namespace of this element.
+ * For XML serialization, the {@link #useName()} identifies the name of the
+ * element to use and the {@link #namespace()} identifies the namespace of this
+ * element.
  * <p>
- * For JSON and YAML serializations, the {@link #useName()} identifies the property/item name to
- * use.
+ * For JSON and YAML serializations, the {@link #useName()} identifies the
+ * property/item name to use.
  */
 @Documented
 @Retention(RUNTIME)
@@ -53,7 +55,8 @@ public @interface BoundAssembly {
   /**
    * Get the documentary formal name of the assembly.
    * <p>
-   * If the value is "##none", then the description will be considered {@code null}.
+   * If the value is "##none", then the description will be considered
+   * {@code null}.
    *
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
@@ -63,7 +66,8 @@ public @interface BoundAssembly {
   /**
    * Get the documentary description of the assembly.
    * <p>
-   * If the value is "##none", then the description will be considered {@code null}.
+   * If the value is "##none", then the description will be considered
+   * {@code null}.
    *
    * @return a markdown string or {@code "##none"} if no description is provided
    */
@@ -71,9 +75,11 @@ public @interface BoundAssembly {
   String description() default Constants.NO_STRING_VALUE;
 
   /**
-   * The model name to use for singleton values. This name will be used for associated XML elements.
+   * The model name to use for singleton values. This name will be used for
+   * associated XML elements.
    * <p>
-   * If the value is "##none", then element name is derived from the JavaBean property name.
+   * If the value is "##none", then element name is derived from the JavaBean
+   * property name.
    *
    * @return the name or {@code "##none"} if no use name is provided
    */
@@ -83,8 +89,8 @@ public @interface BoundAssembly {
   /**
    * The namespace to use for associated XML elements.
    * <p>
-   * If the value is "##default", then element name is derived from the namespace provided in the
-   * package-info.
+   * If the value is "##default", then element name is derived from the namespace
+   * provided in the package-info.
    *
    * @return the namespace
    */
@@ -92,7 +98,8 @@ public @interface BoundAssembly {
   String namespace() default Constants.DEFAULT_STRING_VALUE;
 
   /**
-   * A non-negative number that indicates the minimum occurrence of the model instance.
+   * A non-negative number that indicates the minimum occurrence of the model
+   * instance.
    *
    * @return a non-negative number
    */

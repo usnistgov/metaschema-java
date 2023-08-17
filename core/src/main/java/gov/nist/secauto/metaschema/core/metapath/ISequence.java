@@ -147,15 +147,16 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Iterable<ITEM_TYPE> 
   /**
    * This optional operation ensures that a list is used to back this sequence.
    * <p>
-   * If a stream is currently backing this sequence, the stream will be collected into a list. This
-   * ensures the sequence can be visited multiple times.
+   * If a stream is currently backing this sequence, the stream will be collected
+   * into a list. This ensures the sequence can be visited multiple times.
    */
   void collect();
 
   /**
    * Determine if this sequence is empty.
    *
-   * @return {@code true} if the sequence contains no items, or {@code false} otherwise
+   * @return {@code true} if the sequence contains no items, or {@code false}
+   *         otherwise
    */
   boolean isEmpty();
 

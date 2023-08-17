@@ -41,7 +41,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Information about Java classes generated for definitions from a collection of Metaschema.
+ * Information about Java classes generated for definitions from a collection of
+ * Metaschema.
  */
 public interface IProduction {
 

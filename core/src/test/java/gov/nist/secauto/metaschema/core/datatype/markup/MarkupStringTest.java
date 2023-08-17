@@ -116,7 +116,8 @@ class MarkupStringTest {
           Assertions.assertEquals("*", text.getText().toString());
         }
       }
-      // Emphasis[7, 13] textOpen:[7, 8, "*"] text:[8, 12, "more"] textClose:[12, 13, "*"]
+      // Emphasis[7, 13] textOpen:[7, 8, "*"] text:[8, 12, "more"] textClose:[12, 13,
+      // "*"]
       {
         Emphasis emphasis = (Emphasis) paragraphChildren.get(1);
         List<Node> emphasisChildren = CollectionUtil.toList(emphasis.getChildren());
@@ -131,7 +132,8 @@ class MarkupStringTest {
         Text text = (Text) paragraphChildren.get(2);
         Assertions.assertEquals(" ", text.getChars().toString());
       }
-      // StrongEmphasis[14, 22] textOpen:[14, 16, "**"] text:[16, 20, "text"] textClose:[20, 22, "**"]
+      // StrongEmphasis[14, 22] textOpen:[14, 16, "**"] text:[16, 20, "text"]
+      // textClose:[20, 22, "**"]
       {
         StrongEmphasis strongEmphasis = (StrongEmphasis) paragraphChildren.get(3);
         List<Node> strongEmphasisChildren = CollectionUtil.toList(strongEmphasis.getChildren());

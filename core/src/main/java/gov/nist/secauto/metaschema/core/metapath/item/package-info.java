@@ -24,8 +24,8 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 /**
- * The Metapath type system, which overlays the Metaschema type system defined in
- * {@link gov.nist.secauto.metaschema.core.datatype}.
+ * The Metapath type system, which overlays the Metaschema type system defined
+ * in {@link gov.nist.secauto.metaschema.core.datatype}.
  */
 
 package gov.nist.secauto.metaschema.core.metapath.item;

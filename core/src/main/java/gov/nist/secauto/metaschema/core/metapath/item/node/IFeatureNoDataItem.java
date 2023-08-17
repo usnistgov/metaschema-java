@@ -33,9 +33,10 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 /**
  * This mixin interface represents an item that has no associated data.
  * <p>
- * This will occur when an {@link IItem} represents a Metaschema definition or instance that is not
- * associated with data. This is typical when constructing items for querying a Metaschema directly,
- * instead of content which will always have data.
+ * This will occur when an {@link IItem} represents a Metaschema definition or
+ * instance that is not associated with data. This is typical when constructing
+ * items for querying a Metaschema directly, instead of content which will
+ * always have data.
  */
 interface IFeatureNoDataItem extends IItem {
 

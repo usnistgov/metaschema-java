@@ -110,7 +110,8 @@ public class DataTypeRestrictionDefinitionJsonSchema
     // get schema for the built-in type
     IJsonSchema dataTypeSchema = state.getSchema(getDefinition().getJavaTypeAdapter());
 
-    // if other values are allowed, we need to make a union of the restriction type and the base
+    // if other values are allowed, we need to make a union of the restriction type
+    // and the base
     // built-in type
     ArrayNode ofArray;
     if (allowedValuesCollection.isClosed()) {

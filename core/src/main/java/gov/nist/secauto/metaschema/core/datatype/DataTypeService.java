@@ -44,8 +44,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 /**
- * This class provides a singleton service to allow data types to be discovered within the system
- * based on an SPI provided by {@link IDataTypeProvider}.
+ * This class provides a singleton service to allow data types to be discovered
+ * within the system based on an SPI provided by {@link IDataTypeProvider}.
  */
 public final class DataTypeService {
   private static final Logger LOGGER = LogManager.getLogger(DataTypeService.class);
@@ -55,7 +55,8 @@ public final class DataTypeService {
   private Map<Class<? extends IDataTypeAdapter<?>>, IDataTypeAdapter<?>> libraryByClass;
 
   /**
-   * Get the singleton service instance, which will be lazy constructed on first access.
+   * Get the singleton service instance, which will be lazy constructed on first
+   * access.
    *
    * @return the service instance
    */
@@ -74,7 +75,8 @@ public final class DataTypeService {
    *
    * @param name
    *          the data type name of data type adapter to get the instance for
-   * @return the instance or {@code null} if the instance is unknown to the type system
+   * @return the instance or {@code null} if the instance is unknown to the type
+   *         system
    */
   @Nullable
   public IDataTypeAdapter<?> getJavaTypeAdapterByName(@NonNull String name) {
@@ -88,7 +90,8 @@ public final class DataTypeService {
    *          the adapter class to get the instance for
    * @param <TYPE>
    *          the type of the requested adapter
-   * @return the instance or {@code null} if the instance is unknown to the type system
+   * @return the instance or {@code null} if the instance is unknown to the type
+   *         system
    */
   @SuppressWarnings("unchecked")
   @Nullable

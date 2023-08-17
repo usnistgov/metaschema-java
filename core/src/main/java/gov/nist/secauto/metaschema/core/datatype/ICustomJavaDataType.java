@@ -29,7 +29,8 @@ package gov.nist.secauto.metaschema.core.datatype;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * The common interface for all data type implementations supported by a custom Java class.
+ * The common interface for all data type implementations supported by a custom
+ * Java class.
  *
  * @param <TYPE>
  *          the type of the custom Java class

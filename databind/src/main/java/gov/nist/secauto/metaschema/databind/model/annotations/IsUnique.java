@@ -39,15 +39,17 @@ import java.lang.annotation.Target;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * This annotation defines a rule that requires uniqueness among the target contents of the assembly
- * represented by the containing {@link MetaschemaAssembly} annotation.
+ * This annotation defines a rule that requires uniqueness among the target
+ * contents of the assembly represented by the containing
+ * {@link MetaschemaAssembly} annotation.
  */
 @Documented
 @Retention(RUNTIME)
 @Target(ANNOTATION_TYPE)
 public @interface IsUnique {
   /**
-   * An optional identifier for the constraint, which must be unique to only this constraint.
+   * An optional identifier for the constraint, which must be unique to only this
+   * constraint.
    *
    * @return the identifier if provided or an empty string otherwise
    */
@@ -79,12 +81,13 @@ public @interface IsUnique {
   Level level() default IConstraint.Level.ERROR;
 
   /**
-   * An optional metapath that points to the target flag or field value that the constraint applies
-   * to. If omitted the target will be ".", which means the target is the value of the
-   * {@link BoundFlag}, {@link BoundField} or {@link MetaschemaFieldValue} annotation the constraint
-   * appears on. In the prior case, this annotation may only appear on a {@link BoundField} if the
-   * field has no flags, which results in a {@link BoundField} annotation on a field instance with a
-   * scalar, data type value.
+   * An optional metapath that points to the target flag or field value that the
+   * constraint applies to. If omitted the target will be ".", which means the
+   * target is the value of the {@link BoundFlag}, {@link BoundField} or
+   * {@link MetaschemaFieldValue} annotation the constraint appears on. In the
+   * prior case, this annotation may only appear on a {@link BoundField} if the
+   * field has no flags, which results in a {@link BoundField} annotation on a
+   * field instance with a scalar, data type value.
    *
    * @return the target metapath
    */
@@ -117,7 +120,8 @@ public @interface IsUnique {
   /**
    * Any remarks about the constraint, encoded as an escaped Markdown string.
    *
-   * @return an encoded markdown string or an empty string if no remarks are provided
+   * @return an encoded markdown string or an empty string if no remarks are
+   *         provided
    */
   @NonNull
   String remarks() default "";

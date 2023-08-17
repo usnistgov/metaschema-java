@@ -44,9 +44,10 @@ class Or // NOPMD - intentional name
   }
 
   /**
-   * Determines the logical disjunction of the result of evaluating a list of expressions. The boolean
-   * result of each expression is determined by applying
-   * {@link FnBoolean#fnBooleanAsPrimitive(ISequence)} to each function's {@link ISequence} result.
+   * Determines the logical disjunction of the result of evaluating a list of
+   * expressions. The boolean result of each expression is determined by applying
+   * {@link FnBoolean#fnBooleanAsPrimitive(ISequence)} to each function's
+   * {@link ISequence} result.
    *
    * @param expressions
    *          the list of expressions

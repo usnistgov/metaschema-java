@@ -109,8 +109,8 @@ public interface IConstraintSet {
   Collection<IConstraintSet> getImportedConstraintSets();
 
   /**
-   * Get the set of Metaschema scoped constraints to apply by a {@link QName} formed from the
-   * Metaschema namespace and short name.
+   * Get the set of Metaschema scoped constraints to apply by a {@link QName}
+   * formed from the Metaschema namespace and short name.
    *
    * @return the mapping of QName to scoped constraints
    */

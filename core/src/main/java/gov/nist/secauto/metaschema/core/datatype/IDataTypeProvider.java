@@ -31,12 +31,12 @@ import java.util.List;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * A service interface used to provide implementations of data types represented as
- * {@link IDataTypeAdapter} instances.
+ * A service interface used to provide implementations of data types represented
+ * as {@link IDataTypeAdapter} instances.
  * <p>
- * Multiple providers can be used to support dynamic data type discovery in an Metaschema-based
- * application, allowing data type extensions to be loaded at runtime using the
- * {@link DataTypeService}.
+ * Multiple providers can be used to support dynamic data type discovery in an
+ * Metaschema-based application, allowing data type extensions to be loaded at
+ * runtime using the {@link DataTypeService}.
  */
 public interface IDataTypeProvider {
   /**

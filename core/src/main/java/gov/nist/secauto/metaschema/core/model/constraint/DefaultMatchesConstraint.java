@@ -48,14 +48,16 @@ public final class DefaultMatchesConstraint
   private final IDataTypeAdapter<?> dataType;
 
   /**
-   * Create a new matches constraint, which enforces a value pattern and/or data type.
+   * Create a new matches constraint, which enforces a value pattern and/or data
+   * type.
    *
    * @param id
    *          the optional identifier for the constraint
    * @param formalName
    *          the constraint's formal name or {@code null} if not provided
    * @param description
-   *          the constraint's semantic description or {@code null} if not provided
+   *          the constraint's semantic description or {@code null} if not
+   *          provided
    * @param source
    *          information about the constraint source
    * @param level
@@ -65,9 +67,11 @@ public final class DefaultMatchesConstraint
    * @param properties
    *          a collection of associated properties
    * @param pattern
-   *          the value pattern to match or {@code null} if there is no match pattern
+   *          the value pattern to match or {@code null} if there is no match
+   *          pattern
    * @param dataType
-   *          the value data type to match or {@code null} if there is no match data type
+   *          the value data type to match or {@code null} if there is no match
+   *          data type
    * @param remarks
    *          optional remarks describing the intent of the constraint
    */

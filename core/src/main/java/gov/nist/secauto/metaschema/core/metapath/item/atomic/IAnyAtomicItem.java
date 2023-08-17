@@ -55,7 +55,8 @@ public interface IAnyAtomicItem extends IAtomicValuedItem {
   }
 
   /**
-   * Get a new {@link IStringItem} based on the the textual value of the item's "wrapped" value.
+   * Get a new {@link IStringItem} based on the the textual value of the item's
+   * "wrapped" value.
    *
    * @return a new string item
    */

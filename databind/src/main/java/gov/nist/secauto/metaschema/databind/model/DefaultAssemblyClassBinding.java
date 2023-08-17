@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
+import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
@@ -42,7 +43,13 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 
@@ -54,10 +61,14 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
     extends AbstractClassBinding
     implements IAssemblyClassBinding {
 
+  @NonNull
   private final MetaschemaAssembly metaschemaAssembly;
   private final QName xmlRootQName;
+  @NonNull
   private final Lazy<ClassBindingFlagContainerSupport> flagContainer;
+  @NonNull
   private final Lazy<ClassBindingModelContainerSupport> modelContainer;
+  @NonNull
   private final Lazy<IModelConstrained> constraints;
 
   /**
@@ -101,12 +112,12 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
 
     this.xmlRootQName = localName == null ? null : new QName(namespace, localName);
 
-    this.flagContainer = Lazy.lazy(() -> new ClassBindingFlagContainerSupport(this, null));
-    this.modelContainer = Lazy.lazy(() -> new ClassBindingModelContainerSupport(this));
-    this.constraints = Lazy.lazy(() -> new AssemblyConstraintSupport(
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new ClassBindingFlagContainerSupport(this, null)));
+    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> new ClassBindingModelContainerSupport(this)));
+    this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> new AssemblyConstraintSupport(
         clazz.getAnnotation(ValueConstraints.class),
         clazz.getAnnotation(AssemblyConstraints.class),
-        InternalModelSource.instance()));
+        InternalModelSource.instance())));
   }
 
   @SuppressWarnings("null")
@@ -126,6 +137,18 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
     return modelContainer.get();
   }
 
+  @Override
+  public Map<String, ? extends IBoundNamedInstance> getNamedInstances(
+      Predicate<IBoundFlagInstance> flagFilter) {
+    return ObjectUtils.notNull(Stream.concat(
+        super.getNamedInstances(flagFilter).values().stream()
+            .map(ObjectUtils::notNull),
+        getNamedModelInstances().stream())
+        .collect(
+            Collectors.toMap(instance -> instance.getJsonName(), Function.identity(), CustomCollectors.useLastMapper(),
+                LinkedHashMap::new)));
+  }
+
   /**
    * Get the {@link MetaschemaAssembly} annotation associated with this class.
    * This annotation provides information used by this class binding to control
@@ -133,7 +156,8 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
    *
    * @return the annotation
    */
-  public MetaschemaAssembly getMetaschemaAssemblyAnnotation() {
+  @NonNull
+  private MetaschemaAssembly getMetaschemaAssemblyAnnotation() {
     return metaschemaAssembly;
   }
 
@@ -176,6 +200,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
 
   @Override
   public String getRootName() {
+    // Overriding this is more efficient, since it is already built
     QName qname = getRootXmlQName();
     return qname == null ? null : qname.getLocalPart();
   }
@@ -186,10 +211,9 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
     return xmlRootQName;
   }
 
-  @SuppressWarnings("null")
   @Override
   public IModelConstrained getConstraintSupport() {
-    return constraints.get();
+    return ObjectUtils.notNull(constraints.get());
   }
 
   @Override

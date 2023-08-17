@@ -73,6 +73,16 @@ public final class YamlOperations {
     // disable construction
   }
 
+  /**
+   * Parse the data represented in YAML in the provided {@code target}, producing
+   * an mapping of field names to Java object values.
+   *
+   * @param target
+   *          the YAML file to parse
+   * @return the mapping of field names to Java object values
+   * @throws IOException
+   *           if an error occurred while parsing the YAML content
+   */
   @SuppressWarnings({ "unchecked", "null" })
   @NonNull
   public static Map<String, Object> parseYaml(Path target) throws IOException {

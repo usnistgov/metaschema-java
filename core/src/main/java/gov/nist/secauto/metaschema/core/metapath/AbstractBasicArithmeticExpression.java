@@ -66,7 +66,8 @@ abstract class AbstractBasicArithmeticExpression
    *          the first item
    * @param rightItem
    *          the second item
-   * @return the result of the operation or an empty {@link ISequence} if either item is {@code null}
+   * @return the result of the operation or an empty {@link ISequence} if either
+   *         item is {@code null}
    */
   @NonNull
   protected ISequence<? extends IAnyAtomicItem> resultOrEmpty(

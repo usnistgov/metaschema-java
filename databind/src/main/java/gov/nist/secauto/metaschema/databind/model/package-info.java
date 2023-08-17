@@ -25,8 +25,8 @@
  */
 /**
  * Provides the core implementation of the Metaschema model
- * ({@link gov.nist.secauto.metaschema.core.model}) represented as Java class annotations
- * ({@link gov.nist.secauto.metaschema.databind.model.annotations}).
+ * ({@link gov.nist.secauto.metaschema.core.model}) represented as Java class
+ * annotations ({@link gov.nist.secauto.metaschema.databind.model.annotations}).
  */
 
 package gov.nist.secauto.metaschema.databind.model;

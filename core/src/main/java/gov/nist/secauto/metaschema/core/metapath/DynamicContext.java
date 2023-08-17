@@ -213,7 +213,8 @@ public class DynamicContext { // NOPMD - intentional data class
       /**
        * {@inheritDoc}
        * <p>
-       * This method first resolves the provided URI against the static context's base URI.
+       * This method first resolves the provided URI against the static context's base
+       * URI.
        */
       @Override
       public URI resolve(URI uri) {

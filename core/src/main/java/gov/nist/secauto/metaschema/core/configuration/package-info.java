@@ -26,7 +26,8 @@
 
 /**
  * Provides support for generalized configuration based on a set of
- * {@link gov.nist.secauto.metaschema.core.configuration.IConfigurationFeature} values.
+ * {@link gov.nist.secauto.metaschema.core.configuration.IConfigurationFeature}
+ * values.
  */
 
 package gov.nist.secauto.metaschema.core.configuration;

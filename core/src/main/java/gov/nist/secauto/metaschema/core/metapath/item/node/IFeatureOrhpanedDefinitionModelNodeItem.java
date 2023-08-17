@@ -31,11 +31,13 @@ import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
 
 /**
- * A mixin interface used to identify that the implementation is a {@link IModelNodeItem} that is
- * based on a {@link IDefinition} that is an orphan in it's hierarchy. As a result, this item has no
- * other siblings, since definitions cannot be instantiated.
+ * A mixin interface used to identify that the implementation is a
+ * {@link IModelNodeItem} that is based on a {@link IDefinition} that is an
+ * orphan in it's hierarchy. As a result, this item has no other siblings, since
+ * definitions cannot be instantiated.
  * <p>
- * This interface inherits the traits of the {@link IFeatureOrhpanedDefinitionNodeItem} interface.
+ * This interface inherits the traits of the
+ * {@link IFeatureOrhpanedDefinitionNodeItem} interface.
  *
  * @param <D>
  *          the definition's type
