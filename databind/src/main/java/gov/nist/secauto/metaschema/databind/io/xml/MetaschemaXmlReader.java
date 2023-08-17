@@ -39,7 +39,6 @@ import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IRootAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.info.IPropertyCollector;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -69,7 +68,8 @@ public class MetaschemaXmlReader
   private final IXmlProblemHandler problemHandler;
 
   /**
-   * Construct a new Metaschema-aware XML parser using the default problem handler.
+   * Construct a new Metaschema-aware XML parser using the default problem
+   * handler.
    *
    * @param reader
    *          the XML reader to parse with
@@ -108,8 +108,8 @@ public class MetaschemaXmlReader
   /**
    * Parses XML into a bound object based on the provided {@code definition}.
    * <p>
-   * Parses the {@link XMLStreamConstants#START_DOCUMENT}, the root element, and the
-   * {@link XMLStreamConstants#END_DOCUMENT}.
+   * Parses the {@link XMLStreamConstants#START_DOCUMENT}, the root element, and
+   * the {@link XMLStreamConstants#END_DOCUMENT}.
    *
    * @param <CLASS>
    *          the returned object type
@@ -122,7 +122,7 @@ public class MetaschemaXmlReader
    *           if an error occurred while parsing the input
    */
   @NonNull
-  public <CLASS> CLASS read(@NonNull IRootAssemblyClassBinding definition) throws IOException, XMLStreamException {
+  public <CLASS> CLASS read(@NonNull IAssemblyClassBinding definition) throws IOException, XMLStreamException {
 
     // we may be at the START_DOCUMENT
     if (reader.peek().isStartDocument()) {
@@ -136,7 +136,7 @@ public class MetaschemaXmlReader
 
     StartElement start = ObjectUtils.notNull(event.asStartElement());
 
-    CLASS retval = readDefinitionValue(definition.getRootDefinition(), null, start);
+    CLASS retval = readDefinitionValue(definition, null, start);
 
     XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, rootQName);
 
@@ -192,11 +192,12 @@ public class MetaschemaXmlReader
   }
 
   /**
-   * Read the XML attribute data described by the {@code targetDefinition} and apply it to the
-   * provided {@code targetObject}.
+   * Read the XML attribute data described by the {@code targetDefinition} and
+   * apply it to the provided {@code targetObject}.
    *
    * @param targetDefinition
-   *          the Metaschema definition that describes the syntax of the data to read
+   *          the Metaschema definition that describes the syntax of the data to
+   *          read
    * @param targetObject
    *          the Java object that data parsed by this method will be stored in
    * @param start
@@ -243,11 +244,12 @@ public class MetaschemaXmlReader
   }
 
   /**
-   * Read the XML element data described by the {@code targetDefinition} and apply it to the provided
-   * {@code targetObject}.
+   * Read the XML element data described by the {@code targetDefinition} and apply
+   * it to the provided {@code targetObject}.
    *
    * @param targetDefinition
-   *          the Metaschema definition that describes the syntax of the data to read
+   *          the Metaschema definition that describes the syntax of the data to
+   *          read
    * @param targetObject
    *          the Java object that data parsed by this method will be stored in
    * @param start
@@ -275,11 +277,12 @@ public class MetaschemaXmlReader
   }
 
   /**
-   * Read the XML element and text data described by the {@code targetDefinition} and apply it to the
-   * provided {@code targetObject}.
+   * Read the XML element and text data described by the {@code targetDefinition}
+   * and apply it to the provided {@code targetObject}.
    *
    * @param targetDefinition
-   *          the Metaschema definition that describes the syntax of the data to read
+   *          the Metaschema definition that describes the syntax of the data to
+   *          read
    * @param targetObject
    *          the Java object that data parsed by this method will be stored in
    * @throws IOException
@@ -301,7 +304,8 @@ public class MetaschemaXmlReader
    *
    * @param instance
    *          the model instance that describes the syntax of the data to read
-   * @return {@code true} if the Metaschema instance needs to be parsed, or {@code false} otherwise
+   * @return {@code true} if the Metaschema instance needs to be parsed, or
+   *         {@code false} otherwise
    * @throws XMLStreamException
    *           if an error occurred while parsing XML events
    */
@@ -341,8 +345,8 @@ public class MetaschemaXmlReader
   }
 
   /**
-   * Read the data associated with the {@code instance} and apply it to the provided
-   * {@code parentObject}.
+   * Read the data associated with the {@code instance} and apply it to the
+   * provided {@code parentObject}.
    *
    * @param instance
    *          the instance to parse data for
@@ -350,8 +354,8 @@ public class MetaschemaXmlReader
    *          the Java object that data parsed by this method will be stored in
    * @param start
    *          the XML element start and attribute data previously parsed
-   * @return {@code true} if the instance was parsed, or {@code false} if the data did not contain
-   *         information for this instance
+   * @return {@code true} if the instance was parsed, or {@code false} if the data
+   *         did not contain information for this instance
    * @throws IOException
    *           if an error occurred while parsing the input
    * @throws XMLStreamException
@@ -410,8 +414,8 @@ public class MetaschemaXmlReader
   }
 
   /**
-   * Read the XML data associated with the {@code instance} and apply it to the provided
-   * {@code parentObject}.
+   * Read the XML data associated with the {@code instance} and apply it to the
+   * provided {@code parentObject}.
    *
    * @param instance
    *          the instance to parse data for
@@ -491,8 +495,7 @@ public class MetaschemaXmlReader
       XMLEvent event = reader.peek();
       if (event.isStartElement() && xmlQName.equals(event.asStartElement().getName())) {
         // Consume the start element
-        reader.nextEvent();
-        currentStart = ObjectUtils.notNull(event.asStartElement());
+        currentStart = ObjectUtils.notNull(reader.nextEvent().asStartElement());
       } else {
         throw new IOException(String.format("Found '%s' instead of expected element '%s'%s.",
             event.asStartElement().getName(),

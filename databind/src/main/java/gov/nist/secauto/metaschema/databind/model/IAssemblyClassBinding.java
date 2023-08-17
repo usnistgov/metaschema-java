@@ -27,38 +27,26 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureModelContainer;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
 
 /**
- * Represents a Metaschema assembly bound to a Java plain old java object (POJO) class.
+ * Represents a Metaschema assembly bound to a Java plain old java object (POJO)
+ * class.
  */
-public interface IAssemblyClassBinding extends IClassBinding, IAssemblyDefinition {
-
-  @Override
-  Collection<? extends IBoundNamedModelInstance> getModelInstances();
-
-  @Override
-  Collection<? extends IBoundNamedModelInstance> getNamedModelInstances();
-
-  @Override
-  Collection<? extends IBoundFieldInstance> getFieldInstances();
-
-  @Override
-  IBoundFieldInstance getFieldInstanceByName(String name);
-
-  @Override
-  Collection<? extends IBoundAssemblyInstance> getAssemblyInstances();
-
-  @Override
-  IBoundAssemblyInstance getAssemblyInstanceByName(String name);
-
-  @Override
-  IBoundNamedModelInstance getModelInstanceByName(String name);
+public interface IAssemblyClassBinding
+    extends IClassBinding, IAssemblyDefinition,
+    IFeatureModelContainer<
+        IBoundNamedModelInstance,
+        IBoundNamedModelInstance,
+        IBoundFieldInstance,
+        IBoundAssemblyInstance,
+        IChoiceInstance> {
 
   @Override
   default IAssemblyClassBinding getOwningDefinition() {

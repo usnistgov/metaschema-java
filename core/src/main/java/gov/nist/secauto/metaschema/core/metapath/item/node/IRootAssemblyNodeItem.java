@@ -28,13 +28,13 @@ package gov.nist.secauto.metaschema.core.metapath.item.node;
 
 import gov.nist.secauto.metaschema.core.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IRootAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * A marker interface used to expose root node functionality for an assembly node that has root
- * information.
+ * A marker interface used to expose root node functionality for an assembly
+ * node that has root information.
  */
 public interface IRootAssemblyNodeItem extends IAssemblyNodeItem {
 
@@ -45,7 +45,7 @@ public interface IRootAssemblyNodeItem extends IAssemblyNodeItem {
    */
   @Override
   default String getName() {
-    return getDefinition().getRootName();
+    return ObjectUtils.requireNonNull(getDefinition().getRootName());
   }
 
   /**
@@ -67,9 +67,6 @@ public interface IRootAssemblyNodeItem extends IAssemblyNodeItem {
     // there is no assembly parent
     return null;
   }
-
-  @Override
-  IRootAssemblyDefinition getDefinition();
 
   @Override
   default IAssemblyInstance getInstance() {

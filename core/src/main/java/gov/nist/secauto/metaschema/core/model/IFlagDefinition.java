@@ -28,14 +28,5 @@ package gov.nist.secauto.metaschema.core.model;
 
 public interface IFlagDefinition extends IValuedDefinition, IFlag {
   @Override
-  default boolean isInline() {
-    // reasonable default
-    return false;
-  }
-
-  @Override
-  default IFlagInstance getInlineInstance() {
-    // reasonable default
-    return null;
-  }
+  IFlagInstance getInlineInstance();
 }

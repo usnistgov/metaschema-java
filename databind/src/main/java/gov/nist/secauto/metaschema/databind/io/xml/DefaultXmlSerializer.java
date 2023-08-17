@@ -33,7 +33,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.RootAssemblyDefinition;
 
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -96,10 +95,8 @@ public class DefaultXmlSerializer<CLASS>
 
     MetaschemaXmlWriter xmlGenerator = new MetaschemaXmlWriter(streamWriter);
 
-    RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
-
     try {
-      xmlGenerator.write(root, data);
+      xmlGenerator.write(classBinding, data);
       streamWriter.flush();
     } catch (XMLStreamException ex) {
       caughtException = new IOException(ex);

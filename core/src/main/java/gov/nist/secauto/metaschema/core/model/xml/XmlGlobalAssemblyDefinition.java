@@ -29,10 +29,15 @@ package gov.nist.secauto.metaschema.core.model.xml;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFeatureModelContainer;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
@@ -49,7 +54,9 @@ import nl.talsmasoftware.lazy4j.Lazy;
 
 @SuppressWarnings("PMD.CouplingBetweenObjects")
 class XmlGlobalAssemblyDefinition
-    implements IAssemblyDefinition, IFeatureModelContainer, IFeatureFlagContainer<IFlagInstance> {
+    implements IAssemblyDefinition,
+    IFeatureModelContainer<IModelInstance, INamedModelInstance, IFieldInstance, IAssemblyInstance, IChoiceInstance>,
+    IFeatureFlagContainer<IFlagInstance> {
 
   @NonNull
   private final GlobalAssemblyDefinitionType xmlAssembly;
@@ -144,6 +151,18 @@ class XmlGlobalAssemblyDefinition
   @Override
   public boolean isRoot() {
     return getXmlAssembly().isSetRootName();
+  }
+
+  @Override
+  public boolean isInline() {
+    // global
+    return false;
+  }
+
+  @Override
+  public IAssemblyInstance getInlineInstance() {
+    // global
+    return null;
   }
 
   @Override

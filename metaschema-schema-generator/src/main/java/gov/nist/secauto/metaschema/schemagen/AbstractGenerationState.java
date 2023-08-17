@@ -98,8 +98,8 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
   }
 
   /**
-   * Retrieve any allowed values that are context independent, meaning they always apply regardless of
-   * the location of the node in the larger graph.
+   * Retrieve any allowed values that are context independent, meaning they always
+   * apply regardless of the location of the node in the larger graph.
    *
    * @param definition
    *          the definition to get allowed values for
@@ -126,8 +126,8 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
   }
 
   /**
-   * Get the name of the definition (and any parent instances/definition) to ensure an inline type is
-   * unique.
+   * Get the name of the definition (and any parent instances/definition) to
+   * ensure an inline type is unique.
    *
    * @param definition
    *          the definition to generate a type name for
@@ -141,7 +141,7 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
     StringBuilder builder = new StringBuilder();
     if (definition.isInline()) {
       INamedInstance inlineInstance = definition.getInlineInstance();
-      IDefinition parentDefinition = inlineInstance.getOwningDefinition();
+      IDefinition parentDefinition = inlineInstance.getContainingDefinition();
 
       builder
           .append(getTypeContext(parentDefinition, childMetaschema))

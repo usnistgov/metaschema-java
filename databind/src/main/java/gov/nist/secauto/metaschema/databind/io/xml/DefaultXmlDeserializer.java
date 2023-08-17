@@ -35,7 +35,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.RootAssemblyDefinition;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
@@ -56,16 +55,17 @@ public class DefaultXmlDeserializer<CLASS>
   private XMLInputFactory2 xmlInputFactory;
 
   @NonNull
-  private final RootAssemblyDefinition rootDefinition;
+  private final IAssemblyClassBinding rootDefinition;
 
   /**
-   * Construct a new Metaschema binding-based deserializer that reads XML-based Metaschema content.
+   * Construct a new Metaschema binding-based deserializer that reads XML-based
+   * Metaschema content.
    *
    * @param bindingContext
    *          the Metaschema data binding context
    * @param classBinding
-   *          the assembly class binding describing the Java objects this deserializer parses data
-   *          into
+   *          the assembly class binding describing the Java objects this
+   *          deserializer parses data into
    */
   public DefaultXmlDeserializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
@@ -73,7 +73,7 @@ public class DefaultXmlDeserializer<CLASS>
       throw new UnsupportedOperationException(
           String.format("The assembly '%s' is not a root assembly.", classBinding.getBoundClass().getName()));
     }
-    this.rootDefinition = new RootAssemblyDefinition(classBinding);
+    this.rootDefinition = classBinding;
   }
 
   /**
@@ -99,7 +99,8 @@ public class DefaultXmlDeserializer<CLASS>
   }
 
   /**
-   * Provide a XML input factory instance that will be used to create XML parser instances.
+   * Provide a XML input factory instance that will be used to create XML parser
+   * instances.
    *
    * @param factory
    *          the factory instance

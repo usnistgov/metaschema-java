@@ -33,8 +33,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Indicates that the Metaschema type that has a complex model that can contain field and assembly
- * instances.
+ * Indicates that the Metaschema type that has a complex model that can contain
+ * field and assembly instances.
  */
 public interface IModelContainer extends IContainer {
   /**
@@ -47,7 +47,8 @@ public interface IModelContainer extends IContainer {
   IAssemblyDefinition getOwningDefinition();
 
   /**
-   * Get the model instance contained within the model with the associated use name.
+   * Get the model instance contained within the model with the associated use
+   * name.
    *
    * @param name
    *          the use name of the model instance
@@ -74,7 +75,8 @@ public interface IModelContainer extends IContainer {
   Collection<? extends IFieldInstance> getFieldInstances();
 
   /**
-   * Get the field instance contained within the model with the associated use name.
+   * Get the field instance contained within the model with the associated use
+   * name.
    *
    * @param name
    *          the use name of the field instance
@@ -93,7 +95,8 @@ public interface IModelContainer extends IContainer {
   Collection<? extends IAssemblyInstance> getAssemblyInstances();
 
   /**
-   * Get the assembly instance contained within the model with the associated use name.
+   * Get the assembly instance contained within the model with the associated use
+   * name.
    *
    * @param name
    *          the use name of the assembly instance

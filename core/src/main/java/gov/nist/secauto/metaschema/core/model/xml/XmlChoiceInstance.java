@@ -147,7 +147,7 @@ class XmlChoiceInstance
   }
 
   @Override
-  public List<? extends IModelInstance> getModelInstances() {
+  public Collection<? extends IModelInstance> getModelInstances() {
     initModelContainer();
     return modelContainer.getModelInstances();
   }

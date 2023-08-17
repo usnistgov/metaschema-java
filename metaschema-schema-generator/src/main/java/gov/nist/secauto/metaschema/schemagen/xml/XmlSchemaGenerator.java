@@ -32,7 +32,6 @@ import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
-import gov.nist.secauto.metaschema.core.model.IRootAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.util.AutoCloser;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.AbstractSchemaGenerator;
@@ -73,7 +72,8 @@ public class XmlSchemaGenerator
         AutoCloser<XMLStreamWriter2, SchemaGenerationException>,
         XmlDatatypeManager,
         XmlGenerationState> {
-  // private static final Logger LOGGER = LogManager.getLogger(XmlSchemaGenerator.class);
+  // private static final Logger LOGGER =
+  // LogManager.getLogger(XmlSchemaGenerator.class);
 
   @NonNull
   public static final String PREFIX_XML_SCHEMA = "xs";
@@ -170,7 +170,7 @@ public class XmlSchemaGenerator
 
       // analyze all definitions
       Map<String, String> prefixToNamespaceMap = new HashMap<>(); // NOPMD concurrency not needed
-      final List<IRootAssemblyDefinition> rootAssemblyDefinitions = analyzeDefinitions(
+      final List<IAssemblyDefinition> rootAssemblyDefinitions = analyzeDefinitions(
           state,
           (entry, definition) -> {
             assert entry != null;

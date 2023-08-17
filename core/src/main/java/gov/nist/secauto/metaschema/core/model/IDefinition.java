@@ -60,7 +60,9 @@ public interface IDefinition extends INamedModelElement, IFeatureValueConstraine
   @SuppressWarnings("null")
   @Override
   default String toCoordinates() {
-    return String.format("%s:%s:%s(%d)", getContainingMetaschema().getShortName(), getModelType(),
+    return String.format("%s:%s:%s(%d)",
+        getContainingMetaschema().getShortName(),
+        getModelType(),
         getName(), hashCode());
   }
 

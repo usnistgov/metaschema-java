@@ -39,7 +39,6 @@ import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.RootAssemblyDefinition;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -52,13 +51,14 @@ public class DefaultJsonDeserializer<CLASS>
   private JsonFactory jsonFactory;
 
   /**
-   * Construct a new JSON deserializer that will parse the bound class identified by the
-   * {@code classBinding}.
+   * Construct a new JSON deserializer that will parse the bound class identified
+   * by the {@code classBinding}.
    *
    * @param bindingContext
    *          the binding context used to supply bound Java classes while writing
    * @param classBinding
-   *          the bound class information for the Java type this deserializer is operating on
+   *          the bound class information for the Java type this deserializer is
+   *          operating on
    */
   public DefaultJsonDeserializer(
       @NonNull IBindingContext bindingContext,
@@ -69,7 +69,8 @@ public class DefaultJsonDeserializer<CLASS>
   /**
    * Get a JSON factory instance.
    * <p>
-   * This method can be used by sub-classes to create a customized factory instance.
+   * This method can be used by sub-classes to create a customized factory
+   * instance.
    *
    * @return the factory
    */
@@ -95,7 +96,8 @@ public class DefaultJsonDeserializer<CLASS>
   }
 
   /**
-   * Using the managed JSON factory, create a new JSON parser instance using the provided reader.
+   * Using the managed JSON factory, create a new JSON parser instance using the
+   * provided reader.
    *
    * @param reader
    *          the reader for the parser to read data from
@@ -122,9 +124,8 @@ public class DefaultJsonDeserializer<CLASS>
       if (classBinding.isRoot()
           && configuration.isFeatureEnabled(DeserializationFeature.DESERIALIZE_JSON_ROOT_PROPERTY)) {
 
-        RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
         // now parse the root property
-        CLASS value = ObjectUtils.requireNonNull(parser.read(root));
+        CLASS value = ObjectUtils.requireNonNull(parser.read(classBinding));
 
         // // we should be at the end object
         // JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
@@ -132,7 +133,7 @@ public class DefaultJsonDeserializer<CLASS>
         // // advance past the end object
         // JsonToken end = parser.nextToken();
 
-        retval = INodeItemFactory.instance().newDocumentNodeItem(root, documentUri, value);
+        retval = INodeItemFactory.instance().newDocumentNodeItem(classBinding, documentUri, value);
       } else {
         JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
 

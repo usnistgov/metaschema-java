@@ -26,12 +26,18 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IModelContainerSupport<MI extends IModelInstance, NMI extends INamedModelInstance, FI extends IFieldInstance, AI extends IAssemblyInstance, CI extends IChoiceInstance> {
+public interface IModelContainerSupport<
+    MI extends IModelInstance,
+    NMI extends INamedModelInstance,
+    FI extends IFieldInstance,
+    AI extends IAssemblyInstance,
+    CI extends IChoiceInstance> {
 
   /**
    * Get a listing of all model instances.
@@ -39,31 +45,34 @@ public interface IModelContainerSupport<MI extends IModelInstance, NMI extends I
    * @return the listing
    */
   @NonNull
-  List<? extends MI> getModelInstances();
+  Collection<MI> getModelInstances();
 
   /**
-   * Get a mapping of all named model instances, mapped from their effective name to the instance.
+   * Get a mapping of all named model instances, mapped from their effective name
+   * to the instance.
    *
    * @return the mapping
    */
   @NonNull
-  Map<String, ? extends NMI> getNamedModelInstanceMap();
+  Map<String, NMI> getNamedModelInstanceMap();
 
   /**
-   * Get a mapping of all field instances, mapped from their effective name to the instance.
+   * Get a mapping of all field instances, mapped from their effective name to the
+   * instance.
    *
    * @return the mapping
    */
   @NonNull
-  Map<String, ? extends FI> getFieldInstanceMap();
+  Map<String, FI> getFieldInstanceMap();
 
   /**
-   * Get a mapping of all assembly instances, mapped from their effective name to the instance.
+   * Get a mapping of all assembly instances, mapped from their effective name to
+   * the instance.
    *
    * @return the mapping
    */
   @NonNull
-  Map<String, ? extends AI> getAssemblyInstanceMap();
+  Map<String, AI> getAssemblyInstanceMap();
 
   /**
    * Get a listing of all choice instances.
@@ -71,5 +80,5 @@ public interface IModelContainerSupport<MI extends IModelInstance, NMI extends I
    * @return the listing
    */
   @NonNull
-  List<? extends CI> getChoiceInstances();
+  List<CI> getChoiceInstances();
 }

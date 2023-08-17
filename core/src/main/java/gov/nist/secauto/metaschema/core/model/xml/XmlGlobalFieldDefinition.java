@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
@@ -52,7 +53,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 @SuppressWarnings({ "PMD.GodClass", "PMD.CouplingBetweenObjects" })
-class XmlGlobalFieldDefinition implements IFieldDefinition, IFeatureFlagContainer {
+class XmlGlobalFieldDefinition
+    implements IFieldDefinition,
+    IFeatureFlagContainer<IFlagInstance> {
   @NonNull
   private final GlobalFieldDefinitionType xmlField;
   @NonNull
@@ -114,6 +117,18 @@ class XmlGlobalFieldDefinition implements IFieldDefinition, IFeatureFlagContaine
     return defaultValue;
   }
 
+  @Override
+  public boolean isInline() {
+    // global
+    return false;
+  }
+
+  @Override
+  public IFieldInstance getInlineInstance() {
+    // global
+    return null;
+  }
+
   /**
    * Used to generate the instances for the constraints in a lazy fashion when the
    * constraints are first accessed.
@@ -126,7 +141,7 @@ class XmlGlobalFieldDefinition implements IFieldDefinition, IFeatureFlagContaine
     return constraints.get();
   }
 
-  @SuppressWarnings({ "null", "CPD-START" })
+  @SuppressWarnings({ "null" })
   @Override
   public String getName() {
     return getXmlField().getName();
@@ -180,7 +195,7 @@ class XmlGlobalFieldDefinition implements IFieldDefinition, IFeatureFlagContaine
   public IFlagInstance getJsonValueKeyFlagInstance() {
     IFlagInstance retval = null;
     if (getXmlField().isSetJsonValueKeyFlag() && getXmlField().getJsonValueKeyFlag().isSetFlagRef()) {
-      retval = getFlagInstanceByName(getXmlField().getJsonValueKeyFlag().getFlagRef());
+      retval = getFlagInstanceByName(ObjectUtils.notNull(getXmlField().getJsonValueKeyFlag().getFlagRef()));
     }
     return retval;
   }
@@ -211,7 +226,6 @@ class XmlGlobalFieldDefinition implements IFieldDefinition, IFeatureFlagContaine
     return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
   }
 
-  @SuppressWarnings("CPD-END")
   @Override
   public Object getFieldValue(@NonNull Object parentFieldValue) {
     // there is no value

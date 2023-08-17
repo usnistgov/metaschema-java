@@ -32,6 +32,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
@@ -171,4 +172,17 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   public MarkupMultiline getRemarks() {
     return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
   }
+
+  @Override
+  public boolean isInline() {
+    // global
+    return false;
+  }
+
+  @Override
+  public IFlagInstance getInlineInstance() {
+    // global
+    return null;
+  }
+
 }

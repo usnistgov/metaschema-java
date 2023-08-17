@@ -31,7 +31,12 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IFeatureModelContainer<MI extends IModelInstance, NMI extends INamedModelInstance, FI extends IFieldInstance, AI extends IAssemblyInstance, CI extends IChoiceInstance>
+public interface IFeatureModelContainer<
+    MI extends IModelInstance,
+    NMI extends INamedModelInstance,
+    FI extends IFieldInstance,
+    AI extends IAssemblyInstance,
+    CI extends IChoiceInstance>
     extends IModelContainer {
   /**
    * Lazy initialize the model instances associated with this definition.
@@ -48,7 +53,7 @@ public interface IFeatureModelContainer<MI extends IModelInstance, NMI extends I
 
   @SuppressWarnings("null")
   @Override
-  default Collection<? extends NMI> getNamedModelInstances() {
+  default Collection<NMI> getNamedModelInstances() {
     return getModelContainer().getNamedModelInstanceMap().values();
   }
 
@@ -59,7 +64,7 @@ public interface IFeatureModelContainer<MI extends IModelInstance, NMI extends I
 
   @SuppressWarnings("null")
   @Override
-  default Collection<? extends FI> getFieldInstances() {
+  default Collection<FI> getFieldInstances() {
     return getModelContainer().getFieldInstanceMap().values();
   }
 
@@ -70,17 +75,17 @@ public interface IFeatureModelContainer<MI extends IModelInstance, NMI extends I
 
   @SuppressWarnings("null")
   @Override
-  default Collection<? extends AI> getAssemblyInstances() {
+  default Collection<AI> getAssemblyInstances() {
     return getModelContainer().getAssemblyInstanceMap().values();
   }
 
   @Override
-  default List<? extends CI> getChoiceInstances() {
+  default List<CI> getChoiceInstances() {
     return getModelContainer().getChoiceInstances();
   }
 
   @Override
-  default List<? extends MI> getModelInstances() {
+  default Collection<MI> getModelInstances() {
     return getModelContainer().getModelInstances();
   }
 }

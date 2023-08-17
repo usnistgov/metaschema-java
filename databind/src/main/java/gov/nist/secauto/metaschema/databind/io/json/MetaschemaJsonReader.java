@@ -39,7 +39,6 @@ import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IRootAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
 import gov.nist.secauto.metaschema.databind.model.info.IPropertyCollector;
 
@@ -67,7 +66,8 @@ public class MetaschemaJsonReader
   private final IJsonProblemHandler problemHandler;
 
   /**
-   * Construct a new Metaschema-aware JSON parser using the default problem handler.
+   * Construct a new Metaschema-aware JSON parser using the default problem
+   * handler.
    *
    * @param parser
    *          the JSON parser to parse with
@@ -104,15 +104,18 @@ public class MetaschemaJsonReader
   }
 
   /**
-   * Parses JSON into a bound object. This assembly must be a root assembly for which a call to
-   * {@link IAssemblyClassBinding#isRoot()} will return {@code true}.
+   * Parses JSON into a bound object. This assembly must be a root assembly for
+   * which a call to {@link IAssemblyClassBinding#isRoot()} will return
+   * {@code true}.
    * <p>
    * This method expects the parser's current token to be:
    * <ul>
-   * <li>{@code null} indicating that the parser has not yet parsed a JSON node;</li>
-   * <li>a {@link JsonToken#START_OBJECT} which represents the object wrapper containing the root
-   * field,</li>
-   * <li>a {@link JsonToken#FIELD_NAME} representing the root field to parse, or</li>
+   * <li>{@code null} indicating that the parser has not yet parsed a JSON
+   * node;</li>
+   * <li>a {@link JsonToken#START_OBJECT} which represents the object wrapper
+   * containing the root field,</li>
+   * <li>a {@link JsonToken#FIELD_NAME} representing the root field to parse,
+   * or</li>
    * <li>a peer field to the root field that will be handled by the
    * {@link IJsonProblemHandler#handleUnknownProperty(IClassBinding, Object, String, IJsonParsingContext)}
    * method.</li>
@@ -120,12 +123,14 @@ public class MetaschemaJsonReader
    * <p>
    * After parsing the current token will be:
    * <ul>
-   * <li>the next token after the {@link JsonToken#END_OBJECT} corresponding to the initial
-   * {@link JsonToken#START_OBJECT} parsed by this method;</li>
-   * <li>the next token after the {@link JsonToken#END_OBJECT} for the root field's value; or</li>
-   * <li>the next token after all fields and associated values have been parsed looking for the root
-   * field. This next token will be the {@link JsonToken#END_OBJECT} for the object containing the
-   * fields. In this case the method will throw an {@link IOException} indicating the root was not
+   * <li>the next token after the {@link JsonToken#END_OBJECT} corresponding to
+   * the initial {@link JsonToken#START_OBJECT} parsed by this method;</li>
+   * <li>the next token after the {@link JsonToken#END_OBJECT} for the root
+   * field's value; or</li>
+   * <li>the next token after all fields and associated values have been parsed
+   * looking for the root field. This next token will be the
+   * {@link JsonToken#END_OBJECT} for the object containing the fields. In this
+   * case the method will throw an {@link IOException} indicating the root was not
    * found.</li>
    * </ul>
    *
@@ -141,7 +146,7 @@ public class MetaschemaJsonReader
       "PMD.CyclomaticComplexity" // acceptable
   })
   @Nullable
-  public <T> T read(@NonNull IRootAssemblyClassBinding definition) throws IOException {
+  public <T> T read(@NonNull IAssemblyClassBinding definition) throws IOException {
     boolean objectWrapper = false;
     if (parser.currentToken() == null) {
       parser.nextToken();
@@ -168,7 +173,7 @@ public class MetaschemaJsonReader
         JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
 
         instance = readDefinitionValue(
-            definition.getRootDefinition(),
+            definition,
             null,
             false);
 
@@ -198,19 +203,19 @@ public class MetaschemaJsonReader
   }
 
   /**
-   * Read the data associated with the {@code instance} and apply it to the provided
-   * {@code parentObject}.
+   * Read the data associated with the {@code instance} and apply it to the
+   * provided {@code parentObject}.
    * <p>
-   * Consumes the field if the field's name matches. If it matches, then {@code true} is returned
-   * after parsing the value. Otherwise, {@code false} is returned to indicate the property was not
-   * parsed.
+   * Consumes the field if the field's name matches. If it matches, then
+   * {@code true} is returned after parsing the value. Otherwise, {@code false} is
+   * returned to indicate the property was not parsed.
    *
    * @param instance
    *          the instance to parse data for
    * @param parentObject
    *          the Java object that data parsed by this method will be stored in
-   * @return {@code true} if the instance was parsed, or {@code false} if the data did not contain
-   *         information for this instance
+   * @return {@code true} if the instance was parsed, or {@code false} if the data
+   *         did not contain information for this instance
    * @throws IOException
    *           if an error occurred while parsing the input
    */

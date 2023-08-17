@@ -34,7 +34,6 @@ import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
-import gov.nist.secauto.metaschema.core.model.IRootAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.net.URI;
@@ -46,7 +45,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public abstract class AbstractNodeItemFactory implements INodeItemFactory, INodeItemGenerator {
   @Override
   public IDocumentNodeItem newDocumentNodeItem(
-      IRootAssemblyDefinition definition,
+      IAssemblyDefinition definition,
       URI documentUri,
       Object value) {
     return new DocumentNodeItemImpl(
@@ -181,15 +180,17 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
   }
 
   /**
-   * Create a new {@link IModelNodeItem} based on the provided {@code instance} that is a child of the
-   * provided {@code parent}. This new item will have the provided {@code value}.
+   * Create a new {@link IModelNodeItem} based on the provided {@code instance}
+   * that is a child of the provided {@code parent}. This new item will have the
+   * provided {@code value}.
    *
    * @param instance
    *          the model instance to create the node for
    * @param parent
    *          the item to use as the parent item for the created node item
    * @param position
-   *          the data item's position in the sequence of data items for the instance
+   *          the data item's position in the sequence of data items for the
+   *          instance
    * @param value
    *          the data item's value
    * @return the created node item
@@ -212,8 +213,9 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
   }
 
   /**
-   * Create a new {@link IModelNodeItem} based on the provided {@code instance} that is a child of the
-   * provided {@code parent}. This new item will have no associated value.
+   * Create a new {@link IModelNodeItem} based on the provided {@code instance}
+   * that is a child of the provided {@code parent}. This new item will have no
+   * associated value.
    *
    * @param instance
    *          the model instance to create the node for

@@ -63,7 +63,7 @@ class XmlModelParser {
   private Map<String, INamedModelInstance> namedModelInstances;
   private Map<String, IFieldInstance> fieldInstances;
   private Map<String, IAssemblyInstance> assemblyInstances;
-  private List<? extends IModelInstance> modelInstances;
+  private List<IModelInstance> modelInstances;
 
   // TODO: move back to calling location
   void parseChoice(XmlObject xmlObject, @NonNull IModelContainer container) {
@@ -97,7 +97,8 @@ class XmlModelParser {
   @SuppressWarnings("null")
   private void parseInternal(XmlCursor cursor, @NonNull IModelContainer container) {
 
-    // ensure the streams are treated as sequential, since concatenated streams will only be sequential
+    // ensure the streams are treated as sequential, since concatenated streams will
+    // only be sequential
     // if both streams are sequential
     Stream<IFieldInstance> fieldInstances = Stream.empty();
     fieldInstances = fieldInstances.sequential();
@@ -158,25 +159,25 @@ class XmlModelParser {
 
   @SuppressWarnings("null")
   @NonNull
-  public Map<String, ? extends IFieldInstance> getFieldInstances() {
+  public Map<String, IFieldInstance> getFieldInstances() {
     return fieldInstances == null ? Collections.emptyMap() : fieldInstances;
   }
 
   @SuppressWarnings("null")
   @NonNull
-  public Map<String, ? extends IAssemblyInstance> getAssemblyInstances() {
+  public Map<String, IAssemblyInstance> getAssemblyInstances() {
     return assemblyInstances == null ? Collections.emptyMap() : assemblyInstances;
   }
 
   @SuppressWarnings("null")
   @NonNull
-  public Map<String, ? extends INamedModelInstance> getNamedModelInstances() {
+  public Map<String, INamedModelInstance> getNamedModelInstances() {
     return namedModelInstances == null ? Collections.emptyMap() : namedModelInstances;
   }
 
   @SuppressWarnings("null")
   @NonNull
-  protected List<? extends IModelInstance> getModelInstances() {
+  protected List<IModelInstance> getModelInstances() {
     return modelInstances == null ? Collections.emptyList() : modelInstances;
   }
 

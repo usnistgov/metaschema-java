@@ -36,7 +36,6 @@ import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.databind.io.SerializationFeature;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.RootAssemblyDefinition;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -94,11 +93,9 @@ public class DefaultJsonSerializer<CLASS>
     try (JsonGenerator generator = newJsonGenerator(writer)) {
       IAssemblyClassBinding classBinding = getClassBinding();
 
-      RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
-
       MetaschemaJsonWriter jsonWriter = new MetaschemaJsonWriter(generator);
 
-      jsonWriter.write(root, data);
+      jsonWriter.write(classBinding, data);
     }
   }
 

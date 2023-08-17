@@ -30,8 +30,6 @@ import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
-import gov.nist.secauto.metaschema.core.model.IRootAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.RootAssemblyDefinitionWrapper;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.datatype.IDatatypeManager;
 
@@ -44,7 +42,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Thsi abstract class provides a common implementation shared by all schema generators.
+ * Thsi abstract class provides a common implementation shared by all schema
+ * generators.
  *
  * @param <T>
  *          the writer type
@@ -53,8 +52,11 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * @param <S>
  *          the {@link IGenerationState} type
  */
-public abstract class AbstractSchemaGenerator<T extends AutoCloseable, D extends IDatatypeManager, S extends AbstractGenerationState<
-    T, D>>
+public abstract class AbstractSchemaGenerator<
+    T extends AutoCloseable,
+    D extends IDatatypeManager,
+    S extends AbstractGenerationState<
+        T, D>>
     implements ISchemaGenerator {
 
   /**
@@ -101,7 +103,8 @@ public abstract class AbstractSchemaGenerator<T extends AutoCloseable, D extends
       IMetaschema metaschema,
       Writer out,
       IConfiguration<SchemaGenerationFeature<?>> configuration) {
-    // IInlineStrategy inlineStrategy = IInlineStrategy.newInlineStrategy(configuration);
+    // IInlineStrategy inlineStrategy =
+    // IInlineStrategy.newInlineStrategy(configuration);
     try {
       // avoid automatically closing streams not owned by the generator
       @SuppressWarnings("PMD.CloseResource") T schemaWriter = newWriter(out);
@@ -124,13 +127,14 @@ public abstract class AbstractSchemaGenerator<T extends AutoCloseable, D extends
    *          a callback to execute on each identified root definition
    * @return the list of identified root definitions
    */
-  protected List<IRootAssemblyDefinition> analyzeDefinitions(
+  protected List<IAssemblyDefinition> analyzeDefinitions(
       @NonNull S generationState,
       @Nullable BiConsumer<MetaschemaIndex.DefinitionEntry, IDefinition> handler) {
-    // TODO: use of handler here is confusing and introduces side effects. Consider refactoring this in
+    // TODO: use of handler here is confusing and introduces side effects. Consider
+    // refactoring this in
     // the caller
 
-    List<IRootAssemblyDefinition> rootAssemblyDefinitions = new LinkedList<>();
+    List<IAssemblyDefinition> rootAssemblyDefinitions = new LinkedList<>();
     for (MetaschemaIndex.DefinitionEntry entry : generationState.getMetaschemaIndex().getDefinitions()) {
 
       boolean referenced = entry.isReferenced();
@@ -138,8 +142,7 @@ public abstract class AbstractSchemaGenerator<T extends AutoCloseable, D extends
       IDefinition definition = ObjectUtils.notNull(entry.getDefinition());
       if (definition instanceof IAssemblyDefinition && ((IAssemblyDefinition) definition).isRoot()) {
         // found root definition
-        IRootAssemblyDefinition assemblyDefinition
-            = new RootAssemblyDefinitionWrapper<>((IAssemblyDefinition) definition); // NOPMD necessary instantiation
+        IAssemblyDefinition assemblyDefinition = (IAssemblyDefinition) definition;
         rootAssemblyDefinitions.add(assemblyDefinition);
         if (!referenced) {
           referenced = true;

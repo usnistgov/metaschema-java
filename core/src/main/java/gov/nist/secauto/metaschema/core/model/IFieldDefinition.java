@@ -37,16 +37,7 @@ public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IFi
   }
 
   @Override
-  default boolean isInline() {
-    // reasonable default
-    return false;
-  }
-
-  @Override
-  default IFieldInstance getInlineInstance() {
-    // reasonable default
-    return null;
-  }
+  IFieldInstance getInlineInstance();
 
   /**
    * Retrieves the key to use as the field name for this field's value in JSON.

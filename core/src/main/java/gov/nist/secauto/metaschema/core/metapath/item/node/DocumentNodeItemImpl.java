@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.metapath.item.node;
 
-import gov.nist.secauto.metaschema.core.model.IRootAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.net.URI;
@@ -45,7 +45,7 @@ class DocumentNodeItemImpl
   private final Lazy<ModelContainer> model;
 
   public DocumentNodeItemImpl(
-      @NonNull IRootAssemblyDefinition root,
+      @NonNull IAssemblyDefinition root,
       @NonNull Object rootValue,
       @NonNull URI documentUri,
       @NonNull INodeItemGenerator generator) {

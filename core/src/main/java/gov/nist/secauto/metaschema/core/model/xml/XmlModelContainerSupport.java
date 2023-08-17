@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ChoiceType;
 
 import org.apache.xmlbeans.XmlObject;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,13 +49,13 @@ class XmlModelContainerSupport
     IModelContainerSupport<IModelInstance, INamedModelInstance, IFieldInstance, IAssemblyInstance, IChoiceInstance> {
 
   @NonNull
-  private final List<? extends IModelInstance> modelInstances;
+  private final List<IModelInstance> modelInstances;
   @NonNull
-  private final Map<String, ? extends INamedModelInstance> namedModelInstances;
+  private final Map<String, INamedModelInstance> namedModelInstances;
   @NonNull
-  private final Map<String, ? extends IFieldInstance> fieldInstances;
+  private final Map<String, IFieldInstance> fieldInstances;
   @NonNull
-  private final Map<String, ? extends IAssemblyInstance> assemblyInstances;
+  private final Map<String, IAssemblyInstance> assemblyInstances;
 
   /**
    * Construct a new model container.
@@ -84,40 +85,43 @@ class XmlModelContainerSupport
    */
   @Override
   @NonNull
-  public List<? extends IModelInstance> getModelInstances() {
+  public Collection<IModelInstance> getModelInstances() {
     return modelInstances;
   }
 
   /**
-   * Get a mapping of all named model instances, mapped from their effective name to the instance.
+   * Get a mapping of all named model instances, mapped from their effective name
+   * to the instance.
    *
    * @return the mapping
    */
   @Override
   @NonNull
-  public Map<String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
+  public Map<String, INamedModelInstance> getNamedModelInstanceMap() {
     return namedModelInstances;
   }
 
   /**
-   * Get a mapping of all field instances, mapped from their effective name to the instance.
+   * Get a mapping of all field instances, mapped from their effective name to the
+   * instance.
    *
    * @return the mapping
    */
   @Override
   @NonNull
-  public Map<String, ? extends IFieldInstance> getFieldInstanceMap() {
+  public Map<String, IFieldInstance> getFieldInstanceMap() {
     return fieldInstances;
   }
 
   /**
-   * Get a mapping of all assembly instances, mapped from their effective name to the instance.
+   * Get a mapping of all assembly instances, mapped from their effective name to
+   * the instance.
    *
    * @return the mapping
    */
   @Override
   @NonNull
-  public Map<String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
+  public Map<String, IAssemblyInstance> getAssemblyInstanceMap() {
     return assemblyInstances;
   }
 
@@ -129,7 +133,7 @@ class XmlModelContainerSupport
   @Override
   @SuppressWarnings("null")
   @NonNull
-  public List<? extends IChoiceInstance> getChoiceInstances() {
+  public List<IChoiceInstance> getChoiceInstances() {
     // this shouldn't get called all that often, so this is better than allocating
     // memory
     return getModelInstances().stream()

@@ -31,30 +31,18 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
-import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.annotations.AssemblyConstraints;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
-import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 
@@ -69,7 +57,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   private final MetaschemaAssembly metaschemaAssembly;
   private final QName xmlRootQName;
   private final Lazy<ClassBindingFlagContainerSupport> flagContainer;
-  private Map<String, IBoundNamedModelInstance> modelInstances;
+  private final Lazy<ClassBindingModelContainerSupport> modelContainer;
   private final Lazy<IModelConstrained> constraints;
 
   /**
@@ -114,6 +102,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
     this.xmlRootQName = localName == null ? null : new QName(namespace, localName);
 
     this.flagContainer = Lazy.lazy(() -> new ClassBindingFlagContainerSupport(this, null));
+    this.modelContainer = Lazy.lazy(() -> new ClassBindingModelContainerSupport(this));
     this.constraints = Lazy.lazy(() -> new AssemblyConstraintSupport(
         clazz.getAnnotation(ValueConstraints.class),
         clazz.getAnnotation(AssemblyConstraints.class),
@@ -124,6 +113,17 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   @Override
   public IFlagContainerSupport<IBoundFlagInstance> getFlagContainer() {
     return flagContainer.get();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public IModelContainerSupport<
+      IBoundNamedModelInstance,
+      IBoundNamedModelInstance,
+      IBoundFieldInstance,
+      IBoundAssemblyInstance,
+      IChoiceInstance> getModelContainer() {
+    return modelContainer.get();
   }
 
   /**
@@ -184,143 +184,6 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   public QName getRootXmlQName() {
     // Overriding this is more efficient, since it is already built
     return xmlRootQName;
-  }
-
-  protected Stream<IBoundNamedModelInstance> getModelInstanceFieldStream(Class<?> clazz) {
-    Stream<IBoundNamedModelInstance> superInstances;
-    Class<?> superClass = clazz.getSuperclass();
-    if (superClass == null) {
-      superInstances = Stream.empty();
-    } else {
-      // get instances from superclass
-      superInstances = getModelInstanceFieldStream(superClass);
-    }
-
-    return Stream.concat(superInstances, Arrays.stream(clazz.getDeclaredFields())
-        // skip this field, since it is ignored
-        .filter(field -> !field.isAnnotationPresent(Ignore.class))
-        // skip fields that aren't a Metaschema field or assembly instance
-        .filter(field -> field.isAnnotationPresent(BoundField.class) || field.isAnnotationPresent(BoundAssembly.class))
-        .map(field -> {
-          assert field != null;
-          return newModelInstance(clazz, field);
-        })
-        .filter(Objects::nonNull)
-        .map(ObjectUtils::notNull));
-  }
-
-  protected IBoundNamedModelInstance newModelInstance(@NonNull Class<?> clazz, @NonNull java.lang.reflect.Field field) {
-    IBoundNamedModelInstance retval;
-    if (field.isAnnotationPresent(BoundAssembly.class)
-        && getBindingContext().getClassBinding(IBoundNamedModelInstance.getItemType(field)) != null) {
-      retval = IBoundAssemblyInstance.newInstance(field, this);
-    } else if (field.isAnnotationPresent(BoundField.class)) {
-      retval = IBoundFieldInstance.newInstance(field, this);
-    } else {
-      throw new IllegalStateException(
-          String.format("The field '%s' on class '%s' is not bound", field.getName(), clazz.getName()));
-    }
-    // TODO: handle choice
-    return retval;
-  }
-
-  /**
-   * Initialize the flag instances for this class.
-   */
-  protected void initalizeModelInstances() {
-    synchronized (this) {
-      if (this.modelInstances == null) {
-        this.modelInstances = getModelInstanceFieldStream(getBoundClass())
-            .collect(Collectors.toMap(instance -> instance.getEffectiveName(), Function.identity(),
-                CustomCollectors.useLastMapper(),
-                LinkedHashMap::new));
-      }
-    }
-  }
-
-  @Override
-  public Collection<? extends IBoundNamedModelInstance> getModelInstances() {
-    return getNamedModelInstances();
-  }
-
-  @Override
-  public IBoundNamedModelInstance getModelInstanceByName(String name) {
-    return getNamedModelInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @NonNull
-  private Map<String, ? extends IBoundNamedModelInstance> getNamedModelInstanceMap() {
-    initalizeModelInstances();
-    return modelInstances;
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public Collection<? extends IBoundNamedModelInstance> getNamedModelInstances() {
-    return getNamedModelInstanceMap().values();
-  }
-
-  @Override
-  public Map<String, ? extends IBoundNamedInstance>
-      getNamedInstances(Predicate<IBoundFlagInstance> flagFilter) {
-    return ObjectUtils.notNull(Stream.concat(
-        super.getNamedInstances(flagFilter).values().stream()
-            .map(ObjectUtils::notNull),
-        getNamedModelInstances().stream())
-        .collect(
-            Collectors.toMap(instance -> instance.getJsonName(), Function.identity(), CustomCollectors.useLastMapper(),
-                LinkedHashMap::new)));
-  }
-
-  @NonNull
-  private Map<String, ? extends IBoundFieldInstance> getFieldInstanceMap() {
-    return ObjectUtils.notNull(getNamedModelInstances().stream()
-        .filter(instance -> instance instanceof IBoundFieldInstance)
-        .map(instance -> (IBoundFieldInstance) instance)
-        .map(ObjectUtils::notNull)
-        .collect(Collectors.toMap(IBoundFieldInstance::getEffectiveName, Function.identity(),
-            CustomCollectors.useLastMapper(),
-            LinkedHashMap::new)));
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public Collection<? extends IBoundFieldInstance> getFieldInstances() {
-    return getFieldInstanceMap().values();
-  }
-
-  @Override
-  public IBoundFieldInstance getFieldInstanceByName(String name) {
-    return getFieldInstanceMap().get(name);
-  }
-
-  @NonNull
-  private Map<String, ? extends IBoundAssemblyInstance> getAssemblyInstanceMap() {
-    return ObjectUtils.notNull(getNamedModelInstances().stream()
-        .filter(instance -> instance instanceof IBoundAssemblyInstance)
-        .map(instance -> (IBoundAssemblyInstance) instance)
-        .map(ObjectUtils::notNull)
-        .collect(Collectors.toMap(IBoundAssemblyInstance::getEffectiveName, Function.identity(),
-            CustomCollectors.useLastMapper(),
-            LinkedHashMap::new)));
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public @NonNull Collection<? extends IBoundAssemblyInstance> getAssemblyInstances() {
-    return getAssemblyInstanceMap().values();
-  }
-
-  @Override
-  public IBoundAssemblyInstance getAssemblyInstanceByName(String name) {
-    return getAssemblyInstanceMap().get(name);
-  }
-
-  @Override
-  public List<? extends IChoiceInstance> getChoiceInstances() {
-    // choices are not exposed by this API
-    return CollectionUtil.emptyList();
   }
 
   @SuppressWarnings("null")

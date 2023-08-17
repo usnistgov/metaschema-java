@@ -76,7 +76,7 @@ public class MetaschemaIndex {
   public DefinitionEntry getEntry(@NonNull IDefinition definition) {
     return ObjectUtils.notNull(index.computeIfAbsent(
         definition,
-        k -> new DefinitionEntry(ObjectUtils.notNull(k))));
+        k -> new MetaschemaIndex.DefinitionEntry(ObjectUtils.notNull(k))));
   }
 
   @NonNull
@@ -128,12 +128,13 @@ public class MetaschemaIndex {
      *
      * @param instance
      *          the instance to process
-     * @return {@code true} if this is the first time handling the definition this instance references,
-     *         or {@code false} otherwise
+     * @return {@code true} if this is the first time handling the definition this
+     *         instance references, or {@code false} otherwise
      */
     private boolean handleInstance(INamedInstance instance) {
       IDefinition definition = instance.getDefinition();
-      // check if this will be a new entry, which needs to be called before getEntry, which will create it
+      // check if this will be a new entry, which needs to be called before getEntry,
+      // which will create it
       final boolean exists = getDefaultData().hasEntry(definition);
       DefinitionEntry entry = getDefaultData().getEntry(definition);
       entry.incrementReferenceCount();
@@ -153,7 +154,7 @@ public class MetaschemaIndex {
     }
 
     private static boolean isChoiceSibling(@NonNull INamedInstance instance) {
-      IDefinition containingDefinition = instance.getOwningDefinition();
+      IDefinition containingDefinition = instance.getContainingDefinition();
       return containingDefinition instanceof IAssemblyDefinition
           && !((IAssemblyDefinition) containingDefinition).getChoiceInstances().isEmpty();
     }

@@ -75,16 +75,7 @@ public interface IAssemblyDefinition
   }
 
   @Override
-  default boolean isInline() {
-    // reasonable default
-    return false;
-  }
-
-  @Override
-  default IAssemblyInstance getInlineInstance() {
-    // reasonable default
-    return null;
-  }
+  IAssemblyInstance getInlineInstance();
 
   @Override
   default IAssemblyDefinition getOwningDefinition() {

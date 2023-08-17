@@ -36,7 +36,6 @@ import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IRootAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
 
 import org.apache.logging.log4j.LogManager;
@@ -66,8 +65,9 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
   }
 
   /**
-   * Writes data in a bound object to JSON. This assembly must be a root assembly for which a call to
-   * {@link IAssemblyClassBinding#isRoot()} will return {@code true}.
+   * Writes data in a bound object to JSON. This assembly must be a root assembly
+   * for which a call to {@link IAssemblyClassBinding#isRoot()} will return
+   * {@code true}.
    *
    * @param targetDefinition
    *          the definition describing the root element data to write
@@ -77,7 +77,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
    *           if an error occurred while reading the JSON
    */
   public void write(
-      @NonNull IRootAssemblyClassBinding targetDefinition,
+      @NonNull IAssemblyClassBinding targetDefinition,
       @NonNull Object targetObject) throws IOException {
 
     // first read the initial START_OBJECT
@@ -206,11 +206,13 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
    * @param targetObject
    *          the instance to serialize
    * @param writeObjectWrapper
-   *          {@code true} if the start and end object should be written, or {@code false} otherwise
+   *          {@code true} if the start and end object should be written, or
+   *          {@code false} otherwise
    * @throws IOException
    *           if an error occurs while writing to the output context
    * @throws NullPointerException
-   *           if there is a JSON key configured and the key property's value is {@code null}
+   *           if there is a JSON key configured and the key property's value is
+   *           {@code null}
    */
   protected void writeDefinitionValue(
       @NonNull IAssemblyClassBinding targetDefinition,

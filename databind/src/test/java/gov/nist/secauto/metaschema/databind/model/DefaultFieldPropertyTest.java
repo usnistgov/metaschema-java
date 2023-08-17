@@ -75,11 +75,10 @@ class DefaultFieldPropertyTest {
       IBindingContext bindingContext = IBindingContext.instance();
       IAssemblyClassBinding classBinding = (IAssemblyClassBinding) bindingContext.getClassBinding(SimpleAssembly.class);
       assert classBinding != null;
-      IRootAssemblyClassBinding root = new RootAssemblyDefinition(classBinding);
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
-      SimpleAssembly obj = parser.read(root);
+      SimpleAssembly obj = parser.read(classBinding);
       assert obj != null;
 
       assertAll(

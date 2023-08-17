@@ -34,8 +34,8 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
-import gov.nist.secauto.metaschema.core.model.IRootAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.AbstractSchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
@@ -93,7 +93,7 @@ public class JsonSchemaGenerator
   @Override
   protected void generateSchema(JsonGenerationState state) {
     // analyze all definitions
-    List<IRootAssemblyDefinition> rootAssemblyDefinitions = analyzeDefinitions(
+    List<IAssemblyDefinition> rootAssemblyDefinitions = analyzeDefinitions(
         state,
         (entry, definition) -> {
           assert entry != null;
@@ -160,7 +160,7 @@ public class JsonSchemaGenerator
 
   @NonNull
   private static Map<String, ObjectNode> generateRootProperties(
-      @NonNull IRootAssemblyDefinition definition,
+      @NonNull IAssemblyDefinition definition,
       @NonNull JsonGenerationState state) {
     Map<String, ObjectNode> properties = new LinkedHashMap<>(); // NOPMD no concurrent access
 
@@ -177,19 +177,19 @@ public class JsonSchemaGenerator
 
   private static class RootPropertyEntry {
     @NonNull
-    private final IRootAssemblyDefinition definition;
+    private final IAssemblyDefinition definition;
     @NonNull
     private final Map<String, ObjectNode> properties;
 
     public RootPropertyEntry(
-        @NonNull IRootAssemblyDefinition definition,
+        @NonNull IAssemblyDefinition definition,
         @NonNull JsonGenerationState state) {
       this.definition = definition;
       this.properties = generateRootProperties(definition, state);
     }
 
     @NonNull
-    protected IRootAssemblyDefinition getDefinition() {
+    protected IAssemblyDefinition getDefinition() {
       return definition;
     }
 

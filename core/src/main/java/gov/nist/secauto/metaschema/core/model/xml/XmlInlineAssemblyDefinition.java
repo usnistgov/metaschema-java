@@ -205,6 +205,7 @@ class XmlInlineAssemblyDefinition
       });
     }
 
+    // REFACTOR: get rid of this and similar methods
     @Override
     public boolean isInline() {
       return true;

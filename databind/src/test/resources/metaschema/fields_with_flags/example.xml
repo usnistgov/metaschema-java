@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<top-level xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://csrc.nist.gov/ns/metaschema/testing/fields/with/flags schema.xsd"
-  xmlns="http://csrc.nist.gov/ns/metaschema/testing/fields/with/flags" id="test">
+<top-level xmlns="http://csrc.nist.gov/ns/metaschema/testing/fields/with/flags" id="test">
   <complex-field1 id="complex-field1">test-string</complex-field1>
   <cmplx-fd2 id="complex-field2-1">test-string2</cmplx-fd2>
   <complex-fields3>

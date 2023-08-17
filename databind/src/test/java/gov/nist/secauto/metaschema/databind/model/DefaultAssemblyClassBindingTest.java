@@ -52,10 +52,8 @@ class DefaultAssemblyClassBindingTest
 
       IAssemblyClassBinding classBinding = getRootAssemblyClassBinding();
 
-      RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
-
       try (JsonParser parser = newJsonParser(reader)) {
-        Object value = new MetaschemaJsonReader(parser).read(root);
+        Object value = new MetaschemaJsonReader(parser).read(classBinding);
         assertNotNull(value, "root was null");
       }
     }
