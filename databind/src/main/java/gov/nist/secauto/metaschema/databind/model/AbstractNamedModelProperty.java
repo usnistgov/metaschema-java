@@ -75,7 +75,10 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
   private final Field field;
   @NonNull
   private final IGroupAs groupAs;
+  @NonNull
   private final Lazy<IModelPropertyInfo> propertyInfo;
+  @NonNull
+  private final Lazy<IDataTypeHandler> dataTypeHandler;
 
   /**
    * Construct a new bound model instance based on a Java property. The name of
@@ -102,11 +105,18 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
     // GroupAs.class.getName()));
     // }
     this.groupAs = annotation == null ? SINGLETON_GROUP_AS : new SimpleGroupAs(annotation, parentClassBinding);
-    this.propertyInfo = Lazy.lazy(() -> IModelPropertyInfo.newPropertyInfo(this, () -> newDataTypeHandler()));
+    this.propertyInfo = ObjectUtils.notNull(Lazy.lazy(() -> IModelPropertyInfo.newPropertyInfo(this)));
+    this.dataTypeHandler = ObjectUtils.notNull(Lazy.lazy(this::newDataTypeHandler));
+
   }
 
   // REFACTOR: remove this method if possible
   protected abstract IDataTypeHandler newDataTypeHandler();
+
+  @Override
+  public IDataTypeHandler getDataTypeHandler() {
+    return ObjectUtils.notNull(dataTypeHandler.get());
+  }
 
   @Override
   public Field getField() {
@@ -185,7 +195,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
 
   @Override
   public Object copyItem(Object fromItem, Object toInstance) throws BindingException {
-    return getPropertyInfo().getDataTypeHandler().copyItem(fromItem, toInstance);
+    return getDataTypeHandler().copyItem(fromItem, toInstance);
   }
 
   /**

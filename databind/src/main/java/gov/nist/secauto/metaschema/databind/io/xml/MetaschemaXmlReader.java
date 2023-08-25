@@ -381,7 +381,7 @@ public class MetaschemaXmlReader
 
       IPropertyCollector collector = instance.getPropertyInfo().newPropertyCollector();
       // There are zero or more named values based on cardinality
-      instance.getPropertyInfo().readValue(collector, parentObject, currentStart, this);
+      instance.getPropertyInfo().readValues(collector, parentObject, currentStart, this);
 
       Object value = collector.getValue();
 
@@ -447,7 +447,7 @@ public class MetaschemaXmlReader
         reader.nextEvent();
 
         // consume the value
-        retval = instance.getPropertyInfo().getDataTypeHandler().read(parentObject, nextStart, this);
+        retval = instance.getDataTypeHandler().readItem(parentObject, nextStart, this);
 
         // consume the end element
         XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, nextQName);
@@ -505,7 +505,7 @@ public class MetaschemaXmlReader
     }
 
     // consume the value
-    Object retval = instance.getPropertyInfo().getDataTypeHandler().read(parentObject, currentStart, this);
+    Object retval = instance.getDataTypeHandler().readItem(parentObject, currentStart, this);
 
     if (parseWrapper) {
       // consume the end element

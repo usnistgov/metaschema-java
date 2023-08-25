@@ -31,7 +31,6 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
@@ -39,6 +38,7 @@ import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
 import gov.nist.secauto.metaschema.databind.model.info.IPropertyCollector;
 
@@ -46,15 +46,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class MetaschemaJsonReader
     implements IJsonParsingContext {
@@ -175,15 +171,12 @@ public class MetaschemaJsonReader
       if (fieldName.equals(rootFieldName)) {
         // process the object value, bound to the requested class
         JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
-        JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
 
-        instance = readDefinitionValue(
-            targetDefinition,
-            null,
-            false);
+        // Make a temporary data type handler for the top-level definition
+        IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(targetDefinition);
 
-        // advance past the end object
-        JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
+        // read the top-level definition
+        instance = dataTypeHandler.readItem(null, this);
 
         // stop now, since we found the root field
         break;
@@ -275,7 +268,7 @@ public class MetaschemaJsonReader
       IPropertyCollector collector = info.newPropertyCollector();
 
       // let the property info parse the value
-      info.readValue(collector, parentObject, this);
+      info.readValues(collector, parentObject, this);
 
       // get the underlying value
       value = collector.getValue();
@@ -292,152 +285,34 @@ public class MetaschemaJsonReader
     return value;
   }
 
-  @NonNull
-  private static Map<String, ? extends IBoundNamedInstance> getInstancesToParse(
-      @NonNull IClassBinding targetDefinition,
-      boolean requiresJsonKey) {
-    Collection<? extends IBoundFlagInstance> flags = targetDefinition.getFlagInstances();
-    int flagCount = flags.size() - (requiresJsonKey ? 1 : 0);
-
-    @SuppressWarnings("resource") Stream<? extends IBoundNamedInstance> instanceStream;
-    if (targetDefinition instanceof IAssemblyClassBinding) {
-      instanceStream = ((IAssemblyClassBinding) targetDefinition).getModelInstances().stream();
-      // .flatMap((instance) -> {
-      // return instance instanceof IChoiceInstance ?
-      // ((IChoiceInstance)instance).getNamedModelInstances().stream()
-      // });
-    } else if (targetDefinition instanceof IFieldClassBinding) {
-      IFieldClassBinding targetFieldDefinition = (IFieldClassBinding) targetDefinition;
-
-      IBoundFlagInstance jsonValueKeyFlag = targetFieldDefinition.getJsonValueKeyFlagInstance();
-      if (jsonValueKeyFlag == null && flagCount > 0) {
-        // the field value is handled as named field
-        IBoundFieldValueInstance fieldValue = targetFieldDefinition.getFieldValueInstance();
-        instanceStream = Stream.of(fieldValue);
-      } else {
-        // only the value, with no flags or a JSON value key flag
-        instanceStream = Stream.empty();
-      }
-    } else {
-      throw new UnsupportedOperationException(
-          String.format("Unsupported class binding type: %s", targetDefinition.getClass().getName()));
-    }
-
-    if (requiresJsonKey) {
-      IBoundFlagInstance jsonKey = targetDefinition.getJsonKeyFlagInstance();
-      assert jsonKey != null;
-      instanceStream = Stream.concat(
-          flags.stream().filter((flag) -> !jsonKey.equals(flag)),
-          instanceStream);
-    } else {
-      instanceStream = Stream.concat(
-          flags.stream(),
-          instanceStream);
-    }
-    return ObjectUtils.notNull(instanceStream.collect(
-        Collectors.toMap(
-            IBoundNamedInstance::getJsonName,
-            Function.identity())));
-  }
-
+  // @SuppressFBWarnings(value = "UC_USELESS_CONDITION", justification = "false
+  // positive")
   @Override
-  public <T> T readDefinitionValue(IClassBinding targetDefinition, Object parentObject, boolean requiresJsonKey)
-      throws IOException {
-    Object targetObject;
-    try {
-      targetObject = targetDefinition.newInstance();
-      targetDefinition.callBeforeDeserialize(targetObject, parentObject);
-    } catch (BindingException ex) {
-      throw new IOException(ex);
-    }
-
-    readDefinitionValueContents(targetDefinition, targetObject, requiresJsonKey);
-
-    try {
-      targetDefinition.callAfterDeserialize(targetObject, parentObject);
-    } catch (BindingException ex) {
-      throw new IOException(ex);
-    }
-    return ObjectUtils.asType(targetObject);
-  }
-
-  @SuppressFBWarnings(value = "UC_USELESS_CONDITION", justification = "false positive")
-  private void readDefinitionValueContents(
-      @NonNull IClassBinding targetDefinition,
-      @NonNull Object targetObject,
-      boolean requiresJsonKey) throws IOException {
-    boolean keyObjectWrapper = false;
-    if (requiresJsonKey) {
-      readDefinitionJsonKey(targetDefinition, targetObject);
-
-      keyObjectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
-      if (keyObjectWrapper) {
-        JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-      }
-    }
-
-    if (keyObjectWrapper || JsonToken.FIELD_NAME.equals(parser.currentToken())) {
-      Map<String, ? extends IBoundNamedInstance> properties = getInstancesToParse(targetDefinition, requiresJsonKey);
-      readDefinitionContents(targetDefinition, targetObject, properties);
-    } else if (parser.currentToken().isScalarValue()) {
-      // this is a value
-      IFieldClassBinding fieldDefinition = (IFieldClassBinding) targetDefinition;
-      Object fieldValue = fieldDefinition.getJavaTypeAdapter().parse(parser);
-      fieldDefinition.getFieldValueInstance().setValue(targetObject, fieldValue);
-    }
-
-    if (keyObjectWrapper) {
-      // advance past the END_OBJECT for the JSON key
-      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
-    }
-  }
-
-  private void readDefinitionJsonKey(
-      @NonNull IClassBinding targetDefinition,
-      @NonNull Object targetObject) throws IOException {
-    IBoundFlagInstance jsonKey = targetDefinition.getJsonKeyFlagInstance();
-    if (jsonKey == null) {
-      throw new IOException(String.format("JSON key not defined for object '%s'%s",
-          targetDefinition.toCoordinates(), JsonUtil.generateLocationMessage(parser)));
-    }
-
-    // the field will be the JSON key
-    String key = ObjectUtils.notNull(parser.getCurrentName());
-
-    Object value = jsonKey.getDefinition().getJavaTypeAdapter().parse(key);
-    jsonKey.setValue(targetObject, value.toString());
-
-    // advance past the FIELD_NAME
-    JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
-  }
-
-  @SuppressWarnings({
-      "PMD.NullAssignment", // readability
-      "PMD.CyclomaticComplexity", // acceptable
-      "PMD.CognitiveComplexity" // acceptable
-  })
-  private void readDefinitionContents(
-      @NonNull IClassBinding targetDefinition,
-      @NonNull Object targetObject,
-      @NonNull Map<String, ? extends IBoundNamedInstance> instances) throws IOException {
-
+  public void readDefinitionValue(
+      IClassBinding targetDefinition,
+      Object targetObject,
+      Map<String, ? extends IBoundNamedInstance> instances) throws IOException {
     IBoundFlagInstance valueKeyFlag = null;
     if (targetDefinition instanceof IFieldClassBinding) {
       IFieldClassBinding targetFieldDefinition = (IFieldClassBinding) targetDefinition;
       valueKeyFlag = targetFieldDefinition.getJsonValueKeyFlagInstance();
     }
 
-    while (!JsonToken.END_OBJECT.equals(parser.currentToken())) {
+    // make a copy, since we use the remaining values to initialize default values
+    Map<String, ? extends IBoundNamedInstance> remainingInstances = new HashMap<>(instances); // NOPMD not concurrent
 
+    // handle each property
+    while (!JsonToken.END_OBJECT.equals(parser.currentToken())) {
       boolean handled = false;
       String propertyName = parser.getCurrentName();
       assert propertyName != null;
 
       if (JsonToken.FIELD_NAME.equals(parser.currentToken())) {
-        IBoundNamedInstance property = instances.get(propertyName);
+        // found a matching property
+        IBoundNamedInstance property = remainingInstances.get(propertyName);
         if (property != null) {
           handled = readInstance(property, targetObject);
-          instances.remove(propertyName);
+          remainingInstances.remove(propertyName);
         }
       } else {
         throw new IOException(
@@ -445,7 +320,6 @@ public class MetaschemaJsonReader
       }
 
       if (!handled) {
-        // LOGGER.atInfo().log("Current token: " + JsonUtil.toString(parser));
         if (valueKeyFlag != null) {
           // Handle JSON value key flag case
           IFieldClassBinding targetFieldDefinition = (IFieldClassBinding) targetDefinition;
@@ -459,12 +333,13 @@ public class MetaschemaJsonReader
           fieldValue.setValue(
               targetObject,
               fieldValue.getJavaTypeAdapter().parse(parser));
-          valueKeyFlag = null;
+          valueKeyFlag = null; // NOPMD used as boolean check to avoid value key check
         } else if (!getProblemHandler().handleUnknownProperty(
             targetDefinition,
             targetObject,
             propertyName,
             this)) {
+          // handle unrecognized property case
           if (LOGGER.isWarnEnabled()) {
             LOGGER.warn("Unrecognized property named '{}' at '{}'", propertyName,
                 JsonUtil.toString(ObjectUtils.notNull(parser.getCurrentLocation())));
@@ -475,11 +350,11 @@ public class MetaschemaJsonReader
       }
     }
 
-    if (!instances.isEmpty()) {
+    if (!remainingInstances.isEmpty()) {
       getProblemHandler().handleMissingInstances(
           targetDefinition,
           targetObject,
-          ObjectUtils.notNull(instances.values()));
+          ObjectUtils.notNull(remainingInstances.values()));
     }
   }
 }

@@ -30,6 +30,7 @@ package gov.nist.secauto.metaschema.core.model;
  * A marker interface for a choice of allowed instances in a Metachema.
  */
 public interface IChoiceInstance extends IModelInstance, IModelContainer {
+
   /**
    * Provides the Metaschema model type of "CHOICE".
    *

@@ -29,10 +29,11 @@ package gov.nist.secauto.metaschema.databind.io.json;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import gov.nist.secauto.metaschema.databind.io.IWritingContext;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -41,19 +42,20 @@ public interface IJsonWritingContext extends IWritingContext<JsonGenerator> {
    * Write a set of JSON values described by the provided
    * {@code targetDefinition}.
    *
+   * @param classBinding
+   *
    * @param targetDefinition
    *          the bound Metaschema definition describing the structure of the JSON
    *          data to write
-   * @param targetObjects
+   * @param targetObject
    *          the Java object data to write
-   * @param writeObjectWrapper
-   *          if {@code true} the JSON values will be wrapped in a JSON start and
-   *          end object, or {@code false} otherwise
+   * @param instances
+   *          the set of named instances to write
    * @throws IOException
    *           if an error occurred while writing the JSON
    */
-  void writeDefinitionValues(
-      @NonNull IClassBinding targetDefinition,
-      @NonNull Collection<? extends Object> targetObjects,
-      boolean writeObjectWrapper) throws IOException;
+  void writeDefinitionValue(
+      @NonNull IClassBinding classBinding,
+      @NonNull Object targetObject,
+      @NonNull Map<String, ? extends IBoundNamedInstance> instances) throws IOException;
 }

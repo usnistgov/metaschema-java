@@ -47,7 +47,6 @@ import org.codehaus.stax2.XMLEventReader2;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
-import java.util.function.Supplier;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -60,9 +59,8 @@ class ListPropertyInfo
     extends AbstractModelPropertyInfo {
 
   public ListPropertyInfo(
-      @NonNull IBoundNamedModelInstance property,
-      @NonNull Supplier<IDataTypeHandler> dataTypeHandlerSupplier) {
-    super(property, dataTypeHandlerSupplier);
+      @NonNull IBoundNamedModelInstance property) {
+    super(property);
   }
 
   @Override
@@ -94,7 +92,7 @@ class ListPropertyInfo
   }
 
   @Override
-  public boolean readValue(
+  public boolean readValues(
       IPropertyCollector collector,
       Object parentInstance,
       StartElement start,
@@ -132,7 +130,7 @@ class ListPropertyInfo
   })
 
   @Override
-  public void readValue(
+  public void readValues(
       IPropertyCollector collector,
       Object parentInstance,
       IJsonParsingContext context)
@@ -146,7 +144,7 @@ class ListPropertyInfo
 
       // parse items
       while (!JsonToken.END_ARRAY.equals(parser.currentToken())) {
-        Object value = getDataTypeHandler().read(parentInstance, false, context);
+        Object value = getProperty().getDataTypeHandler().readItem(parentInstance, context);
         collector.add(value);
       }
 
@@ -160,7 +158,7 @@ class ListPropertyInfo
     }
     default:
       // this is a singleton, just parse the value as a single item
-      Object value = getDataTypeHandler().read(parentInstance, false, context);
+      Object value = getProperty().getDataTypeHandler().readItem(parentInstance, context);
       collector.add(value);
     }
   }
@@ -190,7 +188,10 @@ class ListPropertyInfo
       writer.writeStartArray();
     } // only other option is a singleton value, write item
 
-    getDataTypeHandler().writeItems(items, true, context);
+    for (Object targetObject : items) {
+      assert targetObject != null;
+      getProperty().getDataTypeHandler().writeItem(targetObject, context);
+    }
 
     if (writeArray) {
       // write the end array

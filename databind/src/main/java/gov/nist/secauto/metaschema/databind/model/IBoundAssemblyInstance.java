@@ -44,7 +44,7 @@ public interface IBoundAssemblyInstance extends IBoundNamedModelInstance, IAssem
     if (classBinding == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", itemType.getName()));
     }
-    return new DefaultAssemblyProperty(field, (IAssemblyClassBinding) classBinding, parentDefinition);
+    return new ClassBindingAssemblyProperty(field, (IAssemblyClassBinding) classBinding, parentDefinition);
   }
 
   @Override

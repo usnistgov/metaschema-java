@@ -29,35 +29,31 @@ package gov.nist.secauto.metaschema.databind.io.json;
 import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.databind.io.IParsingContext;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import java.io.IOException;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IJsonParsingContext extends IParsingContext<JsonParser, IJsonProblemHandler> {
 
   /**
    * Parse a JSON value described by the provided {@code definition}.
    *
-   * @param <T>
-   *          the resulting value type
    * @param targetDefinition
    *          the bound Metaschema definition describing the structure of the JSON
    *          data to parse
-   * @param parentInstance
-   *          the parent Java object that will contain this data
-   * @param requiresJsonKey
-   *          if {@code true} the data will have a JSON key, or {@code false} the
-   *          data will not have a JSON key
-   * @return the Java object containing the parsed data
+   * @param targetObject
+   *          the Java object that will contain this data
+   * @param instances
+   *          the set of named instances to read
    * @throws IOException
    *           if an error occurred while parsing the JSON
    */
-  @NonNull
-  <T> T readDefinitionValue(
+  void readDefinitionValue(
       @NonNull IClassBinding targetDefinition,
-      @Nullable Object parentInstance,
-      boolean requiresJsonKey) throws IOException;
+      @NonNull Object targetObject,
+      @NonNull Map<String, ? extends IBoundNamedInstance> instances) throws IOException;
 }

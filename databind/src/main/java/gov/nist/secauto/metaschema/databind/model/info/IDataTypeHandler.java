@@ -35,10 +35,10 @@ import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import java.io.IOException;
-import java.util.Collection;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -51,8 +51,15 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface IDataTypeHandler {
   @NonNull
   static IDataTypeHandler newDataTypeHandler(
+      @NonNull IBoundNamedModelInstance targetInstance,
       @NonNull IClassBinding classBinding) {
-    return new ClassDataTypeHandler(classBinding);
+    return new ClassDataTypeHandler(targetInstance, classBinding);
+  }
+
+  @NonNull
+  static IDataTypeHandler newDataTypeHandler(
+      @NonNull IClassBinding classBinding) {
+    return new ClassDataTypeHandler(null, classBinding);
   }
 
   @NonNull
@@ -89,17 +96,19 @@ public interface IDataTypeHandler {
    */
   boolean isUnwrappedValueAllowedInXml();
 
+  boolean isJsonKeyRequired();
+
   /**
    * Parse and return the set of items from the JSON stream.
    * <p>
    * An item is a complete value, which can be a {@link JsonToken#START_OBJECT},
    * or a value token.
    *
+   * @param <T>
+   *          the Java type of the bound object described by this class
    * @param parentObject
-   *          the parent Java object to use for serialization callbacks
-   * @param requiresJsonKey
-   *          when {@code true} indicates that the item will have a JSON key, or
-   *          {@code false} otherwise
+   *          the parent Java object to use for serialization callbacks, or
+   *          {@code null} if there is no parent
    * @param context
    *          the JSON/YAML parser
    * @return the Java object representing the set of parsed items
@@ -107,9 +116,8 @@ public interface IDataTypeHandler {
    *           if an error occurred while parsing
    */
   @NonNull
-  Object read(
-      @NonNull Object parentObject,
-      boolean requiresJsonKey,
+  <T> T readItem(
+      @Nullable Object parentObject,
       @NonNull IJsonParsingContext context) throws IOException;
 
   /**
@@ -128,26 +136,23 @@ public interface IDataTypeHandler {
    *           if an error occurred while generating the XML
    */
   @NonNull
-  Object read(
+  Object readItem(
       @NonNull Object parentObject,
       @NonNull StartElement parentName,
       @NonNull IXmlParsingContext context) throws IOException, XMLStreamException;
 
   /**
-   * Write the provided collection of items as JSON.
+   * Write the provided {@code targetObject} as JSON.
    *
-   * @param items
-   *          the collection of items to write
-   * @param writeObjectWrapper
-   *          if {@code true} an object should be written before writing the item
+   * @param targetObject
+   *          the data to write
    * @param context
    *          the JSON writing context
    * @throws IOException
    *           if an error occurred while writing
    */
-  void writeItems(
-      @NonNull Collection<? extends Object> items,
-      boolean writeObjectWrapper,
+  void writeItem(
+      @NonNull Object targetObject,
       @NonNull IJsonWritingContext context) throws IOException;
 
   /**
@@ -164,7 +169,7 @@ public interface IDataTypeHandler {
    * @throws XMLStreamException
    *           if an error occurred while generating the XML
    */
-  void write(
+  void writeItem(
       @NonNull Object value,
       @NonNull QName currentParentName,
       @NonNull IXmlWritingContext context) throws IOException, XMLStreamException;

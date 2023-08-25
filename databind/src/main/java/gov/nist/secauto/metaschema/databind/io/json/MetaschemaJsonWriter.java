@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.databind.io.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
@@ -36,15 +35,14 @@ import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Map;
-import java.util.function.Predicate;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -95,209 +93,39 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
 
     writer.writeFieldName(targetDefinition.getRootJsonName());
 
-    writeDefinitionValues(targetDefinition, CollectionUtil.singleton(targetObject), true);
+    // Make a temporary data type handler for the root class
+    IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(targetDefinition);
+    dataTypeHandler.writeItem(targetObject, this);
 
     // end of root object
     writer.writeEndObject();
   }
 
   @Override
-  public void writeDefinitionValues(
+  public void writeDefinitionValue(
       IClassBinding targetDefinition,
-      Collection<? extends Object> targetObjects,
-      boolean writeObjectWrapper)
-      throws IOException {
-    if (targetDefinition instanceof IAssemblyClassBinding) {
-      writeDefinitionValues((IAssemblyClassBinding) targetDefinition, targetObjects, writeObjectWrapper);
-    } else if (targetDefinition instanceof IFieldClassBinding) {
-      writeDefinitionValues((IFieldClassBinding) targetDefinition, targetObjects, writeObjectWrapper);
-    } else {
-      throw new UnsupportedOperationException(
-          String.format("Unsupported class binding type: %s", targetDefinition.getClass().getName()));
-    }
-  }
-
-  /**
-   * Write a set of JSON values described by the provided
-   * {@code targetDefinition}.
-   *
-   * @param targetDefinition
-   *          the bound Metaschema definition describing the structure of the JSON
-   *          data to write
-   * @param targetObjects
-   *          the Java object data to write
-   * @param writeObjectWrapper
-   *          if {@code true} the JSON values will be wrapped in a JSON start and
-   *          end object, or {@code false} otherwise
-   * @throws IOException
-   *           if an error occurred while writing the JSON
-   */
-  protected void writeDefinitionValues(
-      @NonNull IAssemblyClassBinding targetDefinition,
-      Collection<? extends Object> targetObjects,
-      boolean writeObjectWrapper)
-      throws IOException {
-    for (Object item : targetObjects) {
-      assert item != null;
-      writeDefinitionValue(targetDefinition, item, writeObjectWrapper);
-    }
-  }
-
-  /**
-   * Write a set of JSON values described by the provided
-   * {@code targetDefinition}.
-   *
-   * @param targetDefinition
-   *          the bound Metaschema definition describing the structure of the JSON
-   *          data to write
-   * @param targetObjects
-   *          the Java object data to write
-   * @param writeObjectWrapper
-   *          if {@code true} the JSON values will be wrapped in a JSON start and
-   *          end object, or {@code false} otherwise
-   * @throws IOException
-   *           if an error occurred while writing the JSON
-   */
-  protected void writeDefinitionValues(// NOPMD
-      @NonNull IFieldClassBinding targetDefinition,
-      @NonNull Collection<? extends Object> targetObjects,
-      boolean writeObjectWrapper)
-      throws IOException {
-
-    // REFACTOR: reduce the complexity of this method
-    if (targetObjects.isEmpty()) {
-      return;
+      Object targetObject,
+      Map<String, ? extends IBoundNamedInstance> instances) throws IOException {
+    for (IBoundNamedInstance property : instances.values()) {
+      assert property != null;
+      writeInstance(property, targetObject);
     }
 
-    Predicate<IBoundFlagInstance> flagFilter = null;
-
-    IBoundFlagInstance jsonKey = targetDefinition.getJsonKeyFlagInstance();
-    if (jsonKey != null) {
-      flagFilter = (flag) -> {
-        return !jsonKey.equals(flag);
-      };
-    }
-
-    IBoundFlagInstance jsonValueKey = targetDefinition.getJsonValueKeyFlagInstance();
-    if (jsonValueKey != null) {
-      if (flagFilter == null) {
-        flagFilter = (flag) -> {
-          return !jsonValueKey.equals(flag);
-        };
-      } else {
-        flagFilter = flagFilter.and((flag) -> {
-          return !jsonValueKey.equals(flag);
-        });
-      }
-    }
-
-    Map<String, ? extends IBoundNamedInstance> properties = targetDefinition.getNamedInstances(flagFilter);
-
-    for (Object item : targetObjects) {
-      assert item != null;
-      if (writeObjectWrapper) {
-        writer.writeStartObject();
-      }
-
-      if (jsonKey != null) {
-        // if there is a json key, the first field will be the key
-        Object flagValue = jsonKey.getValue(item);
-        String key = jsonKey.getValueAsString(flagValue);
-        if (key == null) {
-          throw new IOException(new NullPointerException("Null key value")); // NOPMD - intentional
-        }
-        writer.writeFieldName(key);
-
-        // next the value will be a start object
-        writer.writeStartObject();
-      }
-
-      for (IBoundNamedInstance property : properties.values()) {
-        assert property != null;
-        writeInstance(property, item);
-      }
-
-      IBoundFieldValueInstance fieldValueInstance = targetDefinition.getFieldValueInstance();
-      Object fieldValue = fieldValueInstance.getValue(item);
+    if (targetDefinition instanceof IFieldClassBinding) {
+      IFieldClassBinding fieldDefinition = (IFieldClassBinding) targetDefinition;
+      IBoundFieldValueInstance fieldValueInstance = fieldDefinition.getFieldValueInstance();
+      Object fieldValue = fieldValueInstance.getValue(targetObject);
       if (fieldValue != null) {
         String valueKeyName;
+        IBoundFlagInstance jsonValueKey = fieldDefinition.getJsonValueKeyFlagInstance();
         if (jsonValueKey != null) {
-          valueKeyName = jsonValueKey.getValueAsString(jsonValueKey.getValue(item));
+          valueKeyName = jsonValueKey.getValueAsString(jsonValueKey.getValue(targetObject));
         } else {
           valueKeyName = fieldValueInstance.getJsonValueKeyName();
         }
         writer.writeFieldName(valueKeyName);
         fieldValueInstance.getJavaTypeAdapter().writeJsonValue(fieldValue, writer);
       }
-
-      if (jsonKey != null) {
-        writer.writeEndObject();
-      }
-
-      if (writeObjectWrapper) {
-        writer.writeEndObject();
-      }
-    }
-  }
-
-  /**
-   * Serializes the provided instance in JSON.
-   *
-   * @param targetDefinition
-   *          the definition describing the data to write
-   * @param targetObject
-   *          the instance to serialize
-   * @param writeObjectWrapper
-   *          {@code true} if the start and end object should be written, or
-   *          {@code false} otherwise
-   * @throws IOException
-   *           if an error occurs while writing to the output context
-   * @throws NullPointerException
-   *           if there is a JSON key configured and the key property's value is
-   *           {@code null}
-   */
-  protected void writeDefinitionValue(
-      @NonNull IAssemblyClassBinding targetDefinition,
-      @NonNull Object targetObject,
-      boolean writeObjectWrapper)
-      throws IOException {
-    if (writeObjectWrapper) {
-      writer.writeStartObject();
-    }
-
-    IBoundFlagInstance jsonKey = targetDefinition.getJsonKeyFlagInstance();
-    Map<String, ? extends IBoundNamedInstance> properties;
-    if (jsonKey == null) {
-      properties = targetDefinition.getNamedInstances(null);
-    } else {
-      properties = targetDefinition.getNamedInstances((flag) -> {
-        return !jsonKey.equals(flag);
-      });
-
-      // if there is a json key, the first field will be the key
-      Object flagValue = jsonKey.getValue(targetObject);
-      String key = jsonKey.getValueAsString(flagValue);
-      if (key == null) {
-        throw new IOException(new NullPointerException("Null key value"));
-      }
-      writer.writeFieldName(key);
-
-      // next the value will be a start object
-      writer.writeStartObject();
-    }
-
-    for (IBoundNamedInstance property : properties.values()) {
-      assert property != null;
-      writeInstance(property, targetObject);
-    }
-
-    if (jsonKey != null) {
-      // write the END_OBJECT for the JSON key value
-      writer.writeEndObject();
-    }
-
-    if (writeObjectWrapper) {
-      writer.writeEndObject();
     }
   }
 

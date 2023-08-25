@@ -28,17 +28,16 @@ package gov.nist.secauto.metaschema.databind.io.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
-import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -135,13 +134,11 @@ public class DefaultJsonDeserializer<CLASS>
 
         retval = INodeItemFactory.instance().newDocumentNodeItem(classBinding, documentUri, value);
       } else {
-        JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
+        // Make a temporary data type handler for the top-level definition
+        IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(classBinding);
 
-        @SuppressWarnings("unchecked") CLASS value
-            = (CLASS) parser.readDefinitionValue(classBinding, null, false);
-
-        // advance past the end object
-        JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
+        // read the top-level definition
+        CLASS value = dataTypeHandler.readItem(null, parser);
 
         retval = INodeItemFactory.instance().newAssemblyNodeItem(classBinding, documentUri, value);
       }

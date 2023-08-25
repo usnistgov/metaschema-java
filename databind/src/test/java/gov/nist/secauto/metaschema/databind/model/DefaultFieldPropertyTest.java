@@ -35,12 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
-import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.json.MetaschemaJsonReader;
+import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.databind.model.test.MultiFieldAssembly;
 import gov.nist.secauto.metaschema.databind.model.test.SimpleAssembly;
 
@@ -103,9 +102,11 @@ class DefaultFieldPropertyTest {
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
-      JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
-      MultiFieldAssembly obj = parser.readDefinitionValue(classBinding, null, false);
-      JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
+      // Make a temporary data type handler for the top-level definition
+      IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(classBinding);
+
+      // read the top-level definition
+      MultiFieldAssembly obj = dataTypeHandler.readItem(null, parser);
 
       assertAll(
           () -> assertEquals("field1value", obj.getField1()),
@@ -137,9 +138,11 @@ class DefaultFieldPropertyTest {
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
-      JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
-      MultiFieldAssembly obj = parser.readDefinitionValue(classBinding, null, false);
-      JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
+      // Make a temporary data type handler for the top-level definition
+      IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(classBinding);
+
+      // read the top-level definition
+      MultiFieldAssembly obj = dataTypeHandler.readItem(null, parser);
 
       assertAll(
           () -> assertNull(obj.getField1()),
@@ -164,9 +167,11 @@ class DefaultFieldPropertyTest {
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
-      JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
-      MultiFieldAssembly obj = parser.readDefinitionValue(classBinding, null, false);
-      JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
+      // Make a temporary data type handler for the top-level definition
+      IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(classBinding);
+
+      // read the top-level definition
+      MultiFieldAssembly obj = dataTypeHandler.readItem(null, parser);
 
       assertAll(
           () -> assertEquals("theValue", obj.getField3().getValue()));
@@ -189,9 +194,11 @@ class DefaultFieldPropertyTest {
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
-      JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
-      MultiFieldAssembly obj = parser.readDefinitionValue(classBinding, null, false);
-      JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
+      // Make a temporary data type handler for the top-level definition
+      IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(classBinding);
+
+      // read the top-level definition
+      MultiFieldAssembly obj = dataTypeHandler.readItem(null, parser);
 
       assertAll(
           () -> assertEquals("theValue", obj.getField4().getValue()));

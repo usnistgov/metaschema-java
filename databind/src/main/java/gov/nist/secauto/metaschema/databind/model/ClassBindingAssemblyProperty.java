@@ -30,20 +30,23 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
+import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 
 import java.lang.reflect.Field;
+import java.util.Locale;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class DefaultAssemblyProperty
-    extends AbstractAssemblyProperty {
+class ClassBindingAssemblyProperty
+    extends AbstractNamedModelProperty
+    implements IBoundAssemblyInstance {
 
   @NonNull
   private final BoundAssembly assembly;
   @NonNull
   private final IAssemblyClassBinding definition;
 
-  protected DefaultAssemblyProperty(
+  protected ClassBindingAssemblyProperty(
       @NonNull Field field,
       @NonNull IAssemblyClassBinding definition,
       @NonNull IAssemblyClassBinding parentClassBinding) {
@@ -60,6 +63,17 @@ class DefaultAssemblyProperty
   @NonNull
   private BoundAssembly getAssemblyAnnotation() {
     return assembly;
+  }
+
+  @Override
+  protected IDataTypeHandler newDataTypeHandler() {
+    IClassBinding classBinding
+        = getParentClassBinding().getBindingContext().getClassBinding(getPropertyInfo().getItemType());
+    if (classBinding == null) {
+      throw new IllegalStateException(
+          String.format("Class '%s' is not bound", getPropertyInfo().getItemType().getClass().getName()));
+    }
+    return IDataTypeHandler.newDataTypeHandler(this, classBinding);
   }
 
   @Override
@@ -106,6 +120,15 @@ class DefaultAssemblyProperty
   @Override
   public Object defaultValue() {
     return getPropertyInfo().newPropertyCollector().getValue();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public String toCoordinates() {
+    return String.format("%s Instance(%s): %s",
+        getModelType().name().toLowerCase(Locale.ROOT),
+        getParentClassBinding().getBoundClass().getName(),
+        getName());
   }
 
 }

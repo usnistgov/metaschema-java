@@ -82,7 +82,7 @@ class ClassBindingFieldProperty
 
   @Override
   protected IDataTypeHandler newDataTypeHandler() {
-    return IDataTypeHandler.newDataTypeHandler(getDefinition());
+    return IDataTypeHandler.newDataTypeHandler(this, getDefinition());
   }
 
   @Override

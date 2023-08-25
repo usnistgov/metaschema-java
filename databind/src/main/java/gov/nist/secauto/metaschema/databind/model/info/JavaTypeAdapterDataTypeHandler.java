@@ -37,7 +37,6 @@ import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import java.io.IOException;
-import java.util.Collection;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -70,37 +69,36 @@ class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
     return getJavaTypeAdapter().isUnrappedValueAllowedInXml();
   }
 
-  @SuppressWarnings("resource") // not owned
   @Override
-  public Object read(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
+  public boolean isJsonKeyRequired() {
+    return false;
+  }
+
+  @SuppressWarnings({
+      "resource", // not owned
+      "unchecked" })
+  @Override
+  public <T> T readItem(Object parentInstance, IJsonParsingContext context)
       throws IOException {
-    if (requiresJsonKey) {
-      throw new IOException("A scalar datatype cannot have a JSON key.");
-    }
-    return getJavaTypeAdapter().parse(context.getReader());
+    return (T) getJavaTypeAdapter().parse(context.getReader());
   }
 
   @Override
-  public Object read(Object parentInstance, StartElement start, IXmlParsingContext context)
+  public Object readItem(Object parentInstance, StartElement start, IXmlParsingContext context)
       throws IOException, XMLStreamException {
     return getJavaTypeAdapter().parse(context.getReader());
   }
 
   @Override
-  public void write(Object item, QName currentParentName, IXmlWritingContext context)
+  public void writeItem(Object item, QName currentParentName, IXmlWritingContext context)
       throws IOException, XMLStreamException {
     getJavaTypeAdapter().writeXmlValue(item, currentParentName, context.getWriter());
   }
 
   @SuppressWarnings("resource") // resource not owned
   @Override
-  public void writeItems(
-      Collection<? extends Object> items,
-      boolean writeObjectWrapper,
-      IJsonWritingContext context) throws IOException {
-    for (Object item : items) {
-      getJavaTypeAdapter().writeJsonValue(ObjectUtils.requireNonNull(item), context.getWriter());
-    }
+  public void writeItem(Object targetObject, IJsonWritingContext context) throws IOException {
+    getJavaTypeAdapter().writeJsonValue(ObjectUtils.requireNonNull(targetObject), context.getWriter());
   }
 
   @Override

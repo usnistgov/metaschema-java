@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.databind.model;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
 
 import java.lang.reflect.Field;
@@ -76,6 +77,9 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
 
   @NonNull
   IModelPropertyInfo getPropertyInfo();
+
+  @NonNull
+  IDataTypeHandler getDataTypeHandler();
 
   /**
    * Get the item values associated with the provided value.

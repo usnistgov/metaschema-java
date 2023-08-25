@@ -41,7 +41,6 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -55,8 +54,7 @@ public interface IModelPropertyInfo {
 
   @NonNull
   static IModelPropertyInfo newPropertyInfo(
-      @NonNull IBoundNamedModelInstance instance,
-      @NonNull Supplier<IDataTypeHandler> dataTypeHandlerSupplier) {
+      @NonNull IBoundNamedModelInstance instance) {
     // create the property info
     Type type = instance.getType();
     Field field = instance.getField();
@@ -96,7 +94,7 @@ public interface IModelPropertyInfo {
               field.getType().getName(),
               Map.class.getName()));
         }
-        retval = new MapPropertyInfo(instance, dataTypeHandlerSupplier);
+        retval = new MapPropertyInfo(instance);
       } else {
         if (!List.class.isAssignableFrom(rawType)) {
           throw new IllegalArgumentException(String.format(
@@ -106,7 +104,7 @@ public interface IModelPropertyInfo {
               field.getType().getName(),
               List.class.getName()));
         }
-        retval = new ListPropertyInfo(instance, dataTypeHandlerSupplier);
+        retval = new ListPropertyInfo(instance);
       }
     } else {
       // single value case
@@ -118,7 +116,7 @@ public interface IModelPropertyInfo {
             instance.getParentClassBinding().getBoundClass().getName(),
             field.getType().getName()));
       }
-      retval = new SingletonPropertyInfo(instance, dataTypeHandlerSupplier);
+      retval = new SingletonPropertyInfo(instance);
     }
     return retval;
   }
@@ -142,10 +140,11 @@ public interface IModelPropertyInfo {
   Class<?> getItemType();
 
   @NonNull
-  IDataTypeHandler getDataTypeHandler();
-
-  @NonNull
   IPropertyCollector newPropertyCollector();
+
+  default boolean isJsonKeyRequired() {
+    return false;
+  }
 
   // TODO is the following needed?
   /**
@@ -163,13 +162,13 @@ public interface IModelPropertyInfo {
    * @throws IOException
    *           if there was an error when reading JSON data
    */
-  void readValue(
+  void readValues(
       @NonNull IPropertyCollector collector,
       @NonNull Object parentInstance,
       @NonNull IJsonParsingContext context)
       throws IOException;
 
-  boolean readValue(
+  boolean readValues(
       @NonNull IPropertyCollector collector,
       @NonNull Object parentInstance,
       @NonNull StartElement start,

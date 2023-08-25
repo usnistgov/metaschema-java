@@ -201,7 +201,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     writer.writeStartElement(currentParentName.getNamespaceURI(), currentParentName.getLocalPart());
 
     // write the value
-    targetInstance.getPropertyInfo().getDataTypeHandler().write(item, currentParentName, this);
+    targetInstance.getDataTypeHandler().writeItem(item, currentParentName, this);
 
     // write the end element
     writer.writeEndElement();
@@ -213,9 +213,9 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
       @NonNull QName parentName)
       throws XMLStreamException, IOException {
     // figure out how to parse the item
-    IDataTypeHandler handler = targetInstance.getPropertyInfo().getDataTypeHandler();
+    IDataTypeHandler handler = targetInstance.getDataTypeHandler();
 
-    // figure out if we need to parse the wrapper or not
+    // figure out if we need to write the wrapper or not
     boolean writeWrapper = targetInstance.isInXmlWrapped() || !handler.isUnwrappedValueAllowedInXml();
 
     QName currentParentName;
@@ -227,7 +227,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     }
 
     // write the value
-    handler.write(item, currentParentName, this);
+    handler.writeItem(item, currentParentName, this);
 
     if (writeWrapper) {
       writer.writeEndElement();

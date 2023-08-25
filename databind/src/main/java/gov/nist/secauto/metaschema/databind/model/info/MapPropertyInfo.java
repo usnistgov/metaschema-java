@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
@@ -50,7 +49,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -76,9 +74,13 @@ class MapPropertyInfo
   }
 
   public MapPropertyInfo(
-      @NonNull IBoundNamedModelInstance property,
-      @NonNull Supplier<IDataTypeHandler> dataTypeHandlerSupplier) {
-    super(property, dataTypeHandlerSupplier);
+      @NonNull IBoundNamedModelInstance property) {
+    super(property);
+  }
+
+  @Override
+  public boolean isJsonKeyRequired() {
+    return true;
   }
 
   @SuppressWarnings("null")
@@ -108,7 +110,7 @@ class MapPropertyInfo
   }
 
   @Override
-  public void readValue(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
+  public void readValues(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
       throws IOException {
     @SuppressWarnings("resource") // not owned
     JsonParser jsonParser = context.getReader(); // NOPMD - intentional
@@ -123,7 +125,7 @@ class MapPropertyInfo
       // a map item will always start with a FIELD_NAME, since this represents the key
       JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME);
 
-      Object value = getDataTypeHandler().read(parentInstance, true, context);
+      Object value = getProperty().getDataTypeHandler().readItem(parentInstance, context);
       collector.add(value);
 
       // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all
@@ -137,7 +139,7 @@ class MapPropertyInfo
   }
 
   @Override
-  public boolean readValue(IPropertyCollector collector, Object parentInstance, StartElement start,
+  public boolean readValues(IPropertyCollector collector, Object parentInstance, StartElement start,
       IXmlParsingContext context) throws IOException, XMLStreamException {
     QName qname = getProperty().getXmlQName();
     XMLEventReader2 eventReader = context.getReader();
@@ -175,17 +177,9 @@ class MapPropertyInfo
 
   @Override
   public void writeValues(Object parentInstance, IJsonWritingContext context) throws IOException {
-    Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
-
-    if (!items.isEmpty()) {
-      @SuppressWarnings("resource") // not owned
-      JsonGenerator writer = context.getWriter(); // NOPMD not closable here
-
-      writer.writeStartObject();
-
-      getDataTypeHandler().writeItems(items, false, context);
-
-      writer.writeEndObject();
+    for (Object targetObject : getItemsFromParentInstance(parentInstance)) {
+      assert targetObject != null;
+      getProperty().getDataTypeHandler().writeItem(targetObject, context);
     }
   }
 
@@ -212,7 +206,7 @@ class MapPropertyInfo
     private final IBoundFlagInstance jsonKey;
 
     protected MapPropertyCollector() {
-      IClassBinding classBinding = getDataTypeHandler().getClassBinding();
+      IClassBinding classBinding = getProperty().getDataTypeHandler().getClassBinding();
       this.jsonKey = classBinding == null ? null : classBinding.getJsonKeyFlagInstance();
       if (this.jsonKey == null) {
         throw new IllegalStateException("No JSON key found");

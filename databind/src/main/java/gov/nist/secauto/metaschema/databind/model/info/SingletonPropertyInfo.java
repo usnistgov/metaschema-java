@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
@@ -37,7 +36,6 @@ import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.function.Supplier;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -49,9 +47,8 @@ class SingletonPropertyInfo
     extends AbstractModelPropertyInfo {
 
   public SingletonPropertyInfo(
-      @NonNull IBoundNamedModelInstance property,
-      @NonNull Supplier<IDataTypeHandler> dataTypeHandlerSupplier) {
-    super(property, dataTypeHandlerSupplier);
+      @NonNull IBoundNamedModelInstance property) {
+    super(property);
   }
 
   @SuppressWarnings("null")
@@ -66,7 +63,7 @@ class SingletonPropertyInfo
   }
 
   @Override
-  public void readValue(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
+  public void readValues(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
       throws IOException {
 
     // JsonParser parser = context.getReader();
@@ -79,7 +76,7 @@ class SingletonPropertyInfo
     // JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
     // }
 
-    Object value = getDataTypeHandler().read(parentInstance, false, context);
+    Object value = getProperty().getDataTypeHandler().readItem(parentInstance, context);
     collector.add(value);
 
     // if (isObject) {
@@ -89,7 +86,7 @@ class SingletonPropertyInfo
   }
 
   @Override
-  public boolean readValue(IPropertyCollector collector, Object parentInstance, StartElement start,
+  public boolean readValues(IPropertyCollector collector, Object parentInstance, StartElement start,
       IXmlParsingContext context) throws IOException, XMLStreamException {
     boolean handled = true;
     Object value = context.readModelInstanceValue(getProperty(), parentInstance, start);
@@ -117,10 +114,10 @@ class SingletonPropertyInfo
   }
 
   @Override
-  public void writeValues(Object parentInstance, IJsonWritingContext context) throws IOException {
+  public void writeValues(Object parentObject, IJsonWritingContext context) throws IOException {
     IBoundNamedModelInstance property = getProperty();
-    getDataTypeHandler().writeItems(
-        CollectionUtil.singleton(ObjectUtils.requireNonNull(property.getValue(parentInstance))), true,
+    getProperty().getDataTypeHandler().writeItem(
+        ObjectUtils.notNull(property.getValue(parentObject)),
         context);
   }
 
