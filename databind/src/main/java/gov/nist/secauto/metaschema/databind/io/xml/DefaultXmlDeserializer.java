@@ -32,7 +32,6 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.core.util.AutoCloser;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 
@@ -61,14 +60,12 @@ public class DefaultXmlDeserializer<CLASS>
    * Construct a new Metaschema binding-based deserializer that reads XML-based
    * Metaschema content.
    *
-   * @param bindingContext
-   *          the Metaschema data binding context
    * @param classBinding
    *          the assembly class binding describing the Java objects this
    *          deserializer parses data into
    */
-  public DefaultXmlDeserializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
-    super(bindingContext, classBinding);
+  public DefaultXmlDeserializer(@NonNull IAssemblyClassBinding classBinding) {
+    super(classBinding);
     if (!classBinding.isRoot()) {
       throw new UnsupportedOperationException(
           String.format("The assembly '%s' is not a root assembly.", classBinding.getBoundClass().getName()));

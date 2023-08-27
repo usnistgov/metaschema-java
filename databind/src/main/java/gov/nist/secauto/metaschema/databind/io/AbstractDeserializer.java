@@ -35,7 +35,6 @@ import gov.nist.secauto.metaschema.core.model.constraint.DefaultConstraintValida
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintValidationHandler;
 import gov.nist.secauto.metaschema.core.model.constraint.LoggingConstraintValidationHandler;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 
 import java.io.IOException;
@@ -59,14 +58,12 @@ public abstract class AbstractDeserializer<CLASS>
   /**
    * Construct a new deserializer.
    *
-   * @param bindingContext
-   *          the binding context used to supply bound Java classes while writing
    * @param classBinding
    *          the bound class information for the Java type this deserializer is
    *          operating on
    */
-  protected AbstractDeserializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
-    super(bindingContext, classBinding);
+  protected AbstractDeserializer(@NonNull IAssemblyClassBinding classBinding) {
+    super(classBinding);
   }
 
   /**

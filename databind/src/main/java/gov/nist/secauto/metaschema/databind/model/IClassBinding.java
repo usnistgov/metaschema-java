@@ -30,9 +30,6 @@ import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 
-import java.util.Map;
-import java.util.function.Predicate;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -58,18 +55,6 @@ public interface IClassBinding extends IFeatureFlagContainer<IBoundFlagInstance>
   void callAfterDeserialize(
       @NonNull Object targetObject,
       @Nullable Object parentObject) throws BindingException;
-
-  /**
-   * Get the class's properties that match the filter.
-   *
-   * @param flagFilter
-   *          a filter to apply or {@code null} if no filtering is needed
-   * @return a collection of properties
-   */
-  // REFACTOR: remove
-  @NonNull
-  Map<String, ? extends IBoundNamedInstance> getNamedInstances(
-      @Nullable Predicate<IBoundFlagInstance> flagFilter);
 
   /**
    * Create a deep copy of the provided bound object.

@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.databind.io.yaml;
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.json.DefaultJsonDeserializer;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 
@@ -41,14 +40,12 @@ public class DefaultYamlDeserializer<CLASS>
    * Construct a new YAML deserializer that will parse the bound class identified
    * by the {@code classBinding}.
    *
-   * @param bindingContext
-   *          the binding context used to supply bound Java classes while parsing
    * @param classBinding
    *          the bound class information for the Java type this deserializer is
    *          operating on
    */
-  public DefaultYamlDeserializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
-    super(bindingContext, classBinding);
+  public DefaultYamlDeserializer(@NonNull IAssemblyClassBinding classBinding) {
+    super(classBinding);
   }
 
   /**

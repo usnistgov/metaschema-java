@@ -149,7 +149,7 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
   }
 
   @Override
-  public IGeneratedMetaschemaClass generateClass(
+  public IGeneratedModuleClass generateClass(
       IMetaschema module,
       Path targetDirectory) throws IOException {
 
@@ -213,7 +213,7 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
                 IGeneratedDefinitionClass::getDefinition,
                 Function.identity())));
     String packageName = typeResolver.getPackageName(module);
-    return new DefaultMetaschemaGeneratedClass(module, className, classFile, definitionProductions, packageName);
+    return new DefaultGeneratedModuleClass(module, className, classFile, definitionProductions, packageName);
 
   }
 
@@ -236,7 +236,7 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
   public IGeneratedClass generatePackageInfoClass(
       String javaPackage,
       URI xmlNamespace,
-      Collection<IGeneratedMetaschemaClass> metaschemaProductions,
+      Collection<IGeneratedModuleClass> metaschemaProductions,
       Path targetDirectory) throws IOException {
 
     String packagePath = javaPackage.replace(".", "/");
@@ -248,7 +248,7 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
       writer.format("@%1$s(metaschemas = {%n", MetaschemaPackage.class.getName());
 
       boolean first = true;
-      for (IGeneratedMetaschemaClass metaschemaProduction : metaschemaProductions) {
+      for (IGeneratedModuleClass metaschemaProduction : metaschemaProductions) {
         if (first) {
           first = false;
         } else {

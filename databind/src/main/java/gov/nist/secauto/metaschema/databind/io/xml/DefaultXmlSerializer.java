@@ -30,7 +30,6 @@ import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxOutputFactory;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 
@@ -49,12 +48,26 @@ public class DefaultXmlSerializer<CLASS>
     extends AbstractSerializer<CLASS> {
   private XMLOutputFactory2 xmlOutputFactory;
 
-  public DefaultXmlSerializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
-    super(bindingContext, classBinding);
+  /**
+   * Construct a new XML serializer based on the top-level assembly indicated by
+   * the provided {@code classBinding}.
+   *
+   * @param classBinding
+   *          the bound Metaschema assembly definition that describes the data to
+   *          serialize
+   */
+  public DefaultXmlSerializer(@NonNull IAssemblyClassBinding classBinding) {
+    super(classBinding);
   }
 
+  /**
+   * Get the configured XML output factory used to create {@link XMLStreamWriter2}
+   * instances.
+   *
+   * @return the factory
+   */
   @NonNull
-  protected XMLOutputFactory2 getXMLOutputFactory() {
+  protected final XMLOutputFactory2 getXMLOutputFactory() {
     synchronized (this) {
       if (xmlOutputFactory == null) {
         xmlOutputFactory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
@@ -68,20 +81,32 @@ public class DefaultXmlSerializer<CLASS>
     }
   }
 
+  /**
+   * Override the default {@link XMLOutputFactory2} instance with a custom
+   * factory.
+   *
+   * @param xmlOutputFactory
+   *          the new factory
+   */
   protected void setXMLOutputFactory(@NonNull XMLOutputFactory2 xmlOutputFactory) {
     synchronized (this) {
       this.xmlOutputFactory = xmlOutputFactory;
     }
   }
 
+  /**
+   * Create a new stream writer using the provided writer.
+   *
+   * @param writer
+   *          the writer to use for output
+   * @return the stream writer created by the output factory
+   * @throws IOException
+   *           if an error occurred while creating the writer
+   */
   @NonNull
-  protected XMLStreamWriter2 newXMLStreamWriter(@NonNull Writer writer) throws IOException {
+  protected final XMLStreamWriter2 newXMLStreamWriter(@NonNull Writer writer) throws IOException {
     try {
       return ObjectUtils.notNull((XMLStreamWriter2) getXMLOutputFactory().createXMLStreamWriter(writer));
-      // XMLStreamWriter2 streamWriter = (XMLStreamWriter2)
-      // getXMLOutputFactory().createXMLStreamWriter(writer);
-      // streamWriter = new IndentingXmlStreamWriter2(streamWriter);
-      // return streamWriter;
     } catch (XMLStreamException ex) {
       throw new IOException(ex);
     }

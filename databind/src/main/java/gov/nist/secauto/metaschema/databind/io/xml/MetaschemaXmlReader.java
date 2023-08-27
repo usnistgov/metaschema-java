@@ -113,7 +113,7 @@ public class MetaschemaXmlReader
    *
    * @param <CLASS>
    *          the returned object type
-   * @param definition
+   * @param targetDefinition
    *          the definition describing the root element data to read
    * @return the parsed object
    * @throws XMLStreamException
@@ -122,7 +122,7 @@ public class MetaschemaXmlReader
    *           if an error occurred while parsing the input
    */
   @NonNull
-  public <CLASS> CLASS read(@NonNull IAssemblyClassBinding definition) throws IOException, XMLStreamException {
+  public <CLASS> CLASS read(@NonNull IAssemblyClassBinding targetDefinition) throws IOException, XMLStreamException {
 
     // we may be at the START_DOCUMENT
     if (reader.peek().isStartDocument()) {
@@ -131,12 +131,12 @@ public class MetaschemaXmlReader
 
     XmlEventUtil.skipEvents(reader, XMLStreamConstants.CHARACTERS, XMLStreamConstants.PROCESSING_INSTRUCTION);
 
-    QName rootQName = definition.getRootXmlQName();
+    QName rootQName = targetDefinition.getRootXmlQName();
     XMLEvent event = XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.START_ELEMENT, rootQName);
 
     StartElement start = ObjectUtils.notNull(event.asStartElement());
 
-    CLASS retval = readDefinitionValue(definition, null, start);
+    CLASS retval = readDefinitionValue(targetDefinition, null, start);
 
     XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, rootQName);
 
@@ -302,7 +302,7 @@ public class MetaschemaXmlReader
   /**
    * Determine if the next data to read corresponds to the next model instance.
    *
-   * @param instance
+   * @param targetInstance
    *          the model instance that describes the syntax of the data to read
    * @return {@code true} if the Metaschema instance needs to be parsed, or
    *         {@code false} otherwise
@@ -311,7 +311,7 @@ public class MetaschemaXmlReader
    */
   @SuppressWarnings("PMD.OnlyOneReturn")
   protected boolean isNextInstance(
-      @NonNull IBoundNamedModelInstance instance)
+      @NonNull IBoundNamedModelInstance targetInstance)
       throws XMLStreamException {
 
     XmlEventUtil.skipWhitespace(reader);
@@ -323,18 +323,18 @@ public class MetaschemaXmlReader
 
     QName nextQName = ObjectUtils.notNull(nextEvent.asStartElement().getName());
 
-    if (nextQName.equals(instance.getXmlGroupAsQName())) {
+    if (nextQName.equals(targetInstance.getXmlGroupAsQName())) {
       // we are to parse the grouping element
       return true;
     }
 
-    if (nextQName.equals(instance.getXmlQName())) {
+    if (nextQName.equals(targetInstance.getXmlQName())) {
       // we are to parse the element
       return true;
     }
 
-    if (instance instanceof IBoundFieldInstance) {
-      IBoundFieldInstance fieldInstance = (IBoundFieldInstance) instance;
+    if (targetInstance instanceof IBoundFieldInstance) {
+      IBoundFieldInstance fieldInstance = (IBoundFieldInstance) targetInstance;
       IDataTypeAdapter<?> adapter = fieldInstance.getDefinition().getJavaTypeAdapter();
       // we are to parse the data type
       return !fieldInstance.isInXmlWrapped()

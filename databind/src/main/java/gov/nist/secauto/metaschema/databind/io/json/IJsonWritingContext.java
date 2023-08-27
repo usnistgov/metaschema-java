@@ -39,10 +39,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IJsonWritingContext extends IWritingContext<JsonGenerator> {
   /**
-   * Write a set of JSON values described by the provided
-   * {@code targetDefinition}.
-   *
-   * @param classBinding
+   * Write the data described by the provided {@code targetDefinition} as a JSON
+   * value.
    *
    * @param targetDefinition
    *          the bound Metaschema definition describing the structure of the JSON
@@ -55,7 +53,7 @@ public interface IJsonWritingContext extends IWritingContext<JsonGenerator> {
    *           if an error occurred while writing the JSON
    */
   void writeDefinitionValue(
-      @NonNull IClassBinding classBinding,
+      @NonNull IClassBinding targetDefinition,
       @NonNull Object targetObject,
       @NonNull Map<String, ? extends IBoundNamedInstance> instances) throws IOException;
 }

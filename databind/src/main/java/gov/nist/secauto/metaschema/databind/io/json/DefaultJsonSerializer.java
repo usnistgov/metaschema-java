@@ -32,7 +32,6 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.databind.io.SerializationFeature;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
@@ -50,14 +49,12 @@ public class DefaultJsonSerializer<CLASS>
    * Construct a new Metaschema binding-based deserializer that reads JSON-based
    * Metaschema content.
    *
-   * @param bindingContext
-   *          the Metaschema data binding context
    * @param classBinding
    *          the assembly class binding describing the Java objects this
    *          deserializer parses data into
    */
-  public DefaultJsonSerializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
-    super(bindingContext, classBinding);
+  public DefaultJsonSerializer(@NonNull IAssemblyClassBinding classBinding) {
+    super(classBinding);
   }
 
   /**

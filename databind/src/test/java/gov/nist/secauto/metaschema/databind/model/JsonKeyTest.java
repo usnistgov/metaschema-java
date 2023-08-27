@@ -32,30 +32,30 @@ import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.DynamicBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class JsonKeyTest
     extends AbstractBoundModelTestSupport {
-  @TempDir
-  Path generationDir;
-  // @NonNull
-  // Path generationDir =
-  // ObjectUtils.notNull(Paths.get("target/generated-test-sources/metaschema"));
+  // @TempDir
+  // Path generationDir;
+  @NonNull
+  Path generationDir = ObjectUtils.notNull(Paths.get("target/generated-test-sources/metaschema"));
 
   @Test
   void testJsonKey() throws IOException, MetaschemaException {
     IMetaschema module = new MetaschemaLoader().load(ObjectUtils.requireNonNull(
         Paths.get("src/test/resources/metaschema/json-key/metaschema.xml")));
 
-    IBindingContext bindingContext = DynamicBindingContext.forMetaschema(module, generationDir);
+    IBindingContext bindingContext = IBindingContext.instance();
+    bindingContext.registerModule(module, generationDir);
 
     Object obj = bindingContext.newBoundLoader().load(
         ObjectUtils.requireNonNull(Paths.get("src/test/resources/metaschema/json-key/test.json")));

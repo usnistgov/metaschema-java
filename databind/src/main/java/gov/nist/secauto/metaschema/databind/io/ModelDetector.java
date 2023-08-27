@@ -32,6 +32,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.io.MergedStream;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
+import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -57,17 +58,42 @@ import javax.xml.stream.events.StartElement;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+/**
+ * Provides a means to analyze content to determine what type of bound data it
+ * contains.
+ */
 public class ModelDetector {
   @NonNull
   private final IBindingContext bindingContext;
   @NonNull
   private final IConfiguration<DeserializationFeature<?>> configuration;
 
+  /**
+   * Construct a new format detector using the default configuration.
+   *
+   * @param bindingContext
+   *          information about how Java classes are bound to Metaschema
+   *          definitions
+   */
+  public ModelDetector(
+      @NonNull IBindingContext bindingContext) {
+    this(bindingContext, new DefaultConfiguration<>());
+  }
+
+  /**
+   * Construct a new format detector using the provided {@code configuration}.
+   *
+   * @param bindingContext
+   *          information about how Java classes are bound to Metaschema
+   *          definitions
+   * @param configuration
+   *          the deserialization configuration
+   */
   public ModelDetector(
       @NonNull IBindingContext bindingContext,
-      @NonNull IConfiguration<DeserializationFeature<?>> config) {
+      @NonNull IConfiguration<DeserializationFeature<?>> configuration) {
     this.bindingContext = bindingContext;
-    this.configuration = config;
+    this.configuration = configuration;
   }
 
   private int getLookaheadLimit() {
@@ -84,10 +110,22 @@ public class ModelDetector {
     return configuration;
   }
 
+  /**
+   * Analyzes the data from the provided {@code inputStream} to determine it's
+   * model.
+   *
+   * @param inputStream
+   *          the resource stream to analyze
+   * @param format
+   *          the expected format of the data to read
+   * @return the analysis result
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   */
   @NonNull
-  public Result detect(@NonNull InputStream is, @NonNull Format format)
+  public Result detect(@NonNull InputStream inputStream, @NonNull Format format)
       throws IOException {
-    byte[] buf = ObjectUtils.notNull(is.readNBytes(getLookaheadLimit()));
+    byte[] buf = ObjectUtils.notNull(inputStream.readNBytes(getLookaheadLimit()));
 
     Class<?> clazz;
     try (InputStream bis = new ByteArrayInputStream(buf)) {
@@ -114,11 +152,11 @@ public class ModelDetector {
           String.format("Detected format '%s', but unable to detect the bound data type", format.name()));
     }
 
-    return new Result(clazz, is, buf);
+    return new Result(clazz, inputStream, buf);
   }
 
   @NonNull
-  protected Class<?> detectModelXmlClass(@NonNull InputStream is) throws IOException {
+  private Class<?> detectModelXmlClass(@NonNull InputStream is) throws IOException {
     QName startElementQName;
     try {
       XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
@@ -151,7 +189,7 @@ public class ModelDetector {
   }
 
   @Nullable
-  protected Class<?> detectModelJsonClass(@NonNull JsonParser parser) throws IOException {
+  private Class<?> detectModelJsonClass(@NonNull JsonParser parser) throws IOException {
     Class<?> retval = null;
     JsonUtil.advanceAndAssert(parser, JsonToken.START_OBJECT);
     outer: while (JsonToken.FIELD_NAME.equals(parser.nextToken())) {
@@ -182,11 +220,22 @@ public class ModelDetector {
       this.dataStream = new MergedStream(null, is, buf, 0, buf.length);
     }
 
+    /**
+     * Get the Java class representing the detected bound object.
+     *
+     * @return the Java class
+     */
     @NonNull
     public Class<?> getBoundClass() {
       return boundClass;
     }
 
+    /**
+     * Get an {@link InputStream} that can be used to read the analyzed data from
+     * the start.
+     *
+     * @return the stream
+     */
     @NonNull
     public InputStream getDataStream() {
       return dataStream;

@@ -42,7 +42,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 class ProductionImpl implements IProduction {
 
   @NonNull
-  private final Map<IMetaschema, IGeneratedMetaschemaClass> metaschemaToProductionMap // NOPMD - immutable
+  private final Map<IMetaschema, IGeneratedModuleClass> metaschemaToProductionMap // NOPMD - immutable
       = new HashMap<>();
   @NonNull
   private final Map<String, IPackageProduction> packageNameToProductionMap // NOPMD - immutable
@@ -58,7 +58,7 @@ class ProductionImpl implements IProduction {
     }
 
     if (metaschemaToProductionMap.get(metaschema) == null) {
-      IGeneratedMetaschemaClass metaschemaClass = classFactory.generateClass(metaschema, targetDirectory);
+      IGeneratedModuleClass metaschemaClass = classFactory.generateClass(metaschema, targetDirectory);
       metaschemaToProductionMap.put(metaschema, metaschemaClass);
     }
   }
@@ -81,7 +81,7 @@ class ProductionImpl implements IProduction {
 
   @Override
   @SuppressWarnings("null")
-  public Collection<IGeneratedMetaschemaClass> getMetaschemaProductions() {
+  public Collection<IGeneratedModuleClass> getModuleProductions() {
     return Collections.unmodifiableCollection(metaschemaToProductionMap.values());
   }
 
@@ -92,13 +92,13 @@ class ProductionImpl implements IProduction {
   }
 
   @Override
-  public IGeneratedMetaschemaClass getMetaschemaProduction(IMetaschema metaschema) {
+  public IGeneratedModuleClass getModuleProduction(IMetaschema metaschema) {
     return metaschemaToProductionMap.get(metaschema);
   }
 
   @Override
   public Stream<IGeneratedDefinitionClass> getGlobalDefinitionClassesAsStream() {
-    return ObjectUtils.notNull(getMetaschemaProductions().stream()
+    return ObjectUtils.notNull(getModuleProductions().stream()
         .flatMap(metaschema -> metaschema.getGeneratedDefinitionClasses().stream()));
   }
 
@@ -106,7 +106,7 @@ class ProductionImpl implements IProduction {
   public Stream<? extends IGeneratedClass> getGeneratedClasses() {
     return ObjectUtils.notNull(Stream.concat(
         // generated definitions and metaschema
-        getMetaschemaProductions().stream()
+        getModuleProductions().stream()
             .flatMap(metaschema -> Stream.concat(
                 Stream.of(metaschema),
                 metaschema.getGeneratedDefinitionClasses().stream())),

@@ -34,7 +34,6 @@ import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
-import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
@@ -43,13 +42,7 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 
@@ -78,7 +71,8 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
    * @param clazz
    *          the Java bean class
    * @param bindingContext
-   *          the Metaschema binding environment context
+   *          information about how Java classes are bound to Metaschema
+   *          definitions
    * @return the Metaschema assembly binding for the class
    */
   @NonNull
@@ -135,18 +129,6 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
       IBoundAssemblyInstance,
       IChoiceInstance> getModelContainer() {
     return modelContainer.get();
-  }
-
-  @Override
-  public Map<String, ? extends IBoundNamedInstance> getNamedInstances(
-      Predicate<IBoundFlagInstance> flagFilter) {
-    return ObjectUtils.notNull(Stream.concat(
-        super.getNamedInstances(flagFilter).values().stream()
-            .map(ObjectUtils::notNull),
-        getNamedModelInstances().stream())
-        .collect(
-            Collectors.toMap(instance -> instance.getJsonName(), Function.identity(), CustomCollectors.useLastMapper(),
-                LinkedHashMap::new)));
   }
 
   /**

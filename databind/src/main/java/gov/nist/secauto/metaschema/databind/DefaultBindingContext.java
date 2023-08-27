@@ -108,7 +108,7 @@ public class DefaultBindingContext implements IBindingContext {
   /**
    * Construct a new binding context.
    */
-  protected DefaultBindingContext() {
+  public DefaultBindingContext() {
     // only allow extended classes
     metaschemaLoaderStrategy = new SimpleMetaschemaLoaderStrategy(this);
   }
@@ -148,13 +148,13 @@ public class DefaultBindingContext implements IBindingContext {
     ISerializer<CLASS> retval;
     switch (format) {
     case JSON:
-      retval = new DefaultJsonSerializer<>(this, classBinding);
+      retval = new DefaultJsonSerializer<>(classBinding);
       break;
     case XML:
-      retval = new DefaultXmlSerializer<>(this, classBinding);
+      retval = new DefaultXmlSerializer<>(classBinding);
       break;
     case YAML:
-      retval = new DefaultYamlSerializer<>(this, classBinding);
+      retval = new DefaultYamlSerializer<>(classBinding);
       break;
     default:
       throw new UnsupportedOperationException(String.format("Unsupported format '%s'", format));
@@ -176,13 +176,13 @@ public class DefaultBindingContext implements IBindingContext {
     IDeserializer<CLASS> retval;
     switch (format) {
     case JSON:
-      retval = new DefaultJsonDeserializer<>(this, classBinding);
+      retval = new DefaultJsonDeserializer<>(classBinding);
       break;
     case XML:
-      retval = new DefaultXmlDeserializer<>(this, classBinding);
+      retval = new DefaultXmlDeserializer<>(classBinding);
       break;
     case YAML:
-      retval = new DefaultYamlDeserializer<>(this, classBinding);
+      retval = new DefaultYamlDeserializer<>(classBinding);
       break;
     default:
       throw new UnsupportedOperationException(String.format("Unsupported format '%s'", format));
@@ -192,10 +192,11 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public void registerBindingMatcher(@NonNull IBindingMatcher matcher) {
+  public DefaultBindingContext registerBindingMatcher(@NonNull IBindingMatcher matcher) {
     synchronized (this) {
       bindingMatchers.add(matcher);
     }
+    return this;
   }
 
   /**

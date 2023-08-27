@@ -24,35 +24,42 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model;
+package gov.nist.secauto.metaschema.databind.codegen;
 
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.model.IMetaschema;
 
 import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IFeatureFlagContainer<F extends IFlagInstance> extends IFlagContainer {
+/**
+ * Provides information about a generated Java class that represents a
+ * Metaschema module.
+ */
+public interface IGeneratedModuleClass extends IGeneratedClass {
+
   /**
-   * Lazy initialize the flag instances associated with this definition.
+   * Get the associated Metaschema module data.
    *
-   * @return the flag container
+   * @return the module data
    */
   @NonNull
-  IFlagContainerSupport<F> getFlagContainer();
+  IMetaschema getModule();
 
-  @Override
-  default F getFlagInstanceByName(String name) {
-    return getFlagContainer().getFlagInstanceMap().get(name);
-  }
+  /**
+   * Get the Java package name associated with the Metaschema module.
+   *
+   * @return the package name
+   */
+  @NonNull
+  String getPackageName();
 
-  @Override
-  default Collection<? extends F> getFlagInstances() {
-    return ObjectUtils.notNull(getFlagContainer().getFlagInstanceMap().values());
-  }
-
-  @Override
-  default F getJsonKeyFlagInstance() {
-    return getFlagContainer().getJsonKeyFlagInstance();
-  }
+  /**
+   * Get the collection of generated classes representing definitions associated
+   * with the Metaschema module.
+   *
+   * @return the collection of definition classes
+   */
+  @NonNull
+  Collection<IGeneratedDefinitionClass> getGeneratedDefinitionClasses();
 }

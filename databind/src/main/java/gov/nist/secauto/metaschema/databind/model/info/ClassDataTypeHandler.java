@@ -204,7 +204,7 @@ class ClassDataTypeHandler implements IDataTypeHandler {
 
   @SuppressWarnings({
       "resource", // not owned
-      "PMD.NPathComplexity" // ok
+      "PMD.NPathComplexity", "PMD.CyclomaticComplexity" // ok
   })
   @Override
   public <T> T readItem(Object parentObject, IJsonParsingContext context)

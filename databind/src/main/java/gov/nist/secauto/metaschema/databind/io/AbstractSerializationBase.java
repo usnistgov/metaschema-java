@@ -41,16 +41,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 abstract class AbstractSerializationBase<T extends IConfigurationFeature<?>>
     implements IMutableConfiguration<T> {
   @NonNull
-  private final IBindingContext bindingContext;
-  @NonNull
   private final IAssemblyClassBinding classBinding;
   @NonNull
   private final DefaultConfiguration<T> configuration;
 
-  protected AbstractSerializationBase(
-      @NonNull IBindingContext bindingContext,
-      @NonNull IAssemblyClassBinding classBinding) {
-    this.bindingContext = ObjectUtils.requireNonNull(bindingContext, "bindingContext");
+  protected AbstractSerializationBase(@NonNull IAssemblyClassBinding classBinding) {
     this.classBinding = ObjectUtils.requireNonNull(classBinding, "classBinding");
     this.configuration = new DefaultConfiguration<>();
   }
@@ -62,7 +57,7 @@ abstract class AbstractSerializationBase<T extends IConfigurationFeature<?>>
    */
   @NonNull
   protected IBindingContext getBindingContext() {
-    return bindingContext;
+    return classBinding.getBindingContext();
   }
 
   /**

@@ -287,6 +287,9 @@ public class MetaschemaJsonReader
 
   // @SuppressFBWarnings(value = "UC_USELESS_CONDITION", justification = "false
   // positive")
+  @SuppressWarnings({
+      "PMD.CyclomaticComplexity", "PMD.CognitiveComplexity" // acceptable
+  })
   @Override
   public void readDefinitionValue(
       IClassBinding targetDefinition,

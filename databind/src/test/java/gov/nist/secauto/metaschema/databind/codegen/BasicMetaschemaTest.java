@@ -85,7 +85,7 @@ class BasicMetaschemaTest {
     MetaschemaCompilerHelper.compileMetaschema(metaschema, classDir, bindingConfiguration);
 
     // Load classes
-    return MetaschemaCompilerHelper.getClassLoader(
+    return MetaschemaCompilerHelper.newClassLoader(
         classDir,
         ObjectUtils.notNull(Thread.currentThread().getContextClassLoader()))
         .loadClass(rootClassName);

@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -37,10 +36,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Locale;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -122,19 +117,6 @@ abstract class AbstractClassBinding implements IClassBinding {
   @Override
   public IMetaschema getContainingMetaschema() {
     return initMetaschema();
-  }
-
-  // REFACTOR: remove
-  @Override
-  public Map<String, ? extends IBoundNamedInstance> getNamedInstances(Predicate<IBoundFlagInstance> filter) {
-    Map<String, ? extends IBoundFlagInstance> retval;
-    if (filter == null) {
-      retval = getFlagInstanceMap();
-    } else {
-      retval = ObjectUtils.notNull(getFlagInstances().stream().filter(filter)
-          .collect(Collectors.toMap(IFlagInstance::getJsonName, Function.identity())));
-    }
-    return retval;
   }
 
   /**

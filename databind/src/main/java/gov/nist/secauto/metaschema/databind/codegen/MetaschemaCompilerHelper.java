@@ -27,8 +27,6 @@
 package gov.nist.secauto.metaschema.databind.codegen;
 
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
-import gov.nist.secauto.metaschema.core.model.MetaschemaException;
-import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
 import gov.nist.secauto.metaschema.databind.codegen.config.DefaultBindingConfiguration;
 import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration;
 
@@ -58,46 +56,60 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * This class provides methods to generate and dynamically compile Java code
- * based on a Metaschema. The {@link #getClassLoader(Path, ClassLoader)} method
+ * based on a Metaschema. The {@link #newClassLoader(Path, ClassLoader)} method
  * can be used to get a {@link ClassLoader} for Java code previously generated
  * by this class.
  */
 public final class MetaschemaCompilerHelper {
   private static final Logger LOGGER = LogManager.getLogger(MetaschemaCompilerHelper.class);
-  private static final MetaschemaLoader LOADER = new MetaschemaLoader();
-
-  static {
-    LOADER.allowEntityResolution();
-  }
 
   private MetaschemaCompilerHelper() {
     // disable construction
   }
 
+  /**
+   * Generate and compile Java class, representing the provided Metaschema
+   * {@code module} and its related definitions, using the default binding
+   * configuration.
+   *
+   * @param module
+   *          the Metaschema module to generate Java classes for
+   * @param classDir
+   *          the directory to generate the classes in
+   * @return information about the generated classes
+   * @throws IOException
+   *           if an error occurred while generating or compiling the classes
+   */
   @NonNull
-  public static IProduction compileMetaschema(@NonNull Path metaschemaPath, @NonNull Path classDir)
-      throws IOException, MetaschemaException {
-    return compileMetaschema(metaschemaPath, classDir, new DefaultBindingConfiguration());
-  }
-
-  @NonNull
-  public static IProduction compileMetaschema(@NonNull Path metaschemaPath, @NonNull Path classDir,
-      @NonNull IBindingConfiguration bindingConfiguration)
-      throws IOException, MetaschemaException {
-    IMetaschema metaschema = LOADER.load(metaschemaPath);
-    return compileMetaschema(metaschema, classDir, bindingConfiguration);
-  }
-
-  @NonNull
-  public static IProduction compileMetaschema(@NonNull IMetaschema metaschema, @NonNull Path classDir)
+  public static IProduction compileMetaschema(
+      @NonNull IMetaschema module,
+      @NonNull Path classDir)
       throws IOException {
-    return compileMetaschema(metaschema, classDir, new DefaultBindingConfiguration());
+    return compileMetaschema(module, classDir, new DefaultBindingConfiguration());
   }
 
+  /**
+   * Generate and compile Java class, representing the provided Metaschema
+   * {@code module} and its related definitions, using the provided custom
+   * {@code bindingConfiguration}.
+   *
+   * @param module
+   *          the Metaschema module to generate Java classes for
+   * @param classDir
+   *          the directory to generate the classes in
+   * @param bindingConfiguration
+   *          configuration settings with directives that tailor the class
+   *          generation
+   * @return information about the generated classes
+   * @throws IOException
+   *           if an error occurred while generating or compiling the classes
+   */
   @NonNull
-  public static IProduction compileMetaschema(@NonNull IMetaschema metaschema, @NonNull Path classDir,
+  public static IProduction compileMetaschema(
+      @NonNull IMetaschema module,
+      @NonNull Path classDir,
       @NonNull IBindingConfiguration bindingConfiguration) throws IOException {
-    IProduction production = JavaGenerator.generate(metaschema, classDir, bindingConfiguration);
+    IProduction production = JavaGenerator.generate(module, classDir, bindingConfiguration);
     List<IGeneratedClass> classesToCompile = production.getGeneratedClasses().collect(Collectors.toList());
 
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
@@ -113,9 +125,22 @@ public final class MetaschemaCompilerHelper {
     return production;
   }
 
+  /**
+   * Create a new classloader capable of loading Java classes generated in the
+   * provided {@code classDir}.
+   *
+   * @param classDir
+   *          the directory where generated Java classes have been compiled
+   * @param parent
+   *          the classloader to delegate to when the created class loader cannot
+   *          load a class
+   * @return the new class loader
+   */
   @SuppressWarnings("null")
   @NonNull
-  public static ClassLoader getClassLoader(@NonNull final Path classDir, @NonNull final ClassLoader parent) {
+  public static ClassLoader newClassLoader(
+      @NonNull final Path classDir,
+      @NonNull final ClassLoader parent) {
     return AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
       @Override
       public URLClassLoader run() {

@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.databind.io;
 
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.format.DataFormatDetector;
 import com.fasterxml.jackson.core.format.DataFormatMatcher;
 import com.fasterxml.jackson.core.format.MatchStrength;
@@ -46,6 +45,10 @@ import java.net.URL;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Provides a means to analyze content to determine what {@link Format} the data
+ * is represented as.
+ */
 public class FormatDetector {
 
   private final DataFormatDetector detector;
@@ -96,6 +99,15 @@ public class FormatDetector {
     return detectorFactory;
   }
 
+  /**
+   * Analyzes the provided {@code resource} to determine it's format.
+   *
+   * @param resource
+   *          the resource to analyze
+   * @return the analysis result
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   */
   @NonNull
   public Result detect(@NonNull URL resource) throws IOException {
     try (InputStream is = ObjectUtils.notNull(resource.openStream())) {
@@ -103,9 +115,19 @@ public class FormatDetector {
     }
   }
 
+  /**
+   * Analyzes the data from the provided {@code inputStream} to determine it's
+   * format.
+   *
+   * @param inputStream
+   *          the resource stream to analyze
+   * @return the analysis result
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   */
   @NonNull
-  public Result detect(@NonNull InputStream is) throws IOException {
-    DataFormatMatcher matcher = detector.findFormat(is);
+  public Result detect(@NonNull InputStream inputStream) throws IOException {
+    DataFormatMatcher matcher = detector.findFormat(inputStream);
     switch (matcher.getMatchStrength()) {
     case FULL_MATCH:
     case SOLID_MATCH:
@@ -126,6 +148,11 @@ public class FormatDetector {
       this.matcher = matcher;
     }
 
+    /**
+     * Get the detected format.
+     *
+     * @return the format
+     */
     @NonNull
     public Format getFormat() {
       Format retval;
@@ -142,18 +169,29 @@ public class FormatDetector {
       return retval;
     }
 
+    /**
+     * Get an {@link InputStream} that can be used to read the analyzed data from
+     * the start.
+     *
+     * @return the stream
+     */
     @SuppressWarnings("resource")
     @NonNull
     public InputStream getDataStream() {
       return ObjectUtils.notNull(matcher.getDataStream());
     }
 
-    @SuppressWarnings("resource")
-    @NonNull
-    public JsonParser getParser() throws IOException {
-      return ObjectUtils.notNull(matcher.createParserWithMatch());
-    }
+    // @SuppressWarnings("resource")
+    // @NonNull
+    // public JsonParser getParser() throws IOException {
+    // return ObjectUtils.notNull(matcher.createParserWithMatch());
+    // }
 
+    /**
+     * Get the strength of the match.
+     *
+     * @return the strength
+     */
     @NonNull
     public MatchStrength getMatchStrength() {
       return ObjectUtils.notNull(matcher.getMatchStrength());

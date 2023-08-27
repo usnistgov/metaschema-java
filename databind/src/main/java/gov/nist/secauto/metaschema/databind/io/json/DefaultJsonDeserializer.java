@@ -33,7 +33,6 @@ import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
@@ -53,16 +52,12 @@ public class DefaultJsonDeserializer<CLASS>
    * Construct a new JSON deserializer that will parse the bound class identified
    * by the {@code classBinding}.
    *
-   * @param bindingContext
-   *          the binding context used to supply bound Java classes while writing
    * @param classBinding
    *          the bound class information for the Java type this deserializer is
    *          operating on
    */
-  public DefaultJsonDeserializer(
-      @NonNull IBindingContext bindingContext,
-      @NonNull IAssemblyClassBinding classBinding) {
-    super(bindingContext, classBinding);
+  public DefaultJsonDeserializer(@NonNull IAssemblyClassBinding classBinding) {
+    super(classBinding);
   }
 
   /**

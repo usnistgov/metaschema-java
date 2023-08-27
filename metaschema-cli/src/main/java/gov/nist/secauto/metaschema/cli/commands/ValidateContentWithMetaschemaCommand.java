@@ -39,7 +39,6 @@ import gov.nist.secauto.metaschema.core.model.util.XmlUtil;
 import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.DynamicBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator.SchemaFormat;
@@ -155,7 +154,8 @@ public class ValidateContentWithMetaschemaCommand
     protected IBindingContext getBindingContext(@NonNull Set<IConstraintSet> constraintSets)
         throws MetaschemaException, IOException {
 
-      return DynamicBindingContext.forMetaschema(getMetaschema(constraintSets), getTempDir());
+      return IBindingContext.instance()
+          .registerModule(getMetaschema(constraintSets), tempDir);
     }
 
     @Override

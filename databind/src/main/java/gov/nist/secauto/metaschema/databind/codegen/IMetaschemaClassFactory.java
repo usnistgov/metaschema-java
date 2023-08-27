@@ -74,7 +74,7 @@ public interface IMetaschemaClassFactory {
    *           if an error occurred while generating the Java class
    */
   @NonNull
-  IGeneratedMetaschemaClass generateClass(
+  IGeneratedModuleClass generateClass(
       @NonNull IMetaschema module,
       @NonNull Path targetDirectory) throws IOException;
 
@@ -117,6 +117,6 @@ public interface IMetaschemaClassFactory {
   IGeneratedClass generatePackageInfoClass(
       @NonNull String javaPackage,
       @NonNull URI xmlNamespace,
-      @NonNull Collection<IGeneratedMetaschemaClass> metaschemaProductions,
+      @NonNull Collection<IGeneratedModuleClass> metaschemaProductions,
       @NonNull Path targetDirectory) throws IOException;
 }

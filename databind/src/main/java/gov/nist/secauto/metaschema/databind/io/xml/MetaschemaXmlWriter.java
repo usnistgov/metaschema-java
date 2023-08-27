@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.io.xml;
 
+import gov.nist.secauto.metaschema.databind.io.json.DefaultJsonProblemHandler;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
@@ -51,6 +52,13 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
   @NonNull
   private final XMLStreamWriter2 writer;
 
+  /**
+   * Construct a new Metaschema-aware JSON writer.
+   *
+   * @param writer
+   *          the XML stream writer to write with
+   * @see DefaultJsonProblemHandler
+   */
   public MetaschemaXmlWriter(
       @NonNull XMLStreamWriter2 writer) {
     this.writer = writer;
@@ -99,7 +107,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
   public void writeDefinitionValue(
       @NonNull IClassBinding targetDefinition,
       @NonNull Object targetObject,
-      @NonNull QName parentName) throws IOException, XMLStreamException {
+      @NonNull QName parentName) throws IOException {
     // write flags
     for (IBoundFlagInstance flag : targetDefinition.getFlagInstances()) {
       assert flag != null;
@@ -116,7 +124,11 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
       Object value = fieldValueInstance.getValue(targetObject);
       if (value != null) {
-        fieldValueInstance.getJavaTypeAdapter().writeXmlValue(value, parentName, writer);
+        try {
+          fieldValueInstance.getJavaTypeAdapter().writeXmlValue(value, parentName, writer);
+        } catch (XMLStreamException ex) {
+          throw new IOException(ex);
+        }
       }
     } else {
       throw new UnsupportedOperationException(
@@ -124,30 +136,58 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     }
   }
 
-  protected boolean writeFlagInstance(
+  /**
+   * Write the data described by the provided {@code targetInstance} as an XML
+   * attribute.
+   *
+   * @param targetInstance
+   *          the model instance that describes the syntax of the data to write
+   * @param parentObject
+   *          the Java object that data written by this method is stored in
+   * @throws IOException
+   *           if an error occurred while writing the XML
+   */
+  protected void writeFlagInstance(
       @NonNull IBoundFlagInstance targetInstance,
       @NonNull Object parentObject)
-      throws XMLStreamException {
+      throws IOException {
     Object objectValue = targetInstance.getValue(parentObject);
     String value
         = objectValue == null ? null : targetInstance.getDefinition().getJavaTypeAdapter().asString(objectValue);
 
     if (value != null) {
       QName name = targetInstance.getXmlQName();
-      if (name.getNamespaceURI().isEmpty()) {
-        writer.writeAttribute(name.getLocalPart(), value);
-      } else {
-        writer.writeAttribute(name.getNamespaceURI(), name.getLocalPart(), value);
+      try {
+        if (name.getNamespaceURI().isEmpty()) {
+          writer.writeAttribute(name.getLocalPart(), value);
+        } else {
+          writer.writeAttribute(name.getNamespaceURI(), name.getLocalPart(), value);
+        }
+      } catch (XMLStreamException ex) {
+        throw new IOException(ex);
       }
     }
-    return true;
   }
 
+  /**
+   * Write the data described by the provided {@code targetInstance} as an XML
+   * element.
+   *
+   * @param targetInstance
+   *          the model instance that describes the syntax of the data to write
+   * @param parentObject
+   *          the Java object that data written by this method is stored in
+   * @param parentName
+   *          the qualified name of the XML data's parent element
+   * @return {@code true} id the value was written or {@code false} otherwise
+   * @throws IOException
+   *           if an error occurred while writing the XML
+   */
   protected boolean writeModelInstanceValues(
       @NonNull IBoundNamedModelInstance targetInstance,
       @NonNull Object parentObject,
       @NonNull QName parentName)
-      throws XMLStreamException, IOException {
+      throws IOException {
     Object value = targetInstance.getValue(parentObject);
     if (value == null) {
       return false; // NOPMD - intentional
@@ -158,18 +198,22 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
       // only write a property if the wrapper is required or if it has contents
       QName currentStart = parentName;
 
-      QName groupQName = targetInstance.getXmlGroupAsQName();
-      if (groupQName != null) {
-        // write the grouping element
-        writer.writeStartElement(groupQName.getNamespaceURI(), groupQName.getLocalPart());
-        currentStart = groupQName;
-      }
+      try {
+        QName groupQName = targetInstance.getXmlGroupAsQName();
+        if (groupQName != null) {
+          // write the grouping element
+          writer.writeStartElement(groupQName.getNamespaceURI(), groupQName.getLocalPart());
+          currentStart = groupQName;
+        }
 
-      // There are one or more named values based on cardinality
-      propertyInfo.writeValues(value, currentStart, this);
+        // There are one or more named values based on cardinality
+        propertyInfo.writeValues(value, currentStart, this);
 
-      if (groupQName != null) {
-        writer.writeEndElement();
+        if (groupQName != null) {
+          writer.writeEndElement();
+        }
+      } catch (XMLStreamException ex) {
+        throw new IOException(ex);
       }
     }
     return true;
@@ -178,59 +222,33 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
   @Override
   public void writeInstanceValue(
       @NonNull IBoundNamedModelInstance targetInstance,
-      @NonNull Object itemValue,
-      @NonNull QName parentName)
-      throws XMLStreamException, IOException {
-    if (targetInstance instanceof IBoundAssemblyInstance) {
-      writeInstanceValue((IBoundAssemblyInstance) targetInstance, itemValue);
-    } else if (targetInstance instanceof IBoundFieldInstance) {
-      writeInstanceValue((IBoundFieldInstance) targetInstance, itemValue, parentName);
-    } else {
-      throw new UnsupportedOperationException(
-          String.format("Unsupported class binding type: %s", targetInstance.getClass().getName()));
-    }
-  }
-
-  protected void writeInstanceValue(
-      @NonNull IBoundAssemblyInstance targetInstance,
-      @NonNull Object item)
-      throws XMLStreamException, IOException {
-    QName currentParentName = targetInstance.getXmlQName();
-
-    // write the start element
-    writer.writeStartElement(currentParentName.getNamespaceURI(), currentParentName.getLocalPart());
-
-    // write the value
-    targetInstance.getDataTypeHandler().writeItem(item, currentParentName, this);
-
-    // write the end element
-    writer.writeEndElement();
-  }
-
-  protected void writeInstanceValue(
-      @NonNull IBoundFieldInstance targetInstance,
-      @NonNull Object item,
-      @NonNull QName parentName)
-      throws XMLStreamException, IOException {
+      @NonNull Object targetObject,
+      @NonNull QName parentName) throws IOException {
     // figure out how to parse the item
     IDataTypeHandler handler = targetInstance.getDataTypeHandler();
 
     // figure out if we need to write the wrapper or not
-    boolean writeWrapper = targetInstance.isInXmlWrapped() || !handler.isUnwrappedValueAllowedInXml();
+    boolean writeWrapper = targetInstance instanceof IBoundAssemblyInstance
+        || ((IBoundFieldInstance) targetInstance).isInXmlWrapped()
+        || !handler.isUnwrappedValueAllowedInXml();
 
-    QName currentParentName;
-    if (writeWrapper) {
-      currentParentName = targetInstance.getXmlQName();
-      writer.writeStartElement(currentParentName.getNamespaceURI(), currentParentName.getLocalPart());
-    } else {
-      currentParentName = parentName;
-    }
+    try {
+      QName currentParentName;
+      if (writeWrapper) {
+        currentParentName = targetInstance.getXmlQName();
+        writer.writeStartElement(currentParentName.getNamespaceURI(), currentParentName.getLocalPart());
+      } else {
+        currentParentName = parentName;
+      }
 
-    // write the value
-    handler.writeItem(item, currentParentName, this);
+      // write the value
+      handler.writeItem(targetObject, currentParentName, this);
 
-    if (writeWrapper) {
-      writer.writeEndElement();
+      if (writeWrapper) {
+        writer.writeEndElement();
+      }
+    } catch (XMLStreamException ex) {
+      throw new IOException(ex);
     }
   }
 }

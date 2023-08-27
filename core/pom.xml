@@ -50,10 +50,6 @@
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.jackson.dataformat</groupId>
-			<artifactId>jackson-dataformat-yaml</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
 			<artifactId>xmlbeans</artifactId>
 		</dependency>
@@ -64,12 +60,6 @@
 		<dependency>
 			<groupId>org.xmlresolver</groupId>
 			<artifactId>xmlresolver</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.xmlresolver</groupId>
-			<artifactId>xmlresolver</artifactId>
-			<classifier>data</classifier>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -128,23 +118,6 @@
 			<artifactId>log4j-core</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.logging.log4j</groupId> -->
-		<!-- <artifactId>log4j-jul</artifactId> -->
-		<!-- <scope>test</scope> -->
-		<!-- </dependency> -->
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-slf4j-impl</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- 		<dependency> -->
-		<!-- 			<groupId>io.hosuaby</groupId> -->
-		<!-- 			<artifactId>inject-resources-core</artifactId> -->
-		<!-- 			<version>0.3.2</version> -->
-		<!-- 			<scope>test</scope> -->
-		<!-- 		</dependency> -->
 		<dependency>
 			<groupId>io.hosuaby</groupId>
 			<artifactId>inject-resources-junit-jupiter</artifactId>
@@ -155,17 +128,6 @@
 			<artifactId>jmock-junit5</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>org.hamcrest</groupId> -->
-		<!-- <artifactId>hamcrest-library</artifactId> -->
-		<!-- <version>2.2</version> -->
-		<!-- <scope>test</scope> -->
-		<!-- </dependency> -->
-		<!--		<dependency>-->
-		<!--			<groupId>biz.aQute.bnd</groupId>-->
-		<!--			<artifactId>biz.aQute.bndlib</artifactId>-->
-		<!--			<scope>provided</scope>-->
-		<!--		</dependency>-->
 		<dependency>
 			<groupId>biz.aQute.bnd</groupId>
 			<artifactId>biz.aQute.bnd.util</artifactId>
@@ -200,7 +162,7 @@
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<configuration>
 						<excludes>
-							<exclude>gov/nist/secauto/metaschema/model/xmlbeans/**/*</exclude>
+							<exclude>gov/nist/secauto/metaschema/core/model/xml/xmlbeans/**/*</exclude>
 							<exclude>org/apache/xmlbeans/**/*</exclude>
 						</excludes>
 					</configuration>

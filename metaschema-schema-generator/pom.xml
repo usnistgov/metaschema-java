@@ -25,11 +25,6 @@
 			<artifactId>metaschema-databind</artifactId>
 			<scope>test</scope>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>${project.groupId}</groupId>-->
-<!--			<artifactId>metaschema-java-binding</artifactId>-->
-<!--			<scope>test</scope>-->
-<!--		</dependency>-->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>metaschema-testing</artifactId>
@@ -53,33 +48,12 @@
 			<artifactId>jaxen</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.xmlresolver</groupId>
-			<artifactId>xmlresolver</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.xmlresolver</groupId>
-			<artifactId>xmlresolver</artifactId>
-			<classifier>data</classifier>
-		</dependency>
-		<!--
-		<dependency>
-			<groupId>xml-apis</groupId>
-		<artifactId>xml-apis</artifactId>
-			<scope>provided</scope>
-		</dependency>
--->
-		<dependency>
 			<groupId>org.codehaus.woodstox</groupId>
 			<artifactId>stax2-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.saxon</groupId>
 			<artifactId>Saxon-HE</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

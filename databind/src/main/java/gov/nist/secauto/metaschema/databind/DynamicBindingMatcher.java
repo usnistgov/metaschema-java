@@ -24,22 +24,53 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 
-import java.util.Collection;
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IGeneratedMetaschemaClass extends IGeneratedClass {
+class DynamicBindingMatcher implements IBindingMatcher {
+  private final IAssemblyDefinition definition;
+  private final Class<IAssemblyClassBinding> clazz;
 
-  @NonNull
-  IMetaschema getMetaschema();
+  public DynamicBindingMatcher(@NonNull IAssemblyDefinition definition, @NonNull Class<IAssemblyClassBinding> clazz) {
+    this.definition = definition;
+    this.clazz = clazz;
+  }
 
-  @NonNull
-  String getPackageName();
+  protected IAssemblyDefinition getDefinition() {
+    return definition;
+  }
 
+  protected Class<IAssemblyClassBinding> getClazz() {
+    return clazz;
+  }
+
+  @SuppressWarnings("null")
   @NonNull
-  Collection<IGeneratedDefinitionClass> getGeneratedDefinitionClasses();
+  protected QName getRootQName() {
+    return getDefinition().getRootXmlQName();
+  }
+
+  @SuppressWarnings("null")
+  @NonNull
+  protected String getRootJsonName() {
+    return getDefinition().getRootJsonName();
+  }
+
+  @Override
+  public Class<?> getBoundClassForXmlQName(QName rootQName) {
+    return getRootQName().equals(
+        rootQName) ? getClazz() : null;
+  }
+
+  @Override
+  public Class<?> getBoundClassForJsonName(String rootName) {
+    return getRootJsonName().equals(
+        rootName) ? getClazz() : null;
+  }
 }

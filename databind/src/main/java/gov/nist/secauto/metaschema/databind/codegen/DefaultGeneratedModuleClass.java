@@ -39,9 +39,9 @@ import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class DefaultMetaschemaGeneratedClass
+class DefaultGeneratedModuleClass
     extends DefaultGeneratedClass
-    implements IGeneratedMetaschemaClass {
+    implements IGeneratedModuleClass {
   @NonNull
   private final IMetaschema module;
   @NonNull
@@ -49,7 +49,7 @@ class DefaultMetaschemaGeneratedClass
   @NonNull
   private final String packageName;
 
-  public DefaultMetaschemaGeneratedClass(
+  public DefaultGeneratedModuleClass(
       @NonNull IMetaschema module,
       @NonNull ClassName className,
       @NonNull Path classFile,
@@ -62,7 +62,7 @@ class DefaultMetaschemaGeneratedClass
   }
 
   @Override
-  public IMetaschema getMetaschema() {
+  public IMetaschema getModule() {
     return module;
   }
 

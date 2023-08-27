@@ -36,7 +36,8 @@ import gov.nist.secauto.metaschema.core.model.validation.IValidationResult;
 import gov.nist.secauto.metaschema.core.model.validation.JsonSchemaContentValidator.JsonValidationFinding;
 import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.DynamicBindingContext;
+import gov.nist.secauto.metaschema.databind.DefaultBindingContext;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.Format;
 import gov.nist.secauto.metaschema.databind.io.ISerializer;
 import gov.nist.secauto.metaschema.model.testing.xml.xmlbeans.ContentCaseType;
@@ -270,11 +271,12 @@ public abstract class AbstractTestSuite {
       return schemaPath;
     });
 
-    Future<DynamicBindingContext> dynamicBindingContextFuture = executor.submit(() -> {
+    Future<IBindingContext> dynamicBindingContextFuture = executor.submit(() -> {
       IMetaschema metaschema = loadMetaschemaFuture.get();
-      DynamicBindingContext context;
+      IBindingContext context;
       try {
-        context = DynamicBindingContext.forMetaschema(
+        context = new DefaultBindingContext();
+        context.registerModule(
             ObjectUtils.notNull(metaschema),
             ObjectUtils.notNull(scenarioGenerationPath));
       } catch (Exception ex) { // NOPMD - intentional
@@ -326,7 +328,7 @@ public abstract class AbstractTestSuite {
   }
 
   @SuppressWarnings("unchecked")
-  protected Path convertContent(URI contentUri, @NonNull Path generationPath, @NonNull DynamicBindingContext context)
+  protected Path convertContent(URI contentUri, @NonNull Path generationPath, @NonNull IBindingContext context)
       throws IOException {
     Object object;
     try {
@@ -355,7 +357,7 @@ public abstract class AbstractTestSuite {
 
   private DynamicTest generateValidationCase(
       @NonNull ContentCaseType contentCase,
-      @NonNull Future<DynamicBindingContext> contextFuture,
+      @NonNull Future<IBindingContext> contextFuture,
       @NonNull Future<IContentValidator> contentValidatorFuture,
       @NonNull URI collectionUri,
       @NonNull Path generationPath) {
@@ -390,7 +392,7 @@ public abstract class AbstractTestSuite {
               contentCase.getLocation()),
           contentUri,
           () -> {
-            DynamicBindingContext context;
+            IBindingContext context;
             try {
               context = contextFuture.get();
             } catch (ExecutionException ex) {

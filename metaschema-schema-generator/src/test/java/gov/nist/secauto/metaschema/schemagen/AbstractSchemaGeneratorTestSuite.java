@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.core.model.validation.JsonSchemaContentValida
 import gov.nist.secauto.metaschema.core.model.validation.XmlSchemaContentValidator;
 import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.DynamicBindingContext;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.Format;
 import gov.nist.secauto.metaschema.model.testing.AbstractTestSuite;
 import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
@@ -204,9 +204,8 @@ public abstract class AbstractSchemaGeneratorTestSuite
       throw new IllegalStateException();
     }
 
-    DynamicBindingContext context = DynamicBindingContext.forMetaschema(
-        metaschema,
-        generationDir);
+    IBindingContext context = IBindingContext.instance();
+    context.registerModule(metaschema, generationDir);
     for (ContentCase contentCase : contentCases) {
       Path contentPath = collectionPath.resolve(contentCase.getName());
 

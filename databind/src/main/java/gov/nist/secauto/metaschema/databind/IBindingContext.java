@@ -31,6 +31,9 @@ import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.StaticContext;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.core.model.constraint.FindingCollectingConstraintValidationHandler;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintValidationHandler;
@@ -40,6 +43,7 @@ import gov.nist.secauto.metaschema.core.model.validation.IValidationResult;
 import gov.nist.secauto.metaschema.core.model.validation.JsonSchemaContentValidator;
 import gov.nist.secauto.metaschema.core.model.validation.XmlSchemaContentValidator;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.codegen.MetaschemaCompilerHelper;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
 import gov.nist.secauto.metaschema.databind.io.Format;
@@ -47,6 +51,7 @@ import gov.nist.secauto.metaschema.databind.io.IBoundLoader;
 import gov.nist.secauto.metaschema.databind.io.IDeserializer;
 import gov.nist.secauto.metaschema.databind.io.ISerializer;
 import gov.nist.secauto.metaschema.databind.io.yaml.YamlOperations;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
@@ -56,6 +61,7 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -88,8 +94,10 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    *
    * @param matcher
    *          the matcher implementation
+   * @return this instance
    */
-  void registerBindingMatcher(@NonNull IBindingMatcher matcher);
+  @NonNull
+  IBindingContext registerBindingMatcher(@NonNull IBindingMatcher matcher);
 
   /**
    * Determine the bound class for the provided XML {@link QName}.
@@ -132,11 +140,62 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   @Nullable
   <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NonNull Class<TYPE> clazz);
 
-  // boolean hasClassBinding(Class<?> clazz) throws BindingException;
+  /**
+   * Generate, compile, and load a set of generated Metaschema annotated Java
+   * classes based on the provided Metaschema {@code module}.
+   *
+   * @param module
+   *          the Metaschema module to generate classes for
+   * @param compilePath
+   *          the path to the directory to generate classes in
+   * @return this instance
+   * @throws IOException
+   *           if an error occurred while generating or loading the classes
+   */
+  @SuppressWarnings("PMD.UseProperClassLoader") // false positive
+  @NonNull
+  default IBindingContext registerModule(
+      @NonNull IMetaschema module,
+      @NonNull Path compilePath) throws IOException {
+    Files.createDirectories(compilePath);
 
-  // <TYPE> void registerSubclassType(@NonNull Class<TYPE> originalClass, @NonNull
-  // Class<? extends
-  // TYPE> replacementClass);
+    ClassLoader classLoader = MetaschemaCompilerHelper.newClassLoader(
+        compilePath,
+        ObjectUtils.notNull(Thread.currentThread().getContextClassLoader()));
+
+    MetaschemaCompilerHelper.compileMetaschema(module, compilePath).getGlobalDefinitionClassesAsStream()
+        .filter(definitionInfo -> {
+          boolean retval = false;
+          IFlagContainer definition = definitionInfo.getDefinition();
+          if (definition instanceof IAssemblyDefinition) {
+            IAssemblyDefinition assembly = (IAssemblyDefinition) definition;
+            if (assembly.isRoot()) {
+              retval = true;
+            }
+          }
+          return retval;
+        })
+        .map(
+            generatedClass -> {
+              try {
+                @SuppressWarnings("unchecked") Class<IAssemblyClassBinding> clazz
+                    = ObjectUtils.notNull((Class<IAssemblyClassBinding>) classLoader
+                        .loadClass(generatedClass.getClassName().reflectionName()));
+
+                IAssemblyDefinition definition = (IAssemblyDefinition) generatedClass.getDefinition();
+                return new DynamicBindingMatcher(
+                    definition,
+                    clazz);
+              } catch (ClassNotFoundException ex) {
+                throw new IllegalStateException(ex);
+              }
+            })
+        .forEachOrdered(
+            matcher -> registerBindingMatcher(
+                ObjectUtils.notNull(
+                    matcher)));
+    return this;
+  }
 
   /**
    * Gets a data {@link ISerializer} which can be used to write Java instance data
@@ -344,4 +403,5 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
     @NonNull
     List<Source> getXmlSchemas() throws IOException;
   }
+
 }

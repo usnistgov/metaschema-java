@@ -35,21 +35,44 @@ import org.codehaus.stax2.XMLStreamWriter2;
 import java.io.IOException;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IXmlWritingContext extends IWritingContext<XMLStreamWriter2> {
-  // REFACTOR: is IOException needed?
+  /**
+   * Write the data described by the provided {@code targetDefinition} as an XML
+   * element.
+   *
+   * @param targetDefinition
+   *          the bound Metaschema definition describing the structure of the XML
+   *          data to write
+   * @param targetObject
+   *          the Java object data to write
+   * @param parentName
+   *          the qualified name of the XML element to write
+   * @throws IOException
+   *           if an error occurred while writing the XML
+   */
   void writeDefinitionValue(
       @NonNull IClassBinding targetDefinition,
       @NonNull Object targetObject,
-      @NonNull QName parentName) throws IOException, XMLStreamException;
+      @NonNull QName parentName) throws IOException;
 
-  // REFACTOR: is IOException needed?
+  /**
+   * Write the data described by the provided {@code targetDefinition} as an XML
+   * element.
+   *
+   * @param targetInstance
+   *          the model instance that describes the syntax of the data to write
+   * @param targetObject
+   *          the Java object data to write
+   * @param parentName
+   *          the qualified name of the XML element to write
+   * @throws IOException
+   *           if an error occurred while writing the XML
+   */
   void writeInstanceValue(
       @NonNull IBoundNamedModelInstance targetInstance,
-      @NonNull Object itemValue,
-      @NonNull QName parentName)
-      throws XMLStreamException, IOException;
+      @NonNull Object targetObject,
+      @NonNull QName parentName) throws IOException;
 }
