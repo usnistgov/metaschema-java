@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.databind.codegen;
 
 import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.codegen.config.DefaultBindingConfiguration;
 import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration;
 
@@ -34,6 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.lang.module.ModuleDescriptor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -159,16 +161,41 @@ public final class MetaschemaCompilerHelper {
       DiagnosticCollector<JavaFileObject> diagnostics,
       List<JavaFileObject> compilationUnits,
       Path classDir) {
+
+    String classPath = System.getProperty("java.class.path");
+    String modulePath = System.getProperty("jdk.module.path");
+
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.atDebug().log("Using classpath: {}", classPath);
+      LOGGER.atDebug().log("Using modulepath: {}", modulePath);
+    }
+
     List<String> options = new LinkedList<>();
     // options.add("-verbose");
     // options.add("-g");
     options.add("-d");
     options.add(classDir.toString());
-    options.add("-classpath");
-    options.add(System.getProperty("java.class.path"));
+    if (classPath != null) {
+      options.add("-classpath");
+      options.add(classPath);
+    }
+    if (modulePath != null) {
+      options.add("-p");
+      options.add(modulePath);
+    }
 
     JavaCompiler.CompilationTask task
         = compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits);
+
+    Module module = IBindingContext.class.getModule();
+    if (module != null) {
+      ModuleDescriptor descriptor = module.getDescriptor();
+      if (descriptor != null) {
+        // add the databind module to the task
+        task.addModules(List.of(descriptor.name()));
+      }
+    }
+
     return task.call();
   }
 

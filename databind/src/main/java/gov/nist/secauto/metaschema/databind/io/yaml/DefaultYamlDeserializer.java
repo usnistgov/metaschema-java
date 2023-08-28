@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.databind.io.yaml;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import gov.nist.secauto.metaschema.databind.io.json.DefaultJsonDeserializer;
+import gov.nist.secauto.metaschema.databind.io.yaml.impl.YamlFactoryFactory;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 
 import edu.umd.cs.findbugs.annotations.NonNull;

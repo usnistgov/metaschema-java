@@ -44,18 +44,17 @@ module gov.nist.secauto.metaschema.core {
   requires com.ctc.wstx;
   requires com.fasterxml.jackson.annotation;
   requires com.fasterxml.jackson.core;
+  requires transitive com.fasterxml.jackson.databind;
+  requires transitive inet.ipaddr;
   requires nl.talsmasoftware.lazy4j;
   requires org.antlr.antlr4.runtime;
   requires org.apache.commons.lang3;
   requires org.apache.commons.text;
   requires org.apache.logging.log4j;
   requires org.apache.xmlbeans;
+  requires transitive org.codehaus.stax2;
   requires transitive org.json;
   requires org.jsoup;
-
-  requires transitive com.fasterxml.jackson.databind;
-  requires transitive inet.ipaddr;
-  requires transitive org.codehaus.stax2;
 
   // dependencies without a module descriptor
   requires transitive everit.json.schema; // needed for validation details
@@ -95,6 +94,7 @@ module gov.nist.secauto.metaschema.core {
   exports gov.nist.secauto.metaschema.core.model.validation;
   exports gov.nist.secauto.metaschema.core.model.xml;
   // exports gov.nist.secauto.metaschema.core.model.xml.xmlbeans;
+  exports gov.nist.secauto.metaschema.core.resource;
   exports gov.nist.secauto.metaschema.core.util;
 
   exports gov.nist.secauto.metaschema.core.datatype.markup.flexmark

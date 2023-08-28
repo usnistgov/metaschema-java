@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.json.JsonFactoryFactory;
-import gov.nist.secauto.metaschema.databind.io.yaml.YamlFactoryFactory;
+import gov.nist.secauto.metaschema.databind.io.yaml.impl.YamlFactoryFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
