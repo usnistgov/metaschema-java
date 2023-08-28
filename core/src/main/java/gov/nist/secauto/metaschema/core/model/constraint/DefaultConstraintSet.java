@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.model.constraint;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -97,11 +97,11 @@ public class DefaultConstraintSet implements IConstraintSet {
   }
 
   @Override
-  public Stream<ITargetedConstaints> getTargetedConstraintsForMetaschema(@NonNull IMetaschema metaschema) {
-    QName metaschemaQName = metaschema.getQName();
+  public Stream<ITargetedConstaints> getTargetedConstraintsForModule(@NonNull IModule module) {
+    QName qname = module.getQName();
 
     Map<QName, List<IScopedContraints>> map = getScopedContraints();
-    List<IScopedContraints> scopes = map.getOrDefault(metaschemaQName, CollectionUtil.emptyList());
+    List<IScopedContraints> scopes = map.getOrDefault(qname, CollectionUtil.emptyList());
     return ObjectUtils.notNull(scopes.stream()
         .flatMap(scoped -> scoped.getTargetedContraints().stream()));
   }

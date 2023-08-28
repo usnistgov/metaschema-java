@@ -29,11 +29,11 @@ package gov.nist.secauto.metaschema.core.model.constraint;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression.ResultType;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.IMetaschemaNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -67,38 +67,40 @@ public interface IConstraintSet {
 
   @NonNull
   static List<ITargetedConstaints> getTargetedConstraintsForMetaschema(
-      @NonNull Set<IConstraintSet> constraintSets, @NonNull IMetaschema metaschema) {
+      @NonNull Set<IConstraintSet> constraintSets,
+      @NonNull IModule module) {
     return ObjectUtils.notNull(resolveConstraintSets(constraintSets).stream()
-        .flatMap(set -> set.getTargetedConstraintsForMetaschema(metaschema))
+        .flatMap(set -> set.getTargetedConstraintsForModule(module))
         .collect(Collectors.toUnmodifiableList()));
   }
 
   @NonNull
-  Stream<ITargetedConstaints> getTargetedConstraintsForMetaschema(@NonNull IMetaschema metaschema);
+  Stream<ITargetedConstaints> getTargetedConstraintsForModule(@NonNull IModule module);
 
-  static void applyConstraintSetToMetaschema(@NonNull Set<IConstraintSet> constraintSets,
-      @NonNull IMetaschema metaschema) throws MetaschemaException {
+  static void applyConstraintSetToModule(
+      @NonNull Set<IConstraintSet> constraintSets,
+      @NonNull IModule module) throws MetaschemaException {
     Set<IConstraintSet> resolvedConstraintSets = resolveConstraintSets(constraintSets);
 
     ConstraintComposingVisitor visitor = new ConstraintComposingVisitor();
-    IMetaschemaNodeItem item = INodeItemFactory.instance().newMetaschemaNodeItem(metaschema);
+    IModuleNodeItem item = INodeItemFactory.instance().newModuleNodeItem(module);
 
-    for (ITargetedConstaints targeted : getTargetedConstraintsForMetaschema(resolvedConstraintSets, metaschema)) {
+    for (ITargetedConstaints targeted : getTargetedConstraintsForMetaschema(resolvedConstraintSets, module)) {
       MetapathExpression targetExpression = targeted.getTargetExpression();
       INodeItem node = targetExpression.evaluateAs(item, ResultType.NODE);
       if (node == null) {
         throw new MetaschemaException(String.format("Target not found for expression '%s' on metaschema '%s'.",
             targetExpression.getPath(),
-            metaschema.getQName()));
+            module.getQName()));
       } else if (node instanceof IDefinitionNodeItem) {
         IDefinition nodeDefinition = ((IDefinitionNodeItem<?, ?>) node).getDefinition();
-        IMetaschema nodeMetaschema = nodeDefinition.getContainingMetaschema();
-        if (!metaschema.equals(nodeMetaschema)) {
+        IModule nodeModule = nodeDefinition.getContainingModule();
+        if (!module.equals(nodeModule)) {
           throw new MetaschemaException(
               String.format("Target definition '%s' in metaschema '%s' is not in the scoped metaschema '%s'.",
                   nodeDefinition.getName(),
-                  nodeMetaschema.getQName(),
-                  metaschema.getQName()));
+                  nodeModule.getQName(),
+                  module.getQName()));
         }
       }
       node.accept(visitor, targeted);

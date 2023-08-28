@@ -39,7 +39,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFieldNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFlagNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.IMetaschemaNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
@@ -576,7 +576,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     }
 
     @Override
-    public Void visitMetaschema(@NonNull IMetaschemaNodeItem item, Void context) {
+    public Void visitMetaschema(@NonNull IModuleNodeItem item, Void context) {
       throw new UnsupportedOperationException("not needed");
     }
 

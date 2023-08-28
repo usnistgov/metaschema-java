@@ -35,7 +35,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the target of this annotation is a Metaschema flag whose value
+ * Indicates that the target of this annotation is a Module flag whose value
  * should be the property/item name of the field's value in JSON or YAML.
  * <p>
  * Use of this annotation is mutually exclusive with the

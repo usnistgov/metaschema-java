@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.databind.codegen.config;
 
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -35,14 +35,14 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface IBindingConfiguration {
 
   /**
-   * Generates a Java package name for the provided Metaschema.
+   * Generates a Java package name for the provided Module module.
    *
-   * @param metaschema
-   *          the Metaschema to generate a package name for
+   * @param module
+   *          the Module module to generate a package name for
    * @return a Java package name
    */
   @NonNull
-  String getPackageNameForMetaschema(@NonNull IMetaschema metaschema);
+  String getPackageNameForModule(@NonNull IModule module);
 
   /**
    * Get the Java class name for the provided field or assembly definition.
@@ -55,14 +55,14 @@ public interface IBindingConfiguration {
   String getClassName(@NonNull IFlagContainer definition);
 
   /**
-   * Get the Java class name for the provided Metaschema.
+   * Get the Java class name for the provided Module module.
    *
-   * @param metaschema
-   *          the Metaschema to generate the Java class name for
+   * @param module
+   *          the Module module to generate the Java class name for
    * @return a Java class name
    */
   @NonNull
-  String getClassName(@NonNull IMetaschema metaschema);
+  String getClassName(@NonNull IModule module);
 
   /**
    * Get the Java class name of the base class to use for the class associated

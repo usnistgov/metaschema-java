@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 
-@MetaschemaAssembly(name = "flagged-bound-assembly", metaschema = TestMetaschema.class)
+@MetaschemaAssembly(name = "flagged-bound-assembly", moduleClass = TestMetaschema.class)
 public class FlaggedBoundAssembly {
   @JsonKey
   @BoundFlag(useName = "assembly-required-flag", required = true)

@@ -32,8 +32,8 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
 import gov.nist.secauto.metaschema.core.model.IModelElement;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.IValuedDefinition;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.core.util.AutoCloser;
@@ -80,11 +80,11 @@ public class XmlGenerationState
   private int prefixNum; // 0
 
   public XmlGenerationState(
-      @NonNull IMetaschema metaschema,
+      @NonNull IModule module,
       @NonNull AutoCloser<XMLStreamWriter2, SchemaGenerationException> writer,
       @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration) {
-    super(metaschema, writer, configuration, new XmlDatatypeManager());
-    this.defaultNS = ObjectUtils.notNull(metaschema.getXmlNamespace().toASCIIString());
+    super(module, writer, configuration, new XmlDatatypeManager());
+    this.defaultNS = ObjectUtils.notNull(module.getXmlNamespace().toASCIIString());
   }
 
   @SuppressWarnings("resource")
@@ -106,7 +106,7 @@ public class XmlGenerationState
   @SuppressWarnings("null")
   @NonNull
   public String getNS(@NonNull IModelElement modelElement) {
-    return modelElement.getContainingMetaschema().getXmlNamespace().toASCIIString();
+    return modelElement.getContainingModule().getXmlNamespace().toASCIIString();
   }
 
   public String getNSPrefix(String namespace) {

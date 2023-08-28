@@ -64,7 +64,7 @@ abstract class AbstractSerializationBase<T extends IConfigurationFeature<?>>
    * Retrieve the bound class information associated with the assembly that the
    * serializer/deserializer will write/read data from.
    *
-   * @return the class binding for the Metaschema assembly
+   * @return the class binding for the Module assembly
    */
   @NonNull
   protected IAssemblyClassBinding getClassBinding() {

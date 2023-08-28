@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
@@ -48,21 +48,21 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.util.List;
 
-class MetaschemaLoaderTest {
+class ModuleLoaderTest {
 
   @Test
   void testUrl() throws MetaschemaException, IOException { // NOPMD - intentional
-    MetaschemaLoader loader = new MetaschemaLoader();
+    ModuleLoader loader = new ModuleLoader();
     loader.allowEntityResolution();
-    URI metaschemaUri = ObjectUtils.notNull(URI.create(
+    URI moduleUri = ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
-    IMetaschema metaschema = loader.load(metaschemaUri);
+    IModule module = loader.load(moduleUri);
 
-    IMetaschema oscalCatalogMetaschema = metaschema.getImportedMetaschemaByShortName("oscal-catalog");
-    assertNotNull(oscalCatalogMetaschema, "catalog metaschema not found");
-    IMetaschema metadataMetaschema = oscalCatalogMetaschema.getImportedMetaschemaByShortName("oscal-metadata");
-    assertNotNull(metadataMetaschema, "metadata metaschema not found");
-    IFlagDefinition flag = metadataMetaschema.getScopedFlagDefinitionByName("location-type");
+    IModule oscalCatalogModule = module.getImportedModuleByShortName("oscal-catalog");
+    assertNotNull(oscalCatalogModule, "catalog metaschema not found");
+    IModule metadataModule = oscalCatalogModule.getImportedModuleByShortName("oscal-metadata");
+    assertNotNull(metadataModule, "metadata metaschema not found");
+    IFlagDefinition flag = metadataModule.getScopedFlagDefinitionByName("location-type");
     assertNotNull(flag, "flag not found");
     List<? extends IConstraint> constraints = flag.getConstraints();
     assertFalse(constraints.isEmpty(), "a constraint was expected");
@@ -70,12 +70,11 @@ class MetaschemaLoaderTest {
 
   @Test
   void testFile() throws MetaschemaException, IOException {
-    MetaschemaLoader loader = new MetaschemaLoader();
-    URI metaschemaUri = ObjectUtils.notNull(
+    ModuleLoader loader = new ModuleLoader();
+    URI moduleUri = ObjectUtils.notNull(
         Paths.get("metaschema/test-suite/docs-models/models_metaschema.xml").toUri());
-    IMetaschema metaschema
-        = loader.load(metaschemaUri);
-    assertFalse(metaschema.getExportedRootAssemblyDefinitions().isEmpty(), "no roots found");
+    IModule module = loader.load(moduleUri);
+    assertFalse(module.getExportedRootAssemblyDefinitions().isEmpty(), "no roots found");
   }
 
   @Test
@@ -84,12 +83,12 @@ class MetaschemaLoaderTest {
     IConstraintSet constraintSet = constraintLoader.load(
         ObjectUtils.notNull(Paths.get("src/test/resources/content/oscal-constraints.xml")));
 
-    MetaschemaLoader loader = new MetaschemaLoader(CollectionUtil.singleton(constraintSet));
+    ModuleLoader loader = new ModuleLoader(CollectionUtil.singleton(constraintSet));
     loader.allowEntityResolution();
-    URI metaschemaUri = ObjectUtils.notNull(URI.create(
+    URI moduleUri = ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
-    IMetaschema metaschema = loader.load(metaschemaUri);
-    IAssemblyDefinition catalog = metaschema.getExportedAssemblyDefinitionByName("catalog");
+    IModule module = loader.load(moduleUri);
+    IAssemblyDefinition catalog = module.getExportedAssemblyDefinitionByName("catalog");
 
     assertNotNull(catalog, "catalog not found");
     List<? extends IConstraint> constraints = catalog.getConstraints();
@@ -98,12 +97,12 @@ class MetaschemaLoaderTest {
 
   @Test
   void testLoadMetaschemaWithExternalEntity() throws MetaschemaException, IOException {
-    MetaschemaLoader loader = new MetaschemaLoader();
+    ModuleLoader loader = new ModuleLoader();
     loader.allowEntityResolution();
-    IMetaschema metaschema
+    IModule module
         = loader.load(ObjectUtils.notNull(Paths.get("src/test/resources/content/custom-entity-metaschema.xml")));
 
-    IAssemblyDefinition root = metaschema.getAssemblyDefinitionByName("root");
+    IAssemblyDefinition root = module.getAssemblyDefinitionByName("root");
     assert root != null;
     List<? extends IAllowedValuesConstraint> allowedValues = root.getAllowedValuesConstraints();
 

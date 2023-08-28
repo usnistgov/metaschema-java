@@ -42,23 +42,23 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 abstract class AbstractGlobalDefinitionNodeItem<D extends IDefinition, I extends INamedInstance>
     extends AbstractDefinitionNodeItem<D, I> {
   @NonNull
-  private final IMetaschemaNodeItem metaschemaNodeItem;
+  private final IModuleNodeItem metaschemaNodeItem;
 
   protected AbstractGlobalDefinitionNodeItem(
       @NonNull D definition,
-      @NonNull IMetaschemaNodeItem metaschemaNodeItem) {
+      @NonNull IModuleNodeItem metaschemaNodeItem) {
     super(definition);
     this.metaschemaNodeItem = metaschemaNodeItem;
   }
 
   @NonNull
-  protected IMetaschemaNodeItem getMetaschemaNodeItem() {
+  protected IModuleNodeItem getMetaschemaNodeItem() {
     return metaschemaNodeItem;
   }
 
   @Override
   @NonNull
-  public IMetaschemaNodeItem getParentNodeItem() {
+  public IModuleNodeItem getParentNodeItem() {
     return getMetaschemaNodeItem();
   }
 

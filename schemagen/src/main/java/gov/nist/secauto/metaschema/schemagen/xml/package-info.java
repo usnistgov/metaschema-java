@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 /**
- * Provides XML Schema generation capabilities based on a provided Metaschema.
+ * Provides XML Schema generation capabilities based on a provided Module.
  */
 
 package gov.nist.secauto.metaschema.schemagen.xml;

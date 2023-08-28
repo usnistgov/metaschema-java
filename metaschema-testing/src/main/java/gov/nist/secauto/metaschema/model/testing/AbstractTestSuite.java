@@ -28,13 +28,13 @@ package gov.nist.secauto.metaschema.model.testing;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.validation.IContentValidator;
 import gov.nist.secauto.metaschema.core.model.validation.IValidationFinding;
 import gov.nist.secauto.metaschema.core.model.validation.IValidationResult;
 import gov.nist.secauto.metaschema.core.model.validation.JsonSchemaContentValidator.JsonValidationFinding;
-import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
+import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.DefaultBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
@@ -84,7 +84,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 public abstract class AbstractTestSuite {
   private static final Logger LOGGER = LogManager.getLogger(AbstractTestSuite.class);
-  private static final MetaschemaLoader LOADER = new MetaschemaLoader();
+  private static final ModuleLoader LOADER = new ModuleLoader();
 
   private static final boolean DELETE_RESULTS_ON_EXIT = false;
 
@@ -102,7 +102,7 @@ public abstract class AbstractTestSuite {
   protected abstract Path getGenerationPath();
 
   @NonNull
-  protected abstract BiFunction<IMetaschema, Writer, Void> getGeneratorSupplier();
+  protected abstract BiFunction<IModule, Writer, Void> getGeneratorSupplier();
 
   @Nullable
   protected abstract Supplier<? extends IContentValidator> getSchemaValidatorSupplier();
@@ -200,12 +200,12 @@ public abstract class AbstractTestSuite {
             .sequential());
   }
 
-  protected void produceSchema(@NonNull IMetaschema metaschema, @NonNull Path schemaPath) throws IOException {
-    produceSchema(metaschema, schemaPath, getGeneratorSupplier());
+  protected void produceSchema(@NonNull IModule module, @NonNull Path schemaPath) throws IOException {
+    produceSchema(module, schemaPath, getGeneratorSupplier());
   }
 
-  protected void produceSchema(@NonNull IMetaschema metaschema, @NonNull Path schemaPath,
-      @NonNull BiFunction<IMetaschema, Writer, Void> schemaProducer) throws IOException {
+  protected void produceSchema(@NonNull IModule module, @NonNull Path schemaPath,
+      @NonNull BiFunction<IModule, Writer, Void> schemaProducer) throws IOException {
     Path parentDir = schemaPath.getParent();
     if (parentDir != null && !Files.exists(parentDir)) {
       Files.createDirectories(parentDir);
@@ -215,7 +215,7 @@ public abstract class AbstractTestSuite {
         schemaPath,
         StandardCharsets.UTF_8,
         getWriteOpenOptions())) {
-      schemaProducer.apply(metaschema, writer);
+      schemaProducer.apply(module, writer);
     }
   }
 
@@ -248,14 +248,14 @@ public abstract class AbstractTestSuite {
     URI metaschemaUri = collectionUri.resolve(metaschemaDirective.getLocation());
 
     ExecutorService executor = Executors.newSingleThreadExecutor(); // NOPMD - intentional use of threads
-    Future<IMetaschema> loadMetaschemaFuture = executor.submit(() -> {
-      IMetaschema metaschema;
+    Future<IModule> loadModuleFuture = executor.submit(() -> {
+      IModule module;
       try {
-        metaschema = LOADER.load(ObjectUtils.notNull(metaschemaUri.toURL()));
+        module = LOADER.load(ObjectUtils.notNull(metaschemaUri.toURL()));
       } catch (IOException | MetaschemaException ex) {
-        throw new JUnitException("Unable to generate schema for Metaschema: " + metaschemaUri, ex);
+        throw new JUnitException("Unable to generate schema for Module: " + metaschemaUri, ex);
       }
-      return metaschema;
+      return module;
     });
 
     Future<Path> generateSchemaFuture = executor.submit(() -> {
@@ -266,18 +266,18 @@ public abstract class AbstractTestSuite {
       } catch (IOException ex) {
         throw new JUnitException("Unable to create schema temp file", ex);
       }
-      IMetaschema metaschema = loadMetaschemaFuture.get();
-      produceSchema(ObjectUtils.notNull(metaschema), ObjectUtils.notNull(schemaPath));
+      IModule module = loadModuleFuture.get();
+      produceSchema(ObjectUtils.notNull(module), ObjectUtils.notNull(schemaPath));
       return schemaPath;
     });
 
     Future<IBindingContext> dynamicBindingContextFuture = executor.submit(() -> {
-      IMetaschema metaschema = loadMetaschemaFuture.get();
+      IModule module = loadModuleFuture.get();
       IBindingContext context;
       try {
         context = new DefaultBindingContext();
         context.registerModule(
-            ObjectUtils.notNull(metaschema),
+            ObjectUtils.notNull(module),
             ObjectUtils.notNull(scenarioGenerationPath));
       } catch (Exception ex) { // NOPMD - intentional
         throw new JUnitException("Unable to generate classes for metaschema: " + metaschemaUri, ex);

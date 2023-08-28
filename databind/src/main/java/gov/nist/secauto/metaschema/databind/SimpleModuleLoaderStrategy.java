@@ -24,55 +24,15 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.metapath.item.node;
-
-import gov.nist.secauto.metaschema.core.metapath.format.IPathFormatter;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
-import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
-
-import java.net.URI;
+package gov.nist.secauto.metaschema.databind;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-/**
- * Supports querying of global definitions and associated instances in a
- * Metaschema by effective name.
- * <p>
- * All definitions in the {@link ModuleScopeEnum#INHERITED} scope. This allows
- * the exported structure of the Metaschema to be queried.
- */
-public interface IMetaschemaNodeItem extends IDocumentNodeItem {
+class SimpleModuleLoaderStrategy
+    extends AbstractModuleLoaderStrategy {
 
-  /**
-   * The Metaschema this item is based on.
-   *
-   * @return the Metaschema
-   */
-  @NonNull
-  IMetaschema getMetaschema();
-
-  @Override
-  default URI getDocumentUri() {
-    return getMetaschema().getLocation();
+  public SimpleModuleLoaderStrategy(@NonNull IBindingContext bindingContext) {
+    super(bindingContext);
   }
 
-  @Override
-  default NodeItemType getNodeItemType() {
-    return NodeItemType.METASCHEMA;
-  }
-
-  @Override
-  default IMetaschemaNodeItem getNodeItem() {
-    return this;
-  }
-
-  @Override
-  default String format(@NonNull IPathFormatter formatter) {
-    return formatter.formatMetaschema(this);
-  }
-
-  @Override
-  default <RESULT, CONTEXT> RESULT accept(@NonNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitMetaschema(this, context);
-  }
 }

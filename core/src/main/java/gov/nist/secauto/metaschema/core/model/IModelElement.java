@@ -64,11 +64,11 @@ public interface IModelElement {
   MarkupMultiline getRemarks();
 
   /**
-   * Retrieves the Metaschema instance that contains for the information element's
+   * Retrieves the Metaschema module that contains the information element's
    * declaration.
    *
-   * @return the Metaschema instance
+   * @return the Metaschema module
    */
   @NonNull
-  IMetaschema getContainingMetaschema();
+  IModule getContainingModule();
 }

@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFieldNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFlagNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.IMetaschemaNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemVisitor;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -62,7 +62,7 @@ class ConstraintComposingVisitor
   }
 
   @Override
-  public Void visitMetaschema(@NonNull IMetaschemaNodeItem item, ITargetedConstaints context) {
+  public Void visitMetaschema(@NonNull IModuleNodeItem item, ITargetedConstaints context) {
     throw new UnsupportedOperationException("constraints can only apply to an assembly, field, or flag definition");
   }
 

@@ -45,7 +45,7 @@ public interface INamedModelInstance extends INamedInstance, IModelInstance {
           ObjectUtils.notNull(String.format("null group-as name in instance '%s' on definition '%s' in '%s'",
               this.getName(),
               this.getContainingDefinition().getName(),
-              this.getContainingMetaschema().getLocation())));
+              this.getContainingModule().getLocation())));
       retval = groupAsName;
     } else {
       retval = getEffectiveName();

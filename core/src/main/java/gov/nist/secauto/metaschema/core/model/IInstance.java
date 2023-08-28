@@ -50,8 +50,8 @@ public interface IInstance extends IModelElement {
   IContainer getParentContainer();
 
   @Override
-  default IMetaschema getContainingMetaschema() {
-    return getContainingDefinition().getContainingMetaschema();
+  default IModule getContainingModule() {
+    return getContainingDefinition().getContainingModule();
   }
 
   /**
@@ -60,7 +60,7 @@ public interface IInstance extends IModelElement {
    *
    * A coordinate consists of the element's:
    * <ul>
-   * <li>containing Metaschema's short name</li>
+   * <li>containing Metaschema module's short name</li>
    * <li>model type</li>
    * <li>name</li>
    * <li>hash code</li>
@@ -72,9 +72,9 @@ public interface IInstance extends IModelElement {
   @SuppressWarnings("null")
   @Override
   default String toCoordinates() {
-    IMetaschema metaschema = getContainingMetaschema();
+    IModule module = getContainingModule();
 
     // TODO: revisit this to add more context i.e. the containing definition
-    return String.format("%s:%s", metaschema.getShortName(), getModelType());
+    return String.format("%s:%s", module.getShortName(), getModelType());
   }
 }

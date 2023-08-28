@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind.model.annotations;
 import static java.lang.annotation.ElementType.PACKAGE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -40,8 +40,8 @@ public @interface MetaschemaPackage {
   /**
    * Get the metaschemas associated with this package.
    *
-   * @return the classes that extend {@link IMetaschema} or an empty array if no
+   * @return the classes that extend {@link IModule} or an empty array if no
    *         metaschemas are defined
    */
-  Class<? extends IMetaschema>[] metaschemas() default {};
+  Class<? extends IModule>[] moduleClass() default {};
 }

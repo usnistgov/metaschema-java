@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
@@ -54,9 +54,9 @@ class DefaultBindingContextTest {
         ObjectUtils.notNull(Paths.get("src/test/resources/content/constraints.xml")));
 
     IBindingContext bindingContext = new DefaultBindingContext(CollectionUtil.singleton(constraintSet));
-    IMetaschema metaschema = bindingContext.getMetaschemaInstanceByClass(TestMetaschema.class);
+    IModule module = bindingContext.getModuleByClass(TestMetaschema.class);
 
-    IAssemblyDefinition root = metaschema.getExportedAssemblyDefinitionByName("root");
+    IAssemblyDefinition root = module.getExportedAssemblyDefinitionByName("root");
 
     assertNotNull(root, "root not found");
     List<? extends IConstraint> constraints = root.getConstraints();

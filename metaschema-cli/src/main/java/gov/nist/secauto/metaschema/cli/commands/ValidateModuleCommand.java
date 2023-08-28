@@ -39,7 +39,7 @@ import gov.nist.secauto.metaschema.cli.util.LoggingValidationHandler;
 import gov.nist.secauto.metaschema.core.model.util.XmlUtil;
 import gov.nist.secauto.metaschema.core.model.validation.IContentValidator;
 import gov.nist.secauto.metaschema.core.model.validation.IValidationResult;
-import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
+import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -59,9 +59,9 @@ import javax.xml.transform.Source;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class ValidateMetaschemaCommand
+public class ValidateModuleCommand
     extends AbstractTerminalCommand {
-  private static final Logger LOGGER = LogManager.getLogger(ValidateMetaschemaCommand.class);
+  private static final Logger LOGGER = LogManager.getLogger(ValidateModuleCommand.class);
   @NonNull
   private static final String COMMAND = "validate";
   @NonNull
@@ -69,7 +69,7 @@ public class ValidateMetaschemaCommand
 
   static {
     EXTRA_ARGUMENTS = ObjectUtils.notNull(List.of(
-        new DefaultExtraArgument("Metaschema file to validate", true)));
+        new DefaultExtraArgument("Module file to validate", true)));
   }
 
   @Override
@@ -79,7 +79,7 @@ public class ValidateMetaschemaCommand
 
   @Override
   public String getDescription() {
-    return "Validate that the specified Metaschema is well-formed and valid to the Metaschema model";
+    return "Validate that the specified Module is well-formed and valid to the Module model";
   }
 
   @Override
@@ -92,7 +92,7 @@ public class ValidateMetaschemaCommand
     List<Source> retval = new LinkedList<>();
     retval.add(XmlUtil.getStreamSource(
         ObjectUtils.requireNonNull(
-            MetaschemaLoader.class.getResource("/schema/xml/metaschema.xsd"),
+            ModuleLoader.class.getResource("/schema/xml/metaschema.xsd"),
             "Unable to load '/schema/xml/metaschema.xsd' on the classpath")));
     return CollectionUtil.unmodifiableList(retval);
   }

@@ -53,7 +53,7 @@ public class DefaultXmlSerializer<CLASS>
    * the provided {@code classBinding}.
    *
    * @param classBinding
-   *          the bound Metaschema assembly definition that describes the data to
+   *          the bound Module assembly definition that describes the data to
    *          serialize
    */
   public DefaultXmlSerializer(@NonNull IAssemblyClassBinding classBinding) {

@@ -199,7 +199,7 @@ public abstract class AbstractNodeItemVisitor<RESULT, CONTEXT> implements INodeI
   }
 
   @Override
-  public RESULT visitMetaschema(IMetaschemaNodeItem item, CONTEXT context) {
+  public RESULT visitMetaschema(IModuleNodeItem item, CONTEXT context) {
     // this is the default behavior, which can be overridden
     return aggregateResult(visitFlags(item, context), visitModelChildren(item, context), context);
   }

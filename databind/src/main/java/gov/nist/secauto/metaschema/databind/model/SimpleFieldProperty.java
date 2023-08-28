@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
@@ -236,8 +236,8 @@ class SimpleFieldProperty
     }
 
     @Override
-    public IMetaschema getContainingMetaschema() {
-      return SimpleFieldProperty.this.getContainingMetaschema();
+    public IModule getContainingModule() {
+      return SimpleFieldProperty.this.getContainingModule();
     }
 
     @Override

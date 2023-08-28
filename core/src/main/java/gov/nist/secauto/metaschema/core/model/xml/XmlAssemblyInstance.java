@@ -82,7 +82,7 @@ class XmlAssemblyInstance
   @Override
   public IAssemblyDefinition getDefinition() {
     // This will always be not null
-    return ObjectUtils.notNull(getContainingMetaschema()
+    return ObjectUtils.notNull(getContainingModule()
         .getScopedAssemblyDefinitionByName(getName()));
   }
 

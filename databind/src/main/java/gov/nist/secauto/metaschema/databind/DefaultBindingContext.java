@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.databind;
 
 import gov.nist.secauto.metaschema.core.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -60,11 +60,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * The implementation of a {@link IBindingContext} provided by this library.
  * <p>
- * This implementation caches Metaschema information, which can dramatically
- * improve read and write performance at the cost of some memory use. Thus,
- * using the same singleton of this class across multiple I/O operations will
- * improve overall read and write performance when processing the same types of
- * data.
+ * This implementation caches Module information, which can dramatically improve
+ * read and write performance at the cost of some memory use. Thus, using the
+ * same singleton of this class across multiple I/O operations will improve
+ * overall read and write performance when processing the same types of data.
  * <p>
  * Serializers and deserializers provided by this class using the
  * {@link #newSerializer(Format, Class)} and
@@ -75,7 +74,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class DefaultBindingContext implements IBindingContext {
   private static DefaultBindingContext singleton;
   @NonNull
-  private final IMetaschemaLoaderStrategy metaschemaLoaderStrategy;
+  private final IModuleLoaderStrategy moduleLoaderStrategy;
   @NonNull
   private final List<IBindingMatcher> bindingMatchers = new LinkedList<>();
 
@@ -102,7 +101,7 @@ public class DefaultBindingContext implements IBindingContext {
    */
   public DefaultBindingContext(@NonNull Set<IConstraintSet> externalConstraintSets) {
     // only allow extended classes
-    metaschemaLoaderStrategy = new ExternalConstraintsMetaschemaLoaderStrategy(this, externalConstraintSets);
+    moduleLoaderStrategy = new ExternalConstraintsModuleLoaderStrategy(this, externalConstraintSets);
   }
 
   /**
@@ -110,22 +109,22 @@ public class DefaultBindingContext implements IBindingContext {
    */
   public DefaultBindingContext() {
     // only allow extended classes
-    metaschemaLoaderStrategy = new SimpleMetaschemaLoaderStrategy(this);
+    moduleLoaderStrategy = new SimpleModuleLoaderStrategy(this);
   }
 
   @Override
-  public IMetaschema getMetaschemaInstanceByClass(@NonNull Class<? extends IMetaschema> clazz) {
-    return metaschemaLoaderStrategy.getMetaschemaInstanceByClass(clazz);
+  public IModule getModuleByClass(@NonNull Class<? extends IModule> clazz) {
+    return moduleLoaderStrategy.getModuleByClass(clazz);
   }
 
   @Override
   public IClassBinding getClassBinding(@NonNull Class<?> clazz) {
-    return metaschemaLoaderStrategy.getClassBinding(clazz);
+    return moduleLoaderStrategy.getClassBinding(clazz);
   }
 
   @Override
   public Map<Class<?>, IClassBinding> getClassBindingsByClass() {
-    return metaschemaLoaderStrategy.getClassBindingsByClass();
+    return moduleLoaderStrategy.getClassBindingsByClass();
   }
 
   @Override

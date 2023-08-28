@@ -47,7 +47,7 @@ class PackageProductionImpl implements IPackageProduction {
     this.packageInfoClass = classFactory.generatePackageInfoClass(
         metadata.getPackageName(),
         this.xmlNamespace,
-        metadata.getMetaschemaProductions(),
+        metadata.getModuleProductions(),
         targetDirectory);
   }
   //

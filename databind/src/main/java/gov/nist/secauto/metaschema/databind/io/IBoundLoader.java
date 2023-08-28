@@ -47,7 +47,7 @@ import java.nio.file.Path;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * A common interface for loading Metaschema based instance resources.
+ * A common interface for loading Module based instance resources.
  */
 public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<DeserializationFeature<?>> {
 
@@ -384,8 +384,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * Load data expressed using the provided {@code format} and return that data as
    * a Metapath node item.
    * <p>
-   * The specific Metaschema model is auto-detected by analyzing the source. The
-   * class reported is implementation specific.
+   * The specific Module model is auto-detected by analyzing the source. The class
+   * reported is implementation specific.
    *
    * @param format
    *          the expected format of the data to parse
@@ -407,8 +407,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * Load data expressed using the provided {@code format} and return that data as
    * a Metapath node item.
    * <p>
-   * The specific Metaschema model is auto-detected by analyzing the source. The
-   * class reported is implementation specific.
+   * The specific Module model is auto-detected by analyzing the source. The class
+   * reported is implementation specific.
    *
    * @param format
    *          the expected format of the data to parse
@@ -428,8 +428,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * Load data expressed using the provided {@code format} and return that data as
    * a Metapath node item.
    * <p>
-   * The specific Metaschema model is auto-detected by analyzing the source. The
-   * class reported is implementation specific.
+   * The specific Module model is auto-detected by analyzing the source. The class
+   * reported is implementation specific.
    *
    * @param format
    *          the expected format of the data to parse
@@ -449,7 +449,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
       @NonNull URI documentUri) throws IOException;
 
   /**
-   * Get the configured Metaschema binding context to use to load Java types.
+   * Get the configured Module binding context to use to load Java types.
    *
    * @return the binding context
    */

@@ -31,7 +31,7 @@ import com.squareup.javapoet.ClassName;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -81,14 +81,14 @@ public interface ITypeResolver {
   IModelDefinitionTypeInfo getTypeInfo(@NonNull IFlagContainer definition);
 
   /**
-   * Get the name of the class associated with the provided metaschema.
+   * Get the name of the class associated with the provided Module module.
    *
-   * @param metaschema
-   *          a metaschema that will be built as a class
-   * @return the class name information for the metaschema
+   * @param module
+   *          the Module module that will be built as a class
+   * @return the class name information for the Module module
    */
   @NonNull
-  ClassName getClassName(@NonNull IMetaschema metaschema);
+  ClassName getClassName(@NonNull IModule module);
 
   /**
    * Get the name of the class associated with the provided definition.
@@ -113,12 +113,12 @@ public interface ITypeResolver {
   ClassName getBaseClassName(@NonNull IFlagContainer definition);
 
   /**
-   * Get the Java package name to use for the provided Metaschema.
+   * Get the Java package name to use for the provided Module module.
    *
-   * @param metaschema
-   *          the Metaschema
+   * @param module
+   *          the Module module
    * @return the Java package name
    */
   @NonNull
-  String getPackageName(@NonNull IMetaschema metaschema);
+  String getPackageName(@NonNull IModule module);
 }

@@ -38,12 +38,12 @@ class PackageMetadata {
   @NonNull
   private final URI xmlNamespace;
   @NonNull
-  private final List<IGeneratedModuleClass> metaschemaProductions = new LinkedList<>();
+  private final List<IGeneratedModuleClass> moduleProductions = new LinkedList<>();
 
-  public PackageMetadata(@NonNull IGeneratedModuleClass metaschemaProduction) {
-    packageName = metaschemaProduction.getPackageName();
-    xmlNamespace = metaschemaProduction.getModule().getXmlNamespace();
-    metaschemaProductions.add(metaschemaProduction);
+  public PackageMetadata(@NonNull IGeneratedModuleClass moduleProduction) {
+    packageName = moduleProduction.getPackageName();
+    xmlNamespace = moduleProduction.getModule().getXmlNamespace();
+    moduleProductions.add(moduleProduction);
   }
 
   @NonNull
@@ -57,18 +57,18 @@ class PackageMetadata {
   }
 
   @NonNull
-  protected List<IGeneratedModuleClass> getMetaschemaProductions() {
-    return metaschemaProductions;
+  protected List<IGeneratedModuleClass> getModuleProductions() {
+    return moduleProductions;
   }
 
-  public void addMetaschema(@NonNull IGeneratedModuleClass metaschemaProduction) {
-    URI nextXmlNamespace = metaschemaProduction.getModule().getXmlNamespace();
+  public void addModule(@NonNull IGeneratedModuleClass moduleProduction) {
+    URI nextXmlNamespace = moduleProduction.getModule().getXmlNamespace();
     if (!xmlNamespace.equals(nextXmlNamespace)) {
       throw new IllegalStateException(String.format(
           "The package %s is associated with the XML namespaces '%s' and '%s'."
               + " A package must be associated with a single XML namespace.",
           getPackageName(), getXmlNamespace().toASCIIString(), nextXmlNamespace.toASCIIString()));
     }
-    metaschemaProductions.add(metaschemaProduction);
+    moduleProductions.add(moduleProduction);
   }
 }

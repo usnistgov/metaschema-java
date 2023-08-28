@@ -32,8 +32,7 @@ package gov.nist.secauto.metaschema.core.metapath.item.node;
  */
 public enum NodeItemType {
   /**
-   * An {@link INodeItem} based on a Metaschema (@link
-   * {@link IMetaschemaNodeItem}}).
+   * An {@link INodeItem} based on a Metaschema (@link {@link IModuleNodeItem}}).
    */
   METASCHEMA,
   /**

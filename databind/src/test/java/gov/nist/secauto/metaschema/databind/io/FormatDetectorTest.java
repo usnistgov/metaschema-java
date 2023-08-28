@@ -38,12 +38,14 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 class FormatDetectorTest {
 
   @Test
   void testDetectXml() throws IOException {
-    try (InputStream is = FormatDetectorTest.class.getResourceAsStream("/test-content/bound-class-simple.xml")) {
+    try (InputStream is = Files.newInputStream(Paths.get("src/test/resources/test-content/bound-class-simple.xml"))) {
       assert is != null;
 
       try (CloseDetectingInputStream cis = new CloseDetectingInputStream(is)) {
@@ -64,7 +66,7 @@ class FormatDetectorTest {
 
   @Test
   void testDetectJson() throws IOException {
-    try (InputStream is = FormatDetectorTest.class.getResourceAsStream("/test-content/bound-class-simple.json")) {
+    try (InputStream is = Files.newInputStream(Paths.get("src/test/resources/test-content/bound-class-simple.json"))) {
       assert is != null;
 
       try (CloseDetectingInputStream cis = new CloseDetectingInputStream(is)) {

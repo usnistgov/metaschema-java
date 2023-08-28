@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind.model.annotations;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 
 import java.lang.annotation.Documented;
@@ -39,8 +39,7 @@ import java.lang.annotation.Target;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * This annotation indicates that the target class represents a Metaschema
- * field.
+ * This annotation indicates that the target class represents a Module field.
  * <p>
  * Classes with this annotation must have a field with the
  * {@link MetaschemaFieldValue} annotation.
@@ -86,9 +85,9 @@ public @interface MetaschemaField {
    * Get the metaschema class that "owns" this assembly, which is the concrete
    * implementation of the metaschema containing the assembly.
    *
-   * @return the class that extends {@link IMetaschema}
+   * @return the class that extends {@link IModule}
    */
-  Class<? extends IMetaschema> metaschema();
+  Class<? extends IModule> moduleClass();
 
   /**
    * If the data type allows it, determines if the field's value must be wrapped

@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
@@ -59,7 +59,7 @@ class XmlGlobalFieldDefinition
   @NonNull
   private final GlobalFieldDefinitionType xmlField;
   @NonNull
-  private final IMetaschema metaschema;
+  private final IModule module;
   @Nullable
   private final Object defaultValue;
   private final Lazy<XmlFlagContainerSupport> flagContainer;
@@ -71,12 +71,12 @@ class XmlGlobalFieldDefinition
    *
    * @param xmlField
    *          the XML representation bound to Java objects
-   * @param metaschema
-   *          the containing Metaschema
+   * @param module
+   *          the containing Metaschema module
    */
-  public XmlGlobalFieldDefinition(@NonNull GlobalFieldDefinitionType xmlField, @NonNull IMetaschema metaschema) {
+  public XmlGlobalFieldDefinition(@NonNull GlobalFieldDefinitionType xmlField, @NonNull IModule module) {
     this.xmlField = xmlField;
-    this.metaschema = metaschema;
+    this.module = module;
     Object defaultValue = null;
     if (xmlField.isSetDefault()) {
       defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlField.getDefault()));
@@ -89,7 +89,7 @@ class XmlGlobalFieldDefinition
         retval = new ValueConstraintSupport(
             ObjectUtils.notNull(xmlField.getConstraint()),
             ExternalModelSource.instance(
-                ObjectUtils.requireNonNull(metaschema.getLocation())));
+                ObjectUtils.requireNonNull(module.getLocation())));
       } else {
         retval = new ValueConstraintSupport();
       }
@@ -219,8 +219,8 @@ class XmlGlobalFieldDefinition
   }
 
   @Override
-  public IMetaschema getContainingMetaschema() {
-    return metaschema;
+  public IModule getContainingModule() {
+    return module;
   }
 
   @Override

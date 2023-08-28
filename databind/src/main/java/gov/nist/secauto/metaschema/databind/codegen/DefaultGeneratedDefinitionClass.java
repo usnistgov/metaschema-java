@@ -36,7 +36,7 @@ import java.nio.file.Path;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Contains information about a generated class for a Metaschema definition.
+ * Contains information about a generated class for a Module definition.
  */
 // TODO: make package private
 class DefaultGeneratedDefinitionClass

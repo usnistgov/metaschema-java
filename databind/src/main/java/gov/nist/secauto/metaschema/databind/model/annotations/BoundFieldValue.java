@@ -39,14 +39,14 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Identifies that the annotation target is a bound property that represents a
- * Metaschema field value with no flags.
+ * Module field value with no flags.
  */
 @Documented
 @Retention(RUNTIME)
 @Target({ FIELD })
 public @interface BoundFieldValue {
   /**
-   * The Metaschema data type adapter for the field's value.
+   * The Module data type adapter for the field's value.
    *
    * @return the data type adapter
    */

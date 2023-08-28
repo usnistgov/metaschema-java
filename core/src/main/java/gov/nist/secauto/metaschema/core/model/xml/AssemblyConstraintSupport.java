@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.core.model.xml;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.constraint.DefaultAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.DefaultCardinalityConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.DefaultExpectConstraint;
@@ -295,14 +295,14 @@ class AssemblyConstraintSupport
         EnumType enumType = bean.addNewEnum();
         enumType.setValue(value);
 
-        XmlbeansMarkupVisitor.visit(description, IMetaschema.METASCHEMA_XML_NS, enumType);
+        XmlbeansMarkupVisitor.visit(description, IModule.METASCHEMA_XML_NS, enumType);
       }
 
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
       }
       return null;
     }
@@ -327,7 +327,7 @@ class AssemblyConstraintSupport
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
       }
       return null;
     }
@@ -349,7 +349,7 @@ class AssemblyConstraintSupport
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
       }
       return null;
     }
@@ -374,7 +374,7 @@ class AssemblyConstraintSupport
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
       }
       return null;
     }
@@ -400,7 +400,7 @@ class AssemblyConstraintSupport
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
       }
     }
 
@@ -417,7 +417,7 @@ class AssemblyConstraintSupport
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
       }
       return null;
     }
@@ -435,7 +435,7 @@ class AssemblyConstraintSupport
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
       }
       return null;
     }
@@ -451,7 +451,7 @@ class AssemblyConstraintSupport
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IMetaschema.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
       }
       return null;
     }

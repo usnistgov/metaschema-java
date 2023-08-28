@@ -70,7 +70,7 @@ public class DataTypeJsonSchema
 
   @Override
   public void generateSchema(JsonGenerationState state, ObjectNode obj) {
-    // do nothing, this is a direct reference to the underlying Metaschema data type
+    // do nothing, this is a direct reference to the underlying Module data type
     // the type is generated for the built-in type by the data type manager
     throw new UnsupportedOperationException();
   }

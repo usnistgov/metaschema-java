@@ -28,18 +28,18 @@ package gov.nist.secauto.metaschema.databind.model.test;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.AbstractBoundMetaschema;
-import gov.nist.secauto.metaschema.databind.model.annotations.Metaschema;
+import gov.nist.secauto.metaschema.databind.model.annotations.Module;
 
 import java.net.URI;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-@Metaschema(
+@Module(
     assemblies = {
         EmptyBoundAssembly.class,
         FlaggedBoundAssembly.class,
@@ -56,14 +56,14 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class TestMetaschema
     extends AbstractBoundMetaschema {
 
-  public TestMetaschema(@NonNull List<? extends IMetaschema> importedMetaschema,
+  public TestMetaschema(@NonNull List<? extends IModule> importedModules,
       @NonNull IBindingContext bindingContext) {
-    super(importedMetaschema, bindingContext);
+    super(importedModules, bindingContext);
   }
 
   @Override
   public MarkupLine getName() {
-    return MarkupLine.fromMarkdown("Test Metaschema");
+    return MarkupLine.fromMarkdown("Test Module");
   }
 
   @Override

@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.core.model.xml;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractConstraint.AbstractConstraintBuilder;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractKeyConstraint.AbstractKeyConstraintBuilder;
 import gov.nist.secauto.metaschema.core.model.constraint.DefaultAllowedValue;
@@ -100,7 +100,7 @@ final class ModelFactory {
     return properties.stream()
         .map(prop -> {
           String name = prop.getName();
-          String namespace = prop.isSetNamespace() ? prop.getNamespace() : IMetaschema.METASCHEMA_XML_NS;
+          String namespace = prop.isSetNamespace() ? prop.getNamespace() : IModule.METASCHEMA_XML_NS;
           QName qname = new QName(namespace, name);
           String value = prop.getValue();
 

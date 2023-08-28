@@ -79,7 +79,7 @@
 						</goals>
 						<configuration>
 	                        <xmlConfigs>${project.basedir}/src/schema/xmlconfig.xml</xmlConfigs>
-							<sourceDir>${project.basedir}/../metaschema-model/metaschema/test-suite</sourceDir>
+							<sourceDir>${project.basedir}/../core/metaschema/test-suite</sourceDir>
 							<sourceSchemas>unit-tests.xsd</sourceSchemas>
 							<javaTargetDir>${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
 							<classTargetDir>${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>

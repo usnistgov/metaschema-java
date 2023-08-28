@@ -33,7 +33,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * of a cycle of item that loop back to the head.
  * <p>
  * This is needed to prevent infinite recursion when searching
- * {@link IMetaschemaNodeItem} graphs.
+ * {@link IModuleNodeItem} graphs.
  */
 public interface ICycledAssemblyNodeItem extends IAssemblyNodeItem {
   /**

@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 /**
- * Supports generation of XML Schema types based on Metaschema contructs (i.e.
+ * Supports generation of XML Schema types based on Module contructs (i.e.
  * flags, fields, assemblies).
  */
 

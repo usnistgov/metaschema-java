@@ -140,8 +140,8 @@ public abstract class AbstractMetaschemaMojo
 
   /**
    * The BuildContext is used to identify which files or directories were modified
-   * since last build. This is used to determine if Metaschema-based generation
-   * must be performed again.
+   * since last build. This is used to determine if Module-based generation must
+   * be performed again.
    *
    * @return the active Plexus BuildContext.
    */
@@ -219,7 +219,7 @@ public abstract class AbstractMetaschemaMojo
   }
 
   /**
-   * Retrieve a stream of Metaschema file sources.
+   * Retrieve a stream of Module file sources.
    *
    * @return the stream
    */
@@ -268,8 +268,8 @@ public abstract class AbstractMetaschemaMojo
 
   /**
    * Determine if code generation is required. This is done by comparing the last
-   * modified time of each Metaschema source file against the stale file managed
-   * by this plugin.
+   * modified time of each Module source file against the stale file managed by
+   * this plugin.
    *
    * @return {@code true} if the code generation is needed, or {@code false}
    *         otherwise

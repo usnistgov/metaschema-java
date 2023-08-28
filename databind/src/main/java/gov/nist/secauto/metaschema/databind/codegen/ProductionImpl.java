@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.codegen;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.io.IOException;
@@ -42,24 +42,24 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 class ProductionImpl implements IProduction {
 
   @NonNull
-  private final Map<IMetaschema, IGeneratedModuleClass> metaschemaToProductionMap // NOPMD - immutable
+  private final Map<IModule, IGeneratedModuleClass> moduleToProductionMap // NOPMD - immutable
       = new HashMap<>();
   @NonNull
   private final Map<String, IPackageProduction> packageNameToProductionMap // NOPMD - immutable
       = new HashMap<>();
 
-  public void addMetaschema(
-      @NonNull IMetaschema metaschema,
+  public void addModule(
+      @NonNull IModule module,
       @NonNull IMetaschemaClassFactory classFactory,
       @NonNull Path targetDirectory) throws IOException {
-    for (IMetaschema importedMetaschema : metaschema.getImportedMetaschemas()) {
-      assert importedMetaschema != null;
-      addMetaschema(importedMetaschema, classFactory, targetDirectory);
+    for (IModule importedModule : module.getImportedModules()) {
+      assert importedModule != null;
+      addModule(importedModule, classFactory, targetDirectory);
     }
 
-    if (metaschemaToProductionMap.get(metaschema) == null) {
-      IGeneratedModuleClass metaschemaClass = classFactory.generateClass(metaschema, targetDirectory);
-      metaschemaToProductionMap.put(metaschema, metaschemaClass);
+    if (moduleToProductionMap.get(module) == null) {
+      IGeneratedModuleClass metaschemaClass = classFactory.generateClass(module, targetDirectory);
+      moduleToProductionMap.put(module, metaschemaClass);
     }
   }
 
@@ -82,7 +82,7 @@ class ProductionImpl implements IProduction {
   @Override
   @SuppressWarnings("null")
   public Collection<IGeneratedModuleClass> getModuleProductions() {
-    return Collections.unmodifiableCollection(metaschemaToProductionMap.values());
+    return Collections.unmodifiableCollection(moduleToProductionMap.values());
   }
 
   @SuppressWarnings("null")
@@ -92,8 +92,8 @@ class ProductionImpl implements IProduction {
   }
 
   @Override
-  public IGeneratedModuleClass getModuleProduction(IMetaschema metaschema) {
-    return metaschemaToProductionMap.get(metaschema);
+  public IGeneratedModuleClass getModuleProduction(IModule module) {
+    return moduleToProductionMap.get(module);
   }
 
   @Override
@@ -105,11 +105,11 @@ class ProductionImpl implements IProduction {
   @Override
   public Stream<? extends IGeneratedClass> getGeneratedClasses() {
     return ObjectUtils.notNull(Stream.concat(
-        // generated definitions and metaschema
+        // generated definitions and Metaschema module
         getModuleProductions().stream()
-            .flatMap(metaschema -> Stream.concat(
-                Stream.of(metaschema),
-                metaschema.getGeneratedDefinitionClasses().stream())),
+            .flatMap(module -> Stream.concat(
+                Stream.of(module),
+                module.getGeneratedDefinitionClasses().stream())),
         // generated package-info.java
         getPackageProductions().stream()
             .flatMap(javaPackage -> Stream.of(javaPackage.getGeneratedClass()))));

@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.codegen;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IModelDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
@@ -63,10 +63,10 @@ public interface IMetaschemaClassFactory {
 
   /**
    * Generate a class in the provided {@code targetDirectory} that represents the
-   * provided Metaschema {@code module}.
+   * provided Module {@code module}.
    *
    * @param module
-   *          the Metaschema module to generate the class for
+   *          the Module module to generate the class for
    * @param targetDirectory
    *          the directory to generate the Java class in
    * @return information about the generated class
@@ -75,12 +75,12 @@ public interface IMetaschemaClassFactory {
    */
   @NonNull
   IGeneratedModuleClass generateClass(
-      @NonNull IMetaschema module,
+      @NonNull IModule module,
       @NonNull Path targetDirectory) throws IOException;
 
   /**
    * Generate a class in the provided {@code targetDirectory} that represents the
-   * provided Metaschema definition's {@code typeInfo}.
+   * provided Module definition's {@code typeInfo}.
    *
    * @param typeInfo
    *          the type information for the class to generate
@@ -97,16 +97,16 @@ public interface IMetaschemaClassFactory {
 
   /**
    * Generate a package-info.java class in the provided {@code targetDirectory}
-   * that represents a collection of Metaschema modules.
+   * that represents a collection of Module modules.
    *
    * @param javaPackage
    *          the Java package name to use
    * @param xmlNamespace
-   *          the default XML namespace for all bound Metaschema information
-   *          elements in the generated package
+   *          the default XML namespace for all bound Module information elements
+   *          in the generated package
    * @param metaschemaProductions
-   *          a collection of previously generated Metaschema modules and
-   *          definition classes
+   *          a collection of previously generated Module modules and definition
+   *          classes
    * @param targetDirectory
    *          the directory to generate the Java class in
    * @return the generated class details

@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -56,20 +56,20 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
   }
 
   @Override
-  public IMetaschemaNodeItem newMetaschemaNodeItem(
-      IMetaschema metaschema) {
-    return new MetaschemaNodeItemImpl(
-        metaschema,
+  public IModuleNodeItem newModuleNodeItem(
+      IModule module) {
+    return new ModuleNodeItemImpl(
+        module,
         this);
   }
 
   @Override
   public IFieldNodeItem newFieldNodeItem(
       IFieldDefinition definition,
-      IMetaschemaNodeItem metaschema) {
+      IModuleNodeItem module) {
     return new FieldGlobalDefinitionNodeItemImpl(
         definition,
-        metaschema,
+        module,
         this);
   }
 
@@ -102,10 +102,10 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
   @Override
   public IAssemblyNodeItem newAssemblyNodeItem(
       IAssemblyDefinition definition,
-      IMetaschemaNodeItem metaschema) {
+      IModuleNodeItem module) {
     return new AssemblyGlobalDefinitionNodeItemImpl(
         definition,
-        metaschema,
+        module,
         this);
   }
 

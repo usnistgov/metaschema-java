@@ -32,8 +32,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides information about a generated package-info.java class, that
- * represents a collection of Metaschema constructs generated from one or more
- * Metaschema modules.
+ * represents a collection of Module constructs generated from one or more
+ * Module modules.
  */
 public interface IPackageProduction {
   /**

@@ -39,14 +39,14 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Identifies a field on a class annotated with the {@link MetaschemaField}
- * annotation as the Metaschema field's value.
+ * annotation as the Module field's value.
  */
 @Documented
 @Retention(RUNTIME)
 @Target({ FIELD })
 public @interface MetaschemaFieldValue {
   /**
-   * The Metaschema data type adapter for the field's value.
+   * The Module data type adapter for the field's value.
    *
    * @return the data type adapter
    */

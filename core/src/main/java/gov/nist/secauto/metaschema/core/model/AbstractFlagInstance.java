@@ -47,32 +47,4 @@ public abstract class AbstractFlagInstance
   public IFlagContainer getContainingDefinition() {
     return getParentContainer();
   }
-
-  // @Override
-  // public boolean isJsonKey() {
-  // return this.equals(getContainingDefinition().getJsonKeyFlagInstance());
-  // }
-
-  // @Override
-  // public boolean isJsonValueKey() {
-  // boolean retval;
-  // MetaschemaFlaggedDefinition parent = getContainingDefinition();
-  // if (parent instanceof FieldDefinition) {
-  // FieldDefinition parentField = (FieldDefinition) parent;
-  // retval = parentField.hasJsonValueKey() &&
-  // JsonValueKeyTypeEnum.FLAG.equals(parentField.getJsonValueKeyType())
-  // && this.equals(parentField.getJsonValueKeyFlagInstance());
-  // } else {
-  // retval = false;
-  // }
-  // return retval;
-  // }
-  //
-  // @Override
-  // public FlagDefinition getDefinition() {
-  // FlagDefinition localFlagDefinition = getLocalFlagDefinition();
-  // return localFlagDefinition == null ?
-  // getContainingMetaschema().getFlagDefinitionByName(getName())
-  // : localFlagDefinition;
-  // }
 }

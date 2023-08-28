@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
@@ -49,7 +49,8 @@ abstract class AbstractClassBinding implements IClassBinding {
   private final Class<?> clazz;
   private final Method beforeDeserializeMethod;
   private final Method afterDeserializeMethod;
-  private IMetaschema metaschema;
+  // REFACTOR: use lazy instead
+  private IModule module;
 
   /**
    * Construct a new class binding for the provided class.
@@ -100,23 +101,23 @@ abstract class AbstractClassBinding implements IClassBinding {
     return ModuleScopeEnum.INHERITED;
   }
 
-  protected abstract Class<? extends IMetaschema> getMetaschemaClass();
+  protected abstract Class<? extends IModule> getModuleClass();
 
   @SuppressWarnings("null")
   @NonNull
-  protected IMetaschema initMetaschema() {
+  protected IModule initModule() {
     synchronized (this) {
-      if (metaschema == null) {
-        Class<? extends IMetaschema> metaschemaClass = getMetaschemaClass();
-        metaschema = getBindingContext().getMetaschemaInstanceByClass(metaschemaClass);
+      if (module == null) {
+        Class<? extends IModule> metaschemaClass = getModuleClass();
+        module = getBindingContext().getModuleByClass(metaschemaClass);
       }
-      return metaschema;
+      return module;
     }
   }
 
   @Override
-  public IMetaschema getContainingMetaschema() {
-    return initMetaschema();
+  public IModule getContainingModule() {
+    return initModule();
   }
 
   /**

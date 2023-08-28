@@ -41,7 +41,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 // Used
 @SuppressWarnings("PMD")
-@MetaschemaAssembly(name = "test-field", metaschema = TestMetaschema.class)
+@MetaschemaAssembly(name = "test-field", moduleClass = TestMetaschema.class)
 public class MultiFieldAssembly {
   @BoundField
   private String field1;
@@ -90,7 +90,7 @@ public class MultiFieldAssembly {
   @SuppressWarnings("PMD")
   @MetaschemaField(
       name = "field-value-key",
-      metaschema = TestMetaschema.class)
+      moduleClass = TestMetaschema.class)
   public static class ValueKeyField {
     @BoundFlag
     private String flag;
@@ -109,7 +109,7 @@ public class MultiFieldAssembly {
   @SuppressWarnings("PMD")
   @MetaschemaField(
       name = "field-default-value-key",
-      metaschema = TestMetaschema.class)
+      moduleClass = TestMetaschema.class)
   public static class DefaultValueKeyField {
     @BoundFlag
     private String flag;

@@ -24,51 +24,54 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.annotations;
+package gov.nist.secauto.metaschema.databind;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import java.util.HashSet;
+import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-@Retention(RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Metaschema {
-  /**
-   * Get the classes representing the global fields defined on this Metaschema.
-   *
-   * @return an array of field classes
-   */
+class ExternalConstraintsModuleLoaderStrategy
+    extends AbstractModuleLoaderStrategy {
   @NonNull
-  Class<?>[] fields() default {};
+  private final Set<IConstraintSet> externalConstraintSets;
+  private final Set<IModule> resolvedModules = new HashSet<>();
 
-  /**
-   * Get the classes representing the global assemblies defined on this
-   * Metaschema.
-   *
-   * @return an array of assembly classes
-   */
-  @NonNull
-  Class<?>[] assemblies() default {};
+  protected ExternalConstraintsModuleLoaderStrategy(
+      @NonNull IBindingContext bindingContext,
+      @NonNull Set<IConstraintSet> externalConstraintSets) {
+    super(bindingContext);
+    this.externalConstraintSets = externalConstraintSets;
+  }
 
-  /**
-   * Get the classes representing the Metaschemas imported by this Metaschema.
-   *
-   * @return an array of imported Metaschemas
-   */
   @NonNull
-  Class<? extends IMetaschema>[] imports() default {};
+  protected Set<IConstraintSet> getExternalConstraintSets() {
+    return externalConstraintSets;
+  }
 
-  /**
-   * Get any remarks for this metaschema.
-   *
-   * @return a markdown string or {@code "##none"} if no remarks are provided
-   */
-  @NonNull
-  String remarks() default Constants.NO_STRING_VALUE;
+  @Override
+  public IClassBinding getClassBinding(@NonNull Class<?> clazz) {
+    IClassBinding retval = super.getClassBinding(clazz);
+    if (retval != null) {
+      // force loading of metaschema information to apply constraints
+      IModule module = retval.getContainingModule();
+      synchronized (resolvedModules) {
+        if (!resolvedModules.contains(module)) {
+          // add first, to avoid loops
+          resolvedModules.add(module);
+          try {
+            IConstraintSet.applyConstraintSetToModule(getExternalConstraintSets(), module);
+          } catch (MetaschemaException ex) {
+            throw new IllegalStateException(ex);
+          }
+        }
+      }
+    }
+    return retval;
+  }
 }

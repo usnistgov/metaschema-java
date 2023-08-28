@@ -29,11 +29,11 @@ package gov.nist.secauto.metaschema.schemagen;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.validation.IContentValidator;
 import gov.nist.secauto.metaschema.core.model.validation.XmlSchemaContentValidator;
-import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
+import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.databind.io.Format;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 
@@ -77,7 +77,7 @@ class XmlSuiteTest
 
   // static {
   // URL schemaResource =
-  // MetaschemaLoader.class.getResource("/schema/xml/XMLSchema.xsd");
+  // ModuleLoader.class.getResource("/schema/xml/XMLSchema.xsd");
   // try {
   // List<? extends Source> schemaSources = Collections.singletonList(
   // new StreamSource(schemaResource.openStream(), schemaResource.toString()));
@@ -104,7 +104,7 @@ class XmlSuiteTest
   }
 
   @Override
-  protected BiFunction<IMetaschema, Writer, Void> getGeneratorSupplier() {
+  protected BiFunction<IModule, Writer, Void> getGeneratorSupplier() {
     return XML_SCHEMA_PROVIDER;
   }
 
@@ -185,10 +185,10 @@ class XmlSuiteTest
   @Disabled
   @Test
   void testOSCALComplete() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
-    MetaschemaLoader loader = new MetaschemaLoader();
+    ModuleLoader loader = new ModuleLoader();
     loader.allowEntityResolution();
 
-    IMetaschema metaschema = loader.load(new URL(
+    IModule module = loader.load(new URL(
         // "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
         "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
     ISchemaGenerator schemaGenerator = new XmlSchemaGenerator();
@@ -199,7 +199,7 @@ class XmlSuiteTest
         StandardCharsets.UTF_8,
         getWriteOpenOptions())) {
       assert writer != null;
-      schemaGenerator.generateFromMetaschema(metaschema, writer, features);
+      schemaGenerator.generateFromModule(module, writer, features);
     }
   }
 

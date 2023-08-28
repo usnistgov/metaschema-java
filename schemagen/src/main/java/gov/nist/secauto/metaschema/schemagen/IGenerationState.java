@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 
 import java.io.IOException;
 
@@ -35,7 +35,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IGenerationState<WRITER> {
   @NonNull
-  IMetaschema getMetaschema();
+  IModule getModule();
 
   @NonNull
   WRITER getWriter();

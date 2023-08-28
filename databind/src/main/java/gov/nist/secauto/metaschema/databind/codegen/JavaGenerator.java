@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.codegen;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
@@ -53,10 +53,10 @@ public final class JavaGenerator {
   }
 
   /**
-   * Generate Java sources for the provided metaschema.
+   * Generate Java sources for the provided Metaschema module.
    *
-   * @param metaschema
-   *          the Metaschema to generate Java sources for
+   * @param module
+   *          the Metaschema module to generate Java sources for
    * @param targetDir
    *          the directory to generate sources in
    * @param bindingConfiguration
@@ -66,17 +66,17 @@ public final class JavaGenerator {
    *           if an error occurred while generating the class
    */
   public static IProduction generate(
-      @NonNull IMetaschema metaschema,
+      @NonNull IModule module,
       @NonNull Path targetDir,
       @NonNull IBindingConfiguration bindingConfiguration) throws IOException {
-    return generate(CollectionUtil.singletonList(metaschema), targetDir, bindingConfiguration);
+    return generate(CollectionUtil.singletonList(module), targetDir, bindingConfiguration);
   }
 
   /**
-   * Generates Java classes for Metaschema fields and flags.
+   * Generates Java classes for Module fields and flags.
    *
-   * @param metaschemas
-   *          the Metaschema instances to build classes for
+   * @param modules
+   *          the Metaschema modules to build classes for
    * @param targetDirectory
    *          the directory to generate classes in
    * @param bindingConfiguration
@@ -88,10 +88,10 @@ public final class JavaGenerator {
    */
   @NonNull
   public static IProduction generate(
-      @NonNull Collection<? extends IMetaschema> metaschemas,
+      @NonNull Collection<? extends IModule> modules,
       @NonNull Path targetDirectory,
       @NonNull IBindingConfiguration bindingConfiguration) throws IOException {
-    Objects.requireNonNull(metaschemas, "metaschemas");
+    Objects.requireNonNull(modules, "metaschemas");
     Objects.requireNonNull(targetDirectory, "generationTargetDirectory");
     Objects.requireNonNull(bindingConfiguration, "bindingConfiguration");
     if (LOGGER.isInfoEnabled()) {
@@ -100,6 +100,6 @@ public final class JavaGenerator {
 
     ITypeResolver typeResolver = ITypeResolver.newTypeResolver(bindingConfiguration);
 
-    return IProduction.of(metaschemas, typeResolver, targetDirectory);
+    return IProduction.of(modules, typeResolver, targetDirectory);
   }
 }

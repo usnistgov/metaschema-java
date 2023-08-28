@@ -53,7 +53,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
   private final XMLStreamWriter2 writer;
 
   /**
-   * Construct a new Metaschema-aware JSON writer.
+   * Construct a new Module-aware JSON writer.
    *
    * @param writer
    *          the XML stream writer to write with

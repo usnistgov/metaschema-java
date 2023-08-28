@@ -46,8 +46,8 @@ public class DefaultJsonSerializer<CLASS>
   private JsonFactory jsonFactory;
 
   /**
-   * Construct a new Metaschema binding-based deserializer that reads JSON-based
-   * Metaschema content.
+   * Construct a new Module binding-based deserializer that reads JSON-based
+   * Module content.
    *
    * @param classBinding
    *          the assembly class binding describing the Java objects this

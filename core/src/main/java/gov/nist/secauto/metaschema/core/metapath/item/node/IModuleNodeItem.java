@@ -26,36 +26,53 @@
 
 package gov.nist.secauto.metaschema.core.metapath.item.node;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.metapath.format.IPathFormatter;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
+
+import java.net.URI;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import nl.talsmasoftware.lazy4j.Lazy;
 
-class MetaschemaNodeItemImpl
-    implements IMetaschemaNodeItem, IFeatureModelContainerItem {
+/**
+ * Supports querying of global definitions and associated instances in a
+ * Metaschema module by effective name.
+ * <p>
+ * All definitions in the {@link ModuleScopeEnum#INHERITED} scope. This allows
+ * the exported structure of the Metaschema module to be queried.
+ */
+public interface IModuleNodeItem extends IDocumentNodeItem {
+
+  /**
+   * The Metaschema module this item is based on.
+   *
+   * @return the Metaschema module
+   */
   @NonNull
-  private final IMetaschema metaschema;
+  IModule getModule();
 
-  @NonNull
-  private final Lazy<ModelContainer> model;
-
-  public MetaschemaNodeItemImpl(
-      @NonNull IMetaschema metaschema,
-      @NonNull INodeItemGenerator generator) {
-    this.metaschema = metaschema;
-    this.model = ObjectUtils.notNull(Lazy.lazy(generator.newMetaschemaModelSupplier(this)));
+  @Override
+  default URI getDocumentUri() {
+    return getModule().getLocation();
   }
 
   @Override
-  public IMetaschema getMetaschema() {
-    return metaschema;
+  default NodeItemType getNodeItemType() {
+    return NodeItemType.METASCHEMA;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public ModelContainer getModel() {
-    return model.get();
+  default IModuleNodeItem getNodeItem() {
+    return this;
   }
 
+  @Override
+  default String format(@NonNull IPathFormatter formatter) {
+    return formatter.formatMetaschema(this);
+  }
+
+  @Override
+  default <RESULT, CONTEXT> RESULT accept(@NonNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitMetaschema(this, context);
+  }
 }

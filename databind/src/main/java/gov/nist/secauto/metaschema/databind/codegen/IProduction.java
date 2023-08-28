@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.codegen;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
 import java.io.IOException;
@@ -40,14 +40,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Information about Java classes generated for a collection of Metaschema
- * modules.
+ * Information about Java classes generated for a collection of Module modules.
  */
 public interface IProduction {
 
   /**
-   * Get information about the Java classes generated for each Metaschema module
-   * in the collection.
+   * Get information about the Java classes generated for each Module module in
+   * the collection.
    *
    * @return the Java class information for each module
    */
@@ -55,22 +54,22 @@ public interface IProduction {
   Collection<IGeneratedModuleClass> getModuleProductions();
 
   /**
-   * Get information about the Java classes generated for the provided Metaschema
+   * Get information about the Java classes generated for the provided Module
    * {@code module}.
    *
    * @param module
-   *          the Metaschema module to get information for
+   *          the Module module to get information for
    * @return the Java class information for the module or {@code null} if this
    *         production did not involve generating classes for the provided module
    */
   @Nullable
-  IGeneratedModuleClass getModuleProduction(@NonNull IMetaschema module);
+  IGeneratedModuleClass getModuleProduction(@NonNull IModule module);
 
   /**
    * Get a stream of all definition Java classes generated as part of this
    * production.
    * <p>
-   * This will include each unique class generated for all Metaschema modules
+   * This will include each unique class generated for all Module modules
    * associated with this production.
    *
    * @return the stream of generated Java classes
@@ -88,10 +87,10 @@ public interface IProduction {
   Stream<? extends IGeneratedClass> getGeneratedClasses();
 
   /**
-   * Create a new production for the provided set of Metaschema {@code modules}.
+   * Create a new production for the provided set of Module {@code modules}.
    *
    * @param modules
-   *          the Metaschema modules to generate and compile classes for
+   *          the Module modules to generate and compile classes for
    * @param typeResolver
    *          the resolve used to determine type names
    * @param classDir
@@ -102,28 +101,28 @@ public interface IProduction {
    */
   @NonNull
   static IProduction of( // NOPMD - intentional
-      @NonNull Collection<? extends IMetaschema> modules,
+      @NonNull Collection<? extends IModule> modules,
       @NonNull ITypeResolver typeResolver,
       @NonNull Path classDir) throws IOException {
 
     IMetaschemaClassFactory classFactory = IMetaschemaClassFactory.newInstance(typeResolver);
 
     ProductionImpl retval = new ProductionImpl();
-    for (IMetaschema metaschema : modules) {
-      assert metaschema != null;
-      retval.addMetaschema(metaschema, classFactory, classDir);
+    for (IModule module : modules) {
+      assert module != null;
+      retval.addModule(module, classFactory, classDir);
     }
 
     Map<String, PackageMetadata> packageNameToPackageMetadataMap = new HashMap<>(); // NOPMD - no concurrency
-    for (IGeneratedModuleClass metaschemaProduction : retval.getModuleProductions()) {
-      String packageName = metaschemaProduction.getPackageName();
+    for (IGeneratedModuleClass moduleProduction : retval.getModuleProductions()) {
+      String packageName = moduleProduction.getPackageName();
 
       PackageMetadata metadata = packageNameToPackageMetadataMap.get(packageName);
       if (metadata == null) {
-        metadata = new PackageMetadata(metaschemaProduction); // NOPMD - intentional
+        metadata = new PackageMetadata(moduleProduction); // NOPMD - intentional
         packageNameToPackageMetadataMap.put(metadata.getPackageName(), metadata);
       } else {
-        metadata.addMetaschema(metaschemaProduction);
+        metadata.addModule(moduleProduction);
       }
     }
 

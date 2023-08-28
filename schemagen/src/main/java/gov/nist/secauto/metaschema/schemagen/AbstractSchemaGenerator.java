@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.schemagen;
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.datatype.IDatatypeManager;
 
@@ -74,8 +74,8 @@ public abstract class AbstractSchemaGenerator<
   /**
    * Create a new schema generation state object.
    *
-   * @param metaschema
-   *          the Metaschema to generate the schema for
+   * @param module
+   *          the Metaschema module to generate the schema for
    * @param schemaWriter
    *          the writer to use to write the schema
    * @param configuration
@@ -86,7 +86,7 @@ public abstract class AbstractSchemaGenerator<
    */
   @NonNull
   protected abstract S newGenerationState(
-      @NonNull IMetaschema metaschema,
+      @NonNull IModule module,
       @NonNull T schemaWriter,
       @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration);
 
@@ -99,8 +99,8 @@ public abstract class AbstractSchemaGenerator<
   protected abstract void generateSchema(@NonNull S generationState);
 
   @Override
-  public void generateFromMetaschema(
-      IMetaschema metaschema,
+  public void generateFromModule(
+      IModule metaschema,
       Writer out,
       IConfiguration<SchemaGenerationFeature<?>> configuration) {
     // IInlineStrategy inlineStrategy =
@@ -129,13 +129,13 @@ public abstract class AbstractSchemaGenerator<
    */
   protected List<IAssemblyDefinition> analyzeDefinitions(
       @NonNull S generationState,
-      @Nullable BiConsumer<MetaschemaIndex.DefinitionEntry, IDefinition> handler) {
+      @Nullable BiConsumer<ModuleIndex.DefinitionEntry, IDefinition> handler) {
     // TODO: use of handler here is confusing and introduces side effects. Consider
     // refactoring this in
     // the caller
 
     List<IAssemblyDefinition> rootAssemblyDefinitions = new LinkedList<>();
-    for (MetaschemaIndex.DefinitionEntry entry : generationState.getMetaschemaIndex().getDefinitions()) {
+    for (ModuleIndex.DefinitionEntry entry : generationState.getMetaschemaIndex().getDefinitions()) {
 
       boolean referenced = entry.isReferenced();
 

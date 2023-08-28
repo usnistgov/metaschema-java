@@ -44,7 +44,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Support for constraints on Metaschema assembly bound objects.
+ * Support for constraints on Module assembly bound objects.
  */
 class AssemblyConstraintSupport
     extends ValueConstraintSupport

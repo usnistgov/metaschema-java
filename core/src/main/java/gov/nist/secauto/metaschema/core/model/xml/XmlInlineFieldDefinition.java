@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
@@ -90,8 +90,8 @@ class XmlInlineFieldDefinition
   }
 
   @Override
-  public IMetaschema getContainingMetaschema() {
-    return getContainingDefinition().getContainingMetaschema();
+  public IModule getContainingModule() {
+    return getContainingDefinition().getContainingModule();
   }
 
   // ----------------------------------------
@@ -227,7 +227,7 @@ class XmlInlineFieldDefinition
           retval = new ValueConstraintSupport(
               ObjectUtils.notNull(xmlField.getConstraint()),
               ExternalModelSource.instance(
-                  ObjectUtils.requireNonNull(getContainingMetaschema().getLocation())));
+                  ObjectUtils.requireNonNull(getContainingModule().getLocation())));
         } else {
           retval = new ValueConstraintSupport();
         }
@@ -348,8 +348,8 @@ class XmlInlineFieldDefinition
     }
 
     @Override
-    public IMetaschema getContainingMetaschema() {
-      return XmlInlineFieldDefinition.super.getContainingDefinition().getContainingMetaschema();
+    public IModule getContainingModule() {
+      return XmlInlineFieldDefinition.super.getContainingDefinition().getContainingModule();
     }
 
     @Override

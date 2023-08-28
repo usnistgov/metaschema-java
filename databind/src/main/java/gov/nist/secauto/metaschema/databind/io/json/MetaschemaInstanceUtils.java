@@ -50,7 +50,7 @@ final class MetaschemaInstanceUtils {
   }
 
   /**
-   * Generates a mapping of property names to associated Metaschema instances.
+   * Generates a mapping of property names to associated Module instances.
    * <p>
    * If {@code requiresJsonKey} is {@code true} then the instance used as the JSON
    * key is not included in the mapping.
@@ -61,11 +61,11 @@ final class MetaschemaInstanceUtils {
    * the mapping.
    *
    * @param targetDefinition
-   *          the Metaschema bound definition to generate the instance map for
+   *          the Module bound definition to generate the instance map for
    * @param requiresJsonKey
    *          if {@code true} then the instance used as the JSON key is not
    *          included in the mapping, or {@code false} otherwise
-   * @return a mapping of JSON property to related Metaschema instance
+   * @return a mapping of JSON property to related Module instance
    */
   @NonNull
   public static Map<String, ? extends IBoundNamedInstance> getInstancesToParse(

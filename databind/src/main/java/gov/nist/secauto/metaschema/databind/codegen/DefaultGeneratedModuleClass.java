@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind.codegen;
 import com.squareup.javapoet.ClassName;
 
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -43,14 +43,14 @@ class DefaultGeneratedModuleClass
     extends DefaultGeneratedClass
     implements IGeneratedModuleClass {
   @NonNull
-  private final IMetaschema module;
+  private final IModule module;
   @NonNull
   private final Map<IFlagContainer, IGeneratedDefinitionClass> definitionClassMap;
   @NonNull
   private final String packageName;
 
   public DefaultGeneratedModuleClass(
-      @NonNull IMetaschema module,
+      @NonNull IModule module,
       @NonNull ClassName className,
       @NonNull Path classFile,
       @NonNull Map<IFlagContainer, IGeneratedDefinitionClass> definitionClassMap,
@@ -62,7 +62,7 @@ class DefaultGeneratedModuleClass
   }
 
   @Override
-  public IMetaschema getModule() {
+  public IModule getModule() {
     return module;
   }
 

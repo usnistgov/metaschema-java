@@ -40,7 +40,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Identifies that the annotation target is a bound property that represents a
- * Metaschema flag.
+ * Module flag.
  */
 @Documented
 @Retention(RUNTIME)
@@ -113,7 +113,7 @@ public @interface BoundFlag {
   boolean required() default false;
 
   /**
-   * The Metaschema data type adapter for the field's value.
+   * The Module data type adapter for the field's value.
    *
    * @return the data type adapter
    */

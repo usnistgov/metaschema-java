@@ -25,8 +25,8 @@
  */
 
 /**
- * Abstract support for managing Metaschema data type implementations aligned
- * with a given schema format for use in schema generation.
+ * Abstract support for managing Module data type implementations aligned with a
+ * given schema format for use in schema generation.
  */
 
 package gov.nist.secauto.metaschema.schemagen.datatype;

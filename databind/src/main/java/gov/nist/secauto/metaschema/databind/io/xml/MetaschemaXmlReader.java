@@ -68,8 +68,7 @@ public class MetaschemaXmlReader
   private final IXmlProblemHandler problemHandler;
 
   /**
-   * Construct a new Metaschema-aware XML parser using the default problem
-   * handler.
+   * Construct a new Module-aware XML parser using the default problem handler.
    *
    * @param reader
    *          the XML reader to parse with
@@ -81,7 +80,7 @@ public class MetaschemaXmlReader
   }
 
   /**
-   * Construct a new Metaschema-aware parser.
+   * Construct a new Module-aware parser.
    *
    * @param reader
    *          the XML reader to parse with
@@ -196,8 +195,7 @@ public class MetaschemaXmlReader
    * apply it to the provided {@code targetObject}.
    *
    * @param targetDefinition
-   *          the Metaschema definition that describes the syntax of the data to
-   *          read
+   *          the Module definition that describes the syntax of the data to read
    * @param targetObject
    *          the Java object that data parsed by this method will be stored in
    * @param start
@@ -248,8 +246,7 @@ public class MetaschemaXmlReader
    * it to the provided {@code targetObject}.
    *
    * @param targetDefinition
-   *          the Metaschema definition that describes the syntax of the data to
-   *          read
+   *          the Module definition that describes the syntax of the data to read
    * @param targetObject
    *          the Java object that data parsed by this method will be stored in
    * @param start
@@ -281,8 +278,7 @@ public class MetaschemaXmlReader
    * and apply it to the provided {@code targetObject}.
    *
    * @param targetDefinition
-   *          the Metaschema definition that describes the syntax of the data to
-   *          read
+   *          the Module definition that describes the syntax of the data to read
    * @param targetObject
    *          the Java object that data parsed by this method will be stored in
    * @throws IOException
@@ -304,7 +300,7 @@ public class MetaschemaXmlReader
    *
    * @param targetInstance
    *          the model instance that describes the syntax of the data to read
-   * @return {@code true} if the Metaschema instance needs to be parsed, or
+   * @return {@code true} if the Module instance needs to be parsed, or
    *         {@code false} otherwise
    * @throws XMLStreamException
    *           if an error occurred while parsing XML events

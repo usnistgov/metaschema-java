@@ -113,8 +113,8 @@ public @interface Matches {
   String pattern() default "";
 
   /**
-   * The Metaschema data type adapter for the data type that the associated value
-   * must conform to.
+   * The Module data type adapter for the data type that the associated value must
+   * conform to.
    *
    * @return the data type adapter or a {@link NullJavaTypeAdapter} if none is
    *         provided

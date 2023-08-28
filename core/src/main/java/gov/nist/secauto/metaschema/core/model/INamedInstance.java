@@ -63,7 +63,7 @@ public interface INamedInstance extends IInstance, INamedModelElement {
    * @return the XML namespace or {@code null} if no namespace is defined
    */
   default String getXmlNamespace() {
-    return getContainingMetaschema().getXmlNamespace().toASCIIString();
+    return getContainingModule().getXmlNamespace().toASCIIString();
   }
 
   /**
@@ -83,7 +83,7 @@ public interface INamedInstance extends IInstance, INamedModelElement {
    *
    * A coordinate consists of the element's:
    * <ul>
-   * <li>containing Metaschema's short name</li>
+   * <li>containing Metaschema module's short name</li>
    * <li>model type</li>
    * <li>name</li>
    * <li>hash code</li>
@@ -97,7 +97,7 @@ public interface INamedInstance extends IInstance, INamedModelElement {
   default String toCoordinates() {
     IDefinition definition = getDefinition();
     return String.format("%s:%s:%s@%d(%d)",
-        getContainingDefinition().getContainingMetaschema().getShortName(),
+        getContainingDefinition().getContainingModule().getShortName(),
         getModelType(),
         definition.getName(),
         hashCode(),

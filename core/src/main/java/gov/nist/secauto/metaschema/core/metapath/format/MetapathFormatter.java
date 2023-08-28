@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFieldNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFlagNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.IMetaschemaNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IModelNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IRootAssemblyNodeItem;
@@ -44,7 +44,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class MetapathFormatter implements IPathFormatter {
 
   @Override
-  public @NonNull String formatMetaschema(IMetaschemaNodeItem metaschema) {
+  public @NonNull String formatMetaschema(IModuleNodeItem metaschema) {
     // this will result in a slash being generated using the join in the format
     // method
     return "";

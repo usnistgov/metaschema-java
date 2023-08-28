@@ -34,7 +34,7 @@ module gov.nist.secauto.metaschema.databind {
   requires com.fasterxml.jackson.dataformat.yaml;
   requires com.fasterxml.jackson.dataformat.xml;
   requires com.github.spotbugs.annotations;
-  requires com.squareup.javapoet;
+  requires transitive com.squareup.javapoet;
   requires com.sun.xml.bind.core;
   requires nl.talsmasoftware.lazy4j;
   requires transitive org.apache.commons.lang3;

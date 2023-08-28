@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.IFeatureFlagContainer
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFeatureModelContainerItem.ModelContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -150,13 +150,13 @@ final class DefaultNodeItemFactory
   }
 
   @Override
-  public Supplier<ModelContainer> newMetaschemaModelSupplier(@NonNull IMetaschemaNodeItem item) {
+  public Supplier<ModelContainer> newMetaschemaModelSupplier(@NonNull IModuleNodeItem item) {
     return () -> {
-      IMetaschema metaschema = item.getMetaschema();
+      IModule module = item.getModule();
 
       // build flags from Metaschema definitions
       Map<String, IFlagNodeItem> flags = ObjectUtils.notNull(
-          Collections.unmodifiableMap(metaschema.getExportedFlagDefinitions().stream()
+          Collections.unmodifiableMap(module.getExportedFlagDefinitions().stream()
               .collect(
                   Collectors.toMap(
                       IFlagDefinition::getEffectiveName,
@@ -165,9 +165,9 @@ final class DefaultNodeItemFactory
                       LinkedHashMap::new))));
 
       // build model items from Metaschema definitions
-      Stream<IFieldNodeItem> fieldStream = metaschema.getExportedFieldDefinitions().stream()
+      Stream<IFieldNodeItem> fieldStream = module.getExportedFieldDefinitions().stream()
           .map(def -> newFieldNodeItem(ObjectUtils.notNull(def), item));
-      Stream<IAssemblyNodeItem> assemblyStream = metaschema.getExportedAssemblyDefinitions().stream()
+      Stream<IAssemblyNodeItem> assemblyStream = module.getExportedAssemblyDefinitions().stream()
           .map(def -> newAssemblyNodeItem(ObjectUtils.notNull(def), item));
 
       Map<String, List<? extends IModelNodeItem<?, ?>>> modelItems

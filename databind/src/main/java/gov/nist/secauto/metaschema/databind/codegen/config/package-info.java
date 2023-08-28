@@ -26,7 +26,7 @@
 
 /**
  * Support for customizing how Java code is generated for one or more specific
- * Metaschemas.
+ * Module modules.
  */
 
 package gov.nist.secauto.metaschema.databind.codegen.config;

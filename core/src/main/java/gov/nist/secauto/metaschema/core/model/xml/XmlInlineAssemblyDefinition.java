@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
 import gov.nist.secauto.metaschema.core.model.IFeatureModelContainer;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.IModelInstance;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
@@ -205,7 +205,7 @@ class XmlInlineAssemblyDefinition
           retval = new AssemblyConstraintSupport(
               ObjectUtils.notNull(getXmlAssembly().getConstraint()),
               ExternalModelSource.instance(
-                  ObjectUtils.requireNonNull(getContainingMetaschema().getLocation())));
+                  ObjectUtils.requireNonNull(getContainingModule().getLocation())));
         } else {
           retval = new AssemblyConstraintSupport();
         }
@@ -292,8 +292,8 @@ class XmlInlineAssemblyDefinition
     }
 
     @Override
-    public IMetaschema getContainingMetaschema() {
-      return XmlInlineAssemblyDefinition.super.getContainingDefinition().getContainingMetaschema();
+    public IModule getContainingModule() {
+      return XmlInlineAssemblyDefinition.super.getContainingDefinition().getContainingModule();
     }
   }
 }

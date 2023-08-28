@@ -40,7 +40,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.XmlMarkupParser;
-import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
+import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -131,7 +131,7 @@ class CommonmarkConformanceTest {
   }
 
   private static Schema loadDataTypeSchema() throws URISyntaxException, SAXException, IOException {
-    URL url = MetaschemaLoader.class.getResource(SCHEMA_CLASSPATH);
+    URL url = ModuleLoader.class.getResource(SCHEMA_CLASSPATH);
     // System.out.println(url.toString());
     SchemaFactory schemafactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
     try (InputStream is

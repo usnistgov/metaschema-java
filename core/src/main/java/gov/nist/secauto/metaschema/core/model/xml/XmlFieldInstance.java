@@ -80,7 +80,7 @@ class XmlFieldInstance
   @Override
   public IFieldDefinition getDefinition() {
     // this will always be not null
-    return ObjectUtils.notNull(getContainingMetaschema().getScopedFieldDefinitionByName(getName()));
+    return ObjectUtils.notNull(getContainingModule().getScopedFieldDefinitionByName(getName()));
   }
 
   @Override

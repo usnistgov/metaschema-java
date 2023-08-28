@@ -39,7 +39,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Identifies that the annotation target is a bound property that references a
- * Metaschema field.
+ * Module field.
  * <p>
  * For XML serialization, the {@link #useName()} identifies the name of the
  * element to use and the {@link #namespace()} identifies the namespace of this
@@ -50,8 +50,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * <p>
  * The field must be either:
  * <ol>
- * <li>A Metaschema data type or a collection whose item value is Metaschema
- * data type, with a {@link BoundFieldValue} annotation on the field.
+ * <li>A Module data type or a collection whose item value is Module data type,
+ * with a {@link BoundFieldValue} annotation on the field.
  * <li>A type or a collection whose item value is a type based on a class with a
  * {@link MetaschemaField} annotation.</li>
  * </ol>

@@ -62,7 +62,7 @@ class XmlGlobalAssemblyDefinition
   @NonNull
   private final GlobalAssemblyDefinitionType xmlAssembly;
   @NonNull
-  private final XmlMetaschema metaschema;
+  private final XmlModule metaschema;
   @NonNull
   private final Lazy<XmlFlagContainerSupport> flagContainer;
   @NonNull
@@ -81,7 +81,7 @@ class XmlGlobalAssemblyDefinition
    */
   public XmlGlobalAssemblyDefinition(
       @NonNull GlobalAssemblyDefinitionType xmlAssembly,
-      @NonNull XmlMetaschema metaschema) {
+      @NonNull XmlModule metaschema) {
     this.xmlAssembly = xmlAssembly;
     this.metaschema = metaschema;
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlAssembly, this)));
@@ -107,7 +107,7 @@ class XmlGlobalAssemblyDefinition
   }
 
   @Override
-  public XmlMetaschema getContainingMetaschema() {
+  public XmlModule getContainingModule() {
     return metaschema;
   }
 

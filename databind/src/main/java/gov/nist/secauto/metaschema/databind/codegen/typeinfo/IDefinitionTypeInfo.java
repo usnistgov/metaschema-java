@@ -45,7 +45,7 @@ public interface IDefinitionTypeInfo {
 
   /**
    * Gets the resolver which can be used to lookup Java type information for
-   * Metaschema objects.
+   * Module objects.
    *
    * @return the type resolver
    */

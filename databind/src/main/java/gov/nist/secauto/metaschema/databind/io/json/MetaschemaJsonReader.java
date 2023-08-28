@@ -62,8 +62,7 @@ public class MetaschemaJsonReader
   private final IJsonProblemHandler problemHandler;
 
   /**
-   * Construct a new Metaschema-aware JSON parser using the default problem
-   * handler.
+   * Construct a new Module-aware JSON parser using the default problem handler.
    *
    * @param parser
    *          the JSON parser to parse with
@@ -75,7 +74,7 @@ public class MetaschemaJsonReader
   }
 
   /**
-   * Construct a new Metaschema-aware JSON parser.
+   * Construct a new Module-aware JSON parser.
    *
    * @param parser
    *          the JSON parser to parse with

@@ -24,15 +24,38 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind;
+package gov.nist.secauto.metaschema.core.metapath.item.node;
+
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
-class SimpleMetaschemaLoaderStrategy
-    extends AbstractMetaschemaLoaderStrategy {
+class ModuleNodeItemImpl
+    implements IModuleNodeItem, IFeatureModelContainerItem {
+  @NonNull
+  private final IModule module;
 
-  public SimpleMetaschemaLoaderStrategy(@NonNull IBindingContext bindingContext) {
-    super(bindingContext);
+  @NonNull
+  private final Lazy<ModelContainer> model;
+
+  public ModuleNodeItemImpl(
+      @NonNull IModule module,
+      @NonNull INodeItemGenerator generator) {
+    this.module = module;
+    this.model = ObjectUtils.notNull(Lazy.lazy(generator.newMetaschemaModelSupplier(this)));
+  }
+
+  @Override
+  public IModule getModule() {
+    return module;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public ModelContainer getModel() {
+    return model.get();
   }
 
 }

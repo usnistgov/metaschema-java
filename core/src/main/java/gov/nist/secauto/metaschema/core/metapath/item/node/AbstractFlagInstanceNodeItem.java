@@ -73,6 +73,6 @@ abstract class AbstractFlagInstanceNodeItem
 
   @Override
   public URI getBaseUri() {
-    return getDefinition().getContainingMetaschema().getLocation();
+    return getDefinition().getContainingModule().getLocation();
   }
 }

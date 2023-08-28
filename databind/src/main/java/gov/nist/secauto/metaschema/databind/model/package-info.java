@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 /**
- * Provides the core implementation of the Metaschema model
+ * Provides the core implementation of the Module model
  * ({@link gov.nist.secauto.metaschema.core.model}) represented as Java class
  * annotations ({@link gov.nist.secauto.metaschema.databind.model.annotations}).
  */

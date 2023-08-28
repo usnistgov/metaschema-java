@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
@@ -36,19 +36,19 @@ import java.util.Map;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-interface IMetaschemaLoaderStrategy {
+interface IModuleLoaderStrategy {
   /**
-   * Get the Metaschema instance identified by the provided class.
+   * Get the Metaschema module identified by the provided class.
    *
    * @param clazz
-   *          the Metaschema class
-   * @return the Metaschema instance
+   *          the Module class
+   * @return the module
    * @throws IllegalStateException
-   *           if an error occured while processing the associated Metaschema
+   *           if an error occurred while processing the associated module
    *           information
    */
   @NonNull
-  IMetaschema getMetaschemaInstanceByClass(@NonNull Class<? extends IMetaschema> clazz);
+  IModule getModuleByClass(@NonNull Class<? extends IModule> clazz);
 
   /**
    * Get the {@link IClassBinding} instance for a {@link MetaschemaAssembly} or

@@ -36,7 +36,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 /**
- * Represents a Metaschema assembly bound to a Java plain old java object (POJO)
+ * Represents a Module assembly bound to a Java plain old java object (POJO)
  * class.
  */
 public interface IAssemblyClassBinding

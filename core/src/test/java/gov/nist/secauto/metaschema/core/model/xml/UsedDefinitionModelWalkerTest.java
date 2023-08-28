@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.core.model.xml;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.UsedDefinitionModelWalker;
 
@@ -48,14 +48,14 @@ class UsedDefinitionModelWalkerTest {
   @Disabled
   @Test
   void test() throws MetaschemaException, IOException {
-    MetaschemaLoader loader = new MetaschemaLoader();
+    ModuleLoader loader = new ModuleLoader();
     loader.allowEntityResolution();
 
-    IMetaschema metaschema = loader.load(new URL(
+    IModule module = loader.load(new URL(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
 
     Collection<? extends IDefinition> definitions
-        = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
+        = UsedDefinitionModelWalker.collectUsedDefinitionsFromModule(module);
     assertFalse(definitions.isEmpty(), "no definitions found");
 
     if (LOGGER.isDebugEnabled()) {

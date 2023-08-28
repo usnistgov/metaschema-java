@@ -43,6 +43,6 @@ public abstract class AbstractAssemblyInstance
 
   @Override
   public String getGroupAsXmlNamespace() {
-    return getContainingMetaschema().getXmlNamespace().toASCIIString();
+    return getContainingModule().getXmlNamespace().toASCIIString();
   }
 }

@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.core.model.constraint.FindingCollectingConstraintValidationHandler;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintValidationHandler;
@@ -43,7 +43,7 @@ import gov.nist.secauto.metaschema.core.model.validation.IValidationResult;
 import gov.nist.secauto.metaschema.core.model.validation.JsonSchemaContentValidator;
 import gov.nist.secauto.metaschema.core.model.validation.XmlSchemaContentValidator;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.codegen.MetaschemaCompilerHelper;
+import gov.nist.secauto.metaschema.databind.codegen.ModuleCompilerHelper;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
 import gov.nist.secauto.metaschema.databind.io.Format;
@@ -73,10 +73,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * Provides information supporting a binding between a set of Metaschema models
- * and corresponding Java classes.
+ * Provides information supporting a binding between a set of Module models and
+ * corresponding Java classes.
  */
-public interface IBindingContext extends IMetaschemaLoaderStrategy {
+public interface IBindingContext extends IModuleLoaderStrategy {
 
   /**
    * Get the singleton {@link IBindingContext} instance, which can be used to load
@@ -141,11 +141,11 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NonNull Class<TYPE> clazz);
 
   /**
-   * Generate, compile, and load a set of generated Metaschema annotated Java
-   * classes based on the provided Metaschema {@code module}.
+   * Generate, compile, and load a set of generated Module annotated Java classes
+   * based on the provided Module {@code module}.
    *
    * @param module
-   *          the Metaschema module to generate classes for
+   *          the Module module to generate classes for
    * @param compilePath
    *          the path to the directory to generate classes in
    * @return this instance
@@ -155,15 +155,15 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   @SuppressWarnings("PMD.UseProperClassLoader") // false positive
   @NonNull
   default IBindingContext registerModule(
-      @NonNull IMetaschema module,
+      @NonNull IModule module,
       @NonNull Path compilePath) throws IOException {
     Files.createDirectories(compilePath);
 
-    ClassLoader classLoader = MetaschemaCompilerHelper.newClassLoader(
+    ClassLoader classLoader = ModuleCompilerHelper.newClassLoader(
         compilePath,
         ObjectUtils.notNull(Thread.currentThread().getContextClassLoader()));
 
-    MetaschemaCompilerHelper.compileMetaschema(module, compilePath).getGlobalDefinitionClassesAsStream()
+    ModuleCompilerHelper.compileMetaschema(module, compilePath).getGlobalDefinitionClassesAsStream()
         .filter(definitionInfo -> {
           boolean retval = false;
           IFlagContainer definition = definitionInfo.getDefinition();
@@ -214,8 +214,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    *           if any of the provided arguments, except the configuration, are
    *           {@code null}
    * @throws IllegalArgumentException
-   *           if the provided class is not bound to a Metaschema assembly or
-   *           field
+   *           if the provided class is not bound to a Module assembly or field
    * @throws UnsupportedOperationException
    *           if the requested format is not supported by the implementation
    * @see #getClassBinding(Class)
@@ -240,8 +239,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    *           if any of the provided arguments, except the configuration, are
    *           {@code null}
    * @throws IllegalArgumentException
-   *           if the provided class is not bound to a Metaschema assembly or
-   *           field
+   *           if the provided class is not bound to a Module assembly or field
    * @throws UnsupportedOperationException
    *           if the requested format is not supported by the implementation
    * @see #getClassBinding(Class)
@@ -272,8 +270,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    * @throws NullPointerException
    *           if the provided object is {@code null}
    * @throws IllegalArgumentException
-   *           if the provided class is not bound to a Metaschema assembly or
-   *           field
+   *           if the provided class is not bound to a Module assembly or field
    */
   @NonNull
   <CLASS> CLASS copyBoundObject(@NonNull CLASS other, Object parentInstance) throws BindingException;
@@ -304,8 +301,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    *          the node item to validate
    * @return the validation result
    * @throws IllegalArgumentException
-   *           if the provided class is not bound to a Metaschema assembly or
-   *           field
+   *           if the provided class is not bound to a Module assembly or field
    */
   default IValidationResult validate(@NonNull INodeItem nodeItem) {
     FindingCollectingConstraintValidationHandler handler = new FindingCollectingConstraintValidationHandler();
@@ -362,7 +358,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   }
 
   /**
-   * Load and validate the provided {@code target} using the associated Metaschema
+   * Load and validate the provided {@code target} using the associated Module
    * module constraints.
    *
    * @param target

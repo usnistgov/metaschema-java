@@ -80,7 +80,7 @@ import java.util.regex.Pattern;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * A variety of utility functions for creating Metaschema annotations.
+ * A variety of utility functions for creating Module annotations.
  */
 @SuppressWarnings({
     "PMD.GodClass" // utility class

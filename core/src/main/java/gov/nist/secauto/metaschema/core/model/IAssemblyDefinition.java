@@ -59,7 +59,7 @@ public interface IAssemblyDefinition
     QName retval = null;
     String rootName = getRootName();
     if (rootName != null) {
-      retval = new QName(getContainingMetaschema().getXmlNamespace().toASCIIString(), rootName);
+      retval = new QName(getContainingModule().getXmlNamespace().toASCIIString(), rootName);
     }
     return retval;
   }

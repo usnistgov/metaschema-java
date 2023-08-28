@@ -51,6 +51,6 @@ interface INodeItemGenerator {
   Supplier<ModelContainer> newMetaschemaModelSupplier(@NonNull IAssemblyNodeItem item);
 
   @NonNull
-  Supplier<ModelContainer> newMetaschemaModelSupplier(@NonNull IMetaschemaNodeItem item);
+  Supplier<ModelContainer> newMetaschemaModelSupplier(@NonNull IModuleNodeItem item);
 
 }

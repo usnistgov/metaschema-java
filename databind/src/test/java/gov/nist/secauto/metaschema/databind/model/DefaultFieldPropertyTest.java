@@ -36,7 +36,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.json.MetaschemaJsonReader;
 import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
@@ -57,7 +57,7 @@ class DefaultFieldPropertyTest {
   JUnit5Mockery context = new JUnit5Mockery();
 
   @Mock
-  private IMetaschema metaschema; // NOPMD - it's injected
+  private IModule module; // NOPMD - it's injected
   @Mock
   private IAssemblyClassBinding classBinding; // NOPMD - it's injected
   @Mock

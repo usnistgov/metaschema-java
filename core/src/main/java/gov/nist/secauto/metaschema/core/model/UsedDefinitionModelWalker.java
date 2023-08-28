@@ -68,25 +68,26 @@ public class UsedDefinitionModelWalker
   }
 
   /**
-   * Collect the globally defined metaschema definitions from the provided
-   * metaschemas, and any metaschema imported by these metaschema.
+   * Collect the globally defined Metaschema definitions from the provided
+   * Metaschema modules, and any Metaschema modules imported directly or
+   * indirectly by these modules.
    *
-   * @param metaschemas
-   *          the metaschemas to analyze
+   * @param modules
+   *          the Metaschema modules to analyze
    * @return a collection of matching definitions
    */
   @NonNull
-  public static Collection<? extends IDefinition>
-      collectUsedDefinitionsFromMetaschema(@NonNull Collection<? extends IMetaschema> metaschemas) {
+  public static Collection<? extends IDefinition> collectUsedDefinitionsFromModule(
+      @NonNull Collection<? extends IModule> modules) {
     Set<IAssemblyDefinition> definitions = new HashSet<>();
-    for (IMetaschema metaschema : metaschemas) {
+    for (IModule module : modules) {
       // get local roots in case they are scope=local
-      for (IAssemblyDefinition rootDef : metaschema.getRootAssemblyDefinitions()) {
+      for (IAssemblyDefinition rootDef : module.getRootAssemblyDefinitions()) {
         definitions.add(rootDef);
       }
 
       // get roots from exported
-      for (IAssemblyDefinition assembly : metaschema.getExportedAssemblyDefinitions()) {
+      for (IAssemblyDefinition assembly : module.getExportedAssemblyDefinitions()) {
         if (assembly.isRoot()) {
           definitions.add(assembly);
         }
@@ -96,17 +97,18 @@ public class UsedDefinitionModelWalker
   }
 
   /**
-   * Collect the globally defined metaschema definitions from the provided
-   * metaschema, and any metaschema imported by this metaschema.
+   * Collect the globally defined Metaschema definitions from the provided
+   * Metaschema module, and any Metaschema modules imported directly or indirectly
+   * by this module.
    *
-   * @param metaschema
-   *          the metaschema to analyze
+   * @param module
+   *          the metaschema module to analyze
    * @return a collection of matching definitions
    */
   @NonNull
-  public static Collection<? extends IDefinition>
-      collectUsedDefinitionsFromMetaschema(@NonNull IMetaschema metaschema) {
-    return collectUsedDefinitionsFromMetaschema(CollectionUtil.singleton(metaschema));
+  public static Collection<? extends IDefinition> collectUsedDefinitionsFromModule(
+      @NonNull IModule module) {
+    return collectUsedDefinitionsFromModule(CollectionUtil.singleton(module));
   }
 
   /**

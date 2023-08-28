@@ -33,7 +33,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * This annotation provides package-level Metaschema information.
+ * This annotation provides package-level Module information.
  */
 @Retention(RUNTIME)
 @Target(PACKAGE)

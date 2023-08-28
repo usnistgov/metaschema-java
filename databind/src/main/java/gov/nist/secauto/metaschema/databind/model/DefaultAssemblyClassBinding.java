@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
@@ -71,9 +71,8 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
    * @param clazz
    *          the Java bean class
    * @param bindingContext
-   *          information about how Java classes are bound to Metaschema
-   *          definitions
-   * @return the Metaschema assembly binding for the class
+   *          information about how Java classes are bound to Module definitions
+   * @return the Module assembly binding for the class
    */
   @NonNull
   public static DefaultAssemblyClassBinding createInstance(
@@ -209,8 +208,8 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   }
 
   @Override
-  protected Class<? extends IMetaschema> getMetaschemaClass() {
-    return getMetaschemaAssemblyAnnotation().metaschema();
+  protected Class<? extends IModule> getModuleClass() {
+    return getMetaschemaAssemblyAnnotation().moduleClass();
   }
 
 }

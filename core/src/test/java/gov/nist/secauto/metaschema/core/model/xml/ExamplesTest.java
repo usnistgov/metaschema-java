@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.core.model.xml;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -42,24 +42,24 @@ class ExamplesTest {
 
   @Test
   void testLoadMetaschema() throws MetaschemaException, IOException {
-    MetaschemaLoader loader = new MetaschemaLoader();
+    ModuleLoader loader = new ModuleLoader();
     loader.allowEntityResolution();
 
-    URI metaschemaUri = ObjectUtils.notNull(URI.create(
+    URI moduleUri = ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
-    IMetaschema metaschema = loader.load(metaschemaUri);
-    assertNotNull(metaschema, "metaschema not found");
+    IModule module = loader.load(moduleUri);
+    assertNotNull(module, "metaschema not found");
   }
 
   @Test
   void testExamineAssemblyDefinitionByName() throws MetaschemaException, IOException {
-    MetaschemaLoader loader = new MetaschemaLoader();
+    ModuleLoader loader = new ModuleLoader();
     loader.allowEntityResolution();
-    URI metaschemaUri = ObjectUtils.notNull(URI.create(
+    URI moduleUri = ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
-    IMetaschema metaschema = loader.load(metaschemaUri);
+    IModule module = loader.load(moduleUri);
 
-    IAssemblyDefinition definition = metaschema.getScopedAssemblyDefinitionByName("property");
+    IAssemblyDefinition definition = module.getScopedAssemblyDefinitionByName("property");
     assertNotNull(definition, "definition not found");
   }
 

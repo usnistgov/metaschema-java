@@ -26,15 +26,15 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.AbstractMetaschema;
+import gov.nist.secauto.metaschema.core.model.AbstractModule;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.model.annotations.Metaschema;
+import gov.nist.secauto.metaschema.databind.model.annotations.Module;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -51,58 +51,58 @@ import java.util.stream.Collectors;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractBoundMetaschema
-    extends AbstractMetaschema {
+    extends AbstractModule {
   @NonNull
   private final IBindingContext bindingContext;
   private Map<String, IAssemblyClassBinding> assemblyDefinitions;
   private Map<String, IFieldClassBinding> fieldDefinitions;
 
   /**
-   * Create a new Metaschema instance for a given class annotated by the
-   * {@link Metaschema} annotation.
+   * Create a new Module instance for a given class annotated by the
+   * {@link Module} annotation.
    * <p>
    * Will also load any imported Metaschemas.
    *
    *
    * @param clazz
-   *          the Metaschema class
+   *          the Module class
    * @param bindingContext
-   *          the Metaschema binding context
-   * @return the new Metaschema instance
+   *          the Module binding context
+   * @return the new Module instance
    */
   @NonNull
-  public static IMetaschema createInstance(
-      @NonNull Class<? extends IMetaschema> clazz,
+  public static IModule createInstance(
+      @NonNull Class<? extends IModule> clazz,
       @NonNull IBindingContext bindingContext) {
 
-    if (!clazz.isAnnotationPresent(Metaschema.class)) {
+    if (!clazz.isAnnotationPresent(Module.class)) {
       throw new IllegalStateException(String.format("The class '%s' is missing the '%s' annotation",
-          clazz.getCanonicalName(), Metaschema.class.getCanonicalName()));
+          clazz.getCanonicalName(), Module.class.getCanonicalName()));
     }
 
-    Metaschema metaschemaAnnotation = clazz.getAnnotation(Metaschema.class);
+    Module moduleAnnotation = clazz.getAnnotation(Module.class);
 
-    List<IMetaschema> importedMetaschemas;
-    if (metaschemaAnnotation.imports().length > 0) {
-      importedMetaschemas = new ArrayList<>(metaschemaAnnotation.imports().length);
-      for (Class<? extends IMetaschema> importClass : metaschemaAnnotation.imports()) {
+    List<IModule> importedModules;
+    if (moduleAnnotation.imports().length > 0) {
+      importedModules = new ArrayList<>(moduleAnnotation.imports().length);
+      for (Class<? extends IModule> importClass : moduleAnnotation.imports()) {
         assert importClass != null;
-        IMetaschema metaschemaImport = bindingContext.getMetaschemaInstanceByClass(importClass);
-        importedMetaschemas.add(metaschemaImport);
+        IModule moduleImport = bindingContext.getModuleByClass(importClass);
+        importedModules.add(moduleImport);
       }
     } else {
-      importedMetaschemas = CollectionUtil.emptyList();
+      importedModules = CollectionUtil.emptyList();
     }
-    return createInstance(clazz, bindingContext, importedMetaschemas);
+    return createInstance(clazz, bindingContext, importedModules);
   }
 
   @NonNull
-  private static IMetaschema createInstance(
-      @NonNull Class<? extends IMetaschema> clazz,
+  private static IModule createInstance(
+      @NonNull Class<? extends IModule> clazz,
       @NonNull IBindingContext bindingContext,
-      @NonNull List<? extends IMetaschema> importedMetaschemas) {
+      @NonNull List<? extends IModule> importedModules) {
 
-    Constructor<? extends IMetaschema> constructor;
+    Constructor<? extends IModule> constructor;
     try {
       constructor = clazz.getDeclaredConstructor(List.class, IBindingContext.class);
     } catch (NoSuchMethodException ex) {
@@ -110,29 +110,29 @@ public abstract class AbstractBoundMetaschema
     }
 
     try {
-      return ObjectUtils.notNull(constructor.newInstance(importedMetaschemas, bindingContext));
+      return ObjectUtils.notNull(constructor.newInstance(importedModules, bindingContext));
     } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
       throw new IllegalArgumentException(ex);
     }
   }
 
   /**
-   * Construct a new Metaschema instance.
+   * Construct a new Module instance.
    *
-   * @param importedMetaschema
-   *          Metaschema imports associated with the metaschema
+   * @param importedModules
+   *          Module imports associated with the Metaschema module
    * @param bindingContext
-   *          the Metaschema binding context
+   *          the Module binding context
    */
   protected AbstractBoundMetaschema(
-      @NonNull List<? extends IMetaschema> importedMetaschema,
+      @NonNull List<? extends IModule> importedModules,
       @NonNull IBindingContext bindingContext) {
-    super(importedMetaschema);
+    super(importedModules);
     this.bindingContext = bindingContext;
   }
 
   /**
-   * Get the Metaschema binding context.
+   * Get the Module binding context.
    *
    * @return the context
    */
@@ -150,9 +150,9 @@ public abstract class AbstractBoundMetaschema
   @NonNull
   protected Class<?>[] getAssemblyClasses() {
     Class<?>[] retval;
-    if (getClass().isAnnotationPresent(Metaschema.class)) {
-      Metaschema metaschemaAnnotation = getClass().getAnnotation(Metaschema.class);
-      retval = metaschemaAnnotation.assemblies();
+    if (getClass().isAnnotationPresent(Module.class)) {
+      Module moduleAnnotation = getClass().getAnnotation(Module.class);
+      retval = moduleAnnotation.assemblies();
     } else {
       retval = new Class<?>[] {};
     }
@@ -162,9 +162,9 @@ public abstract class AbstractBoundMetaschema
   @NonNull
   protected Class<?>[] getFieldClasses() {
     Class<?>[] retval;
-    if (getClass().isAnnotationPresent(Metaschema.class)) {
-      Metaschema metaschemaAnnotation = getClass().getAnnotation(Metaschema.class);
-      retval = metaschemaAnnotation.fields();
+    if (getClass().isAnnotationPresent(Module.class)) {
+      Module moduleAnnotation = getClass().getAnnotation(Module.class);
+      retval = moduleAnnotation.fields();
     } else {
       retval = new Class<?>[] {};
     }

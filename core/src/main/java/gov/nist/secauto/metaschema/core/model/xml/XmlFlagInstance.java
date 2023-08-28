@@ -74,7 +74,7 @@ class XmlFlagInstance
   @Override
   public IFlagDefinition getDefinition() {
     // this should always be not null
-    return ObjectUtils.requireNonNull(getContainingDefinition().getContainingMetaschema()
+    return ObjectUtils.requireNonNull(getContainingDefinition().getContainingModule()
         .getScopedFlagDefinitionByName(getName()));
   }
 

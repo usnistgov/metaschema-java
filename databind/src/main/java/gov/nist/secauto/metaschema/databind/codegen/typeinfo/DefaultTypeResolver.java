@@ -31,7 +31,7 @@ import com.squareup.javapoet.ClassName;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
@@ -53,7 +53,7 @@ class DefaultTypeResolver implements ITypeResolver {
 
   private final Map<String, Set<String>> packageToClassNamesMap = new ConcurrentHashMap<>();
   private final Map<IFlagContainer, ClassName> definitionToTypeMap = new ConcurrentHashMap<>();
-  private final Map<IMetaschema, ClassName> metaschemaToTypeMap = new ConcurrentHashMap<>();
+  private final Map<IModule, ClassName> moduleToTypeMap = new ConcurrentHashMap<>();
   private final Map<IAssemblyDefinition, IAssemblyDefinitionTypeInfo> assemblyDefinitionToTypeInfoMap
       = new ConcurrentHashMap<>();
   private final Map<IFieldDefinition, IFieldDefinitionTypeInfo> fieldDefinitionToTypeInfoMap
@@ -103,8 +103,7 @@ class DefaultTypeResolver implements ITypeResolver {
         definition,
         (def) -> {
           ClassName retval;
-          String packageName = getBindingConfiguration()
-              .getPackageNameForMetaschema(def.getContainingMetaschema());
+          String packageName = getBindingConfiguration().getPackageNameForModule(def.getContainingModule());
           if (def.isInline()) {
             // this is a local definition, which means a child class needs to be generated
             INamedModelInstance inlineInstance = def.getInlineInstance();
@@ -121,12 +120,12 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public ClassName getClassName(IMetaschema metaschema) {
-    return ObjectUtils.notNull(metaschemaToTypeMap.computeIfAbsent(
-        metaschema,
+  public ClassName getClassName(IModule module) {
+    return ObjectUtils.notNull(moduleToTypeMap.computeIfAbsent(
+        module,
         (meta) -> {
           assert meta != null;
-          String packageName = getBindingConfiguration().getPackageNameForMetaschema(meta);
+          String packageName = getBindingConfiguration().getPackageNameForModule(meta);
 
           String className = getBindingConfiguration().getClassName(meta);
           String classNameBase = className;
@@ -164,7 +163,7 @@ class DefaultTypeResolver implements ITypeResolver {
       if (classNames.contains(className)) {
         clash = true;
         // first try to append the metaschema's short name
-        String metaschemaShortName = definition.getContainingMetaschema().getShortName();
+        String metaschemaShortName = definition.getContainingModule().getShortName();
         retval = ClassUtils.toClassName(className + metaschemaShortName);
       }
 
@@ -179,7 +178,7 @@ class DefaultTypeResolver implements ITypeResolver {
         LOGGER.warn(String.format(
             "Class name '%s' in metaschema '%s' conflicts with a previously used class name. Using '%s' instead.",
             className,
-            definition.getContainingMetaschema().getLocation(),
+            definition.getContainingModule().getLocation(),
             retval));
       }
     }
@@ -197,7 +196,7 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public String getPackageName(@NonNull IMetaschema metaschema) {
-    return bindingConfiguration.getPackageNameForMetaschema(metaschema);
+  public String getPackageName(@NonNull IModule module) {
+    return bindingConfiguration.getPackageNameForModule(module);
   }
 }

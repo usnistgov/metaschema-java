@@ -44,8 +44,8 @@ public interface IXmlWritingContext extends IWritingContext<XMLStreamWriter2> {
    * element.
    *
    * @param targetDefinition
-   *          the bound Metaschema definition describing the structure of the XML
-   *          data to write
+   *          the bound Module definition describing the structure of the XML data
+   *          to write
    * @param targetObject
    *          the Java object data to write
    * @param parentName

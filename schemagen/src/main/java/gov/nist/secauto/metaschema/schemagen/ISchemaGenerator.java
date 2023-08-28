@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 
@@ -49,7 +49,7 @@ public interface ISchemaGenerator {
    * {@code configuration}.
    *
    * @param metaschema
-   *          the Metaschema to generate the schema for
+   *          the Module to generate the schema for
    * @param writer
    *          the writer to use to write the schema
    * @param configuration
@@ -57,13 +57,13 @@ public interface ISchemaGenerator {
    * @throws SchemaGenerationException
    *           if an error occurred while writing the schema
    */
-  void generateFromMetaschema(
-      @NonNull IMetaschema metaschema,
+  void generateFromModule(
+      @NonNull IModule metaschema,
       @NonNull Writer writer,
       @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration);
 
   static void generateSchema(
-      @NonNull IMetaschema metaschema,
+      @NonNull IModule module,
       @NonNull Path destination,
       @NonNull SchemaFormat asFormat,
       @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration)
@@ -77,13 +77,13 @@ public interface ISchemaGenerator {
         StandardOpenOption.WRITE,
         StandardOpenOption.TRUNCATE_EXISTING)) {
       assert writer != null;
-      schemaGenerator.generateFromMetaschema(metaschema, writer, configuration);
+      schemaGenerator.generateFromModule(module, writer, configuration);
       writer.flush();
     }
   }
 
   static void generateSchema(
-      @NonNull IMetaschema metaschema,
+      @NonNull IModule module,
       @NonNull OutputStream os,
       @NonNull SchemaFormat asFormat,
       @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration)
@@ -91,7 +91,7 @@ public interface ISchemaGenerator {
     ISchemaGenerator schemaGenerator = asFormat.getSchemaGenerator();
 
     Writer writer = new OutputStreamWriter(os, StandardCharsets.UTF_8);
-    schemaGenerator.generateFromMetaschema(metaschema, writer, configuration);
+    schemaGenerator.generateFromModule(module, writer, configuration);
     writer.flush();
     // we don't want to close os, since we do not own it
   }

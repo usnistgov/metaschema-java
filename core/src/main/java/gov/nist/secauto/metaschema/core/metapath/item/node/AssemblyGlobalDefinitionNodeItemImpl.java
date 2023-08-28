@@ -44,7 +44,7 @@ class AssemblyGlobalDefinitionNodeItemImpl
 
   protected AssemblyGlobalDefinitionNodeItemImpl(
       @NonNull IAssemblyDefinition definition,
-      @NonNull IMetaschemaNodeItem metaschemaNodeItem,
+      @NonNull IModuleNodeItem metaschemaNodeItem,
       @NonNull INodeItemGenerator generator) {
     super(definition, metaschemaNodeItem);
     this.model = ObjectUtils.notNull(Lazy.lazy(generator.newMetaschemaModelSupplier(this)));

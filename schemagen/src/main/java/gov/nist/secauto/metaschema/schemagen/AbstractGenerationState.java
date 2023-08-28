@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.schemagen;
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
 import gov.nist.secauto.metaschema.core.model.IValuedDefinition;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
@@ -49,7 +49,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends IDatatypeManager>
     implements IGenerationState<WRITER> {
   @NonNull
-  private final IMetaschema metaschema;
+  private final IModule module;
   @NonNull
   private final WRITER writer;
   @NonNull
@@ -58,23 +58,23 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
   private final IInlineStrategy inlineStrategy;
 
   @NonNull
-  private final MetaschemaIndex metaschemaIndex;
+  private final ModuleIndex moduleIndex;
 
   public AbstractGenerationState(
-      @NonNull IMetaschema metaschema,
+      @NonNull IModule module,
       @NonNull WRITER writer,
       @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration,
       @NonNull DATATYPE_MANAGER datatypeManager) {
-    this.metaschema = metaschema;
+    this.module = module;
     this.writer = writer;
     this.datatypeManager = datatypeManager;
     this.inlineStrategy = IInlineStrategy.newInlineStrategy(configuration);
-    this.metaschemaIndex = MetaschemaIndex.indexDefinitions(metaschema);
+    this.moduleIndex = ModuleIndex.indexDefinitions(module);
   }
 
   @Override
-  public IMetaschema getMetaschema() {
-    return metaschema;
+  public IModule getModule() {
+    return module;
   }
 
   @Override
@@ -88,8 +88,8 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
   }
 
   @NonNull
-  public MetaschemaIndex getMetaschemaIndex() {
-    return metaschemaIndex;
+  public ModuleIndex getMetaschemaIndex() {
+    return moduleIndex;
   }
 
   @Override
@@ -131,20 +131,20 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
    *
    * @param definition
    *          the definition to generate a type name for
-   * @param childMetaschema
-   *          the metaschema of the left node
+   * @param childModule
+   *          the module of the left node
    * @return the unique type name
    */
   private CharSequence getTypeContext(
       @NonNull IDefinition definition,
-      @NonNull IMetaschema childMetaschema) {
+      @NonNull IModule childModule) {
     StringBuilder builder = new StringBuilder();
     if (definition.isInline()) {
       INamedInstance inlineInstance = definition.getInlineInstance();
       IDefinition parentDefinition = inlineInstance.getContainingDefinition();
 
       builder
-          .append(getTypeContext(parentDefinition, childMetaschema))
+          .append(getTypeContext(parentDefinition, childModule))
           .append(toCamelCase(inlineInstance.getEffectiveName()));
     } else {
       builder.append(toCamelCase(definition.getEffectiveName()));
@@ -156,13 +156,13 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
   public String getTypeNameForDefinition(@NonNull IDefinition definition, @Nullable String suffix) {
     StringBuilder builder = new StringBuilder()
         .append(toCamelCase(definition.getModelType().name()))
-        .append(toCamelCase(definition.getContainingMetaschema().getShortName()));
+        .append(toCamelCase(definition.getContainingModule().getShortName()));
 
     if (isInline(definition)) {
       builder.append(toCamelCase(definition.getEffectiveName()));
     } else {
       // need to append the parent name(s) to disambiguate this type name
-      builder.append(getTypeContext(definition, definition.getContainingMetaschema()));
+      builder.append(getTypeContext(definition, definition.getContainingModule()));
     }
     if (suffix != null && !suffix.isBlank()) {
       builder.append(toCamelCase(suffix));

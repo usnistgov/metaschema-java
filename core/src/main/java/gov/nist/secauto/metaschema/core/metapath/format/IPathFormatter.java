@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFieldNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFlagNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.IMetaschemaNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IRootAssemblyNodeItem;
 
 import java.util.stream.Collectors;
@@ -132,5 +132,5 @@ public interface IPathFormatter {
    * @return the formatted text for the segment
    */
   @NonNull
-  String formatMetaschema(@NonNull IMetaschemaNodeItem metaschema);
+  String formatMetaschema(@NonNull IModuleNodeItem metaschema);
 }

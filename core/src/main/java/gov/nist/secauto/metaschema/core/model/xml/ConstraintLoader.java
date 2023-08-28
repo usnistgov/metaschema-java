@@ -78,17 +78,17 @@ public class ConstraintLoader
 
     // now check if this constraint set imports other constraint sets
     int size = xmlObject.getMETASCHEMACONSTRAINTS().sizeOfImportArray();
-    @NonNull Map<URI, IConstraintSet> importedMetaschema;
+    @NonNull Map<URI, IConstraintSet> importedConstraints;
     if (size == 0) {
-      importedMetaschema = ObjectUtils.notNull(Collections.emptyMap());
+      importedConstraints = ObjectUtils.notNull(Collections.emptyMap());
     } else {
       try {
-        importedMetaschema = new LinkedHashMap<>();
+        importedConstraints = new LinkedHashMap<>();
         for (METASCHEMACONSTRAINTSDocument.METASCHEMACONSTRAINTS.Import imported : xmlObject.getMETASCHEMACONSTRAINTS()
             .getImportList()) {
           URI importedResource = URI.create(imported.getHref());
           importedResource = ObjectUtils.notNull(resource.resolve(importedResource));
-          importedMetaschema.put(importedResource, loadInternal(importedResource, visitedResources));
+          importedConstraints.put(importedResource, loadInternal(importedResource, visitedResources));
         }
       } catch (MetaschemaException ex) {
         throw new IOException(ex);
@@ -96,16 +96,16 @@ public class ConstraintLoader
     }
 
     // now create this metaschema
-    Collection<IConstraintSet> values = importedMetaschema.values();
+    Collection<IConstraintSet> values = importedConstraints.values();
     return new DefaultConstraintSet(resource, parseScopedConstraints(xmlObject, resource), new LinkedHashSet<>(values));
   }
 
   /**
-   * Parse the provided XML resource as a Metaschema.
+   * Parse the provided XML resource as a Metaschema constraints.
    *
    * @param resource
    *          the resource to parse
-   * @return the XMLBeans representation of the Metaschema
+   * @return the XMLBeans representation of the Metaschema contraints
    * @throws IOException
    *           if a parsing error occurred
    */

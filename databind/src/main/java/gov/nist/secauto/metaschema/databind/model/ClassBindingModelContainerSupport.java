@@ -103,7 +103,7 @@ class ClassBindingModelContainerSupport
     return Stream.concat(superInstances, Arrays.stream(clazz.getDeclaredFields())
         // skip this field, since it is ignored
         .filter(field -> !field.isAnnotationPresent(Ignore.class))
-        // skip fields that aren't a Metaschema field or assembly instance
+        // skip fields that aren't a Module field or assembly instance
         .filter(field -> field.isAnnotationPresent(BoundField.class) || field.isAnnotationPresent(BoundAssembly.class))
         .map(field -> {
           assert field != null;

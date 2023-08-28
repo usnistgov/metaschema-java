@@ -96,7 +96,7 @@ public final class ModelUtil {
     String retval;
     if (value == null || Constants.DEFAULT_STRING_VALUE.equals(value)) {
       // get namespace from the metaschema
-      retval = classBinding.getContainingMetaschema().getXmlNamespace().toASCIIString();
+      retval = classBinding.getContainingModule().getXmlNamespace().toASCIIString();
     } else if (allowNone && Constants.NO_STRING_VALUE.equals(value)) {
       retval = null; // NOPMD - intentional
     } else {

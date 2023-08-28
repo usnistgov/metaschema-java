@@ -43,7 +43,7 @@ public interface IJsonParsingContext extends IParsingContext<JsonParser, IJsonPr
    * Parse a JSON value described by the provided {@code definition}.
    *
    * @param targetDefinition
-   *          the bound Metaschema definition describing the structure of the JSON
+   *          the bound Module definition describing the structure of the JSON
    *          data to parse
    * @param targetObject
    *          the Java object that will contain this data

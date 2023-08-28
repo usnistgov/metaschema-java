@@ -29,9 +29,9 @@ package gov.nist.secauto.metaschema.databind.codegen;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
-import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
+import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.codegen.config.DefaultBindingConfiguration;
@@ -43,6 +43,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.platform.commons.util.ReflectionUtils;
 
 import java.io.IOException;
@@ -60,32 +61,33 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 class BasicMetaschemaTest {
-  private static final MetaschemaLoader LOADER = new MetaschemaLoader();
+  private static final ModuleLoader LOADER = new ModuleLoader();
   private static final Logger LOGGER = LogManager.getLogger(BasicMetaschemaTest.class);
-  // @TempDir
-  // Path generationDir;
-  @NonNull
-  Path generationDir = ObjectUtils.notNull(Paths.get("target/generated-test-sources/metaschema"));
+  @TempDir
+  Path generationDir;
+  // @NonNull
+  // Path generationDir =
+  // ObjectUtils.notNull(Paths.get("target/generated-test-sources/metaschema"));
 
   @NonNull
-  private static IMetaschema loadMetaschema(@NonNull Path metaschemaFile) throws MetaschemaException, IOException {
-    return LOADER.load(metaschemaFile);
+  private static IModule loadModule(@NonNull Path moduleFile) throws MetaschemaException, IOException {
+    return LOADER.load(moduleFile);
   }
 
-  public static Class<?> compileMetaschema(@NonNull Path metaschemaFile, @Nullable Path bindingFile,
+  public static Class<?> compileModule(@NonNull Path moduleFile, @Nullable Path bindingFile,
       @NonNull String rootClassName, @NonNull Path classDir)
       throws IOException, ClassNotFoundException, MetaschemaException {
-    IMetaschema metaschema = loadMetaschema(metaschemaFile);
+    IModule module = loadModule(moduleFile);
 
     DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
     if (bindingFile != null && Files.exists(bindingFile) && Files.isRegularFile(bindingFile)) {
       bindingConfiguration.load(bindingFile);
     }
 
-    MetaschemaCompilerHelper.compileMetaschema(metaschema, classDir, bindingConfiguration);
+    ModuleCompilerHelper.compileModule(module, classDir, bindingConfiguration);
 
     // Load classes
-    return MetaschemaCompilerHelper.newClassLoader(
+    return ModuleCompilerHelper.newClassLoader(
         classDir,
         ObjectUtils.notNull(Thread.currentThread().getContextClassLoader()))
         .loadClass(rootClassName);
@@ -125,7 +127,7 @@ class BasicMetaschemaTest {
       java.util.function.Consumer<Object> assertions)
       throws ClassNotFoundException, IOException, MetaschemaException, BindingException {
 
-    Class<?> rootClass = compileMetaschema(
+    Class<?> rootClass = compileModule(
         ObjectUtils.notNull(Paths.get(String.format("src/test/resources/metaschema/%s/metaschema.xml", testPath))),
         Paths.get(String.format("src/test/resources/metaschema/%s/binding.xml", testPath)),
         rootClassName,

@@ -37,7 +37,7 @@ public interface IInlineStrategy {
     @Override
     public boolean isInline(
         @NonNull IDefinition definition,
-        @NonNull MetaschemaIndex metaschemaIndex) {
+        @NonNull ModuleIndex metaschemaIndex) {
       return false;
     }
   };
@@ -47,7 +47,7 @@ public interface IInlineStrategy {
     @Override
     public boolean isInline(
         @NonNull IDefinition definition,
-        @NonNull MetaschemaIndex metaschemaIndex) {
+        @NonNull ModuleIndex metaschemaIndex) {
       return definition.isInline();
     }
   };
@@ -72,5 +72,5 @@ public interface IInlineStrategy {
 
   boolean isInline(
       @NonNull IDefinition definition,
-      @NonNull MetaschemaIndex metaschemaIndex);
+      @NonNull ModuleIndex metaschemaIndex);
 }

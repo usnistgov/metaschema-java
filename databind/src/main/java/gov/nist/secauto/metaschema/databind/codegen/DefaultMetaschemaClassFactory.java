@@ -49,7 +49,7 @@ import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
@@ -74,11 +74,11 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonKey;
-import gov.nist.secauto.metaschema.databind.model.annotations.Metaschema;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaPackage;
+import gov.nist.secauto.metaschema.databind.model.annotations.Module;
 import gov.nist.secauto.metaschema.databind.model.annotations.XmlNs;
 import gov.nist.secauto.metaschema.databind.model.annotations.XmlNsForm;
 import gov.nist.secauto.metaschema.databind.model.annotations.XmlSchema;
@@ -150,10 +150,10 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
 
   @Override
   public IGeneratedModuleClass generateClass(
-      IMetaschema module,
+      IModule module,
       Path targetDirectory) throws IOException {
 
-    // Generate the metaschema class
+    // Generate the Module module class
     ClassName className = getTypeResolver().getClassName(module);
 
     TypeSpec.Builder classSpec = newClassBuilder(module, className);
@@ -191,7 +191,7 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
                 generatedClass = generateClass(typeInfo, targetDirectory);
               } catch (RuntimeException ex) { // NOPMD - intended
                 throw new IllegalStateException(
-                    String.format("Unable to generate class for definition '%s' in Metaschema '%s'",
+                    String.format("Unable to generate class for definition '%s' in Module '%s'",
                         definition.getName(),
                         module.getLocation()),
                     ex);
@@ -236,7 +236,7 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
   public IGeneratedClass generatePackageInfoClass(
       String javaPackage,
       URI xmlNamespace,
-      Collection<IGeneratedModuleClass> metaschemaProductions,
+      Collection<IGeneratedModuleClass> moduleProductions,
       Path targetDirectory) throws IOException {
 
     String packagePath = javaPackage.replace(".", "/");
@@ -245,16 +245,16 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
     try (PrintWriter writer = new PrintWriter(
         Files.newBufferedWriter(packageInfo, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
             StandardOpenOption.TRUNCATE_EXISTING))) {
-      writer.format("@%1$s(metaschemas = {%n", MetaschemaPackage.class.getName());
+      writer.format("@%1$s(moduleClass = {%n", MetaschemaPackage.class.getName());
 
       boolean first = true;
-      for (IGeneratedModuleClass metaschemaProduction : metaschemaProductions) {
+      for (IGeneratedModuleClass moduleProduction : moduleProductions) {
         if (first) {
           first = false;
         } else {
           writer.format(",%n");
         }
-        writer.format("  %1$s.class", metaschemaProduction.getClassName().canonicalName());
+        writer.format("  %1$s.class", moduleProduction.getClassName().canonicalName());
       }
 
       writer.format("})%n");
@@ -270,18 +270,18 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
   }
 
   /**
-   * Creates and configures a builder, for a Metaschema module, that can be used
-   * to generate a Java class.
+   * Creates and configures a builder, for a Module module, that can be used to
+   * generate a Java class.
    *
-   * @param metaschema
-   *          a parsed Metaschema module
+   * @param module
+   *          a parsed Module module
    * @param className
-   *          the name of the class to create for the Metaschema module
+   *          the name of the class to create for the Module module
    * @return the class builder
    */
   @NonNull
   protected TypeSpec.Builder newClassBuilder(
-      @NonNull IMetaschema metaschema,
+      @NonNull IModule module,
       @NonNull ClassName className) { // NOPMD - long, but readable
 
     // create the class
@@ -289,64 +289,64 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
 
     builder.superclass(AbstractBoundMetaschema.class);
 
-    AnnotationSpec.Builder metaschemaAnnotation = AnnotationSpec.builder(Metaschema.class);
+    AnnotationSpec.Builder moduleAnnotation = AnnotationSpec.builder(Module.class);
 
     ITypeResolver typeResolver = getTypeResolver();
-    for (IFieldDefinition definition : metaschema.getFieldDefinitions()) {
+    for (IFieldDefinition definition : module.getFieldDefinitions()) {
       if (!definition.isSimple()) {
-        metaschemaAnnotation.addMember("fields", "$T.class", typeResolver.getClassName(definition));
+        moduleAnnotation.addMember("fields", "$T.class", typeResolver.getClassName(definition));
       }
     }
 
-    for (IAssemblyDefinition definition : metaschema.getAssemblyDefinitions()) {
-      metaschemaAnnotation.addMember(
+    for (IAssemblyDefinition definition : module.getAssemblyDefinitions()) {
+      moduleAnnotation.addMember(
           "assemblies",
           "$T.class",
           typeResolver.getClassName(ObjectUtils.notNull(definition)));
     }
 
-    for (IMetaschema metaschemaImport : metaschema.getImportedMetaschemas()) {
-      metaschemaAnnotation.addMember(
+    for (IModule moduleImport : module.getImportedModules()) {
+      moduleAnnotation.addMember(
           "imports",
           "$T.class",
-          typeResolver.getClassName(ObjectUtils.notNull(metaschemaImport)));
+          typeResolver.getClassName(ObjectUtils.notNull(moduleImport)));
     }
 
     {
-      MarkupMultiline remarks = metaschema.getRemarks();
+      MarkupMultiline remarks = module.getRemarks();
       if (remarks != null) {
-        metaschemaAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
+        moduleAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
       }
     }
 
-    builder.addAnnotation(metaschemaAnnotation.build());
+    builder.addAnnotation(moduleAnnotation.build());
 
     builder.addField(
         FieldSpec.builder(MarkupLine.class, "NAME", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-            .initializer("$T.fromMarkdown($S)", MarkupLine.class, metaschema.getName().toMarkdown())
+            .initializer("$T.fromMarkdown($S)", MarkupLine.class, module.getName().toMarkdown())
             .build());
 
     builder.addField(
         FieldSpec.builder(String.class, "SHORT_NAME", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-            .initializer("$S", metaschema.getShortName())
+            .initializer("$S", module.getShortName())
             .build());
 
     builder.addField(
         FieldSpec.builder(String.class, "VERSION", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-            .initializer("$S", metaschema.getVersion())
+            .initializer("$S", module.getVersion())
             .build());
 
     builder.addField(
         FieldSpec.builder(URI.class, "XML_NAMESPACE", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-            .initializer("$T.create($S)", URI.class, metaschema.getXmlNamespace())
+            .initializer("$T.create($S)", URI.class, module.getXmlNamespace())
             .build());
 
     builder.addField(
         FieldSpec.builder(URI.class, "JSON_BASE_URI", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-            .initializer("$T.create($S)", URI.class, metaschema.getJsonBaseUri())
+            .initializer("$T.create($S)", URI.class, module.getJsonBaseUri())
             .build());
 
-    MarkupMultiline remarks = metaschema.getRemarks();
+    MarkupMultiline remarks = module.getRemarks();
     if (remarks != null) {
       builder.addField(
           FieldSpec.builder(MarkupMultiline.class, "REMARKS", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
@@ -359,10 +359,10 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
             .addModifiers(Modifier.PUBLIC)
             .addParameter(
                 ParameterizedTypeName.get(ClassName.get(List.class),
-                    WildcardTypeName.subtypeOf(IMetaschema.class).box()),
-                "importedMetaschema")
+                    WildcardTypeName.subtypeOf(IModule.class).box()),
+                "importedModules")
             .addParameter(IBindingContext.class, "bindingContext")
-            .addStatement("super($N, $N)", "importedMetaschema", "bindingContext")
+            .addStatement("super($N, $N)", "importedModules", "bindingContext")
             .build());
     builder.addMethod(
         MethodSpec.methodBuilder("getName")
@@ -421,8 +421,8 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
   }
 
   /**
-   * Creates and configures a builder, for a Metaschema model definition, that can
-   * be used to generate a Java class.
+   * Creates and configures a builder, for a Module model definition, that can be
+   * used to generate a Java class.
    *
    * @param typeInfo
    *          the type information for the class to generate
@@ -638,8 +638,7 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
   }
 
   /**
-   * Build the core property annotations that are common to all Metaschema
-   * classes.
+   * Build the core property annotations that are common to all Module classes.
    *
    * @param typeInfo
    *          the type information for the Java property to build
@@ -662,8 +661,8 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
     }
 
     builder.addMember("name", "$S", definition.getName());
-    IMetaschema metaschema = definition.getContainingMetaschema();
-    builder.addMember("metaschema", "$T.class", getTypeResolver().getClassName(metaschema));
+    IModule module = definition.getContainingModule();
+    builder.addMember("moduleClass", "$T.class", getTypeResolver().getClassName(module));
   }
 
   /**
@@ -809,7 +808,7 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
     String namespace = modelInstance.getXmlNamespace();
     if (namespace == null) {
       retval.addMember("namespace", "$S", "##none");
-    } else if (!modelInstance.getContainingMetaschema().getXmlNamespace().toASCIIString().equals(namespace)) {
+    } else if (!modelInstance.getContainingModule().getXmlNamespace().toASCIIString().equals(namespace)) {
       retval.addMember("namespace", "$S", namespace);
     } // otherwise use the ##default
 
@@ -851,7 +850,7 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
     String groupAsNamespace = modelInstance.getGroupAsXmlNamespace();
     if (groupAsNamespace == null) {
       groupAsAnnoation.addMember("namespace", "$S", "##none");
-    } else if (!modelInstance.getContainingMetaschema().getXmlNamespace().toASCIIString().equals(groupAsNamespace)) {
+    } else if (!modelInstance.getContainingModule().getXmlNamespace().toASCIIString().equals(groupAsNamespace)) {
       groupAsAnnoation.addMember("namespace", "$S", groupAsNamespace);
     } // otherwise use the ##default
 

@@ -43,7 +43,7 @@ public interface IJsonWritingContext extends IWritingContext<JsonGenerator> {
    * value.
    *
    * @param targetDefinition
-   *          the bound Metaschema definition describing the structure of the JSON
+   *          the bound Module definition describing the structure of the JSON
    *          data to write
    * @param targetObject
    *          the Java object data to write

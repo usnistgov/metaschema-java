@@ -46,7 +46,7 @@ class ClassBindingFieldProperty
    * @param field
    *          the Java field to bind to
    * @param definition
-   *          the field's Metaschema definition
+   *          the field's Module definition
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */

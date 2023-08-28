@@ -28,12 +28,12 @@ package gov.nist.secauto.metaschema.core.model.xml;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractMetaschema;
+import gov.nist.secauto.metaschema.core.model.AbstractModule;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFieldDefinitionType;
@@ -59,14 +59,14 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 @SuppressWarnings("PMD.CouplingBetweenObjects")
-class XmlMetaschema
-    extends AbstractMetaschema {
-  private static final Logger LOGGER = LogManager.getLogger(XmlMetaschema.class);
+class XmlModule
+    extends AbstractModule {
+  private static final Logger LOGGER = LogManager.getLogger(XmlModule.class);
 
   @NonNull
   private final URI location;
   @NonNull
-  private final METASCHEMADocument metaschema;
+  private final METASCHEMADocument module;
   private final Map<String, ? extends IFlagDefinition> flagDefinitions;
   private final Map<String, ? extends IFieldDefinition> fieldDefinitions;
   private final Map<String, ? extends IAssemblyDefinition> assemblyDefinitions;
@@ -76,26 +76,26 @@ class XmlMetaschema
    * Constructs a new Metaschema instance.
    *
    * @param resource
-   *          the resource from which the metaschema was loaded
-   * @param metaschemaXml
-   *          the XML source of the metaschema definition bound to Java objects
-   * @param importedMetaschema
-   *          the definitions for any metaschema imported by this metaschema
+   *          the resource from which the module was loaded
+   * @param moduleXml
+   *          the XML source of the module definition bound to Java objects
+   * @param importedModules
+   *          the modules imported by this module
    * @throws MetaschemaException
    *           if a processing error occurs
    */
-  XmlMetaschema( // NOPMD - unavoidable
+  XmlModule( // NOPMD - unavoidable
       @NonNull URI resource,
-      @NonNull METASCHEMADocument metaschemaXml,
-      @NonNull List<IMetaschema> importedMetaschema) throws MetaschemaException {
-    super(importedMetaschema);
+      @NonNull METASCHEMADocument moduleXml,
+      @NonNull List<IModule> importedModules) throws MetaschemaException {
+    super(importedModules);
     this.location = ObjectUtils.requireNonNull(resource, "resource");
-    Objects.requireNonNull(metaschemaXml.getMETASCHEMA());
-    this.metaschema = metaschemaXml;
+    Objects.requireNonNull(moduleXml.getMETASCHEMA());
+    this.module = moduleXml;
 
-    METASCHEMA metaschemaNode = metaschema.getMETASCHEMA();
+    METASCHEMA metaschemaNode = module.getMETASCHEMA();
 
-    // handle definitions in this metaschema
+    // handle definitions in this module
     {
       // start with flag definitions
       try (XmlCursor cursor = metaschemaNode.newCursor()) {
@@ -170,50 +170,50 @@ class XmlMetaschema
   }
 
   /**
-   * Get the XMLBeans representation of the Metaschema.
+   * Get the XMLBeans representation of the Metaschema module.
    *
-   * @return the XMLBean for the Metaschema
+   * @return the XMLBean for the Metaschema module
    */
   @NonNull
-  protected METASCHEMADocument.METASCHEMA getXmlMetaschema() {
-    return ObjectUtils.notNull(metaschema.getMETASCHEMA());
+  protected METASCHEMADocument.METASCHEMA getXmlModule() {
+    return ObjectUtils.notNull(module.getMETASCHEMA());
   }
 
   @SuppressWarnings("null")
   @Override
   public MarkupLine getName() {
-    return MarkupStringConverter.toMarkupString(getXmlMetaschema().getSchemaName());
+    return MarkupStringConverter.toMarkupString(getXmlModule().getSchemaName());
   }
 
   @SuppressWarnings("null")
   @Override
   public String getVersion() {
-    return getXmlMetaschema().getSchemaVersion();
+    return getXmlModule().getSchemaVersion();
   }
 
   @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
-    return getXmlMetaschema().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlMetaschema().getRemarks())
+    return getXmlModule().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlModule().getRemarks())
         : null;
   }
 
   @SuppressWarnings("null")
   @Override
   public String getShortName() {
-    return getXmlMetaschema().getShortName();
+    return getXmlModule().getShortName();
   }
 
   @SuppressWarnings("null")
   @Override
   public URI getXmlNamespace() {
-    return URI.create(getXmlMetaschema().getNamespace());
+    return URI.create(getXmlModule().getNamespace());
   }
 
   @SuppressWarnings("null")
   @Override
   public URI getJsonBaseUri() {
-    return URI.create(getXmlMetaschema().getJsonBaseUri());
+    return URI.create(getXmlModule().getJsonBaseUri());
   }
 
   private Map<String, ? extends IAssemblyDefinition> getAssemblyDefinitionMap() {

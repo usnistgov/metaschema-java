@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind.codegen.config;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
 import gov.nist.secauto.metaschema.databind.codegen.xmlbeans.JavaModelBindingType;
@@ -59,12 +59,12 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public class DefaultBindingConfiguration implements IBindingConfiguration {
   private final Map<String, String> namespaceToPackageNameMap = new ConcurrentHashMap<>();
   // metaschema location -> ModelType -> Definition Name -> IBindingConfiguration
-  private final Map<String, MetaschemaBindingConfiguration> metaschemaUrlToMetaschemaBindingConfigurationMap
+  private final Map<String, MetaschemaBindingConfiguration> moduleUrlToMetaschemaBindingConfigurationMap
       = new ConcurrentHashMap<>();
 
   @Override
-  public String getPackageNameForMetaschema(IMetaschema metaschema) {
-    URI namespace = metaschema.getXmlNamespace();
+  public String getPackageNameForModule(IModule module) {
+    URI namespace = module.getXmlNamespace();
     return getPackageNameForNamespace(ObjectUtils.notNull(namespace.toASCIIString()));
   }
 
@@ -77,12 +77,12 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
    *         configuration
    */
   @Nullable
-  public IDefinitionBindingConfiguration
-      getBindingConfigurationForDefinition(@NonNull IFlagContainer definition) {
-    String metaschemaUri = ObjectUtils.notNull(definition.getContainingMetaschema().getLocation().toString());
+  public IDefinitionBindingConfiguration getBindingConfigurationForDefinition(
+      @NonNull IFlagContainer definition) {
+    String moduleUri = ObjectUtils.notNull(definition.getContainingModule().getLocation().toString());
     String definitionName = definition.getName();
 
-    MetaschemaBindingConfiguration metaschemaConfig = getMetaschemaBindingConfiguration(metaschemaUri);
+    MetaschemaBindingConfiguration metaschemaConfig = getMetaschemaBindingConfiguration(moduleUri);
 
     IDefinitionBindingConfiguration retval = null;
     if (metaschemaConfig != null) {
@@ -128,14 +128,14 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   }
 
   @Override
-  public @NonNull String getClassName(@NonNull IMetaschema metaschema) {
+  public @NonNull String getClassName(@NonNull IModule module) {
     // TODO: make this configurable
-    return ClassUtils.toClassName(metaschema.getShortName() + "Metaschema");
+    return ClassUtils.toClassName(module.getShortName() + "Module");
   }
 
   /**
-   * Binds an XML namespace, which is normally associated with one or more
-   * Metaschema, with a provided Java package name.
+   * Binds an XML namespace, which is normally associated with one or more Module,
+   * with a provided Java package name.
    *
    * @param namespace
    *          an XML namespace URI
@@ -150,8 +150,10 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
       String oldPackageName = namespaceToPackageNameMap.get(namespace);
       if (!oldPackageName.equals(packageName)) {
         throw new IllegalStateException(
-            String.format("Attempt to redefine existing package name '%s' to '%s' for namespace '%s'", oldPackageName,
-                packageName, namespace));
+            String.format("Attempt to redefine existing package name '%s' to '%s' for namespace '%s'",
+                oldPackageName,
+                packageName,
+                namespace));
       } // else the same package name, so do nothing
     } else {
       namespaceToPackageNameMap.put(namespace, packageName);
@@ -179,49 +181,50 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   }
 
   /**
-   * Get the binding configuration for the provided Metaschema.
+   * Get the binding configuration for the provided Module.
    *
-   * @param metaschema
-   *          the Metaschema
-   * @return the configuration for the Metaschema or {@code null} if there is no
+   * @param module
+   *          the Module module
+   * @return the configuration for the Module or {@code null} if there is no
    *         configuration
    */
-  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(@NonNull IMetaschema metaschema) {
-    String metaschemaUri = ObjectUtils.notNull(metaschema.getLocation().toString());
-    return getMetaschemaBindingConfiguration(metaschemaUri);
+  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(@NonNull IModule module) {
+    String moduleUri = ObjectUtils.notNull(module.getLocation().toString());
+    return getMetaschemaBindingConfiguration(moduleUri);
 
   }
 
   /**
-   * Get the binding configuration for the Metaschema located at the provided
-   * {@code metaschemaUri}.
+   * Get the binding configuration for the Module modulke located at the provided
+   * {@code moduleUri}.
    *
-   * @param metaschemaUri
-   *          the location of the Metaschema
-   * @return the configuration for the Metaschema or {@code null} if there is no
-   *         configuration
+   * @param moduleUri
+   *          the location of the Module module
+   * @return the configuration for the Module module or {@code null} if there is
+   *         no configuration
    */
   @Nullable
-  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(@NonNull String metaschemaUri) {
-    return metaschemaUrlToMetaschemaBindingConfigurationMap.get(metaschemaUri);
+  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(@NonNull String moduleUri) {
+    return moduleUrlToMetaschemaBindingConfigurationMap.get(moduleUri);
   }
 
   /**
-   * Set the binding configuration for the Metaschema located at the provided
-   * {@code metaschemaUri}.
+   * Set the binding configuration for the Module module located at the provided
+   * {@code moduleUri}.
    *
-   * @param metaschemaUri
-   *          the location of the Metaschema
+   * @param moduleUri
+   *          the location of the Module module
    * @param config
-   *          the Metaschema binding configuration
-   * @return the old configuration for the Metaschema or {@code null} if there was
-   *         no previous configuration
+   *          the Module binding configuration
+   * @return the old configuration for the Module module or {@code null} if there
+   *         was no previous configuration
    */
-  public MetaschemaBindingConfiguration addMetaschemaBindingConfiguration(@NonNull String metaschemaUri,
+  public MetaschemaBindingConfiguration addMetaschemaBindingConfiguration(
+      @NonNull String moduleUri,
       @NonNull MetaschemaBindingConfiguration config) {
-    Objects.requireNonNull(metaschemaUri, "metaschemaUri");
+    Objects.requireNonNull(moduleUri, "moduleUri");
     Objects.requireNonNull(config, "config");
-    return metaschemaUrlToMetaschemaBindingConfigurationMap.put(metaschemaUri, config);
+    return moduleUrlToMetaschemaBindingConfigurationMap.put(moduleUri, config);
   }
 
   /**
@@ -295,13 +298,13 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   private void processMetaschemaBindingConfig(URL configResource, MetaschemaBindingType metaschema)
       throws MalformedURLException, URISyntaxException {
     String href = metaschema.getHref();
-    URL metaschemaUrl = new URL(configResource, href);
-    String metaschemaUri = ObjectUtils.notNull(metaschemaUrl.toURI().toString());
+    URL moduleUrl = new URL(configResource, href);
+    String moduleUri = ObjectUtils.notNull(moduleUrl.toURI().toString());
 
-    MetaschemaBindingConfiguration metaschemaConfig = getMetaschemaBindingConfiguration(metaschemaUri);
+    MetaschemaBindingConfiguration metaschemaConfig = getMetaschemaBindingConfiguration(moduleUri);
     if (metaschemaConfig == null) {
       metaschemaConfig = new MetaschemaBindingConfiguration();
-      addMetaschemaBindingConfiguration(metaschemaUri, metaschemaConfig);
+      addMetaschemaBindingConfiguration(moduleUri, metaschemaConfig);
     }
     for (ObjectDefinitionBindingType assemblyBinding : metaschema.getDefineAssemblyBindingList()) {
       String name = ObjectUtils.requireNonNull(assemblyBinding.getName());

@@ -35,7 +35,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.AbstractSchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
@@ -84,10 +84,10 @@ public class JsonSchemaGenerator
 
   @Override
   protected JsonGenerationState newGenerationState(
-      IMetaschema metaschema,
+      IModule module,
       JsonGenerator schemaWriter,
       IConfiguration<SchemaGenerationFeature<?>> configuration) {
-    return new JsonGenerationState(metaschema, schemaWriter, configuration);
+    return new JsonGenerationState(module, schemaWriter, configuration);
   }
 
   @Override
@@ -117,17 +117,17 @@ public class JsonSchemaGenerator
         })
         .collect(Collectors.toUnmodifiableList());
 
-    IMetaschema metaschema = state.getMetaschema();
+    IModule module = state.getModule();
     try {
       state.writeStartObject();
 
       state.writeField("$schema", "http://json-schema.org/draft-07/schema#");
       state.writeField("$id",
           String.format("%s/%s-%s-schema.json",
-              metaschema.getXmlNamespace(),
-              metaschema.getShortName(),
-              metaschema.getVersion()));
-      state.writeField("$comment", metaschema.getName().toMarkdown());
+              module.getXmlNamespace(),
+              module.getShortName(),
+              module.getVersion()));
+      state.writeField("$comment", module.getName().toMarkdown());
       state.writeField("type", "object");
 
       ObjectNode definitionsObject = state.generateDefinitions();

@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
@@ -54,7 +54,7 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   @NonNull
   private final GlobalFlagDefinitionType xmlFlag;
   @NonNull
-  private final IMetaschema metaschema;
+  private final IModule module;
   @Nullable
   private final Object defaultValue;
   private final Lazy<IValueConstrained> constraints;
@@ -65,14 +65,14 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
    *
    * @param xmlFlag
    *          the XML representation bound to Java objects
-   * @param metaschema
-   *          the containing Metaschema
+   * @param module
+   *          the containing Metaschema module
    */
   public XmlGlobalFlagDefinition(
       @NonNull GlobalFlagDefinitionType xmlFlag,
-      @NonNull IMetaschema metaschema) {
+      @NonNull IModule module) {
     this.xmlFlag = xmlFlag;
-    this.metaschema = metaschema;
+    this.module = module;
 
     Object defaultValue = null;
     if (xmlFlag.isSetDefault()) {
@@ -85,7 +85,7 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
         retval = new ValueConstraintSupport(
             ObjectUtils.notNull(getXmlFlag().getConstraint()),
             ExternalModelSource.instance(
-                ObjectUtils.requireNonNull(getContainingMetaschema().getLocation())));
+                ObjectUtils.requireNonNull(getContainingModule().getLocation())));
       } else {
         retval = new ValueConstraintSupport();
       }
@@ -94,8 +94,8 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   }
 
   @Override
-  public IMetaschema getContainingMetaschema() {
-    return metaschema;
+  public IModule getContainingModule() {
+    return module;
   }
 
   @Override

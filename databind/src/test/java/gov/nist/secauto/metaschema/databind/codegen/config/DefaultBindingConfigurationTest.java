@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModelType;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -54,7 +54,7 @@ class DefaultBindingConfigurationTest {
   @RegisterExtension
   JUnit5Mockery context = new JUnit5Mockery();
   private final IFlagContainer definition = context.mock(IFlagContainer.class);
-  private final IMetaschema metaschema = context.mock(IMetaschema.class);
+  private final IModule module = context.mock(IModule.class);
 
   @Test
   void testLoader() throws MalformedURLException, IOException {
@@ -68,10 +68,10 @@ class DefaultBindingConfigurationTest {
 
     context.checking(new Expectations() {
       { // NOPMD - intentional
-        oneOf(metaschema).getLocation();
+        oneOf(module).getLocation();
         will(returnValue(METASCHEMA_LOCATION));
-        allowing(definition).getContainingMetaschema();
-        will(returnValue(metaschema));
+        allowing(definition).getContainingModule();
+        will(returnValue(module));
         allowing(definition).getModelType();
         will(returnValue(DEFINITION_MODEL_TYPE));
         allowing(definition).getName();

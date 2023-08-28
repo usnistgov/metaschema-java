@@ -57,8 +57,8 @@ public class DefaultXmlDeserializer<CLASS>
   private final IAssemblyClassBinding rootDefinition;
 
   /**
-   * Construct a new Metaschema binding-based deserializer that reads XML-based
-   * Metaschema content.
+   * Construct a new Module binding-based deserializer that reads XML-based Module
+   * content.
    *
    * @param classBinding
    *          the assembly class binding describing the Java objects this

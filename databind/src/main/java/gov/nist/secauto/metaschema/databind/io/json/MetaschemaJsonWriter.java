@@ -53,7 +53,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
   private final JsonGenerator writer;
 
   /**
-   * Construct a new Metaschema-aware JSON writer.
+   * Construct a new Module-aware JSON writer.
    *
    * @param generator
    *          the JSON generator to write with

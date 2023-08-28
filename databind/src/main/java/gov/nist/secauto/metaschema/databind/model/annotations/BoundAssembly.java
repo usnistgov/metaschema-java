@@ -39,7 +39,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Identifies that the annotation target is a bound property that references a
- * Metaschema assembly.
+ * Module assembly.
  * <p>
  * For XML serialization, the {@link #useName()} identifies the name of the
  * element to use and the {@link #namespace()} identifies the namespace of this

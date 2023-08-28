@@ -26,7 +26,7 @@
 
 /**
  * Support for loading Metaschema information from an XML-based Metaschema
- * model.
+ * module.
  * <p>
  * Provides an implementation of the Metaschema model
  * ({@link gov.nist.secauto.metaschema.core.model}) using an underlying XML

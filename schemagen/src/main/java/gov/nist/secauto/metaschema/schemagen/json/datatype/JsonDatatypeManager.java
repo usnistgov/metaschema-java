@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
+import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
@@ -58,7 +58,7 @@ public class JsonDatatypeManager
   static {
     JsonNode jsonData;
     try (InputStream is
-        = MetaschemaLoader.class.getResourceAsStream("/schema/json/metaschema-datatypes.json")) {
+        = ModuleLoader.class.getResourceAsStream("/schema/json/metaschema-datatypes.json")) {
       ObjectMapper objectMapper = new ObjectMapper();
       jsonData = objectMapper.readTree(is);
     } catch (IOException ex) {

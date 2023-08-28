@@ -98,7 +98,7 @@ module gov.nist.secauto.metaschema.core {
   exports gov.nist.secauto.metaschema.core.util;
 
   exports gov.nist.secauto.metaschema.core.datatype.markup.flexmark
-      to gov.nist.secauto.metaschema.databind.codegen;
+      to gov.nist.secauto.metaschema.databind;
 
   // make bundled schemas available for use
   opens schema.json;

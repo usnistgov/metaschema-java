@@ -50,7 +50,7 @@ class FlagDefinitionNodeItemImpl
    */
   public FlagDefinitionNodeItemImpl(
       @NonNull IFlagDefinition definition,
-      @NonNull IMetaschemaNodeItem parent) {
+      @NonNull IModuleNodeItem parent) {
     super(definition, parent);
   }
 

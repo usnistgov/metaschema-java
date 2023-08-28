@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.AbstractNodeItemVisit
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFieldNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFlagNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.IMetaschemaNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintValidator;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -62,7 +62,7 @@ public class ValidatingNodeItemVisitor
   }
 
   @Override
-  public Boolean visitMetaschema(@NonNull IMetaschemaNodeItem item, IConstraintValidator context) {
+  public Boolean visitMetaschema(@NonNull IModuleNodeItem item, IConstraintValidator context) {
     throw new UnsupportedOperationException("validation of a metaschema node item is not needed");
   }
 }

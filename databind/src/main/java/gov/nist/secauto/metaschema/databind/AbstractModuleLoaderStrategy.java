@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.AbstractBoundMetaschema;
@@ -42,15 +42,15 @@ import java.util.Map;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-class AbstractMetaschemaLoaderStrategy implements IMetaschemaLoaderStrategy {
+class AbstractModuleLoaderStrategy implements IModuleLoaderStrategy {
   @NonNull
   private final IBindingContext bindingContext;
   @NonNull
-  private final Map<Class<?>, IMetaschema> metaschemasByClass = new HashMap<>(); // NOPMD - intentional
+  private final Map<Class<?>, IModule> modulesByClass = new HashMap<>(); // NOPMD - intentional
   @NonNull
   private final Map<Class<?>, IClassBinding> classBindingsByClass = new HashMap<>(); // NOPMD - intentional
 
-  protected AbstractMetaschemaLoaderStrategy(@NonNull IBindingContext bindingContext) {
+  protected AbstractModuleLoaderStrategy(@NonNull IBindingContext bindingContext) {
     this.bindingContext = bindingContext;
   }
 
@@ -60,21 +60,16 @@ class AbstractMetaschemaLoaderStrategy implements IMetaschemaLoaderStrategy {
   }
 
   @Override
-  public IMetaschema getMetaschemaInstanceByClass(@NonNull Class<? extends IMetaschema> clazz) {
-    IMetaschema retval;
+  public IModule getModuleByClass(@NonNull Class<? extends IModule> clazz) {
+    IModule retval;
     synchronized (this) {
-      retval = metaschemasByClass.get(clazz);
+      retval = modulesByClass.get(clazz);
       if (retval == null) {
-        retval = newMetaschema(clazz);
-        metaschemasByClass.put(clazz, retval);
+        retval = AbstractBoundMetaschema.createInstance(clazz, getBindingContext());
+        modulesByClass.put(clazz, retval);
       }
     }
     return ObjectUtils.notNull(retval);
-  }
-
-  @NonNull
-  protected IMetaschema newMetaschema(@NonNull Class<? extends IMetaschema> clazz) {
-    return AbstractBoundMetaschema.createInstance(clazz, getBindingContext());
   }
 
   @Override
@@ -99,12 +94,6 @@ class AbstractMetaschemaLoaderStrategy implements IMetaschemaLoaderStrategy {
       retval = DefaultAssemblyClassBinding.createInstance(clazz, getBindingContext());
     } else if (clazz.isAnnotationPresent(MetaschemaField.class)) {
       retval = DefaultFieldClassBinding.createInstance(clazz, getBindingContext());
-      // } else {
-      // throw new IllegalArgumentException(String.format(
-      // "Class '%s' does not represent a Metaschema definition"
-      // + " since it is missing a '%s' or '%s' annotation.",
-      // clazz.getName(), MetaschemaAssembly.class.getName(),
-      // MetaschemaField.class.getName()));
     }
     return retval;
   }

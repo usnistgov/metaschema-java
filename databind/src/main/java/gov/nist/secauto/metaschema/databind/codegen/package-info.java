@@ -25,8 +25,7 @@
  */
 
 /**
- * Support for generating "plain old Java objects" (POJOs) based on a
- * Metaschema.
+ * Support for generating "plain old Java objects" (POJOs) based on a Module.
  */
 
 package gov.nist.secauto.metaschema.databind.codegen;

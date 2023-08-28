@@ -71,7 +71,7 @@ public class DefaultBoundLoader
    * {@link IBindingContext}.
    *
    * @param bindingContext
-   *          the Metaschema binding context to use to load Java types
+   *          the Module binding context to use to load Java types
    */
   public DefaultBoundLoader(@NonNull IBindingContext bindingContext) {
     this.bindingContext = bindingContext;

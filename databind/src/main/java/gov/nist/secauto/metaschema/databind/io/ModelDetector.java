@@ -72,8 +72,7 @@ public class ModelDetector {
    * Construct a new format detector using the default configuration.
    *
    * @param bindingContext
-   *          information about how Java classes are bound to Metaschema
-   *          definitions
+   *          information about how Java classes are bound to Module definitions
    */
   public ModelDetector(
       @NonNull IBindingContext bindingContext) {
@@ -84,8 +83,7 @@ public class ModelDetector {
    * Construct a new format detector using the provided {@code configuration}.
    *
    * @param bindingContext
-   *          information about how Java classes are bound to Metaschema
-   *          definitions
+   *          information about how Java classes are bound to Module definitions
    * @param configuration
    *          the deserialization configuration
    */

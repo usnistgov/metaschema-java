@@ -30,7 +30,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.DefaultBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
@@ -81,8 +81,8 @@ public class AbstractBoundModelTestSupport {
   }
 
   @NonNull
-  protected IMetaschema registerMetaschema(@NonNull Class<? extends AbstractBoundMetaschema> clazz) {
-    return getBindingContext().getMetaschemaInstanceByClass(clazz);
+  protected IModule registerModule(@NonNull Class<? extends AbstractBoundMetaschema> clazz) {
+    return getBindingContext().getModuleByClass(clazz);
   }
 
   @SuppressWarnings("null")

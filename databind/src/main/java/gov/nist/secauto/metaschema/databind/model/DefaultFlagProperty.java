@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvi
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
@@ -258,8 +258,8 @@ class DefaultFlagProperty
     }
 
     @Override
-    public IMetaschema getContainingMetaschema() {
-      return DefaultFlagProperty.this.getContainingMetaschema();
+    public IModule getContainingModule() {
+      return DefaultFlagProperty.this.getContainingModule();
     }
   }
 }

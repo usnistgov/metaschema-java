@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.databind.io.json.MetaschemaJsonReader;
 
 import org.junit.jupiter.api.Test;
@@ -60,10 +60,10 @@ class DefaultAssemblyClassBindingTest
   }
 
   @Test
-  void testMetaschema() {
+  void testModule() {
     IAssemblyClassBinding classBinding = getRootAssemblyClassBinding();
-    IMetaschema metaschema = classBinding.getContainingMetaschema();
-    assertNotNull(metaschema, "metaschema was null");
+    IModule module = classBinding.getContainingModule();
+    assertNotNull(module, "metaschema was null");
   }
 
   // @Test

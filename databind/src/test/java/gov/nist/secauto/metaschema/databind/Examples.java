@@ -41,7 +41,7 @@ class Examples { // NOPMD
   // @SuppressWarnings("PMD")
   // @Test
   // void testLoadJson() throws FileNotFoundException, IOException {
-  // // get the binding context instance, which manages Metaschema-to-object
+  // // get the binding context instance, which manages Module-to-object
   // binding information
   // IBindingContext bindingContext = IBindingContext.instance();
   //
@@ -58,7 +58,7 @@ class Examples { // NOPMD
   //
   // @Test
   // void test() throws FileNotFoundException, IOException {
-  // // get the binding context instance, which manages Metaschema-to-object
+  // // get the binding context instance, which manages Module-to-object
   // binding information
   // IBindingContext bindingContext = IBindingContext.instance();
   //

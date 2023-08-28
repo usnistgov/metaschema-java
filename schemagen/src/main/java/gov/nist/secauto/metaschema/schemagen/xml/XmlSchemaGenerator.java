@@ -31,7 +31,7 @@ import com.ctc.wstx.stax.WstxOutputFactory;
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.AutoCloser;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.AbstractSchemaGenerator;
@@ -131,19 +131,19 @@ public class XmlSchemaGenerator
 
   @Override
   protected XmlGenerationState newGenerationState(
-      IMetaschema metaschema,
+      IModule module,
       AutoCloser<XMLStreamWriter2, SchemaGenerationException> schemaWriter,
       IConfiguration<SchemaGenerationFeature<?>> configuration) {
-    return new XmlGenerationState(metaschema, schemaWriter, configuration);
+    return new XmlGenerationState(module, schemaWriter, configuration);
   }
 
   @Override
-  public void generateFromMetaschema(
-      @NonNull IMetaschema metaschema,
+  public void generateFromModule(
+      @NonNull IModule module,
       @NonNull Writer out,
       @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration) {
     try (StringWriter stringWriter = new StringWriter()) {
-      super.generateFromMetaschema(metaschema, stringWriter, configuration);
+      super.generateFromModule(module, stringWriter, configuration);
       stringWriter.flush();
 
       try (StringReader stringReader = new StringReader(stringWriter.toString())) {
@@ -198,16 +198,16 @@ public class XmlSchemaGenerator
         state.writeNamespace(entry.getKey(), entry.getValue());
       }
 
-      IMetaschema metaschema = state.getMetaschema();
+      IModule module = state.getModule();
 
       // write remaining root attributes
       writer.writeAttribute("targetNamespace", targetNS);
       writer.writeAttribute("elementFormDefault", "qualified");
       writer.writeAttribute(NS_XML_SCHEMA_VERSIONING, "minVersion", "1.0");
       writer.writeAttribute(NS_XML_SCHEMA_VERSIONING, "maxVersion", "1.1");
-      writer.writeAttribute("version", metaschema.getVersion());
+      writer.writeAttribute("version", module.getVersion());
 
-      generateSchemaMetadata(metaschema, state);
+      generateSchemaMetadata(module, state);
 
       for (IAssemblyDefinition definition : rootAssemblyDefinitions) {
         QName xmlQName = definition.getRootXmlQName();
@@ -228,30 +228,30 @@ public class XmlSchemaGenerator
   }
 
   protected static void generateSchemaMetadata(
-      @NonNull IMetaschema metaschema,
+      @NonNull IModule module,
       @NonNull XmlGenerationState state)
       throws XMLStreamException {
-    String targetNS = ObjectUtils.notNull(metaschema.getXmlNamespace().toASCIIString());
+    String targetNS = ObjectUtils.notNull(module.getXmlNamespace().toASCIIString());
     state.writeStartElement(PREFIX_XML_SCHEMA, "annotation", NS_XML_SCHEMA);
     state.writeStartElement(PREFIX_XML_SCHEMA, "appinfo", NS_XML_SCHEMA);
 
     state.writeStartElement(targetNS, "schema-name");
 
-    metaschema.getName().writeXHtml(targetNS, state.getXMLStreamWriter());
+    module.getName().writeXHtml(targetNS, state.getXMLStreamWriter());
 
     state.writeEndElement();
 
     state.writeStartElement(targetNS, "schema-version");
-    state.writeCharacters(metaschema.getVersion());
+    state.writeCharacters(module.getVersion());
     state.writeEndElement();
 
     state.writeStartElement(targetNS, "short-name");
-    state.writeCharacters(metaschema.getShortName());
+    state.writeCharacters(module.getShortName());
     state.writeEndElement();
 
     state.writeEndElement();
 
-    MarkupMultiline remarks = metaschema.getRemarks();
+    MarkupMultiline remarks = module.getRemarks();
     if (remarks != null) {
       state.writeStartElement(PREFIX_XML_SCHEMA, "documentation", NS_XML_SCHEMA);
 

@@ -43,7 +43,7 @@ class FieldGlobalDefinitionNodeItemImpl
 
   protected FieldGlobalDefinitionNodeItemImpl(
       @NonNull IFieldDefinition definition,
-      @NonNull IMetaschemaNodeItem metaschemaNodeItem,
+      @NonNull IModuleNodeItem metaschemaNodeItem,
       @NonNull INodeItemGenerator generator) {
     super(definition, metaschemaNodeItem);
     this.model = Lazy.lazy(generator.newMetaschemaModelSupplier(this));

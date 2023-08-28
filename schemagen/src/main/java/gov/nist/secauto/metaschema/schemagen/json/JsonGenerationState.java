@@ -36,7 +36,7 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.IValuedDefinition;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -73,10 +73,10 @@ public class JsonGenerationState
   private final Map<IDataTypeAdapter<?>, IJsonSchema> dataTypeToSchemaMap = new ConcurrentHashMap<>();
 
   public JsonGenerationState(
-      @NonNull IMetaschema metaschema,
+      @NonNull IModule module,
       @NonNull JsonGenerator writer,
       @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration) {
-    super(metaschema, writer, configuration, new JsonDatatypeManager());
+    super(module, writer, configuration, new JsonDatatypeManager());
   }
 
   @NonNull

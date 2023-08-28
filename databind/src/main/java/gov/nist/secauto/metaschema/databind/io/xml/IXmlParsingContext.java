@@ -86,8 +86,7 @@ public interface IXmlParsingContext extends IParsingContext<XMLEventReader2, IXm
    * @param <T>
    *          the resulting object type
    * @param targetDefinition
-   *          the Metaschema definition that describes the syntax of the data to
-   *          read
+   *          the Module definition that describes the syntax of the data to read
    * @param parentObject
    *          the Java object parent of the target object, which can be
    *          {@code null} if there is no parent

@@ -46,43 +46,44 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Provides a common, abstract implementation of a {@link IMetaschema}.
+ * Provides a common, abstract implementation of a {@link IModule}.
  */
 @SuppressWarnings("PMD.CouplingBetweenObjects")
-public abstract class AbstractMetaschema
-    implements IMetaschema {
-  private static final Logger LOGGER = LogManager.getLogger(AbstractMetaschema.class);
+public abstract class AbstractModule
+    implements IModule {
+  private static final Logger LOGGER = LogManager.getLogger(AbstractModule.class);
 
   @NonNull
-  private final List<? extends IMetaschema> importedMetaschemas;
+  private final List<? extends IModule> importedModules;
   private Map<String, IFlagDefinition> exportedFlagDefinitions;
   private Map<String, IFieldDefinition> exportedFieldDefinitions;
   private Map<String, IAssemblyDefinition> exportedAssemblyDefinitions;
 
   /**
-   * Construct a new Metaschema object.
+   * Construct a new Metaschema module object.
    *
-   * @param importedMetaschemas
-   *          the collection of Metaschema objects this Metaschema imports
+   * @param importedModules
+   *          the collection of Metaschema module objects this Metaschema module
+   *          imports
    */
-  public AbstractMetaschema(@NonNull List<? extends IMetaschema> importedMetaschemas) {
-    this.importedMetaschemas
-        = CollectionUtil.unmodifiableList(ObjectUtils.requireNonNull(importedMetaschemas, "importedMetaschema"));
+  public AbstractModule(@NonNull List<? extends IModule> importedModules) {
+    this.importedModules
+        = CollectionUtil.unmodifiableList(ObjectUtils.requireNonNull(importedModules, "importedModules"));
   }
 
   @Override
   @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "interface doesn't allow modification")
-  public List<? extends IMetaschema> getImportedMetaschemas() {
-    return importedMetaschemas;
+  public List<? extends IModule> getImportedModules() {
+    return importedModules;
   }
 
-  private Map<String, ? extends IMetaschema> getImportedMetaschemaByShortNames() {
-    return importedMetaschemas.stream().collect(Collectors.toMap(IMetaschema::getShortName, Function.identity()));
+  private Map<String, ? extends IModule> getImportedModulesByShortName() {
+    return importedModules.stream().collect(Collectors.toMap(IModule::getShortName, Function.identity()));
   }
 
   @Override
-  public IMetaschema getImportedMetaschemaByShortName(String name) {
-    return getImportedMetaschemaByShortNames().get(name);
+  public IModule getImportedModuleByShortName(String name) {
+    return getImportedModulesByShortName().get(name);
   }
 
   @SuppressWarnings("null")
@@ -140,8 +141,8 @@ public abstract class AbstractMetaschema
   protected void initExports() {
     synchronized (this) {
       if (exportedFlagDefinitions == null) {
-        // Populate the stream with the definitions from this metaschema
-        Predicate<IDefinition> filter = IMetaschema.allNonLocalDefinitions();
+        // Populate the stream with the definitions from this module
+        Predicate<IDefinition> filter = IModule.allNonLocalDefinitions();
         Stream<? extends IFlagDefinition> flags = getFlagDefinitions().stream()
             .filter(filter);
         Stream<? extends IFieldDefinition> fields = getFieldDefinitions().stream()
@@ -149,17 +150,17 @@ public abstract class AbstractMetaschema
         Stream<? extends IAssemblyDefinition> assemblies = getAssemblyDefinitions().stream()
             .filter(filter);
 
-        // handle definitions from any included metaschema
-        if (!getImportedMetaschemas().isEmpty()) {
+        // handle definitions from any included module
+        if (!getImportedModules().isEmpty()) {
           Stream<? extends IFlagDefinition> importedFlags = Stream.empty();
           Stream<? extends IFieldDefinition> importedFields = Stream.empty();
           Stream<? extends IAssemblyDefinition> importedAssemblies = Stream.empty();
 
-          for (IMetaschema metaschema : getImportedMetaschemas()) {
-            importedFlags = Stream.concat(importedFlags, metaschema.getExportedFlagDefinitions().stream());
-            importedFields = Stream.concat(importedFields, metaschema.getExportedFieldDefinitions().stream());
+          for (IModule module : getImportedModules()) {
+            importedFlags = Stream.concat(importedFlags, module.getExportedFlagDefinitions().stream());
+            importedFields = Stream.concat(importedFields, module.getExportedFieldDefinitions().stream());
             importedAssemblies
-                = Stream.concat(importedAssemblies, metaschema.getExportedAssemblyDefinitions().stream());
+                = Stream.concat(importedAssemblies, module.getExportedAssemblyDefinitions().stream());
           }
 
           flags = Stream.concat(importedFlags, flags);
@@ -167,25 +168,24 @@ public abstract class AbstractMetaschema
           assemblies = Stream.concat(importedAssemblies, assemblies);
         }
 
-        // Build the maps. Definitions from this Metaschema will take priority, with
-        // shadowing being
-        // reported when a definition from this Metaschema has the same name as an
-        // imported one
+        // Build the maps. Definitions from this module will take priority, with
+        // shadowing being reported when a definition from this module has the same name
+        // as an imported one
         Map<String, IFlagDefinition> exportedFlagDefinitions = flags.collect(
             CustomCollectors.toMap(
                 IFlagDefinition::getName,
                 CustomCollectors.identity(),
-                AbstractMetaschema::handleShadowedDefinitions));
+                AbstractModule::handleShadowedDefinitions));
         Map<String, IFieldDefinition> exportedFieldDefinitions = fields.collect(
             CustomCollectors.toMap(
                 IFieldDefinition::getName,
                 CustomCollectors.identity(),
-                AbstractMetaschema::handleShadowedDefinitions));
+                AbstractModule::handleShadowedDefinitions));
         Map<String, IAssemblyDefinition> exportedAssemblyDefinitions = assemblies.collect(
             CustomCollectors.toMap(
                 IAssemblyDefinition::getName,
                 CustomCollectors.identity(),
-                AbstractMetaschema::handleShadowedDefinitions));
+                AbstractModule::handleShadowedDefinitions));
 
         this.exportedFlagDefinitions = exportedFlagDefinitions.isEmpty()
             ? CollectionUtil.emptyMap()
@@ -207,9 +207,9 @@ public abstract class AbstractMetaschema
       LOGGER.warn("The {} '{}' from metaschema '{}' is shadowing '{}' from metaschema '{}'",
           newDef.getModelType().name().toLowerCase(Locale.ROOT),
           newDef.getName(),
-          newDef.getContainingMetaschema().getShortName(),
+          newDef.getContainingModule().getShortName(),
           oldDef.getName(),
-          oldDef.getContainingMetaschema().getShortName());
+          oldDef.getContainingModule().getShortName());
     }
     return newDef;
   }

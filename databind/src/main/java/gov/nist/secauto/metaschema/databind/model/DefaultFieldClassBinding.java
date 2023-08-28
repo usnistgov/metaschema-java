@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -67,8 +67,8 @@ public class DefaultFieldClassBinding
    * @param clazz
    *          the Java bean class
    * @param bindingContext
-   *          the Metaschema binding environment context
-   * @return the Metaschema field binding for the class
+   *          the Module binding environment context
+   * @return the Module field binding for the class
    */
   @NonNull
   public static DefaultFieldClassBinding createInstance(
@@ -257,7 +257,7 @@ public class DefaultFieldClassBinding
   }
 
   @Override
-  protected Class<? extends IMetaschema> getMetaschemaClass() {
-    return getMetaschemaFieldAnnotation().metaschema();
+  protected Class<? extends IModule> getModuleClass() {
+    return getMetaschemaFieldAnnotation().moduleClass();
   }
 }

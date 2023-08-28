@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 
 import java.net.URI;
 
@@ -79,12 +79,12 @@ public interface INodeItemFactory {
   /**
    * Create a new Metaschema node item for the provided {@code metaschema}.
    *
-   * @param metaschema
+   * @param module
    *          the Metaschema to create the item for.
    * @return the new node item
    */
   @NonNull
-  IMetaschemaNodeItem newMetaschemaNodeItem(@NonNull IMetaschema metaschema);
+  IModuleNodeItem newModuleNodeItem(@NonNull IModule module);
 
   /**
    * Create a new {@link IFlagNodeItem}, with no associated value, based on the
@@ -99,7 +99,7 @@ public interface INodeItemFactory {
   @NonNull
   default IFlagNodeItem newFlagNodeItem(
       @NonNull IFlagDefinition definition,
-      @NonNull IMetaschemaNodeItem parent) {
+      @NonNull IModuleNodeItem parent) {
     return new FlagDefinitionNodeItemImpl(definition, parent);
   }
 
@@ -151,7 +151,7 @@ public interface INodeItemFactory {
   @NonNull
   IFieldNodeItem newFieldNodeItem(
       @NonNull IFieldDefinition definition,
-      @NonNull IMetaschemaNodeItem metaschema);
+      @NonNull IModuleNodeItem metaschema);
 
   /**
    * Create a new {@link IFieldNodeItem} that is detached from a Metaschema.
@@ -233,7 +233,7 @@ public interface INodeItemFactory {
   @NonNull
   IAssemblyNodeItem newAssemblyNodeItem(
       @NonNull IAssemblyDefinition definition,
-      @NonNull IMetaschemaNodeItem metaschema);
+      @NonNull IModuleNodeItem metaschema);
 
   /**
    * Create a new {@link IAssemblyNodeItem} that is detached from a Metaschema.

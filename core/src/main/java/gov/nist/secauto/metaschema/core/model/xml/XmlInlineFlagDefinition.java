@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
@@ -81,7 +81,7 @@ class XmlInlineFlagDefinition
         retval = new ValueConstraintSupport(
             ObjectUtils.notNull(getXmlFlag().getConstraint()),
             ExternalModelSource.instance(
-                ObjectUtils.requireNonNull(getContainingMetaschema().getLocation())));
+                ObjectUtils.requireNonNull(getContainingModule().getLocation())));
       } else {
         retval = new ValueConstraintSupport();
       }
@@ -95,8 +95,8 @@ class XmlInlineFlagDefinition
   }
 
   @Override
-  public IMetaschema getContainingMetaschema() {
-    return getContainingDefinition().getContainingMetaschema();
+  public IModule getContainingModule() {
+    return getContainingDefinition().getContainingModule();
   }
 
   // ----------------------------------------
@@ -256,8 +256,8 @@ class XmlInlineFlagDefinition
     }
 
     @Override
-    public IMetaschema getContainingMetaschema() {
-      return XmlInlineFlagDefinition.super.getContainingDefinition().getContainingMetaschema();
+    public IModule getContainingModule() {
+      return XmlInlineFlagDefinition.super.getContainingDefinition().getContainingModule();
     }
   }
 }

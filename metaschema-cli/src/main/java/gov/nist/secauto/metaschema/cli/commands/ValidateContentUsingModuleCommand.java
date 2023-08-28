@@ -31,12 +31,12 @@ import gov.nist.secauto.metaschema.cli.processor.InvalidArgumentException;
 import gov.nist.secauto.metaschema.cli.processor.command.ICommandExecutor;
 import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.core.model.util.XmlUtil;
-import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
+import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
@@ -63,7 +63,7 @@ import javax.xml.transform.Source;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class ValidateContentWithMetaschemaCommand
+public class ValidateContentUsingModuleCommand
     extends AbstractValidateContentCommand {
   @NonNull
   private static final String COMMAND = "validate-content";
@@ -75,7 +75,7 @@ public class ValidateContentWithMetaschemaCommand
 
   @Override
   public String getDescription() {
-    return "Verify that the provided resource is well-formed and valid to the provided Metaschema-based model.";
+    return "Verify that the provided resource is well-formed and valid to the provided Module-based model.";
   }
 
   @Override
@@ -96,10 +96,10 @@ public class ValidateContentWithMetaschemaCommand
     String metaschemaName = cmdLine.getOptionValue(MetaschemaCommandSupport.METASCHEMA_OPTION);
     Path metaschema = Paths.get(metaschemaName);
     if (!Files.exists(metaschema)) {
-      throw new InvalidArgumentException("The provided metaschema '" + metaschema + "' does not exist.");
+      throw new InvalidArgumentException("The provided module '" + metaschema + "' does not exist.");
     }
     if (!Files.isReadable(metaschema)) {
-      throw new InvalidArgumentException("The provided metaschema '" + metaschema + "' is not readable.");
+      throw new InvalidArgumentException("The provided module '" + metaschema + "' is not readable.");
     }
   }
 
@@ -112,7 +112,7 @@ public class ValidateContentWithMetaschemaCommand
       extends AbstractValidationCommandExecutor {
 
     private Path tempDir;
-    private IMetaschema metaschema;
+    private IModule module;
 
     private OscalCommandExecutor(
         @NonNull CallingContext callingContext,
@@ -129,33 +129,32 @@ public class ValidateContentWithMetaschemaCommand
     }
 
     @NonNull
-    private IMetaschema getMetaschema(@NonNull Set<IConstraintSet> constraintSets)
+    private IModule getModule(@NonNull Set<IConstraintSet> constraintSets)
         throws MetaschemaException, IOException {
-      if (metaschema == null) {
-        String metaschemaName = getCommandLine().getOptionValue(MetaschemaCommandSupport.METASCHEMA_OPTION);
-        Path metaschemaPath = Paths.get(metaschemaName);
-        assert metaschemaPath != null;
+      if (module == null) {
+        String moduleName = getCommandLine().getOptionValue(MetaschemaCommandSupport.METASCHEMA_OPTION);
+        Path modulePath = Paths.get(moduleName);
+        assert modulePath != null;
 
-        MetaschemaLoader loader = new MetaschemaLoader(constraintSets);
+        ModuleLoader loader = new ModuleLoader(constraintSets);
         loader.allowEntityResolution();
-        metaschema = loader.load(metaschemaPath);
+        module = loader.load(modulePath);
       }
-      assert metaschema != null;
-      return metaschema;
+      assert module != null;
+      return module;
     }
 
     @NonNull
-    private IMetaschema getMetaschema() {
+    private IModule getModule() {
       // should be initialized already
-      return ObjectUtils.requireNonNull(metaschema);
+      return ObjectUtils.requireNonNull(module);
     }
 
     @Override
     protected IBindingContext getBindingContext(@NonNull Set<IConstraintSet> constraintSets)
         throws MetaschemaException, IOException {
 
-      return IBindingContext.instance()
-          .registerModule(getMetaschema(constraintSets), tempDir);
+      return IBindingContext.instance().registerModule(getModule(constraintSets), tempDir);
     }
 
     @Override
@@ -163,7 +162,7 @@ public class ValidateContentWithMetaschemaCommand
       Path schemaFile = Files.createTempFile(getTempDir(), "schema-", ".json");
       assert schemaFile != null;
       IMutableConfiguration<SchemaGenerationFeature<?>> configuration = new DefaultConfiguration<>();
-      ISchemaGenerator.generateSchema(getMetaschema(), schemaFile, SchemaFormat.XML, configuration);
+      ISchemaGenerator.generateSchema(getModule(), schemaFile, SchemaFormat.XML, configuration);
       return ObjectUtils.requireNonNull(List.of(
           XmlUtil.getStreamSource(schemaFile.toUri().toURL())));
     }
@@ -173,7 +172,7 @@ public class ValidateContentWithMetaschemaCommand
       Path schemaFile = Files.createTempFile(getTempDir(), "schema-", ".json");
       assert schemaFile != null;
       IMutableConfiguration<SchemaGenerationFeature<?>> configuration = new DefaultConfiguration<>();
-      ISchemaGenerator.generateSchema(getMetaschema(), schemaFile, SchemaFormat.JSON, configuration);
+      ISchemaGenerator.generateSchema(getModule(), schemaFile, SchemaFormat.JSON, configuration);
       try (BufferedReader reader = ObjectUtils.notNull(Files.newBufferedReader(schemaFile, StandardCharsets.UTF_8))) {
         return JsonUtil.toJsonObject(reader);
       }

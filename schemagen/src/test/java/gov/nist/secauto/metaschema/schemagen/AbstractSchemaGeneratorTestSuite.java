@@ -31,11 +31,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.validation.JsonSchemaContentValidator;
 import gov.nist.secauto.metaschema.core.model.validation.XmlSchemaContentValidator;
-import gov.nist.secauto.metaschema.core.model.xml.MetaschemaLoader;
+import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.Format;
@@ -74,9 +74,9 @@ public abstract class AbstractSchemaGeneratorTestSuite
   @NonNull
   protected static final IConfiguration<SchemaGenerationFeature<?>> SCHEMA_GENERATION_CONFIG;
   @NonNull
-  protected static final BiFunction<IMetaschema, Writer, Void> XML_SCHEMA_PROVIDER;
+  protected static final BiFunction<IModule, Writer, Void> XML_SCHEMA_PROVIDER;
   @NonNull
-  protected static final BiFunction<IMetaschema, Writer, Void> JSON_SCHEMA_PROVIDER;
+  protected static final BiFunction<IModule, Writer, Void> JSON_SCHEMA_PROVIDER;
   @NonNull
   protected static final JsonSchemaContentValidator JSON_SCHEMA_VALIDATOR;
   @NonNull
@@ -92,11 +92,11 @@ public abstract class AbstractSchemaGeneratorTestSuite
     features.disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     SCHEMA_GENERATION_CONFIG = features;
 
-    BiFunction<IMetaschema, Writer, Void> xmlProvider = (metaschema, writer) -> {
-      assert metaschema != null;
+    BiFunction<IModule, Writer, Void> xmlProvider = (module, writer) -> {
+      assert module != null;
       assert writer != null;
       try {
-        XML_SCHEMA_GENERATOR.generateFromMetaschema(metaschema, writer, SCHEMA_GENERATION_CONFIG);
+        XML_SCHEMA_GENERATOR.generateFromModule(module, writer, SCHEMA_GENERATION_CONFIG);
       } catch (SchemaGenerationException ex) {
         throw new JUnitException("IO error", ex);
       }
@@ -104,11 +104,11 @@ public abstract class AbstractSchemaGeneratorTestSuite
     };
     XML_SCHEMA_PROVIDER = xmlProvider;
 
-    BiFunction<IMetaschema, Writer, Void> jsonProvider = (metaschema, writer) -> {
-      assert metaschema != null;
+    BiFunction<IModule, Writer, Void> jsonProvider = (module, writer) -> {
+      assert module != null;
       assert writer != null;
       try {
-        JSON_SCHEMA_GENERATOR.generateFromMetaschema(metaschema, writer, SCHEMA_GENERATION_CONFIG);
+        JSON_SCHEMA_GENERATOR.generateFromModule(module, writer, SCHEMA_GENERATION_CONFIG);
       } catch (SchemaGenerationException ex) {
         throw new JUnitException("IO error", ex);
       }
@@ -116,7 +116,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
     };
     JSON_SCHEMA_PROVIDER = jsonProvider;
 
-    try (InputStream is = MetaschemaLoader.class.getResourceAsStream("/schema/json/json-schema.json")) {
+    try (InputStream is = ModuleLoader.class.getResourceAsStream("/schema/json/json-schema.json")) {
       assert is != null : "unable to get JSON schema resource";
       JsonSchemaContentValidator schemaValidator = new JsonSchemaContentValidator(is);
       JSON_SCHEMA_VALIDATOR = schemaValidator;
@@ -160,13 +160,13 @@ public abstract class AbstractSchemaGeneratorTestSuite
     return ObjectUtils.notNull(Paths.get("target/test-schemagen"));
   }
 
-  protected Path produceXmlSchema(@NonNull IMetaschema metaschema, @NonNull Path schemaPath) throws IOException {
-    produceSchema(metaschema, schemaPath, XML_SCHEMA_PROVIDER);
+  protected Path produceXmlSchema(@NonNull IModule module, @NonNull Path schemaPath) throws IOException {
+    produceSchema(module, schemaPath, XML_SCHEMA_PROVIDER);
     return schemaPath;
   }
 
-  protected Path produceJsonSchema(@NonNull IMetaschema metaschema, @NonNull Path schemaPath) throws IOException {
-    produceSchema(metaschema, schemaPath, JSON_SCHEMA_PROVIDER);
+  protected Path produceJsonSchema(@NonNull IModule module, @NonNull Path schemaPath) throws IOException {
+    produceSchema(module, schemaPath, JSON_SCHEMA_PROVIDER);
     return schemaPath;
   }
 
@@ -181,15 +181,15 @@ public abstract class AbstractSchemaGeneratorTestSuite
     Path testSuite = Paths.get("../core/metaschema/test-suite/schema-generation/");
     Path collectionPath = testSuite.resolve(collectionName);
 
-    MetaschemaLoader loader = new MetaschemaLoader();
+    ModuleLoader loader = new ModuleLoader();
     loader.allowEntityResolution();
-    Path metaschemaPath = collectionPath.resolve(metaschemaName);
-    IMetaschema metaschema = loader.load(metaschemaPath);
+    Path modulePath = collectionPath.resolve(metaschemaName);
+    IModule module = loader.load(modulePath);
 
-    Path jsonSchema = produceJsonSchema(metaschema, generationDir.resolve(generatedSchemaName + ".json"));
+    Path jsonSchema = produceJsonSchema(module, generationDir.resolve(generatedSchemaName + ".json"));
     assertEquals(true, validate(JSON_SCHEMA_VALIDATOR, jsonSchema),
         String.format("JSON schema '%s' was invalid", jsonSchema.toString()));
-    Path xmlSchema = produceXmlSchema(metaschema, generationDir.resolve(generatedSchemaName + ".xsd"));
+    Path xmlSchema = produceXmlSchema(module, generationDir.resolve(generatedSchemaName + ".xsd"));
 
     Path schemaPath;
     switch (getRequiredContentFormat()) {
@@ -205,7 +205,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
     }
 
     IBindingContext context = IBindingContext.instance();
-    context.registerModule(metaschema, generationDir);
+    context.registerModule(module, generationDir);
     for (ContentCase contentCase : contentCases) {
       Path contentPath = collectionPath.resolve(contentCase.getName());
 

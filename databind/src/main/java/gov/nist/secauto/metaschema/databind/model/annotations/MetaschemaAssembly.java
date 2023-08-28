@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind.model.annotations;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -38,8 +38,7 @@ import java.lang.annotation.Target;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * This annotation indicates that the target class represents a Metaschema
- * assembly.
+ * This annotation indicates that the target class represents a Module assembly.
  */
 @Documented
 @Retention(RUNTIME)
@@ -71,9 +70,9 @@ public @interface MetaschemaAssembly {
    * Get the metaschema class that "owns" this assembly, which is the concrete
    * implementation of the metaschema containing the assembly.
    *
-   * @return the {@link IMetaschema} class
+   * @return the {@link IModule} class
    */
-  Class<? extends IMetaschema> metaschema();
+  Class<? extends IModule> moduleClass();
 
   /**
    * Name of the assembly.

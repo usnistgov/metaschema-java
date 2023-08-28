@@ -41,7 +41,7 @@ public interface IFieldInstance extends INamedModelInstance, IField {
 
   @Override
   default String getGroupAsXmlNamespace() {
-    return isInXmlWrapped() ? getContainingMetaschema().getXmlNamespace().toASCIIString() : null;
+    return isInXmlWrapped() ? getContainingModule().getXmlNamespace().toASCIIString() : null;
   }
 
   @Override

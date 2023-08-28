@@ -24,8 +24,8 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 /**
- * Provides a set of annotations for associating Metaschema information with a
- * Java class.
+ * Provides a set of annotations for associating Module information with a Java
+ * class.
  */
 
 package gov.nist.secauto.metaschema.databind.model.annotations;

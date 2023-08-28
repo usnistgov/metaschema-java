@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IMetaschema;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
 import gov.nist.secauto.metaschema.core.model.ModelWalker;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -46,13 +46,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class MetaschemaIndex {
+public class ModuleIndex {
   private final Map<IDefinition, DefinitionEntry> index = new ConcurrentHashMap<>();
 
   @NonNull
-  public static MetaschemaIndex indexDefinitions(@NonNull IMetaschema metaschema) {
-    Collection<? extends IAssemblyDefinition> definitions = metaschema.getExportedRootAssemblyDefinitions();
-    MetaschemaIndex index = new MetaschemaIndex();
+  public static ModuleIndex indexDefinitions(@NonNull IModule module) {
+    Collection<? extends IAssemblyDefinition> definitions = module.getExportedRootAssemblyDefinitions();
+    ModuleIndex index = new ModuleIndex();
     if (!definitions.isEmpty()) {
       IndexVisitor visitor = new IndexVisitor(index);
       for (IAssemblyDefinition definition : definitions) {
@@ -76,7 +76,7 @@ public class MetaschemaIndex {
   public DefinitionEntry getEntry(@NonNull IDefinition definition) {
     return ObjectUtils.notNull(index.computeIfAbsent(
         definition,
-        k -> new MetaschemaIndex.DefinitionEntry(ObjectUtils.notNull(k))));
+        k -> new ModuleIndex.DefinitionEntry(ObjectUtils.notNull(k))));
   }
 
   @NonNull
@@ -85,40 +85,40 @@ public class MetaschemaIndex {
   }
 
   private static class IndexVisitor
-      extends ModelWalker<MetaschemaIndex> {
-    private final MetaschemaIndex index;
+      extends ModelWalker<ModuleIndex> {
+    private final ModuleIndex index;
 
-    public IndexVisitor(@NonNull MetaschemaIndex index) {
+    public IndexVisitor(@NonNull ModuleIndex index) {
       this.index = index;
     }
 
     @Override
-    protected MetaschemaIndex getDefaultData() {
+    protected ModuleIndex getDefaultData() {
       return index;
     }
 
     @Override
-    protected boolean visit(IFlagInstance instance, MetaschemaIndex data) {
+    protected boolean visit(IFlagInstance instance, ModuleIndex data) {
       return handleInstance(instance);
     }
 
     @Override
-    protected boolean visit(IFieldInstance instance, MetaschemaIndex data) {
+    protected boolean visit(IFieldInstance instance, ModuleIndex data) {
       return handleInstance(instance);
     }
 
     @Override
-    protected boolean visit(IAssemblyInstance instance, MetaschemaIndex data) {
+    protected boolean visit(IAssemblyInstance instance, ModuleIndex data) {
       return handleInstance(instance);
     }
 
     @Override
-    protected void visit(IFlagDefinition def, MetaschemaIndex data) {
+    protected void visit(IFlagDefinition def, ModuleIndex data) {
       // do nothing
     }
     //
     // @Override
-    // protected boolean visit(IAssemblyDefinition def, MetaschemaIndex data) {
+    // protected boolean visit(IAssemblyDefinition def, ModuleIndex data) {
     // // only walk if the definition hasn't already been visited
     // return !index.hasEntry(def);
     // }

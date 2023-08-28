@@ -81,7 +81,7 @@ public abstract class AbstractTargetedConstraints<T extends IValueConstrained>
     throw new IllegalStateException(
         String.format("The targeted definition '%s' from metaschema '%s' is not a %s definition.",
             definition.getEffectiveName(),
-            definition.getContainingMetaschema().getQName().toString(),
+            definition.getContainingModule().getQName().toString(),
             definition.getModelType().name().toLowerCase(Locale.ROOT)));
   }
 
@@ -90,7 +90,7 @@ public abstract class AbstractTargetedConstraints<T extends IValueConstrained>
     throw new IllegalStateException(
         String.format("The targeted definition '%s' from metaschema '%s' is not a %s definition.",
             definition.getEffectiveName(),
-            definition.getContainingMetaschema().getQName().toString(),
+            definition.getContainingModule().getQName().toString(),
             definition.getModelType().name().toLowerCase(Locale.ROOT)));
   }
 
@@ -99,7 +99,7 @@ public abstract class AbstractTargetedConstraints<T extends IValueConstrained>
     throw new IllegalStateException(
         String.format("The targeted definition '%s' from metaschema '%s' is not a %s definition.",
             definition.getEffectiveName(),
-            definition.getContainingMetaschema().getQName().toString(),
+            definition.getContainingModule().getQName().toString(),
             definition.getModelType().name().toLowerCase(Locale.ROOT)));
   }
 }
