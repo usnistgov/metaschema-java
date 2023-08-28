@@ -1,7 +1,3 @@
-[submodule "metaschema"]
-	path = metaschema-model/metaschema
-	url = https://github.com/usnistgov/metaschema
-	branch = master
 [submodule "core/core/metaschema"]
 	path = core/metaschema
 	url = https://github.com/usnistgov/metaschema.git

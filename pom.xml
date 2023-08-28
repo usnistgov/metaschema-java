@@ -769,8 +769,8 @@
 	<modules>
 		<module>core</module>
 		<module>databind</module>
+		<module>schemagen</module>
 		<module>metaschema-maven-plugin</module>
-		<module>metaschema-schema-generator</module>
 		<module>metaschema-testing</module>
 		<module>cli-processor</module>
 		<module>metaschema-cli</module>
