@@ -30,8 +30,8 @@ import gov.nist.secauto.metaschema.core.model.IValuedDefinition;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
-import gov.nist.secauto.metaschema.schemagen.xml.XmlGenerationState;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.xml.impl.XmlGenerationState;
 
 import java.util.LinkedList;
 import java.util.List;

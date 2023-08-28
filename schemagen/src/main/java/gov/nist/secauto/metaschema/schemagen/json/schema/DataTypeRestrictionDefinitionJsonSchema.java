@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.AbstractGenerationState.AllowedValueCollection;
-import gov.nist.secauto.metaschema.schemagen.json.JsonGenerationState;
+import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

@@ -39,7 +39,7 @@ import gov.nist.secauto.metaschema.core.model.ModelType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.FlagInstanceFilter;
-import gov.nist.secauto.metaschema.schemagen.json.JsonGenerationState;
+import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
 import gov.nist.secauto.metaschema.schemagen.json.property.FlagInstanceJsonProperty;
 import gov.nist.secauto.metaschema.schemagen.json.property.IJsonProperty.PropertyCollection;
 import gov.nist.secauto.metaschema.schemagen.json.property.INamedModelInstanceJsonProperty;

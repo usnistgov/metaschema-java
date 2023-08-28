@@ -37,9 +37,9 @@ import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
-import gov.nist.secauto.metaschema.schemagen.xml.DocumentationGenerator;
-import gov.nist.secauto.metaschema.schemagen.xml.XmlGenerationState;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.xml.impl.DocumentationGenerator;
+import gov.nist.secauto.metaschema.schemagen.xml.impl.XmlGenerationState;
 
 import java.util.Collection;
 

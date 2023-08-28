@@ -41,6 +41,7 @@ import gov.nist.secauto.metaschema.schemagen.AbstractSchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationFeature;
 import gov.nist.secauto.metaschema.schemagen.json.datatype.JsonDatatypeManager;
+import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
 
 import java.io.IOException;
 import java.io.Writer;

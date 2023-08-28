@@ -35,19 +35,19 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 class JsonKeyTest
     extends AbstractBoundModelTestSupport {
-  // @TempDir
-  // Path generationDir;
-  @NonNull
-  Path generationDir = ObjectUtils.notNull(Paths.get("target/generated-test-sources/metaschema"));
+  @TempDir
+  Path generationDir;
+  // @NonNull
+  // Path generationDir =
+  // ObjectUtils.notNull(Paths.get("target/generated-test-sources/metaschema"));
 
   @Test
   void testJsonKey() throws IOException, MetaschemaException {

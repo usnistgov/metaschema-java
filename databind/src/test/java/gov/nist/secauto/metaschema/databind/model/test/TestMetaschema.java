@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.model.AbstractBoundMetaschema;
+import gov.nist.secauto.metaschema.databind.model.AbstractBoundModule;
 import gov.nist.secauto.metaschema.databind.model.annotations.Module;
 
 import java.net.URI;
@@ -54,7 +54,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
         ValueKeyField.class
     })
 public class TestMetaschema
-    extends AbstractBoundMetaschema {
+    extends AbstractBoundModule {
 
   public TestMetaschema(@NonNull List<? extends IModule> importedModules,
       @NonNull IBindingContext bindingContext) {

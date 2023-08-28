@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractBoundMetaschema
+public abstract class AbstractBoundModule
     extends AbstractModule {
   @NonNull
   private final IBindingContext bindingContext;
@@ -124,7 +124,7 @@ public abstract class AbstractBoundMetaschema
    * @param bindingContext
    *          the Module binding context
    */
-  protected AbstractBoundMetaschema(
+  protected AbstractBoundModule(
       @NonNull List<? extends IModule> importedModules,
       @NonNull IBindingContext bindingContext) {
     super(importedModules);

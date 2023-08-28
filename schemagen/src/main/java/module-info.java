@@ -23,28 +23,21 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+module gov.nist.secauto.metaschema.schemagen {
+  // requirements
+  requires java.base;
+  requires java.xml;
 
-package gov.nist.secauto.metaschema.schemagen.xml.schematype;
+  requires transitive gov.nist.secauto.metaschema.core;
 
-import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.schemagen.ModuleIndex.DefinitionEntry;
-import gov.nist.secauto.metaschema.schemagen.xml.impl.XmlGenerationState;
+  requires com.ctc.wstx;
+  requires com.github.spotbugs.annotations;
+  requires transitive org.apache.commons.lang3;
+  requires org.jdom2;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+  requires Saxon.HE;
 
-public interface IXmlComplexType extends IXmlType {
-  @NonNull
-  IDefinition getDefinition();
-
-  @Override
-  default boolean isReferenced(XmlGenerationState state) {
-    DefinitionEntry entry = state.getMetaschemaIndex().getEntry(getDefinition());
-    return entry.isReferenced();
-  }
-
-  @Override
-  default boolean isGeneratedType(XmlGenerationState state) {
-    // these types are generated
-    return true;
-  }
+  exports gov.nist.secauto.metaschema.schemagen;
+  exports gov.nist.secauto.metaschema.schemagen.json;
+  exports gov.nist.secauto.metaschema.schemagen.xml;
 }

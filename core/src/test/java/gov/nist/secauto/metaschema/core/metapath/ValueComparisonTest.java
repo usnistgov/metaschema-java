@@ -54,9 +54,13 @@ class ValueComparisonTest
         Arguments.of(IStringItem.valueOf("A.3"), Operator.GE, IStringItem.valueOf("A.2"), IBooleanItem.TRUE),
         Arguments.of(IStringItem.valueOf("B\\1"), Operator.GE, IStringItem.valueOf("B\\1"), IBooleanItem.TRUE),
         Arguments.of(IStringItem.valueOf("A.1"), Operator.GE, IStringItem.valueOf("A.2"), IBooleanItem.FALSE),
+        Arguments.of(IStringItem.valueOf("A.1@"), Operator.GT, IStringItem.valueOf("A.1"), IBooleanItem.TRUE),
+        Arguments.of(IStringItem.valueOf("X.1"), Operator.GT, IStringItem.valueOf("X.1"), IBooleanItem.FALSE),
         Arguments.of(IStringItem.valueOf("A"), Operator.LE, IStringItem.valueOf("A.2"), IBooleanItem.TRUE),
         Arguments.of(IStringItem.valueOf("B\\1"), Operator.LE, IStringItem.valueOf("C\\1"), IBooleanItem.TRUE),
         Arguments.of(IStringItem.valueOf("X#"), Operator.LE, IStringItem.valueOf("X"), IBooleanItem.FALSE),
+        Arguments.of(IStringItem.valueOf("A"), Operator.LT, IStringItem.valueOf("A.2"), IBooleanItem.TRUE),
+        Arguments.of(IStringItem.valueOf("X#"), Operator.LT, IStringItem.valueOf("X"), IBooleanItem.FALSE),
         // boolean
         Arguments.of(IBooleanItem.TRUE, Operator.EQ, IBooleanItem.TRUE, IBooleanItem.TRUE),
         Arguments.of(IBooleanItem.FALSE, Operator.EQ, IBooleanItem.FALSE, IBooleanItem.TRUE),

@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
-import gov.nist.secauto.metaschema.schemagen.json.JsonGenerationState;
+import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
 
 import java.io.IOException;
 

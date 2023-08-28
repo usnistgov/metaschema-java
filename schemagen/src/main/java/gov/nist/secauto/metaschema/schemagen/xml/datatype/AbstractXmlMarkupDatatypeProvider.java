@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.schemagen.xml.datatype;
 
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.datatype.IDatatypeContent;
@@ -44,7 +45,7 @@ public abstract class AbstractXmlMarkupDatatypeProvider
 
   @Override
   protected InputStream getSchemaResource() {
-    return JDom2XmlSchemaLoader.class.getResourceAsStream(getSchemaResourcePath());
+    return IModule.class.getResourceAsStream(getSchemaResourcePath());
   }
 
   /**

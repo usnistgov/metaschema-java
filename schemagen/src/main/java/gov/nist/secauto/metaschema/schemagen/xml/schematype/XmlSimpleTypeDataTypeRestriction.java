@@ -32,8 +32,8 @@ import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.AbstractGenerationState.AllowedValueCollection;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
-import gov.nist.secauto.metaschema.schemagen.xml.XmlGenerationState;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.xml.impl.XmlGenerationState;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 

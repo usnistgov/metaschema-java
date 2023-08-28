@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.AbstractBoundMetaschema;
+import gov.nist.secauto.metaschema.databind.model.AbstractBoundModule;
 import gov.nist.secauto.metaschema.databind.model.DefaultAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.DefaultFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
@@ -65,7 +65,7 @@ class AbstractModuleLoaderStrategy implements IModuleLoaderStrategy {
     synchronized (this) {
       retval = modulesByClass.get(clazz);
       if (retval == null) {
-        retval = AbstractBoundMetaschema.createInstance(clazz, getBindingContext());
+        retval = AbstractBoundModule.createInstance(clazz, getBindingContext());
         modulesByClass.put(clazz, retval);
       }
     }

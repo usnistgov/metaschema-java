@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.schemagen.json.schema;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.schemagen.json.JsonGenerationState;
+import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;

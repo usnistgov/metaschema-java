@@ -38,6 +38,7 @@ import gov.nist.secauto.metaschema.schemagen.AbstractSchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationFeature;
 import gov.nist.secauto.metaschema.schemagen.xml.datatype.XmlDatatypeManager;
+import gov.nist.secauto.metaschema.schemagen.xml.impl.XmlGenerationState;
 import gov.nist.secauto.metaschema.schemagen.xml.schematype.IXmlType;
 
 import net.sf.saxon.s9api.Processor;

@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.schemagen.xml.datatype;
 
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.datatype.IDatatypeContent;
@@ -50,7 +51,7 @@ public class XmlCoreDatatypeProvider
 
   @Override
   protected InputStream getSchemaResource() {
-    return JDom2XmlSchemaLoader.class.getResourceAsStream("/schema/xml/metaschema-datatypes.xsd");
+    return IModule.class.getResourceAsStream("/schema/xml/metaschema-datatypes.xsd");
   }
 
   @Override

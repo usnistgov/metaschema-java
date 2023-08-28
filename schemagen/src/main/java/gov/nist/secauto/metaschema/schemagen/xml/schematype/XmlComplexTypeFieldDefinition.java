@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.schemagen.xml.schematype;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.schemagen.xml.XmlGenerationState;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.xml.impl.XmlGenerationState;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

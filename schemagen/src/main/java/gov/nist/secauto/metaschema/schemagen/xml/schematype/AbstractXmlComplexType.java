@@ -30,9 +30,9 @@ import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
-import gov.nist.secauto.metaschema.schemagen.xml.DocumentationGenerator;
-import gov.nist.secauto.metaschema.schemagen.xml.XmlGenerationState;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.xml.impl.DocumentationGenerator;
+import gov.nist.secauto.metaschema.schemagen.xml.impl.XmlGenerationState;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

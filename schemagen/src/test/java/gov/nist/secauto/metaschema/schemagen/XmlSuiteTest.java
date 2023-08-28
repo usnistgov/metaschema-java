@@ -137,25 +137,6 @@ class XmlSuiteTest
         contentCase(Format.JSON, "collapsible_test_singleton_PASS.json", true));
   }
 
-  @Test
-  void testJsonValueKeyField() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
-    doTest(
-        "json-value-key/",
-        "json-value-key-field_metaschema.xml",
-        "json-value-key-field-schema",
-        contentCase(Format.JSON, "json-value-key-field_test_valid_PASS.json", true));
-  }
-
-  @Disabled
-  @Test
-  void testJsonValueKeyLabel() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
-    doTest(
-        "json-value-key/",
-        "json-value-key-field_metaschema.xml",
-        "json-value-key-field-schema",
-        contentCase(Format.JSON, "json-value-key-field_test_valid_PASS.json", true));
-  }
-
   @Disabled
   @Test
   void testByKey() throws IOException, MetaschemaException { // NOPMD - delegated to doTest

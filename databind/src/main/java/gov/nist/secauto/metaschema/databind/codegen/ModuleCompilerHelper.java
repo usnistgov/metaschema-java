@@ -162,12 +162,14 @@ public final class ModuleCompilerHelper {
       List<JavaFileObject> compilationUnits,
       Path classDir) {
 
-    String classPath = System.getProperty("java.class.path");
-    String modulePath = System.getProperty("jdk.module.path");
-
-    if (LOGGER.isDebugEnabled()) {
-      LOGGER.atDebug().log("Using classpath: {}", classPath);
-      LOGGER.atDebug().log("Using modulepath: {}", modulePath);
+    String moduleName = null;
+    Module module = IBindingContext.class.getModule();
+    if (module != null) {
+      ModuleDescriptor descriptor = module.getDescriptor();
+      if (descriptor != null) {
+        // add the databind module to the task
+        moduleName = descriptor.name();
+      }
     }
 
     List<String> options = new LinkedList<>();
@@ -175,27 +177,47 @@ public final class ModuleCompilerHelper {
     // options.add("-g");
     options.add("-d");
     options.add(classDir.toString());
-    if (classPath != null) {
-      options.add("-classpath");
-      options.add(classPath);
+
+    String classPath = System.getProperty("java.class.path");
+    String modulePath = System.getProperty("jdk.module.path");
+    if (moduleName == null) {
+      // use classpath only
+      String path = null;
+      if (classPath != null) {
+        path = classPath;
+      }
+
+      if (modulePath != null) {
+        path = path == null ? modulePath : path + ":" + modulePath;
+      }
+
+      if (path != null) {
+        options.add("-classpath");
+        options.add(path);
+      }
+    } else {
+      // use classpath and modulepath from the JDK
+      if (classPath != null) {
+        options.add("-classpath");
+        options.add(classPath);
+      }
+
+      if (modulePath != null) {
+        options.add("-p");
+        options.add(modulePath);
+      }
     }
-    if (modulePath != null) {
-      options.add("-p");
-      options.add(modulePath);
+
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.atDebug().log("Using options: {}", options);
     }
 
     JavaCompiler.CompilationTask task
         = compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits);
 
-    Module module = IBindingContext.class.getModule();
-    if (module != null) {
-      ModuleDescriptor descriptor = module.getDescriptor();
-      if (descriptor != null) {
-        // add the databind module to the task
-        task.addModules(List.of(descriptor.name()));
-      }
+    if (moduleName != null) {
+      task.addModules(List.of(moduleName));
     }
-
     return task.call();
   }
 

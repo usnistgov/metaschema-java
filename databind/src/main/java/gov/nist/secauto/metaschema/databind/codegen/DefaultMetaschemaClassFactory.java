@@ -66,7 +66,7 @@ import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IModelDefinitionTyp
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IModelInstanceTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
-import gov.nist.secauto.metaschema.databind.model.AbstractBoundMetaschema;
+import gov.nist.secauto.metaschema.databind.model.AbstractBoundModule;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
@@ -287,7 +287,7 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
     // create the class
     TypeSpec.Builder builder = TypeSpec.classBuilder(className).addModifiers(Modifier.PUBLIC, Modifier.FINAL);
 
-    builder.superclass(AbstractBoundMetaschema.class);
+    builder.superclass(AbstractBoundModule.class);
 
     AnnotationSpec.Builder moduleAnnotation = AnnotationSpec.builder(Module.class);
 
