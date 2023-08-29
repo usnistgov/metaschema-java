@@ -27,12 +27,18 @@
 package gov.nist.secauto.metaschema.core.metapath.item.atomic;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.net.URI;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IAnyUriItem extends IAnyAtomicItem {
+  @NonNull
+  static IAnyUriItem valueOf(@NonNull String value) {
+    return valueOf(ObjectUtils.notNull(URI.create(value)));
+  }
+
   @NonNull
   static IAnyUriItem valueOf(@NonNull URI value) {
     IAnyUriItem retval;
