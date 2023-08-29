@@ -50,11 +50,11 @@ public final class YamlOperations {
 
   static {
     LoaderOptions loaderOptions = new LoaderOptions();
-    // loaderOptions.setCodePointLimit(YamlFactoryFactory.CODEPOINT_LIMIT);
+    loaderOptions.setCodePointLimit(Integer.MAX_VALUE - 1); // 2GB
     Constructor constructor = new Constructor(loaderOptions);
     DumperOptions dumperOptions = new DumperOptions();
     Representer representer = new Representer(dumperOptions);
-    YAML_PARSER = new Yaml(constructor, representer, dumperOptions, new Resolver() {
+    YAML_PARSER = new Yaml(constructor, representer, dumperOptions, loaderOptions, new Resolver() {
       @Override
       protected void addImplicitResolvers() {
         addImplicitResolver(Tag.BOOL, BOOL, "yYnNtTfFoO");
@@ -65,7 +65,6 @@ public final class YamlOperations {
         addImplicitResolver(Tag.NULL, EMPTY, null);
         // addImplicitResolver(Tag.TIMESTAMP, TIMESTAMP, "0123456789");
       }
-
     });
   }
 
