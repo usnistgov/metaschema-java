@@ -155,6 +155,9 @@ public final class ModuleCompilerHelper {
     });
   }
 
+  @SuppressWarnings({
+      "PMD.CyclomaticComplexity", "PMD.CognitiveComplexity", // acceptable
+  })
   private static boolean compile(
       JavaCompiler compiler,
       JavaFileManager fileManager,

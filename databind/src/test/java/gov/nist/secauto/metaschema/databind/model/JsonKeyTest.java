@@ -55,7 +55,7 @@ class JsonKeyTest
         Paths.get("src/test/resources/metaschema/json-key/metaschema.xml")));
 
     IBindingContext bindingContext = IBindingContext.instance();
-    bindingContext.registerModule(module, generationDir);
+    bindingContext.registerModule(module, ObjectUtils.notNull(generationDir));
 
     Object obj = bindingContext.newBoundLoader().load(
         ObjectUtils.requireNonNull(Paths.get("src/test/resources/metaschema/json-key/test.json")));

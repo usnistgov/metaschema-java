@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto.metaschema</groupId>
@@ -11,7 +13,8 @@
 	<packaging>jar</packaging>
 
 	<name>Metaschema Java Data/Object Binding and Code Generation</name>
-	<description>A Metaschema binding-based parser and code generator for Java objects supporting serialization of conformant XML, JSON, and YAML data.</description>
+	<description>A Metaschema binding-based parser and code generator for Java
+		objects supporting serialization of conformant XML, JSON, and YAML data.</description>
 
 	<url>${site.url}${project.artifactId}/</url>
 	<distributionManagement>
@@ -37,7 +40,7 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>nl.talsmasoftware</groupId>
 			<artifactId>lazy4j</artifactId>
@@ -49,12 +52,12 @@
 		</dependency>
 
 		<dependency>
-		    <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>com.github.erosb</groupId>
-		    <artifactId>everit-json-schema</artifactId>
+			<groupId>com.github.erosb</groupId>
+			<artifactId>everit-json-schema</artifactId>
 		</dependency>
 
 		<dependency>
@@ -64,12 +67,6 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-yaml</artifactId>
-		</dependency>
-
-		<!-- Used to generate Java class, field, package, etc. names -->
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
 		</dependency>
 
 		<dependency>
@@ -111,15 +108,17 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-checkstyle-plugin</artifactId>
 					<configuration>
-						<excludes>**/gov/nist/secauto/metaschema/databind/model/**/*</excludes>
+						<excludes>
+							**/gov/nist/secauto/metaschema/databind/model/**/*</excludes>
 					</configuration>
 				</plugin>
-								<plugin>
+				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<configuration>
 						<excludes>
-							<exclude>gov/nist/secauto/metaschema/databind/codegen/xmlbeans/**/*</exclude>
+							<exclude>
+								gov/nist/secauto/metaschema/databind/codegen/xmlbeans/**/*</exclude>
 							<exclude>org/apache/xmlbeans/**/*</exclude>
 						</excludes>
 					</configuration>
@@ -139,10 +138,13 @@
 							<goal>generate-xmlbeans</goal>
 						</goals>
 						<configuration>
-							<xmlConfigs>${project.basedir}/src/schema/xmlconfig.xml</xmlConfigs>
+							<xmlConfigs>
+								${project.basedir}/src/schema/xmlconfig.xml</xmlConfigs>
 							<sourceDir>${project.basedir}/src/main/xsd</sourceDir>
-							<javaTargetDir>${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
-							<classTargetDir>${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>
+							<javaTargetDir>
+								${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
+							<classTargetDir>
+								${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>
 							<name>metaschema.codegen</name>
 						</configuration>
 					</execution>
@@ -160,7 +162,8 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>${project.build.directory}/generated-sources/xmlbeans</source>
+								<source>
+									${project.build.directory}/generated-sources/xmlbeans</source>
 							</sources>
 						</configuration>
 					</execution>

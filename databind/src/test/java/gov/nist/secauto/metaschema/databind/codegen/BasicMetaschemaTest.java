@@ -165,7 +165,7 @@ class BasicMetaschemaTest {
 
   @Test
   void testSimpleMetaschema() throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-    runTests("simple", "gov.nist.csrc.ns.metaschema.testing.simple.TopLevel", generationDir);
+    runTests("simple", "gov.nist.csrc.ns.metaschema.testing.simple.TopLevel", ObjectUtils.notNull(generationDir));
     // runTests("simple", "gov.nist.csrc.ns.metaschema.testing.simple.TopLevel",
     // generationDir, (obj) ->
     // {
@@ -180,7 +180,10 @@ class BasicMetaschemaTest {
   @Test
   void testSimpleUuidMetaschema()
       throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-    runTests("simple_with_uuid", "gov.nist.csrc.ns.metaschema.testing.simple.with.uuid.TopLevel", generationDir,
+    runTests(
+        "simple_with_uuid",
+        "gov.nist.csrc.ns.metaschema.testing.simple.with.uuid.TopLevel",
+        ObjectUtils.notNull(generationDir),
         (obj) -> {
           try {
             Assertions.assertEquals("5de455cf-2f8d-4da2-9182-323d433e1065", reflectMethod(obj, "getUuid").toString());
@@ -193,7 +196,10 @@ class BasicMetaschemaTest {
   @Test
   void testSimpleWithFieldMetaschema()
       throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-    runTests("simple_with_field", "gov.nist.csrc.ns.metaschema.testing.simple.with.field.TopLevel", generationDir);
+    runTests(
+        "simple_with_field",
+        "gov.nist.csrc.ns.metaschema.testing.simple.with.field.TopLevel",
+        ObjectUtils.notNull(generationDir));
   }
 
   private static Object reflectMethod(Object obj, String name) throws NoSuchMethodException {
@@ -203,8 +209,10 @@ class BasicMetaschemaTest {
   @Test
   void testFieldsWithFlagMetaschema()
       throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-    runTests("fields_with_flags", "gov.nist.csrc.ns.metaschema.testing.fields.with.flags.TopLevel",
-        generationDir,
+    runTests(
+        "fields_with_flags",
+        "gov.nist.csrc.ns.metaschema.testing.fields.with.flags.TopLevel",
+        ObjectUtils.notNull(generationDir),
         (obj) -> {
           try {
             Assertions.assertEquals("test", reflectMethod(obj, "getId"));
@@ -269,18 +277,25 @@ class BasicMetaschemaTest {
   @Test
   void testAssemblyMetaschema()
       throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-    runTests("assembly", "gov.nist.itl.metaschema.codegen.xml.example.assembly.TopLevel", generationDir, (obj) -> {
-      try {
-        Assertions.assertEquals("test", reflectMethod(obj, "getId"));
-      } catch (NoSuchMethodException | SecurityException e) {
-        Assertions.fail(e);
-      }
-    });
+    runTests(
+        "assembly",
+        "gov.nist.itl.metaschema.codegen.xml.example.assembly.TopLevel",
+        ObjectUtils.notNull(generationDir),
+        (obj) -> {
+          try {
+            Assertions.assertEquals("test", reflectMethod(obj, "getId"));
+          } catch (NoSuchMethodException | SecurityException e) {
+            Assertions.fail(e);
+          }
+        });
   }
 
   @Test
   void testLocalDefinitionsMetaschema()
       throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-    runTests("local-definitions", "gov.nist.csrc.ns.metaschema.testing.local.definitions.TopLevel", generationDir);
+    runTests(
+        "local-definitions",
+        "gov.nist.csrc.ns.metaschema.testing.local.definitions.TopLevel",
+        ObjectUtils.notNull(generationDir));
   }
 }

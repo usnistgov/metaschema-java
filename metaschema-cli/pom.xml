@@ -75,10 +75,8 @@
 					<generateRepository>false</generateRepository>
 					<repositoryLayout>flat</repositoryLayout>
 					<repositoryName>lib</repositoryName>
-					<outputFileNameMapping>
-						@{groupId}@.@{artifactId}@-@{version}@.@{extension}@</outputFileNameMapping>
-					<extraJvmArguments>-Dsun.stdout.encoding=UTF-8
-						-Dsun.stderr.encoding=UTF-8</extraJvmArguments>
+					<outputFileNameMapping>@{groupId}@.@{artifactId}@-@{version}@.@{extension}@</outputFileNameMapping>
+					<extraJvmArguments>-Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8</extraJvmArguments>
 					<projectArtifactFirstInClassPath>true</projectArtifactFirstInClassPath>
 					<includeConfigurationDirectoryInClasspath>false</includeConfigurationDirectoryInClasspath>
 				</configuration>

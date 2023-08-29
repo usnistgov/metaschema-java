@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.codegen;
 
-import org.glassfish.jaxb.core.api.impl.NameConverter;
+import gov.nist.secauto.metaschema.databind.codegen.impl.NameConverter;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -49,7 +49,7 @@ public final class ClassUtils {
   @SuppressWarnings("null")
   @NonNull
   public static String toPropertyName(@NonNull String name) {
-    return NameConverter.standard.toPropertyName(name);
+    return NameConverter.STANDARD.toPropertyName(name);
   }
 
   /**
@@ -63,7 +63,7 @@ public final class ClassUtils {
   @SuppressWarnings("null")
   @NonNull
   public static String toVariableName(@NonNull String name) {
-    return NameConverter.standard.toVariableName(name);
+    return NameConverter.STANDARD.toVariableName(name);
   }
 
   /**
@@ -77,7 +77,7 @@ public final class ClassUtils {
   @SuppressWarnings("null")
   @NonNull
   public static String toClassName(@NonNull String name) {
-    return NameConverter.standard.toClassName(name);
+    return NameConverter.STANDARD.toClassName(name);
   }
 
   /**
@@ -91,7 +91,7 @@ public final class ClassUtils {
   @SuppressWarnings("null")
   @NonNull
   public static String toPackageName(@NonNull String name) {
-    return NameConverter.standard.toPackageName(name);
+    return NameConverter.STANDARD.toPackageName(name);
   }
 
 }
