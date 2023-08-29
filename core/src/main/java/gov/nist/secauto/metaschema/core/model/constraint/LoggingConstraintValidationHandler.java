@@ -239,10 +239,10 @@ public class LoggingConstraintValidationHandler
   }
 
   @Override
-  public void handleIndexMiss(IIndexHasKeyConstraint constraint, INodeItem node, INodeItem target) {
+  public void handleIndexMiss(IIndexHasKeyConstraint constraint, INodeItem node, INodeItem target, List<String> key) {
     Level level = constraint.getLevel();
     if (isLogged(level)) {
-      logConstraint(level, node, newIndexMissMessage(constraint, node, target), null);
+      logConstraint(level, node, newIndexMissMessage(constraint, node, target, key), null);
     }
   }
 

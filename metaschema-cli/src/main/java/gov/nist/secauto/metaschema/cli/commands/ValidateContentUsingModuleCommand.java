@@ -154,7 +154,7 @@ public class ValidateContentUsingModuleCommand
     protected IBindingContext getBindingContext(@NonNull Set<IConstraintSet> constraintSets)
         throws MetaschemaException, IOException {
 
-      return IBindingContext.instance().registerModule(getModule(constraintSets), tempDir);
+      return IBindingContext.instance().registerModule(getModule(constraintSets), getTempDir());
     }
 
     @Override

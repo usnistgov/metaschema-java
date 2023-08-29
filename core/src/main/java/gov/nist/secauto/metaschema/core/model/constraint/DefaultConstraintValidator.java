@@ -464,10 +464,12 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
           assert item != null;
 
           try {
-            INodeItem referencedItem = index.get(item, constraint.getKeyFields(), getMetapathContext());
+            List<String> key = IIndex.toKey(item, constraint.getKeyFields(), getMetapathContext());
+
+            INodeItem referencedItem = index.get(key);
 
             if (referencedItem == null) {
-              getConstraintValidationHandler().handleIndexMiss(constraint, keyRef.getNode(), item);
+              getConstraintValidationHandler().handleIndexMiss(constraint, keyRef.getNode(), item, key);
             }
           } catch (MetapathException ex) {
             getConstraintValidationHandler().handleKeyMatchError(constraint, keyRef.getNode(), item, ex);

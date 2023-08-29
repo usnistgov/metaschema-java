@@ -198,9 +198,9 @@ public class FindingCollectingConstraintValidationHandler
   }
 
   @Override
-  public void handleIndexMiss(IIndexHasKeyConstraint constraint, INodeItem node, INodeItem target) {
+  public void handleIndexMiss(IIndexHasKeyConstraint constraint, INodeItem node, INodeItem target, List<String> key) {
     addFinding(ConstraintValidationFinding.builder(constraint, node)
-        .message(newIndexMissMessage(constraint, node, target))
+        .message(newIndexMissMessage(constraint, node, target, key))
         .build());
   }
 

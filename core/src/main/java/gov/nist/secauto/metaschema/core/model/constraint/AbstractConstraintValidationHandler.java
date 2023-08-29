@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -171,8 +172,13 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
   protected CharSequence newIndexMissMessage(
       @NonNull IIndexHasKeyConstraint constraint,
       @SuppressWarnings("unused") @NonNull INodeItem node,
-      @NonNull INodeItem target) {
-    return String.format("Key reference not found in index '%s' for item at path '%s'",
+      @NonNull INodeItem target,
+      @NonNull List<String> key) {
+    String keyValues = key.stream()
+        .collect(Collectors.joining(","));
+
+    return String.format("Key reference [%s] not found in index '%s' for item at path '%s'",
+        keyValues,
         constraint.getIndexName(),
         target.getMetapath());
   }

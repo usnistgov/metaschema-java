@@ -26,26 +26,15 @@
 
 package gov.nist.secauto.metaschema.core.model.constraint;
 
-import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.core.metapath.InvalidTypeMetapathException;
-import gov.nist.secauto.metaschema.core.metapath.MetapathException;
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression.ResultType;
-import gov.nist.secauto.metaschema.core.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class DefaultIndex implements IIndex {
   @NonNull
@@ -80,87 +69,9 @@ public class DefaultIndex implements IIndex {
 
   @Override
   public INodeItem get(List<String> key) {
+    if (getKeyFields().size() != key.size()) {
+      throw new IllegalArgumentException("Provided key is not the same size as the index requires.");
+    }
     return keyToItemMap.get(key);
   }
-
-  @Override
-  public List<String> toKey(@NonNull INodeItem item, @NonNull List<? extends IKeyField> keyFields,
-      @NonNull DynamicContext dynamicContext) {
-    if (getKeyFields().size() != keyFields.size()) {
-      throw new IllegalArgumentException("Provided key fields are not the same size as the index requires.");
-    }
-    return CollectionUtil.unmodifiableList(
-        ObjectUtils.notNull(keyFields.stream()
-            .map(keyField -> {
-              assert keyField != null;
-              return buildKeyItem(item, keyField, dynamicContext);
-            })
-            .collect(Collectors.toCollection(ArrayList::new))));
-  }
-
-  /**
-   * Evaluates the provided key field component against the item to generate a key
-   * value.
-   *
-   * @param item
-   *          the item to generate the key value from
-   * @param keyField
-   *          the key field component used to generate the key value
-   * @param dynamicContext
-   *          the Metapath evaluation context
-   * @return the key value or {@code null} if the evaluation resulted in no value
-   */
-  @Nullable
-  protected static String buildKeyItem(
-      @NonNull INodeItem item,
-      @NonNull IKeyField keyField,
-      @NonNull DynamicContext dynamicContext) {
-    MetapathExpression keyPath = keyField.getTarget();
-
-    INodeItem keyItem;
-    try {
-      keyItem = keyPath.evaluateAs(item, ResultType.NODE, dynamicContext);
-    } catch (InvalidTypeMetapathException ex) {
-      throw new MetapathException("Key path did not result in a single node", ex);
-    }
-
-    String keyValue = null;
-    if (keyItem != null) {
-      keyValue = FnData.fnDataItem(keyItem).asString();
-      Pattern pattern = keyField.getPattern();
-      if (pattern != null) {
-        keyValue = applyPattern(keyItem, keyValue, pattern);
-      }
-    } // empty key
-    return keyValue;
-  }
-
-  /**
-   * Apply the key value pattern, if configured, to generate the final key value.
-   *
-   * @param keyItem
-   *          the node item used to form the key field
-   * @param pattern
-   *          the key field pattern configuration from the constraint
-   * @param keyValue
-   *          the current key value
-   * @return the final key value
-   */
-  protected static String applyPattern(@NonNull INodeItem keyItem, @NonNull String keyValue,
-      @NonNull Pattern pattern) {
-    Matcher matcher = pattern.matcher(keyValue);
-    if (!matcher.matches()) {
-      throw new MetapathException(
-          String.format("Key field declares the pattern '%s' which does not match the value '%s' of node '%s'",
-              pattern.pattern(), keyValue, keyItem.getMetapath()));
-    }
-
-    if (matcher.groupCount() != 1) {
-      throw new MetapathException(String.format(
-          "The first group was not a match for value '%s' of node '%s' for key field pattern '%s'",
-          keyValue, keyItem.getMetapath(), pattern.pattern()));
-    }
-    return matcher.group(1);
-  }
-
 }

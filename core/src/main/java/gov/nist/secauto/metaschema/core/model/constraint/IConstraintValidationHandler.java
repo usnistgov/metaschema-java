@@ -91,7 +91,8 @@ public interface IConstraintValidationHandler {
   void handleIndexMiss(
       @NonNull IIndexHasKeyConstraint constraint,
       @NonNull INodeItem node,
-      @NonNull INodeItem target);
+      @NonNull INodeItem target,
+      @NonNull List<String> key);
 
   void handleAllowedValuesViolation(
       @NonNull List<IAllowedValuesConstraint> failedConstraints,
