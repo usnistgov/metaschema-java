@@ -55,7 +55,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * Goal which generates Java source files for a given set of Module definitions.
  */
-@Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
+@Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class GenerateSourcesMojo
     extends AbstractMetaschemaMojo {
   private static final String STALE_FILE_NAME = "generateSourcesStaleFile";
