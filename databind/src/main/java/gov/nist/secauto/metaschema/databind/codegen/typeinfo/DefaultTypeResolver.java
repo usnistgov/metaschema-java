@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
 import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -164,7 +165,7 @@ class DefaultTypeResolver implements ITypeResolver {
         clash = true;
         // first try to append the metaschema's short name
         String metaschemaShortName = definition.getContainingModule().getShortName();
-        retval = ClassUtils.toClassName(className + metaschemaShortName);
+        retval = ClassUtils.toClassName(className + StringUtils.capitalize(metaschemaShortName));
       }
 
       String classNameBase = retval;
@@ -176,8 +177,9 @@ class DefaultTypeResolver implements ITypeResolver {
 
       if (clash && LOGGER.isWarnEnabled()) {
         LOGGER.warn(String.format(
-            "Class name '%s' in metaschema '%s' conflicts with a previously used class name. Using '%s' instead.",
+            "Class name '%s', based on '%s' in '%s', clashes with another bound class. Using '%s' instead.",
             className,
+            definition.getName(),
             definition.getContainingModule().getLocation(),
             retval));
       }

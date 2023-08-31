@@ -79,10 +79,18 @@ public final class MetapathExpressionHandler {
         XmlBookmark bookmark = cursor.getBookmark(XmlLineNumber.class);
         if (bookmark != null) {
           XmlLineNumber lineNumber = (XmlLineNumber) bookmark;
-          builder.append(" at location ")
-              .append(lineNumber.getLine())
+          builder.append(" at location '");
+
+          String source = cursor.documentProperties().getSourceName();
+          if (source != null) {
+            builder.append(source)
+                .append(':');
+          }
+
+          builder.append(lineNumber.getLine())
               .append(':')
-              .append(lineNumber.getColumn());
+              .append(lineNumber.getColumn())
+              .append('\'');
         }
       }
       XmlValueNotSupportedException exNew

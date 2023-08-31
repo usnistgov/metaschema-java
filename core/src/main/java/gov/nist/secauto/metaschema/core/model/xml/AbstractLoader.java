@@ -107,7 +107,7 @@ public abstract class AbstractLoader<T> {
    */
   @NonNull
   public T load(@NonNull Path path) throws MetaschemaException, IOException {
-    return loadInternal(ObjectUtils.notNull(path.toUri()), new LinkedList<>());
+    return loadInternal(ObjectUtils.notNull(path.toAbsolutePath().normalize().toUri()), new LinkedList<>());
   }
 
   /**
@@ -123,7 +123,7 @@ public abstract class AbstractLoader<T> {
    */
   @NonNull
   public T load(@NonNull File file) throws MetaschemaException, IOException {
-    return loadInternal(ObjectUtils.notNull(file.toURI()), new LinkedList<>());
+    return load(file.toPath());
   }
 
   /**
@@ -183,7 +183,7 @@ public abstract class AbstractLoader<T> {
 
     T retval = cache.get(resource);
     if (retval == null) {
-      LOGGER.info("Loading metaschema '{}'", resource);
+      LOGGER.info("Loading module '{}'", resource);
 
       try {
         visitedResources.push(resource);
