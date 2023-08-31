@@ -2,7 +2,7 @@
 
 This open-source, Metaschema Java framework offers a set of Java libraries providing a programatic means to work with models defined by the [Metaschema modeling language](https://github.com/usnistgov/metaschema). This framework also supports programatically creating, modifying, parsing, and writing XML, JSON, and YAML instance data that conforms to a given Metaschema model. This work is intended to make it easier for Java software developers to incorporate Metaschema-based capabilities into their applications.
 
-This an effort by the National Institute of Standards and Technology (NIST) Metaschema Project.
+This is an effort by the National Institute of Standards and Technology (NIST) Metaschema Project.
 
 The Metaschema Java framework provides:
 
