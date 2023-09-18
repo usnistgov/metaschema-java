@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
@@ -36,6 +38,14 @@ import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.XmlSchemaContentValidator;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
+import org.jdom2.filter.Filters;
+import org.jdom2.input.StAXEventBuilder;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicNode;
@@ -44,16 +54,23 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 
 class XmlSuiteTest
     extends AbstractSchemaGeneratorTestSuite {
@@ -182,6 +199,42 @@ class XmlSuiteTest
         getWriteOpenOptions())) {
       assert writer != null;
       schemaGenerator.generateFromMetaschema(metaschema, writer, features);
+    }
+  }
+
+  @Test
+  void testLiboscalJavaIssue181() throws IOException, MetaschemaException, XMLStreamException, JDOMException {
+    MetaschemaLoader loader = new MetaschemaLoader();
+    loader.allowEntityResolution();
+
+    IMetaschema module = loader.load(new URL(
+        "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.1.1/src/metaschema/oscal_catalog_metaschema.xml"));
+    ISchemaGenerator schemaGenerator = new XmlSchemaGenerator();
+    IMutableConfiguration<SchemaGenerationFeature<?>> features = new DefaultConfiguration<>();
+    features.enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+    features.disableFeature(SchemaGenerationFeature.INLINE_CHOICE_DEFINITIONS);
+
+    Path schemaPath = Path.of("target/oscal-catalog_schema.xsd");
+    try (Writer writer = Files.newBufferedWriter(schemaPath, StandardCharsets.UTF_8, getWriteOpenOptions())) {
+      assert writer != null;
+      schemaGenerator.generateFromMetaschema(module, writer, features);
+    }
+
+    // check for missing attribute types per liboscal-java#181
+    XMLInputFactory factory = XMLInputFactory.newFactory();
+    try (Reader fileReader = new FileReader(schemaPath.toFile())) {
+      XMLEventReader reader = factory.createXMLEventReader(fileReader);
+      StAXEventBuilder builder = new StAXEventBuilder();
+      Document document = document = builder.build(reader);
+
+      XPathExpression<Element> xpath = XPathFactory.instance()
+          .compile("//xs:attribute[not(@type or xs:simpleType)]",
+              Filters.element(),
+              null,
+              Namespace.getNamespace("xs", "http://www.w3.org/2001/XMLSchema"));
+      List<Element> result = xpath.evaluate(document);
+
+      assertTrue(result.isEmpty());
     }
   }
 }
