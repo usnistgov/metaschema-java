@@ -93,7 +93,7 @@ public abstract class AbstractXmlComplexType<D extends IFlagContainer>
 
     IXmlType type = state.getTypeForDefinition(definition);
 
-    if (state.isInline(definition)) {
+    if (state.isInline(definition) && type.isGeneratedType(state)) {
       DocumentationGenerator.generateDocumentation(instance, state);
 
       type.generateType(state, true);
