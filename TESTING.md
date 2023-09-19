@@ -1,4 +1,4 @@
-# OSCAL Testing Standards
+# Testing Standards
 
 ## Summary
 
@@ -14,7 +14,7 @@ The developers provide rationale below for [requirements](#What-are-our-requirem
 
 Continuous builds and testing are part of the continuous integration methodology of software development. Continuous integration involves developers frequently merging code changes into a central code repository, automatically building software from changed code, testing the code and/or the resulting software. This methodology creates a fast feedback loop to test changes and validate the desired behavior of the software from code changes. Continuous builds and testing increase developer productivity and reduce the risk of infrequently aggregating large changes in the code with a higher likelihood of releasing software with undesired behavior. Reducing the likelihood of degradations or failures as early as possible reduces the reputational risk of end users using poor quality software after the fact.
 
-This project uses [GitHub actions](https://github.com/usnistgov/metaschema-java/actions) (GHA) as a Continuous Integration and Continuous Deployment (CI/CD) environment to build, [test](#unit-testing), and [release](https://github.com/usnistgov/metaschema-java/releases) code. The CI is used for all commits against the `develop` and `main` branches, and for all [Pull Requests](https://github.com/usnistgov/metaschema-java/pulls). CD is used for all [tagged releases](https://github.com/usnistgov/metaschema-java/tags). Specialized [GHA workflows](https://github.com/usnistgov/metaschema-java/tree/main/.github/workflows) are used to drive this automation.
+This project uses [GitHub Actions](https://github.com/usnistgov/metaschema-java/actions) (GHA) as a Continuous Integration and Continuous Deployment (CI/CD) environment to build, [test](#unit-testing), and [release](https://github.com/usnistgov/metaschema-java/releases) code. The CI is used for all commits against the `develop` and `main` branches, and for all [Pull Requests](https://github.com/usnistgov/metaschema-java/pulls). CD is used for all [tagged releases](https://github.com/usnistgov/metaschema-java/tags). Specialized [GHA workflows](https://github.com/usnistgov/metaschema-java/tree/main/.github/workflows) are used to drive this automation.
 
 References:
 
