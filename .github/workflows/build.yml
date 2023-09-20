@@ -20,10 +20,12 @@ jobs:
       actions: read
       contents: read
       security-events: write
+    env:
+      BUILD_SNAPSHOT: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+                          (github.ref_name == 'develop' || startsWith(github.ref_name, 'release-')) }}
     steps:
     - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
       with:
-        token: ${{ github.token }}
         submodules: recursive
         fetch-depth: 0
     # -------------------------
@@ -33,15 +35,9 @@ jobs:
       uses: stCarolas/setup-maven@07fbbe97d97ef44336b7382563d66743297e442f
       with:
         maven-version: 3.9.3
-    - name: Set up JDK 11 (build only)
-      if: ${{ !((github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'develop') }}
-      uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
-      with:
-        java-version: 11
-        distribution: 'temurin'
-        cache: 'maven'
-    - name: Set up JDK 11 (deploy)
-      if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'develop'
+    - id: setup-java-deploy
+      name: Set up JDK 11 (deploy)
+      if: ${{ env.BUILD_SNAPSHOT == 'true' }}
       uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
       with:
         java-version: 11
@@ -52,6 +48,13 @@ jobs:
         server-password: MAVEN_CENTRAL_TOKEN # env variable for token in deploy
         gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }} # Value of the GPG private key to import
         gpg-passphrase: MAVEN_GPG_PASSPHRASE # env variable for GPG private key passphrase
+    - name: Set up JDK 11 (build only)
+      if:  ${{ steps.setup-java-deploy.outcome == 'skipped' }}
+      uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2
+      with:
+        java-version: 11
+        distribution: 'temurin'
+        cache: 'maven'
     - name: Initialize CodeQL
       if: github.event_name == 'push'
       uses: github/codeql-action/init@46ed16ded91731b2df79a2893d3aea8e9f03b5c4
@@ -60,18 +63,19 @@ jobs:
     # -------------------------
     # Maven Build
     # -------------------------
-    - name: Build and Test Code
-      if: ${{ !((github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'develop') }}
-      run: |
-        mvn -B -e -Prelease -Preporting install
-    - name: Build, Test and DEPLOY SNAPSHOT Code
-      if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'develop'
+    - id: build-test-deploy
+      name: Build, Test and DEPLOY SNAPSHOT Code
+      if: ${{ env.BUILD_SNAPSHOT == 'true' }}
       run: |
         mvn -B -e -Pgpg -Prelease -Preporting deploy -Dmaven.deploy.skip=releases
       env:
         MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         MAVEN_CENTRAL_TOKEN: ${{ secrets.SONATYPE_PASSWORD }}
         MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+    - name: Build and Test Code
+      if: ${{ steps.build-test-deploy.outcome == 'skipped' }}
+      run: |
+        mvn -B -e -Prelease -Preporting install
     - name: Perform CodeQL Analysis
       if: github.event_name == 'push'
       uses: github/codeql-action/analyze@46ed16ded91731b2df79a2893d3aea8e9f03b5c4
