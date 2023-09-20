@@ -217,6 +217,7 @@ public abstract class AbstractTestSuite {
         getWriteOpenOptions())) {
       schemaProducer.apply(module, writer);
     }
+    LOGGER.atInfo().log("Produced schema '{}' for module '{}'", schemaPath, module.getLocation());
   }
 
   protected OpenOption[] getWriteOpenOptions() {

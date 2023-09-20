@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.schemagen;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.model.IModule;
@@ -163,24 +164,48 @@ class XmlSuiteTest
         contentCase(Format.XML, "allowed-values-basic_test_valid_PASS.xml", true));
   }
 
-  @Disabled
   @Test
-  void testOSCALComplete() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
+  void testLocalDeclarations() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
+    doTest(
+        "local-declarations",
+        "global-and-local_metaschema.xml",
+        "global-and-local");
+  }
+
+  @Test
+  void testliboscalJavaIssue181() throws IOException, MetaschemaException, XMLStreamException, JDOMException {
     ModuleLoader loader = new ModuleLoader();
     loader.allowEntityResolution();
 
     IModule module = loader.load(new URL(
         // "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
-        "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
+        "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.1.1/src/metaschema/oscal_catalog_metaschema.xml"));
     ISchemaGenerator schemaGenerator = new XmlSchemaGenerator();
     IMutableConfiguration<SchemaGenerationFeature<?>> features = new DefaultConfiguration<>();
-    features.disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
-    try (Writer writer = Files.newBufferedWriter(
-        Path.of("target/oscal-complete_schema.xsd"),
-        StandardCharsets.UTF_8,
-        getWriteOpenOptions())) {
+    features.enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+    features.disableFeature(SchemaGenerationFeature.INLINE_CHOICE_DEFINITIONS);
+
+    Path schemaPath = Path.of("target/oscal-catalog_schema.xsd");
+    try (Writer writer = Files.newBufferedWriter(schemaPath, StandardCharsets.UTF_8, getWriteOpenOptions())) {
       assert writer != null;
       schemaGenerator.generateFromModule(module, writer, features);
+    }
+
+    // check for missing attribute types per liboscal-java#181
+    XMLInputFactory factory = XMLInputFactory.newFactory();
+    try (Reader fileReader = new FileReader(schemaPath.toFile())) {
+      XMLEventReader reader = factory.createXMLEventReader(fileReader);
+      StAXEventBuilder builder = new StAXEventBuilder();
+      Document document = document = builder.build(reader);
+
+      XPathExpression<Element> xpath = XPathFactory.instance()
+          .compile("//xs:attribute[not(@type or xs:simpleType)]",
+              Filters.element(),
+              null,
+              Namespace.getNamespace("xs", "http://www.w3.org/2001/XMLSchema"));
+      List<Element> result = xpath.evaluate(document);
+
+      assertTrue(result.isEmpty());
     }
   }
 

@@ -33,6 +33,7 @@ module gov.nist.secauto.metaschema.schemagen {
   requires com.ctc.wstx;
   requires com.github.spotbugs.annotations;
   requires transitive org.apache.commons.lang3;
+  requires org.apache.logging.log4j;
   requires org.jdom2;
 
   requires Saxon.HE;

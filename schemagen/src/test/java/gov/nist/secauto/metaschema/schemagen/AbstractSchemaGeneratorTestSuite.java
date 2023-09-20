@@ -43,6 +43,8 @@ import gov.nist.secauto.metaschema.model.testing.AbstractTestSuite;
 import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.platform.commons.JUnitException;
 import org.xml.sax.SAXException;
 
@@ -67,6 +69,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractSchemaGeneratorTestSuite
     extends AbstractTestSuite {
+  private static final Logger LOGGER = LogManager.getLogger(AbstractTestSuite.class);
   @NonNull
   protected static final ISchemaGenerator XML_SCHEMA_GENERATOR = new XmlSchemaGenerator();
   @NonNull
@@ -89,7 +92,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
 
   static {
     IMutableConfiguration<SchemaGenerationFeature<?>> features = new DefaultConfiguration<>();
-    features.disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+    features.enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     SCHEMA_GENERATION_CONFIG = features;
 
     BiFunction<IModule, Writer, Void> xmlProvider = (module, writer) -> {
