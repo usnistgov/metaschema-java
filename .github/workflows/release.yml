@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
       with:
         submodules: recursive
-        fetch-depth: 0
+        filter: tree:0
     # -------------------------
     # Java
     # -------------------------
