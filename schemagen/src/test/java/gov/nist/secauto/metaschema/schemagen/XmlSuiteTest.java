@@ -211,10 +211,10 @@ class XmlSuiteTest
 
   @Test
   void testLiboscalJavaIssue181() throws IOException, MetaschemaException, XMLStreamException, JDOMException {
-    MetaschemaLoader loader = new MetaschemaLoader();
+    ModuleLoader loader = new ModuleLoader();
     loader.allowEntityResolution();
 
-    IMetaschema module = loader.load(new URL(
+    IModule module = loader.load(new URL(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.1.1/src/metaschema/oscal_catalog_metaschema.xml"));
     ISchemaGenerator schemaGenerator = new XmlSchemaGenerator();
     IMutableConfiguration<SchemaGenerationFeature<?>> features = new DefaultConfiguration<>();
@@ -224,7 +224,7 @@ class XmlSuiteTest
     Path schemaPath = Path.of("target/oscal-catalog_schema.xsd");
     try (Writer writer = Files.newBufferedWriter(schemaPath, StandardCharsets.UTF_8, getWriteOpenOptions())) {
       assert writer != null;
-      schemaGenerator.generateFromMetaschema(module, writer, features);
+      schemaGenerator.generateFromModule(module, writer, features);
     }
 
     // check for missing attribute types per liboscal-java#181
