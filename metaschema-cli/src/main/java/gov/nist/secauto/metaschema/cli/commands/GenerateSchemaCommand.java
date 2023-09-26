@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.cli.commands;
 
-import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.cli.processor.CLIProcessor.CallingContext;
 import gov.nist.secauto.metaschema.cli.processor.ExitCode;
 import gov.nist.secauto.metaschema.cli.processor.ExitStatus;
@@ -36,13 +35,14 @@ import gov.nist.secauto.metaschema.cli.processor.command.AbstractTerminalCommand
 import gov.nist.secauto.metaschema.cli.processor.command.DefaultExtraArgument;
 import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;
 import gov.nist.secauto.metaschema.cli.processor.command.ICommandExecutor;
-import gov.nist.secauto.metaschema.model.MetaschemaLoader;
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.MetaschemaException;
-import gov.nist.secauto.metaschema.model.common.configuration.DefaultConfiguration;
-import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
-import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
+import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
+import gov.nist.secauto.metaschema.core.util.CustomCollectors;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.io.Format;
 import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator.SchemaFormat;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationFeature;
@@ -82,6 +82,7 @@ public class GenerateSchemaCommand
   private static final Option AS_OPTION = ObjectUtils.notNull(
       Option.builder()
           .longOpt("as")
+          .required()
           .hasArg()
           .argName("FORMAT")
           .desc("source format: xml, json, or yaml")
@@ -95,8 +96,8 @@ public class GenerateSchemaCommand
 
   static {
     EXTRA_ARGUMENTS = ObjectUtils.notNull(List.of(
-        new DefaultExtraArgument("metaschema file", true),
-        new DefaultExtraArgument("destination schema file", false)));
+        new DefaultExtraArgument("metaschema-module-file", true),
+        new DefaultExtraArgument("destination-schema-file", false)));
   }
 
   @Override
@@ -106,7 +107,7 @@ public class GenerateSchemaCommand
 
   @Override
   public String getDescription() {
-    return "Generate a schema for the specified Metaschema";
+    return "Generate a schema for the specified Module module";
   }
 
   @SuppressWarnings("null")
@@ -127,8 +128,10 @@ public class GenerateSchemaCommand
   @Override
   public void validateOptions(CallingContext callingContext, CommandLine cmdLine) throws InvalidArgumentException {
     try {
-      String toFormatText = cmdLine.getOptionValue(AS_OPTION);
-      SchemaFormat.valueOf(toFormatText.toUpperCase(Locale.ROOT));
+      String asFormatText = cmdLine.getOptionValue(AS_OPTION);
+      if (asFormatText != null) {
+        SchemaFormat.valueOf(asFormatText.toUpperCase(Locale.ROOT));
+      }
     } catch (IllegalArgumentException ex) {
       InvalidArgumentException newEx = new InvalidArgumentException( // NOPMD - intentional
           String.format("Invalid '%s' argument. The format must be one of: %s.",
@@ -146,12 +149,12 @@ public class GenerateSchemaCommand
       throw new InvalidArgumentException("Illegal number of arguments.");
     }
 
-    Path metaschema = Paths.get(extraArgs.get(0));
-    if (!Files.exists(metaschema)) {
-      throw new InvalidArgumentException("The provided metaschema '" + metaschema + "' does not exist.");
+    Path module = Paths.get(extraArgs.get(0));
+    if (!Files.exists(module)) {
+      throw new InvalidArgumentException("The provided metaschema module '" + module + "' does not exist.");
     }
-    if (!Files.isReadable(metaschema)) {
-      throw new InvalidArgumentException("The provided metaschema '" + metaschema + "' is not readable.");
+    if (!Files.isReadable(module)) {
+      throw new InvalidArgumentException("The provided metaschema module '" + module + "' is not readable.");
     }
   }
 
@@ -214,9 +217,9 @@ public class GenerateSchemaCommand
     Path input = Paths.get(extraArgs.get(0));
     assert input != null;
     try {
-      MetaschemaLoader loader = new MetaschemaLoader();
+      ModuleLoader loader = new ModuleLoader();
       loader.allowEntityResolution();
-      IMetaschema metaschema = loader.load(input);
+      IModule module = loader.load(input);
 
       if (LOGGER.isInfoEnabled()) {
         LOGGER.info("Generating {} schema for '{}'.", asFormat.name(), input);
@@ -224,9 +227,9 @@ public class GenerateSchemaCommand
       if (destination == null) {
         @SuppressWarnings({ "resource", "PMD.CloseResource" }) // not owned
         OutputStream os = ObjectUtils.notNull(System.out);
-        ISchemaGenerator.generateSchema(metaschema, os, asFormat, configuration);
+        ISchemaGenerator.generateSchema(module, os, asFormat, configuration);
       } else {
-        ISchemaGenerator.generateSchema(metaschema, destination, asFormat, configuration);
+        ISchemaGenerator.generateSchema(module, destination, asFormat, configuration);
       }
     } catch (IOException | MetaschemaException ex) {
       return ExitCode.PROCESSING_ERROR.exit().withThrowable(ex); // NOPMD readability

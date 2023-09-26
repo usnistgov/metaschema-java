@@ -28,12 +28,12 @@ package gov.nist.secauto.metaschema.cli.util;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
-import gov.nist.secauto.metaschema.model.common.constraint.ConstraintValidationFinding;
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
-import gov.nist.secauto.metaschema.model.common.validation.IValidationFinding;
-import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
-import gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator.JsonValidationFinding;
-import gov.nist.secauto.metaschema.model.common.validation.XmlSchemaContentValidator.XmlValidationFinding;
+import gov.nist.secauto.metaschema.core.model.constraint.ConstraintValidationFinding;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.Level;
+import gov.nist.secauto.metaschema.core.model.validation.IValidationFinding;
+import gov.nist.secauto.metaschema.core.model.validation.IValidationResult;
+import gov.nist.secauto.metaschema.core.model.validation.JsonSchemaContentValidator.JsonValidationFinding;
+import gov.nist.secauto.metaschema.core.model.validation.XmlSchemaContentValidator.XmlValidationFinding;
 
 import org.apache.logging.log4j.LogBuilder;
 import org.apache.logging.log4j.LogManager;

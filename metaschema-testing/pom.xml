@@ -20,19 +20,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>metaschema-java-binding</artifactId>
+			<artifactId>metaschema-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>metaschema-java-codegen</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>metaschema-model</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>metaschema-model-common</artifactId>
+			<artifactId>metaschema-databind</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
@@ -43,12 +35,13 @@
 			<artifactId>log4j-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-jul</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
+			<artifactId>junit-jupiter</artifactId>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
@@ -86,7 +79,7 @@
 						</goals>
 						<configuration>
 	                        <xmlConfigs>${project.basedir}/src/schema/xmlconfig.xml</xmlConfigs>
-							<sourceDir>${project.basedir}/../metaschema-model/metaschema/test-suite</sourceDir>
+							<sourceDir>${project.basedir}/../core/metaschema/test-suite</sourceDir>
 							<sourceSchemas>unit-tests.xsd</sourceSchemas>
 							<javaTargetDir>${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
 							<classTargetDir>${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>

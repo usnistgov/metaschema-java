@@ -26,13 +26,13 @@
 
 package gov.nist.secauto.metaschema.maven.plugin;
 
-import gov.nist.secauto.metaschema.model.MetaschemaLoader;
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.MetaschemaException;
-import gov.nist.secauto.metaschema.model.common.configuration.DefaultConfiguration;
-import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
-import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
+import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationFeature;
 import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
@@ -61,7 +61,7 @@ import java.util.stream.Collectors;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Goal which generates Java source files for a given set of Metaschema definitions.
+ * Goal which generates Java source files for a given set of Module definitions.
  */
 @Mojo(name = "generate-schemas", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
 public class GenerateSchemaMojo
@@ -80,10 +80,12 @@ public class GenerateSchemaMojo
   private static final JsonSchemaGenerator JSON_SCHEMA_GENERATOR = new JsonSchemaGenerator();
 
   /**
-   * Specifies the formats of the schemas to generate. Multiple formats can be supplied and this
-   * plugin will generate a schema for each of the desired formats.
+   * Specifies the formats of the schemas to generate. Multiple formats can be
+   * supplied and this plugin will generate a schema for each of the desired
+   * formats.
    * <p>
-   * A format is specified by supplying one of the following values in a &lt;format&gt; subelement:
+   * A format is specified by supplying one of the following values in a
+   * &lt;format&gt; subelement:
    * <ul>
    * <li><em>json</em> - Creates a JSON Schema</li>
    * <li><em>xsd</em> - Creates an XML Schema Definition</li>
@@ -93,16 +95,17 @@ public class GenerateSchemaMojo
   private List<String> formats;
 
   /**
-   * If enabled, definitions that are defined inline will be generated as inline types. If disabled,
-   * definitions will always be generated as global types.
+   * If enabled, definitions that are defined inline will be generated as inline
+   * types. If disabled, definitions will always be generated as global types.
    */
   @Parameter(defaultValue = "true")
   private boolean inlineDefinitions = true;
 
   /**
-   * If enabled, child definitions of a choice that are defined inline will be generated as inline
-   * types. If disabled, child definitions of a choice will always be generated as global types. This
-   * option will only be used if <code>inlineDefinitions</code> is also enabled.
+   * If enabled, child definitions of a choice that are defined inline will be
+   * generated as inline types. If disabled, child definitions of a choice will
+   * always be generated as global types. This option will only be used if
+   * <code>inlineDefinitions</code> is also enabled.
    */
   @Parameter(defaultValue = "false")
   private boolean inlineChoiceDefinitions = false;
@@ -110,7 +113,8 @@ public class GenerateSchemaMojo
   /**
    * Determine if inlining definitions is required.
    *
-   * @return {@code true} if inlining definitions is required, or {@code false} otherwise
+   * @return {@code true} if inlining definitions is required, or {@code false}
+   *         otherwise
    */
   protected boolean isInlineDefinitions() {
     return inlineDefinitions;
@@ -119,7 +123,8 @@ public class GenerateSchemaMojo
   /**
    * Determine if inlining choice definitions is required.
    *
-   * @return {@code true} if inlining choice definitions is required, or {@code false} otherwise
+   * @return {@code true} if inlining choice definitions is required, or
+   *         {@code false} otherwise
    */
   protected boolean isInlineChoiceDefinitions() {
     return inlineChoiceDefinitions;
@@ -141,14 +146,14 @@ public class GenerateSchemaMojo
   }
 
   /**
-   * Performs schema generation using the provided Metaschemas.
+   * Performs schema generation using the provided Metaschema modules.
    *
-   * @param metaschemaCollection
-   *          the Metaschemas to generate the schema for
+   * @param modules
+   *          the Metaschema modules to generate the schema for
    * @throws MojoExecutionException
    *           if an error occurred during generation
    */
-  protected void generate(@NonNull Set<IMetaschema> metaschemaCollection) throws MojoExecutionException {
+  protected void generate(@NonNull Set<IModule> modules) throws MojoExecutionException {
     IMutableConfiguration<SchemaGenerationFeature<?>> schemaGenerationConfig
         = new DefaultConfiguration<>();
 
@@ -184,29 +189,29 @@ public class GenerateSchemaMojo
     }
 
     Path outputDirectory = ObjectUtils.notNull(getOutputDirectory().toPath());
-    for (IMetaschema metaschema : metaschemaCollection) {
-      getLog().info(String.format("Processing metaschema: %s", metaschema.getLocation()));
-      if (metaschema.getExportedRootAssemblyDefinitions().isEmpty()) {
+    for (IModule module : modules) {
+      getLog().info(String.format("Processing metaschema: %s", module.getLocation()));
+      if (module.getExportedRootAssemblyDefinitions().isEmpty()) {
         continue;
       }
 
-      generateSchemas(metaschema, schemaGenerationConfig, outputDirectory, schemaFormats);
+      generateSchemas(module, schemaGenerationConfig, outputDirectory, schemaFormats);
     }
   }
 
   private static void generateSchemas(
-      @NonNull IMetaschema metaschema,
+      @NonNull IModule module,
       @NonNull IConfiguration<SchemaGenerationFeature<?>> schemaGenerationConfig,
       @NonNull Path outputDirectory,
       @NonNull Set<SchemaFormat> schemaFormats) throws MojoExecutionException {
 
-    String shortName = metaschema.getShortName();
+    String shortName = module.getShortName();
 
     if (schemaFormats.contains(SchemaFormat.XSD)) {
       try { // XML Schema
         String filename = String.format("%s_schema.xsd", shortName);
         Path xmlSchema = ObjectUtils.notNull(outputDirectory.resolve(filename));
-        generateSchema(metaschema, schemaGenerationConfig, xmlSchema, XML_SCHEMA_GENERATOR);
+        generateSchema(module, schemaGenerationConfig, xmlSchema, XML_SCHEMA_GENERATOR);
       } catch (Exception ex) {
         throw new MojoExecutionException("Unable to generate XML schema.", ex);
       }
@@ -216,7 +221,7 @@ public class GenerateSchemaMojo
       try { // JSON Schema
         String filename = String.format("%s_schema.json", shortName);
         Path xmlSchema = ObjectUtils.notNull(outputDirectory.resolve(filename));
-        generateSchema(metaschema, schemaGenerationConfig, xmlSchema, JSON_SCHEMA_GENERATOR);
+        generateSchema(module, schemaGenerationConfig, xmlSchema, JSON_SCHEMA_GENERATOR);
       } catch (Exception ex) {
         throw new MojoExecutionException("Unable to generate JSON schema.", ex);
       }
@@ -224,7 +229,7 @@ public class GenerateSchemaMojo
   }
 
   private static void generateSchema(
-      @NonNull IMetaschema metaschema,
+      @NonNull IModule module,
       @NonNull IConfiguration<SchemaGenerationFeature<?>> schemaGenerationConfig,
       @NonNull Path schemaPath,
       @NonNull ISchemaGenerator generator) throws IOException {
@@ -234,7 +239,7 @@ public class GenerateSchemaMojo
         StandardOpenOption.CREATE,
         StandardOpenOption.WRITE,
         StandardOpenOption.TRUNCATE_EXISTING))) {
-      generator.generateFromMetaschema(metaschema, writer, schemaGenerationConfig);
+      generator.generateFromModule(module, writer, schemaGenerationConfig);
     }
   }
 
@@ -268,22 +273,22 @@ public class GenerateSchemaMojo
         }
       }
 
-      // generate Java sources based on provided Metaschema sources
-      final MetaschemaLoader loader = new MetaschemaLoader();
+      // generate Java sources based on provided Module sources
+      final ModuleLoader loader = new ModuleLoader();
       loader.allowEntityResolution();
-      final Set<IMetaschema> metaschemaCollection = new HashSet<>();
+      final Set<IModule> modules = new HashSet<>();
       for (File source : getSources().collect(Collectors.toList())) {
         getLog().info("Using metaschema source: " + source.getPath());
-        IMetaschema metaschema;
+        IModule module;
         try {
-          metaschema = loader.load(source);
+          module = loader.load(source);
         } catch (MetaschemaException | IOException ex) {
           throw new MojoExecutionException("Loading of metaschema failed", ex);
         }
-        metaschemaCollection.add(metaschema);
+        modules.add(module);
       }
 
-      generate(metaschemaCollection);
+      generate(modules);
 
       // create the stale file
       if (!staleFileDirectory.exists()) {
@@ -308,7 +313,8 @@ public class GenerateSchemaMojo
     // try {
     // getMavenProject()..addCompileSourceRoot(getOutputDirectory().getCanonicalFile().getPath());
     // } catch (IOException ex) {
-    // throw new MojoExecutionException("Unable to add output directory to maven sources.", ex);
+    // throw new MojoExecutionException("Unable to add output directory to maven
+    // sources.", ex);
     // }
   }
 }

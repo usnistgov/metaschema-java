@@ -33,32 +33,17 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>metaschema-java-binding</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>metaschema-java-codegen</artifactId>
+			<artifactId>metaschema-databind</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>com.google.auto.service</groupId>
-			<artifactId>auto-service</artifactId>
+			<artifactId>auto-service-annotations</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>com.github.spotbugs</groupId>
 			<artifactId>spotbugs-annotations</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -90,10 +75,8 @@
 					<generateRepository>false</generateRepository>
 					<repositoryLayout>flat</repositoryLayout>
 					<repositoryName>lib</repositoryName>
-					<outputFileNameMapping>
-						@{groupId}@.@{artifactId}@-@{version}@.@{extension}@</outputFileNameMapping>
-					<extraJvmArguments>-Dsun.stdout.encoding=UTF-8
-						-Dsun.stderr.encoding=UTF-8</extraJvmArguments>
+					<outputFileNameMapping>@{groupId}@.@{artifactId}@-@{version}@.@{extension}@</outputFileNameMapping>
+					<extraJvmArguments>-Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8</extraJvmArguments>
 					<projectArtifactFirstInClassPath>true</projectArtifactFirstInClassPath>
 					<includeConfigurationDirectoryInClasspath>false</includeConfigurationDirectoryInClasspath>
 				</configuration>

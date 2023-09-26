@@ -1,0 +1,28 @@
+{
+  "$schema": "schema.json",
+  "top-level": {
+    "id": "test",
+    "complex-field1": {
+      "id": "complex-field1",
+      "STRVALUE": "test-string"
+    },
+    "complex-fields2": {
+      "id": "complex-field2-1",
+      "STRVALUE": "test-string2"
+    },
+    "complex-fields3": [
+      {
+        "id2": "complex-field3-1",
+        "STRVALUE": "test-string3"
+      },
+      {
+        "id2": "complex-field3-2",
+        "STRVALUE": "test-string4"
+      }
+    ],
+    "complex-fields4": {
+      "complex-field4-1": {"STRVALUE": "test-string5"},
+      "complex-field4-2": {"STRVALUE": "test-string6"}
+    }
+  }
+}

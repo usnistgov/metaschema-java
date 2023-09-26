@@ -6,81 +6,12 @@
 		<artifactId>metaschema-framework</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
-
 	<artifactId>metaschema-java-binding</artifactId>
-	<packaging>jar</packaging>
-
-	<name>Metaschema Java Data Binding</name>
-	<description>A Metaschema binding-based parser for Java objects supporting serialization of conformant XML, JSON, and YAML data.</description>
-
-	<url>${site.url}${project.artifactId}/</url>
 	<distributionManagement>
-		<site>
-			<id>nist-pages</id>
-			<url>${site.url}${project.artifactId}/</url>
-		</site>
+		<relocation>
+			<groupId>gov.nist.secauto.metaschema</groupId>
+			<artifactId>metaschema-databind</artifactId>
+			<message>In the 1.0.0 release of this library, a few modules that contain general use code were combined to form a core library.</message>
+		</relocation>
 	</distributionManagement>
-
-	<dependencies>
-		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>metaschema-model-common</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>metaschema-model</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.auto.service</groupId>
-			<artifactId>auto-service</artifactId>
-			<optional>true</optional>
-		</dependency>
-
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.commons</groupId> -->
-		<!-- <artifactId>commons-lang3</artifactId> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>commons-io</groupId> -->
-		<!-- <artifactId>commons-io</artifactId> -->
-		<!-- </dependency> -->
-
-		<dependency>
-			<groupId>com.fasterxml.jackson.dataformat</groupId>
-			<artifactId>jackson-dataformat-xml</artifactId>
-		</dependency>
-
-		<!-- Log4j API and Core implementation required for binding -->
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- Binding for Log4J -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.logging.log4j</groupId> -->
-		<!-- <artifactId>log4j-jul</artifactId> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.logging.log4j</groupId> -->
-		<!-- <artifactId>log4j-slf4j-impl</artifactId> -->
-		<!-- </dependency> -->
-
-		<dependency>
-			<groupId>org.jmock</groupId>
-			<artifactId>jmock-junit5</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>org.junit.jupiter</groupId> -->
-		<!-- <artifactId>junit-jupiter-params</artifactId> -->
-		<!-- <scope>test</scope> -->
-		<!-- </dependency> -->
-	</dependencies>
 </project>

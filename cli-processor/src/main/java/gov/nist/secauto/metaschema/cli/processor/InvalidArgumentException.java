@@ -54,7 +54,8 @@ public class InvalidArgumentException
   }
 
   /**
-   * Return the option requiring an argument that wasn't provided on the command line.
+   * Return the option requiring an argument that wasn't provided on the command
+   * line.
    *
    * @return the related option
    */
@@ -64,7 +65,8 @@ public class InvalidArgumentException
   }
 
   /**
-   * Assign the option requiring an argument that wasn't provided on the command line.
+   * Assign the option requiring an argument that wasn't provided on the command
+   * line.
    *
    * @param option
    *          the option to set

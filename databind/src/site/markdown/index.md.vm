@@ -1,0 +1,60 @@
+# ${project.name}
+
+This module provides:
+- A Java parser library, that can read and write XML, JSON, and YAML content that is valid to the associated Metaschema model from and to bound Java objects. This library is a dependency for Java code generated from a Metaschema using the Metaschema Java [code generator plugin](../metaschema-maven-plugin) or this library.
+- A Java code generator [Java API](apidocs/index.html) that generates Java classes for a Metaschema definition. These generated classes can be used to read and write XML, JSON, and YAML content that is valid to the associated Metaschema model using the parser in this library.
+
+This parser uses a set of annotations, that allow Metaschema constructs to be annotated on a Java class, to drive parsing behavior. These annotations provide the information needed by (META-B) to read and write XML, JSON, and YAML content that is valid to the associated Metaschema model.
+
+The following dependency can be added to your POM to use this library.
+
+```xml
+<dependency>
+  <groupId>${project.groupId}</groupId>
+  <artifactId>${project.artifactId}</artifactId>
+  <version>${project.version}</version>
+</dependency>
+```
+
+The following code illustrates how to load data into a bound object using this [Java API](apidocs/index.html). The loader will detect the format of the underlying content automatically.
+
+```java
+// get the binding context instance, which manages Metaschema-to-object binding information
+IBindingContext bindingContext = IBindingContext.instance();
+
+// create a loader which is used to parse the content
+IBoundLoader loader = bindingContext.newBoundLoader();
+
+// specify the bound class to load data into and the file to load it from
+// the loader figures out the format to load from (i.e. JSON)
+BoundClass object
+    = loader.load(BoundClass.class, new File("src/test/resources/test-content/bound-class-simple.json"));
+System.out.println(object.getId());
+```
+
+Once the data is loaded into the bound object, you can then make changes to the object. For example:
+
+```java
+// change the object's identifier
+object.setId("newid");
+```
+
+Next you can save the data in a specific format. In the following example, we save the data loaded from JSON as XML.
+
+```java
+// create a serializer to write the object
+ISerializer<BoundClass> serializer = bindingContext.newSerializer(Format.XML, BoundClass.class);
+serializer.serialize(object, new File("target/bound-class-simple.xml"));
+```
+
+A serializer is associated with a specific format, which in this case is XML.
+
+For a more complex example, the [liboscal-java](https://github.com/usnistgov/liboscal-java/) library illustrates how to build a domain-specific API using some of the more advanced features of this library.
+
+## Known Limitations
+
+This library has the following limitations.
+
+- When parsing YAML, files cannot be larger than `2147483646` codepoint. This is a restriction imposed by [SnakeYAML](https://bitbucket.org/snakeyaml/snakeyaml/src/master/) For larger content, use JSON or XML.
+- For JSON and YAML, additional, unrecognized properties will be ignored by the parser.
+ 

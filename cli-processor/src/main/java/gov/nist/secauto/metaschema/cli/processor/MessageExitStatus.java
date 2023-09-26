@@ -42,7 +42,8 @@ public class MessageExitStatus
    * @param code
    *          the exit code to use.
    * @param messageArguments
-   *          the arguments that can be passed to a formatted string to generate the message
+   *          the arguments that can be passed to a formatted string to generate
+   *          the message
    */
   public MessageExitStatus(@NonNull ExitCode code, @NonNull Object... messageArguments) {
     super(code);

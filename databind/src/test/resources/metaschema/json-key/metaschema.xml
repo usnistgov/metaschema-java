@@ -1,0 +1,86 @@
+<METASCHEMA
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../../../core/metaschema/schema/xml/metaschema.xsd"
+	xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0">
+	<schema-name>JSON key test Metaschema</schema-name>
+	<schema-version>1.0</schema-version>
+	<short-name>assembly</short-name>
+	<namespace>http://csrc.nist.gov/ns/metaschema/testing/json-key</namespace>
+    <json-base-uri>http://csrc.nist.gov/ns/metaschema/testing/json-key</json-base-uri>
+
+
+	<define-flag name="id"/>
+
+	<define-flag name="other"/>
+
+	<define-field name="field-value"/>
+
+	<define-field name="field-key-value">
+		<json-key flag-ref="id"/>
+		<flag ref="id" required="yes"/>
+	</define-field>
+
+	<define-field name="field-key-flag-value">
+		<json-key flag-ref="id"/>
+		<flag ref="id" required="yes"/>
+		<flag ref="other"/>
+	</define-field>
+
+	<define-field name="field-key-flag-value">
+		<json-key flag-ref="id"/>
+		<flag ref="id" required="yes"/>
+		<flag ref="other"/>
+	</define-field>
+	
+	<define-assembly name="bottom-key">
+		<json-key flag-ref="id"/>
+		<flag ref="id" required="yes" />
+	</define-assembly>
+	
+	<define-assembly name="bottom-flag-key">
+		<json-key flag-ref="id"/>
+		<flag ref="id" required="yes" />
+		<flag ref="other"/>
+	</define-assembly>
+	
+	<define-assembly name="bottom-flag-key-value">
+		<json-key flag-ref="id"/>
+		<flag ref="id" required="yes" />
+		<flag ref="other"/>
+		<model>
+			<field ref="field-value" max-occurs="unbounded">
+				<group-as name="values" in-json="ARRAY"/>
+			</field>
+		</model>
+	</define-assembly>
+	
+	<define-assembly name="middle">
+		<model>
+			<field ref="field-value"/>
+			<field ref="field-key-value" max-occurs="unbounded">
+				<group-as name="field-key-values" in-json="BY_KEY"/>
+			</field>
+			<field ref="field-key-flag-value" max-occurs="unbounded">
+				<group-as name="field-key-flag-values" in-json="BY_KEY"/>
+			</field>
+			<assembly ref="bottom-key" max-occurs="unbounded">
+				<group-as name="bottom-keys" in-json="BY_KEY" />
+			</assembly>
+			<assembly ref="bottom-flag-key" max-occurs="unbounded">
+				<group-as name="bottom-flag-keys" in-json="BY_KEY" />
+			</assembly>
+			<assembly ref="bottom-flag-key-value" max-occurs="unbounded">
+				<group-as name="bottom-flag-key-values" in-json="BY_KEY" />
+			</assembly>
+		</model>
+	</define-assembly>
+		
+	<define-assembly name="top">
+		<root-name>top</root-name>
+		<model>
+			<assembly ref="middle" min-occurs="1" max-occurs="unbounded">
+				<group-as name="middle" />
+			</assembly>
+		</model>
+	</define-assembly>
+</METASCHEMA>

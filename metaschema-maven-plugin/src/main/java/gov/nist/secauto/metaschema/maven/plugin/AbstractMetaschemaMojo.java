@@ -58,8 +58,9 @@ public abstract class AbstractMetaschemaMojo
   MavenProject mavenProject;
 
   /**
-   * This will be injected if this plugin is executed as part of the standard Maven lifecycle. If the
-   * mojo is directly invoked, this parameter will not be injected.
+   * This will be injected if this plugin is executed as part of the standard
+   * Maven lifecycle. If the mojo is directly invoked, this parameter will not be
+   * injected.
    */
   @Parameter(defaultValue = "${mojoExecution}", readonly = true)
   private MojoExecution mojoExecution;
@@ -69,12 +70,14 @@ public abstract class AbstractMetaschemaMojo
 
   /**
    * <p>
-   * The directory where the staleFile is found. The staleFile is used to determine if re-generation
-   * of generated Java classes is needed, by recording when the last build occurred.
+   * The directory where the staleFile is found. The staleFile is used to
+   * determine if re-generation of generated Java classes is needed, by recording
+   * when the last build occurred.
    * </p>
    * <p>
-   * This directory is expected to be located within the <code>${project.build.directory}</code>, to
-   * ensure that code (re)generation occurs after cleaning the project.
+   * This directory is expected to be located within the
+   * <code>${project.build.directory}</code>, to ensure that code (re)generation
+   * occurs after cleaning the project.
    * </p>
    */
   @Parameter(defaultValue = "${project.build.directory}/metaschema", readonly = true, required = true)
@@ -85,14 +88,15 @@ public abstract class AbstractMetaschemaMojo
    * Defines the encoding used for generating Java Source files.
    * </p>
    * <p>
-   * The algorithm for finding the encoding to use is as follows (where the first non-null value found
-   * is used for encoding):
+   * The algorithm for finding the encoding to use is as follows (where the first
+   * non-null value found is used for encoding):
    * <ol>
-   * <li>If the configuration property is explicitly given within the plugin's configuration, use that
-   * value.</li>
-   * <li>If the Maven property <code>project.build.sourceEncoding</code> is defined, use its
-   * value.</li>
-   * <li>Otherwise use the value from the system property <code>file.encoding</code>.</li>
+   * <li>If the configuration property is explicitly given within the plugin's
+   * configuration, use that value.</li>
+   * <li>If the Maven property <code>project.build.sourceEncoding</code> is
+   * defined, use its value.</li>
+   * <li>Otherwise use the value from the system property
+   * <code>file.encoding</code>.</li>
    * </ol>
    * </p>
    *
@@ -115,15 +119,15 @@ public abstract class AbstractMetaschemaMojo
   private File metaschemaDir;
 
   /**
-   * A set of inclusion patterns used to select which metaschema are to be processed. By default, all
-   * files are processed.
+   * A set of inclusion patterns used to select which metaschema are to be
+   * processed. By default, all files are processed.
    */
   @Parameter
   protected String[] includes;
 
   /**
-   * A set of exclusion patterns used to prevent certain files from being processed. By default, this
-   * set is empty such that no files are excluded.
+   * A set of exclusion patterns used to prevent certain files from being
+   * processed. By default, this set is empty such that no files are excluded.
    */
   @Parameter
   protected String[] excludes;
@@ -135,8 +139,9 @@ public abstract class AbstractMetaschemaMojo
   private boolean skip;
 
   /**
-   * The BuildContext is used to identify which files or directories were modified since last build.
-   * This is used to determine if Metaschema-based generation must be performed again.
+   * The BuildContext is used to identify which files or directories were modified
+   * since last build. This is used to determine if Module-based generation must
+   * be performed again.
    *
    * @return the active Plexus BuildContext.
    */
@@ -186,15 +191,16 @@ public abstract class AbstractMetaschemaMojo
   /**
    * Gets the file encoding to use for generated classes.
    * <p>
-   * The algorithm for finding the encoding to use is as follows (where the first non-null value found
-   * is used for encoding):
+   * The algorithm for finding the encoding to use is as follows (where the first
+   * non-null value found is used for encoding):
    * </p>
    * <ol>
-   * <li>If the configuration property is explicitly given within the plugin's configuration, use that
-   * value.</li>
-   * <li>If the Maven property <code>project.build.sourceEncoding</code> is defined, use its
-   * value.</li>
-   * <li>Otherwise use the value from the system property <code>file.encoding</code>.</li>
+   * <li>If the configuration property is explicitly given within the plugin's
+   * configuration, use that value.</li>
+   * <li>If the Maven property <code>project.build.sourceEncoding</code> is
+   * defined, use its value.</li>
+   * <li>Otherwise use the value from the system property
+   * <code>file.encoding</code>.</li>
    * </ol>
    *
    * @return The encoding to be used by this AbstractJaxbMojo and its tools.
@@ -213,7 +219,7 @@ public abstract class AbstractMetaschemaMojo
   }
 
   /**
-   * Retrieve a stream of Metaschema file sources.
+   * Retrieve a stream of Module file sources.
    *
    * @return the stream
    */
@@ -232,7 +238,8 @@ public abstract class AbstractMetaschemaMojo
   /**
    * Determine if the execution of this mojo should be skipped.
    *
-   * @return {@code true} if the mojo execution should be skipped, or {@code false} otherwise
+   * @return {@code true} if the mojo execution should be skipped, or
+   *         {@code false} otherwise
    */
   protected boolean shouldExecutionBeSkipped() {
     return skip;
@@ -260,10 +267,12 @@ public abstract class AbstractMetaschemaMojo
   }
 
   /**
-   * Determine if code generation is required. This is done by comparing the last modified time of
-   * each Metaschema source file against the stale file managed by this plugin.
+   * Determine if code generation is required. This is done by comparing the last
+   * modified time of each Module source file against the stale file managed by
+   * this plugin.
    *
-   * @return {@code true} if the code generation is needed, or {@code false} otherwise
+   * @return {@code true} if the code generation is needed, or {@code false}
+   *         otherwise
    */
   protected boolean isGenerationRequired() {
     final File staleFile = getStaleFile();

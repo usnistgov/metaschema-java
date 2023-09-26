@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.cli.commands;
 
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.apache.commons.cli.Option;
 
@@ -41,9 +41,4 @@ public class MetaschemaCommandSupport {
           .required()
           .desc("metaschema resource")
           .build());
-
-  public MetaschemaCommandSupport() {
-    // TODO Auto-generated constructor stub
-  }
-
 }

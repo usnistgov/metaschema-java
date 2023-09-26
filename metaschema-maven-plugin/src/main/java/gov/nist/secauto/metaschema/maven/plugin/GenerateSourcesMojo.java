@@ -26,12 +26,12 @@
 
 package gov.nist.secauto.metaschema.maven.plugin;
 
-import gov.nist.secauto.metaschema.codegen.JavaGenerator;
-import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;
-import gov.nist.secauto.metaschema.model.MetaschemaLoader;
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.MetaschemaException;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.codegen.JavaGenerator;
+import gov.nist.secauto.metaschema.databind.codegen.config.DefaultBindingConfiguration;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -53,9 +53,9 @@ import java.util.stream.Collectors;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Goal which generates Java source files for a given set of Metaschema definitions.
+ * Goal which generates Java source files for a given set of Module definitions.
  */
-@Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
+@Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class GenerateSourcesMojo
     extends AbstractMetaschemaMojo {
   private static final String STALE_FILE_NAME = "generateSourcesStaleFile";
@@ -99,12 +99,12 @@ public class GenerateSourcesMojo
   /**
    * Generate the Java source files for the provided Metaschemas.
    *
-   * @param metaschemaCollection
-   *          the collection of Metaschemas to generate sources for
+   * @param modules
+   *          the collection of Metaschema modules to generate sources for
    * @throws MojoExecutionException
    *           if an error occurred while generating sources
    */
-  protected void generate(@NonNull Set<IMetaschema> metaschemaCollection) throws MojoExecutionException {
+  protected void generate(@NonNull Set<IModule> modules) throws MojoExecutionException {
     DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
     for (File config : getConfigs()) {
       try {
@@ -118,7 +118,7 @@ public class GenerateSourcesMojo
 
     try {
       getLog().info("Generating Java classes in: " + getOutputDirectory().getPath());
-      JavaGenerator.generate(metaschemaCollection, ObjectUtils.notNull(getOutputDirectory().toPath()),
+      JavaGenerator.generate(modules, ObjectUtils.notNull(getOutputDirectory().toPath()),
           bindingConfiguration);
     } catch (IOException ex) {
       throw new MojoExecutionException("Creation of Java classes failed.", ex);
@@ -157,21 +157,21 @@ public class GenerateSourcesMojo
       }
 
       // generate Java sources based on provided metaschema sources
-      final MetaschemaLoader loader = new MetaschemaLoader();
+      final ModuleLoader loader = new ModuleLoader();
       loader.allowEntityResolution();
-      final Set<IMetaschema> metaschemaCollection = new HashSet<>();
+      final Set<IModule> modules = new HashSet<>();
       for (File source : getSources().collect(Collectors.toList())) {
         getLog().info("Using metaschema source: " + source.getPath());
-        IMetaschema metaschema;
+        IModule module;
         try {
-          metaschema = loader.load(source);
+          module = loader.load(source);
         } catch (MetaschemaException | IOException ex) {
           throw new MojoExecutionException("Loading of metaschema failed", ex);
         }
-        metaschemaCollection.add(metaschema);
+        modules.add(module);
       }
 
-      generate(metaschemaCollection);
+      generate(modules);
 
       // create the stale file
       if (!staleFileDirectory.exists()) {

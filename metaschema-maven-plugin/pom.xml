@@ -31,15 +31,15 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>metaschema-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>metaschema-databind</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>metaschema-schema-generator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>metaschema-java-codegen</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>metaschema-model</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
@@ -65,11 +65,7 @@
 			<version>${mojo.maven.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.maven.shared</groupId> -->
-		<!-- <artifactId>maven-shared-incremental</artifactId> -->
-		<!-- <version>${dependency.maven-shared-incremental.version}</version> -->
-		<!-- </dependency> -->
+
 		<dependency>
 			<groupId>org.apache.maven.plugin-tools</groupId>
 			<artifactId>maven-plugin-annotations</artifactId>
@@ -86,21 +82,11 @@
 			<artifactId>plexus-build-api</artifactId>
 			<version>${dependency.plexus-build-api.version}</version>
 		</dependency>
-		<!-- <dependency> <groupId>org.apache.maven</groupId> <artifactId>maven-project</artifactId> <version>2.2.1</version> </dependency> -->
+
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>org.junit.jupiter</groupId> -->
-		<!-- <artifactId>junit-jupiter-engine</artifactId> -->
-		<!-- <scope>test</scope> -->
-		<!-- </dependency> -->
 	</dependencies>
 
 	<build>

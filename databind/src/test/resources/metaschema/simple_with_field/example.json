@@ -1,0 +1,11 @@
+{
+  "top-level": {
+    "id": "test",
+    "field": "field-value",
+    "field2": "field-value2",
+    "field3": "field-value3",
+    "field4s": [ "markdown-string1", "markdown-string2" ],
+    "field5s": [ "string1", "string2" ], 
+    "field6s": [ true, false ]
+  }
+}
