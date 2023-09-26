@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultNodeItemFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath.item.node</a> &gt; <span class="el_source">DefaultNodeItemFactory.java</span></div><h1>DefaultNodeItemFactory.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath.item.node;
+
+import gov.nist.secauto.metaschema.core.metapath.item.node.IFeatureFlagContainerItem.FlagContainer;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IFeatureModelContainerItem.ModelContainer;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+final class DefaultNodeItemFactory
+    extends AbstractNodeItemFactory {
+  @NonNull
+<span class="fc" id="L52">  static final DefaultNodeItemFactory SINGLETON = new DefaultNodeItemFactory();</span>
+
+  /**
+   * Get the singleton instance of this node factory.
+   *
+   * @return the node factory instance
+   */
+  @NonNull
+  public static DefaultNodeItemFactory instance() {
+<span class="fc" id="L61">    return SINGLETON;</span>
+  }
+
+  private DefaultNodeItemFactory() {
+    // prevent construction
+  }
+
+  @Override
+  @NonNull
+  public Supplier&lt;FlagContainer&gt; newDataModelSupplier(@NonNull IFieldNodeItem item) {
+<span class="fc" id="L71">    return () -&gt; {</span>
+<span class="fc" id="L72">      Map&lt;String, IFlagNodeItem&gt; flags = generateFlags(item);</span>
+<span class="fc" id="L73">      return new FlagContainer(flags);</span>
+    };
+  }
+
+  @Override
+  @NonNull
+  public Supplier&lt;ModelContainer&gt; newDataModelSupplier(@NonNull IAssemblyNodeItem item) {
+<span class="fc" id="L80">    return () -&gt; {</span>
+<span class="fc" id="L81">      Map&lt;String, IFlagNodeItem&gt; flags = generateFlags(item);</span>
+<span class="fc" id="L82">      Map&lt;String, List&lt;? extends IModelNodeItem&lt;?, ?&gt;&gt;&gt; modelItems = generateModelItems(item);</span>
+<span class="fc" id="L83">      return new ModelContainer(flags, modelItems);</span>
+    };
+  }
+
+  @Override
+  public Supplier&lt;ModelContainer&gt; newDataModelSupplier(IRootAssemblyNodeItem item) {
+<span class="nc" id="L89">    return () -&gt; {</span>
+<span class="nc" id="L90">      Map&lt;String, List&lt;? extends IModelNodeItem&lt;?, ?&gt;&gt;&gt; modelItems = CollectionUtil.singletonMap(</span>
+<span class="nc" id="L91">          item.getName(),</span>
+<span class="nc" id="L92">          CollectionUtil.singletonList(item));</span>
+<span class="nc" id="L93">      return new ModelContainer(CollectionUtil.emptyMap(), modelItems);</span>
+    };
+  }
+
+  /**
+   * Given the provided parent node item, generate a mapping of flag name to flag
+   * node item for each flag on the parent assembly.
+   *
+   * @param parent
+   *          the parent assembly containing flags
+   * @return a mapping of flag name to flag item
+   */
+  @SuppressWarnings(&quot;PMD.UseConcurrentHashMap&quot;) // need an ordered Map
+  @NonNull
+  protected Map&lt;String, IFlagNodeItem&gt; generateFlags(@NonNull IModelNodeItem&lt;?, ?&gt; parent) {
+<span class="fc" id="L108">    Map&lt;String, IFlagNodeItem&gt; retval = new LinkedHashMap&lt;&gt;();</span>
+
+<span class="fc" id="L110">    Object parentValue = parent.getValue();</span>
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">    assert parentValue != null;</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">    for (IFlagInstance instance : parent.getDefinition().getFlagInstances()) {</span>
+<span class="fc" id="L113">      Object flagValue = instance.getValue(parentValue);</span>
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">      if (flagValue != null) {</span>
+<span class="fc" id="L115">        IFlagNodeItem item = newFlagNodeItem(instance, parent, flagValue);</span>
+<span class="fc" id="L116">        retval.put(instance.getEffectiveName(), item);</span>
+      }
+<span class="fc" id="L118">    }</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">    return retval.isEmpty() ? CollectionUtil.emptyMap() : CollectionUtil.unmodifiableMap(retval);</span>
+  }
+
+  /**
+   * Given the provided parent node item, generate a mapping of model instance
+   * name to model node item(s) for each model instance on the parent assembly.
+   *
+   * @param parent
+   *          the parent assembly containing model instances
+   * @return a mapping of model instance name to model node item(s)
+   */
+  @SuppressWarnings(&quot;PMD.UseConcurrentHashMap&quot;) // need an ordered map
+  @NonNull
+  protected Map&lt;String, List&lt;? extends IModelNodeItem&lt;?, ?&gt;&gt;&gt; generateModelItems(@NonNull IAssemblyNodeItem parent) {
+<span class="fc" id="L133">    Map&lt;String, List&lt;? extends IModelNodeItem&lt;?, ?&gt;&gt;&gt; retval = new LinkedHashMap&lt;&gt;();</span>
+
+<span class="fc" id="L135">    Object parentValue = parent.getValue();</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">    assert parentValue != null;</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">    for (INamedModelInstance instance : CollectionUtil.toIterable(getNamedModelInstances(parent.getDefinition()))) {</span>
+<span class="fc" id="L138">      Object instanceValue = instance.getValue(parentValue);</span>
+
+      // the item values will be all non-null items
+<span class="fc" id="L141">      Stream&lt;? extends Object&gt; itemValues = instance.getItemValues(instanceValue).stream();</span>
+<span class="fc" id="L142">      AtomicInteger index = new AtomicInteger(); // NOPMD - intentional</span>
+<span class="fc" id="L143">      List&lt;IModelNodeItem&lt;?, ?&gt;&gt; items = itemValues.map(itemValue -&gt; {</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        assert itemValue != null;</span>
+<span class="fc" id="L145">        return newModelItem(instance, parent, index.incrementAndGet(), itemValue);</span>
+<span class="fc" id="L146">      }).collect(Collectors.toUnmodifiableList());</span>
+<span class="fc" id="L147">      retval.put(instance.getEffectiveName(), items);</span>
+<span class="fc" id="L148">    }</span>
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">    return retval.isEmpty() ? CollectionUtil.emptyMap() : CollectionUtil.unmodifiableMap(retval);</span>
+  }
+
+  @Override
+  public Supplier&lt;ModelContainer&gt; newMetaschemaModelSupplier(@NonNull IModuleNodeItem item) {
+<span class="fc" id="L154">    return () -&gt; {</span>
+<span class="fc" id="L155">      IModule module = item.getModule();</span>
+
+      // build flags from Metaschema definitions
+<span class="fc" id="L158">      Map&lt;String, IFlagNodeItem&gt; flags = ObjectUtils.notNull(</span>
+<span class="fc" id="L159">          Collections.unmodifiableMap(module.getExportedFlagDefinitions().stream()</span>
+<span class="fc" id="L160">              .collect(</span>
+<span class="fc" id="L161">                  Collectors.toMap(</span>
+                      IFlagDefinition::getEffectiveName,
+<span class="fc" id="L163">                      def -&gt; newFlagNodeItem(ObjectUtils.notNull(def), item),</span>
+<span class="nc" id="L164">                      (v1, v2) -&gt; v2,</span>
+                      LinkedHashMap::new))));
+
+      // build model items from Metaschema definitions
+<span class="fc" id="L168">      Stream&lt;IFieldNodeItem&gt; fieldStream = module.getExportedFieldDefinitions().stream()</span>
+<span class="fc" id="L169">          .map(def -&gt; newFieldNodeItem(ObjectUtils.notNull(def), item));</span>
+<span class="fc" id="L170">      Stream&lt;IAssemblyNodeItem&gt; assemblyStream = module.getExportedAssemblyDefinitions().stream()</span>
+<span class="fc" id="L171">          .map(def -&gt; newAssemblyNodeItem(ObjectUtils.notNull(def), item));</span>
+
+<span class="fc" id="L173">      Map&lt;String, List&lt;? extends IModelNodeItem&lt;?, ?&gt;&gt;&gt; modelItems</span>
+<span class="fc" id="L174">          = ObjectUtils.notNull(Stream.concat(fieldStream, assemblyStream)</span>
+<span class="fc" id="L175">              .collect(</span>
+<span class="fc" id="L176">                  Collectors.collectingAndThen(</span>
+<span class="fc" id="L177">                      Collectors.groupingBy(IModelNodeItem::getName),</span>
+                      Collections::unmodifiableMap)));
+<span class="fc" id="L179">      return new ModelContainer(flags, modelItems);</span>
+    };
+  }
+
+  @Override
+  public Supplier&lt;FlagContainer&gt; newMetaschemaModelSupplier(@NonNull IFieldNodeItem item) {
+<span class="fc" id="L185">    return () -&gt; {</span>
+<span class="nc" id="L186">      Map&lt;String, IFlagNodeItem&gt; flags = generateMetaschemaFlags(item);</span>
+<span class="nc" id="L187">      return new FlagContainer(flags);</span>
+    };
+  }
+
+  @Override
+  public Supplier&lt;ModelContainer&gt; newMetaschemaModelSupplier(
+      @NonNull IAssemblyNodeItem item) {
+<span class="fc" id="L194">    return () -&gt; {</span>
+<span class="nc" id="L195">      Map&lt;String, IFlagNodeItem&gt; flags = generateMetaschemaFlags(item);</span>
+<span class="nc" id="L196">      Map&lt;String, List&lt;? extends IModelNodeItem&lt;?, ?&gt;&gt;&gt; modelItems = generateMetaschemaModelItems(item);</span>
+<span class="nc" id="L197">      return new ModelContainer(flags, modelItems);</span>
+    };
+  }
+
+  @NonNull
+  protected Map&lt;String, IFlagNodeItem&gt; generateMetaschemaFlags(
+      @NonNull IModelNodeItem&lt;?, ?&gt; parent) {
+<span class="nc" id="L204">    Map&lt;String, IFlagNodeItem&gt; retval = new LinkedHashMap&lt;&gt;(); // NOPMD - intentional</span>
+
+<span class="nc bnc" id="L206" title="All 2 branches missed.">    for (IFlagInstance instance : parent.getDefinition().getFlagInstances()) {</span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">      assert instance != null;</span>
+<span class="nc" id="L208">      IFlagNodeItem item = newFlagNodeItem(instance, parent);</span>
+<span class="nc" id="L209">      retval.put(instance.getEffectiveName(), item);</span>
+<span class="nc" id="L210">    }</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">    return retval.isEmpty() ? CollectionUtil.emptyMap() : CollectionUtil.unmodifiableMap(retval);</span>
+  }
+
+  @NonNull
+  protected Map&lt;String, List&lt;? extends IModelNodeItem&lt;?, ?&gt;&gt;&gt; generateMetaschemaModelItems(
+      @NonNull IAssemblyNodeItem parent) {
+<span class="nc" id="L217">    Map&lt;String, List&lt;? extends IModelNodeItem&lt;?, ?&gt;&gt;&gt; retval = new LinkedHashMap&lt;&gt;(); // NOPMD - intentional</span>
+
+<span class="nc bnc" id="L219" title="All 2 branches missed.">    for (INamedModelInstance instance : CollectionUtil.toIterable(getNamedModelInstances(parent.getDefinition()))) {</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">      assert instance != null;</span>
+<span class="nc" id="L221">      IModelNodeItem&lt;?, ?&gt; item = newModelItem(instance, parent);</span>
+<span class="nc" id="L222">      retval.put(instance.getEffectiveName(), Collections.singletonList(item));</span>
+<span class="nc" id="L223">    }</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">    return retval.isEmpty() ? CollectionUtil.emptyMap() : CollectionUtil.unmodifiableMap(retval);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

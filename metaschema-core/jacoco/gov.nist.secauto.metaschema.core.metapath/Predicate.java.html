@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Predicate.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath</a> &gt; <span class="el_source">Predicate.java</span></div><h1>Predicate.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath;
+
+import gov.nist.secauto.metaschema.core.metapath.function.library.FnBoolean;
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.math.BigInteger;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+class Predicate implements IExpression {
+  @NonNull
+  private final IExpression base;
+  @NonNull
+  private final List&lt;IExpression&gt; predicates;
+
+  /**
+   * Construct a new predicate expression.
+   *
+   * @param base
+   *          the base to evaluate against
+   * @param predicates
+   *          the expression(s) to apply as a filter
+   */
+<span class="fc" id="L56">  protected Predicate(@NonNull IExpression base, @NonNull List&lt;IExpression&gt; predicates) {</span>
+<span class="fc" id="L57">    this.base = base;</span>
+<span class="fc" id="L58">    this.predicates = predicates;</span>
+<span class="fc" id="L59">  }</span>
+
+  /**
+   * Get the base sub-expression.
+   *
+   * @return the sub-expression
+   */
+  @NonNull
+  public IExpression getBase() {
+<span class="fc" id="L68">    return base;</span>
+  }
+
+  /**
+   * Retrieve the list of predicates to filter with.
+   *
+   * @return the list of predicates
+   */
+  @NonNull
+  public List&lt;IExpression&gt; getPredicates() {
+<span class="nc" id="L78">    return predicates;</span>
+  }
+
+  @Override
+  public List&lt;? extends IExpression&gt; getChildren() {
+<span class="nc" id="L83">    return ObjectUtils.notNull(</span>
+<span class="nc" id="L84">        Stream.concat(Stream.of(getBase()), getPredicates().stream()).collect(Collectors.toList()));</span>
+  }
+
+  @Override
+  public @NonNull ISequence&lt;? extends IItem&gt; accept(@NonNull DynamicContext dynamicContext,
+      @NonNull ISequence&lt;?&gt; focus) {
+
+<span class="fc" id="L91">    ISequence&lt;?&gt; retval = getBase().accept(dynamicContext, focus);</span>
+
+<span class="fc bfc" id="L93" title="All 2 branches covered.">    if (dynamicContext.getConfiguration().isFeatureEnabled(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES)) {</span>
+      // evaluate the predicates for this step
+<span class="fc" id="L95">      AtomicInteger index = new AtomicInteger();</span>
+
+<span class="fc" id="L97">      Stream&lt;? extends IItem&gt; stream = ObjectUtils.notNull(</span>
+<span class="fc" id="L98">          retval.asStream().map(item -&gt; {</span>
+            // build a positional index of the items
+<span class="fc" id="L100">            return Map.entry(BigInteger.valueOf(index.incrementAndGet()), item);</span>
+<span class="fc" id="L101">          }).filter(entry -&gt; {</span>
+            @SuppressWarnings(&quot;null&quot;)
+<span class="fc" id="L103">            @NonNull IItem item = entry.getValue();</span>
+
+            // return false if any predicate evaluates to false
+<span class="fc" id="L106">            return !predicates.stream()</span>
+<span class="fc" id="L107">                .map(predicateExpr -&gt; {</span>
+                  boolean bool;
+<span class="nc bnc" id="L109" title="All 2 branches missed.">                  if (predicateExpr instanceof IntegerLiteral) {</span>
+                    // reduce the result to the matching item
+<span class="nc" id="L111">                    BigInteger predicateIndex = ((IntegerLiteral) predicateExpr).getValue();</span>
+
+                    // get the position of the item
+<span class="nc" id="L114">                    final BigInteger position = entry.getKey();</span>
+
+                    // it is a match if the position matches
+<span class="nc" id="L117">                    bool = position.equals(predicateIndex);</span>
+<span class="nc" id="L118">                  } else {</span>
+<span class="nc" id="L119">                    ISequence&lt;?&gt; innerFocus = ISequence.of(item);</span>
+<span class="nc" id="L120">                    ISequence&lt;?&gt; predicateResult = predicateExpr.accept(dynamicContext, innerFocus);</span>
+<span class="nc" id="L121">                    bool = FnBoolean.fnBoolean(predicateResult).toBoolean();</span>
+                  }
+<span class="nc" id="L123">                  return bool;</span>
+<span class="pc bpc" id="L124" title="3 of 4 branches missed.">                }).anyMatch(x -&gt; !x);</span>
+<span class="fc" id="L125">          }).map(entry -&gt; entry.getValue()));</span>
+
+<span class="fc" id="L127">      retval = ISequence.of(stream);</span>
+    }
+<span class="fc" id="L129">    return retval;</span>
+  }
+
+  @Override
+  public &lt;RESULT, CONTEXT&gt; RESULT accept(@NonNull IExpressionVisitor&lt;RESULT, CONTEXT&gt; visitor, CONTEXT context) {
+<span class="nc" id="L134">    return visitor.visitPredicate(this, context);</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

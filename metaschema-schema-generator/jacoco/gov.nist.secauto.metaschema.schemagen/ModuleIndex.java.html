@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ModuleIndex.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema XML and JSON Schema Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.schemagen</a> &gt; <span class="el_source">ModuleIndex.java</span></div><h1>ModuleIndex.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.schemagen;
+
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.INamedInstance;
+import gov.nist.secauto.metaschema.core.model.ModelWalker;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L49">public class ModuleIndex {</span>
+<span class="fc" id="L50">  private final Map&lt;IDefinition, DefinitionEntry&gt; index = new ConcurrentHashMap&lt;&gt;();</span>
+
+  @NonNull
+  public static ModuleIndex indexDefinitions(@NonNull IModule module) {
+<span class="fc" id="L54">    Collection&lt;? extends IAssemblyDefinition&gt; definitions = module.getExportedRootAssemblyDefinitions();</span>
+<span class="fc" id="L55">    ModuleIndex index = new ModuleIndex();</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">    if (!definitions.isEmpty()) {</span>
+<span class="fc" id="L57">      IndexVisitor visitor = new IndexVisitor(index);</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">      for (IAssemblyDefinition definition : definitions) {</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        assert definition != null;</span>
+
+        // add the root definition to the index
+<span class="fc" id="L62">        index.getEntry(definition).incrementReferenceCount();</span>
+
+        // walk the definition
+<span class="fc" id="L65">        visitor.walk(ObjectUtils.requireNonNull(definition));</span>
+<span class="fc" id="L66">      }</span>
+    }
+<span class="fc" id="L68">    return index;</span>
+  }
+
+  public boolean hasEntry(@NonNull IDefinition definition) {
+<span class="fc" id="L72">    return index.containsKey(definition);</span>
+  }
+
+  @NonNull
+  public DefinitionEntry getEntry(@NonNull IDefinition definition) {
+<span class="fc" id="L77">    return ObjectUtils.notNull(index.computeIfAbsent(</span>
+        definition,
+<span class="fc" id="L79">        k -&gt; new ModuleIndex.DefinitionEntry(ObjectUtils.notNull(k))));</span>
+  }
+
+  @NonNull
+  public Collection&lt;DefinitionEntry&gt; getDefinitions() {
+<span class="fc" id="L84">    return ObjectUtils.notNull(index.values());</span>
+  }
+
+  private static class IndexVisitor
+      extends ModelWalker&lt;ModuleIndex&gt; {
+    private final ModuleIndex index;
+
+<span class="fc" id="L91">    public IndexVisitor(@NonNull ModuleIndex index) {</span>
+<span class="fc" id="L92">      this.index = index;</span>
+<span class="fc" id="L93">    }</span>
+
+    @Override
+    protected ModuleIndex getDefaultData() {
+<span class="fc" id="L97">      return index;</span>
+    }
+
+    @Override
+    protected boolean visit(IFlagInstance instance, ModuleIndex data) {
+<span class="fc" id="L102">      return handleInstance(instance);</span>
+    }
+
+    @Override
+    protected boolean visit(IFieldInstance instance, ModuleIndex data) {
+<span class="fc" id="L107">      return handleInstance(instance);</span>
+    }
+
+    @Override
+    protected boolean visit(IAssemblyInstance instance, ModuleIndex data) {
+<span class="fc" id="L112">      return handleInstance(instance);</span>
+    }
+
+    @Override
+    protected void visit(IFlagDefinition def, ModuleIndex data) {
+      // do nothing
+<span class="fc" id="L118">    }</span>
+    //
+    // @Override
+    // protected boolean visit(IAssemblyDefinition def, ModuleIndex data) {
+    // // only walk if the definition hasn't already been visited
+    // return !index.hasEntry(def);
+    // }
+
+    /**
+     * Updates the index entry for the definition associated with the reference.
+     *
+     * @param instance
+     *          the instance to process
+     * @return {@code true} if this is the first time handling the definition this
+     *         instance references, or {@code false} otherwise
+     */
+    private boolean handleInstance(INamedInstance instance) {
+<span class="fc" id="L135">      IDefinition definition = instance.getDefinition();</span>
+      // check if this will be a new entry, which needs to be called before getEntry,
+      // which will create it
+<span class="fc" id="L138">      final boolean exists = getDefaultData().hasEntry(definition);</span>
+<span class="fc" id="L139">      DefinitionEntry entry = getDefaultData().getEntry(definition);</span>
+<span class="fc" id="L140">      entry.incrementReferenceCount();</span>
+
+<span class="fc bfc" id="L142" title="All 2 branches covered.">      if (isChoice(instance)) {</span>
+<span class="fc" id="L143">        entry.markUsedAsChoice();</span>
+      }
+
+<span class="fc bfc" id="L146" title="All 2 branches covered.">      if (isChoiceSibling(instance)) {</span>
+<span class="fc" id="L147">        entry.markAsChoiceSibling();</span>
+      }
+<span class="fc bfc" id="L149" title="All 2 branches covered.">      return !exists;</span>
+    }
+
+    private static boolean isChoice(@NonNull INamedInstance instance) {
+<span class="fc" id="L153">      return instance.getParentContainer() instanceof IChoiceInstance;</span>
+    }
+
+    private static boolean isChoiceSibling(@NonNull INamedInstance instance) {
+<span class="fc" id="L157">      IDefinition containingDefinition = instance.getContainingDefinition();</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">      return containingDefinition instanceof IAssemblyDefinition</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">          &amp;&amp; !((IAssemblyDefinition) containingDefinition).getChoiceInstances().isEmpty();</span>
+    }
+  }
+
+  public static class DefinitionEntry {
+    @NonNull
+    private final IDefinition definition;
+<span class="fc" id="L166">    private final AtomicInteger referenceCount = new AtomicInteger(); // 0</span>
+<span class="fc" id="L167">    private final AtomicBoolean usedAsChoice = new AtomicBoolean(); // false</span>
+<span class="fc" id="L168">    private final AtomicBoolean choiceSibling = new AtomicBoolean(); // false</span>
+
+<span class="fc" id="L170">    public DefinitionEntry(@NonNull IDefinition definition) {</span>
+<span class="fc" id="L171">      this.definition = definition;</span>
+<span class="fc" id="L172">    }</span>
+
+    public IDefinition getDefinition() {
+<span class="fc" id="L175">      return definition;</span>
+    }
+
+    public boolean isReferenced() {
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">      return getReferenceCount() &gt; 0;</span>
+    }
+
+    public int getReferenceCount() {
+<span class="fc" id="L183">      return referenceCount.get();</span>
+    }
+
+    public int incrementReferenceCount() {
+<span class="fc" id="L187">      return referenceCount.incrementAndGet();</span>
+    }
+
+    public int incrementReferenceCount(int increment) {
+<span class="nc" id="L191">      return referenceCount.addAndGet(increment);</span>
+    }
+
+    public boolean isInline() {
+<span class="fc" id="L195">      return getDefinition().isInline();</span>
+    }
+
+    public void markUsedAsChoice() {
+<span class="fc" id="L199">      usedAsChoice.compareAndSet(false, true);</span>
+<span class="fc" id="L200">    }</span>
+
+    public boolean isUsedAsChoice() {
+<span class="nc" id="L203">      return usedAsChoice.get();</span>
+    }
+
+    public void markAsChoiceSibling() {
+<span class="fc" id="L207">      choiceSibling.compareAndSet(false, true);</span>
+<span class="fc" id="L208">    }</span>
+
+    public boolean isChoiceSibling() {
+<span class="fc" id="L211">      return choiceSibling.get();</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

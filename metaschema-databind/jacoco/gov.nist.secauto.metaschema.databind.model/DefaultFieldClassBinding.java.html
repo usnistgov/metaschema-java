@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultFieldClassBinding.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.model</a> &gt; <span class="el_source">DefaultFieldClassBinding.java</span></div><h1>DefaultFieldClassBinding.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.model;
+
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldValue;
+import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
+
+import java.util.Objects;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import nl.talsmasoftware.lazy4j.Lazy;
+
+public class DefaultFieldClassBinding
+    extends AbstractClassBinding
+    implements IFieldClassBinding {
+
+  @NonNull
+  private final MetaschemaField metaschemaField;
+  private IBoundFieldValueInstance fieldValue;
+  private IBoundFlagInstance jsonValueKeyFlagInstance;
+  private final Lazy&lt;ClassBindingFlagContainerSupport&gt; flagContainer;
+  private final Lazy&lt;IValueConstrained&gt; constraints;
+
+  /**
+   * Create a new {@link IClassBinding} for a Java bean annotated with the
+   * {@link BoundField} annotation.
+   *
+   * @param clazz
+   *          the Java bean class
+   * @param bindingContext
+   *          the Module binding environment context
+   * @return the Module field binding for the class
+   */
+  @NonNull
+  public static DefaultFieldClassBinding createInstance(
+      @NonNull Class&lt;?&gt; clazz,
+      @NonNull IBindingContext bindingContext) {
+<span class="fc" id="L77">    Objects.requireNonNull(clazz, &quot;clazz&quot;);</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">    if (!clazz.isAnnotationPresent(MetaschemaField.class)) {</span>
+<span class="nc" id="L79">      throw new IllegalArgumentException(</span>
+<span class="nc" id="L80">          String.format(&quot;Class '%s' is missing the '%s' annotation.&quot;,</span>
+<span class="nc" id="L81">              clazz.getName(),</span>
+<span class="nc" id="L82">              MetaschemaField.class.getName()));</span>
+    }
+<span class="fc" id="L84">    return new DefaultFieldClassBinding(clazz, bindingContext);</span>
+  }
+
+  /**
+   * Construct a new {@link IClassBinding} for a Java bean annotated with the
+   * {@link BoundField} annotation.
+   *
+   * @param clazz
+   *          the Java bean class
+   * @param bindingContext
+   *          the class binding context for which this class is participating
+   */
+  protected DefaultFieldClassBinding(
+      @NonNull Class&lt;?&gt; clazz,
+      @NonNull IBindingContext bindingContext) {
+<span class="fc" id="L99">    super(clazz, bindingContext);</span>
+<span class="fc" id="L100">    this.metaschemaField = ObjectUtils.notNull(clazz.getAnnotation(MetaschemaField.class));</span>
+<span class="fc" id="L101">    this.flagContainer = Lazy.lazy(() -&gt; new ClassBindingFlagContainerSupport(this, this::handleFlagInstance));</span>
+<span class="fc" id="L102">    this.constraints = Lazy.lazy(() -&gt; new ValueConstraintSupport(</span>
+<span class="fc" id="L103">        clazz.getAnnotation(ValueConstraints.class),</span>
+<span class="fc" id="L104">        InternalModelSource.instance()));</span>
+<span class="fc" id="L105">  }</span>
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public IFlagContainerSupport&lt;IBoundFlagInstance&gt; getFlagContainer() {
+<span class="fc" id="L110">    return flagContainer.get();</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public IValueConstrained getConstraintSupport() {
+<span class="fc" id="L116">    return constraints.get();</span>
+  }
+
+  @NonNull
+  private MetaschemaField getMetaschemaFieldAnnotation() {
+<span class="fc" id="L121">    return metaschemaField;</span>
+  }
+
+  @Override
+  public String getFormalName() {
+<span class="nc" id="L126">    return ModelUtil.resolveToString(getMetaschemaFieldAnnotation().formalName());</span>
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+<span class="nc" id="L131">    return ModelUtil.resolveToMarkupLine(getMetaschemaFieldAnnotation().description());</span>
+  }
+
+  @Override
+  public @Nullable MarkupMultiline getRemarks() {
+<span class="nc" id="L136">    return ModelUtil.resolveToMarkupMultiline(getMetaschemaFieldAnnotation().description());</span>
+  }
+
+  @Override
+  public String getName() {
+<span class="fc" id="L141">    return getMetaschemaFieldAnnotation().name();</span>
+  }
+
+  @Override
+  public Object getDefaultValue() {
+<span class="nc" id="L146">    return getFieldValueInstance().getDefaultValue();</span>
+  }
+
+  /**
+   * Collect all fields that are part of the model for this class.
+   *
+   * @param clazz
+   *          the class
+   * @return the field value instances if found or {@code null} otherwise
+   */
+  protected java.lang.reflect.Field getFieldValueField(Class&lt;?&gt; clazz) {
+<span class="fc" id="L157">    java.lang.reflect.Field[] fields = clazz.getDeclaredFields();</span>
+
+<span class="fc" id="L159">    java.lang.reflect.Field retval = null;</span>
+
+<span class="fc" id="L161">    Class&lt;?&gt; superClass = clazz.getSuperclass();</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">    if (superClass != null) {</span>
+      // get instances from superclass
+<span class="fc" id="L164">      retval = getFieldValueField(superClass);</span>
+    }
+
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">    if (retval == null) {</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">      for (java.lang.reflect.Field field : fields) {</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        if (!field.isAnnotationPresent(MetaschemaFieldValue.class)) {</span>
+          // skip fields that aren't a field or assembly instance
+<span class="fc" id="L171">          continue;</span>
+        }
+
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">        if (field.isAnnotationPresent(Ignore.class)) {</span>
+          // skip this field, since it is ignored
+<span class="nc" id="L176">          continue;</span>
+        }
+<span class="fc" id="L178">        retval = field;</span>
+      }
+    }
+<span class="fc" id="L181">    return retval;</span>
+  }
+
+  /**
+   * Initialize the flag instances for this class.
+   *
+   * @return the field value instance
+   */
+  protected IBoundFieldValueInstance initalizeFieldValueInstance() {
+<span class="fc" id="L190">    synchronized (this) {</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">      if (this.fieldValue == null) {</span>
+<span class="fc" id="L192">        java.lang.reflect.Field field = getFieldValueField(getBoundClass());</span>
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">        if (field == null) {</span>
+<span class="nc" id="L194">          throw new IllegalArgumentException(</span>
+<span class="nc" id="L195">              String.format(&quot;Class '%s' is missing the '%s' annotation on one of its fields.&quot;,</span>
+<span class="nc" id="L196">                  getBoundClass().getName(),</span>
+<span class="nc" id="L197">                  MetaschemaFieldValue.class.getName()));</span>
+        }
+
+<span class="fc" id="L200">        this.fieldValue = new DefaultFieldValueProperty(this, field);</span>
+      }
+<span class="fc" id="L202">      return this.fieldValue;</span>
+    }
+  }
+
+  @Override
+  public boolean isInline() {
+<span class="nc" id="L208">    return false;</span>
+  }
+
+  @Override
+  public IBoundFieldInstance getInlineInstance() {
+<span class="nc" id="L213">    return null;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public IBoundFieldValueInstance getFieldValueInstance() {
+<span class="fc" id="L219">    return initalizeFieldValueInstance();</span>
+  }
+
+  @Override
+  public Object getFieldValue(@NonNull Object item) {
+<span class="nc" id="L224">    return ObjectUtils.requireNonNull(getFieldValueInstance().getValue(item));</span>
+  }
+
+  protected void handleFlagInstance(IBoundFlagInstance instance) {
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">    if (instance.isJsonValueKey()) {</span>
+<span class="nc" id="L229">      this.jsonValueKeyFlagInstance = instance;</span>
+    }
+<span class="fc" id="L231">  }</span>
+
+  @Override
+  @SuppressFBWarnings(value = &quot;EI_EXPOSE_REP&quot;, justification = &quot;access is restricted using interface&quot;)
+  public IBoundFlagInstance getJsonValueKeyFlagInstance() {
+    // lazy load flags
+<span class="fc" id="L237">    flagContainer.get();</span>
+<span class="fc" id="L238">    return jsonValueKeyFlagInstance;</span>
+  }
+
+  @Override
+  public String getJsonValueKeyName() {
+<span class="nc" id="L243">    return getFieldValueInstance().getJsonValueKeyName();</span>
+  }
+
+  @Override
+  public IDataTypeAdapter&lt;?&gt; getJavaTypeAdapter() {
+<span class="fc" id="L248">    return getFieldValueInstance().getJavaTypeAdapter();</span>
+  }
+
+  @Override
+  protected void copyBoundObjectInternal(@NonNull Object fromInstance, @NonNull Object toInstance)
+      throws BindingException {
+<span class="nc" id="L254">    super.copyBoundObjectInternal(fromInstance, toInstance);</span>
+
+<span class="nc" id="L256">    getFieldValueInstance().copyBoundObject(fromInstance, toInstance);</span>
+<span class="nc" id="L257">  }</span>
+
+  @Override
+  protected Class&lt;? extends IModule&gt; getModuleClass() {
+<span class="fc" id="L261">    return getMetaschemaFieldAnnotation().moduleClass();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

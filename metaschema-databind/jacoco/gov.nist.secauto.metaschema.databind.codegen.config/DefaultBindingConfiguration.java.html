@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultBindingConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.codegen.config</a> &gt; <span class="el_source">DefaultBindingConfiguration.java</span></div><h1>DefaultBindingConfiguration.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.codegen.config;
+
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
+import gov.nist.secauto.metaschema.databind.codegen.xmlbeans.JavaModelBindingType;
+import gov.nist.secauto.metaschema.databind.codegen.xmlbeans.JavaObjectDefinitionBindingType;
+import gov.nist.secauto.metaschema.databind.codegen.xmlbeans.MetaschemaBindingType;
+import gov.nist.secauto.metaschema.databind.codegen.xmlbeans.MetaschemaBindingsDocument;
+import gov.nist.secauto.metaschema.databind.codegen.xmlbeans.MetaschemaBindingsType;
+import gov.nist.secauto.metaschema.databind.codegen.xmlbeans.ModelBindingType;
+import gov.nist.secauto.metaschema.databind.codegen.xmlbeans.ObjectDefinitionBindingType;
+
+import org.apache.xmlbeans.XmlException;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+<span class="fc" id="L59">public class DefaultBindingConfiguration implements IBindingConfiguration {</span>
+<span class="fc" id="L60">  private final Map&lt;String, String&gt; namespaceToPackageNameMap = new ConcurrentHashMap&lt;&gt;();</span>
+  // metaschema location -&gt; ModelType -&gt; Definition Name -&gt; IBindingConfiguration
+<span class="fc" id="L62">  private final Map&lt;String, MetaschemaBindingConfiguration&gt; moduleUrlToMetaschemaBindingConfigurationMap</span>
+      = new ConcurrentHashMap&lt;&gt;();
+
+  @Override
+  public String getPackageNameForModule(IModule module) {
+<span class="fc" id="L67">    URI namespace = module.getXmlNamespace();</span>
+<span class="fc" id="L68">    return getPackageNameForNamespace(ObjectUtils.notNull(namespace.toASCIIString()));</span>
+  }
+
+  /**
+   * Retrieve the binding configuration for the provided {@code definition}.
+   *
+   * @param definition
+   *          the definition to get the config for
+   * @return the binding configuration or {@code null} if there is not
+   *         configuration
+   */
+  @Nullable
+  public IDefinitionBindingConfiguration getBindingConfigurationForDefinition(
+      @NonNull IFlagContainer definition) {
+<span class="fc" id="L82">    String moduleUri = ObjectUtils.notNull(definition.getContainingModule().getLocation().toString());</span>
+<span class="fc" id="L83">    String definitionName = definition.getName();</span>
+
+<span class="fc" id="L85">    MetaschemaBindingConfiguration metaschemaConfig = getMetaschemaBindingConfiguration(moduleUri);</span>
+
+<span class="fc" id="L87">    IDefinitionBindingConfiguration retval = null;</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">    if (metaschemaConfig != null) {</span>
+<span class="pc bpc" id="L89" title="2 of 3 branches missed.">      switch (definition.getModelType()) {</span>
+      case ASSEMBLY:
+<span class="fc" id="L91">        retval = metaschemaConfig.getAssemblyDefinitionBindingConfig(definitionName);</span>
+<span class="fc" id="L92">        break;</span>
+      case FIELD:
+<span class="nc" id="L94">        retval = metaschemaConfig.getFieldDefinitionBindingConfig(definitionName);</span>
+<span class="nc" id="L95">        break;</span>
+      default:
+<span class="nc" id="L97">        throw new UnsupportedOperationException(</span>
+<span class="nc" id="L98">            String.format(&quot;Unsupported definition type '%s'&quot;, definition.getModelType()));</span>
+      }
+    }
+<span class="fc" id="L101">    return retval;</span>
+  }
+
+  @Override
+  public String getQualifiedBaseClassName(IFlagContainer definition) {
+<span class="fc" id="L106">    IDefinitionBindingConfiguration config = getBindingConfigurationForDefinition(definition);</span>
+
+<span class="fc" id="L108">    String retval = null;</span>
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">    if (config != null) {</span>
+<span class="nc" id="L110">      retval = config.getQualifiedBaseClassName();</span>
+    }
+<span class="fc" id="L112">    return retval;</span>
+  }
+
+  @Override
+  public String getClassName(IFlagContainer definition) {
+<span class="fc" id="L117">    IDefinitionBindingConfiguration config = getBindingConfigurationForDefinition(definition);</span>
+
+<span class="fc" id="L119">    String retval = null;</span>
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">    if (config != null) {</span>
+<span class="nc" id="L121">      retval = config.getClassName();</span>
+    }
+
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">    if (retval == null) {</span>
+<span class="fc" id="L125">      retval = ClassUtils.toClassName(definition.getName());</span>
+    }
+<span class="fc" id="L127">    return retval;</span>
+  }
+
+  @Override
+  public @NonNull String getClassName(@NonNull IModule module) {
+    // TODO: make this configurable
+<span class="fc" id="L133">    return ClassUtils.toClassName(module.getShortName() + &quot;Module&quot;);</span>
+  }
+
+  /**
+   * Binds an XML namespace, which is normally associated with one or more Module,
+   * with a provided Java package name.
+   *
+   * @param namespace
+   *          an XML namespace URI
+   * @param packageName
+   *          the package name to associate with the namespace
+   * @throws IllegalStateException
+   *           if the binding configuration is changing a previously changed
+   *           namespace to package binding
+   */
+  public void addModelBindingConfig(String namespace, String packageName) {
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">    if (namespaceToPackageNameMap.containsKey(namespace)) {</span>
+<span class="nc" id="L150">      String oldPackageName = namespaceToPackageNameMap.get(namespace);</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">      if (!oldPackageName.equals(packageName)) {</span>
+<span class="nc" id="L152">        throw new IllegalStateException(</span>
+<span class="nc" id="L153">            String.format(&quot;Attempt to redefine existing package name '%s' to '%s' for namespace '%s'&quot;,</span>
+                oldPackageName,
+                packageName,
+                namespace));
+      } // else the same package name, so do nothing
+<span class="nc" id="L158">    } else {</span>
+<span class="fc" id="L159">      namespaceToPackageNameMap.put(namespace, packageName);</span>
+    }
+<span class="fc" id="L161">  }</span>
+
+  /**
+   * Based on the current binding configuration, generate a Java package name for
+   * the provided namespace. If the namespace is already mapped, such as through
+   * the use of {@link #addModelBindingConfig(String, String)}, then the provided
+   * package name will be used. If the namespace is not mapped, then the namespace
+   * URI will be translated into a Java package name.
+   *
+   * @param namespace
+   *          the namespace to generate a Java package name for
+   * @return a Java package name
+   */
+  @NonNull
+  protected String getPackageNameForNamespace(@NonNull String namespace) {
+<span class="fc" id="L176">    String packageName = namespaceToPackageNameMap.get(namespace);</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">    if (packageName == null) {</span>
+<span class="fc" id="L178">      packageName = ClassUtils.toPackageName(namespace);</span>
+    }
+<span class="fc" id="L180">    return packageName;</span>
+  }
+
+  /**
+   * Get the binding configuration for the provided Module.
+   *
+   * @param module
+   *          the Module module
+   * @return the configuration for the Module or {@code null} if there is no
+   *         configuration
+   */
+  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(@NonNull IModule module) {
+<span class="nc" id="L192">    String moduleUri = ObjectUtils.notNull(module.getLocation().toString());</span>
+<span class="nc" id="L193">    return getMetaschemaBindingConfiguration(moduleUri);</span>
+
+  }
+
+  /**
+   * Get the binding configuration for the Module modulke located at the provided
+   * {@code moduleUri}.
+   *
+   * @param moduleUri
+   *          the location of the Module module
+   * @return the configuration for the Module module or {@code null} if there is
+   *         no configuration
+   */
+  @Nullable
+  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(@NonNull String moduleUri) {
+<span class="fc" id="L208">    return moduleUrlToMetaschemaBindingConfigurationMap.get(moduleUri);</span>
+  }
+
+  /**
+   * Set the binding configuration for the Module module located at the provided
+   * {@code moduleUri}.
+   *
+   * @param moduleUri
+   *          the location of the Module module
+   * @param config
+   *          the Module binding configuration
+   * @return the old configuration for the Module module or {@code null} if there
+   *         was no previous configuration
+   */
+  public MetaschemaBindingConfiguration addMetaschemaBindingConfiguration(
+      @NonNull String moduleUri,
+      @NonNull MetaschemaBindingConfiguration config) {
+<span class="fc" id="L225">    Objects.requireNonNull(moduleUri, &quot;moduleUri&quot;);</span>
+<span class="fc" id="L226">    Objects.requireNonNull(config, &quot;config&quot;);</span>
+<span class="fc" id="L227">    return moduleUrlToMetaschemaBindingConfigurationMap.put(moduleUri, config);</span>
+  }
+
+  /**
+   * Load the binding configuration from the provided {@code file}.
+   *
+   * @param file
+   *          the configuration resource
+   * @throws IOException
+   *           if an error occurred while reading the {@code file}
+   */
+  public void load(Path file) throws IOException {
+<span class="fc" id="L239">    URL resource = file.toUri().toURL();</span>
+<span class="fc" id="L240">    load(resource);</span>
+<span class="fc" id="L241">  }</span>
+
+  /**
+   * Load the binding configuration from the provided {@code file}.
+   *
+   * @param file
+   *          the configuration resource
+   * @throws IOException
+   *           if an error occurred while reading the {@code file}
+   */
+  public void load(File file) throws IOException {
+<span class="fc" id="L252">    URL resource = file.toURI().toURL();</span>
+<span class="fc" id="L253">    load(resource);</span>
+<span class="fc" id="L254">  }</span>
+
+  /**
+   * Load the binding configuration from the provided {@code resource}.
+   *
+   * @param resource
+   *          the configuration resource
+   * @throws IOException
+   *           if an error occurred while reading the {@code resource}
+   */
+  public void load(URL resource) throws IOException {
+    MetaschemaBindingsDocument xml;
+    try {
+<span class="fc" id="L267">      xml = MetaschemaBindingsDocument.Factory.parse(resource);</span>
+<span class="nc" id="L268">    } catch (XmlException ex) {</span>
+<span class="nc" id="L269">      throw new IOException(ex);</span>
+<span class="fc" id="L270">    }</span>
+
+<span class="fc" id="L272">    MetaschemaBindingsType bindings = xml.getMetaschemaBindings();</span>
+
+<span class="fc bfc" id="L274" title="All 2 branches covered.">    for (ModelBindingType model : bindings.getModelBindingList()) {</span>
+<span class="fc" id="L275">      processModelBindingConfig(model);</span>
+<span class="fc" id="L276">    }</span>
+
+<span class="fc bfc" id="L278" title="All 2 branches covered.">    for (MetaschemaBindingType metaschema : bindings.getMetaschemaBindingList()) {</span>
+      try {
+<span class="fc" id="L280">        processMetaschemaBindingConfig(resource, metaschema);</span>
+<span class="nc" id="L281">      } catch (MalformedURLException | URISyntaxException ex) {</span>
+<span class="nc" id="L282">        throw new IOException(ex);</span>
+<span class="fc" id="L283">      }</span>
+<span class="fc" id="L284">    }</span>
+<span class="fc" id="L285">  }</span>
+
+  private void processModelBindingConfig(ModelBindingType model) {
+<span class="fc" id="L288">    String namespace = model.getNamespace();</span>
+
+<span class="pc bpc" id="L290" title="1 of 2 branches missed.">    if (model.isSetJava()) {</span>
+<span class="fc" id="L291">      JavaModelBindingType java = model.getJava();</span>
+<span class="pc bpc" id="L292" title="1 of 2 branches missed.">      if (java.isSetUsePackageName()) {</span>
+<span class="fc" id="L293">        addModelBindingConfig(namespace, java.getUsePackageName());</span>
+      }
+    }
+<span class="fc" id="L296">  }</span>
+
+  private void processMetaschemaBindingConfig(URL configResource, MetaschemaBindingType metaschema)
+      throws MalformedURLException, URISyntaxException {
+<span class="fc" id="L300">    String href = metaschema.getHref();</span>
+<span class="fc" id="L301">    URL moduleUrl = new URL(configResource, href);</span>
+<span class="fc" id="L302">    String moduleUri = ObjectUtils.notNull(moduleUrl.toURI().toString());</span>
+
+<span class="fc" id="L304">    MetaschemaBindingConfiguration metaschemaConfig = getMetaschemaBindingConfiguration(moduleUri);</span>
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">    if (metaschemaConfig == null) {</span>
+<span class="fc" id="L306">      metaschemaConfig = new MetaschemaBindingConfiguration();</span>
+<span class="fc" id="L307">      addMetaschemaBindingConfiguration(moduleUri, metaschemaConfig);</span>
+    }
+<span class="fc bfc" id="L309" title="All 2 branches covered.">    for (ObjectDefinitionBindingType assemblyBinding : metaschema.getDefineAssemblyBindingList()) {</span>
+<span class="fc" id="L310">      String name = ObjectUtils.requireNonNull(assemblyBinding.getName());</span>
+<span class="fc" id="L311">      IDefinitionBindingConfiguration config = metaschemaConfig.getAssemblyDefinitionBindingConfig(name);</span>
+<span class="fc" id="L312">      config = processDefinitionBindingConfiguration(config, assemblyBinding);</span>
+<span class="fc" id="L313">      metaschemaConfig.addAssemblyDefinitionBindingConfig(name, config);</span>
+<span class="fc" id="L314">    }</span>
+
+<span class="fc bfc" id="L316" title="All 2 branches covered.">    for (ObjectDefinitionBindingType fieldBinding : metaschema.getDefineFieldBindingList()) {</span>
+<span class="fc" id="L317">      String name = ObjectUtils.requireNonNull(fieldBinding.getName());</span>
+<span class="fc" id="L318">      IDefinitionBindingConfiguration config = metaschemaConfig.getFieldDefinitionBindingConfig(name);</span>
+<span class="fc" id="L319">      config = processDefinitionBindingConfiguration(config, fieldBinding);</span>
+<span class="fc" id="L320">      metaschemaConfig.addFieldDefinitionBindingConfig(name, config);</span>
+<span class="fc" id="L321">    }</span>
+<span class="fc" id="L322">  }</span>
+
+  @NonNull
+  private static IMutableDefinitionBindingConfiguration processDefinitionBindingConfiguration(
+      @Nullable IDefinitionBindingConfiguration oldConfig,
+      @NonNull ObjectDefinitionBindingType objectDefinitionBinding) {
+    IMutableDefinitionBindingConfiguration config;
+<span class="pc bpc" id="L329" title="1 of 2 branches missed.">    if (oldConfig != null) {</span>
+<span class="nc" id="L330">      config = new DefaultDefinitionBindingConfiguration(oldConfig);</span>
+    } else {
+<span class="fc" id="L332">      config = new DefaultDefinitionBindingConfiguration();</span>
+    }
+
+<span class="pc bpc" id="L335" title="1 of 2 branches missed.">    if (objectDefinitionBinding.isSetJava()) {</span>
+<span class="fc" id="L336">      JavaObjectDefinitionBindingType java = objectDefinitionBinding.getJava();</span>
+<span class="pc bpc" id="L337" title="1 of 2 branches missed.">      if (java.isSetUseClassName()) {</span>
+<span class="fc" id="L338">        config.setClassName(ObjectUtils.notNull(java.getUseClassName()));</span>
+      }
+
+<span class="pc bpc" id="L341" title="1 of 2 branches missed.">      if (java.isSetExtendBaseClass()) {</span>
+<span class="nc" id="L342">        config.setQualifiedBaseClassName(ObjectUtils.notNull(java.getExtendBaseClass()));</span>
+      }
+
+<span class="fc bfc" id="L345" title="All 2 branches covered.">      for (String interfaceName : java.getImplementInterfaceList()) {</span>
+<span class="fc" id="L346">        config.addInterfaceToImplement(ObjectUtils.notNull(interfaceName));</span>
+<span class="fc" id="L347">      }</span>
+    }
+<span class="fc" id="L349">    return config;</span>
+  }
+
+  public static final class MetaschemaBindingConfiguration {
+<span class="fc" id="L353">    private final Map&lt;String, IDefinitionBindingConfiguration&gt; assemblyBindingConfigs = new ConcurrentHashMap&lt;&gt;();</span>
+<span class="fc" id="L354">    private final Map&lt;String, IDefinitionBindingConfiguration&gt; fieldBindingConfigs = new ConcurrentHashMap&lt;&gt;();</span>
+
+<span class="fc" id="L356">    private MetaschemaBindingConfiguration() {</span>
+<span class="fc" id="L357">    }</span>
+
+    /**
+     * Get the binding configuration for the {@link IAssemblyDefinition} with the
+     * provided {@code name}.
+     *
+     * @param name
+     *          the definition name
+     * @return the definition's binding configuration or {@code null} if no
+     *         configuration is provided
+     */
+    @Nullable
+    public IDefinitionBindingConfiguration getAssemblyDefinitionBindingConfig(@NonNull String name) {
+<span class="fc" id="L370">      return assemblyBindingConfigs.get(name);</span>
+    }
+
+    /**
+     * Get the binding configuration for the {@link IFieldDefinition} with the
+     * provided {@code name}.
+     *
+     * @param name
+     *          the definition name
+     * @return the definition's binding configuration or {@code null} if no
+     *         configuration is provided
+     */
+    @Nullable
+    public IDefinitionBindingConfiguration getFieldDefinitionBindingConfig(@NonNull String name) {
+<span class="fc" id="L384">      return fieldBindingConfigs.get(name);</span>
+    }
+
+    /**
+     * Set the binding configuration for the {@link IAssemblyDefinition} with the
+     * provided {@code name}.
+     *
+     * @param name
+     *          the definition name
+     * @param config
+     *          the new binding configuration for the definition
+     * @return the definition's old binding configuration or {@code null} if no
+     *         configuration was previously provided
+     */
+    @Nullable
+    public IDefinitionBindingConfiguration addAssemblyDefinitionBindingConfig(@NonNull String name,
+        @NonNull IDefinitionBindingConfiguration config) {
+<span class="fc" id="L401">      return assemblyBindingConfigs.put(name, config);</span>
+    }
+
+    /**
+     * Set the binding configuration for the {@link IFieldDefinition} with the
+     * provided {@code name}.
+     *
+     * @param name
+     *          the definition name
+     * @param config
+     *          the new binding configuration for the definition
+     * @return the definition's old binding configuration or {@code null} if no
+     *         configuration was previously provided
+     */
+    @Nullable
+    public IDefinitionBindingConfiguration addFieldDefinitionBindingConfig(@NonNull String name,
+        @NonNull IDefinitionBindingConfiguration config) {
+<span class="fc" id="L418">      return fieldBindingConfigs.put(name, config);</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

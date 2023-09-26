@@ -64,14 +64,14 @@
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>    @Test
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>    <strong class="jxr_keyword">void</strong> testMetaschemaValidate() {
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>      String[] args = { <span class="jxr_string">"validate"</span>,
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>          <span class="jxr_string">"../metaschema-java-codegen/src/test/resources/metaschema/fields_with_flags/metaschema.xml"</span> };
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>          <span class="jxr_string">"../databind/src/test/resources/metaschema/fields_with_flags/metaschema.xml"</span> };
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      evaluateResult(CLI.runCli(args), ExitCode.OK);
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>    }
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>    @Test
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>    <strong class="jxr_keyword">void</strong> testMetaschemaGenerateSchema() {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      String[] args = { <span class="jxr_string">"generate-schema"</span>, <span class="jxr_string">"--overwrite"</span>, <span class="jxr_string">"--as"</span>, <span class="jxr_string">"JSON"</span>,
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>          <span class="jxr_string">"../metaschema-java-codegen/src/test/resources/metaschema/fields_with_flags/metaschema.xml"</span>,
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>          <span class="jxr_string">"../databind/src/test/resources/metaschema/fields_with_flags/metaschema.xml"</span>,
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          <span class="jxr_string">"target/schema-test.json"</span> };
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>      evaluateResult(CLI.runCli(args), ExitCode.OK);
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>    }

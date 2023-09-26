@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AggregateValidationResult.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.validation</a> &gt; <span class="el_source">AggregateValidationResult.java</span></div><h1>AggregateValidationResult.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.validation;
+
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.Level;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="nc" id="L40">public final class AggregateValidationResult implements IValidationResult {</span>
+  @NonNull
+  private final List&lt;IValidationFinding&gt; findings;
+  @NonNull
+  private final Level highestSeverity;
+
+<span class="nc" id="L46">  private AggregateValidationResult(@NonNull List&lt;IValidationFinding&gt; findings, @NonNull Level highestSeverity) {</span>
+<span class="nc" id="L47">    this.findings = CollectionUtil.unmodifiableList(findings);</span>
+<span class="nc" id="L48">    this.highestSeverity = highestSeverity;</span>
+<span class="nc" id="L49">  }</span>
+
+  public static IValidationResult aggregate(@NonNull IValidationResult result) {
+<span class="nc" id="L52">    return result;</span>
+  }
+
+  public static IValidationResult aggregate(@NonNull IValidationResult... results) {
+<span class="nc" id="L56">    Stream&lt;? extends IValidationFinding&gt; stream = Stream.empty();</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">    for (IValidationResult result : results) {</span>
+<span class="nc" id="L58">      stream = Stream.concat(stream, result.getFindings().stream());</span>
+    }
+<span class="nc bnc" id="L60" title="All 2 branches missed.">    assert stream != null;</span>
+<span class="nc" id="L61">    return aggregate(stream);</span>
+  }
+
+  public static IValidationResult aggregate(@NonNull Stream&lt;? extends IValidationFinding&gt; findingStream) {
+<span class="nc" id="L65">    AtomicReference&lt;Level&gt; highestSeverity = new AtomicReference&lt;&gt;(Level.INFORMATIONAL);</span>
+
+<span class="nc" id="L67">    List&lt;IValidationFinding&gt; findings = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L68">    findingStream.sequential().forEachOrdered(finding -&gt; {</span>
+<span class="nc" id="L69">      findings.add(finding);</span>
+<span class="nc" id="L70">      Level severity = finding.getSeverity();</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">      if (highestSeverity.get().ordinal() &lt; severity.ordinal()) {</span>
+<span class="nc" id="L72">        highestSeverity.set(severity);</span>
+      }
+<span class="nc" id="L74">    });</span>
+
+<span class="nc" id="L76">    return new AggregateValidationResult(findings, ObjectUtils.notNull(highestSeverity.get()));</span>
+  }
+
+  @Override
+  public Level getHighestSeverity() {
+<span class="nc" id="L81">    return highestSeverity;</span>
+  }
+
+  @Override
+  public List&lt;? extends IValidationFinding&gt; getFindings() {
+<span class="nc" id="L86">    return findings;</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

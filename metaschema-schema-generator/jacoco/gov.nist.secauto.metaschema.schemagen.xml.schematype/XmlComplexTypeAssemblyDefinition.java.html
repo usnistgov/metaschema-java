@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XmlComplexTypeAssemblyDefinition.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema XML and JSON Schema Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.schemagen.xml.schematype</a> &gt; <span class="el_source">XmlComplexTypeAssemblyDefinition.java</span></div><h1>XmlComplexTypeAssemblyDefinition.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.schemagen.xml.schematype;
+
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupDataTypeProvider;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
+import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.xml.impl.DocumentationGenerator;
+import gov.nist.secauto.metaschema.schemagen.xml.impl.XmlGenerationState;
+
+import java.util.Collection;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L51">public class XmlComplexTypeAssemblyDefinition</span>
+    extends AbstractXmlComplexType&lt;IAssemblyDefinition&gt; {
+
+  public XmlComplexTypeAssemblyDefinition(
+      @NonNull QName qname,
+      @NonNull IAssemblyDefinition definition) {
+<span class="fc" id="L57">    super(qname, definition);</span>
+<span class="fc" id="L58">  }</span>
+
+  @Override
+  protected void generateTypeBody(XmlGenerationState state) throws XMLStreamException {
+<span class="fc" id="L62">    IAssemblyDefinition definition = getDefinition();</span>
+
+<span class="fc" id="L64">    Collection&lt;? extends IModelInstance&gt; modelInstances = definition.getModelInstances();</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">    if (!modelInstances.isEmpty()) {</span>
+<span class="fc" id="L66">      state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, &quot;sequence&quot;, XmlSchemaGenerator.NS_XML_SCHEMA);</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">      for (IModelInstance modelInstance : modelInstances) {</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">        assert modelInstance != null;</span>
+<span class="fc" id="L69">        generateModelInstance(modelInstance, state);</span>
+<span class="fc" id="L70">      }</span>
+<span class="fc" id="L71">      state.writeEndElement();</span>
+    }
+
+<span class="fc" id="L74">    Collection&lt;? extends IFlagInstance&gt; flagInstances = definition.getFlagInstances();</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">    if (!flagInstances.isEmpty()) {</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">      for (IFlagInstance flagInstance : flagInstances) {</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        assert flagInstance != null;</span>
+<span class="fc" id="L78">        generateFlagInstance(flagInstance, state);</span>
+<span class="fc" id="L79">      }</span>
+    }
+<span class="fc" id="L81">  }</span>
+
+  protected void generateModelInstance( // NOPMD acceptable complexity
+      @NonNull IModelInstance modelInstance,
+      @NonNull XmlGenerationState state)
+      throws XMLStreamException {
+
+<span class="fc" id="L88">    boolean grouped = false;</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">    if (XmlGroupAsBehavior.GROUPED.equals(modelInstance.getXmlGroupAsBehavior())) {</span>
+      // handle grouping
+<span class="fc" id="L91">      state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, &quot;element&quot;, XmlSchemaGenerator.NS_XML_SCHEMA);</span>
+
+<span class="fc" id="L93">      QName groupAsQName = ObjectUtils.requireNonNull(modelInstance.getXmlGroupAsQName());</span>
+
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">      if (state.getDefaultNS().equals(groupAsQName.getNamespaceURI())) {</span>
+<span class="fc" id="L96">        state.writeAttribute(&quot;name&quot;, ObjectUtils.requireNonNull(groupAsQName.getLocalPart()));</span>
+      } else {
+<span class="nc" id="L98">        throw new SchemaGenerationException(</span>
+<span class="nc" id="L99">            String.format(&quot;Attempt to create element '%s' on definition '%s' with different namespace&quot;, groupAsQName,</span>
+<span class="nc" id="L100">                getDefinition().toCoordinates()));</span>
+      }
+
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">      if (modelInstance.getMinOccurs() == 0) {</span>
+        // this is an optional instance group
+<span class="fc" id="L105">        state.writeAttribute(&quot;minOccurs&quot;, &quot;0&quot;);</span>
+      }
+
+      // now generate the child elements of the group
+<span class="fc" id="L109">      state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, &quot;complexType&quot;, XmlSchemaGenerator.NS_XML_SCHEMA);</span>
+<span class="fc" id="L110">      state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, &quot;sequence&quot;, XmlSchemaGenerator.NS_XML_SCHEMA);</span>
+
+      // mark that we need to close these elements
+<span class="fc" id="L113">      grouped = true;</span>
+    }
+
+<span class="pc bpc" id="L116" title="1 of 4 branches missed.">    switch (modelInstance.getModelType()) {</span>
+    case ASSEMBLY:
+<span class="fc" id="L118">      generateNamedModelInstance((INamedModelInstance) modelInstance, grouped, state);</span>
+<span class="fc" id="L119">      break;</span>
+    case FIELD: {
+<span class="fc" id="L121">      IFieldInstance fieldInstance = (IFieldInstance) modelInstance;</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">      if (!fieldInstance.isInXmlWrapped()</span>
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">          &amp;&amp; fieldInstance.getDefinition().getJavaTypeAdapter().isUnrappedValueAllowedInXml()) {</span>
+<span class="fc" id="L124">        generateUnwrappedFieldInstance(fieldInstance, grouped, state);</span>
+      } else {
+<span class="fc" id="L126">        generateNamedModelInstance(fieldInstance, grouped, state);</span>
+      }
+<span class="fc" id="L128">      break;</span>
+    }
+    case CHOICE:
+<span class="fc" id="L131">      generateChoiceModelInstance((IChoiceInstance) modelInstance, state);</span>
+<span class="fc" id="L132">      break;</span>
+    default:
+<span class="nc" id="L134">      throw new UnsupportedOperationException();</span>
+    }
+
+<span class="fc bfc" id="L137" title="All 2 branches covered.">    if (grouped) {</span>
+<span class="fc" id="L138">      state.writeEndElement(); // xs:sequence</span>
+<span class="fc" id="L139">      state.writeEndElement(); // xs:complexType</span>
+<span class="fc" id="L140">      state.writeEndElement(); // xs:element</span>
+    }
+<span class="fc" id="L142">  }</span>
+
+  protected void generateNamedModelInstance(
+      @NonNull INamedModelInstance modelInstance,
+      boolean grouped,
+      @NonNull XmlGenerationState state) throws XMLStreamException {
+<span class="fc" id="L148">    state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, &quot;element&quot;, XmlSchemaGenerator.NS_XML_SCHEMA);</span>
+
+<span class="fc" id="L150">    state.writeAttribute(&quot;name&quot;, modelInstance.getEffectiveName());</span>
+
+    // state.generateElementNameOrRef(modelInstance);
+
+<span class="fc bfc" id="L154" title="All 4 branches covered.">    if (!grouped &amp;&amp; modelInstance.getMinOccurs() != 1) {</span>
+<span class="fc" id="L155">      state.writeAttribute(&quot;minOccurs&quot;, ObjectUtils.notNull(Integer.toString(modelInstance.getMinOccurs())));</span>
+    }
+
+<span class="fc bfc" id="L158" title="All 2 branches covered.">    if (modelInstance.getMaxOccurs() != 1) {</span>
+<span class="fc" id="L159">      state.writeAttribute(&quot;maxOccurs&quot;,</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">          modelInstance.getMaxOccurs() == -1 ? &quot;unbounded&quot;</span>
+<span class="fc" id="L161">              : ObjectUtils.notNull(Integer.toString(modelInstance.getMaxOccurs())));</span>
+    }
+
+<span class="fc" id="L164">    IFlagContainer definition = modelInstance.getDefinition();</span>
+<span class="fc" id="L165">    IXmlType type = state.getTypeForDefinition(definition);</span>
+
+<span class="fc bfc" id="L167" title="All 2 branches covered.">    if (state.isInline(definition)) {</span>
+<span class="fc" id="L168">      DocumentationGenerator.generateDocumentation(modelInstance, state);</span>
+<span class="fc" id="L169">      type.generateType(state, true);</span>
+    } else {
+<span class="fc" id="L171">      state.writeAttribute(&quot;type&quot;, type.getTypeReference());</span>
+<span class="fc" id="L172">      DocumentationGenerator.generateDocumentation(modelInstance, state);</span>
+    }
+<span class="fc" id="L174">    state.writeEndElement(); // xs:element</span>
+<span class="fc" id="L175">  }</span>
+
+  protected static void generateUnwrappedFieldInstance(
+      @NonNull IFieldInstance fieldInstance,
+      boolean grouped,
+      @NonNull XmlGenerationState state) throws XMLStreamException {
+
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">    if (!MarkupDataTypeProvider.MARKUP_MULTILINE.equals(fieldInstance.getDefinition().getJavaTypeAdapter())) {</span>
+<span class="nc" id="L183">      throw new IllegalStateException();</span>
+    }
+
+<span class="fc" id="L186">    state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, &quot;group&quot;, XmlSchemaGenerator.NS_XML_SCHEMA);</span>
+
+<span class="fc" id="L188">    state.writeAttribute(&quot;ref&quot;, &quot;blockElementGroup&quot;);</span>
+
+    // minOccurs=1 is the schema default
+<span class="pc bpc" id="L191" title="1 of 4 branches missed.">    if (!grouped &amp;&amp; fieldInstance.getMinOccurs() != 1) {</span>
+<span class="fc" id="L192">      state.writeAttribute(&quot;minOccurs&quot;, ObjectUtils.notNull(Integer.toString(fieldInstance.getMinOccurs())));</span>
+    }
+
+    // if (fieldInstance.getMaxOccurs() != 1) {
+    // state.writeAttribute(&quot;maxOccurs&quot;,
+    // fieldInstance.getMaxOccurs() == -1 ? &quot;unbounded&quot;
+    // : ObjectUtils.notNull(Integer.toString(fieldInstance.getMaxOccurs())));
+    // }
+
+    // unwrapped fields always have a max-occurance of 1. Since the markup multiline
+    // is unbounded, this
+    // value is unbounded.
+<span class="fc" id="L204">    state.writeAttribute(&quot;maxOccurs&quot;, &quot;unbounded&quot;);</span>
+
+<span class="fc" id="L206">    DocumentationGenerator.generateDocumentation(fieldInstance, state);</span>
+
+<span class="fc" id="L208">    state.writeEndElement(); // xs:group</span>
+<span class="fc" id="L209">  }</span>
+
+  protected void generateChoiceModelInstance(@NonNull IChoiceInstance choice,
+      @NonNull XmlGenerationState state) throws XMLStreamException {
+<span class="fc" id="L213">    state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, &quot;choice&quot;, XmlSchemaGenerator.NS_XML_SCHEMA);</span>
+
+<span class="fc bfc" id="L215" title="All 2 branches covered.">    for (IModelInstance instance : choice.getModelInstances()) {</span>
+<span class="pc bpc" id="L216" title="1 of 2 branches missed.">      assert instance != null;</span>
+
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">      if (instance instanceof IChoiceInstance) {</span>
+<span class="nc" id="L219">        generateChoiceModelInstance((IChoiceInstance) instance, state);</span>
+      } else {
+<span class="fc" id="L221">        generateModelInstance(instance, state);</span>
+      }
+<span class="fc" id="L223">    }</span>
+
+<span class="fc" id="L225">    state.writeEndElement(); // xs:choice</span>
+<span class="fc" id="L226">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

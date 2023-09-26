@@ -34,8 +34,8 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.schemagen.xml.schematype;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.IDataTypeAdapter;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.schemagen.xml.XmlGenerationState;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.schemagen.xml.impl.XmlGenerationState;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  
@@ -44,7 +44,7 @@
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>    IDataTypeAdapter&lt;?&gt; getDataTypeAdapter();
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>    @Override
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>    <strong class="jxr_keyword">default</strong> <strong class="jxr_keyword">boolean</strong> isReferenced(<a name="XmlGenerationState" href="../../../../../../../gov/nist/secauto/metaschema/schemagen/xml/XmlGenerationState.html#XmlGenerationState">XmlGenerationState</a> state) {
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>    <strong class="jxr_keyword">default</strong> <strong class="jxr_keyword">boolean</strong> isReferenced(<a name="XmlGenerationState" href="../../../../../../../gov/nist/secauto/metaschema/schemagen/xml/impl/XmlGenerationState.html#XmlGenerationState">XmlGenerationState</a> state) {
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>      <em class="jxr_comment">// simple types are always referenced, since they are generated on demand</em>
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>      <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>    }

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MetaschemaXmlWriter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.io.xml</a> &gt; <span class="el_source">MetaschemaXmlWriter.java</span></div><h1>MetaschemaXmlWriter.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.io.xml;
+
+import gov.nist.secauto.metaschema.databind.io.json.DefaultJsonProblemHandler;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
+
+import org.codehaus.stax2.XMLStreamWriter2;
+
+import java.io.IOException;
+
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L51">public class MetaschemaXmlWriter implements IXmlWritingContext {</span>
+  @NonNull
+  private final XMLStreamWriter2 writer;
+
+  /**
+   * Construct a new Module-aware JSON writer.
+   *
+   * @param writer
+   *          the XML stream writer to write with
+   * @see DefaultJsonProblemHandler
+   */
+  public MetaschemaXmlWriter(
+<span class="fc" id="L63">      @NonNull XMLStreamWriter2 writer) {</span>
+<span class="fc" id="L64">    this.writer = writer;</span>
+<span class="fc" id="L65">  }</span>
+
+  @Override
+  public XMLStreamWriter2 getWriter() {
+<span class="fc" id="L69">    return writer;</span>
+  }
+
+  /**
+   * Writes data in a bound object to XML. This assembly must be a root assembly
+   * for which a call to {@link IAssemblyClassBinding#isRoot()} will return
+   * {@code true}.
+   *
+   * @param targetDefinition
+   *          the definition describing the root element data to write
+   * @param targetObject
+   *          the bound object
+   * @throws XMLStreamException
+   *           if an error occurred while parsing into XML
+   * @throws IOException
+   *           if an error occurred while writing the output
+   */
+  public void write(
+      @NonNull IAssemblyClassBinding targetDefinition,
+      @NonNull Object targetObject) throws XMLStreamException, IOException {
+<span class="fc" id="L89">    writer.writeStartDocument(&quot;UTF-8&quot;, &quot;1.0&quot;);</span>
+
+<span class="fc" id="L91">    QName rootQName = targetDefinition.getRootXmlQName();</span>
+
+<span class="fc" id="L93">    NamespaceContext nsContext = writer.getNamespaceContext();</span>
+<span class="fc" id="L94">    String prefix = nsContext.getPrefix(rootQName.getNamespaceURI());</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">    if (prefix == null) {</span>
+<span class="fc" id="L96">      prefix = &quot;&quot;;</span>
+    }
+
+<span class="fc" id="L99">    writer.writeStartElement(prefix, rootQName.getLocalPart(), rootQName.getNamespaceURI());</span>
+
+<span class="fc" id="L101">    writeDefinitionValue(targetDefinition, targetObject, rootQName);</span>
+
+<span class="fc" id="L103">    writer.writeEndElement();</span>
+<span class="fc" id="L104">  }</span>
+
+  @Override
+  public void writeDefinitionValue(
+      @NonNull IClassBinding targetDefinition,
+      @NonNull Object targetObject,
+      @NonNull QName parentName) throws IOException {
+    // write flags
+<span class="fc bfc" id="L112" title="All 2 branches covered.">    for (IBoundFlagInstance flag : targetDefinition.getFlagInstances()) {</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">      assert flag != null;</span>
+<span class="fc" id="L114">      writeFlagInstance(flag, targetObject);</span>
+<span class="fc" id="L115">    }</span>
+
+<span class="fc bfc" id="L117" title="All 2 branches covered.">    if (targetDefinition instanceof IAssemblyClassBinding) {</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">      for (IBoundNamedModelInstance modelProperty : ((IAssemblyClassBinding) targetDefinition).getModelInstances()) {</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">        assert modelProperty != null;</span>
+<span class="fc" id="L120">        writeModelInstanceValues(modelProperty, targetObject, parentName);</span>
+<span class="fc" id="L121">      }</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">    } else if (targetDefinition instanceof IFieldClassBinding) {</span>
+<span class="fc" id="L123">      IBoundFieldValueInstance fieldValueInstance = ((IFieldClassBinding) targetDefinition).getFieldValueInstance();</span>
+
+<span class="fc" id="L125">      Object value = fieldValueInstance.getValue(targetObject);</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">      if (value != null) {</span>
+        try {
+<span class="fc" id="L128">          fieldValueInstance.getJavaTypeAdapter().writeXmlValue(value, parentName, writer);</span>
+<span class="nc" id="L129">        } catch (XMLStreamException ex) {</span>
+<span class="nc" id="L130">          throw new IOException(ex);</span>
+<span class="fc" id="L131">        }</span>
+      }
+<span class="fc" id="L133">    } else {</span>
+<span class="nc" id="L134">      throw new UnsupportedOperationException(</span>
+<span class="nc" id="L135">          String.format(&quot;Unsupported class binding type: %s&quot;, targetDefinition.getClass().getName()));</span>
+    }
+<span class="fc" id="L137">  }</span>
+
+  /**
+   * Write the data described by the provided {@code targetInstance} as an XML
+   * attribute.
+   *
+   * @param targetInstance
+   *          the model instance that describes the syntax of the data to write
+   * @param parentObject
+   *          the Java object that data written by this method is stored in
+   * @throws IOException
+   *           if an error occurred while writing the XML
+   */
+  protected void writeFlagInstance(
+      @NonNull IBoundFlagInstance targetInstance,
+      @NonNull Object parentObject)
+      throws IOException {
+<span class="fc" id="L154">    Object objectValue = targetInstance.getValue(parentObject);</span>
+    String value
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">        = objectValue == null ? null : targetInstance.getDefinition().getJavaTypeAdapter().asString(objectValue);</span>
+
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">    if (value != null) {</span>
+<span class="fc" id="L159">      QName name = targetInstance.getXmlQName();</span>
+      try {
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">        if (name.getNamespaceURI().isEmpty()) {</span>
+<span class="fc" id="L162">          writer.writeAttribute(name.getLocalPart(), value);</span>
+        } else {
+<span class="nc" id="L164">          writer.writeAttribute(name.getNamespaceURI(), name.getLocalPart(), value);</span>
+        }
+<span class="nc" id="L166">      } catch (XMLStreamException ex) {</span>
+<span class="nc" id="L167">        throw new IOException(ex);</span>
+<span class="fc" id="L168">      }</span>
+    }
+<span class="fc" id="L170">  }</span>
+
+  /**
+   * Write the data described by the provided {@code targetInstance} as an XML
+   * element.
+   *
+   * @param targetInstance
+   *          the model instance that describes the syntax of the data to write
+   * @param parentObject
+   *          the Java object that data written by this method is stored in
+   * @param parentName
+   *          the qualified name of the XML data's parent element
+   * @return {@code true} id the value was written or {@code false} otherwise
+   * @throws IOException
+   *           if an error occurred while writing the XML
+   */
+  protected boolean writeModelInstanceValues(
+      @NonNull IBoundNamedModelInstance targetInstance,
+      @NonNull Object parentObject,
+      @NonNull QName parentName)
+      throws IOException {
+<span class="fc" id="L191">    Object value = targetInstance.getValue(parentObject);</span>
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">    if (value == null) {</span>
+<span class="nc" id="L193">      return false; // NOPMD - intentional</span>
+    }
+
+<span class="fc" id="L196">    IModelPropertyInfo propertyInfo = targetInstance.getPropertyInfo();</span>
+<span class="pc bpc" id="L197" title="1 of 4 branches missed.">    if (targetInstance.getMinOccurs() &gt; 0 || propertyInfo.getItemCount(value) &gt; 0) {</span>
+      // only write a property if the wrapper is required or if it has contents
+<span class="fc" id="L199">      QName currentStart = parentName;</span>
+
+      try {
+<span class="fc" id="L202">        QName groupQName = targetInstance.getXmlGroupAsQName();</span>
+<span class="fc bfc" id="L203" title="All 2 branches covered.">        if (groupQName != null) {</span>
+          // write the grouping element
+<span class="fc" id="L205">          writer.writeStartElement(groupQName.getNamespaceURI(), groupQName.getLocalPart());</span>
+<span class="fc" id="L206">          currentStart = groupQName;</span>
+        }
+
+        // There are one or more named values based on cardinality
+<span class="fc" id="L210">        propertyInfo.writeValues(value, currentStart, this);</span>
+
+<span class="fc bfc" id="L212" title="All 2 branches covered.">        if (groupQName != null) {</span>
+<span class="fc" id="L213">          writer.writeEndElement();</span>
+        }
+<span class="nc" id="L215">      } catch (XMLStreamException ex) {</span>
+<span class="nc" id="L216">        throw new IOException(ex);</span>
+<span class="fc" id="L217">      }</span>
+    }
+<span class="fc" id="L219">    return true;</span>
+  }
+
+  @Override
+  public void writeInstanceValue(
+      @NonNull IBoundNamedModelInstance targetInstance,
+      @NonNull Object targetObject,
+      @NonNull QName parentName) throws IOException {
+    // figure out how to parse the item
+<span class="fc" id="L228">    IDataTypeHandler handler = targetInstance.getDataTypeHandler();</span>
+
+    // figure out if we need to write the wrapper or not
+<span class="fc bfc" id="L231" title="All 2 branches covered.">    boolean writeWrapper = targetInstance instanceof IBoundAssemblyInstance</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">        || ((IBoundFieldInstance) targetInstance).isInXmlWrapped()</span>
+<span class="pc bnc" id="L233" title="All 2 branches missed.">        || !handler.isUnwrappedValueAllowedInXml();</span>
+
+    try {
+      QName currentParentName;
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">      if (writeWrapper) {</span>
+<span class="fc" id="L238">        currentParentName = targetInstance.getXmlQName();</span>
+<span class="fc" id="L239">        writer.writeStartElement(currentParentName.getNamespaceURI(), currentParentName.getLocalPart());</span>
+      } else {
+<span class="nc" id="L241">        currentParentName = parentName;</span>
+      }
+
+      // write the value
+<span class="fc" id="L245">      handler.writeItem(targetObject, currentParentName, this);</span>
+
+<span class="pc bpc" id="L247" title="1 of 2 branches missed.">      if (writeWrapper) {</span>
+<span class="fc" id="L248">        writer.writeEndElement();</span>
+      }
+<span class="nc" id="L250">    } catch (XMLStreamException ex) {</span>
+<span class="nc" id="L251">      throw new IOException(ex);</span>
+<span class="fc" id="L252">    }</span>
+<span class="fc" id="L253">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

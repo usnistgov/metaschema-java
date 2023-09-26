@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MetapathExpression.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath</a> &gt; <span class="el_source">MetapathExpression.java</span></div><h1>MetapathExpression.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath;
+
+import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Lexer;
+import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser;
+import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
+import gov.nist.secauto.metaschema.core.metapath.function.library.FnBoolean;
+import gov.nist.secauto.metaschema.core.metapath.function.library.FnData;
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDecimalItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+public class MetapathExpression {
+
+<span class="fc" id="L58">  public enum ResultType {</span>
+<span class="fc" id="L59">    NUMBER,</span>
+<span class="fc" id="L60">    STRING,</span>
+<span class="fc" id="L61">    BOOLEAN,</span>
+<span class="fc" id="L62">    SEQUENCE,</span>
+<span class="fc" id="L63">    NODE;</span>
+  }
+
+<span class="fc" id="L66">  private static final Logger LOGGER = LogManager.getLogger(MetapathExpression.class);</span>
+
+  @NonNull
+<span class="fc" id="L69">  public static final MetapathExpression CONTEXT_NODE = new MetapathExpression(&quot;.&quot;, ContextItem.instance());</span>
+
+  private final String path;
+  @NonNull
+  private final IExpression node;
+
+  /**
+   * Compiles a Metapath expression string.
+   *
+   * @param path
+   *          the metapath expression
+   * @return the compiled expression object
+   * @throws MetapathException
+   *           if an error occurred while compiling the Metapath expression
+   */
+  @NonNull
+  public static MetapathExpression compile(@NonNull String path) {
+    @NonNull MetapathExpression retval;
+<span class="fc bfc" id="L87" title="All 2 branches covered.">    if (&quot;.&quot;.equals(path)) {</span>
+<span class="fc" id="L88">      retval = CONTEXT_NODE;</span>
+    } else {
+      try {
+<span class="fc" id="L91">        metapath10Lexer lexer = new metapath10Lexer(CharStreams.fromString(path));</span>
+<span class="fc" id="L92">        CommonTokenStream tokens = new CommonTokenStream(lexer);</span>
+<span class="fc" id="L93">        metapath10Parser parser = new metapath10Parser(tokens);</span>
+<span class="fc" id="L94">        parser.removeErrorListeners();</span>
+<span class="fc" id="L95">        parser.addErrorListener(new FailingErrorListener());</span>
+
+<span class="fc" id="L97">        ParseTree tree = ObjectUtils.notNull(parser.expr());</span>
+
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
+<span class="nc" id="L100">          try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {</span>
+<span class="nc" id="L101">            try (PrintStream ps = new PrintStream(os, true, StandardCharsets.UTF_8)) {</span>
+<span class="nc" id="L102">              CSTPrinter printer = new CSTPrinter(ps);</span>
+<span class="nc" id="L103">              printer.print(tree, Arrays.asList(metapath10Parser.ruleNames));</span>
+<span class="nc" id="L104">              ps.flush();</span>
+            }
+<span class="nc" id="L106">            LOGGER.atDebug().log(String.format(&quot;Metapath CST:%n%s&quot;, os.toString(StandardCharsets.UTF_8)));</span>
+<span class="nc" id="L107">          } catch (IOException ex) {</span>
+<span class="nc" id="L108">            LOGGER.atError().withThrowable(ex).log(&quot;An unexpected error occured while closing the steam.&quot;);</span>
+<span class="nc" id="L109">          }</span>
+        }
+
+<span class="fc" id="L112">        IExpression expr = new BuildAstVisitor().visit(tree);</span>
+
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
+<span class="nc" id="L115">          LOGGER.atDebug().log(String.format(&quot;Metapath AST:%n%s&quot;, ASTPrinter.instance().visit(expr)));</span>
+        }
+<span class="fc" id="L117">        retval = new MetapathExpression(path, expr);</span>
+<span class="fc" id="L118">      } catch (MetapathException | ParseCancellationException ex) {</span>
+<span class="fc" id="L119">        String msg = String.format(&quot;Unable to compile Metapath '%s'&quot;, path);</span>
+<span class="fc" id="L120">        LOGGER.atError().withThrowable(ex).log(msg);</span>
+<span class="fc" id="L121">        throw new MetapathException(msg, ex);</span>
+<span class="fc" id="L122">      }</span>
+    }
+<span class="fc" id="L124">    return retval;</span>
+  }
+
+  /**
+   * Construct a new Metapath expression.
+   *
+   * @param path
+   *          the Metapath as a string
+   * @param expr
+   *          the Metapath as a compiled abstract syntax tree (AST)
+   */
+<span class="fc" id="L135">  protected MetapathExpression(@NonNull String path, @NonNull IExpression expr) {</span>
+<span class="fc" id="L136">    this.path = path;</span>
+<span class="fc" id="L137">    this.node = expr;</span>
+<span class="fc" id="L138">  }</span>
+
+  /**
+   * Get the original Metapath expression as a string.
+   *
+   * @return the expression
+   */
+  public String getPath() {
+<span class="nc" id="L146">    return path;</span>
+  }
+
+  /**
+   * Get the compiled abstract syntax tree (AST) representation of the Metapath.
+   *
+   * @return the Metapath AST
+   */
+  @NonNull
+  protected IExpression getASTNode() {
+<span class="fc" id="L156">    return node;</span>
+  }
+
+  @Override
+  public String toString() {
+<span class="nc" id="L161">    return ASTPrinter.instance().visit(getASTNode());</span>
+  }
+
+  /**
+   * Evaluate this Metapath expression without a specific focus. The required
+   * result type will be determined by the {@code resultType} argument.
+   *
+   * @param &lt;T&gt;
+   *          the expected result type
+   * @param resultType
+   *          the type of result to produce
+   * @return the converted result
+   * @throws TypeMetapathException
+   *           if the provided sequence is incompatible with the requested result
+   *           type
+   * @throws MetapathException
+   *           if an error occurred during evaluation
+   * @see #toResultType(ISequence, ResultType)
+   */
+  @Nullable
+  public &lt;T&gt; T evaluateAs(@NonNull ResultType resultType) {
+<span class="nc" id="L182">    return evaluateAs(null, resultType);</span>
+  }
+
+  /**
+   * Evaluate this Metapath expression using the provided {@code focus} as the
+   * initial evaluation context. The required result type will be determined by
+   * the {@code resultType} argument.
+   *
+   * @param &lt;T&gt;
+   *          the expected result type
+   * @param focus
+   *          the outer focus of the expression
+   * @param resultType
+   *          the type of result to produce
+   * @return the converted result
+   * @throws TypeMetapathException
+   *           if the provided sequence is incompatible with the requested result
+   *           type
+   * @throws MetapathException
+   *           if an error occurred during evaluation
+   * @see #toResultType(ISequence, ResultType)
+   */
+  @Nullable
+  public &lt;T&gt; T evaluateAs(
+      @Nullable IItem focus,
+      @NonNull ResultType resultType) {
+<span class="fc" id="L208">    ISequence&lt;?&gt; result = evaluate(focus);</span>
+<span class="fc" id="L209">    return toResultType(result, resultType);</span>
+  }
+
+  /**
+   * Evaluate this Metapath expression using the provided {@code focus} as the
+   * initial evaluation context. The specific result type will be determined by
+   * the {@code resultType} argument.
+   * &lt;p&gt;
+   * This variant allow for reuse of a provided {@code dynamicContext}.
+   *
+   * @param &lt;T&gt;
+   *          the expected result type
+   * @param focus
+   *          the outer focus of the expression
+   * @param resultType
+   *          the type of result to produce
+   * @param dynamicContext
+   *          the dynamic context to use for evaluation
+   * @return the converted result
+   * @throws TypeMetapathException
+   *           if the provided sequence is incompatible with the requested result
+   *           type
+   * @throws MetapathException
+   *           if an error occurred during evaluation
+   * @see #toResultType(ISequence, ResultType)
+   */
+  @Nullable
+  public &lt;T&gt; T evaluateAs(
+      @NonNull IItem focus,
+      @NonNull ResultType resultType,
+      @NonNull DynamicContext dynamicContext) {
+<span class="nc" id="L240">    ISequence&lt;?&gt; result = evaluate(focus, dynamicContext);</span>
+<span class="nc" id="L241">    return toResultType(result, resultType);</span>
+  }
+
+  /**
+   * Converts the provided {@code sequence} to the requested {@code resultType}.
+   * &lt;p&gt;
+   * The {@code resultType} determines the returned result, which is derived from
+   * the evaluation result sequence, as follows:
+   * &lt;ul&gt;
+   * &lt;li&gt;BOOLEAN - the effective boolean result is produced using
+   * {@link FnBoolean#fnBoolean(ISequence)}.&lt;/li&gt;
+   * &lt;li&gt;NODE - the first result item in the sequence is returned.&lt;/li&gt;
+   * &lt;li&gt;NUMBER - the sequence is cast to a number using
+   * {@link IDecimalItem#cast(IAnyAtomicItem)}.&lt;/li&gt;
+   * &lt;li&gt;SEQUENCE - the evaluation result sequence.&lt;/li&gt;
+   * &lt;li&gt;STRING - the string value of the first result item in the sequence.&lt;/li&gt;
+   * &lt;/ul&gt;
+   *
+   * @param &lt;T&gt;
+   *          the requested return value
+   * @param sequence
+   *          the sequence to convert
+   * @param resultType
+   *          the type of result to produce
+   * @return the converted result
+   * @throws TypeMetapathException
+   *           if the provided sequence is incompatible with the requested result
+   *           type
+   */
+  @SuppressWarnings(&quot;PMD.NullAssignment&quot;) // for readability
+  @Nullable
+  protected &lt;T&gt; T toResultType(@NonNull ISequence&lt;?&gt; sequence, @NonNull ResultType resultType) {
+    Object result;
+<span class="pc bpc" id="L274" title="5 of 6 branches missed.">    switch (resultType) {</span>
+    case BOOLEAN:
+<span class="nc" id="L276">      result = FnBoolean.fnBoolean(sequence).toBoolean();</span>
+<span class="nc" id="L277">      break;</span>
+    case NODE:
+<span class="fc" id="L279">      result = FunctionUtils.getFirstItem(sequence, true);</span>
+<span class="fc" id="L280">      break;</span>
+    case NUMBER:
+<span class="nc" id="L282">      INumericItem numeric = FunctionUtils.toNumeric(sequence, true);</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">      result = numeric == null ? null : numeric.asDecimal();</span>
+<span class="nc" id="L284">      break;</span>
+    case SEQUENCE:
+<span class="nc" id="L286">      result = sequence;</span>
+<span class="nc" id="L287">      break;</span>
+    case STRING:
+<span class="nc" id="L289">      IItem item = FunctionUtils.getFirstItem(sequence, true);</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">      result = item == null ? &quot;&quot; : FnData.fnDataItem(item).asString();</span>
+<span class="nc" id="L291">      break;</span>
+    default:
+<span class="nc" id="L293">      throw new InvalidTypeMetapathException(null, String.format(&quot;unsupported result type '%s'&quot;, resultType.name()));</span>
+    }
+
+<span class="fc" id="L296">    @SuppressWarnings(&quot;unchecked&quot;) T retval = (T) result;</span>
+<span class="fc" id="L297">    return retval;</span>
+  }
+
+  /**
+   * Evaluate this Metapath expression without a specific focus.
+   *
+   * @param &lt;T&gt;
+   *          the type of items contained in the resulting sequence
+   * @return a sequence of Metapath items representing the result of the
+   *         evaluation
+   * @throws MetapathException
+   *           if an error occurred during evaluation
+   */
+  @NonNull
+  public &lt;T extends IItem&gt; ISequence&lt;T&gt; evaluate() {
+<span class="fc" id="L312">    return evaluate(null);</span>
+  }
+
+  /**
+   * Evaluate this Metapath expression using the provided {@code focus} as the
+   * initial evaluation context.
+   *
+   * @param &lt;T&gt;
+   *          the type of items contained in the resulting sequence
+   * @param focus
+   *          the outer focus of the expression
+   * @return a sequence of Metapath items representing the result of the
+   *         evaluation
+   * @throws MetapathException
+   *           if an error occurred during evaluation
+   */
+  @SuppressWarnings(&quot;unchecked&quot;)
+  @NonNull
+  public &lt;T extends IItem&gt; ISequence&lt;T&gt; evaluate(
+      @Nullable IItem focus) {
+<span class="fc" id="L332">    return (ISequence&lt;T&gt;) evaluate(</span>
+        focus,
+<span class="fc" id="L334">        StaticContext.builder()</span>
+<span class="fc" id="L335">            .build().newDynamicContext());</span>
+  }
+
+  /**
+   * Evaluate this Metapath expression using the provided {@code focus} as the
+   * initial evaluation context.
+   * &lt;p&gt;
+   * This variant allow for reuse of a provided {@code dynamicContext}.
+   *
+   * @param &lt;T&gt;
+   *          the type of items contained in the resulting sequence
+   * @param focus
+   *          the outer focus of the expression
+   * @param dynamicContext
+   *          the dynamic context to use for evaluation
+   * @return a sequence of Metapath items representing the result of the
+   *         evaluation
+   * @throws MetapathException
+   *           if an error occurred during evaluation
+   */
+  @SuppressWarnings(&quot;unchecked&quot;)
+  @NonNull
+  public &lt;T extends IItem&gt; ISequence&lt;T&gt; evaluate(
+      @Nullable IItem focus,
+      @NonNull DynamicContext dynamicContext) {
+    try {
+<span class="fc" id="L361">      return (ISequence&lt;T&gt;) getASTNode().accept(dynamicContext, ISequence.of(focus));</span>
+<span class="nc" id="L362">    } catch (MetapathException ex) { // NOPMD - intentional</span>
+<span class="nc" id="L363">      throw new MetapathException(</span>
+<span class="nc" id="L364">          String.format(&quot;An error occurred while evaluating the expression '%s'.&quot;, getPath()), ex);</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

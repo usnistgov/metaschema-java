@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DataTypeService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.datatype</a> &gt; <span class="el_source">DataTypeService.java</span></div><h1>DataTypeService.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.datatype;
+
+import gov.nist.secauto.metaschema.core.util.CustomCollectors;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.List;
+import java.util.Map;
+import java.util.ServiceLoader;
+import java.util.ServiceLoader.Provider;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
+
+/**
+ * This class provides a singleton service to allow data types to be discovered
+ * within the system based on an SPI provided by {@link IDataTypeProvider}.
+ */
+public final class DataTypeService {
+<span class="fc" id="L51">  private static final Logger LOGGER = LogManager.getLogger(DataTypeService.class);</span>
+<span class="fc" id="L52">  private static final Lazy&lt;DataTypeService&gt; INSTANCE = Lazy.lazy(() -&gt; new DataTypeService());</span>
+
+  private Map&lt;String, IDataTypeAdapter&lt;?&gt;&gt; libraryByName;
+  private Map&lt;Class&lt;? extends IDataTypeAdapter&lt;?&gt;&gt;, IDataTypeAdapter&lt;?&gt;&gt; libraryByClass;
+
+  /**
+   * Get the singleton service instance, which will be lazy constructed on first
+   * access.
+   *
+   * @return the service instance
+   */
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static DataTypeService getInstance() {
+<span class="fc" id="L66">    return INSTANCE.get();</span>
+  }
+
+<span class="fc" id="L69">  private DataTypeService() {</span>
+<span class="fc" id="L70">    load();</span>
+<span class="fc" id="L71">  }</span>
+
+  /**
+   * Lookup a specific {@link IDataTypeAdapter} instance by its name.
+   *
+   * @param name
+   *          the data type name of data type adapter to get the instance for
+   * @return the instance or {@code null} if the instance is unknown to the type
+   *         system
+   */
+  @Nullable
+  public IDataTypeAdapter&lt;?&gt; getJavaTypeAdapterByName(@NonNull String name) {
+<span class="fc" id="L83">    return libraryByName.get(name);</span>
+  }
+
+  /**
+   * Lookup a specific {@link IDataTypeAdapter} instance by its class.
+   *
+   * @param clazz
+   *          the adapter class to get the instance for
+   * @param &lt;TYPE&gt;
+   *          the type of the requested adapter
+   * @return the instance or {@code null} if the instance is unknown to the type
+   *         system
+   */
+  @SuppressWarnings(&quot;unchecked&quot;)
+  @Nullable
+  public &lt;TYPE extends IDataTypeAdapter&lt;?&gt;&gt; TYPE getJavaTypeAdapterByClass(@NonNull Class&lt;TYPE&gt; clazz) {
+<span class="nc" id="L99">    return (TYPE) libraryByClass.get(clazz);</span>
+  }
+
+  /**
+   * Load available data types registered with the {@link IDataTypeProvider} SPI.
+   *
+   * @throws IllegalStateException
+   *           if there are two adapters with the same name
+   */
+  private void load() {
+<span class="fc" id="L109">    ServiceLoader&lt;IDataTypeProvider&gt; loader = ServiceLoader.load(IDataTypeProvider.class);</span>
+<span class="fc" id="L110">    List&lt;IDataTypeAdapter&lt;?&gt;&gt; dataTypes = loader.stream()</span>
+<span class="fc" id="L111">        .map(Provider&lt;IDataTypeProvider&gt;::get)</span>
+<span class="fc" id="L112">        .flatMap(provider -&gt; provider.getJavaTypeAdapters().stream())</span>
+<span class="fc" id="L113">        .collect(Collectors.toList());</span>
+
+<span class="fc" id="L115">    Map&lt;String, IDataTypeAdapter&lt;?&gt;&gt; libraryByName = dataTypes.stream()</span>
+<span class="fc" id="L116">        .flatMap(dataType -&gt; dataType.getNames().stream()</span>
+<span class="fc" id="L117">            .map(name -&gt; Map.entry(name, dataType)))</span>
+<span class="fc" id="L118">        .collect(CustomCollectors.toMap(</span>
+            Map.Entry::getKey,
+<span class="fc" id="L120">            (entry) -&gt; entry.getValue(),</span>
+            (key, v1, v2) -&gt; {
+<span class="nc bnc" id="L122" title="All 2 branches missed.">              if (LOGGER.isWarnEnabled()) {</span>
+<span class="nc" id="L123">                LOGGER.warn(&quot;Data types '{}' and '{}' have duplicate name '{}'. Using the first.&quot;,</span>
+<span class="nc" id="L124">                    v1.getClass().getName(),</span>
+<span class="nc" id="L125">                    v2.getClass().getName(),</span>
+                    key);
+              }
+<span class="nc" id="L128">              return v1;</span>
+            },
+            ConcurrentHashMap::new));
+
+    @SuppressWarnings({ &quot;unchecked&quot;, &quot;null&quot; }) Map&lt;Class&lt;? extends IDataTypeAdapter&lt;?&gt;&gt;,
+<span class="fc" id="L133">        IDataTypeAdapter&lt;?&gt;&gt; libraryByClass = dataTypes.stream()</span>
+<span class="fc" id="L134">            .collect(CustomCollectors.toMap(</span>
+<span class="fc" id="L135">                dataType -&gt; (Class&lt;? extends IDataTypeAdapter&lt;?&gt;&gt;) dataType.getClass(),</span>
+<span class="fc" id="L136">                Function.identity(),</span>
+                (key, v1, v2) -&gt; {
+<span class="nc bnc" id="L138" title="All 2 branches missed.">                  if (LOGGER.isWarnEnabled()) {</span>
+<span class="nc" id="L139">                    LOGGER.warn(&quot;Duplicate data type class '{}'. Using the first.&quot;,</span>
+<span class="nc" id="L140">                        key.getClass().getName());</span>
+                  }
+<span class="nc" id="L142">                  return v1;</span>
+                },
+                ConcurrentHashMap::new));
+
+<span class="fc" id="L146">    synchronized (this) {</span>
+<span class="fc" id="L147">      this.libraryByName = libraryByName;</span>
+<span class="fc" id="L148">      this.libraryByClass = libraryByClass;</span>
+<span class="fc" id="L149">    }</span>
+<span class="fc" id="L150">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -34,8 +34,8 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.schemagen;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IDefinition;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.configuration.IConfiguration;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.model.IDefinition;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  
@@ -45,7 +45,7 @@
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>      @Override
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isInline(
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>          @NonNull IDefinition definition,
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>          @NonNull <a name="MetaschemaIndex" href="../../../../../gov/nist/secauto/metaschema/schemagen/MetaschemaIndex.html#MetaschemaIndex">MetaschemaIndex</a> metaschemaIndex) {
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>          @NonNull <a name="ModuleIndex" href="../../../../../gov/nist/secauto/metaschema/schemagen/ModuleIndex.html#ModuleIndex">ModuleIndex</a> metaschemaIndex) {
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>        <strong class="jxr_keyword">return</strong> false;
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>      }
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>    };
@@ -55,7 +55,7 @@
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      @Override
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isInline(
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>          @NonNull IDefinition definition,
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>          @NonNull <a name="MetaschemaIndex" href="../../../../../gov/nist/secauto/metaschema/schemagen/MetaschemaIndex.html#MetaschemaIndex">MetaschemaIndex</a> metaschemaIndex) {
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>          @NonNull <a name="ModuleIndex" href="../../../../../gov/nist/secauto/metaschema/schemagen/ModuleIndex.html#ModuleIndex">ModuleIndex</a> metaschemaIndex) {
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>        <strong class="jxr_keyword">return</strong> definition.isInline();
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      }
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>    };
@@ -80,7 +80,7 @@
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>    <strong class="jxr_keyword">boolean</strong> isInline(
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>        @NonNull IDefinition definition,
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>        @NonNull <a name="MetaschemaIndex" href="../../../../../gov/nist/secauto/metaschema/schemagen/MetaschemaIndex.html#MetaschemaIndex">MetaschemaIndex</a> metaschemaIndex);
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>        @NonNull <a name="ModuleIndex" href="../../../../../gov/nist/secauto/metaschema/schemagen/ModuleIndex.html#ModuleIndex">ModuleIndex</a> metaschemaIndex);
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  }
 </pre>
 <hr/>

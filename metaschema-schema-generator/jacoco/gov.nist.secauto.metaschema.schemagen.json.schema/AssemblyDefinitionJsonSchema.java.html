@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AssemblyDefinitionJsonSchema.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema XML and JSON Schema Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.schemagen.json.schema</a> &gt; <span class="el_source">AssemblyDefinitionJsonSchema.java</span></div><h1>AssemblyDefinitionJsonSchema.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.schemagen.json.schema;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.ModelType;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.schemagen.FlagInstanceFilter;
+import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
+import gov.nist.secauto.metaschema.schemagen.json.property.FlagInstanceJsonProperty;
+import gov.nist.secauto.metaschema.schemagen.json.property.IJsonProperty.PropertyCollection;
+import gov.nist.secauto.metaschema.schemagen.json.property.INamedModelInstanceJsonProperty;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L54">public class AssemblyDefinitionJsonSchema</span>
+    extends AbstractDefinitionJsonSchema&lt;IAssemblyDefinition&gt; {
+
+  public AssemblyDefinitionJsonSchema(
+      @NonNull IAssemblyDefinition definition) {
+<span class="fc" id="L59">    super(definition);</span>
+<span class="fc" id="L60">  }</span>
+
+  @Override
+  public void resolveSubSchemas(JsonGenerationState state) {
+<span class="fc bfc" id="L64" title="All 2 branches covered.">    for (IFlagInstance instance : getDefinition().getFlagInstances()) {</span>
+<span class="fc" id="L65">      state.getSchema(instance.getDefinition());</span>
+<span class="fc" id="L66">    }</span>
+
+<span class="fc bfc" id="L68" title="All 2 branches covered.">    for (INamedModelInstance instance : getDefinition().getNamedModelInstances()) {</span>
+<span class="fc" id="L69">      state.getSchema(instance.getDefinition());</span>
+<span class="fc" id="L70">    }</span>
+<span class="fc" id="L71">  }</span>
+
+  @Override
+  protected void generateBody(JsonGenerationState state, ObjectNode obj) throws IOException {
+<span class="fc" id="L75">    IAssemblyDefinition definition = getDefinition();</span>
+
+<span class="fc" id="L77">    obj.put(&quot;type&quot;, &quot;object&quot;);</span>
+
+    // determine the flag instances to generate
+<span class="fc" id="L80">    IFlagInstance jsonKeyFlag = definition.getJsonKeyFlagInstance();</span>
+<span class="fc" id="L81">    Collection&lt;? extends IFlagInstance&gt; flags</span>
+<span class="fc" id="L82">        = FlagInstanceFilter.filterFlags(definition.getFlagInstances(), jsonKeyFlag);</span>
+
+<span class="fc" id="L84">    PropertyCollection properties = new PropertyCollection();</span>
+
+    // generate flag properties
+<span class="fc bfc" id="L87" title="All 2 branches covered.">    for (IFlagInstance flag : flags) {</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">      assert flag != null;</span>
+<span class="fc" id="L89">      new FlagInstanceJsonProperty(flag).generateProperty(properties, state); // NOPMD instantiation needed</span>
+<span class="fc" id="L90">    }</span>
+    // generate model properties
+<span class="fc" id="L92">    Collection&lt;? extends INamedModelInstance&gt; instances = definition.getNamedModelInstances();</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">    for (INamedModelInstance instance : instances) {</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">      assert instance != null;</span>
+<span class="fc" id="L95">      INamedModelInstanceJsonProperty.newProperty(instance)</span>
+<span class="fc" id="L96">          .generateProperty(properties, state);</span>
+<span class="fc" id="L97">    }</span>
+
+<span class="fc" id="L99">    Collection&lt;? extends IChoiceInstance&gt; choices = definition.getChoiceInstances();</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">    if (choices.isEmpty()) {</span>
+<span class="fc" id="L101">      properties.generate(obj);</span>
+
+<span class="fc" id="L103">      obj.put(&quot;additionalProperties&quot;, false);</span>
+    } else {
+<span class="fc" id="L105">      generateChoices(choices, properties, obj, state);</span>
+    }
+<span class="fc" id="L107">  }</span>
+
+  protected void generateChoices(
+      @NonNull Collection&lt;? extends IChoiceInstance&gt; choices,
+      @NonNull PropertyCollection properties,
+      @NonNull ObjectNode definitionNode,
+      @NonNull JsonGenerationState state) throws IOException {
+<span class="fc" id="L114">    List&lt;PropertyCollection&gt; propertyChoices = CollectionUtil.singletonList(properties);</span>
+<span class="fc" id="L115">    propertyChoices = explodeChoices(choices, propertyChoices, state);</span>
+
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">    if (propertyChoices.size() == 1) {</span>
+<span class="nc" id="L118">      propertyChoices.iterator().next().generate(definitionNode);</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">    } else if (propertyChoices.size() &gt; 1) {</span>
+<span class="fc" id="L120">      ArrayNode anyOfdNode = ObjectUtils.notNull(JsonNodeFactory.instance.arrayNode());</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">      for (PropertyCollection propertyChoice : propertyChoices) {</span>
+<span class="fc" id="L122">        ObjectNode choiceDefinitionNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());</span>
+<span class="fc" id="L123">        propertyChoice.generate(choiceDefinitionNode);</span>
+<span class="fc" id="L124">        choiceDefinitionNode.put(&quot;additionalProperties&quot;, false);</span>
+<span class="fc" id="L125">        anyOfdNode.add(choiceDefinitionNode);</span>
+<span class="fc" id="L126">      }</span>
+<span class="fc" id="L127">      definitionNode.set(&quot;anyOf&quot;, anyOfdNode);</span>
+    }
+<span class="fc" id="L129">  }</span>
+
+  protected List&lt;PropertyCollection&gt; explodeChoices(
+      @NonNull Collection&lt;? extends IChoiceInstance&gt; choices,
+      @NonNull List&lt;PropertyCollection&gt; propertyChoices,
+      @NonNull JsonGenerationState state) throws IOException {
+
+<span class="fc" id="L136">    List&lt;PropertyCollection&gt; retval = propertyChoices;</span>
+
+<span class="fc bfc" id="L138" title="All 2 branches covered.">    for (IChoiceInstance choice : choices) {</span>
+<span class="fc" id="L139">      List&lt;PropertyCollection&gt; newRetval = new LinkedList&lt;&gt;(); // NOPMD - intentional</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">      for (IModelInstance optionInstance : choice.getModelInstances()) {</span>
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">        if (ModelType.CHOICE.equals(optionInstance.getModelType())) {</span>
+          // recurse
+<span class="nc" id="L143">          newRetval.addAll(explodeChoices(</span>
+<span class="nc" id="L144">              CollectionUtil.singleton((IChoiceInstance) optionInstance),</span>
+              retval,
+              state));
+        } else {
+          // iterate over the old array of choices and append new choice
+<span class="fc bfc" id="L149" title="All 2 branches covered.">          for (PropertyCollection oldInstanceProperties : retval) {</span>
+            @SuppressWarnings(&quot;null&quot;)
+<span class="fc" id="L151">            @NonNull PropertyCollection newInstanceProperties = oldInstanceProperties.copy();</span>
+
+            // add the choice
+<span class="fc" id="L154">            INamedModelInstanceJsonProperty.newProperty((INamedModelInstance) optionInstance)</span>
+<span class="fc" id="L155">                .generateProperty(newInstanceProperties, state);</span>
+
+<span class="fc" id="L157">            newRetval.add(newInstanceProperties);</span>
+<span class="fc" id="L158">          }</span>
+        }
+<span class="fc" id="L160">      }</span>
+<span class="fc" id="L161">      retval = newRetval;</span>
+<span class="fc" id="L162">    }</span>
+<span class="fc" id="L163">    return retval;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

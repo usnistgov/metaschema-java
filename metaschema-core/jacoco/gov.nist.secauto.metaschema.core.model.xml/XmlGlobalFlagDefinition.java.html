@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XmlGlobalFlagDefinition.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.xml</a> &gt; <span class="el_source">XmlGlobalFlagDefinition.java</span></div><h1>XmlGlobalFlagDefinition.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.xml;
+
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFlagDefinitionType;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
+
+class XmlGlobalFlagDefinition implements IFlagDefinition {
+  @NonNull
+  private final GlobalFlagDefinitionType xmlFlag;
+  @NonNull
+  private final IModule module;
+  @Nullable
+  private final Object defaultValue;
+  private final Lazy&lt;IValueConstrained&gt; constraints;
+
+  /**
+   * Constructs a new Metaschema flag definition from an XML representation bound
+   * to Java objects.
+   *
+   * @param xmlFlag
+   *          the XML representation bound to Java objects
+   * @param module
+   *          the containing Metaschema module
+   */
+  public XmlGlobalFlagDefinition(
+      @NonNull GlobalFlagDefinitionType xmlFlag,
+<span class="fc" id="L73">      @NonNull IModule module) {</span>
+<span class="fc" id="L74">    this.xmlFlag = xmlFlag;</span>
+<span class="fc" id="L75">    this.module = module;</span>
+
+<span class="fc" id="L77">    Object defaultValue = null;</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">    if (xmlFlag.isSetDefault()) {</span>
+<span class="nc" id="L79">      defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlFlag.getDefault()));</span>
+    }
+<span class="fc" id="L81">    this.defaultValue = defaultValue;</span>
+<span class="fc" id="L82">    this.constraints = Lazy.lazy(() -&gt; {</span>
+      IValueConstrained retval;
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">      if (getXmlFlag().isSetConstraint()) {</span>
+<span class="fc" id="L85">        retval = new ValueConstraintSupport(</span>
+<span class="fc" id="L86">            ObjectUtils.notNull(getXmlFlag().getConstraint()),</span>
+<span class="fc" id="L87">            ExternalModelSource.instance(</span>
+<span class="fc" id="L88">                ObjectUtils.requireNonNull(getContainingModule().getLocation())));</span>
+      } else {
+<span class="nc" id="L90">        retval = new ValueConstraintSupport();</span>
+      }
+<span class="fc" id="L92">      return retval;</span>
+    });
+<span class="fc" id="L94">  }</span>
+
+  @Override
+  public IModule getContainingModule() {
+<span class="fc" id="L98">    return module;</span>
+  }
+
+  @Override
+  public Object getDefaultValue() {
+<span class="nc" id="L103">    return defaultValue;</span>
+  }
+
+  /**
+   * Used to generate the instances for the constraints in a lazy fashion when the
+   * constraints are first accessed.
+   *
+   * @return the constraints instance
+   */
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public IValueConstrained getConstraintSupport() {
+<span class="fc" id="L115">    return constraints.get();</span>
+  }
+
+  // ----------------------------------------
+  // - Start annotation driven code - CPD-OFF
+  // ----------------------------------------
+
+  /**
+   * Get the underlying XML representation.
+   *
+   * @return the underlying XML data
+   */
+  protected final GlobalFlagDefinitionType getXmlFlag() {
+<span class="fc" id="L128">    return xmlFlag;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public ModuleScopeEnum getModuleScope() {
+<span class="fc bfc" id="L134" title="All 2 branches covered.">    return getXmlFlag().isSetScope() ? getXmlFlag().getScope() : IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public String getName() {
+<span class="fc" id="L140">    return getXmlFlag().getName();</span>
+  }
+
+  @Override
+  public String getUseName() {
+<span class="fc" id="L145">    String retval = getXmlFlag().getUseName();</span>
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">    if (retval == null) {</span>
+<span class="fc" id="L147">      retval = getName();</span>
+    }
+<span class="fc" id="L149">    return retval;</span>
+  }
+
+  @Override
+  public String getFormalName() {
+<span class="nc bnc" id="L154" title="All 2 branches missed.">    return getXmlFlag().isSetFormalName() ? getXmlFlag().getFormalName() : null;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public MarkupLine getDescription() {
+<span class="nc bnc" id="L160" title="All 2 branches missed.">    return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription()) : null;</span>
+  }
+
+  @Override
+  public Map&lt;QName, Set&lt;String&gt;&gt; getProperties() {
+<span class="nc" id="L165">    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlFlag().getPropList()));</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public final IDataTypeAdapter&lt;?&gt; getJavaTypeAdapter() {
+<span class="nc bnc" id="L171" title="All 2 branches missed.">    return getXmlFlag().isSetAsType() ? getXmlFlag().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public MarkupMultiline getRemarks() {
+<span class="nc bnc" id="L177" title="All 2 branches missed.">    return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;</span>
+  }
+
+  // --------------------------------------
+  // - End annotation driven code - CPD-ON
+  // --------------------------------------
+
+  @Override
+  public boolean isInline() {
+    // global
+<span class="nc" id="L187">    return false;</span>
+  }
+
+  @Override
+  public IFlagInstance getInlineInstance() {
+    // global
+<span class="nc" id="L193">    return null;</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

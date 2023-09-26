@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ValidateModuleCommand.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Command Line Tool</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.cli.commands</a> &gt; <span class="el_source">ValidateModuleCommand.java</span></div><h1>ValidateModuleCommand.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.cli.commands;
+
+import gov.nist.secauto.metaschema.cli.processor.CLIProcessor;
+import gov.nist.secauto.metaschema.cli.processor.CLIProcessor.CallingContext;
+import gov.nist.secauto.metaschema.cli.processor.ExitCode;
+import gov.nist.secauto.metaschema.cli.processor.ExitStatus;
+import gov.nist.secauto.metaschema.cli.processor.InvalidArgumentException;
+import gov.nist.secauto.metaschema.cli.processor.command.AbstractTerminalCommand;
+import gov.nist.secauto.metaschema.cli.processor.command.DefaultExtraArgument;
+import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;
+import gov.nist.secauto.metaschema.cli.processor.command.ICommandExecutor;
+import gov.nist.secauto.metaschema.cli.util.LoggingValidationHandler;
+import gov.nist.secauto.metaschema.core.model.util.XmlUtil;
+import gov.nist.secauto.metaschema.core.model.validation.IContentValidator;
+import gov.nist.secauto.metaschema.core.model.validation.IValidationResult;
+import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.xml.sax.SAXException;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.xml.transform.Source;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L62">public class ValidateModuleCommand</span>
+    extends AbstractTerminalCommand {
+<span class="fc" id="L64">  private static final Logger LOGGER = LogManager.getLogger(ValidateModuleCommand.class);</span>
+  @NonNull
+  private static final String COMMAND = &quot;validate&quot;;
+  @NonNull
+  private static final List&lt;ExtraArgument&gt; EXTRA_ARGUMENTS;
+
+  static {
+<span class="fc" id="L71">    EXTRA_ARGUMENTS = ObjectUtils.notNull(List.of(</span>
+        new DefaultExtraArgument(&quot;Module file to validate&quot;, true)));
+<span class="fc" id="L73">  }</span>
+
+  @Override
+  public String getName() {
+<span class="fc" id="L77">    return COMMAND;</span>
+  }
+
+  @Override
+  public String getDescription() {
+<span class="fc" id="L82">    return &quot;Validate that the specified Module is well-formed and valid to the Module model&quot;;</span>
+  }
+
+  @Override
+  public List&lt;ExtraArgument&gt; getExtraArguments() {
+<span class="nc" id="L87">    return EXTRA_ARGUMENTS;</span>
+  }
+
+  @NonNull
+  protected List&lt;Source&gt; getXmlSchemaSources() throws IOException {
+<span class="fc" id="L92">    List&lt;Source&gt; retval = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L93">    retval.add(XmlUtil.getStreamSource(</span>
+<span class="fc" id="L94">        ObjectUtils.requireNonNull(</span>
+<span class="fc" id="L95">            ModuleLoader.class.getResource(&quot;/schema/xml/metaschema.xsd&quot;),</span>
+            &quot;Unable to load '/schema/xml/metaschema.xsd' on the classpath&quot;)));
+<span class="fc" id="L97">    return CollectionUtil.unmodifiableList(retval);</span>
+  }
+
+  @Override
+  public void validateOptions(CallingContext callingContext, CommandLine cmdLine) throws InvalidArgumentException {
+<span class="fc" id="L102">    List&lt;String&gt; extraArgs = cmdLine.getArgList();</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">    if (extraArgs.size() != 1) {</span>
+<span class="nc" id="L104">      throw new InvalidArgumentException(&quot;The source to validate must be provided.&quot;);</span>
+    }
+
+<span class="fc" id="L107">    File target = new File(extraArgs.get(0));</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">    if (!target.exists()) {</span>
+<span class="nc" id="L109">      throw new InvalidArgumentException(&quot;The provided source file '&quot; + target.getPath() + &quot;' does not exist.&quot;);</span>
+    }
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">    if (!target.canRead()) {</span>
+<span class="nc" id="L112">      throw new InvalidArgumentException(&quot;The provided source file '&quot; + target.getPath() + &quot;' is not readable.&quot;);</span>
+    }
+<span class="fc" id="L114">  }</span>
+
+  @Override
+  public ICommandExecutor newExecutor(CallingContext callingContext, CommandLine cmdLine) {
+<span class="fc" id="L118">    return ICommandExecutor.using(callingContext, cmdLine, this::executeCommand);</span>
+  }
+
+  @SuppressWarnings({ &quot;PMD.OnlyOneReturn&quot;, &quot;unused&quot; }) // readability
+  @NonNull
+  protected ExitStatus executeCommand(CallingContext callingContext, CommandLine cmdLine) {
+<span class="fc" id="L124">    List&lt;String&gt; extraArgs = cmdLine.getArgList();</span>
+<span class="fc" id="L125">    Path target = Paths.get(extraArgs.get(0));</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">    assert target != null;</span>
+
+    IValidationResult schemaValidationResult;
+    try {
+<span class="fc" id="L130">      List&lt;Source&gt; schemaSources = getXmlSchemaSources();</span>
+<span class="fc" id="L131">      schemaValidationResult = IContentValidator.validateWithXmlSchema(</span>
+<span class="fc" id="L132">          ObjectUtils.notNull(target.toUri()),</span>
+          schemaSources);
+<span class="nc" id="L134">    } catch (IOException | SAXException ex) {</span>
+<span class="nc" id="L135">      return ExitCode.PROCESSING_ERROR.exit().withThrowable(ex);</span>
+<span class="fc" id="L136">    }</span>
+
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">    if (!schemaValidationResult.isPassing()) {</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">      if (LOGGER.isErrorEnabled()) {</span>
+<span class="nc" id="L140">        LOGGER.error(&quot;The file '{}' has validation issue(s). The issues are:&quot;, target);</span>
+      }
+<span class="nc" id="L142">      LoggingValidationHandler.instance().handleValidationResults(schemaValidationResult);</span>
+<span class="nc" id="L143">      return ExitCode.FAIL.exit();</span>
+    }
+
+<span class="pc bpc" id="L146" title="3 of 6 branches missed.">    if (schemaValidationResult.isPassing() &amp;&amp; !cmdLine.hasOption(CLIProcessor.QUIET_OPTION) &amp;&amp; LOGGER.isInfoEnabled()) {</span>
+<span class="fc" id="L147">      LOGGER.info(&quot;The file '{}' is valid.&quot;, target);</span>
+    }
+<span class="fc" id="L149">    return ExitCode.OK.exit();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

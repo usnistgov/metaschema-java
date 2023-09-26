@@ -1,0 +1,12 @@
+module:gov.nist.secauto.metaschema.databind
+gov.nist.secauto.metaschema.databind
+gov.nist.secauto.metaschema.databind.codegen
+gov.nist.secauto.metaschema.databind.codegen.config
+gov.nist.secauto.metaschema.databind.codegen.typeinfo
+gov.nist.secauto.metaschema.databind.io
+gov.nist.secauto.metaschema.databind.io.json
+gov.nist.secauto.metaschema.databind.io.xml
+gov.nist.secauto.metaschema.databind.io.yaml
+gov.nist.secauto.metaschema.databind.model
+gov.nist.secauto.metaschema.databind.model.annotations
+gov.nist.secauto.metaschema.databind.model.info

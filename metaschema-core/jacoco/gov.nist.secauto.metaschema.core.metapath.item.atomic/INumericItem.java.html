@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>INumericItem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath.item.atomic</a> &gt; <span class="el_source">INumericItem.java</span></div><h1>INumericItem.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath.item.atomic;
+
+import gov.nist.secauto.metaschema.core.metapath.function.ArithmeticFunctionException;
+import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
+import gov.nist.secauto.metaschema.core.metapath.function.InvalidValueForCastFunctionException;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.MathContext;
+import java.math.RoundingMode;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public interface INumericItem extends IAnyAtomicItem {
+
+  @NonNull
+  static INumericItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+    INumericItem retval;
+<span class="fc bfc" id="L46" title="All 2 branches covered.">    if (item instanceof INumericItem) {</span>
+<span class="fc" id="L47">      retval = (INumericItem) item;</span>
+    } else {
+      try {
+<span class="fc" id="L50">        retval = IDecimalItem.valueOf(item.asString());</span>
+<span class="nc" id="L51">      } catch (NumberFormatException ex) {</span>
+<span class="nc" id="L52">        throw new InvalidValueForCastFunctionException(ex);</span>
+<span class="fc" id="L53">      }</span>
+    }
+<span class="fc" id="L55">    return retval;</span>
+  }
+
+  @NonNull
+  BigDecimal asDecimal();
+
+  @NonNull
+  BigInteger asInteger();
+
+  boolean toEffectiveBoolean();
+
+  /**
+   * Get the absolute value of the item.
+   *
+   * @return this item negated if this item is negative, or the item otherwise
+   */
+  @NonNull
+  INumericItem abs();
+
+  /**
+   * Round the value to the whole number closest to positive infinity.
+   *
+   * @return the rounded value
+   */
+  @NonNull
+  IIntegerItem ceiling();
+
+  /**
+   * Round the value to the whole number closest to negative infinity.
+   *
+   * @return the rounded value
+   */
+  @NonNull
+  IIntegerItem floor();
+
+  @NonNull
+  default INumericItem round() {
+<span class="nc" id="L92">    return round(IIntegerItem.ZERO);</span>
+  }
+
+  @NonNull
+  default INumericItem round(@NonNull IIntegerItem precisionItem) {
+    int precision;
+    try {
+<span class="fc" id="L99">      precision = FunctionUtils.asInteger(precisionItem);</span>
+<span class="nc" id="L100">    } catch (ArithmeticException ex) {</span>
+<span class="nc" id="L101">      throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR,</span>
+          &quot;Numeric operation overflow/underflow.&quot;, ex);
+<span class="fc" id="L103">    }</span>
+    INumericItem retval;
+<span class="fc bfc" id="L105" title="All 2 branches covered.">    if (precision &gt;= 0) {</span>
+      // round to precision decimal places
+<span class="fc bfc" id="L107" title="All 2 branches covered.">      if (this instanceof IIntegerItem) {</span>
+<span class="fc" id="L108">        retval = this;</span>
+      } else {
+        // IDecimalItem
+<span class="fc" id="L111">        BigDecimal value = this.asDecimal();</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        if (value.signum() == -1) {</span>
+<span class="fc" id="L113">          retval = IDecimalItem.valueOf(</span>
+<span class="fc" id="L114">              ObjectUtils.notNull(</span>
+<span class="fc" id="L115">                  value.round(new MathContext(precision + value.precision() - value.scale(), RoundingMode.HALF_DOWN))));</span>
+        } else {
+<span class="fc" id="L117">          retval = IDecimalItem.valueOf(</span>
+<span class="fc" id="L118">              ObjectUtils.notNull(</span>
+<span class="fc" id="L119">                  value.round(new MathContext(precision + value.precision() - value.scale(), RoundingMode.HALF_UP))));</span>
+        }
+<span class="fc" id="L121">      }</span>
+    } else {
+      // round to a power of 10
+<span class="fc" id="L124">      BigInteger value = this.asInteger();</span>
+<span class="fc" id="L125">      BigInteger divisor = BigInteger.TEN.pow(0 - precision);</span>
+
+      @NonNull BigInteger result;
+<span class="fc bfc" id="L128" title="All 2 branches covered.">      if (divisor.compareTo(value.abs()) &gt; 0) {</span>
+<span class="fc" id="L129">        result = ObjectUtils.notNull(BigInteger.ZERO);</span>
+      } else {
+<span class="fc" id="L131">        BigInteger remainder = value.mod(divisor);</span>
+<span class="fc" id="L132">        BigInteger lessRemainder = value.subtract(remainder);</span>
+<span class="fc" id="L133">        BigInteger halfDivisor = divisor.divide(BigInteger.TWO);</span>
+<span class="fc" id="L134">        result = ObjectUtils.notNull(</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">            remainder.compareTo(halfDivisor) &gt;= 0 ? lessRemainder.add(divisor) : lessRemainder);</span>
+      }
+<span class="fc" id="L137">      retval = IIntegerItem.valueOf(result);</span>
+    }
+<span class="fc" id="L139">    return retval;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MarkupLine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.datatype.markup</a> &gt; <span class="el_source">MarkupLine.java</span></div><h1>MarkupLine.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.datatype.markup;
+
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.ast.Block;
+import com.vladsch.flexmark.util.ast.Document;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.data.DataSet;
+import com.vladsch.flexmark.util.data.MutableDataSet;
+import com.vladsch.flexmark.util.misc.Extension;
+
+import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.FlexmarkConfiguration;
+import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.FlexmarkFactory;
+import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.SuppressPTagExtension;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public class MarkupLine
+    extends AbstractMarkupString&lt;MarkupLine&gt; {
+
+  @NonNull
+<span class="fc" id="L52">  private static final DataSet FLEXMARK_CONFIG = newParserOptions();</span>
+
+  @NonNull
+<span class="fc" id="L55">  private static final FlexmarkFactory FLEXMARK_FACTORY = new FlexmarkFactory(FLEXMARK_CONFIG);</span>
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  protected static DataSet newParserOptions() {
+<span class="fc" id="L60">    MutableDataSet options = new MutableDataSet();</span>
+    // disable inline HTML
+<span class="fc" id="L62">    options.set(Parser.HTML_BLOCK_PARSER, false);</span>
+    // disable list processing
+<span class="fc" id="L64">    options.set(Parser.LIST_BLOCK_PARSER, false);</span>
+<span class="fc" id="L65">    options.set(HtmlRenderer.SUPPRESS_HTML_BLOCKS, true);</span>
+
+<span class="fc" id="L67">    Collection&lt;Extension&gt; currentExtensions = Parser.EXTENSIONS.get(FlexmarkConfiguration.FLEXMARK_CONFIG);</span>
+<span class="fc" id="L68">    List&lt;Extension&gt; extensions = new LinkedList&lt;&gt;(currentExtensions);</span>
+<span class="fc" id="L69">    extensions.add(SuppressPTagExtension.create());</span>
+<span class="fc" id="L70">    Parser.EXTENSIONS.set(options, extensions);</span>
+
+<span class="fc" id="L72">    return FlexmarkConfiguration.newFlexmarkConfig(options);</span>
+  }
+
+  @NonNull
+  public static MarkupLine fromHtml(@NonNull String html) {
+<span class="fc" id="L77">    return new MarkupLine(</span>
+<span class="fc" id="L78">        parseHtml(html, FLEXMARK_FACTORY.getFlexmarkHtmlConverter(), FLEXMARK_FACTORY.getMarkdownParser()));</span>
+  }
+
+  @NonNull
+  public static MarkupLine fromMarkdown(@NonNull String markdown) {
+<span class="fc" id="L83">    return new MarkupLine(parseMarkdown(markdown, FLEXMARK_FACTORY.getMarkdownParser()));</span>
+  }
+
+  @Override
+  public FlexmarkFactory getFlexmarkFactory() {
+<span class="fc" id="L88">    return FLEXMARK_FACTORY;</span>
+  }
+
+  protected MarkupLine(@NonNull Document astNode) {
+<span class="fc" id="L92">    super(astNode);</span>
+<span class="fc" id="L93">    Node child = astNode.getFirstChild();</span>
+<span class="pc bpc" id="L94" title="2 of 4 branches missed.">    if (child instanceof Block &amp;&amp; child.getNext() != null) {</span>
+<span class="nc" id="L95">      throw new IllegalStateException(&quot;multiple blocks not allowed&quot;);</span>
+    } // else empty markdown
+<span class="fc" id="L97">  }</span>
+
+  @Override
+  public MarkupLine copy() {
+    // TODO: find a way to do a deep copy
+    // this is a shallow copy that uses the same underlying Document object
+<span class="nc" id="L103">    return new MarkupLine(getDocument());</span>
+  }
+
+  @Override
+  public boolean isBlock() {
+<span class="fc" id="L108">    return false;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

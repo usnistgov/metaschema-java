@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultFlagProperty.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.model</a> &gt; <span class="el_source">DefaultFlagProperty.java</span></div><h1>DefaultFlagProperty.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.model;
+
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
+import gov.nist.secauto.metaschema.databind.model.annotations.Constants;
+import gov.nist.secauto.metaschema.databind.model.annotations.JsonFieldValueKeyFlag;
+import gov.nist.secauto.metaschema.databind.model.annotations.JsonKey;
+import gov.nist.secauto.metaschema.databind.model.annotations.NullJavaTypeAdapter;
+import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
+
+import java.lang.reflect.Field;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
+
+class DefaultFlagProperty
+    extends AbstractFlagProperty {
+  // private static final Logger logger =
+  // LogManager.getLogger(DefaultFlagProperty.class);
+  @NonNull
+  private final Field field;
+  @NonNull
+  private final BoundFlag flag;
+  @NonNull
+  private final IDataTypeAdapter&lt;?&gt; javaTypeAdapter;
+  @Nullable
+  private final Object defaultValue;
+  @NonNull
+  private final Lazy&lt;InternalFlagDefinition&gt; definition;
+
+  /**
+   * Construct a new bound flag instance based on a Java property. The name of the
+   * property is bound to the name of the instance.
+   *
+   * @param field
+   *          the Java field to bind to
+   * @param parentClassBinding
+   *          the class binding for the field's containing class
+   */
+  public DefaultFlagProperty(
+      @NonNull Field field,
+      @NonNull IClassBinding parentClassBinding) {
+<span class="fc" id="L84">    super(parentClassBinding);</span>
+<span class="fc" id="L85">    this.field = ObjectUtils.requireNonNull(field, &quot;field&quot;);</span>
+<span class="fc" id="L86">    this.flag = ObjectUtils.requireNonNull(field.getAnnotation(BoundFlag.class));</span>
+
+<span class="fc" id="L88">    Class&lt;? extends IDataTypeAdapter&lt;?&gt;&gt; adapterClass = ObjectUtils.notNull(this.flag.typeAdapter());</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">    if (NullJavaTypeAdapter.class.equals(adapterClass)) {</span>
+<span class="fc" id="L90">      this.javaTypeAdapter = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;</span>
+    } else {
+<span class="fc" id="L92">      this.javaTypeAdapter = ObjectUtils.requireNonNull(</span>
+<span class="fc" id="L93">          parentClassBinding.getBindingContext().getJavaTypeAdapterInstance(adapterClass));</span>
+    }
+
+<span class="fc" id="L96">    String defaultString = this.flag.defaultValue();</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">    this.defaultValue = Constants.NULL_VALUE.equals(defaultString) ? null // NOPMD readability</span>
+<span class="fc" id="L98">        : getJavaTypeAdapter().parse(defaultString);</span>
+<span class="fc" id="L99">    this.definition = ObjectUtils.notNull(Lazy.lazy(() -&gt; new InternalFlagDefinition()));</span>
+<span class="fc" id="L100">  }</span>
+
+  @Override
+  @NonNull
+  public Field getField() {
+<span class="fc" id="L105">    return field;</span>
+  }
+
+  @NonNull
+  private BoundFlag getFlagAnnotation() {
+<span class="fc" id="L110">    return flag;</span>
+  }
+
+  public Object getDefaultValue() {
+<span class="fc" id="L114">    return this.defaultValue;</span>
+  }
+
+  @Override
+  public boolean isJsonKey() {
+<span class="fc" id="L119">    return getField().isAnnotationPresent(JsonKey.class);</span>
+  }
+
+  @Override
+  public boolean isJsonValueKey() {
+<span class="fc" id="L124">    return getField().isAnnotationPresent(JsonFieldValueKeyFlag.class);</span>
+  }
+
+  @Override
+  public boolean isRequired() {
+<span class="nc" id="L129">    return getFlagAnnotation().required();</span>
+  }
+
+  @NonNull
+  protected final IDataTypeAdapter&lt;?&gt; getJavaTypeAdapter() {
+<span class="fc" id="L134">    return javaTypeAdapter;</span>
+  }
+
+  @Override
+  public String getFormalName() {
+<span class="nc" id="L139">    return ModelUtil.resolveToString(getFlagAnnotation().formalName());</span>
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+<span class="nc" id="L144">    return ModelUtil.resolveToMarkupLine(getFlagAnnotation().description());</span>
+  }
+
+  @Override
+  public String getUseName() {
+<span class="fc" id="L149">    return ModelUtil.resolveToString(getFlagAnnotation().useName());</span>
+  }
+
+  @Override
+  public String getXmlNamespace() {
+<span class="fc" id="L154">    return ModelUtil.resolveOptionalNamespace(getFlagAnnotation().namespace(), getParentClassBinding());</span>
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+<span class="nc" id="L159">    return ModelUtil.resolveToMarkupMultiline(getFlagAnnotation().remarks());</span>
+  }
+
+  @Override
+  public IFlagDefinition getDefinition() {
+<span class="fc" id="L164">    return ObjectUtils.notNull(definition.get());</span>
+  }
+
+  @Override
+  public Object defaultValue() {
+<span class="fc" id="L169">    return getDefaultValue();</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public String toCoordinates() {
+<span class="nc" id="L175">    return String.format(&quot;%s Instance(%s): %s:%s&quot;,</span>
+<span class="nc" id="L176">        getModelType().name().toLowerCase(Locale.ROOT),</span>
+<span class="nc" id="L177">        getName(),</span>
+<span class="nc" id="L178">        getParentClassBinding().getBoundClass().getName(),</span>
+<span class="nc" id="L179">        getField().getName());</span>
+  }
+
+  private final class InternalFlagDefinition implements IFlagDefinition {
+    private final Lazy&lt;IValueConstrained&gt; constraints;
+
+<span class="fc" id="L185">    private InternalFlagDefinition() {</span>
+<span class="fc" id="L186">      this.constraints = Lazy.lazy(() -&gt; new ValueConstraintSupport(</span>
+<span class="fc" id="L187">          getField().getAnnotation(ValueConstraints.class),</span>
+<span class="fc" id="L188">          InternalModelSource.instance()));</span>
+<span class="fc" id="L189">    }</span>
+
+    @SuppressWarnings(&quot;null&quot;)
+    @Override
+    public IValueConstrained getConstraintSupport() {
+<span class="fc" id="L194">      return constraints.get();</span>
+    }
+
+    @Override
+    public String getFormalName() {
+<span class="nc" id="L199">      return DefaultFlagProperty.this.getFormalName();</span>
+    }
+
+    @Override
+    public MarkupLine getDescription() {
+<span class="nc" id="L204">      return DefaultFlagProperty.this.getDescription();</span>
+    }
+
+    @Override
+    public @NonNull Map&lt;QName, Set&lt;String&gt;&gt; getProperties() {
+      // TODO: implement
+<span class="nc" id="L210">      throw new UnsupportedOperationException();</span>
+    }
+
+    @Override
+    public IDataTypeAdapter&lt;?&gt; getJavaTypeAdapter() {
+<span class="fc" id="L215">      return DefaultFlagProperty.this.getJavaTypeAdapter();</span>
+    }
+
+    @Override
+    public Object getDefaultValue() {
+<span class="nc" id="L220">      return DefaultFlagProperty.this.getDefaultValue();</span>
+    }
+
+    @Override
+    public boolean isInline() {
+<span class="nc" id="L225">      return true;</span>
+    }
+
+    @Override
+    public IBoundFlagInstance getInlineInstance() {
+<span class="nc" id="L230">      return DefaultFlagProperty.this;</span>
+    }
+
+    @Override
+    public String getName() {
+<span class="fc" id="L235">      return getJavaFieldName();</span>
+    }
+
+    @Override
+    public String getUseName() {
+      // always use the name instead
+<span class="fc" id="L241">      return null;</span>
+    }
+
+    @Override
+    public MarkupMultiline getRemarks() {
+<span class="nc" id="L246">      return DefaultFlagProperty.this.getRemarks();</span>
+    }
+
+    @Override
+    public String toCoordinates() {
+<span class="nc" id="L251">      return DefaultFlagProperty.this.toCoordinates();</span>
+    }
+
+    @Override
+    public @NonNull ModuleScopeEnum getModuleScope() {
+      // TODO: is this the right value?
+<span class="nc" id="L257">      return ModuleScopeEnum.INHERITED;</span>
+    }
+
+    @Override
+    public IModule getContainingModule() {
+<span class="nc" id="L262">      return DefaultFlagProperty.this.getContainingModule();</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

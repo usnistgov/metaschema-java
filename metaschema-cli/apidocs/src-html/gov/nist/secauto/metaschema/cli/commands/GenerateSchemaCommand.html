@@ -35,23 +35,23 @@
 <span class="sourceLineNo">026</span><a id="line.26"></a>
 <span class="sourceLineNo">027</span><a id="line.27">package gov.nist.secauto.metaschema.cli.commands;</a>
 <span class="sourceLineNo">028</span><a id="line.28"></a>
-<span class="sourceLineNo">029</span><a id="line.29">import gov.nist.secauto.metaschema.binding.io.Format;</a>
-<span class="sourceLineNo">030</span><a id="line.30">import gov.nist.secauto.metaschema.cli.processor.CLIProcessor.CallingContext;</a>
-<span class="sourceLineNo">031</span><a id="line.31">import gov.nist.secauto.metaschema.cli.processor.ExitCode;</a>
-<span class="sourceLineNo">032</span><a id="line.32">import gov.nist.secauto.metaschema.cli.processor.ExitStatus;</a>
-<span class="sourceLineNo">033</span><a id="line.33">import gov.nist.secauto.metaschema.cli.processor.InvalidArgumentException;</a>
-<span class="sourceLineNo">034</span><a id="line.34">import gov.nist.secauto.metaschema.cli.processor.OptionUtils;</a>
-<span class="sourceLineNo">035</span><a id="line.35">import gov.nist.secauto.metaschema.cli.processor.command.AbstractTerminalCommand;</a>
-<span class="sourceLineNo">036</span><a id="line.36">import gov.nist.secauto.metaschema.cli.processor.command.DefaultExtraArgument;</a>
-<span class="sourceLineNo">037</span><a id="line.37">import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;</a>
-<span class="sourceLineNo">038</span><a id="line.38">import gov.nist.secauto.metaschema.cli.processor.command.ICommandExecutor;</a>
-<span class="sourceLineNo">039</span><a id="line.39">import gov.nist.secauto.metaschema.model.MetaschemaLoader;</a>
-<span class="sourceLineNo">040</span><a id="line.40">import gov.nist.secauto.metaschema.model.common.IMetaschema;</a>
-<span class="sourceLineNo">041</span><a id="line.41">import gov.nist.secauto.metaschema.model.common.MetaschemaException;</a>
-<span class="sourceLineNo">042</span><a id="line.42">import gov.nist.secauto.metaschema.model.common.configuration.DefaultConfiguration;</a>
-<span class="sourceLineNo">043</span><a id="line.43">import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;</a>
-<span class="sourceLineNo">044</span><a id="line.44">import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;</a>
-<span class="sourceLineNo">045</span><a id="line.45">import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;</a>
+<span class="sourceLineNo">029</span><a id="line.29">import gov.nist.secauto.metaschema.cli.processor.CLIProcessor.CallingContext;</a>
+<span class="sourceLineNo">030</span><a id="line.30">import gov.nist.secauto.metaschema.cli.processor.ExitCode;</a>
+<span class="sourceLineNo">031</span><a id="line.31">import gov.nist.secauto.metaschema.cli.processor.ExitStatus;</a>
+<span class="sourceLineNo">032</span><a id="line.32">import gov.nist.secauto.metaschema.cli.processor.InvalidArgumentException;</a>
+<span class="sourceLineNo">033</span><a id="line.33">import gov.nist.secauto.metaschema.cli.processor.OptionUtils;</a>
+<span class="sourceLineNo">034</span><a id="line.34">import gov.nist.secauto.metaschema.cli.processor.command.AbstractTerminalCommand;</a>
+<span class="sourceLineNo">035</span><a id="line.35">import gov.nist.secauto.metaschema.cli.processor.command.DefaultExtraArgument;</a>
+<span class="sourceLineNo">036</span><a id="line.36">import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;</a>
+<span class="sourceLineNo">037</span><a id="line.37">import gov.nist.secauto.metaschema.cli.processor.command.ICommandExecutor;</a>
+<span class="sourceLineNo">038</span><a id="line.38">import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;</a>
+<span class="sourceLineNo">039</span><a id="line.39">import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;</a>
+<span class="sourceLineNo">040</span><a id="line.40">import gov.nist.secauto.metaschema.core.model.IModule;</a>
+<span class="sourceLineNo">041</span><a id="line.41">import gov.nist.secauto.metaschema.core.model.MetaschemaException;</a>
+<span class="sourceLineNo">042</span><a id="line.42">import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;</a>
+<span class="sourceLineNo">043</span><a id="line.43">import gov.nist.secauto.metaschema.core.util.CustomCollectors;</a>
+<span class="sourceLineNo">044</span><a id="line.44">import gov.nist.secauto.metaschema.core.util.ObjectUtils;</a>
+<span class="sourceLineNo">045</span><a id="line.45">import gov.nist.secauto.metaschema.databind.io.Format;</a>
 <span class="sourceLineNo">046</span><a id="line.46">import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator;</a>
 <span class="sourceLineNo">047</span><a id="line.47">import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator.SchemaFormat;</a>
 <span class="sourceLineNo">048</span><a id="line.48">import gov.nist.secauto.metaschema.schemagen.SchemaGenerationFeature;</a>
@@ -91,161 +91,164 @@
 <span class="sourceLineNo">082</span><a id="line.82">  private static final Option AS_OPTION = ObjectUtils.notNull(</a>
 <span class="sourceLineNo">083</span><a id="line.83">      Option.builder()</a>
 <span class="sourceLineNo">084</span><a id="line.84">          .longOpt("as")</a>
-<span class="sourceLineNo">085</span><a id="line.85">          .hasArg()</a>
-<span class="sourceLineNo">086</span><a id="line.86">          .argName("FORMAT")</a>
-<span class="sourceLineNo">087</span><a id="line.87">          .desc("source format: xml, json, or yaml")</a>
-<span class="sourceLineNo">088</span><a id="line.88">          .build());</a>
-<span class="sourceLineNo">089</span><a id="line.89">  @NonNull</a>
-<span class="sourceLineNo">090</span><a id="line.90">  private static final Option INLINE_TYPES_OPTION = ObjectUtils.notNull(</a>
-<span class="sourceLineNo">091</span><a id="line.91">      Option.builder()</a>
-<span class="sourceLineNo">092</span><a id="line.92">          .longOpt("inline-types")</a>
-<span class="sourceLineNo">093</span><a id="line.93">          .desc("definitions declared inline will be generated as inline types")</a>
-<span class="sourceLineNo">094</span><a id="line.94">          .build());</a>
-<span class="sourceLineNo">095</span><a id="line.95"></a>
-<span class="sourceLineNo">096</span><a id="line.96">  static {</a>
-<span class="sourceLineNo">097</span><a id="line.97">    EXTRA_ARGUMENTS = ObjectUtils.notNull(List.of(</a>
-<span class="sourceLineNo">098</span><a id="line.98">        new DefaultExtraArgument("metaschema file", true),</a>
-<span class="sourceLineNo">099</span><a id="line.99">        new DefaultExtraArgument("destination schema file", false)));</a>
-<span class="sourceLineNo">100</span><a id="line.100">  }</a>
-<span class="sourceLineNo">101</span><a id="line.101"></a>
-<span class="sourceLineNo">102</span><a id="line.102">  @Override</a>
-<span class="sourceLineNo">103</span><a id="line.103">  public String getName() {</a>
-<span class="sourceLineNo">104</span><a id="line.104">    return COMMAND;</a>
-<span class="sourceLineNo">105</span><a id="line.105">  }</a>
-<span class="sourceLineNo">106</span><a id="line.106"></a>
-<span class="sourceLineNo">107</span><a id="line.107">  @Override</a>
-<span class="sourceLineNo">108</span><a id="line.108">  public String getDescription() {</a>
-<span class="sourceLineNo">109</span><a id="line.109">    return "Generate a schema for the specified Metaschema";</a>
-<span class="sourceLineNo">110</span><a id="line.110">  }</a>
-<span class="sourceLineNo">111</span><a id="line.111"></a>
-<span class="sourceLineNo">112</span><a id="line.112">  @SuppressWarnings("null")</a>
-<span class="sourceLineNo">113</span><a id="line.113">  @Override</a>
-<span class="sourceLineNo">114</span><a id="line.114">  public Collection&lt;? extends Option&gt; gatherOptions() {</a>
-<span class="sourceLineNo">115</span><a id="line.115">    return List.of(</a>
-<span class="sourceLineNo">116</span><a id="line.116">        OVERWRITE_OPTION,</a>
-<span class="sourceLineNo">117</span><a id="line.117">        AS_OPTION,</a>
-<span class="sourceLineNo">118</span><a id="line.118">        INLINE_TYPES_OPTION);</a>
-<span class="sourceLineNo">119</span><a id="line.119">  }</a>
-<span class="sourceLineNo">120</span><a id="line.120"></a>
-<span class="sourceLineNo">121</span><a id="line.121">  @Override</a>
-<span class="sourceLineNo">122</span><a id="line.122">  public List&lt;ExtraArgument&gt; getExtraArguments() {</a>
-<span class="sourceLineNo">123</span><a id="line.123">    return EXTRA_ARGUMENTS;</a>
-<span class="sourceLineNo">124</span><a id="line.124">  }</a>
-<span class="sourceLineNo">125</span><a id="line.125"></a>
-<span class="sourceLineNo">126</span><a id="line.126">  @SuppressWarnings("PMD.PreserveStackTrace") // intended</a>
-<span class="sourceLineNo">127</span><a id="line.127">  @Override</a>
-<span class="sourceLineNo">128</span><a id="line.128">  public void validateOptions(CallingContext callingContext, CommandLine cmdLine) throws InvalidArgumentException {</a>
-<span class="sourceLineNo">129</span><a id="line.129">    try {</a>
-<span class="sourceLineNo">130</span><a id="line.130">      String toFormatText = cmdLine.getOptionValue(AS_OPTION);</a>
-<span class="sourceLineNo">131</span><a id="line.131">      SchemaFormat.valueOf(toFormatText.toUpperCase(Locale.ROOT));</a>
-<span class="sourceLineNo">132</span><a id="line.132">    } catch (IllegalArgumentException ex) {</a>
-<span class="sourceLineNo">133</span><a id="line.133">      InvalidArgumentException newEx = new InvalidArgumentException( // NOPMD - intentional</a>
-<span class="sourceLineNo">134</span><a id="line.134">          String.format("Invalid '%s' argument. The format must be one of: %s.",</a>
-<span class="sourceLineNo">135</span><a id="line.135">              OptionUtils.toArgument(AS_OPTION),</a>
-<span class="sourceLineNo">136</span><a id="line.136">              Arrays.asList(Format.values()).stream()</a>
-<span class="sourceLineNo">137</span><a id="line.137">                  .map(format -&gt; format.name())</a>
-<span class="sourceLineNo">138</span><a id="line.138">                  .collect(CustomCollectors.joiningWithOxfordComma("and"))));</a>
-<span class="sourceLineNo">139</span><a id="line.139">      newEx.setOption(AS_OPTION);</a>
-<span class="sourceLineNo">140</span><a id="line.140">      newEx.addSuppressed(ex);</a>
-<span class="sourceLineNo">141</span><a id="line.141">      throw newEx;</a>
-<span class="sourceLineNo">142</span><a id="line.142">    }</a>
-<span class="sourceLineNo">143</span><a id="line.143"></a>
-<span class="sourceLineNo">144</span><a id="line.144">    List&lt;String&gt; extraArgs = cmdLine.getArgList();</a>
-<span class="sourceLineNo">145</span><a id="line.145">    if (extraArgs.isEmpty() || extraArgs.size() &gt; 2) {</a>
-<span class="sourceLineNo">146</span><a id="line.146">      throw new InvalidArgumentException("Illegal number of arguments.");</a>
-<span class="sourceLineNo">147</span><a id="line.147">    }</a>
-<span class="sourceLineNo">148</span><a id="line.148"></a>
-<span class="sourceLineNo">149</span><a id="line.149">    Path metaschema = Paths.get(extraArgs.get(0));</a>
-<span class="sourceLineNo">150</span><a id="line.150">    if (!Files.exists(metaschema)) {</a>
-<span class="sourceLineNo">151</span><a id="line.151">      throw new InvalidArgumentException("The provided metaschema '" + metaschema + "' does not exist.");</a>
-<span class="sourceLineNo">152</span><a id="line.152">    }</a>
-<span class="sourceLineNo">153</span><a id="line.153">    if (!Files.isReadable(metaschema)) {</a>
-<span class="sourceLineNo">154</span><a id="line.154">      throw new InvalidArgumentException("The provided metaschema '" + metaschema + "' is not readable.");</a>
+<span class="sourceLineNo">085</span><a id="line.85">          .required()</a>
+<span class="sourceLineNo">086</span><a id="line.86">          .hasArg()</a>
+<span class="sourceLineNo">087</span><a id="line.87">          .argName("FORMAT")</a>
+<span class="sourceLineNo">088</span><a id="line.88">          .desc("source format: xml, json, or yaml")</a>
+<span class="sourceLineNo">089</span><a id="line.89">          .build());</a>
+<span class="sourceLineNo">090</span><a id="line.90">  @NonNull</a>
+<span class="sourceLineNo">091</span><a id="line.91">  private static final Option INLINE_TYPES_OPTION = ObjectUtils.notNull(</a>
+<span class="sourceLineNo">092</span><a id="line.92">      Option.builder()</a>
+<span class="sourceLineNo">093</span><a id="line.93">          .longOpt("inline-types")</a>
+<span class="sourceLineNo">094</span><a id="line.94">          .desc("definitions declared inline will be generated as inline types")</a>
+<span class="sourceLineNo">095</span><a id="line.95">          .build());</a>
+<span class="sourceLineNo">096</span><a id="line.96"></a>
+<span class="sourceLineNo">097</span><a id="line.97">  static {</a>
+<span class="sourceLineNo">098</span><a id="line.98">    EXTRA_ARGUMENTS = ObjectUtils.notNull(List.of(</a>
+<span class="sourceLineNo">099</span><a id="line.99">        new DefaultExtraArgument("metaschema-module-file", true),</a>
+<span class="sourceLineNo">100</span><a id="line.100">        new DefaultExtraArgument("destination-schema-file", false)));</a>
+<span class="sourceLineNo">101</span><a id="line.101">  }</a>
+<span class="sourceLineNo">102</span><a id="line.102"></a>
+<span class="sourceLineNo">103</span><a id="line.103">  @Override</a>
+<span class="sourceLineNo">104</span><a id="line.104">  public String getName() {</a>
+<span class="sourceLineNo">105</span><a id="line.105">    return COMMAND;</a>
+<span class="sourceLineNo">106</span><a id="line.106">  }</a>
+<span class="sourceLineNo">107</span><a id="line.107"></a>
+<span class="sourceLineNo">108</span><a id="line.108">  @Override</a>
+<span class="sourceLineNo">109</span><a id="line.109">  public String getDescription() {</a>
+<span class="sourceLineNo">110</span><a id="line.110">    return "Generate a schema for the specified Module module";</a>
+<span class="sourceLineNo">111</span><a id="line.111">  }</a>
+<span class="sourceLineNo">112</span><a id="line.112"></a>
+<span class="sourceLineNo">113</span><a id="line.113">  @SuppressWarnings("null")</a>
+<span class="sourceLineNo">114</span><a id="line.114">  @Override</a>
+<span class="sourceLineNo">115</span><a id="line.115">  public Collection&lt;? extends Option&gt; gatherOptions() {</a>
+<span class="sourceLineNo">116</span><a id="line.116">    return List.of(</a>
+<span class="sourceLineNo">117</span><a id="line.117">        OVERWRITE_OPTION,</a>
+<span class="sourceLineNo">118</span><a id="line.118">        AS_OPTION,</a>
+<span class="sourceLineNo">119</span><a id="line.119">        INLINE_TYPES_OPTION);</a>
+<span class="sourceLineNo">120</span><a id="line.120">  }</a>
+<span class="sourceLineNo">121</span><a id="line.121"></a>
+<span class="sourceLineNo">122</span><a id="line.122">  @Override</a>
+<span class="sourceLineNo">123</span><a id="line.123">  public List&lt;ExtraArgument&gt; getExtraArguments() {</a>
+<span class="sourceLineNo">124</span><a id="line.124">    return EXTRA_ARGUMENTS;</a>
+<span class="sourceLineNo">125</span><a id="line.125">  }</a>
+<span class="sourceLineNo">126</span><a id="line.126"></a>
+<span class="sourceLineNo">127</span><a id="line.127">  @SuppressWarnings("PMD.PreserveStackTrace") // intended</a>
+<span class="sourceLineNo">128</span><a id="line.128">  @Override</a>
+<span class="sourceLineNo">129</span><a id="line.129">  public void validateOptions(CallingContext callingContext, CommandLine cmdLine) throws InvalidArgumentException {</a>
+<span class="sourceLineNo">130</span><a id="line.130">    try {</a>
+<span class="sourceLineNo">131</span><a id="line.131">      String asFormatText = cmdLine.getOptionValue(AS_OPTION);</a>
+<span class="sourceLineNo">132</span><a id="line.132">      if (asFormatText != null) {</a>
+<span class="sourceLineNo">133</span><a id="line.133">        SchemaFormat.valueOf(asFormatText.toUpperCase(Locale.ROOT));</a>
+<span class="sourceLineNo">134</span><a id="line.134">      }</a>
+<span class="sourceLineNo">135</span><a id="line.135">    } catch (IllegalArgumentException ex) {</a>
+<span class="sourceLineNo">136</span><a id="line.136">      InvalidArgumentException newEx = new InvalidArgumentException( // NOPMD - intentional</a>
+<span class="sourceLineNo">137</span><a id="line.137">          String.format("Invalid '%s' argument. The format must be one of: %s.",</a>
+<span class="sourceLineNo">138</span><a id="line.138">              OptionUtils.toArgument(AS_OPTION),</a>
+<span class="sourceLineNo">139</span><a id="line.139">              Arrays.asList(Format.values()).stream()</a>
+<span class="sourceLineNo">140</span><a id="line.140">                  .map(format -&gt; format.name())</a>
+<span class="sourceLineNo">141</span><a id="line.141">                  .collect(CustomCollectors.joiningWithOxfordComma("and"))));</a>
+<span class="sourceLineNo">142</span><a id="line.142">      newEx.setOption(AS_OPTION);</a>
+<span class="sourceLineNo">143</span><a id="line.143">      newEx.addSuppressed(ex);</a>
+<span class="sourceLineNo">144</span><a id="line.144">      throw newEx;</a>
+<span class="sourceLineNo">145</span><a id="line.145">    }</a>
+<span class="sourceLineNo">146</span><a id="line.146"></a>
+<span class="sourceLineNo">147</span><a id="line.147">    List&lt;String&gt; extraArgs = cmdLine.getArgList();</a>
+<span class="sourceLineNo">148</span><a id="line.148">    if (extraArgs.isEmpty() || extraArgs.size() &gt; 2) {</a>
+<span class="sourceLineNo">149</span><a id="line.149">      throw new InvalidArgumentException("Illegal number of arguments.");</a>
+<span class="sourceLineNo">150</span><a id="line.150">    }</a>
+<span class="sourceLineNo">151</span><a id="line.151"></a>
+<span class="sourceLineNo">152</span><a id="line.152">    Path module = Paths.get(extraArgs.get(0));</a>
+<span class="sourceLineNo">153</span><a id="line.153">    if (!Files.exists(module)) {</a>
+<span class="sourceLineNo">154</span><a id="line.154">      throw new InvalidArgumentException("The provided metaschema module '" + module + "' does not exist.");</a>
 <span class="sourceLineNo">155</span><a id="line.155">    }</a>
-<span class="sourceLineNo">156</span><a id="line.156">  }</a>
-<span class="sourceLineNo">157</span><a id="line.157"></a>
-<span class="sourceLineNo">158</span><a id="line.158">  @Override</a>
-<span class="sourceLineNo">159</span><a id="line.159">  public ICommandExecutor newExecutor(CallingContext callingContext, CommandLine cmdLine) {</a>
-<span class="sourceLineNo">160</span><a id="line.160">    return ICommandExecutor.using(callingContext, cmdLine, this::executeCommand);</a>
-<span class="sourceLineNo">161</span><a id="line.161">  }</a>
-<span class="sourceLineNo">162</span><a id="line.162"></a>
-<span class="sourceLineNo">163</span><a id="line.163">  @SuppressWarnings({</a>
-<span class="sourceLineNo">164</span><a id="line.164">      "PMD.OnlyOneReturn", // readability</a>
-<span class="sourceLineNo">165</span><a id="line.165">      "unused"</a>
-<span class="sourceLineNo">166</span><a id="line.166">  })</a>
-<span class="sourceLineNo">167</span><a id="line.167">  protected ExitStatus executeCommand(</a>
-<span class="sourceLineNo">168</span><a id="line.168">      @NonNull CallingContext callingContext,</a>
-<span class="sourceLineNo">169</span><a id="line.169">      @NonNull CommandLine cmdLine) {</a>
-<span class="sourceLineNo">170</span><a id="line.170">    List&lt;String&gt; extraArgs = cmdLine.getArgList();</a>
-<span class="sourceLineNo">171</span><a id="line.171"></a>
-<span class="sourceLineNo">172</span><a id="line.172">    Path destination = null;</a>
-<span class="sourceLineNo">173</span><a id="line.173">    if (extraArgs.size() &gt; 1) {</a>
-<span class="sourceLineNo">174</span><a id="line.174">      destination = Paths.get(extraArgs.get(1)).toAbsolutePath();</a>
-<span class="sourceLineNo">175</span><a id="line.175">    }</a>
-<span class="sourceLineNo">176</span><a id="line.176"></a>
-<span class="sourceLineNo">177</span><a id="line.177">    if (destination != null) {</a>
-<span class="sourceLineNo">178</span><a id="line.178">      if (Files.exists(destination)) {</a>
-<span class="sourceLineNo">179</span><a id="line.179">        if (!cmdLine.hasOption(OVERWRITE_OPTION)) {</a>
-<span class="sourceLineNo">180</span><a id="line.180">          return ExitCode.INVALID_ARGUMENTS.exitMessage( // NOPMD readability</a>
-<span class="sourceLineNo">181</span><a id="line.181">              String.format("The provided destination '%s' already exists and the '%s' option was not provided.",</a>
-<span class="sourceLineNo">182</span><a id="line.182">                  destination,</a>
-<span class="sourceLineNo">183</span><a id="line.183">                  OptionUtils.toArgument(OVERWRITE_OPTION)));</a>
-<span class="sourceLineNo">184</span><a id="line.184">        }</a>
-<span class="sourceLineNo">185</span><a id="line.185">        if (!Files.isWritable(destination)) {</a>
-<span class="sourceLineNo">186</span><a id="line.186">          return ExitCode.IO_ERROR.exitMessage( // NOPMD readability</a>
-<span class="sourceLineNo">187</span><a id="line.187">              "The provided destination '" + destination + "' is not writable.");</a>
-<span class="sourceLineNo">188</span><a id="line.188">        }</a>
-<span class="sourceLineNo">189</span><a id="line.189">      } else {</a>
-<span class="sourceLineNo">190</span><a id="line.190">        Path parent = destination.getParent();</a>
-<span class="sourceLineNo">191</span><a id="line.191">        if (parent != null) {</a>
-<span class="sourceLineNo">192</span><a id="line.192">          try {</a>
-<span class="sourceLineNo">193</span><a id="line.193">            Files.createDirectories(parent);</a>
-<span class="sourceLineNo">194</span><a id="line.194">          } catch (IOException ex) {</a>
-<span class="sourceLineNo">195</span><a id="line.195">            return ExitCode.INVALID_TARGET.exit().withThrowable(ex); // NOPMD readability</a>
-<span class="sourceLineNo">196</span><a id="line.196">          }</a>
-<span class="sourceLineNo">197</span><a id="line.197">        }</a>
-<span class="sourceLineNo">198</span><a id="line.198">      }</a>
-<span class="sourceLineNo">199</span><a id="line.199">    }</a>
-<span class="sourceLineNo">200</span><a id="line.200"></a>
-<span class="sourceLineNo">201</span><a id="line.201">    String asFormatText = cmdLine.getOptionValue(AS_OPTION);</a>
-<span class="sourceLineNo">202</span><a id="line.202">    SchemaFormat asFormat = SchemaFormat.valueOf(asFormatText.toUpperCase(Locale.ROOT));</a>
+<span class="sourceLineNo">156</span><a id="line.156">    if (!Files.isReadable(module)) {</a>
+<span class="sourceLineNo">157</span><a id="line.157">      throw new InvalidArgumentException("The provided metaschema module '" + module + "' is not readable.");</a>
+<span class="sourceLineNo">158</span><a id="line.158">    }</a>
+<span class="sourceLineNo">159</span><a id="line.159">  }</a>
+<span class="sourceLineNo">160</span><a id="line.160"></a>
+<span class="sourceLineNo">161</span><a id="line.161">  @Override</a>
+<span class="sourceLineNo">162</span><a id="line.162">  public ICommandExecutor newExecutor(CallingContext callingContext, CommandLine cmdLine) {</a>
+<span class="sourceLineNo">163</span><a id="line.163">    return ICommandExecutor.using(callingContext, cmdLine, this::executeCommand);</a>
+<span class="sourceLineNo">164</span><a id="line.164">  }</a>
+<span class="sourceLineNo">165</span><a id="line.165"></a>
+<span class="sourceLineNo">166</span><a id="line.166">  @SuppressWarnings({</a>
+<span class="sourceLineNo">167</span><a id="line.167">      "PMD.OnlyOneReturn", // readability</a>
+<span class="sourceLineNo">168</span><a id="line.168">      "unused"</a>
+<span class="sourceLineNo">169</span><a id="line.169">  })</a>
+<span class="sourceLineNo">170</span><a id="line.170">  protected ExitStatus executeCommand(</a>
+<span class="sourceLineNo">171</span><a id="line.171">      @NonNull CallingContext callingContext,</a>
+<span class="sourceLineNo">172</span><a id="line.172">      @NonNull CommandLine cmdLine) {</a>
+<span class="sourceLineNo">173</span><a id="line.173">    List&lt;String&gt; extraArgs = cmdLine.getArgList();</a>
+<span class="sourceLineNo">174</span><a id="line.174"></a>
+<span class="sourceLineNo">175</span><a id="line.175">    Path destination = null;</a>
+<span class="sourceLineNo">176</span><a id="line.176">    if (extraArgs.size() &gt; 1) {</a>
+<span class="sourceLineNo">177</span><a id="line.177">      destination = Paths.get(extraArgs.get(1)).toAbsolutePath();</a>
+<span class="sourceLineNo">178</span><a id="line.178">    }</a>
+<span class="sourceLineNo">179</span><a id="line.179"></a>
+<span class="sourceLineNo">180</span><a id="line.180">    if (destination != null) {</a>
+<span class="sourceLineNo">181</span><a id="line.181">      if (Files.exists(destination)) {</a>
+<span class="sourceLineNo">182</span><a id="line.182">        if (!cmdLine.hasOption(OVERWRITE_OPTION)) {</a>
+<span class="sourceLineNo">183</span><a id="line.183">          return ExitCode.INVALID_ARGUMENTS.exitMessage( // NOPMD readability</a>
+<span class="sourceLineNo">184</span><a id="line.184">              String.format("The provided destination '%s' already exists and the '%s' option was not provided.",</a>
+<span class="sourceLineNo">185</span><a id="line.185">                  destination,</a>
+<span class="sourceLineNo">186</span><a id="line.186">                  OptionUtils.toArgument(OVERWRITE_OPTION)));</a>
+<span class="sourceLineNo">187</span><a id="line.187">        }</a>
+<span class="sourceLineNo">188</span><a id="line.188">        if (!Files.isWritable(destination)) {</a>
+<span class="sourceLineNo">189</span><a id="line.189">          return ExitCode.IO_ERROR.exitMessage( // NOPMD readability</a>
+<span class="sourceLineNo">190</span><a id="line.190">              "The provided destination '" + destination + "' is not writable.");</a>
+<span class="sourceLineNo">191</span><a id="line.191">        }</a>
+<span class="sourceLineNo">192</span><a id="line.192">      } else {</a>
+<span class="sourceLineNo">193</span><a id="line.193">        Path parent = destination.getParent();</a>
+<span class="sourceLineNo">194</span><a id="line.194">        if (parent != null) {</a>
+<span class="sourceLineNo">195</span><a id="line.195">          try {</a>
+<span class="sourceLineNo">196</span><a id="line.196">            Files.createDirectories(parent);</a>
+<span class="sourceLineNo">197</span><a id="line.197">          } catch (IOException ex) {</a>
+<span class="sourceLineNo">198</span><a id="line.198">            return ExitCode.INVALID_TARGET.exit().withThrowable(ex); // NOPMD readability</a>
+<span class="sourceLineNo">199</span><a id="line.199">          }</a>
+<span class="sourceLineNo">200</span><a id="line.200">        }</a>
+<span class="sourceLineNo">201</span><a id="line.201">      }</a>
+<span class="sourceLineNo">202</span><a id="line.202">    }</a>
 <span class="sourceLineNo">203</span><a id="line.203"></a>
-<span class="sourceLineNo">204</span><a id="line.204">    IMutableConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; configuration = new DefaultConfiguration&lt;&gt;();</a>
-<span class="sourceLineNo">205</span><a id="line.205">    if (cmdLine.hasOption(INLINE_TYPES_OPTION)) {</a>
-<span class="sourceLineNo">206</span><a id="line.206">      configuration.enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);</a>
-<span class="sourceLineNo">207</span><a id="line.207">      if (SchemaFormat.JSON.equals(asFormat)) {</a>
-<span class="sourceLineNo">208</span><a id="line.208">        configuration.disableFeature(SchemaGenerationFeature.INLINE_CHOICE_DEFINITIONS);</a>
-<span class="sourceLineNo">209</span><a id="line.209">      } else {</a>
-<span class="sourceLineNo">210</span><a id="line.210">        configuration.enableFeature(SchemaGenerationFeature.INLINE_CHOICE_DEFINITIONS);</a>
-<span class="sourceLineNo">211</span><a id="line.211">      }</a>
-<span class="sourceLineNo">212</span><a id="line.212">    }</a>
-<span class="sourceLineNo">213</span><a id="line.213"></a>
-<span class="sourceLineNo">214</span><a id="line.214">    Path input = Paths.get(extraArgs.get(0));</a>
-<span class="sourceLineNo">215</span><a id="line.215">    assert input != null;</a>
-<span class="sourceLineNo">216</span><a id="line.216">    try {</a>
-<span class="sourceLineNo">217</span><a id="line.217">      MetaschemaLoader loader = new MetaschemaLoader();</a>
-<span class="sourceLineNo">218</span><a id="line.218">      loader.allowEntityResolution();</a>
-<span class="sourceLineNo">219</span><a id="line.219">      IMetaschema metaschema = loader.load(input);</a>
-<span class="sourceLineNo">220</span><a id="line.220"></a>
-<span class="sourceLineNo">221</span><a id="line.221">      if (LOGGER.isInfoEnabled()) {</a>
-<span class="sourceLineNo">222</span><a id="line.222">        LOGGER.info("Generating {} schema for '{}'.", asFormat.name(), input);</a>
-<span class="sourceLineNo">223</span><a id="line.223">      }</a>
-<span class="sourceLineNo">224</span><a id="line.224">      if (destination == null) {</a>
-<span class="sourceLineNo">225</span><a id="line.225">        @SuppressWarnings({ "resource", "PMD.CloseResource" }) // not owned</a>
-<span class="sourceLineNo">226</span><a id="line.226">        OutputStream os = ObjectUtils.notNull(System.out);</a>
-<span class="sourceLineNo">227</span><a id="line.227">        ISchemaGenerator.generateSchema(metaschema, os, asFormat, configuration);</a>
-<span class="sourceLineNo">228</span><a id="line.228">      } else {</a>
-<span class="sourceLineNo">229</span><a id="line.229">        ISchemaGenerator.generateSchema(metaschema, destination, asFormat, configuration);</a>
-<span class="sourceLineNo">230</span><a id="line.230">      }</a>
-<span class="sourceLineNo">231</span><a id="line.231">    } catch (IOException | MetaschemaException ex) {</a>
-<span class="sourceLineNo">232</span><a id="line.232">      return ExitCode.PROCESSING_ERROR.exit().withThrowable(ex); // NOPMD readability</a>
-<span class="sourceLineNo">233</span><a id="line.233">    }</a>
-<span class="sourceLineNo">234</span><a id="line.234">    if (destination != null &amp;&amp; LOGGER.isInfoEnabled()) {</a>
-<span class="sourceLineNo">235</span><a id="line.235">      LOGGER.info("Generated {} schema file: {}", asFormat.toString(), destination);</a>
+<span class="sourceLineNo">204</span><a id="line.204">    String asFormatText = cmdLine.getOptionValue(AS_OPTION);</a>
+<span class="sourceLineNo">205</span><a id="line.205">    SchemaFormat asFormat = SchemaFormat.valueOf(asFormatText.toUpperCase(Locale.ROOT));</a>
+<span class="sourceLineNo">206</span><a id="line.206"></a>
+<span class="sourceLineNo">207</span><a id="line.207">    IMutableConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; configuration = new DefaultConfiguration&lt;&gt;();</a>
+<span class="sourceLineNo">208</span><a id="line.208">    if (cmdLine.hasOption(INLINE_TYPES_OPTION)) {</a>
+<span class="sourceLineNo">209</span><a id="line.209">      configuration.enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);</a>
+<span class="sourceLineNo">210</span><a id="line.210">      if (SchemaFormat.JSON.equals(asFormat)) {</a>
+<span class="sourceLineNo">211</span><a id="line.211">        configuration.disableFeature(SchemaGenerationFeature.INLINE_CHOICE_DEFINITIONS);</a>
+<span class="sourceLineNo">212</span><a id="line.212">      } else {</a>
+<span class="sourceLineNo">213</span><a id="line.213">        configuration.enableFeature(SchemaGenerationFeature.INLINE_CHOICE_DEFINITIONS);</a>
+<span class="sourceLineNo">214</span><a id="line.214">      }</a>
+<span class="sourceLineNo">215</span><a id="line.215">    }</a>
+<span class="sourceLineNo">216</span><a id="line.216"></a>
+<span class="sourceLineNo">217</span><a id="line.217">    Path input = Paths.get(extraArgs.get(0));</a>
+<span class="sourceLineNo">218</span><a id="line.218">    assert input != null;</a>
+<span class="sourceLineNo">219</span><a id="line.219">    try {</a>
+<span class="sourceLineNo">220</span><a id="line.220">      ModuleLoader loader = new ModuleLoader();</a>
+<span class="sourceLineNo">221</span><a id="line.221">      loader.allowEntityResolution();</a>
+<span class="sourceLineNo">222</span><a id="line.222">      IModule module = loader.load(input);</a>
+<span class="sourceLineNo">223</span><a id="line.223"></a>
+<span class="sourceLineNo">224</span><a id="line.224">      if (LOGGER.isInfoEnabled()) {</a>
+<span class="sourceLineNo">225</span><a id="line.225">        LOGGER.info("Generating {} schema for '{}'.", asFormat.name(), input);</a>
+<span class="sourceLineNo">226</span><a id="line.226">      }</a>
+<span class="sourceLineNo">227</span><a id="line.227">      if (destination == null) {</a>
+<span class="sourceLineNo">228</span><a id="line.228">        @SuppressWarnings({ "resource", "PMD.CloseResource" }) // not owned</a>
+<span class="sourceLineNo">229</span><a id="line.229">        OutputStream os = ObjectUtils.notNull(System.out);</a>
+<span class="sourceLineNo">230</span><a id="line.230">        ISchemaGenerator.generateSchema(module, os, asFormat, configuration);</a>
+<span class="sourceLineNo">231</span><a id="line.231">      } else {</a>
+<span class="sourceLineNo">232</span><a id="line.232">        ISchemaGenerator.generateSchema(module, destination, asFormat, configuration);</a>
+<span class="sourceLineNo">233</span><a id="line.233">      }</a>
+<span class="sourceLineNo">234</span><a id="line.234">    } catch (IOException | MetaschemaException ex) {</a>
+<span class="sourceLineNo">235</span><a id="line.235">      return ExitCode.PROCESSING_ERROR.exit().withThrowable(ex); // NOPMD readability</a>
 <span class="sourceLineNo">236</span><a id="line.236">    }</a>
-<span class="sourceLineNo">237</span><a id="line.237">    return ExitCode.OK.exit();</a>
-<span class="sourceLineNo">238</span><a id="line.238">  }</a>
-<span class="sourceLineNo">239</span><a id="line.239">}</a>
+<span class="sourceLineNo">237</span><a id="line.237">    if (destination != null &amp;&amp; LOGGER.isInfoEnabled()) {</a>
+<span class="sourceLineNo">238</span><a id="line.238">      LOGGER.info("Generated {} schema file: {}", asFormat.toString(), destination);</a>
+<span class="sourceLineNo">239</span><a id="line.239">    }</a>
+<span class="sourceLineNo">240</span><a id="line.240">    return ExitCode.OK.exit();</a>
+<span class="sourceLineNo">241</span><a id="line.241">  }</a>
+<span class="sourceLineNo">242</span><a id="line.242">}</a>
 
 
 

@@ -35,20 +35,20 @@
 <span class="sourceLineNo">026</span><a id="line.26"></a>
 <span class="sourceLineNo">027</span><a id="line.27">package gov.nist.secauto.metaschema.cli.commands;</a>
 <span class="sourceLineNo">028</span><a id="line.28"></a>
-<span class="sourceLineNo">029</span><a id="line.29">import gov.nist.secauto.metaschema.binding.IBindingContext;</a>
-<span class="sourceLineNo">030</span><a id="line.30">import gov.nist.secauto.metaschema.binding.io.Format;</a>
-<span class="sourceLineNo">031</span><a id="line.31">import gov.nist.secauto.metaschema.binding.io.IBoundLoader;</a>
-<span class="sourceLineNo">032</span><a id="line.32">import gov.nist.secauto.metaschema.cli.processor.CLIProcessor.CallingContext;</a>
-<span class="sourceLineNo">033</span><a id="line.33">import gov.nist.secauto.metaschema.cli.processor.ExitCode;</a>
-<span class="sourceLineNo">034</span><a id="line.34">import gov.nist.secauto.metaschema.cli.processor.ExitStatus;</a>
-<span class="sourceLineNo">035</span><a id="line.35">import gov.nist.secauto.metaschema.cli.processor.InvalidArgumentException;</a>
-<span class="sourceLineNo">036</span><a id="line.36">import gov.nist.secauto.metaschema.cli.processor.OptionUtils;</a>
-<span class="sourceLineNo">037</span><a id="line.37">import gov.nist.secauto.metaschema.cli.processor.command.AbstractCommandExecutor;</a>
-<span class="sourceLineNo">038</span><a id="line.38">import gov.nist.secauto.metaschema.cli.processor.command.AbstractTerminalCommand;</a>
-<span class="sourceLineNo">039</span><a id="line.39">import gov.nist.secauto.metaschema.cli.processor.command.DefaultExtraArgument;</a>
-<span class="sourceLineNo">040</span><a id="line.40">import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;</a>
-<span class="sourceLineNo">041</span><a id="line.41">import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;</a>
-<span class="sourceLineNo">042</span><a id="line.42">import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;</a>
+<span class="sourceLineNo">029</span><a id="line.29">import gov.nist.secauto.metaschema.cli.processor.CLIProcessor.CallingContext;</a>
+<span class="sourceLineNo">030</span><a id="line.30">import gov.nist.secauto.metaschema.cli.processor.ExitCode;</a>
+<span class="sourceLineNo">031</span><a id="line.31">import gov.nist.secauto.metaschema.cli.processor.ExitStatus;</a>
+<span class="sourceLineNo">032</span><a id="line.32">import gov.nist.secauto.metaschema.cli.processor.InvalidArgumentException;</a>
+<span class="sourceLineNo">033</span><a id="line.33">import gov.nist.secauto.metaschema.cli.processor.OptionUtils;</a>
+<span class="sourceLineNo">034</span><a id="line.34">import gov.nist.secauto.metaschema.cli.processor.command.AbstractCommandExecutor;</a>
+<span class="sourceLineNo">035</span><a id="line.35">import gov.nist.secauto.metaschema.cli.processor.command.AbstractTerminalCommand;</a>
+<span class="sourceLineNo">036</span><a id="line.36">import gov.nist.secauto.metaschema.cli.processor.command.DefaultExtraArgument;</a>
+<span class="sourceLineNo">037</span><a id="line.37">import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;</a>
+<span class="sourceLineNo">038</span><a id="line.38">import gov.nist.secauto.metaschema.core.util.CustomCollectors;</a>
+<span class="sourceLineNo">039</span><a id="line.39">import gov.nist.secauto.metaschema.core.util.ObjectUtils;</a>
+<span class="sourceLineNo">040</span><a id="line.40">import gov.nist.secauto.metaschema.databind.IBindingContext;</a>
+<span class="sourceLineNo">041</span><a id="line.41">import gov.nist.secauto.metaschema.databind.io.Format;</a>
+<span class="sourceLineNo">042</span><a id="line.42">import gov.nist.secauto.metaschema.databind.io.IBoundLoader;</a>
 <span class="sourceLineNo">043</span><a id="line.43"></a>
 <span class="sourceLineNo">044</span><a id="line.44">import org.apache.commons.cli.CommandLine;</a>
 <span class="sourceLineNo">045</span><a id="line.45">import org.apache.commons.cli.Option;</a>

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractDataTypeAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.datatype</a> &gt; <span class="el_source">AbstractDataTypeAdapter.java</span></div><h1>AbstractDataTypeAdapter.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.datatype;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+
+import gov.nist.secauto.metaschema.core.metapath.function.InvalidValueForCastFunctionException;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
+
+import org.codehaus.stax2.XMLEventReader2;
+import org.codehaus.stax2.XMLStreamWriter2;
+import org.codehaus.stax2.evt.XMLEventFactory2;
+
+import java.io.IOException;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+/**
+ * Provides a basic Java type adapter implementation. This implementation should
+ * be the parent class of all Java type adapter implementations.
+ *
+ * @param &lt;TYPE&gt;
+ *          the raw Java type this adapter supports
+ * @param &lt;ITEM_TYPE&gt;
+ *          the metapath item type corresponding to the raw Java type supported
+ *          by the adapter
+ */
+public abstract class AbstractDataTypeAdapter&lt;TYPE, ITEM_TYPE extends IAnyAtomicItem&gt;
+    implements IDataTypeAdapter&lt;TYPE&gt; {
+  public static final String DEFAULT_JSON_FIELD_NAME = &quot;STRVALUE&quot;;
+
+  @NonNull
+  private final Class&lt;TYPE&gt; clazz;
+
+  /**
+   * Construct a new Java type adapter for a provided class.
+   *
+   * @param clazz
+   *          the Java type this adapter supports
+   */
+<span class="fc" id="L74">  protected AbstractDataTypeAdapter(@NonNull Class&lt;TYPE&gt; clazz) {</span>
+<span class="fc" id="L75">    this.clazz = clazz;</span>
+<span class="fc" id="L76">  }</span>
+
+  @Override
+  @SuppressWarnings(&quot;unchecked&quot;)
+  public TYPE toValue(Object value) {
+<span class="fc" id="L81">    return (TYPE) value;</span>
+  }
+
+  @Override
+  public Class&lt;TYPE&gt; getJavaClass() {
+<span class="nc" id="L86">    return clazz;</span>
+  }
+
+  @Override
+  public boolean isParsingStartElement() {
+<span class="nc" id="L91">    return false;</span>
+  }
+
+  @Override
+  public boolean canHandleQName(QName nextQName) {
+<span class="nc" id="L96">    return false;</span>
+  }
+
+  @Override
+  public String getDefaultJsonValueKey() {
+<span class="nc" id="L101">    return DEFAULT_JSON_FIELD_NAME;</span>
+  }
+
+  @Override
+  public boolean isUnrappedValueAllowedInXml() {
+<span class="nc" id="L106">    return false;</span>
+  }
+
+  @Override
+  public boolean isXmlMixed() {
+<span class="nc" id="L111">    return false;</span>
+  }
+
+  @Override
+  public TYPE parse(XMLEventReader2 eventReader) throws IOException {
+<span class="nc" id="L116">    StringBuilder builder = new StringBuilder();</span>
+    try {
+      XMLEvent nextEvent;
+<span class="nc bnc" id="L119" title="All 2 branches missed.">      while (!(nextEvent = eventReader.peek()).isEndElement()) {</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        if (nextEvent.isCharacters()) {</span>
+<span class="nc" id="L121">          Characters characters = nextEvent.asCharacters();</span>
+<span class="nc" id="L122">          builder.append(characters.getData());</span>
+          // advance past current event
+<span class="nc" id="L124">          eventReader.nextEvent();</span>
+<span class="nc" id="L125">        } else {</span>
+<span class="nc" id="L126">          throw new IOException(String.format(&quot;Invalid content '%s' at %s&quot;, XmlEventUtil.toString(nextEvent),</span>
+<span class="nc" id="L127">              XmlEventUtil.toString(nextEvent.getLocation())));</span>
+        }
+      }
+
+      // trim leading and trailing whitespace
+      @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L133">      @NonNull String value = builder.toString().trim();</span>
+<span class="nc" id="L134">      return parse(value);</span>
+<span class="nc" id="L135">    } catch (XMLStreamException ex) {</span>
+<span class="nc" id="L136">      throw new IOException(ex);</span>
+    }
+  }
+
+  /**
+   * This default implementation will parse the value as a string and delegate to
+   * the string-based parsing method.
+   */
+  @Override
+  public TYPE parse(JsonParser parser) throws IOException {
+<span class="nc" id="L146">    String value = parser.getValueAsString();</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">    if (value == null) {</span>
+<span class="nc" id="L148">      throw new IOException(&quot;Unable to parse field value as text&quot;);</span>
+    }
+    // skip over value
+<span class="nc" id="L151">    parser.nextToken();</span>
+<span class="nc" id="L152">    return parse(value);</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public String asString(Object value) {
+<span class="fc" id="L158">    return value.toString();</span>
+  }
+
+  @Override
+  public void writeXmlValue(
+      Object value,
+      StartElement parent,
+      XMLEventFactory2 eventFactory,
+      XMLEventWriter eventWriter)
+      throws IOException, XMLStreamException {
+    try {
+<span class="nc" id="L169">      String content = asString(value);</span>
+<span class="nc" id="L170">      Characters characters = eventFactory.createCharacters(content);</span>
+<span class="nc" id="L171">      eventWriter.add(characters);</span>
+<span class="nc" id="L172">    } catch (XMLStreamException ex) {</span>
+<span class="nc" id="L173">      throw new IOException(ex);</span>
+<span class="nc" id="L174">    }</span>
+<span class="nc" id="L175">  }</span>
+
+  @Override
+  public void writeXmlValue(Object value, QName parentName, XMLStreamWriter2 writer) throws XMLStreamException {
+<span class="nc" id="L179">    String content = asString(value);</span>
+<span class="nc" id="L180">    writer.writeCharacters(content);</span>
+<span class="nc" id="L181">  }</span>
+
+  @Override
+  public void writeJsonValue(Object value, JsonGenerator generator) throws IOException {
+<span class="nc" id="L185">    generator.writeString(asString(value));</span>
+<span class="nc" id="L186">  }</span>
+
+  @Override
+  public abstract Class&lt;ITEM_TYPE&gt; getItemClass();
+
+  @Override
+  public abstract ITEM_TYPE newItem(Object value);
+
+  @Override
+  public ITEM_TYPE cast(IAnyAtomicItem item) {
+    ITEM_TYPE retval;
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">    if (item == null) {</span>
+<span class="nc" id="L198">      throw new InvalidValueForCastFunctionException(&quot;item is null&quot;);</span>
+<span class="fc bfc" id="L199" title="All 2 branches covered.">    } else if (getItemClass().isAssignableFrom(item.getClass())) {</span>
+<span class="fc" id="L200">      @SuppressWarnings(&quot;unchecked&quot;) ITEM_TYPE typedItem = (ITEM_TYPE) item;</span>
+<span class="fc" id="L201">      retval = typedItem;</span>
+<span class="fc" id="L202">    } else {</span>
+<span class="fc" id="L203">      retval = castInternal(item);</span>
+    }
+<span class="fc" id="L205">    return retval;</span>
+  }
+
+  /**
+   * Attempt to cast the provided item to this adapter's item type.
+   * &lt;p&gt;
+   * The default implementation of this will attempt to parse the provided item as
+   * a string using the {@link #parse(String)} method. If this behavior is
+   * undesirable, then a subclass should override this method.
+   *
+   * @param item
+   *          the item to cast
+   * @return the item casted to this adapter's item type
+   * @throws InvalidValueForCastFunctionException
+   *           if the casting of the item is not possible because the item
+   *           represents an invalid value for this adapter's item type
+   */
+  @NonNull
+  protected ITEM_TYPE castInternal(@NonNull IAnyAtomicItem item) {
+    // try string based casting as a fallback
+<span class="fc" id="L225">    String itemString = item.asString();</span>
+    try {
+<span class="fc" id="L227">      TYPE value = parse(itemString);</span>
+<span class="fc" id="L228">      return newItem(value);</span>
+<span class="nc" id="L229">    } catch (IllegalArgumentException ex) {</span>
+<span class="nc" id="L230">      throw new InvalidValueForCastFunctionException(</span>
+<span class="nc" id="L231">          String.format(&quot;The value '%s' is not compatible with the type '%s'&quot;, itemString, getItemClass().getName()),</span>
+          ex);
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

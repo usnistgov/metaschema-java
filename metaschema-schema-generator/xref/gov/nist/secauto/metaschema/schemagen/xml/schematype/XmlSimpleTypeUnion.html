@@ -34,12 +34,12 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.schemagen.xml.schematype;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IValuedDefinition;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.model.IValuedDefinition;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.util.CollectionUtil;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.util.ObjectUtils;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.schemagen.xml.XmlGenerationState;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.schemagen.xml.impl.XmlGenerationState;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> java.util.LinkedList;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> java.util.List;
@@ -69,7 +69,7 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>    }
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>    @Override
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> generateType(<a name="XmlGenerationState" href="../../../../../../../gov/nist/secauto/metaschema/schemagen/xml/XmlGenerationState.html#XmlGenerationState">XmlGenerationState</a> state, <strong class="jxr_keyword">boolean</strong> anonymous) { <em class="jxr_comment">// NOPMD unavoidable complexity</em>
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> generateType(<a name="XmlGenerationState" href="../../../../../../../gov/nist/secauto/metaschema/schemagen/xml/impl/XmlGenerationState.html#XmlGenerationState">XmlGenerationState</a> state, <strong class="jxr_keyword">boolean</strong> anonymous) { <em class="jxr_comment">// NOPMD unavoidable complexity</em>
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>        state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, <span class="jxr_string">"simpleType"</span>, XmlSchemaGenerator.NS_XML_SCHEMA);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  

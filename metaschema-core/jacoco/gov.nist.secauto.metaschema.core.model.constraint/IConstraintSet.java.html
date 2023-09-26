@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IConstraintSet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.constraint</a> &gt; <span class="el_source">IConstraintSet.java</span></div><h1>IConstraintSet.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.constraint;
+
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression.ResultType;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
+import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public interface IConstraintSet {
+
+  @NonNull
+  static Set&lt;IConstraintSet&gt; resolveConstraintSets(@NonNull Set&lt;IConstraintSet&gt; constraintSets) {
+<span class="fc" id="L55">    return ObjectUtils.notNull(constraintSets.stream()</span>
+<span class="fc" id="L56">        .flatMap(set -&gt; resolveConstraintSet(ObjectUtils.notNull(set)))</span>
+<span class="fc" id="L57">        .distinct()</span>
+<span class="fc" id="L58">        .collect(Collectors.toUnmodifiableSet()));</span>
+  }
+
+  @NonNull
+  private static Stream&lt;IConstraintSet&gt; resolveConstraintSet(@NonNull IConstraintSet constraintSet) {
+<span class="fc" id="L63">    return ObjectUtils.notNull(Stream.concat(</span>
+<span class="fc" id="L64">        Stream.of(constraintSet),</span>
+<span class="fc" id="L65">        constraintSet.getImportedConstraintSets().stream()));</span>
+  }
+
+  @NonNull
+  static List&lt;ITargetedConstaints&gt; getTargetedConstraintsForMetaschema(
+      @NonNull Set&lt;IConstraintSet&gt; constraintSets,
+      @NonNull IModule module) {
+<span class="fc" id="L72">    return ObjectUtils.notNull(resolveConstraintSets(constraintSets).stream()</span>
+<span class="fc" id="L73">        .flatMap(set -&gt; set.getTargetedConstraintsForModule(module))</span>
+<span class="fc" id="L74">        .collect(Collectors.toUnmodifiableList()));</span>
+  }
+
+  @NonNull
+  Stream&lt;ITargetedConstaints&gt; getTargetedConstraintsForModule(@NonNull IModule module);
+
+  static void applyConstraintSetToModule(
+      @NonNull Set&lt;IConstraintSet&gt; constraintSets,
+      @NonNull IModule module) throws MetaschemaException {
+<span class="fc" id="L83">    Set&lt;IConstraintSet&gt; resolvedConstraintSets = resolveConstraintSets(constraintSets);</span>
+
+<span class="fc" id="L85">    ConstraintComposingVisitor visitor = new ConstraintComposingVisitor();</span>
+<span class="fc" id="L86">    IModuleNodeItem item = INodeItemFactory.instance().newModuleNodeItem(module);</span>
+
+<span class="fc bfc" id="L88" title="All 2 branches covered.">    for (ITargetedConstaints targeted : getTargetedConstraintsForMetaschema(resolvedConstraintSets, module)) {</span>
+<span class="fc" id="L89">      MetapathExpression targetExpression = targeted.getTargetExpression();</span>
+<span class="fc" id="L90">      INodeItem node = targetExpression.evaluateAs(item, ResultType.NODE);</span>
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">      if (node == null) {</span>
+<span class="nc" id="L92">        throw new MetaschemaException(String.format(&quot;Target not found for expression '%s' on metaschema '%s'.&quot;,</span>
+<span class="nc" id="L93">            targetExpression.getPath(),</span>
+<span class="nc" id="L94">            module.getQName()));</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">      } else if (node instanceof IDefinitionNodeItem) {</span>
+<span class="fc" id="L96">        IDefinition nodeDefinition = ((IDefinitionNodeItem&lt;?, ?&gt;) node).getDefinition();</span>
+<span class="fc" id="L97">        IModule nodeModule = nodeDefinition.getContainingModule();</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if (!module.equals(nodeModule)) {</span>
+<span class="nc" id="L99">          throw new MetaschemaException(</span>
+<span class="nc" id="L100">              String.format(&quot;Target definition '%s' in metaschema '%s' is not in the scoped metaschema '%s'.&quot;,</span>
+<span class="nc" id="L101">                  nodeDefinition.getName(),</span>
+<span class="nc" id="L102">                  nodeModule.getQName(),</span>
+<span class="nc" id="L103">                  module.getQName()));</span>
+        }
+      }
+<span class="fc" id="L106">      node.accept(visitor, targeted);</span>
+<span class="fc" id="L107">    }</span>
+
+<span class="fc" id="L109">  }</span>
+
+  Collection&lt;IConstraintSet&gt; getImportedConstraintSets();
+
+  /**
+   * Get the set of Metaschema scoped constraints to apply by a {@link QName}
+   * formed from the Metaschema namespace and short name.
+   *
+   * @return the mapping of QName to scoped constraints
+   */
+  @NonNull
+  Map&lt;QName, List&lt;IScopedContraints&gt;&gt; getScopedContraints();
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

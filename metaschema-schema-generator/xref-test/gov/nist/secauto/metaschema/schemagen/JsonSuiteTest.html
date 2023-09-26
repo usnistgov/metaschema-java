@@ -34,14 +34,14 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.schemagen;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.io.Format;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.MetaschemaLoader;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IMetaschema;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.MetaschemaException;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.configuration.DefaultConfiguration;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.model.IModule;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.model.MetaschemaException;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.model.validation.IContentValidator;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.model.validation.JsonSchemaContentValidator;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.databind.io.Format;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.junit.jupiter.api.Disabled;
@@ -82,7 +82,7 @@
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>    }
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>    @Override
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>    <strong class="jxr_keyword">protected</strong> BiFunction&lt;IMetaschema, Writer, Void&gt; getGeneratorSupplier() {
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>    <strong class="jxr_keyword">protected</strong> BiFunction&lt;IModule, Writer, Void&gt; getGeneratorSupplier() {
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      <strong class="jxr_keyword">return</strong> JSON_SCHEMA_PROVIDER;
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>    }
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  
@@ -139,10 +139,10 @@
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>   @Disabled
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>   @Test
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>   <strong class="jxr_keyword">void</strong> testOSCALComplete() <strong class="jxr_keyword">throws</strong> IOException, MetaschemaException { <em class="jxr_comment">// NOPMD - delegated to doTest</em>
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>     MetaschemaLoader loader = <strong class="jxr_keyword">new</strong> MetaschemaLoader();
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>     ModuleLoader loader = <strong class="jxr_keyword">new</strong> ModuleLoader();
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>     loader.allowEntityResolution();
 <a class="jxr_linenumber" name="L136" href="#L136">136</a> 
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>     IMetaschema metaschema = loader.load(<strong class="jxr_keyword">new</strong> URL(
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>     IModule module = loader.load(<strong class="jxr_keyword">new</strong> URL(
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>         <span class="jxr_string">"https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"</span>));
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>     ISchemaGenerator schemaGenerator = <strong class="jxr_keyword">new</strong> JsonSchemaGenerator();
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>     IMutableConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; features
@@ -153,16 +153,16 @@
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>         StandardCharsets.UTF_8,
 <a class="jxr_linenumber" name="L146" href="#L146">146</a>         getWriteOpenOptions())) {
 <a class="jxr_linenumber" name="L147" href="#L147">147</a>       assert writer != <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>       schemaGenerator.generateFromMetaschema(metaschema, writer, features);
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>       schemaGenerator.generateFromModule(module, writer, features);
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>     }
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>   }
 <a class="jxr_linenumber" name="L151" href="#L151">151</a> 
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>   @Disabled
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>   @Test
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>   <strong class="jxr_keyword">void</strong> testTestMetaschema() <strong class="jxr_keyword">throws</strong> IOException, MetaschemaException { <em class="jxr_comment">// NOPMD - delegated to doTest</em>
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>     MetaschemaLoader loader = <strong class="jxr_keyword">new</strong> MetaschemaLoader();
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>     ModuleLoader loader = <strong class="jxr_keyword">new</strong> ModuleLoader();
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>     loader.allowEntityResolution();
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>     IMetaschema metaschema = loader.load(<strong class="jxr_keyword">new</strong> URL(
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>     IModule module = loader.load(<strong class="jxr_keyword">new</strong> URL(
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>         <span class="jxr_string">"https://raw.githubusercontent.com/usnistgov/metaschema/71233f4eb6854e820c7949144e86afa4d7981b22/test-suite/metaschema-xspec/json-schema-gen/json-value-testing-mini-metaschema.xml"</span>));
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>     ISchemaGenerator schemaGenerator = <strong class="jxr_keyword">new</strong> JsonSchemaGenerator();
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>     IMutableConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; features = <strong class="jxr_keyword">new</strong> DefaultConfiguration&lt;&gt;();
@@ -172,7 +172,7 @@
 <a class="jxr_linenumber" name="L164" href="#L164">164</a>         StandardCharsets.UTF_8,
 <a class="jxr_linenumber" name="L165" href="#L165">165</a>         getWriteOpenOptions())) {
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>       assert writer != <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>       schemaGenerator.generateFromMetaschema(metaschema, writer, features);
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>       schemaGenerator.generateFromModule(module, writer, features);
 <a class="jxr_linenumber" name="L168" href="#L168">168</a>     }
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>   }
 <a class="jxr_linenumber" name="L170" href="#L170">170</a> 

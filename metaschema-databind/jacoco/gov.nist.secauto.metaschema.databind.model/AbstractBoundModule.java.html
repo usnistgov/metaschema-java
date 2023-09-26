@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractBoundModule.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.model</a> &gt; <span class="el_source">AbstractBoundModule.java</span></div><h1>AbstractBoundModule.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.model;
+
+import gov.nist.secauto.metaschema.core.model.AbstractModule;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.model.annotations.Module;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L53">public abstract class AbstractBoundModule</span>
+    extends AbstractModule {
+  @NonNull
+  private final IBindingContext bindingContext;
+  private Map&lt;String, IAssemblyClassBinding&gt; assemblyDefinitions;
+  private Map&lt;String, IFieldClassBinding&gt; fieldDefinitions;
+
+  /**
+   * Create a new Module instance for a given class annotated by the
+   * {@link Module} annotation.
+   * &lt;p&gt;
+   * Will also load any imported Metaschemas.
+   *
+   *
+   * @param clazz
+   *          the Module class
+   * @param bindingContext
+   *          the Module binding context
+   * @return the new Module instance
+   */
+  @NonNull
+  public static IModule createInstance(
+      @NonNull Class&lt;? extends IModule&gt; clazz,
+      @NonNull IBindingContext bindingContext) {
+
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">    if (!clazz.isAnnotationPresent(Module.class)) {</span>
+<span class="nc" id="L79">      throw new IllegalStateException(String.format(&quot;The class '%s' is missing the '%s' annotation&quot;,</span>
+<span class="nc" id="L80">          clazz.getCanonicalName(), Module.class.getCanonicalName()));</span>
+    }
+
+<span class="fc" id="L83">    Module moduleAnnotation = clazz.getAnnotation(Module.class);</span>
+
+    List&lt;IModule&gt; importedModules;
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">    if (moduleAnnotation.imports().length &gt; 0) {</span>
+<span class="nc" id="L87">      importedModules = new ArrayList&lt;&gt;(moduleAnnotation.imports().length);</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">      for (Class&lt;? extends IModule&gt; importClass : moduleAnnotation.imports()) {</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        assert importClass != null;</span>
+<span class="nc" id="L90">        IModule moduleImport = bindingContext.getModuleByClass(importClass);</span>
+<span class="nc" id="L91">        importedModules.add(moduleImport);</span>
+      }
+    } else {
+<span class="fc" id="L94">      importedModules = CollectionUtil.emptyList();</span>
+    }
+<span class="fc" id="L96">    return createInstance(clazz, bindingContext, importedModules);</span>
+  }
+
+  @NonNull
+  private static IModule createInstance(
+      @NonNull Class&lt;? extends IModule&gt; clazz,
+      @NonNull IBindingContext bindingContext,
+      @NonNull List&lt;? extends IModule&gt; importedModules) {
+
+    Constructor&lt;? extends IModule&gt; constructor;
+    try {
+<span class="fc" id="L107">      constructor = clazz.getDeclaredConstructor(List.class, IBindingContext.class);</span>
+<span class="nc" id="L108">    } catch (NoSuchMethodException ex) {</span>
+<span class="nc" id="L109">      throw new IllegalArgumentException(ex);</span>
+<span class="fc" id="L110">    }</span>
+
+    try {
+<span class="fc" id="L113">      return ObjectUtils.notNull(constructor.newInstance(importedModules, bindingContext));</span>
+<span class="nc" id="L114">    } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {</span>
+<span class="nc" id="L115">      throw new IllegalArgumentException(ex);</span>
+    }
+  }
+
+  /**
+   * Construct a new Module instance.
+   *
+   * @param importedModules
+   *          Module imports associated with the Metaschema module
+   * @param bindingContext
+   *          the Module binding context
+   */
+  protected AbstractBoundModule(
+      @NonNull List&lt;? extends IModule&gt; importedModules,
+      @NonNull IBindingContext bindingContext) {
+<span class="fc" id="L130">    super(importedModules);</span>
+<span class="fc" id="L131">    this.bindingContext = bindingContext;</span>
+<span class="fc" id="L132">  }</span>
+
+  /**
+   * Get the Module binding context.
+   *
+   * @return the context
+   */
+  @NonNull
+  protected IBindingContext getBindingContext() {
+<span class="fc" id="L141">    return bindingContext;</span>
+  }
+
+  @Override
+  public URI getLocation() { // NOPMD - intentional
+    // not known
+<span class="fc" id="L147">    return null;</span>
+  }
+
+  @NonNull
+  protected Class&lt;?&gt;[] getAssemblyClasses() {
+    Class&lt;?&gt;[] retval;
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">    if (getClass().isAnnotationPresent(Module.class)) {</span>
+<span class="fc" id="L154">      Module moduleAnnotation = getClass().getAnnotation(Module.class);</span>
+<span class="fc" id="L155">      retval = moduleAnnotation.assemblies();</span>
+<span class="fc" id="L156">    } else {</span>
+<span class="nc" id="L157">      retval = new Class&lt;?&gt;[] {};</span>
+    }
+<span class="fc" id="L159">    return retval;</span>
+  }
+
+  @NonNull
+  protected Class&lt;?&gt;[] getFieldClasses() {
+    Class&lt;?&gt;[] retval;
+<span class="pc bpc" id="L165" title="1 of 2 branches missed.">    if (getClass().isAnnotationPresent(Module.class)) {</span>
+<span class="fc" id="L166">      Module moduleAnnotation = getClass().getAnnotation(Module.class);</span>
+<span class="fc" id="L167">      retval = moduleAnnotation.fields();</span>
+<span class="fc" id="L168">    } else {</span>
+<span class="nc" id="L169">      retval = new Class&lt;?&gt;[] {};</span>
+    }
+<span class="fc" id="L171">    return retval;</span>
+  }
+
+  protected void initDefinitions() {
+<span class="fc" id="L175">    synchronized (this) {</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">      if (assemblyDefinitions == null) {</span>
+<span class="fc" id="L177">        IBindingContext bindingContext = getBindingContext();</span>
+<span class="fc" id="L178">        this.assemblyDefinitions = Arrays.stream(getAssemblyClasses())</span>
+<span class="fc" id="L179">            .map(clazz -&gt; {</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">              assert clazz != null;</span>
+<span class="fc" id="L181">              return (IAssemblyClassBinding) ObjectUtils.requireNonNull(bindingContext.getClassBinding(clazz));</span>
+            })
+<span class="fc" id="L183">            .collect(Collectors.toUnmodifiableMap(</span>
+                IAssemblyClassBinding::getName,
+<span class="fc" id="L185">                Function.identity()));</span>
+<span class="fc" id="L186">        this.fieldDefinitions = Arrays.stream(getFieldClasses())</span>
+<span class="fc" id="L187">            .map(clazz -&gt; {</span>
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">              assert clazz != null;</span>
+<span class="fc" id="L189">              return (IFieldClassBinding) ObjectUtils.requireNonNull(bindingContext.getClassBinding(clazz));</span>
+            })
+<span class="fc" id="L191">            .collect(Collectors.toUnmodifiableMap(</span>
+                IFieldClassBinding::getName,
+<span class="fc" id="L193">                Function.identity()));</span>
+      }
+<span class="fc" id="L195">    }</span>
+
+<span class="fc" id="L197">  }</span>
+
+  @SuppressWarnings(&quot;null&quot;)
+  protected @NonNull Map&lt;String, ? extends IAssemblyDefinition&gt; getAssemblyDefinitionMap() {
+<span class="fc" id="L201">    initDefinitions();</span>
+<span class="fc" id="L202">    return assemblyDefinitions;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public Collection&lt;? extends IAssemblyDefinition&gt; getAssemblyDefinitions() {
+<span class="fc" id="L208">    return getAssemblyDefinitionMap().values();</span>
+  }
+
+  @Override
+  public IAssemblyDefinition getAssemblyDefinitionByName(@NonNull String name) {
+<span class="nc" id="L213">    return getAssemblyDefinitionMap().get(name);</span>
+  }
+
+  protected Map&lt;String, ? extends IFieldDefinition&gt; getFieldDefinitionMap() {
+<span class="fc" id="L217">    initDefinitions();</span>
+<span class="fc" id="L218">    return fieldDefinitions;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public Collection&lt;? extends IFieldDefinition&gt; getFieldDefinitions() {
+<span class="fc" id="L224">    return getFieldDefinitionMap().values();</span>
+  }
+
+  @Override
+  public IFieldDefinition getFieldDefinitionByName(@NonNull String name) {
+<span class="nc" id="L229">    return getFieldDefinitionMap().get(name);</span>
+  }
+
+  @NonNull
+  public Map&lt;String, ? extends IFlagDefinition&gt; getFlagDefinitionMap() {
+    // FlagContainer are always inline
+<span class="nc" id="L235">    return CollectionUtil.emptyMap();</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public Collection&lt;? extends IFlagDefinition&gt; getFlagDefinitions() {
+    // FlagContainer are always inline
+<span class="fc" id="L242">    return Collections.emptyList();</span>
+  }
+
+  @Override
+  public IFlagDefinition getFlagDefinitionByName(@NonNull String name) { // NOPMD - intentional
+    // FlagContainer are always inline
+<span class="nc" id="L248">    return null;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

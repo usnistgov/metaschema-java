@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClassBindingFlagContainerSupport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.model</a> &gt; <span class="el_source">ClassBindingFlagContainerSupport.java</span></div><h1>ClassBindingFlagContainerSupport.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.model;
+
+import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
+import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
+
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+class ClassBindingFlagContainerSupport implements IFlagContainerSupport&lt;IBoundFlagInstance&gt; {
+  @NonNull
+  private final Map&lt;String, IBoundFlagInstance&gt; flagInstances;
+  @Nullable
+  private IBoundFlagInstance jsonKeyFlag;
+
+  @SuppressWarnings(&quot;PMD.ConstructorCallsOverridableMethod&quot;)
+  public ClassBindingFlagContainerSupport(
+      @NonNull IClassBinding classBinding,
+<span class="fc" id="L57">      @Nullable Consumer&lt;IBoundFlagInstance&gt; peeker) {</span>
+<span class="fc" id="L58">    Class&lt;?&gt; clazz = classBinding.getBoundClass();</span>
+
+<span class="fc" id="L60">    Stream&lt;IBoundFlagInstance&gt; instances = getFlagInstanceFields(clazz).stream()</span>
+<span class="fc" id="L61">        .flatMap(field -&gt; {</span>
+          Stream&lt;IBoundFlagInstance&gt; stream;
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">          if (field.isAnnotationPresent(BoundFlag.class)) {</span>
+<span class="fc" id="L64">            stream = Stream.of(new DefaultFlagProperty(field, classBinding));</span>
+          } else {
+<span class="nc" id="L66">            stream = Stream.empty();</span>
+          }
+<span class="fc" id="L68">          return stream;</span>
+        });
+
+<span class="fc" id="L71">    Consumer&lt;IBoundFlagInstance&gt; intermediate = this::handle;</span>
+
+<span class="fc bfc" id="L73" title="All 2 branches covered.">    if (peeker != null) {</span>
+<span class="fc" id="L74">      intermediate = intermediate.andThen(peeker);</span>
+    }
+
+<span class="fc" id="L77">    this.flagInstances = ObjectUtils.notNull(instances</span>
+<span class="fc" id="L78">        .peek(intermediate)</span>
+<span class="fc" id="L79">        .collect(Collectors.toUnmodifiableMap(</span>
+            IBoundFlagInstance::getEffectiveName,
+<span class="fc" id="L81">            Function.identity())));</span>
+<span class="fc" id="L82">  }</span>
+
+  private void handle(IBoundFlagInstance instance) {
+<span class="fc bfc" id="L85" title="All 2 branches covered.">    if (instance.isJsonKey()) {</span>
+<span class="fc" id="L86">      this.jsonKeyFlag = instance;</span>
+    }
+<span class="fc" id="L88">  }</span>
+
+  /**
+   * Collect all fields that are flag instances on this class.
+   *
+   * @param clazz
+   *          the class
+   * @return an immutable collection of flag instances
+   */
+  @SuppressWarnings(&quot;PMD.UseArraysAsList&quot;)
+  @NonNull
+  protected static Collection&lt;Field&gt; getFlagInstanceFields(Class&lt;?&gt; clazz) {
+<span class="fc" id="L100">    Field[] fields = clazz.getDeclaredFields();</span>
+
+<span class="fc" id="L102">    List&lt;Field&gt; retval = new LinkedList&lt;&gt;();</span>
+
+<span class="fc" id="L104">    Class&lt;?&gt; superClass = clazz.getSuperclass();</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">    if (superClass != null) {</span>
+      // get flags from superclass
+<span class="fc" id="L107">      retval.addAll(getFlagInstanceFields(superClass));</span>
+    }
+
+<span class="fc bfc" id="L110" title="All 2 branches covered.">    for (Field field : fields) {</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">      if (!field.isAnnotationPresent(BoundFlag.class)) {</span>
+        // skip non-flag fields
+<span class="fc" id="L113">        continue;</span>
+      }
+
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">      if (field.isAnnotationPresent(Ignore.class)) {</span>
+        // skip this field, since it is ignored
+<span class="nc" id="L118">        continue;</span>
+      }
+
+<span class="fc" id="L121">      retval.add(field);</span>
+    }
+<span class="fc" id="L123">    return ObjectUtils.notNull(Collections.unmodifiableCollection(retval));</span>
+  }
+
+  /**
+   * Used to delegate flag instance initialization to subclasses.
+   *
+   * @param instance
+   *          the flag instance to process
+   */
+  protected void handleFlagInstance(IBoundFlagInstance instance) {
+<span class="nc bnc" id="L133" title="All 2 branches missed.">    if (instance.isJsonKey()) {</span>
+<span class="nc" id="L134">      this.jsonKeyFlag = instance;</span>
+    }
+<span class="nc" id="L136">  }</span>
+
+  @Override
+  @NonNull
+  public Map&lt;String, IBoundFlagInstance&gt; getFlagInstanceMap() {
+<span class="fc" id="L141">    return flagInstances;</span>
+  }
+
+  @Override
+  public IBoundFlagInstance getJsonKeyFlagInstance() {
+<span class="fc" id="L146">    return jsonKeyFlag;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultBindingContext.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind</a> &gt; <span class="el_source">DefaultBindingContext.java</span></div><h1>DefaultBindingContext.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind;
+
+import gov.nist.secauto.metaschema.core.datatype.DataTypeService;
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.io.DefaultBoundLoader;
+import gov.nist.secauto.metaschema.databind.io.Format;
+import gov.nist.secauto.metaschema.databind.io.IBoundLoader;
+import gov.nist.secauto.metaschema.databind.io.IDeserializer;
+import gov.nist.secauto.metaschema.databind.io.ISerializer;
+import gov.nist.secauto.metaschema.databind.io.json.DefaultJsonDeserializer;
+import gov.nist.secauto.metaschema.databind.io.json.DefaultJsonSerializer;
+import gov.nist.secauto.metaschema.databind.io.xml.DefaultXmlDeserializer;
+import gov.nist.secauto.metaschema.databind.io.xml.DefaultXmlSerializer;
+import gov.nist.secauto.metaschema.databind.io.yaml.DefaultYamlDeserializer;
+import gov.nist.secauto.metaschema.databind.io.yaml.DefaultYamlSerializer;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+/**
+ * The implementation of a {@link IBindingContext} provided by this library.
+ * &lt;p&gt;
+ * This implementation caches Module information, which can dramatically improve
+ * read and write performance at the cost of some memory use. Thus, using the
+ * same singleton of this class across multiple I/O operations will improve
+ * overall read and write performance when processing the same types of data.
+ * &lt;p&gt;
+ * Serializers and deserializers provided by this class using the
+ * {@link #newSerializer(Format, Class)} and
+ * {@link #newDeserializer(Format, Class)} methods will
+ * &lt;p&gt;
+ * This class is synchronized and is thread-safe.
+ */
+public class DefaultBindingContext implements IBindingContext {
+  private static DefaultBindingContext singleton;
+  @NonNull
+  private final IModuleLoaderStrategy moduleLoaderStrategy;
+<span class="fc" id="L78">  @NonNull</span>
+  private final List&lt;IBindingMatcher&gt; bindingMatchers = new LinkedList&lt;&gt;();
+
+  /**
+   * Get the singleton instance of this binding context.
+   *
+   * @return the binding context
+   */
+  @NonNull
+  public static DefaultBindingContext instance() {
+<span class="fc" id="L88">    synchronized (DefaultBindingContext.class) {</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">      if (singleton == null) {</span>
+<span class="fc" id="L90">        singleton = new DefaultBindingContext();</span>
+      }
+<span class="fc" id="L92">    }</span>
+<span class="fc" id="L93">    return ObjectUtils.notNull(singleton);</span>
+  }
+
+  /**
+   * Construct a new binding context.
+   *
+   * @param externalConstraintSets
+   *          the set of external constraints to configure this binding to use
+   */
+<span class="fc" id="L102">  public DefaultBindingContext(@NonNull Set&lt;IConstraintSet&gt; externalConstraintSets) {</span>
+    // only allow extended classes
+<span class="fc" id="L104">    moduleLoaderStrategy = new ExternalConstraintsModuleLoaderStrategy(this, externalConstraintSets);</span>
+<span class="fc" id="L105">  }</span>
+
+  /**
+   * Construct a new binding context.
+   */
+<span class="fc" id="L110">  public DefaultBindingContext() {</span>
+    // only allow extended classes
+<span class="fc" id="L112">    moduleLoaderStrategy = new SimpleModuleLoaderStrategy(this);</span>
+<span class="fc" id="L113">  }</span>
+
+  @Override
+  public IModule getModuleByClass(@NonNull Class&lt;? extends IModule&gt; clazz) {
+<span class="fc" id="L117">    return moduleLoaderStrategy.getModuleByClass(clazz);</span>
+  }
+
+  @Override
+  public IClassBinding getClassBinding(@NonNull Class&lt;?&gt; clazz) {
+<span class="fc" id="L122">    return moduleLoaderStrategy.getClassBinding(clazz);</span>
+  }
+
+  @Override
+  public Map&lt;Class&lt;?&gt;, IClassBinding&gt; getClassBindingsByClass() {
+<span class="nc" id="L127">    return moduleLoaderStrategy.getClassBindingsByClass();</span>
+  }
+
+  @Override
+  public &lt;TYPE extends IDataTypeAdapter&lt;?&gt;&gt; TYPE getJavaTypeAdapterInstance(@NonNull Class&lt;TYPE&gt; clazz) {
+<span class="fc" id="L132">    return DataTypeService.getInstance().getJavaTypeAdapterByClass(clazz);</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   * &lt;p&gt;
+   * A serializer returned by this method is thread-safe.
+   */
+  @Override
+  public &lt;CLASS&gt; ISerializer&lt;CLASS&gt; newSerializer(@NonNull Format format, @NonNull Class&lt;CLASS&gt; clazz) {
+<span class="fc" id="L142">    Objects.requireNonNull(format, &quot;format&quot;);</span>
+<span class="fc" id="L143">    IAssemblyClassBinding classBinding = (IAssemblyClassBinding) getClassBinding(clazz);</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">    if (classBinding == null) {</span>
+<span class="nc" id="L145">      throw new IllegalStateException(String.format(&quot;Class '%s' is not bound&quot;, clazz.getClass().getName()));</span>
+    }
+    ISerializer&lt;CLASS&gt; retval;
+<span class="pc bpc" id="L148" title="3 of 4 branches missed.">    switch (format) {</span>
+    case JSON:
+<span class="nc" id="L150">      retval = new DefaultJsonSerializer&lt;&gt;(classBinding);</span>
+<span class="nc" id="L151">      break;</span>
+    case XML:
+<span class="fc" id="L153">      retval = new DefaultXmlSerializer&lt;&gt;(classBinding);</span>
+<span class="fc" id="L154">      break;</span>
+    case YAML:
+<span class="nc" id="L156">      retval = new DefaultYamlSerializer&lt;&gt;(classBinding);</span>
+<span class="nc" id="L157">      break;</span>
+    default:
+<span class="nc" id="L159">      throw new UnsupportedOperationException(String.format(&quot;Unsupported format '%s'&quot;, format));</span>
+    }
+<span class="fc" id="L161">    return retval;</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   * &lt;p&gt;
+   * A deserializer returned by this method is thread-safe.
+   */
+  @Override
+  public &lt;CLASS&gt; IDeserializer&lt;CLASS&gt; newDeserializer(@NonNull Format format, @NonNull Class&lt;CLASS&gt; clazz) {
+<span class="fc" id="L171">    IAssemblyClassBinding classBinding = (IAssemblyClassBinding) getClassBinding(clazz);</span>
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">    if (classBinding == null) {</span>
+<span class="nc" id="L173">      throw new IllegalStateException(String.format(&quot;Class '%s' is not bound&quot;, clazz.getName()));</span>
+    }
+    IDeserializer&lt;CLASS&gt; retval;
+<span class="pc bpc" id="L176" title="2 of 4 branches missed.">    switch (format) {</span>
+    case JSON:
+<span class="fc" id="L178">      retval = new DefaultJsonDeserializer&lt;&gt;(classBinding);</span>
+<span class="fc" id="L179">      break;</span>
+    case XML:
+<span class="fc" id="L181">      retval = new DefaultXmlDeserializer&lt;&gt;(classBinding);</span>
+<span class="fc" id="L182">      break;</span>
+    case YAML:
+<span class="nc" id="L184">      retval = new DefaultYamlDeserializer&lt;&gt;(classBinding);</span>
+<span class="nc" id="L185">      break;</span>
+    default:
+<span class="nc" id="L187">      throw new UnsupportedOperationException(String.format(&quot;Unsupported format '%s'&quot;, format));</span>
+    }
+
+<span class="fc" id="L190">    return retval;</span>
+  }
+
+  @Override
+  public DefaultBindingContext registerBindingMatcher(@NonNull IBindingMatcher matcher) {
+<span class="fc" id="L195">    synchronized (this) {</span>
+<span class="fc" id="L196">      bindingMatchers.add(matcher);</span>
+<span class="fc" id="L197">    }</span>
+<span class="fc" id="L198">    return this;</span>
+  }
+
+  /**
+   * Get the binding matchers that are associated with this class.
+   *
+   * @return the list of matchers
+   * @see #registerBindingMatcher(IBindingMatcher)
+   */
+  @NonNull
+  protected List&lt;? extends IBindingMatcher&gt; getBindingMatchers() {
+<span class="fc" id="L209">    synchronized (this) {</span>
+<span class="fc" id="L210">      return CollectionUtil.unmodifiableList(bindingMatchers);</span>
+    }
+  }
+
+  @Override
+  public Class&lt;?&gt; getBoundClassForXmlQName(@NonNull QName rootQName) {
+<span class="nc" id="L216">    Class&lt;?&gt; retval = null;</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">    for (IBindingMatcher matcher : getBindingMatchers()) {</span>
+<span class="nc" id="L218">      retval = matcher.getBoundClassForXmlQName(rootQName);</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">      if (retval != null) {</span>
+<span class="nc" id="L220">        break;</span>
+      }
+<span class="nc" id="L222">    }</span>
+<span class="nc" id="L223">    return retval;</span>
+  }
+
+  @Override
+  public Class&lt;?&gt; getBoundClassForJsonName(@NonNull String rootName) {
+<span class="fc" id="L228">    Class&lt;?&gt; retval = null;</span>
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">    for (IBindingMatcher matcher : getBindingMatchers()) {</span>
+<span class="fc" id="L230">      retval = matcher.getBoundClassForJsonName(rootName);</span>
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">      if (retval != null) {</span>
+<span class="fc" id="L232">        break;</span>
+      }
+<span class="nc" id="L234">    }</span>
+<span class="fc" id="L235">    return retval;</span>
+  }
+
+  @Override
+  public IBoundLoader newBoundLoader() {
+<span class="fc" id="L240">    return new DefaultBoundLoader(this);</span>
+  }
+
+  @Override
+  public &lt;CLASS&gt; CLASS copyBoundObject(@NonNull CLASS other, Object parentInstance) throws BindingException {
+<span class="nc" id="L245">    IClassBinding classBinding = getClassBinding(other.getClass());</span>
+<span class="nc bnc" id="L246" title="All 2 branches missed.">    if (classBinding == null) {</span>
+<span class="nc" id="L247">      throw new IllegalStateException(String.format(&quot;Class '%s' is not bound&quot;, other.getClass().getName()));</span>
+    }
+<span class="nc" id="L249">    @SuppressWarnings(&quot;unchecked&quot;) CLASS retval = (CLASS) classBinding.copyBoundObject(other, parentInstance);</span>
+<span class="nc" id="L250">    return retval;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

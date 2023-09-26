@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>INamedModelElement.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model</a> &gt; <span class="el_source">INamedModelElement.java</span></div><h1>INamedModelElement.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model;
+
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+/**
+ * A marker interface for Metaschema constructs that can be members of a
+ * Metaschema definition's model that are named.
+ */
+public interface INamedModelElement extends IModelElement {
+  /**
+   * The formal display name.
+   *
+   * @return the formal name or {@code null} if not defined
+   */
+  @Nullable
+  String getFormalName();
+
+  /**
+   * The resolved formal display name, which allows an instance to override a
+   * definition's name.
+   *
+   * @return the formal name or {@code null} if not defined
+   */
+  @Nullable
+  default String getEffectiveFormalName() {
+<span class="nc" id="L61">    return getFormalName();</span>
+  }
+
+  /**
+   * Get the text that describes the basic use of the element.
+   *
+   * @return a line of markup text or {@code null} if not defined
+   */
+  @Nullable
+  MarkupLine getDescription();
+
+  /**
+   * Get the text that describes the basic use of the element, which allows an
+   * instance to override a definition's description.
+   *
+   * @return a line of markup text or {@code null} if not defined
+   */
+  @Nullable
+  default MarkupLine getEffectiveDescription() {
+<span class="nc" id="L80">    return getDescription();</span>
+  }
+
+  /**
+   * Get the mapping of property name to values for the model element.
+   *
+   * @return the mapping
+   */
+  @NonNull
+  Map&lt;QName, Set&lt;String&gt;&gt; getProperties();
+
+  /**
+   * Determine if a property is defined.
+   *
+   * @param qname
+   *          the qualified name of the property
+   * @return {@code true} if the property is defined or {@code false} otherwise
+   */
+  default boolean hasProperty(@NonNull QName qname) {
+<span class="nc" id="L99">    return getProperties().containsKey(qname);</span>
+  }
+
+  /**
+   * Get the values associated with a given property.
+   *
+   * @param qname
+   *          the qualified name of the property
+   * @return the values or an empty set
+   */
+  @NonNull
+  default Set&lt;String&gt; getPropertyValues(@NonNull QName qname) {
+<span class="nc" id="L111">    Set&lt;String&gt; retval = getProperties().get(qname);</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">    if (retval == null) {</span>
+<span class="nc" id="L113">      retval = CollectionUtil.emptySet();</span>
+    }
+<span class="nc" id="L115">    return retval;</span>
+  }
+
+  /**
+   * Determine if a given property, with a given {@code qname}, has the identified
+   * {@code value}.
+   *
+   * @param qname
+   *          the qualified name of the property
+   * @param value
+   *          the expected property value
+   * @return {@code true} if the property value is defined or {@code false}
+   *         otherwise
+   */
+  default boolean hasPropertyValue(@NonNull QName qname, @NonNull String value) {
+<span class="nc" id="L130">    Set&lt;String&gt; values = getProperties().get(qname);</span>
+<span class="nc bnc" id="L131" title="All 4 branches missed.">    return values != null &amp;&amp; values.contains(value);</span>
+  }
+
+  // @NonNull
+  // default QName getXmlQName() {
+  // String namespace = getXmlNamespace();
+  //
+  // @NonNull
+  // QName retval;
+  // if (namespace != null) {
+  // retval = new QName(namespace, getEffectiveName());
+  // } else {
+  // retval = new QName(getEffectiveName());
+  // }
+  // return retval;
+  // }
+
+  /**
+   * Get the name used for the associated property in JSON/YAML.
+   *
+   * @return the JSON property name
+   */
+  @NonNull
+  default String getJsonName() {
+<span class="nc" id="L155">    return getEffectiveName();</span>
+  }
+
+  /**
+   * Get the name to use based on the provided names. This method will return the
+   * use name provided by {@link #getUseName()} if the call is not {@code null},
+   * and fall back to the name provided by {@link #getName()} otherwise. This is
+   * the model name to use for the for an instance where the instance is
+   * referenced.
+   *
+   * @return the use name if available, or the name if not
+   *
+   * @see #getUseName()
+   * @see #getName()
+   */
+  @NonNull
+  default String getEffectiveName() {
+<span class="fc" id="L172">    @Nullable String useName = getUseName();</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">    return useName == null ? getName() : useName;</span>
+  }
+
+  /**
+   * Retrieve the name of the model element.
+   *
+   * @return the name
+   */
+  @NonNull
+  String getName();
+
+  /**
+   * Retrieve the name to use for the model element, instead of the name.
+   *
+   * @return the use name or {@code null} if no use name is defined
+   */
+  @Nullable
+  String getUseName();
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

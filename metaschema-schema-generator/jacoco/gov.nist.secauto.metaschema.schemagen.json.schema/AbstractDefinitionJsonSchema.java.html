@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractDefinitionJsonSchema.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema XML and JSON Schema Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.schemagen.json.schema</a> &gt; <span class="el_source">AbstractDefinitionJsonSchema.java</span></div><h1>AbstractDefinitionJsonSchema.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.schemagen.json.schema;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
+import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
+
+import java.io.IOException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public abstract class AbstractDefinitionJsonSchema&lt;D extends IDefinition&gt;
+    extends AbstractDefineableJsonSchema {
+  @NonNull
+  private final D definition;
+
+<span class="fc" id="L46">  protected AbstractDefinitionJsonSchema(@NonNull D definition) {</span>
+<span class="fc" id="L47">    this.definition = definition;</span>
+<span class="fc" id="L48">  }</span>
+
+  @NonNull
+  protected D getDefinition() {
+<span class="fc" id="L52">    return definition;</span>
+  }
+
+  @Override
+  public boolean isInline(JsonGenerationState state) {
+<span class="fc" id="L57">    return state.isInline(getDefinition());</span>
+  }
+
+  @Override
+  protected String generateDefinitionName(JsonGenerationState state) {
+<span class="fc" id="L62">    return state.getTypeNameForDefinition(definition, null);</span>
+  }
+
+  protected abstract void generateBody(@NonNull JsonGenerationState state, @NonNull ObjectNode obj) throws IOException;
+
+  @Override
+  public void generateSchema(JsonGenerationState state, ObjectNode obj) {
+<span class="fc" id="L69">    D definition = getDefinition();</span>
+
+    try {
+<span class="fc" id="L72">      generateTitle(definition, obj);</span>
+<span class="fc" id="L73">      generateDescription(definition, obj);</span>
+
+<span class="fc" id="L75">      generateBody(state, obj);</span>
+<span class="nc" id="L76">    } catch (IOException ex) {</span>
+<span class="nc" id="L77">      throw new SchemaGenerationException(ex);</span>
+<span class="fc" id="L78">    }</span>
+<span class="fc" id="L79">  }</span>
+
+  public static void generateTitle(@NonNull IDefinition definition, @NonNull ObjectNode obj) {
+<span class="fc" id="L82">    String formalName = definition.getEffectiveFormalName();</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">    if (formalName != null) {</span>
+<span class="fc" id="L84">      obj.put(&quot;title&quot;, formalName);</span>
+    }
+<span class="fc" id="L86">  }</span>
+
+  public static void generateDescription(@NonNull IDefinition definition, @NonNull ObjectNode obj) {
+<span class="fc" id="L89">    MarkupLine description = definition.getDescription();</span>
+
+<span class="fc" id="L91">    StringBuilder retval = null;</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">    if (description != null) {</span>
+<span class="fc" id="L93">      retval = new StringBuilder().append(description.toMarkdown());</span>
+    }
+
+<span class="fc" id="L96">    MarkupMultiline remarks = definition.getRemarks();</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">    if (remarks != null) {</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">      if (retval == null) {</span>
+<span class="nc" id="L99">        retval = new StringBuilder();</span>
+      } else {
+<span class="fc" id="L101">        retval.append(&quot;\n\n&quot;);</span>
+      }
+<span class="fc" id="L103">      retval.append(remarks.toMarkdown());</span>
+    }
+<span class="fc bfc" id="L105" title="All 2 branches covered.">    if (retval != null) {</span>
+<span class="fc" id="L106">      obj.put(&quot;description&quot;, retval.toString());</span>
+    }
+<span class="fc" id="L108">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

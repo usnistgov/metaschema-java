@@ -1,0 +1,509 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/*</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * Portions of this software was developed by employees of the National Institute</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * of Standards and Technology (NIST), an agency of the Federal Government and is</a>
+<span class="sourceLineNo">004</span><a id="line.4"> * being made available as a public service. Pursuant to title 17 United States</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * Code Section 105, works of NIST employees are not subject to copyright</a>
+<span class="sourceLineNo">006</span><a id="line.6"> * protection in the United States. This software may be subject to foreign</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * copyright. Permission in the United States and in foreign countries, to the</a>
+<span class="sourceLineNo">008</span><a id="line.8"> * extent that NIST may hold copyright, to use, copy, modify, create derivative</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * works, and distribute this software and its documentation without fee is hereby</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * granted on a non-exclusive basis, provided that this notice and disclaimer</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * of warranty appears in all copies.</a>
+<span class="sourceLineNo">012</span><a id="line.12"> *</a>
+<span class="sourceLineNo">013</span><a id="line.13"> * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE</a>
+<span class="sourceLineNo">018</span><a id="line.18"> * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR</a>
+<span class="sourceLineNo">023</span><a id="line.23"> * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.</a>
+<span class="sourceLineNo">025</span><a id="line.25"> */</a>
+<span class="sourceLineNo">026</span><a id="line.26"></a>
+<span class="sourceLineNo">027</span><a id="line.27">package gov.nist.secauto.metaschema.core.model;</a>
+<span class="sourceLineNo">028</span><a id="line.28"></a>
+<span class="sourceLineNo">029</span><a id="line.29">import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;</a>
+<span class="sourceLineNo">030</span><a id="line.30">import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;</a>
+<span class="sourceLineNo">031</span><a id="line.31">import gov.nist.secauto.metaschema.core.util.ObjectUtils;</a>
+<span class="sourceLineNo">032</span><a id="line.32"></a>
+<span class="sourceLineNo">033</span><a id="line.33">import java.net.URI;</a>
+<span class="sourceLineNo">034</span><a id="line.34">import java.util.Collection;</a>
+<span class="sourceLineNo">035</span><a id="line.35">import java.util.List;</a>
+<span class="sourceLineNo">036</span><a id="line.36">import java.util.function.Predicate;</a>
+<span class="sourceLineNo">037</span><a id="line.37">import java.util.stream.Collectors;</a>
+<span class="sourceLineNo">038</span><a id="line.38">import java.util.stream.Stream;</a>
+<span class="sourceLineNo">039</span><a id="line.39"></a>
+<span class="sourceLineNo">040</span><a id="line.40">import javax.xml.namespace.QName;</a>
+<span class="sourceLineNo">041</span><a id="line.41"></a>
+<span class="sourceLineNo">042</span><a id="line.42">import edu.umd.cs.findbugs.annotations.NonNull;</a>
+<span class="sourceLineNo">043</span><a id="line.43">import edu.umd.cs.findbugs.annotations.Nullable;</a>
+<span class="sourceLineNo">044</span><a id="line.44"></a>
+<span class="sourceLineNo">045</span><a id="line.45">/**</a>
+<span class="sourceLineNo">046</span><a id="line.46"> * The API for accessing information about a given Metaschema.</a>
+<span class="sourceLineNo">047</span><a id="line.47"> * &lt;p&gt;</a>
+<span class="sourceLineNo">048</span><a id="line.48"> * A Metaschem module may import another Metaschema module. This import graph</a>
+<span class="sourceLineNo">049</span><a id="line.49"> * can be accessed using {@link #getImportedModules()}.</a>
+<span class="sourceLineNo">050</span><a id="line.50"> * &lt;p&gt;</a>
+<span class="sourceLineNo">051</span><a id="line.51"> * Global scoped Metaschema definitions can be accessed using</a>
+<span class="sourceLineNo">052</span><a id="line.52"> * {@link #getScopedAssemblyDefinitionByName(String)},</a>
+<span class="sourceLineNo">053</span><a id="line.53"> * {@link #getScopedFieldDefinitionByName(String)}, and</a>
+<span class="sourceLineNo">054</span><a id="line.54"> * {@link #getScopedFlagDefinitionByName(String)}. These methods take into</a>
+<span class="sourceLineNo">055</span><a id="line.55"> * consideration the import order to provide the global definitions that are in</a>
+<span class="sourceLineNo">056</span><a id="line.56"> * scope within the given Metschema module.</a>
+<span class="sourceLineNo">057</span><a id="line.57"> * &lt;p&gt;</a>
+<span class="sourceLineNo">058</span><a id="line.58"> * Global scoped definitions exported by this Metaschema module, available for</a>
+<span class="sourceLineNo">059</span><a id="line.59"> * use by importing Metaschema modules, can be accessed using</a>
+<span class="sourceLineNo">060</span><a id="line.60"> * {@link #getExportedAssemblyDefinitions()},</a>
+<span class="sourceLineNo">061</span><a id="line.61"> * {@link #getExportedFieldDefinitions()}, and</a>
+<span class="sourceLineNo">062</span><a id="line.62"> * {@link #getExportedFlagDefinitions()}.</a>
+<span class="sourceLineNo">063</span><a id="line.63"> * &lt;p&gt;</a>
+<span class="sourceLineNo">064</span><a id="line.64"> * Global scoped definitions defined directly within the given Metaschema module</a>
+<span class="sourceLineNo">065</span><a id="line.65"> * can be accessed using {@link #getAssemblyDefinitions()},</a>
+<span class="sourceLineNo">066</span><a id="line.66"> * {@link #getFieldDefinitions()}, and {@link #getFlagDefinitions()}, along with</a>
+<span class="sourceLineNo">067</span><a id="line.67"> * similarly named access methods.</a>
+<span class="sourceLineNo">068</span><a id="line.68"> */</a>
+<span class="sourceLineNo">069</span><a id="line.69">// REFACTOR: rename to IModule</a>
+<span class="sourceLineNo">070</span><a id="line.70">public interface IModule {</a>
+<span class="sourceLineNo">071</span><a id="line.71">  String METASCHEMA_XML_NS = "http://csrc.nist.gov/ns/oscal/metaschema/1.0";</a>
+<span class="sourceLineNo">072</span><a id="line.72"></a>
+<span class="sourceLineNo">073</span><a id="line.73">  /**</a>
+<span class="sourceLineNo">074</span><a id="line.74">   * Get a filter that will match all definitions that are not locally defined.</a>
+<span class="sourceLineNo">075</span><a id="line.75">   *</a>
+<span class="sourceLineNo">076</span><a id="line.76">   * @param &lt;DEF&gt;</a>
+<span class="sourceLineNo">077</span><a id="line.77">   *          the type of definition</a>
+<span class="sourceLineNo">078</span><a id="line.78">   * @return a predicate implementing the filter</a>
+<span class="sourceLineNo">079</span><a id="line.79">   */</a>
+<span class="sourceLineNo">080</span><a id="line.80">  static &lt;DEF extends IDefinition&gt; Predicate&lt;DEF&gt; allNonLocalDefinitions() {</a>
+<span class="sourceLineNo">081</span><a id="line.81">    return definition -&gt; {</a>
+<span class="sourceLineNo">082</span><a id="line.82">      return ModuleScopeEnum.INHERITED.equals(definition.getModuleScope())</a>
+<span class="sourceLineNo">083</span><a id="line.83">          || ModelType.ASSEMBLY.equals(definition.getModelType()) &amp;&amp; ((IAssemblyDefinition) definition).isRoot();</a>
+<span class="sourceLineNo">084</span><a id="line.84">    };</a>
+<span class="sourceLineNo">085</span><a id="line.85">  }</a>
+<span class="sourceLineNo">086</span><a id="line.86"></a>
+<span class="sourceLineNo">087</span><a id="line.87">  /**</a>
+<span class="sourceLineNo">088</span><a id="line.88">   * Get a filter that will match all definitions that are root assemblies.</a>
+<span class="sourceLineNo">089</span><a id="line.89">   *</a>
+<span class="sourceLineNo">090</span><a id="line.90">   * @param &lt;DEF&gt;</a>
+<span class="sourceLineNo">091</span><a id="line.91">   *          the type of definition</a>
+<span class="sourceLineNo">092</span><a id="line.92">   * @return a predicate implementing the filter</a>
+<span class="sourceLineNo">093</span><a id="line.93">   */</a>
+<span class="sourceLineNo">094</span><a id="line.94">  static &lt;DEF extends IDefinition&gt; Predicate&lt;DEF&gt; allRootAssemblyDefinitions() {</a>
+<span class="sourceLineNo">095</span><a id="line.95">    return definition -&gt; {</a>
+<span class="sourceLineNo">096</span><a id="line.96">      return ModelType.ASSEMBLY.equals(definition.getModelType()) &amp;&amp; ((IAssemblyDefinition) definition).isRoot();</a>
+<span class="sourceLineNo">097</span><a id="line.97">    };</a>
+<span class="sourceLineNo">098</span><a id="line.98">  }</a>
+<span class="sourceLineNo">099</span><a id="line.99"></a>
+<span class="sourceLineNo">100</span><a id="line.100">  /**</a>
+<span class="sourceLineNo">101</span><a id="line.101">   * Retrieves the location where the Metaschema module was loaded from.</a>
+<span class="sourceLineNo">102</span><a id="line.102">   *</a>
+<span class="sourceLineNo">103</span><a id="line.103">   * @return the location, or {@code null} if this information is not available</a>
+<span class="sourceLineNo">104</span><a id="line.104">   */</a>
+<span class="sourceLineNo">105</span><a id="line.105">  URI getLocation();</a>
+<span class="sourceLineNo">106</span><a id="line.106"></a>
+<span class="sourceLineNo">107</span><a id="line.107">  /**</a>
+<span class="sourceLineNo">108</span><a id="line.108">   * Get the long name for the Metaschema module.</a>
+<span class="sourceLineNo">109</span><a id="line.109">   *</a>
+<span class="sourceLineNo">110</span><a id="line.110">   * @return the name</a>
+<span class="sourceLineNo">111</span><a id="line.111">   */</a>
+<span class="sourceLineNo">112</span><a id="line.112">  @NonNull</a>
+<span class="sourceLineNo">113</span><a id="line.113">  MarkupLine getName();</a>
+<span class="sourceLineNo">114</span><a id="line.114"></a>
+<span class="sourceLineNo">115</span><a id="line.115">  /**</a>
+<span class="sourceLineNo">116</span><a id="line.116">   * Get the revision of the Metaschema module.</a>
+<span class="sourceLineNo">117</span><a id="line.117">   *</a>
+<span class="sourceLineNo">118</span><a id="line.118">   * @return the revision</a>
+<span class="sourceLineNo">119</span><a id="line.119">   */</a>
+<span class="sourceLineNo">120</span><a id="line.120">  @NonNull</a>
+<span class="sourceLineNo">121</span><a id="line.121">  String getVersion();</a>
+<span class="sourceLineNo">122</span><a id="line.122"></a>
+<span class="sourceLineNo">123</span><a id="line.123">  /**</a>
+<span class="sourceLineNo">124</span><a id="line.124">   * Retrieve the remarks associated with this Metaschema module, if any.</a>
+<span class="sourceLineNo">125</span><a id="line.125">   *</a>
+<span class="sourceLineNo">126</span><a id="line.126">   * @return the remarks or {@code null} if no remarks are defined</a>
+<span class="sourceLineNo">127</span><a id="line.127">   */</a>
+<span class="sourceLineNo">128</span><a id="line.128">  @Nullable</a>
+<span class="sourceLineNo">129</span><a id="line.129">  MarkupMultiline getRemarks();</a>
+<span class="sourceLineNo">130</span><a id="line.130"></a>
+<span class="sourceLineNo">131</span><a id="line.131">  /**</a>
+<span class="sourceLineNo">132</span><a id="line.132">   * Retrieves the unique short name for the Metaschema module, which provides a</a>
+<span class="sourceLineNo">133</span><a id="line.133">   * textual identifier for the Metaschema module.</a>
+<span class="sourceLineNo">134</span><a id="line.134">   *</a>
+<span class="sourceLineNo">135</span><a id="line.135">   * @return the short name</a>
+<span class="sourceLineNo">136</span><a id="line.136">   */</a>
+<span class="sourceLineNo">137</span><a id="line.137">  @NonNull</a>
+<span class="sourceLineNo">138</span><a id="line.138">  String getShortName();</a>
+<span class="sourceLineNo">139</span><a id="line.139"></a>
+<span class="sourceLineNo">140</span><a id="line.140">  /**</a>
+<span class="sourceLineNo">141</span><a id="line.141">   * Retrieves the XML namespace associated with the Metaschema module.</a>
+<span class="sourceLineNo">142</span><a id="line.142">   *</a>
+<span class="sourceLineNo">143</span><a id="line.143">   * @return a namespace</a>
+<span class="sourceLineNo">144</span><a id="line.144">   */</a>
+<span class="sourceLineNo">145</span><a id="line.145">  @NonNull</a>
+<span class="sourceLineNo">146</span><a id="line.146">  URI getXmlNamespace();</a>
+<span class="sourceLineNo">147</span><a id="line.147"></a>
+<span class="sourceLineNo">148</span><a id="line.148">  /**</a>
+<span class="sourceLineNo">149</span><a id="line.149">   * Retrieve the JSON schema base URI associated with the Metaschema module.</a>
+<span class="sourceLineNo">150</span><a id="line.150">   *</a>
+<span class="sourceLineNo">151</span><a id="line.151">   * @return the base URI</a>
+<span class="sourceLineNo">152</span><a id="line.152">   */</a>
+<span class="sourceLineNo">153</span><a id="line.153">  @NonNull</a>
+<span class="sourceLineNo">154</span><a id="line.154">  URI getJsonBaseUri();</a>
+<span class="sourceLineNo">155</span><a id="line.155"></a>
+<span class="sourceLineNo">156</span><a id="line.156">  /**</a>
+<span class="sourceLineNo">157</span><a id="line.157">   * Get the qualified name associated with the Metaschema module.</a>
+<span class="sourceLineNo">158</span><a id="line.158">   *</a>
+<span class="sourceLineNo">159</span><a id="line.159">   * @return the qualified name</a>
+<span class="sourceLineNo">160</span><a id="line.160">   */</a>
+<span class="sourceLineNo">161</span><a id="line.161">  default QName getQName() {</a>
+<span class="sourceLineNo">162</span><a id="line.162">    return new QName(getXmlNamespace().toString(), getShortName());</a>
+<span class="sourceLineNo">163</span><a id="line.163">  }</a>
+<span class="sourceLineNo">164</span><a id="line.164"></a>
+<span class="sourceLineNo">165</span><a id="line.165">  /**</a>
+<span class="sourceLineNo">166</span><a id="line.166">   * Retrieves all Metaschema modules imported by this Metaschema module.</a>
+<span class="sourceLineNo">167</span><a id="line.167">   *</a>
+<span class="sourceLineNo">168</span><a id="line.168">   * @return a list of imported Metaschema modules</a>
+<span class="sourceLineNo">169</span><a id="line.169">   */</a>
+<span class="sourceLineNo">170</span><a id="line.170">  @NonNull</a>
+<span class="sourceLineNo">171</span><a id="line.171">  List&lt;? extends IModule&gt; getImportedModules();</a>
+<span class="sourceLineNo">172</span><a id="line.172"></a>
+<span class="sourceLineNo">173</span><a id="line.173">  /**</a>
+<span class="sourceLineNo">174</span><a id="line.174">   * Retrieve the imported Metaschema module with the specified name, if it</a>
+<span class="sourceLineNo">175</span><a id="line.175">   * exists.</a>
+<span class="sourceLineNo">176</span><a id="line.176">   *</a>
+<span class="sourceLineNo">177</span><a id="line.177">   * @param name</a>
+<span class="sourceLineNo">178</span><a id="line.178">   *          the short name of the Metschema module to retrieve</a>
+<span class="sourceLineNo">179</span><a id="line.179">   * @return the imported Metaschema module or {@code null} if it doesn't exist</a>
+<span class="sourceLineNo">180</span><a id="line.180">   */</a>
+<span class="sourceLineNo">181</span><a id="line.181">  @Nullable</a>
+<span class="sourceLineNo">182</span><a id="line.182">  IModule getImportedModuleByShortName(String name);</a>
+<span class="sourceLineNo">183</span><a id="line.183"></a>
+<span class="sourceLineNo">184</span><a id="line.184">  /**</a>
+<span class="sourceLineNo">185</span><a id="line.185">   * Retrieves the top-level assembly definitions in this Metaschema module.</a>
+<span class="sourceLineNo">186</span><a id="line.186">   *</a>
+<span class="sourceLineNo">187</span><a id="line.187">   * @return the collection of assembly definitions</a>
+<span class="sourceLineNo">188</span><a id="line.188">   */</a>
+<span class="sourceLineNo">189</span><a id="line.189">  @NonNull</a>
+<span class="sourceLineNo">190</span><a id="line.190">  Collection&lt;? extends IAssemblyDefinition&gt; getAssemblyDefinitions();</a>
+<span class="sourceLineNo">191</span><a id="line.191"></a>
+<span class="sourceLineNo">192</span><a id="line.192">  /**</a>
+<span class="sourceLineNo">193</span><a id="line.193">   * Retrieves the top-level assembly definition in this Metaschema module with</a>
+<span class="sourceLineNo">194</span><a id="line.194">   * the matching name, if it exists.</a>
+<span class="sourceLineNo">195</span><a id="line.195">   *</a>
+<span class="sourceLineNo">196</span><a id="line.196">   * @param name</a>
+<span class="sourceLineNo">197</span><a id="line.197">   *          the definition name</a>
+<span class="sourceLineNo">198</span><a id="line.198">   *</a>
+<span class="sourceLineNo">199</span><a id="line.199">   * @return the matching assembly definition, or {@code null} if none match</a>
+<span class="sourceLineNo">200</span><a id="line.200">   */</a>
+<span class="sourceLineNo">201</span><a id="line.201">  @Nullable</a>
+<span class="sourceLineNo">202</span><a id="line.202">  IAssemblyDefinition getAssemblyDefinitionByName(@NonNull String name);</a>
+<span class="sourceLineNo">203</span><a id="line.203"></a>
+<span class="sourceLineNo">204</span><a id="line.204">  /**</a>
+<span class="sourceLineNo">205</span><a id="line.205">   * Retrieves the top-level field definitions in this Metaschema module.</a>
+<span class="sourceLineNo">206</span><a id="line.206">   *</a>
+<span class="sourceLineNo">207</span><a id="line.207">   * @return the collection of field definitions</a>
+<span class="sourceLineNo">208</span><a id="line.208">   */</a>
+<span class="sourceLineNo">209</span><a id="line.209">  @NonNull</a>
+<span class="sourceLineNo">210</span><a id="line.210">  Collection&lt;? extends IFieldDefinition&gt; getFieldDefinitions();</a>
+<span class="sourceLineNo">211</span><a id="line.211"></a>
+<span class="sourceLineNo">212</span><a id="line.212">  /**</a>
+<span class="sourceLineNo">213</span><a id="line.213">   * Retrieves the top-level field definition in this Metaschema module with the</a>
+<span class="sourceLineNo">214</span><a id="line.214">   * matching name, if it exists.</a>
+<span class="sourceLineNo">215</span><a id="line.215">   *</a>
+<span class="sourceLineNo">216</span><a id="line.216">   * @param name</a>
+<span class="sourceLineNo">217</span><a id="line.217">   *          the definition name</a>
+<span class="sourceLineNo">218</span><a id="line.218">   *</a>
+<span class="sourceLineNo">219</span><a id="line.219">   * @return the matching field definition, or {@code null} if none match</a>
+<span class="sourceLineNo">220</span><a id="line.220">   */</a>
+<span class="sourceLineNo">221</span><a id="line.221">  @Nullable</a>
+<span class="sourceLineNo">222</span><a id="line.222">  IFieldDefinition getFieldDefinitionByName(@NonNull String name);</a>
+<span class="sourceLineNo">223</span><a id="line.223"></a>
+<span class="sourceLineNo">224</span><a id="line.224">  /**</a>
+<span class="sourceLineNo">225</span><a id="line.225">   * Retrieves the top-level assembly and field definitions in this Metaschema</a>
+<span class="sourceLineNo">226</span><a id="line.226">   * module.</a>
+<span class="sourceLineNo">227</span><a id="line.227">   *</a>
+<span class="sourceLineNo">228</span><a id="line.228">   * @return a listing of assembly and field definitions</a>
+<span class="sourceLineNo">229</span><a id="line.229">   */</a>
+<span class="sourceLineNo">230</span><a id="line.230">  @NonNull</a>
+<span class="sourceLineNo">231</span><a id="line.231">  default List&lt;? extends IFlagContainer&gt; getAssemblyAndFieldDefinitions() {</a>
+<span class="sourceLineNo">232</span><a id="line.232">    return ObjectUtils.notNull(</a>
+<span class="sourceLineNo">233</span><a id="line.233">        Stream.concat(getAssemblyDefinitions().stream(), getFieldDefinitions().stream())</a>
+<span class="sourceLineNo">234</span><a id="line.234">            .collect(Collectors.toList()));</a>
+<span class="sourceLineNo">235</span><a id="line.235">  }</a>
+<span class="sourceLineNo">236</span><a id="line.236"></a>
+<span class="sourceLineNo">237</span><a id="line.237">  /**</a>
+<span class="sourceLineNo">238</span><a id="line.238">   * Retrieves the top-level flag definitions in this Metaschema module.</a>
+<span class="sourceLineNo">239</span><a id="line.239">   *</a>
+<span class="sourceLineNo">240</span><a id="line.240">   * @return the collection of flag definitions</a>
+<span class="sourceLineNo">241</span><a id="line.241">   */</a>
+<span class="sourceLineNo">242</span><a id="line.242">  @NonNull</a>
+<span class="sourceLineNo">243</span><a id="line.243">  Collection&lt;? extends IFlagDefinition&gt; getFlagDefinitions();</a>
+<span class="sourceLineNo">244</span><a id="line.244"></a>
+<span class="sourceLineNo">245</span><a id="line.245">  /**</a>
+<span class="sourceLineNo">246</span><a id="line.246">   * Retrieves the top-level flag definition in this Metaschema module with the</a>
+<span class="sourceLineNo">247</span><a id="line.247">   * matching name, if it exists.</a>
+<span class="sourceLineNo">248</span><a id="line.248">   *</a>
+<span class="sourceLineNo">249</span><a id="line.249">   * @param name</a>
+<span class="sourceLineNo">250</span><a id="line.250">   *          the definition name</a>
+<span class="sourceLineNo">251</span><a id="line.251">   *</a>
+<span class="sourceLineNo">252</span><a id="line.252">   * @return the matching flag definition, or {@code null} if none match</a>
+<span class="sourceLineNo">253</span><a id="line.253">   */</a>
+<span class="sourceLineNo">254</span><a id="line.254">  @Nullable</a>
+<span class="sourceLineNo">255</span><a id="line.255">  IFlagDefinition getFlagDefinitionByName(@NonNull String name);</a>
+<span class="sourceLineNo">256</span><a id="line.256"></a>
+<span class="sourceLineNo">257</span><a id="line.257">  // /**</a>
+<span class="sourceLineNo">258</span><a id="line.258">  // * Retrieves the information elements matching the path.</a>
+<span class="sourceLineNo">259</span><a id="line.259">  // *</a>
+<span class="sourceLineNo">260</span><a id="line.260">  // * @param path</a>
+<span class="sourceLineNo">261</span><a id="line.261">  // * a MetaPath expression</a>
+<span class="sourceLineNo">262</span><a id="line.262">  // * @return the matching information elements or an empty collection</a>
+<span class="sourceLineNo">263</span><a id="line.263">  // */</a>
+<span class="sourceLineNo">264</span><a id="line.264">  // @NonNull</a>
+<span class="sourceLineNo">265</span><a id="line.265">  // Collection&lt;@NonNull ? extends IModelElement&gt;</a>
+<span class="sourceLineNo">266</span><a id="line.266">  // getInfoElementsByMetapath(@NonNull String path);</a>
+<span class="sourceLineNo">267</span><a id="line.267"></a>
+<span class="sourceLineNo">268</span><a id="line.268">  /**</a>
+<span class="sourceLineNo">269</span><a id="line.269">   * Retrieves the assembly definition with a matching name from either: 1) the</a>
+<span class="sourceLineNo">270</span><a id="line.270">   * top-level assembly definitions from this Metaschema module, or 2) global</a>
+<span class="sourceLineNo">271</span><a id="line.271">   * assembly definitions from each imported Metaschema module in reverse order of</a>
+<span class="sourceLineNo">272</span><a id="line.272">   * import.</a>
+<span class="sourceLineNo">273</span><a id="line.273">   *</a>
+<span class="sourceLineNo">274</span><a id="line.274">   * @param name</a>
+<span class="sourceLineNo">275</span><a id="line.275">   *          the name of the assembly to find</a>
+<span class="sourceLineNo">276</span><a id="line.276">   * @return the assembly definition</a>
+<span class="sourceLineNo">277</span><a id="line.277">   */</a>
+<span class="sourceLineNo">278</span><a id="line.278">  @Nullable</a>
+<span class="sourceLineNo">279</span><a id="line.279">  default IAssemblyDefinition getScopedAssemblyDefinitionByName(@NonNull String name) {</a>
+<span class="sourceLineNo">280</span><a id="line.280">    // first try local/global top-level definitions from current metaschema module</a>
+<span class="sourceLineNo">281</span><a id="line.281">    IAssemblyDefinition retval = getAssemblyDefinitionByName(name);</a>
+<span class="sourceLineNo">282</span><a id="line.282">    if (retval == null) {</a>
+<span class="sourceLineNo">283</span><a id="line.283">      // try global definitions from imported Metaschema modules</a>
+<span class="sourceLineNo">284</span><a id="line.284">      retval = getExportedAssemblyDefinitionByName(name);</a>
+<span class="sourceLineNo">285</span><a id="line.285">    }</a>
+<span class="sourceLineNo">286</span><a id="line.286">    return retval;</a>
+<span class="sourceLineNo">287</span><a id="line.287">  }</a>
+<span class="sourceLineNo">288</span><a id="line.288"></a>
+<span class="sourceLineNo">289</span><a id="line.289">  /**</a>
+<span class="sourceLineNo">290</span><a id="line.290">   * Retrieves the field definition with a matching name from either: 1) the</a>
+<span class="sourceLineNo">291</span><a id="line.291">   * top-level field definitions from this Metaschema module, or 2) global field</a>
+<span class="sourceLineNo">292</span><a id="line.292">   * definitions from each imported Metaschema module in reverse order of import.</a>
+<span class="sourceLineNo">293</span><a id="line.293">   *</a>
+<span class="sourceLineNo">294</span><a id="line.294">   * @param name</a>
+<span class="sourceLineNo">295</span><a id="line.295">   *          the name of the field definition to find</a>
+<span class="sourceLineNo">296</span><a id="line.296">   * @return the field definition</a>
+<span class="sourceLineNo">297</span><a id="line.297">   */</a>
+<span class="sourceLineNo">298</span><a id="line.298">  @Nullable</a>
+<span class="sourceLineNo">299</span><a id="line.299">  default IFieldDefinition getScopedFieldDefinitionByName(@NonNull String name) {</a>
+<span class="sourceLineNo">300</span><a id="line.300">    // first try local/global top-level definitions from current metaschema module</a>
+<span class="sourceLineNo">301</span><a id="line.301">    IFieldDefinition retval = getFieldDefinitionByName(name);</a>
+<span class="sourceLineNo">302</span><a id="line.302">    if (retval == null) {</a>
+<span class="sourceLineNo">303</span><a id="line.303">      // try global definitions from imported metaschema modules</a>
+<span class="sourceLineNo">304</span><a id="line.304">      retval = getExportedFieldDefinitionByName(name);</a>
+<span class="sourceLineNo">305</span><a id="line.305">    }</a>
+<span class="sourceLineNo">306</span><a id="line.306">    return retval;</a>
+<span class="sourceLineNo">307</span><a id="line.307">  }</a>
+<span class="sourceLineNo">308</span><a id="line.308"></a>
+<span class="sourceLineNo">309</span><a id="line.309">  /**</a>
+<span class="sourceLineNo">310</span><a id="line.310">   * Retrieves the flag definition with a matching name from either: 1) the</a>
+<span class="sourceLineNo">311</span><a id="line.311">   * top-level flag definitions from this Metaschema module, or 2) global flag</a>
+<span class="sourceLineNo">312</span><a id="line.312">   * definitions from each imported Metaschema module in reverse order of import.</a>
+<span class="sourceLineNo">313</span><a id="line.313">   *</a>
+<span class="sourceLineNo">314</span><a id="line.314">   * @param name</a>
+<span class="sourceLineNo">315</span><a id="line.315">   *          the name of the flag definition to find</a>
+<span class="sourceLineNo">316</span><a id="line.316">   * @return the flag definition</a>
+<span class="sourceLineNo">317</span><a id="line.317">   */</a>
+<span class="sourceLineNo">318</span><a id="line.318">  @Nullable</a>
+<span class="sourceLineNo">319</span><a id="line.319">  default IFlagDefinition getScopedFlagDefinitionByName(@NonNull String name) {</a>
+<span class="sourceLineNo">320</span><a id="line.320">    // first try local/global top-level definitions from current metaschema module</a>
+<span class="sourceLineNo">321</span><a id="line.321">    IFlagDefinition retval = getFlagDefinitionByName(name);</a>
+<span class="sourceLineNo">322</span><a id="line.322">    if (retval == null) {</a>
+<span class="sourceLineNo">323</span><a id="line.323">      // try global definitions from imported metaschema modules</a>
+<span class="sourceLineNo">324</span><a id="line.324">      retval = getExportedFlagDefinitionByName(name);</a>
+<span class="sourceLineNo">325</span><a id="line.325">    }</a>
+<span class="sourceLineNo">326</span><a id="line.326">    return retval;</a>
+<span class="sourceLineNo">327</span><a id="line.327">  }</a>
+<span class="sourceLineNo">328</span><a id="line.328"></a>
+<span class="sourceLineNo">329</span><a id="line.329">  /**</a>
+<span class="sourceLineNo">330</span><a id="line.330">   * Retrieves the top-level assembly definitions that are marked as roots from</a>
+<span class="sourceLineNo">331</span><a id="line.331">   * the current Metaschema module and any imported Metaschema modules.</a>
+<span class="sourceLineNo">332</span><a id="line.332">   *</a>
+<span class="sourceLineNo">333</span><a id="line.333">   * @return a listing of assembly definitions marked as root</a>
+<span class="sourceLineNo">334</span><a id="line.334">   */</a>
+<span class="sourceLineNo">335</span><a id="line.335">  @NonNull</a>
+<span class="sourceLineNo">336</span><a id="line.336">  default Collection&lt;? extends IAssemblyDefinition&gt; getExportedRootAssemblyDefinitions() {</a>
+<span class="sourceLineNo">337</span><a id="line.337">    return ObjectUtils.notNull(getExportedAssemblyDefinitions().stream()</a>
+<span class="sourceLineNo">338</span><a id="line.338">        .filter(allRootAssemblyDefinitions())</a>
+<span class="sourceLineNo">339</span><a id="line.339">        .collect(Collectors.toList()));</a>
+<span class="sourceLineNo">340</span><a id="line.340">  }</a>
+<span class="sourceLineNo">341</span><a id="line.341"></a>
+<span class="sourceLineNo">342</span><a id="line.342">  /**</a>
+<span class="sourceLineNo">343</span><a id="line.343">   * Retrieves the top-level assembly definitions that are marked as roots from</a>
+<span class="sourceLineNo">344</span><a id="line.344">   * the current Metaschema module.</a>
+<span class="sourceLineNo">345</span><a id="line.345">   *</a>
+<span class="sourceLineNo">346</span><a id="line.346">   * @return a listing of assembly definitions marked as root</a>
+<span class="sourceLineNo">347</span><a id="line.347">   */</a>
+<span class="sourceLineNo">348</span><a id="line.348">  @NonNull</a>
+<span class="sourceLineNo">349</span><a id="line.349">  default Collection&lt;? extends IAssemblyDefinition&gt; getRootAssemblyDefinitions() {</a>
+<span class="sourceLineNo">350</span><a id="line.350">    return ObjectUtils.notNull(getAssemblyDefinitions().stream()</a>
+<span class="sourceLineNo">351</span><a id="line.351">        .filter(allRootAssemblyDefinitions())</a>
+<span class="sourceLineNo">352</span><a id="line.352">        .collect(Collectors.toList()));</a>
+<span class="sourceLineNo">353</span><a id="line.353">  }</a>
+<span class="sourceLineNo">354</span><a id="line.354"></a>
+<span class="sourceLineNo">355</span><a id="line.355">  /**</a>
+<span class="sourceLineNo">356</span><a id="line.356">   * Retrieve the top-level flag definitions that are marked global in this</a>
+<span class="sourceLineNo">357</span><a id="line.357">   * Metaschema module or in any imported Metaschema modules. The resulting</a>
+<span class="sourceLineNo">358</span><a id="line.358">   * collection is built by adding global definitions from each imported</a>
+<span class="sourceLineNo">359</span><a id="line.359">   * Metaschema module in order of import, then adding global definitions from the</a>
+<span class="sourceLineNo">360</span><a id="line.360">   * current Metaschema module. Such a map is built in this way for each imported</a>
+<span class="sourceLineNo">361</span><a id="line.361">   * Metaschema module in the chain. Values for clashing keys will be replaced in</a>
+<span class="sourceLineNo">362</span><a id="line.362">   * this order, giving preference to the "closest" definition.</a>
+<span class="sourceLineNo">363</span><a id="line.363">   *</a>
+<span class="sourceLineNo">364</span><a id="line.364">   * @return the collection of exported flag definitions</a>
+<span class="sourceLineNo">365</span><a id="line.365">   */</a>
+<span class="sourceLineNo">366</span><a id="line.366">  @NonNull</a>
+<span class="sourceLineNo">367</span><a id="line.367">  Collection&lt;? extends IFlagDefinition&gt; getExportedFlagDefinitions();</a>
+<span class="sourceLineNo">368</span><a id="line.368"></a>
+<span class="sourceLineNo">369</span><a id="line.369">  /**</a>
+<span class="sourceLineNo">370</span><a id="line.370">   * Retrieves the exported named flag definition, if it exists.</a>
+<span class="sourceLineNo">371</span><a id="line.371">   * &lt;p&gt;</a>
+<span class="sourceLineNo">372</span><a id="line.372">   * For information about how flag definitions are exported see</a>
+<span class="sourceLineNo">373</span><a id="line.373">   * {@link #getExportedFlagDefinitions()}.</a>
+<span class="sourceLineNo">374</span><a id="line.374">   *</a>
+<span class="sourceLineNo">375</span><a id="line.375">   * @param name</a>
+<span class="sourceLineNo">376</span><a id="line.376">   *          the definition name</a>
+<span class="sourceLineNo">377</span><a id="line.377">   * @return the flag definition, or {@code null} if it doesn't exist.</a>
+<span class="sourceLineNo">378</span><a id="line.378">   */</a>
+<span class="sourceLineNo">379</span><a id="line.379">  @Nullable</a>
+<span class="sourceLineNo">380</span><a id="line.380">  IFlagDefinition getExportedFlagDefinitionByName(String name);</a>
+<span class="sourceLineNo">381</span><a id="line.381"></a>
+<span class="sourceLineNo">382</span><a id="line.382">  /**</a>
+<span class="sourceLineNo">383</span><a id="line.383">   * Retrieve the top-level field definitions that are marked global in this</a>
+<span class="sourceLineNo">384</span><a id="line.384">   * Metaschema module or in any imported Metaschema module. The resulting</a>
+<span class="sourceLineNo">385</span><a id="line.385">   * collection is built by adding global definitions from each imported</a>
+<span class="sourceLineNo">386</span><a id="line.386">   * Metaschema module in order of import, then adding global definitions from the</a>
+<span class="sourceLineNo">387</span><a id="line.387">   * current Metaschema module. Such a map is built in this way for each imported</a>
+<span class="sourceLineNo">388</span><a id="line.388">   * Metaschema module in the chain. Values for clashing keys will be replaced in</a>
+<span class="sourceLineNo">389</span><a id="line.389">   * this order, giving preference to the "closest" definition</a>
+<span class="sourceLineNo">390</span><a id="line.390">   *</a>
+<span class="sourceLineNo">391</span><a id="line.391">   * @return the collection of exported field definitions</a>
+<span class="sourceLineNo">392</span><a id="line.392">   */</a>
+<span class="sourceLineNo">393</span><a id="line.393">  @NonNull</a>
+<span class="sourceLineNo">394</span><a id="line.394">  Collection&lt;? extends IFieldDefinition&gt; getExportedFieldDefinitions();</a>
+<span class="sourceLineNo">395</span><a id="line.395"></a>
+<span class="sourceLineNo">396</span><a id="line.396">  /**</a>
+<span class="sourceLineNo">397</span><a id="line.397">   * Retrieves the exported named field definition, if it exists.</a>
+<span class="sourceLineNo">398</span><a id="line.398">   * &lt;p&gt;</a>
+<span class="sourceLineNo">399</span><a id="line.399">   * For information about how field definitions are exported see</a>
+<span class="sourceLineNo">400</span><a id="line.400">   * {@link #getExportedFieldDefinitions()}.</a>
+<span class="sourceLineNo">401</span><a id="line.401">   *</a>
+<span class="sourceLineNo">402</span><a id="line.402">   * @param name</a>
+<span class="sourceLineNo">403</span><a id="line.403">   *          the definition name</a>
+<span class="sourceLineNo">404</span><a id="line.404">   * @return the field definition, or {@code null} if it doesn't exist.</a>
+<span class="sourceLineNo">405</span><a id="line.405">   */</a>
+<span class="sourceLineNo">406</span><a id="line.406">  @Nullable</a>
+<span class="sourceLineNo">407</span><a id="line.407">  IFieldDefinition getExportedFieldDefinitionByName(String name);</a>
+<span class="sourceLineNo">408</span><a id="line.408"></a>
+<span class="sourceLineNo">409</span><a id="line.409">  /**</a>
+<span class="sourceLineNo">410</span><a id="line.410">   * Retrieve the top-level assembly definitions that are marked global in this</a>
+<span class="sourceLineNo">411</span><a id="line.411">   * Metaschema module or in any imported Metaschema module. The resulting</a>
+<span class="sourceLineNo">412</span><a id="line.412">   * collection is built by adding global definitions from each imported</a>
+<span class="sourceLineNo">413</span><a id="line.413">   * Metaschema module in order of import, then adding global definitions from the</a>
+<span class="sourceLineNo">414</span><a id="line.414">   * current Metaschema module. This collection is built in this way for each</a>
+<span class="sourceLineNo">415</span><a id="line.415">   * imported Metaschema module in the chain. Items with duplicate names will be</a>
+<span class="sourceLineNo">416</span><a id="line.416">   * replaced in this order, giving preference to the "closest" definition</a>
+<span class="sourceLineNo">417</span><a id="line.417">   *</a>
+<span class="sourceLineNo">418</span><a id="line.418">   * @return the collection of exported assembly definitions</a>
+<span class="sourceLineNo">419</span><a id="line.419">   */</a>
+<span class="sourceLineNo">420</span><a id="line.420">  @NonNull</a>
+<span class="sourceLineNo">421</span><a id="line.421">  Collection&lt;? extends IAssemblyDefinition&gt; getExportedAssemblyDefinitions();</a>
+<span class="sourceLineNo">422</span><a id="line.422"></a>
+<span class="sourceLineNo">423</span><a id="line.423">  /**</a>
+<span class="sourceLineNo">424</span><a id="line.424">   * Retrieves the exported named assembly definition, if it exists.</a>
+<span class="sourceLineNo">425</span><a id="line.425">   * &lt;p&gt;</a>
+<span class="sourceLineNo">426</span><a id="line.426">   * For information about how assembly definitions are exported see</a>
+<span class="sourceLineNo">427</span><a id="line.427">   * {@link #getExportedFieldDefinitions()}.</a>
+<span class="sourceLineNo">428</span><a id="line.428">   *</a>
+<span class="sourceLineNo">429</span><a id="line.429">   * @param name</a>
+<span class="sourceLineNo">430</span><a id="line.430">   *          the definition name</a>
+<span class="sourceLineNo">431</span><a id="line.431">   * @return the assembly definition, or {@code null} if it doesn't exist.</a>
+<span class="sourceLineNo">432</span><a id="line.432">   */</a>
+<span class="sourceLineNo">433</span><a id="line.433">  @Nullable</a>
+<span class="sourceLineNo">434</span><a id="line.434">  IAssemblyDefinition getExportedAssemblyDefinitionByName(String name);</a>
+<span class="sourceLineNo">435</span><a id="line.435">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JsonDatatypeManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema XML and JSON Schema Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.schemagen.json.datatype</a> &gt; <span class="el_source">JsonDatatypeManager.java</span></div><h1>JsonDatatypeManager.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.schemagen.json.datatype;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
+import gov.nist.secauto.metaschema.schemagen.datatype.AbstractDatatypeManager;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L52">public class JsonDatatypeManager</span>
+    extends AbstractDatatypeManager {
+<span class="fc" id="L54">  private static final Map&lt;String, List&lt;String&gt;&gt; DATATYPE_DEPENDENCY_MAP = new ConcurrentHashMap&lt;&gt;();</span>
+<span class="fc" id="L55">  private static final Pattern DEFINITION_REF_PATTERN = Pattern.compile(&quot;^#/definitions/(.+)$&quot;);</span>
+<span class="fc" id="L56">  private static final Map&lt;String, JsonNode&gt; JSON_DATATYPES = new ConcurrentHashMap&lt;&gt;();</span>
+
+  static {
+    JsonNode jsonData;
+<span class="fc" id="L60">    try (InputStream is</span>
+<span class="fc" id="L61">        = ModuleLoader.class.getResourceAsStream(&quot;/schema/json/metaschema-datatypes.json&quot;)) {</span>
+<span class="fc" id="L62">      ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="fc" id="L63">      jsonData = objectMapper.readTree(is);</span>
+<span class="nc" id="L64">    } catch (IOException ex) {</span>
+<span class="nc" id="L65">      throw new IllegalStateException(ex);</span>
+<span class="fc" id="L66">    }</span>
+
+    // analyze datatypes for dependencies
+<span class="fc bfc" id="L69" title="All 2 branches covered.">    for (String ref : getDatatypeTranslationMap().values()) {</span>
+<span class="fc" id="L70">      JsonNode refNode = jsonData.at(&quot;/definitions/&quot; + ref);</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">      if (!refNode.isMissingNode()) {</span>
+<span class="fc" id="L72">        JSON_DATATYPES.put(ref, refNode);</span>
+
+<span class="fc" id="L74">        List&lt;String&gt; dependencies = getDependencies(refNode).collect(Collectors.toList());</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (!dependencies.isEmpty()) {</span>
+<span class="fc" id="L76">          DATATYPE_DEPENDENCY_MAP.put(ref, dependencies);</span>
+        }
+      }
+<span class="fc" id="L79">    }</span>
+<span class="fc" id="L80">  }</span>
+
+  private static Stream&lt;String&gt; getDependencies(@NonNull JsonNode node) {
+<span class="fc" id="L83">    Stream&lt;String&gt; retval = Stream.empty();</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">    for (Map.Entry&lt;String, JsonNode&gt; entry : CollectionUtil.toIterable(ObjectUtils.notNull(node.fields()))) {</span>
+<span class="fc" id="L85">      JsonNode value = entry.getValue();</span>
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">      assert value != null;</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">      if (&quot;$ref&quot;.equals(entry.getKey())) {</span>
+<span class="fc" id="L88">        Matcher matcher = DEFINITION_REF_PATTERN.matcher(value.asText());</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        if (matcher.matches()) {</span>
+<span class="fc" id="L90">          String dependency = matcher.group(1);</span>
+<span class="fc" id="L91">          retval = Stream.concat(retval, Stream.of(dependency));</span>
+        }
+      }
+
+<span class="fc bfc" id="L95" title="All 2 branches covered.">      if (value.isArray()) {</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        for (JsonNode child : CollectionUtil.toIterable(ObjectUtils.notNull(value.elements()))) {</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">          assert child != null;</span>
+<span class="fc" id="L98">          retval = Stream.concat(retval, getDependencies(child));</span>
+<span class="fc" id="L99">        }</span>
+      }
+<span class="fc" id="L101">    }</span>
+<span class="fc" id="L102">    return retval;</span>
+  }
+
+  public void generateDatatypes(@NonNull ObjectNode definitionsObject) {
+<span class="fc" id="L106">    Set&lt;String&gt; requiredJsonDatatypes = getUsedTypes();</span>
+    // resolve dependencies
+<span class="fc bfc" id="L108" title="All 2 branches covered.">    for (String datatype : CollectionUtil.toIterable(ObjectUtils.notNull(</span>
+<span class="fc" id="L109">        requiredJsonDatatypes.stream()</span>
+<span class="fc" id="L110">            .flatMap(datatype -&gt; {</span>
+              Stream&lt;String&gt; result;
+<span class="fc" id="L112">              List&lt;String&gt; dependencies = DATATYPE_DEPENDENCY_MAP.get(datatype);</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">              if (dependencies == null) {</span>
+<span class="fc" id="L114">                result = Stream.of(datatype);</span>
+              } else {
+<span class="fc" id="L116">                result = Stream.concat(Stream.of(datatype), dependencies.stream());</span>
+              }
+<span class="fc" id="L118">              return result;</span>
+<span class="fc" id="L119">            }).distinct()</span>
+<span class="fc" id="L120">            .sorted()</span>
+<span class="fc" id="L121">            .iterator()))) {</span>
+
+<span class="fc" id="L123">      JsonNode definition = JSON_DATATYPES.get(datatype);</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">      if (definition == null) {</span>
+<span class="nc" id="L125">        throw new SchemaGenerationException(&quot;Missing JSON datatype definition for: /definitions/&quot; + datatype);</span>
+      }
+<span class="fc" id="L127">      definitionsObject.set(datatype, definition);</span>
+<span class="fc" id="L128">    }</span>
+<span class="fc" id="L129">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

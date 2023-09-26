@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConstraintVisitingModelWalker.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.constraint</a> &gt; <span class="el_source">ConstraintVisitingModelWalker.java</span></div><h1>ConstraintVisitingModelWalker.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.constraint;
+
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.ModelWalker;
+
+// TODO: remove if unused
+<span class="nc" id="L35">abstract class ConstraintVisitingModelWalker&lt;DATA&gt;</span>
+    extends ModelWalker&lt;DATA&gt; {
+
+  @Override
+  protected boolean visit(IAssemblyDefinition def, DATA data) {
+<span class="nc" id="L40">    boolean retval = super.visit(def, data);</span>
+<span class="nc" id="L41">    walkConstraints(def, data);</span>
+<span class="nc" id="L42">    return retval;</span>
+  }
+
+  /**
+   * A callback called when visiting the {@code constraint} associated with
+   * {@code def}.
+   *
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IAssemblyDefinition definition, IAllowedValuesConstraint constraint, DATA data) { // NOPMD -
+                                                                                                         // intentional
+    // subclasses may override this method to process the constraint
+<span class="nc" id="L59">  }</span>
+
+  /**
+   * A callback called when visiting the {@code constraint} associated with
+   * {@code def}.
+   *
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IAssemblyDefinition definition, ICardinalityConstraint constraint, DATA data) { // NOPMD -
+                                                                                                       // intentional
+    // subclasses may override this method to process the constraint
+<span class="nc" id="L75">  }</span>
+
+  /**
+   * A callback called when visiting the {@code constraint} associated with
+   * {@code def}.
+   *
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IAssemblyDefinition definition, IExpectConstraint constraint, DATA data) { // NOPMD - intentional
+    // subclasses may override this method to process the constraint
+<span class="nc" id="L90">  }</span>
+
+  /**
+   * A callback called when visiting the {@code constraint} associated with
+   * {@code def}.
+   *
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IAssemblyDefinition definition, IIndexConstraint constraint, DATA data) { // NOPMD - intentional
+    // subclasses may override this method to process the constraint
+<span class="nc" id="L105">  }</span>
+
+  /**
+   * A callback called when visiting the {@code constraint} associated with
+   * {@code def}.
+   *
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IAssemblyDefinition definition, IIndexHasKeyConstraint constraint, // NOPMD - intentional
+      DATA data) {
+    // subclasses may override this method to process the constraint
+<span class="nc" id="L121">  }</span>
+
+  /**
+   * A callback called when visiting the {@code constraint} associated with
+   * {@code def}.
+   *
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IAssemblyDefinition definition, IMatchesConstraint constraint, // NOPMD - intentional
+      DATA data) {
+    // subclasses may override this method to process the constraint
+<span class="nc" id="L137">  }</span>
+
+  /**
+   * A callback called when visiting the {@code constraint} associated with
+   * {@code def}.
+   *
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IAssemblyDefinition definition, IUniqueConstraint constraint, DATA data) { // NOPMD - intentional
+    // subclasses may override this method to process the constraint
+<span class="nc" id="L152">  }</span>
+
+  @Override
+  protected boolean visit(IFieldDefinition def, DATA data) {
+<span class="nc" id="L156">    boolean retval = super.visit(def, data);</span>
+<span class="nc" id="L157">    walkConstraints(def, data);</span>
+<span class="nc" id="L158">    return retval;</span>
+  }
+
+  /**
+   * A callback called when visiting the {@code constraint} associated with
+   * {@code def}.
+   *
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IFieldDefinition definition, IAllowedValuesConstraint constraint, // NOPMD - intentional
+      DATA data) {
+    // subclasses may override this method to process the constraint
+<span class="nc" id="L175">  }</span>
+
+  /**
+   * A callback called when visiting the {@code constraint} associated with
+   * {@code def}.
+   *
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IFieldDefinition definition, IExpectConstraint constraint, DATA data) { // NOPMD - intentional
+    // subclasses may override this method to process the constraint
+<span class="nc" id="L190">  }</span>
+
+  /**
+   * A callback called when visiting the {@code constraint} associated with
+   * {@code def}.
+   *
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IFieldDefinition definition, IIndexHasKeyConstraint constraint, // NOPMD - intentional
+      DATA data) {
+    // subclasses may override this method to process the constraint
+<span class="nc" id="L206">  }</span>
+
+  /**
+   * A callback called when visiting the {@code constraint} associated with
+   * {@code def}.
+   *
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IFieldDefinition definition, IMatchesConstraint constraint, DATA data) { // NOPMD - intentional
+    // subclasses may override this method to process the constraint
+<span class="nc" id="L221">  }</span>
+
+  @Override
+  protected void visit(IFlagDefinition def, DATA data) {
+<span class="nc" id="L225">    walkConstraints(def, data);</span>
+<span class="nc" id="L226">  }</span>
+
+  /**
+   * A callback called when visiting the {@code constraint} associated with
+   * {@code def}.
+   *
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IFlagDefinition definition, IAllowedValuesConstraint constraint, // NOPMD - intentional
+      DATA data) {
+    // subclasses may override this method to process the constraint
+<span class="nc" id="L242">  }</span>
+
+  /**
+   * A callback called when visiting the {@code constraint} associated with
+   * {@code def}.
+   *
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IFlagDefinition definition, IExpectConstraint constraint, DATA data) { // NOPMD - intentional
+    // subclasses may override this method to process the constraint
+<span class="nc" id="L257">  }</span>
+
+  /**
+   * A callback called when visiting the {@code constraint} associated with
+   * {@code def}.
+   *
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IFlagDefinition definition, IIndexHasKeyConstraint constraint, // NOPMD - intentional
+      DATA data) {
+    // subclasses may override this method to process the constraint
+<span class="nc" id="L273">  }</span>
+
+  /**
+   * A callback called when visiting the {@code constraint} associated with
+   * {@code def}.
+   *
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IFlagDefinition definition, IMatchesConstraint constraint, DATA data) { // NOPMD - intentional
+    // subclasses may override this method to process the constraint
+<span class="nc" id="L288">  }</span>
+
+  /**
+   * Walk the constraints associated with the {@code definition}.
+   *
+   * @param definition
+   *          the definition the constraints to walk are associated with
+   * @param data
+   *          other data to use for processing
+   */
+  protected void walkConstraints(IAssemblyDefinition definition, DATA data) {
+<span class="nc bnc" id="L299" title="All 2 branches missed.">    for (IAllowedValuesConstraint constraint : definition.getAllowedValuesConstraints()) {</span>
+<span class="nc" id="L300">      visit(definition, constraint, data);</span>
+<span class="nc" id="L301">    }</span>
+
+<span class="nc bnc" id="L303" title="All 2 branches missed.">    for (IMatchesConstraint constraint : definition.getMatchesConstraints()) {</span>
+<span class="nc" id="L304">      visit(definition, constraint, data);</span>
+<span class="nc" id="L305">    }</span>
+
+<span class="nc bnc" id="L307" title="All 2 branches missed.">    for (IExpectConstraint constraint : definition.getExpectConstraints()) {</span>
+<span class="nc" id="L308">      visit(definition, constraint, data);</span>
+<span class="nc" id="L309">    }</span>
+
+<span class="nc bnc" id="L311" title="All 2 branches missed.">    for (IUniqueConstraint constraint : definition.getUniqueConstraints()) {</span>
+<span class="nc" id="L312">      visit(definition, constraint, data);</span>
+<span class="nc" id="L313">    }</span>
+
+<span class="nc bnc" id="L315" title="All 2 branches missed.">    for (IIndexConstraint constraint : definition.getIndexConstraints()) {</span>
+<span class="nc" id="L316">      visit(definition, constraint, data);</span>
+<span class="nc" id="L317">    }</span>
+
+<span class="nc bnc" id="L319" title="All 2 branches missed.">    for (IIndexHasKeyConstraint constraint : definition.getIndexHasKeyConstraints()) {</span>
+<span class="nc" id="L320">      visit(definition, constraint, data);</span>
+<span class="nc" id="L321">    }</span>
+
+<span class="nc bnc" id="L323" title="All 2 branches missed.">    for (ICardinalityConstraint constraint : definition.getHasCardinalityConstraints()) {</span>
+<span class="nc" id="L324">      visit(definition, constraint, data);</span>
+<span class="nc" id="L325">    }</span>
+<span class="nc" id="L326">  }</span>
+
+  /**
+   * Walk the constraints associated with the {@code definition}.
+   *
+   * @param definition
+   *          the definition the constraints to walk are associated with
+   * @param data
+   *          other data to use for processing
+   */
+  protected void walkConstraints(IFieldDefinition definition, DATA data) {
+<span class="nc bnc" id="L337" title="All 2 branches missed.">    for (IAllowedValuesConstraint constraint : definition.getAllowedValuesConstraints()) {</span>
+<span class="nc" id="L338">      visit(definition, constraint, data);</span>
+<span class="nc" id="L339">    }</span>
+
+<span class="nc bnc" id="L341" title="All 2 branches missed.">    for (IMatchesConstraint constraint : definition.getMatchesConstraints()) {</span>
+<span class="nc" id="L342">      visit(definition, constraint, data);</span>
+<span class="nc" id="L343">    }</span>
+
+<span class="nc bnc" id="L345" title="All 2 branches missed.">    for (IExpectConstraint constraint : definition.getExpectConstraints()) {</span>
+<span class="nc" id="L346">      visit(definition, constraint, data);</span>
+<span class="nc" id="L347">    }</span>
+
+<span class="nc bnc" id="L349" title="All 2 branches missed.">    for (IIndexHasKeyConstraint constraint : definition.getIndexHasKeyConstraints()) {</span>
+<span class="nc" id="L350">      visit(definition, constraint, data);</span>
+<span class="nc" id="L351">    }</span>
+<span class="nc" id="L352">  }</span>
+
+  /**
+   * Walk the constraints associated with the {@code definition}.
+   *
+   * @param definition
+   *          the definition the constraints to walk are associated with
+   * @param data
+   *          other data to use for processing
+   */
+  protected void walkConstraints(IFlagDefinition definition, DATA data) {
+<span class="nc bnc" id="L363" title="All 2 branches missed.">    for (IAllowedValuesConstraint constraint : definition.getAllowedValuesConstraints()) {</span>
+<span class="nc" id="L364">      visit(definition, constraint, data);</span>
+<span class="nc" id="L365">    }</span>
+
+<span class="nc bnc" id="L367" title="All 2 branches missed.">    for (IMatchesConstraint constraint : definition.getMatchesConstraints()) {</span>
+<span class="nc" id="L368">      visit(definition, constraint, data);</span>
+<span class="nc" id="L369">    }</span>
+
+<span class="nc bnc" id="L371" title="All 2 branches missed.">    for (IExpectConstraint constraint : definition.getExpectConstraints()) {</span>
+<span class="nc" id="L372">      visit(definition, constraint, data);</span>
+<span class="nc" id="L373">    }</span>
+
+<span class="nc bnc" id="L375" title="All 2 branches missed.">    for (IIndexHasKeyConstraint constraint : definition.getIndexHasKeyConstraints()) {</span>
+<span class="nc" id="L376">      visit(definition, constraint, data);</span>
+<span class="nc" id="L377">    }</span>
+<span class="nc" id="L378">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

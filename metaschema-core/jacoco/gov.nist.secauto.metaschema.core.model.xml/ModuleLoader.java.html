@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ModuleLoader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.xml</a> &gt; <span class="el_source">ModuleLoader.java</span></div><h1>ModuleLoader.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.xml;
+
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.METASCHEMADocument;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.MetaschemaImportType;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+/**
+ * Provides methods to load a Metaschema expressed in XML.
+ * &lt;p&gt;
+ * Loaded Metaschema instances are cached to avoid the need to load them for
+ * every use. Any Metaschema imported is also loaded and cached automatically.
+ */
+public class ModuleLoader
+    extends AbstractLoader&lt;IModule&gt; {
+  private boolean resolveEntities; // = false;
+
+  @NonNull
+  private final Set&lt;IConstraintSet&gt; registeredConstraintSets;
+
+  /**
+   * Construct a new Metaschema loader.
+   */
+  public ModuleLoader() {
+<span class="fc" id="L79">    this(CollectionUtil.emptySet());</span>
+<span class="fc" id="L80">  }</span>
+
+  /**
+   * Construct a new Metaschema loader, which will incorporate the additional
+   * provided constraints into matching loaded definitions.
+   *
+   * @param additionalConstraintSets
+   *          additional constraints to associate with loaded definitions
+   */
+<span class="fc" id="L89">  public ModuleLoader(@NonNull Set&lt;IConstraintSet&gt; additionalConstraintSets) {</span>
+<span class="fc" id="L90">    this.registeredConstraintSets = CollectionUtil.unmodifiableSet(additionalConstraintSets);</span>
+<span class="fc" id="L91">  }</span>
+
+  /**
+   * Get the set of additional constraints associated with this loader.
+   *
+   * @return the set of constraints
+   */
+  @NonNull
+  protected Set&lt;IConstraintSet&gt; getRegisteredConstraintSets() {
+<span class="fc" id="L100">    return registeredConstraintSets;</span>
+  }
+
+  /**
+   * Enable a mode that allows XML entity resolution. This may be needed to parse
+   * some resource files that contain entities. Enabling entity resolution is a
+   * less secure, which requires trust in the resource content being parsed.
+   */
+  public void allowEntityResolution() {
+<span class="fc" id="L109">    resolveEntities = true;</span>
+<span class="fc" id="L110">  }</span>
+
+  /**
+   * Parse the {@code resource} based on the provided {@code xmlObject}.
+   *
+   * @param resource
+   *          the URI of the resource being parsed
+   * @param xmlObject
+   *          the XML beans object to parse
+   * @param importedModules
+   *          previously parsed Metaschema modules imported by the provided
+   *          {@code resource}
+   * @return the parsed resource as a Metaschema module
+   * @throws MetaschemaException
+   *           if an error occurred while parsing the XML beans object
+   */
+  protected IModule newXmlMetaschema(
+      @NonNull URI resource,
+      @NonNull METASCHEMADocument xmlObject,
+      @NonNull List&lt;IModule&gt; importedModules) throws MetaschemaException {
+<span class="fc" id="L130">    IModule retval = new XmlModule(resource, xmlObject, importedModules);</span>
+
+<span class="fc" id="L132">    IConstraintSet.applyConstraintSetToModule(getRegisteredConstraintSets(), retval);</span>
+
+<span class="fc" id="L134">    return retval;</span>
+  }
+
+  @Override
+  protected IModule parseResource(@NonNull URI resource, @NonNull Deque&lt;URI&gt; visitedResources)
+      throws IOException {
+    // parse this Metaschema module
+<span class="fc" id="L141">    METASCHEMADocument xmlObject = parseModule(resource);</span>
+
+    // now check if this Metaschema imports other metaschema
+<span class="fc" id="L144">    int size = xmlObject.getMETASCHEMA().sizeOfImportArray();</span>
+    @NonNull Map&lt;URI, IModule&gt; importedModules;
+<span class="fc bfc" id="L146" title="All 2 branches covered.">    if (size == 0) {</span>
+<span class="fc" id="L147">      importedModules = ObjectUtils.notNull(Collections.emptyMap());</span>
+    } else {
+      try {
+<span class="fc" id="L150">        importedModules = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        for (MetaschemaImportType imported : xmlObject.getMETASCHEMA().getImportList()) {</span>
+<span class="fc" id="L152">          URI importedResource = URI.create(imported.getHref());</span>
+<span class="fc" id="L153">          importedResource = ObjectUtils.notNull(resource.resolve(importedResource));</span>
+<span class="fc" id="L154">          importedModules.put(importedResource, loadInternal(importedResource, visitedResources));</span>
+<span class="fc" id="L155">        }</span>
+<span class="nc" id="L156">      } catch (MetaschemaException ex) {</span>
+<span class="nc" id="L157">        throw new IOException(ex);</span>
+<span class="fc" id="L158">      }</span>
+    }
+
+    // now create this metaschema
+<span class="fc" id="L162">    Collection&lt;IModule&gt; values = importedModules.values();</span>
+    try {
+<span class="fc" id="L164">      return newXmlMetaschema(resource, xmlObject, new ArrayList&lt;&gt;(values));</span>
+<span class="nc" id="L165">    } catch (MetaschemaException ex) {</span>
+<span class="nc" id="L166">      throw new IOException(ex);</span>
+    }
+  }
+
+  /**
+   * Parse the provided XML resource as a Metaschema module.
+   *
+   * @param resource
+   *          the resource to parse
+   * @return the XMLBeans representation of the Metaschema module
+   * @throws IOException
+   *           if a parsing error occurred
+   */
+  protected METASCHEMADocument parseModule(@NonNull URI resource) throws IOException {
+    METASCHEMADocument metaschemaXml;
+    try {
+<span class="fc" id="L182">      XmlOptions options = new XmlOptions();</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">      if (resolveEntities) {</span>
+<span class="fc" id="L184">        SAXParserFactory factory = SAXParserFactory.newInstance();</span>
+
+        try {
+          // factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+<span class="fc" id="L188">          factory.setFeature(&quot;http://apache.org/xml/features/disallow-doctype-decl&quot;, false);</span>
+<span class="fc" id="L189">          factory.setFeature(&quot;http://xml.org/sax/features/external-general-entities&quot;, true);</span>
+<span class="fc" id="L190">          factory.setFeature(&quot;http://xml.org/sax/features/external-parameter-entities&quot;, true);</span>
+<span class="fc" id="L191">          SAXParser parser = factory.newSAXParser();</span>
+<span class="fc" id="L192">          parser.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, &quot;file&quot;); // ,jar:file</span>
+<span class="fc" id="L193">          XMLReader reader = parser.getXMLReader();</span>
+<span class="fc" id="L194">          reader.setEntityResolver(new EntityResolver() {</span>
+
+            @Override
+            public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+<span class="nc" id="L198">              return null;</span>
+            }
+
+          });
+<span class="fc" id="L202">          options.setLoadUseXMLReader(reader);</span>
+<span class="nc" id="L203">        } catch (SAXException | ParserConfigurationException ex) {</span>
+<span class="nc" id="L204">          throw new IOException(ex);</span>
+<span class="fc" id="L205">        }</span>
+        // options.setLoadEntityBytesLimit(204800);
+        // options.setLoadUseDefaultResolver();
+<span class="fc" id="L208">        options.setEntityResolver(new EntityResolver() {</span>
+
+          @Override
+          public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+<span class="fc" id="L212">            String effectiveSystemId = systemId;</span>
+            // TODO: It's very odd that the system id looks like this. Need to investigate.
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">            if (effectiveSystemId.startsWith(&quot;file://file://&quot;)) {</span>
+<span class="fc" id="L215">              effectiveSystemId = effectiveSystemId.substring(14);</span>
+            }
+<span class="fc" id="L217">            URI resolvedSystemId = resource.resolve(effectiveSystemId);</span>
+<span class="fc" id="L218">            return new InputSource(resolvedSystemId.toString());</span>
+          }
+
+        });
+<span class="fc" id="L222">        options.setLoadDTDGrammar(true);</span>
+      }
+<span class="fc" id="L224">      options.setBaseURI(resource);</span>
+<span class="fc" id="L225">      options.setLoadLineNumbers();</span>
+<span class="fc" id="L226">      metaschemaXml = METASCHEMADocument.Factory.parse(resource.toURL(), options);</span>
+<span class="nc" id="L227">    } catch (XmlException ex) {</span>
+<span class="nc" id="L228">      throw new IOException(ex);</span>
+<span class="fc" id="L229">    }</span>
+<span class="fc" id="L230">    return metaschemaXml;</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

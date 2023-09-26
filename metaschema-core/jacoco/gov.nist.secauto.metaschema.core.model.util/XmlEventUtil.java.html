@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XmlEventUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.util</a> &gt; <span class="el_source">XmlEventUtil.java</span></div><h1>XmlEventUtil.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.util;
+
+import org.codehaus.stax2.XMLEventReader2;
+import org.codehaus.stax2.XMLStreamReader2;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.Location;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+public final class XmlEventUtil { // NOPMD this is a set of utility methods
+  // private static final Logger LOGGER =
+  // LogManager.getLogger(XmlEventUtil.class);
+
+<span class="fc" id="L55">  private static final Pattern WHITESPACE_ONLY = Pattern.compile(&quot;^\\s+$&quot;);</span>
+
+<span class="fc" id="L57">  private static final Map&lt;Integer, String&gt; EVENT_NAME_MAP = new HashMap&lt;&gt;(); // NOPMD - this value is immutable</span>
+
+  static {
+<span class="fc" id="L60">    EVENT_NAME_MAP.put(XMLStreamConstants.START_ELEMENT, &quot;START_ELEMENT&quot;);</span>
+<span class="fc" id="L61">    EVENT_NAME_MAP.put(XMLStreamConstants.END_ELEMENT, &quot;END_ELEMENT&quot;);</span>
+<span class="fc" id="L62">    EVENT_NAME_MAP.put(XMLStreamConstants.PROCESSING_INSTRUCTION, &quot;PROCESSING_INSTRUCTION&quot;);</span>
+<span class="fc" id="L63">    EVENT_NAME_MAP.put(XMLStreamConstants.CHARACTERS, &quot;CHARACTERS&quot;);</span>
+<span class="fc" id="L64">    EVENT_NAME_MAP.put(XMLStreamConstants.COMMENT, &quot;COMMENT&quot;);</span>
+<span class="fc" id="L65">    EVENT_NAME_MAP.put(XMLStreamConstants.SPACE, &quot;SPACE&quot;);</span>
+<span class="fc" id="L66">    EVENT_NAME_MAP.put(XMLStreamConstants.START_DOCUMENT, &quot;START_DOCUMENT&quot;);</span>
+<span class="fc" id="L67">    EVENT_NAME_MAP.put(XMLStreamConstants.END_DOCUMENT, &quot;END_DOCUMENT&quot;);</span>
+<span class="fc" id="L68">    EVENT_NAME_MAP.put(XMLStreamConstants.ENTITY_REFERENCE, &quot;ENTITY_REFERENCE&quot;);</span>
+<span class="fc" id="L69">    EVENT_NAME_MAP.put(XMLStreamConstants.ATTRIBUTE, &quot;ATTRIBUTE&quot;);</span>
+<span class="fc" id="L70">    EVENT_NAME_MAP.put(XMLStreamConstants.DTD, &quot;DTD&quot;);</span>
+<span class="fc" id="L71">    EVENT_NAME_MAP.put(XMLStreamConstants.CDATA, &quot;CDATA&quot;);</span>
+<span class="fc" id="L72">    EVENT_NAME_MAP.put(XMLStreamConstants.NAMESPACE, &quot;NAMESPACE&quot;);</span>
+<span class="fc" id="L73">    EVENT_NAME_MAP.put(XMLStreamConstants.NOTATION_DECLARATION, &quot;NOTATION_DECLARATION&quot;);</span>
+<span class="fc" id="L74">    EVENT_NAME_MAP.put(XMLStreamConstants.ENTITY_DECLARATION, &quot;ENTITY_DECLARATION&quot;);</span>
+<span class="fc" id="L75">  }</span>
+
+  private XmlEventUtil() {
+    // disable construction
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  private static Object escape(@NonNull String data) {
+<span class="nc" id="L84">    return data.chars().mapToObj(c -&gt; (char) c).map(c -&gt; escape(c)).collect(Collectors.joining());</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  private static String escape(char ch) {
+    String retval;
+<span class="nc bnc" id="L91" title="All 3 branches missed.">    switch (ch) {</span>
+    case '\n':
+<span class="nc" id="L93">      retval = &quot;\\n&quot;;</span>
+<span class="nc" id="L94">      break;</span>
+    case '\r':
+<span class="nc" id="L96">      retval = &quot;\\r&quot;;</span>
+<span class="nc" id="L97">      break;</span>
+    default:
+<span class="nc" id="L99">      retval = String.valueOf(ch);</span>
+      break;
+    }
+<span class="nc" id="L102">    return retval;</span>
+  }
+
+  /**
+   * Generate a message suitable for logging that describes the provided
+   * {@link XMLEvent}.
+   *
+   * @param xmlEvent
+   *          the event to generate the message for
+   * @return the message
+   */
+  @NonNull
+  public static CharSequence toString(XMLEvent xmlEvent) {
+    CharSequence retval;
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">    if (xmlEvent == null) {</span>
+<span class="nc" id="L117">      retval = &quot;EOF&quot;;</span>
+    } else {
+      @SuppressWarnings(&quot;null&quot;)
+<span class="fc" id="L120">      @NonNull StringBuilder builder = new StringBuilder()</span>
+<span class="fc" id="L121">          .append(toEventName(xmlEvent));</span>
+<span class="fc" id="L122">      QName name = toQName(xmlEvent);</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">      if (name != null) {</span>
+<span class="fc" id="L124">        builder.append(&quot;: &quot;).append(name.toString());</span>
+      }
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">      if (xmlEvent.isCharacters()) {</span>
+<span class="nc" id="L127">        String text = xmlEvent.asCharacters().getData();</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (text != null) {</span>
+<span class="nc" id="L129">          builder.append(&quot; '&quot;).append(escape(text)).append('\'');</span>
+        }
+      }
+<span class="fc" id="L132">      Location location = toLocation(xmlEvent);</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">      if (location != null) {</span>
+<span class="fc" id="L134">        builder.append(&quot; at &quot;).append(toString(location));</span>
+      }
+<span class="fc" id="L136">      retval = builder;</span>
+    }
+<span class="fc" id="L138">    return retval;</span>
+  }
+
+  /**
+   * Generates a message for the provided {@link Location}.
+   *
+   * @param location
+   *          the location to generate the message for
+   * @return the message
+   */
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static CharSequence toString(@Nullable Location location) {
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">    return location == null ? &quot;unknown&quot;</span>
+        : new StringBuilder()
+<span class="fc" id="L153">            .append(location.getLineNumber())</span>
+<span class="fc" id="L154">            .append(':')</span>
+<span class="fc" id="L155">            .append(location.getColumnNumber());</span>
+  }
+
+  /**
+   * Generates a string containing the current event and location of the stream
+   * reader.
+   *
+   * @param reader
+   *          the stream reader
+   * @return the generated string
+   */
+  @NonNull
+  public static CharSequence toString(@NonNull XMLStreamReader2 reader) { // NO_UCD (unused code)
+<span class="nc" id="L168">    int type = reader.getEventType();</span>
+
+    @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L171">    @NonNull StringBuilder builder = new StringBuilder().append(toEventName(type));</span>
+<span class="nc" id="L172">    QName name = reader.getName();</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">    if (name != null) {</span>
+<span class="nc" id="L174">      builder.append(&quot;: &quot;).append(name.toString());</span>
+    }
+<span class="nc bnc" id="L176" title="All 2 branches missed.">    if (XMLStreamConstants.CHARACTERS == type) {</span>
+<span class="nc" id="L177">      String text = reader.getText();</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">      if (text != null) {</span>
+<span class="nc" id="L179">        builder.append(&quot; '&quot;).append(escape(text)).append('\'');</span>
+      }
+    }
+<span class="nc" id="L182">    Location location = reader.getLocation();</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">    if (location != null) {</span>
+<span class="nc" id="L184">      builder.append(&quot; at &quot;).append(toString(location));</span>
+    }
+<span class="nc" id="L186">    return builder;</span>
+  }
+
+  /**
+   * Retrieve the resource location of {@code event}.
+   *
+   * @param event
+   *          the event to identify the location for
+   * @return the location or {@code null} if the location is unknown
+   */
+  @Nullable
+  public static Location toLocation(@NonNull XMLEvent event) {
+<span class="fc" id="L198">    Location retval = null;</span>
+<span class="fc bfc" id="L199" title="All 2 branches covered.">    if (event.isStartElement()) {</span>
+<span class="fc" id="L200">      StartElement start = event.asStartElement();</span>
+<span class="fc" id="L201">      retval = start.getLocation();</span>
+<span class="pc bpc" id="L202" title="1 of 2 branches missed.">    } else if (event.isEndElement()) {</span>
+<span class="nc" id="L203">      EndElement end = event.asEndElement();</span>
+<span class="nc" id="L204">      retval = end.getLocation();</span>
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">    } else if (event.isCharacters()) {</span>
+<span class="nc" id="L206">      Characters characters = event.asCharacters();</span>
+<span class="nc" id="L207">      retval = characters.getLocation();</span>
+    }
+<span class="fc" id="L209">    return retval;</span>
+  }
+
+  /**
+   * Retrieve the name of the node associated with {@code event}.
+   *
+   * @param event
+   *          the event to get the {@link QName} for
+   * @return the name of the node or {@code null} if the event is not a start or
+   *         end element
+   */
+  @Nullable
+  public static QName toQName(@NonNull XMLEvent event) {
+<span class="fc" id="L222">    QName retval = null;</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">    if (event.isStartElement()) {</span>
+<span class="fc" id="L224">      StartElement start = event.asStartElement();</span>
+<span class="fc" id="L225">      retval = start.getName();</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">    } else if (event.isEndElement()) {</span>
+<span class="fc" id="L227">      EndElement end = event.asEndElement();</span>
+<span class="fc" id="L228">      retval = end.getName();</span>
+    }
+<span class="fc" id="L230">    return retval;</span>
+  }
+
+  /**
+   * Get the event name of the {@code event}.
+   *
+   * @param event
+   *          the event to get the event name for
+   * @return the event name
+   */
+  @NonNull
+  public static String toEventName(@NonNull XMLEvent event) {
+<span class="fc" id="L242">    return toEventName(event.getEventType());</span>
+  }
+
+  /**
+   * Get the event name of the {@code eventType}, which is one of the types
+   * defined by {@link XMLStreamConstants}.
+   *
+   * @param eventType
+   *          the event constant to get the event name for as defined by
+   *          {@link XMLStreamConstants}
+   * @return the event name
+   */
+  @NonNull
+  public static String toEventName(int eventType) {
+<span class="fc" id="L256">    String retval = EVENT_NAME_MAP.get(eventType);</span>
+<span class="pc bpc" id="L257" title="1 of 2 branches missed.">    if (retval == null) {</span>
+<span class="nc" id="L258">      retval = &quot;unknown event '&quot; + Integer.toString(eventType) + &quot;'&quot;;</span>
+    }
+<span class="fc" id="L260">    return retval;</span>
+  }
+
+  /**
+   * Advance through XMLEvents until the event type identified by
+   * {@code eventType} is reached or the end of stream is found.
+   *
+   * @param reader
+   *          the event reader to advance
+   * @param eventType
+   *          the event type to stop on as defined by {@link XMLStreamConstants}
+   * @return the next event of the specified type or {@code null} if the end of
+   *         stream is reached
+   * @throws XMLStreamException
+   *           if an error occurred while advancing the stream
+   */
+  @Nullable
+  public static XMLEvent advanceTo(@NonNull XMLEventReader2 reader, int eventType)
+      throws XMLStreamException { // NO_UCD (unused code)
+    XMLEvent xmlEvent;
+    do {
+<span class="nc" id="L281">      xmlEvent = reader.nextEvent();</span>
+      // if (LOGGER.isWarnEnabled()) {
+      // LOGGER.warn(&quot;skipping over: {}&quot;, XmlEventUtil.toString(xmlEvent));
+      // }
+<span class="nc bnc" id="L285" title="All 2 branches missed.">      if (xmlEvent.isStartElement()) {</span>
+<span class="nc" id="L286">        advanceTo(reader, XMLStreamConstants.END_ELEMENT);</span>
+        // skip this end element
+<span class="nc" id="L288">        xmlEvent = reader.nextEvent();</span>
+        // if (LOGGER.isDebugEnabled()) {
+        // LOGGER.debug(&quot;skipping over: {}&quot;, XmlEventUtil.toString(xmlEvent));
+        // }
+      }
+<span class="nc bnc" id="L293" title="All 4 branches missed.">    } while (reader.hasNext() &amp;&amp; (xmlEvent = reader.peek()).getEventType() != eventType);</span>
+<span class="nc" id="L294">    return xmlEvent;</span>
+  }
+
+  /**
+   * Skip over any processing instructions.
+   *
+   * @param reader
+   *          the event reader to advance
+   * @return the last processing instruction event or the reader's next event if
+   *         no processing instruction was found
+   * @throws XMLStreamException
+   *           if an error occurred while advancing the stream
+   */
+  @NonNull
+  public static XMLEvent skipProcessingInstructions(@NonNull XMLEventReader2 reader) throws XMLStreamException {
+    XMLEvent nextEvent;
+<span class="nc bnc" id="L310" title="All 2 branches missed.">    while ((nextEvent = reader.peek()).isProcessingInstruction()) {</span>
+<span class="nc" id="L311">      nextEvent = reader.nextEvent();</span>
+    }
+<span class="nc" id="L313">    return nextEvent;</span>
+  }
+
+  /**
+   * Skip over any whitespace.
+   *
+   * @param reader
+   *          the event reader to advance
+   * @return the last character event containing whitespace or the reader's next
+   *         event if no character event was found
+   * @throws XMLStreamException
+   *           if an error occurred while advancing the stream
+   */
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static XMLEvent skipWhitespace(@NonNull XMLEventReader2 reader) throws XMLStreamException {
+    @NonNull XMLEvent nextEvent;
+<span class="fc bfc" id="L330" title="All 2 branches covered.">    while ((nextEvent = reader.peek()).isCharacters()) {</span>
+<span class="fc" id="L331">      Characters characters = nextEvent.asCharacters();</span>
+<span class="fc" id="L332">      String data = characters.getData();</span>
+<span class="pc bpc" id="L333" title="1 of 2 branches missed.">      if (WHITESPACE_ONLY.matcher(data).matches()) {</span>
+<span class="fc" id="L334">        nextEvent = reader.nextEvent();</span>
+      } else {
+        break;
+      }
+<span class="fc" id="L338">    }</span>
+<span class="fc" id="L339">    return nextEvent;</span>
+  }
+
+  /**
+   * Determine if the {@code event} is an end element whose name matches the
+   * provided {@code expectedQName}.
+   *
+   * @param event
+   *          the event
+   * @param expectedQName
+   *          the expected element name
+   * @return {@code true} if the next event matches the {@code expectedQName}
+   */
+  public static boolean isEventEndElement(XMLEvent event, @NonNull QName expectedQName) {
+<span class="pc bpc" id="L353" title="1 of 2 branches missed.">    return event != null</span>
+<span class="pc bpc" id="L354" title="1 of 2 branches missed.">        &amp;&amp; event.isEndElement()</span>
+<span class="pc bpc" id="L355" title="1 of 2 branches missed.">        &amp;&amp; expectedQName.equals(event.asEndElement().getName());</span>
+  }
+
+  /**
+   * Determine if the {@code event} is an end of document event.
+   *
+   * @param event
+   *          the event
+   * @return {@code true} if the next event is an end of document event
+   */
+  public static boolean isEventEndDocument(XMLEvent event) {
+<span class="nc bnc" id="L366" title="All 2 branches missed.">    return event != null</span>
+<span class="nc bnc" id="L367" title="All 2 branches missed.">        &amp;&amp; event.isEndElement();</span>
+  }
+
+  /**
+   * Determine if the {@code event} is a start element whose name matches the
+   * provided {@code expectedQName}.
+   *
+   * @param event
+   *          the event
+   * @param expectedQName
+   *          the expected element name
+   * @return {@code true} if the next event is a start element that matches the
+   *         {@code expectedQName}
+   * @throws XMLStreamException
+   *           if an error occurred while looking at the next event
+   */
+  public static boolean isEventStartElement(XMLEvent event, @NonNull QName expectedQName) throws XMLStreamException {
+<span class="nc bnc" id="L384" title="All 2 branches missed.">    return event != null</span>
+<span class="nc bnc" id="L385" title="All 2 branches missed.">        &amp;&amp; event.isStartElement()</span>
+<span class="nc bnc" id="L386" title="All 2 branches missed.">        &amp;&amp; expectedQName.equals(event.asStartElement().getName());</span>
+  }
+
+  /**
+   * Consume the next event from {@code reader} and assert that this event is of
+   * the type identified by {@code presumedEventType}.
+   *
+   * @param reader
+   *          the event reader
+   * @param presumedEventType
+   *          the expected event type as defined by {@link XMLStreamConstants}
+   * @return the next event
+   * @throws XMLStreamException
+   *           if an error occurred while looking at the next event
+   */
+  public static XMLEvent consumeAndAssert(XMLEventReader2 reader, int presumedEventType)
+      throws XMLStreamException {
+<span class="nc" id="L403">    return consumeAndAssert(reader, presumedEventType, null);</span>
+  }
+
+  /**
+   * Consume the next event from {@code reader} and assert that this event is of
+   * the type identified by {@code presumedEventType} and has the name identified
+   * by {@code presumedName}.
+   *
+   * @param reader
+   *          the event reader
+   * @param presumedEventType
+   *          the expected event type as defined by {@link XMLStreamConstants}
+   * @param presumedName
+   *          the expected name of the node associated with the event
+   * @return the next event
+   * @throws XMLStreamException
+   *           if an error occurred while looking at the next event
+   */
+  public static XMLEvent consumeAndAssert(XMLEventReader2 reader, int presumedEventType, QName presumedName)
+      throws XMLStreamException {
+<span class="nc" id="L423">    XMLEvent retval = reader.nextEvent();</span>
+
+<span class="nc" id="L425">    int eventType = retval.getEventType();</span>
+<span class="nc" id="L426">    QName name = toQName(retval);</span>
+<span class="nc bnc" id="L427" title="All 4 branches missed.">    assert eventType == presumedEventType</span>
+        &amp;&amp; (presumedName == null
+<span class="nc bnc" id="L429" title="All 2 branches missed.">            || presumedName.equals(name)) : generateExpectedMessage(</span>
+                retval,
+                presumedEventType,
+                presumedName);
+<span class="nc" id="L433">    return retval;</span>
+  }
+
+  /**
+   * Assert that the next event from {@code reader} is of the type identified by
+   * {@code presumedEventType}.
+   *
+   * @param reader
+   *          the event reader
+   * @param presumedEventType
+   *          the expected event type as defined by {@link XMLStreamConstants}
+   * @return the next event
+   * @throws XMLStreamException
+   *           if an error occurred while looking at the next event
+   * @throws AssertionError
+   *           if the next event does not match the presumed event
+   */
+  public static XMLEvent assertNext(
+      @NonNull XMLEventReader2 reader,
+      int presumedEventType)
+      throws XMLStreamException {
+<span class="nc" id="L454">    return assertNext(reader, presumedEventType, null);</span>
+  }
+
+  /**
+   * Assert that the next event from {@code reader} is of the type identified by
+   * {@code presumedEventType} and has the name identified by
+   * {@code presumedName}.
+   *
+   * @param reader
+   *          the event reader
+   * @param presumedEventType
+   *          the expected event type as defined by {@link XMLStreamConstants}
+   * @param presumedName
+   *          the expected name of the node associated with the event
+   * @return the next event
+   * @throws XMLStreamException
+   *           if an error occurred while looking at the next event
+   * @throws AssertionError
+   *           if the next event does not match the presumed event
+   */
+  public static XMLEvent assertNext(
+      @NonNull XMLEventReader2 reader,
+      int presumedEventType,
+      @Nullable QName presumedName)
+      throws XMLStreamException {
+<span class="fc" id="L479">    XMLEvent nextEvent = reader.peek();</span>
+
+<span class="fc" id="L481">    int eventType = nextEvent.getEventType();</span>
+<span class="pc bpc" id="L482" title="2 of 4 branches missed.">    assert eventType == presumedEventType</span>
+        &amp;&amp; (presumedName == null
+<span class="pc bpc" id="L484" title="1 of 2 branches missed.">            || presumedName.equals(toQName(nextEvent))) : generateExpectedMessage(</span>
+                nextEvent,
+                presumedEventType,
+                presumedName);
+<span class="fc" id="L488">    return nextEvent;</span>
+  }
+
+  public static CharSequence generateLocationMessage(@NonNull XMLEvent event) {
+<span class="nc" id="L492">    Location location = XmlEventUtil.toLocation(event);</span>
+<span class="nc bnc" id="L493" title="All 2 branches missed.">    return location == null ? &quot;&quot; : generateLocationMessage(location);</span>
+  }
+
+  public static CharSequence generateLocationMessage(@NonNull Location location) {
+<span class="nc" id="L497">    return new StringBuilder(12)</span>
+<span class="nc" id="L498">        .append(&quot; at &quot;)</span>
+<span class="nc" id="L499">        .append(XmlEventUtil.toString(location));</span>
+  }
+
+  public static CharSequence generateExpectedMessage(
+      @Nullable XMLEvent event,
+      int presumedEventType,
+      @Nullable QName presumedName) {
+<span class="nc" id="L506">    StringBuilder builder = new StringBuilder(64);</span>
+<span class="nc" id="L507">    builder</span>
+<span class="nc" id="L508">        .append(&quot;Expected XML &quot;)</span>
+<span class="nc" id="L509">        .append(toEventName(presumedEventType));</span>
+
+<span class="nc bnc" id="L511" title="All 2 branches missed.">    if (presumedName != null) {</span>
+<span class="nc" id="L512">      builder.append(&quot; for QName '&quot;)</span>
+<span class="nc" id="L513">          .append(presumedName.toString());</span>
+    }
+
+<span class="nc bnc" id="L516" title="All 2 branches missed.">    if (event == null) {</span>
+<span class="nc" id="L517">      builder.append(&quot;', instead found null event&quot;);</span>
+    } else {
+<span class="nc" id="L519">      builder.append(&quot;', instead found &quot;)</span>
+<span class="nc" id="L520">          .append(toString(event))</span>
+<span class="nc" id="L521">          .append(generateLocationMessage(event));</span>
+    }
+<span class="nc" id="L523">    return builder;</span>
+  }
+
+  /**
+   * Skips events specified by {@code events}.
+   *
+   * @param reader
+   *          the event reader
+   * @param events
+   *          the events to skip
+   * @return the next non-mataching event returned by
+   *         {@link XMLEventReader2#peek()}, or {@code null} if there was no next
+   *         event
+   * @throws XMLStreamException
+   *           if an error occurred while reading
+   */
+  public static XMLEvent skipEvents(XMLEventReader2 reader, int... events) throws XMLStreamException {
+<span class="nc" id="L540">    Set&lt;Integer&gt; skipEvents = IntStream.of(events).boxed().collect(Collectors.toSet());</span>
+
+<span class="nc" id="L542">    XMLEvent nextEvent = null;</span>
+<span class="nc bnc" id="L543" title="All 2 branches missed.">    while (reader.hasNext()) {</span>
+<span class="nc" id="L544">      nextEvent = reader.peek();</span>
+<span class="nc bnc" id="L545" title="All 2 branches missed.">      if (!skipEvents.contains(nextEvent.getEventType())) {</span>
+<span class="nc" id="L546">        break;</span>
+      }
+<span class="nc" id="L548">      reader.nextEvent();</span>
+    }
+<span class="nc" id="L550">    return nextEvent;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

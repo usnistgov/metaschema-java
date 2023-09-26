@@ -36,9 +36,9 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> com.fasterxml.jackson.databind.node.ObjectNode;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.INamedModelInstance;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.schemagen.json.JsonGenerationState;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.util.ObjectUtils;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  
@@ -54,7 +54,7 @@
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>    }
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>    @Override
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> generateBody(ObjectNode obj, <a name="JsonGenerationState" href="../../../../../../../gov/nist/secauto/metaschema/schemagen/json/JsonGenerationState.html#JsonGenerationState">JsonGenerationState</a> state) {
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> generateBody(ObjectNode obj, <a name="JsonGenerationState" href="../../../../../../../gov/nist/secauto/metaschema/schemagen/json/impl/JsonGenerationState.html#JsonGenerationState">JsonGenerationState</a> state) {
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>      obj.put(<span class="jxr_string">"type"</span>, <span class="jxr_string">"array"</span>);
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      ObjectNode items = ObjectUtils.notNull(

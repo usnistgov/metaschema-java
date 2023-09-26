@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XmlMarkupParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.datatype.markup.flexmark</a> &gt; <span class="el_source">XmlMarkupParser.java</span></div><h1>XmlMarkupParser.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.datatype.markup.flexmark;
+
+import com.vladsch.flexmark.util.sequence.Escaping;
+
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codehaus.stax2.XMLEventReader2;
+
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L53">public class XmlMarkupParser { // NOPMD - acceptable</span>
+<span class="fc" id="L54">  private static final Logger LOGGER = LogManager.getLogger(XmlMarkupParser.class);</span>
+
+  @NonNull
+<span class="fc" id="L57">  public static final Set&lt;String&gt; BLOCK_ELEMENTS = ObjectUtils.notNull(</span>
+<span class="fc" id="L58">      Set.of(</span>
+          &quot;h1&quot;,
+          &quot;h2&quot;,
+          &quot;h3&quot;,
+          &quot;h4&quot;,
+          &quot;h5&quot;,
+          &quot;h6&quot;,
+          &quot;ul&quot;,
+          &quot;ol&quot;,
+          &quot;pre&quot;,
+          &quot;hr&quot;,
+          &quot;blockquote&quot;,
+          &quot;p&quot;,
+          &quot;table&quot;,
+          &quot;img&quot;));
+
+  @NonNull
+<span class="fc" id="L75">  private static final XmlMarkupParser SINGLETON = new XmlMarkupParser();</span>
+
+  @NonNull
+  public static XmlMarkupParser instance() {
+<span class="fc" id="L79">    return SINGLETON;</span>
+  }
+
+  public MarkupLine parseMarkupline(XMLEventReader2 reader) throws XMLStreamException { // NOPMD - acceptable
+<span class="nc" id="L83">    StringBuilder buffer = new StringBuilder();</span>
+<span class="nc" id="L84">    parseContents(reader, null, buffer);</span>
+<span class="nc" id="L85">    String html = buffer.toString().trim();</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">    return html.isEmpty() ? null : MarkupLine.fromHtml(html);</span>
+  }
+
+  public MarkupMultiline parseMarkupMultiline(XMLEventReader2 reader) throws XMLStreamException {
+<span class="fc" id="L90">    StringBuilder buffer = new StringBuilder();</span>
+<span class="fc" id="L91">    parseToString(reader, buffer);</span>
+<span class="fc" id="L92">    String html = buffer.toString().trim();</span>
+
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">    if (LOGGER.isDebugEnabled()) {</span>
+<span class="nc" id="L95">      LOGGER.debug(&quot;XML-&gt;HTML: {}&quot;, html);</span>
+    }
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">    return html.isEmpty() ? null : MarkupMultiline.fromHtml(html);</span>
+  }
+
+  protected void parseToString(XMLEventReader2 reader, StringBuilder buffer) // NOPMD - acceptable
+      throws XMLStreamException {
+    // if (LOGGER.isDebugEnabled()) {
+    // LOGGER.debug(&quot;parseToString(enter): {}&quot;,
+    // XmlEventUtil.toString(reader.peek()));
+    // }
+
+<span class="pc bpc" id="L107" title="1 of 4 branches missed.">    outer: while (reader.hasNextEvent() &amp;&amp; !reader.peek().isEndElement()) {</span>
+      // skip whitespace before the next block element
+<span class="fc" id="L109">      XMLEvent nextEvent = XmlEventUtil.skipWhitespace(reader);</span>
+
+      // if (LOGGER.isDebugEnabled()) {
+      // LOGGER.debug(&quot;parseToString: {}&quot;, XmlEventUtil.toString(nextEvent));
+      // }
+
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">      if (nextEvent.isStartElement()) {</span>
+<span class="fc" id="L116">        StartElement start = nextEvent.asStartElement();</span>
+<span class="fc" id="L117">        QName name = start.getName();</span>
+
+        // Note: the next element is not consumed. The called method is expected to
+        // consume it
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        if (BLOCK_ELEMENTS.contains(name.getLocalPart())) {</span>
+<span class="fc" id="L122">          parseStartElement(reader, start, buffer);</span>
+
+          // the next event should be the event after the start's END_ELEMENT
+          // assert XmlEventUtil.isNextEventEndElement(reader, name) :
+          // XmlEventUtil.toString(reader.peek());
+        } else {
+          // throw new IllegalStateException();
+          // stop parsing on first unrecognized event
+          break outer;
+        }
+      }
+      // reader.nextEvent();
+
+      // skip whitespace before the next block element
+<span class="fc" id="L136">      XmlEventUtil.skipWhitespace(reader);</span>
+<span class="fc" id="L137">    }</span>
+
+    // if (LOGGER.isDebugEnabled()) {
+    // LOGGER.debug(&quot;parseToString(exit): {}&quot;, reader.peek() != null ?
+    // XmlEventUtil.toString(reader.peek()) : &quot;&quot;);
+    // }
+<span class="fc" id="L143">  }</span>
+
+  private void parseStartElement(XMLEventReader2 reader, StartElement start, StringBuilder buffer)
+      throws XMLStreamException {
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">    if (LOGGER.isDebugEnabled()) {</span>
+<span class="nc" id="L148">      LOGGER.debug(&quot;parseStartElement(enter): {}&quot;, XmlEventUtil.toString(start));</span>
+    }
+
+    // consume the start event
+<span class="fc" id="L152">    reader.nextEvent();</span>
+
+<span class="fc" id="L154">    QName name = start.getName();</span>
+<span class="fc" id="L155">    buffer.append('&lt;')</span>
+<span class="fc" id="L156">        .append(name.getLocalPart());</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">    for (Attribute attribute : CollectionUtil.toIterable(</span>
+<span class="fc" id="L158">        ObjectUtils.notNull(start.getAttributes()))) {</span>
+<span class="fc" id="L159">      buffer</span>
+<span class="fc" id="L160">          .append(' ')</span>
+<span class="fc" id="L161">          .append(attribute.getName().getLocalPart())</span>
+<span class="fc" id="L162">          .append(&quot;=\&quot;&quot;)</span>
+<span class="fc" id="L163">          .append(attribute.getValue())</span>
+<span class="fc" id="L164">          .append('&quot;');</span>
+<span class="fc" id="L165">    }</span>
+
+<span class="fc" id="L167">    XMLEvent next = reader.peek();</span>
+<span class="pc bpc" id="L168" title="1 of 4 branches missed.">    if (next != null &amp;&amp; next.isEndElement()) {</span>
+<span class="fc" id="L169">      buffer.append(&quot;/&gt;&quot;);</span>
+      // consume end element event
+<span class="fc" id="L171">      reader.nextEvent();</span>
+    } else {
+<span class="fc" id="L173">      buffer.append('&gt;');</span>
+
+      // parse until the start's END_ELEMENT is reached
+<span class="fc" id="L176">      parseContents(reader, start, buffer);</span>
+
+<span class="fc" id="L178">      buffer</span>
+<span class="fc" id="L179">          .append(&quot;&lt;/&quot;)</span>
+<span class="fc" id="L180">          .append(name.getLocalPart())</span>
+<span class="fc" id="L181">          .append('&gt;');</span>
+
+      // the next event should be the start's END_ELEMENT
+<span class="fc" id="L184">      XmlEventUtil.assertNext(reader, XMLStreamConstants.END_ELEMENT, name);</span>
+
+      // consume the start's END_ELEMENT
+<span class="fc" id="L187">      reader.nextEvent();</span>
+    }
+
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">    if (LOGGER.isDebugEnabled()) {</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">      LOGGER.debug(&quot;parseStartElement(exit): {}&quot;, reader.peek() != null ? XmlEventUtil.toString(reader.peek()) : &quot;&quot;);</span>
+    }
+<span class="fc" id="L193">  }</span>
+
+  private void parseContents(XMLEventReader2 reader, StartElement start, StringBuilder buffer)
+      throws XMLStreamException {
+    // if (LOGGER.isDebugEnabled()) {
+    // LOGGER.debug(&quot;parseContents(enter): {}&quot;,
+    // XmlEventUtil.toString(reader.peek()));
+    // }
+
+    XMLEvent event;
+<span class="pc bpc" id="L203" title="1 of 4 branches missed.">    while (reader.hasNextEvent() &amp;&amp; !(event = reader.peek()).isEndElement()) {</span>
+      // // skip whitespace before the next list item
+      // event = XmlEventUtil.skipWhitespace(reader);
+
+      // if (LOGGER.isDebugEnabled()) {
+      // LOGGER.debug(&quot;parseContents(before): {}&quot;, XmlEventUtil.toString(event));
+      // }
+
+<span class="fc bfc" id="L211" title="All 2 branches covered.">      if (event.isStartElement()) {</span>
+<span class="fc" id="L212">        StartElement nextStart = event.asStartElement();</span>
+        // QName nextName = nextStart.getName();
+<span class="fc" id="L214">        parseStartElement(reader, nextStart, buffer);</span>
+
+        // if (LOGGER.isDebugEnabled()) {
+        // LOGGER.debug(&quot;parseContents(after): {}&quot;,
+        // XmlEventUtil.toString(reader.peek()));
+        // }
+
+        // assert XmlEventUtil.isNextEventEndElement(reader, nextName) :
+        // XmlEventUtil.toString(reader.peek());
+
+        // reader.nextEvent();
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">      } else if (event.isCharacters()) {</span>
+<span class="fc" id="L226">        Characters characters = event.asCharacters();</span>
+<span class="fc" id="L227">        buffer.append(Escaping.escapeHtml(characters.getData(), true));</span>
+<span class="fc" id="L228">        reader.nextEvent();</span>
+<span class="fc" id="L229">      }</span>
+    }
+
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">    assert start == null</span>
+<span class="pc bpc" id="L233" title="1 of 2 branches missed.">        || XmlEventUtil.isEventEndElement(reader.peek(), ObjectUtils.notNull(start.getName())) : XmlEventUtil</span>
+<span class="nc" id="L234">            .generateExpectedMessage(reader.peek(), XMLStreamConstants.END_ELEMENT, start.getName());</span>
+
+    // if (LOGGER.isDebugEnabled()) {
+    // LOGGER.debug(&quot;parseContents(exit): {}&quot;, reader.peek() != null ?
+    // XmlEventUtil.toString(reader.peek()) : &quot;&quot;);
+    // }
+<span class="fc" id="L240">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

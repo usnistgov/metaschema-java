@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XmlInlineFlagDefinition.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.xml</a> &gt; <span class="el_source">XmlInlineFlagDefinition.java</span></div><h1>XmlInlineFlagDefinition.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.xml;
+
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.AbstractFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFlagDefinitionType;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
+
+class XmlInlineFlagDefinition
+    extends AbstractFlagInstance {
+  @NonNull
+  private final InlineFlagDefinitionType xmlFlag;
+  @NonNull
+  private final InternalFlagDefinition flagDefinition;
+  private final Lazy&lt;IValueConstrained&gt; constraints;
+
+  /**
+   * Constructs a new Metaschema flag definition from an XML representation bound
+   * to Java objects.
+   *
+   * @param xmlFlag
+   *          the XML representation bound to Java objects
+   * @param parent
+   *          the parent definition, which must be a definition type that can
+   *          contain flags.
+   */
+  public XmlInlineFlagDefinition(@NonNull InlineFlagDefinitionType xmlFlag, @NonNull IFlagContainer parent) {
+<span class="nc" id="L75">    super(parent);</span>
+<span class="nc" id="L76">    this.xmlFlag = xmlFlag;</span>
+<span class="nc" id="L77">    this.flagDefinition = new InternalFlagDefinition();</span>
+<span class="nc" id="L78">    this.constraints = Lazy.lazy(() -&gt; {</span>
+      IValueConstrained retval;
+<span class="nc bnc" id="L80" title="All 2 branches missed.">      if (getXmlFlag().isSetConstraint()) {</span>
+<span class="nc" id="L81">        retval = new ValueConstraintSupport(</span>
+<span class="nc" id="L82">            ObjectUtils.notNull(getXmlFlag().getConstraint()),</span>
+<span class="nc" id="L83">            ExternalModelSource.instance(</span>
+<span class="nc" id="L84">                ObjectUtils.requireNonNull(getContainingModule().getLocation())));</span>
+      } else {
+<span class="nc" id="L86">        retval = new ValueConstraintSupport();</span>
+      }
+<span class="nc" id="L88">      return retval;</span>
+    });
+<span class="nc" id="L90">  }</span>
+
+  @Override
+  public InternalFlagDefinition getDefinition() {
+<span class="nc" id="L94">    return flagDefinition;</span>
+  }
+
+  @Override
+  public IModule getContainingModule() {
+<span class="nc" id="L99">    return getContainingDefinition().getContainingModule();</span>
+  }
+
+  // ----------------------------------------
+  // - Start Annotation driven code - CPD-OFF
+  // ----------------------------------------
+
+  /**
+   * Get the underlying XML model.
+   *
+   * @return the XML model
+   */
+  protected final InlineFlagDefinitionType getXmlFlag() {
+<span class="nc" id="L112">    return xmlFlag;</span>
+  }
+
+  @Override
+  public String getFormalName() {
+<span class="nc bnc" id="L117" title="All 2 branches missed.">    return getXmlFlag().isSetFormalName() ? getXmlFlag().getFormalName() : null;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public MarkupLine getDescription() {
+<span class="nc bnc" id="L123" title="All 2 branches missed.">    return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription())</span>
+<span class="nc" id="L124">        : null;</span>
+  }
+
+  @Override
+  public Map&lt;QName, Set&lt;String&gt;&gt; getProperties() {
+<span class="nc" id="L129">    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlFlag().getPropList()));</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public String getName() {
+<span class="nc" id="L135">    return getXmlFlag().getName();</span>
+  }
+
+  @Override
+  public boolean isRequired() {
+<span class="nc bnc" id="L140" title="All 2 branches missed.">    return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : MetaschemaModelConstants.DEFAULT_FLAG_REQUIRED;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public MarkupMultiline getRemarks() {
+<span class="nc bnc" id="L146" title="All 2 branches missed.">    return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;</span>
+  }
+
+  // --------------------------------------
+  // - End Annotation driven code - CPD-ON
+  // --------------------------------------
+
+  @Override
+  public String getUseName() {
+    // flags cannot use a use-name
+<span class="nc" id="L156">    return null;</span>
+  }
+
+  @Override
+  public Object getValue(@NonNull Object parentValue) {
+    // there is no value
+<span class="nc" id="L162">    return null;</span>
+  }
+
+  /**
+   * The corresponding definition for the local flag instance.
+   */
+  private final class InternalFlagDefinition
+      implements IFlagDefinition,
+      IFeatureInlinedDefinition&lt;IFlagInstance&gt; {
+    @Nullable
+    private final Object defaultValue;
+
+<span class="nc" id="L174">    private InternalFlagDefinition() {</span>
+<span class="nc" id="L175">      Object defaultValue = null;</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">      if (getXmlFlag().isSetDefault()) {</span>
+<span class="nc" id="L177">        defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(getXmlFlag().getDefault()));</span>
+      }
+<span class="nc" id="L179">      this.defaultValue = defaultValue;</span>
+<span class="nc" id="L180">    }</span>
+
+    // ----------------------------------------
+    // - Start annotation driven code - CPD-OFF
+    // ----------------------------------------
+
+    @SuppressWarnings(&quot;null&quot;)
+    @Override
+    public IDataTypeAdapter&lt;?&gt; getJavaTypeAdapter() {
+<span class="nc bnc" id="L189" title="All 2 branches missed.">      return getXmlFlag().isSetAsType() ? getXmlFlag().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;</span>
+    }
+
+    // --------------------------------------
+    // - End annotation driven code - CPD-ON
+    // --------------------------------------
+
+    @Override
+    public Object getDefaultValue() {
+<span class="nc" id="L198">      return defaultValue;</span>
+    }
+
+    @Override
+    public boolean isInline() {
+<span class="nc" id="L203">      return true;</span>
+    }
+
+    @Override
+    @NonNull
+    public IFlagInstance getInlineInstance() {
+<span class="nc" id="L209">      return XmlInlineFlagDefinition.this;</span>
+    }
+
+    @Override
+    public String getName() {
+<span class="nc" id="L214">      return XmlInlineFlagDefinition.this.getName();</span>
+    }
+
+    @Override
+    public String getUseName() {
+      // always use the name
+<span class="nc" id="L220">      return null;</span>
+    }
+
+    @Override
+    public ModuleScopeEnum getModuleScope() {
+<span class="nc" id="L225">      return ModuleScopeEnum.LOCAL;</span>
+    }
+
+    @Override
+    public String getFormalName() {
+<span class="nc" id="L230">      return XmlInlineFlagDefinition.this.getFormalName();</span>
+    }
+
+    @Override
+    public MarkupLine getDescription() {
+<span class="nc" id="L235">      return XmlInlineFlagDefinition.this.getDescription();</span>
+    }
+
+    @Override
+    public Map&lt;QName, Set&lt;String&gt;&gt; getProperties() {
+<span class="nc" id="L240">      return XmlInlineFlagDefinition.this.getProperties();</span>
+    }
+
+    /**
+     * Used to generate the instances for the constraints in a lazy fashion when the
+     * constraints are first accessed.
+     */
+    @SuppressWarnings(&quot;null&quot;)
+    @Override
+    public IValueConstrained getConstraintSupport() {
+<span class="nc" id="L250">      return constraints.get();</span>
+    }
+
+    @Override
+    public MarkupMultiline getRemarks() {
+<span class="nc" id="L255">      return XmlInlineFlagDefinition.this.getRemarks();</span>
+    }
+
+    @Override
+    public IModule getContainingModule() {
+<span class="nc" id="L260">      return XmlInlineFlagDefinition.super.getContainingDefinition().getContainingModule();</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

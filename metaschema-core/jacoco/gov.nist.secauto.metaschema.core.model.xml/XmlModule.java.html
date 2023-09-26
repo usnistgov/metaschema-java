@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XmlModule.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.xml</a> &gt; <span class="el_source">XmlModule.java</span></div><h1>XmlModule.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.xml;
+
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.AbstractModule;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFieldDefinitionType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFlagDefinitionType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.METASCHEMADocument;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.METASCHEMADocument.METASCHEMA;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.xmlbeans.XmlCursor;
+
+import java.net.URI;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+@SuppressWarnings(&quot;PMD.CouplingBetweenObjects&quot;)
+class XmlModule
+    extends AbstractModule {
+<span class="fc" id="L64">  private static final Logger LOGGER = LogManager.getLogger(XmlModule.class);</span>
+
+  @NonNull
+  private final URI location;
+  @NonNull
+  private final METASCHEMADocument module;
+  private final Map&lt;String, ? extends IFlagDefinition&gt; flagDefinitions;
+  private final Map&lt;String, ? extends IFieldDefinition&gt; fieldDefinitions;
+  private final Map&lt;String, ? extends IAssemblyDefinition&gt; assemblyDefinitions;
+  private final Map&lt;String, ? extends IAssemblyDefinition&gt; rootAssemblyDefinitions;
+
+  /**
+   * Constructs a new Metaschema instance.
+   *
+   * @param resource
+   *          the resource from which the module was loaded
+   * @param moduleXml
+   *          the XML source of the module definition bound to Java objects
+   * @param importedModules
+   *          the modules imported by this module
+   * @throws MetaschemaException
+   *           if a processing error occurs
+   */
+  XmlModule( // NOPMD - unavoidable
+      @NonNull URI resource,
+      @NonNull METASCHEMADocument moduleXml,
+      @NonNull List&lt;IModule&gt; importedModules) throws MetaschemaException {
+<span class="fc" id="L91">    super(importedModules);</span>
+<span class="fc" id="L92">    this.location = ObjectUtils.requireNonNull(resource, &quot;resource&quot;);</span>
+<span class="fc" id="L93">    Objects.requireNonNull(moduleXml.getMETASCHEMA());</span>
+<span class="fc" id="L94">    this.module = moduleXml;</span>
+
+<span class="fc" id="L96">    METASCHEMA metaschemaNode = module.getMETASCHEMA();</span>
+
+    // handle definitions in this module
+    {
+      // start with flag definitions
+<span class="fc" id="L101">      try (XmlCursor cursor = metaschemaNode.newCursor()) {</span>
+<span class="fc" id="L102">        cursor.selectPath(&quot;declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';$this/m:define-flag&quot;);</span>
+
+<span class="fc" id="L104">        Map&lt;String, IFlagDefinition&gt; flagDefinitions = new LinkedHashMap&lt;&gt;(); // NOPMD - intentional</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        while (cursor.toNextSelection()) {</span>
+<span class="fc" id="L106">          GlobalFlagDefinitionType obj = ObjectUtils.notNull((GlobalFlagDefinitionType) cursor.getObject());</span>
+<span class="fc" id="L107">          XmlGlobalFlagDefinition flag = new XmlGlobalFlagDefinition(obj, this); // NOPMD - intentional</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">          if (LOGGER.isTraceEnabled()) {</span>
+<span class="nc" id="L109">            LOGGER.trace(&quot;New flag definition '{}'&quot;, flag.toCoordinates());</span>
+          }
+<span class="fc" id="L111">          flagDefinitions.put(flag.getName(), flag);</span>
+<span class="fc" id="L112">        }</span>
+<span class="fc" id="L113">        this.flagDefinitions</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">            = flagDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagDefinitions);</span>
+      }
+    }
+
+    {
+      // now field definitions
+<span class="fc" id="L120">      try (XmlCursor cursor = metaschemaNode.newCursor()) {</span>
+<span class="fc" id="L121">        cursor.selectPath(&quot;declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';$this/m:define-field&quot;);</span>
+
+<span class="fc" id="L123">        Map&lt;String, IFieldDefinition&gt; fieldDefinitions = new LinkedHashMap&lt;&gt;(); // NOPMD - intentional</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        while (cursor.toNextSelection()) {</span>
+<span class="fc" id="L125">          GlobalFieldDefinitionType obj = ObjectUtils.notNull((GlobalFieldDefinitionType) cursor.getObject());</span>
+<span class="fc" id="L126">          XmlGlobalFieldDefinition field = new XmlGlobalFieldDefinition(obj, this); // NOPMD - intentional</span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">          if (LOGGER.isTraceEnabled()) {</span>
+<span class="nc" id="L128">            LOGGER.trace(&quot;New field definition '{}'&quot;, field.toCoordinates());</span>
+          }
+<span class="fc" id="L130">          fieldDefinitions.put(field.getName(), field);</span>
+<span class="fc" id="L131">        }</span>
+<span class="fc" id="L132">        this.fieldDefinitions</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">            = fieldDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(fieldDefinitions);</span>
+      }
+    }
+
+    {
+      // finally assembly definitions
+<span class="fc" id="L139">      Map&lt;String, IAssemblyDefinition&gt; assemblyDefinitions = new LinkedHashMap&lt;&gt;(); // NOPMD - intentional</span>
+<span class="fc" id="L140">      Map&lt;String, IAssemblyDefinition&gt; rootAssemblyDefinitions = new LinkedHashMap&lt;&gt;(); // NOPMD - intentional</span>
+
+<span class="fc" id="L142">      try (XmlCursor cursor = metaschemaNode.newCursor()) {</span>
+<span class="fc" id="L143">        cursor.selectPath(</span>
+            &quot;declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';$this/m:define-assembly&quot;);
+
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        while (cursor.toNextSelection()) {</span>
+<span class="fc" id="L147">          GlobalAssemblyDefinitionType obj = ObjectUtils.notNull((GlobalAssemblyDefinitionType) cursor.getObject());</span>
+<span class="fc" id="L148">          XmlGlobalAssemblyDefinition assembly = new XmlGlobalAssemblyDefinition(obj, this); // NOPMD - intentional</span>
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">          if (LOGGER.isTraceEnabled()) {</span>
+<span class="nc" id="L150">            LOGGER.trace(&quot;New assembly definition '{}'&quot;, assembly.toCoordinates());</span>
+          }
+<span class="fc" id="L152">          assemblyDefinitions.put(assembly.getName(), assembly);</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">          if (assembly.isRoot()) {</span>
+<span class="fc" id="L154">            rootAssemblyDefinitions.put(ObjectUtils.notNull(assembly.getRootName()), assembly);</span>
+          }
+<span class="fc" id="L156">        }</span>
+
+<span class="fc" id="L158">        this.assemblyDefinitions</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">            = assemblyDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(assemblyDefinitions);</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        this.rootAssemblyDefinitions = rootAssemblyDefinitions.isEmpty() ? Collections.emptyMap()</span>
+<span class="fc" id="L161">            : Collections.unmodifiableMap(rootAssemblyDefinitions);</span>
+      }
+    }
+<span class="fc" id="L164">  }</span>
+
+  @NonNull
+  @Override
+  public URI getLocation() {
+<span class="fc" id="L169">    return location;</span>
+  }
+
+  /**
+   * Get the XMLBeans representation of the Metaschema module.
+   *
+   * @return the XMLBean for the Metaschema module
+   */
+  @NonNull
+  protected METASCHEMADocument.METASCHEMA getXmlModule() {
+<span class="fc" id="L179">    return ObjectUtils.notNull(module.getMETASCHEMA());</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public MarkupLine getName() {
+<span class="nc" id="L185">    return MarkupStringConverter.toMarkupString(getXmlModule().getSchemaName());</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public String getVersion() {
+<span class="nc" id="L191">    return getXmlModule().getSchemaVersion();</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public MarkupMultiline getRemarks() {
+<span class="nc bnc" id="L197" title="All 2 branches missed.">    return getXmlModule().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlModule().getRemarks())</span>
+<span class="nc" id="L198">        : null;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public String getShortName() {
+<span class="fc" id="L204">    return getXmlModule().getShortName();</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public URI getXmlNamespace() {
+<span class="fc" id="L210">    return URI.create(getXmlModule().getNamespace());</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public URI getJsonBaseUri() {
+<span class="nc" id="L216">    return URI.create(getXmlModule().getJsonBaseUri());</span>
+  }
+
+  private Map&lt;String, ? extends IAssemblyDefinition&gt; getAssemblyDefinitionMap() {
+<span class="fc" id="L220">    return assemblyDefinitions;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public Collection&lt;? extends IAssemblyDefinition&gt; getAssemblyDefinitions() {
+<span class="fc" id="L226">    return getAssemblyDefinitionMap().values();</span>
+  }
+
+  @Override
+  public IAssemblyDefinition getAssemblyDefinitionByName(@NonNull String name) {
+<span class="fc" id="L231">    return getAssemblyDefinitionMap().get(name);</span>
+  }
+
+  private Map&lt;String, ? extends IFieldDefinition&gt; getFieldDefinitionMap() {
+<span class="fc" id="L235">    return fieldDefinitions;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public Collection&lt;? extends IFieldDefinition&gt; getFieldDefinitions() {
+<span class="fc" id="L241">    return getFieldDefinitionMap().values();</span>
+  }
+
+  @Override
+  public IFieldDefinition getFieldDefinitionByName(@NonNull String name) {
+<span class="nc" id="L246">    return getFieldDefinitionMap().get(name);</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public List&lt;? extends IFlagContainer&gt; getAssemblyAndFieldDefinitions() {
+<span class="nc" id="L252">    return Stream.concat(getAssemblyDefinitions().stream(), getFieldDefinitions().stream())</span>
+<span class="nc" id="L253">        .collect(Collectors.toList());</span>
+  }
+
+  private Map&lt;String, ? extends IFlagDefinition&gt; getFlagDefinitionMap() {
+<span class="fc" id="L257">    return flagDefinitions;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public Collection&lt;? extends IFlagDefinition&gt; getFlagDefinitions() {
+<span class="fc" id="L263">    return getFlagDefinitionMap().values();</span>
+  }
+
+  @Override
+  public IFlagDefinition getFlagDefinitionByName(@NonNull String name) {
+<span class="fc" id="L268">    return getFlagDefinitionMap().get(name);</span>
+  }
+
+  private Map&lt;String, ? extends IAssemblyDefinition&gt; getRootAssemblyDefinitionMap() {
+<span class="nc" id="L272">    return rootAssemblyDefinitions;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public Collection&lt;? extends IAssemblyDefinition&gt; getRootAssemblyDefinitions() {
+<span class="nc" id="L278">    return getRootAssemblyDefinitionMap().values();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

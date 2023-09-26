@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IndentingXmlStreamWriter2.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.xml</a> &gt; <span class="el_source">IndentingXmlStreamWriter2.java</span></div><h1>IndentingXmlStreamWriter2.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.xml;
+
+import org.codehaus.stax2.XMLStreamWriter2;
+import org.codehaus.stax2.util.StreamWriter2Delegate;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.xml.stream.XMLStreamException;
+
+public class IndentingXmlStreamWriter2
+    extends StreamWriter2Delegate {
+<span class="nc" id="L40">  private String indentText = DEFAULT_INDENT_TEXT;</span>
+<span class="nc" id="L41">  private String lineEndText = DEFAULT_LINE_END_TEXT;</span>
+  private int depth; // = 0;
+<span class="nc" id="L43">  private final Map&lt;Integer, Boolean&gt; depthWithChildMap = new HashMap&lt;&gt;(); // NOPMD - synchronization not needed</span>
+  private static final String DEFAULT_INDENT_TEXT = &quot;  &quot;;
+  private static final String DEFAULT_LINE_END_TEXT = &quot;\n&quot;;
+
+  public IndentingXmlStreamWriter2(XMLStreamWriter2 parent) {
+<span class="nc" id="L48">    super(parent);</span>
+<span class="nc" id="L49">  }</span>
+
+  protected String getIndentText() {
+<span class="nc" id="L52">    return indentText;</span>
+  }
+
+  protected void setIndentText(String indentText) {
+<span class="nc" id="L56">    Objects.requireNonNull(indentText, &quot;indentText&quot;);</span>
+<span class="nc" id="L57">    this.indentText = indentText;</span>
+<span class="nc" id="L58">  }</span>
+
+  protected String getLineEndText() {
+<span class="nc" id="L61">    return lineEndText;</span>
+  }
+
+  protected void setLineEndText(String lineEndText) {
+<span class="nc" id="L65">    Objects.requireNonNull(lineEndText, &quot;lineEndText&quot;);</span>
+<span class="nc" id="L66">    this.lineEndText = lineEndText;</span>
+<span class="nc" id="L67">  }</span>
+
+  protected void handleStartElement() throws XMLStreamException {
+    // update state of parent node
+<span class="nc bnc" id="L71" title="All 2 branches missed.">    if (depth &gt; 0) {</span>
+<span class="nc" id="L72">      depthWithChildMap.put(depth - 1, true);</span>
+    }
+    // reset state of current node
+<span class="nc" id="L75">    depthWithChildMap.put(depth, false);</span>
+    // indent for current depth
+<span class="nc" id="L77">    getParent().writeCharacters(getLineEndText());</span>
+<span class="nc" id="L78">    getParent().writeCharacters(getIndentText().repeat(depth));</span>
+<span class="nc" id="L79">    depth++;</span>
+<span class="nc" id="L80">  }</span>
+
+  @Override
+  public void writeStartElement(String localName) throws XMLStreamException {
+<span class="nc" id="L84">    handleStartElement();</span>
+<span class="nc" id="L85">    super.writeStartElement(localName);</span>
+<span class="nc" id="L86">  }</span>
+
+  @Override
+  public void writeStartElement(String namespaceURI, String localName) throws XMLStreamException {
+<span class="nc" id="L90">    handleStartElement();</span>
+<span class="nc" id="L91">    super.writeStartElement(namespaceURI, localName);</span>
+<span class="nc" id="L92">  }</span>
+
+  @Override
+  public void writeStartElement(String prefix,
+      String localName,
+      String namespaceURI) throws XMLStreamException {
+<span class="nc" id="L98">    handleStartElement();</span>
+<span class="nc" id="L99">    super.writeStartElement(prefix, localName, namespaceURI);</span>
+<span class="nc" id="L100">  }</span>
+
+  protected void handleEndElement() throws XMLStreamException {
+<span class="nc" id="L103">    depth--;</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">    if (depthWithChildMap.get(depth)) {</span>
+<span class="nc" id="L105">      getParent().writeCharacters(getLineEndText());</span>
+<span class="nc" id="L106">      getParent().writeCharacters(getIndentText().repeat(depth));</span>
+    }
+<span class="nc" id="L108">  }</span>
+
+  @Override
+  public void writeEndElement() throws XMLStreamException {
+<span class="nc" id="L112">    handleEndElement();</span>
+<span class="nc" id="L113">    super.writeEndElement();</span>
+<span class="nc" id="L114">  }</span>
+
+  @Override
+  public void writeFullEndElement() throws XMLStreamException {
+<span class="nc" id="L118">    handleEndElement();</span>
+<span class="nc" id="L119">    super.writeFullEndElement();</span>
+<span class="nc" id="L120">  }</span>
+
+  protected void handleEmptyElement() throws XMLStreamException {
+    // update state of parent node
+<span class="nc bnc" id="L124" title="All 2 branches missed.">    if (depth &gt; 0) {</span>
+<span class="nc" id="L125">      depthWithChildMap.put(depth - 1, true);</span>
+    }
+    // indent for current depth
+<span class="nc" id="L128">    getParent().writeCharacters(getLineEndText());</span>
+<span class="nc" id="L129">    getParent().writeCharacters(getIndentText().repeat(depth));</span>
+<span class="nc" id="L130">  }</span>
+
+  @Override
+  public void writeEmptyElement(String localName) throws XMLStreamException {
+<span class="nc" id="L134">    handleEmptyElement();</span>
+<span class="nc" id="L135">    super.writeEmptyElement(localName);</span>
+<span class="nc" id="L136">  }</span>
+
+  @Override
+  public void writeEmptyElement(String namespaceURI, String localName) throws XMLStreamException {
+<span class="nc" id="L140">    handleEmptyElement();</span>
+<span class="nc" id="L141">    super.writeEmptyElement(namespaceURI, localName);</span>
+<span class="nc" id="L142">  }</span>
+
+  @Override
+  public void writeEmptyElement(String prefix, String localName, String namespaceURI) throws XMLStreamException {
+<span class="nc" id="L146">    handleEmptyElement();</span>
+<span class="nc" id="L147">    super.writeEmptyElement(prefix, localName, namespaceURI);</span>
+<span class="nc" id="L148">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MapPropertyInfo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.model.info</a> &gt; <span class="el_source">MapPropertyInfo.java</span></div><h1>MapPropertyInfo.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.model.info;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+
+import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
+import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
+import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
+import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+
+import org.codehaus.stax2.XMLEventReader2;
+
+import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+<span class="fc" id="L62">class MapPropertyInfo</span>
+    extends AbstractModelPropertyInfo {
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public Collection&lt;?&gt; getItemsFromValue(Object value) {
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">    return value == null ? List.of() : ((Map&lt;?, ?&gt;) value).values();</span>
+  }
+
+  @Override
+  public int getItemCount(Object value) {
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">    return value == null ? 0 : ((Map&lt;?, ?&gt;) value).size();</span>
+  }
+
+  public MapPropertyInfo(
+      @NonNull IBoundNamedModelInstance property) {
+<span class="fc" id="L78">    super(property);</span>
+<span class="fc" id="L79">  }</span>
+
+  @Override
+  public boolean isJsonKeyRequired() {
+<span class="fc" id="L83">    return true;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public Class&lt;?&gt; getKeyType() {
+<span class="nc" id="L89">    ParameterizedType actualType = (ParameterizedType) getProperty().getType();</span>
+    // this is a Map so the first generic type is the key
+<span class="nc" id="L91">    return (Class&lt;?&gt;) actualType.getActualTypeArguments()[0];</span>
+  }
+
+  @Override
+  public Class&lt;?&gt; getItemType() {
+<span class="fc" id="L96">    return getValueType();</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public Class&lt;?&gt; getValueType() {
+<span class="fc" id="L102">    ParameterizedType actualType = (ParameterizedType) getProperty().getType();</span>
+    // this is a Map so the second generic type is the value
+<span class="fc" id="L104">    return (Class&lt;?&gt;) actualType.getActualTypeArguments()[1];</span>
+  }
+
+  @Override
+  public IPropertyCollector newPropertyCollector() {
+<span class="fc" id="L109">    return new MapPropertyCollector();</span>
+  }
+
+  @Override
+  public void readValues(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
+      throws IOException {
+    @SuppressWarnings(&quot;resource&quot;) // not owned
+<span class="fc" id="L116">    JsonParser jsonParser = context.getReader(); // NOPMD - intentional</span>
+
+    // A map value is always wrapped in a START_OBJECT, since fields are used for
+    // the keys
+<span class="fc" id="L120">    JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);</span>
+
+    // process all map items
+<span class="fc bfc" id="L123" title="All 2 branches covered.">    while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {</span>
+
+      // a map item will always start with a FIELD_NAME, since this represents the key
+<span class="fc" id="L126">      JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME);</span>
+
+<span class="fc" id="L128">      Object value = getProperty().getDataTypeHandler().readItem(parentInstance, context);</span>
+<span class="fc" id="L129">      collector.add(value);</span>
+
+      // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all
+      // items have been
+      // read
+<span class="fc" id="L134">      JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);</span>
+<span class="fc" id="L135">    }</span>
+
+    // A map value will always end with an end object, which needs to be consumed
+<span class="fc" id="L138">    JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);</span>
+<span class="fc" id="L139">  }</span>
+
+  @Override
+  public boolean readValues(IPropertyCollector collector, Object parentInstance, StartElement start,
+      IXmlParsingContext context) throws IOException, XMLStreamException {
+<span class="fc" id="L144">    QName qname = getProperty().getXmlQName();</span>
+<span class="fc" id="L145">    XMLEventReader2 eventReader = context.getReader();</span>
+
+    // consume extra whitespace between elements
+<span class="fc" id="L148">    XmlEventUtil.skipWhitespace(eventReader);</span>
+
+<span class="fc" id="L150">    boolean handled = false;</span>
+    XMLEvent event;
+<span class="pc bpc" id="L152" title="1 of 4 branches missed.">    while ((event = eventReader.peek()).isStartElement() &amp;&amp; qname.equals(event.asStartElement().getName())) {</span>
+
+      // Consume the start element
+<span class="fc" id="L155">      Object value = context.readModelInstanceValue(getProperty(), parentInstance, start);</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">      if (value != null) {</span>
+<span class="fc" id="L157">        collector.add(value);</span>
+<span class="fc" id="L158">        handled = true;</span>
+      }
+
+      // consume extra whitespace between elements
+<span class="fc" id="L162">      XmlEventUtil.skipWhitespace(eventReader);</span>
+<span class="fc" id="L163">    }</span>
+
+<span class="fc" id="L165">    return handled;</span>
+  }
+
+  @Override
+  public void writeValues(Object value, QName parentName, IXmlWritingContext context)
+      throws XMLStreamException, IOException {
+<span class="fc" id="L171">    IBoundNamedModelInstance property = getProperty();</span>
+<span class="fc" id="L172">    @SuppressWarnings(&quot;unchecked&quot;) Map&lt;String, ? extends Object&gt; items = (Map&lt;String, ? extends Object&gt;) value;</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">    for (Object item : items.values()) {</span>
+<span class="fc" id="L174">      context.writeInstanceValue(property, ObjectUtils.notNull(item), parentName);</span>
+<span class="fc" id="L175">    }</span>
+<span class="fc" id="L176">  }</span>
+
+  @Override
+  public void writeValues(Object parentInstance, IJsonWritingContext context) throws IOException {
+<span class="nc bnc" id="L180" title="All 2 branches missed.">    for (Object targetObject : getItemsFromParentInstance(parentInstance)) {</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">      assert targetObject != null;</span>
+<span class="nc" id="L182">      getProperty().getDataTypeHandler().writeItem(targetObject, context);</span>
+<span class="nc" id="L183">    }</span>
+<span class="nc" id="L184">  }</span>
+
+  @Override
+  public boolean isValueSet(Object parentInstance) throws IOException {
+<span class="nc" id="L188">    Collection&lt;? extends Object&gt; items = getItemsFromParentInstance(parentInstance);</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">    return !items.isEmpty();</span>
+  }
+
+  @Override
+  public void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
+      throws BindingException {
+<span class="nc" id="L195">    IBoundNamedModelInstance property = getProperty();</span>
+
+<span class="nc bnc" id="L197" title="All 2 branches missed.">    for (Object item : getItemsFromParentInstance(fromInstance)) {</span>
+<span class="nc" id="L198">      collector.add(property.copyItem(ObjectUtils.requireNonNull(item), toInstance));</span>
+<span class="nc" id="L199">    }</span>
+<span class="nc" id="L200">  }</span>
+
+<span class="fc" id="L202">  public class MapPropertyCollector implements IPropertyCollector {</span>
+<span class="fc" id="L203">    @NonNull</span>
+    private final Map&lt;String, Object&gt; map = new LinkedHashMap&lt;&gt;(); // NOPMD - single threaded
+    @Nullable
+    private final IBoundFlagInstance jsonKey;
+
+<span class="fc" id="L208">    protected MapPropertyCollector() {</span>
+<span class="fc" id="L209">      IClassBinding classBinding = getProperty().getDataTypeHandler().getClassBinding();</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">      this.jsonKey = classBinding == null ? null : classBinding.getJsonKeyFlagInstance();</span>
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">      if (this.jsonKey == null) {</span>
+<span class="nc" id="L212">        throw new IllegalStateException(&quot;No JSON key found&quot;);</span>
+      }
+<span class="fc" id="L214">    }</span>
+
+    protected IBoundFlagInstance getJsonKey() {
+<span class="fc" id="L217">      return jsonKey;</span>
+    }
+
+    @Override
+    public void add(Object item) {
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">      assert item != null;</span>
+
+      // lookup the key
+<span class="fc" id="L225">      String key = getJsonKey().getValue(item).toString();</span>
+<span class="fc" id="L226">      map.put(key, item);</span>
+<span class="fc" id="L227">    }</span>
+
+    @Override
+    public void addAll(Collection&lt;?&gt; items) {
+<span class="nc bnc" id="L231" title="All 2 branches missed.">      for (Object item : items) {</span>
+<span class="nc" id="L232">        add(ObjectUtils.requireNonNull(item));</span>
+<span class="nc" id="L233">      }</span>
+<span class="nc" id="L234">    }</span>
+
+    @NonNull
+    @Override
+    @SuppressFBWarnings(value = &quot;EI_EXPOSE_REP&quot;, justification = &quot;this is a data holder&quot;)
+    public Map&lt;String, Object&gt; getValue() {
+<span class="fc" id="L240">      return map;</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

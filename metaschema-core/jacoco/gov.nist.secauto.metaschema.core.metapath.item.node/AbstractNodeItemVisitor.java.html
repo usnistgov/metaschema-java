@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractNodeItemVisitor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath.item.node</a> &gt; <span class="el_source">AbstractNodeItemVisitor.java</span></div><h1>AbstractNodeItemVisitor.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath.item.node;
+
+import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+/**
+ * Used by implementations of this class to visit a sequence of node items in a
+ * directed graph, using depth-first ordering.
+ *
+ * @param &lt;RESULT&gt;
+ *          the type of result produced by visitation
+ * @param &lt;CONTEXT&gt;
+ *          the type of data to pass to each visited node
+ */
+<span class="fc" id="L42">public abstract class AbstractNodeItemVisitor&lt;RESULT, CONTEXT&gt; implements INodeItemVisitor&lt;RESULT, CONTEXT&gt; {</span>
+  /**
+   * Visit the provided {@code item}.
+   *
+   * @param item
+   *          the item to visit
+   * @param context
+   *          provides contextual information for use by the visitor
+   * @return the result produced by visiting the item
+   */
+  public final RESULT visit(@NonNull INodeItemVisitable item, CONTEXT context) {
+<span class="nc" id="L53">    return item.accept(this, context);</span>
+  }
+
+  /**
+   * Visit any child flags associated with the provided {@code item}.
+   *
+   * @param item
+   *          the item to visit
+   * @param context
+   *          provides contextual information for use by the visitor
+   * @return the result produced by visiting the item's flags
+   */
+  protected RESULT visitFlags(@NonNull INodeItem item, CONTEXT context) {
+<span class="nc" id="L66">    RESULT result = defaultResult();</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">    for (IFlagNodeItem flag : item.getFlags()) {</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">      assert flag != null;</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">      if (!shouldVisitNextChild(item, flag, result, context)) {</span>
+<span class="nc" id="L70">        break;</span>
+      }
+
+<span class="nc" id="L73">      RESULT childResult = flag.accept(this, context);</span>
+<span class="nc" id="L74">      result = aggregateResult(result, childResult, context);</span>
+<span class="nc" id="L75">    }</span>
+<span class="nc" id="L76">    return result;</span>
+  }
+
+  /**
+   * Visit any child model items associated with the provided {@code item}.
+   *
+   * @param item
+   *          the item to visit
+   * @param context
+   *          provides contextual information for use by the visitor
+   * @return the result produced by visiting the item's child model items
+   */
+  protected RESULT visitModelChildren(@NonNull INodeItem item, CONTEXT context) {
+<span class="nc" id="L89">    RESULT result = defaultResult();</span>
+
+<span class="nc bnc" id="L91" title="All 2 branches missed.">    for (List&lt;? extends IModelNodeItem&lt;?, ?&gt;&gt; childItems : item.getModelItems()) {</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">      for (IModelNodeItem&lt;?, ?&gt; childItem : childItems) {</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        assert childItem != null;</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (!shouldVisitNextChild(item, childItem, result, context)) {</span>
+<span class="nc" id="L95">          break;</span>
+        }
+
+<span class="nc" id="L98">        RESULT childResult = childItem.accept(this, context);</span>
+<span class="nc" id="L99">        result = aggregateResult(result, childResult, context);</span>
+<span class="nc" id="L100">      }</span>
+<span class="nc" id="L101">    }</span>
+<span class="nc" id="L102">    return result;</span>
+  }
+
+  /**
+   * Determine if the child should be visited next, or skipped.
+   *
+   * @param parent
+   *          the parent of the child to visit next
+   * @param child
+   *          the next child to visit
+   * @param result
+   *          the current visitation result
+   * @param context
+   *          provides contextual information for use by the visitor
+   * @return {@code true} if the child should be visited, or {@code false} if the
+   *         child should be skipped
+   */
+  protected boolean shouldVisitNextChild(
+      @NonNull INodeItem parent,
+      @NonNull INodeItem child,
+      RESULT result,
+      CONTEXT context) {
+    // this is the default behavior, which can be overridden
+<span class="nc" id="L125">    return true;</span>
+  }
+
+  /**
+   * Determine if the child should be visited next, or skipped.
+   *
+   * @param parent
+   *          the parent of the child to visit next
+   * @param child
+   *          the next child to visit
+   * @param result
+   *          the current visitation result
+   * @param context
+   *          provides contextual information for use by the visitor
+   * @return {@code true} if the child should be visited, or {@code false} if the
+   *         child should be skipped
+   */
+  protected boolean shouldVisitNextChild(
+      @NonNull INodeItem parent,
+      @NonNull IModelNodeItem&lt;?, ?&gt; child,
+      RESULT result,
+      CONTEXT context) {
+    // this is the default behavior, which can be overridden
+<span class="nc" id="L148">    return true;</span>
+  }
+
+  /**
+   * The initial, default visitation result, which will be used as the basis for
+   * aggregating results produced when visiting.
+   *
+   * @return the default result
+   * @see #aggregateResult(Object, Object, Object)
+   */
+  protected abstract RESULT defaultResult();
+
+  /**
+   * Combine two results into a single, aggregate result.
+   *
+   * @param first
+   *          the original result
+   * @param second
+   *          the new result to combine with the original result
+   * @param context
+   *          provides contextual information for use by the visitor
+   * @return the combined result
+   */
+  protected RESULT aggregateResult(RESULT first, RESULT second, CONTEXT context) {
+    // this is the default behavior, which can be overridden
+<span class="nc" id="L173">    return second;</span>
+  }
+
+  @Override
+  public RESULT visitDocument(IDocumentNodeItem item, CONTEXT context) {
+    // this is the default behavior, which can be overridden
+<span class="nc" id="L179">    return visitModelChildren(item, context);</span>
+    // return visitAssembly(item.getRootAssemblyNodeItem(), context);
+  }
+
+  @Override
+  public RESULT visitFlag(IFlagNodeItem item, CONTEXT context) {
+    // this is the default behavior, which can be overridden
+<span class="fc" id="L186">    return defaultResult();</span>
+  }
+
+  @Override
+  public RESULT visitField(IFieldNodeItem item, CONTEXT context) {
+    // this is the default behavior, which can be overridden
+<span class="nc" id="L192">    return visitFlags(item, context);</span>
+  }
+
+  @Override
+  public RESULT visitAssembly(IAssemblyNodeItem item, CONTEXT context) {
+    // this is the default behavior, which can be overridden
+<span class="nc" id="L198">    return aggregateResult(visitFlags(item, context), visitModelChildren(item, context), context);</span>
+  }
+
+  @Override
+  public RESULT visitMetaschema(IModuleNodeItem item, CONTEXT context) {
+    // this is the default behavior, which can be overridden
+<span class="nc" id="L204">    return aggregateResult(visitFlags(item, context), visitModelChildren(item, context), context);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

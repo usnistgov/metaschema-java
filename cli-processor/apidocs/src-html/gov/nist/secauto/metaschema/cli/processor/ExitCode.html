@@ -51,74 +51,76 @@
 <span class="sourceLineNo">042</span><a id="line.42">   */</a>
 <span class="sourceLineNo">043</span><a id="line.43">  IO_ERROR(2),</a>
 <span class="sourceLineNo">044</span><a id="line.44">  /**</a>
-<span class="sourceLineNo">045</span><a id="line.45">   * A command was requested by name that doesn't exist or required arguments are missing.</a>
-<span class="sourceLineNo">046</span><a id="line.46">   */</a>
-<span class="sourceLineNo">047</span><a id="line.47">  INVALID_COMMAND(3),</a>
-<span class="sourceLineNo">048</span><a id="line.48">  /**</a>
-<span class="sourceLineNo">049</span><a id="line.49">   * The target argument was not found or invalid.</a>
-<span class="sourceLineNo">050</span><a id="line.50">   */</a>
-<span class="sourceLineNo">051</span><a id="line.51">  INVALID_TARGET(4),</a>
-<span class="sourceLineNo">052</span><a id="line.52">  /**</a>
-<span class="sourceLineNo">053</span><a id="line.53">   * Handled errors that occur during command execution.</a>
-<span class="sourceLineNo">054</span><a id="line.54">   */</a>
-<span class="sourceLineNo">055</span><a id="line.55">  PROCESSING_ERROR(5),</a>
-<span class="sourceLineNo">056</span><a id="line.56">  /**</a>
-<span class="sourceLineNo">057</span><a id="line.57">   * Unhandled errors that occur during command execution.</a>
-<span class="sourceLineNo">058</span><a id="line.58">   */</a>
-<span class="sourceLineNo">059</span><a id="line.59">  RUNTIME_ERROR(6),</a>
-<span class="sourceLineNo">060</span><a id="line.60">  /**</a>
-<span class="sourceLineNo">061</span><a id="line.61">   * The provided argument information for a command fails to match argument use requirements.</a>
-<span class="sourceLineNo">062</span><a id="line.62">   */</a>
-<span class="sourceLineNo">063</span><a id="line.63">  INVALID_ARGUMENTS(7);</a>
-<span class="sourceLineNo">064</span><a id="line.64"></a>
-<span class="sourceLineNo">065</span><a id="line.65">  private final int statusCode;</a>
+<span class="sourceLineNo">045</span><a id="line.45">   * A command was requested by name that doesn't exist or required arguments are</a>
+<span class="sourceLineNo">046</span><a id="line.46">   * missing.</a>
+<span class="sourceLineNo">047</span><a id="line.47">   */</a>
+<span class="sourceLineNo">048</span><a id="line.48">  INVALID_COMMAND(3),</a>
+<span class="sourceLineNo">049</span><a id="line.49">  /**</a>
+<span class="sourceLineNo">050</span><a id="line.50">   * The target argument was not found or invalid.</a>
+<span class="sourceLineNo">051</span><a id="line.51">   */</a>
+<span class="sourceLineNo">052</span><a id="line.52">  INVALID_TARGET(4),</a>
+<span class="sourceLineNo">053</span><a id="line.53">  /**</a>
+<span class="sourceLineNo">054</span><a id="line.54">   * Handled errors that occur during command execution.</a>
+<span class="sourceLineNo">055</span><a id="line.55">   */</a>
+<span class="sourceLineNo">056</span><a id="line.56">  PROCESSING_ERROR(5),</a>
+<span class="sourceLineNo">057</span><a id="line.57">  /**</a>
+<span class="sourceLineNo">058</span><a id="line.58">   * Unhandled errors that occur during command execution.</a>
+<span class="sourceLineNo">059</span><a id="line.59">   */</a>
+<span class="sourceLineNo">060</span><a id="line.60">  RUNTIME_ERROR(6),</a>
+<span class="sourceLineNo">061</span><a id="line.61">  /**</a>
+<span class="sourceLineNo">062</span><a id="line.62">   * The provided argument information for a command fails to match argument use</a>
+<span class="sourceLineNo">063</span><a id="line.63">   * requirements.</a>
+<span class="sourceLineNo">064</span><a id="line.64">   */</a>
+<span class="sourceLineNo">065</span><a id="line.65">  INVALID_ARGUMENTS(7);</a>
 <span class="sourceLineNo">066</span><a id="line.66"></a>
-<span class="sourceLineNo">067</span><a id="line.67">  ExitCode(int statusCode) {</a>
-<span class="sourceLineNo">068</span><a id="line.68">    this.statusCode = statusCode;</a>
-<span class="sourceLineNo">069</span><a id="line.69">  }</a>
-<span class="sourceLineNo">070</span><a id="line.70"></a>
-<span class="sourceLineNo">071</span><a id="line.71">  /**</a>
-<span class="sourceLineNo">072</span><a id="line.72">   * Get the related status code for use with {@link System#exit(int)}.</a>
-<span class="sourceLineNo">073</span><a id="line.73">   *</a>
-<span class="sourceLineNo">074</span><a id="line.74">   * @return the statusCode</a>
-<span class="sourceLineNo">075</span><a id="line.75">   */</a>
-<span class="sourceLineNo">076</span><a id="line.76">  public int getStatusCode() {</a>
-<span class="sourceLineNo">077</span><a id="line.77">    return statusCode;</a>
-<span class="sourceLineNo">078</span><a id="line.78">  }</a>
-<span class="sourceLineNo">079</span><a id="line.79"></a>
-<span class="sourceLineNo">080</span><a id="line.80">  /**</a>
-<span class="sourceLineNo">081</span><a id="line.81">   * Exit without a message.</a>
-<span class="sourceLineNo">082</span><a id="line.82">   *</a>
-<span class="sourceLineNo">083</span><a id="line.83">   * @return the exit status</a>
-<span class="sourceLineNo">084</span><a id="line.84">   */</a>
-<span class="sourceLineNo">085</span><a id="line.85">  @NonNull</a>
-<span class="sourceLineNo">086</span><a id="line.86">  public ExitStatus exit() {</a>
-<span class="sourceLineNo">087</span><a id="line.87">    return new NonMessageExitStatus(this);</a>
-<span class="sourceLineNo">088</span><a id="line.88">  }</a>
-<span class="sourceLineNo">089</span><a id="line.89"></a>
-<span class="sourceLineNo">090</span><a id="line.90">  /**</a>
-<span class="sourceLineNo">091</span><a id="line.91">   * Exit with the associated message.</a>
-<span class="sourceLineNo">092</span><a id="line.92">   *</a>
-<span class="sourceLineNo">093</span><a id="line.93">   * @return the exit status</a>
-<span class="sourceLineNo">094</span><a id="line.94">   */</a>
-<span class="sourceLineNo">095</span><a id="line.95">  @NonNull</a>
-<span class="sourceLineNo">096</span><a id="line.96">  public ExitStatus exitMessage() {</a>
-<span class="sourceLineNo">097</span><a id="line.97">    return new MessageExitStatus(this);</a>
-<span class="sourceLineNo">098</span><a id="line.98">  }</a>
-<span class="sourceLineNo">099</span><a id="line.99"></a>
-<span class="sourceLineNo">100</span><a id="line.100">  /**</a>
-<span class="sourceLineNo">101</span><a id="line.101">   * Exit with the associated message and message arguments.</a>
-<span class="sourceLineNo">102</span><a id="line.102">   *</a>
-<span class="sourceLineNo">103</span><a id="line.103">   * @param messageArguments</a>
-<span class="sourceLineNo">104</span><a id="line.104">   *          any message parameters</a>
-<span class="sourceLineNo">105</span><a id="line.105">   *</a>
-<span class="sourceLineNo">106</span><a id="line.106">   * @return the exit status</a>
-<span class="sourceLineNo">107</span><a id="line.107">   */</a>
-<span class="sourceLineNo">108</span><a id="line.108">  @NonNull</a>
-<span class="sourceLineNo">109</span><a id="line.109">  public ExitStatus exitMessage(@NonNull Object... messageArguments) {</a>
-<span class="sourceLineNo">110</span><a id="line.110">    return new MessageExitStatus(this, messageArguments);</a>
-<span class="sourceLineNo">111</span><a id="line.111">  }</a>
-<span class="sourceLineNo">112</span><a id="line.112">}</a>
+<span class="sourceLineNo">067</span><a id="line.67">  private final int statusCode;</a>
+<span class="sourceLineNo">068</span><a id="line.68"></a>
+<span class="sourceLineNo">069</span><a id="line.69">  ExitCode(int statusCode) {</a>
+<span class="sourceLineNo">070</span><a id="line.70">    this.statusCode = statusCode;</a>
+<span class="sourceLineNo">071</span><a id="line.71">  }</a>
+<span class="sourceLineNo">072</span><a id="line.72"></a>
+<span class="sourceLineNo">073</span><a id="line.73">  /**</a>
+<span class="sourceLineNo">074</span><a id="line.74">   * Get the related status code for use with {@link System#exit(int)}.</a>
+<span class="sourceLineNo">075</span><a id="line.75">   *</a>
+<span class="sourceLineNo">076</span><a id="line.76">   * @return the statusCode</a>
+<span class="sourceLineNo">077</span><a id="line.77">   */</a>
+<span class="sourceLineNo">078</span><a id="line.78">  public int getStatusCode() {</a>
+<span class="sourceLineNo">079</span><a id="line.79">    return statusCode;</a>
+<span class="sourceLineNo">080</span><a id="line.80">  }</a>
+<span class="sourceLineNo">081</span><a id="line.81"></a>
+<span class="sourceLineNo">082</span><a id="line.82">  /**</a>
+<span class="sourceLineNo">083</span><a id="line.83">   * Exit without a message.</a>
+<span class="sourceLineNo">084</span><a id="line.84">   *</a>
+<span class="sourceLineNo">085</span><a id="line.85">   * @return the exit status</a>
+<span class="sourceLineNo">086</span><a id="line.86">   */</a>
+<span class="sourceLineNo">087</span><a id="line.87">  @NonNull</a>
+<span class="sourceLineNo">088</span><a id="line.88">  public ExitStatus exit() {</a>
+<span class="sourceLineNo">089</span><a id="line.89">    return new NonMessageExitStatus(this);</a>
+<span class="sourceLineNo">090</span><a id="line.90">  }</a>
+<span class="sourceLineNo">091</span><a id="line.91"></a>
+<span class="sourceLineNo">092</span><a id="line.92">  /**</a>
+<span class="sourceLineNo">093</span><a id="line.93">   * Exit with the associated message.</a>
+<span class="sourceLineNo">094</span><a id="line.94">   *</a>
+<span class="sourceLineNo">095</span><a id="line.95">   * @return the exit status</a>
+<span class="sourceLineNo">096</span><a id="line.96">   */</a>
+<span class="sourceLineNo">097</span><a id="line.97">  @NonNull</a>
+<span class="sourceLineNo">098</span><a id="line.98">  public ExitStatus exitMessage() {</a>
+<span class="sourceLineNo">099</span><a id="line.99">    return new MessageExitStatus(this);</a>
+<span class="sourceLineNo">100</span><a id="line.100">  }</a>
+<span class="sourceLineNo">101</span><a id="line.101"></a>
+<span class="sourceLineNo">102</span><a id="line.102">  /**</a>
+<span class="sourceLineNo">103</span><a id="line.103">   * Exit with the associated message and message arguments.</a>
+<span class="sourceLineNo">104</span><a id="line.104">   *</a>
+<span class="sourceLineNo">105</span><a id="line.105">   * @param messageArguments</a>
+<span class="sourceLineNo">106</span><a id="line.106">   *          any message parameters</a>
+<span class="sourceLineNo">107</span><a id="line.107">   *</a>
+<span class="sourceLineNo">108</span><a id="line.108">   * @return the exit status</a>
+<span class="sourceLineNo">109</span><a id="line.109">   */</a>
+<span class="sourceLineNo">110</span><a id="line.110">  @NonNull</a>
+<span class="sourceLineNo">111</span><a id="line.111">  public ExitStatus exitMessage(@NonNull Object... messageArguments) {</a>
+<span class="sourceLineNo">112</span><a id="line.112">    return new MessageExitStatus(this, messageArguments);</a>
+<span class="sourceLineNo">113</span><a id="line.113">  }</a>
+<span class="sourceLineNo">114</span><a id="line.114">}</a>
 
 
 

@@ -35,12 +35,12 @@
 <span class="sourceLineNo">026</span><a id="line.26"></a>
 <span class="sourceLineNo">027</span><a id="line.27">package gov.nist.secauto.metaschema.maven.plugin;</a>
 <span class="sourceLineNo">028</span><a id="line.28"></a>
-<span class="sourceLineNo">029</span><a id="line.29">import gov.nist.secauto.metaschema.codegen.JavaGenerator;</a>
-<span class="sourceLineNo">030</span><a id="line.30">import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;</a>
-<span class="sourceLineNo">031</span><a id="line.31">import gov.nist.secauto.metaschema.model.MetaschemaLoader;</a>
-<span class="sourceLineNo">032</span><a id="line.32">import gov.nist.secauto.metaschema.model.common.IMetaschema;</a>
-<span class="sourceLineNo">033</span><a id="line.33">import gov.nist.secauto.metaschema.model.common.MetaschemaException;</a>
-<span class="sourceLineNo">034</span><a id="line.34">import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;</a>
+<span class="sourceLineNo">029</span><a id="line.29">import gov.nist.secauto.metaschema.core.model.IModule;</a>
+<span class="sourceLineNo">030</span><a id="line.30">import gov.nist.secauto.metaschema.core.model.MetaschemaException;</a>
+<span class="sourceLineNo">031</span><a id="line.31">import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;</a>
+<span class="sourceLineNo">032</span><a id="line.32">import gov.nist.secauto.metaschema.core.util.ObjectUtils;</a>
+<span class="sourceLineNo">033</span><a id="line.33">import gov.nist.secauto.metaschema.databind.codegen.JavaGenerator;</a>
+<span class="sourceLineNo">034</span><a id="line.34">import gov.nist.secauto.metaschema.databind.codegen.config.DefaultBindingConfiguration;</a>
 <span class="sourceLineNo">035</span><a id="line.35"></a>
 <span class="sourceLineNo">036</span><a id="line.36">import org.apache.maven.plugin.MojoExecutionException;</a>
 <span class="sourceLineNo">037</span><a id="line.37">import org.apache.maven.plugins.annotations.LifecyclePhase;</a>
@@ -62,9 +62,9 @@
 <span class="sourceLineNo">053</span><a id="line.53">import edu.umd.cs.findbugs.annotations.NonNull;</a>
 <span class="sourceLineNo">054</span><a id="line.54"></a>
 <span class="sourceLineNo">055</span><a id="line.55">/**</a>
-<span class="sourceLineNo">056</span><a id="line.56"> * Goal which generates Java source files for a given set of Metaschema definitions.</a>
+<span class="sourceLineNo">056</span><a id="line.56"> * Goal which generates Java source files for a given set of Module definitions.</a>
 <span class="sourceLineNo">057</span><a id="line.57"> */</a>
-<span class="sourceLineNo">058</span><a id="line.58">@Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.PROCESS_SOURCES)</a>
+<span class="sourceLineNo">058</span><a id="line.58">@Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES)</a>
 <span class="sourceLineNo">059</span><a id="line.59">public class GenerateSourcesMojo</a>
 <span class="sourceLineNo">060</span><a id="line.60">    extends AbstractMetaschemaMojo {</a>
 <span class="sourceLineNo">061</span><a id="line.61">  private static final String STALE_FILE_NAME = "generateSourcesStaleFile";</a>
@@ -108,12 +108,12 @@
 <span class="sourceLineNo">099</span><a id="line.99">  /**</a>
 <span class="sourceLineNo">100</span><a id="line.100">   * Generate the Java source files for the provided Metaschemas.</a>
 <span class="sourceLineNo">101</span><a id="line.101">   *</a>
-<span class="sourceLineNo">102</span><a id="line.102">   * @param metaschemaCollection</a>
-<span class="sourceLineNo">103</span><a id="line.103">   *          the collection of Metaschemas to generate sources for</a>
+<span class="sourceLineNo">102</span><a id="line.102">   * @param modules</a>
+<span class="sourceLineNo">103</span><a id="line.103">   *          the collection of Metaschema modules to generate sources for</a>
 <span class="sourceLineNo">104</span><a id="line.104">   * @throws MojoExecutionException</a>
 <span class="sourceLineNo">105</span><a id="line.105">   *           if an error occurred while generating sources</a>
 <span class="sourceLineNo">106</span><a id="line.106">   */</a>
-<span class="sourceLineNo">107</span><a id="line.107">  protected void generate(@NonNull Set&lt;IMetaschema&gt; metaschemaCollection) throws MojoExecutionException {</a>
+<span class="sourceLineNo">107</span><a id="line.107">  protected void generate(@NonNull Set&lt;IModule&gt; modules) throws MojoExecutionException {</a>
 <span class="sourceLineNo">108</span><a id="line.108">    DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();</a>
 <span class="sourceLineNo">109</span><a id="line.109">    for (File config : getConfigs()) {</a>
 <span class="sourceLineNo">110</span><a id="line.110">      try {</a>
@@ -127,7 +127,7 @@
 <span class="sourceLineNo">118</span><a id="line.118"></a>
 <span class="sourceLineNo">119</span><a id="line.119">    try {</a>
 <span class="sourceLineNo">120</span><a id="line.120">      getLog().info("Generating Java classes in: " + getOutputDirectory().getPath());</a>
-<span class="sourceLineNo">121</span><a id="line.121">      JavaGenerator.generate(metaschemaCollection, ObjectUtils.notNull(getOutputDirectory().toPath()),</a>
+<span class="sourceLineNo">121</span><a id="line.121">      JavaGenerator.generate(modules, ObjectUtils.notNull(getOutputDirectory().toPath()),</a>
 <span class="sourceLineNo">122</span><a id="line.122">          bindingConfiguration);</a>
 <span class="sourceLineNo">123</span><a id="line.123">    } catch (IOException ex) {</a>
 <span class="sourceLineNo">124</span><a id="line.124">      throw new MojoExecutionException("Creation of Java classes failed.", ex);</a>
@@ -166,21 +166,21 @@
 <span class="sourceLineNo">157</span><a id="line.157">      }</a>
 <span class="sourceLineNo">158</span><a id="line.158"></a>
 <span class="sourceLineNo">159</span><a id="line.159">      // generate Java sources based on provided metaschema sources</a>
-<span class="sourceLineNo">160</span><a id="line.160">      final MetaschemaLoader loader = new MetaschemaLoader();</a>
+<span class="sourceLineNo">160</span><a id="line.160">      final ModuleLoader loader = new ModuleLoader();</a>
 <span class="sourceLineNo">161</span><a id="line.161">      loader.allowEntityResolution();</a>
-<span class="sourceLineNo">162</span><a id="line.162">      final Set&lt;IMetaschema&gt; metaschemaCollection = new HashSet&lt;&gt;();</a>
+<span class="sourceLineNo">162</span><a id="line.162">      final Set&lt;IModule&gt; modules = new HashSet&lt;&gt;();</a>
 <span class="sourceLineNo">163</span><a id="line.163">      for (File source : getSources().collect(Collectors.toList())) {</a>
 <span class="sourceLineNo">164</span><a id="line.164">        getLog().info("Using metaschema source: " + source.getPath());</a>
-<span class="sourceLineNo">165</span><a id="line.165">        IMetaschema metaschema;</a>
+<span class="sourceLineNo">165</span><a id="line.165">        IModule module;</a>
 <span class="sourceLineNo">166</span><a id="line.166">        try {</a>
-<span class="sourceLineNo">167</span><a id="line.167">          metaschema = loader.load(source);</a>
+<span class="sourceLineNo">167</span><a id="line.167">          module = loader.load(source);</a>
 <span class="sourceLineNo">168</span><a id="line.168">        } catch (MetaschemaException | IOException ex) {</a>
 <span class="sourceLineNo">169</span><a id="line.169">          throw new MojoExecutionException("Loading of metaschema failed", ex);</a>
 <span class="sourceLineNo">170</span><a id="line.170">        }</a>
-<span class="sourceLineNo">171</span><a id="line.171">        metaschemaCollection.add(metaschema);</a>
+<span class="sourceLineNo">171</span><a id="line.171">        modules.add(module);</a>
 <span class="sourceLineNo">172</span><a id="line.172">      }</a>
 <span class="sourceLineNo">173</span><a id="line.173"></a>
-<span class="sourceLineNo">174</span><a id="line.174">      generate(metaschemaCollection);</a>
+<span class="sourceLineNo">174</span><a id="line.174">      generate(modules);</a>
 <span class="sourceLineNo">175</span><a id="line.175"></a>
 <span class="sourceLineNo">176</span><a id="line.176">      // create the stale file</a>
 <span class="sourceLineNo">177</span><a id="line.177">      if (!staleFileDirectory.exists()) {</a>

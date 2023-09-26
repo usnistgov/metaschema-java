@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XmlInlineFieldDefinition.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.xml</a> &gt; <span class="el_source">XmlInlineFieldDefinition.java</span></div><h1>XmlInlineFieldDefinition.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.xml; // NOPMD - intentional
+
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupDataTypeProvider;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.AbstractFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFieldDefinitionType;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
+
+class XmlInlineFieldDefinition
+    extends AbstractFieldInstance {
+  @NonNull
+  private final InlineFieldDefinitionType xmlField;
+  @NonNull
+  private final InternalFieldDefinition fieldDefinition;
+
+  /**
+   * Constructs a new Metaschema field definition from an XML representation bound
+   * to Java objects.
+   *
+   * @param xmlField
+   *          the XML representation bound to Java objects
+   * @param parent
+   *          the parent container, either a choice or assembly
+   */
+  public XmlInlineFieldDefinition(
+      @NonNull InlineFieldDefinitionType xmlField,
+      @NonNull IModelContainer parent) {
+<span class="nc" id="L82">    super(parent);</span>
+<span class="nc" id="L83">    this.xmlField = xmlField;</span>
+<span class="nc" id="L84">    this.fieldDefinition = new InternalFieldDefinition(xmlField);</span>
+<span class="nc" id="L85">  }</span>
+
+  @Override
+  public InternalFieldDefinition getDefinition() {
+<span class="nc" id="L89">    return fieldDefinition;</span>
+  }
+
+  @Override
+  public IModule getContainingModule() {
+<span class="nc" id="L94">    return getContainingDefinition().getContainingModule();</span>
+  }
+
+  // ----------------------------------------
+  // - Start annotation driven code - CPD-OFF
+  // ----------------------------------------
+
+  /**
+   * Get the underlying XML model.
+   *
+   * @return the XML model
+   */
+  @NonNull
+  protected final InlineFieldDefinitionType getXmlField() {
+<span class="nc" id="L108">    return xmlField;</span>
+  }
+
+  @Override
+  public boolean isInXmlWrapped() {
+    boolean retval;
+<span class="nc bnc" id="L114" title="All 2 branches missed.">    if (MarkupDataTypeProvider.MARKUP_MULTILINE.equals(getDefinition().getJavaTypeAdapter())) {</span>
+      // default value
+<span class="nc" id="L116">      retval = MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">      if (getXmlField().isSetInXml()) {</span>
+<span class="nc" id="L118">        retval = getXmlField().getInXml();</span>
+      }
+    } else {
+      // All other data types get &quot;wrapped&quot;
+<span class="nc" id="L122">      retval = true;</span>
+    }
+<span class="nc" id="L124">    return retval;</span>
+  }
+
+  @Override
+  public String getFormalName() {
+<span class="nc bnc" id="L129" title="All 2 branches missed.">    return getXmlField().isSetFormalName() ? getXmlField().getFormalName() : null;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public MarkupLine getDescription() {
+<span class="nc bnc" id="L135" title="All 2 branches missed.">    return getXmlField().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlField().getDescription())</span>
+<span class="nc" id="L136">        : null;</span>
+  }
+
+  @Override
+  public Map&lt;QName, Set&lt;String&gt;&gt; getProperties() {
+<span class="nc" id="L141">    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlField().getPropList()));</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public String getName() {
+<span class="nc" id="L147">    return getXmlField().getName();</span>
+  }
+
+  @Override
+  public String getGroupAsName() {
+<span class="nc bnc" id="L152" title="All 2 branches missed.">    return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : null;</span>
+  }
+
+  @Override
+  public int getMinOccurs() {
+<span class="nc" id="L157">    return XmlModelParser.getMinOccurs(getXmlField().getMinOccurs());</span>
+  }
+
+  @Override
+  public int getMaxOccurs() {
+<span class="nc" id="L162">    return XmlModelParser.getMaxOccurs(getXmlField().getMaxOccurs());</span>
+  }
+
+  @Override
+  public JsonGroupAsBehavior getJsonGroupAsBehavior() {
+<span class="nc" id="L167">    return XmlModelParser.getJsonGroupAsBehavior(getXmlField().getGroupAs());</span>
+  }
+
+  @Override
+  public XmlGroupAsBehavior getXmlGroupAsBehavior() {
+<span class="nc" id="L172">    return XmlModelParser.getXmlGroupAsBehavior(getXmlField().getGroupAs());</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public MarkupMultiline getRemarks() {
+<span class="nc bnc" id="L178" title="All 2 branches missed.">    return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;</span>
+  }
+
+  // --------------------------------------
+  // - End annotation driven code - CPD-ON
+  // --------------------------------------
+
+  @Override
+  public String getUseName() {
+    // an inline definition doesn't have a use name
+<span class="nc" id="L188">    return null;</span>
+  }
+
+  @Override
+  public Object getValue(@NonNull Object parentValue) {
+    // there is no value
+<span class="nc" id="L194">    return null;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public Collection&lt;?&gt; getItemValues(Object instanceValue) {
+    // there are no item values
+<span class="nc" id="L201">    return Collections.emptyList();</span>
+  }
+
+  /**
+   * The corresponding definition for the local flag instance.
+   */
+  private final class InternalFieldDefinition
+      implements IFieldDefinition,
+      IFeatureInlinedDefinition&lt;IFieldInstance&gt;,
+      IFeatureFlagContainer&lt;IFlagInstance&gt; {
+    @Nullable
+    private final Object defaultValue;
+    private final Lazy&lt;XmlFlagContainerSupport&gt; flagContainer;
+    private final Lazy&lt;IValueConstrained&gt; constraints;
+
+    private InternalFieldDefinition(
+<span class="nc" id="L217">        @NonNull InlineFieldDefinitionType xmlField) {</span>
+<span class="nc" id="L218">      Object defaultValue = null;</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">      if (xmlField.isSetDefault()) {</span>
+<span class="nc" id="L220">        defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlField.getDefault()));</span>
+      }
+<span class="nc" id="L222">      this.defaultValue = defaultValue;</span>
+<span class="nc" id="L223">      this.flagContainer = Lazy.lazy(() -&gt; new XmlFlagContainerSupport(xmlField, this));</span>
+<span class="nc" id="L224">      this.constraints = Lazy.lazy(() -&gt; {</span>
+        IValueConstrained retval;
+<span class="nc bnc" id="L226" title="All 2 branches missed.">        if (xmlField.isSetConstraint()) {</span>
+<span class="nc" id="L227">          retval = new ValueConstraintSupport(</span>
+<span class="nc" id="L228">              ObjectUtils.notNull(xmlField.getConstraint()),</span>
+<span class="nc" id="L229">              ExternalModelSource.instance(</span>
+<span class="nc" id="L230">                  ObjectUtils.requireNonNull(getContainingModule().getLocation())));</span>
+        } else {
+<span class="nc" id="L232">          retval = new ValueConstraintSupport();</span>
+        }
+<span class="nc" id="L234">        return retval;</span>
+      });
+<span class="nc" id="L236">    }</span>
+
+    // ----------------------------------------
+    // - Start annotation driven code - CPD-OFF
+    // ----------------------------------------
+
+    @SuppressWarnings(&quot;null&quot;)
+    @Override
+    public IDataTypeAdapter&lt;?&gt; getJavaTypeAdapter() {
+<span class="nc bnc" id="L245" title="All 2 branches missed.">      return getXmlField().isSetAsType() ? getXmlField().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;</span>
+    }
+
+    @Override
+    public boolean hasJsonValueKeyFlagInstance() {
+<span class="nc bnc" id="L250" title="All 4 branches missed.">      return getXmlField().isSetJsonValueKeyFlag() &amp;&amp; getXmlField().getJsonValueKeyFlag().isSetFlagRef();</span>
+    }
+
+    @Override
+    public IFlagInstance getJsonValueKeyFlagInstance() {
+<span class="nc" id="L255">      IFlagInstance retval = null;</span>
+<span class="nc bnc" id="L256" title="All 4 branches missed.">      if (getXmlField().isSetJsonValueKeyFlag() &amp;&amp; getXmlField().getJsonValueKeyFlag().isSetFlagRef()) {</span>
+<span class="nc" id="L257">        retval = getFlagInstanceByName(ObjectUtils.notNull(getXmlField().getJsonValueKeyFlag().getFlagRef()));</span>
+      }
+<span class="nc" id="L259">      return retval;</span>
+    }
+
+    @Override
+    public String getJsonValueKeyName() {
+<span class="nc" id="L264">      String retval = null;</span>
+
+<span class="nc bnc" id="L266" title="All 2 branches missed.">      if (getXmlField().isSetJsonValueKey()) {</span>
+<span class="nc" id="L267">        retval = getXmlField().getJsonValueKey();</span>
+      }
+
+<span class="nc bnc" id="L270" title="All 4 branches missed.">      if (retval == null || retval.isEmpty()) {</span>
+<span class="nc" id="L271">        retval = getJavaTypeAdapter().getDefaultJsonValueKey();</span>
+      }
+<span class="nc" id="L273">      return retval;</span>
+    }
+
+    // --------------------------------------
+    // - End annotation driven code - CPD-ON
+    // --------------------------------------
+
+    @Override
+    public Object getDefaultValue() {
+<span class="nc" id="L282">      return defaultValue;</span>
+    }
+
+    @Override
+    public boolean isInline() {
+<span class="nc" id="L287">      return true;</span>
+    }
+
+    @Override
+    @NonNull
+    public IFieldInstance getInlineInstance() {
+<span class="nc" id="L293">      return XmlInlineFieldDefinition.this;</span>
+    }
+
+    @Override
+    public String getFormalName() {
+<span class="nc" id="L298">      return XmlInlineFieldDefinition.this.getFormalName();</span>
+    }
+
+    @Override
+    public MarkupLine getDescription() {
+<span class="nc" id="L303">      return XmlInlineFieldDefinition.this.getDescription();</span>
+    }
+
+    @Override
+    public @NonNull Map&lt;QName, Set&lt;String&gt;&gt; getProperties() {
+<span class="nc" id="L308">      return XmlInlineFieldDefinition.this.getProperties();</span>
+    }
+
+    @Override
+    public ModuleScopeEnum getModuleScope() {
+<span class="nc" id="L313">      return ModuleScopeEnum.LOCAL;</span>
+    }
+
+    @Override
+    public String getName() {
+<span class="nc" id="L318">      return XmlInlineFieldDefinition.this.getName();</span>
+    }
+
+    @Override
+    public String getUseName() {
+      // always use the name instead
+<span class="nc" id="L324">      return null;</span>
+    }
+
+    @SuppressWarnings(&quot;null&quot;)
+    @Override
+    public XmlFlagContainerSupport getFlagContainer() {
+<span class="nc" id="L330">      return flagContainer.get();</span>
+    }
+
+    /**
+     * Used to generate the instances for the constraints in a lazy fashion when the
+     * constraints are first accessed.
+     *
+     * @return the constraints instance
+     */
+    @SuppressWarnings(&quot;null&quot;)
+    @Override
+    public IValueConstrained getConstraintSupport() {
+<span class="nc" id="L342">      return constraints.get();</span>
+    }
+
+    @Override
+    public MarkupMultiline getRemarks() {
+<span class="nc" id="L347">      return XmlInlineFieldDefinition.this.getRemarks();</span>
+    }
+
+    @Override
+    public IModule getContainingModule() {
+<span class="nc" id="L352">      return XmlInlineFieldDefinition.super.getContainingDefinition().getContainingModule();</span>
+    }
+
+    @Override
+    public Object getFieldValue(@NonNull Object parentFieldValue) {
+      // there is no value
+<span class="nc" id="L358">      return null;</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractDeserializer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.io</a> &gt; <span class="el_source">AbstractDeserializer.java</span></div><h1>AbstractDeserializer.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.io;
+
+import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
+import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.core.metapath.StaticContext;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultConstraintValidator;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraintValidationHandler;
+import gov.nist.secauto.metaschema.core.model.constraint.LoggingConstraintValidationHandler;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.net.URI;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+/**
+ * The base class of all format-specific deserializers.
+ *
+ * @param &lt;CLASS&gt;
+ *          the bound class to deserialize to
+ */
+public abstract class AbstractDeserializer&lt;CLASS&gt;
+    extends AbstractSerializationBase&lt;DeserializationFeature&lt;?&gt;&gt;
+    implements IDeserializer&lt;CLASS&gt; {
+
+  private IConstraintValidationHandler constraintValidationHandler;
+
+  /**
+   * Construct a new deserializer.
+   *
+   * @param classBinding
+   *          the bound class information for the Java type this deserializer is
+   *          operating on
+   */
+  protected AbstractDeserializer(@NonNull IAssemblyClassBinding classBinding) {
+<span class="fc" id="L66">    super(classBinding);</span>
+<span class="fc" id="L67">  }</span>
+
+  /**
+   * Get the constraint validation handler configured for this deserializer, which
+   * will be used to validate loaded data.
+   *
+   * @return the deserializer
+   */
+  @Override
+  @NonNull
+  public IConstraintValidationHandler getConstraintValidationHandler() {
+<span class="fc" id="L78">    synchronized (this) {</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">      if (constraintValidationHandler == null) {</span>
+<span class="fc" id="L80">        constraintValidationHandler = new LoggingConstraintValidationHandler();</span>
+      }
+<span class="fc" id="L82">      return ObjectUtils.notNull(constraintValidationHandler);</span>
+    }
+  }
+
+  @Override
+  public void setConstraintValidationHandler(@NonNull IConstraintValidationHandler constraintValidationHandler) {
+<span class="nc" id="L88">    synchronized (this) {</span>
+<span class="nc" id="L89">      this.constraintValidationHandler = constraintValidationHandler;</span>
+<span class="nc" id="L90">    }</span>
+<span class="nc" id="L91">  }</span>
+
+  @Override
+  public INodeItem deserializeToNodeItem(Reader reader, URI documentUri) throws IOException {
+
+    INodeItem nodeItem;
+    try {
+<span class="fc" id="L98">      nodeItem = deserializeToNodeItemInternal(reader, documentUri);</span>
+<span class="nc" id="L99">    } catch (Exception ex) { // NOPMD - this is intentional</span>
+<span class="nc" id="L100">      throw new IOException(ex);</span>
+<span class="fc" id="L101">    }</span>
+
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">    if (isValidating()) {</span>
+<span class="fc" id="L104">      StaticContext staticContext = StaticContext.newInstance();</span>
+<span class="fc" id="L105">      DynamicContext dynamicContext = staticContext.newDynamicContext();</span>
+<span class="fc" id="L106">      dynamicContext.setDocumentLoader(getBindingContext().newBoundLoader());</span>
+<span class="fc" id="L107">      DefaultConstraintValidator validator = new DefaultConstraintValidator(</span>
+          dynamicContext,
+<span class="fc" id="L109">          getConstraintValidationHandler());</span>
+<span class="fc" id="L110">      validator.validate(nodeItem);</span>
+<span class="fc" id="L111">      validator.finalizeValidation();</span>
+    }
+<span class="fc" id="L113">    return nodeItem;</span>
+  }
+
+  /**
+   * This abstract method delegates parsing to the concrete implementation.
+   *
+   * @param reader
+   *          the reader instance to read data from
+   * @param documentUri
+   *          the URI of the document that is being read
+   * @return a new node item containing the read contents
+   * @throws IOException
+   *           if an error occurred while reading data from the stream
+   */
+  @NonNull
+  protected abstract INodeItem deserializeToNodeItemInternal(@NonNull Reader reader, @NonNull URI documentUri)
+      throws IOException;
+
+  @Override
+  public IDeserializer&lt;CLASS&gt; enableFeature(DeserializationFeature&lt;?&gt; feature) {
+<span class="nc" id="L133">    return set(feature, true);</span>
+  }
+
+  @Override
+  public IDeserializer&lt;CLASS&gt; disableFeature(DeserializationFeature&lt;?&gt; feature) {
+<span class="nc" id="L138">    return set(feature, false);</span>
+  }
+
+  @Override
+  public IDeserializer&lt;CLASS&gt; applyConfiguration(
+      @NonNull IConfiguration&lt;DeserializationFeature&lt;?&gt;&gt; other) {
+<span class="fc" id="L144">    IMutableConfiguration&lt;DeserializationFeature&lt;?&gt;&gt; config = getConfiguration();</span>
+<span class="fc" id="L145">    config.applyConfiguration(other);</span>
+<span class="fc" id="L146">    configurationChanged(config);</span>
+<span class="fc" id="L147">    return this;</span>
+  }
+
+  @Override
+  public IDeserializer&lt;CLASS&gt; set(DeserializationFeature&lt;?&gt; feature, Object value) {
+<span class="nc" id="L152">    IMutableConfiguration&lt;DeserializationFeature&lt;?&gt;&gt; config = getConfiguration();</span>
+<span class="nc" id="L153">    config.set(feature, value);</span>
+<span class="nc" id="L154">    configurationChanged(config);</span>
+<span class="nc" id="L155">    return this;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

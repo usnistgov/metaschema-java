@@ -35,15 +35,15 @@
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.cli;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.cli.commands.GenerateSchemaCommand;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.cli.commands.ValidateContentWithMetaschemaCommand;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.cli.commands.ValidateMetaschemaCommand;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.cli.commands.ValidateContentUsingModuleCommand;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.cli.commands.ValidateModuleCommand;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.cli.processor.CLIProcessor;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.cli.processor.ExitStatus;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.cli.processor.command.CommandService;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.MetaschemaVersion;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.IVersionInfo;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.MetaschemaJavaVersion;
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.MetaschemaJavaVersion;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.model.MetaschemaVersion;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.util.IVersionInfo;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.util.ObjectUtils;
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> java.util.List;
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  
@@ -64,9 +64,9 @@
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>              <strong class="jxr_keyword">new</strong> MetaschemaJavaVersion(),
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>              <strong class="jxr_keyword">new</strong> MetaschemaVersion()));
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>      CLIProcessor processor = <strong class="jxr_keyword">new</strong> CLIProcessor(<span class="jxr_string">"metaschema-cli"</span>, versions);
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>      processor.addCommandHandler(<strong class="jxr_keyword">new</strong> <a name="ValidateMetaschemaCommand" href="../../../../../gov/nist/secauto/metaschema/cli/commands/ValidateMetaschemaCommand.html#ValidateMetaschemaCommand">ValidateMetaschemaCommand</a>());
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>      processor.addCommandHandler(<strong class="jxr_keyword">new</strong> <a name="ValidateModuleCommand" href="../../../../../gov/nist/secauto/metaschema/cli/commands/ValidateModuleCommand.html#ValidateModuleCommand">ValidateModuleCommand</a>());
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      processor.addCommandHandler(<strong class="jxr_keyword">new</strong> <a name="GenerateSchemaCommand" href="../../../../../gov/nist/secauto/metaschema/cli/commands/GenerateSchemaCommand.html#GenerateSchemaCommand">GenerateSchemaCommand</a>());
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>      processor.addCommandHandler(<strong class="jxr_keyword">new</strong> <a name="ValidateContentWithMetaschemaCommand" href="../../../../../gov/nist/secauto/metaschema/cli/commands/ValidateContentWithMetaschemaCommand.html#ValidateContentWithMetaschemaCommand">ValidateContentWithMetaschemaCommand</a>());
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>      processor.addCommandHandler(<strong class="jxr_keyword">new</strong> <a name="ValidateContentUsingModuleCommand" href="../../../../../gov/nist/secauto/metaschema/cli/commands/ValidateContentUsingModuleCommand.html#ValidateContentUsingModuleCommand">ValidateContentUsingModuleCommand</a>());
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      CommandService.getInstance().getCommands().stream().forEach(command -&gt; {
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>        assert command != <strong class="jxr_keyword">null</strong>;

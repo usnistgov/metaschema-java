@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ISequence.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath</a> &gt; <span class="el_source">ISequence.java</span></div><h1>ISequence.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath;
+
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+public interface ISequence&lt;ITEM_TYPE extends IItem&gt; extends Iterable&lt;ITEM_TYPE&gt; {
+  @SuppressWarnings(&quot;rawtypes&quot;)
+<span class="fc" id="L50">  ISequence EMPTY = new EmptyListImpl&lt;&gt;();</span>
+
+  /**
+   * Get an empty sequence.
+   *
+   * @param &lt;ITEM_TYPE&gt;
+   *          the item type
+   * @return the empty sequence
+   */
+  @SuppressWarnings({ &quot;unchecked&quot;, &quot;null&quot; })
+  @NonNull
+  static &lt;ITEM_TYPE extends IItem&gt; ISequence&lt;ITEM_TYPE&gt; empty() {
+<span class="fc" id="L62">    return EMPTY;</span>
+  }
+
+  /**
+   * Construct a new sequence containing the provided {@code item}.
+   * &lt;p&gt;
+   * If the item is {@code null} and empty sequence will be created.
+   *
+   * @param &lt;ITEM_TYPE&gt;
+   *          the type of items contained in the sequence.
+   * @param item
+   *          the item to add to the sequence
+   * @return the new sequence
+   */
+  @NonNull
+  public static &lt;ITEM_TYPE extends IItem&gt; ISequence&lt;ITEM_TYPE&gt; of( // NOPMD - intentional
+      @Nullable ITEM_TYPE item) {
+    ISequence&lt;ITEM_TYPE&gt; retval;
+<span class="fc bfc" id="L80" title="All 2 branches covered.">    if (item == null) {</span>
+<span class="fc" id="L81">      retval = empty();</span>
+    } else {
+<span class="fc" id="L83">      retval = new SingletonSequenceImpl&lt;&gt;(item);</span>
+    }
+<span class="fc" id="L85">    return retval;</span>
+  }
+
+  /**
+   * Construct a new sequence containing the provided {@code items}.
+   *
+   * @param &lt;ITEM_TYPE&gt;
+   *          the type of items contained in the sequence.
+   * @param items
+   *          the items to add to the sequence
+   * @return the new sequence
+   */
+  @NonNull
+  public static &lt;ITEM_TYPE extends IItem&gt; ISequence&lt;ITEM_TYPE&gt; of( // NOPMD - intentional
+      @NonNull List&lt;ITEM_TYPE&gt; items) {
+    ISequence&lt;ITEM_TYPE&gt; retval;
+<span class="nc bnc" id="L101" title="All 2 branches missed.">    if (items.isEmpty()) {</span>
+<span class="nc" id="L102">      retval = empty();</span>
+    } else {
+<span class="nc" id="L104">      retval = new ListSequenceImpl&lt;&gt;(items);</span>
+    }
+<span class="nc" id="L106">    return retval;</span>
+  }
+
+  /**
+   * Construct a new sequence containing the provided {@code items}.
+   *
+   * @param &lt;ITEM_TYPE&gt;
+   *          the type of items contained in the sequence.
+   * @param items
+   *          the items to add to the sequence
+   * @return the new sequence
+   */
+  // TODO: remove null check on callers
+  @NonNull
+  public static &lt;ITEM_TYPE extends IItem&gt; ISequence&lt;ITEM_TYPE&gt; of( // NOPMD - intentional
+      Stream&lt;ITEM_TYPE&gt; items) {
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">    return items == null ? empty() : new StreamSequenceImpl&lt;&gt;(items);</span>
+  }
+
+  @Override
+  default Iterator&lt;ITEM_TYPE&gt; iterator() {
+<span class="nc" id="L127">    return asList().listIterator();</span>
+  }
+
+  /**
+   * Get the items in this sequence as a {@link List}.
+   *
+   * @return a list containing all the items of the sequence
+   */
+  @NonNull
+  List&lt;ITEM_TYPE&gt; asList();
+
+  /**
+   * Get the items in this sequence as a {@link Stream}.
+   *
+   * @return a stream containing all the items of the sequence
+   */
+  // TODO: rename to &quot;stream&quot;
+  @NonNull
+  Stream&lt;ITEM_TYPE&gt; asStream();
+
+  /**
+   * This optional operation ensures that a list is used to back this sequence.
+   * &lt;p&gt;
+   * If a stream is currently backing this sequence, the stream will be collected
+   * into a list. This ensures the sequence can be visited multiple times.
+   */
+  void collect();
+
+  /**
+   * Determine if this sequence is empty.
+   *
+   * @return {@code true} if the sequence contains no items, or {@code false}
+   *         otherwise
+   */
+  boolean isEmpty();
+
+  /**
+   * Get the count of items in this sequence.
+   *
+   * @return the count of items
+   */
+  int size();
+
+  /**
+   * Iterate over each item in the sequence using the provided {@code action}.
+   *
+   * @param action
+   *          code to execute for each item
+   */
+  @Override
+  void forEach(Consumer&lt;? super ITEM_TYPE&gt; action);
+
+  @NonNull
+  static &lt;ITEM_TYPE extends IItem&gt; Collector&lt;ITEM_TYPE, ?, ISequence&lt;ITEM_TYPE&gt;&gt; toSequence() {
+
+<span class="fc" id="L182">    return new Collector&lt;ITEM_TYPE, List&lt;ITEM_TYPE&gt;, ISequence&lt;ITEM_TYPE&gt;&gt;() {</span>
+
+      @Override
+      public Supplier&lt;List&lt;ITEM_TYPE&gt;&gt; supplier() {
+<span class="fc" id="L186">        return ArrayList::new;</span>
+      }
+
+      @Override
+      public BiConsumer&lt;List&lt;ITEM_TYPE&gt;, ITEM_TYPE&gt; accumulator() {
+<span class="fc" id="L191">        return (list, value) -&gt; list.add(value);</span>
+      }
+
+      @Override
+      public BinaryOperator&lt;List&lt;ITEM_TYPE&gt;&gt; combiner() {
+<span class="fc" id="L196">        return (list1, list2) -&gt; {</span>
+<span class="nc" id="L197">          list1.addAll(list2);</span>
+<span class="nc" id="L198">          return list1;</span>
+        };
+      }
+
+      @Override
+      public Function&lt;List&lt;ITEM_TYPE&gt;, ISequence&lt;ITEM_TYPE&gt;&gt; finisher() {
+<span class="fc" id="L204">        return list -&gt; {</span>
+          ISequence&lt;ITEM_TYPE&gt; retval;
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">          if (list.isEmpty()) {</span>
+<span class="nc" id="L207">            retval = empty();</span>
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">          } else if (list.size() == 1) {</span>
+<span class="fc" id="L209">            retval = new SingletonSequenceImpl&lt;&gt;(ObjectUtils.notNull(list.iterator().next()));</span>
+          } else {
+<span class="nc" id="L211">            retval = new ListSequenceImpl&lt;&gt;(list, false);</span>
+          }
+<span class="fc" id="L213">          return retval;</span>
+        };
+      }
+
+      @Override
+      public Set&lt;Characteristics&gt; characteristics() {
+<span class="fc" id="L219">        return Collections.emptySet();</span>
+      }
+
+    };
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

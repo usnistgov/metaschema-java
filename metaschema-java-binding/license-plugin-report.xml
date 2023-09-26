@@ -1,23 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<licensePluginReport goal="FORMAT" timestamp="1689799843793">
-    <module artifactId="metaschema-java-binding" groupId="gov.nist.secauto.metaschema" version="0.12.0"/>
-    <files>
-        <file path="src\test\java\gov\nist\secauto\metaschema\binding\DefaultBindingContextTest.java" result="NOOP"/>
-        <file path="src\test\java\gov\nist\secauto\metaschema\binding\Examples.java" result="NOOP"/>
-        <file path="src\test\java\gov\nist\secauto\metaschema\binding\metapath\MetapathExpressionTest.java" result="NOOP"/>
-        <file path="src\test\java\gov\nist\secauto\metaschema\binding\model\AbstractBoundModelTestSupport.java" result="NOOP"/>
-        <file path="src\test\java\gov\nist\secauto\metaschema\binding\model\DefaultAssemblyClassBindingTest.java" result="NOOP"/>
-        <file path="src\test\java\gov\nist\secauto\metaschema\binding\model\DefaultFieldPropertyTest.java" result="NOOP"/>
-        <file path="src\test\java\gov\nist\secauto\metaschema\binding\model\DefaultFieldValuePropertyTest.java" result="NOOP"/>
-        <file path="src\test\java\gov\nist\secauto\metaschema\binding\model\DefaultFlagPropertyTest.java" result="NOOP"/>
-        <file path="src\test\java\gov\nist\secauto\metaschema\binding\model\test\CollapsibleFlaggedBoundField.java" result="NOOP"/>
-        <file path="src\test\java\gov\nist\secauto\metaschema\binding\model\test\EmptyBoundAssembly.java" result="NOOP"/>
-        <file path="src\test\java\gov\nist\secauto\metaschema\binding\model\test\FlaggedAssembly.java" result="NOOP"/>
-        <file path="src\test\java\gov\nist\secauto\metaschema\binding\model\test\FlaggedBoundAssembly.java" result="NOOP"/>
-        <file path="src\test\java\gov\nist\secauto\metaschema\binding\model\test\FlaggedBoundField.java" result="NOOP"/>
-        <file path="src\test\java\gov\nist\secauto\metaschema\binding\model\test\OnlyModelBoundAssembly.java" result="NOOP"/>
-        <file path="src\test\java\gov\nist\secauto\metaschema\binding\model\test\RootBoundAssembly.java" result="NOOP"/>
-        <file path="src\test\java\gov\nist\secauto\metaschema\binding\model\test\TestMetaschema.java" result="NOOP"/>
-        <file path="src\test\java\gov\nist\secauto\metaschema\binding\model\test\package-info.java" result="NOOP"/>
-    </files>
+<licensePluginReport goal="FORMAT" timestamp="1695758010197">
+    <module artifactId="metaschema-java-binding" groupId="gov.nist.secauto.metaschema" version="1.0.0-M1"/>
+    <files/>
 </licensePluginReport>

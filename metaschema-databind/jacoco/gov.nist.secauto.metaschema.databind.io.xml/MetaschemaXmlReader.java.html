@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MetaschemaXmlReader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.io.xml</a> &gt; <span class="el_source">MetaschemaXmlReader.java</span></div><h1>MetaschemaXmlReader.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.io.xml;
+
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.model.info.IPropertyCollector;
+
+import org.codehaus.stax2.XMLEventReader2;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+<span class="fc" id="L63">public class MetaschemaXmlReader</span>
+    implements IXmlParsingContext {
+  @NonNull
+  private final XMLEventReader2 reader;
+  @NonNull
+  private final IXmlProblemHandler problemHandler;
+
+  /**
+   * Construct a new Module-aware XML parser using the default problem handler.
+   *
+   * @param reader
+   *          the XML reader to parse with
+   * @see DefaultXmlProblemHandler
+   */
+  public MetaschemaXmlReader(
+      @NonNull XMLEventReader2 reader) {
+<span class="fc" id="L79">    this(reader, new DefaultXmlProblemHandler());</span>
+<span class="fc" id="L80">  }</span>
+
+  /**
+   * Construct a new Module-aware parser.
+   *
+   * @param reader
+   *          the XML reader to parse with
+   * @param problemHandler
+   *          the problem handler implementation to use
+   */
+  public MetaschemaXmlReader(
+      @NonNull XMLEventReader2 reader,
+<span class="fc" id="L92">      @NonNull IXmlProblemHandler problemHandler) {</span>
+<span class="fc" id="L93">    this.reader = reader;</span>
+<span class="fc" id="L94">    this.problemHandler = problemHandler;</span>
+<span class="fc" id="L95">  }</span>
+
+  @Override
+  public XMLEventReader2 getReader() {
+<span class="fc" id="L99">    return reader;</span>
+  }
+
+  @Override
+  public IXmlProblemHandler getProblemHandler() {
+<span class="fc" id="L104">    return problemHandler;</span>
+  }
+
+  /**
+   * Parses XML into a bound object based on the provided {@code definition}.
+   * &lt;p&gt;
+   * Parses the {@link XMLStreamConstants#START_DOCUMENT}, the root element, and
+   * the {@link XMLStreamConstants#END_DOCUMENT}.
+   *
+   * @param &lt;CLASS&gt;
+   *          the returned object type
+   * @param targetDefinition
+   *          the definition describing the root element data to read
+   * @return the parsed object
+   * @throws XMLStreamException
+   *           if an error occurred while parsing XML events
+   * @throws IOException
+   *           if an error occurred while parsing the input
+   */
+  @NonNull
+  public &lt;CLASS&gt; CLASS read(@NonNull IAssemblyClassBinding targetDefinition) throws IOException, XMLStreamException {
+
+    // we may be at the START_DOCUMENT
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">    if (reader.peek().isStartDocument()) {</span>
+<span class="fc" id="L128">      XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.START_DOCUMENT);</span>
+    }
+
+<span class="fc" id="L131">    XmlEventUtil.skipEvents(reader, XMLStreamConstants.CHARACTERS, XMLStreamConstants.PROCESSING_INSTRUCTION);</span>
+
+<span class="fc" id="L133">    QName rootQName = targetDefinition.getRootXmlQName();</span>
+<span class="fc" id="L134">    XMLEvent event = XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.START_ELEMENT, rootQName);</span>
+
+<span class="fc" id="L136">    StartElement start = ObjectUtils.notNull(event.asStartElement());</span>
+
+<span class="fc" id="L138">    CLASS retval = readDefinitionValue(targetDefinition, null, start);</span>
+
+<span class="fc" id="L140">    XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, rootQName);</span>
+
+    // if (reader.hasNext() &amp;&amp; LOGGER.isDebugEnabled()) {
+    // LOGGER.debug(&quot;After Parse: {}&quot;, XmlEventUtil.toString(reader.peek()));
+    // }
+
+<span class="fc" id="L146">    return retval;</span>
+  }
+
+  @SuppressWarnings(&quot;PMD.CyclomaticComplexity&quot;)
+  @Override
+  public &lt;T&gt; T readDefinitionValue(
+      IClassBinding targetDefinition,
+      Object parentObject,
+      StartElement start) throws IOException, XMLStreamException {
+
+    Object targetObject;
+    try {
+<span class="fc" id="L158">      targetObject = targetDefinition.newInstance();</span>
+<span class="fc" id="L159">      targetDefinition.callBeforeDeserialize(targetObject, parentObject);</span>
+<span class="nc" id="L160">    } catch (BindingException ex) {</span>
+<span class="nc" id="L161">      throw new IOException(ex);</span>
+<span class="fc" id="L162">    }</span>
+
+<span class="fc" id="L164">    readFlagInstances(targetDefinition, targetObject, start);</span>
+
+<span class="fc bfc" id="L166" title="All 2 branches covered.">    if (targetDefinition instanceof IAssemblyClassBinding) {</span>
+<span class="fc" id="L167">      readModelInstances((IAssemblyClassBinding) targetDefinition, targetObject, start);</span>
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">    } else if (targetDefinition instanceof IFieldClassBinding) {</span>
+<span class="fc" id="L169">      readFieldValue((IFieldClassBinding) targetDefinition, targetObject);</span>
+    } else {
+<span class="nc" id="L171">      throw new UnsupportedOperationException(</span>
+<span class="nc" id="L172">          String.format(&quot;Unsupported class binding type: %s&quot;, targetDefinition.getClass().getName()));</span>
+    }
+
+<span class="fc" id="L175">    XmlEventUtil.skipWhitespace(reader);</span>
+
+<span class="fc" id="L177">    XMLEvent nextEvent = ObjectUtils.notNull(reader.peek());</span>
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">    if (!XmlEventUtil.isEventEndElement(nextEvent, ObjectUtils.notNull(start.getName()))) {</span>
+<span class="nc" id="L179">      throw new IOException(</span>
+<span class="nc" id="L180">          String.format(&quot;Unrecognized element '%s'%s.&quot;,</span>
+<span class="nc" id="L181">              XmlEventUtil.toEventName(nextEvent),</span>
+<span class="nc" id="L182">              XmlEventUtil.generateLocationMessage(nextEvent)));</span>
+    }
+
+    try {
+<span class="fc" id="L186">      targetDefinition.callAfterDeserialize(targetObject, parentObject);</span>
+<span class="nc" id="L187">    } catch (BindingException ex) {</span>
+<span class="nc" id="L188">      throw new IOException(ex);</span>
+<span class="fc" id="L189">    }</span>
+<span class="fc" id="L190">    return ObjectUtils.asType(targetObject);</span>
+  }
+
+  /**
+   * Read the XML attribute data described by the {@code targetDefinition} and
+   * apply it to the provided {@code targetObject}.
+   *
+   * @param targetDefinition
+   *          the Module definition that describes the syntax of the data to read
+   * @param targetObject
+   *          the Java object that data parsed by this method will be stored in
+   * @param start
+   *          the containing XML element that was previously parsed
+   * @throws IOException
+   *           if an error occurred while parsing the input
+   * @throws XMLStreamException
+   *           if an error occurred while parsing XML events
+   */
+  protected void readFlagInstances(
+      @NonNull IClassBinding targetDefinition,
+      @NonNull Object targetObject,
+      @NonNull StartElement start) throws IOException, XMLStreamException {
+
+<span class="fc" id="L213">    Map&lt;QName, IBoundFlagInstance&gt; flagInstanceMap = targetDefinition.getFlagInstances().stream()</span>
+<span class="fc" id="L214">        .collect(Collectors.toMap(IBoundFlagInstance::getXmlQName, Function.identity()));</span>
+
+<span class="fc bfc" id="L216" title="All 2 branches covered.">    for (Attribute attribute : CollectionUtil.toIterable(ObjectUtils.notNull(start.getAttributes()))) {</span>
+<span class="fc" id="L217">      QName qname = attribute.getName();</span>
+<span class="fc" id="L218">      IBoundFlagInstance instance = flagInstanceMap.get(qname);</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">      if (instance == null) {</span>
+        // unrecognized flag
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">        if (!getProblemHandler().handleUnknownAttribute(targetDefinition, targetObject, attribute, this)) {</span>
+<span class="nc" id="L222">          throw new IOException(</span>
+<span class="nc" id="L223">              String.format(&quot;Unrecognized attribute '%s'%s.&quot;,</span>
+                  qname,
+<span class="nc" id="L225">                  XmlEventUtil.generateLocationMessage(attribute)));</span>
+        }
+      } else {
+        // get the attribute value
+<span class="fc" id="L229">        Object value = instance.getDefinition().getJavaTypeAdapter().parse(ObjectUtils.notNull(attribute.getValue()));</span>
+        // apply the value to the parentObject
+<span class="fc" id="L231">        instance.setValue(targetObject, value);</span>
+<span class="fc" id="L232">        flagInstanceMap.remove(qname);</span>
+      }
+<span class="fc" id="L234">    }</span>
+
+<span class="pc bpc" id="L236" title="1 of 2 branches missed.">    if (!flagInstanceMap.isEmpty()) {</span>
+<span class="nc" id="L237">      getProblemHandler().handleMissingFlagInstances(</span>
+          targetDefinition,
+          targetObject,
+<span class="nc" id="L240">          ObjectUtils.notNull(flagInstanceMap.values()));</span>
+    }
+<span class="fc" id="L242">  }</span>
+
+  /**
+   * Read the XML element data described by the {@code targetDefinition} and apply
+   * it to the provided {@code targetObject}.
+   *
+   * @param targetDefinition
+   *          the Module definition that describes the syntax of the data to read
+   * @param targetObject
+   *          the Java object that data parsed by this method will be stored in
+   * @param start
+   *          the XML element start and attribute data previously parsed
+   * @throws IOException
+   *           if an error occurred while parsing the input
+   * @throws XMLStreamException
+   *           if an error occurred while parsing XML events
+   */
+  protected void readModelInstances(
+      @NonNull IAssemblyClassBinding targetDefinition,
+      @NonNull Object targetObject,
+      @NonNull StartElement start)
+      throws IOException, XMLStreamException {
+<span class="fc" id="L264">    Set&lt;IBoundNamedModelInstance&gt; unhandledProperties = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L265" title="All 2 branches covered.">    for (IBoundNamedModelInstance modelProperty : targetDefinition.getModelInstances()) {</span>
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">      assert modelProperty != null;</span>
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">      if (!readModelInstanceValues(modelProperty, targetObject, start)) {</span>
+<span class="nc" id="L268">        unhandledProperties.add(modelProperty);</span>
+      }
+<span class="fc" id="L270">    }</span>
+
+    // process all properties that did not get a value
+<span class="fc" id="L273">    getProblemHandler().handleMissingModelInstances(targetDefinition, targetObject, unhandledProperties);</span>
+<span class="fc" id="L274">  }</span>
+
+  /**
+   * Read the XML element and text data described by the {@code targetDefinition}
+   * and apply it to the provided {@code targetObject}.
+   *
+   * @param targetDefinition
+   *          the Module definition that describes the syntax of the data to read
+   * @param targetObject
+   *          the Java object that data parsed by this method will be stored in
+   * @throws IOException
+   *           if an error occurred while parsing the input
+   */
+  protected void readFieldValue(
+      @NonNull IFieldClassBinding targetDefinition,
+      @NonNull Object targetObject)
+      throws IOException {
+<span class="fc" id="L291">    IBoundFieldValueInstance fieldValue = targetDefinition.getFieldValueInstance();</span>
+
+    // parse the value
+<span class="fc" id="L294">    Object value = fieldValue.getJavaTypeAdapter().parse(reader);</span>
+<span class="fc" id="L295">    fieldValue.setValue(targetObject, value);</span>
+<span class="fc" id="L296">  }</span>
+
+  /**
+   * Determine if the next data to read corresponds to the next model instance.
+   *
+   * @param targetInstance
+   *          the model instance that describes the syntax of the data to read
+   * @return {@code true} if the Module instance needs to be parsed, or
+   *         {@code false} otherwise
+   * @throws XMLStreamException
+   *           if an error occurred while parsing XML events
+   */
+  @SuppressWarnings(&quot;PMD.OnlyOneReturn&quot;)
+  protected boolean isNextInstance(
+      @NonNull IBoundNamedModelInstance targetInstance)
+      throws XMLStreamException {
+
+<span class="fc" id="L313">    XmlEventUtil.skipWhitespace(reader);</span>
+
+<span class="fc" id="L315">    XMLEvent nextEvent = reader.peek();</span>
+<span class="fc bfc" id="L316" title="All 2 branches covered.">    if (!nextEvent.isStartElement()) {</span>
+<span class="fc" id="L317">      return false;</span>
+    }
+
+<span class="fc" id="L320">    QName nextQName = ObjectUtils.notNull(nextEvent.asStartElement().getName());</span>
+
+<span class="fc bfc" id="L322" title="All 2 branches covered.">    if (nextQName.equals(targetInstance.getXmlGroupAsQName())) {</span>
+      // we are to parse the grouping element
+<span class="fc" id="L324">      return true;</span>
+    }
+
+<span class="fc bfc" id="L327" title="All 2 branches covered.">    if (nextQName.equals(targetInstance.getXmlQName())) {</span>
+      // we are to parse the element
+<span class="fc" id="L329">      return true;</span>
+    }
+
+<span class="pc bpc" id="L332" title="1 of 2 branches missed.">    if (targetInstance instanceof IBoundFieldInstance) {</span>
+<span class="fc" id="L333">      IBoundFieldInstance fieldInstance = (IBoundFieldInstance) targetInstance;</span>
+<span class="fc" id="L334">      IDataTypeAdapter&lt;?&gt; adapter = fieldInstance.getDefinition().getJavaTypeAdapter();</span>
+      // we are to parse the data type
+<span class="pc bpc" id="L336" title="1 of 2 branches missed.">      return !fieldInstance.isInXmlWrapped()</span>
+<span class="nc bnc" id="L337" title="All 2 branches missed.">          &amp;&amp; adapter.isUnrappedValueAllowedInXml()</span>
+<span class="pc bnc" id="L338" title="All 2 branches missed.">          &amp;&amp; adapter.canHandleQName(nextQName);</span>
+    }
+<span class="nc" id="L340">    return false;</span>
+  }
+
+  /**
+   * Read the data associated with the {@code instance} and apply it to the
+   * provided {@code parentObject}.
+   *
+   * @param instance
+   *          the instance to parse data for
+   * @param parentObject
+   *          the Java object that data parsed by this method will be stored in
+   * @param start
+   *          the XML element start and attribute data previously parsed
+   * @return {@code true} if the instance was parsed, or {@code false} if the data
+   *         did not contain information for this instance
+   * @throws IOException
+   *           if an error occurred while parsing the input
+   * @throws XMLStreamException
+   *           if an error occurred while parsing XML events
+   */
+  protected boolean readModelInstanceValues(
+      @NonNull IBoundNamedModelInstance instance,
+      @NonNull Object parentObject,
+      @NonNull StartElement start)
+      throws IOException, XMLStreamException {
+<span class="fc" id="L365">    boolean handled = isNextInstance(instance);</span>
+<span class="fc bfc" id="L366" title="All 2 branches covered.">    if (handled) {</span>
+<span class="fc" id="L367">      XmlEventUtil.skipWhitespace(reader);</span>
+
+<span class="fc" id="L369">      StartElement currentStart = start;</span>
+
+<span class="fc" id="L371">      QName groupQName = instance.getXmlGroupAsQName();</span>
+<span class="fc bfc" id="L372" title="All 2 branches covered.">      if (groupQName != null) {</span>
+        // we are to parse the grouping element, if the next token matches
+<span class="fc" id="L374">        XMLEvent groupEvent = XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.START_ELEMENT, groupQName);</span>
+<span class="fc" id="L375">        currentStart = ObjectUtils.notNull(groupEvent.asStartElement());</span>
+      }
+
+<span class="fc" id="L378">      IPropertyCollector collector = instance.getPropertyInfo().newPropertyCollector();</span>
+      // There are zero or more named values based on cardinality
+<span class="fc" id="L380">      instance.getPropertyInfo().readValues(collector, parentObject, currentStart, this);</span>
+
+<span class="fc" id="L382">      Object value = collector.getValue();</span>
+
+      // consume extra whitespace between elements
+<span class="fc" id="L385">      XmlEventUtil.skipWhitespace(reader);</span>
+
+<span class="fc bfc" id="L387" title="All 2 branches covered.">      if (groupQName != null) {</span>
+        // consume the end of the group
+<span class="fc" id="L389">        XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, groupQName);</span>
+      }
+
+<span class="fc" id="L392">      instance.setValue(parentObject, value);</span>
+    }
+<span class="fc" id="L394">    return handled;</span>
+  }
+
+  @Override
+  public &lt;T&gt; T readModelInstanceValue(IBoundNamedModelInstance instance, Object parentObject, StartElement start)
+      throws XMLStreamException, IOException {
+    Object retval;
+<span class="fc bfc" id="L401" title="All 2 branches covered.">    if (instance instanceof IBoundAssemblyInstance) {</span>
+<span class="fc" id="L402">      retval = readModelInstanceValue((IBoundAssemblyInstance) instance, parentObject, start);</span>
+<span class="pc bpc" id="L403" title="1 of 2 branches missed.">    } else if (instance instanceof IBoundFieldInstance) {</span>
+<span class="fc" id="L404">      retval = readModelInstanceValue((IBoundFieldInstance) instance, parentObject, start);</span>
+    } else {
+<span class="nc" id="L406">      throw new UnsupportedOperationException(</span>
+<span class="nc" id="L407">          String.format(&quot;Unsupported instance type: %s&quot;, instance.getClass().getName()));</span>
+    }
+<span class="fc" id="L409">    return ObjectUtils.asNullableType(retval);</span>
+  }
+
+  /**
+   * Read the XML data associated with the {@code instance} and apply it to the
+   * provided {@code parentObject}.
+   *
+   * @param instance
+   *          the instance to parse data for
+   * @param parentObject
+   *          the Java object that data parsed by this method will be stored in
+   * @param start
+   *          the XML element start and attribute data previously parsed
+   * @return the Java object read, or {@code null} if no data was read
+   * @throws IOException
+   *           if an error occurred while parsing the input
+   * @throws XMLStreamException
+   *           if an error occurred while parsing XML events
+   */
+  @Nullable
+  protected Object readModelInstanceValue(
+      @NonNull IBoundAssemblyInstance instance,
+      @NonNull Object parentObject,
+      @NonNull StartElement start) throws XMLStreamException, IOException {
+    // consume extra whitespace between elements
+<span class="fc" id="L434">    XmlEventUtil.skipWhitespace(reader);</span>
+
+<span class="fc" id="L436">    Object retval = null;</span>
+<span class="fc" id="L437">    XMLEvent event = reader.peek();</span>
+<span class="pc bpc" id="L438" title="1 of 2 branches missed.">    if (event.isStartElement()) {</span>
+<span class="fc" id="L439">      StartElement nextStart = event.asStartElement();</span>
+<span class="fc" id="L440">      QName nextQName = nextStart.getName();</span>
+<span class="pc bpc" id="L441" title="1 of 2 branches missed.">      if (instance.getXmlQName().equals(nextQName)) {</span>
+        // Consume the start element
+<span class="fc" id="L443">        reader.nextEvent();</span>
+
+        // consume the value
+<span class="fc" id="L446">        retval = instance.getDataTypeHandler().readItem(parentObject, nextStart, this);</span>
+
+        // consume the end element
+<span class="fc" id="L449">        XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, nextQName);</span>
+      }
+    }
+<span class="fc" id="L452">    return retval;</span>
+  }
+
+  /**
+   * Revise
+   * &lt;p&gt;
+   * Reads an individual XML item from the XML stream.
+   *
+   * @param instance
+   *          the instance to parse data for
+   * @param parentObject
+   *          the Java object that data parsed by this method will be stored in
+   * @param start
+   *          the XML element start and attribute data previously parsed
+   * @return the Java object read, or {@code null} if no data was read
+   * @throws IOException
+   *           if an error occurred while parsing the input
+   * @throws XMLStreamException
+   *           if an error occurred while parsing XML events
+   */
+  @NonNull
+  protected Object readModelInstanceValue(
+      @NonNull IBoundFieldInstance instance,
+      @NonNull Object parentObject,
+      @NonNull StartElement start) throws XMLStreamException, IOException {
+    // figure out if we need to parse the wrapper or not
+<span class="fc" id="L478">    IDataTypeAdapter&lt;?&gt; adapter = instance.getDefinition().getJavaTypeAdapter();</span>
+<span class="fc" id="L479">    boolean parseWrapper = true;</span>
+<span class="pc bpc" id="L480" title="3 of 4 branches missed.">    if (!instance.isInXmlWrapped() &amp;&amp; adapter.isUnrappedValueAllowedInXml()) {</span>
+<span class="nc" id="L481">      parseWrapper = false;</span>
+    }
+
+<span class="fc" id="L484">    StartElement currentStart = start;</span>
+<span class="pc bpc" id="L485" title="1 of 2 branches missed.">    if (parseWrapper) {</span>
+      // TODO: not sure this is needed, since there is a peek just before this
+      // parse any whitespace before the element
+<span class="fc" id="L488">      XmlEventUtil.skipWhitespace(reader);</span>
+
+<span class="fc" id="L490">      QName xmlQName = instance.getXmlQName();</span>
+<span class="fc" id="L491">      XMLEvent event = reader.peek();</span>
+<span class="pc bpc" id="L492" title="2 of 4 branches missed.">      if (event.isStartElement() &amp;&amp; xmlQName.equals(event.asStartElement().getName())) {</span>
+        // Consume the start element
+<span class="fc" id="L494">        currentStart = ObjectUtils.notNull(reader.nextEvent().asStartElement());</span>
+      } else {
+<span class="nc" id="L496">        throw new IOException(String.format(&quot;Found '%s' instead of expected element '%s'%s.&quot;,</span>
+<span class="nc" id="L497">            event.asStartElement().getName(),</span>
+            xmlQName,
+<span class="nc" id="L499">            XmlEventUtil.generateLocationMessage(event)));</span>
+      }
+    }
+
+    // consume the value
+<span class="fc" id="L504">    Object retval = instance.getDataTypeHandler().readItem(parentObject, currentStart, this);</span>
+
+<span class="pc bpc" id="L506" title="1 of 2 branches missed.">    if (parseWrapper) {</span>
+      // consume the end element
+<span class="fc" id="L508">      XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, currentStart.getName());</span>
+    }
+
+<span class="fc" id="L511">    return retval;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

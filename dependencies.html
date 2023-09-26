@@ -35,19 +35,20 @@
             <div class="collapse navbar-collapse" id="top-navbar-collapse-1">
                 <ul class="nav navbar-nav ">
                     <li class="nav-item " ><a  href="http://github.com/usnistgov/metaschema-java/"  title="GitHub project"   class="externalLink nav-link" >GitHub project</a></li>
-                    <li class="nav-item " ><a  href="apidocs"  title="Javadoc"  class="nav-link" >Javadoc</a></li>
                     <li class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Modules <b class="caret"></b></a>
                         <div class="dropdown-menu">
-                            <a href="metaschema-model/index.html" title="Metaschema XML Implementation"  class="dropdown-item ">Metaschema XML Implementation</a>
-                            <a href="metaschema-java-codegen/index.html" title="Metaschema Java Code Generator"  class="dropdown-item ">Metaschema Java Code Generator</a>
-                            <a href="metaschema-maven-plugin/index.html" title="Metaschema Maven Plugin"  class="dropdown-item ">Metaschema Maven Plugin</a>
-                            <a href="metaschema-java-binding/index.html" title="Metaschema Java Data Binding"  class="dropdown-item ">Metaschema Java Data Binding</a>
-                            <a href="metaschema-model-common/index.html" title="Metaschema Core API"  class="dropdown-item ">Metaschema Core API</a>
+                            <a href="metaschema-core/index.html" title="Metaschema Core API"  class="dropdown-item ">Metaschema Core API</a>
+                            <a href="metaschema-databind/index.html" title="Metaschema Java Data/Object Binding and Code Generation"  class="dropdown-item ">Metaschema Java Data/Object Binding and Code Generation</a>
                             <a href="metaschema-schema-generator/index.html" title="Metaschema XML and JSON Schema Generator"  class="dropdown-item ">Metaschema XML and JSON Schema Generator</a>
+                            <a href="metaschema-maven-plugin/index.html" title="Metaschema Maven Plugin"  class="dropdown-item ">Metaschema Maven Plugin</a>
                             <a href="metaschema-testing/index.html" title="Metaschema Unit Testing Support"  class="dropdown-item ">Metaschema Unit Testing Support</a>
                             <a href="cli-processor/index.html" title="Metaschema CLI Framework"  class="dropdown-item ">Metaschema CLI Framework</a>
                             <a href="metaschema-cli/index.html" title="Metaschema Command Line Tool"  class="dropdown-item ">Metaschema Command Line Tool</a>
+                            <a href="metaschema-model-common/index.html" title="metaschema-model-common"  class="dropdown-item ">metaschema-model-common</a>
+                            <a href="metaschema-model/index.html" title="metaschema-model"  class="dropdown-item ">metaschema-model</a>
+                            <a href="metaschema-java-codegen/index.html" title="metaschema-java-codegen"  class="dropdown-item ">metaschema-java-codegen</a>
+                            <a href="metaschema-java-binding/index.html" title="metaschema-java-binding"  class="dropdown-item ">metaschema-java-binding</a>
                         </div>
                     </li>
                     <li class="nav-item dropdown active">
@@ -72,7 +73,6 @@
                             <div class="dropdown-submenu">
                                 <a  href="project-reports.html"  title="Project Reports"  class="dropdown-item" >Project Reports</a>                                <div class="dropdown-menu">
                                     <a href="surefire-report.html" title="Surefire"  class="dropdown-item ">Surefire</a>
-                                    <a href="apidocs/index.html" title="Javadoc"  class="dropdown-item ">Javadoc</a>
                                 </div>
                             </div>
                         </div>
@@ -87,7 +87,7 @@
         <main class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-8" role="main">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a  href="."  title="Java Tools"  class="" >Java Tools</a></li>
+            <li class="breadcrumb-item"><a  href="."  title="Summary"  class="" >Summary</a></li>
             <li class="breadcrumb-item active">Project Dependencies</li>
         </ol>
     </nav>
@@ -134,7 +134,7 @@
    <tbody>
     <tr class="b">
      <td style="text-align: left;">org.junit.jupiter</td>
-     <td><a class="externalLink" href="https://junit.org/junit5/">junit-jupiter-api</a></td>
+     <td><a class="externalLink" href="https://junit.org/junit5/">junit-jupiter</a></td>
      <td>5.9.0</td>
      <td>jar</td>
      <td><a class="externalLink" href="https://www.eclipse.org/legal/epl-v20.html">Eclipse Public License v2.0</a></td>
@@ -192,8 +192,36 @@
      <td><a class="externalLink" href="http://www.apache.org/licenses/LICENSE-2.0.txt">The Apache License, Version 2.0</a></td>
     </tr>
     <tr class="a">
+     <td style="text-align: left;">org.junit.jupiter</td>
+     <td><a class="externalLink" href="https://junit.org/junit5/">junit-jupiter-api</a></td>
+     <td>5.9.0</td>
+     <td>jar</td>
+     <td><a class="externalLink" href="https://www.eclipse.org/legal/epl-v20.html">Eclipse Public License v2.0</a></td>
+    </tr>
+    <tr class="b">
+     <td style="text-align: left;">org.junit.jupiter</td>
+     <td><a class="externalLink" href="https://junit.org/junit5/">junit-jupiter-engine</a></td>
+     <td>5.9.0</td>
+     <td>jar</td>
+     <td><a class="externalLink" href="https://www.eclipse.org/legal/epl-v20.html">Eclipse Public License v2.0</a></td>
+    </tr>
+    <tr class="a">
+     <td style="text-align: left;">org.junit.jupiter</td>
+     <td><a class="externalLink" href="https://junit.org/junit5/">junit-jupiter-params</a></td>
+     <td>5.9.0</td>
+     <td>jar</td>
+     <td><a class="externalLink" href="https://www.eclipse.org/legal/epl-v20.html">Eclipse Public License v2.0</a></td>
+    </tr>
+    <tr class="b">
      <td style="text-align: left;">org.junit.platform</td>
      <td><a class="externalLink" href="https://junit.org/junit5/">junit-platform-commons</a></td>
+     <td>1.9.0</td>
+     <td>jar</td>
+     <td><a class="externalLink" href="https://www.eclipse.org/legal/epl-v20.html">Eclipse Public License v2.0</a></td>
+    </tr>
+    <tr class="a">
+     <td style="text-align: left;">org.junit.platform</td>
+     <td><a class="externalLink" href="https://junit.org/junit5/">junit-platform-engine</a></td>
      <td>1.9.0</td>
      <td>jar</td>
      <td><a class="externalLink" href="https://www.eclipse.org/legal/epl-v20.html">Eclipse Public License v2.0</a></td>
@@ -233,7 +261,7 @@
  <section>
   <h2 id="dependency-tree">Dependency Tree</h2>
   <ul>
-   <li>gov.nist.secauto.metaschema:metaschema-framework:pom:0.12.0 <i class="fas fa-info"></i>
+   <li>gov.nist.secauto.metaschema:metaschema-framework:pom:1.0.0-M1 <i class="fas fa-info"></i>
     <div id="_dep0" style="display:none">
      Metaschema Framework Parent 
      <p><b>Description: </b>A common build root for all NIST Java projects related to the Metaschema framework.</p>
@@ -257,35 +285,67 @@
          <p><b>Project Licenses: </b><a class="externalLink" href="http://www.apache.org/licenses/LICENSE-2.0.txt">The Apache Software License, Version 2.0</a></p>
         </div></li>
       </ul></li>
-     <li>org.junit.jupiter:junit-jupiter-api:jar:5.9.0 (test) <i class="fas fa-info"></i>
+     <li>org.junit.jupiter:junit-jupiter:jar:5.9.0 (test) <i class="fas fa-info"></i>
       <div id="_dep6" style="display:none">
-       JUnit Jupiter API 
-       <p><b>Description: </b>Module "junit-jupiter-api" of JUnit 5.</p>
+       JUnit Jupiter (Aggregator) 
+       <p><b>Description: </b>Module "junit-jupiter" of JUnit 5.</p>
        <p><b>URL: </b><a class="externalLink" href="https://junit.org/junit5/">https://junit.org/junit5/</a></p>
        <p><b>Project Licenses: </b><a class="externalLink" href="https://www.eclipse.org/legal/epl-v20.html">Eclipse Public License v2.0</a></p>
       </div>
       <ul>
-       <li>org.opentest4j:opentest4j:jar:1.2.0 (test) <i class="fas fa-info"></i>
+       <li>org.junit.jupiter:junit-jupiter-api:jar:5.9.0 (test) <i class="fas fa-info"></i>
         <div id="_dep8" style="display:none">
-         org.opentest4j:opentest4j 
-         <p><b>Description: </b>Open Test Alliance for the JVM</p>
-         <p><b>URL: </b><a class="externalLink" href="https://github.com/ota4j-team/opentest4j">https://github.com/ota4j-team/opentest4j</a></p>
-         <p><b>Project Licenses: </b><a class="externalLink" href="http://www.apache.org/licenses/LICENSE-2.0.txt">The Apache License, Version 2.0</a></p>
-        </div></li>
-       <li>org.junit.platform:junit-platform-commons:jar:1.9.0 (test) <i class="fas fa-info"></i>
-        <div id="_dep10" style="display:none">
-         JUnit Platform Commons 
-         <p><b>Description: </b>Module "junit-platform-commons" of JUnit 5.</p>
+         JUnit Jupiter API 
+         <p><b>Description: </b>Module "junit-jupiter-api" of JUnit 5.</p>
+         <p><b>URL: </b><a class="externalLink" href="https://junit.org/junit5/">https://junit.org/junit5/</a></p>
+         <p><b>Project Licenses: </b><a class="externalLink" href="https://www.eclipse.org/legal/epl-v20.html">Eclipse Public License v2.0</a></p>
+        </div>
+        <ul>
+         <li>org.opentest4j:opentest4j:jar:1.2.0 (test) <i class="fas fa-info"></i>
+          <div id="_dep10" style="display:none">
+           org.opentest4j:opentest4j 
+           <p><b>Description: </b>Open Test Alliance for the JVM</p>
+           <p><b>URL: </b><a class="externalLink" href="https://github.com/ota4j-team/opentest4j">https://github.com/ota4j-team/opentest4j</a></p>
+           <p><b>Project Licenses: </b><a class="externalLink" href="http://www.apache.org/licenses/LICENSE-2.0.txt">The Apache License, Version 2.0</a></p>
+          </div></li>
+         <li>org.junit.platform:junit-platform-commons:jar:1.9.0 (test) <i class="fas fa-info"></i>
+          <div id="_dep12" style="display:none">
+           JUnit Platform Commons 
+           <p><b>Description: </b>Module "junit-platform-commons" of JUnit 5.</p>
+           <p><b>URL: </b><a class="externalLink" href="https://junit.org/junit5/">https://junit.org/junit5/</a></p>
+           <p><b>Project Licenses: </b><a class="externalLink" href="https://www.eclipse.org/legal/epl-v20.html">Eclipse Public License v2.0</a></p>
+          </div></li>
+         <li>org.apiguardian:apiguardian-api:jar:1.1.2 (test) <i class="fas fa-info"></i>
+          <div id="_dep14" style="display:none">
+           org.apiguardian:apiguardian-api 
+           <p><b>Description: </b>@API Guardian</p>
+           <p><b>URL: </b><a class="externalLink" href="https://github.com/apiguardian-team/apiguardian">https://github.com/apiguardian-team/apiguardian</a></p>
+           <p><b>Project Licenses: </b><a class="externalLink" href="http://www.apache.org/licenses/LICENSE-2.0.txt">The Apache License, Version 2.0</a></p>
+          </div></li>
+        </ul></li>
+       <li>org.junit.jupiter:junit-jupiter-params:jar:5.9.0 (test) <i class="fas fa-info"></i>
+        <div id="_dep16" style="display:none">
+         JUnit Jupiter Params 
+         <p><b>Description: </b>Module "junit-jupiter-params" of JUnit 5.</p>
          <p><b>URL: </b><a class="externalLink" href="https://junit.org/junit5/">https://junit.org/junit5/</a></p>
          <p><b>Project Licenses: </b><a class="externalLink" href="https://www.eclipse.org/legal/epl-v20.html">Eclipse Public License v2.0</a></p>
         </div></li>
-       <li>org.apiguardian:apiguardian-api:jar:1.1.2 (test) <i class="fas fa-info"></i>
-        <div id="_dep12" style="display:none">
-         org.apiguardian:apiguardian-api 
-         <p><b>Description: </b>@API Guardian</p>
-         <p><b>URL: </b><a class="externalLink" href="https://github.com/apiguardian-team/apiguardian">https://github.com/apiguardian-team/apiguardian</a></p>
-         <p><b>Project Licenses: </b><a class="externalLink" href="http://www.apache.org/licenses/LICENSE-2.0.txt">The Apache License, Version 2.0</a></p>
-        </div></li>
+       <li>org.junit.jupiter:junit-jupiter-engine:jar:5.9.0 (test) <i class="fas fa-info"></i>
+        <div id="_dep18" style="display:none">
+         JUnit Jupiter Engine 
+         <p><b>Description: </b>Module "junit-jupiter-engine" of JUnit 5.</p>
+         <p><b>URL: </b><a class="externalLink" href="https://junit.org/junit5/">https://junit.org/junit5/</a></p>
+         <p><b>Project Licenses: </b><a class="externalLink" href="https://www.eclipse.org/legal/epl-v20.html">Eclipse Public License v2.0</a></p>
+        </div>
+        <ul>
+         <li>org.junit.platform:junit-platform-engine:jar:1.9.0 (test) <i class="fas fa-info"></i>
+          <div id="_dep20" style="display:none">
+           JUnit Platform Engine API 
+           <p><b>Description: </b>Module "junit-platform-engine" of JUnit 5.</p>
+           <p><b>URL: </b><a class="externalLink" href="https://junit.org/junit5/">https://junit.org/junit5/</a></p>
+           <p><b>Project Licenses: </b><a class="externalLink" href="https://www.eclipse.org/legal/epl-v20.html">Eclipse Public License v2.0</a></p>
+          </div></li>
+        </ul></li>
       </ul></li>
     </ul></li>
   </ul>
@@ -295,7 +355,7 @@
  <h1 id="licenses1">Licenses</h1>
  <p><b>The Apache License, Version 2.0: </b>org.apiguardian:apiguardian-api, org.opentest4j:opentest4j</p>
  <p><b>NIST License: </b>Metaschema Framework Parent</p>
- <p><b>Eclipse Public License v2.0: </b>JUnit Jupiter API, JUnit Platform Commons</p>
+ <p><b>Eclipse Public License v2.0: </b>JUnit Jupiter (Aggregator), JUnit Jupiter API, JUnit Jupiter Engine, JUnit Jupiter Params, JUnit Platform Commons, JUnit Platform Engine API</p>
  <p><b>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1: </b>SpotBugs Annotations</p>
  <p><b>The Apache Software License, Version 2.0: </b>FindBugs-jsr305</p>
 </section><a id="dependency_file_details"></a>
@@ -340,6 +400,15 @@
     <td style="text-align: center;">Yes</td>
    </tr>
    <tr class="a">
+    <td style="text-align: left;">junit-jupiter-5.9.0.jar</td>
+    <td style="text-align: right;">6.4 kB</td>
+    <td style="text-align: right;">5</td>
+    <td style="text-align: right;">1</td>
+    <td style="text-align: right;">1</td>
+    <td style="text-align: center;">-</td>
+    <td style="text-align: center;">No</td>
+   </tr>
+   <tr class="b">
     <td style="text-align: left;">junit-jupiter-api-5.9.0.jar</td>
     <td style="text-align: right;">203.4 kB</td>
     <td style="text-align: right;">190</td>
@@ -348,12 +417,39 @@
     <td style="text-align: center;">-</td>
     <td style="text-align: center;">Yes</td>
    </tr>
+   <tr class="a">
+    <td style="text-align: left;">junit-jupiter-engine-5.9.0.jar</td>
+    <td style="text-align: right;">246.4 kB</td>
+    <td style="text-align: right;">151</td>
+    <td style="text-align: right;">134</td>
+    <td style="text-align: right;">9</td>
+    <td style="text-align: center;">-</td>
+    <td style="text-align: center;">Yes</td>
+   </tr>
    <tr class="b">
+    <td style="text-align: left;">junit-jupiter-params-5.9.0.jar</td>
+    <td style="text-align: right;">578.3 kB</td>
+    <td style="text-align: right;">377</td>
+    <td style="text-align: right;">343</td>
+    <td style="text-align: right;">22</td>
+    <td style="text-align: center;">-</td>
+    <td style="text-align: center;">Yes</td>
+   </tr>
+   <tr class="a">
     <td style="text-align: left;">junit-platform-commons-1.9.0.jar</td>
     <td style="text-align: right;">102.7 kB</td>
     <td style="text-align: right;">64</td>
     <td style="text-align: right;">44</td>
     <td style="text-align: right;">7</td>
+    <td style="text-align: center;">-</td>
+    <td style="text-align: center;">Yes</td>
+   </tr>
+   <tr class="b">
+    <td style="text-align: left;">junit-platform-engine-1.9.0.jar</td>
+    <td style="text-align: right;">188.2 kB</td>
+    <td style="text-align: right;">143</td>
+    <td style="text-align: right;">127</td>
+    <td style="text-align: right;">9</td>
     <td style="text-align: center;">-</td>
     <td style="text-align: center;">Yes</td>
    </tr>
@@ -376,13 +472,13 @@
     <th>Debug Information</th>
    </tr>
    <tr class="a">
-    <td style="text-align: right;">6</td>
-    <td style="text-align: right;">355.7 kB</td>
-    <td style="text-align: right;">351</td>
-    <td style="text-align: right;">288</td>
-    <td style="text-align: right;">23</td>
+    <td style="text-align: right;">10</td>
+    <td style="text-align: right;">1.4 MB</td>
+    <td style="text-align: right;">1027</td>
+    <td style="text-align: right;">893</td>
+    <td style="text-align: right;">64</td>
     <td style="text-align: center;">1.8</td>
-    <td style="text-align: right;">6</td>
+    <td style="text-align: right;">9</td>
    </tr>
    <tr class="b">
     <td style="text-align: right;">compile: 2</td>
@@ -394,13 +490,13 @@
     <td style="text-align: right;">compile: 2</td>
    </tr>
    <tr class="a">
-    <td style="text-align: right;">test: 4</td>
-    <td style="text-align: right;">test: 320.6 kB</td>
-    <td style="text-align: right;">test: 274</td>
-    <td style="text-align: right;">test: 229</td>
-    <td style="text-align: right;">test: 19</td>
+    <td style="text-align: right;">test: 8</td>
+    <td style="text-align: right;">test: 1.3 MB</td>
+    <td style="text-align: right;">test: 950</td>
+    <td style="text-align: right;">test: 834</td>
+    <td style="text-align: right;">test: 60</td>
     <td style="text-align: center;">-</td>
-    <td style="text-align: right;">test: 4</td>
+    <td style="text-align: right;">test: 7</td>
    </tr>
   </tbody>
  </table>
@@ -497,7 +593,7 @@ Maven Documentation
                 <blockquote class="blockquote"><span class="color-highlight">Metaschema Java tools</span> provide a set of tools and libraries that allow developers to quickly develop applications based on Metaschema models.</blockquote>
 
                                 <blockquote class="version-date">
-                    <span class="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): 0.12.0</span>
+                    <span class="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): 1.0.0-M1</span>
                             </blockquote>
             </div> <!-- col: .container -->
         </div> <!-- END: .row -->

@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JsonSchemaGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema XML and JSON Schema Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.schemagen.json</a> &gt; <span class="el_source">JsonSchemaGenerator.java</span></div><h1>JsonSchemaGenerator.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.schemagen.json;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonGenerator.Feature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.schemagen.AbstractSchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
+import gov.nist.secauto.metaschema.schemagen.SchemaGenerationFeature;
+import gov.nist.secauto.metaschema.schemagen.json.datatype.JsonDatatypeManager;
+import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L55">public class JsonSchemaGenerator</span>
+    extends AbstractSchemaGenerator&lt;JsonGenerator, JsonDatatypeManager, JsonGenerationState&gt; {
+  @NonNull
+  private final JsonFactory jsonFactory;
+
+  public JsonSchemaGenerator() {
+<span class="fc" id="L61">    this(new JsonFactory());</span>
+<span class="fc" id="L62">  }</span>
+
+<span class="fc" id="L64">  public JsonSchemaGenerator(@NonNull JsonFactory jsonFactory) {</span>
+<span class="fc" id="L65">    this.jsonFactory = jsonFactory;</span>
+<span class="fc" id="L66">  }</span>
+
+  @NonNull
+  public JsonFactory getJsonFactory() {
+<span class="fc" id="L70">    return jsonFactory;</span>
+  }
+
+  @SuppressWarnings(&quot;resource&quot;)
+  @Override
+  protected JsonGenerator newWriter(Writer out) {
+    try {
+<span class="fc" id="L77">      return ObjectUtils.notNull(getJsonFactory().createGenerator(out)</span>
+<span class="fc" id="L78">          .setCodec(new ObjectMapper())</span>
+<span class="fc" id="L79">          .useDefaultPrettyPrinter()</span>
+<span class="fc" id="L80">          .disable(Feature.AUTO_CLOSE_TARGET));</span>
+<span class="nc" id="L81">    } catch (IOException ex) {</span>
+<span class="nc" id="L82">      throw new SchemaGenerationException(ex);</span>
+    }
+  }
+
+  @Override
+  protected JsonGenerationState newGenerationState(
+      IModule module,
+      JsonGenerator schemaWriter,
+      IConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; configuration) {
+<span class="fc" id="L91">    return new JsonGenerationState(module, schemaWriter, configuration);</span>
+  }
+
+  @Override
+  protected void generateSchema(JsonGenerationState state) {
+    // analyze all definitions
+<span class="fc" id="L97">    List&lt;IAssemblyDefinition&gt; rootAssemblyDefinitions = analyzeDefinitions(</span>
+        state,
+        (entry, definition) -&gt; {
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">          assert entry != null;</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">          assert definition != null;</span>
+
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">          if (entry.isReferenced()) {</span>
+            // ensure schema is generated
+<span class="fc" id="L105">            state.getSchema(definition);</span>
+          }
+<span class="fc" id="L107">        });</span>
+
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">    if (rootAssemblyDefinitions.isEmpty()) {</span>
+<span class="nc" id="L110">      throw new SchemaGenerationException(&quot;No root definitions found&quot;);</span>
+    }
+
+    // generate the properties first to ensure all definitions are identified
+<span class="fc" id="L114">    List&lt;RootPropertyEntry&gt; rootEntries = rootAssemblyDefinitions.stream()</span>
+<span class="fc" id="L115">        .map(root -&gt; {</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">          assert root != null;</span>
+<span class="fc" id="L117">          return new RootPropertyEntry(root, state);</span>
+        })
+<span class="fc" id="L119">        .collect(Collectors.toUnmodifiableList());</span>
+
+<span class="fc" id="L121">    IModule module = state.getModule();</span>
+    try {
+<span class="fc" id="L123">      state.writeStartObject();</span>
+
+<span class="fc" id="L125">      state.writeField(&quot;$schema&quot;, &quot;http://json-schema.org/draft-07/schema#&quot;);</span>
+<span class="fc" id="L126">      state.writeField(&quot;$id&quot;,</span>
+<span class="fc" id="L127">          String.format(&quot;%s/%s-%s-schema.json&quot;,</span>
+<span class="fc" id="L128">              module.getXmlNamespace(),</span>
+<span class="fc" id="L129">              module.getShortName(),</span>
+<span class="fc" id="L130">              module.getVersion()));</span>
+<span class="fc" id="L131">      state.writeField(&quot;$comment&quot;, module.getName().toMarkdown());</span>
+<span class="fc" id="L132">      state.writeField(&quot;type&quot;, &quot;object&quot;);</span>
+
+<span class="fc" id="L134">      ObjectNode definitionsObject = state.generateDefinitions();</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">      if (!definitionsObject.isEmpty()) {</span>
+<span class="fc" id="L136">        state.writeField(&quot;definitions&quot;, definitionsObject);</span>
+      }
+
+<span class="fc" id="L139">      @SuppressWarnings(&quot;resource&quot;) JsonGenerator writer = state.getWriter(); // NOPMD not owned</span>
+
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">      if (rootEntries.size() == 1) {</span>
+<span class="fc" id="L142">        rootEntries.iterator().next().write(writer);</span>
+      } else {
+<span class="nc" id="L144">        writer.writeFieldName(&quot;oneOf&quot;);</span>
+<span class="nc" id="L145">        writer.writeStartArray();</span>
+
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        for (RootPropertyEntry root : rootEntries) {</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">          assert root != null;</span>
+<span class="nc" id="L149">          writer.writeStartObject();</span>
+<span class="nc" id="L150">          root.write(writer);</span>
+<span class="nc" id="L151">          writer.writeEndObject();</span>
+<span class="nc" id="L152">        }</span>
+
+<span class="nc" id="L154">        writer.writeEndArray();</span>
+      }
+<span class="fc" id="L156">      state.writeEndObject();</span>
+<span class="nc" id="L157">    } catch (IOException ex) {</span>
+<span class="nc" id="L158">      throw new SchemaGenerationException(ex);</span>
+<span class="fc" id="L159">    }</span>
+<span class="fc" id="L160">  }</span>
+
+  @NonNull
+  private static Map&lt;String, ObjectNode&gt; generateRootProperties(
+      @NonNull IAssemblyDefinition definition,
+      @NonNull JsonGenerationState state) {
+<span class="fc" id="L166">    Map&lt;String, ObjectNode&gt; properties = new LinkedHashMap&lt;&gt;(); // NOPMD no concurrent access</span>
+
+<span class="fc" id="L168">    properties.put(&quot;$schema&quot;, JsonNodeFactory.instance.objectNode()</span>
+<span class="fc" id="L169">        .put(&quot;type&quot;, &quot;string&quot;)</span>
+<span class="fc" id="L170">        .put(&quot;format&quot;, &quot;uri-reference&quot;));</span>
+
+<span class="fc" id="L172">    ObjectNode rootObj = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());</span>
+<span class="fc" id="L173">    state.getSchema(definition).generateSchemaOrRef(state, rootObj);</span>
+
+<span class="fc" id="L175">    properties.put(definition.getRootJsonName(), rootObj);</span>
+<span class="fc" id="L176">    return properties;</span>
+  }
+
+  private static class RootPropertyEntry {
+    @NonNull
+    private final IAssemblyDefinition definition;
+    @NonNull
+    private final Map&lt;String, ObjectNode&gt; properties;
+
+    public RootPropertyEntry(
+        @NonNull IAssemblyDefinition definition,
+<span class="fc" id="L187">        @NonNull JsonGenerationState state) {</span>
+<span class="fc" id="L188">      this.definition = definition;</span>
+<span class="fc" id="L189">      this.properties = generateRootProperties(definition, state);</span>
+<span class="fc" id="L190">    }</span>
+
+    @NonNull
+    protected IAssemblyDefinition getDefinition() {
+<span class="fc" id="L194">      return definition;</span>
+    }
+
+    @NonNull
+    protected Map&lt;String, ObjectNode&gt; getProperties() {
+<span class="fc" id="L199">      return properties;</span>
+    }
+
+    public void write(JsonGenerator writer) throws IOException {
+<span class="fc" id="L203">      writer.writeFieldName(&quot;properties&quot;);</span>
+<span class="fc" id="L204">      writer.writeStartObject();</span>
+
+<span class="fc bfc" id="L206" title="All 2 branches covered.">      for (Map.Entry&lt;String, ObjectNode&gt; entry : getProperties().entrySet()) {</span>
+<span class="fc" id="L207">        writer.writeFieldName(entry.getKey());</span>
+<span class="fc" id="L208">        writer.writeTree(entry.getValue());</span>
+<span class="fc" id="L209">      }</span>
+
+<span class="fc" id="L211">      writer.writeEndObject();</span>
+
+<span class="fc" id="L213">      writer.writeFieldName(&quot;required&quot;);</span>
+<span class="fc" id="L214">      writer.writeStartArray();</span>
+<span class="fc" id="L215">      writer.writeString(getDefinition().getRootJsonName());</span>
+<span class="fc" id="L216">      writer.writeEndArray();</span>
+
+<span class="fc" id="L218">      writer.writeBooleanField(&quot;additionalProperties&quot;, false);</span>
+<span class="fc" id="L219">    }</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

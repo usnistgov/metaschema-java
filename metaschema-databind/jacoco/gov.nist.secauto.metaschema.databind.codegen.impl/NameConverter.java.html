@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NameConverter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.codegen.impl</a> &gt; <span class="el_source">NameConverter.java</span></div><h1>NameConverter.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+/*
+ * Copyright (c) 1997, 2022 Oracle and/or its affiliates. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Distribution License v. 1.0, which is available at
+ * http://www.eclipse.org/org/documents/edl-v10.php.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+package gov.nist.secauto.metaschema.databind.codegen.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.StringTokenizer;
+
+import javax.lang.model.SourceVersion;
+
+/**
+ * Converts aribitrary strings into Java identifiers.
+ *
+ * @author &lt;a href=&quot;mailto:kohsuke.kawaguchi@sun.com&quot;&gt;Kohsuke KAWAGUCHI&lt;/a&gt;
+ */
+public interface NameConverter {
+  /**
+   * The name converter implemented by Code Model.
+   *
+   * This is the standard name conversion for JAXB.
+   */
+<span class="fc" id="L56">  NameConverter STANDARD = new Standard();</span>
+
+  /**
+   * converts a string into an identifier suitable for classes.
+   *
+   * In general, this operation should generate &quot;NamesLikeThis&quot;.
+   *
+   * @param token
+   *          the string to convert
+   * @return the equivalent class name
+   */
+  String toClassName(String token);
+
+  /**
+   * converts a string into an identifier suitable for interfaces.
+   *
+   * In general, this operation should generate &quot;NamesLikeThis&quot;. But for example,
+   * it can prepend every interface with 'I'.
+   *
+   * @param token
+   *          the string to convert
+   * @return the equivalent interface name
+   */
+  String toInterfaceName(String token);
+
+  /**
+   * converts a string into an identifier suitable for properties.
+   *
+   * In general, this operation should generate &quot;NamesLikeThis&quot;, which will be
+   * used with known prefixes like &quot;get&quot; or &quot;set&quot;.
+   *
+   * @param token
+   *          the string to convert
+   * @return the equivalent property name
+   */
+  String toPropertyName(String token);
+
+  /**
+   * converts a string into an identifier suitable for constants.
+   *
+   * In the standard Java naming convention, this operation should generate
+   * &quot;NAMES_LIKE_THIS&quot;.
+   *
+   * @param token
+   *          the string to convert
+   * @return the equivalent constant name
+   */
+  String toConstantName(String token);
+
+  /**
+   * Converts a string into an identifier suitable for variables.
+   *
+   * In general it should generate &quot;namesLikeThis&quot;.
+   *
+   * @param token
+   *          the string to convert
+   * @return the equivalent variable name
+   */
+  String toVariableName(String token);
+
+  /**
+   * Converts a namespace URI into a package name. This method should expect
+   * strings like &quot;http://foo.bar.zot/org&quot;, &quot;urn:abc:def:ghi&quot; &quot;&quot;, or even &quot;###&quot;
+   * (basically anything) and expected to return a package name, liks
+   * &quot;org.acme.foo&quot;.
+   *
+   * @param namespaceUri
+   *          the string to convert
+   * @return the equivalent package name
+   */
+  String toPackageName(String namespaceUri);
+
+  class Standard
+      extends NameUtil
+      implements NameConverter {
+
+    /**
+     * Default constructor.
+     */
+<span class="fc" id="L135">    public Standard() {</span>
+      // do nothing
+<span class="fc" id="L137">    }</span>
+
+    @Override
+    public String toClassName(String token) {
+<span class="fc" id="L141">      return toMixedCaseName(toWordList(token), true);</span>
+    }
+
+    @Override
+    public String toVariableName(String token) {
+<span class="fc" id="L146">      return toMixedCaseName(toWordList(token), false);</span>
+    }
+
+    @Override
+    public String toInterfaceName(String token) {
+<span class="nc" id="L151">      return toClassName(token);</span>
+    }
+
+    @Override
+    public String toPropertyName(String token) {
+<span class="fc" id="L156">      String prop = toClassName(token);</span>
+      // property name &quot;Class&quot; with collide with Object.getClass,
+      // so escape this.
+<span class="pc bpc" id="L159" title="1 of 2 branches missed.">      if (&quot;Class&quot;.equals(prop)) {</span>
+<span class="nc" id="L160">        prop = &quot;Clazz&quot;;</span>
+      }
+<span class="fc" id="L162">      return prop;</span>
+    }
+
+    /**
+     * Computes a Java package name from a namespace URI, as specified in the spec.
+     *
+     * @return {@code null} if it fails to derive a package name.
+     */
+    @SuppressWarnings({
+        &quot;PMD.CyclomaticComplexity&quot;, &quot;PMD.NPathComplexity&quot;, // acceptable
+        &quot;PMD.OnlyOneReturn&quot;, // readability
+        &quot;PMD.UseStringBufferForStringAppends&quot; // ok
+    })
+    @Override
+    public String toPackageName(String uri) {
+<span class="fc" id="L177">      String nsUri = uri;</span>
+      // remove scheme and :, if present
+      // spec only requires us to remove 'http' and 'urn'...
+<span class="fc" id="L180">      int idx = nsUri.indexOf(':');</span>
+<span class="fc" id="L181">      String scheme = &quot;&quot;;</span>
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">      if (idx &gt;= 0) {</span>
+<span class="fc" id="L183">        scheme = nsUri.substring(0, idx);</span>
+<span class="pc bpc" id="L184" title="3 of 4 branches missed.">        if (&quot;http&quot;.equalsIgnoreCase(scheme) || &quot;urn&quot;.equalsIgnoreCase(scheme)) {</span>
+<span class="fc" id="L185">          nsUri = nsUri.substring(idx + 1);</span>
+        }
+      }
+
+      // tokenize string
+<span class="fc" id="L190">      List&lt;String&gt; tokens = tokenize(nsUri, &quot;/: &quot;);</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">      if (tokens.isEmpty()) {</span>
+<span class="nc" id="L192">        return null;</span>
+      }
+
+      // remove trailing file type, if necessary
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">      if (tokens.size() &gt; 1) {</span>
+        // for uri's like &quot;www.foo.com&quot; and &quot;foo.com&quot;, there is no trailing
+        // file, so there's no need to look at the last '.' and substring
+        // otherwise, we loose the &quot;com&quot; (which would be wrong)
+<span class="fc" id="L200">        String lastToken = tokens.get(tokens.size() - 1);</span>
+<span class="fc" id="L201">        idx = lastToken.lastIndexOf('.');</span>
+<span class="pc bpc" id="L202" title="1 of 2 branches missed.">        if (idx &gt; 0) {</span>
+<span class="nc" id="L203">          lastToken = lastToken.substring(0, idx);</span>
+<span class="nc" id="L204">          tokens.set(tokens.size() - 1, lastToken);</span>
+        }
+      }
+
+      // tokenize domain name and reverse. Also remove :port if it exists
+<span class="fc" id="L209">      String domain = tokens.get(0);</span>
+<span class="fc" id="L210">      idx = domain.indexOf(':');</span>
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">      if (idx &gt;= 0) {</span>
+<span class="nc" id="L212">        domain = domain.substring(0, idx);</span>
+      }
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">      List&lt;String&gt; rev = reverse(tokenize(domain, &quot;urn&quot;.equals(scheme) ? &quot;.-&quot; : &quot;.&quot;));</span>
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">      if (&quot;www&quot;.equalsIgnoreCase(rev.get(rev.size() - 1))) {</span>
+        // remove leading www
+<span class="nc" id="L217">        rev.remove(rev.size() - 1);</span>
+      }
+
+      // replace the domain name with tokenized items
+<span class="fc" id="L221">      tokens.addAll(1, rev);</span>
+<span class="fc" id="L222">      tokens.remove(0);</span>
+
+      // iterate through the tokens and apply xml-&gt;java name algorithm
+<span class="fc bfc" id="L225" title="All 2 branches covered.">      for (int i = 0; i &lt; tokens.size(); i++) {</span>
+
+        // get the token and remove illegal chars
+<span class="fc" id="L228">        String token = tokens.get(i);</span>
+<span class="fc" id="L229">        token = removeIllegalIdentifierChars(token);</span>
+
+        // this will check for reserved keywords
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">        if (SourceVersion.isKeyword(token.toLowerCase(Locale.ENGLISH))) {</span>
+<span class="nc" id="L233">          token = '_' + token;</span>
+        }
+
+<span class="fc" id="L236">        tokens.set(i, token.toLowerCase(Locale.ENGLISH));</span>
+      }
+
+      // concat all the pieces and return it
+<span class="fc" id="L240">      return combine(tokens, '.');</span>
+    }
+
+    private static String removeIllegalIdentifierChars(String token) {
+<span class="fc" id="L244">      StringBuilder newToken = new StringBuilder(token.length() + 1); // max expected length</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">      for (int i = 0; i &lt; token.length(); i++) {</span>
+<span class="fc" id="L246">        char ch = token.charAt(i);</span>
+<span class="pc bpc" id="L247" title="1 of 4 branches missed.">        if (i == 0 &amp;&amp; !Character.isJavaIdentifierStart(ch)) { // ch can't be used as FIRST char</span>
+<span class="nc" id="L248">          newToken.append('_');</span>
+        }
+<span class="fc bfc" id="L250" title="All 2 branches covered.">        if (Character.isJavaIdentifierPart(ch)) {</span>
+<span class="fc" id="L251">          newToken.append(ch); // ch is valid</span>
+        } else {
+<span class="fc" id="L253">          newToken.append('_'); // ch can't be used</span>
+        }
+      }
+<span class="fc" id="L256">      return newToken.toString();</span>
+    }
+
+    private static List&lt;String&gt; tokenize(String str, String sep) {
+<span class="fc" id="L260">      StringTokenizer tokens = new StringTokenizer(str, sep);</span>
+<span class="fc" id="L261">      ArrayList&lt;String&gt; retval = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L263" title="All 2 branches covered.">      while (tokens.hasMoreTokens())</span>
+<span class="fc" id="L264">        retval.add(tokens.nextToken());</span>
+
+<span class="fc" id="L266">      return retval;</span>
+    }
+
+    private static &lt;T&gt; List&lt;T&gt; reverse(List&lt;T&gt; list) {
+<span class="fc" id="L270">      List&lt;T&gt; rev = new ArrayList&lt;&gt;(list.size());</span>
+
+<span class="fc bfc" id="L272" title="All 2 branches covered.">      for (int i = list.size() - 1; i &gt;= 0; i--) {</span>
+<span class="fc" id="L273">        rev.add(list.get(i));</span>
+      }
+
+<span class="fc" id="L276">      return rev;</span>
+    }
+
+    private static String combine(List&lt;String&gt; tokens, char sep) {
+<span class="fc" id="L280">      StringBuilder buf = new StringBuilder(tokens.get(0));</span>
+
+<span class="fc bfc" id="L282" title="All 2 branches covered.">      for (int i = 1; i &lt; tokens.size(); i++) {</span>
+<span class="fc" id="L283">        buf.append(sep);</span>
+<span class="fc" id="L284">        buf.append(tokens.get(i));</span>
+      }
+
+<span class="fc" id="L287">      return buf.toString();</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

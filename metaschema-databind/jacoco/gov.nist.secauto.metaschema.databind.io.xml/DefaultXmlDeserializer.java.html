@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultXmlDeserializer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.io.xml</a> &gt; <span class="el_source">DefaultXmlDeserializer.java</span></div><h1>DefaultXmlDeserializer.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.io.xml;
+
+import com.ctc.wstx.stax.WstxInputFactory;
+
+import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
+import gov.nist.secauto.metaschema.core.util.AutoCloser;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.io.AbstractDeserializer;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+
+import org.codehaus.stax2.XMLEventReader2;
+import org.codehaus.stax2.XMLInputFactory2;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.net.URI;
+
+import javax.xml.stream.EventFilter;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L52">public class DefaultXmlDeserializer&lt;CLASS&gt;</span>
+    extends AbstractDeserializer&lt;CLASS&gt; {
+  private XMLInputFactory2 xmlInputFactory;
+
+  @NonNull
+  private final IAssemblyClassBinding rootDefinition;
+
+  /**
+   * Construct a new Module binding-based deserializer that reads XML-based Module
+   * content.
+   *
+   * @param classBinding
+   *          the assembly class binding describing the Java objects this
+   *          deserializer parses data into
+   */
+  public DefaultXmlDeserializer(@NonNull IAssemblyClassBinding classBinding) {
+<span class="fc" id="L68">    super(classBinding);</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">    if (!classBinding.isRoot()) {</span>
+<span class="nc" id="L70">      throw new UnsupportedOperationException(</span>
+<span class="nc" id="L71">          String.format(&quot;The assembly '%s' is not a root assembly.&quot;, classBinding.getBoundClass().getName()));</span>
+    }
+<span class="fc" id="L73">    this.rootDefinition = classBinding;</span>
+<span class="fc" id="L74">  }</span>
+
+  /**
+   * Get the XML input factory instance used to create XML parser instances.
+   * &lt;p&gt;
+   * Uses a built-in default if a user specified factory is not provided.
+   *
+   * @return the factory instance
+   * @see #setXMLInputFactory(XMLInputFactory2)
+   */
+  @NonNull
+  private XMLInputFactory2 getXMLInputFactory() {
+<span class="fc" id="L86">    synchronized (this) {</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">      if (xmlInputFactory == null) {</span>
+<span class="fc" id="L88">        xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        assert xmlInputFactory instanceof WstxInputFactory;</span>
+<span class="fc" id="L90">        xmlInputFactory.configureForXmlConformance();</span>
+<span class="fc" id="L91">        xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, false);</span>
+        // xmlInputFactory.configureForSpeed();
+      }
+<span class="fc" id="L94">      return ObjectUtils.notNull(xmlInputFactory);</span>
+    }
+  }
+
+  /**
+   * Provide a XML input factory instance that will be used to create XML parser
+   * instances.
+   *
+   * @param factory
+   *          the factory instance
+   */
+  protected void setXMLInputFactory(@NonNull XMLInputFactory2 factory) {
+<span class="nc" id="L106">    synchronized (this) {</span>
+<span class="nc" id="L107">      this.xmlInputFactory = factory;</span>
+<span class="nc" id="L108">    }</span>
+<span class="nc" id="L109">  }</span>
+
+  @NonNull
+  private XMLEventReader2 newXMLEventReader2(@NonNull Reader reader) throws XMLStreamException {
+<span class="fc" id="L113">    XMLEventReader eventReader = getXMLInputFactory().createXMLEventReader(reader);</span>
+<span class="fc" id="L114">    EventFilter filter = new CommentFilter();</span>
+<span class="fc" id="L115">    return ObjectUtils.notNull((XMLEventReader2) getXMLInputFactory().createFilteredReader(eventReader, filter));</span>
+  }
+
+  @Override
+  protected final IDocumentNodeItem deserializeToNodeItemInternal(Reader reader, URI documentUri) throws IOException {
+<span class="nc" id="L120">    Object value = deserializeToValue(reader, documentUri);</span>
+<span class="nc" id="L121">    return INodeItemFactory.instance().newDocumentNodeItem(rootDefinition, documentUri, value);</span>
+  }
+
+  @Override
+  public final CLASS deserializeToValue(Reader reader, URI documentUri) throws IOException {
+    // doesn't auto close the underlying reader
+<span class="fc" id="L127">    try (AutoCloser&lt;XMLEventReader2, XMLStreamException&gt; closer = new AutoCloser&lt;&gt;(</span>
+<span class="fc" id="L128">        newXMLEventReader2(reader), event -&gt; event.close())) {</span>
+<span class="fc" id="L129">      return parseXmlInternal(closer.getResource());</span>
+<span class="nc" id="L130">    } catch (XMLStreamException ex) {</span>
+<span class="nc" id="L131">      throw new IOException(&quot;Unable to create a new XMLEventReader2 instance.&quot;, ex);</span>
+    }
+  }
+
+  @NonNull
+  private CLASS parseXmlInternal(@NonNull XMLEventReader2 reader)
+      throws IOException {
+
+<span class="fc" id="L139">    MetaschemaXmlReader parser = new MetaschemaXmlReader(reader, new DefaultXmlProblemHandler());</span>
+
+    try {
+<span class="fc" id="L142">      return parser.read(rootDefinition);</span>
+<span class="nc" id="L143">    } catch (IOException | XMLStreamException | AssertionError ex) {</span>
+<span class="nc" id="L144">      throw new IOException(</span>
+<span class="nc" id="L145">          String.format(&quot;An unexpected error occured during parsing: %s&quot;, ex.getMessage()),</span>
+          ex);
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

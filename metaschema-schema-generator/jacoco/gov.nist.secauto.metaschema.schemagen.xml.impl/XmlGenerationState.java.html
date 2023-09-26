@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XmlGenerationState.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema XML and JSON Schema Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.schemagen.xml.impl</a> &gt; <span class="el_source">XmlGenerationState.java</span></div><h1>XmlGenerationState.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.schemagen.xml.impl;
+
+import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IModelElement;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.IValuedDefinition;
+import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
+import gov.nist.secauto.metaschema.core.util.AutoCloser;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.schemagen.AbstractGenerationState;
+import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
+import gov.nist.secauto.metaschema.schemagen.SchemaGenerationFeature;
+import gov.nist.secauto.metaschema.schemagen.xml.datatype.XmlDatatypeManager;
+import gov.nist.secauto.metaschema.schemagen.xml.schematype.IXmlComplexType;
+import gov.nist.secauto.metaschema.schemagen.xml.schematype.IXmlSimpleType;
+import gov.nist.secauto.metaschema.schemagen.xml.schematype.IXmlType;
+import gov.nist.secauto.metaschema.schemagen.xml.schematype.XmlComplexTypeAssemblyDefinition;
+import gov.nist.secauto.metaschema.schemagen.xml.schematype.XmlComplexTypeFieldDefinition;
+import gov.nist.secauto.metaschema.schemagen.xml.schematype.XmlSimpleTypeDataTypeReference;
+import gov.nist.secauto.metaschema.schemagen.xml.schematype.XmlSimpleTypeDataTypeRestriction;
+import gov.nist.secauto.metaschema.schemagen.xml.schematype.XmlSimpleTypeUnion;
+
+import org.codehaus.stax2.XMLStreamWriter2;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+<span class="fc" id="L67">public class XmlGenerationState</span>
+    extends AbstractGenerationState&lt;AutoCloser&lt;XMLStreamWriter2, SchemaGenerationException&gt;, XmlDatatypeManager&gt; {
+  @NonNull
+  private final String defaultNS;
+<span class="fc" id="L71">  @NonNull</span>
+  private final Map&lt;String, String&gt; namespaceToPrefixMap = new ConcurrentHashMap&lt;&gt;();
+<span class="fc" id="L73">  @NonNull</span>
+  private final Map&lt;IDataTypeAdapter&lt;?&gt;, IXmlSimpleType&gt; dataTypeToSimpleTypeMap = new ConcurrentHashMap&lt;&gt;();
+<span class="fc" id="L75">  @NonNull</span>
+  private final Map&lt;IValuedDefinition, IXmlSimpleType&gt; definitionToSimpleTypeMap = new ConcurrentHashMap&lt;&gt;();
+<span class="fc" id="L77">  @NonNull</span>
+  private final Map&lt;IDefinition, IXmlType&gt; definitionToTypeMap = new ConcurrentHashMap&lt;&gt;();
+
+  private int prefixNum; // 0
+
+  public XmlGenerationState(
+      @NonNull IModule module,
+      @NonNull AutoCloser&lt;XMLStreamWriter2, SchemaGenerationException&gt; writer,
+      @NonNull IConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; configuration) {
+<span class="fc" id="L86">    super(module, writer, configuration, new XmlDatatypeManager());</span>
+<span class="fc" id="L87">    this.defaultNS = ObjectUtils.notNull(module.getXmlNamespace().toASCIIString());</span>
+<span class="fc" id="L88">  }</span>
+
+  @SuppressWarnings(&quot;resource&quot;)
+  @NonNull
+  public XMLStreamWriter2 getXMLStreamWriter() {
+<span class="fc" id="L93">    return getWriter().getResource();</span>
+  }
+
+  @NonNull
+  public String getDefaultNS() {
+<span class="fc" id="L98">    return defaultNS;</span>
+  }
+
+  @NonNull
+  public String getDatatypeNS() {
+<span class="fc" id="L103">    return getDefaultNS();</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public String getNS(@NonNull IModelElement modelElement) {
+<span class="fc" id="L109">    return modelElement.getContainingModule().getXmlNamespace().toASCIIString();</span>
+  }
+
+  public String getNSPrefix(String namespace) {
+<span class="nc" id="L113">    String retval = null;</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">    if (!getDefaultNS().equals(namespace)) {</span>
+<span class="nc" id="L115">      synchronized (this) {</span>
+<span class="nc" id="L116">        retval = namespaceToPrefixMap.get(namespace);</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        if (retval == null) {</span>
+<span class="nc" id="L118">          retval = String.format(&quot;ns%d&quot;, ++prefixNum);</span>
+<span class="nc" id="L119">          namespaceToPrefixMap.put(namespace, retval);</span>
+        }
+<span class="nc" id="L121">      }</span>
+    }
+<span class="nc" id="L123">    return retval;</span>
+  }
+
+  @NonNull
+  protected QName newQName(
+      @NonNull String localName,
+      @NonNull String namespace) {
+<span class="fc" id="L130">    String prefix = null;</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">    if (!getDefaultNS().equals(namespace)) {</span>
+<span class="nc" id="L132">      prefix = getNSPrefix(namespace);</span>
+    }
+
+<span class="fc" id="L135">    return ObjectUtils.notNull(</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        prefix == null ? new QName(namespace, localName) : new QName(namespace, localName, prefix));</span>
+  }
+
+  @NonNull
+  protected QName newQName(
+      @NonNull IDefinition definition,
+      @Nullable String suffix) {
+<span class="fc" id="L143">    return newQName(</span>
+<span class="fc" id="L144">        getTypeNameForDefinition(definition, suffix),</span>
+<span class="fc" id="L145">        getNS(definition));</span>
+  }
+
+  public IXmlType getTypeForDefinition(@NonNull IDefinition definition) {
+<span class="fc" id="L149">    IXmlType retval = definitionToTypeMap.get(definition);</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">    if (retval == null) {</span>
+<span class="pc bpc" id="L151" title="1 of 4 branches missed.">      switch (definition.getModelType()) {</span>
+      case FIELD: {
+<span class="fc" id="L153">        IFieldDefinition field = (IFieldDefinition) definition;</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        if (field.getFlagInstances().isEmpty()) {</span>
+<span class="fc" id="L155">          retval = getSimpleType(field);</span>
+        } else {
+<span class="fc" id="L157">          retval = newComplexType(field);</span>
+        }
+<span class="fc" id="L159">        break;</span>
+      }
+      case ASSEMBLY: {
+<span class="fc" id="L162">        retval = newComplexType((IAssemblyDefinition) definition);</span>
+<span class="fc" id="L163">        break;</span>
+      }
+      case FLAG:
+<span class="fc" id="L166">        retval = getSimpleType((IFlagDefinition) definition);</span>
+<span class="fc" id="L167">        break;</span>
+      default:
+<span class="nc" id="L169">        throw new UnsupportedOperationException(definition.getModelType().toString());</span>
+      }
+<span class="fc" id="L171">      definitionToTypeMap.put(definition, retval);</span>
+    }
+<span class="fc" id="L173">    return retval;</span>
+  }
+
+  @NonNull
+  public IXmlSimpleType getSimpleType(@NonNull IDataTypeAdapter&lt;?&gt; dataType) {
+<span class="fc" id="L178">    IXmlSimpleType type = dataTypeToSimpleTypeMap.get(dataType);</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">    if (type == null) {</span>
+      // lazy initialize and cache the type
+<span class="fc" id="L181">      QName qname = newQName(</span>
+<span class="fc" id="L182">          getDatatypeManager().getTypeNameForDatatype(dataType),</span>
+<span class="fc" id="L183">          getDatatypeNS());</span>
+<span class="fc" id="L184">      type = new XmlSimpleTypeDataTypeReference(qname, dataType);</span>
+<span class="fc" id="L185">      dataTypeToSimpleTypeMap.put(dataType, type);</span>
+    }
+<span class="fc" id="L187">    return type;</span>
+  }
+
+  @NonNull
+  public IXmlSimpleType getSimpleType(@NonNull IValuedDefinition definition) {
+<span class="fc" id="L192">    IXmlSimpleType simpleType = definitionToSimpleTypeMap.get(definition);</span>
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">    if (simpleType == null) {</span>
+<span class="fc" id="L194">      AllowedValueCollection allowedValuesCollection = getContextIndependentEnumeratedValues(definition);</span>
+<span class="fc" id="L195">      List&lt;IAllowedValue&gt; allowedValues = allowedValuesCollection.getValues();</span>
+
+<span class="fc" id="L197">      IDataTypeAdapter&lt;?&gt; dataType = definition.getJavaTypeAdapter();</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">      if (allowedValues.isEmpty()) {</span>
+        // just use the built-in type
+<span class="fc" id="L200">        simpleType = getSimpleType(dataType);</span>
+      } else {
+
+        // generate a restriction on the built-in type for the enumerated values
+<span class="fc" id="L204">        simpleType = new XmlSimpleTypeDataTypeRestriction(</span>
+<span class="fc" id="L205">            newQName(definition, null),</span>
+            definition,
+            allowedValuesCollection);
+
+<span class="fc bfc" id="L209" title="All 2 branches covered.">        if (!allowedValuesCollection.isClosed()) {</span>
+          // if other values are allowed, we need to make a union of the restriction type
+          // and the base
+          // built-in type
+<span class="fc" id="L213">          simpleType = new XmlSimpleTypeUnion(</span>
+<span class="fc" id="L214">              newQName(definition, &quot;Union&quot;),</span>
+              definition,
+<span class="fc" id="L216">              getSimpleType(dataType),</span>
+              simpleType);
+        }
+      }
+
+<span class="fc" id="L221">      definitionToSimpleTypeMap.put(definition, simpleType);</span>
+    }
+<span class="fc" id="L223">    return simpleType;</span>
+  }
+
+  @NonNull
+  protected IXmlComplexType newComplexType(@NonNull IFieldDefinition definition) {
+<span class="fc" id="L228">    QName qname = newQName(definition, null);</span>
+<span class="fc" id="L229">    return new XmlComplexTypeFieldDefinition(qname, definition);</span>
+  }
+
+  @NonNull
+  protected IXmlComplexType newComplexType(@NonNull IAssemblyDefinition definition) {
+<span class="fc" id="L234">    QName qname = newQName(definition, null);</span>
+<span class="fc" id="L235">    return new XmlComplexTypeAssemblyDefinition(qname, definition);</span>
+  }
+
+  public void generateXmlTypes() throws XMLStreamException {
+
+<span class="fc bfc" id="L240" title="All 2 branches covered.">    for (IXmlType type : definitionToTypeMap.values()) {</span>
+<span class="pc bpc" id="L241" title="1 of 6 branches missed.">      if (!type.isInline(this) &amp;&amp; type.isGeneratedType(this) &amp;&amp; type.isReferenced(this)) {</span>
+<span class="fc" id="L242">        type.generateType(this, false);</span>
+      } else {
+<span class="fc bfc" id="L244" title="All 2 branches covered.">        if (type.isGeneratedType(this)) {</span>
+<span class="pc bpc" id="L245" title="3 of 4 branches missed.">          assert type.isInline(this) || !type.isReferenced(this);</span>
+        }
+      }
+<span class="fc" id="L248">    }</span>
+<span class="fc" id="L249">    getDatatypeManager().generateDatatypes(getXMLStreamWriter());</span>
+<span class="fc" id="L250">  }</span>
+
+  public void writeAttribute(@NonNull String localName, @NonNull String value) throws XMLStreamException {
+<span class="fc" id="L253">    getXMLStreamWriter().writeAttribute(localName, value);</span>
+<span class="fc" id="L254">  }</span>
+
+  public void writeStartElement(@NonNull String namespaceUri, @NonNull String localName) throws XMLStreamException {
+<span class="fc" id="L257">    getXMLStreamWriter().writeStartElement(namespaceUri, localName);</span>
+<span class="fc" id="L258">  }</span>
+
+  public void writeStartElement(
+      @NonNull String prefix,
+      @NonNull String localName,
+      @NonNull String namespaceUri) throws XMLStreamException {
+<span class="fc" id="L264">    getXMLStreamWriter().writeStartElement(prefix, localName, namespaceUri);</span>
+
+<span class="fc" id="L266">  }</span>
+
+  public void writeEndElement() throws XMLStreamException {
+<span class="fc" id="L269">    getXMLStreamWriter().writeEndElement();</span>
+<span class="fc" id="L270">  }</span>
+
+  public void writeCharacters(@NonNull String text) throws XMLStreamException {
+<span class="fc" id="L273">    getXMLStreamWriter().writeCharacters(text);</span>
+<span class="fc" id="L274">  }</span>
+
+  public void writeNamespace(String prefix, String namespaceUri) throws XMLStreamException {
+<span class="fc" id="L277">    getXMLStreamWriter().writeNamespace(prefix, namespaceUri);</span>
+<span class="fc" id="L278">  }</span>
+
+  @Override
+  public void flushWriter() throws IOException {
+    try {
+<span class="fc" id="L283">      getWriter().getResource().flush();</span>
+<span class="nc" id="L284">    } catch (XMLStreamException ex) {</span>
+<span class="nc" id="L285">      throw new IOException(ex);</span>
+<span class="fc" id="L286">    }</span>
+<span class="fc" id="L287">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

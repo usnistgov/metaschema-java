@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IBoundNamedInstance.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.model</a> &gt; <span class="el_source">IBoundNamedInstance.java</span></div><h1>IBoundNamedInstance.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.model;
+
+import gov.nist.secauto.metaschema.core.model.INamedInstance;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+public interface IBoundNamedInstance extends INamedInstance {
+
+  @Override
+  default String getName() {
+    // delegate to the definition
+<span class="fc" id="L49">    return getDefinition().getName();</span>
+  }
+
+  @Override
+  default @NonNull Map&lt;QName, Set&lt;String&gt;&gt; getProperties() {
+    // TODO: implement
+<span class="nc" id="L55">    throw new UnsupportedOperationException();</span>
+  }
+
+  /**
+   * Get the {@link IClassBinding} for the Java class within which this property
+   * exists.
+   *
+   * @return the containing class's binding
+   */
+  @NonNull
+  IClassBinding getParentClassBinding();
+
+  /**
+   * Gets the bound Java field associated with this property.
+   *
+   * @return the Java field
+   */
+  @NonNull
+  Field getField();
+
+  @NonNull
+  default String getJavaFieldName() {
+<span class="fc" id="L77">    return ObjectUtils.notNull(getField().getName());</span>
+  }
+
+  /**
+   * Get the actual Java type of the underlying bound object.
+   * &lt;p&gt;
+   * This may be the same as the what is returned by {@link #getItemType()}, or
+   * may be a Java collection class.
+   *
+   * @return the raw type of the bound object
+   */
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  default Type getType() {
+<span class="fc" id="L91">    return getField().getGenericType();</span>
+  }
+
+  /**
+   * Get the item type of the bound object. An item type is the primitive or
+   * specialized type that represents that data associated with this binding.
+   *
+   * @return the item type of the bound object
+   */
+  @NonNull
+  default Class&lt;?&gt; getItemType() {
+<span class="nc" id="L102">    return (Class&lt;?&gt;) getType();</span>
+  }
+
+  /**
+   * Get the current value from the provided {@code parentInstance} object. The
+   * provided object must be of the type associated with the definition containing
+   * this property.
+   *
+   * @param parentInstance
+   *          the object associated with the definition containing this property
+   * @return the value if available, or {@code null} otherwise
+   */
+  @Override
+  default Object getValue(@NonNull Object parentInstance) {
+<span class="fc" id="L116">    Field field = getField();</span>
+<span class="fc" id="L117">    boolean accessable = field.canAccess(parentInstance);</span>
+<span class="fc" id="L118">    field.setAccessible(true); // NOPMD - intentional</span>
+    Object retval;
+    try {
+<span class="fc" id="L121">      Object result = field.get(parentInstance);</span>
+<span class="fc" id="L122">      retval = result;</span>
+<span class="nc" id="L123">    } catch (IllegalArgumentException | IllegalAccessException ex) {</span>
+<span class="nc" id="L124">      throw new IllegalArgumentException(</span>
+<span class="nc" id="L125">          String.format(&quot;Unable to get the value of field '%s' in class '%s'.&quot;, field.getName(),</span>
+<span class="nc" id="L126">              field.getDeclaringClass().getName()),</span>
+          ex);
+    } finally {
+<span class="fc" id="L129">      field.setAccessible(accessable); // NOPMD - intentional</span>
+    }
+<span class="fc" id="L131">    return retval;</span>
+  }
+
+  /**
+   * Set the provided value on the provided object. The provided object must be of
+   * the item's type associated with this property.
+   *
+   * @param parentInstance
+   *          the object
+   * @param value
+   *          a value, which may be a simple {@link Type} or a
+   *          {@link ParameterizedType} for a collection
+   */
+  default void setValue(@NonNull Object parentInstance, Object value) {
+<span class="fc" id="L145">    Field field = getField();</span>
+<span class="fc" id="L146">    boolean accessable = field.canAccess(parentInstance);</span>
+<span class="fc" id="L147">    field.setAccessible(true); // NOPMD - intentional</span>
+    try {
+<span class="fc" id="L149">      field.set(parentInstance, value);</span>
+<span class="nc" id="L150">    } catch (IllegalArgumentException | IllegalAccessException ex) {</span>
+<span class="nc" id="L151">      throw new IllegalArgumentException(</span>
+<span class="nc" id="L152">          String.format(</span>
+              &quot;Unable to set the value of field '%s' in class '%s'. Perhaps this is a data type adapter problem on the declared class?&quot;,
+<span class="nc" id="L154">              field.getName(),</span>
+<span class="nc" id="L155">              field.getDeclaringClass().getName()),</span>
+          ex);
+    } finally {
+<span class="fc" id="L158">      field.setAccessible(accessable); // NOPMD - intentional</span>
+    }
+<span class="fc" id="L160">  }</span>
+
+  @Nullable
+  Object defaultValue() throws BindingException;
+
+  /**
+   * Copy this instance from one parent object to another.
+   *
+   * @param fromInstance
+   *          the object to copy from
+   * @param toInstance
+   *          the object to copy to
+   * @throws BindingException
+   *           if an error occurred while processing the object bindings
+   */
+  void copyBoundObject(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

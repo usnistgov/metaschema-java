@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IBoundLoader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.io</a> &gt; <span class="el_source">IBoundLoader.java</span></div><h1>IBoundLoader.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.io;
+
+import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
+import gov.nist.secauto.metaschema.core.metapath.IDocumentLoader;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.DefaultBindingContext;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+/**
+ * A common interface for loading Module based instance resources.
+ */
+public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration&lt;DeserializationFeature&lt;?&gt;&gt; {
+
+  @Override
+  default IBoundLoader enableFeature(DeserializationFeature&lt;?&gt; feature) {
+<span class="nc" id="L56">    return set(feature, true);</span>
+  }
+
+  @Override
+  default IBoundLoader disableFeature(DeserializationFeature&lt;?&gt; feature) {
+<span class="nc" id="L61">    return set(feature, false);</span>
+  }
+
+  @Override
+  IBoundLoader applyConfiguration(IConfiguration&lt;DeserializationFeature&lt;?&gt;&gt; other);
+
+  @Override
+  IBoundLoader set(DeserializationFeature&lt;?&gt; feature, Object value);
+
+  /**
+   * Determine the format of the provided resource.
+   *
+   * @param file
+   *          the resource
+   * @return the format information for the provided resource
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   */
+  @NonNull
+  default FormatDetector.Result detectFormat(@NonNull File file) throws IOException {
+<span class="nc" id="L81">    return detectFormat(ObjectUtils.notNull(file.toPath()));</span>
+  }
+
+  /**
+   * Determine the format of the provided resource.
+   *
+   * @param path
+   *          the resource
+   * @return the format information for the provided resource
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   */
+  @NonNull
+  default FormatDetector.Result detectFormat(@NonNull Path path) throws IOException {
+<span class="nc" id="L95">    return detectFormat(ObjectUtils.notNull(path.toUri()));</span>
+  }
+
+  /**
+   * Determine the format of the provided resource.
+   *
+   * @param url
+   *          the resource
+   * @return the format information for the provided resource
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   */
+  @NonNull
+  default FormatDetector.Result detectFormat(@NonNull URL url) throws IOException {
+    try {
+<span class="nc" id="L110">      return detectFormat(ObjectUtils.notNull(url.toURI()));</span>
+<span class="nc" id="L111">    } catch (URISyntaxException ex) {</span>
+<span class="nc" id="L112">      throw new IOException(ex);</span>
+    }
+  }
+
+  /**
+   * Determine the format of the resource identified by the provided {@code uri}.
+   *
+   * @param uri
+   *          the resource
+   * @return the format information for the provided resource
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   */
+  @NonNull
+  FormatDetector.Result detectFormat(@NonNull URI uri) throws IOException;
+
+  /**
+   * Determine the format of the provided resource.
+   * &lt;p&gt;
+   * This method will consume data from the provided {@link InputStream}. If the
+   * caller of this method intends to read data from the stream after determining
+   * the format, the caller should pass in a stream that can be reset.
+   * &lt;p&gt;
+   * This method will not close the provided {@link InputStream}, since it does
+   * not own the stream.
+   *
+   * @param is
+   *          an input stream for the resource
+   * @return the format information for the provided resource
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   */
+  @NonNull
+  FormatDetector.Result detectFormat(@NonNull InputStream is) throws IOException;
+
+  //
+  // /**
+  // * Determine the format of the provided resource.
+  // * &lt;p&gt;
+  // * This method will consume data from any {@link InputStream} provided by the
+  // * {@link InputSource}. If the caller of this method intends to read data from
+  // * the stream after determining the format, the caller should pass in a stream
+  // * that can be reset.
+  // * &lt;p&gt;
+  // * This method will not close any {@link InputStream} provided by the
+  // * {@link InputSource}, since it does not own the stream.
+  // *
+  // * @param source
+  // * information about how to access the resource
+  // * @return the format of the provided resource
+  // * @throws IOException
+  // * if an error occurred while reading the resource
+  // */
+  // @NonNull
+  // Format detectFormat(@NonNull InputSource source) throws IOException;
+
+  /**
+   * Load data from the provided resource into a bound object.
+   * &lt;p&gt;
+   * This method will auto-detect the format of the provided resource.
+   *
+   * @param &lt;CLASS&gt;
+   *          the type of the bound object to return
+   * @param file
+   *          the resource
+   * @return a bound object containing the loaded data
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   * @see #detectFormat(File)
+   */
+  @NonNull
+  default &lt;CLASS&gt; CLASS load(@NonNull File file) throws IOException {
+<span class="nc" id="L184">    return load(ObjectUtils.notNull(file.toPath()));</span>
+  }
+
+  /**
+   * Load data from the provided resource into a bound object.
+   * &lt;p&gt;
+   * This method will auto-detect the format of the provided resource.
+   *
+   * @param &lt;CLASS&gt;
+   *          the type of the bound object to return
+   * @param path
+   *          the resource
+   * @return a bound object containing the loaded data
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   * @see #detectFormat(File)
+   */
+  @NonNull
+  default &lt;CLASS&gt; CLASS load(@NonNull Path path) throws IOException {
+<span class="fc" id="L203">    return load(ObjectUtils.notNull(path.toUri()));</span>
+  }
+
+  /**
+   * Load data from the provided resource into a bound object.
+   * &lt;p&gt;
+   * This method will auto-detect the format of the provided resource.
+   *
+   * @param &lt;CLASS&gt;
+   *          the type of the bound object to return
+   * @param url
+   *          the resource
+   * @return a bound object containing the loaded data
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   * @throws URISyntaxException
+   *           if the provided {@code url} is malformed
+   * @see #detectFormat(URL)
+   */
+  @NonNull
+  default &lt;CLASS&gt; CLASS load(@NonNull URL url) throws IOException, URISyntaxException {
+<span class="nc" id="L224">    return load(ObjectUtils.notNull(url.toURI()));</span>
+  }
+
+  /**
+   * Load data from the resource identified by the provided {@code uri} into a
+   * bound object.
+   * &lt;p&gt;
+   * This method will auto-detect the format of the provided resource.
+   *
+   * @param &lt;CLASS&gt;
+   *          the type of the bound object to return
+   * @param uri
+   *          the resource
+   * @return a bound object containing the loaded data
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   * @see #detectFormat(URL)
+   */
+  @NonNull
+  &lt;CLASS&gt; CLASS load(@NonNull URI uri) throws IOException;
+
+  /**
+   * Load data from the provided resource into a bound object.
+   * &lt;p&gt;
+   * This method should auto-detect the format of the provided resource.
+   * &lt;p&gt;
+   * This method will not close the provided {@link InputStream}, since it does
+   * not own the stream.
+   *
+   * @param &lt;CLASS&gt;
+   *          the type of the bound object to return
+   * @param is
+   *          the resource stream
+   * @param documentUri
+   *          the URI of the resource
+   * @return a bound object containing the loaded data
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   * @see #detectFormat(InputStream)
+   */
+  @NonNull
+  &lt;CLASS&gt; CLASS load(@NonNull InputStream is, @NonNull URI documentUri) throws IOException;
+
+  /**
+   * Load data from the specified resource into a bound object with the type of
+   * the specified Java class.
+   *
+   * @param &lt;CLASS&gt;
+   *          the Java type to load data into
+   * @param clazz
+   *          the class for the java type
+   * @param file
+   *          the resource to load
+   * @return the loaded instance data
+   * @throws IOException
+   *           if an error occurred while loading the data in the specified file
+   */
+  @NonNull
+  default &lt;CLASS&gt; CLASS load(
+      @NonNull Class&lt;CLASS&gt; clazz,
+      @NonNull File file) throws IOException {
+<span class="nc" id="L285">    return load(clazz, ObjectUtils.notNull(file.toPath()));</span>
+  }
+
+  /**
+   * Load data from the specified resource into a bound object with the type of
+   * the specified Java class.
+   *
+   * @param &lt;CLASS&gt;
+   *          the Java type to load data into
+   * @param clazz
+   *          the class for the java type
+   * @param path
+   *          the resource to load
+   * @return the loaded instance data
+   * @throws IOException
+   *           if an error occurred while loading the data in the specified file
+   */
+  @NonNull
+  default &lt;CLASS&gt; CLASS load(
+      @NonNull Class&lt;CLASS&gt; clazz,
+      @NonNull Path path) throws IOException {
+<span class="nc" id="L306">    return load(clazz, ObjectUtils.notNull(path.toUri()));</span>
+  }
+
+  /**
+   * Load data from the specified resource into a bound object with the type of
+   * the specified Java class.
+   *
+   * @param &lt;CLASS&gt;
+   *          the Java type to load data into
+   * @param clazz
+   *          the class for the java type
+   * @param url
+   *          the resource to load
+   * @return the loaded instance data
+   * @throws IOException
+   *           if an error occurred while loading the data in the specified file
+   * @throws URISyntaxException
+   *           if the provided {@code url} is malformed
+   */
+  @NonNull
+  default &lt;CLASS&gt; CLASS load(
+      @NonNull Class&lt;CLASS&gt; clazz,
+      @NonNull URL url) throws IOException, URISyntaxException {
+<span class="nc" id="L329">    return load(clazz, ObjectUtils.notNull(url.toURI()));</span>
+  }
+
+  /**
+   * Load data from the specified resource into a bound object with the type of
+   * the specified Java class.
+   *
+   * @param &lt;CLASS&gt;
+   *          the Java type to load data into
+   * @param clazz
+   *          the class for the java type
+   * @param uri
+   *          the resource to load
+   * @return the loaded instance data
+   * @throws IOException
+   *           if an error occurred while loading the data in the specified file
+   */
+  @NonNull
+  &lt;CLASS&gt; CLASS load(
+      @NonNull Class&lt;CLASS&gt; clazz,
+      @NonNull URI uri) throws IOException;
+
+  /**
+   * Load data from the specified resource into a bound object with the type of
+   * the specified Java class.
+   * &lt;p&gt;
+   * This method will not close the provided {@link InputStream}, since it does
+   * not own the stream.
+   * &lt;p&gt;
+   * Implementations of this method will do format detection. This process might
+   * leave the provided {@link InputStream} at a position beyond the last parsed
+   * location. If you want to avoid this possibility, use and implementation of
+   * {@link IDeserializer#deserialize(InputStream, URI)} instead, such as what is
+   * provided by {@link DefaultBindingContext#newDeserializer(Format, Class)}.
+   *
+   * @param &lt;CLASS&gt;
+   *          the Java type to load data into
+   * @param clazz
+   *          the class for the java type
+   * @param is
+   *          the resource stream
+   * @param documentUri
+   *          the URI of the resource
+   * @return the loaded data
+   * @throws IOException
+   *           if an error occurred while loading the data from the specified
+   *           resource
+   */
+  @NonNull
+  &lt;CLASS&gt; CLASS load(
+      @NonNull Class&lt;CLASS&gt; clazz,
+      @NonNull InputStream is,
+      @NonNull URI documentUri) throws IOException;
+
+  /**
+   * Load data expressed using the provided {@code format} and return that data as
+   * a Metapath node item.
+   * &lt;p&gt;
+   * The specific Module model is auto-detected by analyzing the source. The class
+   * reported is implementation specific.
+   *
+   * @param format
+   *          the expected format of the data to parse
+   * @param path
+   *          the resource
+   * @return the Metapath node item for the parsed data
+   * @throws IOException
+   *           if an error occurred while loading the data from the specified
+   *           resource
+   */
+  @NonNull
+  default IDocumentNodeItem loadAsNodeItem(
+      @NonNull Format format,
+      @NonNull Path path) throws IOException {
+<span class="nc" id="L403">    return loadAsNodeItem(format, ObjectUtils.notNull(path.toUri()));</span>
+  }
+
+  /**
+   * Load data expressed using the provided {@code format} and return that data as
+   * a Metapath node item.
+   * &lt;p&gt;
+   * The specific Module model is auto-detected by analyzing the source. The class
+   * reported is implementation specific.
+   *
+   * @param format
+   *          the expected format of the data to parse
+   * @param uri
+   *          the resource
+   * @return the Metapath node item for the parsed data
+   * @throws IOException
+   *           if an error occurred while loading the data from the specified
+   *           resource
+   */
+  @NonNull
+  IDocumentNodeItem loadAsNodeItem(
+      @NonNull Format format,
+      @NonNull URI uri) throws IOException;
+
+  /**
+   * Load data expressed using the provided {@code format} and return that data as
+   * a Metapath node item.
+   * &lt;p&gt;
+   * The specific Module model is auto-detected by analyzing the source. The class
+   * reported is implementation specific.
+   *
+   * @param format
+   *          the expected format of the data to parse
+   * @param is
+   *          the resource stream
+   * @param documentUri
+   *          the URI of the resource
+   * @return the Metapath node item for the parsed data
+   * @throws IOException
+   *           if an error occurred while loading the data from the specified
+   *           resource
+   */
+  @NonNull
+  IDocumentNodeItem loadAsNodeItem(
+      @NonNull Format format,
+      @NonNull InputStream is,
+      @NonNull URI documentUri) throws IOException;
+
+  /**
+   * Get the configured Module binding context to use to load Java types.
+   *
+   * @return the binding context
+   */
+  @NonNull
+  IBindingContext getBindingContext();
+
+  /**
+   * Auto convert the provided {@code source} to the provided {@code toFormat}.
+   * Write the converted content to the provided {@code destination}.
+   * &lt;p&gt;
+   * The format of the source is expected to be auto detected using
+   * {@link #detectFormat(Path)}.
+   *
+   * @param &lt;CLASS&gt;
+   *          the Java type to load data into
+   * @param source
+   *          the resource to convert
+   * @param destination
+   *          the resource to write converted content to
+   * @param toFormat
+   *          the format to convert to
+   * @param rootClass
+   *          the class for the Java type to load data into
+   * @throws FileNotFoundException
+   *           the the provided source file was not found
+   * @throws IOException
+   *           if an error occurred while loading the data from the specified
+   *           resource or writing the converted data to the specified destination
+   */
+  default &lt;CLASS&gt; void convert(
+      @NonNull Path source,
+      @NonNull Path destination,
+      @NonNull Format toFormat,
+      @NonNull Class&lt;CLASS&gt; rootClass) throws FileNotFoundException, IOException {
+<span class="nc" id="L487">    CLASS object = load(rootClass, source);</span>
+
+<span class="nc" id="L489">    ISerializer&lt;CLASS&gt; serializer = getBindingContext().newSerializer(toFormat, rootClass);</span>
+<span class="nc" id="L490">    serializer.serialize(object, destination);</span>
+<span class="nc" id="L491">  }</span>
+
+  /**
+   * Auto convert the provided {@code source} to the provided {@code toFormat}.
+   * Write the converted content to the provided {@code destination}.
+   * &lt;p&gt;
+   * The format of the source is expected to be auto detected using
+   * {@link #detectFormat(Path)}.
+   *
+   * @param &lt;CLASS&gt;
+   *          the Java type to load data into
+   * @param source
+   *          the resource to convert
+   * @param os
+   *          the output stream to write converted content to
+   * @param toFormat
+   *          the format to convert to
+   * @param rootClass
+   *          the class for the Java type to load data into
+   * @throws FileNotFoundException
+   *           the the provided source file was not found
+   * @throws IOException
+   *           if an error occurred while loading the data from the specified
+   *           resource or writing the converted data to the specified destination
+   */
+  default &lt;CLASS&gt; void convert(
+      @NonNull Path source,
+      @NonNull OutputStream os,
+      @NonNull Format toFormat,
+      @NonNull Class&lt;CLASS&gt; rootClass) throws FileNotFoundException, IOException {
+<span class="nc" id="L521">    CLASS object = load(rootClass, source);</span>
+
+<span class="nc" id="L523">    ISerializer&lt;CLASS&gt; serializer = getBindingContext().newSerializer(toFormat, rootClass);</span>
+<span class="nc" id="L524">    serializer.serialize(object, os);</span>
+<span class="nc" id="L525">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

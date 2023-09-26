@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Step.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath</a> &gt; <span class="el_source">Step.java</span></div><h1>Step.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath;
+
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+/**
+ * An immutable expression that combines the evaluation of a sub-expression,
+ * with the evaluation of a series of predicate expressions that filter the
+ * result of the evaluation.
+ */
+class Step implements IExpression { // NOPMD - intentional
+
+  @NonNull
+  private final Axis axisExpression;
+  @NonNull
+  private final IExpression stepExpression;
+  @NonNull
+  private final Class&lt;? extends IItem&gt; staticResultType;
+
+  /**
+   * Construct a new stepExpression expression.
+   *
+   * @param axis
+   *          the axis to evaluate against
+   * @param step
+   *          the sub-expression to evaluate before filtering with the predicates
+   */
+  @SuppressWarnings(&quot;null&quot;)
+<span class="fc" id="L60">  protected Step(@NonNull Axis axis, @NonNull IExpression step) {</span>
+<span class="fc" id="L61">    this.axisExpression = axis;</span>
+<span class="fc" id="L62">    this.stepExpression = step;</span>
+<span class="fc" id="L63">    this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, List.of(step));</span>
+<span class="fc" id="L64">  }</span>
+
+  @NonNull
+  public Axis getAxis() {
+<span class="fc" id="L68">    return axisExpression;</span>
+  }
+
+  /**
+   * Get the stepExpression's sub-expression.
+   *
+   * @return the sub-expression
+   */
+  @NonNull
+  public IExpression getStep() {
+<span class="fc" id="L78">    return stepExpression;</span>
+  }
+
+  @Override
+  public Class&lt;? extends IItem&gt; getStaticResultType() {
+<span class="nc" id="L83">    return staticResultType;</span>
+  }
+
+  @Override
+  public List&lt;? extends IExpression&gt; getChildren() {
+<span class="nc" id="L88">    return ObjectUtils.notNull(List.of(getAxis(), getStep()));</span>
+  }
+
+  @Override
+  public &lt;RESULT, CONTEXT&gt; RESULT accept(IExpressionVisitor&lt;RESULT, CONTEXT&gt; visitor, CONTEXT context) {
+<span class="nc" id="L93">    return visitor.visitStep(this, context);</span>
+  }
+
+  @Override
+  public ISequence&lt;?&gt; accept(DynamicContext dynamicContext, ISequence&lt;?&gt; focus) {
+
+<span class="fc" id="L99">    ISequence&lt;? extends INodeItem&gt; axisResult = getAxis().accept(dynamicContext, focus);</span>
+<span class="fc" id="L100">    return getStep().accept(dynamicContext, axisResult);</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public String toASTString() {
+<span class="nc" id="L106">    return String.format(&quot;%s[axis=%s]&quot;, getClass().getName(), getAxis().name());</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExpressionUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath</a> &gt; <span class="el_source">ExpressionUtils.java</span></div><h1>ExpressionUtils.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath;
+
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+<span class="fc" id="L37">final class ExpressionUtils {</span>
+  private ExpressionUtils() {
+    // disable
+  }
+
+  @NonNull
+  public static &lt;RESULT_TYPE&gt; Class&lt;? extends RESULT_TYPE&gt; analyzeStaticResultType(
+      @NonNull Class&lt;RESULT_TYPE&gt; baseType,
+      @NonNull List&lt;IExpression&gt; expressions) {
+
+    Class&lt;? extends RESULT_TYPE&gt; retval;
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">    if (expressions.isEmpty()) {</span>
+      // no expressions, so use the base type
+<span class="nc" id="L50">      retval = baseType;</span>
+    } else {
+<span class="fc" id="L52">      List&lt;Class&lt;?&gt;&gt; expressionClasses = ObjectUtils.notNull(expressions.stream()</span>
+<span class="fc" id="L53">          .map(expr -&gt; expr.getStaticResultType()).collect(Collectors.toList()));</span>
+
+      // check if the expression classes, are derived from the base type
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">      if (checkDerivedFrom(baseType, expressionClasses)) {</span>
+<span class="fc" id="L57">        retval = findCommonBase(baseType, expressionClasses);</span>
+      } else {
+<span class="nc" id="L59">        retval = baseType;</span>
+      }
+    }
+<span class="fc" id="L62">    return retval;</span>
+  }
+
+  @NonNull
+  private static &lt;RESULT_TYPE&gt; Class&lt;? extends RESULT_TYPE&gt; findCommonBase(
+      @NonNull Class&lt;RESULT_TYPE&gt; baseType,
+      @NonNull List&lt;Class&lt;?&gt;&gt; expressionClasses) {
+    Class&lt;? extends RESULT_TYPE&gt; retval;
+<span class="fc bfc" id="L70" title="All 2 branches covered.">    if (expressionClasses.size() == 1) {</span>
+<span class="fc" id="L71">      @SuppressWarnings(&quot;unchecked&quot;) Class&lt;? extends RESULT_TYPE&gt; result</span>
+<span class="fc" id="L72">          = (Class&lt;? extends RESULT_TYPE&gt;) expressionClasses.iterator().next();</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">      assert result != null;</span>
+<span class="fc" id="L74">      retval = result;</span>
+<span class="fc" id="L75">    } else {</span>
+<span class="fc" id="L76">      @SuppressWarnings(&quot;unchecked&quot;) Class&lt;? extends RESULT_TYPE&gt; first</span>
+<span class="fc" id="L77">          = (Class&lt;? extends RESULT_TYPE&gt;) expressionClasses.iterator().next();</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">      assert first != null;</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">      if (baseType.equals(first)) {</span>
+        // the first type is the same as the base, which is the least common type
+<span class="fc" id="L81">        retval = baseType;</span>
+      } else {
+        // search for the least common type
+<span class="fc" id="L84">        Class&lt;?&gt; leastCommon = getCommonBaseClass(</span>
+            baseType,
+            first,
+<span class="fc" id="L87">            ObjectUtils.notNull(expressionClasses.subList(1, expressionClasses.size())));</span>
+<span class="fc" id="L88">        @SuppressWarnings(&quot;unchecked&quot;) Class&lt;? extends RESULT_TYPE&gt; newBase</span>
+            = (Class&lt;? extends RESULT_TYPE&gt;) leastCommon;
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        if (newBase != null) {</span>
+<span class="fc" id="L91">          retval = newBase;</span>
+        } else {
+<span class="nc" id="L93">          retval = baseType;</span>
+        }
+      }
+    }
+<span class="fc" id="L97">    return retval;</span>
+  }
+
+  @Nullable
+  private static Class&lt;?&gt; getCommonBaseClass(@NonNull Class&lt;?&gt; baseType,
+      @NonNull Class&lt;?&gt; first, @NonNull List&lt;Class&lt;?&gt;&gt; expressionClasses) {
+<span class="fc" id="L103">    boolean match = true;</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">    for (Class&lt;?&gt; clazz : expressionClasses) {</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">      if (!first.isAssignableFrom(clazz)) {</span>
+<span class="fc" id="L106">        match = false;</span>
+<span class="fc" id="L107">        break;</span>
+      }
+<span class="fc" id="L109">    }</span>
+
+<span class="fc" id="L111">    Class&lt;?&gt; retval = null;</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">    if (match) {</span>
+<span class="fc" id="L113">      retval = first;</span>
+    } else {
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">      for (Class&lt;?&gt; clazz : first.getInterfaces()) {</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        assert clazz != null;</span>
+        // ensure the new interface is a sublass of the baseType
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        if (baseType.isAssignableFrom(clazz)) {</span>
+<span class="fc" id="L119">          Class&lt;?&gt; newBase = getCommonBaseClass(baseType, clazz, expressionClasses);</span>
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">          if (newBase != null) {</span>
+<span class="fc" id="L121">            retval = newBase;</span>
+<span class="fc" id="L122">            break;</span>
+          }
+        }
+      }
+    }
+<span class="fc" id="L127">    return retval;</span>
+  }
+
+  private static boolean checkDerivedFrom(@NonNull Class&lt;?&gt; baseType,
+      @NonNull List&lt;Class&lt;?&gt;&gt; expressionClasses) {
+<span class="fc" id="L132">    boolean retval = true;</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">    for (Class&lt;?&gt; clazz : expressionClasses) {</span>
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">      if (!baseType.isAssignableFrom(clazz)) {</span>
+<span class="nc" id="L135">        retval = false;</span>
+<span class="nc" id="L136">        break;</span>
+      }
+<span class="fc" id="L138">    }</span>
+<span class="fc" id="L139">    return retval;</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

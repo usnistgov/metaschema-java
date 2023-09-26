@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CollectionUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.util</a> &gt; <span class="el_source">CollectionUtil.java</span></div><h1>CollectionUtil.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.util;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+public final class CollectionUtil {
+
+  private CollectionUtil() {
+    // disable construction
+  }
+
+  /**
+   * Get a {@link Stream} for the provided {@link Iterable}.
+   *
+   * @param &lt;T&gt;
+   *          the type to iterate on
+   * @param iterator
+   *          the iterator
+   * @return the stream
+   */
+  public static &lt;T&gt; Stream&lt;T&gt; toStream(@NonNull Iterator&lt;T&gt; iterator) {
+<span class="nc" id="L64">    Iterable&lt;T&gt; iterable = toIterable(iterator);</span>
+<span class="nc" id="L65">    return StreamSupport.stream(iterable.spliterator(), false);</span>
+  }
+
+  /**
+   * Get an {@link Iterable} for the provided {@link Stream}.
+   *
+   * @param &lt;T&gt;
+   *          the type to iterate on
+   * @param stream
+   *          the stream to iterate over
+   * @return the resulting iterable instance
+   */
+  @NonNull
+  public static &lt;T&gt; Iterable&lt;T&gt; toIterable(@NonNull Stream&lt;T&gt; stream) {
+<span class="fc" id="L79">    return toIterable(ObjectUtils.notNull(stream.iterator()));</span>
+  }
+
+  /**
+   * Get an {@link Iterable} for the provided {@link Iterator}.
+   *
+   * @param &lt;T&gt;
+   *          the type to iterate on
+   * @param iterator
+   *          the iterator
+   * @return the resulting iterable instance
+   */
+  @NonNull
+  public static &lt;T&gt; Iterable&lt;T&gt; toIterable(@NonNull Iterator&lt;T&gt; iterator) {
+<span class="fc" id="L93">    return () -&gt; iterator;</span>
+  }
+
+  /**
+   * Get a reverse {@link Iterable} for the provided {@link List}.
+   *
+   * @param &lt;T&gt;
+   *          the type to iterate on
+   * @param list
+   *          the list of items to iterate over
+   * @return the resulting iterable instance
+   */
+  @NonNull
+  public static &lt;T&gt; Iterable&lt;T&gt; toDescendingIterable(@NonNull List&lt;T&gt; list) {
+<span class="nc" id="L107">    return toIterable(descendingIterator(list));</span>
+  }
+
+  /**
+   * Convert the provided {@link Iterable} to a list of the same generic type.
+   *
+   * @param &lt;T&gt;
+   *          the collection item's generic type
+   * @param iterable
+   *          the Iterable to convert to a list
+   * @return the list
+   */
+  @NonNull
+  public static &lt;T&gt; List&lt;T&gt; toList(Iterable&lt;T&gt; iterable) {
+<span class="fc" id="L121">    return ObjectUtils.notNull(StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList()));</span>
+  }
+
+  /**
+   * Convert the provided {@link Iterator} to a list of the same generic type.
+   *
+   * @param &lt;T&gt;
+   *          the collection item's generic type
+   * @param iterator
+   *          the Iterator to convert to a list
+   * @return the list
+   */
+  @NonNull
+  public static &lt;T&gt; List&lt;T&gt; toList(Iterator&lt;T&gt; iterator) {
+<span class="nc" id="L135">    return ObjectUtils.notNull(</span>
+<span class="nc" id="L136">        StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false)</span>
+<span class="nc" id="L137">            .collect(Collectors.toList()));</span>
+  }
+
+  /**
+   * Get a reverse {@link Iterator} for the provided {@link List}.
+   *
+   * @param &lt;T&gt;
+   *          the type to iterate on
+   * @param list
+   *          the list of items to iterate over
+   * @return the resulting Iterator instance
+   */
+  @NonNull
+  public static &lt;T&gt; Iterator&lt;T&gt; descendingIterator(@NonNull List&lt;T&gt; list) {
+    Iterator&lt;T&gt; retval;
+<span class="nc bnc" id="L152" title="All 2 branches missed.">    if (list instanceof LinkedList) {</span>
+<span class="nc" id="L153">      retval = ((LinkedList&lt;T&gt;) list).descendingIterator();</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">    } else if (list instanceof ArrayList) {</span>
+<span class="nc" id="L155">      retval = IntStream.range(0, list.size())</span>
+<span class="nc" id="L156">          .map(i -&gt; list.size() - 1 - i)</span>
+<span class="nc" id="L157">          .mapToObj(list::get).iterator();</span>
+    } else {
+<span class="nc" id="L159">      throw new UnsupportedOperationException();</span>
+    }
+<span class="nc" id="L161">    return ObjectUtils.notNull(retval);</span>
+  }
+
+  @NonNull
+  public static &lt;T extends Collection&lt;A&gt;, A&gt; T requireNonEmpty(@NonNull T collection) {
+<span class="nc bnc" id="L166" title="All 2 branches missed.">    if (collection.isEmpty()) {</span>
+<span class="nc" id="L167">      throw new IllegalStateException();</span>
+    }
+<span class="nc" id="L169">    return collection;</span>
+  }
+
+  @NonNull
+  public static &lt;T extends Collection&lt;A&gt;, A&gt; T requireNonEmpty(@NonNull T collection, @NonNull String message) {
+<span class="nc bnc" id="L174" title="All 2 branches missed.">    if (collection.isEmpty()) {</span>
+<span class="nc" id="L175">      throw new IllegalStateException(message);</span>
+    }
+<span class="nc" id="L177">    return collection;</span>
+  }
+
+  /**
+   * A wrapper of the {@link Collections#unmodifiableCollection(Collection)}
+   * method that ensure a {@link NonNull} result is returned.
+   *
+   * @param &lt;T&gt;
+   *          the collection's item type
+   * @param collection
+   *          the collection
+   * @return a non-null unmodifiable instance of the provided collection
+   */
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static &lt;T&gt; Collection&lt;T&gt; unmodifiableCollection(@NonNull Collection&lt;T&gt; collection) {
+<span class="nc" id="L193">    return Collections.unmodifiableCollection(collection);</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static &lt;T&gt; Set&lt;T&gt; singleton(@NonNull T value) {
+<span class="fc" id="L199">    return Collections.singleton(value);</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static &lt;T&gt; Set&lt;T&gt; emptySet() {
+<span class="fc" id="L205">    return Collections.emptySet();</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static &lt;T&gt; Set&lt;T&gt; unmodifiableSet(@NonNull Set&lt;T&gt; set) {
+<span class="fc" id="L211">    return Collections.unmodifiableSet(set);</span>
+  }
+
+  @NonNull
+  public static &lt;T&gt; List&lt;T&gt; listOrEmpty(@Nullable List&lt;T&gt; list) {
+<span class="nc bnc" id="L216" title="All 2 branches missed.">    return list == null ? emptyList() : list;</span>
+  }
+
+  @SafeVarargs
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static &lt;T&gt; List&lt;T&gt; listOrEmpty(@Nullable T... array) {
+<span class="nc bnc" id="L223" title="All 4 branches missed.">    return array == null || array.length == 0 ? emptyList() : Arrays.asList(array);</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static &lt;T&gt; List&lt;T&gt; emptyList() {
+<span class="fc" id="L229">    return Collections.emptyList();</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static &lt;T&gt; List&lt;T&gt; unmodifiableList(@NonNull List&lt;T&gt; list) {
+<span class="fc" id="L235">    return Collections.unmodifiableList(list);</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static &lt;T&gt; List&lt;T&gt; singletonList(@NonNull T instance) {
+<span class="fc" id="L241">    return Collections.singletonList(instance);</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static &lt;K, V&gt; Map&lt;K, V&gt; emptyMap() {
+<span class="fc" id="L247">    return Collections.emptyMap();</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static &lt;K, V&gt; Map&lt;K, V&gt; singletonMap(@NonNull K key, @NonNull V value) {
+<span class="nc" id="L253">    return Collections.singletonMap(key, value);</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static &lt;K, V&gt; Map&lt;K, V&gt; unmodifiableMap(@NonNull Map&lt;K, V&gt; map) {
+<span class="fc" id="L259">    return Collections.unmodifiableMap(map);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

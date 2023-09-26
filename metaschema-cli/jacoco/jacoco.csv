@@ -1,0 +1,12 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+Metaschema Command Line Tool,gov.nist.secauto.metaschema.cli,CLI,17,46,2,0,5,10,3,2,2,2
+Metaschema Command Line Tool,gov.nist.secauto.metaschema.cli.commands,AbstractValidateContentCommand,156,39,18,0,35,16,14,2,5,2
+Metaschema Command Line Tool,gov.nist.secauto.metaschema.cli.commands,GenerateSchemaCommand,129,219,18,18,29,65,19,9,2,8
+Metaschema Command Line Tool,gov.nist.secauto.metaschema.cli.commands,AbstractValidateContentCommand.AbstractValidationCommandExecutor,259,0,22,0,63,0,16,0,5,0
+Metaschema Command Line Tool,gov.nist.secauto.metaschema.cli.commands,MetaschemaCommandSupport,16,0,0,0,8,0,2,0,2,0
+Metaschema Command Line Tool,gov.nist.secauto.metaschema.cli.commands,ValidateContentUsingModuleCommand.OscalCommandExecutor,152,0,12,0,31,0,14,0,8,0
+Metaschema Command Line Tool,gov.nist.secauto.metaschema.cli.commands,AbstractConvertSubcommand,137,0,8,0,39,0,10,0,6,0
+Metaschema Command Line Tool,gov.nist.secauto.metaschema.cli.commands,ValidateModuleCommand,45,110,10,8,10,29,10,8,1,8
+Metaschema Command Line Tool,gov.nist.secauto.metaschema.cli.commands,ValidateContentUsingModuleCommand,63,7,4,0,14,3,5,3,3,3
+Metaschema Command Line Tool,gov.nist.secauto.metaschema.cli.commands,AbstractConvertSubcommand.AbstractConversionCommandExecutor,166,0,22,0,39,0,14,0,3,0
+Metaschema Command Line Tool,gov.nist.secauto.metaschema.cli.util,LoggingValidationHandler,297,0,28,0,73,0,29,0,12,0

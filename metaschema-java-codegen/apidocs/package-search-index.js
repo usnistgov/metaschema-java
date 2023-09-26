@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"gov.nist.secauto.metaschema.codegen"},{"l":"gov.nist.secauto.metaschema.codegen.binding"},{"l":"gov.nist.secauto.metaschema.codegen.binding.config"}]

@@ -34,12 +34,12 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.maven.plugin;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.codegen.JavaGenerator;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.MetaschemaLoader;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IMetaschema;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.MetaschemaException;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.model.IModule;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.model.MetaschemaException;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.util.ObjectUtils;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.databind.codegen.JavaGenerator;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.databind.codegen.config.DefaultBindingConfiguration;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.apache.maven.plugin.MojoExecutionException;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -61,9 +61,9 @@
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.NonNull;
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment"> * Goal which generates Java source files for a given set of Metaschema definitions.</em>
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment"> * Goal which generates Java source files for a given set of Module definitions.</em>
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>  @Mojo(name = <span class="jxr_string">"generate-sources"</span>, defaultPhase = LifecyclePhase.PROCESS_SOURCES)
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  @Mojo(name = <span class="jxr_string">"generate-sources"</span>, defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="GenerateSourcesMojo" href="../../../../../../gov/nist/secauto/metaschema/maven/plugin/GenerateSourcesMojo.html#GenerateSourcesMojo">GenerateSourcesMojo</a>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      <strong class="jxr_keyword">extends</strong> <a name="AbstractMetaschemaMojo" href="../../../../../../gov/nist/secauto/metaschema/maven/plugin/AbstractMetaschemaMojo.html#AbstractMetaschemaMojo">AbstractMetaschemaMojo</a> {
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String STALE_FILE_NAME = <span class="jxr_string">"generateSourcesStaleFile"</span>;
@@ -107,12 +107,12 @@
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L100" href="#L100">100</a> <em class="jxr_javadoccomment">   * Generate the Java source files for the provided Metaschemas.</em>
 <a class="jxr_linenumber" name="L101" href="#L101">101</a> <em class="jxr_javadoccomment">   *</em>
-<a class="jxr_linenumber" name="L102" href="#L102">102</a> <em class="jxr_javadoccomment">   * @param metaschemaCollection</em>
-<a class="jxr_linenumber" name="L103" href="#L103">103</a> <em class="jxr_javadoccomment">   *          the collection of Metaschemas to generate sources for</em>
+<a class="jxr_linenumber" name="L102" href="#L102">102</a> <em class="jxr_javadoccomment">   * @param modules</em>
+<a class="jxr_linenumber" name="L103" href="#L103">103</a> <em class="jxr_javadoccomment">   *          the collection of Metaschema modules to generate sources for</em>
 <a class="jxr_linenumber" name="L104" href="#L104">104</a> <em class="jxr_javadoccomment">   * @throws MojoExecutionException</em>
 <a class="jxr_linenumber" name="L105" href="#L105">105</a> <em class="jxr_javadoccomment">   *           if an error occurred while generating sources</em>
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> generate(@NonNull Set&lt;IMetaschema&gt; metaschemaCollection) <strong class="jxr_keyword">throws</strong> MojoExecutionException {
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> generate(@NonNull Set&lt;IModule&gt; modules) <strong class="jxr_keyword">throws</strong> MojoExecutionException {
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>     DefaultBindingConfiguration bindingConfiguration = <strong class="jxr_keyword">new</strong> DefaultBindingConfiguration();
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>     <strong class="jxr_keyword">for</strong> (File config : getConfigs()) {
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>       <strong class="jxr_keyword">try</strong> {
@@ -126,7 +126,7 @@
 <a class="jxr_linenumber" name="L118" href="#L118">118</a> 
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>     <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>       getLog().info(<span class="jxr_string">"Generating Java classes in: "</span> + getOutputDirectory().getPath());
-<a class="jxr_linenumber" name="L121" href="#L121">121</a>       JavaGenerator.generate(metaschemaCollection, ObjectUtils.notNull(getOutputDirectory().toPath()),
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>       JavaGenerator.generate(modules, ObjectUtils.notNull(getOutputDirectory().toPath()),
 <a class="jxr_linenumber" name="L122" href="#L122">122</a>           bindingConfiguration);
 <a class="jxr_linenumber" name="L123" href="#L123">123</a>     } <strong class="jxr_keyword">catch</strong> (IOException ex) {
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> MojoExecutionException(<span class="jxr_string">"Creation of Java classes failed."</span>, ex);
@@ -165,21 +165,21 @@
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>       }
 <a class="jxr_linenumber" name="L158" href="#L158">158</a> 
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>       <em class="jxr_comment">// generate Java sources based on provided metaschema sources</em>
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>       <strong class="jxr_keyword">final</strong> MetaschemaLoader loader = <strong class="jxr_keyword">new</strong> MetaschemaLoader();
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>       <strong class="jxr_keyword">final</strong> ModuleLoader loader = <strong class="jxr_keyword">new</strong> ModuleLoader();
 <a class="jxr_linenumber" name="L161" href="#L161">161</a>       loader.allowEntityResolution();
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>       <strong class="jxr_keyword">final</strong> Set&lt;IMetaschema&gt; metaschemaCollection = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;();
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>       <strong class="jxr_keyword">final</strong> Set&lt;IModule&gt; modules = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;();
 <a class="jxr_linenumber" name="L163" href="#L163">163</a>       <strong class="jxr_keyword">for</strong> (File source : getSources().collect(Collectors.toList())) {
 <a class="jxr_linenumber" name="L164" href="#L164">164</a>         getLog().info(<span class="jxr_string">"Using metaschema source: "</span> + source.getPath());
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>         IMetaschema metaschema;
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>         IModule module;
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>           metaschema = loader.load(source);
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>           module = loader.load(source);
 <a class="jxr_linenumber" name="L168" href="#L168">168</a>         } <strong class="jxr_keyword">catch</strong> (MetaschemaException | IOException ex) {
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>           <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> MojoExecutionException(<span class="jxr_string">"Loading of metaschema failed"</span>, ex);
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>         }
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>         metaschemaCollection.add(metaschema);
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>         modules.add(module);
 <a class="jxr_linenumber" name="L172" href="#L172">172</a>       }
 <a class="jxr_linenumber" name="L173" href="#L173">173</a> 
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>       generate(metaschemaCollection);
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>       generate(modules);
 <a class="jxr_linenumber" name="L175" href="#L175">175</a> 
 <a class="jxr_linenumber" name="L176" href="#L176">176</a>       <em class="jxr_comment">// create the stale file</em>
 <a class="jxr_linenumber" name="L177" href="#L177">177</a>       <strong class="jxr_keyword">if</strong> (!staleFileDirectory.exists()) {

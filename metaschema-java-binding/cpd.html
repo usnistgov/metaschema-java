@@ -8,7 +8,7 @@
 <html  xml:lang="" lang="">
         <head>
     <meta charset="UTF-8" />
-    <title>CPD Results | Metaschema Java Data Binding</title>
+    <title>CPD Results | metaschema-java-binding</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="" />
       <meta http-equiv="content-language" content="" />
@@ -35,7 +35,6 @@
             <div class="collapse navbar-collapse" id="top-navbar-collapse-1">
                 <ul class="nav navbar-nav ">
                     <li class="nav-item " ><a  href="http://github.com/usnistgov/metaschema-java/"  title="GitHub project"   class="externalLink nav-link" >GitHub project</a></li>
-                    <li class="nav-item " ><a  href="../apidocs"  title="Javadoc"  class="nav-link" >Javadoc</a></li>
                     <li class="nav-item dropdown active">
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Maven Documentation <b class="caret"></b></a>
                         <div class="dropdown-menu">
@@ -57,14 +56,8 @@
                             <div class="dropdown-submenu">
                                 <a  href="project-reports.html"  title="Project Reports"  class="dropdown-item active" >Project Reports</a>                                <div class="dropdown-menu">
                                     <a href="surefire-report.html" title="Surefire"  class="dropdown-item ">Surefire</a>
-                                    <a href="xref/index.html" title="Source Xref"  class="dropdown-item ">Source Xref</a>
-                                    <a href="xref-test/index.html" title="Test Source Xref"  class="dropdown-item ">Test Source Xref</a>
                                     <a href="pmd.html" title="PMD"  class="dropdown-item ">PMD</a>
                                     <a href="" title="CPD"  class="dropdown-item active">CPD</a>
-                                    <a href="taglist.html" title="Tag List"  class="dropdown-item ">Tag List</a>
-                                    <a href="checkstyle.html" title="Checkstyle"  class="dropdown-item ">Checkstyle</a>
-                                    <a href="spotbugs.html" title="SpotBugs"  class="dropdown-item ">SpotBugs</a>
-                                    <a href="apidocs/index.html" title="Javadoc"  class="dropdown-item ">Javadoc</a>
                                 </div>
                             </div>
                         </div>
@@ -79,224 +72,15 @@
         <main class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-8" role="main">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a  href=".."  title="Java Tools"  class="" >Java Tools</a></li>
-            <li class="breadcrumb-item"><a  href="index.html"  title="Metaschema Java Data Binding"  class="" >Metaschema Java Data Binding</a></li>
+            <li class="breadcrumb-item"><a  href=".."  title="Summary"  class="" >Summary</a></li>
+            <li class="breadcrumb-item"><a  href="index.html"  title="metaschema-java-binding"  class="" >metaschema-java-binding</a></li>
             <li class="breadcrumb-item active">CPD Results</li>
         </ol>
     </nav>
         <section>
  <h1 id="cpd-results">CPD Results</h1><a id="cpd_results"></a>
  <p>The following document contains the results of PMD's <a class="externalLink" href="https://pmd.github.io/latest/pmd_userdocs_cpd.html">CPD</a> 6.55.0.</p>
- <section>
-  <h2 id="duplications1">Duplications</h2><a id="duplications"></a>
-  <table class="bodyTable table table-striped table-hover">
-   <thead>
-    <tr class="a">
-     <th>File</th>
-     <th>Line</th>
-    </tr>
-   </thead>
-   <tbody>
-    <tr class="b">
-     <td style="text-align: left;">gov\nist\secauto\metaschema\binding\model\AssemblyConstraintSupport.java</td>
-     <td><a href="./xref/gov/nist/secauto/metaschema/binding/model/AssemblyConstraintSupport.html#L86">86</a></td>
-    </tr>
-    <tr class="a">
-     <td style="text-align: left;">gov\nist\secauto\metaschema\binding\model\ValueConstraintSupport.java</td>
-     <td><a href="./xref/gov/nist/secauto/metaschema/binding/model/ValueConstraintSupport.html#L81">81</a></td>
-    </tr>
-    <tr class="b">
-     <td colspan="2" style="text-align: left;">
-      <div class="source">
-       <pre>@Nullable AssemblyConstraints assemblyAnnotation,
-      @NonNull ISource source) {
-    if (valueAnnotation == null) {
-      this.allowedValuesConstraints = new LinkedList&lt;&gt;();
-      this.matchesConstraints = new LinkedList&lt;&gt;();
-      this.indexHasKeyConstraints = new LinkedList&lt;&gt;();
-      this.expectConstraints = new LinkedList&lt;&gt;();
-    } else {
-      try {
-        allowedValuesConstraints = Arrays.stream(valueAnnotation.allowedValues())
-            .map(annotation -&gt; ConstraintFactory.newAllowedValuesConstraint(annotation, source))
-            .collect(Collectors.toCollection(LinkedList::new));
-
-        matchesConstraints = Arrays.stream(valueAnnotation.matches())
-            .map(annotation -&gt; ConstraintFactory.newMatchesConstraint(annotation, source))
-            .collect(Collectors.toCollection(LinkedList::new));
-
-        indexHasKeyConstraints = Arrays.stream(valueAnnotation.indexHasKey())
-            .map(annotation -&gt; ConstraintFactory.newIndexHasKeyConstraint(annotation, source))
-            .collect(Collectors.toCollection(LinkedList::new));
-
-        expectConstraints = Arrays.stream(valueAnnotation.expect())
-            .map(annotation -&gt; ConstraintFactory.newExpectConstraint(annotation, source))
-            .collect(Collectors.toCollection(LinkedList::new));
-      } catch (MetapathException ex) {
-        throw new MetapathException(
-            String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()),
-            ex);
-      }
-    }</pre>
-      </div></td>
-    </tr>
-   </tbody>
-  </table>
-  <table class="bodyTable table table-striped table-hover">
-   <thead>
-    <tr class="a">
-     <th>File</th>
-     <th>Line</th>
-    </tr>
-   </thead>
-   <tbody>
-    <tr class="b">
-     <td style="text-align: left;">gov\nist\secauto\metaschema\binding\model\DefaultFieldClassBinding.java</td>
-     <td><a href="./xref/gov/nist/secauto/metaschema/binding/model/DefaultFieldClassBinding.html#L330">330</a></td>
-    </tr>
-    <tr class="a">
-     <td style="text-align: left;">gov\nist\secauto\metaschema\binding\model\DefaultFieldClassBinding.java</td>
-     <td><a href="./xref/gov/nist/secauto/metaschema/binding/model/DefaultFieldClassBinding.html#L487">487</a></td>
-    </tr>
-    <tr class="b">
-     <td colspan="2" style="text-align: left;">
-      <div class="source">
-       <pre>@NonNull IJsonParsingContext context)
-      throws IOException {
-    Predicate&lt;IBoundFlagInstance&gt; flagFilter = null;
-
-    IBoundFlagInstance jsonKey = null;
-    if (requiresJsonKey) {
-      IBoundFlagInstance instance = getJsonKeyFlagInstance();
-      if (instance == null) {
-        throw new IOException("This property is configured to use a JSON key, but no JSON key was found");
-      }
-
-      flagFilter = (flag) -&gt; {
-        return !instance.equals(flag);
-      };
-      jsonKey = instance;
-    }
-
-    IBoundFlagInstance jsonValueKey = getJsonValueKeyFlagInstance();
-    if (jsonValueKey != null) {
-      if (flagFilter == null) {
-        flagFilter = (flag) -&gt; {
-          return !jsonValueKey.equals(flag);
-        };
-      } else {
-        flagFilter = flagFilter.and((flag) -&gt; {
-          return !jsonValueKey.equals(flag);
-        });
-      }
-    }
-
-    Map&lt;String, ? extends IBoundNamedInstance&gt; properties = getNamedInstances(flagFilter);</pre>
-      </div></td>
-    </tr>
-   </tbody>
-  </table>
-  <table class="bodyTable table table-striped table-hover">
-   <thead>
-    <tr class="a">
-     <th>File</th>
-     <th>Line</th>
-    </tr>
-   </thead>
-   <tbody>
-    <tr class="b">
-     <td style="text-align: left;">gov\nist\secauto\metaschema\binding\model\IAssemblyConstraintFeature.java</td>
-     <td><a href="./xref/gov/nist/secauto/metaschema/binding/model/IAssemblyConstraintFeature.html#L45">45</a></td>
-    </tr>
-    <tr class="a">
-     <td style="text-align: left;">gov\nist\secauto\metaschema\binding\model\IValueConstraintFeature.java</td>
-     <td><a href="./xref/gov/nist/secauto/metaschema/binding/model/IValueConstraintFeature.html#L41">41</a></td>
-    </tr>
-    <tr class="b">
-     <td colspan="2" style="text-align: left;">
-      <div class="source">
-       <pre>IAssemblyConstraintSupport getConstraintSupport();
-
-  @Override
-  default List&lt;? extends IConstraint&gt; getConstraints() {
-    return getConstraintSupport().getConstraints();
-  }
-
-  @Override
-  default List&lt;? extends IAllowedValuesConstraint&gt; getAllowedValuesConstraints() {
-    return getConstraintSupport().getAllowedValuesConstraints();
-  }
-
-  @Override
-  default List&lt;? extends IMatchesConstraint&gt; getMatchesConstraints() {
-    return getConstraintSupport().getMatchesConstraints();
-  }
-
-  @Override
-  default List&lt;? extends IIndexHasKeyConstraint&gt; getIndexHasKeyConstraints() {
-    return getConstraintSupport().getIndexHasKeyConstraints();
-  }
-
-  @Override
-  default List&lt;? extends IExpectConstraint&gt; getExpectConstraints() {
-    return getConstraintSupport().getExpectConstraints();
-  }
-
-  @Override
-  default List&lt;? extends IIndexConstraint&gt; getIndexConstraints() {</pre>
-      </div></td>
-    </tr>
-   </tbody>
-  </table>
-  <table class="bodyTable table table-striped table-hover">
-   <thead>
-    <tr class="a">
-     <th>File</th>
-     <th>Line</th>
-    </tr>
-   </thead>
-   <tbody>
-    <tr class="b">
-     <td style="text-align: left;">gov\nist\secauto\metaschema\binding\model\AssemblyConstraintSupport.java</td>
-     <td><a href="./xref/gov/nist/secauto/metaschema/binding/model/AssemblyConstraintSupport.html#L189">189</a></td>
-    </tr>
-    <tr class="a">
-     <td style="text-align: left;">gov\nist\secauto\metaschema\binding\model\ValueConstraintSupport.java</td>
-     <td><a href="./xref/gov/nist/secauto/metaschema/binding/model/ValueConstraintSupport.html#L142">142</a></td>
-    </tr>
-    <tr class="b">
-     <td colspan="2" style="text-align: left;">
-      <div class="source">
-       <pre>}
-
-  @Override
-  public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
-    constraints.add(constraint);
-    allowedValuesConstraints.add(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IMatchesConstraint constraint) {
-    constraints.add(constraint);
-    matchesConstraints.add(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
-    constraints.add(constraint);
-    indexHasKeyConstraints.add(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IExpectConstraint constraint) {
-    constraints.add(constraint);
-    expectConstraints.add(constraint);
-  }</pre>
-      </div></td>
-    </tr>
-   </tbody>
-  </table>
- </section>
+ <p>CPD found no problems in your source code.</p>
 </section>        </main>
         <div class="d-none d-sm-none d-md-none d-lg-none d-xl-block col-xl-2">
             <div id="m-toc-sidebar" class="d-print-none m-toc-sidebar-enabled m-toc-sidebar-autoexpandable toc-sidebar-fixed">
@@ -304,9 +88,6 @@
                 <ul class="m-nav--sidebar nav flex-column flex-nowrap">
     <li class="h1">
         <a class="nav-link" href="#cpd-results" title="CPD Results">CPD Results</a>
-    </li>
-    <li class="h2">
-        <a class="nav-link" href="#duplications1" title="Duplications">Duplications</a>
     </li>
                     </ul>
                 </nav>
@@ -347,14 +128,8 @@ Maven Documentation
                                 <li class="nav-item "><a  href="project-info.html"  title="Project Information"  class="nav-link" >Project Information <i class="fas fa-angle-right"></i></a></li>
                                 <li class="nav-item active"><a  href="project-reports.html"  title="Project Reports"  class="nav-link" >Project Reports <i class="fas fa-angle-down"></i></a>        <ul class="nav flex-column nav-list">
                     <li class="nav-item "><a  href="surefire-report.html"  title="Surefire"  class="nav-link" >Surefire</a></li>
-                    <li class="nav-item "><a  href="xref/index.html"  title="Source Xref"  class="nav-link" >Source Xref</a></li>
-                    <li class="nav-item "><a  href="xref-test/index.html"  title="Test Source Xref"  class="nav-link" >Test Source Xref</a></li>
                     <li class="nav-item "><a  href="pmd.html"  title="PMD"  class="nav-link" >PMD</a></li>
                     <li class="nav-item active"><a  title="CPD"  class="nav-link" >CPD</a></li>
-                    <li class="nav-item "><a  href="taglist.html"  title="Tag List"  class="nav-link" >Tag List</a></li>
-                    <li class="nav-item "><a  href="checkstyle.html"  title="Checkstyle"  class="nav-link" >Checkstyle</a></li>
-                    <li class="nav-item "><a  href="spotbugs.html"  title="SpotBugs"  class="nav-link" >SpotBugs</a></li>
-                    <li class="nav-item "><a  href="apidocs/index.html"  title="Javadoc"  class="nav-link" >Javadoc</a></li>
         </ul>
 </li>
                 </ul>
@@ -363,7 +138,7 @@ Maven Documentation
                 <blockquote class="blockquote"><span class="color-highlight">Metaschema Java tools</span> provide a set of tools and libraries that allow developers to quickly develop applications based on Metaschema models.</blockquote>
 
                                 <blockquote class="version-date">
-                    <span class="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): 0.12.0</span>
+                    <span class="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): 1.0.0-M1</span>
                             </blockquote>
             </div> <!-- col: .container -->
         </div> <!-- END: .row -->

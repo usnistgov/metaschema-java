@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MetaschemaDataTypeProvider.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.datatype.adapter</a> &gt; <span class="el_source">MetaschemaDataTypeProvider.java</span></div><h1>MetaschemaDataTypeProvider.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.datatype.adapter;
+
+import com.google.auto.service.AutoService;
+
+import gov.nist.secauto.metaschema.core.datatype.AbstractDataTypeProvider;
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeProvider;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+/**
+ * Provides for runtime discovery of built-in implementations of the core
+ * Metaschema data types.
+ */
+@AutoService(IDataTypeProvider.class)
+public final class MetaschemaDataTypeProvider // NOPMD - Used for service initialization
+    extends AbstractDataTypeProvider {
+  @NonNull
+<span class="fc" id="L44">  public static final Base64Adapter BASE64 = new Base64Adapter();</span>
+  @NonNull
+<span class="fc" id="L46">  public static final BooleanAdapter BOOLEAN = new BooleanAdapter();</span>
+  @NonNull
+<span class="fc" id="L48">  public static final DateAdapter DATE = new DateAdapter();</span>
+  @NonNull
+<span class="fc" id="L50">  public static final DateWithTZAdapter DATE_WITH_TZ = new DateWithTZAdapter();</span>
+  @NonNull
+<span class="fc" id="L52">  public static final DateTimeAdapter DATE_TIME = new DateTimeAdapter();</span>
+  @NonNull
+<span class="fc" id="L54">  public static final DateTimeWithTZAdapter DATE_TIME_WITH_TZ = new DateTimeWithTZAdapter();</span>
+  @NonNull
+<span class="fc" id="L56">  public static final IPv4AddressAdapter IP_V4_ADDRESS = new IPv4AddressAdapter();</span>
+  @NonNull
+<span class="fc" id="L58">  public static final IPv6AddressAdapter IP_V6_ADDRESS = new IPv6AddressAdapter();</span>
+  @NonNull
+<span class="fc" id="L60">  public static final UriAdapter URI = new UriAdapter();</span>
+  @NonNull
+<span class="fc" id="L62">  public static final UriReferenceAdapter URI_REFERENCE = new UriReferenceAdapter();</span>
+  @NonNull
+<span class="fc" id="L64">  public static final UuidAdapter UUID = new UuidAdapter();</span>
+
+  @NonNull
+<span class="fc" id="L67">  public static final DayTimeAdapter DAY_TIME_DURATION = new DayTimeAdapter();</span>
+  @NonNull
+<span class="fc" id="L69">  public static final YearMonthAdapter YEAR_MONTH_DURATION = new YearMonthAdapter();</span>
+
+  @NonNull
+<span class="fc" id="L72">  public static final DecimalAdapter DECIMAL = new DecimalAdapter();</span>
+  @NonNull
+<span class="fc" id="L74">  public static final IntegerAdapter INTEGER = new IntegerAdapter();</span>
+  @NonNull
+<span class="fc" id="L76">  public static final NonNegativeIntegerAdapter NON_NEGATIVE_INTEGER = new NonNegativeIntegerAdapter();</span>
+  @NonNull
+<span class="fc" id="L78">  public static final PositiveIntegerAdapter POSITIVE_INTEGER = new PositiveIntegerAdapter();</span>
+
+  @NonNull
+<span class="fc" id="L81">  public static final EmailAddressAdapter EMAIL_ADDRESS = new EmailAddressAdapter();</span>
+  @NonNull
+<span class="fc" id="L83">  public static final HostnameAdapter HOSTNAME = new HostnameAdapter();</span>
+  @NonNull
+<span class="fc" id="L85">  public static final NcNameAdapter NCNAME = new NcNameAdapter();</span>
+  @NonNull
+<span class="fc" id="L87">  public static final StringAdapter STRING = new StringAdapter();</span>
+  @NonNull
+<span class="fc" id="L89">  public static final TokenAdapter TOKEN = new TokenAdapter();</span>
+
+  @NonNull
+<span class="fc" id="L92">  public static final StringAdapter DEFAULT_DATA_TYPE = STRING;</span>
+
+  /**
+   * Initialize the built-in data types.
+   */
+<span class="fc" id="L97">  public MetaschemaDataTypeProvider() {</span>
+    // The data type &quot;string&quot; must be first since this is the default data type for
+    // the {@link String}
+    // Java type. This ensures that when a data type is resolved that this data type
+    // is matched first
+    // before other String-based data types.
+<span class="fc" id="L103">    registerDatatype(STRING);</span>
+
+<span class="fc" id="L105">    registerDatatype(BASE64);</span>
+<span class="fc" id="L106">    registerDatatype(BOOLEAN);</span>
+<span class="fc" id="L107">    registerDatatype(DATE);</span>
+<span class="fc" id="L108">    registerDatatype(DATE_WITH_TZ);</span>
+<span class="fc" id="L109">    registerDatatype(DATE_TIME);</span>
+<span class="fc" id="L110">    registerDatatype(DATE_TIME_WITH_TZ);</span>
+<span class="fc" id="L111">    registerDatatype(DAY_TIME_DURATION);</span>
+<span class="fc" id="L112">    registerDatatype(DECIMAL);</span>
+<span class="fc" id="L113">    registerDatatype(EMAIL_ADDRESS);</span>
+<span class="fc" id="L114">    registerDatatype(HOSTNAME);</span>
+<span class="fc" id="L115">    registerDatatype(INTEGER);</span>
+<span class="fc" id="L116">    registerDatatype(IP_V4_ADDRESS);</span>
+<span class="fc" id="L117">    registerDatatype(IP_V6_ADDRESS);</span>
+
+<span class="fc" id="L119">    registerDatatype(NON_NEGATIVE_INTEGER);</span>
+<span class="fc" id="L120">    registerDatatype(POSITIVE_INTEGER);</span>
+<span class="fc" id="L121">    registerDatatype(TOKEN);</span>
+<span class="fc" id="L122">    registerDatatype(URI);</span>
+<span class="fc" id="L123">    registerDatatype(URI_REFERENCE);</span>
+<span class="fc" id="L124">    registerDatatype(UUID);</span>
+<span class="fc" id="L125">    registerDatatype(YEAR_MONTH_DURATION);</span>
+<span class="fc" id="L126">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

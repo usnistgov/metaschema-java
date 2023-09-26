@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConstraintLoader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.xml</a> &gt; <span class="el_source">ConstraintLoader.java</span></div><h1>ConstraintLoader.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.xml;
+
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultConstraintSet;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultScopedContraints;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalSource;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ISource;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
+import gov.nist.secauto.metaschema.core.model.constraint.IScopedContraints;
+import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstaints;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.METASCHEMACONSTRAINTSDocument;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.METASCHEMACONSTRAINTSDocument.METASCHEMACONSTRAINTS.Scope;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedIndexHasKeyConstraintType;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+/**
+ * Provides methods to load a constraint set expressed in XML.
+ * &lt;p&gt;
+ * Loaded constraint instances are cached to avoid the need to load them for
+ * every use. Any constraint set imported is also loaded and cached
+ * automatically.
+ */
+<span class="fc" id="L69">public class ConstraintLoader</span>
+    extends AbstractLoader&lt;IConstraintSet&gt; {
+
+  @Override
+  protected IConstraintSet parseResource(@NonNull URI resource, @NonNull Deque&lt;URI&gt; visitedResources)
+      throws IOException {
+
+    // parse this metaschema
+<span class="fc" id="L77">    METASCHEMACONSTRAINTSDocument xmlObject = parseConstraintSet(resource);</span>
+
+    // now check if this constraint set imports other constraint sets
+<span class="fc" id="L80">    int size = xmlObject.getMETASCHEMACONSTRAINTS().sizeOfImportArray();</span>
+    @NonNull Map&lt;URI, IConstraintSet&gt; importedConstraints;
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">    if (size == 0) {</span>
+<span class="fc" id="L83">      importedConstraints = ObjectUtils.notNull(Collections.emptyMap());</span>
+    } else {
+      try {
+<span class="nc" id="L86">        importedConstraints = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        for (METASCHEMACONSTRAINTSDocument.METASCHEMACONSTRAINTS.Import imported : xmlObject.getMETASCHEMACONSTRAINTS()</span>
+<span class="nc" id="L88">            .getImportList()) {</span>
+<span class="nc" id="L89">          URI importedResource = URI.create(imported.getHref());</span>
+<span class="nc" id="L90">          importedResource = ObjectUtils.notNull(resource.resolve(importedResource));</span>
+<span class="nc" id="L91">          importedConstraints.put(importedResource, loadInternal(importedResource, visitedResources));</span>
+<span class="nc" id="L92">        }</span>
+<span class="nc" id="L93">      } catch (MetaschemaException ex) {</span>
+<span class="nc" id="L94">        throw new IOException(ex);</span>
+<span class="nc" id="L95">      }</span>
+    }
+
+    // now create this metaschema
+<span class="fc" id="L99">    Collection&lt;IConstraintSet&gt; values = importedConstraints.values();</span>
+<span class="fc" id="L100">    return new DefaultConstraintSet(resource, parseScopedConstraints(xmlObject, resource), new LinkedHashSet&lt;&gt;(values));</span>
+  }
+
+  /**
+   * Parse the provided XML resource as a Metaschema constraints.
+   *
+   * @param resource
+   *          the resource to parse
+   * @return the XMLBeans representation of the Metaschema contraints
+   * @throws IOException
+   *           if a parsing error occurred
+   */
+  @NonNull
+  protected METASCHEMACONSTRAINTSDocument parseConstraintSet(@NonNull URI resource) throws IOException {
+    try {
+<span class="fc" id="L115">      XmlOptions options = new XmlOptions();</span>
+<span class="fc" id="L116">      options.setBaseURI(resource);</span>
+<span class="fc" id="L117">      options.setLoadLineNumbers();</span>
+<span class="fc" id="L118">      return ObjectUtils.notNull(METASCHEMACONSTRAINTSDocument.Factory.parse(resource.toURL(), options));</span>
+<span class="nc" id="L119">    } catch (XmlException ex) {</span>
+<span class="nc" id="L120">      throw new IOException(ex);</span>
+    }
+  }
+
+  /**
+   * Parse individual constraint definitions from the provided XMLBeans object.
+   *
+   * @param xmlObject
+   *          the XMLBeans object
+   * @param source
+   *          the source of the constraint content
+   * @return the scoped constraint definitions
+   */
+  @NonNull
+  protected List&lt;IScopedContraints&gt; parseScopedConstraints(
+      @NonNull METASCHEMACONSTRAINTSDocument xmlObject,
+      @NonNull URI source) {
+<span class="fc" id="L137">    List&lt;IScopedContraints&gt; scopedConstraints = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L138">    ISource constraintSource = ExternalSource.instance(source);</span>
+
+<span class="fc bfc" id="L140" title="All 2 branches covered.">    for (Scope scope : xmlObject.getMETASCHEMACONSTRAINTS().getScopeList()) {</span>
+<span class="fc" id="L141">      URI namespace = ObjectUtils.notNull(URI.create(scope.getMetaschemaNamespace()));</span>
+<span class="fc" id="L142">      String shortName = ObjectUtils.requireNonNull(scope.getMetaschemaShortName());</span>
+
+<span class="fc" id="L144">      try (XmlCursor cursor = scope.newCursor()) {</span>
+<span class="fc" id="L145">        cursor.selectPath(&quot;declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';&quot;</span>
+            + &quot;$this/m:assembly|$this/m:field|$this/m:flag&quot;);
+
+<span class="fc" id="L148">        List&lt;ITargetedConstaints&gt; targetedConstraints = new LinkedList&lt;&gt;(); // NOPMD - intentional</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        while (cursor.toNextSelection()) {</span>
+<span class="fc" id="L150">          XmlObject obj = cursor.getObject();</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">          if (obj instanceof Scope.Assembly) {</span>
+<span class="fc" id="L152">            Scope.Assembly assembly = (Scope.Assembly) obj;</span>
+<span class="fc" id="L153">            MetapathExpression expression = ObjectUtils.requireNonNull(assembly.getTarget());</span>
+<span class="fc" id="L154">            AssemblyConstraintSupport constraints</span>
+                = new AssemblyConstraintSupport(assembly, constraintSource); // NOPMD - intentional
+<span class="fc" id="L156">            targetedConstraints.add(new AssemblyTargetedConstraints(expression, constraints));</span>
+<span class="pc bnc" id="L157" title="All 2 branches missed.">          } else if (obj instanceof Scope.Field) {</span>
+<span class="nc" id="L158">            Scope.Field field = (Scope.Field) obj;</span>
+<span class="nc" id="L159">            MetapathExpression expression = ObjectUtils.requireNonNull(field.getTarget());</span>
+<span class="nc" id="L160">            ValueConstraintSupport constraints</span>
+                = new ValueConstraintSupport(field, constraintSource); // NOPMD - intentional
+<span class="nc" id="L162">            targetedConstraints.add(new FieldTargetedConstraints(expression, constraints));</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">          } else if (obj instanceof ScopedIndexHasKeyConstraintType) {</span>
+<span class="nc" id="L164">            Scope.Flag flag = (Scope.Flag) obj;</span>
+<span class="nc" id="L165">            MetapathExpression expression = ObjectUtils.requireNonNull(flag.getTarget());</span>
+<span class="nc" id="L166">            ValueConstraintSupport constraints</span>
+                = new ValueConstraintSupport(flag, constraintSource); // NOPMD - intentional
+<span class="nc" id="L168">            targetedConstraints.add(new FlagTargetedConstraints(expression, constraints));</span>
+          }
+<span class="fc" id="L170">        }</span>
+<span class="fc" id="L171">        scopedConstraints.add(</span>
+<span class="fc" id="L172">            new DefaultScopedContraints(namespace, shortName, CollectionUtil.unmodifiableList(targetedConstraints)));</span>
+      }
+<span class="fc" id="L174">    }</span>
+<span class="fc" id="L175">    return CollectionUtil.unmodifiableList(scopedConstraints);</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -34,13 +34,13 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.schemagen.xml.schematype;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFlagContainer;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFlagDefinition;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFlagInstance;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.model.IFlagContainer;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.core.model.IFlagInstance;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.schemagen.xml.DocumentationGenerator;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.schemagen.xml.XmlGenerationState;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.schemagen.xml.impl.DocumentationGenerator;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.schemagen.xml.impl.XmlGenerationState;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> javax.xml.namespace.QName;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> javax.xml.stream.XMLStreamException;
@@ -67,7 +67,7 @@
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>    }
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>    @Override
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> generateType(@NonNull <a name="XmlGenerationState" href="../../../../../../../gov/nist/secauto/metaschema/schemagen/xml/XmlGenerationState.html#XmlGenerationState">XmlGenerationState</a> state, <strong class="jxr_keyword">boolean</strong> anonymous) {
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> generateType(@NonNull <a name="XmlGenerationState" href="../../../../../../../gov/nist/secauto/metaschema/schemagen/xml/impl/XmlGenerationState.html#XmlGenerationState">XmlGenerationState</a> state, <strong class="jxr_keyword">boolean</strong> anonymous) {
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>        state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, <span class="jxr_string">"complexType"</span>, XmlSchemaGenerator.NS_XML_SCHEMA);
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  
@@ -85,9 +85,9 @@
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>      }
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>    }
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> generateTypeBody(@NonNull <a name="XmlGenerationState" href="../../../../../../../gov/nist/secauto/metaschema/schemagen/xml/XmlGenerationState.html#XmlGenerationState">XmlGenerationState</a> state) <strong class="jxr_keyword">throws</strong> XMLStreamException;
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> generateTypeBody(@NonNull <a name="XmlGenerationState" href="../../../../../../../gov/nist/secauto/metaschema/schemagen/xml/impl/XmlGenerationState.html#XmlGenerationState">XmlGenerationState</a> state) <strong class="jxr_keyword">throws</strong> XMLStreamException;
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> generateFlagInstance(@NonNull IFlagInstance instance, @NonNull <a name="XmlGenerationState" href="../../../../../../../gov/nist/secauto/metaschema/schemagen/xml/XmlGenerationState.html#XmlGenerationState">XmlGenerationState</a> state)
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> generateFlagInstance(@NonNull IFlagInstance instance, @NonNull <a name="XmlGenerationState" href="../../../../../../../gov/nist/secauto/metaschema/schemagen/xml/impl/XmlGenerationState.html#XmlGenerationState">XmlGenerationState</a> state)
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>        <strong class="jxr_keyword">throws</strong> XMLStreamException {
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>      state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, <span class="jxr_string">"attribute"</span>, XmlSchemaGenerator.NS_XML_SCHEMA);
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  
@@ -101,7 +101,7 @@
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>  
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>      <a name="IXmlType" href="../../../../../../../gov/nist/secauto/metaschema/schemagen/xml/schematype/IXmlType.html#IXmlType">IXmlType</a> type = state.getTypeForDefinition(definition);
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>      <strong class="jxr_keyword">if</strong> (state.isInline(definition)) {
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>      <strong class="jxr_keyword">if</strong> (state.isInline(definition) &amp;&amp; type.isGeneratedType(state)) {
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>        DocumentationGenerator.generateDocumentation(instance, state);
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>        type.generateType(state, <strong class="jxr_keyword">true</strong>);
@@ -115,7 +115,7 @@
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>   }
 <a class="jxr_linenumber" name="L108" href="#L108">108</a> 
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>   @Override
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isInline(<a name="XmlGenerationState" href="../../../../../../../gov/nist/secauto/metaschema/schemagen/xml/XmlGenerationState.html#XmlGenerationState">XmlGenerationState</a> state) {
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isInline(<a name="XmlGenerationState" href="../../../../../../../gov/nist/secauto/metaschema/schemagen/xml/impl/XmlGenerationState.html#XmlGenerationState">XmlGenerationState</a> state) {
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>     <strong class="jxr_keyword">return</strong> state.isInline(getDefinition());
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>   }
 <a class="jxr_linenumber" name="L113" href="#L113">113</a> }

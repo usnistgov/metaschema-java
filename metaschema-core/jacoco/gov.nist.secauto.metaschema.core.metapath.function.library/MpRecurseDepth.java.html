@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MpRecurseDepth.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath.function.library</a> &gt; <span class="el_source">MpRecurseDepth.java</span></div><h1>MpRecurseDepth.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath.function.library;
+
+import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.core.metapath.DynamicMetapathException;
+import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
+import gov.nist.secauto.metaschema.core.metapath.MetapathException;
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
+import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
+import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.List;
+import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public final class MpRecurseDepth {
+  // private static final Logger logger = LogManager.getLogger(FnDoc.class);
+
+  @NonNull
+<span class="fc" id="L52">  static final IFunction SIGNATURE_ONE_ARG = IFunction.builder()</span>
+<span class="fc" id="L53">      .name(&quot;recurse-depth&quot;)</span>
+<span class="fc" id="L54">      .namespace(MetapathConstants.NS_METAPATH)</span>
+<span class="fc" id="L55">      .deterministic()</span>
+<span class="fc" id="L56">      .contextDependent()</span>
+<span class="fc" id="L57">      .focusDependent()</span>
+<span class="fc" id="L58">      .argument(IArgument.newBuilder()</span>
+<span class="fc" id="L59">          .name(&quot;recursePath&quot;)</span>
+<span class="fc" id="L60">          .type(IStringItem.class)</span>
+<span class="fc" id="L61">          .one()</span>
+<span class="fc" id="L62">          .build())</span>
+<span class="fc" id="L63">      .returnType(INodeItem.class)</span>
+<span class="fc" id="L64">      .returnZeroOrMore()</span>
+<span class="fc" id="L65">      .functionHandler(MpRecurseDepth::executeOneArg)</span>
+<span class="fc" id="L66">      .build();</span>
+
+  @NonNull
+<span class="fc" id="L69">  static final IFunction SIGNATURE_TWO_ARG = IFunction.builder()</span>
+<span class="fc" id="L70">      .name(&quot;recurse-depth&quot;)</span>
+<span class="fc" id="L71">      .namespace(MetapathConstants.NS_METAPATH)</span>
+<span class="fc" id="L72">      .deterministic()</span>
+<span class="fc" id="L73">      .contextDependent()</span>
+<span class="fc" id="L74">      .focusIndependent()</span>
+<span class="fc" id="L75">      .argument(IArgument.newBuilder()</span>
+<span class="fc" id="L76">          .name(&quot;context&quot;)</span>
+<span class="fc" id="L77">          .type(INodeItem.class)</span>
+<span class="fc" id="L78">          .zeroOrMore()</span>
+<span class="fc" id="L79">          .build())</span>
+<span class="fc" id="L80">      .argument(IArgument.newBuilder()</span>
+<span class="fc" id="L81">          .name(&quot;recursePath&quot;)</span>
+<span class="fc" id="L82">          .type(IStringItem.class)</span>
+<span class="fc" id="L83">          .one()</span>
+<span class="fc" id="L84">          .build())</span>
+<span class="fc" id="L85">      .returnType(INodeItem.class)</span>
+<span class="fc" id="L86">      .returnZeroOrMore()</span>
+<span class="fc" id="L87">      .functionHandler(MpRecurseDepth::executeTwoArg)</span>
+<span class="fc" id="L88">      .build();</span>
+
+  private MpRecurseDepth() {
+    // disable construction
+  }
+
+  @SuppressWarnings(&quot;unused&quot;)
+  @NonNull
+  private static ISequence&lt;INodeItem&gt; executeOneArg(
+      @NonNull IFunction function,
+      @NonNull List&lt;ISequence&lt;?&gt;&gt; arguments,
+      @NonNull DynamicContext dynamicContext,
+      IItem focus) {
+
+<span class="nc" id="L102">    ISequence&lt;INodeItem&gt; initalContext = ISequence.of(FunctionUtils.requireType(INodeItem.class, focus));</span>
+
+<span class="nc" id="L104">    ISequence&lt;? extends IStringItem&gt; arg = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));</span>
+<span class="nc" id="L105">    IStringItem recursionPath = FunctionUtils.requireFirstItem(arg, true);</span>
+
+<span class="nc" id="L107">    return recurseDepth(initalContext, recursionPath, dynamicContext);</span>
+  }
+
+  @SuppressWarnings(&quot;unused&quot;)
+  @NonNull
+  private static ISequence&lt;INodeItem&gt; executeTwoArg(
+      @NonNull IFunction function,
+      @NonNull List&lt;ISequence&lt;?&gt;&gt; arguments,
+      @NonNull DynamicContext dynamicContext,
+      IItem focus) {
+
+<span class="nc" id="L118">    ISequence&lt;INodeItem&gt; initalContext = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));</span>
+
+<span class="nc" id="L120">    ISequence&lt;? extends IStringItem&gt; arg = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1)));</span>
+<span class="nc" id="L121">    IStringItem recursionPath = FunctionUtils.requireFirstItem(arg, true);</span>
+
+<span class="nc" id="L123">    return recurseDepth(initalContext, recursionPath, dynamicContext);</span>
+  }
+
+  @NonNull
+  private static ISequence&lt;INodeItem&gt; recurseDepth(
+      @NonNull ISequence&lt;INodeItem&gt; initialContext,
+      @NonNull IStringItem recursionPath,
+      @NonNull DynamicContext dynamicContext) {
+
+    MetapathExpression recursionMetapath;
+    try {
+<span class="nc" id="L134">      recursionMetapath = MetapathExpression.compile(recursionPath.asString());</span>
+<span class="nc" id="L135">    } catch (MetapathException ex) {</span>
+<span class="nc" id="L136">      throw new DynamicMetapathException(DynamicMetapathException.INVALID_PATH_GRAMMAR, ex.getMessage(), ex);</span>
+<span class="nc" id="L137">    }</span>
+
+<span class="nc" id="L139">    return recurseDepth(initialContext, recursionMetapath, dynamicContext);</span>
+  }
+
+  @NonNull
+  public static ISequence&lt;INodeItem&gt; recurseDepth(
+      @NonNull ISequence&lt;INodeItem&gt; initialContext,
+      @NonNull MetapathExpression recursionMetapath,
+      @NonNull DynamicContext dynamicContext) {
+
+<span class="nc" id="L148">    return ISequence.of(ObjectUtils.notNull(initialContext.asStream()</span>
+<span class="nc" id="L149">        .flatMap(item -&gt; {</span>
+<span class="nc" id="L150">          @NonNull ISequence&lt;INodeItem&gt; metapathResult</span>
+<span class="nc" id="L151">              = recursionMetapath.evaluate(item, dynamicContext);</span>
+<span class="nc" id="L152">          ISequence&lt;INodeItem&gt; result = recurseDepth(metapathResult, recursionMetapath, dynamicContext);</span>
+<span class="nc" id="L153">          return ObjectUtils.notNull(Stream.concat(result.asStream(), Stream.of(item)));</span>
+        })));
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

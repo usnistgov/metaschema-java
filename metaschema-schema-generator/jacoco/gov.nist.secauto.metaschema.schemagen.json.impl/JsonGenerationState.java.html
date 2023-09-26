@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JsonGenerationState.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema XML and JSON Schema Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.schemagen.json.impl</a> &gt; <span class="el_source">JsonGenerationState.java</span></div><h1>JsonGenerationState.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.schemagen.json.impl;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.IValuedDefinition;
+import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.schemagen.AbstractGenerationState;
+import gov.nist.secauto.metaschema.schemagen.SchemaGenerationFeature;
+import gov.nist.secauto.metaschema.schemagen.json.datatype.JsonDatatypeManager;
+import gov.nist.secauto.metaschema.schemagen.json.schema.AssemblyDefinitionJsonSchema;
+import gov.nist.secauto.metaschema.schemagen.json.schema.DataTypeJsonSchema;
+import gov.nist.secauto.metaschema.schemagen.json.schema.DataTypeRestrictionDefinitionJsonSchema;
+import gov.nist.secauto.metaschema.schemagen.json.schema.FieldDefinitionJsonSchema;
+import gov.nist.secauto.metaschema.schemagen.json.schema.FlagDefinitionJsonSchema;
+import gov.nist.secauto.metaschema.schemagen.json.schema.IDefineableJsonSchema;
+import gov.nist.secauto.metaschema.schemagen.json.schema.IJsonSchema;
+
+import java.io.IOException;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public class JsonGenerationState
+    extends AbstractGenerationState&lt;JsonGenerator, JsonDatatypeManager&gt; {
+
+<span class="fc" id="L66">  @NonNull</span>
+  private final Set&lt;IDefineableJsonSchema&gt; definitionSchemas = new LinkedHashSet&lt;&gt;();
+<span class="fc" id="L68">  @NonNull</span>
+  private final Map&lt;IDefinition, IJsonSchema&gt; definitionToSchemaMap = new ConcurrentHashMap&lt;&gt;();
+<span class="fc" id="L70">  @NonNull</span>
+  private final Map&lt;IValuedDefinition, IJsonSchema&gt; definitionValueToDataTypeSchemaMap = new ConcurrentHashMap&lt;&gt;();
+<span class="fc" id="L72">  @NonNull</span>
+  private final Map&lt;IDataTypeAdapter&lt;?&gt;, IJsonSchema&gt; dataTypeToSchemaMap = new ConcurrentHashMap&lt;&gt;();
+
+  public JsonGenerationState(
+      @NonNull IModule module,
+      @NonNull JsonGenerator writer,
+      @NonNull IConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; configuration) {
+<span class="fc" id="L79">    super(module, writer, configuration, new JsonDatatypeManager());</span>
+<span class="fc" id="L80">  }</span>
+
+  @NonNull
+  public IJsonSchema getDataTypeSchemaForDefinition(@NonNull IValuedDefinition definition) {
+<span class="fc" id="L84">    IJsonSchema retval = definitionValueToDataTypeSchemaMap.get(definition);</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">    if (retval == null) {</span>
+<span class="fc" id="L86">      AllowedValueCollection allowedValuesCollection = getContextIndependentEnumeratedValues(definition);</span>
+<span class="fc" id="L87">      List&lt;IAllowedValue&gt; allowedValues = allowedValuesCollection.getValues();</span>
+
+<span class="fc bfc" id="L89" title="All 2 branches covered.">      if (allowedValues.isEmpty()) {</span>
+        // by default, just use the built-in type
+<span class="fc" id="L91">        retval = getSchema(definition.getJavaTypeAdapter());</span>
+      } else {
+<span class="fc" id="L93">        IDefineableJsonSchema restriction</span>
+            = new DataTypeRestrictionDefinitionJsonSchema(definition, allowedValuesCollection);
+<span class="fc" id="L95">        registerDefinitionSchema(restriction);</span>
+<span class="fc" id="L96">        retval = restriction;</span>
+      }
+<span class="fc" id="L98">      definitionValueToDataTypeSchemaMap.put(definition, retval);</span>
+<span class="fc" id="L99">      retval.resolveSubSchemas(this);</span>
+    }
+<span class="fc" id="L101">    return retval;</span>
+  }
+
+  @NonNull
+  public IJsonSchema getSchema(@NonNull IDefinition definition) {
+<span class="fc" id="L106">    IJsonSchema retval = definitionToSchemaMap.get(definition);</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">    if (retval == null) {</span>
+      IDefineableJsonSchema definitionSchema;
+<span class="pc bpc" id="L109" title="1 of 4 branches missed.">      switch (definition.getModelType()) {</span>
+      case ASSEMBLY:
+<span class="fc" id="L111">        definitionSchema = new AssemblyDefinitionJsonSchema((IAssemblyDefinition) definition);</span>
+<span class="fc" id="L112">        break;</span>
+      case FIELD:
+<span class="fc" id="L114">        definitionSchema = new FieldDefinitionJsonSchema((IFieldDefinition) definition);</span>
+<span class="fc" id="L115">        break;</span>
+      case FLAG:
+<span class="fc" id="L117">        definitionSchema = new FlagDefinitionJsonSchema((IFlagDefinition) definition);</span>
+<span class="fc" id="L118">        break;</span>
+      default:
+<span class="nc" id="L120">        throw new UnsupportedOperationException(definition.getModelType().toString());</span>
+      }
+<span class="fc" id="L122">      definitionToSchemaMap.put(definition, definitionSchema);</span>
+<span class="fc" id="L123">      registerDefinitionSchema(definitionSchema);</span>
+<span class="fc" id="L124">      definitionSchema.resolveSubSchemas(this);</span>
+<span class="fc" id="L125">      retval = definitionSchema;</span>
+    }
+<span class="fc" id="L127">    return retval;</span>
+  }
+
+  @NonNull
+  public IJsonSchema getSchema(@NonNull IDataTypeAdapter&lt;?&gt; datatype) {
+<span class="fc" id="L132">    IJsonSchema retval = dataTypeToSchemaMap.get(datatype);</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">    if (retval == null) {</span>
+<span class="fc" id="L134">      retval = new DataTypeJsonSchema(</span>
+<span class="fc" id="L135">          getDatatypeManager().getTypeNameForDatatype(datatype),</span>
+          datatype);
+<span class="fc" id="L137">      dataTypeToSchemaMap.put(datatype, retval);</span>
+    }
+<span class="fc" id="L139">    return retval;</span>
+  }
+
+  protected void registerDefinitionSchema(@NonNull IDefineableJsonSchema schema) {
+<span class="fc bfc" id="L143" title="All 2 branches covered.">    if (schema.isDefinition(this)) {</span>
+<span class="fc" id="L144">      synchronized (definitionSchemas) {</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">        if (!definitionSchemas.contains(schema)) {</span>
+<span class="fc" id="L146">          definitionSchemas.add(schema);</span>
+        }
+<span class="fc" id="L148">      }</span>
+    }
+<span class="fc" id="L150">  }</span>
+
+  public ObjectNode generateDefinitions() {
+<span class="fc" id="L153">    ObjectNode definitionsObject = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());</span>
+
+<span class="fc bfc" id="L155" title="All 2 branches covered.">    for (IDefineableJsonSchema schema : definitionSchemas) {</span>
+<span class="fc" id="L156">      schema.generateDefinition(this, definitionsObject);</span>
+<span class="fc" id="L157">    }</span>
+
+<span class="fc" id="L159">    getDatatypeManager().generateDatatypes(definitionsObject);</span>
+
+<span class="fc" id="L161">    return definitionsObject;</span>
+  }
+
+  @SuppressWarnings(&quot;resource&quot;)
+  public void writeStartObject() throws IOException {
+<span class="fc" id="L166">    getWriter().writeStartObject();</span>
+<span class="fc" id="L167">  }</span>
+
+  @SuppressWarnings(&quot;resource&quot;)
+  public void writeEndObject() throws IOException {
+<span class="fc" id="L171">    getWriter().writeEndObject();</span>
+<span class="fc" id="L172">  }</span>
+
+  @SuppressWarnings(&quot;resource&quot;)
+  public void writeField(String fieldName, String value) throws IOException {
+<span class="fc" id="L176">    getWriter().writeStringField(fieldName, value);</span>
+
+<span class="fc" id="L178">  }</span>
+
+  @SuppressWarnings(&quot;resource&quot;)
+  public void writeField(String fieldName, ObjectNode obj) throws IOException {
+<span class="fc" id="L182">    JsonGenerator writer = getWriter(); // NOPMD not closable here</span>
+
+<span class="fc" id="L184">    writer.writeFieldName(fieldName);</span>
+<span class="fc" id="L185">    writer.writeTree(obj);</span>
+<span class="fc" id="L186">  }</span>
+
+  @Override
+  public void flushWriter() throws IOException {
+<span class="fc" id="L190">    getWriter().flush();</span>
+<span class="fc" id="L191">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
