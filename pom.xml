@@ -762,11 +762,5 @@
 		<module>metaschema-cli</module>
 		<!-- <module>metaschema-freemarker-support</module> -->
 		<!-- <module>metaschema-documentation-generator</module> -->
-
-		<!-- retired modules -->
-		<module>metaschema-model-common</module><!-- moved to core -->
-		<module>metaschema-model</module><!-- moved to core -->
-		<module>metaschema-java-codegen</module><!-- moved to databind -->
-		<module>metaschema-java-binding</module><!-- moved to databind -->
 	</modules>
 </project>
