@@ -27,9 +27,11 @@
 package gov.nist.secauto.metaschema.core.metapath;
 
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyUriItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDayTimeDurationItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDecimalItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IYearMonthDurationItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.math.BigDecimal;
@@ -68,6 +70,16 @@ public final class TestUtils {
     URI uri = URI.create(value);
     assert uri != null;
     return IAnyUriItem.valueOf(uri);
+  }
+
+  @NonNull
+  public static IYearMonthDurationItem yearMonthDuration(@NonNull String value) {
+    return IYearMonthDurationItem.valueOf(value);
+  }
+
+  @NonNull
+  public static IDayTimeDurationItem dayTimeDuration(@NonNull String value) {
+    return IDayTimeDurationItem.valueOf(value);
   }
 
 }

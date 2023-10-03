@@ -92,7 +92,8 @@ public final class OperationFunctions { // NOPMD - intentional
   }
 
   @NonNull
-  public static IDayTimeDurationItem opAddDayTimeDurations(@NonNull IDayTimeDurationItem arg1,
+  public static IDayTimeDurationItem opAddDayTimeDurations(
+      @NonNull IDayTimeDurationItem arg1,
       @NonNull IDayTimeDurationItem arg2) {
     Duration duration1 = arg1.getValue();
     Duration duration2 = arg2.getValue();
@@ -441,38 +442,20 @@ public final class OperationFunctions { // NOPMD - intentional
   }
 
   @NonNull
-  public static INumericItem opNumericDivide(@NonNull INumericItem dividend, @NonNull INumericItem divisor) {
-    INumericItem retval;
-    if (dividend instanceof IDecimalItem || divisor instanceof IDecimalItem) {
-      // create a decimal result
-      BigDecimal decimalDivisor = divisor.asDecimal();
+  public static IDecimalItem opNumericDivide(@NonNull INumericItem dividend, @NonNull INumericItem divisor) {
+    // create a decimal result
+    BigDecimal decimalDivisor = divisor.asDecimal();
 
-      if (BigDecimal.ZERO.equals(decimalDivisor)) {
-        throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,
-            ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
-      }
-
-      BigDecimal decimalDividend = dividend.asDecimal();
-
-      @SuppressWarnings("null")
-      @NonNull BigDecimal result = decimalDividend.divide(decimalDivisor, FunctionUtils.MATH_CONTEXT);
-      retval = IDecimalItem.valueOf(result);
-    } else {
-      // create an integer result
-      BigInteger integerDivisor = divisor.asInteger();
-
-      if (BigInteger.ZERO.equals(integerDivisor)) {
-        throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,
-            ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
-      }
-
-      BigInteger integerDividend = dividend.asInteger();
-
-      @SuppressWarnings("null")
-      @NonNull BigInteger result = integerDividend.divide(integerDivisor);
-      retval = IIntegerItem.valueOf(result);
+    if (BigDecimal.ZERO.equals(decimalDivisor)) {
+      throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,
+          ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
     }
-    return retval;
+
+    BigDecimal decimalDividend = dividend.asDecimal();
+
+    @SuppressWarnings("null")
+    @NonNull BigDecimal result = decimalDividend.divide(decimalDivisor, FunctionUtils.MATH_CONTEXT);
+    return IDecimalItem.valueOf(result);
   }
 
   @NonNull
