@@ -77,6 +77,5 @@ class FnAvgTest
     } catch (InvalidArgumentFunctionException ex) {
       assertNull(expected);
     }
-
   }
 }
