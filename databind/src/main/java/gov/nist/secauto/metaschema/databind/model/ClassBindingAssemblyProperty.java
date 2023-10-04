@@ -102,6 +102,12 @@ class ClassBindingAssemblyProperty
   }
 
   @Override
+  public Integer getUseIndex() {
+    int value = getAssemblyAnnotation().useIndex();
+    return value == Integer.MIN_VALUE ? null : value;
+  }
+
+  @Override
   public String getXmlNamespace() {
     return ObjectUtils
         .notNull(ModelUtil.resolveNamespace(getAssemblyAnnotation().namespace(), getParentClassBinding()));

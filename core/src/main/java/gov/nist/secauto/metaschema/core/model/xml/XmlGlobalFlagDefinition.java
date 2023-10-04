@@ -141,10 +141,23 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   }
 
   @Override
+  public Integer getIndex() {
+    return getXmlFlag().isSetIndex() ? getXmlFlag().getIndex().intValue() : null;
+  }
+
+  @Override
   public String getUseName() {
-    String retval = getXmlFlag().getUseName();
-    if (retval == null) {
-      retval = getName();
+    return getXmlFlag().isSetUseName() ? getXmlFlag().getUseName().getStringValue() : null;
+  }
+
+  @Override
+  public Integer getUseIndex() {
+    Integer retval = null;
+    if (getXmlFlag().isSetUseName()) {
+      GlobalFlagDefinitionType.UseName useName = getXmlFlag().getUseName();
+      if (useName.isSetIndex()) {
+        retval = useName.getIndex().intValue();
+      }
     }
     return retval;
   }

@@ -125,7 +125,19 @@ class XmlFieldInstance
 
   @Override
   public String getUseName() {
-    return getXmlField().isSetUseName() ? getXmlField().getUseName() : null;
+    return getXmlField().isSetUseName() ? getXmlField().getUseName().getStringValue() : null;
+  }
+
+  @Override
+  public Integer getUseIndex() {
+    Integer retval = null;
+    if (getXmlField().isSetUseName()) {
+      FieldReferenceType.UseName useName = getXmlField().getUseName();
+      if (useName.isSetIndex()) {
+        retval = useName.getIndex().intValue();
+      }
+    }
+    return retval;
   }
 
   @Override

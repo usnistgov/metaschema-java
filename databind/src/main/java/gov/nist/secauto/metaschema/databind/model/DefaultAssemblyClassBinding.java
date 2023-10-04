@@ -30,8 +30,8 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -163,6 +163,12 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   }
 
   @Override
+  public Integer getIndex() {
+    int value = getMetaschemaAssemblyAnnotation().index();
+    return value == Integer.MIN_VALUE ? null : value;
+  }
+
+  @Override
   public boolean isInline() {
     return false;
   }
@@ -184,6 +190,12 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
     // Overriding this is more efficient, since it is already built
     QName qname = getRootXmlQName();
     return qname == null ? null : qname.getLocalPart();
+  }
+
+  @Override
+  public Integer getRootIndex() {
+    int value = getMetaschemaAssemblyAnnotation().rootIndex();
+    return value == Integer.MIN_VALUE ? null : value;
   }
 
   @Override

@@ -83,6 +83,15 @@ public @interface MetaschemaAssembly {
   String name();
 
   /**
+   * The binary name of the assembly.
+   * <p>
+   * The value {@link Integer#MIN_VALUE} indicates that there is no index.
+   *
+   * @return the index value
+   */
+  int index() default Integer.MIN_VALUE;
+
+  /**
    * Name of the root XML element or the JSON/YAML property.
    * <p>
    * If the value is "##none", then there is no root name.
@@ -91,6 +100,15 @@ public @interface MetaschemaAssembly {
    */
   @NonNull
   String rootName() default Constants.NO_STRING_VALUE;
+
+  /**
+   * The binary root name of the assembly.
+   * <p>
+   * The value {@link Integer#MIN_VALUE} indicates that there is no root index.
+   *
+   * @return the index value
+   */
+  int rootIndex() default Integer.MIN_VALUE;
 
   /**
    * XML target namespace of the XML element.

@@ -150,6 +150,12 @@ class DefaultFlagProperty
   }
 
   @Override
+  public Integer getUseIndex() {
+    int value = getFlagAnnotation().useIndex();
+    return value == Integer.MIN_VALUE ? null : value;
+  }
+
+  @Override
   public String getXmlNamespace() {
     return ModelUtil.resolveOptionalNamespace(getFlagAnnotation().namespace(), getParentClassBinding());
   }
@@ -236,8 +242,19 @@ class DefaultFlagProperty
     }
 
     @Override
+    public Integer getIndex() {
+      return DefaultFlagProperty.this.getIndex();
+    }
+
+    @Override
     public String getUseName() {
       // always use the name instead
+      return null;
+    }
+
+    @Override
+    public Integer getUseIndex() {
+      // always use the index instead
       return null;
     }
 

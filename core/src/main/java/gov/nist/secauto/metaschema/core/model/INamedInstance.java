@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * This marker interface indicates that the instance has a flag, field, or
@@ -105,6 +106,12 @@ public interface INamedInstance extends IInstance, INamedModelElement {
   }
 
   @Override
+  default Integer getIndex() {
+    // does not have an index
+    return null;
+  }
+
+  @Override
   @NonNull
   default String getEffectiveName() {
     String result = getUseName();
@@ -112,6 +119,18 @@ public interface INamedInstance extends IInstance, INamedModelElement {
       // fall back to the definition
       IDefinition def = getDefinition();
       result = def.getEffectiveName();
+    }
+    return result;
+  }
+
+  @Override
+  @Nullable
+  default Integer getEffectiveIndex() {
+    Integer result = getUseIndex();
+    if (result == null) {
+      // fall back to the definition
+      IDefinition def = getDefinition();
+      result = def.getEffectiveIndex();
     }
     return result;
   }

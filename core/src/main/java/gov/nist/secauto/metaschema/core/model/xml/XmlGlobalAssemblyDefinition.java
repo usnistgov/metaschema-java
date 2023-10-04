@@ -131,8 +131,25 @@ class XmlGlobalAssemblyDefinition
   }
 
   @Override
+  public Integer getIndex() {
+    return getXmlAssembly().isSetIndex() ? getXmlAssembly().getIndex().intValue() : null;
+  }
+
+  @Override
   public String getUseName() {
-    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName() : null;
+    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName().getStringValue() : null;
+  }
+
+  @Override
+  public Integer getUseIndex() {
+    Integer retval = null;
+    if (getXmlAssembly().isSetUseName()) {
+      GlobalAssemblyDefinitionType.UseName useName = getXmlAssembly().getUseName();
+      if (useName.isSetIndex()) {
+        retval = useName.getIndex().intValue();
+      }
+    }
+    return retval;
   }
 
   @Override
@@ -159,7 +176,19 @@ class XmlGlobalAssemblyDefinition
 
   @Override
   public String getRootName() {
-    return getXmlAssembly().isSetRootName() ? getXmlAssembly().getRootName() : null;
+    return getXmlAssembly().isSetRootName() ? getXmlAssembly().getRootName().getStringValue() : null;
+  }
+
+  @Override
+  public Integer getRootIndex() {
+    Integer retval = null;
+    if (getXmlAssembly().isSetRootName()) {
+      GlobalAssemblyDefinitionType.RootName rootName = getXmlAssembly().getRootName();
+      if (rootName.isSetIndex()) {
+        retval = rootName.getIndex().intValue();
+      }
+    }
+    return retval;
   }
 
   @SuppressWarnings("null")

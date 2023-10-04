@@ -72,7 +72,7 @@ class ModuleLoaderTest {
   void testFile() throws MetaschemaException, IOException {
     ModuleLoader loader = new ModuleLoader();
     URI moduleUri = ObjectUtils.notNull(
-        Paths.get("metaschema/test-suite/docs-models/models_metaschema.xml").toUri());
+        Paths.get("src/test/resources/content/custom-entity-metaschema.xml").toUri());
     IModule module = loader.load(moduleUri);
     assertFalse(module.getExportedRootAssemblyDefinitions().isEmpty(), "no roots found");
   }
