@@ -68,4 +68,9 @@ public interface IPositiveIntegerItem extends IIntegerItem {
   static IPositiveIntegerItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.POSITIVE_INTEGER.cast(item);
   }
+
+  @Override
+  default IPositiveIntegerItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
+  }
 }

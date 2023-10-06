@@ -44,4 +44,12 @@ public interface IIPv4AddressItem extends IIPAddressItem {
       throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.IP_V4_ADDRESS.cast(item);
   }
+
+  @Override
+  IPv4Address getValue();
+
+  @Override
+  default IIPv4AddressItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
+  }
 }

@@ -48,7 +48,7 @@ public interface IStringItem extends IAnyAtomicItem {
   }
 
   @Override
-  default IStringItem newStringItem() {
+  default IStringItem asStringItem() {
     return this;
   }
 
@@ -57,5 +57,10 @@ public interface IStringItem extends IAnyAtomicItem {
     String leftString = this.asString();
     String rightString = other.asString();
     return IIntegerItem.valueOf(leftString.compareTo(rightString));
+  }
+
+  @Override
+  default IStringItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
   }
 }

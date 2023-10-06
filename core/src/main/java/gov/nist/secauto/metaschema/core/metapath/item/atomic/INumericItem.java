@@ -92,6 +92,9 @@ public interface INumericItem extends IAnyAtomicItem {
     return round(IIntegerItem.ZERO);
   }
 
+  @Override
+  INumericItem castAsType(IAnyAtomicItem item);
+
   @NonNull
   default INumericItem round(@NonNull IIntegerItem precisionItem) {
     int precision;
@@ -118,6 +121,9 @@ public interface INumericItem extends IAnyAtomicItem {
               ObjectUtils.notNull(
                   value.round(new MathContext(precision + value.precision() - value.scale(), RoundingMode.HALF_UP))));
         }
+
+        // cast result to original type
+        retval = this.castAsType(retval);
       }
     } else {
       // round to a power of 10

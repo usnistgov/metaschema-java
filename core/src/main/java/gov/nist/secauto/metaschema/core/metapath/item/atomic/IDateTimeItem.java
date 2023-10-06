@@ -61,6 +61,11 @@ public interface IDateTimeItem extends IAnyAtomicItem {
     return MetaschemaDataTypeProvider.DATE_TIME.cast(item);
   }
 
+  @Override
+  default IDateTimeItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
+  }
+
   @NonNull
   ZonedDateTime asZonedDateTime();
 }

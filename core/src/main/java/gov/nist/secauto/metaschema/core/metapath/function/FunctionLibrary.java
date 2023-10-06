@@ -26,11 +26,9 @@
 
 package gov.nist.secauto.metaschema.core.metapath.function;
 
-import gov.nist.secauto.metaschema.core.metapath.IExpression;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -101,21 +99,21 @@ public class FunctionLibrary implements IFunctionLibrary {
   }
 
   @Override
-  public IFunction getFunction(@NonNull String name, @NonNull List<IExpression> args) {
+  public IFunction getFunction(@NonNull String name, int arity) {
     IFunction retval;
     synchronized (this) {
       NamedFunctionSet functions = libraryByName.get(name);
-      retval = functions == null ? null : functions.getFunctionWithArity(args.size());
+      retval = functions == null ? null : functions.getFunctionWithArity(arity);
     }
     return retval;
   }
 
   @Override
-  public IFunction getFunction(@NonNull QName name, @NonNull List<IExpression> args) {
+  public IFunction getFunction(@NonNull QName name, int arity) {
     IFunction retval;
     synchronized (this) {
       NamedFunctionSet functions = libraryByQName.get(name);
-      retval = functions == null ? null : functions.getFunctionWithArity(args.size());
+      retval = functions == null ? null : functions.getFunctionWithArity(arity);
     }
     return retval;
   }

@@ -26,73 +26,73 @@
 
 package gov.nist.secauto.metaschema.core.metapath.function.library;
 
-import static gov.nist.secauto.metaschema.core.metapath.TestUtils.dayTimeDuration;
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.decimal;
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.integer;
-import static gov.nist.secauto.metaschema.core.metapath.TestUtils.string;
-import static gov.nist.secauto.metaschema.core.metapath.TestUtils.yearMonthDuration;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.MetapathException;
-import gov.nist.secauto.metaschema.core.metapath.function.InvalidArgumentFunctionException;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDayTimeDurationItem;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.IYearMonthDurationItem;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-class FnAvgTest
+class FnRoundTest
     extends FunctionTestBase {
 
-  private static Stream<Arguments> provideValuesForAvg() {
-    IYearMonthDurationItem yearMonth1 = yearMonthDuration("P20Y");
-    IYearMonthDurationItem yearMonth2 = yearMonthDuration("P10M");
-    IDayTimeDurationItem dayTime1 = dayTimeDuration("P1DT12H");
-    IDayTimeDurationItem dayTime2 = dayTimeDuration("P2D");
-
+  private static Stream<Arguments> provideValuesForRound() {
     return Stream.of(
-        Arguments.of(decimal("4"), new IAnyAtomicItem[] { integer(3), integer(4), integer(5) }),
-        Arguments.of(null, new IAnyAtomicItem[] { integer(3), integer(4), string("test") }),
-        Arguments.of(dayTimeDuration("P1DT18H"), new IAnyAtomicItem[] { dayTime1, dayTime2 }),
-        Arguments.of(null, new IAnyAtomicItem[] { dayTime1, dayTime2, integer(1) }),
-        Arguments.of(yearMonthDuration("P10Y5M"), new IAnyAtomicItem[] { yearMonth1, yearMonth2 }),
-        Arguments.of(null, new IAnyAtomicItem[] { yearMonth1, yearMonth2, integer(1) }));
+        Arguments.of(decimal("2.5"), decimal("3")),
+        Arguments.of(decimal("2.4999"), decimal("2")),
+        Arguments.of(decimal("-2.5"), decimal("-2")));
   }
 
   @ParameterizedTest
-  @MethodSource("provideValuesForAvg")
-  void testAvg(@Nullable IAnyAtomicItem expected, @NonNull IAnyAtomicItem... values) {
-    List<IAnyAtomicItem> valueList = ObjectUtils.notNull(Arrays.asList(values));
-    try {
-      assertFunctionResult(
-          FnAvg.SIGNATURE,
-          ISequence.of(expected),
-          List.of(ISequence.of(valueList)));
-    } catch (MetapathException ex) {
-      assertAll(
-          () -> assertNull(expected),
-          () -> assertInstanceOf(InvalidArgumentFunctionException.class, ex.getCause()));
-    }
+  @MethodSource("provideValuesForRound")
+  void testRound(@NonNull INumericItem actual, @NonNull INumericItem expected) {
+    assertFunctionResult(
+        FnRound.SIGNATURE,
+        ISequence.of(expected),
+        List.of(ISequence.of(actual)));
   }
 
   @Test
-  void testAvgNoOp() {
+  void testRoundNoOp() {
     assertFunctionResult(
-        FnAvg.SIGNATURE,
+        FnRound.SIGNATURE,
+        ISequence.empty(),
+        List.of(ISequence.empty()));
+  }
+
+  private static Stream<Arguments> provideValuesForRoundWithPrecision() {
+    return Stream.of(
+        Arguments.of(decimal("1.125"), integer(2), decimal("1.13")),
+        Arguments.of(decimal("8452"), integer(-2), integer(8500)),
+        Arguments.of(decimal("3.1415e0"), integer(2), decimal("3.14e0")));
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideValuesForRoundWithPrecision")
+  void testRoundWithPrecision(
+      @NonNull INumericItem actual,
+      @NonNull IIntegerItem precision,
+      @NonNull INumericItem expected) {
+    assertFunctionResult(
+        FnRound.SIGNATURE_WITH_PRECISION,
+        ISequence.of(expected),
+        List.of(ISequence.of(actual), ISequence.of(precision)));
+  }
+
+  @Test
+  void testRoundWithPrecisionNoOp() {
+    assertFunctionResult(
+        FnRound.SIGNATURE_WITH_PRECISION,
         ISequence.empty(),
         List.of(ISequence.empty()));
   }

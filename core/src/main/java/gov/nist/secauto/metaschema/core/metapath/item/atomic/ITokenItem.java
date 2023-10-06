@@ -48,7 +48,7 @@ public interface ITokenItem extends IStringItem {
   }
 
   @Override
-  default ITokenItem newStringItem() {
-    return this;
+  default ITokenItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
   }
 }

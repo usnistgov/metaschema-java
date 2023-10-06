@@ -24,29 +24,46 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.metapath.item.atomic;
+package gov.nist.secauto.metaschema.core.metapath.function.library;
 
-import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
-import gov.nist.secauto.metaschema.core.metapath.function.InvalidValueForCastFunctionException;
+import static gov.nist.secauto.metaschema.core.metapath.TestUtils.bool;
+import static gov.nist.secauto.metaschema.core.metapath.TestUtils.string;
 
-import java.net.URI;
+import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-public interface IUriReferenceItem extends IAnyUriItem {
-  @NonNull
-  static IUriReferenceItem valueOf(@NonNull URI value) {
-    return new UriReferenceItemImpl(value);
+import java.util.List;
+import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+class FnStartsWithTest
+    extends FunctionTestBase {
+  static Stream<Arguments> provideValues() {
+    return Stream.of(
+        Arguments.of(bool(true), null, null),
+        Arguments.of(bool(true), string(""), null),
+        Arguments.of(bool(true), null, string("")),
+        Arguments.of(bool(true), string("non-empty"), null),
+        Arguments.of(bool(false), null, string("non-empty")),
+        Arguments.of(bool(true), string(""), string("")),
+        Arguments.of(bool(true), string("non-empty"), string("")),
+        Arguments.of(bool(false), string(""), string("non-empty")),
+        Arguments.of(bool(true), string("abcdefg"), string("abc")),
+        Arguments.of(bool(false), string("abcdefg"), string("bc")));
   }
 
-  @NonNull
-  static IUriReferenceItem cast(@NonNull IAnyAtomicItem item)
-      throws InvalidValueForCastFunctionException {
-    return MetaschemaDataTypeProvider.URI_REFERENCE.cast(item);
-  }
-
-  @Override
-  default IUriReferenceItem castAsType(IAnyAtomicItem item) {
-    return cast(item);
+  @ParameterizedTest
+  @MethodSource("provideValues")
+  void test(@Nullable IBooleanItem expected, @Nullable IStringItem text, @Nullable IStringItem pattern) {
+    assertFunctionResult(
+        FnStartsWith.SIGNATURE,
+        ISequence.of(expected),
+        List.of(ISequence.of(text), ISequence.of(pattern)));
   }
 }

@@ -64,4 +64,9 @@ public interface IYearMonthDurationItem extends IDurationItem {
 
   @Override
   Period getValue();
+
+  @Override
+  default IYearMonthDurationItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
+  }
 }

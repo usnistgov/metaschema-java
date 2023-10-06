@@ -83,7 +83,7 @@ public final class NumericFunction implements IFunctionExecutor {
   }
 
   @NonNull
-  private static NumericFunction newFunctionHandler(@NonNull INumericExecutor executor) {
+  static NumericFunction newFunctionHandler(@NonNull INumericExecutor executor) {
     return new NumericFunction(executor);
   }
 

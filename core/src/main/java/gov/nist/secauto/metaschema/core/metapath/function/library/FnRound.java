@@ -41,14 +41,30 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Based on the XPath 3.1
+ * <a href= "https://www.w3.org/TR/xpath-functions-31/#func-round">fn:round</a>
+ * functions.
+ */
 public final class FnRound {
   private static final String NAME = "round";
 
   @NonNull
-  static final IFunction SIGNATURE = NumericFunction.signature(
-      MetapathConstants.NS_XPATH_FUNCTIONS,
-      NAME,
-      INumericItem::round);
+  static final IFunction SIGNATURE = IFunction.builder()
+      .name(NAME)
+      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .deterministic()
+      .contextIndependent()
+      .focusIndependent()
+      .argument(IArgument.newBuilder()
+          .name("arg")
+          .type(INumericItem.class)
+          .zeroOrOne()
+          .build())
+      .returnType(INumericItem.class)
+      .returnZeroOrOne()
+      .functionHandler(FnRound::executeOneArg)
+      .build();
 
   @NonNull
   static final IFunction SIGNATURE_WITH_PRECISION = IFunction.builder()
@@ -78,6 +94,25 @@ public final class FnRound {
 
   @SuppressWarnings("unused")
   @NonNull
+  private static ISequence<INumericItem> executeOneArg(
+      @NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
+      IItem focus) {
+    ISequence<? extends INumericItem> sequence = FunctionUtils.asType(
+        ObjectUtils.requireNonNull(arguments.get(0)));
+
+    INumericItem item = FunctionUtils.getFirstItem(sequence, true);
+    if (item == null) {
+      return ISequence.empty(); // NOPMD - readability
+    }
+
+    INumericItem result = item.round();
+    return ISequence.of(result);
+  }
+
+  @SuppressWarnings("unused")
+  @NonNull
   private static ISequence<INumericItem> executeTwoArg(
       @NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
@@ -85,9 +120,6 @@ public final class FnRound {
       IItem focus) {
     ISequence<? extends INumericItem> sequence = FunctionUtils.asType(
         ObjectUtils.requireNonNull(arguments.get(0)));
-    if (sequence.isEmpty()) {
-      return ISequence.empty(); // NOPMD - readability
-    }
 
     INumericItem item = FunctionUtils.getFirstItem(sequence, true);
     if (item == null) {

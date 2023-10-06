@@ -57,4 +57,9 @@ public interface IDayTimeDurationItem extends IDurationItem {
 
   @Override
   Duration getValue();
+
+  @Override
+  default IDayTimeDurationItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
+  }
 }

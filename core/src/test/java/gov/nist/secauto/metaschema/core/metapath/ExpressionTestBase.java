@@ -57,7 +57,7 @@ public class ExpressionTestBase {
    * @return the dynamic context
    */
   @NonNull
-  protected DynamicContext newDynamicContext() {
+  protected static DynamicContext newDynamicContext() {
     URI baseUri = ObjectUtils.notNull(new File("").getAbsoluteFile().toURI());
 
     return StaticContext.builder()

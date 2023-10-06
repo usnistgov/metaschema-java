@@ -102,7 +102,7 @@ public final class FnNot {
    * @return the negated boolean value
    */
   @NonNull
-  public static IBooleanItem fnNot(ISequence<?> sequence) {
+  public static IBooleanItem fnNot(@NonNull ISequence<?> sequence) {
     return FnBoolean.fnBoolean(sequence).negate();
   }
 }

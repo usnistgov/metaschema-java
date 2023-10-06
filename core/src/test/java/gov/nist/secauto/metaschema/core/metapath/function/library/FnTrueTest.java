@@ -26,29 +26,19 @@
 
 package gov.nist.secauto.metaschema.core.metapath.function.library;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import gov.nist.secauto.metaschema.core.metapath.ExpressionTestBase;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
-import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
 import org.junit.jupiter.api.Test;
 
 class FnTrueTest
-    extends ExpressionTestBase {
+    extends FunctionTestBase {
 
   @Test
   void test() {
-
-    ISequence<?> result = FnFalse.SIGNATURE.execute(
-        CollectionUtil.emptyList(),
-        newDynamicContext(),
-        ISequence.empty());
-
-    IItem resultItem = FunctionUtils.getFirstItem(result, false);
-    assertEquals(IBooleanItem.FALSE, resultItem);
+    assertFunctionResult(
+        FnTrue.SIGNATURE,
+        ISequence.of(IBooleanItem.TRUE),
+        null);
   }
 }

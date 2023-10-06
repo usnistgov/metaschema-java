@@ -71,6 +71,11 @@ public interface IBooleanItem extends IAnyAtomicItem {
 
   boolean toBoolean();
 
+  @Override
+  default IBooleanItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
+  }
+
   @NonNull
   default IBooleanItem negate() {
     return this.toBoolean() ? FALSE : TRUE;

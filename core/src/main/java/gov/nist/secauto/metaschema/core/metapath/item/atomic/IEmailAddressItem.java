@@ -49,7 +49,7 @@ public interface IEmailAddressItem extends IStringItem {
   }
 
   @Override
-  default IEmailAddressItem newStringItem() {
-    return this;
+  default IEmailAddressItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
   }
 }

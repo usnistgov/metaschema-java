@@ -53,4 +53,9 @@ public interface IUuidItem extends IAnyAtomicItem {
 
   @Override
   UUID getValue();
+
+  @Override
+  default IUuidItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
+  }
 }

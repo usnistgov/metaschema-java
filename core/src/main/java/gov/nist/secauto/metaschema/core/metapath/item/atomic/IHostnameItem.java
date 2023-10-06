@@ -48,7 +48,7 @@ public interface IHostnameItem extends IStringItem {
   }
 
   @Override
-  default IHostnameItem newStringItem() {
-    return this;
+  default IHostnameItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
   }
 }

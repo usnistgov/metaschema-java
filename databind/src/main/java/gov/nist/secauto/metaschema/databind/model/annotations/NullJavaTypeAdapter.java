@@ -110,5 +110,10 @@ public class NullJavaTypeAdapter
     public IDataTypeAdapter<?> getJavaTypeAdapter() {
       throw new UnsupportedOperationException(NOT_VALID);
     }
+
+    @Override
+    public IAnyAtomicItem castAsType(IAnyAtomicItem item) {
+      throw new UnsupportedOperationException(NOT_VALID);
+    }
   }
 }

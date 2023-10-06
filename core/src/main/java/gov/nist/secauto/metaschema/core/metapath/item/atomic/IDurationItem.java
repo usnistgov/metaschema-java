@@ -33,10 +33,6 @@ import java.time.temporal.TemporalAmount;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IDurationItem extends IAnyAtomicItem {
-
-  @Override
-  TemporalAmount getValue();
-
   @NonNull
   static IDurationItem cast(@NonNull IAnyAtomicItem item) {
     IDurationItem retval;
@@ -56,5 +52,13 @@ public interface IDurationItem extends IAnyAtomicItem {
       }
     }
     return retval;
+  }
+
+  @Override
+  TemporalAmount getValue();
+
+  @Override
+  default IDurationItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
   }
 }

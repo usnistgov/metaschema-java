@@ -192,6 +192,20 @@ public interface IFunction {
   // */
   // boolean isSupported(List<IExpression<?>> arguments);
 
+  /**
+   * Execute the function with the provided {@code arguments}, using the provided
+   * {@code DynamicContext} and {@code focus}.
+   *
+   * @param arguments
+   *          the function arguments or an empty list if there are no arguments
+   * @param dynamicContext
+   *          the dynamic evaluation context
+   * @param focus
+   *          the current focus or an empty sequence if there is no focus
+   * @return the function result
+   * @throws MetapathException
+   *           if an error occurred while executing the function
+   */
   @NonNull
   ISequence<?> execute(
       @NonNull List<ISequence<?>> arguments,
@@ -205,6 +219,11 @@ public interface IFunction {
    */
   String toSignature();
 
+  /**
+   * Construct a new function signature builder.
+   *
+   * @return the new builder instance
+   */
   @NonNull
   static Builder builder() {
     return new Builder();

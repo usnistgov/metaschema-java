@@ -24,56 +24,42 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.metapath.item.atomic;
+package gov.nist.secauto.metaschema.core.metapath.function.library;
 
-import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
-import gov.nist.secauto.metaschema.core.metapath.function.InvalidValueForCastFunctionException;
+import static gov.nist.secauto.metaschema.core.metapath.TestUtils.bool;
+import static gov.nist.secauto.metaschema.core.metapath.TestUtils.integer;
 
-import java.math.BigInteger;
+import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface INonNegativeIntegerItem extends IIntegerItem {
-  @SuppressWarnings("null")
-  @NonNull
-  INonNegativeIntegerItem ONE = valueOf(BigInteger.ONE);
-  @SuppressWarnings("null")
-  @NonNull
-  INonNegativeIntegerItem ZERO = valueOf(BigInteger.ZERO);
-
-  @NonNull
-  static INonNegativeIntegerItem valueOf(@NonNull IIntegerItem value) {
-    return valueOf(value.asInteger());
+class FnExistsTest
+    extends FunctionTestBase {
+  private static Stream<Arguments> provideValuesForExists() {
+    return Stream.of(
+        Arguments.of(bool(true), new IItem[] { integer(3) }),
+        Arguments.of(bool(false), new IItem[] {}));
   }
 
-  @SuppressWarnings("null")
-  @NonNull
-  static INonNegativeIntegerItem valueOf(long value) {
-    return valueOf(BigInteger.valueOf(value));
-  }
-
-  @NonNull
-  static INonNegativeIntegerItem valueOf(@NonNull BigInteger value) {
-    return new NonNegativeIntegerItemImpl(value);
-  }
-
-  @NonNull
-  static INonNegativeIntegerItem valueOf(@NonNull String value) {
-    try {
-      return valueOf(MetaschemaDataTypeProvider.NON_NEGATIVE_INTEGER.parse(value));
-    } catch (IllegalArgumentException ex) {
-      throw new InvalidValueForCastFunctionException(String.format("Unable to parse string value '%s'", value),
-          ex);
-    }
-  }
-
-  @NonNull
-  static INonNegativeIntegerItem cast(@NonNull IAnyAtomicItem item) {
-    return MetaschemaDataTypeProvider.NON_NEGATIVE_INTEGER.cast(item);
-  }
-
-  @Override
-  default INonNegativeIntegerItem castAsType(IAnyAtomicItem item) {
-    return cast(item);
+  @ParameterizedTest
+  @MethodSource("provideValuesForExists")
+  void test(@Nullable IBooleanItem expected, @NonNull IItem... values) {
+    List<IItem> valueList = ObjectUtils.notNull(Arrays.asList(values));
+    assertFunctionResult(
+        FnExists.SIGNATURE,
+        ISequence.of(expected),
+        List.of(ISequence.of(valueList)));
   }
 }

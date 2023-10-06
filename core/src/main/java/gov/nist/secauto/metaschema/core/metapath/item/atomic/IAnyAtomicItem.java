@@ -60,9 +60,8 @@ public interface IAnyAtomicItem extends IAtomicValuedItem {
    *
    * @return a new string item
    */
-  // TODO: rename to asStringItem
   @NonNull
-  default IStringItem newStringItem() {
+  default IStringItem asStringItem() {
     return IStringItem.valueOf(asString());
   }
 
@@ -75,4 +74,14 @@ public interface IAnyAtomicItem extends IAtomicValuedItem {
   IDataTypeAdapter<?> getJavaTypeAdapter();
   //
   // <T extends IValuedItem> T cast(IValuedItem item);
+
+  /**
+   * Cast the provided {@code item} to be the same type as this item.
+   *
+   * @param item
+   *          the item to cast
+   * @return the result from casting
+   */
+  @NonNull
+  IAnyAtomicItem castAsType(@NonNull IAnyAtomicItem item);
 }

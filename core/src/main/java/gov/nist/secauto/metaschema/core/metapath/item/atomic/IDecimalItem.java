@@ -65,11 +65,17 @@ public interface IDecimalItem extends INumericItem {
     }
   }
 
-  static @NonNull IDecimalItem cast(@NonNull IAnyAtomicItem item)
+  @NonNull
+  static IDecimalItem cast(@NonNull IAnyAtomicItem item)
       throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.DECIMAL.cast(item);
   }
 
   @Override
   BigDecimal getValue();
+
+  @Override
+  default IDecimalItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
+  }
 }

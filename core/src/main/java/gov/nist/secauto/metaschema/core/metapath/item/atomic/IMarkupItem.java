@@ -35,10 +35,6 @@ import gov.nist.secauto.metaschema.core.metapath.function.InvalidValueForCastFun
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IMarkupItem extends IUntypedAtomicItem {
-
-  @Override
-  IMarkupString<?> getValue();
-
   @NonNull
   static IMarkupItem valueOf(@NonNull MarkupLine value) {
     return new MarkupLineItemImpl(value);
@@ -52,5 +48,13 @@ public interface IMarkupItem extends IUntypedAtomicItem {
   @NonNull
   static IMarkupItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     return MarkupDataTypeProvider.MARKUP_MULTILINE.cast(item);
+  }
+
+  @Override
+  IMarkupString<?> getValue();
+
+  @Override
+  default IMarkupItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
   }
 }

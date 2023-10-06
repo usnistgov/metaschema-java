@@ -102,4 +102,9 @@ public interface IIntegerItem extends INumericItem {
 
   @Override
   BigInteger getValue();
+
+  @Override
+  default IIntegerItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
+  }
 }

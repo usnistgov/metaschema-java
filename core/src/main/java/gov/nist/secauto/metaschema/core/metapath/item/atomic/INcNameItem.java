@@ -48,7 +48,7 @@ public interface INcNameItem extends IStringItem {
   }
 
   @Override
-  default INcNameItem newStringItem() {
-    return this;
+  default INcNameItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
   }
 }

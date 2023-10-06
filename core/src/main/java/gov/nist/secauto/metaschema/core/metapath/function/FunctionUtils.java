@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -368,6 +369,14 @@ public final class FunctionUtils {
   @NonNull
   public static Stream<Class<?>> getTypes(@NonNull Stream<? extends IItem> items) {
     return ObjectUtils.notNull(items.map(item -> item.getClass()));
+  }
+
+  @SuppressWarnings("unchecked")
+  @NonNull
+  public static <T extends IItem> List<Class<? extends T>> getTypes(@NonNull List<T> items) {
+    return ObjectUtils.notNull(items.stream()
+        .map(item -> (Class<? extends T>) item.getClass())
+        .collect(Collectors.toList()));
   }
 
   /**

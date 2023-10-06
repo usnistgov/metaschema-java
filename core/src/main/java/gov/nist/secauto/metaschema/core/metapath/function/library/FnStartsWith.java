@@ -103,7 +103,7 @@ public final class FnStartsWith {
       retval = true;
     } else {
       String arg1String = arg1 == null ? "" : arg1.asString();
-      retval = arg1String.contains(arg2String);
+      retval = arg1String.startsWith(arg2String);
     }
     return IBooleanItem.valueOf(retval);
   }

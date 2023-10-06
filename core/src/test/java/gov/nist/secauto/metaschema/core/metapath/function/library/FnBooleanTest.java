@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.core.metapath.function.library;
 
-import static gov.nist.secauto.metaschema.core.metapath.TestUtils.dayTimeDuration;
-import static gov.nist.secauto.metaschema.core.metapath.TestUtils.decimal;
+import static gov.nist.secauto.metaschema.core.metapath.TestUtils.bool;
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.integer;
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.string;
+import static gov.nist.secauto.metaschema.core.metapath.TestUtils.uri;
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.yearMonthDuration;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -38,11 +38,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.MetapathException;
 import gov.nist.secauto.metaschema.core.metapath.function.InvalidArgumentFunctionException;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDayTimeDurationItem;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.IYearMonthDurationItem;
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IUntypedAtomicItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import org.jmock.Expectations;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -55,31 +57,31 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-class FnAvgTest
+class FnBooleanTest
     extends FunctionTestBase {
-
-  private static Stream<Arguments> provideValuesForAvg() {
-    IYearMonthDurationItem yearMonth1 = yearMonthDuration("P20Y");
-    IYearMonthDurationItem yearMonth2 = yearMonthDuration("P10M");
-    IDayTimeDurationItem dayTime1 = dayTimeDuration("P1DT12H");
-    IDayTimeDurationItem dayTime2 = dayTimeDuration("P2D");
-
+  static Stream<Arguments> provideValues() {
     return Stream.of(
-        Arguments.of(decimal("4"), new IAnyAtomicItem[] { integer(3), integer(4), integer(5) }),
-        Arguments.of(null, new IAnyAtomicItem[] { integer(3), integer(4), string("test") }),
-        Arguments.of(dayTimeDuration("P1DT18H"), new IAnyAtomicItem[] { dayTime1, dayTime2 }),
-        Arguments.of(null, new IAnyAtomicItem[] { dayTime1, dayTime2, integer(1) }),
-        Arguments.of(yearMonthDuration("P10Y5M"), new IAnyAtomicItem[] { yearMonth1, yearMonth2 }),
-        Arguments.of(null, new IAnyAtomicItem[] { yearMonth1, yearMonth2, integer(1) }));
+        Arguments.of(null, new IItem[] { yearMonthDuration("P20Y") }),
+        Arguments.of(bool(true), new IItem[] { IBooleanItem.TRUE }),
+        Arguments.of(bool(false), new IItem[] { IBooleanItem.FALSE }),
+        Arguments.of(bool(true), new IItem[] { string("non-blank") }),
+        Arguments.of(bool(false), new IItem[] { string("") }),
+        Arguments.of(bool(false), new IItem[] { IBooleanItem.TRUE, IBooleanItem.FALSE }),
+        Arguments.of(bool(true), new IItem[] { integer(1) }),
+        Arguments.of(bool(false), new IItem[] { integer(0) }),
+        Arguments.of(bool(true), new IItem[] { integer(-1) }),
+        Arguments.of(bool(true), new IItem[] { uri("path") }),
+        Arguments.of(bool(false), new IItem[] { uri("") }),
+        Arguments.of(bool(false), new IItem[] {}));
   }
 
   @ParameterizedTest
-  @MethodSource("provideValuesForAvg")
-  void testAvg(@Nullable IAnyAtomicItem expected, @NonNull IAnyAtomicItem... values) {
-    List<IAnyAtomicItem> valueList = ObjectUtils.notNull(Arrays.asList(values));
+  @MethodSource("provideValues")
+  void test(@Nullable IBooleanItem expected, @NonNull IItem... values) {
+    List<IItem> valueList = ObjectUtils.notNull(Arrays.asList(values));
     try {
       assertFunctionResult(
-          FnAvg.SIGNATURE,
+          FnBoolean.SIGNATURE,
           ISequence.of(expected),
           List.of(ISequence.of(valueList)));
     } catch (MetapathException ex) {
@@ -90,10 +92,47 @@ class FnAvgTest
   }
 
   @Test
-  void testAvgNoOp() {
+  void testNodeItem() {
+    INodeItem item = getContext().mock(INodeItem.class, "nodeItem");
     assertFunctionResult(
-        FnAvg.SIGNATURE,
-        ISequence.empty(),
-        List.of(ISequence.empty()));
+        FnBoolean.SIGNATURE,
+        ISequence.of(IBooleanItem.TRUE),
+        List.of(ISequence.of(item)));
+  }
+
+  @Test
+  void testUntypedAtomicItemBlank() {
+    IUntypedAtomicItem item = getContext().mock(IUntypedAtomicItem.class, "untypedAtomicItem");
+    assert item != null;
+
+    getContext().checking(new Expectations() {
+      { // NOPMD - intentional
+        allowing(item).asString();
+        will(returnValue(""));
+      }
+    });
+
+    assertFunctionResult(
+        FnBoolean.SIGNATURE,
+        ISequence.of(IBooleanItem.FALSE),
+        List.of(ISequence.of(item)));
+  }
+
+  @Test
+  void testUntypedAtomicItemNonBlank() {
+    IUntypedAtomicItem item = getContext().mock(IUntypedAtomicItem.class, "untypedAtomicItem");
+    assert item != null;
+
+    getContext().checking(new Expectations() {
+      { // NOPMD - intentional
+        allowing(item).asString();
+        will(returnValue("non-blank"));
+      }
+    });
+
+    assertFunctionResult(
+        FnBoolean.SIGNATURE,
+        ISequence.of(IBooleanItem.TRUE),
+        List.of(ISequence.of(item)));
   }
 }

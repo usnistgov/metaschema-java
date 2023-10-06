@@ -44,4 +44,12 @@ public interface IIPv6AddressItem extends IIPAddressItem {
       throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.IP_V6_ADDRESS.cast(item);
   }
+
+  @Override
+  IPv6Address getValue();
+
+  @Override
+  default IIPv6AddressItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
+  }
 }

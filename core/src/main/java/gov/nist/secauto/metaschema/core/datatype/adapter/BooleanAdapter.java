@@ -112,7 +112,7 @@ public class BooleanAdapter
     } else if (item instanceof IStringItem) {
       retval = castToBoolean((IStringItem) item);
     } else {
-      retval = castToBoolean(item.newStringItem());
+      retval = castToBoolean(item.asStringItem());
     }
     return retval;
   }
