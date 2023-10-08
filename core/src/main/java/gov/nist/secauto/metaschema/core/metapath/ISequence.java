@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -83,6 +84,22 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Iterable<ITEM_TYPE> 
       retval = new SingletonSequenceImpl<>(item);
     }
     return retval;
+  }
+
+  /**
+   * Construct a new sequence containing the provided {@code items}.
+   *
+   * @param <ITEM_TYPE>
+   *          the type of items contained in the sequence.
+   * @param items
+   *          the items to add to the sequence
+   * @return the new sequence
+   */
+  @SafeVarargs
+  @NonNull
+  static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
+      @NonNull ITEM_TYPE... items) {
+    return of(ObjectUtils.notNull(Arrays.asList(items)));
   }
 
   /**

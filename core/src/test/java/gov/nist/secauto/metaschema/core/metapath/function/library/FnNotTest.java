@@ -42,7 +42,6 @@ import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IUntypedAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.jmock.Expectations;
 import org.junit.jupiter.api.Test;
@@ -50,7 +49,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -78,12 +76,11 @@ class FnNotTest
   @ParameterizedTest
   @MethodSource("provideValues")
   void test(@Nullable IBooleanItem expected, @NonNull IItem... values) {
-    List<IItem> valueList = ObjectUtils.notNull(Arrays.asList(values));
     try {
       assertFunctionResult(
           FnNot.SIGNATURE,
           ISequence.of(expected),
-          List.of(ISequence.of(valueList)));
+          List.of(ISequence.of(values)));
     } catch (MetapathException ex) {
       assertAll(
           () -> assertNull(expected),

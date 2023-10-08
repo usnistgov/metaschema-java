@@ -75,7 +75,6 @@ public final class FnAvg {
 
   private FnAvg() {
     // disable construction
-
   }
 
   @SuppressWarnings("unused")

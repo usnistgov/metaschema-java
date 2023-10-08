@@ -56,6 +56,7 @@ public class DefaultFunctionLibrary
     // https://www.w3.org/TR/xpath-functions-31/#func-adjust-dateTime-to-timezone
     // https://www.w3.org/TR/xpath-functions-31/#func-adjust-date-to-timezone
     // https://www.w3.org/TR/xpath-functions-31/#func-adjust-time-to-timezone
+    // https://www.w3.org/TR/xpath-functions-31/#func-avg
     registerFunction(FnAvg.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-base-uri
     registerFunction(FnBaseUri.SIGNATURE_NO_ARG);
@@ -68,7 +69,8 @@ public class DefaultFunctionLibrary
     registerFunction(FnCompare.SIGNATURE);
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-concat
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-contains
-    // P1(#224): https://www.w3.org/TR/xpath-functions-31/#func-count
+    // https://www.w3.org/TR/xpath-functions-31/#func-count
+    registerFunction(FnCount.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-current-date
     // https://www.w3.org/TR/xpath-functions-31/#func-current-dateTime
     // https://www.w3.org/TR/xpath-functions-31/#func-current-time
@@ -92,6 +94,7 @@ public class DefaultFunctionLibrary
     // https://www.w3.org/TR/xpath-functions-31/#func-exactly-one
     // https://www.w3.org/TR/xpath-functions-31/#func-exists
     registerFunction(FnExists.SIGNATURE);
+    // https://www.w3.org/TR/xpath-functions-31/#func-false
     registerFunction(FnFalse.SIGNATURE);
     // P1(#224): https://www.w3.org/TR/xpath-functions-31/#func-floor
     registerFunction(NumericFunction.signature(MetapathConstants.NS_XPATH_FUNCTIONS, "floor", INumericItem::floor));
@@ -141,6 +144,7 @@ public class DefaultFunctionLibrary
     registerFunction(FnResolveUri.SIGNATURE_TWO_ARG);
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-reverse
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-root
+    // https://www.w3.org/TR/xpath-functions-31/#func-round
     registerFunction(FnRound.SIGNATURE);
     registerFunction(FnRound.SIGNATURE_WITH_PRECISION);
     // https://www.w3.org/TR/xpath-functions-31/#func-round-half-to-even
@@ -164,6 +168,7 @@ public class DefaultFunctionLibrary
     // https://www.w3.org/TR/xpath-functions-31/#func-timezone-from-time
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-tokenize
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-translate
+    // https://www.w3.org/TR/xpath-functions-31/#func-true
     registerFunction(FnTrue.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-unparsed-text
     // https://www.w3.org/TR/xpath-functions-31/#func-unparsed-text-available
