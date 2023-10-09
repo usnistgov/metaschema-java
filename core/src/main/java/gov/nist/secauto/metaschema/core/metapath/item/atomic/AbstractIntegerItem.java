@@ -33,23 +33,26 @@ import java.math.MathContext;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractIntegerItem
-    extends AbstractNumericItem<BigInteger>
+    extends AbstractAnyAtomicItem<BigInteger>
     implements IIntegerItem {
+  /**
+   * Construct a new item with the provided {@code value}.
+   *
+   * @param value
+   *          the value to wrap
+   */
   protected AbstractIntegerItem(@NonNull BigInteger value) {
     super(value);
   }
 
   @Override
   public boolean toEffectiveBoolean() {
-    return !BigInteger.ZERO.equals(
-        getValue());
+    return !BigInteger.ZERO.equals(asInteger());
   }
 
   @Override
   public BigDecimal asDecimal() {
-    return new BigDecimal(
-        getValue(),
-        MathContext.DECIMAL64);
+    return new BigDecimal(getValue(), MathContext.DECIMAL64);
   }
 
   @Override
@@ -60,7 +63,7 @@ public abstract class AbstractIntegerItem
   @SuppressWarnings("null")
   @Override
   public IIntegerItem abs() {
-    BigInteger value = getValue();
+    BigInteger value = asInteger();
     int signum = value.signum();
 
     IIntegerItem retval;
@@ -68,8 +71,24 @@ public abstract class AbstractIntegerItem
       retval = this;
     } else {
       retval = IIntegerItem.valueOf(
-          getValue().abs());
+          value.abs());
     }
     return retval;
+  }
+
+  @Override
+  public int hashCode() {
+    return asInteger().hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true; // NOPMD readability
+    }
+    if (!(obj instanceof IIntegerItem)) {
+      return false; // NOPMD readability
+    }
+    return compareTo((IIntegerItem) obj) == 0;
   }
 }

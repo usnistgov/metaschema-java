@@ -36,7 +36,7 @@ import org.jmock.Mockery;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class FlagBuilder
+public final class FlagBuilder
     extends AbstractModelBuilder<FlagBuilder> {
 
   private boolean required;

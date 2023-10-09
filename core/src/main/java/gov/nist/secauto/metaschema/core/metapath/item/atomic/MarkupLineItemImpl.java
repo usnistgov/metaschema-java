@@ -41,6 +41,11 @@ class MarkupLineItemImpl
   }
 
   @Override
+  public MarkupLine asMarkup() {
+    return getValue();
+  }
+
+  @Override
   public MarkupLineAdapter getJavaTypeAdapter() {
     return MarkupDataTypeProvider.MARKUP_LINE;
   }

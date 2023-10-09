@@ -29,8 +29,6 @@ package gov.nist.secauto.metaschema.core.metapath.item.atomic;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 
-import java.util.Objects;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class BooleanItemImpl implements IBooleanItem {
@@ -47,6 +45,11 @@ class BooleanItemImpl implements IBooleanItem {
 
   BooleanItemImpl(boolean booleanValue) {
     this.booleanValue = booleanValue;
+  }
+
+  @Override
+  public Boolean getValue() {
+    return toBoolean();
   }
 
   @Override
@@ -70,15 +73,11 @@ class BooleanItemImpl implements IBooleanItem {
   }
 
   @Override
-  public Boolean getValue() {
-    return toBoolean();
-  }
-
-  @Override
   public int hashCode() {
-    return Objects.hash(booleanValue);
+    return Boolean.hashCode(booleanValue);
   }
 
+  @SuppressWarnings("PMD.OnlyOneReturn")
   @Override
   public boolean equals(Object obj) {
     if (this == obj) {
@@ -87,12 +86,6 @@ class BooleanItemImpl implements IBooleanItem {
     if (!(obj instanceof IBooleanItem)) {
       return false;
     }
-    IBooleanItem other = (IBooleanItem) obj;
-    return booleanValue == other.toBoolean();
-  }
-
-  @Override
-  public String toString() {
-    return Boolean.toString(booleanValue);
+    return compareTo((IBooleanItem) obj) == 0;
   }
 }

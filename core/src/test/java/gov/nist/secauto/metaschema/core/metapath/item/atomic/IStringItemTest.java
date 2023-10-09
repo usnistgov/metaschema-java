@@ -46,7 +46,7 @@ class IStringItemTest {
   @ParameterizedTest
   @MethodSource
   void testCompare(@NonNull IStringItem left, @NonNull IStringItem right, @NonNull IIntegerItem expectedResult) {
-    IIntegerItem result = left.compare(right);
+    IIntegerItem result = IIntegerItem.valueOf(left.compareTo(right));
     assertEquals(expectedResult, result);
   }
 

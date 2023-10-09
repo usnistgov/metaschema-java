@@ -24,15 +24,46 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.metapath;
+package gov.nist.secauto.metaschema.core.metapath.item.atomic;
 
-interface IComparison extends IBooleanLogicExpression {
-  enum Operator {
-    EQ,
-    NE,
-    LT,
-    LE,
-    GT,
-    GE;
+import java.net.URI;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public abstract class AbstractUriItem
+    extends AbstractAnyAtomicItem<URI>
+    implements IAnyUriItem {
+
+  /**
+   * Construct a new item that wraps the provided value.
+   *
+   * @param value
+   *          the value to wrap
+   */
+  protected AbstractUriItem(@NonNull URI value) {
+    super(value);
   }
+
+  @Override
+  @NonNull
+  public URI asUri() {
+    return getValue();
+  }
+
+  @Override
+  public int hashCode() {
+    return asUri().hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true; // NOPMD readability
+    }
+    if (!(obj instanceof IAnyUriItem)) {
+      return false; // NOPMD readability
+    }
+    return compareTo((IAnyUriItem) obj) == 0;
+  }
+
 }

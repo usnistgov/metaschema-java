@@ -34,8 +34,7 @@ import java.net.URI;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class AnyUriItemImpl
-    extends AbstractAnyAtomicItem<URI>
-    implements IAnyUriItem {
+    extends AbstractUriItem {
 
   public AnyUriItemImpl(@NonNull URI value) {
     super(value);

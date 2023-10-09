@@ -31,12 +31,12 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvi
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
+import java.util.Objects;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DecimalItemImpl
-    extends AbstractNumericItem<BigDecimal>
+    extends AbstractAnyAtomicItem<BigDecimal>
     implements IDecimalItem {
   public DecimalItemImpl(@NonNull BigDecimal value) {
     super(value);
@@ -47,6 +47,11 @@ class DecimalItemImpl
     return MetaschemaDataTypeProvider.DECIMAL;
   }
 
+  @Override
+  public BigDecimal asDecimal() {
+    return getValue();
+  }
+
   @SuppressWarnings("null")
   @Override
   public String asString() {
@@ -55,59 +60,25 @@ class DecimalItemImpl
     return decimal.scale() <= 0 ? decimal.toBigIntegerExact().toString() : decimal.toPlainString();
   }
 
-  @Override
-  public boolean toEffectiveBoolean() {
-    return !BigDecimal.ZERO.equals(getValue());
-  }
-
-  @Override
-  public BigDecimal asDecimal() {
-    return getValue();
-  }
-
   @SuppressWarnings("null")
   @Override
   public BigInteger asInteger() {
     return getValue().toBigInteger();
   }
 
-  @SuppressWarnings("null")
-  @Override
-  public INumericItem abs() {
-    return new DecimalItemImpl(getValue().abs());
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public IIntegerItem ceiling() {
-    return IIntegerItem.valueOf(getValue().setScale(0, RoundingMode.CEILING).toBigIntegerExact());
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public IIntegerItem floor() {
-    return IIntegerItem.valueOf(getValue().setScale(0, RoundingMode.FLOOR).toBigIntegerExact());
-  }
-
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + getValue().hashCode();
-    return result;
+    return Objects.hash(asDecimal());
   }
 
   @Override
   public boolean equals(Object obj) {
     if (this == obj) {
       return true; // NOPMD readability
-    } else if (obj == null) {
-      return false; // NOPMD readability
-    } else if (getClass() != obj.getClass()) {
+    }
+    if (!(obj instanceof IDecimalItem)) {
       return false; // NOPMD readability
     }
-    DecimalItemImpl other = (DecimalItemImpl) obj;
-    return getValue().equals(other.getValue());
+    return compareTo((IDecimalItem) obj) == 0;
   }
-
 }

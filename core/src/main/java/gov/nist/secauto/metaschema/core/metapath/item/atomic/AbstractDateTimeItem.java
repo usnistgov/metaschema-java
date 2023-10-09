@@ -26,48 +26,35 @@
 
 package gov.nist.secauto.metaschema.core.metapath.item.atomic;
 
-import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-/**
- * Provides a common implementation for all atomic types.
- *
- * @param <TYPE>
- *          the Java type associated with the atomic type.
- */
-public abstract class AbstractAnyAtomicItem<TYPE> implements IAnyAtomicItem {
-  @NonNull
-  private final TYPE value;
-
+public abstract class AbstractDateTimeItem<TYPE>
+    extends AbstractAnyAtomicItem<TYPE>
+    implements IDateTimeItem {
   /**
-   * Construct a new atomic item using the provided {@code value}.
+   * Construct a new item with the provided {@code value}.
    *
    * @param value
-   *          the value to assign to this atomic item
+   *          the value to wrap
    */
-  protected AbstractAnyAtomicItem(@NonNull TYPE value) {
-    this.value = ObjectUtils.requireNonNull(value, "value");
+  protected AbstractDateTimeItem(@NonNull TYPE value) {
+    super(value);
   }
 
   @Override
-  @NonNull
-  public TYPE getValue() {
-    return value;
+  public int hashCode() {
+    return asZonedDateTime().hashCode();
   }
 
+  @SuppressWarnings("PMD.OnlyOneReturn")
   @Override
-  @NonNull
-  public abstract IDataTypeAdapter<TYPE> getJavaTypeAdapter();
-
-  @Override
-  public String asString() {
-    return getJavaTypeAdapter().asString(getValue());
-  }
-
-  @Override
-  public String toString() {
-    return asString();
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof IDateTimeItem)) {
+      return false;
+    }
+    return compareTo((IDateTimeItem) obj) == 0;
   }
 }

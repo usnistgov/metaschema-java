@@ -123,7 +123,7 @@ public abstract class AbstractLoader<T> {
    */
   @NonNull
   public T load(@NonNull File file) throws MetaschemaException, IOException {
-    return load(file.toPath());
+    return load(ObjectUtils.notNull(file.toPath()));
   }
 
   /**

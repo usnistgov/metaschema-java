@@ -82,7 +82,7 @@ public class FnCompare {
     if (comparand1 == null || comparand2 == null) {
       retval = ISequence.empty();
     } else {
-      IIntegerItem result = comparand1.compare(comparand2);
+      IIntegerItem result = IIntegerItem.valueOf(comparand1.compareTo(comparand2));
       retval = ISequence.of(result);
     }
     return retval;

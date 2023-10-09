@@ -26,6 +26,30 @@
 
 package gov.nist.secauto.metaschema.core.metapath.item.atomic;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import inet.ipaddr.IPAddress;
+
 public interface IIPAddressItem extends IUntypedAtomicItem {
-  // this interface does not have any additional methods
+  /**
+   * Get the "wrapped" IP address value.
+   *
+   * @return the underlying IP address value
+   */
+  @NonNull
+  IPAddress asIpAddress();
+
+  @Override
+  int compareTo(IAnyAtomicItem item);
+
+  /**
+   * Compares this value with the argument.
+   *
+   * @param item
+   *          the item to compare with this value
+   * @return a negative integer, zero, or a positive integer if this value is less
+   *         than, equal to, or greater than the {@code item}.
+   */
+  default int compareTo(IIPAddressItem item) {
+    return asIpAddress().compareTo(item.asIpAddress());
+  }
 }

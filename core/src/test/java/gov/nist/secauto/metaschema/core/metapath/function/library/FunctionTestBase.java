@@ -68,7 +68,7 @@ public class FunctionTestBase
 
     assertNotNull(function, String.format("Function '%s' not found.", functionName));
 
-    assertFunctionResultInternal(function, expectedResult, focus, usedArguments);
+    assertFunctionResultInternal(function, focus, expectedResult, usedArguments);
   }
 
   public static void assertFunctionResult(
@@ -92,18 +92,18 @@ public class FunctionTestBase
 
     assertNotNull(resolvedFunction, String.format("Function '%s' not found in function service.", functionName));
 
-    assertFunctionResultInternal(function, expectedResult, focus, usedArguments);
+    assertFunctionResultInternal(function, focus, expectedResult, usedArguments);
   }
 
   private static void assertFunctionResultInternal(
       @NonNull IFunction function,
-      @NonNull ISequence<?> expectedResult,
       @Nullable ISequence<?> focus,
+      @NonNull ISequence<?> expectedResult,
       List<ISequence<?>> arguments) {
     ISequence<INumericItem> result = TestUtils.executeFunction(
         function,
         newDynamicContext(),
-        null,
+        focus,
         arguments);
 
     assertAll(

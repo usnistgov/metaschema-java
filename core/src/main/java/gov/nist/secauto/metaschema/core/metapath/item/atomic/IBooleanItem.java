@@ -37,16 +37,16 @@ public interface IBooleanItem extends IAnyAtomicItem {
   @NonNull
   IBooleanItem FALSE = new BooleanItemImpl(false);
 
-  @NonNull
-  static IBooleanItem valueOf(boolean value) {
-    return value ? TRUE : FALSE;
-  }
-
-  @NonNull
-  static IBooleanItem valueOf(@NonNull Boolean value) {
-    return value ? TRUE : FALSE;
-  }
-
+  /**
+   * Construct a new boolean item using the provided string {@code value}.
+   * <p>
+   * The item will be {@link #TRUE} if the value is "1" or "true", or
+   * {@link #FALSE} otherwise
+   *
+   * @param value
+   *          a string representing a boolean value
+   * @return the new item
+   */
   @NonNull
   static IBooleanItem valueOf(@NonNull String value) {
     IBooleanItem retval;
@@ -64,11 +64,38 @@ public interface IBooleanItem extends IAnyAtomicItem {
     return retval;
   }
 
+  /**
+   * Construct a new boolean item using the provided {@code value}.
+   *
+   * @param value
+   *          a boolean
+   * @return the new item
+   */
   @NonNull
-  static IBooleanItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  static IBooleanItem valueOf(boolean value) {
+    return value ? TRUE : FALSE;
+  }
+
+  /**
+   * Cast the provided type to this item type.
+   *
+   * @param item
+   *          the item to cast
+   * @return the original item if it is already this type, otherwise a new item
+   *         cast to this type
+   * @throws InvalidValueForCastFunctionException
+   *           if the provided {@code item} cannot be cast to this type
+   */
+  @NonNull
+  static IBooleanItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.BOOLEAN.cast(item);
   }
 
+  /**
+   * Get the "wrapped" boolean value.
+   *
+   * @return the underlying boolean value
+   */
   boolean toBoolean();
 
   @Override
@@ -76,8 +103,30 @@ public interface IBooleanItem extends IAnyAtomicItem {
     return cast(item);
   }
 
+  /**
+   * Get the boolean negation of this value.
+   *
+   * @return the negated boolean value
+   */
   @NonNull
   default IBooleanItem negate() {
     return this.toBoolean() ? FALSE : TRUE;
+  }
+
+  @Override
+  default int compareTo(IAnyAtomicItem item) {
+    return compareTo(cast(item));
+  }
+
+  /**
+   * Compares this value with the argument.
+   *
+   * @param item
+   *          the item to compare with this value
+   * @return a negative integer, zero, or a positive integer if this value is less
+   *         than, equal to, or greater than the {@code item}.
+   */
+  default int compareTo(@NonNull IBooleanItem item) {
+    return Boolean.compare(toBoolean(), item.toBoolean());
   }
 }

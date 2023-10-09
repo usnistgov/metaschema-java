@@ -383,6 +383,8 @@ public final class FunctionUtils {
    * Count the occurrences of the provided data type item {@code classes} used in
    * the set of provided {@code items}.
    *
+   * @param <T>
+   *          the class type
    * @param classes
    *          the Metapath item classes to count
    * @param items
@@ -390,13 +392,13 @@ public final class FunctionUtils {
    * @return a mapping of Metapath item class to count
    */
   @NonNull
-  public static Map<Class<? extends IItem>, Integer> countTypes(
-      @NonNull Set<Class<? extends IItem>> classes,
-      @NonNull List<? extends IItem> items) {
-    Map<Class<? extends IItem>, Integer> retval = new HashMap<>();
-    for (IItem item : items) {
-      Class<? extends IItem> itemClass = item.getClass();
-      for (Class<? extends IItem> clazz : classes) {
+  public static <T extends IItem> Map<Class<? extends T>, Integer> countTypes(
+      @NonNull Set<Class<? extends T>> classes,
+      @NonNull List<? extends T> items) {
+    Map<Class<? extends T>, Integer> retval = new HashMap<>();
+    for (T item : items) {
+      Class<?> itemClass = item.getClass();
+      for (Class<? extends T> clazz : classes) {
         if (clazz.isAssignableFrom(itemClass)) {
           retval.compute(clazz, (cl, current) -> current == null ? 1 : current + 1);
         }

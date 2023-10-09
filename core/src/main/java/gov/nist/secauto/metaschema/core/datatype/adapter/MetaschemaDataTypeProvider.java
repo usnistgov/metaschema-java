@@ -81,6 +81,7 @@ public final class MetaschemaDataTypeProvider // NOPMD - Used for service initia
   public static final EmailAddressAdapter EMAIL_ADDRESS = new EmailAddressAdapter();
   @NonNull
   public static final HostnameAdapter HOSTNAME = new HostnameAdapter();
+  @Deprecated(forRemoval = true, since = "0.7.0")
   @NonNull
   public static final NcNameAdapter NCNAME = new NcNameAdapter();
   @NonNull

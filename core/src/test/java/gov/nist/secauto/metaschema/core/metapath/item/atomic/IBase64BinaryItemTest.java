@@ -63,7 +63,8 @@ class IBase64BinaryItemTest {
     IBase64BinaryItem expected = IBase64BinaryItem.valueOf(buf);
     IBase64BinaryItem actual = IBase64BinaryItem.cast(IStringItem.valueOf(BASE_64));
     Assertions.assertAll(
-        () -> assertArrayEquals(actual.getValue().array(), expected.getValue().array()),
+        // TODO: use equals method?
+        () -> assertArrayEquals(actual.asByteBuffer().array(), expected.asByteBuffer().array()),
         () -> assertEquals(actual.asString(), expected.asString()));
   }
 }

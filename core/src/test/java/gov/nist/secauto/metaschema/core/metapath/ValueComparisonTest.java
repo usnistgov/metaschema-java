@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import gov.nist.secauto.metaschema.core.metapath.IComparison.Operator;
+import gov.nist.secauto.metaschema.core.metapath.function.ComparisonFunctions;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
@@ -47,33 +47,47 @@ class ValueComparisonTest
   private static Stream<Arguments> testValueComparison() { // NOPMD - false positive
     return Stream.of(
         // string
-        Arguments.of(IStringItem.valueOf("AbC"), Operator.EQ, IStringItem.valueOf("AbC"), IBooleanItem.TRUE),
-        Arguments.of(IStringItem.valueOf("AbC"), Operator.EQ, IStringItem.valueOf("xYz"), IBooleanItem.FALSE),
-        Arguments.of(IStringItem.valueOf("A.1"), Operator.NE, IStringItem.valueOf("A.2"), IBooleanItem.TRUE),
-        Arguments.of(IStringItem.valueOf("A.1"), Operator.NE, IStringItem.valueOf("A.1"), IBooleanItem.FALSE),
-        Arguments.of(IStringItem.valueOf("A.3"), Operator.GE, IStringItem.valueOf("A.2"), IBooleanItem.TRUE),
-        Arguments.of(IStringItem.valueOf("B\\1"), Operator.GE, IStringItem.valueOf("B\\1"), IBooleanItem.TRUE),
-        Arguments.of(IStringItem.valueOf("A.1"), Operator.GE, IStringItem.valueOf("A.2"), IBooleanItem.FALSE),
-        Arguments.of(IStringItem.valueOf("A.1@"), Operator.GT, IStringItem.valueOf("A.1"), IBooleanItem.TRUE),
-        Arguments.of(IStringItem.valueOf("X.1"), Operator.GT, IStringItem.valueOf("X.1"), IBooleanItem.FALSE),
-        Arguments.of(IStringItem.valueOf("A"), Operator.LE, IStringItem.valueOf("A.2"), IBooleanItem.TRUE),
-        Arguments.of(IStringItem.valueOf("B\\1"), Operator.LE, IStringItem.valueOf("C\\1"), IBooleanItem.TRUE),
-        Arguments.of(IStringItem.valueOf("X#"), Operator.LE, IStringItem.valueOf("X"), IBooleanItem.FALSE),
-        Arguments.of(IStringItem.valueOf("A"), Operator.LT, IStringItem.valueOf("A.2"), IBooleanItem.TRUE),
-        Arguments.of(IStringItem.valueOf("X#"), Operator.LT, IStringItem.valueOf("X"), IBooleanItem.FALSE),
+        Arguments.of(IStringItem.valueOf("AbC"), ComparisonFunctions.Operator.EQ, IStringItem.valueOf("AbC"),
+            IBooleanItem.TRUE),
+        Arguments.of(IStringItem.valueOf("AbC"), ComparisonFunctions.Operator.EQ, IStringItem.valueOf("xYz"),
+            IBooleanItem.FALSE),
+        Arguments.of(IStringItem.valueOf("A.1"), ComparisonFunctions.Operator.NE, IStringItem.valueOf("A.2"),
+            IBooleanItem.TRUE),
+        Arguments.of(IStringItem.valueOf("A.1"), ComparisonFunctions.Operator.NE, IStringItem.valueOf("A.1"),
+            IBooleanItem.FALSE),
+        Arguments.of(IStringItem.valueOf("A.3"), ComparisonFunctions.Operator.GE, IStringItem.valueOf("A.2"),
+            IBooleanItem.TRUE),
+        Arguments.of(IStringItem.valueOf("B\\1"), ComparisonFunctions.Operator.GE, IStringItem.valueOf("B\\1"),
+            IBooleanItem.TRUE),
+        Arguments.of(IStringItem.valueOf("A.1"), ComparisonFunctions.Operator.GE, IStringItem.valueOf("A.2"),
+            IBooleanItem.FALSE),
+        Arguments.of(IStringItem.valueOf("A.1@"), ComparisonFunctions.Operator.GT, IStringItem.valueOf("A.1"),
+            IBooleanItem.TRUE),
+        Arguments.of(IStringItem.valueOf("X.1"), ComparisonFunctions.Operator.GT, IStringItem.valueOf("X.1"),
+            IBooleanItem.FALSE),
+        Arguments.of(IStringItem.valueOf("A"), ComparisonFunctions.Operator.LE, IStringItem.valueOf("A.2"),
+            IBooleanItem.TRUE),
+        Arguments.of(IStringItem.valueOf("B\\1"), ComparisonFunctions.Operator.LE, IStringItem.valueOf("C\\1"),
+            IBooleanItem.TRUE),
+        Arguments.of(IStringItem.valueOf("X#"), ComparisonFunctions.Operator.LE, IStringItem.valueOf("X"),
+            IBooleanItem.FALSE),
+        Arguments.of(IStringItem.valueOf("A"), ComparisonFunctions.Operator.LT, IStringItem.valueOf("A.2"),
+            IBooleanItem.TRUE),
+        Arguments.of(IStringItem.valueOf("X#"), ComparisonFunctions.Operator.LT, IStringItem.valueOf("X"),
+            IBooleanItem.FALSE),
         // boolean
-        Arguments.of(IBooleanItem.TRUE, Operator.EQ, IBooleanItem.TRUE, IBooleanItem.TRUE),
-        Arguments.of(IBooleanItem.FALSE, Operator.EQ, IBooleanItem.FALSE, IBooleanItem.TRUE),
-        Arguments.of(IBooleanItem.TRUE, Operator.EQ, IBooleanItem.FALSE, IBooleanItem.FALSE),
-        Arguments.of(IBooleanItem.FALSE, Operator.EQ, IBooleanItem.TRUE, IBooleanItem.FALSE),
-        Arguments.of(IBooleanItem.TRUE, Operator.NE, IBooleanItem.FALSE, IBooleanItem.TRUE),
-        Arguments.of(IBooleanItem.TRUE, Operator.NE, IBooleanItem.FALSE, IBooleanItem.TRUE),
-        Arguments.of(IBooleanItem.TRUE, Operator.NE, IBooleanItem.TRUE, IBooleanItem.FALSE),
-        Arguments.of(IBooleanItem.FALSE, Operator.NE, IBooleanItem.FALSE, IBooleanItem.FALSE),
-        Arguments.of(IBooleanItem.TRUE, Operator.GE, IBooleanItem.TRUE, IBooleanItem.TRUE),
-        Arguments.of(IBooleanItem.TRUE, Operator.GT, IBooleanItem.TRUE, IBooleanItem.FALSE),
-        Arguments.of(IBooleanItem.TRUE, Operator.LE, IBooleanItem.TRUE, IBooleanItem.TRUE),
-        Arguments.of(IBooleanItem.TRUE, Operator.LT, IBooleanItem.TRUE, IBooleanItem.FALSE)
+        Arguments.of(IBooleanItem.TRUE, ComparisonFunctions.Operator.EQ, IBooleanItem.TRUE, IBooleanItem.TRUE),
+        Arguments.of(IBooleanItem.FALSE, ComparisonFunctions.Operator.EQ, IBooleanItem.FALSE, IBooleanItem.TRUE),
+        Arguments.of(IBooleanItem.TRUE, ComparisonFunctions.Operator.EQ, IBooleanItem.FALSE, IBooleanItem.FALSE),
+        Arguments.of(IBooleanItem.FALSE, ComparisonFunctions.Operator.EQ, IBooleanItem.TRUE, IBooleanItem.FALSE),
+        Arguments.of(IBooleanItem.TRUE, ComparisonFunctions.Operator.NE, IBooleanItem.FALSE, IBooleanItem.TRUE),
+        Arguments.of(IBooleanItem.TRUE, ComparisonFunctions.Operator.NE, IBooleanItem.FALSE, IBooleanItem.TRUE),
+        Arguments.of(IBooleanItem.TRUE, ComparisonFunctions.Operator.NE, IBooleanItem.TRUE, IBooleanItem.FALSE),
+        Arguments.of(IBooleanItem.FALSE, ComparisonFunctions.Operator.NE, IBooleanItem.FALSE, IBooleanItem.FALSE),
+        Arguments.of(IBooleanItem.TRUE, ComparisonFunctions.Operator.GE, IBooleanItem.TRUE, IBooleanItem.TRUE),
+        Arguments.of(IBooleanItem.TRUE, ComparisonFunctions.Operator.GT, IBooleanItem.TRUE, IBooleanItem.FALSE),
+        Arguments.of(IBooleanItem.TRUE, ComparisonFunctions.Operator.LE, IBooleanItem.TRUE, IBooleanItem.TRUE),
+        Arguments.of(IBooleanItem.TRUE, ComparisonFunctions.Operator.LT, IBooleanItem.TRUE, IBooleanItem.FALSE)
 
     );
   }
@@ -81,7 +95,11 @@ class ValueComparisonTest
   @SuppressWarnings("null")
   @ParameterizedTest
   @MethodSource
-  void testValueComparison(IItem leftItem, Operator operator, IItem rightItem, IBooleanItem expectedResult) {
+  void testValueComparison(
+      IItem leftItem,
+      ComparisonFunctions.Operator operator,
+      IItem rightItem,
+      IBooleanItem expectedResult) {
     DynamicContext dynamicContext = newDynamicContext();
     Mockery context = getContext();
 

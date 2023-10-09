@@ -38,10 +38,10 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import gov.nist.secauto.metaschema.core.metapath.IComparison.Operator;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression.ResultType;
 import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Lexer;
 import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser;
+import gov.nist.secauto.metaschema.core.metapath.function.ComparisonFunctions;
 import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
@@ -231,23 +231,26 @@ class BuildAstVisitorTest {
 
   static Stream<Arguments> testComparison() {
     return Stream.of(
-        Arguments.of("A = B", GeneralComparison.class, Operator.EQ),
-        Arguments.of("A != B", GeneralComparison.class, Operator.NE),
-        Arguments.of("A < B", GeneralComparison.class, Operator.LT),
-        Arguments.of("A <= B", GeneralComparison.class, Operator.LE),
-        Arguments.of("A > B", GeneralComparison.class, Operator.GT),
-        Arguments.of("A >= B", GeneralComparison.class, Operator.GE),
-        Arguments.of("A eq B", ValueComparison.class, Operator.EQ),
-        Arguments.of("A ne B", ValueComparison.class, Operator.NE),
-        Arguments.of("A lt B", ValueComparison.class, Operator.LT),
-        Arguments.of("A le B", ValueComparison.class, Operator.LE),
-        Arguments.of("A gt B", ValueComparison.class, Operator.GT),
-        Arguments.of("A ge B", ValueComparison.class, Operator.GE));
+        Arguments.of("A = B", GeneralComparison.class, ComparisonFunctions.Operator.EQ),
+        Arguments.of("A != B", GeneralComparison.class, ComparisonFunctions.Operator.NE),
+        Arguments.of("A < B", GeneralComparison.class, ComparisonFunctions.Operator.LT),
+        Arguments.of("A <= B", GeneralComparison.class, ComparisonFunctions.Operator.LE),
+        Arguments.of("A > B", GeneralComparison.class, ComparisonFunctions.Operator.GT),
+        Arguments.of("A >= B", GeneralComparison.class, ComparisonFunctions.Operator.GE),
+        Arguments.of("A eq B", ValueComparison.class, ComparisonFunctions.Operator.EQ),
+        Arguments.of("A ne B", ValueComparison.class, ComparisonFunctions.Operator.NE),
+        Arguments.of("A lt B", ValueComparison.class, ComparisonFunctions.Operator.LT),
+        Arguments.of("A le B", ValueComparison.class, ComparisonFunctions.Operator.LE),
+        Arguments.of("A gt B", ValueComparison.class, ComparisonFunctions.Operator.GT),
+        Arguments.of("A ge B", ValueComparison.class, ComparisonFunctions.Operator.GE));
   }
 
   @ParameterizedTest
   @MethodSource
-  void testComparison(@NonNull String metapath, @NonNull Class<?> expectedClass, @NonNull Operator operator) {
+  void testComparison(
+      @NonNull String metapath,
+      @NonNull Class<?> expectedClass,
+      @NonNull ComparisonFunctions.Operator operator) {
     IExpression ast = parseExpression(metapath);
 
     assertAll(

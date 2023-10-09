@@ -45,4 +45,26 @@ class Base64BinaryItemImpl
   public Base64Adapter getJavaTypeAdapter() {
     return MetaschemaDataTypeProvider.BASE64;
   }
+
+  @Override
+  public ByteBuffer asByteBuffer() {
+    return getValue();
+  }
+
+  @Override
+  public int hashCode() {
+    return asByteBuffer().hashCode();
+  }
+
+  @SuppressWarnings("PMD.OnlyOneReturn")
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof IBase64BinaryItem)) {
+      return false;
+    }
+    return compareTo((IBase64BinaryItem) obj) == 0;
+  }
 }

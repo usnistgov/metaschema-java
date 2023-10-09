@@ -33,6 +33,16 @@ import java.time.temporal.TemporalAmount;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IDurationItem extends IAnyAtomicItem {
+  /**
+   * Cast the provided type to this item type.
+   *
+   * @param item
+   *          the item to cast
+   * @return the original item if it is already this type, otherwise a new item
+   *         cast to this type
+   * @throws InvalidValueForCastFunctionException
+   *           if the provided {@code item} cannot be cast to this type
+   */
   @NonNull
   static IDurationItem cast(@NonNull IAnyAtomicItem item) {
     IDurationItem retval;

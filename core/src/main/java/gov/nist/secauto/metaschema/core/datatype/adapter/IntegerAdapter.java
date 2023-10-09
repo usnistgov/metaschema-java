@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.core.datatype.adapter;
 
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDecimalItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -68,15 +67,10 @@ public class IntegerAdapter
   protected IIntegerItem castInternal(@NonNull IAnyAtomicItem item) {
     IIntegerItem retval;
     if (item instanceof INumericItem) {
-      if (item instanceof IIntegerItem) {
-        retval = (IIntegerItem) item;
-      } else {
-        // must be a decimal type
-        retval = newItem(((IDecimalItem) item).asInteger());
-      }
+      retval = newItem(((INumericItem) item).asInteger());
     } else if (item instanceof IBooleanItem) {
       boolean value = ((IBooleanItem) item).toBoolean();
-      retval = value ? IIntegerItem.ONE : IIntegerItem.ZERO;
+      retval = newItem(ObjectUtils.notNull(value ? BigInteger.ONE : BigInteger.ZERO));
     } else {
       retval = super.castInternal(item);
     }

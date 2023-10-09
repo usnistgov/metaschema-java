@@ -32,6 +32,13 @@ import gov.nist.secauto.metaschema.core.metapath.function.InvalidValueForCastFun
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IEmailAddressItem extends IStringItem {
+  /**
+   * Construct a new email address item using the provided string {@code value}.
+   *
+   * @param value
+   *          a string representing an email address value
+   * @return the new item
+   */
   @NonNull
   static IEmailAddressItem valueOf(@NonNull String value) {
     try {
@@ -42,9 +49,18 @@ public interface IEmailAddressItem extends IStringItem {
     }
   }
 
+  /**
+   * Cast the provided type to this item type.
+   *
+   * @param item
+   *          the item to cast
+   * @return the original item if it is already this type, otherwise a new item
+   *         cast to this type
+   * @throws InvalidValueForCastFunctionException
+   *           if the provided {@code item} cannot be cast to this type
+   */
   @NonNull
-  static IEmailAddressItem cast(@NonNull IAnyAtomicItem item)
-      throws InvalidValueForCastFunctionException {
+  static IEmailAddressItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.EMAIL_ADDRESS.cast(item);
   }
 

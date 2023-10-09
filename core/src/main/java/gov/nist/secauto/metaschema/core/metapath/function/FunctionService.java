@@ -108,7 +108,6 @@ public final class FunctionService {
    * @throws StaticMetapathException
    *           if a matching function was not found
    */
-  @SuppressWarnings("null")
   public IFunction getFunction(@NonNull String name, int arity) {
     IFunction retval;
     synchronized (this) {
@@ -135,7 +134,6 @@ public final class FunctionService {
    * @throws StaticMetapathException
    *           if a matching function was not found
    */
-  @SuppressWarnings("null")
   public IFunction getFunction(@NonNull QName name, int arity) {
     IFunction retval;
     synchronized (this) {

@@ -26,15 +26,10 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
+import gov.nist.secauto.metaschema.core.metapath.function.ComparisonFunctions;
 import gov.nist.secauto.metaschema.core.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDayTimeDurationItem;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDecimalItem;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.IUntypedAtomicItem;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.IYearMonthDurationItem;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -51,7 +46,8 @@ class GeneralComparison
    * @param right
    *          the expression to compare with
    */
-  protected GeneralComparison(@NonNull IExpression left, @NonNull Operator operator, @NonNull IExpression right) {
+  protected GeneralComparison(@NonNull IExpression left, @NonNull ComparisonFunctions.Operator operator,
+      @NonNull IExpression right) {
     super(left, operator, right);
   }
 
@@ -64,81 +60,7 @@ class GeneralComparison
   public ISequence<? extends IBooleanItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
     ISequence<? extends IAnyAtomicItem> leftItems = FnData.fnData(getLeft().accept(dynamicContext, focus));
     ISequence<? extends IAnyAtomicItem> rightItems = FnData.fnData(getRight().accept(dynamicContext, focus));
-    return ISequence.of(valueCompairison(leftItems, getOperator(), rightItems));
+    return ISequence.of(ComparisonFunctions.generalCompairison(leftItems, getOperator(), rightItems));
   }
 
-  /**
-   * Compare the sets of atomic items.
-   *
-   * @param leftItems
-   *          the first set of items to compare
-   * @param operator
-   *          the comparison operator
-   * @param rightItems
-   *          the second set of items to compare
-   * @return a or an empty {@link ISequence} if either item is {@code null}
-   */
-  @NonNull
-  protected IBooleanItem valueCompairison( // NOPMD - acceptable complexity
-      @NonNull ISequence<? extends IAnyAtomicItem> leftItems,
-      @NonNull Operator operator,
-      @NonNull ISequence<? extends IAnyAtomicItem> rightItems) {
-
-    IBooleanItem retval = IBooleanItem.FALSE;
-    for (IAnyAtomicItem left : leftItems.asList()) {
-      assert left != null;
-      for (IAnyAtomicItem right : rightItems.asList()) {
-        assert right != null;
-        IAnyAtomicItem leftCast;
-        IAnyAtomicItem rightCast;
-        if (left instanceof IUntypedAtomicItem) {
-          if (right instanceof IUntypedAtomicItem) {
-            leftCast = IStringItem.cast(left);
-            rightCast = IStringItem.cast(right);
-          } else {
-            leftCast = applyGeneralComparisonCast(right, left);
-            rightCast = right;
-          }
-        } else if (right instanceof IUntypedAtomicItem) {
-          leftCast = left;
-          rightCast = applyGeneralComparisonCast(left, right);
-        } else {
-          leftCast = left;
-          rightCast = right;
-        }
-
-        assert leftCast != null;
-        IBooleanItem result = compare(leftCast, operator, rightCast);
-        if (IBooleanItem.TRUE.equals(result)) {
-          retval = IBooleanItem.TRUE;
-        }
-      }
-    }
-    return retval;
-  }
-
-  /**
-   * Attempts to cast the provided {@code other} item to the type of the
-   * {@code item}.
-   *
-   * @param item
-   *          the item whose type the other item is to be cast to
-   * @param other
-   *          the item to cast
-   * @return the casted item
-   */
-  @NonNull
-  protected IAnyAtomicItem applyGeneralComparisonCast(@NonNull IAnyAtomicItem item, @NonNull IAnyAtomicItem other) {
-    IAnyAtomicItem retval;
-    if (item instanceof INumericItem) {
-      retval = IDecimalItem.cast(other);
-    } else if (item instanceof IDayTimeDurationItem) {
-      retval = IDayTimeDurationItem.cast(other);
-    } else if (item instanceof IDayTimeDurationItem) {
-      retval = IYearMonthDurationItem.cast(other);
-    } else {
-      retval = item.getJavaTypeAdapter().cast(other);
-    }
-    return retval;
-  }
 }

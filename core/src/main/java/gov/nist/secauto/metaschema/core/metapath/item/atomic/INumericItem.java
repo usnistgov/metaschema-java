@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.metapath.item.atomic;
 
+import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.metapath.function.ArithmeticFunctionException;
 import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.function.InvalidValueForCastFunctionException;
@@ -40,28 +41,47 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface INumericItem extends IAnyAtomicItem {
 
+  /**
+   * Cast the provided type to this item type.
+   *
+   * @param item
+   *          the item to cast
+   * @return the original item if it is already this type, otherwise a new item
+   *         cast to this type
+   * @throws InvalidValueForCastFunctionException
+   *           if the provided {@code item} cannot be cast to this type
+   */
   @NonNull
-  static INumericItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
-    INumericItem retval;
-    if (item instanceof INumericItem) {
-      retval = (INumericItem) item;
-    } else {
-      try {
-        retval = IDecimalItem.valueOf(item.asString());
-      } catch (NumberFormatException ex) {
-        throw new InvalidValueForCastFunctionException(ex);
-      }
-    }
-    return retval;
+  static INumericItem cast(@NonNull IAnyAtomicItem item) {
+    return MetaschemaDataTypeProvider.DECIMAL.cast(item);
   }
 
+  /**
+   * Get this item's value as a decimal.
+   *
+   * @return the equivalent decimal value
+   */
   @NonNull
   BigDecimal asDecimal();
 
+  /**
+   * Get this item's value as an integer.
+   *
+   * @return the equivalent integer value
+   */
   @NonNull
   BigInteger asInteger();
 
+  /**
+   * Get the effective boolean value of this item based on
+   * <a href="https://www.w3.org/TR/xpath-31/#id-ebv">XPath 3.1</a>.
+   *
+   * @return the effective boolean value
+   */
   boolean toEffectiveBoolean();
+
+  @Override
+  INumericItem castAsType(IAnyAtomicItem item);
 
   /**
    * Get the absolute value of the item.
@@ -87,14 +107,30 @@ public interface INumericItem extends IAnyAtomicItem {
   @NonNull
   IIntegerItem floor();
 
+  /**
+   * Round the item's value with zero precision.
+   * <p>
+   * This is the same as calling {@link #round(IIntegerItem)} with a precision of
+   * {@code 0}.
+   *
+   * @return the rounded value
+   */
   @NonNull
   default INumericItem round() {
     return round(IIntegerItem.ZERO);
   }
 
-  @Override
-  INumericItem castAsType(IAnyAtomicItem item);
-
+  /**
+   * Round the item's value with the specified precision.
+   * <p>
+   * This is the same as calling {@link #round(IIntegerItem)} with a precision of
+   * {@code 0}.
+   *
+   * @param precisionItem
+   *          the precision indicating the number of digits to round to before
+   *          (negative value} or after (positive value) the decimal point.
+   * @return the rounded value
+   */
   @NonNull
   default INumericItem round(@NonNull IIntegerItem precisionItem) {
     int precision;
@@ -111,7 +147,7 @@ public interface INumericItem extends IAnyAtomicItem {
         retval = this;
       } else {
         // IDecimalItem
-        BigDecimal value = this.asDecimal();
+        BigDecimal value = asDecimal();
         if (value.signum() == -1) {
           retval = IDecimalItem.valueOf(
               ObjectUtils.notNull(
@@ -123,11 +159,11 @@ public interface INumericItem extends IAnyAtomicItem {
         }
 
         // cast result to original type
-        retval = this.castAsType(retval);
+        retval = castAsType(retval);
       }
     } else {
       // round to a power of 10
-      BigInteger value = this.asInteger();
+      BigInteger value = asInteger();
       BigInteger divisor = BigInteger.TEN.pow(0 - precision);
 
       @NonNull BigInteger result;

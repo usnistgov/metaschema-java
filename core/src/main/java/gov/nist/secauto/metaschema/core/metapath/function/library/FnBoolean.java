@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.core.metapath.function.InvalidArgumentFunctionException;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyUriItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
@@ -131,16 +132,12 @@ public final class FnBoolean {
     boolean retval;
     if (item instanceof IBooleanItem) {
       retval = ((IBooleanItem) item).toBoolean();
-    } else if (item instanceof IStringItem) {
-      String string = ((IStringItem) item).asString();
-      retval = !string.isBlank();
     } else if (item instanceof INumericItem) {
       retval = ((INumericItem) item).toEffectiveBoolean();
-    } else if (item instanceof IUntypedAtomicItem) {
-      String string = ((IUntypedAtomicItem) item).asString();
-      retval = !string.isBlank();
-    } else if (item instanceof IAnyUriItem) {
-      String string = ((IAnyUriItem) item).asString();
+    } else if (item instanceof IStringItem
+        || item instanceof IAnyUriItem
+        || item instanceof IUntypedAtomicItem) {
+      String string = ((IAnyAtomicItem) item).asString();
       retval = !string.isBlank();
     } else {
       throw new InvalidArgumentFunctionException(

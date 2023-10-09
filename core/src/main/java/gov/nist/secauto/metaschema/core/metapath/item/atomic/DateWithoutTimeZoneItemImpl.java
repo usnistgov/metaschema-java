@@ -35,8 +35,7 @@ import java.time.ZonedDateTime;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DateWithoutTimeZoneItemImpl
-    extends AbstractAnyAtomicItem<Date>
-    implements IDateItem {
+    extends AbstractDateItem<Date> {
 
   public DateWithoutTimeZoneItemImpl(@NonNull Date value) {
     super(value);

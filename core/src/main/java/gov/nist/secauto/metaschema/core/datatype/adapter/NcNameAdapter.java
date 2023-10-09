@@ -33,6 +33,7 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+@Deprecated(forRemoval = true, since = "0.7.0")
 public class NcNameAdapter
     extends AbstractStringAdapter<INcNameItem> {
   @NonNull

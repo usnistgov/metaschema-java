@@ -43,6 +43,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IPositiveIntegerItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
 
+@SuppressWarnings({ "removal", "deprecation" })
 @AutoService(IFunctionLibrary.class)
 public class DefaultFunctionLibrary
     extends FunctionLibrary {
@@ -118,7 +119,9 @@ public class DefaultFunctionLibrary
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-lower-case
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-matches
     // P1(#224): https://www.w3.org/TR/xpath-functions-31/#func-max
+    registerFunction(FnMinMax.SIGNATURE_MAX);
     // P1(#224): https://www.w3.org/TR/xpath-functions-31/#func-min
+    registerFunction(FnMinMax.SIGNATURE_MIN);
     // https://www.w3.org/TR/xpath-functions-31/#func-minutes-from-dateTime
     // https://www.w3.org/TR/xpath-functions-31/#func-minutes-from-duration
     // https://www.w3.org/TR/xpath-functions-31/#func-minutes-from-time

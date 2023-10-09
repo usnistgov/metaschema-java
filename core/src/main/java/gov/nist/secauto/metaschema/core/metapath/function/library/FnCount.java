@@ -40,7 +40,7 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class FnCount {
+public final class FnCount {
   private static final String NAME = "count";
 
   @NonNull

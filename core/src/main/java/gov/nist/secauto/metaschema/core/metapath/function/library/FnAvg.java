@@ -105,11 +105,11 @@ public final class FnAvg {
    */
   @NonNull
   public static IAnyAtomicItem average(@NonNull List<? extends IAnyAtomicItem> items) {
-    Set<Class<? extends IItem>> allowedTypes = ObjectUtils.notNull(Set.of(
+    Set<Class<? extends IAnyAtomicItem>> allowedTypes = ObjectUtils.notNull(Set.of(
         IDayTimeDurationItem.class,
         IYearMonthDurationItem.class,
         INumericItem.class));
-    Map<Class<? extends IItem>, Integer> typeCounts = FunctionUtils.countTypes(
+    Map<Class<? extends IAnyAtomicItem>, Integer> typeCounts = FunctionUtils.countTypes(
         allowedTypes,
         ObjectUtils.notNull(items));
 
@@ -165,6 +165,17 @@ public final class FnAvg {
   }
 
   @NonNull
+  private static <T extends IAnyAtomicItem, R extends T> R average(
+      @NonNull List<T> items,
+      @NonNull BinaryOperator<T> adder,
+      @NonNull BiFunction<T, INumericItem, R> divider) {
+    T sum = items.stream()
+        .reduce(adder)
+        .get();
+    return ObjectUtils.notNull(divider.apply(sum, IIntegerItem.valueOf(items.size())));
+  }
+
+  @NonNull
   public static IDayTimeDurationItem averageDayTimeDurations(@NonNull List<IDayTimeDurationItem> items) {
     return average(
         items,
@@ -189,16 +200,5 @@ public final class FnAvg {
         (BinaryOperator<INumericItem>) OperationFunctions::opNumericAdd,
         (BiFunction<INumericItem, INumericItem,
             IDecimalItem>) OperationFunctions::opNumericDivide);
-  }
-
-  @NonNull
-  private static <T extends IAnyAtomicItem, R extends T> R average(
-      @NonNull List<T> items,
-      @NonNull BinaryOperator<T> adder,
-      @NonNull BiFunction<T, INumericItem, R> divider) {
-    T sum = items.stream()
-        .reduce(adder)
-        .get();
-    return ObjectUtils.notNull(divider.apply(sum, IIntegerItem.valueOf(items.size())));
   }
 }

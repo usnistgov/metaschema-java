@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
-import gov.nist.secauto.metaschema.core.metapath.IComparison.Operator;
 import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Lexer;
 import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.AbbrevforwardstepContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.AbbrevreversestepContext;
@@ -61,6 +60,7 @@ import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.Unionexp
 import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ValuecompContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.VarrefContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.WildcardContext;
+import gov.nist.secauto.metaschema.core.metapath.function.ComparisonFunctions;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -274,30 +274,30 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
     // the operator
     ParseTree operatorTree = ctx.getChild(1);
     Object payload = operatorTree.getPayload();
-    Operator operator;
 
-    IComparison retval;
+    ComparisonFunctions.Operator operator;
+    IBooleanLogicExpression retval;
     if (payload instanceof GeneralcompContext) {
       GeneralcompContext compContext = (GeneralcompContext) payload;
       int type = ((TerminalNode) compContext.getChild(0)).getSymbol().getType();
       switch (type) {
       case metapath10Lexer.EQ:
-        operator = Operator.EQ;
+        operator = ComparisonFunctions.Operator.EQ;
         break;
       case metapath10Lexer.NE:
-        operator = Operator.NE;
+        operator = ComparisonFunctions.Operator.NE;
         break;
       case metapath10Lexer.LT:
-        operator = Operator.LT;
+        operator = ComparisonFunctions.Operator.LT;
         break;
       case metapath10Lexer.LE:
-        operator = Operator.LE;
+        operator = ComparisonFunctions.Operator.LE;
         break;
       case metapath10Lexer.GT:
-        operator = Operator.GT;
+        operator = ComparisonFunctions.Operator.GT;
         break;
       case metapath10Lexer.GE:
-        operator = Operator.GE;
+        operator = ComparisonFunctions.Operator.GE;
         break;
       default:
         throw new UnsupportedOperationException(((TerminalNode) compContext.getChild(0)).getSymbol().getText());
@@ -308,22 +308,22 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
       int type = ((TerminalNode) compContext.getChild(0)).getSymbol().getType();
       switch (type) {
       case metapath10Lexer.KW_EQ:
-        operator = Operator.EQ;
+        operator = ComparisonFunctions.Operator.EQ;
         break;
       case metapath10Lexer.KW_NE:
-        operator = Operator.NE;
+        operator = ComparisonFunctions.Operator.NE;
         break;
       case metapath10Lexer.KW_LT:
-        operator = Operator.LT;
+        operator = ComparisonFunctions.Operator.LT;
         break;
       case metapath10Lexer.KW_LE:
-        operator = Operator.LE;
+        operator = ComparisonFunctions.Operator.LE;
         break;
       case metapath10Lexer.KW_GT:
-        operator = Operator.GT;
+        operator = ComparisonFunctions.Operator.GT;
         break;
       case metapath10Lexer.KW_GE:
-        operator = Operator.GE;
+        operator = ComparisonFunctions.Operator.GE;
         break;
       default:
         throw new UnsupportedOperationException(((TerminalNode) compContext.getChild(0)).getSymbol().getText());

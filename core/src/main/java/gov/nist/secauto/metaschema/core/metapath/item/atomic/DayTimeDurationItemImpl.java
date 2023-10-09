@@ -30,7 +30,6 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.DayTimeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 
 import java.time.Duration;
-import java.util.Objects;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -43,15 +42,21 @@ class DayTimeDurationItemImpl
   }
 
   @Override
+  public Duration asDuration() {
+    return getValue();
+  }
+
+  @Override
   public DayTimeAdapter getJavaTypeAdapter() {
     return MetaschemaDataTypeProvider.DAY_TIME_DURATION;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getValue());
+    return asDuration().hashCode();
   }
 
+  @SuppressWarnings("PMD.OnlyOneReturn")
   @Override
   public boolean equals(Object obj) {
     if (this == obj) {
@@ -60,7 +65,6 @@ class DayTimeDurationItemImpl
     if (!(obj instanceof IDayTimeDurationItem)) {
       return false;
     }
-    IDayTimeDurationItem other = (IDayTimeDurationItem) obj;
-    return Objects.equals(getValue(), other.getValue());
+    return compareTo((IDayTimeDurationItem) obj) == 0;
   }
 }

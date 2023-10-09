@@ -39,7 +39,6 @@ import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyUriItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
-import java.net.URI;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -196,8 +195,6 @@ public final class FnResolveUri {
       return null; // NOPMD - readability
     }
 
-    @SuppressWarnings("null")
-    @NonNull URI resolvedUri = base.getValue().resolve(relative.getValue());
-    return IAnyUriItem.valueOf(resolvedUri);
+    return base.resolve(relative);
   }
 }

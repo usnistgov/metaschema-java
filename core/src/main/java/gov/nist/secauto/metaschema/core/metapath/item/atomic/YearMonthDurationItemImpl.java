@@ -43,13 +43,18 @@ class YearMonthDurationItemImpl
   }
 
   @Override
+  public Period asPeriod() {
+    return getValue();
+  }
+
+  @Override
   public YearMonthAdapter getJavaTypeAdapter() {
     return MetaschemaDataTypeProvider.YEAR_MONTH_DURATION;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getValue());
+    return Objects.hash(asPeriod());
   }
 
   @Override
@@ -60,7 +65,6 @@ class YearMonthDurationItemImpl
     if (!(obj instanceof IYearMonthDurationItem)) {
       return false;
     }
-    IYearMonthDurationItem other = (IYearMonthDurationItem) obj;
-    return Objects.equals(getValue(), other.getValue());
+    return compareTo((IYearMonthDurationItem) obj) == 0;
   }
 }

@@ -44,4 +44,9 @@ class IPv4AddressItemImpl
   public IPv4AddressAdapter getJavaTypeAdapter() {
     return MetaschemaDataTypeProvider.IP_V4_ADDRESS;
   }
+
+  @Override
+  public IPv4Address asIpAddress() {
+    return getValue();
+  }
 }

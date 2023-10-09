@@ -34,22 +34,43 @@ import inet.ipaddr.ipv4.IPv4Address;
 
 public interface IIPv4AddressItem extends IIPAddressItem {
 
+  /**
+   * Construct a new IPv4 item using the provided {@code value}.
+   *
+   * @param value
+   *          an IPv4 value
+   * @return the new item
+   */
   @NonNull
   static IIPv4AddressItem valueOf(@NonNull IPv4Address value) {
     return new IPv4AddressItemImpl(value);
   }
 
+  /**
+   * Cast the provided type to this item type.
+   *
+   * @param item
+   *          the item to cast
+   * @return the original item if it is already this type, otherwise a new item
+   *         cast to this type
+   * @throws InvalidValueForCastFunctionException
+   *           if the provided {@code item} cannot be cast to this type
+   */
   @NonNull
-  static IIPv4AddressItem cast(@NonNull IAnyAtomicItem item)
-      throws InvalidValueForCastFunctionException {
+  static IIPv4AddressItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.IP_V4_ADDRESS.cast(item);
   }
 
   @Override
-  IPv4Address getValue();
+  IPv4Address asIpAddress();
 
   @Override
   default IIPv4AddressItem castAsType(IAnyAtomicItem item) {
     return cast(item);
+  }
+
+  @Override
+  default int compareTo(IAnyAtomicItem item) {
+    return compareTo(cast(item));
   }
 }
