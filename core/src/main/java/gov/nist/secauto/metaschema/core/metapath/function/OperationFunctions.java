@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.core.metapath.function; // NOPMD - intentional
 
 import gov.nist.secauto.metaschema.core.metapath.InvalidTypeMetapathException;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBase64BinaryItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDateItem;
@@ -37,6 +38,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDurationItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IYearMonthDurationItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -44,11 +46,18 @@ import java.time.Duration;
 import java.time.Period;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAmount;
+import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public final class OperationFunctions { // NOPMD - intentional
+  @NonNull
+  public static final Set<Class<? extends IAnyAtomicItem>> AGGREGATE_MATH_TYPES = ObjectUtils.notNull(Set.of(
+      IDayTimeDurationItem.class,
+      IYearMonthDurationItem.class,
+      INumericItem.class));
+
   private OperationFunctions() {
     // disable
   }
@@ -76,8 +85,9 @@ public final class OperationFunctions { // NOPMD - intentional
   }
 
   @NonNull
-  public static IYearMonthDurationItem opAddYearMonthDurations(@NonNull IYearMonthDurationItem arg1,
-      IYearMonthDurationItem arg2) {
+  public static IYearMonthDurationItem opAddYearMonthDurations(
+      @NonNull IYearMonthDurationItem arg1,
+      @NonNull IYearMonthDurationItem arg2) {
     Period duration1 = arg1.asPeriod();
     Period duration2 = arg2.asPeriod();
 

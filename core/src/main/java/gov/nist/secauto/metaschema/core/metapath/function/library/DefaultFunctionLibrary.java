@@ -164,7 +164,9 @@ public class DefaultFunctionLibrary
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-substring
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-substring-after
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-substring-before
-    // P1(#224): https://www.w3.org/TR/xpath-functions-31/#func-sum
+    // https://www.w3.org/TR/xpath-functions-31/#func-sum
+    registerFunction(FnSum.SIGNATURE_ONE_ARG);
+    registerFunction(FnSum.SIGNATURE_TWO_ARG);
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-tail
     // https://www.w3.org/TR/xpath-functions-31/#func-timezone-from-date
     // https://www.w3.org/TR/xpath-functions-31/#func-timezone-from-dateTime

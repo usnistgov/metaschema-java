@@ -33,29 +33,28 @@ import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.core.metapath.function.InvalidArgumentFunctionException;
+import gov.nist.secauto.metaschema.core.metapath.function.OperationFunctions;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyUriItem;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDecimalItem;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.IUntypedAtomicItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDayTimeDurationItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IYearMonthDurationItem;
+import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public final class FnMinMax {
-  private static final String NAME_MIN = "min";
-  private static final String NAME_MAX = "max";
+public final class FnSum {
+  private static final String NAME = "sum";
 
   @NonNull
-  static final IFunction SIGNATURE_MIN = IFunction.builder()
-      .name(NAME_MIN)
+  static final IFunction SIGNATURE_ONE_ARG = IFunction.builder()
+      .name(NAME)
       .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
@@ -66,13 +65,13 @@ public final class FnMinMax {
           .zeroOrMore()
           .build())
       .returnType(IAnyAtomicItem.class)
-      .returnZeroOrOne()
-      .functionHandler(FnMinMax::executeMin)
+      .returnOne()
+      .functionHandler(FnSum::executeOneArg)
       .build();
 
   @NonNull
-  static final IFunction SIGNATURE_MAX = IFunction.builder()
-      .name(NAME_MAX)
+  static final IFunction SIGNATURE_TWO_ARG = IFunction.builder()
+      .name(NAME)
       .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
@@ -82,18 +81,23 @@ public final class FnMinMax {
           .type(IAnyAtomicItem.class)
           .zeroOrMore()
           .build())
+      .argument(IArgument.newBuilder()
+          .name("zero")
+          .type(IAnyAtomicItem.class)
+          .zeroOrOne()
+          .build())
       .returnType(IAnyAtomicItem.class)
       .returnZeroOrOne()
-      .functionHandler(FnMinMax::executeMax)
+      .functionHandler(FnSum::executeTwoArg)
       .build();
 
-  private FnMinMax() {
+  private FnSum() {
     // disable construction
   }
 
   @SuppressWarnings("unused")
   @NonNull
-  private static ISequence<IAnyAtomicItem> executeMin(
+  private static ISequence<IAnyAtomicItem> executeOneArg(
       @NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
@@ -101,12 +105,12 @@ public final class FnMinMax {
     ISequence<? extends IAnyAtomicItem> sequence = FunctionUtils.asType(
         ObjectUtils.requireNonNull(arguments.get(0)));
 
-    return ISequence.of(min(sequence.asList()));
+    return ISequence.of(sum(sequence.asList(), IIntegerItem.ZERO));
   }
 
   @SuppressWarnings("unused")
   @NonNull
-  private static ISequence<IAnyAtomicItem> executeMax(
+  private static ISequence<IAnyAtomicItem> executeTwoArg(
       @NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
@@ -114,85 +118,94 @@ public final class FnMinMax {
     ISequence<? extends IAnyAtomicItem> sequence = FunctionUtils.asType(
         ObjectUtils.requireNonNull(arguments.get(0)));
 
-    return ISequence.of(max(sequence.asList()));
+    IAnyAtomicItem zero = FunctionUtils.getFirstItem(
+        FunctionUtils.asType(
+            ObjectUtils.requireNonNull(arguments.get(1))),
+        true);
+
+    return ISequence.of(sum(sequence.asList(), zero));
   }
 
   /**
    * An implementation of XPath 3.1
-   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-min">fn:min</a>.
+   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-sum">fn:sum</a>.
    *
    * @param items
-   *          the items to find the minimum value for
+   *          the items to sum
+   * @param zero
+   *          the value to use if no items are provided, which can be {@code null}
    * @return the average
    */
   @Nullable
-  public static IAnyAtomicItem min(@NonNull List<? extends IAnyAtomicItem> items) {
-    return normalize(items)
-        .min((item1, item2) -> {
-          assert item2 != null;
-          return item1.compareTo(item2);
-        })
-        .orElse(null);
-  }
-
-  /**
-   * An implementation of XPath 3.1
-   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-max">fn:max</a>.
-   *
-   * @param items
-   *          the items to find the maximum value for
-   * @return the average
-   */
-  @Nullable
-  public static IAnyAtomicItem max(@NonNull List<? extends IAnyAtomicItem> items) {
-    return normalize(items)
-        .max((item1, item2) -> {
-          assert item2 != null;
-          return item1.compareTo(item2);
-        })
-        .orElse(null);
-  }
-
-  private static Stream<? extends IAnyAtomicItem> normalize(
-      @NonNull List<? extends IAnyAtomicItem> items) {
+  public static IAnyAtomicItem sum(
+      @NonNull List<? extends IAnyAtomicItem> items,
+      @Nullable IAnyAtomicItem zero) {
     if (items.isEmpty()) {
-      return Stream.empty();
+      return zero;
     }
 
     if (items.size() == 1) {
-      return Stream.of(items.get(0));
+      return items.get(0);
     }
 
-    List<? extends IAnyAtomicItem> resultingItems = ObjectUtils.notNull(items.stream()
-        .map(item -> item instanceof IUntypedAtomicItem ? IDecimalItem.cast(item) : item)
-        .collect(Collectors.toList()));
+    Map<Class<? extends IAnyAtomicItem>, Integer> typeCounts = FunctionUtils.countTypes(
+        OperationFunctions.AGGREGATE_MATH_TYPES,
+        ObjectUtils.notNull(items));
 
-    Map<Class<? extends IAnyAtomicItem>, Integer> counts = FunctionUtils.countTypes(
-        IAnyAtomicItem.PRIMITIVE_ITEM_TYPES,
-        resultingItems);
+    int count = items.size();
+    int dayTimeCount = typeCounts.getOrDefault(IDayTimeDurationItem.class, 0);
+    int yearMonthCount = typeCounts.getOrDefault(IYearMonthDurationItem.class, 0);
+    int numericCount = typeCounts.getOrDefault(INumericItem.class, 0);
 
-    Stream<? extends IAnyAtomicItem> stream = null;
-    if (counts.size() == 1) {
-      stream = resultingItems.stream();
-    } else if (counts.size() > 1) {
-      int size = resultingItems.size();
-      if (counts.getOrDefault(IStringItem.class, 0) + counts.getOrDefault(IAnyUriItem.class, 0) == size) {
-        stream = resultingItems.stream()
-            .map(item -> item.asStringItem());
-      } else if (counts.getOrDefault(IDecimalItem.class, 0) == size) {
-        stream = resultingItems.stream()
-            .map(item -> (IDecimalItem) item);
+    IAnyAtomicItem retval;
+    if (dayTimeCount > 0) {
+      if (dayTimeCount != count) {
+        throw new InvalidArgumentFunctionException(
+            InvalidArgumentFunctionException.INVALID_ARGUMENT_TYPE,
+            String.format("Values must all be of type '%s'.", IDayTimeDurationItem.class.getName()));
       }
-    }
 
-    if (stream == null) {
+      retval = items.stream()
+          .map(item -> (IDayTimeDurationItem) item)
+          .reduce((item1, item2) -> OperationFunctions.opAddDayTimeDurations(
+              ObjectUtils.notNull(item1),
+              ObjectUtils.notNull(item2)))
+          .get();
+    } else if (yearMonthCount > 0) {
+      if (yearMonthCount != count) {
+        throw new InvalidArgumentFunctionException(
+            InvalidArgumentFunctionException.INVALID_ARGUMENT_TYPE,
+            String.format("Values must all be of type '%s'.", IYearMonthDurationItem.class.getName()));
+      }
+
+      retval = items.stream()
+          .map(item -> (IYearMonthDurationItem) item)
+          .reduce((item1, item2) -> OperationFunctions.opAddYearMonthDurations(
+              ObjectUtils.notNull(item1),
+              ObjectUtils.notNull(item2)))
+          .get();
+    } else if (numericCount > 0) {
+      if (numericCount != count) {
+        throw new InvalidArgumentFunctionException(
+            InvalidArgumentFunctionException.INVALID_ARGUMENT_TYPE,
+            String.format("Values must all be of type '%s'.", INumericItem.class.getName()));
+      }
+
+      retval = items.stream()
+          .map(item -> (INumericItem) item)
+          .reduce((item1, item2) -> OperationFunctions.opNumericAdd(
+              ObjectUtils.notNull(item1),
+              ObjectUtils.notNull(item2)))
+          .get();
+    } else {
       throw new InvalidArgumentFunctionException(
           InvalidArgumentFunctionException.INVALID_ARGUMENT_TYPE,
-          String.format("Values must all be of a single atomic type. Their types are '%s'.",
-              FunctionUtils.getTypes(resultingItems).stream()
-                  .map(clazz -> clazz.getName())
-                  .collect(Collectors.joining(","))));
+          String.format("Values must all be of type '%s'.",
+              OperationFunctions.AGGREGATE_MATH_TYPES.stream()
+                  .map(type -> type.getName())
+                  .collect(CustomCollectors.joiningWithOxfordComma(","))));
     }
-    return stream;
+
+    return retval;
   }
 }

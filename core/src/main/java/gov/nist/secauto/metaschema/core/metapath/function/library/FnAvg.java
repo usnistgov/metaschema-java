@@ -46,12 +46,12 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public final class FnAvg {
   private static final String NAME = "avg";
@@ -86,9 +86,6 @@ public final class FnAvg {
       IItem focus) {
     ISequence<? extends IAnyAtomicItem> sequence = FunctionUtils.asType(
         ObjectUtils.requireNonNull(arguments.get(0)));
-    if (sequence.isEmpty()) {
-      return ISequence.empty(); // NOPMD - readability
-    }
 
     List<? extends IAnyAtomicItem> items = sequence.asList();
 
@@ -103,14 +100,14 @@ public final class FnAvg {
    *          the items to average
    * @return the average
    */
-  @NonNull
+  @Nullable
   public static IAnyAtomicItem average(@NonNull List<? extends IAnyAtomicItem> items) {
-    Set<Class<? extends IAnyAtomicItem>> allowedTypes = ObjectUtils.notNull(Set.of(
-        IDayTimeDurationItem.class,
-        IYearMonthDurationItem.class,
-        INumericItem.class));
+    if (items.isEmpty()) {
+      return null; // NOPMD - readability
+    }
+
     Map<Class<? extends IAnyAtomicItem>, Integer> typeCounts = FunctionUtils.countTypes(
-        allowedTypes,
+        OperationFunctions.AGGREGATE_MATH_TYPES,
         ObjectUtils.notNull(items));
 
     int count = items.size();
@@ -156,7 +153,7 @@ public final class FnAvg {
       throw new InvalidArgumentFunctionException(
           InvalidArgumentFunctionException.INVALID_ARGUMENT_TYPE,
           String.format("Values must all be of type '%s'.",
-              allowedTypes.stream()
+              OperationFunctions.AGGREGATE_MATH_TYPES.stream()
                   .map(type -> type.getName())
                   .collect(CustomCollectors.joiningWithOxfordComma(","))));
     }
