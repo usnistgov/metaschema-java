@@ -70,7 +70,7 @@ public interface IMarkupItem extends IUntypedAtomicItem {
    *           if the provided {@code item} cannot be cast to this type
    */
   @NonNull
-  static IMarkupItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  static IMarkupItem cast(@NonNull IAnyAtomicItem item) {
     return MarkupDataTypeProvider.MARKUP_MULTILINE.cast(item);
   }
 

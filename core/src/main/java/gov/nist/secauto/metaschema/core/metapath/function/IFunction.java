@@ -210,7 +210,7 @@ public interface IFunction {
   ISequence<?> execute(
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      @NonNull ISequence<?> focus) throws MetapathException;
+      @NonNull ISequence<?> focus);
 
   /**
    * Get the signature of the function as a string.

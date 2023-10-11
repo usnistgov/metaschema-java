@@ -153,6 +153,7 @@ public final class FnMinMax {
         .orElse(null);
   }
 
+  @SuppressWarnings("PMD.OnlyOneReturn") // readability
   private static Stream<? extends IAnyAtomicItem> normalize(
       @NonNull List<? extends IAnyAtomicItem> items) {
     if (items.isEmpty()) {

@@ -63,5 +63,5 @@ public interface IFunctionExecutor {
       @NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
-      @Nullable IItem focus) throws MetapathException;
+      @Nullable IItem focus);
 }

@@ -52,8 +52,8 @@ public class DefaultFunctionLibrary
    * Initialize the built-in function library.
    */
   public DefaultFunctionLibrary() { // NOPMD - intentional
-    // P1(#224): https://www.w3.org/TR/xpath-functions-31/#func-abs
-    registerFunction(NumericFunction.signature(MetapathConstants.NS_XPATH_FUNCTIONS, "abs", INumericItem::abs));
+    // https://www.w3.org/TR/xpath-functions-31/#func-abs
+    registerFunction(FnAbs.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-adjust-dateTime-to-timezone
     // https://www.w3.org/TR/xpath-functions-31/#func-adjust-date-to-timezone
     // https://www.w3.org/TR/xpath-functions-31/#func-adjust-time-to-timezone

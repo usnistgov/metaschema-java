@@ -69,7 +69,7 @@ public interface IUuidItem extends IAnyAtomicItem {
    *           if the provided {@code item} cannot be cast to this type
    */
   @NonNull
-  static IUuidItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  static IUuidItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.UUID.cast(item);
   }
 

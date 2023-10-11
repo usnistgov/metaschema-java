@@ -107,8 +107,7 @@ public final class FnRound {
       return ISequence.empty(); // NOPMD - readability
     }
 
-    INumericItem result = item.round();
-    return ISequence.of(result);
+    return ISequence.of(item.round());
   }
 
   @SuppressWarnings("unused")
@@ -126,12 +125,11 @@ public final class FnRound {
       return ISequence.empty(); // NOPMD - readability
     }
 
-    @NonNull IIntegerItem precision = FunctionUtils.asType(
+    IIntegerItem precision = FunctionUtils.asType(
         FunctionUtils.requireFirstItem(
             ObjectUtils.requireNonNull(arguments.get(1)),
             true));
 
-    INumericItem result = item.round(precision);
-    return ISequence.of(result);
+    return ISequence.of(item.round(precision));
   }
 }

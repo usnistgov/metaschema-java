@@ -136,6 +136,7 @@ public final class FnSum {
    *          the value to use if no items are provided, which can be {@code null}
    * @return the average
    */
+  @SuppressWarnings("PMD.OnlyOneReturn") // readability
   @Nullable
   public static IAnyAtomicItem sum(
       @NonNull List<? extends IAnyAtomicItem> items,
@@ -147,6 +148,8 @@ public final class FnSum {
     if (items.size() == 1) {
       return items.get(0);
     }
+
+    // tell cpd to start ignoring code - CPD-OFF
 
     Map<Class<? extends IAnyAtomicItem>, Integer> typeCounts = FunctionUtils.countTypes(
         OperationFunctions.AGGREGATE_MATH_TYPES,
@@ -205,6 +208,8 @@ public final class FnSum {
                   .map(type -> type.getName())
                   .collect(CustomCollectors.joiningWithOxfordComma(","))));
     }
+
+    // resume CPD analysis - CPD-ON
 
     return retval;
   }

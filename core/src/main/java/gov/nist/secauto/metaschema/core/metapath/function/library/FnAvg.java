@@ -106,6 +106,8 @@ public final class FnAvg {
       return null; // NOPMD - readability
     }
 
+    // tell cpd to start ignoring code - CPD-OFF
+
     Map<Class<? extends IAnyAtomicItem>, Integer> typeCounts = FunctionUtils.countTypes(
         OperationFunctions.AGGREGATE_MATH_TYPES,
         ObjectUtils.notNull(items));
@@ -158,44 +160,47 @@ public final class FnAvg {
                   .collect(CustomCollectors.joiningWithOxfordComma(","))));
     }
 
+    // resume CPD analysis - CPD-ON
+
     return retval;
   }
 
   @NonNull
-  private static <T extends IAnyAtomicItem, R extends T> R average(
-      @NonNull List<T> items,
+  private static <T, R extends T> R average(
+      @NonNull List<? extends T> items,
       @NonNull BinaryOperator<T> adder,
-      @NonNull BiFunction<T, INumericItem, R> divider) {
+      @NonNull BiFunction<T, IIntegerItem, R> divider) {
     T sum = items.stream()
+        .map(item -> (T) item)
         .reduce(adder)
         .get();
     return ObjectUtils.notNull(divider.apply(sum, IIntegerItem.valueOf(items.size())));
   }
 
   @NonNull
-  public static IDayTimeDurationItem averageDayTimeDurations(@NonNull List<IDayTimeDurationItem> items) {
+  public static IDayTimeDurationItem averageDayTimeDurations(@NonNull List<? extends IDayTimeDurationItem> items) {
     return average(
         items,
         (BinaryOperator<IDayTimeDurationItem>) OperationFunctions::opAddDayTimeDurations,
-        (BiFunction<IDayTimeDurationItem, INumericItem,
+        (BiFunction<IDayTimeDurationItem, IIntegerItem,
             IDayTimeDurationItem>) OperationFunctions::opDivideDayTimeDuration);
   }
 
   @NonNull
-  public static IYearMonthDurationItem averageYearMonthDurations(@NonNull List<IYearMonthDurationItem> items) {
+  public static IYearMonthDurationItem
+      averageYearMonthDurations(@NonNull List<? extends IYearMonthDurationItem> items) {
     return average(
         items,
         (BinaryOperator<IYearMonthDurationItem>) OperationFunctions::opAddYearMonthDurations,
-        (BiFunction<IYearMonthDurationItem, INumericItem,
+        (BiFunction<IYearMonthDurationItem, IIntegerItem,
             IYearMonthDurationItem>) OperationFunctions::opDivideYearMonthDuration);
   }
 
   @NonNull
-  public static IDecimalItem averageNumeric(@NonNull List<INumericItem> items) {
+  public static IDecimalItem averageNumeric(@NonNull List<? extends INumericItem> items) {
     return average(
         items,
         (BinaryOperator<INumericItem>) OperationFunctions::opNumericAdd,
-        (BiFunction<INumericItem, INumericItem,
-            IDecimalItem>) OperationFunctions::opNumericDivide);
+        (BiFunction<INumericItem, IIntegerItem, IDecimalItem>) OperationFunctions::opNumericDivide);
   }
 }

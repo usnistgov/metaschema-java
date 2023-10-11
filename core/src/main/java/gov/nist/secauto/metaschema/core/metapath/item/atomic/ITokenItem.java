@@ -60,7 +60,7 @@ public interface ITokenItem extends IStringItem {
    *           if the provided {@code item} cannot be cast to this type
    */
   @NonNull
-  static ITokenItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  static ITokenItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.TOKEN.cast(item);
   }
 

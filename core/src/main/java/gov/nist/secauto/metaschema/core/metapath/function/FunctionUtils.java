@@ -395,7 +395,7 @@ public final class FunctionUtils {
   public static <T extends IItem> Map<Class<? extends T>, Integer> countTypes(
       @NonNull Set<Class<? extends T>> classes,
       @NonNull List<? extends T> items) {
-    Map<Class<? extends T>, Integer> retval = new HashMap<>();
+    Map<Class<? extends T>, Integer> retval = new HashMap<>(); // NOPMD
     for (T item : items) {
       Class<?> itemClass = item.getClass();
       for (Class<? extends T> clazz : classes) {
