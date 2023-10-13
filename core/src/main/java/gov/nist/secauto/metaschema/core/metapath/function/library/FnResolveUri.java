@@ -52,7 +52,7 @@ public final class FnResolveUri {
       .deterministic()
       .contextDependent()
       .focusIndependent()
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("relative")
           .type(IStringItem.class)
           .zeroOrOne()
@@ -69,12 +69,12 @@ public final class FnResolveUri {
       .deterministic()
       .contextIndependent()
       .focusIndependent()
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("relative")
           .type(IStringItem.class)
           .zeroOrOne()
           .build())
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("base")
           .type(IStringItem.class)
           .one()
@@ -102,16 +102,12 @@ public final class FnResolveUri {
       return ISequence.empty(); // NOPMD - readability
     }
 
-    IAnyUriItem baseUri = FnStaticBaseUri.fnStaticBaseUri(dynamicContext);
-    if (baseUri == null) {
-      throw new UriFunctionException(UriFunctionException.BASE_URI_NOT_DEFINED_IN_STATIC_CONTEXT,
-          "The base-uri is not defined in the static context");
-    }
-
     IStringItem relativeString = FunctionUtils.getFirstItem(relativeSequence, true);
-
-    IAnyUriItem resolvedUri = fnResolveUri(relativeString, baseUri);
-    return resolvedUri == null ? ISequence.empty() : ISequence.of(resolvedUri);
+    IAnyUriItem resolvedUri = null;
+    if (relativeString != null) {
+      resolvedUri = fnResolveUri(relativeString, null, dynamicContext);
+    }
+    return ISequence.of(resolvedUri);
   }
 
   /**
@@ -158,8 +154,11 @@ public final class FnResolveUri {
 
     IStringItem relativeString = FunctionUtils.getFirstItem(relativeSequence, true);
 
-    IAnyUriItem resolvedUri = fnResolveUri(relativeString, baseUri);
-    return resolvedUri == null ? ISequence.empty() : ISequence.of(resolvedUri);
+    IAnyUriItem resolvedUri = null;
+    if (relativeString != null) {
+      resolvedUri = fnResolveUri(relativeString, baseUri, dynamicContext);
+    }
+    return ISequence.of(resolvedUri);
   }
 
   /**
@@ -169,14 +168,17 @@ public final class FnResolveUri {
    *          the relative URI to resolve
    * @param base
    *          the base URI to resolve against
+   * @param dynamicContext
+   *          the evaluation context used to get the static base URI if needed
    * @return the resolved URI or {@code null} if the {@code relative} URI in
    *         {@code null}
    */
   @Nullable
-  public static IAnyUriItem fnResolveUri(@Nullable IStringItem relative, @NonNull IAnyUriItem base) {
-    IAnyUriItem relativeUri = relative == null ? null : IAnyUriItem.cast(relative);
-
-    return fnResolveUri(relativeUri, base);
+  public static IAnyUriItem fnResolveUri(
+      @NonNull IStringItem relative,
+      @Nullable IAnyUriItem base,
+      @NonNull DynamicContext dynamicContext) {
+    return fnResolveUri(IAnyUriItem.cast(relative), base, dynamicContext);
   }
 
   /**
@@ -186,15 +188,26 @@ public final class FnResolveUri {
    *          the relative URI to resolve
    * @param base
    *          the base URI to resolve against
+   * @param dynamicContext
+   *          the evaluation context used to get the static base URI if needed
    * @return the resolved URI or {@code null} if the {@code relative} URI in
    *         {@code null}
    */
-  @Nullable
-  public static IAnyUriItem fnResolveUri(@Nullable IAnyUriItem relative, @NonNull IAnyUriItem base) {
-    if (relative == null) {
-      return null; // NOPMD - readability
+  @NonNull
+  public static IAnyUriItem fnResolveUri(
+      @NonNull IAnyUriItem relative,
+      @Nullable IAnyUriItem base,
+      @NonNull DynamicContext dynamicContext) {
+
+    IAnyUriItem baseUri = base;
+    if (baseUri == null) {
+      baseUri = FnStaticBaseUri.fnStaticBaseUri(dynamicContext);
+      if (baseUri == null) {
+        throw new UriFunctionException(UriFunctionException.BASE_URI_NOT_DEFINED_IN_STATIC_CONTEXT,
+            "The base-uri is not defined in the static context");
+      }
     }
 
-    return base.resolve(relative);
+    return baseUri.resolve(relative);
   }
 }

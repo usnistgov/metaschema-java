@@ -92,6 +92,25 @@ public interface IAnyUriItem extends IAnyAtomicItem {
   URI asUri();
 
   /**
+   * Determines if this URI has a scheme component, making it absolute.
+   *
+   * @return {@code true} if the URI is absolute, or {@code false} otherwise
+   */
+  default boolean isAbsolute() {
+    return asUri().isAbsolute();
+  }
+
+  /**
+   * Determines if this URI is opaque.
+   *
+   * @return {@code true} if the URI is opaque, or {@code false} otherwise
+   * @see URI#isOpaque()
+   */
+  default boolean isOpaque() {
+    return asUri().isOpaque();
+  }
+
+  /**
    * Resolve the provided URI against this URI.
    *
    * @param other

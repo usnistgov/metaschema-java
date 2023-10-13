@@ -69,7 +69,7 @@ public final class FnData {
       .deterministic()
       .contextIndependent()
       .focusIndependent()
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("arg1")
           .type(IItem.class)
           .zeroOrMore()

@@ -52,7 +52,7 @@ public final class FnExists {
       .deterministic()
       .contextIndependent()
       .focusIndependent()
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("arg")
           .type(IItem.class)
           .zeroOrMore()

@@ -45,7 +45,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 class FnAbsTest
     extends FunctionTestBase {
 
-  private static Stream<Arguments> provideValuesForRound() {
+  private static Stream<Arguments> provideValues() {
     return Stream.of(
         Arguments.of(decimal("10.5"), decimal("10.5")),
         Arguments.of(decimal("10.5"), decimal("-10.5")),
@@ -54,7 +54,7 @@ class FnAbsTest
   }
 
   @ParameterizedTest
-  @MethodSource("provideValuesForRound")
+  @MethodSource("provideValues")
   void testRound(@NonNull INumericItem expected, @NonNull INumericItem actual) {
     assertFunctionResult(
         FnAbs.SIGNATURE,

@@ -127,6 +127,6 @@ public interface INonNegativeIntegerItem extends IIntegerItem {
 
   @Override
   default INonNegativeIntegerItem castAsType(IAnyAtomicItem item) {
-    return cast(item);
+    return valueOf(cast(item).asInteger());
   }
 }

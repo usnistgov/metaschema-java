@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.metapath.function;
 
-import gov.nist.secauto.metaschema.core.metapath.IExpression;
-
 import java.util.Objects;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -51,13 +49,6 @@ class ArgumentImpl implements IArgument {
   @Override
   public ISequenceType getSequenceType() {
     return sequenceType;
-  }
-
-  @Override
-  public boolean isSupported(IExpression expression) {
-    // Class<? extends IItem> itemType = expression.getItemType();
-    // TODO: implement this test
-    return true;
   }
 
   @SuppressWarnings("null")

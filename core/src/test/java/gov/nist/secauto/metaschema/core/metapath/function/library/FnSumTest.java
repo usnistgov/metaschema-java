@@ -106,7 +106,8 @@ class FnSumTest
 
   @ParameterizedTest
   @MethodSource("provideValuesTwoArg")
-  void testAvg(@Nullable IAnyAtomicItem expected, @Nullable IAnyAtomicItem zero, @NonNull IAnyAtomicItem... values) {
+  void testAvgWithZero(@Nullable IAnyAtomicItem expected, @Nullable IAnyAtomicItem zero,
+      @NonNull IAnyAtomicItem... values) {
     try {
       assertFunctionResult(
           FnSum.SIGNATURE_TWO_ARG,

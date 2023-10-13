@@ -41,6 +41,14 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Implements the XPath 3.1
+ * <a href= "https://www.w3.org/TR/xpath-functions-31/#casting">casting
+ * functions</a>.
+ *
+ * @param <ITEM>
+ *          the Metapath atomic item's Java type
+ */
 public final class CastFunction<ITEM extends IAnyAtomicItem> implements IFunctionExecutor {
   @NonNull
   private final ICastExecutor<ITEM> castExecutor;
@@ -67,7 +75,7 @@ public final class CastFunction<ITEM extends IAnyAtomicItem> implements IFunctio
     return IFunction.builder()
         .name(name)
         .namespace(namespace)
-        .argument(IArgument.newBuilder()
+        .argument(IArgument.builder()
             .name("arg1")
             .type(IAnyAtomicItem.class)
             .zeroOrOne()

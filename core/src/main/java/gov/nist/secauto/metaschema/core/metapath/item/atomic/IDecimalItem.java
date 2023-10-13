@@ -110,7 +110,7 @@ public interface IDecimalItem extends INumericItem {
 
   @Override
   default IDecimalItem castAsType(IAnyAtomicItem item) {
-    return cast(item);
+    return valueOf(cast(item).asDecimal());
   }
 
   @Override

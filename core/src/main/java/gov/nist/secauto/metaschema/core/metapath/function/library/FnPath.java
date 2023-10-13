@@ -69,7 +69,7 @@ public final class FnPath {
       .deterministic()
       .contextIndependent()
       .focusIndependent()
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("arg1")
           .type(INodeItem.class)
           .zeroOrOne()
@@ -113,13 +113,11 @@ public final class FnPath {
 
   /**
    * An implementation of XPath 3.1
-   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-data">fn:data</a>
-   * supporting <a href="https://www.w3.org/TR/xpath-31/#id-atomization">item
-   * atomization</a>.
+   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-path">fn:path</a>.
    *
    * @param sequence
-   *          the sequence of items to atomize
-   * @return the atomized result
+   *          a Metapath sequence containing an item to get the Metapath for
+   * @return a sequence containing the generated Metapath
    */
   @NonNull
   public static ISequence<IStringItem> fnPath(@NonNull ISequence<?> sequence) {
@@ -144,13 +142,11 @@ public final class FnPath {
   }
 
   /**
-   * An implementation of
-   * <a href="https://www.w3.org/TR/xpath-31/#id-atomization">item
-   * atomization</a>.
+   * Generates a Metapath for the provided item.
    *
    * @param item
-   *          the item to atomize
-   * @return the atomized result
+   *          the item to get the Metapath for
+   * @return the generated Metapath
    */
   @Nullable
   public static IStringItem fnPath(@Nullable INodeItem item) {

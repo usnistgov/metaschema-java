@@ -55,7 +55,7 @@ public final class FnBoolean {
       .deterministic()
       .contextIndependent()
       .focusIndependent()
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("arg")
           .type(IItem.class)
           .zeroOrMore()

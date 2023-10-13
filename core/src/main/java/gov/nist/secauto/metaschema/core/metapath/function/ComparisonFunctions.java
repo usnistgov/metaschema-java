@@ -48,12 +48,33 @@ import java.util.Locale;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public final class ComparisonFunctions {
+  /**
+   * Comparison operators.
+   */
   public enum Operator {
+    /**
+     * equal
+     */
     EQ,
+    /**
+     * not equal
+     */
     NE,
+    /**
+     * less than
+     */
     LT,
+    /**
+     * less than or equal
+     */
     LE,
+    /**
+     * greater than
+     */
     GT,
+    /**
+     * greater than or equal
+     */
     GE;
   }
 

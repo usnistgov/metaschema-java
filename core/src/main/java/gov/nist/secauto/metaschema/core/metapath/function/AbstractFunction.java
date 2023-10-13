@@ -30,7 +30,7 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractFunction implements IFunction {
+abstract class AbstractFunction implements IFunction {
   @NonNull
   private final String name;
   @NonNull
@@ -38,7 +38,7 @@ public abstract class AbstractFunction implements IFunction {
   @NonNull
   private final List<IArgument> arguments;
 
-  AbstractFunction(
+  protected AbstractFunction(
       @NonNull String name,
       @NonNull String namespace,
       @NonNull List<IArgument> arguments) {

@@ -45,6 +45,9 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Provides functions that evaluate a Metapath recursively over sequences.
+ */
 public final class MpRecurseDepth {
   // private static final Logger logger = LogManager.getLogger(FnDoc.class);
 
@@ -55,7 +58,7 @@ public final class MpRecurseDepth {
       .deterministic()
       .contextDependent()
       .focusDependent()
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("recursePath")
           .type(IStringItem.class)
           .one()
@@ -72,12 +75,12 @@ public final class MpRecurseDepth {
       .deterministic()
       .contextDependent()
       .focusIndependent()
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("context")
           .type(INodeItem.class)
           .zeroOrMore()
           .build())
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("recursePath")
           .type(IStringItem.class)
           .one()
@@ -139,6 +142,20 @@ public final class MpRecurseDepth {
     return recurseDepth(initialContext, recursionMetapath, dynamicContext);
   }
 
+  /**
+   * Applies the {@code recursionMetapath} starting with the the items in the
+   * {@code initialContext} and also recursively to the resulting items returned
+   * by evaluating this path.
+   *
+   * @param initialContext
+   *          the sequence containing the initial node items to evaluate the
+   *          Metapath against
+   * @param recursionMetapath
+   *          the Metapath expression to use for recursive evaluation
+   * @param dynamicContext
+   *          the dynamic context supporting evaluation
+   * @return the Metapath node items resulting from the Metapath execution
+   */
   @NonNull
   public static ISequence<INodeItem> recurseDepth(
       @NonNull ISequence<INodeItem> initialContext,

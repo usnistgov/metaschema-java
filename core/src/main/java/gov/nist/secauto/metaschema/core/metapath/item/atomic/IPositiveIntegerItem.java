@@ -124,6 +124,6 @@ public interface IPositiveIntegerItem extends INonNegativeIntegerItem {
 
   @Override
   default IPositiveIntegerItem castAsType(IAnyAtomicItem item) {
-    return cast(item);
+    return valueOf(cast(item).asInteger());
   }
 }

@@ -44,6 +44,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.atomic.IYearMonthDurationI
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -53,6 +54,10 @@ import java.util.stream.Collectors;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+/**
+ * An implementation of XPath 3.1
+ * <a href="https://www.w3.org/TR/xpath-functions-31/#func-avg">fn:avg</a>.
+ */
 public final class FnAvg {
   private static final String NAME = "avg";
 
@@ -63,7 +68,7 @@ public final class FnAvg {
       .deterministic()
       .contextIndependent()
       .focusIndependent()
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("arg")
           .type(IAnyAtomicItem.class)
           .zeroOrMore()
@@ -101,7 +106,7 @@ public final class FnAvg {
    * @return the average
    */
   @Nullable
-  public static IAnyAtomicItem average(@NonNull List<? extends IAnyAtomicItem> items) {
+  public static IAnyAtomicItem average(@NonNull Collection<? extends IAnyAtomicItem> items) {
     if (items.isEmpty()) {
       return null; // NOPMD - readability
     }
@@ -167,7 +172,7 @@ public final class FnAvg {
 
   @NonNull
   private static <T, R extends T> R average(
-      @NonNull List<? extends T> items,
+      @NonNull Collection<? extends T> items,
       @NonNull BinaryOperator<T> adder,
       @NonNull BiFunction<T, IIntegerItem, R> divider) {
     T sum = items.stream()
@@ -177,8 +182,16 @@ public final class FnAvg {
     return ObjectUtils.notNull(divider.apply(sum, IIntegerItem.valueOf(items.size())));
   }
 
+  /**
+   * Get the average of a collection of day/time duration-based items.
+   *
+   * @param items
+   *          the Metapath items to average
+   * @return the average
+   */
   @NonNull
-  public static IDayTimeDurationItem averageDayTimeDurations(@NonNull List<? extends IDayTimeDurationItem> items) {
+  public static IDayTimeDurationItem
+      averageDayTimeDurations(@NonNull Collection<? extends IDayTimeDurationItem> items) {
     return average(
         items,
         (BinaryOperator<IDayTimeDurationItem>) OperationFunctions::opAddDayTimeDurations,
@@ -186,9 +199,16 @@ public final class FnAvg {
             IDayTimeDurationItem>) OperationFunctions::opDivideDayTimeDuration);
   }
 
+  /**
+   * Get the average of a collection of year/month duration-based items.
+   *
+   * @param items
+   *          the Metapath items to average
+   * @return the average
+   */
   @NonNull
   public static IYearMonthDurationItem
-      averageYearMonthDurations(@NonNull List<? extends IYearMonthDurationItem> items) {
+      averageYearMonthDurations(@NonNull Collection<? extends IYearMonthDurationItem> items) {
     return average(
         items,
         (BinaryOperator<IYearMonthDurationItem>) OperationFunctions::opAddYearMonthDurations,
@@ -196,8 +216,15 @@ public final class FnAvg {
             IYearMonthDurationItem>) OperationFunctions::opDivideYearMonthDuration);
   }
 
+  /**
+   * Get the average of a collection of numeric items.
+   *
+   * @param items
+   *          the Metapath items to average
+   * @return the average
+   */
   @NonNull
-  public static IDecimalItem averageNumeric(@NonNull List<? extends INumericItem> items) {
+  public static IDecimalItem averageNumeric(@NonNull Collection<? extends INumericItem> items) {
     return average(
         items,
         (BinaryOperator<INumericItem>) OperationFunctions::opNumericAdd,

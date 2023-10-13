@@ -50,7 +50,7 @@ public final class FnCount {
       .deterministic()
       .contextIndependent()
       .focusIndependent()
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("arg")
           .type(IItem.class)
           .zeroOrMore()

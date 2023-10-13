@@ -38,6 +38,7 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,9 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+/**
+ * A collection of utility functions for use in implementing Metapath functions.
+ */
 public final class FunctionUtils {
   public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
 
@@ -371,6 +375,16 @@ public final class FunctionUtils {
     return ObjectUtils.notNull(items.map(item -> item.getClass()));
   }
 
+  /**
+   * Generate a list of Metapath item Java type classes from a list of Metapath
+   * items.
+   *
+   * @param <T>
+   *          the base Java types of the items
+   * @param items
+   *          the items to get Java type class for
+   * @return a list of corresponding Java type classes for the provided items
+   */
   @SuppressWarnings("unchecked")
   @NonNull
   public static <T extends IItem> List<Class<? extends T>> getTypes(@NonNull List<T> items) {
@@ -394,7 +408,7 @@ public final class FunctionUtils {
   @NonNull
   public static <T extends IItem> Map<Class<? extends T>, Integer> countTypes(
       @NonNull Set<Class<? extends T>> classes,
-      @NonNull List<? extends T> items) {
+      @NonNull Collection<? extends T> items) {
     Map<Class<? extends T>, Integer> retval = new HashMap<>(); // NOPMD
     for (T item : items) {
       Class<?> itemClass = item.getClass();

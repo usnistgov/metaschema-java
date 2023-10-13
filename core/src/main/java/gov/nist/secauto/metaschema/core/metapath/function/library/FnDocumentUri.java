@@ -65,7 +65,7 @@ public final class FnDocumentUri {
       .deterministic()
       .contextIndependent()
       .focusIndependent()
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("arg1")
           .type(IDocumentNodeItem.class)
           .zeroOrOne()

@@ -133,7 +133,7 @@ public interface IIntegerItem extends IDecimalItem {
 
   @Override
   default IIntegerItem castAsType(IAnyAtomicItem item) {
-    return cast(item);
+    return valueOf(cast(item).asInteger());
   }
 
   @Override

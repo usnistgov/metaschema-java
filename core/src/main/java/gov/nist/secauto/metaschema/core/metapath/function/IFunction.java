@@ -44,7 +44,13 @@ import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * A common interface for all Metapath functions.
+ */
 public interface IFunction {
+  /**
+   * Details specific characteristics of a function.
+   */
   enum FunctionProperty {
     /**
      * Indicates that the function will produce identical results for the same
@@ -229,8 +235,11 @@ public interface IFunction {
     return new Builder();
   }
 
+  /**
+   * Used to create a function's signature using a builder pattern.
+   */
   @SuppressWarnings("PMD.LooseCoupling")
-  class Builder {
+  public class Builder {
     private String name;
     private String namespace;
     @SuppressWarnings("null")
@@ -242,6 +251,17 @@ public interface IFunction {
     private Occurrence returnOccurrence = Occurrence.ONE;
     private IFunctionExecutor functionHandler;
 
+    private Builder() {
+      // do nothing
+    }
+
+    /**
+     * Define the name of the function.
+     *
+     * @param name
+     *          the function's name
+     * @return this builder
+     */
     @NonNull
     public Builder name(@NonNull String name) {
       Objects.requireNonNull(name, "name");
@@ -252,11 +272,25 @@ public interface IFunction {
       return this;
     }
 
+    /**
+     * Define the namespace of the function.
+     *
+     * @param uri
+     *          the function's namespace URI
+     * @return this builder
+     */
     @NonNull
     public Builder namespace(@NonNull URI uri) {
       return namespace(ObjectUtils.notNull(uri.toASCIIString()));
     }
 
+    /**
+     * Define the namespace of the function.
+     *
+     * @param name
+     *          the function's namespace URI as a string
+     * @return this builder
+     */
     @NonNull
     public Builder namespace(@NonNull String name) {
       Objects.requireNonNull(name, "name");
@@ -267,42 +301,86 @@ public interface IFunction {
       return this;
     }
 
+    /**
+     * Mark the function as deterministic.
+     *
+     * @return this builder
+     * @see IFunction.FunctionProperty#DETERMINISTIC
+     */
     @NonNull
     public Builder deterministic() {
       properties.add(FunctionProperty.DETERMINISTIC);
       return this;
     }
 
+    /**
+     * Mark the function as non-deterministic.
+     *
+     * @return this builder
+     * @see IFunction.FunctionProperty#DETERMINISTIC
+     */
     @NonNull
     public Builder nonDeterministic() {
       properties.remove(FunctionProperty.DETERMINISTIC);
       return this;
     }
 
+    /**
+     * Mark the function as context dependent.
+     *
+     * @return this builder
+     * @see IFunction.FunctionProperty#CONTEXT_DEPENDENT
+     */
     @NonNull
     public Builder contextDependent() {
       properties.add(FunctionProperty.CONTEXT_DEPENDENT);
       return this;
     }
 
+    /**
+     * Mark the function as context independent.
+     *
+     * @return this builder
+     * @see IFunction.FunctionProperty#CONTEXT_DEPENDENT
+     */
     @NonNull
     public Builder contextIndependent() {
       properties.remove(FunctionProperty.CONTEXT_DEPENDENT);
       return this;
     }
 
+    /**
+     * Mark the function as focus dependent.
+     *
+     * @return this builder
+     * @see IFunction.FunctionProperty#FOCUS_DEPENDENT
+     */
     @NonNull
     public Builder focusDependent() {
       properties.add(FunctionProperty.FOCUS_DEPENDENT);
       return this;
     }
 
+    /**
+     * Mark the function as focus independent.
+     *
+     * @return this builder
+     * @see IFunction.FunctionProperty#FOCUS_DEPENDENT
+     */
     @NonNull
     public Builder focusIndependent() {
       properties.remove(FunctionProperty.FOCUS_DEPENDENT);
       return this;
     }
 
+    /**
+     * Indicate if the last argument can be repeated.
+     *
+     * @param allow
+     *          if {@code true} then the the last argument can be repeated an
+     *          unlimited number of times, or {@code false} otherwise
+     * @return this builder
+     */
     @NonNull
     public Builder allowUnboundedArity(boolean allow) {
       if (allow) {
@@ -313,6 +391,13 @@ public interface IFunction {
       return this;
     }
 
+    /**
+     * Define the return sequence Java type of the function.
+     *
+     * @param type
+     *          the function's return Java type
+     * @return this builder
+     */
     @NonNull
     public Builder returnType(@NonNull Class<? extends IItem> type) {
       Objects.requireNonNull(type, "type");
@@ -320,38 +405,72 @@ public interface IFunction {
       return this;
     }
 
+    /**
+     * Indicate the sequence returned will contain zero or one items.
+     *
+     * @return this builder
+     */
     @NonNull
     public Builder returnZeroOrOne() {
       return returnOccurrence(Occurrence.ZERO_OR_ONE);
     }
 
+    /**
+     * Indicate the sequence returned will contain one item.
+     *
+     * @return this builder
+     */
     @NonNull
     public Builder returnOne() {
       return returnOccurrence(Occurrence.ONE);
     }
 
+    /**
+     * Indicate the sequence returned will contain zero or more items.
+     *
+     * @return this builder
+     */
     @NonNull
     public Builder returnZeroOrMore() {
       return returnOccurrence(Occurrence.ZERO_OR_MORE);
     }
 
+    /**
+     * Indicate the sequence returned will contain one or more items.
+     *
+     * @return this builder
+     */
     @NonNull
     public Builder returnOneOrMore() {
       return returnOccurrence(Occurrence.ONE_OR_MORE);
     }
 
     @NonNull
-    public Builder returnOccurrence(@NonNull Occurrence occurrence) {
+    private Builder returnOccurrence(@NonNull Occurrence occurrence) {
       Objects.requireNonNull(occurrence, "occurrence");
       this.returnOccurrence = occurrence;
       return this;
     }
 
+    /**
+     * Add an argument based on the provided {@code builder}.
+     *
+     * @param builder
+     *          the argument builder
+     * @return this builder
+     */
     @NonNull
     public Builder argument(@NonNull IArgument.Builder builder) {
       return argument(builder.build());
     }
 
+    /**
+     * Add an argument based on the provided {@code argument} signature.
+     *
+     * @param argument
+     *          the argument
+     * @return this builder
+     */
     @NonNull
     public Builder argument(@NonNull IArgument argument) {
       Objects.requireNonNull(argument, "argument");
@@ -359,6 +478,14 @@ public interface IFunction {
       return this;
     }
 
+    /**
+     * Specify the static function to call when executing the function.
+     *
+     * @param handler
+     *          a method implementing the {@link IFunctionExecutor} functional
+     *          interface
+     * @return this builder
+     */
     @NonNull
     public Builder functionHandler(@NonNull IFunctionExecutor handler) {
       Objects.requireNonNull(handler, "handler");
@@ -366,6 +493,11 @@ public interface IFunction {
       return this;
     }
 
+    /**
+     * Builds the function's signature.
+     *
+     * @return the function's signature
+     */
     @NonNull
     public IFunction build() {
       ISequenceType sequenceType;

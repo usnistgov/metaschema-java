@@ -68,7 +68,7 @@ public final class FnBaseUri {
       .deterministic()
       .contextIndependent()
       .focusIndependent()
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("arg1")
           .type(INodeItem.class)
           .zeroOrOne()

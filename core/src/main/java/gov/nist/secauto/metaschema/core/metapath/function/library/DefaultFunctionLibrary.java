@@ -65,7 +65,7 @@ public class DefaultFunctionLibrary
     // https://www.w3.org/TR/xpath-functions-31/#func-boolean
     registerFunction(FnBoolean.SIGNATURE);
     // P1(#224): https://www.w3.org/TR/xpath-functions-31/#func-ceiling
-    registerFunction(NumericFunction.signature(MetapathConstants.NS_XPATH_FUNCTIONS, "ceiling", INumericItem::ceiling));
+    registerFunction(FnCeiling.SIGNATURE);
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-compare
     registerFunction(FnCompare.SIGNATURE);
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-concat

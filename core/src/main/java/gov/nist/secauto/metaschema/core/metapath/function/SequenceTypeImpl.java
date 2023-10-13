@@ -89,7 +89,7 @@ class SequenceTypeImpl implements ISequenceType {
     if (getClass() != obj.getClass()) {
       return false; // NOPMD - readability
     }
-    SequenceTypeImpl other = (SequenceTypeImpl) obj;
-    return occurrence == other.occurrence && Objects.equals(type, other.type);
+    ISequenceType other = (ISequenceType) obj;
+    return Objects.equals(occurrence, other.getOccurrence()) && Objects.equals(type, other.getType());
   }
 }
