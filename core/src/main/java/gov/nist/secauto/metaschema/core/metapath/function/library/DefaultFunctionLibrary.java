@@ -64,7 +64,7 @@ public class DefaultFunctionLibrary
     registerFunction(FnBaseUri.SIGNATURE_ONE_ARG);
     // https://www.w3.org/TR/xpath-functions-31/#func-boolean
     registerFunction(FnBoolean.SIGNATURE);
-    // P1(#224): https://www.w3.org/TR/xpath-functions-31/#func-ceiling
+    // https://www.w3.org/TR/xpath-functions-31/#func-ceiling
     registerFunction(FnCeiling.SIGNATURE);
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-compare
     registerFunction(FnCompare.SIGNATURE);
@@ -72,9 +72,9 @@ public class DefaultFunctionLibrary
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-contains
     // https://www.w3.org/TR/xpath-functions-31/#func-count
     registerFunction(FnCount.SIGNATURE);
-    // https://www.w3.org/TR/xpath-functions-31/#func-current-date
-    // https://www.w3.org/TR/xpath-functions-31/#func-current-dateTime
-    // https://www.w3.org/TR/xpath-functions-31/#func-current-time
+    // P2: https://www.w3.org/TR/xpath-functions-31/#func-current-date
+    // P2: https://www.w3.org/TR/xpath-functions-31/#func-current-dateTime
+    // P2: https://www.w3.org/TR/xpath-functions-31/#func-current-time
     // https://www.w3.org/TR/xpath-functions-31/#func-data
     registerFunction(FnData.SIGNATURE_NO_ARG);
     registerFunction(FnData.SIGNATURE_ONE_ARG);
@@ -92,20 +92,20 @@ public class DefaultFunctionLibrary
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-empty
     // https://www.w3.org/TR/xpath-functions-31/#func-encode-for-uri
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-ends-with
-    // https://www.w3.org/TR/xpath-functions-31/#func-exactly-one
+    // P2: https://www.w3.org/TR/xpath-functions-31/#func-exactly-one
     // https://www.w3.org/TR/xpath-functions-31/#func-exists
     registerFunction(FnExists.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-false
     registerFunction(FnFalse.SIGNATURE);
-    // P1(#224): https://www.w3.org/TR/xpath-functions-31/#func-floor
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-floor
     registerFunction(NumericFunction.signature(MetapathConstants.NS_XPATH_FUNCTIONS, "floor", INumericItem::floor));
-    // https://www.w3.org/TR/xpath-functions-31/#func-format-date
-    // https://www.w3.org/TR/xpath-functions-31/#func-format-dateTime
-    // https://www.w3.org/TR/xpath-functions-31/#func-format-integer
-    // https://www.w3.org/TR/xpath-functions-31/#func-format-number
-    // https://www.w3.org/TR/xpath-functions-31/#func-format-time
+    // P2: https://www.w3.org/TR/xpath-functions-31/#func-format-date
+    // P2: https://www.w3.org/TR/xpath-functions-31/#func-format-dateTime
+    // P2: https://www.w3.org/TR/xpath-functions-31/#func-format-integer
+    // P2: https://www.w3.org/TR/xpath-functions-31/#func-format-number
+    // P2: https://www.w3.org/TR/xpath-functions-31/#func-format-time
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-generate-id
-    // https://www.w3.org/TR/xpath-functions-31/#func-has-children
+    // P2: https://www.w3.org/TR/xpath-functions-31/#func-has-children
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-head
     // https://www.w3.org/TR/xpath-functions-31/#func-hours-from-dateTime
     // https://www.w3.org/TR/xpath-functions-31/#func-hours-from-duration
@@ -115,12 +115,12 @@ public class DefaultFunctionLibrary
     // https://www.w3.org/TR/xpath-functions-31/#func-innermost
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-insert-before
     // https://www.w3.org/TR/xpath-functions-31/#func-iri-to-uri
-    // https://www.w3.org/TR/xpath-functions-31/#func-last
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-last
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-lower-case
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-matches
-    // P1(#224): https://www.w3.org/TR/xpath-functions-31/#func-max
+    // https://www.w3.org/TR/xpath-functions-31/#func-max
     registerFunction(FnMinMax.SIGNATURE_MAX);
-    // P1(#224): https://www.w3.org/TR/xpath-functions-31/#func-min
+    // https://www.w3.org/TR/xpath-functions-31/#func-min
     registerFunction(FnMinMax.SIGNATURE_MIN);
     // https://www.w3.org/TR/xpath-functions-31/#func-minutes-from-dateTime
     // https://www.w3.org/TR/xpath-functions-31/#func-minutes-from-duration
@@ -133,13 +133,13 @@ public class DefaultFunctionLibrary
     // https://www.w3.org/TR/xpath-functions-31/#func-not
     registerFunction(FnNot.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-number
-    // https://www.w3.org/TR/xpath-functions-31/#func-one-or-more
+    // P2: https://www.w3.org/TR/xpath-functions-31/#func-one-or-more
     // https://www.w3.org/TR/xpath-functions-31/#func-outermost
     // https://www.w3.org/TR/xpath-functions-31/#func-parse-ietf-date
     // https://www.w3.org/TR/xpath-functions-31/#func-path
     registerFunction(FnPath.SIGNATURE_NO_ARG);
     registerFunction(FnPath.SIGNATURE_ONE_ARG);
-    // https://www.w3.org/TR/xpath-functions-31/#func-position
+    // P2: https://www.w3.org/TR/xpath-functions-31/#func-position
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-remove
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-replace
     // https://www.w3.org/TR/xpath-functions-31/#func-resolve-uri
@@ -150,7 +150,7 @@ public class DefaultFunctionLibrary
     // https://www.w3.org/TR/xpath-functions-31/#func-round
     registerFunction(FnRound.SIGNATURE);
     registerFunction(FnRound.SIGNATURE_WITH_PRECISION);
-    // https://www.w3.org/TR/xpath-functions-31/#func-round-half-to-even
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-round-half-to-even
     // https://www.w3.org/TR/xpath-functions-31/#func-seconds-from-dateTime
     // https://www.w3.org/TR/xpath-functions-31/#func-seconds-from-duration
     // https://www.w3.org/TR/xpath-functions-31/#func-seconds-from-time
@@ -160,7 +160,7 @@ public class DefaultFunctionLibrary
     registerFunction(FnStaticBaseUri.SIGNATURE);
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-string-join
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-string-length
-    // https://www.w3.org/TR/xpath-functions-31/#func-subsequence
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-subsequence
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-substring
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-substring-after
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-substring-before
@@ -182,7 +182,7 @@ public class DefaultFunctionLibrary
     // https://www.w3.org/TR/xpath-functions-31/#func-year-from-date
     // https://www.w3.org/TR/xpath-functions-31/#func-year-from-dateTime
     // https://www.w3.org/TR/xpath-functions-31/#func-years-from-duration
-    // https://www.w3.org/TR/xpath-functions-31/#func-zero-or-one
+    // P2: https://www.w3.org/TR/xpath-functions-31/#func-zero-or-one
 
     // xpath casting functions
     registerFunction(
