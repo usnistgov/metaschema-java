@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class AssemblyBuilder
+public final class AssemblyBuilder
     extends AbstractModelBuilder<AssemblyBuilder>
     implements IModelInstanceBuilder {
 

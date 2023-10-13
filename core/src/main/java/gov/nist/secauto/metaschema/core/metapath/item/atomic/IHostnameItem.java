@@ -32,6 +32,13 @@ import gov.nist.secauto.metaschema.core.metapath.function.InvalidValueForCastFun
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IHostnameItem extends IStringItem {
+  /**
+   * Construct a new host name item using the provided string {@code value}.
+   *
+   * @param value
+   *          a string representing an host name value
+   * @return the new item
+   */
   @NonNull
   static IHostnameItem valueOf(@NonNull String value) {
     try {
@@ -42,13 +49,23 @@ public interface IHostnameItem extends IStringItem {
     }
   }
 
+  /**
+   * Cast the provided type to this item type.
+   *
+   * @param item
+   *          the item to cast
+   * @return the original item if it is already this type, otherwise a new item
+   *         cast to this type
+   * @throws InvalidValueForCastFunctionException
+   *           if the provided {@code item} cannot be cast to this type
+   */
   @NonNull
-  static IHostnameItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  static IHostnameItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.HOSTNAME.cast(item);
   }
 
   @Override
-  default IHostnameItem newStringItem() {
-    return this;
+  default IHostnameItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
   }
 }

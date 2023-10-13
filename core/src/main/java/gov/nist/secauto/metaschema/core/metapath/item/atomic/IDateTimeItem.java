@@ -35,17 +35,13 @@ import java.time.ZonedDateTime;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IDateTimeItem extends IAnyAtomicItem {
-
-  @NonNull
-  static IDateTimeItem valueOf(@NonNull DateTime value) {
-    return new DateTimeWithoutTimeZoneItemImpl(value);
-  }
-
-  @NonNull
-  static IDateTimeItem valueOf(@NonNull ZonedDateTime value) {
-    return new DateTimeWithTimeZoneItemImpl(value);
-  }
-
+  /**
+   * Construct a new date/time item using the provided string {@code value}.
+   *
+   * @param value
+   *          a string representing a date/time
+   * @return the new item
+   */
   @NonNull
   static IDateTimeItem valueOf(@NonNull String value) {
     try {
@@ -56,11 +52,72 @@ public interface IDateTimeItem extends IAnyAtomicItem {
     }
   }
 
+  /**
+   * Construct a new date/time item using the provided {@code value}.
+   *
+   * @param value
+   *          a date/time, without time zone information
+   * @return the new item
+   */
   @NonNull
-  static IDateTimeItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  static IDateTimeItem valueOf(@NonNull DateTime value) {
+    return new DateTimeWithoutTimeZoneItemImpl(value);
+  }
+
+  /**
+   * Construct a new date/time item using the provided {@code value}.
+   *
+   * @param value
+   *          a date/time, with time zone information
+   * @return the new item
+   */
+  @NonNull
+  static IDateTimeItem valueOf(@NonNull ZonedDateTime value) {
+    return new DateTimeWithTimeZoneItemImpl(value);
+  }
+
+  /**
+   * Cast the provided type to this item type.
+   *
+   * @param item
+   *          the item to cast
+   * @return the original item if it is already this type, otherwise a new item
+   *         cast to this type
+   * @throws InvalidValueForCastFunctionException
+   *           if the provided {@code item} cannot be cast to this type
+   */
+  @NonNull
+  static IDateTimeItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.DATE_TIME.cast(item);
   }
 
+  @Override
+  default IDateTimeItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
+  }
+
+  /**
+   * Get the "wrapped" date/time value.
+   *
+   * @return the underlying date value
+   */
   @NonNull
   ZonedDateTime asZonedDateTime();
+
+  @Override
+  default int compareTo(IAnyAtomicItem item) {
+    return compareTo(cast(item));
+  }
+
+  /**
+   * Compares this value with the argument.
+   *
+   * @param item
+   *          the item to compare with this value
+   * @return a negative integer, zero, or a positive integer if this value is less
+   *         than, equal to, or greater than the {@code item}.
+   */
+  default int compareTo(@NonNull IDateTimeItem item) {
+    return asZonedDateTime().compareTo(item.asZonedDateTime());
+  }
 }

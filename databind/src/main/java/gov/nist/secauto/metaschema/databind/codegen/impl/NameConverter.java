@@ -260,8 +260,9 @@ public interface NameConverter {
       StringTokenizer tokens = new StringTokenizer(str, sep);
       ArrayList<String> retval = new ArrayList<>();
 
-      while (tokens.hasMoreTokens())
+      while (tokens.hasMoreTokens()) {
         retval.add(tokens.nextToken());
+      }
 
       return retval;
     }

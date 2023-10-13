@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -74,7 +75,7 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Iterable<ITEM_TYPE> 
    * @return the new sequence
    */
   @NonNull
-  public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
+  static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
       @Nullable ITEM_TYPE item) {
     ISequence<ITEM_TYPE> retval;
     if (item == null) {
@@ -94,8 +95,24 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Iterable<ITEM_TYPE> 
    *          the items to add to the sequence
    * @return the new sequence
    */
+  @SafeVarargs
   @NonNull
-  public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
+  static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
+      @NonNull ITEM_TYPE... items) {
+    return of(ObjectUtils.notNull(Arrays.asList(items)));
+  }
+
+  /**
+   * Construct a new sequence containing the provided {@code items}.
+   *
+   * @param <ITEM_TYPE>
+   *          the type of items contained in the sequence.
+   * @param items
+   *          the items to add to the sequence
+   * @return the new sequence
+   */
+  @NonNull
+  static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
       @NonNull List<ITEM_TYPE> items) {
     ISequence<ITEM_TYPE> retval;
     if (items.isEmpty()) {
@@ -117,7 +134,7 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Iterable<ITEM_TYPE> 
    */
   // TODO: remove null check on callers
   @NonNull
-  public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
+  static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
       Stream<ITEM_TYPE> items) {
     return items == null ? empty() : new StreamSequenceImpl<>(items);
   }
@@ -143,6 +160,16 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Iterable<ITEM_TYPE> 
   // TODO: rename to "stream"
   @NonNull
   Stream<ITEM_TYPE> asStream();
+
+  /**
+   * Get a stream guaranteed to be backed by a list.
+   *
+   * @return the stream
+   */
+  @NonNull
+  default Stream<ITEM_TYPE> safeStream() {
+    return ObjectUtils.notNull(asList().stream());
+  }
 
   /**
    * This optional operation ensures that a list is used to back this sequence.
@@ -178,7 +205,6 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Iterable<ITEM_TYPE> 
 
   @NonNull
   static <ITEM_TYPE extends IItem> Collector<ITEM_TYPE, ?, ISequence<ITEM_TYPE>> toSequence() {
-
     return new Collector<ITEM_TYPE, List<ITEM_TYPE>, ISequence<ITEM_TYPE>>() {
 
       @Override
@@ -220,5 +246,12 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Iterable<ITEM_TYPE> 
       }
 
     };
+  }
+
+  static <T extends R, R extends IItem> ISequence<R> map(
+      @NonNull Function<T, R> mapFunction,
+      @NonNull ISequence<T> seq) {
+    return ISequence.of(seq.safeStream()
+        .map(item -> mapFunction.apply(item)));
   }
 }

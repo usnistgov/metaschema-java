@@ -35,22 +35,72 @@ import gov.nist.secauto.metaschema.core.metapath.function.InvalidValueForCastFun
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IMarkupItem extends IUntypedAtomicItem {
-
-  @Override
-  IMarkupString<?> getValue();
-
+  /**
+   * Construct a new item using the provided {@code value}.
+   *
+   * @param value
+   *          a line of markup
+   * @return the new item
+   */
   @NonNull
   static IMarkupItem valueOf(@NonNull MarkupLine value) {
     return new MarkupLineItemImpl(value);
   }
 
+  /**
+   * Construct a new item using the provided {@code value}.
+   *
+   * @param value
+   *          multiple lines of markup
+   * @return the new item
+   */
   @NonNull
   static IMarkupItem valueOf(@NonNull MarkupMultiline value) {
     return new MarkupMultiLineItemImpl(value);
   }
 
+  /**
+   * Cast the provided type to this item type.
+   *
+   * @param item
+   *          the item to cast
+   * @return the original item if it is already this type, otherwise a new item
+   *         cast to this type
+   * @throws InvalidValueForCastFunctionException
+   *           if the provided {@code item} cannot be cast to this type
+   */
   @NonNull
-  static IMarkupItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  static IMarkupItem cast(@NonNull IAnyAtomicItem item) {
     return MarkupDataTypeProvider.MARKUP_MULTILINE.cast(item);
+  }
+
+  /**
+   * Get the "wrapped" markup value.
+   *
+   * @return the underlying markup value
+   */
+  @NonNull
+  IMarkupString<?> asMarkup();
+
+  @Override
+  default IMarkupItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
+  }
+
+  @Override
+  default int compareTo(IAnyAtomicItem item) {
+    return compareTo(cast(item));
+  }
+
+  /**
+   * Compares this value with the argument.
+   *
+   * @param item
+   *          the item to compare with this value
+   * @return a negative integer, zero, or a positive integer if this value is less
+   *         than, equal to, or greater than the {@code item}.
+   */
+  default int compareTo(@NonNull IMarkupItem item) {
+    return asString().compareTo(item.asString());
   }
 }

@@ -50,12 +50,12 @@ public class FnCompare {
       .deterministic()
       .contextDependent()
       .focusIndependent()
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("comparand1")
           .type(IStringItem.class)
           .zeroOrOne()
           .build())
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("comparand2")
           .type(IStringItem.class)
           .zeroOrOne()
@@ -82,7 +82,7 @@ public class FnCompare {
     if (comparand1 == null || comparand2 == null) {
       retval = ISequence.empty();
     } else {
-      IIntegerItem result = comparand1.compare(comparand2);
+      IIntegerItem result = IIntegerItem.valueOf(comparand1.compareTo(comparand2));
       retval = ISequence.of(result);
     }
     return retval;

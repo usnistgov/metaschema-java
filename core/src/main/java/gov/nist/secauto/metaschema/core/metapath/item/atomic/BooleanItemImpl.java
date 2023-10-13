@@ -48,6 +48,11 @@ class BooleanItemImpl implements IBooleanItem {
   }
 
   @Override
+  public Boolean getValue() {
+    return toBoolean();
+  }
+
+  @Override
   public boolean toBoolean() {
     return booleanValue;
   }
@@ -58,7 +63,7 @@ class BooleanItemImpl implements IBooleanItem {
   }
 
   @Override
-  public IStringItem newStringItem() {
+  public IStringItem asStringItem() {
     return toBoolean() ? TRUE_STRING_ITEM : FALSE_STRING_ITEM;
   }
 
@@ -68,7 +73,19 @@ class BooleanItemImpl implements IBooleanItem {
   }
 
   @Override
-  public Boolean getValue() {
-    return toBoolean();
+  public int hashCode() {
+    return Boolean.hashCode(booleanValue);
+  }
+
+  @SuppressWarnings("PMD.OnlyOneReturn")
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof IBooleanItem)) {
+      return false;
+    }
+    return compareTo((IBooleanItem) obj) == 0;
   }
 }

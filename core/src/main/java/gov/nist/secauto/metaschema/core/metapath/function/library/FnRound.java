@@ -41,25 +41,44 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Based on the XPath 3.1
+ * <a href= "https://www.w3.org/TR/xpath-functions-31/#func-round">fn:round</a>
+ * functions.
+ */
 public final class FnRound {
   private static final String NAME = "round";
 
   @NonNull
-  static final IFunction SIGNATURE = NumericFunction.signature(
-      MetapathConstants.NS_XPATH_FUNCTIONS,
-      NAME,
-      INumericItem::round);
+  static final IFunction SIGNATURE = IFunction.builder()
+      .name(NAME)
+      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .deterministic()
+      .contextIndependent()
+      .focusIndependent()
+      .argument(IArgument.builder()
+          .name("arg")
+          .type(INumericItem.class)
+          .zeroOrOne()
+          .build())
+      .returnType(INumericItem.class)
+      .returnZeroOrOne()
+      .functionHandler(FnRound::executeOneArg)
+      .build();
 
   @NonNull
   static final IFunction SIGNATURE_WITH_PRECISION = IFunction.builder()
       .name(NAME)
       .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
-      .argument(IArgument.newBuilder()
+      .deterministic()
+      .contextIndependent()
+      .focusIndependent()
+      .argument(IArgument.builder()
           .name("arg1")
           .type(INumericItem.class)
           .zeroOrOne()
           .build())
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("precision")
           .type(IIntegerItem.class)
           .one()
@@ -75,6 +94,24 @@ public final class FnRound {
 
   @SuppressWarnings("unused")
   @NonNull
+  private static ISequence<INumericItem> executeOneArg(
+      @NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
+      IItem focus) {
+    ISequence<? extends INumericItem> sequence = FunctionUtils.asType(
+        ObjectUtils.requireNonNull(arguments.get(0)));
+
+    INumericItem item = FunctionUtils.getFirstItem(sequence, true);
+    if (item == null) {
+      return ISequence.empty(); // NOPMD - readability
+    }
+
+    return ISequence.of(item.round());
+  }
+
+  @SuppressWarnings("unused")
+  @NonNull
   private static ISequence<INumericItem> executeTwoArg(
       @NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
@@ -82,21 +119,17 @@ public final class FnRound {
       IItem focus) {
     ISequence<? extends INumericItem> sequence = FunctionUtils.asType(
         ObjectUtils.requireNonNull(arguments.get(0)));
-    if (sequence.isEmpty()) {
-      return ISequence.empty(); // NOPMD - readability
-    }
 
     INumericItem item = FunctionUtils.getFirstItem(sequence, true);
     if (item == null) {
       return ISequence.empty(); // NOPMD - readability
     }
 
-    @NonNull IIntegerItem precision = FunctionUtils.asType(
+    IIntegerItem precision = FunctionUtils.asType(
         FunctionUtils.requireFirstItem(
             ObjectUtils.requireNonNull(arguments.get(1)),
             true));
 
-    INumericItem result = item.round(precision);
-    return ISequence.of(result);
+    return ISequence.of(item.round(precision));
   }
 }

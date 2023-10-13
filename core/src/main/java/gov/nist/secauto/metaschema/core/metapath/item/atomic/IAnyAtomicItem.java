@@ -30,9 +30,21 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.metapath.item.IAtomicValuedItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import java.util.Set;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IAnyAtomicItem extends IAtomicValuedItem {
+  @NonNull
+  Set<Class<? extends IAnyAtomicItem>> PRIMITIVE_ITEM_TYPES = ObjectUtils.notNull(Set.of(
+      IStringItem.class,
+      IBooleanItem.class,
+      IDecimalItem.class,
+      IDurationItem.class,
+      IDateTimeItem.class,
+      IDateItem.class,
+      IBase64BinaryItem.class,
+      IAnyUriItem.class));
 
   @Override
   @NonNull
@@ -40,9 +52,18 @@ public interface IAnyAtomicItem extends IAtomicValuedItem {
     return this;
   }
 
+  /**
+   * Get the "wrapped" value represented by this item.
+   *
+   * @return the value
+   */
   @Override
   @NonNull
   Object getValue();
+
+  @Override
+  @NonNull
+  String toString();
 
   /**
    * Get the item's string value.
@@ -50,9 +71,7 @@ public interface IAnyAtomicItem extends IAtomicValuedItem {
    * @return the string value value of the item
    */
   @NonNull
-  default String asString() {
-    return ObjectUtils.notNull(getValue().toString());
-  }
+  String asString();
 
   /**
    * Get a new {@link IStringItem} based on the the textual value of the item's
@@ -60,9 +79,8 @@ public interface IAnyAtomicItem extends IAtomicValuedItem {
    *
    * @return a new string item
    */
-  // TODO: rename to asStringItem
   @NonNull
-  default IStringItem newStringItem() {
+  default IStringItem asStringItem() {
     return IStringItem.valueOf(asString());
   }
 
@@ -75,4 +93,24 @@ public interface IAnyAtomicItem extends IAtomicValuedItem {
   IDataTypeAdapter<?> getJavaTypeAdapter();
   //
   // <T extends IValuedItem> T cast(IValuedItem item);
+
+  /**
+   * Cast the provided {@code item} to be the same type as this item.
+   *
+   * @param item
+   *          the item to cast
+   * @return the result from casting
+   */
+  @NonNull
+  IAnyAtomicItem castAsType(@NonNull IAnyAtomicItem item);
+
+  /**
+   * Compares this value with the argument. Ordering is item type dependent.
+   *
+   * @param other
+   *          the item to compare with this value
+   * @return a negative integer, zero, or a positive integer if this value is less
+   *         than, equal to, or greater than the {@code item}.
+   */
+  int compareTo(@NonNull IAnyAtomicItem other);
 }

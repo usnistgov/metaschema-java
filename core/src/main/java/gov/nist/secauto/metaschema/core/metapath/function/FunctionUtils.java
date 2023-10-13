@@ -38,11 +38,20 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+/**
+ * A collection of utility functions for use in implementing Metapath functions.
+ */
 public final class FunctionUtils {
   public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
 
@@ -242,24 +251,73 @@ public final class FunctionUtils {
     return item == null ? null : toNumeric(item);
   }
 
-  @SuppressWarnings("unchecked")
-  @NonNull
-  public static <TYPE extends IItem> TYPE asType(@NonNull IItem item) {
-    return (TYPE) item;
-  }
-
-  @SuppressWarnings("unchecked")
-  @NonNull
-  public static <TYPE extends IItem> ISequence<TYPE> asType(@NonNull ISequence<?> sequence) {
-    return (ISequence<TYPE>) sequence;
-  }
-
+  /**
+   * Casts the provided {@code item} as the result type, if the item is not
+   * {@code null}.
+   *
+   * @param <TYPE>
+   *          the Java type to cast to
+   * @param item
+   *          the value to cast
+   * @return the item cast to the required type or {@code null} if the item is
+   *         {@code null}
+   * @throws ClassCastException
+   *           if the item's type is not compatible with the requested type
+   */
   @SuppressWarnings("unchecked")
   @Nullable
   public static <TYPE extends IItem> TYPE asTypeOrNull(@Nullable IItem item) {
     return (TYPE) item;
   }
 
+  /**
+   * Casts the provided {@code item} as the result type.
+   *
+   * @param <TYPE>
+   *          the Java type to cast to
+   * @param item
+   *          the value to cast
+   * @return the item cast to the required type
+   * @throws ClassCastException
+   *           if the item's type is not compatible with the requested type
+   */
+  @SuppressWarnings("unchecked")
+  @NonNull
+  public static <TYPE extends IItem> TYPE asType(@NonNull IItem item) {
+    return (TYPE) item;
+  }
+
+  /**
+   * Casts the provided {@code item} as the result sequence type.
+   *
+   * @param <TYPE>
+   *          the Java type to cast to
+   * @param sequence
+   *          the values to cast
+   * @return the sequence cast to the required type
+   * @throws ClassCastException
+   *           if the sequence's type is not compatible with the requested type
+   */
+  @SuppressWarnings("unchecked")
+  @NonNull
+  public static <TYPE extends IItem> ISequence<TYPE> asType(@NonNull ISequence<?> sequence) {
+    return (ISequence<TYPE>) sequence;
+  }
+
+  /**
+   * Casts the provided {@code item} as the result type.
+   *
+   * @param <TYPE>
+   *          the Java type to cast to
+   * @param clazz
+   *          the Java class instance for the requested type
+   * @param item
+   *          the value to cast
+   * @return the item cast to the required type
+   * @throws InvalidTypeMetapathException
+   *           if the provided item is {@code null} or if the item's type is not
+   *           assignment compatible to the requested type
+   */
   @NonNull
   public static <TYPE extends IItem> TYPE requireType(Class<TYPE> clazz, IItem item) {
     if (item == null) {
@@ -274,18 +332,92 @@ public final class FunctionUtils {
               clazz.getName(),
               item.getClass().getName()));
     }
-    return FunctionUtils.asType(item);
+    return asType(item);
   }
 
+  /**
+   * Casts the provided {@code item} as the result type, if the item is not
+   * {@code null}.
+   *
+   * @param <TYPE>
+   *          the Java type to cast to
+   * @param clazz
+   *          the Java class instance for the requested type
+   * @param item
+   *          the value to cast
+   * @return the item cast to the required type or {@code null} if the item is
+   *         {@code null}
+   * @throws InvalidTypeMetapathException
+   *           if the provided item is {@code null} or if the item's type is not
+   *           assignment compatible to the requested type
+   */
   @Nullable
   public static <TYPE extends IItem> TYPE requireTypeOrNull(Class<TYPE> clazz, @Nullable IItem item) {
     if (item == null || clazz.isInstance(item)) {
-      return FunctionUtils.asTypeOrNull(item);
+      return asTypeOrNull(item);
     }
     throw new InvalidTypeMetapathException(
         item,
         String.format("Expected type '%s', but the node was type '%s'.",
             clazz.getName(),
             item.getClass().getName()));
+  }
+
+  /**
+   * Get a stream of item data types for the stream of items.
+   *
+   * @param items
+   *          the Metapath items to get the data types for
+   * @return a stream of data type classes
+   */
+  @NonNull
+  public static Stream<Class<?>> getTypes(@NonNull Stream<? extends IItem> items) {
+    return ObjectUtils.notNull(items.map(item -> item.getClass()));
+  }
+
+  /**
+   * Generate a list of Metapath item Java type classes from a list of Metapath
+   * items.
+   *
+   * @param <T>
+   *          the base Java types of the items
+   * @param items
+   *          the items to get Java type class for
+   * @return a list of corresponding Java type classes for the provided items
+   */
+  @SuppressWarnings("unchecked")
+  @NonNull
+  public static <T extends IItem> List<Class<? extends T>> getTypes(@NonNull List<T> items) {
+    return ObjectUtils.notNull(items.stream()
+        .map(item -> (Class<? extends T>) item.getClass())
+        .collect(Collectors.toList()));
+  }
+
+  /**
+   * Count the occurrences of the provided data type item {@code classes} used in
+   * the set of provided {@code items}.
+   *
+   * @param <T>
+   *          the class type
+   * @param classes
+   *          the Metapath item classes to count
+   * @param items
+   *          the Metapath items to analyze
+   * @return a mapping of Metapath item class to count
+   */
+  @NonNull
+  public static <T extends IItem> Map<Class<? extends T>, Integer> countTypes(
+      @NonNull Set<Class<? extends T>> classes,
+      @NonNull Collection<? extends T> items) {
+    Map<Class<? extends T>, Integer> retval = new HashMap<>(); // NOPMD
+    for (T item : items) {
+      Class<?> itemClass = item.getClass();
+      for (Class<? extends T> clazz : classes) {
+        if (clazz.isAssignableFrom(itemClass)) {
+          retval.compute(clazz, (cl, current) -> current == null ? 1 : current + 1);
+        }
+      }
+    }
+    return retval;
   }
 }

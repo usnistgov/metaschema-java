@@ -26,36 +26,63 @@
 
 package gov.nist.secauto.metaschema.core.metapath.item.atomic;
 
-import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.metapath.function.InvalidValueForCastFunctionException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IStringItem extends IAnyAtomicItem {
+  /**
+   * Construct a new item using the provided string {@code value}.
+   *
+   * @param value
+   *          a string value
+   * @return the new item
+   */
   @NonNull
   static IStringItem valueOf(@NonNull String value) {
-    try {
-      return new StringItemImpl(MetaschemaDataTypeProvider.STRING.parse(value));
-    } catch (IllegalArgumentException ex) {
-      throw new InvalidValueForCastFunctionException(String.format("Unable to parse string value '%s'", value),
-          ex);
-    }
+    return new StringItemImpl(value);
   }
 
+  /**
+   * Cast the provided type to this item type.
+   *
+   * @param item
+   *          the item to cast
+   * @return the original item if it is already this type, otherwise a new item
+   *         cast to this type
+   * @throws InvalidValueForCastFunctionException
+   *           if the provided {@code item} cannot be cast to this type
+   */
   @NonNull
-  static IStringItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
-    return MetaschemaDataTypeProvider.STRING.cast(item);
+  static IStringItem cast(@NonNull IAnyAtomicItem item) {
+    return item.asStringItem();
   }
 
   @Override
-  default IStringItem newStringItem() {
+  default IStringItem asStringItem() {
     return this;
   }
 
-  @NonNull
-  default IIntegerItem compare(@NonNull IStringItem other) {
-    String leftString = this.asString();
-    String rightString = other.asString();
-    return IIntegerItem.valueOf(leftString.compareTo(rightString));
+  @Override
+  default IStringItem castAsType(IAnyAtomicItem item) {
+    return cast(item);
+  }
+
+  /**
+   * Compares this value with the argument. Ordering is in lexical dictionary
+   * order.
+   *
+   * @param other
+   *          the item to compare with this value
+   * @return a negative integer, zero, or a positive integer if this value is less
+   *         than, equal to, or greater than the {@code item}.
+   */
+  default int compareTo(@NonNull IStringItem other) {
+    return asString().compareTo(other.asString());
+  }
+
+  @Override
+  default int compareTo(IAnyAtomicItem other) {
+    return compareTo(other.asStringItem());
   }
 }

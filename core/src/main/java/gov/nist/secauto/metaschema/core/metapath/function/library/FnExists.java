@@ -40,6 +40,10 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Implements <a href=
+ * "https://www.w3.org/TR/xpath-functions-31/#func-exists">fn:exists</a>.
+ */
 public final class FnExists {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
@@ -48,7 +52,7 @@ public final class FnExists {
       .deterministic()
       .contextIndependent()
       .focusIndependent()
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("arg")
           .type(IItem.class)
           .zeroOrMore()

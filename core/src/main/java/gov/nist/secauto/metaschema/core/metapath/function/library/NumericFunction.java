@@ -63,7 +63,7 @@ public final class NumericFunction implements IFunctionExecutor {
     return IFunction.builder()
         .name(name)
         .namespace(namespace)
-        .argument(IArgument.newBuilder()
+        .argument(IArgument.builder()
             .name("arg1")
             .type(INumericItem.class)
             .zeroOrOne()
@@ -83,7 +83,7 @@ public final class NumericFunction implements IFunctionExecutor {
   }
 
   @NonNull
-  private static NumericFunction newFunctionHandler(@NonNull INumericExecutor executor) {
+  static NumericFunction newFunctionHandler(@NonNull INumericExecutor executor) {
     return new NumericFunction(executor);
   }
 

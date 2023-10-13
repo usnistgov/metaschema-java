@@ -23,8 +23,9 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 /**
- * Provides implementations of Metapath atomic data items.
+ * Provides implementations of Metapath atomic data type items.
  */
 
 package gov.nist.secauto.metaschema.core.metapath.item.atomic;

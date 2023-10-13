@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.metapath.function.InvalidValueForCastFun
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -39,22 +40,13 @@ public interface IDecimalItem extends INumericItem {
   @NonNull
   IDecimalItem ZERO = valueOf(BigDecimal.ZERO);
 
-  @SuppressWarnings("null")
-  @NonNull
-  static IDecimalItem valueOf(long value) {
-    return valueOf(BigDecimal.valueOf(value));
-  }
-
-  @NonNull
-  static IDecimalItem valueOf(double value) {
-    return valueOf(ObjectUtils.notNull(Double.toString(value)));
-  }
-
-  @NonNull
-  static IDecimalItem valueOf(@NonNull BigDecimal value) {
-    return new DecimalItemImpl(value);
-  }
-
+  /**
+   * Construct a new decimal item using the provided string {@code value}.
+   *
+   * @param value
+   *          a string representing a decimal value
+   * @return the new item
+   */
   @NonNull
   static IDecimalItem valueOf(@NonNull String value) {
     try {
@@ -65,11 +57,99 @@ public interface IDecimalItem extends INumericItem {
     }
   }
 
-  static @NonNull IDecimalItem cast(@NonNull IAnyAtomicItem item)
-      throws InvalidValueForCastFunctionException {
+  /**
+   * Construct a new decimal item using the provided {@code value}.
+   *
+   * @param value
+   *          a long value
+   * @return the new item
+   */
+  @NonNull
+  static IDecimalItem valueOf(long value) {
+    return valueOf(ObjectUtils.notNull(BigDecimal.valueOf(value)));
+  }
+
+  /**
+   * Construct a new decimal item using the provided {@code value}.
+   *
+   * @param value
+   *          a double value
+   * @return the new item
+   */
+  @NonNull
+  static IDecimalItem valueOf(double value) {
+    return valueOf(ObjectUtils.notNull(Double.toString(value)));
+  }
+
+  /**
+   * Construct a new decimal item using the provided {@code value}.
+   *
+   * @param value
+   *          a decimal value
+   * @return the new item
+   */
+  @NonNull
+  static IDecimalItem valueOf(@NonNull BigDecimal value) {
+    return new DecimalItemImpl(value);
+  }
+
+  /**
+   * Cast the provided type to this item type.
+   *
+   * @param item
+   *          the item to cast
+   * @return the original item if it is already this type, otherwise a new item
+   *         cast to this type
+   * @throws InvalidValueForCastFunctionException
+   *           if the provided {@code item} cannot be cast to this type
+   */
+  @NonNull
+  static IDecimalItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.DECIMAL.cast(item);
   }
 
   @Override
-  BigDecimal getValue();
+  default IDecimalItem castAsType(IAnyAtomicItem item) {
+    return valueOf(cast(item).asDecimal());
+  }
+
+  @Override
+  default boolean toEffectiveBoolean() {
+    return !BigDecimal.ZERO.equals(asDecimal());
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default INumericItem abs() {
+    return new DecimalItemImpl(asDecimal().abs());
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default IIntegerItem ceiling() {
+    return IIntegerItem.valueOf(asDecimal().setScale(0, RoundingMode.CEILING).toBigIntegerExact());
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default IIntegerItem floor() {
+    return IIntegerItem.valueOf(asDecimal().setScale(0, RoundingMode.FLOOR).toBigIntegerExact());
+  }
+
+  /**
+   * Compares this value with the argument.
+   *
+   * @param item
+   *          the item to compare with this value
+   * @return a negative integer, zero, or a positive integer if this value is less
+   *         than, equal to, or greater than the {@code item}.
+   */
+  default int compareTo(@NonNull IDecimalItem item) {
+    return asDecimal().compareTo(item.asDecimal());
+  }
+
+  @Override
+  default int compareTo(IAnyAtomicItem item) {
+    return compareTo(cast(item));
+  }
 }

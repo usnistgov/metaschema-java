@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.core.metapath.function; // NOPMD - intentional
 
 import gov.nist.secauto.metaschema.core.metapath.InvalidTypeMetapathException;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBase64BinaryItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDateItem;
@@ -37,6 +38,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDurationItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IYearMonthDurationItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -44,23 +46,30 @@ import java.time.Duration;
 import java.time.Period;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAmount;
+import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public final class OperationFunctions { // NOPMD - intentional
+  @NonNull
+  public static final Set<Class<? extends IAnyAtomicItem>> AGGREGATE_MATH_TYPES = ObjectUtils.notNull(Set.of(
+      IDayTimeDurationItem.class,
+      IYearMonthDurationItem.class,
+      INumericItem.class));
+
   private OperationFunctions() {
     // disable
   }
 
   @NonNull
   public static IDateItem opAddYearMonthDurationToDate(@NonNull IDateItem arg1, @NonNull IYearMonthDurationItem arg2) {
-    return addDurationToDate(arg1.asZonedDateTime(), arg2.getValue());
+    return addDurationToDate(arg1.asZonedDateTime(), arg2.asPeriod());
   }
 
   @NonNull
   public static IDateItem opAddDayTimeDurationToDate(@NonNull IDateItem arg1, @NonNull IDayTimeDurationItem arg2) {
-    return addDurationToDate(arg1.asZonedDateTime(), arg2.getValue());
+    return addDurationToDate(arg1.asZonedDateTime(), arg2.asDuration());
   }
 
   @NonNull
@@ -76,10 +85,11 @@ public final class OperationFunctions { // NOPMD - intentional
   }
 
   @NonNull
-  public static IYearMonthDurationItem opAddYearMonthDurations(@NonNull IYearMonthDurationItem arg1,
-      IYearMonthDurationItem arg2) {
-    Period duration1 = arg1.getValue();
-    Period duration2 = arg2.getValue();
+  public static IYearMonthDurationItem opAddYearMonthDurations(
+      @NonNull IYearMonthDurationItem arg1,
+      @NonNull IYearMonthDurationItem arg2) {
+    Period duration1 = arg1.asPeriod();
+    Period duration2 = arg2.asPeriod();
 
     Period result;
     try {
@@ -92,10 +102,11 @@ public final class OperationFunctions { // NOPMD - intentional
   }
 
   @NonNull
-  public static IDayTimeDurationItem opAddDayTimeDurations(@NonNull IDayTimeDurationItem arg1,
+  public static IDayTimeDurationItem opAddDayTimeDurations(
+      @NonNull IDayTimeDurationItem arg1,
       @NonNull IDayTimeDurationItem arg2) {
-    Duration duration1 = arg1.getValue();
-    Duration duration2 = arg2.getValue();
+    Duration duration1 = arg1.asDuration();
+    Duration duration2 = arg2.asDuration();
 
     Duration result;
     try {
@@ -108,11 +119,12 @@ public final class OperationFunctions { // NOPMD - intentional
   }
 
   @NonNull
-  public static IDateTimeItem opAddYearMonthDurationToDateTime(@NonNull IDateTimeItem arg1,
+  public static IDateTimeItem opAddYearMonthDurationToDateTime(
+      @NonNull IDateTimeItem arg1,
       @NonNull IYearMonthDurationItem arg2) {
     ZonedDateTime result;
     try {
-      result = arg1.asZonedDateTime().plus(arg2.getValue());
+      result = arg1.asZonedDateTime().plus(arg2.asPeriod());
     } catch (ArithmeticException ex) {
       throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);
     }
@@ -121,11 +133,12 @@ public final class OperationFunctions { // NOPMD - intentional
   }
 
   @NonNull
-  public static IDateTimeItem opAddDayTimeDurationToDateTime(@NonNull IDateTimeItem arg1,
+  public static IDateTimeItem opAddDayTimeDurationToDateTime(
+      @NonNull IDateTimeItem arg1,
       @NonNull IDayTimeDurationItem arg2) {
     ZonedDateTime result;
     try {
-      result = arg1.asZonedDateTime().plus(arg2.getValue());
+      result = arg1.asZonedDateTime().plus(arg2.asDuration());
     } catch (ArithmeticException ex) {
       throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);
     }
@@ -139,19 +152,22 @@ public final class OperationFunctions { // NOPMD - intentional
   }
 
   @NonNull
-  public static IDateItem opSubtractYearMonthDurationFromDate(@NonNull IDateItem arg1,
+  public static IDateItem opSubtractYearMonthDurationFromDate(
+      @NonNull IDateItem arg1,
       @NonNull IYearMonthDurationItem arg2) {
-    return subtractDurationFromDate(arg1.asZonedDateTime(), arg2.getValue());
+    return subtractDurationFromDate(arg1.asZonedDateTime(), arg2.asPeriod());
   }
 
   @NonNull
-  public static IDateItem opSubtractDayTimeDurationFromDate(@NonNull IDateItem arg1,
+  public static IDateItem opSubtractDayTimeDurationFromDate(
+      @NonNull IDateItem arg1,
       @NonNull IDayTimeDurationItem arg2) {
-    return subtractDurationFromDate(arg1.asZonedDateTime(), arg2.getValue());
+    return subtractDurationFromDate(arg1.asZonedDateTime(), arg2.asDuration());
   }
 
   @NonNull
-  private static IDateItem subtractDurationFromDate(@NonNull ZonedDateTime dateTime,
+  private static IDateItem subtractDurationFromDate(
+      @NonNull ZonedDateTime dateTime,
       @NonNull TemporalAmount duration) {
     @SuppressWarnings("null")
     @NonNull ZonedDateTime result = dateTime.minus(duration);
@@ -159,10 +175,11 @@ public final class OperationFunctions { // NOPMD - intentional
   }
 
   @NonNull
-  public static IYearMonthDurationItem opSubtractYearMonthDurations(@NonNull IYearMonthDurationItem arg1,
-      IYearMonthDurationItem arg2) {
-    Period duration1 = arg1.getValue();
-    Period duration2 = arg2.getValue();
+  public static IYearMonthDurationItem opSubtractYearMonthDurations(
+      @NonNull IYearMonthDurationItem arg1,
+      @NonNull IYearMonthDurationItem arg2) {
+    Period duration1 = arg1.asPeriod();
+    Period duration2 = arg2.asPeriod();
 
     @SuppressWarnings("null")
     @NonNull Period duration = duration1.minus(duration2);
@@ -170,10 +187,11 @@ public final class OperationFunctions { // NOPMD - intentional
   }
 
   @NonNull
-  public static IDayTimeDurationItem opSubtractDayTimeDurations(@NonNull IDayTimeDurationItem arg1,
+  public static IDayTimeDurationItem opSubtractDayTimeDurations(
+      @NonNull IDayTimeDurationItem arg1,
       @NonNull IDayTimeDurationItem arg2) {
-    Duration duration1 = arg1.getValue();
-    Duration duration2 = arg2.getValue();
+    Duration duration1 = arg1.asDuration();
+    Duration duration2 = arg2.asDuration();
 
     @SuppressWarnings("null")
     @NonNull Duration duration = duration1.minus(duration2);
@@ -193,26 +211,28 @@ public final class OperationFunctions { // NOPMD - intentional
   }
 
   @NonNull
-  public static IDateTimeItem opSubtractYearMonthDurationFromDateTime(@NonNull IDateTimeItem arg1,
+  public static IDateTimeItem opSubtractYearMonthDurationFromDateTime(
+      @NonNull IDateTimeItem arg1,
       @NonNull IYearMonthDurationItem arg2) {
     @SuppressWarnings("null")
-    @NonNull ZonedDateTime dateTime = arg1.asZonedDateTime().minus(arg2.getValue());
+    @NonNull ZonedDateTime dateTime = arg1.asZonedDateTime().minus(arg2.asPeriod());
     return IDateTimeItem.valueOf(dateTime);
   }
 
   @NonNull
-  public static IDateTimeItem opSubtractDayTimeDurationFromDateTime(@NonNull IDateTimeItem arg1,
+  public static IDateTimeItem opSubtractDayTimeDurationFromDateTime(
+      @NonNull IDateTimeItem arg1,
       @NonNull IDayTimeDurationItem arg2) {
 
     @SuppressWarnings("null")
-    @NonNull ZonedDateTime dateTime = arg1.asZonedDateTime().plus(arg2.getValue());
+    @NonNull ZonedDateTime dateTime = arg1.asZonedDateTime().plus(arg2.asDuration());
     return IDateTimeItem.valueOf(dateTime);
   }
 
   @NonNull
-  public static IYearMonthDurationItem opMultiplyYearMonthDuration(@NonNull IYearMonthDurationItem arg1,
-      @NonNull INumericItem arg2)
-      throws ArithmeticFunctionException {
+  public static IYearMonthDurationItem opMultiplyYearMonthDuration(
+      @NonNull IYearMonthDurationItem arg1,
+      @NonNull INumericItem arg2) {
     int arg2Int;
     try {
       arg2Int = FunctionUtils.asInteger(arg2.round());
@@ -221,14 +241,14 @@ public final class OperationFunctions { // NOPMD - intentional
     }
 
     @SuppressWarnings("null")
-    @NonNull Period period = arg1.getValue().multipliedBy(arg2Int);
+    @NonNull Period period = arg1.asPeriod().multipliedBy(arg2Int);
     return IYearMonthDurationItem.valueOf(period);
   }
 
   @NonNull
-  public static IDayTimeDurationItem opMultiplyDayTimeDuration(@NonNull IDayTimeDurationItem arg1,
-      @NonNull INumericItem arg2)
-      throws ArithmeticFunctionException {
+  public static IDayTimeDurationItem opMultiplyDayTimeDuration(
+      @NonNull IDayTimeDurationItem arg1,
+      @NonNull INumericItem arg2) {
     long arg2Long;
     try {
       arg2Long = FunctionUtils.asLong(arg2.round());
@@ -237,15 +257,15 @@ public final class OperationFunctions { // NOPMD - intentional
     }
 
     @SuppressWarnings("null")
-    @NonNull Duration duration = arg1.getValue().multipliedBy(arg2Long);
+    @NonNull Duration duration = arg1.asDuration().multipliedBy(arg2Long);
     return IDayTimeDurationItem.valueOf(duration);
   }
 
   @NonNull
-  public static IYearMonthDurationItem opDivideYearMonthDuration(@NonNull IYearMonthDurationItem arg1,
-      @NonNull INumericItem arg2)
-      throws DateTimeFunctionException {
-    IIntegerItem totalMonths = IIntegerItem.valueOf(arg1.getValue().toTotalMonths());
+  public static IYearMonthDurationItem opDivideYearMonthDuration(
+      @NonNull IYearMonthDurationItem arg1,
+      @NonNull INumericItem arg2) {
+    IIntegerItem totalMonths = IIntegerItem.valueOf(arg1.asPeriod().toTotalMonths());
     IIntegerItem result = opNumericIntegerDivide(totalMonths, arg2);
     int months;
     try {
@@ -256,16 +276,16 @@ public final class OperationFunctions { // NOPMD - intentional
     }
     int years = months / 12;
     months = months % 12;
-    return IYearMonthDurationItem.valueOf(years, months, 0);
+    return IYearMonthDurationItem.valueOf(years, months);
   }
 
   @NonNull
-  public static IDayTimeDurationItem opDivideDayTimeDuration(@NonNull IDayTimeDurationItem arg1,
-      @NonNull INumericItem arg2)
-      throws ArithmeticFunctionException {
+  public static IDayTimeDurationItem opDivideDayTimeDuration(
+      @NonNull IDayTimeDurationItem arg1,
+      @NonNull INumericItem arg2) {
     try {
       @SuppressWarnings("null")
-      @NonNull Duration duration = arg1.getValue().dividedBy(FunctionUtils.asLong(arg2.round()));
+      @NonNull Duration duration = arg1.asDuration().dividedBy(FunctionUtils.asLong(arg2.round()));
       return IDayTimeDurationItem
           .valueOf(duration);
     } catch (ArithmeticException ex) {
@@ -274,16 +294,18 @@ public final class OperationFunctions { // NOPMD - intentional
   }
 
   @NonNull
-  public static IDecimalItem opDivideDayTimeDurationByDayTimeDuration(@NonNull IDayTimeDurationItem arg1,
-      IDayTimeDurationItem arg2) {
+  public static IDecimalItem opDivideDayTimeDurationByDayTimeDuration(
+      @NonNull IDayTimeDurationItem arg1,
+      @NonNull IDayTimeDurationItem arg2) {
     return IDecimalItem.cast(
         opNumericDivide(
-            IDecimalItem.valueOf(arg1.getValue().toSeconds()),
-            IDecimalItem.valueOf(arg2.getValue().toSeconds())));
+            IDecimalItem.valueOf(arg1.asSeconds()),
+            IDecimalItem.valueOf(arg2.asSeconds())));
   }
 
   @NonNull
   public static IBooleanItem opDateEqual(@NonNull IDateItem arg1, @NonNull IDateItem arg2) {
+    // TODO: avoid cast?
     return opDateTimeEqual(IDateTimeItem.cast(arg1), IDateTimeItem.cast(arg2));
   }
 
@@ -294,16 +316,17 @@ public final class OperationFunctions { // NOPMD - intentional
 
   @NonNull
   public static IBooleanItem opDurationEqual(@NonNull IDurationItem arg1, @NonNull IDurationItem arg2) {
-    return IBooleanItem.valueOf(arg1.getValue().equals(arg2.getValue()));
+    return IBooleanItem.valueOf(arg1.compareTo(arg2) == 0);
   }
 
   @NonNull
   public static IBooleanItem opBase64BinaryEqual(@NonNull IBase64BinaryItem arg1, @NonNull IBase64BinaryItem arg2) {
-    return IBooleanItem.valueOf(arg1.getValue().equals(arg2.getValue()));
+    return IBooleanItem.valueOf(arg1.asByteBuffer().equals(arg2.asByteBuffer()));
   }
 
   @NonNull
   public static IBooleanItem opDateGreaterThan(@NonNull IDateItem arg1, @NonNull IDateItem arg2) {
+    // TODO: avoid cast?
     return opDateTimeGreaterThan(IDateTimeItem.cast(arg1), IDateTimeItem.cast(arg2));
   }
 
@@ -313,10 +336,11 @@ public final class OperationFunctions { // NOPMD - intentional
   }
 
   @NonNull
-  public static IBooleanItem opYearMonthDurationGreaterThan(@NonNull IYearMonthDurationItem arg1,
+  public static IBooleanItem opYearMonthDurationGreaterThan(
+      @NonNull IYearMonthDurationItem arg1,
       @NonNull IYearMonthDurationItem arg2) {
-    Period p1 = arg1.getValue();
-    Period p2 = arg2.getValue();
+    Period p1 = arg1.asPeriod();
+    Period p2 = arg2.asPeriod();
 
     // this is only an approximation
     return IBooleanItem.valueOf(p1.toTotalMonths() > p2.toTotalMonths());
@@ -326,14 +350,14 @@ public final class OperationFunctions { // NOPMD - intentional
   public static IBooleanItem opDayTimeDurationGreaterThan(
       @NonNull IDayTimeDurationItem arg1,
       @NonNull IDayTimeDurationItem arg2) {
-    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg2.getValue()) > 0);
+    return IBooleanItem.valueOf(arg1.compareTo(arg2) > 0);
   }
 
   @NonNull
   public static IBooleanItem opBase64BinaryGreaterThan(
       @NonNull IBase64BinaryItem arg1,
       @NonNull IBase64BinaryItem arg2) {
-    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg2.getValue()) > 0);
+    return IBooleanItem.valueOf(arg1.compareTo(arg2) > 0);
   }
 
   @NonNull
@@ -353,8 +377,8 @@ public final class OperationFunctions { // NOPMD - intentional
   @NonNull
   public static IBooleanItem opYearMonthDurationLessThan(@NonNull IYearMonthDurationItem arg1,
       @NonNull IYearMonthDurationItem arg2) {
-    Period p1 = arg1.getValue();
-    Period p2 = arg2.getValue();
+    Period p1 = arg1.asPeriod();
+    Period p2 = arg2.asPeriod();
 
     // this is only an approximation
     return IBooleanItem.valueOf(p1.toTotalMonths() < p2.toTotalMonths());
@@ -364,14 +388,14 @@ public final class OperationFunctions { // NOPMD - intentional
   public static IBooleanItem opDayTimeDurationLessThan(
       @NonNull IDayTimeDurationItem arg1,
       @NonNull IDayTimeDurationItem arg2) {
-    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg2.getValue()) < 0);
+    return IBooleanItem.valueOf(arg1.compareTo(arg2) < 0);
   }
 
   @NonNull
   public static IBooleanItem opBase64BinaryLessThan(
       @NonNull IBase64BinaryItem arg1,
       @NonNull IBase64BinaryItem arg2) {
-    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg2.getValue()) < 0);
+    return IBooleanItem.valueOf(arg1.compareTo(arg2) < 0);
   }
 
   @NonNull
@@ -441,38 +465,20 @@ public final class OperationFunctions { // NOPMD - intentional
   }
 
   @NonNull
-  public static INumericItem opNumericDivide(@NonNull INumericItem dividend, @NonNull INumericItem divisor) {
-    INumericItem retval;
-    if (dividend instanceof IDecimalItem || divisor instanceof IDecimalItem) {
-      // create a decimal result
-      BigDecimal decimalDivisor = divisor.asDecimal();
+  public static IDecimalItem opNumericDivide(@NonNull INumericItem dividend, @NonNull INumericItem divisor) {
+    // create a decimal result
+    BigDecimal decimalDivisor = divisor.asDecimal();
 
-      if (BigDecimal.ZERO.equals(decimalDivisor)) {
-        throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,
-            ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
-      }
-
-      BigDecimal decimalDividend = dividend.asDecimal();
-
-      @SuppressWarnings("null")
-      @NonNull BigDecimal result = decimalDividend.divide(decimalDivisor, FunctionUtils.MATH_CONTEXT);
-      retval = IDecimalItem.valueOf(result);
-    } else {
-      // create an integer result
-      BigInteger integerDivisor = divisor.asInteger();
-
-      if (BigInteger.ZERO.equals(integerDivisor)) {
-        throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,
-            ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
-      }
-
-      BigInteger integerDividend = dividend.asInteger();
-
-      @SuppressWarnings("null")
-      @NonNull BigInteger result = integerDividend.divide(integerDivisor);
-      retval = IIntegerItem.valueOf(result);
+    if (BigDecimal.ZERO.equals(decimalDivisor)) {
+      throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,
+          ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
     }
-    return retval;
+
+    BigDecimal decimalDividend = dividend.asDecimal();
+
+    @SuppressWarnings("null")
+    @NonNull BigDecimal result = decimalDividend.divide(decimalDivisor, FunctionUtils.MATH_CONTEXT);
+    return IDecimalItem.valueOf(result);
   }
 
   @NonNull

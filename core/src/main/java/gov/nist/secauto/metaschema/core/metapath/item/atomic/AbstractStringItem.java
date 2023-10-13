@@ -32,7 +32,13 @@ public abstract class AbstractStringItem
     extends AbstractAnyAtomicItem<String>
     implements IStringItem {
 
-  public AbstractStringItem(@NonNull String value) {
+  /**
+   * Construct a new string item with the provided {@code value}.
+   *
+   * @param value
+   *          the value to wrap
+   */
+  protected AbstractStringItem(@NonNull String value) {
     super(value);
   }
 
@@ -41,4 +47,19 @@ public abstract class AbstractStringItem
     return getValue();
   }
 
+  @Override
+  public int hashCode() {
+    return asString().hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true; // NOPMD readability
+    }
+    if (!(obj instanceof IStringItem)) {
+      return false; // NOPMD readability
+    }
+    return compareTo((IStringItem) obj) == 0;
+  }
 }

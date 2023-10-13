@@ -48,11 +48,11 @@ public final class FnStartsWith {
   static final IFunction SIGNATURE = IFunction.builder()
       .name("starts-with")
       .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("arg1").type(IStringItem.class)
           .zeroOrOne()
           .build())
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("arg2")
           .type(IStringItem.class)
           .zeroOrOne()
@@ -103,7 +103,7 @@ public final class FnStartsWith {
       retval = true;
     } else {
       String arg1String = arg1 == null ? "" : arg1.asString();
-      retval = arg1String.contains(arg2String);
+      retval = arg1String.startsWith(arg2String);
     }
     return IBooleanItem.valueOf(retval);
   }

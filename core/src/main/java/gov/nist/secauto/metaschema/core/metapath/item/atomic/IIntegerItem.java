@@ -27,13 +27,15 @@
 package gov.nist.secauto.metaschema.core.metapath.item.atomic;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.core.metapath.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.core.metapath.function.InvalidValueForCastFunctionException;
 
 import java.math.BigInteger;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IIntegerItem extends INumericItem {
+// TODO: extends IDecimalItem instead
+public interface IIntegerItem extends IDecimalItem {
 
   @SuppressWarnings("null")
   @NonNull
@@ -45,6 +47,33 @@ public interface IIntegerItem extends INumericItem {
   @NonNull
   IIntegerItem NEGATIVE_ONE = valueOf(BigInteger.ONE.negate());
 
+  /**
+   * Create an item from an existing integer value.
+   *
+   * @param value
+   *          a string representing an integer value
+   * @return the item
+   * @throws InvalidTypeMetapathException
+   *           if the provided value is not an integer
+   */
+  @NonNull
+  static IIntegerItem valueOf(@NonNull String value) {
+    try {
+      return valueOf(new BigInteger(value));
+    } catch (NumberFormatException ex) {
+      throw new InvalidTypeMetapathException(null,
+          ex.getMessage(),
+          ex);
+    }
+  }
+
+  /**
+   * Construct a new integer item using the provided {@code value}.
+   *
+   * @param value
+   *          a long value
+   * @return the new item
+   */
   @NonNull
   static IIntegerItem valueOf(long value) {
     @SuppressWarnings("null")
@@ -53,20 +82,12 @@ public interface IIntegerItem extends INumericItem {
   }
 
   /**
-   * Create an integer item from a string representing an integer value.
+   * Construct a new integer item using the provided {@code value}.
    *
    * @param value
    *          an integer value
-   * @return the item
-   * @throws NumberFormatException
-   *           if the provided value is not a valid representation of a
-   *           {@link BigInteger}
+   * @return the new item
    */
-  @NonNull
-  static IIntegerItem valueOf(@NonNull String value) {
-    return valueOf(new BigInteger(value));
-  }
-
   @NonNull
   static IIntegerItem valueOf(@NonNull BigInteger value) {
     int signum = value.signum();
@@ -82,8 +103,18 @@ public interface IIntegerItem extends INumericItem {
     return retval;
   }
 
+  /**
+   * Cast the provided type to this item type.
+   *
+   * @param item
+   *          the item to cast
+   * @return the original item if it is already this type, otherwise a new item
+   *         cast to this type
+   * @throws InvalidValueForCastFunctionException
+   *           if the provided {@code item} cannot be cast to this type
+   */
   @NonNull
-  static IIntegerItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  static IIntegerItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.INTEGER.cast(item);
   }
 
@@ -101,5 +132,24 @@ public interface IIntegerItem extends INumericItem {
   }
 
   @Override
-  BigInteger getValue();
+  default IIntegerItem castAsType(IAnyAtomicItem item) {
+    return valueOf(cast(item).asInteger());
+  }
+
+  @Override
+  default int compareTo(IAnyAtomicItem item) {
+    return compareTo(cast(item));
+  }
+
+  /**
+   * Compares this value with the argument.
+   *
+   * @param item
+   *          the item to compare with this value
+   * @return a negative integer, zero, or a positive integer if this value is less
+   *         than, equal to, or greater than the {@code item}.
+   */
+  default int compareTo(IIntegerItem item) {
+    return asInteger().compareTo(item.asInteger());
+  }
 }

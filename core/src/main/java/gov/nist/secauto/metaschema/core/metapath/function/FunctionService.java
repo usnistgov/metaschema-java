@@ -26,14 +26,13 @@
 
 package gov.nist.secauto.metaschema.core.metapath.function;
 
-import gov.nist.secauto.metaschema.core.metapath.IExpression;
 import gov.nist.secauto.metaschema.core.metapath.StaticMetapathException;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
@@ -102,16 +101,24 @@ public final class FunctionService {
    *
    * @param name
    *          the name of a group of functions
-   * @param arguments
-   *          a list of argument expressions for use in determining an argument
-   *          signature match
+   * @param arity
+   *          the count of arguments for use in determining an argument signature
+   *          match
    * @return the matching function or {@code null} if no match exists
    * @throws StaticMetapathException
    *           if a matching function was not found
    */
-  @SuppressWarnings("null")
-  public IFunction getFunction(@NonNull String name, @NonNull IExpression... arguments) {
-    return getFunction(name, Arrays.asList(arguments));
+  public IFunction getFunction(@NonNull String name, int arity) {
+    IFunction retval;
+    synchronized (this) {
+      retval = library.getFunction(name, arity);
+    }
+
+    if (retval == null) {
+      throw new StaticMetapathException(StaticMetapathException.NO_FUNCTION_MATCH,
+          String.format("unable to find function with name '%s' having arity '%d'", name, arity));
+    }
+    return retval;
   }
 
   /**
@@ -120,23 +127,24 @@ public final class FunctionService {
    *
    * @param name
    *          the name of a group of functions
-   * @param arguments
-   *          a list of argument expressions for use in determining an argument
-   *          signature match
-   * @return the matching function
+   * @param arity
+   *          the count of arguments for use in determining an argument signature
+   *          match
+   * @return the matching function or {@code null} if no match exists
    * @throws StaticMetapathException
    *           if a matching function was not found
    */
-  public IFunction getFunction(@NonNull String name, @NonNull List<IExpression> arguments) {
+  public IFunction getFunction(@NonNull QName name, int arity) {
     IFunction retval;
     synchronized (this) {
-      retval = library.getFunction(name, arguments);
+      retval = library.getFunction(name, arity);
     }
 
     if (retval == null) {
       throw new StaticMetapathException(StaticMetapathException.NO_FUNCTION_MATCH,
-          String.format("unable to find function with name '%s' having arity '%d'", name, arguments.size()));
+          String.format("unable to find function with name '%s' having arity '%d'", name, arity));
     }
     return retval;
   }
+
 }

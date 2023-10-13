@@ -29,10 +29,12 @@ package gov.nist.secauto.metaschema.core.metapath.function.library;
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
+import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.core.metapath.function.InvalidArgumentFunctionException;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyUriItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
@@ -44,7 +46,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public final class FnBoolean {
   @NonNull
@@ -54,7 +55,7 @@ public final class FnBoolean {
       .deterministic()
       .contextIndependent()
       .focusIndependent()
-      .argument(IArgument.newBuilder()
+      .argument(IArgument.builder()
           .name("arg")
           .type(IItem.class)
           .zeroOrMore()
@@ -75,7 +76,7 @@ public final class FnBoolean {
       @NonNull DynamicContext dynamicContext,
       IItem focus) {
 
-    ISequence<?> items = ObjectUtils.requireNonNull(arguments.iterator().next());
+    ISequence<?> items = ObjectUtils.requireNonNull(arguments.get(0));
 
     IBooleanItem result = fnBoolean(items);
     return ISequence.of(result);
@@ -93,14 +94,8 @@ public final class FnBoolean {
    * @return the effective boolean value of the sequence
    */
   @NonNull
-  public static IBooleanItem fnBoolean(@Nullable ISequence<?> sequence) {
-    IBooleanItem retval;
-    if (sequence == null) {
-      retval = IBooleanItem.FALSE;
-    } else {
-      retval = IBooleanItem.valueOf(fnBooleanAsPrimitive(sequence));
-    }
-    return retval;
+  public static IBooleanItem fnBoolean(@NonNull ISequence<?> sequence) {
+    return IBooleanItem.valueOf(fnBooleanAsPrimitive(sequence));
   }
 
   /**
@@ -114,12 +109,11 @@ public final class FnBoolean {
    */
   public static boolean fnBooleanAsPrimitive(@NonNull ISequence<?> sequence) {
     boolean retval = false;
-    if (!sequence.isEmpty()) {
-      List<? extends IItem> items = sequence.asList();
-      IItem first = ObjectUtils.notNull(items.iterator().next());
+    IItem first = FunctionUtils.getFirstItem(sequence, false);
+    if (first != null) {
       if (first instanceof INodeItem) {
         retval = true;
-      } else if (items.size() == 1) {
+      } else if (sequence.size() == 1) {
         retval = fnBooleanAsPrimitive(first);
       }
     }
@@ -138,19 +132,16 @@ public final class FnBoolean {
     boolean retval;
     if (item instanceof IBooleanItem) {
       retval = ((IBooleanItem) item).toBoolean();
-    } else if (item instanceof IStringItem) {
-      String string = ((IStringItem) item).asString();
-      retval = !string.isBlank();
     } else if (item instanceof INumericItem) {
       retval = ((INumericItem) item).toEffectiveBoolean();
-    } else if (item instanceof IUntypedAtomicItem) {
-      String string = ((IUntypedAtomicItem) item).asString();
-      retval = !string.isBlank();
-    } else if (item instanceof IAnyUriItem) {
-      String string = ((IAnyUriItem) item).asString();
+    } else if (item instanceof IStringItem
+        || item instanceof IAnyUriItem
+        || item instanceof IUntypedAtomicItem) {
+      String string = ((IAnyAtomicItem) item).asString();
       retval = !string.isBlank();
     } else {
-      throw new InvalidArgumentFunctionException(InvalidArgumentFunctionException.INVALID_ARGUMENT_TYPE,
+      throw new InvalidArgumentFunctionException(
+          InvalidArgumentFunctionException.INVALID_ARGUMENT_TYPE,
           String.format("Invalid argument type '%s'", item.getClass().getName()));
     }
     return retval;

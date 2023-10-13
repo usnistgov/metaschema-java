@@ -196,7 +196,7 @@ class XmlSuiteTest
     try (Reader fileReader = new FileReader(schemaPath.toFile())) {
       XMLEventReader reader = factory.createXMLEventReader(fileReader);
       StAXEventBuilder builder = new StAXEventBuilder();
-      Document document = document = builder.build(reader);
+      Document document = builder.build(reader);
 
       XPathExpression<Element> xpath = XPathFactory.instance()
           .compile("//xs:attribute[not(@type or xs:simpleType)]",
@@ -232,7 +232,7 @@ class XmlSuiteTest
     try (Reader fileReader = new FileReader(schemaPath.toFile())) {
       XMLEventReader reader = factory.createXMLEventReader(fileReader);
       StAXEventBuilder builder = new StAXEventBuilder();
-      Document document = document = builder.build(reader);
+      Document document = builder.build(reader);
 
       XPathExpression<Element> xpath = XPathFactory.instance()
           .compile("//xs:attribute[not(@type or xs:simpleType)]",

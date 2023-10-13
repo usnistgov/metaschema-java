@@ -45,25 +45,4 @@ class NonNegativeIntegerItemImpl
   public NonNegativeIntegerAdapter getJavaTypeAdapter() {
     return MetaschemaDataTypeProvider.NON_NEGATIVE_INTEGER;
   }
-
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + getValue().hashCode();
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true; // NOPMD readability
-    } else if (obj == null) {
-      return false; // NOPMD readability
-    } else if (getClass() != obj.getClass()) {
-      return false; // NOPMD readability
-    }
-    NonNegativeIntegerItemImpl other = (NonNegativeIntegerItemImpl) obj;
-    return getValue().equals(other.getValue());
-  }
 }

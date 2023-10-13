@@ -47,7 +47,7 @@ public abstract class AbstractAnyAtomicItem<TYPE> implements IAnyAtomicItem {
    * @param value
    *          the value to assign to this atomic item
    */
-  public AbstractAnyAtomicItem(@NonNull TYPE value) {
+  protected AbstractAnyAtomicItem(@NonNull TYPE value) {
     this.value = ObjectUtils.requireNonNull(value, "value");
   }
 
@@ -63,8 +63,7 @@ public abstract class AbstractAnyAtomicItem<TYPE> implements IAnyAtomicItem {
 
   @Override
   public String asString() {
-    IDataTypeAdapter<TYPE> adapter = getJavaTypeAdapter();
-    return adapter.asString(getValue());
+    return getJavaTypeAdapter().asString(getValue());
   }
 
   @Override

@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvi
 import gov.nist.secauto.metaschema.core.datatype.adapter.YearMonthAdapter;
 
 import java.time.Period;
+import java.util.Objects;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -42,7 +43,29 @@ class YearMonthDurationItemImpl
   }
 
   @Override
+  public Period asPeriod() {
+    return getValue();
+  }
+
+  @Override
   public YearMonthAdapter getJavaTypeAdapter() {
     return MetaschemaDataTypeProvider.YEAR_MONTH_DURATION;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(asPeriod());
+  }
+
+  @SuppressWarnings("PMD.OnlyOneReturn") // readability
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof IYearMonthDurationItem)) {
+      return false;
+    }
+    return compareTo((IYearMonthDurationItem) obj) == 0;
   }
 }

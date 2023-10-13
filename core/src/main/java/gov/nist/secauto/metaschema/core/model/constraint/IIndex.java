@@ -193,6 +193,7 @@ public interface IIndex {
     String keyValue = null;
     if (keyItem != null) {
       keyValue = FnData.fnDataItem(keyItem).asString();
+      assert keyValue != null;
       Pattern pattern = keyField.getPattern();
       if (pattern != null) {
         keyValue = applyPattern(keyItem, keyValue, pattern);

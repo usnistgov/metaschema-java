@@ -42,8 +42,29 @@ class DayTimeDurationItemImpl
   }
 
   @Override
+  public Duration asDuration() {
+    return getValue();
+  }
+
+  @Override
   public DayTimeAdapter getJavaTypeAdapter() {
     return MetaschemaDataTypeProvider.DAY_TIME_DURATION;
   }
 
+  @Override
+  public int hashCode() {
+    return asDuration().hashCode();
+  }
+
+  @SuppressWarnings("PMD.OnlyOneReturn")
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof IDayTimeDurationItem)) {
+      return false;
+    }
+    return compareTo((IDayTimeDurationItem) obj) == 0;
+  }
 }

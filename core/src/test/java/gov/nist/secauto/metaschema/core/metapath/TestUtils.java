@@ -26,26 +26,44 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
+import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyUriItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDayTimeDurationItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDecimalItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IYearMonthDurationItem;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.net.URI;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public final class TestUtils {
   private TestUtils() {
     // disable construction
   }
 
+  @NonNull
+  public static IBooleanItem bool(boolean value) {
+    return IBooleanItem.valueOf(value);
+  }
+
   public static IDecimalItem decimal(@NonNull String value) {
     return IDecimalItem.valueOf(new BigDecimal(value, MathContext.DECIMAL64));
+  }
+
+  @NonNull
+  public static IDecimalItem decimal(int value) {
+    return IDecimalItem.valueOf(value);
   }
 
   @NonNull
@@ -70,4 +88,30 @@ public final class TestUtils {
     return IAnyUriItem.valueOf(uri);
   }
 
+  @NonNull
+  public static IYearMonthDurationItem yearMonthDuration(@NonNull String value) {
+    return IYearMonthDurationItem.valueOf(value);
+  }
+
+  @NonNull
+  public static IDayTimeDurationItem dayTimeDuration(@NonNull String value) {
+    return IDayTimeDurationItem.valueOf(value);
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <R extends IItem> ISequence<R> executeFunction(
+      @NonNull IFunction function,
+      @Nullable DynamicContext dynamicContext,
+      @Nullable ISequence<?> focus,
+      List<ISequence<?>> arguments) {
+
+    DynamicContext context = dynamicContext == null ? StaticContext.newInstance().newDynamicContext() : dynamicContext;
+    ISequence<?> focusSeqence = function.isFocusDepenent()
+        ? ObjectUtils.requireNonNull(focus, "Function call requires a focus")
+        : ISequence.empty();
+    return (ISequence<R>) function.execute(
+        arguments == null ? CollectionUtil.emptyList() : arguments,
+        context,
+        focusSeqence);
+  }
 }

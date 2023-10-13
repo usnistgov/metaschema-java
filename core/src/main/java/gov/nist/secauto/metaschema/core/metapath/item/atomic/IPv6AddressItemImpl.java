@@ -44,4 +44,9 @@ class IPv6AddressItemImpl
   public IPv6AddressAdapter getJavaTypeAdapter() {
     return MetaschemaDataTypeProvider.IP_V6_ADDRESS;
   }
+
+  @Override
+  public IPv6Address asIpAddress() {
+    return getValue();
+  }
 }

@@ -44,8 +44,8 @@ public abstract class AbstractCodedMetapathException
   private final int code;
 
   /**
-   * Constructs a new Metapath exception with the provided {@code message} and no
-   * cause.
+   * Constructs a new Metapath exception with the provided {@code code},
+   * {@code message}, and no cause.
    *
    * @param code
    *          the error code value
@@ -66,7 +66,7 @@ public abstract class AbstractCodedMetapathException
    * @param message
    *          the exception message
    * @param cause
-   *          the exception cause
+   *          the original exception cause
    */
   public AbstractCodedMetapathException(int code, String message, Throwable cause) {
     super(message, cause);
@@ -80,7 +80,7 @@ public abstract class AbstractCodedMetapathException
    * @param code
    *          the error code value
    * @param cause
-   *          the exception cause
+   *          the original exception cause
    */
   public AbstractCodedMetapathException(int code, Throwable cause) {
     super(cause);

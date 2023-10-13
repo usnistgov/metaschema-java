@@ -42,6 +42,11 @@ class UuidItemImpl
   }
 
   @Override
+  public UUID asUuid() {
+    return getValue();
+  }
+
+  @Override
   public UuidAdapter getJavaTypeAdapter() {
     return MetaschemaDataTypeProvider.UUID;
   }

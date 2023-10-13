@@ -68,7 +68,7 @@ class FunctionCall implements IExpression {
   public IFunction getFunction() {
     synchronized (this) {
       if (function == null) {
-        function = FunctionService.getInstance().getFunction(name, arguments);
+        function = FunctionService.getInstance().getFunction(name, arguments.size());
       }
       return function;
     }

@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
+import gov.nist.secauto.metaschema.core.metapath.function.ComparisonFunctions;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
 
@@ -45,7 +46,10 @@ class ValueComparison
    * @param right
    *          the expression to compare with
    */
-  protected ValueComparison(@NonNull IExpression left, @NonNull Operator operator, @NonNull IExpression right) {
+  protected ValueComparison(
+      @NonNull IExpression left,
+      @NonNull ComparisonFunctions.Operator operator,
+      @NonNull IExpression right) {
     super(left, operator, right);
   }
 
@@ -78,26 +82,10 @@ class ValueComparison
     if (leftItem == null || rightItem == null) {
       retval = ISequence.empty();
     } else {
-      IBooleanItem result = valueCompairison(leftItem, getOperator(), rightItem);
+      IBooleanItem result = ComparisonFunctions.valueCompairison(leftItem, getOperator(), rightItem);
       retval = ISequence.of(result);
     }
     return retval;
   }
 
-  /**
-   * Compare the two items using the provided {@code operator}.
-   *
-   * @param leftItem
-   *          the first item to compare
-   * @param operator
-   *          the comparison operator
-   * @param rightItem
-   *          the second item to compare
-   * @return the result of the comparison
-   */
-  @NonNull
-  protected IBooleanItem valueCompairison(@NonNull IAnyAtomicItem leftItem, @NonNull Operator operator,
-      @NonNull IAnyAtomicItem rightItem) {
-    return compare(leftItem, operator, rightItem);
-  }
 }

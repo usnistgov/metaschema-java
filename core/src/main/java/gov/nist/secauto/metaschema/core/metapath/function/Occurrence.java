@@ -28,6 +28,10 @@ package gov.nist.secauto.metaschema.core.metapath.function;
 
 import java.util.Objects;
 
+/**
+ * Identifies the occurrence of a sequence used a function argument or return
+ * value.
+ */
 public enum Occurrence {
   /**
    * An empty sequence.
