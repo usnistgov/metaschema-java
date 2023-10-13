@@ -136,6 +136,11 @@ class XmlInlineFlagDefinition
   }
 
   @Override
+  public Integer getIndex() {
+    return getXmlFlag().isSetIndex() ? getXmlFlag().getIndex().intValue() : null;
+  }
+
+  @Override
   public boolean isRequired() {
     return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : MetaschemaModelConstants.DEFAULT_FLAG_REQUIRED;
   }
@@ -153,6 +158,12 @@ class XmlInlineFlagDefinition
   @Override
   public String getUseName() {
     // flags cannot use a use-name
+    return null;
+  }
+
+  @Override
+  public Integer getUseIndex() {
+    // an inline definition doesn't have a use name index
     return null;
   }
 
@@ -215,8 +226,19 @@ class XmlInlineFlagDefinition
     }
 
     @Override
+    public Integer getIndex() {
+      return XmlInlineFlagDefinition.this.getIndex();
+    }
+
+    @Override
     public String getUseName() {
       // always use the name
+      return null;
+    }
+
+    @Override
+    public Integer getUseIndex() {
+      // always use the name index instead
       return null;
     }
 

@@ -156,6 +156,22 @@ public interface INamedModelElement extends IModelElement {
   }
 
   /**
+   * Retrieve the name of the model element.
+   *
+   * @return the name
+   */
+  @NonNull
+  String getName();
+
+  /**
+   * Retrieve the name to use for the model element, instead of the name.
+   *
+   * @return the use name or {@code null} if no use name is defined
+   */
+  @Nullable
+  String getUseName();
+
+  /**
    * Get the name to use based on the provided names. This method will return the
    * use name provided by {@link #getUseName()} if the call is not {@code null},
    * and fall back to the name provided by {@link #getName()} otherwise. This is
@@ -174,18 +190,24 @@ public interface INamedModelElement extends IModelElement {
   }
 
   /**
-   * Retrieve the name of the model element.
+   * Retrieve the index value to use for binary naming.
    *
-   * @return the name
-   */
-  @NonNull
-  String getName();
-
-  /**
-   * Retrieve the name to use for the model element, instead of the name.
-   *
-   * @return the use name or {@code null} if no use name is defined
+   * @return the name index or {@code null} if no name index is defined
    */
   @Nullable
-  String getUseName();
+  Integer getIndex();
+
+  /**
+   * Retrieve the index value to use for binary naming, instead of the name.
+   *
+   * @return the use name index or {@code null} if no use name index is defined
+   */
+  @Nullable
+  Integer getUseIndex();
+
+  @Nullable
+  default Integer getEffectiveIndex() {
+    @Nullable Integer useIndex = getUseIndex();
+    return useIndex == null ? getIndex() : useIndex;
+  }
 }

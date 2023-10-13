@@ -50,6 +50,15 @@ public interface IAssemblyDefinition
   String getRootName();
 
   /**
+   * Get the root index to use for binary data, if this assembly is a top-level
+   * root.
+   *
+   * @return the root index if provided and this assembly is a top-level root, or
+   *         {@code null} otherwise
+   */
+  Integer getRootIndex();
+
+  /**
    * Get the XML qualified name to use in XML as the root element.
    *
    * @return the root XML qualified name if this assembly is a top-level root, or

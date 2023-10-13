@@ -115,7 +115,19 @@ class XmlAssemblyInstance
 
   @Override
   public String getUseName() {
-    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName() : null;
+    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName().getStringValue() : null;
+  }
+
+  @Override
+  public Integer getUseIndex() {
+    Integer retval = null;
+    if (getXmlAssembly().isSetUseName()) {
+      AssemblyReferenceType.UseName useName = getXmlAssembly().getUseName();
+      if (useName.isSetIndex()) {
+        retval = useName.getIndex().intValue();
+      }
+    }
+    return retval;
   }
 
   @Override

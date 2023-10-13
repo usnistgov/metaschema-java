@@ -148,6 +148,11 @@ class XmlInlineFieldDefinition
   }
 
   @Override
+  public Integer getIndex() {
+    return getXmlField().isSetIndex() ? getXmlField().getIndex().intValue() : null;
+  }
+
+  @Override
   public String getGroupAsName() {
     return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : null;
   }
@@ -185,6 +190,12 @@ class XmlInlineFieldDefinition
   @Override
   public String getUseName() {
     // an inline definition doesn't have a use name
+    return null;
+  }
+
+  @Override
+  public Integer getUseIndex() {
+    // an inline definition doesn't have a use name index
     return null;
   }
 
@@ -319,8 +330,19 @@ class XmlInlineFieldDefinition
     }
 
     @Override
+    public Integer getIndex() {
+      return XmlInlineFieldDefinition.this.getIndex();
+    }
+
+    @Override
     public String getUseName() {
       // always use the name instead
+      return null;
+    }
+
+    @Override
+    public Integer getUseIndex() {
+      // always use the name index instead
       return null;
     }
 

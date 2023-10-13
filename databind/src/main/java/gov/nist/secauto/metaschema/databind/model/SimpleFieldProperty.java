@@ -112,18 +112,8 @@ class SimpleFieldProperty
     return IDataTypeHandler.newDataTypeHandler(this);
   }
 
-  @Override
-  public boolean isInXmlWrapped() {
-    return getFieldAnnotation().inXmlWrapped();
-  }
-
   protected Object getDefaultValue() {
     return defaultValue;
-  }
-
-  @Override
-  public String getUseName() {
-    return ModelUtil.resolveToString(getFieldAnnotation().useName());
   }
 
   @Override
@@ -185,6 +175,16 @@ class SimpleFieldProperty
     @Override
     public String getName() {
       return getJavaFieldName();
+    }
+
+    @Override
+    public Integer getIndex() {
+      return null; // no index by default;
+    }
+
+    @Override
+    public Integer getUseIndex() {
+      return null; // none
     }
 
     @Override

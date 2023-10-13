@@ -90,6 +90,12 @@ public abstract class AbstractFieldProperty
   }
 
   @Override
+  public Integer getUseIndex() {
+    int value = getFieldAnnotation().useIndex();
+    return value == Integer.MIN_VALUE ? null : value;
+  }
+
+  @Override
   public boolean isInXmlWrapped() {
     return getFieldAnnotation().inXmlWrapped();
   }

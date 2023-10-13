@@ -130,6 +130,11 @@ class XmlInlineAssemblyDefinition
   }
 
   @Override
+  public Integer getIndex() {
+    return getXmlAssembly().isSetIndex() ? getXmlAssembly().getIndex().intValue() : null;
+  }
+
+  @Override
   public String getGroupAsName() {
     return getXmlAssembly().isSetGroupAs() ? getXmlAssembly().getGroupAs().getName() : null;
   }
@@ -167,6 +172,12 @@ class XmlInlineAssemblyDefinition
   @Override
   public String getUseName() {
     // an inline definition doesn't have a use name
+    return null;
+  }
+
+  @Override
+  public Integer getUseIndex() {
+    // an inline definition doesn't have a use name index
     return null;
   }
 
@@ -251,8 +262,19 @@ class XmlInlineAssemblyDefinition
     }
 
     @Override
+    public Integer getIndex() {
+      return XmlInlineAssemblyDefinition.this.getIndex();
+    }
+
+    @Override
     public String getUseName() {
       // always use the name instead
+      return null;
+    }
+
+    @Override
+    public Integer getUseIndex() {
+      // always use the name index instead
       return null;
     }
 
@@ -264,6 +286,12 @@ class XmlInlineAssemblyDefinition
 
     @Override
     public String getRootName() {
+      // a local assembly is never a root
+      return null;
+    }
+
+    @Override
+    public Integer getRootIndex() {
       // a local assembly is never a root
       return null;
     }

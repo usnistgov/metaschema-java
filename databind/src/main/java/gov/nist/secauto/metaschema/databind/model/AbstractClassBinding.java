@@ -88,6 +88,12 @@ abstract class AbstractClassBinding implements IClassBinding {
     return null;
   }
 
+  @Override
+  public Integer getUseIndex() {
+    // a use name index is never provided
+    return null;
+  }
+
   @SuppressWarnings("null")
   @Override
   public String toCoordinates() {

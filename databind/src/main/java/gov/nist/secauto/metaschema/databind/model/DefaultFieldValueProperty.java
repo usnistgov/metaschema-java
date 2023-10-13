@@ -134,6 +134,12 @@ class DefaultFieldValueProperty
   }
 
   @Override
+  public Integer getUseIndex() {
+    // TODO: implement?
+    return null;
+  }
+
+  @Override
   public @NonNull ModelType getModelType() {
     // TODO: is this right? Is there a way to not make this derived from a property?
     return ModelType.FIELD;

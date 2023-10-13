@@ -78,8 +78,26 @@ public @interface MetaschemaField {
   @NonNull
   String name();
 
+  /**
+   * The binary name of the assembly.
+   * <p>
+   * The value {@link Integer#MIN_VALUE} indicates that there is no index.
+   *
+   * @return the index value
+   */
+  int index() default Integer.MIN_VALUE;
+
   @NonNull
   String useName() default Constants.NO_STRING_VALUE;
+
+  /**
+   * The binary use name of the assembly.
+   * <p>
+   * The value {@link Integer#MIN_VALUE} indicates that there is no use name.
+   *
+   * @return the index value
+   */
+  int useIndex() default Integer.MIN_VALUE;
 
   /**
    * Get the metaschema class that "owns" this assembly, which is the concrete

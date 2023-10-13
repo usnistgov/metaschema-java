@@ -87,6 +87,15 @@ public @interface BoundAssembly {
   String useName() default Constants.NO_STRING_VALUE;
 
   /**
+   * The binary use name of the assembly.
+   * <p>
+   * The value {@link Integer#MIN_VALUE} indicates that there is no use name.
+   *
+   * @return the index value
+   */
+  int useIndex() default Integer.MIN_VALUE;
+
+  /**
    * The namespace to use for associated XML elements.
    * <p>
    * If the value is "##default", then element name is derived from the namespace

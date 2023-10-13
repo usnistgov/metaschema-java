@@ -142,6 +142,12 @@ public class DefaultFieldClassBinding
   }
 
   @Override
+  public Integer getIndex() {
+    int value = getMetaschemaFieldAnnotation().index();
+    return value == Integer.MIN_VALUE ? null : value;
+  }
+
+  @Override
   public Object getDefaultValue() {
     return getFieldValueInstance().getDefaultValue();
   }

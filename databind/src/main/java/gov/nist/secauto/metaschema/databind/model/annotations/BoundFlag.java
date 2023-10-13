@@ -81,6 +81,15 @@ public @interface BoundFlag {
   String useName() default Constants.NO_STRING_VALUE;
 
   /**
+   * The binary use name of the flag.
+   * <p>
+   * The value {@link Integer#MIN_VALUE} indicates that there is no use name.
+   *
+   * @return the index value
+   */
+  int useIndex() default Integer.MIN_VALUE;
+
+  /**
    * XML target namespace of the XML Schema element.
    * <p>
    * If the value is "##default", then namespace is derived from the namespace
