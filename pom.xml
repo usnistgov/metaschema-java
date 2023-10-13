@@ -118,7 +118,7 @@
 		<dependency.auto-service.version>1.1.1</dependency.auto-service.version>
 		<dependency.commons-cli.version>1.5.0</dependency.commons-cli.version>
 		<dependency.commons-collections4.version>4.4</dependency.commons-collections4.version>
-		<dependency.commons-io.version>2.13.0</dependency.commons-io.version>
+		<dependency.commons-io.version>2.14.0</dependency.commons-io.version>
 		<dependency.commons-lang3.version>3.13.0</dependency.commons-lang3.version>
 		<dependency.commons-text.version>1.10.0</dependency.commons-text.version>
 		<dependency.everit-json.version>1.14.2</dependency.everit-json.version>
