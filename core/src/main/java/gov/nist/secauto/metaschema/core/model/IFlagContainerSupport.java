@@ -32,6 +32,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IFlagContainerSupport<F extends IFlagInstance> {
+  /**
+   * Provides an empty instance.
+   *
+   * @param <T>
+   *          the Java type of the flag instance
+   * @return an empty instance
+   */
   @SuppressWarnings("unchecked")
   @NonNull
   static <T extends IFlagInstance> IFlagContainerSupport<T> empty() {

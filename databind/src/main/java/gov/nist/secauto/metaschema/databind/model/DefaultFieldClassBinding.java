@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
+import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
@@ -101,7 +101,7 @@ public class DefaultFieldClassBinding
     this.flagContainer = Lazy.lazy(() -> new ClassBindingFlagContainerSupport(this, this::handleFlagInstance));
     this.constraints = Lazy.lazy(() -> new ValueConstraintSupport(
         clazz.getAnnotation(ValueConstraints.class),
-        InternalModelSource.instance()));
+        ISource.modelSource()));
   }
 
   @SuppressWarnings("null")

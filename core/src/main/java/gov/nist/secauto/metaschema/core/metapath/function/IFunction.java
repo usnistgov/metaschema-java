@@ -239,7 +239,7 @@ public interface IFunction {
    * Used to create a function's signature using a builder pattern.
    */
   @SuppressWarnings("PMD.LooseCoupling")
-  public class Builder {
+  class Builder {
     private String name;
     private String namespace;
     @SuppressWarnings("null")

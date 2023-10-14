@@ -32,8 +32,8 @@ import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
+import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
@@ -110,7 +110,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> new AssemblyConstraintSupport(
         clazz.getAnnotation(ValueConstraints.class),
         clazz.getAnnotation(AssemblyConstraints.class),
-        InternalModelSource.instance())));
+        ISource.modelSource())));
   }
 
   @SuppressWarnings("null")

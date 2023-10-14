@@ -35,8 +35,12 @@ import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
+import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.ValueConstraintSet;
+import gov.nist.secauto.metaschema.core.model.xml.impl.ConstraintXmlSupport;
+import gov.nist.secauto.metaschema.core.model.xml.impl.MarkupStringConverter;
+import gov.nist.secauto.metaschema.core.model.xml.impl.ModelFactory;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFlagDefinitionType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -80,14 +84,10 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
     }
     this.defaultValue = defaultValue;
     this.constraints = Lazy.lazy(() -> {
-      IValueConstrained retval;
+      IValueConstrained retval = new ValueConstraintSet();
       if (getXmlFlag().isSetConstraint()) {
-        retval = new ValueConstraintSupport(
-            ObjectUtils.notNull(getXmlFlag().getConstraint()),
-            ExternalModelSource.instance(
-                ObjectUtils.requireNonNull(getContainingModule().getLocation())));
-      } else {
-        retval = new ValueConstraintSupport();
+        ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(getXmlFlag().getConstraint()),
+            ISource.modelSource(ObjectUtils.requireNonNull(getContainingModule().getLocation())));
       }
       return retval;
     });

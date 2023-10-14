@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.model.validation;
 
-import gov.nist.secauto.metaschema.core.resource.AbstractResourceLoader;
+import gov.nist.secauto.metaschema.core.resource.AbstractResourceResolver;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.io.IOException;
@@ -35,7 +35,7 @@ import java.net.URI;
 import java.net.URL;
 
 public abstract class AbstractContentValidator
-    extends AbstractResourceLoader
+    extends AbstractResourceResolver
     implements IContentValidator {
 
   @Override

@@ -26,6 +26,10 @@
 
 package gov.nist.secauto.metaschema.core.model.constraint;
 
+import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -36,10 +40,13 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * one entry in a set of enumerated values.
  */
 public interface IAllowedValuesConstraint extends IConstraint {
-  boolean DEFAULT_ALLOW_OTHER = false;
+  boolean ALLOW_OTHER_DEFAULT = false;
   @NonNull
-  Extensible DEFAULT_EXTENSIBLE = Extensible.MODEL;
+  Extensible EXTENSIBLE_DEFAULT = Extensible.EXTERNAL;
 
+  /**
+   * Indicates how an allowed values constraint can be extended, or if it can be.
+   */
   enum Extensible {
     /**
      * Can be extended by external constraints. The most permissive level.
@@ -94,4 +101,87 @@ public interface IAllowedValuesConstraint extends IConstraint {
    */
   @NonNull
   Extensible getExtensible();
+
+  @Override
+  default <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
+    return visitor.visitAllowedValues(this, state);
+  }
+
+  /**
+   * Get a new constraint builder.
+   *
+   * @return the builder
+   */
+  @NonNull
+  static Builder builder() {
+    return new Builder();
+  }
+
+  class Builder
+      extends AbstractConstraintBuilder<Builder, IAllowedValuesConstraint> {
+    @NonNull
+    private final Map<String, IAllowedValue> allowedValues = new LinkedHashMap<>(); // NOPMD not thread safe
+    private boolean allowedOther = IAllowedValuesConstraint.ALLOW_OTHER_DEFAULT;
+    @NonNull
+    private Extensible extensible = IAllowedValuesConstraint.EXTENSIBLE_DEFAULT;
+
+    private Builder() {
+      // disable construction
+    }
+
+    public Builder allowedValue(@NonNull IAllowedValue allowedValue) {
+      this.allowedValues.put(allowedValue.getValue(), allowedValue);
+      return this;
+    }
+
+    public Builder allowedValues(@NonNull Map<String, IAllowedValue> allowedValues) {
+      this.allowedValues.putAll(allowedValues);
+      return this;
+    }
+
+    public Builder allowedOther(boolean bool) {
+      this.allowedOther = bool;
+      return this;
+    }
+
+    public Builder extensible(@NonNull Extensible extensible) {
+      this.extensible = extensible;
+      return this;
+    }
+
+    @Override
+    protected Builder getThis() {
+      return this;
+    }
+
+    @NonNull
+    protected Map<String, IAllowedValue> getAllowedValues() {
+      return allowedValues;
+    }
+
+    protected boolean isAllowedOther() {
+      return allowedOther;
+    }
+
+    @NonNull
+    protected Extensible getExtensible() {
+      return extensible;
+    }
+
+    @Override
+    protected IAllowedValuesConstraint newInstance() {
+      return new DefaultAllowedValuesConstraint(
+          getId(),
+          getFormalName(),
+          getDescription(),
+          ObjectUtils.notNull(getSource()),
+          getLevel(),
+          getTarget(),
+          getProperties(),
+          getAllowedValues(),
+          isAllowedOther(),
+          getExtensible(),
+          getRemarks());
+    }
+  }
 }

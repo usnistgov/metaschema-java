@@ -33,8 +33,6 @@ import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
 
-import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -98,9 +96,19 @@ public interface IConstraint {
   @Nullable
   String getId();
 
+  /**
+   * Get the constraint's formal name.
+   *
+   * @return the formal name or {@code null} if no name is defined
+   */
   @Nullable
   MarkupLine getDescription();
 
+  /**
+   * Get the constraint's formal name.
+   *
+   * @return the formal name or {@code null} if no name is defined
+   */
   @Nullable
   String getFormalName();
 
@@ -120,6 +128,11 @@ public interface IConstraint {
   @NonNull
   Level getLevel();
 
+  /**
+   * Get the mapping of property name to value(s).
+   *
+   * @return the mapping of property name to value(s)
+   */
   @NonNull
   Map<QName, Set<String>> getProperties();
 
@@ -171,118 +184,20 @@ public interface IConstraint {
    */
   MarkupMultiline getRemarks();
 
+  /**
+   * Used for double dispatch supporting the visitor pattern provided by
+   * implementations of {@link IConstraintVisitor}.
+   *
+   * @param <T>
+   *          the Java type of a state object passed to the visitor
+   * @param <R>
+   *          the Java type of the result returned by the visitor methods
+   * @param visitor
+   *          the visitor implementation
+   * @param state
+   *          the state object passed to the visitor
+   * @return the visitation result
+   * @see IConstraintVisitor
+   */
   <T, R> R accept(@NonNull IConstraintVisitor<T, R> visitor, T state);
-
-  interface ISource {
-    enum SourceType {
-      /**
-       * A constraint embedded in a model.
-       */
-      MODEL,
-      /**
-       * A constraint defined externally from a model.
-       */
-      EXTERNAL;
-    }
-
-    @NonNull
-    SourceType getSourceType();
-
-    @Nullable
-    URI getSource();
-  }
-
-  final class InternalModelSource implements ISource {
-    @NonNull
-    private static final ISource SINGLETON = new InternalModelSource();
-
-    @NonNull
-    public static ISource instance() {
-      return SINGLETON;
-    }
-
-    private InternalModelSource() {
-      // reduce visibility
-    }
-
-    @Override
-    public SourceType getSourceType() {
-      return SourceType.MODEL;
-    }
-
-    @Override
-    public URI getSource() {
-      // always null
-      return null;
-    }
-  }
-
-  final class ExternalModelSource implements IConstraint.ISource {
-    @NonNull
-    private static final Map<URI, ExternalModelSource> sources = new HashMap<>(); // NOPMD - intentional
-    @NonNull
-    private final URI modelUri;
-
-    @NonNull
-    public static ISource instance(@NonNull URI location) {
-      ISource retval;
-      synchronized (sources) {
-        retval = sources.get(location);
-        if (retval == null) {
-          retval = new ExternalModelSource(location);
-        }
-      }
-      return retval;
-    }
-
-    private ExternalModelSource(@NonNull URI modelSource) {
-      this.modelUri = modelSource;
-    }
-
-    @Override
-    public SourceType getSourceType() {
-      return SourceType.MODEL;
-    }
-
-    @NonNull
-    @Override
-    public URI getSource() {
-      return modelUri;
-    }
-  }
-
-  final class ExternalSource implements IConstraint.ISource {
-    @NonNull
-    private static final Map<URI, ExternalSource> sources = new HashMap<>(); // NOPMD - intentional
-
-    @NonNull
-    private final URI modelUri;
-
-    @NonNull
-    public static ISource instance(@NonNull URI location) {
-      ISource retval;
-      synchronized (sources) {
-        retval = sources.get(location);
-        if (retval == null) {
-          retval = new ExternalModelSource(location);
-        }
-      }
-      return retval;
-    }
-
-    private ExternalSource(@NonNull URI modelSource) {
-      this.modelUri = modelSource;
-    }
-
-    @Override
-    public SourceType getSourceType() {
-      return SourceType.EXTERNAL;
-    }
-
-    @NonNull
-    @Override
-    public URI getSource() {
-      return modelUri;
-    }
-  }
 }

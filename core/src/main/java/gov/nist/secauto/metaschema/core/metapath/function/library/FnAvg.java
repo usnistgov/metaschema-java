@@ -105,6 +105,7 @@ public final class FnAvg {
    *          the items to average
    * @return the average
    */
+  @SuppressWarnings("PMD.CyclomaticComplexity")
   @Nullable
   public static IAnyAtomicItem average(@NonNull Collection<? extends IAnyAtomicItem> items) {
     if (items.isEmpty()) {

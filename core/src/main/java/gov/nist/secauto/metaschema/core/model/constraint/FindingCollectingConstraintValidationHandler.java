@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.core.model.constraint;
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.MetapathException;
-import gov.nist.secauto.metaschema.core.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.Level;
 import gov.nist.secauto.metaschema.core.model.validation.IValidationResult;
@@ -37,7 +36,6 @@ import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -47,19 +45,7 @@ public class FindingCollectingConstraintValidationHandler
   @NonNull
   private final List<ConstraintValidationFinding> findings = new LinkedList<>();
   @NonNull
-  private IPathFormatter pathFormatter = IPathFormatter.METAPATH_PATH_FORMATER;
-  @NonNull
   private Level highestLevel = IConstraint.Level.INFORMATIONAL;
-
-  @Override
-  @NonNull
-  public IPathFormatter getPathFormatter() {
-    return pathFormatter;
-  }
-
-  public void setPathFormatter(@NonNull IPathFormatter pathFormatter) {
-    this.pathFormatter = Objects.requireNonNull(pathFormatter, "pathFormatter");
-  }
 
   @Override
   @NonNull

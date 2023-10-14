@@ -44,8 +44,12 @@ import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
+import gov.nist.secauto.metaschema.core.model.constraint.ISource;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.AssemblyConstraintSet;
+import gov.nist.secauto.metaschema.core.model.xml.impl.ConstraintXmlSupport;
+import gov.nist.secauto.metaschema.core.model.xml.impl.MarkupStringConverter;
+import gov.nist.secauto.metaschema.core.model.xml.impl.ModelFactory;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -211,14 +215,10 @@ class XmlInlineAssemblyDefinition
       this.flagContainer = Lazy.lazy(() -> new XmlFlagContainerSupport(xmlAssembly, this));
       this.modelContainer = Lazy.lazy(() -> new XmlModelContainerSupport(xmlAssembly, this));
       this.constraints = Lazy.lazy(() -> {
-        IModelConstrained retval;
+        IModelConstrained retval = new AssemblyConstraintSet();
         if (getXmlAssembly().isSetConstraint()) {
-          retval = new AssemblyConstraintSupport(
-              ObjectUtils.notNull(getXmlAssembly().getConstraint()),
-              ExternalModelSource.instance(
-                  ObjectUtils.requireNonNull(getContainingModule().getLocation())));
-        } else {
-          retval = new AssemblyConstraintSupport();
+          ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(getXmlAssembly().getConstraint()),
+              ISource.modelSource(ObjectUtils.requireNonNull(getContainingModule().getLocation())));
         }
         return retval;
       });

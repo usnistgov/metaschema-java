@@ -76,8 +76,8 @@ class ListSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> 
   }
 
   @Override
-  public void collect() {
-    // do nothing
+  public ISequence<ITEM_TYPE> collect() {
+    return this;
   }
 
   @Override

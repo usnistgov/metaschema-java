@@ -32,8 +32,13 @@ import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IModelInstanceBuilder {
+  /**
+   * Generate an instance of the implementing type using the provided parent.
+   *
+   * @param parent
+   *          the parent assembly definition containing the instance
+   * @return the new instance
+   */
   @NonNull
-  INamedModelInstance toInstance(
-      @NonNull IAssemblyDefinition parent);
-
+  INamedModelInstance toInstance(@NonNull IAssemblyDefinition parent);
 }

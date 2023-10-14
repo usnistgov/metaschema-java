@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
+import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -128,7 +128,7 @@ class SimpleFieldProperty
     private ScalarFieldDefinition() {
       this.constraints = Lazy.lazy(() -> new ValueConstraintSupport(
           getField().getAnnotation(ValueConstraints.class),
-          InternalModelSource.instance()));
+          ISource.modelSource()));
     }
 
     @Override

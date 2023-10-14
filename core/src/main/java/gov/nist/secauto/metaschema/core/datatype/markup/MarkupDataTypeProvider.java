@@ -45,6 +45,9 @@ public final class MarkupDataTypeProvider
   @NonNull
   public static final MarkupMultilineAdapter MARKUP_MULTILINE = new MarkupMultilineAdapter();
 
+  /**
+   * Create the data type provider.
+   */
   public MarkupDataTypeProvider() {
     registerDatatype(MARKUP_LINE);
     registerDatatype(MARKUP_MULTILINE);

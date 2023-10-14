@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.core.metapath;
 
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
-import gov.nist.secauto.metaschema.core.model.IResourceLoader;
+import gov.nist.secauto.metaschema.core.model.IResourceResolver;
 import gov.nist.secauto.metaschema.core.model.IUriResolver;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -42,7 +42,7 @@ import java.nio.file.Path;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IDocumentLoader extends IResourceLoader {
+public interface IDocumentLoader extends IResourceResolver {
   void setUriResolver(@NonNull IUriResolver resolver);
 
   @NonNull

@@ -39,8 +39,12 @@ import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelInstance;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
+import gov.nist.secauto.metaschema.core.model.constraint.ISource;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.AssemblyConstraintSet;
+import gov.nist.secauto.metaschema.core.model.xml.impl.ConstraintXmlSupport;
+import gov.nist.secauto.metaschema.core.model.xml.impl.MarkupStringConverter;
+import gov.nist.secauto.metaschema.core.model.xml.impl.ModelFactory;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -68,7 +72,7 @@ class XmlGlobalAssemblyDefinition
   @NonNull
   private final Lazy<XmlModelContainerSupport> modelContainer;
   @NonNull
-  private final Lazy<AssemblyConstraintSupport> constraints;
+  private final Lazy<IModelConstrained> constraints;
 
   /**
    * Constructs a new Metaschema Assembly definition from an XML representation
@@ -86,9 +90,14 @@ class XmlGlobalAssemblyDefinition
     this.metaschema = metaschema;
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlAssembly, this)));
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlModelContainerSupport(xmlAssembly, this)));
-    this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> AssemblyConstraintSupport.newInstance(
-        xmlAssembly,
-        ExternalModelSource.instance(metaschema.getLocation()))));
+    this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
+      IModelConstrained retval = new AssemblyConstraintSet();
+      if (xmlAssembly.isSetConstraint()) {
+        ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(xmlAssembly.getConstraint()),
+            ISource.modelSource(metaschema.getLocation()));
+      }
+      return retval;
+    }));
   }
 
   @Override

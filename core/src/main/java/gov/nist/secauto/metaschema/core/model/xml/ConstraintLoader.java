@@ -27,17 +27,23 @@
 package gov.nist.secauto.metaschema.core.model.xml;
 
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.model.AbstractLoader;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
-import gov.nist.secauto.metaschema.core.model.constraint.DefaultConstraintSet;
-import gov.nist.secauto.metaschema.core.model.constraint.DefaultScopedContraints;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalSource;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
+import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.IScopedContraints;
+import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstaints;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.AssemblyConstraintSet;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.AssemblyTargetedConstraints;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultConstraintSet;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultScopedContraints;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.FieldTargetedConstraints;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.FlagTargetedConstraints;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.ValueConstraintSet;
+import gov.nist.secauto.metaschema.core.model.xml.impl.ConstraintXmlSupport;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.METASCHEMACONSTRAINTSDocument;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.METASCHEMACONSTRAINTSDocument.METASCHEMACONSTRAINTS.Scope;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedIndexHasKeyConstraintType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -95,7 +101,7 @@ public class ConstraintLoader
       }
     }
 
-    // now create this metaschema
+    // now create this constraint set
     Collection<IConstraintSet> values = importedConstraints.values();
     return new DefaultConstraintSet(resource, parseScopedConstraints(xmlObject, resource), new LinkedHashSet<>(values));
   }
@@ -110,7 +116,7 @@ public class ConstraintLoader
    *           if a parsing error occurred
    */
   @NonNull
-  protected METASCHEMACONSTRAINTSDocument parseConstraintSet(@NonNull URI resource) throws IOException {
+  private static METASCHEMACONSTRAINTSDocument parseConstraintSet(@NonNull URI resource) throws IOException {
     try {
       XmlOptions options = new XmlOptions();
       options.setBaseURI(resource);
@@ -130,12 +136,13 @@ public class ConstraintLoader
    *          the source of the constraint content
    * @return the scoped constraint definitions
    */
+  @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops") // intentional
   @NonNull
   protected List<IScopedContraints> parseScopedConstraints(
       @NonNull METASCHEMACONSTRAINTSDocument xmlObject,
       @NonNull URI source) {
     List<IScopedContraints> scopedConstraints = new LinkedList<>();
-    ISource constraintSource = ExternalSource.instance(source);
+    ISource constraintSource = ISource.externalSource(source);
 
     for (Scope scope : xmlObject.getMETASCHEMACONSTRAINTS().getScopeList()) {
       URI namespace = ObjectUtils.notNull(URI.create(scope.getMetaschemaNamespace()));
@@ -151,20 +158,26 @@ public class ConstraintLoader
           if (obj instanceof Scope.Assembly) {
             Scope.Assembly assembly = (Scope.Assembly) obj;
             MetapathExpression expression = ObjectUtils.requireNonNull(assembly.getTarget());
-            AssemblyConstraintSupport constraints
-                = new AssemblyConstraintSupport(assembly, constraintSource); // NOPMD - intentional
+
+            IModelConstrained constraints = new AssemblyConstraintSet();
+            ConstraintXmlSupport.parse(constraints, assembly, constraintSource);
+
             targetedConstraints.add(new AssemblyTargetedConstraints(expression, constraints));
           } else if (obj instanceof Scope.Field) {
             Scope.Field field = (Scope.Field) obj;
             MetapathExpression expression = ObjectUtils.requireNonNull(field.getTarget());
-            ValueConstraintSupport constraints
-                = new ValueConstraintSupport(field, constraintSource); // NOPMD - intentional
+
+            ValueConstraintSet constraints = new AssemblyConstraintSet();
+            ConstraintXmlSupport.parse(constraints, field, constraintSource);
+
             targetedConstraints.add(new FieldTargetedConstraints(expression, constraints));
-          } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
+          } else if (obj instanceof Scope.Flag) {
             Scope.Flag flag = (Scope.Flag) obj;
             MetapathExpression expression = ObjectUtils.requireNonNull(flag.getTarget());
-            ValueConstraintSupport constraints
-                = new ValueConstraintSupport(flag, constraintSource); // NOPMD - intentional
+
+            ValueConstraintSet constraints = new AssemblyConstraintSet();
+            ConstraintXmlSupport.parse(constraints, flag, constraintSource);
+
             targetedConstraints.add(new FlagTargetedConstraints(expression, constraints));
           }
         }

@@ -53,27 +53,27 @@ public final class ComparisonFunctions {
    */
   public enum Operator {
     /**
-     * equal
+     * An equal comparison.
      */
     EQ,
     /**
-     * not equal
+     * A not equal comparison.
      */
     NE,
     /**
-     * less than
+     * A less than comparison.
      */
     LT,
     /**
-     * less than or equal
+     * A less than or equal comparison.
      */
     LE,
     /**
-     * greater than
+     * A greater than comparison.
      */
     GT,
     /**
-     * greater than or equal
+     * A greater than or equal comparison.
      */
     GE;
   }

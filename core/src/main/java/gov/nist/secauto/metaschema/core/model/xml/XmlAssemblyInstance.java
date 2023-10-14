@@ -33,6 +33,8 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.model.xml.impl.MarkupStringConverter;
+import gov.nist.secauto.metaschema.core.model.xml.impl.ModelFactory;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.AssemblyReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.MarkupLineDatatype;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;

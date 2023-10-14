@@ -43,8 +43,12 @@ import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
+import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.ValueConstraintSet;
+import gov.nist.secauto.metaschema.core.model.xml.impl.ConstraintXmlSupport;
+import gov.nist.secauto.metaschema.core.model.xml.impl.MarkupStringConverter;
+import gov.nist.secauto.metaschema.core.model.xml.impl.ModelFactory;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFieldDefinitionType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -233,14 +237,10 @@ class XmlInlineFieldDefinition
       this.defaultValue = defaultValue;
       this.flagContainer = Lazy.lazy(() -> new XmlFlagContainerSupport(xmlField, this));
       this.constraints = Lazy.lazy(() -> {
-        IValueConstrained retval;
-        if (xmlField.isSetConstraint()) {
-          retval = new ValueConstraintSupport(
-              ObjectUtils.notNull(xmlField.getConstraint()),
-              ExternalModelSource.instance(
-                  ObjectUtils.requireNonNull(getContainingModule().getLocation())));
-        } else {
-          retval = new ValueConstraintSupport();
+        IValueConstrained retval = new ValueConstraintSet();
+        if (getXmlField().isSetConstraint()) {
+          ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(getXmlField().getConstraint()),
+              ISource.modelSource(ObjectUtils.requireNonNull(getContainingModule().getLocation())));
         }
         return retval;
       });

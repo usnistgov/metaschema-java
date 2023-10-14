@@ -117,6 +117,8 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Iterable<ITEM_TYPE> 
     ISequence<ITEM_TYPE> retval;
     if (items.isEmpty()) {
       retval = empty();
+    } else if (items.size() == 1) {
+      retval = new SingletonSequenceImpl<>(ObjectUtils.notNull(items.iterator().next()));
     } else {
       retval = new ListSequenceImpl<>(items);
     }
@@ -176,8 +178,11 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Iterable<ITEM_TYPE> 
    * <p>
    * If a stream is currently backing this sequence, the stream will be collected
    * into a list. This ensures the sequence can be visited multiple times.
+   *
+   * @return the resulting sequence
    */
-  void collect();
+  @NonNull
+  ISequence<ITEM_TYPE> collect();
 
   /**
    * Determine if this sequence is empty.
@@ -203,6 +208,14 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Iterable<ITEM_TYPE> 
   @Override
   void forEach(Consumer<? super ITEM_TYPE> action);
 
+  /**
+   * A {@link Collector} implementation to generates a sequence from a stream of
+   * Metapath items.
+   *
+   * @param <ITEM_TYPE>
+   *          the Java type of the items
+   * @return a collector that will generate a sequence
+   */
   @NonNull
   static <ITEM_TYPE extends IItem> Collector<ITEM_TYPE, ?, ISequence<ITEM_TYPE>> toSequence() {
     return new Collector<ITEM_TYPE, List<ITEM_TYPE>, ISequence<ITEM_TYPE>>() {
@@ -227,31 +240,34 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Iterable<ITEM_TYPE> 
 
       @Override
       public Function<List<ITEM_TYPE>, ISequence<ITEM_TYPE>> finisher() {
-        return list -> {
-          ISequence<ITEM_TYPE> retval;
-          if (list.isEmpty()) {
-            retval = empty();
-          } else if (list.size() == 1) {
-            retval = new SingletonSequenceImpl<>(ObjectUtils.notNull(list.iterator().next()));
-          } else {
-            retval = new ListSequenceImpl<>(list, false);
-          }
-          return retval;
-        };
+        return list -> of(ObjectUtils.notNull(list));
       }
 
       @Override
       public Set<Characteristics> characteristics() {
         return Collections.emptySet();
       }
-
     };
   }
 
+  /**
+   * Apply the provided {@code mapFunction} to each item in the sequence.
+   *
+   * @param <T>
+   *          the Java type of the provided items
+   * @param <R>
+   *          the Java type of the resulting items
+   * @param mapFunction
+   *          the map function to apply to each item in the provided sequence
+   * @param seq
+   *          the sequence of items to map
+   * @return a new sequence containing the mapped items
+   */
   static <T extends R, R extends IItem> ISequence<R> map(
       @NonNull Function<T, R> mapFunction,
       @NonNull ISequence<T> seq) {
-    return ISequence.of(seq.safeStream()
-        .map(item -> mapFunction.apply(item)));
+    return seq.safeStream()
+        .map(item -> mapFunction.apply(item))
+        .collect(toSequence());
   }
 }

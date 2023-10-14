@@ -32,6 +32,12 @@ public abstract class AbstractModelInstance
     extends AbstractInstance<IModelContainer>
     implements IModelInstance {
 
+  /**
+   * Construct a new instance.
+   *
+   * @param parent
+   *          the parent containing the instance.
+   */
   public AbstractModelInstance(@NonNull IModelContainer parent) {
     super(parent);
   }
