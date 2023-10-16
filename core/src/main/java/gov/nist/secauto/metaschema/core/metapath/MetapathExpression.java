@@ -89,6 +89,9 @@ public class MetapathExpression {
     } else {
       try {
         metapath10Lexer lexer = new metapath10Lexer(CharStreams.fromString(path));
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(new FailingErrorListener());
+
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         metapath10Parser parser = new metapath10Parser(tokens);
         parser.removeErrorListeners();
