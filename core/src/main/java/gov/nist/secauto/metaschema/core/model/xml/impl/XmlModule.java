@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml;
+package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
@@ -35,7 +35,6 @@ import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
-import gov.nist.secauto.metaschema.core.model.xml.impl.MarkupStringConverter;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFieldDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFlagDefinitionType;
@@ -60,7 +59,7 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 @SuppressWarnings("PMD.CouplingBetweenObjects")
-class XmlModule
+public class XmlModule
     extends AbstractModule {
   private static final Logger LOGGER = LogManager.getLogger(XmlModule.class);
 
@@ -85,7 +84,7 @@ class XmlModule
    * @throws MetaschemaException
    *           if a processing error occurs
    */
-  XmlModule( // NOPMD - unavoidable
+  public XmlModule( // NOPMD - unavoidable
       @NonNull URI resource,
       @NonNull METASCHEMADocument moduleXml,
       @NonNull List<IModule> importedModules) throws MetaschemaException {

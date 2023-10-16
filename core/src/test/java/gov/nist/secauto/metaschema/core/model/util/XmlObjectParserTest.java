@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.core.model.util;
 
-import gov.nist.secauto.metaschema.core.model.xml.XmlObjectParser;
-import gov.nist.secauto.metaschema.core.model.xml.XmlObjectParser.Handler;
+import gov.nist.secauto.metaschema.core.model.xml.impl.XmlObjectParser;
+import gov.nist.secauto.metaschema.core.model.xml.impl.XmlObjectParser.Handler;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.apache.xmlbeans.XmlCursor;

@@ -24,17 +24,12 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml;
+package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureModelContainer;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ChoiceType;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -43,12 +38,11 @@ import nl.talsmasoftware.lazy4j.Lazy;
 
 class XmlChoiceInstance
     extends AbstractChoiceInstance
-    implements IFeatureModelContainer<
-        IModelInstance, INamedModelInstance, IFieldInstance, IAssemblyInstance, IChoiceInstance> {
+    implements IFeatureStandardModelContainer {
   @NonNull
   private final ChoiceType xmlChoice;
   @NonNull
-  private final Lazy<XmlModelContainerSupport> modelContainer;
+  private final Lazy<IStandardModelContainerSupport> modelContainer;
 
   /**
    * Constructs a mutually exclusive choice between two possible objects.
@@ -63,11 +57,15 @@ class XmlChoiceInstance
       @NonNull IModelContainer parent) {
     super(parent);
     this.xmlChoice = xmlChoice;
-    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlModelContainerSupport(xmlChoice, this)));
+    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
+      IStandardModelContainerSupport retval = new DefaultModelContainerSupport();
+      new XmlModelParser().parseChoice(xmlChoice, parent, retval);
+      return retval;
+    }));
   }
 
   @Override
-  public XmlModelContainerSupport getModelContainer() {
+  public IStandardModelContainerSupport getModelContainer() {
     return ObjectUtils.notNull(modelContainer.get());
   }
 

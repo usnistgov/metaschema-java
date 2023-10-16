@@ -24,59 +24,36 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml;
+package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
-import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IModelInstance;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ChoiceType;
 
-import org.apache.xmlbeans.XmlObject;
-
-import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class XmlModelContainerSupport
-    implements
-    IModelContainerSupport<IModelInstance, INamedModelInstance, IFieldInstance, IAssemblyInstance, IChoiceInstance> {
+public class DefaultModelContainerSupport
+    implements IStandardModelContainerSupport {
 
   @NonNull
-  private final List<IModelInstance> modelInstances;
+  private final List<IModelInstance> modelInstances = new LinkedList<>();
+  @SuppressWarnings("PMD.UseConcurrentHashMap")
   @NonNull
-  private final Map<String, INamedModelInstance> namedModelInstances;
+  private final Map<String, INamedModelInstance> namedModelInstances = new LinkedHashMap<>();
+  @SuppressWarnings("PMD.UseConcurrentHashMap")
   @NonNull
-  private final Map<String, IFieldInstance> fieldInstances;
+  private final Map<String, IFieldInstance> fieldInstances = new LinkedHashMap<>();
+  @SuppressWarnings("PMD.UseConcurrentHashMap")
   @NonNull
-  private final Map<String, IAssemblyInstance> assemblyInstances;
-
-  /**
-   * Construct a new model container.
-   *
-   * @param xmlContent
-   *          the XMLBeans content to parse
-   * @param container
-   *          the assembly containing this model
-   */
-  public XmlModelContainerSupport(@NonNull XmlObject xmlContent, @NonNull IModelContainer container) {
-    XmlModelParser parser = new XmlModelParser();
-    if (xmlContent instanceof ChoiceType) {
-      parser.parseChoice(xmlContent, container);
-    } else {
-      parser.parseModel(xmlContent, container);
-    }
-    this.modelInstances = parser.getModelInstances();
-    this.namedModelInstances = parser.getNamedModelInstances();
-    this.fieldInstances = parser.getFieldInstances();
-    this.assemblyInstances = parser.getAssemblyInstances();
-  }
+  private final Map<String, IAssemblyInstance> assemblyInstances = new LinkedHashMap<>();
 
   /**
    * Get a listing of all model instances.
@@ -85,7 +62,7 @@ class XmlModelContainerSupport
    */
   @Override
   @NonNull
-  public Collection<IModelInstance> getModelInstances() {
+  public List<IModelInstance> getModelInstances() {
     return modelInstances;
   }
 

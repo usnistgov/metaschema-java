@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml;
+package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
@@ -33,8 +33,6 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.xml.impl.MarkupStringConverter;
-import gov.nist.secauto.metaschema.core.model.xml.impl.ModelFactory;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.AssemblyReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.MarkupLineDatatype;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;

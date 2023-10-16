@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml;
+package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
@@ -32,8 +32,6 @@ import gov.nist.secauto.metaschema.core.model.AbstractFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
-import gov.nist.secauto.metaschema.core.model.xml.impl.MarkupStringConverter;
-import gov.nist.secauto.metaschema.core.model.xml.impl.ModelFactory;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.FlagReferenceType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;

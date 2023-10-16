@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml; // NOPMD - intentional
+package gov.nist.secauto.metaschema.core.model.xml.impl; // NOPMD - intentional
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
@@ -46,9 +46,6 @@ import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.impl.ValueConstraintSet;
-import gov.nist.secauto.metaschema.core.model.xml.impl.ConstraintXmlSupport;
-import gov.nist.secauto.metaschema.core.model.xml.impl.MarkupStringConverter;
-import gov.nist.secauto.metaschema.core.model.xml.impl.ModelFactory;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFieldDefinitionType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;

@@ -24,24 +24,23 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml;
+package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.impl.ValueConstraintSet;
-import gov.nist.secauto.metaschema.core.model.xml.impl.ConstraintXmlSupport;
-import gov.nist.secauto.metaschema.core.model.xml.impl.MarkupStringConverter;
-import gov.nist.secauto.metaschema.core.model.xml.impl.ModelFactory;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFlagDefinitionType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFieldDefinitionType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -54,53 +53,56 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
-class XmlGlobalFlagDefinition implements IFlagDefinition {
+@SuppressWarnings({ "PMD.GodClass", "PMD.CouplingBetweenObjects" })
+class XmlGlobalFieldDefinition
+    implements IFieldDefinition,
+    IFeatureFlagContainer<IFlagInstance> {
   @NonNull
-  private final GlobalFlagDefinitionType xmlFlag;
+  private final GlobalFieldDefinitionType xmlField;
   @NonNull
   private final IModule module;
   @Nullable
   private final Object defaultValue;
+  private final Lazy<XmlFlagContainerSupport> flagContainer;
   private final Lazy<IValueConstrained> constraints;
 
   /**
-   * Constructs a new Metaschema flag definition from an XML representation bound
+   * Constructs a new Metaschema field definition from an XML representation bound
    * to Java objects.
    *
-   * @param xmlFlag
+   * @param xmlField
    *          the XML representation bound to Java objects
    * @param module
    *          the containing Metaschema module
    */
-  public XmlGlobalFlagDefinition(
-      @NonNull GlobalFlagDefinitionType xmlFlag,
-      @NonNull IModule module) {
-    this.xmlFlag = xmlFlag;
+  public XmlGlobalFieldDefinition(@NonNull GlobalFieldDefinitionType xmlField, @NonNull IModule module) {
+    this.xmlField = xmlField;
     this.module = module;
-
     Object defaultValue = null;
-    if (xmlFlag.isSetDefault()) {
-      defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlFlag.getDefault()));
+    if (xmlField.isSetDefault()) {
+      defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlField.getDefault()));
     }
     this.defaultValue = defaultValue;
+    this.flagContainer = Lazy.lazy(() -> new XmlFlagContainerSupport(xmlField, this));
     this.constraints = Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();
-      if (getXmlFlag().isSetConstraint()) {
-        ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(getXmlFlag().getConstraint()),
+      if (getXmlField().isSetConstraint()) {
+        ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(getXmlField().getConstraint()),
             ISource.modelSource(ObjectUtils.requireNonNull(getContainingModule().getLocation())));
       }
       return retval;
     });
   }
 
+  /**
+   * Lazy initialize the flag instances associated with this definition.
+   *
+   * @return the flag container
+   */
+  @SuppressWarnings("null")
   @Override
-  public IModule getContainingModule() {
-    return module;
-  }
-
-  @Override
-  public Object getDefaultValue() {
-    return defaultValue;
+  public XmlFlagContainerSupport getFlagContainer() {
+    return flagContainer.get();
   }
 
   /**
@@ -116,45 +118,40 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   }
 
   // ----------------------------------------
-  // - Start annotation driven code - CPD-OFF
+  // - Start Annotation driven code - CPD-OFF
   // ----------------------------------------
 
   /**
-   * Get the underlying XML representation.
+   * Get the underlying XML data.
    *
    * @return the underlying XML data
    */
-  protected final GlobalFlagDefinitionType getXmlFlag() {
-    return xmlFlag;
+  @NonNull
+  protected final GlobalFieldDefinitionType getXmlField() {
+    return xmlField;
   }
 
-  @SuppressWarnings("null")
-  @Override
-  public ModuleScopeEnum getModuleScope() {
-    return getXmlFlag().isSetScope() ? getXmlFlag().getScope() : IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
-  }
-
-  @SuppressWarnings("null")
+  @SuppressWarnings({ "null" })
   @Override
   public String getName() {
-    return getXmlFlag().getName();
+    return getXmlField().getName();
   }
 
   @Override
   public Integer getIndex() {
-    return getXmlFlag().isSetIndex() ? getXmlFlag().getIndex().intValue() : null;
+    return getXmlField().isSetIndex() ? getXmlField().getIndex().intValue() : null;
   }
 
   @Override
   public String getUseName() {
-    return getXmlFlag().isSetUseName() ? getXmlFlag().getUseName().getStringValue() : null;
+    return getXmlField().isSetUseName() ? getXmlField().getUseName().getStringValue() : null;
   }
 
   @Override
   public Integer getUseIndex() {
     Integer retval = null;
-    if (getXmlFlag().isSetUseName()) {
-      GlobalFlagDefinitionType.UseName useName = getXmlFlag().getUseName();
+    if (getXmlField().isSetUseName()) {
+      GlobalFieldDefinitionType.UseName useName = getXmlField().getUseName();
       if (useName.isSetIndex()) {
         retval = useName.getIndex().intValue();
       }
@@ -164,35 +161,86 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
 
   @Override
   public String getFormalName() {
-    return getXmlFlag().isSetFormalName() ? getXmlFlag().getFormalName() : null;
+    return getXmlField().isSetFormalName() ? getXmlField().getFormalName() : null;
   }
 
   @SuppressWarnings("null")
   @Override
   public MarkupLine getDescription() {
-    return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription()) : null;
+    return getXmlField().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlField().getDescription())
+        : null;
   }
 
   @Override
   public Map<QName, Set<String>> getProperties() {
-    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlFlag().getPropList()));
+    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlField().getPropList()));
   }
 
   @SuppressWarnings("null")
   @Override
   public final IDataTypeAdapter<?> getJavaTypeAdapter() {
-    return getXmlFlag().isSetAsType() ? getXmlFlag().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
+    return getXmlField().isSetAsType() ? getXmlField().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
+  }
+
+  @Override
+  public boolean hasJsonValueKeyFlagInstance() {
+    return getXmlField().isSetJsonValueKeyFlag() && getXmlField().getJsonValueKeyFlag().isSetFlagRef();
+  }
+
+  @Override
+  public IFlagInstance getJsonValueKeyFlagInstance() {
+    IFlagInstance retval = null;
+    if (getXmlField().isSetJsonValueKeyFlag() && getXmlField().getJsonValueKeyFlag().isSetFlagRef()) {
+      retval = getFlagInstanceByName(ObjectUtils.notNull(getXmlField().getJsonValueKeyFlag().getFlagRef()));
+    }
+    return retval;
+  }
+
+  @Override
+  public String getJsonValueKeyName() {
+    String retval = null;
+
+    if (getXmlField().isSetJsonValueKey()) {
+      retval = getXmlField().getJsonValueKey();
+    }
+
+    if (retval == null || retval.isEmpty()) {
+      retval = getJavaTypeAdapter().getDefaultJsonValueKey();
+    }
+    return retval;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public ModuleScopeEnum getModuleScope() {
+    return getXmlField().isSetScope() ? getXmlField().getScope() : IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
   }
 
   @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
-    return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
+    return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
   }
 
   // --------------------------------------
-  // - End annotation driven code - CPD-ON
+  // - End Annotation driven code - CPD-ON
   // --------------------------------------
+
+  @Override
+  public Object getFieldValue(@NonNull Object parentFieldValue) {
+    // there is no value
+    return null;
+  }
+
+  @Override
+  public IModule getContainingModule() {
+    return module;
+  }
+
+  @Override
+  public Object getDefaultValue() {
+    return defaultValue;
+  }
 
   @Override
   public boolean isInline() {
@@ -201,9 +249,8 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   }
 
   @Override
-  public IFlagInstance getInlineInstance() {
+  public IFieldInstance getInlineInstance() {
     // global
     return null;
   }
-
 }

@@ -24,13 +24,14 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml;
+package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.FlagReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFieldDefinitionType;
@@ -38,24 +39,69 @@ import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineAssemblyDefinit
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFieldDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFlagDefinitionType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 @SuppressWarnings("PMD.NullAssignment") // readability
 class XmlFlagContainerSupport implements IFlagContainerSupport<IFlagInstance> {
+  @SuppressWarnings("PMD.UseConcurrentHashMap")
+  @NonNull
+  private static final XmlObjectParser<Pair<IFlagContainer, Map<String, IFlagInstance>>> FLAG_PARSER
+      = new XmlObjectParser<>(ObjectUtils.notNull(
+          Map.ofEntries(
+              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "flag"),
+                  XmlFlagContainerSupport::handleFlag),
+              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "define-flag"),
+                  XmlFlagContainerSupport::handleDefineFlag)))) {
+
+        @Override
+        protected Handler<Pair<IFlagContainer, Map<String, IFlagInstance>>> identifyHandler(XmlCursor cursor,
+            XmlObject obj) {
+          Handler<Pair<IFlagContainer, Map<String, IFlagInstance>>> retval;
+          if (obj instanceof FlagReferenceType) {
+            retval = XmlFlagContainerSupport::handleFlag;
+          } else if (obj instanceof InlineFlagDefinitionType) {
+            retval = XmlFlagContainerSupport::handleDefineFlag;
+          } else {
+            retval = super.identifyHandler(cursor, obj);
+          }
+          return retval;
+        }
+      };
 
   @NonNull
   private final Map<String, IFlagInstance> flagInstances;
   @Nullable
   private final IFlagInstance jsonKeyFlag;
+
+  private static void handleFlag(
+      @NonNull XmlObject obj,
+      Pair<IFlagContainer, Map<String, IFlagInstance>> state) {
+    XmlFlagInstance flagInstance = new XmlFlagInstance(
+        (FlagReferenceType) obj,
+        ObjectUtils.notNull(state.getLeft()));
+    state.getRight().put(flagInstance.getEffectiveName(), flagInstance);
+  }
+
+  private static void handleDefineFlag(
+      @NonNull XmlObject obj,
+      Pair<IFlagContainer, Map<String, IFlagInstance>> state) {
+    XmlInlineFlagDefinition flagInstance = new XmlInlineFlagDefinition(
+        (InlineFlagDefinitionType) obj,
+        ObjectUtils.notNull(state.getLeft()));
+    state.getRight().put(flagInstance.getEffectiveName(), flagInstance);
+  }
 
   /**
    * Generate a set of constraints from the provided XMLBeans instance.
@@ -158,26 +204,9 @@ class XmlFlagContainerSupport implements IFlagContainerSupport<IFlagInstance> {
       @NonNull IFlagContainer parent) {
     // handle flags
     Map<String, IFlagInstance> flagInstances = new LinkedHashMap<>(); // NOPMD - intentional
-    try (XmlCursor cursor = xmlObject.newCursor()) {
-      cursor.selectPath(
-          "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';" + "$this/m:flag|$this/m:define-flag");
 
-      while (cursor.toNextSelection()) {
-        XmlObject obj = cursor.getObject();
-        if (obj instanceof FlagReferenceType) {
-          XmlFlagInstance flagInstance = new XmlFlagInstance((FlagReferenceType) obj, parent); // NOPMD - intentional
-          flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
-        } else if (obj instanceof InlineFlagDefinitionType) {
-          XmlInlineFlagDefinition flagInstance
-              = new XmlInlineFlagDefinition((InlineFlagDefinitionType) obj, parent); // NOPMD - intentional
-          flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
-        }
-      }
-    }
+    FLAG_PARSER.parse(xmlObject, Pair.of(parent, flagInstances));
 
-    @SuppressWarnings("null")
-    @NonNull Map<String, IFlagInstance> retval
-        = flagInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagInstances);
-    return retval;
+    return flagInstances.isEmpty() ? CollectionUtil.emptyMap() : CollectionUtil.unmodifiableMap(flagInstances);
   }
 }

@@ -24,12 +24,14 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml;
+package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlCursor.XmlBookmark;
+import org.apache.xmlbeans.XmlLineNumber;
 import org.apache.xmlbeans.XmlObject;
 
 import java.util.Collection;
@@ -103,6 +105,49 @@ public class XmlObjectParser<T> {
   }
 
   /**
+   * Used to determine which parser {@link Handler} implementation to use to parse
+   * the object.
+   * <p>
+   * Subclasses can override this method to implement a more efficient or advanced
+   * detection method.
+   *
+   * @param cursor
+   *          the current XmlCursor location
+   * @param obj
+   *          the strongly typed XmlObject at the current location
+   * @return the identified handler
+   * @throws IllegalStateException
+   *           if a suitable handler cannot be identified
+   */
+  @NonNull
+  protected Handler<T> identifyHandler(@NonNull XmlCursor cursor, @NonNull XmlObject obj) {
+    QName qname = cursor.getName();
+    Handler<T> retval = getElementNameToHandlerMap().get(qname);
+    if (retval == null) {
+      String location = "";
+      XmlBookmark bookmark = cursor.getBookmark(XmlLineNumber.class);
+      if (bookmark != null) {
+        StringBuilder locationBuilder = new StringBuilder();
+        XmlLineNumber lineNumber = (XmlLineNumber) bookmark;
+        locationBuilder.append(" at location '");
+
+        String source = cursor.documentProperties().getSourceName();
+        if (source != null) {
+          locationBuilder.append(source)
+              .append(':');
+        }
+
+        locationBuilder.append(lineNumber.getLine())
+            .append(':')
+            .append(lineNumber.getColumn())
+            .append('\'');
+      }
+      throw new IllegalStateException(String.format("Unhandled node '%s'%s.", qname, location));
+    }
+    return retval;
+  }
+
+  /**
    * Parse an XmlObject element tree using the configured child element handlers.
    *
    * @param container
@@ -115,13 +160,9 @@ public class XmlObjectParser<T> {
       assert cursor != null;
       cursor.selectPath(getXpath());
       while (cursor.toNextSelection()) {
-        QName qname = cursor.getName();
-        Handler<T> handler = getElementNameToHandlerMap().get(qname);
-        if (handler == null) {
-          throw new IllegalStateException(String.format("Unhandled node '%s'.", qname));
-        }
         XmlObject obj = cursor.getObject();
         assert obj != null;
+        Handler<T> handler = identifyHandler(cursor, obj);
         handler.handle(obj, state);
       }
     }

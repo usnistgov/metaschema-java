@@ -46,8 +46,6 @@ import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
-import gov.nist.secauto.metaschema.core.model.xml.XmlObjectParser;
-import gov.nist.secauto.metaschema.core.model.xml.XmlObjectParser.Handler;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.AllowedValuesType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ConstraintType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.DefineAssemblyConstraintsType;
@@ -71,6 +69,7 @@ import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedMatchesConstrai
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.impl.values.XmlValueNotSupportedException;
 
@@ -86,42 +85,72 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public final class ConstraintXmlSupport {
   @SuppressWarnings("PMD.UseConcurrentHashMap")
   @NonNull
-  private static final Map<QName, Handler<Pair<ISource, IValueConstrained>>> FLAG_OBJECT_MAPPING = ObjectUtils.notNull(
-      Map.ofEntries(
-          Map.entry(new QName(IModule.METASCHEMA_XML_NS, "allowed-values"),
-              ConstraintXmlSupport::handleAllowedValues),
-          Map.entry(new QName(IModule.METASCHEMA_XML_NS, "index-has-key"),
-              ConstraintXmlSupport::handleIndexHasKey),
-          Map.entry(new QName(IModule.METASCHEMA_XML_NS, "matches"),
-              ConstraintXmlSupport::handleMatches),
-          Map.entry(new QName(IModule.METASCHEMA_XML_NS, "expect"),
-              ConstraintXmlSupport::handleExpect)));
-
-  @NonNull
   private static final XmlObjectParser<Pair<ISource, IValueConstrained>> FLAG_PARSER
-      = new XmlObjectParser<>(FLAG_OBJECT_MAPPING);
+      = new XmlObjectParser<>(ObjectUtils.notNull(
+          Map.ofEntries(
+              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "allowed-values"),
+                  ConstraintXmlSupport::handleAllowedValues),
+              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "index-has-key"),
+                  ConstraintXmlSupport::handleIndexHasKey),
+              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "matches"),
+                  ConstraintXmlSupport::handleMatches),
+              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "expect"),
+                  ConstraintXmlSupport::handleExpect)))) {
+
+        @Override
+        protected Handler<Pair<ISource, IValueConstrained>> identifyHandler(XmlCursor cursor, XmlObject obj) {
+          Handler<Pair<ISource, IValueConstrained>> retval;
+          if (obj instanceof AllowedValuesType) {
+            retval = ConstraintXmlSupport::handleAllowedValues;
+          } else if (obj instanceof IndexHasKeyConstraintType) {
+            retval = ConstraintXmlSupport::handleIndexHasKey;
+          } else if (obj instanceof MatchesConstraintType) {
+            retval = ConstraintXmlSupport::handleMatches;
+          } else if (obj instanceof ExpectConstraintType) {
+            retval = ConstraintXmlSupport::handleExpect;
+          } else {
+            retval = super.identifyHandler(cursor, obj);
+          }
+          return retval;
+        }
+      };
 
   @SuppressWarnings("PMD.UseConcurrentHashMap")
-  @NonNull
-  private static final Map<QName, Handler<Pair<ISource, IValueConstrained>>> FIELD_OBJECT_MAPPING = ObjectUtils.notNull(
-      Map.ofEntries(
-          Map.entry(new QName(IModule.METASCHEMA_XML_NS, "allowed-values"),
-              ConstraintXmlSupport::handleScopedAllowedValues),
-          Map.entry(new QName(IModule.METASCHEMA_XML_NS, "index-has-key"),
-              ConstraintXmlSupport::handleScopedIndexHasKey),
-          Map.entry(new QName(IModule.METASCHEMA_XML_NS, "matches"),
-              ConstraintXmlSupport::handleScopedMatches),
-          Map.entry(new QName(IModule.METASCHEMA_XML_NS, "expect"),
-              ConstraintXmlSupport::handleScopedExpect)));
-
   @NonNull
   private static final XmlObjectParser<Pair<ISource, IValueConstrained>> FIELD_PARSER
-      = new XmlObjectParser<>(FIELD_OBJECT_MAPPING);
+      = new XmlObjectParser<>(ObjectUtils.notNull(
+          Map.ofEntries(
+              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "allowed-values"),
+                  ConstraintXmlSupport::handleScopedAllowedValues),
+              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "index-has-key"),
+                  ConstraintXmlSupport::handleScopedIndexHasKey),
+              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "matches"),
+                  ConstraintXmlSupport::handleScopedMatches),
+              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "expect"),
+                  ConstraintXmlSupport::handleScopedExpect)))) {
+
+        @Override
+        protected Handler<Pair<ISource, IValueConstrained>> identifyHandler(XmlCursor cursor, XmlObject obj) {
+          Handler<Pair<ISource, IValueConstrained>> retval;
+          if (obj instanceof ScopedAllowedValuesType) {
+            retval = ConstraintXmlSupport::handleScopedAllowedValues;
+          } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
+            retval = ConstraintXmlSupport::handleScopedIndexHasKey;
+          } else if (obj instanceof ScopedMatchesConstraintType) {
+            retval = ConstraintXmlSupport::handleScopedMatches;
+          } else if (obj instanceof ScopedExpectConstraintType) {
+            retval = ConstraintXmlSupport::handleScopedExpect;
+          } else {
+            retval = super.identifyHandler(cursor, obj);
+          }
+          return retval;
+        }
+      };
 
   @SuppressWarnings("PMD.UseConcurrentHashMap")
   @NonNull
-  private static final Map<QName,
-      Handler<Pair<ISource, IModelConstrained>>> ASSEMBLY_OBJECT_MAPPING = ObjectUtils.notNull(
+  private static final XmlObjectParser<Pair<ISource, IModelConstrained>> ASSEMBLY_PARSER
+      = new XmlObjectParser<>(ObjectUtils.notNull(
           Map.ofEntries(
               Map.entry(new QName(IModule.METASCHEMA_XML_NS, "allowed-values"),
                   ConstraintXmlSupport::handleScopedAllowedValues),
@@ -136,11 +165,32 @@ public final class ConstraintXmlSupport {
               Map.entry(new QName(IModule.METASCHEMA_XML_NS, "is-unique"),
                   ConstraintXmlSupport::handleScopedIsUnique),
               Map.entry(new QName(IModule.METASCHEMA_XML_NS, "has-cardinality"),
-                  ConstraintXmlSupport::handleScopedHasCardinality)));
+                  ConstraintXmlSupport::handleScopedHasCardinality)))) {
 
-  @NonNull
-  private static final XmlObjectParser<Pair<ISource, IModelConstrained>> ASSEMBLY_PARSER
-      = new XmlObjectParser<>(ASSEMBLY_OBJECT_MAPPING);
+        @Override
+        protected Handler<Pair<ISource, IModelConstrained>> identifyHandler(XmlCursor cursor, XmlObject obj) {
+          Handler<Pair<ISource, IModelConstrained>> retval;
+          if (obj instanceof ScopedAllowedValuesType) {
+            retval = ConstraintXmlSupport::handleScopedAllowedValues;
+          } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
+            retval = ConstraintXmlSupport::handleScopedIndexHasKey;
+          } else if (obj instanceof ScopedMatchesConstraintType) {
+            retval = ConstraintXmlSupport::handleScopedMatches;
+          } else if (obj instanceof ScopedExpectConstraintType) {
+            retval = ConstraintXmlSupport::handleScopedExpect;
+          } else if (obj instanceof ScopedIndexConstraintType) {
+            retval = ConstraintXmlSupport::handleScopedIndex;
+          } else if (obj instanceof ScopedKeyConstraintType) {
+            retval = ConstraintXmlSupport::handleScopedIsUnique;
+          } else if (obj instanceof HasCardinalityConstraintType) {
+            retval = ConstraintXmlSupport::handleScopedHasCardinality;
+          } else {
+            retval = super.identifyHandler(cursor, obj);
+          }
+          return retval;
+        }
+
+      };
 
   /**
    * Parse a set of constraints from the provided XMLBeans {@code xmlObject} and
@@ -157,7 +207,11 @@ public final class ConstraintXmlSupport {
       @NonNull IValueConstrained constraints,
       @NonNull DefineFlagConstraintsType xmlObject,
       @NonNull ISource source) {
-    parse(FLAG_PARSER, constraints, (XmlObject) xmlObject, source);
+    parse(
+        FLAG_PARSER,
+        constraints,
+        (XmlObject) xmlObject,
+        source);
   }
 
   /**
@@ -175,7 +229,11 @@ public final class ConstraintXmlSupport {
       @NonNull IValueConstrained constraints,
       @NonNull DefineFieldConstraintsType xmlObject,
       @NonNull ISource source) {
-    parse(FIELD_PARSER, constraints, (XmlObject) xmlObject, source);
+    parse(
+        FIELD_PARSER,
+        constraints,
+        (XmlObject) xmlObject,
+        source);
   }
 
   /**
@@ -193,7 +251,11 @@ public final class ConstraintXmlSupport {
       @NonNull IModelConstrained constraints,
       @NonNull DefineAssemblyConstraintsType xmlObject,
       @NonNull ISource source) {
-    parse(ASSEMBLY_PARSER, constraints, (XmlObject) xmlObject, source);
+    parse(
+        ASSEMBLY_PARSER,
+        constraints,
+        (XmlObject) xmlObject,
+        source);
   }
 
   private static <T> void parse(
