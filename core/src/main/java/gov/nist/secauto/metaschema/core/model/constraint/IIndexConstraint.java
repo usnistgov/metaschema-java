@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.core.model.constraint;
 
+import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultIndexConstraint;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
@@ -44,4 +47,64 @@ public interface IIndexConstraint extends IKeyConstraint {
    */
   @NonNull
   String getName();
+
+  @Override
+  default <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
+    return visitor.visitIndexConstraint(this, state);
+  }
+
+  /**
+   * Get a new constraint builder.
+   *
+   * @return the builder
+   */
+  @NonNull
+  static Builder builder() {
+    return new Builder();
+  }
+
+  class Builder
+      extends AbstractKeyConstraintBuilder<Builder, DefaultIndexConstraint> {
+    private String name;
+
+    private Builder() {
+      // disable construction
+    }
+
+    public Builder name(@NonNull String name) {
+      this.name = name;
+      return this;
+    }
+
+    @Override
+    protected Builder getThis() {
+      return this;
+    }
+
+    @Override
+    protected void validate() {
+      super.validate();
+
+      ObjectUtils.requireNonNull(name);
+    }
+
+    protected String getName() {
+      return name;
+    }
+
+    @Override
+    protected DefaultIndexConstraint newInstance() {
+      return new DefaultIndexConstraint(
+          getId(),
+          getFormalName(),
+          getDescription(),
+          ObjectUtils.notNull(getSource()),
+          getLevel(),
+          getTarget(),
+          getProperties(),
+          ObjectUtils.notNull(getName()),
+          getKeyFields(),
+          getRemarks());
+    }
+  }
 }

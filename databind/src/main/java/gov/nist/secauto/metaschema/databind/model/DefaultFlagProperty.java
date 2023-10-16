@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
+import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
@@ -191,7 +191,7 @@ class DefaultFlagProperty
     private InternalFlagDefinition() {
       this.constraints = Lazy.lazy(() -> new ValueConstraintSupport(
           getField().getAnnotation(ValueConstraints.class),
-          InternalModelSource.instance()));
+          ISource.modelSource()));
     }
 
     @SuppressWarnings("null")

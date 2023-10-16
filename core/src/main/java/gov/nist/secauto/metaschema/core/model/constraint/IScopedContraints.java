@@ -33,10 +33,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IScopedContraints {
   @NonNull
-  URI getMetaschemaNamespace();
+  URI getModuleNamespace();
 
   @NonNull
-  String getMetaschemaShortName();
+  String getModuleShortName();
 
   @NonNull
   List<ITargetedConstaints> getTargetedContraints();

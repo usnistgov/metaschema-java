@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.ConstraintComposingVisitor;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.Collection;
@@ -74,9 +75,6 @@ public interface IConstraintSet {
         .collect(Collectors.toUnmodifiableList()));
   }
 
-  @NonNull
-  Stream<ITargetedConstaints> getTargetedConstraintsForModule(@NonNull IModule module);
-
   static void applyConstraintSetToModule(
       @NonNull Set<IConstraintSet> constraintSets,
       @NonNull IModule module) throws MetaschemaException {
@@ -107,6 +105,9 @@ public interface IConstraintSet {
     }
 
   }
+
+  @NonNull
+  Stream<ITargetedConstaints> getTargetedConstraintsForModule(@NonNull IModule module);
 
   Collection<IConstraintSet> getImportedConstraintSets();
 

@@ -27,7 +27,10 @@
 package gov.nist.secauto.metaschema.core.model.constraint;
 
 import gov.nist.secauto.metaschema.core.model.IModelInstance;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultCardinalityConstraint;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
@@ -56,4 +59,71 @@ public interface ICardinalityConstraint extends IConstraint {
    */
   @Nullable
   Integer getMaxOccurs();
+
+  @Override
+  default <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
+    return visitor.visitCardinalityConstraint(this, state);
+  }
+
+  @NonNull
+  static Builder builder() {
+    return new Builder();
+  }
+
+  class Builder
+      extends AbstractConstraintBuilder<Builder, ICardinalityConstraint> {
+    private Integer minOccurs;
+    private Integer maxOccurs;
+
+    private Builder() {
+      // disable construction
+    }
+
+    public Builder minOccurs(int value) {
+      this.minOccurs = value;
+      return this;
+    }
+
+    public Builder maxOccurs(int value) {
+      this.maxOccurs = value;
+      return this;
+    }
+
+    @Override
+    protected Builder getThis() {
+      return this;
+    }
+
+    @Override
+    protected void validate() {
+      super.validate();
+
+      if (getMinOccurs() == null && getMaxOccurs() == null) {
+        throw new IllegalStateException("At least one of minOccurs or maxOccurs must be provided.");
+      }
+    }
+
+    protected Integer getMinOccurs() {
+      return minOccurs;
+    }
+
+    protected Integer getMaxOccurs() {
+      return maxOccurs;
+    }
+
+    @Override
+    protected ICardinalityConstraint newInstance() {
+      return new DefaultCardinalityConstraint(
+          getId(),
+          getFormalName(),
+          getDescription(),
+          ObjectUtils.notNull(getSource()),
+          getLevel(),
+          getTarget(),
+          getProperties(),
+          getMinOccurs(),
+          getMaxOccurs(),
+          getRemarks());
+    }
+  }
 }

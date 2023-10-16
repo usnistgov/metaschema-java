@@ -43,7 +43,6 @@ import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFlagNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.MockNodeItemFactory;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
 import org.jmock.Expectations;
@@ -70,11 +69,9 @@ class DefaultConstraintValidatorTest {
 
     IFlagDefinition flagDefinition = context.mock(IFlagDefinition.class);
 
-    DefaultAllowedValuesConstraint allowedValues = DefaultAllowedValuesConstraint.builder()
-        .source(InternalModelSource.instance())
-        .allowedValue(new DefaultAllowedValue(
-            "other",
-            MarkupLine.fromMarkdown("some documentation")))
+    IAllowedValuesConstraint allowedValues = IAllowedValuesConstraint.builder()
+        .source(ISource.modelSource())
+        .allowedValue(IAllowedValue.of("other", MarkupLine.fromMarkdown("some documentation")))
         .allowedOther(true)
         .build();
 
@@ -117,18 +114,14 @@ class DefaultConstraintValidatorTest {
 
     IFlagDefinition flagDefinition = context.mock(IFlagDefinition.class);
 
-    DefaultAllowedValuesConstraint allowedValues1 = DefaultAllowedValuesConstraint.builder()
-        .source(InternalModelSource.instance())
-        .allowedValue(new DefaultAllowedValue(
-            "other",
-            MarkupLine.fromMarkdown("some documentation")))
+    IAllowedValuesConstraint allowedValues1 = IAllowedValuesConstraint.builder()
+        .source(ISource.modelSource())
+        .allowedValue(IAllowedValue.of("other", MarkupLine.fromMarkdown("some documentation")))
         .allowedOther(true)
         .build();
-    DefaultAllowedValuesConstraint allowedValues2 = DefaultAllowedValuesConstraint.builder()
-        .source(InternalModelSource.instance())
-        .allowedValue(new DefaultAllowedValue(
-            "other2",
-            MarkupLine.fromMarkdown("some documentation")))
+    IAllowedValuesConstraint allowedValues2 = IAllowedValuesConstraint.builder()
+        .source(ISource.modelSource())
+        .allowedValue(IAllowedValue.of("other2", MarkupLine.fromMarkdown("some documentation")))
         .allowedOther(true)
         .build();
 
@@ -175,18 +168,14 @@ class DefaultConstraintValidatorTest {
 
     IFlagDefinition flagDefinition = context.mock(IFlagDefinition.class);
 
-    DefaultAllowedValuesConstraint allowedValues1 = DefaultAllowedValuesConstraint.builder()
-        .source(InternalModelSource.instance())
-        .allowedValue(new DefaultAllowedValue(
-            "other",
-            MarkupLine.fromMarkdown("some documentation")))
+    IAllowedValuesConstraint allowedValues1 = IAllowedValuesConstraint.builder()
+        .source(ISource.modelSource())
+        .allowedValue(IAllowedValue.of("other", MarkupLine.fromMarkdown("some documentation")))
         .allowedOther(true)
         .build();
-    DefaultAllowedValuesConstraint allowedValues2 = DefaultAllowedValuesConstraint.builder()
-        .source(InternalModelSource.instance())
-        .allowedValue(new DefaultAllowedValue(
-            "other2",
-            MarkupLine.fromMarkdown("some documentation")))
+    IAllowedValuesConstraint allowedValues2 = IAllowedValuesConstraint.builder()
+        .source(ISource.modelSource())
+        .allowedValue(IAllowedValue.of("other2", MarkupLine.fromMarkdown("some documentation")))
         .allowedOther(false)
         .build();
 

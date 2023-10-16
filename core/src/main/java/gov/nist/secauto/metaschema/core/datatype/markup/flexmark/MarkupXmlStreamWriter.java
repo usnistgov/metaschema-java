@@ -36,9 +36,20 @@ import javax.xml.stream.XMLStreamWriter;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+// TODO: Is this orphaned code needed?
 public class MarkupXmlStreamWriter
     extends AbstractMarkupWriter<XMLStreamWriter, XMLStreamException> {
 
+  /**
+   * Construct a new markup stream writer.
+   *
+   * @param namespace
+   *          the XML namespace to use for markup elements
+   * @param listOptions
+   *          options controling markup list output
+   * @param writer
+   *          the writer used to serialize markup
+   */
   public MarkupXmlStreamWriter(
       @NonNull String namespace,
       @NonNull ListOptions listOptions,

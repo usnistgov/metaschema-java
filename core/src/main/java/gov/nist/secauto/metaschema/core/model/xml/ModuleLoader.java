@@ -26,9 +26,11 @@
 
 package gov.nist.secauto.metaschema.core.model.xml;
 
+import gov.nist.secauto.metaschema.core.model.AbstractLoader;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
+import gov.nist.secauto.metaschema.core.model.xml.impl.XmlModule;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.METASCHEMADocument;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.MetaschemaImportType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;

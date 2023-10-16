@@ -205,6 +205,16 @@ public interface INamedModelElement extends IModelElement {
   @Nullable
   Integer getUseIndex();
 
+  /**
+   * Get the index value to use for binary naming based on the provided index
+   * values.
+   * <p>
+   * This method will return the use index value provided by
+   * {@link #getUseIndex()} if the call result is not {@code null}, and fall back
+   * to the index value provided by {@link #getIndex()} otherwise.
+   *
+   * @return the index value if available, or {@code null} otherwise
+   */
   @Nullable
   default Integer getEffectiveIndex() {
     @Nullable Integer useIndex = getUseIndex();

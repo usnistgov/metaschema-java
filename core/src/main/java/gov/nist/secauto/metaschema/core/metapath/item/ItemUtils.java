@@ -38,6 +38,15 @@ public final class ItemUtils {
     // disable construction
   }
 
+  /**
+   * Checks that the item is a node item.
+   *
+   * @param item
+   *          the item to check
+   * @return the item cast to a {@link INodeItem}
+   * @throws TypeMetapathException
+   *           if the item is {@code null} or not an {@link INodeItem}
+   */
   @NonNull
   public static INodeItem checkItemIsNodeItemForStep(@Nullable IItem item) {
     if (item instanceof INodeItem) {
@@ -53,6 +62,20 @@ public final class ItemUtils {
             item.getClass().getName()));
   }
 
+  /**
+   * Check that the item is the type specified by {@code clazz}.
+   *
+   * @param <TYPE>
+   *          the Java type the item is required to match
+   * @param item
+   *          the item to check
+   * @param clazz
+   *          the Java class to check the item against
+   * @return the item cast to the required class value
+   * @throws TypeMetapathException
+   *           if the item is {@code null} or does not match the type specified by
+   *           {@code clazz}
+   */
   @SuppressWarnings("unchecked")
   @NonNull
   public static <TYPE> TYPE checkItemType(@NonNull IItem item, @NonNull Class<TYPE> clazz) {

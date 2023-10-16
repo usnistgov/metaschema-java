@@ -27,8 +27,12 @@
 package gov.nist.secauto.metaschema.core.model.constraint;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultMatchesConstraint;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.regex.Pattern;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Represents a rule requiring the value of a field or flag to match a pattern
@@ -38,4 +42,75 @@ public interface IMatchesConstraint extends IConstraint {
   Pattern getPattern();
 
   IDataTypeAdapter<?> getDataType();
+
+  @Override
+  default <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
+    return visitor.visitMatchesConstraint(this, state);
+  }
+
+  @NonNull
+  static Builder builder() {
+    return new Builder();
+  }
+
+  class Builder
+      extends AbstractConstraintBuilder<Builder, IMatchesConstraint> {
+    private Pattern pattern;
+    private IDataTypeAdapter<?> datatype;
+
+    private Builder() {
+      // disable construction
+    }
+
+    public Builder regex(@NonNull String pattern) {
+      return regex(ObjectUtils.notNull(Pattern.compile(pattern)));
+    }
+
+    public Builder regex(@NonNull Pattern pattern) {
+      this.pattern = pattern;
+      return this;
+    }
+
+    public Builder datatype(@NonNull IDataTypeAdapter<?> datatype) {
+      this.datatype = datatype;
+      return this;
+    }
+
+    @Override
+    protected Builder getThis() {
+      return this;
+    }
+
+    @Override
+    protected void validate() {
+      super.validate();
+
+      if (getPattern() == null && getDatatype() == null) {
+        throw new IllegalStateException("A pattern or data type must be provided at minimum.");
+      }
+    }
+
+    protected Pattern getPattern() {
+      return pattern;
+    }
+
+    protected IDataTypeAdapter<?> getDatatype() {
+      return datatype;
+    }
+
+    @Override
+    protected IMatchesConstraint newInstance() {
+      return new DefaultMatchesConstraint(
+          getId(),
+          getFormalName(),
+          getDescription(),
+          ObjectUtils.notNull(getSource()),
+          getLevel(),
+          getTarget(),
+          getProperties(),
+          getPattern(),
+          getDatatype(),
+          getRemarks());
+    }
+  }
 }

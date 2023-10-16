@@ -35,16 +35,50 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Provides messaging for constraint violations.
+ */
 public abstract class AbstractConstraintValidationHandler implements IConstraintValidationHandler {
   @NonNull
-  public abstract IPathFormatter getPathFormatter();
+  private IPathFormatter pathFormatter = IPathFormatter.METAPATH_PATH_FORMATER;
 
-  protected String toPath(@NonNull INodeItem nodeItem) {
-    return nodeItem.toPath(getPathFormatter());
+  /**
+   * Get the formatter used to generate content paths for validation issue
+   * locations.
+   *
+   * @return the formatter
+   */
+  @NonNull
+  public IPathFormatter getPathFormatter() {
+    return pathFormatter;
+  }
+
+  /**
+   * Set the path formatter to use when generating contextual paths in validation
+   * messages.
+   *
+   * @param formatter
+   *          the path formatter to use
+   */
+  public void setPathFormatter(@NonNull IPathFormatter formatter) {
+    this.pathFormatter = Objects.requireNonNull(formatter, "pathFormatter");
+  }
+
+  /**
+   * Get the path of the provided item using the configured path formatter.
+   *
+   * @param item
+   *          the node item to generate the path for
+   * @return the path
+   * @see #getPathFormatter()
+   */
+  protected String toPath(@NonNull INodeItem item) {
+    return item.toPath(getPathFormatter());
   }
 
   @SuppressWarnings("null")
@@ -53,10 +87,17 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
       @NonNull ICardinalityConstraint constraint,
       @SuppressWarnings("unused") @NonNull INodeItem node,
       @NonNull ISequence<? extends INodeItem> targets) {
-    // TODO: render the item paths instead of the expression
     return String.format(
-        "The cardinality '%d' is below the required minimum '%d' for items matching the expression '%s'.",
-        targets.size(), constraint.getMinOccurs(), constraint.getTarget().getPath());
+        "The cardinality '%d' is below the required minimum '%d' at: %s.",
+        targets.size(),
+        constraint.getMinOccurs(),
+        targets.safeStream()
+            .map(item -> new StringBuilder(12)
+                .append('\'')
+                .append(toPath(item))
+                .append('\'')
+                .toString())
+            .collect(CustomCollectors.joiningWithOxfordComma("and")));
   }
 
   @SuppressWarnings("null")
@@ -65,10 +106,17 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
       @NonNull ICardinalityConstraint constraint,
       @SuppressWarnings("unused") @NonNull INodeItem node,
       @NonNull ISequence<? extends INodeItem> targets) {
-    // TODO: render the item paths instead of the expression
     return String.format(
-        "The cardinality '%d' is greater than the required maximum '%d' for items matching the expression '%s'.",
-        targets.size(), constraint.getMinOccurs(), constraint.getTarget().getPath());
+        "The cardinality '%d' is greater than the required maximum '%d' at: %s.",
+        targets.size(),
+        constraint.getMinOccurs(),
+        targets.safeStream()
+            .map(item -> new StringBuilder(12)
+                .append('\'')
+                .append(toPath(item))
+                .append('\'')
+                .toString())
+            .collect(CustomCollectors.joiningWithOxfordComma("and")));
   }
 
   @SuppressWarnings("null")
@@ -79,8 +127,10 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
       @NonNull INodeItem oldItem,
       @NonNull INodeItem target) {
     // TODO: render the key paths
-    return String.format("Index '%s' has duplicate key for items at paths '%s' and '%s'", constraint.getName(),
-        toPath(oldItem), toPath(target));
+    return String.format("Index '%s' has duplicate key for items at paths '%s' and '%s'",
+        constraint.getName(),
+        toPath(oldItem),
+        toPath(target));
   }
 
   @SuppressWarnings("null")
@@ -92,7 +142,8 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
       @NonNull INodeItem target) {
     // TODO: render the key paths
     return String.format("Unique constraint violation at paths '%s' and '%s'",
-        toPath(oldItem), toPath(target));
+        toPath(oldItem),
+        toPath(target));
   }
 
   @SuppressWarnings("null")

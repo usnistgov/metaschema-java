@@ -33,6 +33,10 @@ import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Represents a set of constraints that target a given definition using a target
+ * Metapath expression.
+ */
 public interface ITargetedConstaints extends IValueConstrained {
   @NonNull
   MetapathExpression getTargetExpression();

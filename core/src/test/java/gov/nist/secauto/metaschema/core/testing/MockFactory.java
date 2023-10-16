@@ -40,6 +40,12 @@ public class MockFactory implements IMockFactory {
   @NonNull
   private final Mockery context;
 
+  /**
+   * Construct a new mock factory.
+   *
+   * @param ctx
+   *          the mocking context
+   */
   public MockFactory(@NonNull Mockery ctx) {
     this.context = ctx;
   }

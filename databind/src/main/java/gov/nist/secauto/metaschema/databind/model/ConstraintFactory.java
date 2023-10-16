@@ -31,19 +31,19 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.core.model.constraint.AbstractConstraint.AbstractConstraintBuilder;
-import gov.nist.secauto.metaschema.core.model.constraint.AbstractKeyConstraint.AbstractKeyConstraintBuilder;
-import gov.nist.secauto.metaschema.core.model.constraint.DefaultAllowedValue;
-import gov.nist.secauto.metaschema.core.model.constraint.DefaultAllowedValuesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.DefaultCardinalityConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.DefaultExpectConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.DefaultIndexConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.DefaultIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.DefaultKeyField;
-import gov.nist.secauto.metaschema.core.model.constraint.DefaultMatchesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.DefaultUniqueConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.AbstractConstraintBuilder;
+import gov.nist.secauto.metaschema.core.model.constraint.AbstractKeyConstraintBuilder;
+import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
+import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ISource;
+import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IIndexConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IKeyField;
+import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.ISource;
+import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.databind.model.annotations.AllowedValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.AllowedValues;
 import gov.nist.secauto.metaschema.databind.model.annotations.Expect;
@@ -161,12 +161,11 @@ final class ConstraintFactory {
   }
 
   @NonNull
-  static DefaultAllowedValuesConstraint.Builder applyAllowedValues(
-      @NonNull DefaultAllowedValuesConstraint.Builder builder,
+  static IAllowedValuesConstraint.Builder applyAllowedValues(
+      @NonNull IAllowedValuesConstraint.Builder builder,
       @NonNull AllowedValues constraint) {
     for (AllowedValue value : constraint.values()) {
-      DefaultAllowedValue allowedValue
-          = new DefaultAllowedValue(value.value(), MarkupLine.fromMarkdown(value.description())); // NOPMD - intentional
+      IAllowedValue allowedValue = IAllowedValue.of(value.value(), MarkupLine.fromMarkdown(value.description()));
       builder.allowedValue(allowedValue);
     }
     return builder;
@@ -189,10 +188,10 @@ final class ConstraintFactory {
   }
 
   @NonNull
-  static DefaultAllowedValuesConstraint newAllowedValuesConstraint(
+  static IAllowedValuesConstraint newAllowedValuesConstraint(
       @NonNull AllowedValues constraint,
       @NonNull ISource source) {
-    DefaultAllowedValuesConstraint.Builder builder = DefaultAllowedValuesConstraint.builder();
+    IAllowedValuesConstraint.Builder builder = IAllowedValuesConstraint.builder();
     applyId(builder, constraint.id());
     applyFormalName(builder, constraint.formalName());
     applyDescription(builder, constraint.description());
@@ -211,8 +210,8 @@ final class ConstraintFactory {
   }
 
   @NonNull
-  static DefaultMatchesConstraint newMatchesConstraint(Matches constraint, @NonNull ISource source) {
-    DefaultMatchesConstraint.Builder builder = DefaultMatchesConstraint.builder();
+  static IMatchesConstraint newMatchesConstraint(Matches constraint, @NonNull ISource source) {
+    IMatchesConstraint.Builder builder = IMatchesConstraint.builder();
     applyId(builder, constraint.id());
     applyFormalName(builder, constraint.formalName());
     applyDescription(builder, constraint.description());
@@ -241,7 +240,7 @@ final class ConstraintFactory {
       @NonNull KeyField... keyFields) {
     for (KeyField keyField : keyFields) {
       @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops") // ok
-      DefaultKeyField field = new DefaultKeyField(
+      IKeyField field = IKeyField.of(
           toMetapath(keyField.target()),
           toPattern(keyField.pattern()),
           toRemarks(keyField.remarks()));
@@ -251,8 +250,8 @@ final class ConstraintFactory {
   }
 
   @NonNull
-  static DefaultUniqueConstraint newUniqueConstraint(@NonNull IsUnique constraint, @NonNull ISource source) {
-    DefaultUniqueConstraint.Builder builder = DefaultUniqueConstraint.builder();
+  static IUniqueConstraint newUniqueConstraint(@NonNull IsUnique constraint, @NonNull ISource source) {
+    IUniqueConstraint.Builder builder = IUniqueConstraint.builder();
     applyId(builder, constraint.id());
     applyFormalName(builder, constraint.formalName());
     applyDescription(builder, constraint.description());
@@ -269,8 +268,8 @@ final class ConstraintFactory {
   }
 
   @NonNull
-  static DefaultIndexConstraint newIndexConstraint(@NonNull Index constraint, @NonNull ISource source) {
-    DefaultIndexConstraint.Builder builder = DefaultIndexConstraint.builder();
+  static IIndexConstraint newIndexConstraint(@NonNull Index constraint, @NonNull ISource source) {
+    IIndexConstraint.Builder builder = IIndexConstraint.builder();
     applyId(builder, constraint.id());
     applyFormalName(builder, constraint.formalName());
     applyDescription(builder, constraint.description());
@@ -288,9 +287,10 @@ final class ConstraintFactory {
   }
 
   @NonNull
-  static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(@NonNull IndexHasKey constraint,
+  static IIndexHasKeyConstraint newIndexHasKeyConstraint(
+      @NonNull IndexHasKey constraint,
       @NonNull ISource source) {
-    DefaultIndexHasKeyConstraint.Builder builder = DefaultIndexHasKeyConstraint.builder();
+    IIndexHasKeyConstraint.Builder builder = IIndexHasKeyConstraint.builder();
     applyId(builder, constraint.id());
     applyFormalName(builder, constraint.formalName());
     applyDescription(builder, constraint.description());
@@ -308,8 +308,8 @@ final class ConstraintFactory {
   }
 
   @NonNull
-  static DefaultExpectConstraint newExpectConstraint(@NonNull Expect constraint, @NonNull ISource source) {
-    DefaultExpectConstraint.Builder builder = DefaultExpectConstraint.builder();
+  static IExpectConstraint newExpectConstraint(@NonNull Expect constraint, @NonNull ISource source) {
+    IExpectConstraint.Builder builder = IExpectConstraint.builder();
     applyId(builder, constraint.id());
     applyFormalName(builder, constraint.formalName());
     applyDescription(builder, constraint.description());
@@ -336,9 +336,9 @@ final class ConstraintFactory {
   }
 
   @NonNull
-  static DefaultCardinalityConstraint newCardinalityConstraint(@NonNull HasCardinality constraint,
+  static ICardinalityConstraint newCardinalityConstraint(@NonNull HasCardinality constraint,
       @NonNull ISource source) {
-    DefaultCardinalityConstraint.Builder builder = DefaultCardinalityConstraint.builder();
+    ICardinalityConstraint.Builder builder = ICardinalityConstraint.builder();
     applyId(builder, constraint.id());
     applyFormalName(builder, constraint.formalName());
     applyDescription(builder, constraint.description());

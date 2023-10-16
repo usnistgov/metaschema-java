@@ -32,7 +32,13 @@ public abstract class AbstractInstance<P extends IContainer> implements IInstanc
   @NonNull
   private final P parent;
 
-  public AbstractInstance(@NonNull P parent) {
+  /**
+   * Construct a new instance.
+   *
+   * @param parent
+   *          the parent containing the instance.
+   */
+  protected AbstractInstance(@NonNull P parent) {
     this.parent = parent;
   }
 

@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
-import gov.nist.secauto.metaschema.core.resource.AbstractResourceLoader;
+import gov.nist.secauto.metaschema.core.resource.AbstractResourceResolver;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 
@@ -47,7 +47,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * A default implementation of an {@link IBoundLoader}.
  */
 public class DefaultBoundLoader
-    extends AbstractResourceLoader
+    extends AbstractResourceResolver
     implements IBoundLoader {
   public static final int LOOK_AHEAD_BYTES = 32_768;
   // @NonNull

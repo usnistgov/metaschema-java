@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.core.model.constraint;
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.MetapathException;
-import gov.nist.secauto.metaschema.core.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.Level;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -40,7 +39,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -48,20 +46,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public class LoggingConstraintValidationHandler
     extends AbstractConstraintValidationHandler {
   private static final Logger LOGGER = LogManager.getLogger(DefaultConstraintValidator.class);
-  @NonNull
-  private IPathFormatter pathFormatter = IPathFormatter.METAPATH_PATH_FORMATER;
 
-  @Override
-  @NonNull
-  public IPathFormatter getPathFormatter() {
-    return pathFormatter;
-  }
-
-  public void setPathFormatter(@NonNull IPathFormatter pathFormatter) {
-    this.pathFormatter = Objects.requireNonNull(pathFormatter, "pathFormatter");
-  }
-
-  protected LogBuilder getLogBuilder(@NonNull Level level) {
+  private static LogBuilder getLogBuilder(@NonNull Level level) {
     LogBuilder retval;
     switch (level) {
     case CRITICAL:
@@ -87,7 +73,16 @@ public class LoggingConstraintValidationHandler
     return nodeItem.toPath(getPathFormatter());
   }
 
-  protected boolean isLogged(@NonNull Level level) {
+  /**
+   * Determine if a failure to validate a constraint at the given severity level
+   * should be logged.
+   *
+   * @param level
+   *          the severity level to check
+   * @return {@code true} if the severity level should be logged, or {@code false}
+   *         otherwise
+   */
+  private static boolean isLogged(@NonNull Level level) {
     boolean retval;
     switch (level) {
     case CRITICAL:
@@ -108,7 +103,7 @@ public class LoggingConstraintValidationHandler
     return retval;
   }
 
-  protected void logConstraint(
+  private void logConstraint(
       @NonNull Level level,
       @NonNull INodeItem node,
       @NonNull CharSequence message,

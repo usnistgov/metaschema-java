@@ -131,6 +131,7 @@ public interface INumericItem extends IAnyAtomicItem {
    *          (negative value} or after (positive value) the decimal point.
    * @return the rounded value
    */
+  @SuppressWarnings("PMD.CognitiveComplexity") // ok
   @NonNull
   default INumericItem round(@NonNull IIntegerItem precisionItem) {
     int precision;

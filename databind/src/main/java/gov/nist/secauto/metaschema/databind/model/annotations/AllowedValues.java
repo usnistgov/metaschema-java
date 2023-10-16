@@ -115,7 +115,7 @@ public @interface AllowedValues {
    *
    * @return {@code true} if other values are allowed or {@code false} otherwise
    */
-  boolean allowOthers() default IAllowedValuesConstraint.DEFAULT_ALLOW_OTHER;
+  boolean allowOthers() default IAllowedValuesConstraint.ALLOW_OTHER_DEFAULT;
 
   /**
    * Indicates if the constraint can be extended by other constraints.

@@ -45,6 +45,13 @@ public class FixedEmphasisDelimiterProcessor
   // TODO: remove this class once vsch/flexmark-java#580 is merged
   private final int multipleUse;
 
+  /**
+   * Construct a new delimiter processor.
+   *
+   * @param strongWrapsEmphasis
+   *          when {@code true} strong will wrap emphasis, otherwise emphasis will
+   *          wrap strong
+   */
   public FixedEmphasisDelimiterProcessor(boolean strongWrapsEmphasis) {
     super(strongWrapsEmphasis);
     this.multipleUse = strongWrapsEmphasis ? 1 : 2;

@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.core.model.constraint;
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultExpectConstraint;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -52,4 +54,69 @@ public interface IExpectConstraint extends IConstraint {
   String getMessage();
 
   CharSequence generateMessage(@NonNull INodeItem item, @NonNull DynamicContext context);
+
+  @Override
+  default <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
+    return visitor.visitExpectConstraint(this, state);
+  }
+
+  @NonNull
+  static Builder builder() {
+    return new Builder();
+  }
+
+  class Builder
+      extends AbstractConstraintBuilder<Builder, IExpectConstraint> {
+    private MetapathExpression test;
+    private String message;
+
+    private Builder() {
+      // disable construction
+    }
+
+    public Builder test(@NonNull MetapathExpression test) {
+      this.test = test;
+      return this;
+    }
+
+    public Builder message(@NonNull String message) {
+      this.message = message;
+      return this;
+    }
+
+    @Override
+    protected Builder getThis() {
+      return this;
+    }
+
+    @Override
+    protected void validate() {
+      super.validate();
+
+      ObjectUtils.requireNonNull(getTest());
+    }
+
+    protected MetapathExpression getTest() {
+      return test;
+    }
+
+    protected String getMessage() {
+      return message;
+    }
+
+    @Override
+    protected IExpectConstraint newInstance() {
+      return new DefaultExpectConstraint(
+          getId(),
+          getFormalName(),
+          getDescription(),
+          ObjectUtils.notNull(getSource()),
+          getLevel(),
+          getTarget(),
+          getProperties(),
+          ObjectUtils.requireNonNull(getTest()),
+          getMessage(),
+          getRemarks());
+    }
+  }
 }

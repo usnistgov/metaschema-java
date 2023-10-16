@@ -136,7 +136,10 @@ public final class FnSum {
    *          the value to use if no items are provided, which can be {@code null}
    * @return the average
    */
-  @SuppressWarnings("PMD.OnlyOneReturn") // readability
+  @SuppressWarnings({
+      "PMD.OnlyOneReturn", // readability
+      "PMD.CyclomaticComplexity" // ok
+  })
   @Nullable
   public static IAnyAtomicItem sum(
       @NonNull List<? extends IAnyAtomicItem> items,

@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.core.model.constraint;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultAllowedValue;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -35,6 +36,24 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * {@link IAllowedValuesConstraint}.
  */
 public interface IAllowedValue {
+  /**
+   * Construct a new allowed value entry for use in an
+   * {@link IAllowedValuesConstraint}.
+   *
+   * @param value
+   *          the allowed value
+   * @param description
+   *          a textual description of the value
+   * @return the new allowed value
+   */
+  @SuppressWarnings("PMD.ShortMethodName")
+  @NonNull
+  static IAllowedValue of(
+      @NonNull String value,
+      @NonNull MarkupLine description) {
+    return new DefaultAllowedValue(value, description);
+  }
+
   /**
    * Retrieves the enumerated value associated with this allowed value constraint
    * entry.

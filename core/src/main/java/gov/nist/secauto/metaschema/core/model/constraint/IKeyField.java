@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.model.constraint;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultKeyField;
 
 import java.util.regex.Pattern;
 
@@ -42,6 +43,33 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * generating an index key.
  */
 public interface IKeyField {
+  /**
+   * Construct a new key field based on the provided target. An optional pattern
+   * can be used to extract a portion of the resulting key value.
+   *
+   * @param target
+   *          a Metapath expression identifying the target of the key field
+   * @param pattern
+   *          an optional used to extract a portion of the resulting key value
+   * @param remarks
+   *          optional remarks describing the intent of the constraint
+   * @return the new key field
+   */
+  @SuppressWarnings("PMD.ShortMethodName")
+  @NonNull
+  static IKeyField of(
+      @NonNull MetapathExpression target,
+      @Nullable Pattern pattern,
+      @Nullable MarkupMultiline remarks) {
+    return new DefaultKeyField(target, pattern, remarks);
+  }
+
+  /**
+   * Get the Metapath expression that identifies the node item whose value will be
+   * used as the key value.
+   *
+   * @return the Metapath expression identifying the key value target
+   */
   @NonNull
   MetapathExpression getTarget();
 

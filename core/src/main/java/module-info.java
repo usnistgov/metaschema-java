@@ -51,7 +51,7 @@ module gov.nist.secauto.metaschema.core {
   requires org.apache.commons.lang3;
   requires org.apache.commons.text;
   requires org.apache.logging.log4j;
-  requires org.apache.xmlbeans;
+  requires transitive org.apache.xmlbeans;
   requires transitive org.codehaus.stax2;
   requires transitive org.json;
   requires org.jsoup;
