@@ -26,40 +26,40 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Lexer;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.AbbrevforwardstepContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.AbbrevreversestepContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.AdditiveexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.AndexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ArgumentlistContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ArrowexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.AxisstepContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ComparisonexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ContextitemexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.EqnameContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ExprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ForwardstepContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.FunctioncallContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.GeneralcompContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.IntersectexceptexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.LetexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.LiteralContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.MultiplicativeexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.NumericliteralContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.OrexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.PathexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.PostfixexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.PredicateContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.RelativepathexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ReversestepContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.SimpleletbindingContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.SimpleletclauseContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.StringconcatexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.UnaryexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.UnionexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ValuecompContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.VarrefContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.WildcardContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AbbrevforwardstepContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AbbrevreversestepContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AdditiveexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AndexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ArgumentlistContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ArrowexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AxisstepContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ComparisonexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ContextitemexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.EqnameContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ExprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ForwardstepContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.FunctioncallContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.GeneralcompContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.IntersectexceptexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.LetexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.LiteralContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.MultiplicativeexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.NumericliteralContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.OrexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.PathexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.PostfixexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.PredicateContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.RelativepathexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ReversestepContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SimpleletbindingContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SimpleletclauseContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.StringconcatexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.UnaryexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.UnionexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ValuecompContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.VarrefContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.WildcardContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10Lexer;
 import gov.nist.secauto.metaschema.core.metapath.function.ComparisonFunctions;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -281,22 +281,22 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
       GeneralcompContext compContext = (GeneralcompContext) payload;
       int type = ((TerminalNode) compContext.getChild(0)).getSymbol().getType();
       switch (type) {
-      case metapath10Lexer.EQ:
+      case Metapath10Lexer.EQ:
         operator = ComparisonFunctions.Operator.EQ;
         break;
-      case metapath10Lexer.NE:
+      case Metapath10Lexer.NE:
         operator = ComparisonFunctions.Operator.NE;
         break;
-      case metapath10Lexer.LT:
+      case Metapath10Lexer.LT:
         operator = ComparisonFunctions.Operator.LT;
         break;
-      case metapath10Lexer.LE:
+      case Metapath10Lexer.LE:
         operator = ComparisonFunctions.Operator.LE;
         break;
-      case metapath10Lexer.GT:
+      case Metapath10Lexer.GT:
         operator = ComparisonFunctions.Operator.GT;
         break;
-      case metapath10Lexer.GE:
+      case Metapath10Lexer.GE:
         operator = ComparisonFunctions.Operator.GE;
         break;
       default:
@@ -307,22 +307,22 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
       ValuecompContext compContext = (ValuecompContext) payload;
       int type = ((TerminalNode) compContext.getChild(0)).getSymbol().getType();
       switch (type) {
-      case metapath10Lexer.KW_EQ:
+      case Metapath10Lexer.KW_EQ:
         operator = ComparisonFunctions.Operator.EQ;
         break;
-      case metapath10Lexer.KW_NE:
+      case Metapath10Lexer.KW_NE:
         operator = ComparisonFunctions.Operator.NE;
         break;
-      case metapath10Lexer.KW_LT:
+      case Metapath10Lexer.KW_LT:
         operator = ComparisonFunctions.Operator.LT;
         break;
-      case metapath10Lexer.KW_LE:
+      case Metapath10Lexer.KW_LE:
         operator = ComparisonFunctions.Operator.LE;
         break;
-      case metapath10Lexer.KW_GT:
+      case Metapath10Lexer.KW_GT:
         operator = ComparisonFunctions.Operator.GT;
         break;
-      case metapath10Lexer.KW_GE:
+      case Metapath10Lexer.KW_GE:
         operator = ComparisonFunctions.Operator.GE;
         break;
       default:
@@ -357,10 +357,10 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
       IExpression retval;
       switch (type) {
-      case metapath10Lexer.PLUS:
+      case Metapath10Lexer.PLUS:
         retval = new Addition(left, right);
         break;
-      case metapath10Lexer.MINUS:
+      case Metapath10Lexer.MINUS:
         retval = new Subtraction(left, right);
         break;
       default:
@@ -383,16 +383,16 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
       int type = ((TerminalNode) operatorTree).getSymbol().getType();
       IExpression retval;
       switch (type) {
-      case metapath10Lexer.STAR:
+      case Metapath10Lexer.STAR:
         retval = new Multiplication(left, right);
         break;
-      case metapath10Lexer.KW_DIV:
+      case Metapath10Lexer.KW_DIV:
         retval = new Division(left, right);
         break;
-      case metapath10Lexer.KW_IDIV:
+      case Metapath10Lexer.KW_IDIV:
         retval = new IntegerDivision(left, right);
         break;
-      case metapath10Lexer.KW_MOD:
+      case Metapath10Lexer.KW_MOD:
         retval = new Modulo(left, right);
         break;
       default:
@@ -424,10 +424,10 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
       IExpression retval;
       switch (type) {
-      case metapath10Lexer.KW_INTERSECT:
+      case Metapath10Lexer.KW_INTERSECT:
         retval = new Intersect(left, right);
         break;
-      case metapath10Lexer.KW_EXCEPT:
+      case Metapath10Lexer.KW_EXCEPT:
         retval = new Except(left, right);
         break;
       default:
@@ -468,9 +468,9 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
       ParseTree tree = ctx.getChild(idx);
       int type = ((TerminalNode) tree).getSymbol().getType();
       switch (type) {
-      case metapath10Lexer.PLUS:
+      case Metapath10Lexer.PLUS:
         break;
-      case metapath10Lexer.MINUS:
+      case Metapath10Lexer.MINUS:
         negateCount++;
         break;
       default:
@@ -496,7 +496,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
     if (tree instanceof TerminalNode) {
       int type = ((TerminalNode) tree).getSymbol().getType();
       switch (type) {
-      case metapath10Lexer.SLASH:
+      case Metapath10Lexer.SLASH:
         // a slash expression with optional path
         if (numChildren == 2) {
           // the optional path
@@ -506,7 +506,7 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
           retval = new RootSlashOnlyPath();
         }
         break;
-      case metapath10Lexer.SS:
+      case Metapath10Lexer.SS:
         // a double slash expression with path
         ParseTree pathTree = ctx.getChild(1);
         IExpression node = pathTree.accept(this);
@@ -537,10 +537,10 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
       IExpression retval;
       switch (type) {
-      case metapath10Lexer.SLASH:
+      case Metapath10Lexer.SLASH:
         retval = new RelativeSlashPath(left, rightResult);
         break;
-      case metapath10Lexer.SS:
+      case Metapath10Lexer.SS:
         retval = new RelativeDoubleSlashPath(left, rightResult);
         break;
       default:
@@ -618,16 +618,16 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
     Axis axis;
     switch (token.getType()) {
-    case metapath10Lexer.KW_SELF:
+    case Metapath10Lexer.KW_SELF:
       axis = Axis.SELF;
       break;
-    case metapath10Lexer.KW_CHILD:
+    case Metapath10Lexer.KW_CHILD:
       axis = Axis.CHILDREN;
       break;
-    case metapath10Lexer.KW_DESCENDANT:
+    case Metapath10Lexer.KW_DESCENDANT:
       axis = Axis.DESCENDANT;
       break;
-    case metapath10Lexer.KW_DESCENDANT_OR_SELF:
+    case Metapath10Lexer.KW_DESCENDANT_OR_SELF:
       axis = Axis.DESCENDANT_OR_SELF;
       break;
     default:
@@ -661,13 +661,13 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
 
     Axis axis;
     switch (token.getType()) {
-    case metapath10Lexer.KW_PARENT:
+    case Metapath10Lexer.KW_PARENT:
       axis = Axis.PARENT;
       break;
-    case metapath10Lexer.KW_ANCESTOR:
+    case Metapath10Lexer.KW_ANCESTOR:
       axis = Axis.ANCESTOR;
       break;
-    case metapath10Lexer.KW_ANCESTOR_OR_SELF:
+    case Metapath10Lexer.KW_ANCESTOR_OR_SELF:
       axis = Axis.ANCESTOR_OR_SELF;
       break;
     default:
@@ -693,11 +693,11 @@ class BuildAstVisitor // NOPMD - this visitor has many methods
     Token token = (Token) tree.getPayload();
     IExpression retval;
     switch (token.getType()) {
-    case metapath10Lexer.IntegerLiteral:
+    case Metapath10Lexer.IntegerLiteral:
       retval = new IntegerLiteral(new BigInteger(token.getText()));
       break;
-    case metapath10Lexer.DecimalLiteral:
-    case metapath10Lexer.DoubleLiteral:
+    case Metapath10Lexer.DecimalLiteral:
+    case Metapath10Lexer.DoubleLiteral:
       retval = new DecimalLiteral(new BigDecimal(token.getText()));
       break;
     default:

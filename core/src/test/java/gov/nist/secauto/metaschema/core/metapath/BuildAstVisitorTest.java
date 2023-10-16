@@ -39,8 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression.ResultType;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Lexer;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10Lexer;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10Parser;
 import gov.nist.secauto.metaschema.core.metapath.function.ComparisonFunctions;
 import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
@@ -96,9 +96,9 @@ class BuildAstVisitorTest {
 
   private static IExpression parseExpression(@NonNull String path) {
 
-    metapath10Lexer lexer = new metapath10Lexer(CharStreams.fromString(path));
+    Metapath10Lexer lexer = new Metapath10Lexer(CharStreams.fromString(path));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
-    metapath10Parser parser = new metapath10Parser(tokens);
+    Metapath10Parser parser = new Metapath10Parser(tokens);
     parser.addErrorListener(new FailingErrorListener());
 
     ParseTree tree = parser.expr();

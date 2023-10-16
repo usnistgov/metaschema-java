@@ -26,20 +26,13 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.io.PrintStream;
-import java.util.List;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 class CSTPrinter {
-  @NonNull
   private final PrintStream outputStream;
   private boolean ignoringWrappers = true;
 
@@ -49,8 +42,8 @@ class CSTPrinter {
    * @param outputStream
    *          the stream to print to
    */
-  public CSTPrinter(@NonNull PrintStream outputStream) {
-    this.outputStream = ObjectUtils.requireNonNull(outputStream, "outputStream");
+  public CSTPrinter(PrintStream outputStream) {
+    this.outputStream = outputStream;
   }
 
   /**
@@ -65,16 +58,6 @@ class CSTPrinter {
   }
 
   /**
-   * Print a given CST {@link RuleContext} node.
-   *
-   * @param ctx
-   *          the CST node
-   */
-  public void print(@NonNull RuleContext ctx) {
-    explore(ctx, 0);
-  }
-
-  /**
    * Print a given CST {@link ParseTree} using the provided {@code ruleNames}.
    *
    * @param tree
@@ -82,13 +65,15 @@ class CSTPrinter {
    * @param ruleNames
    *          the list of rule names to use for human readability
    */
-  public void print(ParseTree tree, List<String> ruleNames) {
-    explore((RuleContext) tree.getPayload(), 0);
+  @SuppressWarnings("PMD.UseVarargs")
+  public void print(ParseTree tree, String[] ruleNames) {
+    explore((RuleContext) tree.getPayload(), 0, ruleNames);
   }
 
-  private void explore(RuleContext ctx, int indentation) {
+  @SuppressWarnings("PMD.UseVarargs")
+  private void explore(RuleContext ctx, int indentation, String[] ruleNames) {
     boolean toBeIgnored = ignoringWrappers && ctx.getChildCount() == 1 && ctx.getChild(0) instanceof ParserRuleContext;
-    String ruleName = metapath10Parser.ruleNames[ctx.getRuleIndex()];
+    String ruleName = ruleNames[ctx.getRuleIndex()];
     for (int i = 0; i < indentation; i++) {
       outputStream.print("  ");
     }
@@ -103,7 +88,7 @@ class CSTPrinter {
     for (int i = 0; i < ctx.getChildCount(); i++) {
       ParseTree element = ctx.getChild(i);
       if (element instanceof RuleContext) {
-        explore((RuleContext) element, indentation + 1);
+        explore((RuleContext) element, indentation + 1, ruleNames);
       }
     }
   }

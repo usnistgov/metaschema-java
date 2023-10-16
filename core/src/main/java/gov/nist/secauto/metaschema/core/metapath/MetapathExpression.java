@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Lexer;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10Lexer;
 import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.function.library.FnBoolean;
 import gov.nist.secauto.metaschema.core.metapath.function.library.FnData;
@@ -48,7 +48,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -88,12 +87,12 @@ public class MetapathExpression {
       retval = CONTEXT_NODE;
     } else {
       try {
-        metapath10Lexer lexer = new metapath10Lexer(CharStreams.fromString(path));
+        Metapath10Lexer lexer = new Metapath10Lexer(CharStreams.fromString(path));
         lexer.removeErrorListeners();
         lexer.addErrorListener(new FailingErrorListener());
 
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        metapath10Parser parser = new metapath10Parser(tokens);
+        Metapath10 parser = new Metapath10(tokens);
         parser.removeErrorListeners();
         parser.addErrorListener(new FailingErrorListener());
 
@@ -103,7 +102,7 @@ public class MetapathExpression {
           try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             try (PrintStream ps = new PrintStream(os, true, StandardCharsets.UTF_8)) {
               CSTPrinter printer = new CSTPrinter(ps);
-              printer.print(tree, Arrays.asList(metapath10Parser.ruleNames));
+              printer.print(tree, Metapath10.ruleNames);
               ps.flush();
             }
             LOGGER.atDebug().log(String.format("Metapath CST:%n%s", os.toString(StandardCharsets.UTF_8)));

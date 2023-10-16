@@ -26,53 +26,53 @@
 
 package gov.nist.secauto.metaschema.core.metapath; // NOPMD requires a large number of public methods
 
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10BaseVisitor;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.AbbrevforwardstepContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.AbbrevreversestepContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.AdditiveexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.AndexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ArgumentContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ArgumentlistContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ArrowexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ArrowfunctionspecifierContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.AxisstepContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ComparisonexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ContextitemexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.EqnameContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ExprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ExprsingleContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ForwardaxisContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ForwardstepContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.FunctioncallContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.GeneralcompContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.IntersectexceptexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.LetexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.LiteralContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.MetapathContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.MultiplicativeexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.NametestContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.NumericliteralContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.OrexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ParenthesizedexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.PathexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.PostfixexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.PredicateContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.PredicatelistContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.PrimaryexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.RelativepathexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ReverseaxisContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ReversestepContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.SimpleletbindingContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.SimpleletclauseContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.StepexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.StringconcatexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.UnaryexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.UnionexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ValuecompContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.ValueexprContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.VarnameContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.VarrefContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser.WildcardContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AbbrevforwardstepContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AbbrevreversestepContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AdditiveexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AndexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ArgumentContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ArgumentlistContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ArrowexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ArrowfunctionspecifierContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AxisstepContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ComparisonexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ContextitemexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.EqnameContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ExprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ExprsingleContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ForwardaxisContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ForwardstepContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.FunctioncallContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.GeneralcompContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.IntersectexceptexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.LetexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.LiteralContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.MetapathContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.MultiplicativeexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.NametestContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.NumericliteralContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.OrexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ParenthesizedexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.PathexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.PostfixexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.PredicateContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.PredicatelistContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.PrimaryexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.RelativepathexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ReverseaxisContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ReversestepContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SimpleletbindingContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SimpleletclauseContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.StepexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.StringconcatexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.UnaryexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.UnionexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ValuecompContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ValueexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.VarnameContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.VarrefContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.WildcardContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10BaseVisitor;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -83,7 +83,7 @@ import java.util.function.Function;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractAstVisitor<R> // NOPMD
-    extends metapath10BaseVisitor<R> {
+    extends Metapath10BaseVisitor<R> {
 
   /**
    * This dispatch method will call the node handler on a leaf node or if multiple

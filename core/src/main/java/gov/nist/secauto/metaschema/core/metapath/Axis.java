@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Lexer;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10Lexer;
 import gov.nist.secauto.metaschema.core.metapath.item.ItemUtils;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
@@ -40,13 +40,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 @SuppressWarnings("PMD.ShortClassName") // intentional
 public enum Axis implements IExpression {
-  SELF(metapath10Lexer.KW_SELF, focus -> Stream.of(focus)),
-  PARENT(metapath10Lexer.KW_PARENT, focus -> Stream.ofNullable(focus.getParentNodeItem())),
-  ANCESTOR(metapath10Lexer.KW_ANCESTOR, INodeItem::ancestor),
-  ANCESTOR_OR_SELF(metapath10Lexer.KW_ANCESTOR_OR_SELF, INodeItem::ancestorOrSelf),
-  CHILDREN(metapath10Lexer.KW_CHILD, INodeItem::modelItems),
-  DESCENDANT(metapath10Lexer.KW_DESCENDANT, INodeItem::descendant),
-  DESCENDANT_OR_SELF(metapath10Lexer.KW_DESCENDANT_OR_SELF, INodeItem::descendantOrSelf);
+  SELF(Metapath10Lexer.KW_SELF, focus -> Stream.of(focus)),
+  PARENT(Metapath10Lexer.KW_PARENT, focus -> Stream.ofNullable(focus.getParentNodeItem())),
+  ANCESTOR(Metapath10Lexer.KW_ANCESTOR, INodeItem::ancestor),
+  ANCESTOR_OR_SELF(Metapath10Lexer.KW_ANCESTOR_OR_SELF, INodeItem::ancestorOrSelf),
+  CHILDREN(Metapath10Lexer.KW_CHILD, INodeItem::modelItems),
+  DESCENDANT(Metapath10Lexer.KW_DESCENDANT, INodeItem::descendant),
+  DESCENDANT_OR_SELF(Metapath10Lexer.KW_DESCENDANT_OR_SELF, INodeItem::descendantOrSelf);
 
   private final int keywordIndex;
   @NonNull
