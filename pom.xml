@@ -132,7 +132,7 @@
 		<dependency.jaxen.version>2.0.0</dependency.jaxen.version>
 		<dependency.jdom2.version>2.0.6.1</dependency.jdom2.version>
 		<dependency.jmock-junit5.version>2.12.0</dependency.jmock-junit5.version>
-		<dependency.json.version>20230618</dependency.json.version>
+		<dependency.json.version>20231013</dependency.json.version>
 		<dependency.junit5.version>5.9.0</dependency.junit5.version>
 		<dependency.junit5-platform-launcher.version>1.9.0</dependency.junit5-platform-launcher.version>
 		<dependency.log4j2.version>2.20.0</dependency.log4j2.version>
