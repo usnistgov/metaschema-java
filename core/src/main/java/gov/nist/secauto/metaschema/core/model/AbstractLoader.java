@@ -193,7 +193,7 @@ public abstract class AbstractLoader<T> {
       cache.put(resource, retval);
     } else {
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Found metaschema in cache '{}'", resource);
+        LOGGER.debug("Found resource in cache '{}'", resource);
       }
     }
     return ObjectUtils.notNull(retval);

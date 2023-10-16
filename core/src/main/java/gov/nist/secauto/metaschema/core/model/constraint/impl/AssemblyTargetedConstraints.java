@@ -44,7 +44,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * @see #getTargetExpression()
  */
 public class AssemblyTargetedConstraints
-    extends AbstractTargetedConstraints<IAssemblyDefinition, IModelConstrained>
+    extends AbstractDefinitionTargetedConstraints<IAssemblyDefinition, IModelConstrained>
     implements IModelConstrained {
 
   /**

@@ -27,35 +27,24 @@
 package gov.nist.secauto.metaschema.core.model.constraint.impl;
 
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstaints;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
-
-import java.util.Locale;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides an base implementation for a set of constraints that target a given
+ * Provides an base implementation for a set of constraints that target a
  * definition using a target Metapath expression.
  *
  * @param <T>
- *          the Java type of the definition target
- *
- * @param <S>
  *          the Java type of the constraint container
  */
-public abstract class AbstractTargetedConstraints<
-    T extends IDefinition,
-    S extends IValueConstrained>
+public abstract class AbstractTargetedConstraints<T extends IValueConstrained>
     implements ITargetedConstaints, IFeatureValueConstrained {
   @NonNull
   private final MetapathExpression targetExpression;
   @NonNull
-  private final S constraints;
+  private final T constraints;
 
   /**
    * Construct a new set of targeted constraints.
@@ -67,7 +56,7 @@ public abstract class AbstractTargetedConstraints<
    */
   protected AbstractTargetedConstraints(
       @NonNull MetapathExpression target,
-      @NonNull S constraints) {
+      @NonNull T constraints) {
     this.targetExpression = target;
     this.constraints = constraints;
   }
@@ -78,51 +67,7 @@ public abstract class AbstractTargetedConstraints<
   }
 
   @Override
-  public S getConstraintSupport() {
+  public T getConstraintSupport() {
     return constraints;
-  }
-
-  /**
-   * Apply the constraints to the provided {@code definition}.
-   * <p>
-   * This will be called when a definition is found that matches the target
-   * expression.
-   *
-   * @param definition
-   *          the definition to apply the constraints to.
-   */
-  @SuppressWarnings("null")
-  protected void applyTo(@NonNull T definition) {
-    getAllowedValuesConstraints().forEach(constraint -> definition.addConstraint(constraint));
-    getMatchesConstraints().forEach(constraint -> definition.addConstraint(constraint));
-    getIndexHasKeyConstraints().forEach(constraint -> definition.addConstraint(constraint));
-    getExpectConstraints().forEach(constraint -> definition.addConstraint(constraint));
-  }
-
-  @Override
-  public void target(@NonNull IFlagDefinition definition) {
-    throw new IllegalStateException(
-        String.format("The targeted definition '%s' from metaschema '%s' is not a %s definition.",
-            definition.getEffectiveName(),
-            definition.getContainingModule().getQName().toString(),
-            definition.getModelType().name().toLowerCase(Locale.ROOT)));
-  }
-
-  @Override
-  public void target(@NonNull IFieldDefinition definition) {
-    throw new IllegalStateException(
-        String.format("The targeted definition '%s' from metaschema '%s' is not a %s definition.",
-            definition.getEffectiveName(),
-            definition.getContainingModule().getQName().toString(),
-            definition.getModelType().name().toLowerCase(Locale.ROOT)));
-  }
-
-  @Override
-  public void target(@NonNull IAssemblyDefinition definition) {
-    throw new IllegalStateException(
-        String.format("The targeted definition '%s' from metaschema '%s' is not a %s definition.",
-            definition.getEffectiveName(),
-            definition.getContainingModule().getQName().toString(),
-            definition.getModelType().name().toLowerCase(Locale.ROOT)));
   }
 }

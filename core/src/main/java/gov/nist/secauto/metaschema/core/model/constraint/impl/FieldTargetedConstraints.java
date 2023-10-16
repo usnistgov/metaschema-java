@@ -39,7 +39,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * @see #getTargetExpression()
  */
 public class FieldTargetedConstraints
-    extends AbstractTargetedConstraints<IFieldDefinition, IValueConstrained> {
+    extends AbstractDefinitionTargetedConstraints<IFieldDefinition, IValueConstrained> {
 
   /**
    * Construct a new set of targeted constraints.

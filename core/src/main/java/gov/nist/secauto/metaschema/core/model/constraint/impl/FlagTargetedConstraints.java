@@ -39,7 +39,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * @see #getTargetExpression()
  */
 public class FlagTargetedConstraints
-    extends AbstractTargetedConstraints<IFlagDefinition, IValueConstrained> {
+    extends AbstractDefinitionTargetedConstraints<IFlagDefinition, IValueConstrained> {
 
   /**
    * Construct a new set of targeted constraints.
