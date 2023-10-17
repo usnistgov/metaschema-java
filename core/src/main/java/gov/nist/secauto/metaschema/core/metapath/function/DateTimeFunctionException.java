@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.metapath.function;
 
-import gov.nist.secauto.metaschema.core.metapath.AbstractCodedMetapathException;
+import gov.nist.secauto.metaschema.core.metapath.cst.AbstractCodedMetapathException;
 
 /**
  * FODT: Exceptions related to Date/Time/Duration errors.

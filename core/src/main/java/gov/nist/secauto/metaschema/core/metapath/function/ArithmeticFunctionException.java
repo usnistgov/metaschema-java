@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.metapath.function;
 
-import gov.nist.secauto.metaschema.core.metapath.AbstractCodedMetapathException;
+import gov.nist.secauto.metaschema.core.metapath.cst.AbstractCodedMetapathException;
 
 /**
  * Represents an error that occurred while performing mathematical operations.

@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
+import gov.nist.secauto.metaschema.core.metapath.cst.AbstractCodedMetapathException;
+
 public class TypeMetapathException
     extends AbstractCodedMetapathException {
   public static final int INVALID_TYPE_ERROR = 4;
@@ -34,7 +36,7 @@ public class TypeMetapathException
    */
   public static final int BASE_PATH_NOT_A_SEQUENCE = 19;
   /**
-   * The context item is not a node when evaluating an axis {@link Step}.
+   * The context item is not a node when evaluating an axis step.
    */
   public static final int NOT_A_NODE_ITEM_FOR_STEP = 20;
 

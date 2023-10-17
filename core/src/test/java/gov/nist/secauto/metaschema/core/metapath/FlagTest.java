@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.core.metapath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import gov.nist.secauto.metaschema.core.metapath.cst.Flag;
+import gov.nist.secauto.metaschema.core.metapath.cst.Name;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFlagNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IModelNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.NodeItemType;

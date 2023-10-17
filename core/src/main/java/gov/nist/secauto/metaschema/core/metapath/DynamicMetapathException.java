@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
+import gov.nist.secauto.metaschema.core.metapath.cst.AbstractCodedMetapathException;
+
 public class DynamicMetapathException
     extends AbstractCodedMetapathException {
 

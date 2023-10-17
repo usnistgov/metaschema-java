@@ -33,7 +33,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public final class MetapathEvaluationFeature<V>
     extends AbstractConfigurationFeature<V> {
   /**
-   * If enabled, evaluate {@link Predicate} nodes, otherwise skip evaluating them.
+   * If enabled, evaluate <a href=
+   * "https://www.w3.org/TR/xpath-31/#id-filter-expression">predicates</a>,
+   * otherwise skip evaluating them.
    */
   @NonNull
   public static final MetapathEvaluationFeature<Boolean> METAPATH_EVALUATE_PREDICATES

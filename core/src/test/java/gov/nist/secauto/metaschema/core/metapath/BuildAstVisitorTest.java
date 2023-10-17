@@ -39,8 +39,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression.ResultType;
+import gov.nist.secauto.metaschema.core.metapath.antlr.BuildCSTVisitor;
+import gov.nist.secauto.metaschema.core.metapath.antlr.FailingErrorListener;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10Lexer;
-import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10Parser;
+import gov.nist.secauto.metaschema.core.metapath.cst.AbstractComparison;
+import gov.nist.secauto.metaschema.core.metapath.cst.And;
+import gov.nist.secauto.metaschema.core.metapath.cst.GeneralComparison;
+import gov.nist.secauto.metaschema.core.metapath.cst.IExpression;
+import gov.nist.secauto.metaschema.core.metapath.cst.ValueComparison;
 import gov.nist.secauto.metaschema.core.metapath.function.ComparisonFunctions;
 import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
@@ -98,14 +105,14 @@ class BuildAstVisitorTest {
 
     Metapath10Lexer lexer = new Metapath10Lexer(CharStreams.fromString(path));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
-    Metapath10Parser parser = new Metapath10Parser(tokens);
+    Metapath10 parser = new Metapath10(tokens);
     parser.addErrorListener(new FailingErrorListener());
 
     ParseTree tree = parser.expr();
-    // CSTPrinter cstPrinter = new CSTPrinter(System.out);
+    // ParseTreePrinter cstPrinter = new ParseTreePrinter(System.out);
     // cstPrinter.print(tree, Arrays.asList(parser.getRuleNames()));
 
-    return new BuildAstVisitor().visit(tree);
+    return new BuildCSTVisitor().visit(tree);
   }
 
   @Test

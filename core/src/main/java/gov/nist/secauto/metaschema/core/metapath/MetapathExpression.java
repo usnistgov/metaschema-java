@@ -26,8 +26,14 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
+import gov.nist.secauto.metaschema.core.metapath.antlr.BuildCSTVisitor;
+import gov.nist.secauto.metaschema.core.metapath.antlr.FailingErrorListener;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10Lexer;
+import gov.nist.secauto.metaschema.core.metapath.antlr.ParseTreePrinter;
+import gov.nist.secauto.metaschema.core.metapath.cst.CSTPrinter;
+import gov.nist.secauto.metaschema.core.metapath.cst.ContextItem;
+import gov.nist.secauto.metaschema.core.metapath.cst.IExpression;
 import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.function.library.FnBoolean;
 import gov.nist.secauto.metaschema.core.metapath.function.library.FnData;
@@ -101,20 +107,20 @@ public class MetapathExpression {
         if (LOGGER.isDebugEnabled()) {
           try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             try (PrintStream ps = new PrintStream(os, true, StandardCharsets.UTF_8)) {
-              CSTPrinter printer = new CSTPrinter(ps);
+              ParseTreePrinter printer = new ParseTreePrinter(ps);
               printer.print(tree, Metapath10.ruleNames);
               ps.flush();
             }
-            LOGGER.atDebug().log(String.format("Metapath CST:%n%s", os.toString(StandardCharsets.UTF_8)));
+            LOGGER.atDebug().log(String.format("Metapath AST:%n%s", os.toString(StandardCharsets.UTF_8)));
           } catch (IOException ex) {
             LOGGER.atError().withThrowable(ex).log("An unexpected error occured while closing the steam.");
           }
         }
 
-        IExpression expr = new BuildAstVisitor().visit(tree);
+        IExpression expr = new BuildCSTVisitor().visit(tree);
 
         if (LOGGER.isDebugEnabled()) {
-          LOGGER.atDebug().log(String.format("Metapath AST:%n%s", ASTPrinter.instance().visit(expr)));
+          LOGGER.atDebug().log(String.format("Metapath CST:%n%s", CSTPrinter.instance().visit(expr)));
         }
         retval = new MetapathExpression(path, expr);
       } catch (MetapathException | ParseCancellationException ex) {
@@ -160,7 +166,7 @@ public class MetapathExpression {
 
   @Override
   public String toString() {
-    return ASTPrinter.instance().visit(getASTNode());
+    return CSTPrinter.instance().visit(getASTNode());
   }
 
   /**

@@ -2,10 +2,13 @@
 
 parser grammar Metapath10;
 
-options { tokenVocab=Metapath10Lexer; }
+options { tokenVocab=Metapath10Lexer; superClass=Metapath10ParserBase; }
+
+// Metapath extensions
+metapath : expr EOF ;
 
 // [1]
-metapath : expr EOF ;
+// xpath : expr EOF ;
 // paramlist : param ( COMMA param)* ;
 // param : DOLLAR eqname typedeclaration? ;
 // functionbody : enclosedexpr ;
@@ -13,24 +16,24 @@ metapath : expr EOF ;
 // enclosedexpr : OC expr? CC ;
 expr : exprsingle ( COMMA exprsingle)* ;
 // exprsingle : forexpr | letexpr | quantifiedexpr | ifexpr | orexpr ;
-exprsingle : letexpr | orexpr ;
-// forexpr : simpleforclause KW_RETURN exprsingle ;
-// simpleforclause : KW_FOR simpleforbinding ( COMMA simpleforbinding)* ;
+exprsingle : forexpr | letexpr | ifexpr | orexpr ;
+forexpr : simpleforclause KW_RETURN exprsingle ;
+simpleforclause : KW_FOR simpleforbinding ( COMMA simpleforbinding)* ;
 // [10]
-// simpleforbinding : DOLLAR varname KW_IN exprsingle ;
+simpleforbinding : DOLLAR varname KW_IN exprsingle ;
 letexpr :    simpleletclause KW_RETURN exprsingle ;
 simpleletclause : KW_LET simpleletbinding ( COMMA simpleletbinding)* ;
 simpleletbinding : DOLLAR varname CEQ exprsingle ;
-// quantifiedexpr :    ( KW_SOME | KW_EVERY) DOLLAR varname KW_IN exprsingle ( COMMA DOLLAR varname KW_IN exprsingle)* KW_SATISFIES exprsingle ;
+quantifiedexpr :    ( KW_SOME | KW_EVERY) DOLLAR varname KW_IN exprsingle ( COMMA DOLLAR varname KW_IN exprsingle)* KW_SATISFIES exprsingle ;
 // [15]
-// ifexpr : KW_IF OP expr CP KW_THEN exprsingle KW_ELSE exprsingle ;
+ifexpr : KW_IF OP expr CP KW_THEN exprsingle KW_ELSE exprsingle ;
 orexpr : andexpr ( KW_OR andexpr )* ;
 andexpr : comparisonexpr ( KW_AND comparisonexpr )* ;
 // comparisonexpr : stringconcatexpr ( (valuecomp | generalcomp | nodecomp) stringconcatexpr )? ;
 comparisonexpr : stringconcatexpr ( (valuecomp | generalcomp) stringconcatexpr )? ;
-stringconcatexpr : additiveexpr ( PP additiveexpr )* ;
+stringconcatexpr : rangeexpr ( PP rangeexpr )* ;
 // [20]
-// rangeexpr : additiveexpr ( KW_TO additiveexpr )? ;
+rangeexpr : additiveexpr ( KW_TO additiveexpr )? ;
 additiveexpr : multiplicativeexpr ( (PLUS | MINUS) multiplicativeexpr )* ;
 multiplicativeexpr : unionexpr ( (STAR | KW_DIV | KW_IDIV | KW_MOD) unionexpr )* ;
 unionexpr : intersectexceptexpr ( (KW_UNION | P) intersectexceptexpr )* ;
@@ -69,9 +72,9 @@ reverseaxis : KW_PARENT COLONCOLON | KW_ANCESTOR COLONCOLON | KW_ANCESTOR_OR_SEL
 // [45]
 abbrevreversestep : DD ;
 // nodetest : kindtest | nametest ;
+nodetest : nametest ;
 nametest : eqname | wildcard ;
-// wildcard : STAR | NCName CS | SC NCName | BracedURILiteral STAR ;
-wildcard : STAR ;
+wildcard : STAR | NCName CS | SC NCName | BracedURILiteral STAR ;
 // postfixexpr : primaryexpr (predicate | argumentlist | lookup)* ;
 postfixexpr : primaryexpr (predicate)* ;
 // [50]
@@ -91,26 +94,7 @@ varref : DOLLAR varname ;
 varname : eqname ;
 parenthesizedexpr : OP expr? CP ;
 contextitemexpr : D ;
-functioncall : 
-                      { !(
-                        getInputStream().LA(1) == KW_ARRAY
-				        || getInputStream().LA(1) == KW_ATTRIBUTE
-				        || getInputStream().LA(1) == KW_COMMENT
-				        || getInputStream().LA(1) == KW_DOCUMENT_NODE
-				        || getInputStream().LA(1) == KW_ELEMENT
-				        || getInputStream().LA(1) == KW_EMPTY_SEQUENCE
-				        || getInputStream().LA(1) == KW_FUNCTION
-				        || getInputStream().LA(1) == KW_IF
-				        || getInputStream().LA(1) == KW_ITEM
-				        || getInputStream().LA(1) == KW_MAP
-				        || getInputStream().LA(1) == KW_NAMESPACE_NODE
-				        || getInputStream().LA(1) == KW_NODE
-				        || getInputStream().LA(1) == KW_PROCESSING_INSTRUCTION
-				        || getInputStream().LA(1) == KW_SCHEMA_ATTRIBUTE
-				        || getInputStream().LA(1) == KW_SCHEMA_ELEMENT
-				        || getInputStream().LA(1) == KW_TEXT
-                        ) }?
-                        eqname argumentlist ;
+functioncall : { this.isFuncCall() }? eqname argumentlist ;
 // argument : exprsingle | argumentplaceholder ;
 argument : exprsingle ;
 // [65]
@@ -173,8 +157,7 @@ argument : exprsingle ;
 
 
 // Error in the spec. EQName also includes acceptable keywords.
-//eqname : QName | URIQualifiedName
-eqname : LocalName
+eqname : QName | URIQualifiedName
  | KW_ANCESTOR
  | KW_ANCESTOR_OR_SELF
  | KW_AND
@@ -190,28 +173,28 @@ eqname : LocalName
  | KW_DIV
 // | KW_DOCUMENT_NODE
 // | KW_ELEMENT
-// | KW_ELSE
+ | KW_ELSE
  | KW_EMPTY_SEQUENCE
  | KW_EQ
-// | KW_EVERY
+ | KW_EVERY
  | KW_EXCEPT
 // | KW_FOLLOWING
 // | KW_FOLLOWING_SIBLING
-// | KW_FOR
+ | KW_FOR
 // | KW_FUNCTION
  | KW_GE
  | KW_GT
  | KW_IDIV
-// | KW_IF
-// | KW_IN
+ | KW_IF
+ | KW_IN
 // | KW_INSTANCE
  | KW_INTERSECT
-//  | KW_IS
+// | KW_IS
 // | KW_ITEM
  | KW_LE
  | KW_LET
  | KW_LT
- // | KW_MAP
+// | KW_MAP
  | KW_MOD
 // | KW_NAMESPACE
 // | KW_NAMESPACE_NODE
@@ -224,13 +207,13 @@ eqname : LocalName
  | KW_PRECEDING_SIBLING
 // | KW_PROCESSING_INSTRUCTION
  | KW_RETURN
-// | KW_SATISFIES
+ | KW_SATISFIES
 // | KW_SCHEMA_ATTRIBUTE
 // | KW_SCHEMA_ELEMENT
  | KW_SELF
-// | KW_SOME
+ | KW_SOME
 // | KW_TEXT
-// | KW_THEN
+ | KW_THEN
 // | KW_TREAT
  | KW_UNION
  ;

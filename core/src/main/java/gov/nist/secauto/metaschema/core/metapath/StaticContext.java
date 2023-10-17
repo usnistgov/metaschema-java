@@ -36,6 +36,26 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public final class StaticContext {
+  @NonNull
+  private static final Map<String, URI> WELL_KNOWN_NAMESPACES;
+
+  static {
+    Map<String, URI> knownNamespaces = new ConcurrentHashMap<>();
+    knownNamespaces.put(
+        MetapathConstants.PREFIX_METAPATH,
+        MetapathConstants.NS_METAPATH);
+    knownNamespaces.put(
+        MetapathConstants.PREFIX_XML_SCHEMA,
+        MetapathConstants.NS_XML_SCHEMA);
+    knownNamespaces.put(
+        MetapathConstants.PREFIX_XPATH_FUNCTIONS,
+        MetapathConstants.NS_XPATH_FUNCTIONS);
+    knownNamespaces.put(
+        MetapathConstants.PREFIX_XPATH_FUNCTIONS_MATH,
+        MetapathConstants.NS_XPATH_FUNCTIONS_MATH);
+    WELL_KNOWN_NAMESPACES = CollectionUtil.unmodifiableMap(knownNamespaces);
+  }
+
   @Nullable
   private final URI baseUri;
   @NonNull
@@ -72,9 +92,37 @@ public final class StaticContext {
     }
   }
 
+  /**
+   * Get the namespace URI associated with the provided {@code prefix}, if any is
+   * bound.
+   *
+   * @param prefix
+   *          the namespace prefix
+   * @return the namespace URI bound to the prefix, or {@code null} if no
+   *         namespace is bound to the prefix
+   */
   @Nullable
   public URI getUriForPrefix(@NonNull String prefix) {
-    return knownNamespaces.get(prefix);
+    URI retval = knownNamespaces.get(prefix);
+    if (retval == null) {
+      retval = WELL_KNOWN_NAMESPACES.get(prefix);
+    }
+    return retval;
+  }
+
+  /**
+   * Get the namespace associated with the provided {@code prefix} as a string, if
+   * any is bound.
+   *
+   * @param prefix
+   *          the namespace prefix
+   * @return the namespace string bound to the prefix, or {@code null} if no
+   *         namespace is bound to the prefix
+   */
+  @Nullable
+  public String lookupNamespaceForPrefix(@NonNull String prefix) {
+    URI result = getUriForPrefix(prefix);
+    return result == null ? null : result.toASCIIString();
   }
 
   /**

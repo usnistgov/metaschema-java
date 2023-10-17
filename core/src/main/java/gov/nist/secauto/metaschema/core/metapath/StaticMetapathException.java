@@ -26,23 +26,84 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
+import gov.nist.secauto.metaschema.core.metapath.cst.AbstractCodedMetapathException;
+
+/**
+ * MPST: Exceptions related to the Metapath static context.
+ */
 public class StaticMetapathException
     extends AbstractCodedMetapathException {
   public static final int NO_FUNCTION_MATCH = 17;
+
+  /**
+   * <a href= "https://www.w3.org/TR/xpath-31/#ERRXQST0070">err:MQST0070</a>: A
+   * <a href="https://www.w3.org/TR/xpath-31/#dt-static-error">static error</a> is
+   * raised if any of the following conditions is statically detected in any
+   * expression.
+   * <ul>
+   * <li>The prefix xml is bound to some namespace URI other than
+   * http://www.w3.org/XML/1998/namespace.</li>
+   * <li>A prefix other than xml is bound to the namespace URI
+   * http://www.w3.org/XML/1998/namespace.</li>
+   * <li>The prefix xmlns is bound to any namespace URI.</li>
+   * <li>A prefix other than xmlns is bound to the namespace URI
+   * http://www.w3.org/2000/xmlns/.</li>
+   * </ul>
+   */
+  public static final int NAMESPACE_MISUSE = 70;
+
+  /**
+   * <a href= "https://www.w3.org/TR/xpath-31/#ERRXQST0070">err:MQST0070</a>: A It
+   * is a <a href="https://www.w3.org/TR/xpath-31/#dt-static-error">static
+   * error</a> if a QName used in an expression contains a namespace prefix that
+   * cannot be expanded into a namespace URI by using the
+   * <a href="https://www.w3.org/TR/xpath-31/#dt-static-namespaces">statically
+   * known namespaces</a>.
+   */
+  public static final int PREFIX_NOT_EXPANDABLE = 81;
 
   /**
    * the serial version UID.
    */
   private static final long serialVersionUID = 2L;
 
-  public StaticMetapathException(int code, String message) {
-    super(code, message);
-  }
-
+  /**
+   * Constructs a new exception with the provided {@code code}, {@code message},
+   * and {@code cause}.
+   *
+   * @param code
+   *          the error code value
+   * @param message
+   *          the exception message
+   * @param cause
+   *          the original exception cause
+   */
   public StaticMetapathException(int code, String message, Throwable cause) {
     super(code, message, cause);
   }
 
+  /**
+   * Constructs a new exception with the provided {@code code}, {@code message},
+   * and no cause.
+   *
+   * @param code
+   *          the error code value
+   * @param message
+   *          the exception message
+   */
+  public StaticMetapathException(int code, String message) {
+    super(code, message);
+  }
+
+  /**
+   * Constructs a new exception with the provided {@code code}, no message, and
+   * the {@code cause}.
+   *
+   * @param code
+   *          the error code value
+   * @param cause
+   *          the original exception cause
+   */
   public StaticMetapathException(int code, Throwable cause) {
     super(code, cause);
   }
