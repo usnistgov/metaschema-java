@@ -98,7 +98,7 @@ public class Quantified
   @SuppressWarnings("PMD.SystemPrintln")
   @Override
   public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
-    Map<String, ISequence<?>> clauses = getInClauses().entrySet().stream()
+    Map<String, ISequence<? extends IItem>> clauses = getInClauses().entrySet().stream()
         .map(entry -> Map.entry(
             entry.getKey(),
             entry.getValue().accept(dynamicContext, focus)))
@@ -108,7 +108,7 @@ public class Quantified
     List<? extends Collection<? extends IItem>> clauseValues = new ArrayList<>(clauses.values());
 
     boolean retval = true;
-    for (List<? extends IItem> product : new CartesianProduct<>(clauseValues)) {
+    for (List<IItem> product : new CartesianProduct<>(clauseValues)) {
       DynamicContext subDynamicContext = dynamicContext.subContext();
       for (int idx = 0; idx < product.size(); idx++) {
         String var = clauseKeys.get(idx);
@@ -140,7 +140,8 @@ public class Quantified
     return visitor.visitQuantified(this, context);
   }
 
-  public static <T extends IItem> Iterable<List<T>> cartesianProduct(final List<? extends Collection<T>> axes) {
+  public static <T extends IItem> Iterable<List<T>>
+      cartesianProduct(final List<? extends Collection<? extends T>> axes) {
     return new CartesianProduct<>(axes);
   }
 
@@ -207,7 +208,7 @@ public class Quantified
     private final Object[][] dimensions;
     private final long size;
 
-    private CartesianProduct(final List<? extends Collection<T>> axes) {
+    private CartesianProduct(final List<? extends Collection<? extends T>> axes) {
       Object[][] dimensions = new Object[axes.size()][];
       long size = dimensions.length == 0 ? 0 : 1;
       for (int i = 0; i < axes.size(); i++) {
