@@ -33,9 +33,22 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * The CST node for a Metapath
+ * <a href="https://www.w3.org/TR/xpath-31/#combining_seq">except
+ * expression</a>.
+ */
 public class Except
     extends AbstractFilterExpression {
 
+  /**
+   * Construct a new Metapath except expression CST node.
+   *
+   * @param left
+   *          an expression indicating the items to filter
+   * @param right
+   *          an expression indicating the items to omit
+   */
   public Except(@NonNull IExpression left, @NonNull IExpression right) {
     super(left, right);
   }

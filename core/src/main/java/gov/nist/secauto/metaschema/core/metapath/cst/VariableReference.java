@@ -36,14 +36,30 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * The CST node for a Metapath
+ * <a href="https://www.w3.org/TR/xpath-31/#id-variables">variable
+ * reference</a>.
+ */
 public class VariableReference implements IExpression {
   @NonNull
   private final Name name;
 
+  /**
+   * Construct a new Metapath variable reference CST node.
+   *
+   * @param name
+   *          the variable name
+   */
   public VariableReference(@NonNull Name name) {
     this.name = name;
   }
 
+  /**
+   * Get the variable name.
+   *
+   * @return the variable name
+   */
   @NonNull
   public Name getName() {
     return name;

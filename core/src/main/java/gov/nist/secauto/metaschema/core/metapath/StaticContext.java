@@ -34,7 +34,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+// add support for default namespace
+/**
+ * The implementation of a Metapath
+ * <a href="https://www.w3.org/TR/xpath-31/#static_context">static context</a>.
+ */
 public final class StaticContext {
   @NonNull
   private static final Map<String, URI> WELL_KNOWN_NAMESPACES;
@@ -61,11 +67,36 @@ public final class StaticContext {
   @NonNull
   private final Map<String, URI> knownNamespaces;
 
+  /**
+   * Get the mapping of prefix to namespace URI for all well-known namespaces
+   * provided by default to the static context.
+   * <p>
+   * These namespaces can be overridden using the
+   * {@link Builder#namespace(String, URI)} method.
+   *
+   * @return the mapping of prefix to namespace URI for all well-known namespaces
+   */
+  @SuppressFBWarnings("MS_EXPOSE_REP")
+  public static Map<String, URI> getWellKnownNamespaces() {
+    return WELL_KNOWN_NAMESPACES;
+  }
+
+  /**
+   * Create a new static context instance using default values.
+   *
+   * @return a new static context instance
+   */
   @NonNull
-  public static StaticContext newInstance() {
+  public static StaticContext instance() {
     return builder().build();
   }
 
+  /**
+   * Create a new static context builder that allows for fine-grained adjustments
+   * when creating a new static context.
+   *
+   * @return a new builder
+   */
   @NonNull
   public static Builder builder() {
     return new Builder();
@@ -95,16 +126,26 @@ public final class StaticContext {
   /**
    * Get the namespace URI associated with the provided {@code prefix}, if any is
    * bound.
+   * <p>
+   * This method uses the namespaces set by the
+   * {@link Builder#namespace(String, URI)} method, falling back to the well-known
+   * namespace bindings when a prefix match is not found.
+   * <p>
+   * The well-known namespace bindings can be retrieved using the
+   * {@link StaticContext#getWellKnownNamespaces()} method.
    *
    * @param prefix
    *          the namespace prefix
    * @return the namespace URI bound to the prefix, or {@code null} if no
    *         namespace is bound to the prefix
+   * @see Builder#namespace(String, URI)
+   * @see #getWellKnownNamespaces()
    */
   @Nullable
-  public URI getUriForPrefix(@NonNull String prefix) {
+  public URI lookupNamespaceURIForPrefix(@NonNull String prefix) {
     URI retval = knownNamespaces.get(prefix);
     if (retval == null) {
+      // fall back to well-known namespaces
       retval = WELL_KNOWN_NAMESPACES.get(prefix);
     }
     return retval;
@@ -121,7 +162,7 @@ public final class StaticContext {
    */
   @Nullable
   public String lookupNamespaceForPrefix(@NonNull String prefix) {
-    URI result = getUriForPrefix(prefix);
+    URI result = lookupNamespaceURIForPrefix(prefix);
     return result == null ? null : result.toASCIIString();
   }
 
@@ -131,26 +172,26 @@ public final class StaticContext {
    * @return the generated dynamic context
    */
   @NonNull
-  public DynamicContext newDynamicContext() {
+  public DynamicContext dynamicContext() {
     return new DynamicContext(this);
   }
 
   public static class Builder {
     private URI baseUri;
     @NonNull
-    private final Map<String, URI> knownNamespaces = new ConcurrentHashMap<>();
+    private final Map<String, URI> namespaces = new ConcurrentHashMap<>();
 
     private Builder() {
-      knownNamespaces.put(
+      namespaces.put(
           MetapathConstants.PREFIX_METAPATH,
           MetapathConstants.NS_METAPATH);
-      knownNamespaces.put(
+      namespaces.put(
           MetapathConstants.PREFIX_XML_SCHEMA,
           MetapathConstants.NS_XML_SCHEMA);
-      knownNamespaces.put(
+      namespaces.put(
           MetapathConstants.PREFIX_XPATH_FUNCTIONS,
           MetapathConstants.NS_XPATH_FUNCTIONS);
-      knownNamespaces.put(
+      namespaces.put(
           MetapathConstants.PREFIX_XPATH_FUNCTIONS_MATH,
           MetapathConstants.NS_XPATH_FUNCTIONS_MATH);
     }
@@ -170,17 +211,42 @@ public final class StaticContext {
       return this;
     }
 
+    /**
+     * Adds a new prefix to namespace URI binding to the mapping of
+     * <a href="https://www.w3.org/TR/xpath-31/#dt-static-namespaces">statically
+     * known namespaces</a>.
+     * <p>
+     * A namespace set by this method can be resolved using the
+     * {@link StaticContext#lookupNamespaceForPrefix(String)} method.
+     * <p>
+     * Well-known namespace bindings are used by default, which can be retrieved
+     * using the {@link StaticContext#getWellKnownNamespaces()} method.
+     *
+     * @param prefix
+     *          the prefix to associate with the namespace, which may be
+     * @param uri
+     *          the namespace URI
+     * @return this builder
+     * @see StaticContext#lookupNamespaceForPrefix(String)
+     * @see StaticContext#lookupNamespaceURIForPrefix(String)
+     * @see StaticContext#getWellKnownNamespaces()
+     */
     @NonNull
     public Builder namespace(@NonNull String prefix, @NonNull URI uri) {
-      this.knownNamespaces.put(prefix, uri);
+      this.namespaces.put(prefix, uri);
       return this;
     }
 
+    /**
+     * Construct a new static context using the information provided to the builder.
+     *
+     * @return the new static context
+     */
     @NonNull
     public StaticContext build() {
       return new StaticContext(
           baseUri,
-          CollectionUtil.unmodifiableMap(knownNamespaces));
+          CollectionUtil.unmodifiableMap(namespaces));
     }
   }
 }

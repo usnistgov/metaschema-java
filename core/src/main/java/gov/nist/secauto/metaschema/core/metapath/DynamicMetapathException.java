@@ -26,6 +26,10 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
+/**
+ * MPDY: Exceptions related to the Metapath dynamic context and dynamic
+ * evaluation.
+ */
 public class DynamicMetapathException
     extends AbstractCodedMetapathException {
 
@@ -34,8 +38,16 @@ public class DynamicMetapathException
    */
   private static final long serialVersionUID = 1L;
 
+  /**
+   * <a href= "https://www.w3.org/TR/xpath-31/#ERRXPDY0002">err:MPDY0002</a>: It
+   * is a <a href="https://www.w3.org/TR/xpath-31/#dt-dynamic-error">dynamic
+   * error</a> if evaluation of an expression relies on some part of the
+   * <a href="https://www.w3.org/TR/xpath-31/#dt-dynamic-context">dynamic
+   * context</a> that is
+   * <a href="https://www.w3.org/TR/xpath-datamodel-31/#dt-absent">absent</a>.
+   */
   public static final int DYNAMIC_CONTEXT_ABSENT = 2;
-  public static final int INVALID_PATH_GRAMMAR = 3;
+
   public static final int CONTEXT_NODE_NOT_A_DOCUMENT_NODE = 50;
 
   public DynamicMetapathException(int code, String message) {
@@ -52,6 +64,6 @@ public class DynamicMetapathException
 
   @Override
   protected String getCodePrefix() {
-    return "XPDY";
+    return "MPDY";
   }
 }

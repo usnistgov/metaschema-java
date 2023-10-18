@@ -37,13 +37,18 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * The CST node for a Metapath
+ * <a href="https://www.w3.org/TR/xpath-31/#dt-expanded-qname">expanded QName
+ * name test</a>.
+ */
 public class Name // NOPMD - intentional
     implements IExpression {
 
   private final String value;
 
   /**
-   * Create a new literal expression.
+   * Construct a new expanded QName-based literal expression.
    *
    * @param value
    *          the literal value

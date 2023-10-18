@@ -287,7 +287,7 @@ public interface IBindingContext extends IModuleLoaderStrategy {
     IBoundLoader loader = newBoundLoader();
     loader.disableFeature(DeserializationFeature.DESERIALIZE_VALIDATE_CONSTRAINTS);
 
-    DynamicContext context = StaticContext.newInstance().newDynamicContext();
+    DynamicContext context = StaticContext.instance().dynamicContext();
     context.setDocumentLoader(loader);
 
     return new DefaultConstraintValidator(context, handler);
@@ -371,7 +371,7 @@ public interface IBindingContext extends IModuleLoaderStrategy {
     IBoundLoader loader = newBoundLoader();
     loader.disableFeature(DeserializationFeature.DESERIALIZE_VALIDATE_CONSTRAINTS);
 
-    DynamicContext dynamicContext = StaticContext.newInstance().newDynamicContext();
+    DynamicContext dynamicContext = StaticContext.instance().dynamicContext();
     dynamicContext.setDocumentLoader(loader);
     IDocumentNodeItem nodeItem = loader.loadAsNodeItem(target);
 

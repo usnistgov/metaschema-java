@@ -328,24 +328,12 @@ public class DefaultFunction
       if (isDeterministic()) {
         // check cache
         callingContext = new CallingContext(arguments, contextItem);
+        // TODO: implement something like computeIfAbsent
         // attempt to get the result from the cache
         result = dynamicContext.getCachedResult(callingContext);
       }
 
       if (result == null) {
-        // logger.info(String.format("Executing function '%s' with arguments '%s'.",
-        // toSignature(),
-        // convertedArguments.toString()));
-
-        // INodeItem actualFocus = focus == null ? null : focus.getNodeItem();
-        // if (isFocusDepenent() && actualFocus == null) {
-        // throw new
-        // DynamicMetapathException(DynamicMetapathException.DYNAMIC_CONTEXT_ABSENT,
-        // "Null
-        // focus");
-        // }
-        // result = handler.execute(this, convertedArguments, dynamicContext,
-        // actualFocus);
         result = handler.execute(this, convertedArguments, dynamicContext, contextItem);
 
         if (callingContext != null) {

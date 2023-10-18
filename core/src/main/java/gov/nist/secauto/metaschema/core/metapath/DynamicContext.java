@@ -38,9 +38,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
 import java.time.Clock;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -51,14 +48,24 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+// TODO: add support for in-scope namespaces
+/**
+ * The implementation of a Metapath
+ * <a href="https://www.w3.org/TR/xpath-31/#eval_context">dynamic context</a>.
+ */
 public class DynamicContext { // NOPMD - intentional data class
   @NonNull
   private final Map<String, ISequence<?>> letVariableMap;
   @NonNull
   private final SharedState sharedState;
 
-  @SuppressWarnings("null")
-  public DynamicContext(@NonNull StaticContext staticContext) {
+  /**
+   * Construct a new Metapath dynamic context.
+   *
+   * @param staticContext
+   *          the Metapath static context
+   */
+  DynamicContext(@NonNull StaticContext staticContext) {
     this.letVariableMap = new ConcurrentHashMap<>();
     this.sharedState = new SharedState(staticContext);
   }
@@ -96,21 +103,45 @@ public class DynamicContext { // NOPMD - intentional data class
     }
   }
 
+  /**
+   * Generate a new dynamic context that is based on this object.
+   * <p>
+   * This method can be used to create a new sub-context where changes can be made
+   * without affecting this context. This is useful for setting information that
+   * is only used in a limited evaluation scope, such as variables.
+   *
+   * @return a new dynamic context
+   */
   @NonNull
   public DynamicContext subContext() {
     return new DynamicContext(this);
   }
 
+  /**
+   * Get the static context associated with this dynamic context.
+   *
+   * @return the associated static context
+   */
   @NonNull
   public StaticContext getStaticContext() {
     return sharedState.staticContext;
   }
 
+  /**
+   * Get the default time zone used for evaluation.
+   *
+   * @return the time zone identifier object
+   */
   @NonNull
   public ZoneId getImplicitTimeZone() {
     return sharedState.implicitTimeZone;
   }
 
+  /**
+   * Get the current date and time.
+   *
+   * @return the current date and time
+   */
   @NonNull
   public ZonedDateTime getCurrentDateTime() {
     return sharedState.currentDateTime;
@@ -188,28 +219,6 @@ public class DynamicContext { // NOPMD - intentional data class
     }
 
     @Override
-    public IDocumentNodeItem loadAsNodeItem(Path path) throws IOException {
-      URI uri = path.toUri();
-      IDocumentNodeItem retval = sharedState.availableDocuments.get(uri);
-      if (retval == null) {
-        retval = getProxiedDocumentLoader().loadAsNodeItem(path);
-        sharedState.availableDocuments.put(uri, retval);
-      }
-      return retval;
-    }
-
-    @Override
-    public IDocumentNodeItem loadAsNodeItem(URL url) throws IOException, URISyntaxException {
-      URI uri = ObjectUtils.notNull(url.toURI());
-      IDocumentNodeItem retval = sharedState.availableDocuments.get(uri);
-      if (retval == null) {
-        retval = getProxiedDocumentLoader().loadAsNodeItem(uri);
-        sharedState.availableDocuments.put(uri, retval);
-      }
-      return retval;
-    }
-
-    @Override
     public IDocumentNodeItem loadAsNodeItem(URI uri) throws IOException {
       IDocumentNodeItem retval = sharedState.availableDocuments.get(uri);
       if (retval == null) {
@@ -223,8 +232,8 @@ public class DynamicContext { // NOPMD - intentional data class
     public @NonNull IDocumentNodeItem loadAsNodeItem(
         @NonNull InputStream is,
         @NonNull URI documentUri) throws IOException {
-      throw new UnsupportedOperationException();
-      // return getProxiedDocumentLoader().loadAsNodeItem(is, documentUri);
+      // throw new UnsupportedOperationException();
+      return getProxiedDocumentLoader().loadAsNodeItem(is, documentUri);
     }
 
     public class ContextUriResolver implements IUriResolver {

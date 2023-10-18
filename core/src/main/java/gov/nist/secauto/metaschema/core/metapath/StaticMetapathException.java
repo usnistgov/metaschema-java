@@ -27,14 +27,23 @@
 package gov.nist.secauto.metaschema.core.metapath;
 
 /**
- * MPST: Exceptions related to the Metapath static context.
+ * MPST: Exceptions related to the Metapath static context and static
+ * evaluation.
  */
 public class StaticMetapathException
     extends AbstractCodedMetapathException {
+  /**
+   * <a href= "https://www.w3.org/TR/xpath-31/#ERRXPST0003">err:MPST0003</a>: It
+   * is a <a href="https://www.w3.org/TR/xpath-31/#dt-static-error">static
+   * error</a> if an expression is not a valid instance of the Metapath grammar.
+   */
+  // TODO: need a grammar link
+  public static final int INVALID_PATH_GRAMMAR = 3;
+
   public static final int NO_FUNCTION_MATCH = 17;
 
   /**
-   * <a href= "https://www.w3.org/TR/xpath-31/#ERRXQST0070">err:MQST0070</a>: A
+   * <a href= "https://www.w3.org/TR/xpath-31/#ERRXQST0070">err:MPST0070</a>: A
    * <a href="https://www.w3.org/TR/xpath-31/#dt-static-error">static error</a> is
    * raised if any of the following conditions is statically detected in any
    * expression.
@@ -51,7 +60,7 @@ public class StaticMetapathException
   public static final int NAMESPACE_MISUSE = 70;
 
   /**
-   * <a href= "https://www.w3.org/TR/xpath-31/#ERRXQST0070">err:MQST0070</a>: A It
+   * <a href= "https://www.w3.org/TR/xpath-31/#ERRXQST0070">err:MPST0070</a>: It
    * is a <a href="https://www.w3.org/TR/xpath-31/#dt-static-error">static
    * error</a> if a QName used in an expression contains a namespace prefix that
    * cannot be expanded into a namespace URI by using the

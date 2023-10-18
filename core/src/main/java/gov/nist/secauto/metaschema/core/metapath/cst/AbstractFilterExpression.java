@@ -34,6 +34,11 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * An abstract CST node for a Metapath
+ * <a href="https://www.w3.org/TR/xpath-31/#combining_seq">filtering
+ * expression</a>.
+ */
 public abstract class AbstractFilterExpression
     extends AbstractBinaryExpression<IExpression, IExpression> {
 

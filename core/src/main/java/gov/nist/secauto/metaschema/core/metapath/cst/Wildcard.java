@@ -34,6 +34,11 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * The CST node for a Metapath
+ * <a href="https://www.w3.org/TR/xpath-31/#doc-xpath31-Wildcard">wildcard name
+ * test</a>.
+ */
 public class Wildcard implements IExpression {
   @SuppressWarnings("null")
   @Override

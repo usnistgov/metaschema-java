@@ -99,7 +99,7 @@ class BuildAstVisitorTest {
   @NonNull
   private static DynamicContext newDynamicContext() {
     return StaticContext.builder()
-        .build().newDynamicContext();
+        .build().dynamicContext();
   }
 
   private static IExpression parseExpression(@NonNull String path) {

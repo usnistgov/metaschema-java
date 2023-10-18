@@ -37,6 +37,11 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * The CST node for a Metapath
+ * <a href="https://www.w3.org/TR/xpath-31/#doc-xpath31-RangeExpr">range
+ * expression</a>.
+ */
 public class Range
     extends AbstractBinaryExpression<IExpression, IExpression> {
 

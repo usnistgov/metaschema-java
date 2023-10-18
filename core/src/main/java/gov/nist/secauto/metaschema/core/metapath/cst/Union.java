@@ -36,6 +36,10 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * The CST node for a Metapath
+ * <a href="https://www.w3.org/TR/xpath-31/#combining_seq">union expression</a>.
+ */
 public class Union
     extends AbstractNAryExpression {
 

@@ -41,6 +41,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDecimalItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.antlr.v4.runtime.CharStreams;
@@ -53,18 +54,37 @@ import org.apache.logging.log4j.Logger;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+/**
+ * Supports compiling and executing Metapath expressions.
+ */
 public class MetapathExpression {
 
   public enum ResultType {
+    /**
+     * The result is expected to be a {@link BigDecimal} value.
+     */
     NUMBER,
+    /**
+     * The result is expected to be a {@link String} value.
+     */
     STRING,
+    /**
+     * The result is expected to be a {@link Boolean} value.
+     */
     BOOLEAN,
+    /**
+     * The result is expected to be an {@link ISequence} value.
+     */
     SEQUENCE,
+    /**
+     * The result is expected to be an {@link INodeItem} value.
+     */
     NODE;
   }
 
@@ -126,7 +146,7 @@ public class MetapathExpression {
       } catch (MetapathException | ParseCancellationException ex) {
         String msg = String.format("Unable to compile Metapath '%s'", path);
         LOGGER.atError().withThrowable(ex).log(msg);
-        throw new MetapathException(msg, ex);
+        throw new StaticMetapathException(StaticMetapathException.INVALID_PATH_GRAMMAR, msg, ex);
       }
     }
     return retval;
@@ -340,7 +360,7 @@ public class MetapathExpression {
     return (ISequence<T>) evaluate(
         focus,
         StaticContext.builder()
-            .build().newDynamicContext());
+            .build().dynamicContext());
   }
 
   /**

@@ -62,7 +62,7 @@ public class ExpressionTestBase {
 
     return StaticContext.builder()
         .baseUri(baseUri)
-        .build().newDynamicContext();
+        .build().dynamicContext();
   }
 
   @NonNull
