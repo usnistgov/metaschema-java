@@ -51,7 +51,7 @@ public final class FnDoc {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("doc")
-      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .deterministic()
       .contextDependent()
       .focusIndependent()

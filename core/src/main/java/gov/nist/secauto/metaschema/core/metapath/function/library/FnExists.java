@@ -48,7 +48,7 @@ public final class FnExists {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("exists")
-      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
       .focusIndependent()

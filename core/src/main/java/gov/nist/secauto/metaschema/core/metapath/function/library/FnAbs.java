@@ -51,7 +51,7 @@ public final class FnAbs {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name(NAME)
-      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
       .focusIndependent()

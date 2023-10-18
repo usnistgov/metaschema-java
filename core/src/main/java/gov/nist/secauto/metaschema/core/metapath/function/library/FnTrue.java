@@ -41,7 +41,7 @@ public final class FnTrue {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("true")
-      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
       .focusIndependent()

@@ -34,7 +34,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * sets for a given purpose.
  *
  * @param <V>
- *          the feature value type
+ *          the feature value Java type
  */
 public abstract class AbstractConfigurationFeature<V> implements IConfigurationFeature<V> {
   @NonNull

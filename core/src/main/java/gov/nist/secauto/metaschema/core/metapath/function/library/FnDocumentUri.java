@@ -49,7 +49,7 @@ public final class FnDocumentUri {
   @NonNull
   static final IFunction SIGNATURE_NO_ARG = IFunction.builder()
       .name("document-uri")
-      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .deterministic()
       .contextDependent()
       .focusDependent()
@@ -61,7 +61,7 @@ public final class FnDocumentUri {
   @NonNull
   static final IFunction SIGNATURE_ONE_ARG = IFunction.builder()
       .name("document-uri")
-      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
       .focusIndependent()

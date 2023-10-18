@@ -47,7 +47,7 @@ public final class FnStartsWith {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("starts-with")
-      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .argument(IArgument.builder()
           .name("arg1").type(IStringItem.class)
           .zeroOrOne()

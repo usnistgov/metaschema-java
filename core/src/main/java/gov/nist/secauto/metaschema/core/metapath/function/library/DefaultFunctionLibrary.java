@@ -98,7 +98,7 @@ public class DefaultFunctionLibrary
     // https://www.w3.org/TR/xpath-functions-31/#func-false
     registerFunction(FnFalse.SIGNATURE);
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-floor
-    registerFunction(NumericFunction.signature(MetapathConstants.NS_XPATH_FUNCTIONS, "floor", INumericItem::floor));
+    registerFunction(NumericFunction.signature(MetapathConstants.NS_METAPATH_FUNCTIONS, "floor", INumericItem::floor));
     // P2: https://www.w3.org/TR/xpath-functions-31/#func-format-date
     // P2: https://www.w3.org/TR/xpath-functions-31/#func-format-dateTime
     // P2: https://www.w3.org/TR/xpath-functions-31/#func-format-integer

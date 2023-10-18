@@ -36,7 +36,6 @@ import gov.nist.secauto.metaschema.core.model.IUriResolver;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.time.Clock;
 import java.time.ZoneId;
@@ -226,14 +225,6 @@ public class DynamicContext { // NOPMD - intentional data class
         sharedState.availableDocuments.put(uri, retval);
       }
       return retval;
-    }
-
-    @Override
-    public @NonNull IDocumentNodeItem loadAsNodeItem(
-        @NonNull InputStream is,
-        @NonNull URI documentUri) throws IOException {
-      // throw new UnsupportedOperationException();
-      return getProxiedDocumentLoader().loadAsNodeItem(is, documentUri);
     }
 
     public class ContextUriResolver implements IUriResolver {

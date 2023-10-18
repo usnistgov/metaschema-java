@@ -45,7 +45,7 @@ public final class FnStaticBaseUri {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("static-base-uri")
-      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .argument(IArgument.builder()
           .name("arg1")
           .type(IStringItem.class)

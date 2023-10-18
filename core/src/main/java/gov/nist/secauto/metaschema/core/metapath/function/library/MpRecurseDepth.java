@@ -54,7 +54,7 @@ public final class MpRecurseDepth {
   @NonNull
   static final IFunction SIGNATURE_ONE_ARG = IFunction.builder()
       .name("recurse-depth")
-      .namespace(MetapathConstants.NS_METAPATH)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS_EXTENDED)
       .deterministic()
       .contextDependent()
       .focusDependent()
@@ -71,7 +71,7 @@ public final class MpRecurseDepth {
   @NonNull
   static final IFunction SIGNATURE_TWO_ARG = IFunction.builder()
       .name("recurse-depth")
-      .namespace(MetapathConstants.NS_METAPATH)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS_EXTENDED)
       .deterministic()
       .contextDependent()
       .focusIndependent()

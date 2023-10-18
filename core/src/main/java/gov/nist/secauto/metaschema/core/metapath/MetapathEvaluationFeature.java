@@ -30,6 +30,12 @@ import gov.nist.secauto.metaschema.core.configuration.AbstractConfigurationFeatu
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Provides a mechanism to configure Metapath evaluation settings.
+ *
+ * @param <V>
+ *          the feature value Java type
+ */
 public final class MetapathEvaluationFeature<V>
     extends AbstractConfigurationFeature<V> {
   /**

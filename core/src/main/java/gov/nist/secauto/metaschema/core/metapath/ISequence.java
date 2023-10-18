@@ -47,6 +47,15 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+/**
+ * Represents an ordered collection of Metapath expression results.
+ * <p>
+ * Items is a sequence are typically ordered based on their position in the
+ * original node graph based on a depth first ordering.
+ *
+ * @param <ITEM_TYPE>
+ *          the Java type of the items in a sequence
+ */
 public interface ISequence<ITEM_TYPE extends IItem> extends Collection<ITEM_TYPE> {
   @SuppressWarnings("rawtypes")
   ISequence EMPTY = new EmptyListImpl<>();

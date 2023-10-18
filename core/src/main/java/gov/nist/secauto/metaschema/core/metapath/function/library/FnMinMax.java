@@ -56,7 +56,7 @@ public final class FnMinMax {
   @NonNull
   static final IFunction SIGNATURE_MIN = IFunction.builder()
       .name(NAME_MIN)
-      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
       .focusIndependent()
@@ -73,7 +73,7 @@ public final class FnMinMax {
   @NonNull
   static final IFunction SIGNATURE_MAX = IFunction.builder()
       .name(NAME_MAX)
-      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
       .focusIndependent()

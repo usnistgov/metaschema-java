@@ -55,10 +55,10 @@ public final class StaticContext {
         MetapathConstants.NS_XML_SCHEMA);
     knownNamespaces.put(
         MetapathConstants.PREFIX_XPATH_FUNCTIONS,
-        MetapathConstants.NS_XPATH_FUNCTIONS);
+        MetapathConstants.NS_METAPATH_FUNCTIONS);
     knownNamespaces.put(
         MetapathConstants.PREFIX_XPATH_FUNCTIONS_MATH,
-        MetapathConstants.NS_XPATH_FUNCTIONS_MATH);
+        MetapathConstants.NS_METAPATH_FUNCTIONS_MATH);
     WELL_KNOWN_NAMESPACES = CollectionUtil.unmodifiableMap(knownNamespaces);
   }
 
@@ -176,6 +176,9 @@ public final class StaticContext {
     return new DynamicContext(this);
   }
 
+  /**
+   * A builder used to generate the static context.
+   */
   public static class Builder {
     private URI baseUri;
     @NonNull
@@ -190,10 +193,10 @@ public final class StaticContext {
           MetapathConstants.NS_XML_SCHEMA);
       namespaces.put(
           MetapathConstants.PREFIX_XPATH_FUNCTIONS,
-          MetapathConstants.NS_XPATH_FUNCTIONS);
+          MetapathConstants.NS_METAPATH_FUNCTIONS);
       namespaces.put(
           MetapathConstants.PREFIX_XPATH_FUNCTIONS_MATH,
-          MetapathConstants.NS_XPATH_FUNCTIONS_MATH);
+          MetapathConstants.NS_METAPATH_FUNCTIONS_MATH);
     }
 
     /**
