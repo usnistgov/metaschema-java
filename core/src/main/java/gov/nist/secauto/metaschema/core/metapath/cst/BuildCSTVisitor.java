@@ -954,7 +954,7 @@ public class BuildCSTVisitor
     }
 
     int numVars = (ctx.getChildCount() - 2) / 5; // children - "satisfies expr" / ", $ varName in expr"
-    Map<String, IExpression> vars = new LinkedHashMap<>();
+    Map<String, IExpression> vars = new LinkedHashMap<>(); // NOPMD ordering needed
     int offset = 0;
     for (; offset < numVars; offset++) {
       // $

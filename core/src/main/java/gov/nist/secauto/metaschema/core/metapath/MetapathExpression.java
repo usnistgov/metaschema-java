@@ -120,7 +120,7 @@ public class MetapathExpression {
         IExpression expr = new BuildCSTVisitor().visit(tree);
 
         if (LOGGER.isDebugEnabled()) {
-          LOGGER.atDebug().log(String.format("Metapath CST:%n%s", CSTPrinter.instance().visit(expr)));
+          LOGGER.atDebug().log(String.format("Metapath CST:%n%s", CSTPrinter.toString(expr)));
         }
         retval = new MetapathExpression(path, expr);
       } catch (MetapathException | ParseCancellationException ex) {
@@ -166,7 +166,7 @@ public class MetapathExpression {
 
   @Override
   public String toString() {
-    return CSTPrinter.instance().visit(getASTNode());
+    return CSTPrinter.toString(getASTNode());
   }
 
   /**

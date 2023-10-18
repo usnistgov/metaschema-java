@@ -85,8 +85,6 @@ public class Let implements IExpression { // NOPMD class name ok
 
     subDynamicContext.setVariableValue(name, result);
 
-    ISequence<?> retval = getReturnExpression().accept(subDynamicContext, focus);
-
-    return retval;
+    return getReturnExpression().accept(subDynamicContext, focus);
   }
 }

@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.metapath.cst;
 
-import gov.nist.secauto.metaschema.core.metapath.cst.CSTPrinter.State;
 import gov.nist.secauto.metaschema.core.metapath.cst.comparison.GeneralComparison;
 import gov.nist.secauto.metaschema.core.metapath.cst.comparison.ValueComparison;
 import gov.nist.secauto.metaschema.core.metapath.cst.math.Addition;
@@ -49,279 +48,274 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 @SuppressWarnings("PMD.CouplingBetweenObjects")
-public final class CSTPrinter
-    extends AbstractExpressionVisitor<String, State> {
-
-  private static final CSTPrinter SINGLETON = new CSTPrinter();
-
-  /**
-   * Get the singleton instance.
-   *
-   * @return the instance
-   */
-  public static CSTPrinter instance() {
-    return SINGLETON;
-  }
-
+public final class CSTPrinter {
   private CSTPrinter() {
     // disable construction
   }
 
-  @Override
-  protected String visitChildren(IExpression expr, State context) {
-    context.push();
-    String result = super.visitChildren(expr, context);
-    context.pop();
-    return result;
+  public static String toString(@NonNull IExpression expr) {
+    return new CSTPrinterVisitor().visit(expr);
   }
 
-  @Override
-  protected String aggregateResult(String result, String nextResult, State context) {
-    StringBuilder buffer = new StringBuilder();
-    if (result != null) {
-      buffer.append(result);
-      // buffer.append(" ar "+System.lineSeparator());
+  private static class CSTPrinterVisitor
+      extends AbstractExpressionVisitor<String, State> {
+
+    @Override
+    protected String visitChildren(IExpression expr, State context) {
+      context.push();
+      String result = super.visitChildren(expr, context);
+      context.pop();
+      return result;
     }
 
-    buffer.append(context.getIndentation())
-        .append(nextResult);
-    return buffer.toString();
-  }
+    @Override
+    protected String aggregateResult(String result, String nextResult, State context) {
+      StringBuilder buffer = new StringBuilder();
+      if (result != null) {
+        buffer.append(result);
+        // buffer.append(" ar "+System.lineSeparator());
+      }
 
-  @Override
-  protected String defaultResult() {
-    return "";
-  }
-
-  /**
-   * Append the {@code childResult} to the record produced for the current node.
-   *
-   * @param expr
-   *          the current node
-   * @param childResult
-   *          the output generated for the curren't node's children
-   * @param context
-   *          the output context state
-   * @return the string representation of the node tree for the current node and
-   *         its children
-   */
-  @SuppressWarnings("static-method")
-  protected String appendNode(@NonNull IExpression expr, @Nullable String childResult, @NonNull State context) {
-    StringBuilder buffer = new StringBuilder();
-    buffer.append(context.getIndentation())
-        .append(expr.toASTString());
-    if (childResult != null) {
-      buffer.append(System.lineSeparator())
-          .append(childResult);
+      buffer.append(context.getIndentation())
+          .append(nextResult);
+      return buffer.toString();
     }
-    return buffer.toString();
-  }
 
-  /**
-   * Visit a node and produce a string representation of its the node tree.
-   *
-   * @param expression
-   *          the node to build the node tree for
-   * @return the string representation of the node tree for the provided
-   *         expression node and its children
-   */
-  public String visit(@NonNull IExpression expression) {
-    return visit(expression, new State());
-  }
+    @Override
+    protected String defaultResult() {
+      return "";
+    }
 
-  @Override
-  public String visitAddition(Addition expr, State context) {
-    return appendNode(expr, super.visitAddition(expr, context), context);
-  }
+    /**
+     * Append the {@code childResult} to the record produced for the current node.
+     *
+     * @param expr
+     *          the current node
+     * @param childResult
+     *          the output generated for the curren't node's children
+     * @param context
+     *          the output context state
+     * @return the string representation of the node tree for the current node and
+     *         its children
+     */
+    @SuppressWarnings("static-method")
+    protected String appendNode(@NonNull IExpression expr, @Nullable String childResult, @NonNull State context) {
+      StringBuilder buffer = new StringBuilder();
+      buffer.append(context.getIndentation())
+          .append(expr.toASTString());
+      if (childResult != null) {
+        buffer.append(System.lineSeparator())
+            .append(childResult);
+      }
+      return buffer.toString();
+    }
 
-  @Override
-  public String visitAnd(And expr, State context) {
-    return appendNode(expr, super.visitAnd(expr, context), context);
-  }
+    /**
+     * Visit a node and produce a string representation of its the node tree.
+     *
+     * @param expression
+     *          the node to build the node tree for
+     * @return the string representation of the node tree for the provided
+     *         expression node and its children
+     */
+    public String visit(@NonNull IExpression expression) {
+      return visit(expression, new State());
+    }
 
-  @Override
-  public String visitStep(Step expr, State context) {
-    return appendNode(expr, super.visitStep(expr, context), context);
-  }
+    @Override
+    public String visitAddition(Addition expr, State context) {
+      return appendNode(expr, super.visitAddition(expr, context), context);
+    }
 
-  @Override
-  public String visitValueComparison(ValueComparison expr, State context) {
-    return appendNode(expr, super.visitValueComparison(expr, context), context);
-  }
+    @Override
+    public String visitAnd(And expr, State context) {
+      return appendNode(expr, super.visitAnd(expr, context), context);
+    }
 
-  @Override
-  public String visitGeneralComparison(GeneralComparison expr, State context) {
-    return appendNode(expr, super.visitGeneralComparison(expr, context), context);
-  }
+    @Override
+    public String visitStep(Step expr, State context) {
+      return appendNode(expr, super.visitStep(expr, context), context);
+    }
 
-  @Override
-  public String visitContextItem(ContextItem expr, State context) {
-    return appendNode(expr, super.visitContextItem(expr, context), context);
-  }
+    @Override
+    public String visitValueComparison(ValueComparison expr, State context) {
+      return appendNode(expr, super.visitValueComparison(expr, context), context);
+    }
 
-  @Override
-  public String visitDecimalLiteral(DecimalLiteral expr, State context) {
-    return appendNode(expr, super.visitDecimalLiteral(expr, context), context);
-  }
+    @Override
+    public String visitGeneralComparison(GeneralComparison expr, State context) {
+      return appendNode(expr, super.visitGeneralComparison(expr, context), context);
+    }
 
-  @Override
-  public String visitDivision(Division expr, State context) {
-    return appendNode(expr, super.visitDivision(expr, context), context);
-  }
+    @Override
+    public String visitContextItem(ContextItem expr, State context) {
+      return appendNode(expr, super.visitContextItem(expr, context), context);
+    }
 
-  @Override
-  public String visitExcept(@NonNull Except expr, State context) {
-    return appendNode(expr, super.visitExcept(expr, context), context);
-  }
+    @Override
+    public String visitDecimalLiteral(DecimalLiteral expr, State context) {
+      return appendNode(expr, super.visitDecimalLiteral(expr, context), context);
+    }
 
-  @Override
-  public String visitFlag(Flag expr, State context) {
-    return appendNode(expr, super.visitFlag(expr, context), context);
-  }
+    @Override
+    public String visitDivision(Division expr, State context) {
+      return appendNode(expr, super.visitDivision(expr, context), context);
+    }
 
-  @Override
-  public String visitFunctionCall(FunctionCall expr, State context) {
-    return appendNode(expr, super.visitFunctionCall(expr, context), context);
-  }
+    @Override
+    public String visitExcept(@NonNull Except expr, State context) {
+      return appendNode(expr, super.visitExcept(expr, context), context);
+    }
 
-  @Override
-  public String visitIntegerDivision(IntegerDivision expr, State context) {
-    return appendNode(expr, super.visitIntegerDivision(expr, context), context);
-  }
+    @Override
+    public String visitFlag(Flag expr, State context) {
+      return appendNode(expr, super.visitFlag(expr, context), context);
+    }
 
-  @Override
-  public String visitIntegerLiteral(IntegerLiteral expr, State context) {
-    return appendNode(expr, super.visitIntegerLiteral(expr, context), context);
-  }
+    @Override
+    public String visitFunctionCall(FunctionCall expr, State context) {
+      return appendNode(expr, super.visitFunctionCall(expr, context), context);
+    }
 
-  @Override
-  public String visitIntersect(Intersect expr, State context) {
-    return appendNode(expr, super.visitIntersect(expr, context), context);
-  }
+    @Override
+    public String visitIntegerDivision(IntegerDivision expr, State context) {
+      return appendNode(expr, super.visitIntegerDivision(expr, context), context);
+    }
 
-  @Override
-  public String visitMetapath(Metapath expr, State context) {
-    return appendNode(expr, super.visitMetapath(expr, context), context);
-  }
+    @Override
+    public String visitIntegerLiteral(IntegerLiteral expr, State context) {
+      return appendNode(expr, super.visitIntegerLiteral(expr, context), context);
+    }
 
-  @Override
-  public String visitModulo(Modulo expr, State context) {
-    return appendNode(expr, super.visitModulo(expr, context), context);
-  }
+    @Override
+    public String visitIntersect(Intersect expr, State context) {
+      return appendNode(expr, super.visitIntersect(expr, context), context);
+    }
 
-  @Override
-  public String visitModelInstance(ModelInstance expr, State context) {
-    return appendNode(expr, super.visitModelInstance(expr, context), context);
-  }
+    @Override
+    public String visitMetapath(Metapath expr, State context) {
+      return appendNode(expr, super.visitMetapath(expr, context), context);
+    }
 
-  @Override
-  public String visitMultiplication(Multiplication expr, State context) {
-    return appendNode(expr, super.visitMultiplication(expr, context), context);
-  }
+    @Override
+    public String visitModulo(Modulo expr, State context) {
+      return appendNode(expr, super.visitModulo(expr, context), context);
+    }
 
-  @Override
-  public String visitName(Name expr, State context) {
-    return appendNode(expr, super.visitName(expr, context), context);
-  }
+    @Override
+    public String visitModelInstance(ModelInstance expr, State context) {
+      return appendNode(expr, super.visitModelInstance(expr, context), context);
+    }
 
-  @Override
-  public String visitNegate(Negate expr, State context) {
-    return appendNode(expr, super.visitNegate(expr, context), context);
-  }
+    @Override
+    public String visitMultiplication(Multiplication expr, State context) {
+      return appendNode(expr, super.visitMultiplication(expr, context), context);
+    }
 
-  @Override
-  public String visitOr(Or expr, State context) {
-    return appendNode(expr, super.visitOr(expr, context), context);
-  }
+    @Override
+    public String visitName(Name expr, State context) {
+      return appendNode(expr, super.visitName(expr, context), context);
+    }
 
-  @Override
-  public String visitAxis(Axis expr, State context) {
-    return appendNode(expr, super.visitAxis(expr, context), context);
-  }
+    @Override
+    public String visitNegate(Negate expr, State context) {
+      return appendNode(expr, super.visitNegate(expr, context), context);
+    }
 
-  @Override
-  public String visitPredicate(Predicate expr, State context) {
-    return appendNode(expr, super.visitPredicate(expr, context), context);
-  }
+    @Override
+    public String visitOr(Or expr, State context) {
+      return appendNode(expr, super.visitOr(expr, context), context);
+    }
 
-  @Override
-  public String visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr, State context) {
-    return appendNode(expr, super.visitRelativeDoubleSlashPath(expr, context), context);
-  }
+    @Override
+    public String visitAxis(Axis expr, State context) {
+      return appendNode(expr, super.visitAxis(expr, context), context);
+    }
 
-  @Override
-  public String visitRelativeSlashPath(RelativeSlashPath expr, State context) {
-    return appendNode(expr, super.visitRelativeSlashPath(expr, context), context);
-  }
+    @Override
+    public String visitPredicate(Predicate expr, State context) {
+      return appendNode(expr, super.visitPredicate(expr, context), context);
+    }
 
-  @Override
-  public String visitRootDoubleSlashPath(RootDoubleSlashPath expr, State context) {
-    return appendNode(expr, super.visitRootDoubleSlashPath(expr, context), context);
-  }
+    @Override
+    public String visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr, State context) {
+      return appendNode(expr, super.visitRelativeDoubleSlashPath(expr, context), context);
+    }
 
-  @Override
-  public String visitRootSlashOnlyPath(RootSlashOnlyPath expr, State context) {
-    return appendNode(expr, super.visitRootSlashOnlyPath(expr, context), context);
-  }
+    @Override
+    public String visitRelativeSlashPath(RelativeSlashPath expr, State context) {
+      return appendNode(expr, super.visitRelativeSlashPath(expr, context), context);
+    }
 
-  @Override
-  public String visitRootSlashPath(RootSlashPath expr, State context) {
-    return appendNode(expr, super.visitRootSlashPath(expr, context), context);
-  }
+    @Override
+    public String visitRootDoubleSlashPath(RootDoubleSlashPath expr, State context) {
+      return appendNode(expr, super.visitRootDoubleSlashPath(expr, context), context);
+    }
 
-  @Override
-  public String visitStringConcat(StringConcat expr, State context) {
-    return appendNode(expr, super.visitStringConcat(expr, context), context);
-  }
+    @Override
+    public String visitRootSlashOnlyPath(RootSlashOnlyPath expr, State context) {
+      return appendNode(expr, super.visitRootSlashOnlyPath(expr, context), context);
+    }
 
-  @Override
-  public String visitStringLiteral(StringLiteral expr, State context) {
-    return appendNode(expr, super.visitStringLiteral(expr, context), context);
-  }
+    @Override
+    public String visitRootSlashPath(RootSlashPath expr, State context) {
+      return appendNode(expr, super.visitRootSlashPath(expr, context), context);
+    }
 
-  @Override
-  public String visitSubtraction(Subtraction expr, State context) {
-    return appendNode(expr, super.visitSubtraction(expr, context), context);
-  }
+    @Override
+    public String visitStringConcat(StringConcat expr, State context) {
+      return appendNode(expr, super.visitStringConcat(expr, context), context);
+    }
 
-  @Override
-  public String visitUnion(Union expr, State context) {
-    return appendNode(expr, super.visitUnion(expr, context), context);
-  }
+    @Override
+    public String visitStringLiteral(StringLiteral expr, State context) {
+      return appendNode(expr, super.visitStringLiteral(expr, context), context);
+    }
 
-  @Override
-  public String visitWildcard(Wildcard expr, State context) {
-    return appendNode(expr, super.visitWildcard(expr, context), context);
-  }
+    @Override
+    public String visitSubtraction(Subtraction expr, State context) {
+      return appendNode(expr, super.visitSubtraction(expr, context), context);
+    }
 
-  @Override
-  public String visitLet(Let expr, State context) {
-    return appendNode(expr, super.visitLet(expr, context), context);
-  }
+    @Override
+    public String visitUnion(Union expr, State context) {
+      return appendNode(expr, super.visitUnion(expr, context), context);
+    }
 
-  @Override
-  public String visitVariableReference(VariableReference expr, State context) {
-    return appendNode(expr, super.visitVariableReference(expr, context), context);
-  }
+    @Override
+    public String visitWildcard(Wildcard expr, State context) {
+      return appendNode(expr, super.visitWildcard(expr, context), context);
+    }
 
-  @Override
-  public String visitEmptySequence(EmptySequence<?> expr, State context) {
-    return appendNode(expr, super.visitEmptySequence(expr, context), context);
-  }
+    @Override
+    public String visitLet(Let expr, State context) {
+      return appendNode(expr, super.visitLet(expr, context), context);
+    }
 
-  @Override
-  public String visitRange(Range expr, State context) {
-    return appendNode(expr, super.visitRange(expr, context), context);
-  }
+    @Override
+    public String visitVariableReference(VariableReference expr, State context) {
+      return appendNode(expr, super.visitVariableReference(expr, context), context);
+    }
 
-  @Override
-  public String visitIf(If expr, State context) {
-    return appendNode(expr, super.visitIf(expr, context), context);
-  }
+    @Override
+    public String visitEmptySequence(EmptySequence<?> expr, State context) {
+      return appendNode(expr, super.visitEmptySequence(expr, context), context);
+    }
 
-  @Override
-  public String visitQuantified(Quantified expr, State context) {
-    return appendNode(expr, super.visitQuantified(expr, context), context);
+    @Override
+    public String visitRange(Range expr, State context) {
+      return appendNode(expr, super.visitRange(expr, context), context);
+    }
+
+    @Override
+    public String visitIf(If expr, State context) {
+      return appendNode(expr, super.visitIf(expr, context), context);
+    }
+
+    @Override
+    public String visitQuantified(Quantified expr, State context) {
+      return appendNode(expr, super.visitQuantified(expr, context), context);
+    }
   }
 
   static class State {

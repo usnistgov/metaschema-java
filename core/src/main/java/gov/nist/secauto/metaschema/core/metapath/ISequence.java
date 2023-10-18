@@ -275,8 +275,8 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Collection<ITEM_TYPE
   }
 
   @Override
-  default boolean contains(Object o) {
-    return asList().contains(o);
+  default boolean contains(Object obj) {
+    return asList().contains(obj);
   }
 
   @Override
@@ -285,37 +285,37 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Collection<ITEM_TYPE
   }
 
   @Override
-  default <T> T[] toArray(T[] a) {
-    return asList().toArray(a);
+  default <T> T[] toArray(T[] array) {
+    return asList().toArray(array);
   }
 
   @Override
-  default boolean add(ITEM_TYPE e) {
+  default boolean add(ITEM_TYPE item) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  default boolean remove(Object o) {
+  default boolean remove(Object obj) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  default boolean containsAll(Collection<?> c) {
-    return asList().containsAll(c);
+  default boolean containsAll(Collection<?> collection) {
+    return asList().containsAll(collection);
   }
 
   @Override
-  default boolean addAll(Collection<? extends ITEM_TYPE> c) {
+  default boolean addAll(Collection<? extends ITEM_TYPE> collection) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  default boolean removeAll(Collection<?> c) {
+  default boolean removeAll(Collection<?> collection) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  default boolean retainAll(Collection<?> c) {
+  default boolean retainAll(Collection<?> collection) {
     throw new UnsupportedOperationException();
   }
 

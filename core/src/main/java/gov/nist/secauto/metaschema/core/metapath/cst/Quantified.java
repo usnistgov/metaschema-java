@@ -33,9 +33,6 @@ import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,8 +51,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class Quantified
     extends AbstractExpression {
-  private static final Logger LOGGER = LogManager.getLogger(Quantified.class);
-
   public enum Quantifier {
     SOME,
     EVERY;
@@ -152,7 +147,10 @@ public class Quantified
     private final int[] indizes;
     private boolean reachedMax;
 
-    @SuppressWarnings("PMD.UseVarargs")
+    @SuppressWarnings({
+        "PMD.UseVarargs",
+        "PMD.ArrayIsStoredDirectly" // ok for internal use
+    })
     CartesianProductIterator(final Object[][] dimensions) {
       this.dimensions = dimensions;
       this.length = dimensions.length;
@@ -219,6 +217,7 @@ public class Quantified
       this.size = size;
     }
 
+    @SuppressWarnings("PMD.OnlyOneReturn") // readability
     @Override
     public Iterator<List<T>> iterator() {
       if (size == 0) {

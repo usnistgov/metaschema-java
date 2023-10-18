@@ -61,6 +61,6 @@ public abstract class AbstractExpression implements IExpression {
 
   @Override
   public String toString() {
-    return CSTPrinter.instance().visit(this);
+    return CSTPrinter.toString(this);
   }
 }
