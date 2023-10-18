@@ -24,52 +24,42 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.metapath.function;
-
-import gov.nist.secauto.metaschema.core.metapath.AbstractCodedMetapathException;
+package gov.nist.secauto.metaschema.core.metapath;
 
 /**
- * Represents an error that occurred while performing mathematical operations.
+ * This Metapath exception base class is used for all exceptions that have a
+ * defined error code family and value.
  */
-public class ArithmeticFunctionException
-    extends AbstractCodedMetapathException {
-  /**
-   * <a href=
-   * "https://www.w3.org/TR/xpath-functions-31/#ERRFOAR0001">err:FOAR0001</a>:
-   * This error is raised whenever an attempt is made to divide by zero.
-   */
-  public static final int DIVISION_BY_ZERO = 1;
-  /**
-   * <a href=
-   * "https://www.w3.org/TR/xpath-functions-31/#ERRFOAR0002">err:FOAR0002</a>:
-   * This error is raised whenever numeric operations result in an overflow or
-   * underflow.
-   */
-  public static final int OVERFLOW_UNDERFLOW_ERROR = 2;
-
-  public static final String DIVISION_BY_ZERO_MESSAGE = "Division by zero";
+public abstract class AbstractCodedMetapathException
+    extends MetapathException {
 
   /**
    * the serial version UID.
    */
-  private static final long serialVersionUID = 2L;
+  private static final long serialVersionUID = 1L;
 
   /**
-   * Constructs a new exception with the provided {@code code}, {@code message},
-   * and no cause.
+   * The error code.
+   */
+  private final int code;
+
+  /**
+   * Constructs a new Metapath exception with the provided {@code code},
+   * {@code message}, and no cause.
    *
    * @param code
    *          the error code value
    * @param message
    *          the exception message
    */
-  public ArithmeticFunctionException(int code, String message) {
-    super(code, message);
+  public AbstractCodedMetapathException(int code, String message) {
+    super(message);
+    this.code = code;
   }
 
   /**
-   * Constructs a new exception with the provided {@code code}, {@code message},
-   * and {@code cause}.
+   * Constructs a new Metapath exception with the provided {@code message} and
+   * {@code cause}.
    *
    * @param code
    *          the error code value
@@ -78,26 +68,52 @@ public class ArithmeticFunctionException
    * @param cause
    *          the original exception cause
    */
-  public ArithmeticFunctionException(int code, String message, Throwable cause) {
-    super(code, message, cause);
+  public AbstractCodedMetapathException(int code, String message, Throwable cause) {
+    super(message, cause);
+    this.code = code;
   }
 
   /**
-   * Constructs a new exception with the provided {@code code}, no message, and
-   * the {@code cause}.
+   * Constructs a new Metapath exception with a {@code null} message and the
+   * provided {@code cause}.
    *
    * @param code
    *          the error code value
    * @param cause
    *          the original exception cause
    */
-  public ArithmeticFunctionException(int code, Throwable cause) {
-    super(code, cause);
+  public AbstractCodedMetapathException(int code, Throwable cause) {
+    super(cause);
+    this.code = code;
   }
 
   @Override
-  protected String getCodePrefix() {
-    return "FOAR";
+  public String getMessage() {
+    return String.format("%s: %s", getCodeAsString(), super.getMessage());
   }
 
+  /**
+   * Get the error code value.
+   *
+   * @return the error code value
+   */
+  protected int getCode() {
+    return code;
+  }
+
+  /**
+   * Get the error code family.
+   *
+   * @return the error code family
+   */
+  protected abstract String getCodePrefix();
+
+  /**
+   * Get a combination of the error code family and value.
+   *
+   * @return the full error code.
+   */
+  protected String getCodeAsString() {
+    return String.format("%s%04d", getCodePrefix(), getCode());
+  }
 }

@@ -26,6 +26,24 @@
 
 package gov.nist.secauto.metaschema.core.metapath.cst;
 
+import gov.nist.secauto.metaschema.core.metapath.cst.comparison.GeneralComparison;
+import gov.nist.secauto.metaschema.core.metapath.cst.comparison.ValueComparison;
+import gov.nist.secauto.metaschema.core.metapath.cst.math.Addition;
+import gov.nist.secauto.metaschema.core.metapath.cst.math.Division;
+import gov.nist.secauto.metaschema.core.metapath.cst.math.IntegerDivision;
+import gov.nist.secauto.metaschema.core.metapath.cst.math.Modulo;
+import gov.nist.secauto.metaschema.core.metapath.cst.math.Multiplication;
+import gov.nist.secauto.metaschema.core.metapath.cst.math.Subtraction;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.Axis;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.Flag;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.ModelInstance;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.RelativeDoubleSlashPath;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.RelativeSlashPath;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.RootDoubleSlashPath;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.RootSlashOnlyPath;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.RootSlashPath;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.Step;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -300,6 +318,26 @@ public abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExp
 
   @Override
   public RESULT visitVariableReference(VariableReference expr, CONTEXT context) {
+    return visitChildren(expr, context);
+  }
+
+  @Override
+  public RESULT visitEmptySequence(EmptySequence<?> expr, CONTEXT context) {
+    return defaultResult();
+  }
+
+  @Override
+  public RESULT visitRange(Range expr, CONTEXT context) {
+    return visitChildren(expr, context);
+  }
+
+  @Override
+  public RESULT visitIf(If expr, CONTEXT context) {
+    return visitChildren(expr, context);
+  }
+
+  @Override
+  public RESULT visitQuantified(Quantified expr, CONTEXT context) {
     return visitChildren(expr, context);
   }
 }

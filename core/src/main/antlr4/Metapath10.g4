@@ -15,8 +15,7 @@ metapath : expr EOF ;
 // [5]
 // enclosedexpr : OC expr? CC ;
 expr : exprsingle ( COMMA exprsingle)* ;
-// exprsingle : forexpr | letexpr | quantifiedexpr | ifexpr | orexpr ;
-exprsingle : forexpr | letexpr | ifexpr | orexpr ;
+exprsingle : forexpr | letexpr | quantifiedexpr  | ifexpr | orexpr ;
 forexpr : simpleforclause KW_RETURN exprsingle ;
 simpleforclause : KW_FOR simpleforbinding ( COMMA simpleforbinding)* ;
 // [10]
@@ -47,13 +46,12 @@ intersectexceptexpr : arrowexpr ( ( KW_INTERSECT | KW_EXCEPT) arrowexpr )* ;
 arrowexpr : unaryexpr ( EG arrowfunctionspecifier argumentlist )* ;
 // [30]
 unaryexpr : ( MINUS | PLUS)* valueexpr ;
-// valueexpr : simplemapexpr ;
-valueexpr : pathexpr ;
+valueexpr : simplemapexpr ;
 generalcomp : EQ | NE | LT | LE | GT | GE ;
 valuecomp : KW_EQ | KW_NE | KW_LT | KW_LE | KW_GT | KW_GE ;
 // nodecomp : KW_IS | LL | GG ;
 // [35]
-// simplemapexpr : pathexpr ( BANG pathexpr)* ;
+simplemapexpr : pathexpr ( BANG pathexpr)* ;
 pathexpr : SLASH relativepathexpr? | SS relativepathexpr | relativepathexpr ;
 relativepathexpr : stepexpr (( SLASH | SS) stepexpr)* ;
 stepexpr : postfixexpr | axisstep ;

@@ -27,6 +27,23 @@
 package gov.nist.secauto.metaschema.core.metapath.cst;
 
 import gov.nist.secauto.metaschema.core.metapath.cst.CSTPrinter.State;
+import gov.nist.secauto.metaschema.core.metapath.cst.comparison.GeneralComparison;
+import gov.nist.secauto.metaschema.core.metapath.cst.comparison.ValueComparison;
+import gov.nist.secauto.metaschema.core.metapath.cst.math.Addition;
+import gov.nist.secauto.metaschema.core.metapath.cst.math.Division;
+import gov.nist.secauto.metaschema.core.metapath.cst.math.IntegerDivision;
+import gov.nist.secauto.metaschema.core.metapath.cst.math.Modulo;
+import gov.nist.secauto.metaschema.core.metapath.cst.math.Multiplication;
+import gov.nist.secauto.metaschema.core.metapath.cst.math.Subtraction;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.Axis;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.Flag;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.ModelInstance;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.RelativeDoubleSlashPath;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.RelativeSlashPath;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.RootDoubleSlashPath;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.RootSlashOnlyPath;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.RootSlashPath;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.Step;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -285,6 +302,26 @@ public final class CSTPrinter
   @Override
   public String visitVariableReference(VariableReference expr, State context) {
     return appendNode(expr, super.visitVariableReference(expr, context), context);
+  }
+
+  @Override
+  public String visitEmptySequence(EmptySequence<?> expr, State context) {
+    return appendNode(expr, super.visitEmptySequence(expr, context), context);
+  }
+
+  @Override
+  public String visitRange(Range expr, State context) {
+    return appendNode(expr, super.visitRange(expr, context), context);
+  }
+
+  @Override
+  public String visitIf(If expr, State context) {
+    return appendNode(expr, super.visitIf(expr, context), context);
+  }
+
+  @Override
+  public String visitQuantified(Quantified expr, State context) {
+    return appendNode(expr, super.visitQuantified(expr, context), context);
   }
 
   static class State {

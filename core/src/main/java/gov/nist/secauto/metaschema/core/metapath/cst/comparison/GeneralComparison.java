@@ -24,69 +24,48 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.metapath.cst;
+package gov.nist.secauto.metaschema.core.metapath.cst.comparison;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.item.IItem;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-
-import java.util.List;
+import gov.nist.secauto.metaschema.core.metapath.cst.IExpression;
+import gov.nist.secauto.metaschema.core.metapath.cst.IExpressionVisitor;
+import gov.nist.secauto.metaschema.core.metapath.function.ComparisonFunctions;
+import gov.nist.secauto.metaschema.core.metapath.function.library.FnData;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class Let implements IExpression { // NOPMD class name ok
-  @NonNull
-  private final Name name;
-  @NonNull
-  private final IExpression boundExpression;
-  @NonNull
-  private final IExpression returnExpression;
+public class GeneralComparison
+    extends AbstractComparison {
 
-  public Let(@NonNull Name name, @NonNull IExpression boundExpression, @NonNull IExpression returnExpression) {
-    this.name = name;
-    this.boundExpression = boundExpression;
-    this.returnExpression = returnExpression;
-  }
-
-  @NonNull
-  public Name getName() {
-    return name;
-  }
-
-  @NonNull
-  public IExpression getBoundExpression() {
-    return boundExpression;
-  }
-
-  @NonNull
-  public IExpression getReturnExpression() {
-    return returnExpression;
-  }
-
-  @Override
-  public List<? extends IExpression> getChildren() {
-    return ObjectUtils.notNull(
-        List.of(boundExpression, returnExpression));
+  /**
+   * Create a new value comparison expression.
+   *
+   * @param left
+   *          the expression to compare against
+   * @param operator
+   *          the comparison operator
+   * @param right
+   *          the expression to compare with
+   */
+  public GeneralComparison(
+      @NonNull IExpression left,
+      @NonNull ComparisonFunctions.Operator operator,
+      @NonNull IExpression right) {
+    super(left, operator, right);
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitLet(this, context);
+    return visitor.visitGeneralComparison(this, context);
   }
 
   @Override
-  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
-    ISequence<?> result = getBoundExpression().accept(dynamicContext, focus);
-
-    String name = getName().getValue();
-
-    DynamicContext subDynamicContext = dynamicContext.subContext();
-
-    subDynamicContext.setVariableValue(name, result);
-
-    ISequence<?> retval = getReturnExpression().accept(subDynamicContext, focus);
-
-    return retval;
+  public ISequence<? extends IBooleanItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
+    ISequence<? extends IAnyAtomicItem> leftItems = FnData.fnData(getLeft().accept(dynamicContext, focus));
+    ISequence<? extends IAnyAtomicItem> rightItems = FnData.fnData(getRight().accept(dynamicContext, focus));
+    return ISequence.of(ComparisonFunctions.generalCompairison(leftItems, getOperator(), rightItems));
   }
 }

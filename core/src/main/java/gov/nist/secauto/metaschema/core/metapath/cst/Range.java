@@ -28,65 +28,55 @@ package gov.nist.secauto.metaschema.core.metapath.cst;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.item.IItem;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class Let implements IExpression { // NOPMD class name ok
-  @NonNull
-  private final Name name;
-  @NonNull
-  private final IExpression boundExpression;
-  @NonNull
-  private final IExpression returnExpression;
+public class Range
+    extends AbstractBinaryExpression<IExpression, IExpression> {
 
-  public Let(@NonNull Name name, @NonNull IExpression boundExpression, @NonNull IExpression returnExpression) {
-    this.name = name;
-    this.boundExpression = boundExpression;
-    this.returnExpression = returnExpression;
-  }
-
-  @NonNull
-  public Name getName() {
-    return name;
-  }
-
-  @NonNull
-  public IExpression getBoundExpression() {
-    return boundExpression;
-  }
-
-  @NonNull
-  public IExpression getReturnExpression() {
-    return returnExpression;
+  public Range(@NonNull IExpression left, @NonNull IExpression right) {
+    super(left, right);
   }
 
   @Override
-  public List<? extends IExpression> getChildren() {
-    return ObjectUtils.notNull(
-        List.of(boundExpression, returnExpression));
+  public Class<IIntegerItem> getBaseResultType() {
+    return IIntegerItem.class;
+  }
+
+  @Override
+  public ISequence<IIntegerItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
+    IAnyAtomicItem leftItem = getFirstDataItem(getLeft().accept(dynamicContext, focus), true);
+    IAnyAtomicItem rightItem = getFirstDataItem(getRight().accept(dynamicContext, focus), true);
+
+    IIntegerItem left = leftItem == null ? null : IIntegerItem.cast(leftItem);
+    IIntegerItem right = rightItem == null ? null : IIntegerItem.cast(rightItem);
+
+    ISequence<IIntegerItem> retval;
+    if (left == null || right == null || left.compareTo(right) > 0) {
+      retval = ISequence.empty();
+    } else {
+
+      BigInteger min = right.asInteger();
+      BigInteger max = right.asInteger();
+
+      List<IIntegerItem> range = new ArrayList<>(max.subtract(min).add(BigInteger.ONE).intValueExact());
+      for (BigInteger val = left.asInteger(); val.compareTo(max) <= 0; val = val.add(BigInteger.ONE)) {
+        range.add(IIntegerItem.valueOf(val));
+      }
+
+      retval = ISequence.of(range);
+    }
+    return retval;
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitLet(this, context);
-  }
-
-  @Override
-  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
-    ISequence<?> result = getBoundExpression().accept(dynamicContext, focus);
-
-    String name = getName().getValue();
-
-    DynamicContext subDynamicContext = dynamicContext.subContext();
-
-    subDynamicContext.setVariableValue(name, result);
-
-    ISequence<?> retval = getReturnExpression().accept(subDynamicContext, focus);
-
-    return retval;
+    return visitor.visitRange(this, context);
   }
 }

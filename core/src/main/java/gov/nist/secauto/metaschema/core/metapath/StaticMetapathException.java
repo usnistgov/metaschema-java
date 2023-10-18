@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
-import gov.nist.secauto.metaschema.core.metapath.cst.AbstractCodedMetapathException;
-
 /**
  * MPST: Exceptions related to the Metapath static context.
  */

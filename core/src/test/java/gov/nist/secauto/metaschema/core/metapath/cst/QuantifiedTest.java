@@ -26,67 +26,37 @@
 
 package gov.nist.secauto.metaschema.core.metapath.cst;
 
-import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.item.IItem;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.List;
+import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.core.metapath.ExpressionTestBase;
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class Let implements IExpression { // NOPMD class name ok
-  @NonNull
-  private final Name name;
-  @NonNull
-  private final IExpression boundExpression;
-  @NonNull
-  private final IExpression returnExpression;
-
-  public Let(@NonNull Name name, @NonNull IExpression boundExpression, @NonNull IExpression returnExpression) {
-    this.name = name;
-    this.boundExpression = boundExpression;
-    this.returnExpression = returnExpression;
+class QuantifiedTest
+    extends ExpressionTestBase {
+  private static Stream<Arguments> testQuantified() { // NOPMD - false positive
+    return Stream.of(
+        Arguments.of(
+            true,
+            MetapathExpression.compile("some $x in (1, 2, 3), $y in (2, 3, 4) satisfies $x + $y = 4")),
+        Arguments.of(
+            false,
+            MetapathExpression.compile("every $x in (1, 2, 3), $y in (2, 3, 4) satisfies $x + $y = 4")));
   }
 
-  @NonNull
-  public Name getName() {
-    return name;
-  }
+  @ParameterizedTest
+  @MethodSource
+  void testQuantified(boolean expected, @NonNull MetapathExpression metapath) {
+    DynamicContext dynamicContext = newDynamicContext();
 
-  @NonNull
-  public IExpression getBoundExpression() {
-    return boundExpression;
-  }
-
-  @NonNull
-  public IExpression getReturnExpression() {
-    return returnExpression;
-  }
-
-  @Override
-  public List<? extends IExpression> getChildren() {
-    return ObjectUtils.notNull(
-        List.of(boundExpression, returnExpression));
-  }
-
-  @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitLet(this, context);
-  }
-
-  @Override
-  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
-    ISequence<?> result = getBoundExpression().accept(dynamicContext, focus);
-
-    String name = getName().getValue();
-
-    DynamicContext subDynamicContext = dynamicContext.subContext();
-
-    subDynamicContext.setVariableValue(name, result);
-
-    ISequence<?> retval = getReturnExpression().accept(subDynamicContext, focus);
-
-    return retval;
+    assertEquals(expected, metapath.evaluateAs(null, MetapathExpression.ResultType.BOOLEAN, dynamicContext));
   }
 }

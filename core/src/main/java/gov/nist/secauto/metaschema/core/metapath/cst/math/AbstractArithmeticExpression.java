@@ -24,69 +24,54 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.metapath.cst;
+package gov.nist.secauto.metaschema.core.metapath.cst.math;
 
-import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.item.IItem;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.metapath.cst.AbstractBinaryExpression;
+import gov.nist.secauto.metaschema.core.metapath.cst.ExpressionUtils;
+import gov.nist.secauto.metaschema.core.metapath.cst.IExpression;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class Let implements IExpression { // NOPMD class name ok
-  @NonNull
-  private final Name name;
-  @NonNull
-  private final IExpression boundExpression;
-  @NonNull
-  private final IExpression returnExpression;
-
-  public Let(@NonNull Name name, @NonNull IExpression boundExpression, @NonNull IExpression returnExpression) {
-    this.name = name;
-    this.boundExpression = boundExpression;
-    this.returnExpression = returnExpression;
-  }
+/**
+ * An immutable binary expression that supports arithmetic evaluation. The
+ * result type is determined through static analysis of the sub-expressions,
+ * which may result in a more specific type that is a sub-class of the base
+ * result type.
+ *
+ * @param <RESULT_TYPE>
+ *          the base result of evaluating the arithmetic expression
+ */
+public abstract class AbstractArithmeticExpression<RESULT_TYPE extends IAnyAtomicItem>
+    extends AbstractBinaryExpression<IExpression, IExpression> {
 
   @NonNull
-  public Name getName() {
-    return name;
-  }
+  private final Class<? extends RESULT_TYPE> staticResultType;
 
-  @NonNull
-  public IExpression getBoundExpression() {
-    return boundExpression;
-  }
-
-  @NonNull
-  public IExpression getReturnExpression() {
-    return returnExpression;
-  }
-
-  @Override
-  public List<? extends IExpression> getChildren() {
-    return ObjectUtils.notNull(
-        List.of(boundExpression, returnExpression));
+  /**
+   * Construct a new arithmetic expression.
+   *
+   * @param left
+   *          the left side of the arithmetic operation
+   * @param right
+   *          the right side of the arithmetic operation
+   * @param baseType
+   *          the base result type of the expression result
+   */
+  @SuppressWarnings("null")
+  public AbstractArithmeticExpression(@NonNull IExpression left, @NonNull IExpression right,
+      @NonNull Class<RESULT_TYPE> baseType) {
+    super(left, right);
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(baseType, List.of(left, right));
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitLet(this, context);
-  }
+  public abstract Class<RESULT_TYPE> getBaseResultType();
 
   @Override
-  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
-    ISequence<?> result = getBoundExpression().accept(dynamicContext, focus);
-
-    String name = getName().getValue();
-
-    DynamicContext subDynamicContext = dynamicContext.subContext();
-
-    subDynamicContext.setVariableValue(name, result);
-
-    ISequence<?> retval = getReturnExpression().accept(subDynamicContext, focus);
-
-    return retval;
+  public Class<? extends RESULT_TYPE> getStaticResultType() {
+    return staticResultType;
   }
 }

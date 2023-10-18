@@ -26,67 +26,61 @@
 
 package gov.nist.secauto.metaschema.core.metapath.cst;
 
-import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.item.IItem;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.List;
+import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.core.metapath.ExpressionTestBase;
+import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.cst.Name;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.Flag;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IFlagNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IModelNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.NodeItemType;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.junit.jupiter.api.Test;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class Let implements IExpression { // NOPMD class name ok
-  @NonNull
-  private final Name name;
-  @NonNull
-  private final IExpression boundExpression;
-  @NonNull
-  private final IExpression returnExpression;
+class FlagTest
+    extends ExpressionTestBase {
+  @Test
+  void testFlagWithName() {
+    DynamicContext dynamicContext = newDynamicContext();
 
-  public Let(@NonNull Name name, @NonNull IExpression boundExpression, @NonNull IExpression returnExpression) {
-    this.name = name;
-    this.boundExpression = boundExpression;
-    this.returnExpression = returnExpression;
-  }
+    Mockery context = getContext();
 
-  @NonNull
-  public Name getName() {
-    return name;
-  }
+    @SuppressWarnings("null")
+    @NonNull IModelNodeItem<?, ?> focusItem = context.mock(IModelNodeItem.class);
 
-  @NonNull
-  public IExpression getBoundExpression() {
-    return boundExpression;
-  }
+    IFlagInstance instance = context.mock(IFlagInstance.class);
+    IFlagNodeItem flagNode = context.mock(IFlagNodeItem.class);
 
-  @NonNull
-  public IExpression getReturnExpression() {
-    return returnExpression;
-  }
+    String flagName = "test";
 
-  @Override
-  public List<? extends IExpression> getChildren() {
-    return ObjectUtils.notNull(
-        List.of(boundExpression, returnExpression));
-  }
+    context.checking(new Expectations() {
+      { // NOPMD - intentional
+        allowing(focusItem).getNodeItem();
+        will(returnValue(focusItem));
+        allowing(focusItem).getNodeItemType();
+        will(returnValue(NodeItemType.ASSEMBLY));
+        allowing(focusItem).getFlagByName(flagName);
+        will(returnValue(flagNode));
 
-  @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitLet(this, context);
-  }
+        allowing(flagNode).getInstance();
+        will(returnValue(instance));
 
-  @Override
-  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
-    ISequence<?> result = getBoundExpression().accept(dynamicContext, focus);
+        allowing(instance).getEffectiveName();
+        will(returnValue(flagName));
 
-    String name = getName().getValue();
+      }
+    });
 
-    DynamicContext subDynamicContext = dynamicContext.subContext();
+    Flag expr = new Flag(new Name(flagName));
 
-    subDynamicContext.setVariableValue(name, result);
-
-    ISequence<?> retval = getReturnExpression().accept(subDynamicContext, focus);
-
-    return retval;
+    ISequence<?> result = expr.accept(dynamicContext, ISequence.of(focusItem));
+    assertEquals(ISequence.of(flagNode), result, "Sequence does not match");
   }
 }

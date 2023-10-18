@@ -24,31 +24,55 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.metapath.cst;
+package gov.nist.secauto.metaschema.core.metapath.cst.path;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.core.metapath.DynamicMetapathException;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.cst.path.AbstractPathExpression;
+import gov.nist.secauto.metaschema.core.metapath.cst.IExpression;
+import gov.nist.secauto.metaschema.core.metapath.cst.IExpressionVisitor;
+import gov.nist.secauto.metaschema.core.metapath.item.ItemUtils;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public final class ContextItem
-    extends AbstractPathExpression<INodeItem> {
-  @NonNull
-  private static final ContextItem SINGLETON = new ContextItem();
+@SuppressWarnings("PMD.ShortClassName") // intentional
+public enum Axis implements IExpression {
+  SELF(focus -> Stream.of(focus)),
+  PARENT(focus -> Stream.ofNullable(focus.getParentNodeItem())),
+  ANCESTOR(INodeItem::ancestor),
+  ANCESTOR_OR_SELF(INodeItem::ancestorOrSelf),
+  CHILDREN(INodeItem::modelItems),
+  DESCENDANT(INodeItem::descendant),
+  DESCENDANT_OR_SELF(INodeItem::descendantOrSelf);
 
   @NonNull
-  public static ContextItem instance() {
-    return SINGLETON;
+  private final Function<INodeItem, Stream<? extends INodeItem>> action;
+
+  Axis(@NonNull Function<INodeItem, Stream<? extends INodeItem>> action) {
+    this.action = action;
   }
 
-  private ContextItem() {
-    // disable construction
+  /**
+   * Execute the axis operation on the provided {@code focus}.
+   *
+   * @param focus
+   *          the node to operate on
+   * @return the result of the axis operation
+   */
+  @NonNull
+  public Stream<? extends INodeItem> execute(@NonNull INodeItem focus) {
+    return ObjectUtils.notNull(action.apply(focus));
+  }
+
+  @Override
+  public List<? extends IExpression> getChildren() {
+    return CollectionUtil.emptyList();
   }
 
   @Override
@@ -57,26 +81,30 @@ public final class ContextItem
   }
 
   @Override
-  public Class<? extends INodeItem> getStaticResultType() {
+  public Class<INodeItem> getStaticResultType() {
     return getBaseResultType();
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public List<? extends IExpression> getChildren() {
-    return Collections.emptyList();
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitContextItem(this, context);
+    return visitor.visitAxis(this, context);
   }
 
   @Override
-  public ISequence<?> accept(DynamicContext dynamicContext, ISequence<?> focus) {
-    if (focus.isEmpty()) {
-      throw new DynamicMetapathException(DynamicMetapathException.DYNAMIC_CONTEXT_ABSENT, "The context is empty");
+  public ISequence<? extends INodeItem> accept(
+      DynamicContext dynamicContext,
+      ISequence<?> outerFocus) {
+    ISequence<? extends INodeItem> retval;
+    if (outerFocus.isEmpty()) {
+      retval = ISequence.empty();
+    } else {
+      retval = ISequence.of(outerFocus.asStream()
+          .map(item -> ItemUtils.checkItemIsNodeItemForStep(item))
+          .flatMap(item -> {
+            assert item != null;
+            return execute(item);
+          }).distinct());
     }
-    return focus;
+    return retval;
   }
 }

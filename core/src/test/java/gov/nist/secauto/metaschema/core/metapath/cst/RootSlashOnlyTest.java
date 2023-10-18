@@ -26,67 +26,41 @@
 
 package gov.nist.secauto.metaschema.core.metapath.cst;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.core.metapath.ExpressionTestBase;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.item.IItem;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.RootSlashOnlyPath;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 
-import java.util.List;
+import org.junit.jupiter.api.Test;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+class RootSlashOnlyTest
+    extends ExpressionTestBase {
 
-public class Let implements IExpression { // NOPMD class name ok
-  @NonNull
-  private final Name name;
-  @NonNull
-  private final IExpression boundExpression;
-  @NonNull
-  private final IExpression returnExpression;
+  @Test
+  void testRootSlashOnlyPathUsingDocument() {
+    IDocumentNodeItem nodeContext = newDocumentNodeContext();
+    assert nodeContext != null;
 
-  public Let(@NonNull Name name, @NonNull IExpression boundExpression, @NonNull IExpression returnExpression) {
-    this.name = name;
-    this.boundExpression = boundExpression;
-    this.returnExpression = returnExpression;
+    RootSlashOnlyPath expr = new RootSlashOnlyPath();
+
+    DynamicContext dynamicContext = newDynamicContext();
+    ISequence<?> result = expr.accept(dynamicContext, ISequence.of(nodeContext));
+    assertEquals(ISequence.of(nodeContext), result);
   }
 
-  @NonNull
-  public Name getName() {
-    return name;
-  }
+  @Test
+  void testRootSlashOnlyPathUsingNonDocument() {
+    INodeItem item = newNonDocumentNodeContext("non-document");
+    assert item != null;
 
-  @NonNull
-  public IExpression getBoundExpression() {
-    return boundExpression;
-  }
+    RootSlashOnlyPath expr = new RootSlashOnlyPath();
 
-  @NonNull
-  public IExpression getReturnExpression() {
-    return returnExpression;
-  }
-
-  @Override
-  public List<? extends IExpression> getChildren() {
-    return ObjectUtils.notNull(
-        List.of(boundExpression, returnExpression));
-  }
-
-  @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitLet(this, context);
-  }
-
-  @Override
-  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
-    ISequence<?> result = getBoundExpression().accept(dynamicContext, focus);
-
-    String name = getName().getValue();
-
-    DynamicContext subDynamicContext = dynamicContext.subContext();
-
-    subDynamicContext.setVariableValue(name, result);
-
-    ISequence<?> retval = getReturnExpression().accept(subDynamicContext, focus);
-
-    return retval;
+    DynamicContext dynamicContext = newDynamicContext();
+    ISequence<?> result = expr.accept(dynamicContext, ISequence.of(item));
+    assertEquals(ISequence.of(item), result);
   }
 }

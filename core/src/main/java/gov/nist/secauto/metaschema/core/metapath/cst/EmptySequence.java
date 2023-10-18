@@ -29,64 +29,42 @@ package gov.nist.secauto.metaschema.core.metapath.cst;
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class Let implements IExpression { // NOPMD class name ok
+public final class EmptySequence<RESULT_TYPE extends IItem>
+    extends AbstractExpression {
   @NonNull
-  private final Name name;
-  @NonNull
-  private final IExpression boundExpression;
-  @NonNull
-  private final IExpression returnExpression;
+  private static final EmptySequence<?> SINGLETON = new EmptySequence<>();
 
-  public Let(@NonNull Name name, @NonNull IExpression boundExpression, @NonNull IExpression returnExpression) {
-    this.name = name;
-    this.boundExpression = boundExpression;
-    this.returnExpression = returnExpression;
+  @SuppressWarnings("unchecked")
+  @NonNull
+  public static <T extends IItem> EmptySequence<T> instance() {
+    return (EmptySequence<T>) SINGLETON;
   }
 
-  @NonNull
-  public Name getName() {
-    return name;
+  private EmptySequence() {
+    // disable construction
   }
 
-  @NonNull
-  public IExpression getBoundExpression() {
-    return boundExpression;
-  }
-
-  @NonNull
-  public IExpression getReturnExpression() {
-    return returnExpression;
+  @SuppressWarnings("null")
+  @Override
+  public List<? extends IExpression> getChildren() {
+    // no children
+    return Collections.emptyList();
   }
 
   @Override
-  public List<? extends IExpression> getChildren() {
-    return ObjectUtils.notNull(
-        List.of(boundExpression, returnExpression));
+  public ISequence<RESULT_TYPE> accept(DynamicContext dynamicContext, ISequence<?> focus) {
+    return ISequence.empty();
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitLet(this, context);
+    return visitor.visitEmptySequence(this, context);
   }
 
-  @Override
-  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
-    ISequence<?> result = getBoundExpression().accept(dynamicContext, focus);
-
-    String name = getName().getValue();
-
-    DynamicContext subDynamicContext = dynamicContext.subContext();
-
-    subDynamicContext.setVariableValue(name, result);
-
-    ISequence<?> retval = getReturnExpression().accept(subDynamicContext, focus);
-
-    return retval;
-  }
 }

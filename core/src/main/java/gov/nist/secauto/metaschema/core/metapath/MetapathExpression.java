@@ -26,11 +26,11 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
-import gov.nist.secauto.metaschema.core.metapath.antlr.BuildCSTVisitor;
 import gov.nist.secauto.metaschema.core.metapath.antlr.FailingErrorListener;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10Lexer;
 import gov.nist.secauto.metaschema.core.metapath.antlr.ParseTreePrinter;
+import gov.nist.secauto.metaschema.core.metapath.cst.BuildCSTVisitor;
 import gov.nist.secauto.metaschema.core.metapath.cst.CSTPrinter;
 import gov.nist.secauto.metaschema.core.metapath.cst.ContextItem;
 import gov.nist.secauto.metaschema.core.metapath.cst.IExpression;
@@ -242,7 +242,7 @@ public class MetapathExpression {
    */
   @Nullable
   public <T> T evaluateAs(
-      @NonNull IItem focus,
+      @Nullable IItem focus,
       @NonNull ResultType resultType,
       @NonNull DynamicContext dynamicContext) {
     ISequence<?> result = evaluate(focus, dynamicContext);

@@ -45,12 +45,14 @@ import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ForwardaxisCon
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ForwardstepContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.FunctioncallContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.GeneralcompContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.IfexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.IntersectexceptexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.LetexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.LiteralContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.MetapathContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.MultiplicativeexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.NametestContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.NodetestContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.NumericliteralContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.OrexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ParenthesizedexprContext;
@@ -59,11 +61,16 @@ import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.PostfixexprCon
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.PredicateContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.PredicatelistContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.PrimaryexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.QuantifiedexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.RangeexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.RelativepathexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ReverseaxisContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ReversestepContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SimpleforbindingContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SimpleforclauseContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SimpleletbindingContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SimpleletclauseContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SimplemapexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.StepexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.StringconcatexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.UnaryexprContext;
@@ -73,7 +80,6 @@ import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ValueexprConte
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.VarnameContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.VarrefContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.WildcardContext;
-import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10BaseVisitor;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -83,7 +89,7 @@ import java.util.function.Function;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-abstract class AbstractAstVisitor<R> // NOPMD
+public abstract class AbstractAstVisitor<R> // NOPMD
     extends Metapath10BaseVisitor<R> {
 
   /**
@@ -125,17 +131,22 @@ abstract class AbstractAstVisitor<R> // NOPMD
    * @throws IllegalStateException
    *           if there was not a single child expression
    */
-  protected <T extends RuleContext> R passThrough(@NonNull T ctx) {
+  protected <T extends RuleContext> R delegateToChild(@NonNull T ctx) {
     if (ctx.getChildCount() == 1) {
       return ctx.getChild(0).accept(this);
     }
     throw new IllegalStateException("a single child expression was expected");
   }
 
+  /* ============================================================
+   * Expressions - https://www.w3.org/TR/xpath-31/#id-expressions
+   * ============================================================
+   */
+
   @Override
   public R visitMetapath(MetapathContext ctx) {
     assert ctx != null;
-    return passThrough(ctx);
+    return delegateToChild(ctx);
   }
 
   /**
@@ -147,375 +158,32 @@ abstract class AbstractAstVisitor<R> // NOPMD
    */
   protected abstract R handleExpr(@NonNull ExprContext ctx);
 
-  @SuppressWarnings("null")
   @Override
   public R visitExpr(ExprContext ctx) {
+    assert ctx != null;
     return handle(ctx, (context) -> handleExpr(ctx));
   }
 
   @Override
   public R visitExprsingle(ExprsingleContext ctx) {
     assert ctx != null;
-    return passThrough(ctx);
+    return delegateToChild(ctx);
   }
-
-  @Override
-  public R visitForexpr(ForexprContext ctx) {
-    return handle(ctx, (context) -> {
-      throw new UnsupportedOperationException();
-    });
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
+  /* ============================================================================
+   * Primary Expressions - https://www.w3.org/TR/xpath-31/#id-primary-expressions
+   * ============================================================================
    */
-  protected abstract R handleOrexpr(@NonNull OrexprContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitOrexpr(OrexprContext ctx) {
-    return handle(ctx, (context) -> handleOrexpr(ctx));
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handleAndexpr(@NonNull AndexprContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitAndexpr(AndexprContext ctx) {
-    return handle(ctx, (context) -> handleAndexpr(ctx));
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handleComparisonexpr(@NonNull ComparisonexprContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitComparisonexpr(ComparisonexprContext ctx) {
-    return handle(ctx, (context) -> handleComparisonexpr(ctx));
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handleStringconcatexpr(@NonNull StringconcatexprContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitStringconcatexpr(StringconcatexprContext ctx) {
-    return handle(ctx, (context) -> handleStringconcatexpr(ctx));
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handleAdditiveexpr(@NonNull AdditiveexprContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitAdditiveexpr(AdditiveexprContext ctx) {
-    return handle(ctx, (context) -> handleAdditiveexpr(ctx));
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handleMultiplicativeexpr(@NonNull MultiplicativeexprContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitMultiplicativeexpr(MultiplicativeexprContext ctx) {
-    return handle(ctx, (context) -> handleMultiplicativeexpr(ctx));
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handleUnionexpr(@NonNull UnionexprContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitUnionexpr(UnionexprContext ctx) {
-    return handle(ctx, (context) -> handleUnionexpr(ctx));
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handleIntersectexceptexpr(@NonNull IntersectexceptexprContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitIntersectexceptexpr(IntersectexceptexprContext ctx) {
-    return handle(ctx, (context) -> handleIntersectexceptexpr(ctx));
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handleArrowexpr(@NonNull ArrowexprContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitArrowexpr(ArrowexprContext ctx) {
-    return handle(ctx, (context) -> handleArrowexpr(ctx));
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handleUnaryexpr(@NonNull UnaryexprContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitUnaryexpr(UnaryexprContext ctx) {
-    return handle(ctx, (context) -> handleUnaryexpr(ctx));
-  }
-
-  @Override
-  public R visitValueexpr(ValueexprContext ctx) {
-    assert ctx != null;
-    return passThrough(ctx);
-  }
-
-  @Override
-  public R visitGeneralcomp(GeneralcompContext ctx) {
-    // should never be called, since this is handled by the parent expression
-    throw new IllegalStateException();
-  }
-
-  @Override
-  public R visitValuecomp(ValuecompContext ctx) {
-    // should never be called, since this is handled by the parent expression
-    throw new IllegalStateException();
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handlePathexpr(@NonNull PathexprContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitPathexpr(PathexprContext ctx) {
-    return handle(ctx, (context) -> handlePathexpr(ctx));
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handleRelativepathexpr(@NonNull RelativepathexprContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitRelativepathexpr(RelativepathexprContext ctx) {
-    return handle(ctx, (context) -> handleRelativepathexpr(ctx));
-  }
-
-  @Override
-  public R visitStepexpr(StepexprContext ctx) {
-    assert ctx != null;
-    return passThrough(ctx);
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handleAxisstep(@NonNull AxisstepContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitAxisstep(AxisstepContext ctx) {
-    return handle(ctx, (context) -> handleAxisstep(ctx));
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handleForwardstep(@NonNull ForwardstepContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitForwardstep(ForwardstepContext ctx) {
-    return handle(ctx, (context) -> handleForwardstep(ctx));
-  }
-
-  @Override
-  public R visitForwardaxis(ForwardaxisContext ctx) {
-    // should never be called, since this is handled by handleForwardstep
-    throw new IllegalStateException();
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handleAbbrevforwardstep(@NonNull AbbrevforwardstepContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitAbbrevforwardstep(AbbrevforwardstepContext ctx) {
-    return handleAbbrevforwardstep(ctx);
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handleReversestep(@NonNull ReversestepContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitReversestep(ReversestepContext ctx) {
-    return handle(ctx, (context) -> handleReversestep(ctx));
-  }
-
-  @Override
-  public R visitReverseaxis(ReverseaxisContext ctx) {
-    // should never be called, since this is handled by handleReversestep
-    throw new IllegalStateException();
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handleAbbrevreversestep(@NonNull AbbrevreversestepContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitAbbrevreversestep(AbbrevreversestepContext ctx) {
-    return handleAbbrevreversestep(ctx);
-  }
-
-  @Override
-  public R visitNametest(NametestContext ctx) {
-    assert ctx != null;
-    return passThrough(ctx);
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handleWildcard(@NonNull WildcardContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitWildcard(WildcardContext ctx) {
-    return handleWildcard(ctx);
-  }
-
-  /**
-   * Handle the provided expression.
-   *
-   * @param ctx
-   *          the provided expression context
-   * @return the result
-   */
-  protected abstract R handlePostfixexpr(@NonNull PostfixexprContext ctx);
-
-  @SuppressWarnings("null")
-  @Override
-  public R visitPostfixexpr(PostfixexprContext ctx) {
-    return handle(ctx, (context) -> handlePostfixexpr(ctx));
-  }
-
-  @Override
-  public R visitArgumentlist(ArgumentlistContext ctx) {
-    // should never be called, since this is handled by the parent expression
-    throw new IllegalStateException();
-  }
-
-  @Override
-  public R visitPredicatelist(PredicatelistContext ctx) {
-    // should never be called, since this is handled by the parent expression
-    throw new IllegalStateException();
-  }
-
-  @Override
-  public R visitPredicate(PredicateContext ctx) {
-    // should never be called, since this is handled by the parent expression
-    throw new IllegalStateException();
-  }
 
   @Override
   public R visitPrimaryexpr(PrimaryexprContext ctx) {
     assert ctx != null;
-    return passThrough(ctx);
+    return delegateToChild(ctx);
   }
+
+  /* =================================================================
+   * Literal Expressions - https://www.w3.org/TR/xpath-31/#id-literals
+   * =================================================================
+   */
 
   /**
    * Handle the provided expression.
@@ -526,9 +194,9 @@ abstract class AbstractAstVisitor<R> // NOPMD
    */
   protected abstract R handleStringLiteral(@NonNull LiteralContext ctx);
 
-  @SuppressWarnings("null")
   @Override
   public R visitLiteral(LiteralContext ctx) {
+    assert ctx != null;
     return handle(ctx, (context) -> handleStringLiteral(ctx));
   }
 
@@ -541,16 +209,56 @@ abstract class AbstractAstVisitor<R> // NOPMD
    */
   protected abstract R handleNumericLiteral(@NonNull NumericliteralContext ctx);
 
-  @SuppressWarnings("null")
   @Override
   public R visitNumericliteral(NumericliteralContext ctx) {
+    assert ctx != null;
     return handle(ctx, (context) -> handleNumericLiteral(ctx));
   }
 
+  /* ==================================================================
+   * Variable References - https://www.w3.org/TR/xpath-31/#id-variables
+   * ==================================================================
+   */
+
+  protected abstract R handleVarref(@NonNull VarrefContext ctx);
+
+  @Override
+  public R visitVarref(VarrefContext ctx) {
+    assert ctx != null;
+    return handleVarref(ctx);
+  }
+
+  @Override
+  public R visitVarname(VarnameContext ctx) {
+    assert ctx != null;
+    return delegateToChild(ctx);
+  }
+
+  /* =================================================================================
+   * Parenthesized Expressions  - https://www.w3.org/TR/xpath-31/#id-paren-expressions
+   * =================================================================================
+   */
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleEmptyParenthesizedexpr(@NonNull ParenthesizedexprContext ctx);
+
   @Override
   public R visitParenthesizedexpr(ParenthesizedexprContext ctx) {
-    return ctx.expr().accept(this);
+    assert ctx != null;
+    ExprContext expr = ctx.expr();
+    return expr == null ? handleEmptyParenthesizedexpr(ctx) : visit(expr);
   }
+
+  /* =====================================================================================
+   * Context Item Expression  - https://www.w3.org/TR/xpath-31/#id-context-item-expression
+   * =====================================================================================
+   */
 
   /**
    * Handle the provided expression.
@@ -561,11 +269,16 @@ abstract class AbstractAstVisitor<R> // NOPMD
    */
   protected abstract R handleContextitemexpr(@NonNull ContextitemexprContext ctx);
 
-  @SuppressWarnings("null")
   @Override
   public R visitContextitemexpr(ContextitemexprContext ctx) {
+    assert ctx != null;
     return handle(ctx, (context) -> handleContextitemexpr(ctx));
   }
+
+  /* =========================================================================
+   * Static Function Calls - https://www.w3.org/TR/xpath-31/#id-function-calls
+   * =========================================================================
+   */
 
   /**
    * Handle the provided expression.
@@ -576,16 +289,192 @@ abstract class AbstractAstVisitor<R> // NOPMD
    */
   protected abstract R handleFunctioncall(@NonNull FunctioncallContext ctx);
 
-  @SuppressWarnings("null")
   @Override
   public R visitFunctioncall(FunctioncallContext ctx) {
+    assert ctx != null;
     return handle(ctx, (context) -> handleFunctioncall(ctx));
   }
 
   @Override
+  public R visitArgumentlist(ArgumentlistContext ctx) {
+    // should never be called, since this is handled by the parent expression
+    throw new IllegalStateException();
+  }
+
+  @Override
   public R visitArgument(ArgumentContext ctx) {
+    // should never be called, since this is handled by the parent expression
+    throw new IllegalStateException();
+  }
+
+  /* =========================================================================
+   * Filter Expressions - https://www.w3.org/TR/xpath-31/#id-filter-expression
+   * =========================================================================
+   */
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handlePostfixexpr(@NonNull PostfixexprContext ctx);
+
+  @Override
+  public R visitPostfixexpr(PostfixexprContext ctx) {
     assert ctx != null;
-    return passThrough(ctx);
+    return handle(ctx, (context) -> handlePostfixexpr(ctx));
+  }
+
+  @Override
+  public R visitPredicate(PredicateContext ctx) {
+    // should never be called, since this is handled by the parent expression
+    throw new IllegalStateException();
+  }
+
+  /* ======================================================================
+   * Path Expressions - https://www.w3.org/TR/xpath-31/#id-path-expressions
+   * ======================================================================
+   */
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handlePathexpr(@NonNull PathexprContext ctx);
+
+  @Override
+  public R visitPathexpr(PathexprContext ctx) {
+    assert ctx != null;
+    return handle(ctx, (context) -> handlePathexpr(ctx));
+  }
+
+  /* =======================================================================================
+   * RelativePath Expressions - https://www.w3.org/TR/xpath-31/#id-relative-path-expressions
+   * =======================================================================================
+   */
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleRelativepathexpr(@NonNull RelativepathexprContext ctx);
+
+  @Override
+  public R visitRelativepathexpr(RelativepathexprContext ctx) {
+    assert ctx != null;
+    return handle(ctx, (context) -> handleRelativepathexpr(ctx));
+  }
+
+  /* ================================================
+   * Steps - https://www.w3.org/TR/xpath-31/#id-steps
+   * ================================================
+   */
+
+  @Override
+  public R visitStepexpr(StepexprContext ctx) {
+    assert ctx != null;
+    return delegateToChild(ctx);
+  }
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleForwardstep(@NonNull ForwardstepContext ctx);
+
+  @Override
+  public R visitForwardstep(ForwardstepContext ctx) {
+    assert ctx != null;
+    // this will either call the handler or forward for AbbrevforwardstepContext
+    return handle(ctx, (context) -> handleForwardstep(ctx));
+  }
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleReversestep(@NonNull ReversestepContext ctx);
+
+  @Override
+  public R visitReversestep(ReversestepContext ctx) {
+    assert ctx != null;
+    // this will either call the handler or forward for AbbrevreversestepContext
+    return handle(ctx, (context) -> handleReversestep(ctx));
+  }
+
+  /* ======================================================================
+   * Predicates within Steps - https://www.w3.org/TR/xpath-31/#id-predicate
+   * ======================================================================
+   */
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleAxisstep(@NonNull AxisstepContext ctx);
+
+  @Override
+  public R visitAxisstep(AxisstepContext ctx) {
+    assert ctx != null;
+    return handle(ctx, (context) -> handleAxisstep(ctx));
+  }
+
+  @Override
+  public R visitPredicatelist(PredicatelistContext ctx) {
+    // should never be called, since this is handled by the parent expression
+    throw new IllegalStateException();
+  }
+
+  /* ===========================================
+   * Axes - https://www.w3.org/TR/xpath-31/#axes
+   * ===========================================
+   */
+
+  @Override
+  public R visitForwardaxis(ForwardaxisContext ctx) {
+    // should never be called, since this is handled by handleForwardstep
+    throw new IllegalStateException();
+  }
+
+  @Override
+  public R visitReverseaxis(ReverseaxisContext ctx) {
+    // should never be called, since this is handled by handleReversestep
+    throw new IllegalStateException();
+  }
+
+  /* =======================================================
+   * Node Tests - https://www.w3.org/TR/xpath-31/#node-tests
+   * =======================================================
+   */
+
+  @Override
+  public R visitNodetest(NodetestContext ctx) {
+    // TODO: revisit once kindtest is implemented
+    assert ctx != null;
+    return delegateToChild(ctx);
+  }
+
+  @Override
+  public R visitNametest(NametestContext ctx) {
+    assert ctx != null;
+    return delegateToChild(ctx);
   }
 
   /**
@@ -597,11 +486,296 @@ abstract class AbstractAstVisitor<R> // NOPMD
    */
   protected abstract R handleEqname(@NonNull EqnameContext ctx);
 
-  @SuppressWarnings("null")
   @Override
   public R visitEqname(EqnameContext ctx) {
+    assert ctx != null;
     return handleEqname(ctx);
   }
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleWildcard(@NonNull WildcardContext ctx);
+
+  @Override
+  public R visitWildcard(WildcardContext ctx) {
+    assert ctx != null;
+    return handleWildcard(ctx);
+  }
+
+  /* ===========================================================
+   * Abbreviated Syntax - https://www.w3.org/TR/xpath-31/#abbrev
+   * ===========================================================
+   */
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleAbbrevforwardstep(@NonNull AbbrevforwardstepContext ctx);
+
+  @Override
+  public R visitAbbrevforwardstep(AbbrevforwardstepContext ctx) {
+    assert ctx != null;
+    return handleAbbrevforwardstep(ctx);
+  }
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleAbbrevreversestep(@NonNull AbbrevreversestepContext ctx);
+
+  @Override
+  public R visitAbbrevreversestep(AbbrevreversestepContext ctx) {
+    assert ctx != null;
+    return handleAbbrevreversestep(ctx);
+  }
+
+  /* ======================================================================
+   * Constructing Sequences - https://www.w3.org/TR/xpath-31/#construct_seq
+   * ======================================================================
+   */
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleRangeexpr(@NonNull RangeexprContext ctx);
+
+  @Override
+  public R visitRangeexpr(RangeexprContext ctx) {
+    assert ctx != null;
+    return handle(ctx, (context) -> handleRangeexpr(ctx));
+  }
+
+  /* ========================================================================
+   * Combining Node Sequences - https://www.w3.org/TR/xpath-31/#combining_seq
+   * ========================================================================
+   */
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleUnionexpr(@NonNull UnionexprContext ctx);
+
+  @Override
+  public R visitUnionexpr(UnionexprContext ctx) {
+    assert ctx != null;
+    return handle(ctx, (context) -> handleUnionexpr(ctx));
+  }
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleIntersectexceptexpr(@NonNull IntersectexceptexprContext ctx);
+
+  @Override
+  public R visitIntersectexceptexpr(IntersectexceptexprContext ctx) {
+    assert ctx != null;
+    return handle(ctx, (context) -> handleIntersectexceptexpr(ctx));
+  }
+
+  /* ======================================================================
+   * Arithmetic Expressions - https://www.w3.org/TR/xpath-31/#id-arithmetic
+   * ======================================================================
+   */
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleAdditiveexpr(@NonNull AdditiveexprContext ctx);
+
+  @Override
+  public R visitAdditiveexpr(AdditiveexprContext ctx) {
+    assert ctx != null;
+    return handle(ctx, (context) -> handleAdditiveexpr(ctx));
+  }
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleMultiplicativeexpr(@NonNull MultiplicativeexprContext ctx);
+
+  @Override
+  public R visitMultiplicativeexpr(MultiplicativeexprContext ctx) {
+    assert ctx != null;
+    return handle(ctx, (context) -> handleMultiplicativeexpr(ctx));
+  }
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleUnaryexpr(@NonNull UnaryexprContext ctx);
+
+  @Override
+  public R visitUnaryexpr(UnaryexprContext ctx) {
+    assert ctx != null;
+    return handle(ctx, (context) -> handleUnaryexpr(ctx));
+  }
+
+  @Override
+  public R visitValueexpr(ValueexprContext ctx) {
+    assert ctx != null;
+    return delegateToChild(ctx);
+  }
+
+  /* ========================================================================================
+   * String Concatenation Expressions - https://www.w3.org/TR/xpath-31/#id-string-concat-expr
+   * ========================================================================================
+   */
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleStringconcatexpr(@NonNull StringconcatexprContext ctx);
+
+  @Override
+  public R visitStringconcatexpr(StringconcatexprContext ctx) {
+    assert ctx != null;
+    return handle(ctx, (context) -> handleStringconcatexpr(ctx));
+  }
+
+  /* =======================================================================
+   * Comparison Expressions - https://www.w3.org/TR/xpath-31/#id-comparisons
+   * =======================================================================
+   */
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleComparisonexpr(@NonNull ComparisonexprContext ctx);
+
+  @Override
+  public R visitComparisonexpr(ComparisonexprContext ctx) {
+    assert ctx != null;
+    return handle(ctx, (context) -> handleComparisonexpr(ctx));
+  }
+
+  @Override
+  public R visitValuecomp(ValuecompContext ctx) {
+    // should never be called, since this is handled by the parent expression
+    throw new IllegalStateException();
+  }
+
+  @Override
+  public R visitGeneralcomp(GeneralcompContext ctx) {
+    // should never be called, since this is handled by the parent expression
+    throw new IllegalStateException();
+  }
+
+  /* ============================================================================
+   * Logical Expressions - https://www.w3.org/TR/xpath-31/#id-logical-expressions
+   * ============================================================================
+   */
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleOrexpr(@NonNull OrexprContext ctx);
+
+  @Override
+  public R visitOrexpr(OrexprContext ctx) {
+    assert ctx != null;
+    return handle(ctx, (context) -> handleOrexpr(ctx));
+  }
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleAndexpr(@NonNull AndexprContext ctx);
+
+  @Override
+  public R visitAndexpr(AndexprContext ctx) {
+    assert ctx != null;
+    return handle(ctx, (context) -> handleAndexpr(ctx));
+  }
+
+  /* ====================================================================
+   * For Expressions - https://www.w3.org/TR/xpath-31/#id-for-expressions
+   * ====================================================================
+   */
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleForexpr(@NonNull ForexprContext ctx);
+
+  @Override
+  public R visitForexpr(ForexprContext ctx) {
+    assert ctx != null;
+    return handle(ctx, (context) -> handleForexpr(ctx));
+  }
+
+  @Override
+  public R visitSimpleforclause(SimpleforclauseContext ctx) {
+    // should never be called, since this is handled by the parent expression
+    throw new IllegalStateException();
+  }
+
+  @Override
+  public R visitSimpleforbinding(SimpleforbindingContext ctx) {
+    // should never be called, since this is handled by the parent expression
+    throw new IllegalStateException();
+  }
+
+  /* ====================================================================
+   * Let Expressions - https://www.w3.org/TR/xpath-31/#id-let-expressions
+   * ====================================================================
+   */
 
   protected abstract R handleLet(@NonNull LetexprContext ctx);
 
@@ -623,24 +797,89 @@ abstract class AbstractAstVisitor<R> // NOPMD
     throw new IllegalStateException();
   }
 
+  /* =========================================================================
+   * Conditional Expressions - https://www.w3.org/TR/xpath-31/#id-conditionals
+   * =========================================================================
+   */
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleIfexpr(@NonNull IfexprContext ctx);
+
+  @Override
+  public R visitIfexpr(IfexprContext ctx) {
+    assert ctx != null;
+    return handle(ctx, (context) -> handleIfexpr(ctx));
+  }
+
+  /* ==================================================================================
+   * Quantified Expressions - https://www.w3.org/TR/xpath-31/#id-quantified-expressions
+   * ==================================================================================
+   */
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleQuantifiedexpr(@NonNull QuantifiedexprContext ctx);
+
+  @Override
+  public R visitQuantifiedexpr(QuantifiedexprContext ctx) {
+    assert ctx != null;
+    return handleQuantifiedexpr(ctx);
+  }
+
+  /* =========================================================================
+   * Simple map operator (!) - https://www.w3.org/TR/xpath-31/#id-map-operator
+   * =========================================================================
+   */
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleSimplemapexpr(@NonNull SimplemapexprContext ctx);
+
+  @Override
+  public R visitSimplemapexpr(SimplemapexprContext ctx) {
+    assert ctx != null;
+    return handle(ctx, (context) -> handleSimplemapexpr(ctx));
+  }
+
+  /* =======================================================================
+   * Arrow operator (=>) - https://www.w3.org/TR/xpath-31/#id-arrow-operator
+   * =======================================================================
+   */
+
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
+  protected abstract R handleArrowexpr(@NonNull ArrowexprContext ctx);
+
+  @Override
+  public R visitArrowexpr(ArrowexprContext ctx) {
+    assert ctx != null;
+    return handle(ctx, (context) -> handleArrowexpr(ctx));
+  }
+
   @Override
   public R visitArrowfunctionspecifier(ArrowfunctionspecifierContext ctx) {
     // should never be called, since this is handled by the parent expression
     throw new IllegalStateException();
   }
-
-  protected abstract R handleVarref(@NonNull VarrefContext ctx);
-
-  @Override
-  public R visitVarref(VarrefContext ctx) {
-    assert ctx != null;
-    return handleVarref(ctx);
-  }
-
-  @Override
-  public R visitVarname(VarnameContext ctx) {
-    assert ctx != null;
-    return passThrough(ctx);
-  }
-
 }

@@ -24,55 +24,72 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.metapath.cst;
+package gov.nist.secauto.metaschema.core.metapath.cst.comparison;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.function.library.FnBoolean;
+import gov.nist.secauto.metaschema.core.metapath.cst.IExpression;
+import gov.nist.secauto.metaschema.core.metapath.cst.IExpressionVisitor;
+import gov.nist.secauto.metaschema.core.metapath.function.ComparisonFunctions;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
 
-import java.util.Arrays;
-import java.util.List;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class Or // NOPMD - intentional name
-    extends AbstractNAryExpression
-    implements IBooleanLogicExpression {
-
-  @SuppressWarnings("null")
-  public Or(@NonNull IExpression... expressions) {
-    this(Arrays.asList(expressions));
-  }
+public class ValueComparison
+    extends AbstractComparison {
 
   /**
-   * Determines the logical disjunction of the result of evaluating a list of
-   * expressions. The boolean result of each expression is determined by applying
-   * {@link FnBoolean#fnBooleanAsPrimitive(ISequence)} to each function's
-   * {@link ISequence} result.
+   * Create a new value comparison expression.
    *
-   * @param expressions
-   *          the list of expressions
+   * @param left
+   *          the expression to compare against
+   * @param operator
+   *          the comparison operator
+   * @param right
+   *          the expression to compare with
    */
-  public Or(@NonNull List<IExpression> expressions) {
-    super(expressions);
+  public ValueComparison(
+      @NonNull IExpression left,
+      @NonNull ComparisonFunctions.Operator operator,
+      @NonNull IExpression right) {
+    super(left, operator, right);
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitOr(this, context);
+    return visitor.visitValueComparison(this, context);
   }
 
   @Override
   public ISequence<? extends IBooleanItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
-    boolean retval = false;
-    for (IExpression child : getChildren()) {
-      ISequence<?> result = child.accept(dynamicContext, focus);
-      if (FnBoolean.fnBooleanAsPrimitive(result)) {
-        retval = true;
-        break;
-      }
-    }
-    return ISequence.of(IBooleanItem.valueOf(retval));
+    IAnyAtomicItem left = getFirstDataItem(getLeft().accept(dynamicContext, focus), false);
+    IAnyAtomicItem right = getFirstDataItem(getRight().accept(dynamicContext, focus), false);
+
+    return resultOrEmpty(left, right);
   }
+
+  /**
+   * Compare the two atomic items.
+   *
+   * @param leftItem
+   *          the first item to compare
+   * @param rightItem
+   *          the second item to compare
+   * @return a or an empty {@link ISequence} if either item is {@code null}
+   */
+  @NonNull
+  protected ISequence<? extends IBooleanItem> resultOrEmpty(@Nullable IAnyAtomicItem leftItem,
+      @Nullable IAnyAtomicItem rightItem) {
+    ISequence<? extends IBooleanItem> retval;
+    if (leftItem == null || rightItem == null) {
+      retval = ISequence.empty();
+    } else {
+      IBooleanItem result = ComparisonFunctions.valueCompairison(leftItem, getOperator(), rightItem);
+      retval = ISequence.of(result);
+    }
+    return retval;
+  }
+
 }

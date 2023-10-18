@@ -24,69 +24,90 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.metapath.cst;
+package gov.nist.secauto.metaschema.core.metapath.cst.path;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.cst.ExpressionUtils;
+import gov.nist.secauto.metaschema.core.metapath.cst.IExpression;
+import gov.nist.secauto.metaschema.core.metapath.cst.IExpressionVisitor;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class Let implements IExpression { // NOPMD class name ok
-  @NonNull
-  private final Name name;
-  @NonNull
-  private final IExpression boundExpression;
-  @NonNull
-  private final IExpression returnExpression;
+/**
+ * An immutable expression that combines the evaluation of a sub-expression,
+ * with the evaluation of a series of predicate expressions that filter the
+ * result of the evaluation.
+ */
+public class Step implements IExpression { // NOPMD - intentional
 
-  public Let(@NonNull Name name, @NonNull IExpression boundExpression, @NonNull IExpression returnExpression) {
-    this.name = name;
-    this.boundExpression = boundExpression;
-    this.returnExpression = returnExpression;
+  @NonNull
+  private final Axis axisExpression;
+  @NonNull
+  private final IExpression stepExpression;
+  @NonNull
+  private final Class<? extends IItem> staticResultType;
+
+  /**
+   * Construct a new stepExpression expression.
+   *
+   * @param axis
+   *          the axis to evaluate against
+   * @param step
+   *          the sub-expression to evaluate before filtering with the predicates
+   */
+  @SuppressWarnings("null")
+  public Step(@NonNull Axis axis, @NonNull IExpression step) {
+    this.axisExpression = axis;
+    this.stepExpression = step;
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, List.of(step));
   }
 
   @NonNull
-  public Name getName() {
-    return name;
+  public Axis getAxis() {
+    return axisExpression;
   }
 
+  /**
+   * Get the step expression's sub-expression.
+   *
+   * @return the sub-expression
+   */
   @NonNull
-  public IExpression getBoundExpression() {
-    return boundExpression;
+  public IExpression getStep() {
+    return stepExpression;
   }
 
-  @NonNull
-  public IExpression getReturnExpression() {
-    return returnExpression;
+  @Override
+  public Class<? extends IItem> getStaticResultType() {
+    return staticResultType;
   }
 
   @Override
   public List<? extends IExpression> getChildren() {
-    return ObjectUtils.notNull(
-        List.of(boundExpression, returnExpression));
+    return ObjectUtils.notNull(List.of(getAxis(), getStep()));
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitLet(this, context);
+    return visitor.visitStep(this, context);
   }
 
   @Override
-  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
-    ISequence<?> result = getBoundExpression().accept(dynamicContext, focus);
+  public ISequence<?> accept(DynamicContext dynamicContext, ISequence<?> focus) {
 
-    String name = getName().getValue();
+    ISequence<? extends INodeItem> axisResult = getAxis().accept(dynamicContext, focus);
+    return getStep().accept(dynamicContext, axisResult);
+  }
 
-    DynamicContext subDynamicContext = dynamicContext.subContext();
-
-    subDynamicContext.setVariableValue(name, result);
-
-    ISequence<?> retval = getReturnExpression().accept(subDynamicContext, focus);
-
-    return retval;
+  @SuppressWarnings("null")
+  @Override
+  public String toASTString() {
+    return String.format("%s[axis=%s]", getClass().getName(), getAxis().name());
   }
 }

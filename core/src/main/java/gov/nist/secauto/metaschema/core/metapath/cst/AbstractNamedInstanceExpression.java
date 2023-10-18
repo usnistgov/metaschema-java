@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.metapath.cst;
 
+import gov.nist.secauto.metaschema.core.metapath.cst.path.AbstractPathExpression;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 
 import java.util.List;

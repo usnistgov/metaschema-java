@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
-import gov.nist.secauto.metaschema.core.metapath.cst.AbstractCodedMetapathException;
-
 public class TypeMetapathException
     extends AbstractCodedMetapathException {
   public static final int INVALID_TYPE_ERROR = 4;

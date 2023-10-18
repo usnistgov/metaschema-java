@@ -24,69 +24,73 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.metapath.cst;
+package gov.nist.secauto.metaschema.core.metapath.cst.path;
 
-import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.item.IItem;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.metapath.cst.ExpressionUtils;
+import gov.nist.secauto.metaschema.core.metapath.cst.IExpression;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class Let implements IExpression { // NOPMD class name ok
+public abstract class AbstractRelativePathExpression
+    extends AbstractPathExpression<INodeItem> {
   @NonNull
-  private final Name name;
+  private final IExpression left;
   @NonNull
-  private final IExpression boundExpression;
+  private final IExpression right;
   @NonNull
-  private final IExpression returnExpression;
+  private final Class<? extends INodeItem> staticResultType;
 
-  public Let(@NonNull Name name, @NonNull IExpression boundExpression, @NonNull IExpression returnExpression) {
-    this.name = name;
-    this.boundExpression = boundExpression;
-    this.returnExpression = returnExpression;
+  /**
+   * Construct a new relative path expression of "left/right".
+   *
+   * @param left
+   *          the left part of the path
+   * @param right
+   *          the right part of the path
+   */
+  @SuppressWarnings("null")
+  public AbstractRelativePathExpression(@NonNull IExpression left, @NonNull IExpression right) {
+    this.left = left;
+    this.right = right;
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(getBaseResultType(), List.of(left, right));
   }
 
+  /**
+   * The expression associated with the left path segment.
+   *
+   * @return the expression
+   */
   @NonNull
-  public Name getName() {
-    return name;
+  public IExpression getLeft() {
+    return left;
   }
 
+  /**
+   * The expression associated with the right path segment.
+   *
+   * @return the expression
+   */
   @NonNull
-  public IExpression getBoundExpression() {
-    return boundExpression;
+  public IExpression getRight() {
+    return right;
   }
 
-  @NonNull
-  public IExpression getReturnExpression() {
-    return returnExpression;
-  }
-
+  @SuppressWarnings("null")
   @Override
   public List<? extends IExpression> getChildren() {
-    return ObjectUtils.notNull(
-        List.of(boundExpression, returnExpression));
+    return List.of(left, right);
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitLet(this, context);
+  public final @NonNull Class<INodeItem> getBaseResultType() {
+    return INodeItem.class;
   }
 
   @Override
-  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
-    ISequence<?> result = getBoundExpression().accept(dynamicContext, focus);
-
-    String name = getName().getValue();
-
-    DynamicContext subDynamicContext = dynamicContext.subContext();
-
-    subDynamicContext.setVariableValue(name, result);
-
-    ISequence<?> retval = getReturnExpression().accept(subDynamicContext, focus);
-
-    return retval;
+  public Class<? extends INodeItem> getStaticResultType() {
+    return staticResultType;
   }
 }

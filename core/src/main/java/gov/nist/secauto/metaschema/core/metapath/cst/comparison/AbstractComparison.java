@@ -24,69 +24,60 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.metapath.cst;
+package gov.nist.secauto.metaschema.core.metapath.cst.comparison;
 
-import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.cst.AbstractBinaryExpression;
+import gov.nist.secauto.metaschema.core.metapath.cst.IBooleanLogicExpression;
+import gov.nist.secauto.metaschema.core.metapath.cst.IExpression;
+import gov.nist.secauto.metaschema.core.metapath.function.ComparisonFunctions;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-
-import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class Let implements IExpression { // NOPMD class name ok
-  @NonNull
-  private final Name name;
-  @NonNull
-  private final IExpression boundExpression;
-  @NonNull
-  private final IExpression returnExpression;
+/**
+ * A common base class for all comparison nodes, which consist of two
+ * expressions representing the left and right sides of the comparison, and a
+ * comparison operator.
+ */
+public abstract class AbstractComparison // NOPMD - unavoidable
+    extends AbstractBinaryExpression<IExpression, IExpression>
+    implements IBooleanLogicExpression {
 
-  public Let(@NonNull Name name, @NonNull IExpression boundExpression, @NonNull IExpression returnExpression) {
-    this.name = name;
-    this.boundExpression = boundExpression;
-    this.returnExpression = returnExpression;
+  @NonNull
+  private final ComparisonFunctions.Operator operator;
+
+  /**
+   * Construct an expression that compares the result of the {@code right}
+   * expression with the result of the {@code left} expression using the specified
+   * {@code operator}.
+   *
+   * @param left
+   *          the expression to compare against
+   * @param operator
+   *          the comparison operator
+   * @param right
+   *          the expression to compare with
+   */
+  public AbstractComparison(@NonNull IExpression left, @NonNull ComparisonFunctions.Operator operator,
+      @NonNull IExpression right) {
+    super(left, right);
+    this.operator = ObjectUtils.requireNonNull(operator, "operator");
   }
 
+  /**
+   * Get the comparison operator.
+   *
+   * @return the operator
+   */
   @NonNull
-  public Name getName() {
-    return name;
+  public ComparisonFunctions.Operator getOperator() {
+    return operator;
   }
 
-  @NonNull
-  public IExpression getBoundExpression() {
-    return boundExpression;
-  }
-
-  @NonNull
-  public IExpression getReturnExpression() {
-    return returnExpression;
-  }
-
+  @SuppressWarnings("null")
   @Override
-  public List<? extends IExpression> getChildren() {
-    return ObjectUtils.notNull(
-        List.of(boundExpression, returnExpression));
+  public String toASTString() {
+    return String.format("%s[operator=%s]", getClass().getName(), operator);
   }
 
-  @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitLet(this, context);
-  }
-
-  @Override
-  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
-    ISequence<?> result = getBoundExpression().accept(dynamicContext, focus);
-
-    String name = getName().getValue();
-
-    DynamicContext subDynamicContext = dynamicContext.subContext();
-
-    subDynamicContext.setVariableValue(name, result);
-
-    ISequence<?> retval = getReturnExpression().accept(subDynamicContext, focus);
-
-    return retval;
-  }
 }

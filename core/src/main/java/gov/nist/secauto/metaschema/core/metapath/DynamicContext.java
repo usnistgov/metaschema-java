@@ -53,81 +53,100 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DynamicContext { // NOPMD - intentional data class
   @NonNull
-  private final StaticContext staticContext;
-  @NonNull
-  private final ZoneId implicitTimeZone;
-  @NonNull
-  private final ZonedDateTime currentDateTime;
-  @NonNull
-  private final Map<URI, IDocumentNodeItem> availableDocuments;
-  private final Map<CallingContext, ISequence<?>> functionResultCache;
-  private CachingLoader documentLoader;
-  @NonNull
-  private final IMutableConfiguration<MetapathEvaluationFeature<?>> configuration;
-  @NonNull
   private final Map<String, ISequence<?>> letVariableMap;
+  @NonNull
+  private final SharedState sharedState;
 
   @SuppressWarnings("null")
   public DynamicContext(@NonNull StaticContext staticContext) {
-    this.staticContext = staticContext;
-
-    Clock clock = Clock.systemDefaultZone();
-
-    this.implicitTimeZone = clock.getZone();
-    this.currentDateTime = ZonedDateTime.now(clock);
-    this.availableDocuments = new HashMap<>();
-    this.functionResultCache = new HashMap<>();
-    this.configuration = new DefaultConfiguration<>();
-    this.configuration.enableFeature(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES);
     this.letVariableMap = new ConcurrentHashMap<>();
+    this.sharedState = new SharedState(staticContext);
+  }
+
+  private DynamicContext(@NonNull DynamicContext context) {
+    this.letVariableMap = new ConcurrentHashMap<>(context.letVariableMap);
+    this.sharedState = context.sharedState;
+  }
+
+  private static class SharedState {
+    @NonNull
+    private final StaticContext staticContext;
+    @NonNull
+    private final ZoneId implicitTimeZone;
+    @NonNull
+    private final ZonedDateTime currentDateTime;
+    @NonNull
+    private final Map<URI, IDocumentNodeItem> availableDocuments;
+    private final Map<CallingContext, ISequence<?>> functionResultCache;
+    private CachingLoader documentLoader;
+    @NonNull
+    private final IMutableConfiguration<MetapathEvaluationFeature<?>> configuration;
+
+    public SharedState(@NonNull StaticContext staticContext) {
+      this.staticContext = staticContext;
+
+      Clock clock = Clock.systemDefaultZone();
+
+      this.implicitTimeZone = clock.getZone();
+      this.currentDateTime = ZonedDateTime.now(clock);
+      this.availableDocuments = new HashMap<>();
+      this.functionResultCache = new HashMap<>();
+      this.configuration = new DefaultConfiguration<>();
+      this.configuration.enableFeature(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES);
+    }
+  }
+
+  @NonNull
+  public DynamicContext subContext() {
+    return new DynamicContext(this);
   }
 
   @NonNull
   public StaticContext getStaticContext() {
-    return staticContext;
+    return sharedState.staticContext;
   }
 
   @NonNull
   public ZoneId getImplicitTimeZone() {
-    return implicitTimeZone;
+    return sharedState.implicitTimeZone;
   }
 
   @NonNull
   public ZonedDateTime getCurrentDateTime() {
-    return currentDateTime;
+    return sharedState.currentDateTime;
   }
 
   @SuppressWarnings("null")
   @NonNull
   public Map<URI, INodeItem> getAvailableDocuments() {
-    return Collections.unmodifiableMap(availableDocuments);
+    return Collections.unmodifiableMap(sharedState.availableDocuments);
   }
 
   public IDocumentLoader getDocumentLoader() {
-    return documentLoader;
+    return sharedState.documentLoader;
   }
 
   public void setDocumentLoader(@NonNull IDocumentLoader documentLoader) {
-    this.documentLoader = new CachingLoader(documentLoader);
+    this.sharedState.documentLoader = new CachingLoader(documentLoader);
   }
 
   public ISequence<?> getCachedResult(@NonNull CallingContext callingContext) {
-    return functionResultCache.get(callingContext);
+    return sharedState.functionResultCache.get(callingContext);
   }
 
   @NonNull
   public DynamicContext disablePredicateEvaluation() {
-    this.configuration.disableFeature(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES);
+    this.sharedState.configuration.disableFeature(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES);
     return this;
   }
 
   @NonNull
   public IConfiguration<MetapathEvaluationFeature<?>> getConfiguration() {
-    return configuration;
+    return sharedState.configuration;
   }
 
   public void cacheResult(@NonNull CallingContext callingContext, @NonNull ISequence<?> result) {
-    ISequence<?> old = functionResultCache.put(callingContext, result);
+    ISequence<?> old = sharedState.functionResultCache.put(callingContext, result);
     assert old == null;
   }
 
@@ -171,10 +190,10 @@ public class DynamicContext { // NOPMD - intentional data class
     @Override
     public IDocumentNodeItem loadAsNodeItem(Path path) throws IOException {
       URI uri = path.toUri();
-      IDocumentNodeItem retval = availableDocuments.get(uri);
+      IDocumentNodeItem retval = sharedState.availableDocuments.get(uri);
       if (retval == null) {
         retval = getProxiedDocumentLoader().loadAsNodeItem(path);
-        availableDocuments.put(uri, retval);
+        sharedState.availableDocuments.put(uri, retval);
       }
       return retval;
     }
@@ -182,20 +201,20 @@ public class DynamicContext { // NOPMD - intentional data class
     @Override
     public IDocumentNodeItem loadAsNodeItem(URL url) throws IOException, URISyntaxException {
       URI uri = ObjectUtils.notNull(url.toURI());
-      IDocumentNodeItem retval = availableDocuments.get(uri);
+      IDocumentNodeItem retval = sharedState.availableDocuments.get(uri);
       if (retval == null) {
         retval = getProxiedDocumentLoader().loadAsNodeItem(uri);
-        availableDocuments.put(uri, retval);
+        sharedState.availableDocuments.put(uri, retval);
       }
       return retval;
     }
 
     @Override
     public IDocumentNodeItem loadAsNodeItem(URI uri) throws IOException {
-      IDocumentNodeItem retval = availableDocuments.get(uri);
+      IDocumentNodeItem retval = sharedState.availableDocuments.get(uri);
       if (retval == null) {
         retval = getProxiedDocumentLoader().loadAsNodeItem(uri);
-        availableDocuments.put(uri, retval);
+        sharedState.availableDocuments.put(uri, retval);
       }
       return retval;
     }
@@ -232,4 +251,5 @@ public class DynamicContext { // NOPMD - intentional data class
       }
     }
   }
+
 }
