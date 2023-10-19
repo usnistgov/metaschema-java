@@ -89,7 +89,8 @@ public class DefaultFunctionLibrary
     // https://www.w3.org/TR/xpath-functions-31/#func-document-uri
     registerFunction(FnDocumentUri.SIGNATURE_NO_ARG);
     registerFunction(FnDocumentUri.SIGNATURE_ONE_ARG);
-    // P1: https://www.w3.org/TR/xpath-functions-31/#func-empty
+    // https://www.w3.org/TR/xpath-functions-31/#func-empty
+    registerFunction(FnEmpty.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-encode-for-uri
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-ends-with
     // P2: https://www.w3.org/TR/xpath-functions-31/#func-exactly-one
