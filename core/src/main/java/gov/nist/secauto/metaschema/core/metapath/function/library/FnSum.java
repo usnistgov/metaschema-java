@@ -55,7 +55,7 @@ public final class FnSum {
   @NonNull
   static final IFunction SIGNATURE_ONE_ARG = IFunction.builder()
       .name(NAME)
-      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
       .focusIndependent()
@@ -72,7 +72,7 @@ public final class FnSum {
   @NonNull
   static final IFunction SIGNATURE_TWO_ARG = IFunction.builder()
       .name(NAME)
-      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
       .focusIndependent()

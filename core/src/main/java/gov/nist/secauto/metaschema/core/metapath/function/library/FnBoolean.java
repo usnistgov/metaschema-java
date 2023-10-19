@@ -51,7 +51,7 @@ public final class FnBoolean {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("boolean")
-      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
       .focusIndependent()

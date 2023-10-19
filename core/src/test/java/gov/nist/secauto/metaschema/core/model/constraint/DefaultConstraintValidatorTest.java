@@ -96,7 +96,7 @@ class DefaultConstraintValidatorTest {
     });
 
     DynamicContext dynamicContext = StaticContext.builder()
-        .build().newDynamicContext();
+        .build().dynamicContext();
     FindingCollectingConstraintValidationHandler handler = new FindingCollectingConstraintValidationHandler();
     DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext, handler);
     validator.validate(flag);
@@ -149,7 +149,7 @@ class DefaultConstraintValidatorTest {
     });
 
     DynamicContext dynamicContext = StaticContext.builder()
-        .build().newDynamicContext();
+        .build().dynamicContext();
     FindingCollectingConstraintValidationHandler handler = new FindingCollectingConstraintValidationHandler();
     DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext, handler);
     validator.validate(flag);
@@ -210,7 +210,7 @@ class DefaultConstraintValidatorTest {
     });
 
     DynamicContext dynamicContext = StaticContext.builder()
-        .build().newDynamicContext();
+        .build().dynamicContext();
     FindingCollectingConstraintValidationHandler handler = new FindingCollectingConstraintValidationHandler();
     DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext, handler);
     validator.validate(flag1);

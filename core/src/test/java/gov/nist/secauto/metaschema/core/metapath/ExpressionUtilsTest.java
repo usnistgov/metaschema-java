@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.core.metapath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import gov.nist.secauto.metaschema.core.metapath.cst.ExpressionUtils;
+import gov.nist.secauto.metaschema.core.metapath.cst.IExpression;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFieldNodeItem;

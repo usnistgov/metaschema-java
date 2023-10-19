@@ -34,6 +34,9 @@ import javax.xml.XMLConstants;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Provides constant values used in Metapath.
+ */
 public final class MetapathConstants {
   @NonNull
   public static final URI NS_METAPATH = ObjectUtils.requireNonNull(
@@ -42,11 +45,13 @@ public final class MetapathConstants {
   public static final URI NS_XML_SCHEMA = ObjectUtils.requireNonNull(
       URI.create(XMLConstants.W3C_XML_SCHEMA_NS_URI));
   @NonNull
-  public static final URI NS_XPATH_FUNCTIONS = ObjectUtils.requireNonNull(
-      URI.create("http://www.w3.org/2005/xpath-functions"));
+  public static final URI NS_METAPATH_FUNCTIONS = ObjectUtils.requireNonNull(
+      URI.create("http://csrc.nist.gov/ns/metaschema/metapath-functions"));
   @NonNull
-  public static final URI NS_XPATH_FUNCTIONS_MATH = ObjectUtils.requireNonNull(
-      URI.create("http://www.w3.org/2005/xpath-functions/math"));
+  public static final URI NS_METAPATH_FUNCTIONS_MATH = ObjectUtils.requireNonNull(
+      URI.create("http://csrc.nist.gov/ns/metaschema/metapath-functions/math"));
+  @NonNull
+  public static final URI NS_METAPATH_FUNCTIONS_EXTENDED = NS_METAPATH_FUNCTIONS_MATH;
 
   @NonNull
   public static final String PREFIX_METAPATH = "mp";

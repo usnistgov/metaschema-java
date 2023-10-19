@@ -46,7 +46,7 @@ public class FnCompare {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("compare")
-      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .deterministic()
       .contextDependent()
       .focusIndependent()

@@ -27,11 +27,11 @@
 package gov.nist.secauto.metaschema.core.metapath.function.library;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.core.metapath.DynamicMetapathException;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.MetapathException;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.metapath.StaticMetapathException;
 import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
@@ -54,7 +54,7 @@ public final class MpRecurseDepth {
   @NonNull
   static final IFunction SIGNATURE_ONE_ARG = IFunction.builder()
       .name("recurse-depth")
-      .namespace(MetapathConstants.NS_METAPATH)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS_EXTENDED)
       .deterministic()
       .contextDependent()
       .focusDependent()
@@ -71,7 +71,7 @@ public final class MpRecurseDepth {
   @NonNull
   static final IFunction SIGNATURE_TWO_ARG = IFunction.builder()
       .name("recurse-depth")
-      .namespace(MetapathConstants.NS_METAPATH)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS_EXTENDED)
       .deterministic()
       .contextDependent()
       .focusIndependent()
@@ -136,7 +136,7 @@ public final class MpRecurseDepth {
     try {
       recursionMetapath = MetapathExpression.compile(recursionPath.asString());
     } catch (MetapathException ex) {
-      throw new DynamicMetapathException(DynamicMetapathException.INVALID_PATH_GRAMMAR, ex.getMessage(), ex);
+      throw new StaticMetapathException(StaticMetapathException.INVALID_PATH_GRAMMAR, ex.getMessage(), ex);
     }
 
     return recurseDepth(initialContext, recursionMetapath, dynamicContext);

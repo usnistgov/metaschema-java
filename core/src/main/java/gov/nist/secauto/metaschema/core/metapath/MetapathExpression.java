@@ -26,8 +26,14 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Lexer;
-import gov.nist.secauto.metaschema.core.metapath.antlr.metapath10Parser;
+import gov.nist.secauto.metaschema.core.metapath.antlr.FailingErrorListener;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10Lexer;
+import gov.nist.secauto.metaschema.core.metapath.antlr.ParseTreePrinter;
+import gov.nist.secauto.metaschema.core.metapath.cst.BuildCSTVisitor;
+import gov.nist.secauto.metaschema.core.metapath.cst.CSTPrinter;
+import gov.nist.secauto.metaschema.core.metapath.cst.ContextItem;
+import gov.nist.secauto.metaschema.core.metapath.cst.IExpression;
 import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.function.library.FnBoolean;
 import gov.nist.secauto.metaschema.core.metapath.function.library.FnData;
@@ -35,6 +41,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDecimalItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.antlr.v4.runtime.CharStreams;
@@ -47,19 +54,37 @@ import org.apache.logging.log4j.Logger;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+/**
+ * Supports compiling and executing Metapath expressions.
+ */
 public class MetapathExpression {
 
   public enum ResultType {
+    /**
+     * The result is expected to be a {@link BigDecimal} value.
+     */
     NUMBER,
+    /**
+     * The result is expected to be a {@link String} value.
+     */
     STRING,
+    /**
+     * The result is expected to be a {@link Boolean} value.
+     */
     BOOLEAN,
+    /**
+     * The result is expected to be an {@link ISequence} value.
+     */
     SEQUENCE,
+    /**
+     * The result is expected to be an {@link INodeItem} value.
+     */
     NODE;
   }
 
@@ -88,9 +113,12 @@ public class MetapathExpression {
       retval = CONTEXT_NODE;
     } else {
       try {
-        metapath10Lexer lexer = new metapath10Lexer(CharStreams.fromString(path));
+        Metapath10Lexer lexer = new Metapath10Lexer(CharStreams.fromString(path));
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(new FailingErrorListener());
+
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        metapath10Parser parser = new metapath10Parser(tokens);
+        Metapath10 parser = new Metapath10(tokens);
         parser.removeErrorListeners();
         parser.addErrorListener(new FailingErrorListener());
 
@@ -99,26 +127,26 @@ public class MetapathExpression {
         if (LOGGER.isDebugEnabled()) {
           try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             try (PrintStream ps = new PrintStream(os, true, StandardCharsets.UTF_8)) {
-              CSTPrinter printer = new CSTPrinter(ps);
-              printer.print(tree, Arrays.asList(metapath10Parser.ruleNames));
+              ParseTreePrinter printer = new ParseTreePrinter(ps);
+              printer.print(tree, Metapath10.ruleNames);
               ps.flush();
             }
-            LOGGER.atDebug().log(String.format("Metapath CST:%n%s", os.toString(StandardCharsets.UTF_8)));
+            LOGGER.atDebug().log(String.format("Metapath AST:%n%s", os.toString(StandardCharsets.UTF_8)));
           } catch (IOException ex) {
             LOGGER.atError().withThrowable(ex).log("An unexpected error occured while closing the steam.");
           }
         }
 
-        IExpression expr = new BuildAstVisitor().visit(tree);
+        IExpression expr = new BuildCSTVisitor().visit(tree);
 
         if (LOGGER.isDebugEnabled()) {
-          LOGGER.atDebug().log(String.format("Metapath AST:%n%s", ASTPrinter.instance().visit(expr)));
+          LOGGER.atDebug().log(String.format("Metapath CST:%n%s", CSTPrinter.toString(expr)));
         }
         retval = new MetapathExpression(path, expr);
       } catch (MetapathException | ParseCancellationException ex) {
         String msg = String.format("Unable to compile Metapath '%s'", path);
         LOGGER.atError().withThrowable(ex).log(msg);
-        throw new MetapathException(msg, ex);
+        throw new StaticMetapathException(StaticMetapathException.INVALID_PATH_GRAMMAR, msg, ex);
       }
     }
     return retval;
@@ -158,7 +186,7 @@ public class MetapathExpression {
 
   @Override
   public String toString() {
-    return ASTPrinter.instance().visit(getASTNode());
+    return CSTPrinter.toString(getASTNode());
   }
 
   /**
@@ -234,7 +262,7 @@ public class MetapathExpression {
    */
   @Nullable
   public <T> T evaluateAs(
-      @NonNull IItem focus,
+      @Nullable IItem focus,
       @NonNull ResultType resultType,
       @NonNull DynamicContext dynamicContext) {
     ISequence<?> result = evaluate(focus, dynamicContext);
@@ -332,7 +360,7 @@ public class MetapathExpression {
     return (ISequence<T>) evaluate(
         focus,
         StaticContext.builder()
-            .build().newDynamicContext());
+            .build().dynamicContext());
   }
 
   /**

@@ -43,7 +43,7 @@ public final class FnNot {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("not")
-      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
       .focusIndependent()

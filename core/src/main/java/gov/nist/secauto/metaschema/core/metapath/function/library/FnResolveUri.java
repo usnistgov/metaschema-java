@@ -48,7 +48,7 @@ public final class FnResolveUri {
   @NonNull
   static final IFunction SIGNATURE_ONE_ARG = IFunction.builder()
       .name("resolve-uri")
-      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .deterministic()
       .contextDependent()
       .focusIndependent()
@@ -65,7 +65,7 @@ public final class FnResolveUri {
   @NonNull
   static final IFunction SIGNATURE_TWO_ARG = IFunction.builder()
       .name("resolve-uri")
-      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
       .focusIndependent()

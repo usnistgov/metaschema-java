@@ -30,10 +30,18 @@ import gov.nist.secauto.metaschema.core.configuration.AbstractConfigurationFeatu
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Provides a mechanism to configure Metapath evaluation settings.
+ *
+ * @param <V>
+ *          the feature value Java type
+ */
 public final class MetapathEvaluationFeature<V>
     extends AbstractConfigurationFeature<V> {
   /**
-   * If enabled, evaluate {@link Predicate} nodes, otherwise skip evaluating them.
+   * If enabled, evaluate <a href=
+   * "https://www.w3.org/TR/xpath-31/#id-filter-expression">predicates</a>,
+   * otherwise skip evaluating them.
    */
   @NonNull
   public static final MetapathEvaluationFeature<Boolean> METAPATH_EVALUATE_PREDICATES

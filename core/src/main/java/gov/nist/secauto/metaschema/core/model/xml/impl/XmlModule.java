@@ -96,6 +96,7 @@ public class XmlModule
     METASCHEMA metaschemaNode = module.getMETASCHEMA();
 
     // handle definitions in this module
+    // TODO: switch implementation to use the XmlObjectParser
     {
       // start with flag definitions
       try (XmlCursor cursor = metaschemaNode.newCursor()) {

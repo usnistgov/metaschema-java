@@ -432,7 +432,7 @@ final class AnnotationGenerator {
       @NonNull AnnotationSpec.Builder annotation,
       @NonNull List<? extends ICardinalityConstraint> constraints) {
 
-    DynamicContext dynamicContext = StaticContext.newInstance().newDynamicContext();
+    DynamicContext dynamicContext = StaticContext.instance().dynamicContext();
     dynamicContext.disablePredicateEvaluation();
 
     for (ICardinalityConstraint constraint : constraints) {

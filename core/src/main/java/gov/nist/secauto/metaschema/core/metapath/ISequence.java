@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +47,16 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface ISequence<ITEM_TYPE extends IItem> extends Iterable<ITEM_TYPE> {
+/**
+ * Represents an ordered collection of Metapath expression results.
+ * <p>
+ * Items is a sequence are typically ordered based on their position in the
+ * original node graph based on a depth first ordering.
+ *
+ * @param <ITEM_TYPE>
+ *          the Java type of the items in a sequence
+ */
+public interface ISequence<ITEM_TYPE extends IItem> extends Collection<ITEM_TYPE> {
   @SuppressWarnings("rawtypes")
   ISequence EMPTY = new EmptyListImpl<>();
 
@@ -190,6 +200,7 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Iterable<ITEM_TYPE> 
    * @return {@code true} if the sequence contains no items, or {@code false}
    *         otherwise
    */
+  @Override
   boolean isEmpty();
 
   /**
@@ -197,6 +208,7 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Iterable<ITEM_TYPE> 
    *
    * @return the count of items
    */
+  @Override
   int size();
 
   /**
@@ -269,5 +281,55 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Iterable<ITEM_TYPE> 
     return seq.safeStream()
         .map(item -> mapFunction.apply(item))
         .collect(toSequence());
+  }
+
+  @Override
+  default boolean contains(Object obj) {
+    return asList().contains(obj);
+  }
+
+  @Override
+  default Object[] toArray() {
+    return asList().toArray();
+  }
+
+  @Override
+  default <T> T[] toArray(T[] array) {
+    return asList().toArray(array);
+  }
+
+  @Override
+  default boolean add(ITEM_TYPE item) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  default boolean remove(Object obj) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  default boolean containsAll(Collection<?> collection) {
+    return asList().containsAll(collection);
+  }
+
+  @Override
+  default boolean addAll(Collection<? extends ITEM_TYPE> collection) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  default boolean removeAll(Collection<?> collection) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  default boolean retainAll(Collection<?> collection) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  default void clear() {
+    throw new UnsupportedOperationException();
   }
 }

@@ -230,8 +230,8 @@ public class DefaultBoundLoader
     }
   }
 
-  @Override
-  public IDocumentNodeItem loadAsNodeItem(InputStream is, URI documentUri) throws IOException {
+  @NonNull
+  public IDocumentNodeItem loadAsNodeItem(@NonNull InputStream is, @NonNull URI documentUri) throws IOException {
     FormatDetector.Result formatMatch = getFormatDetector().detect(is);
     Format format = formatMatch.getFormat();
 

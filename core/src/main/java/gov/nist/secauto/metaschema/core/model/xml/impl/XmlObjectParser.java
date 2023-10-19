@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class XmlObjectParser<T> {
   private final Map<QName, Handler<T>> elementNameToHandlerMap;
@@ -104,6 +105,29 @@ public class XmlObjectParser<T> {
     return xpath;
   }
 
+  @Nullable
+  public static String getLocation(@NonNull XmlCursor cursor) {
+    String retval = null;
+    XmlBookmark bookmark = cursor.getBookmark(XmlLineNumber.class);
+    if (bookmark != null) {
+      StringBuilder locationBuilder = new StringBuilder();
+      XmlLineNumber lineNumber = (XmlLineNumber) bookmark;
+
+      String source = cursor.documentProperties().getSourceName();
+      if (source != null) {
+        locationBuilder.append(source)
+            .append(':');
+      }
+
+      locationBuilder.append(lineNumber.getLine())
+          .append(':')
+          .append(lineNumber.getColumn());
+
+      retval = locationBuilder.toString();
+    }
+    return retval;
+  }
+
   /**
    * Used to determine which parser {@link Handler} implementation to use to parse
    * the object.
@@ -124,23 +148,15 @@ public class XmlObjectParser<T> {
     QName qname = cursor.getName();
     Handler<T> retval = getElementNameToHandlerMap().get(qname);
     if (retval == null) {
-      String location = "";
-      XmlBookmark bookmark = cursor.getBookmark(XmlLineNumber.class);
-      if (bookmark != null) {
-        StringBuilder locationBuilder = new StringBuilder();
-        XmlLineNumber lineNumber = (XmlLineNumber) bookmark;
-        locationBuilder.append(" at location '");
-
-        String source = cursor.documentProperties().getSourceName();
-        if (source != null) {
-          locationBuilder.append(source)
-              .append(':');
-        }
-
-        locationBuilder.append(lineNumber.getLine())
-            .append(':')
-            .append(lineNumber.getColumn())
-            .append('\'');
+      String location = getLocation(cursor);
+      if (location == null) {
+        location = "";
+      } else {
+        location = new StringBuilder()
+            .append(" at location '")
+            .append(location)
+            .append('\'')
+            .toString();
       }
       throw new IllegalStateException(String.format("Unhandled node '%s'%s.", qname, location));
     }

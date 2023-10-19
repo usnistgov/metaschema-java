@@ -83,8 +83,7 @@ class MarkupParserTest {
 
     assertDoesNotThrow(() -> {
       MarkupMultiline markupString = XmlMarkupParser.instance().parseMarkupMultiline(reader);
-      AstCollectingVisitor visitor = new AstCollectingVisitor();
-      visitor.collect(markupString.getDocument());
+      AstCollectingVisitor.asString(markupString.getDocument());
       // System.out.println(html);
       // System.out.println(visitor.getAst());
       // System.out.println(markupString.toMarkdown());

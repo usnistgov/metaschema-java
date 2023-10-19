@@ -29,54 +29,45 @@ package gov.nist.secauto.metaschema.core.datatype.markup.flexmark;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeVisitorBase;
 
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class AstCollectingVisitor
+public final class AstCollectingVisitor
     extends NodeVisitorBase {
   public static final String EOL = "\n";
-  @NonNull
-  protected StringBuilder output = new StringBuilder(); // NOPMD - intentional
-  protected int indent; // 0;
-  protected boolean eolPending; // false;
 
+  @SuppressWarnings("PMD.AvoidStringBufferField") // short lived
+  private final StringBuilder strBuilder;
+  private int indent; // 0;
+
+  private AstCollectingVisitor(@NonNull StringBuilder strBuilder) {
+    this.strBuilder = strBuilder;
+    indent = 0;
+  }
+
+  /**
+   * Generate a string representation of an AST.
+   *
+   * @param node
+   *          the branch of the tree to visualize
+   * @return the string representation of the AST.
+   */
   @NonNull
   public static String asString(@NonNull Node node) {
-    AstCollectingVisitor visitor = new AstCollectingVisitor();
+    StringBuilder builder = new StringBuilder();
+    AstCollectingVisitor visitor = new AstCollectingVisitor(builder);
     visitor.collect(node);
-    return visitor.getAst();
+    return ObjectUtils.notNull(builder.toString());
   }
 
-  @SuppressWarnings("null")
-  @NonNull
-  public String getAst() {
-    return output.toString();
-  }
-
-  public void clear() {
-    output = new StringBuilder();
-    indent = 0;
-    eolPending = false;
-  }
-
-  protected void appendIndent() {
+  private void appendIndent() {
     for (int i = 0; i < indent * 2; i++) {
-      output.append(' ');
-    }
-    eolPending = true;
-  }
-
-  protected void appendEOL() {
-    output.append(EOL);
-    eolPending = false;
-  }
-
-  protected void appendPendingEOL() {
-    if (eolPending) {
-      appendEOL();
+      strBuilder.append(' ');
     }
   }
 
-  public void collect(@NonNull Node node) {
+  private void collect(@NonNull Node node) {
     visit(node);
   }
 
@@ -84,8 +75,8 @@ public class AstCollectingVisitor
   protected void visit(Node node) {
     assert node != null;
     appendIndent();
-    node.astString(output, true);
-    output.append(EOL);
+    node.astString(strBuilder, true);
+    strBuilder.append(EOL);
     indent++;
 
     try {

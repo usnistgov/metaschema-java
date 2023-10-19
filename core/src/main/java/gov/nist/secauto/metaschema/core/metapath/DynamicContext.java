@@ -36,11 +36,7 @@ import gov.nist.secauto.metaschema.core.model.IUriResolver;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
 import java.time.Clock;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -51,97 +47,154 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+// TODO: add support for in-scope namespaces
+/**
+ * The implementation of a Metapath
+ * <a href="https://www.w3.org/TR/xpath-31/#eval_context">dynamic context</a>.
+ */
 public class DynamicContext { // NOPMD - intentional data class
   @NonNull
-  private final StaticContext staticContext;
-  @NonNull
-  private final ZoneId implicitTimeZone;
-  @NonNull
-  private final ZonedDateTime currentDateTime;
-  @NonNull
-  private final Map<URI, IDocumentNodeItem> availableDocuments;
-  private final Map<CallingContext, ISequence<?>> functionResultCache;
-  private CachingLoader documentLoader;
-  @NonNull
-  private final IMutableConfiguration<MetapathEvaluationFeature<?>> configuration;
-  @NonNull
   private final Map<String, ISequence<?>> letVariableMap;
+  @NonNull
+  private final SharedState sharedState;
 
-  @SuppressWarnings("null")
-  public DynamicContext(@NonNull StaticContext staticContext) {
-    this.staticContext = staticContext;
-
-    Clock clock = Clock.systemDefaultZone();
-
-    this.implicitTimeZone = clock.getZone();
-    this.currentDateTime = ZonedDateTime.now(clock);
-    this.availableDocuments = new HashMap<>();
-    this.functionResultCache = new HashMap<>();
-    this.configuration = new DefaultConfiguration<>();
-    this.configuration.enableFeature(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES);
+  /**
+   * Construct a new Metapath dynamic context.
+   *
+   * @param staticContext
+   *          the Metapath static context
+   */
+  DynamicContext(@NonNull StaticContext staticContext) {
     this.letVariableMap = new ConcurrentHashMap<>();
+    this.sharedState = new SharedState(staticContext);
   }
 
+  private DynamicContext(@NonNull DynamicContext context) {
+    this.letVariableMap = new ConcurrentHashMap<>(context.letVariableMap);
+    this.sharedState = context.sharedState;
+  }
+
+  private static class SharedState {
+    @NonNull
+    private final StaticContext staticContext;
+    @NonNull
+    private final ZoneId implicitTimeZone;
+    @NonNull
+    private final ZonedDateTime currentDateTime;
+    @NonNull
+    private final Map<URI, IDocumentNodeItem> availableDocuments;
+    private final Map<CallingContext, ISequence<?>> functionResultCache;
+    private CachingLoader documentLoader;
+    @NonNull
+    private final IMutableConfiguration<MetapathEvaluationFeature<?>> configuration;
+
+    public SharedState(@NonNull StaticContext staticContext) {
+      this.staticContext = staticContext;
+
+      Clock clock = Clock.systemDefaultZone();
+
+      this.implicitTimeZone = ObjectUtils.notNull(clock.getZone());
+      this.currentDateTime = ObjectUtils.notNull(ZonedDateTime.now(clock));
+      this.availableDocuments = new HashMap<>();
+      this.functionResultCache = new HashMap<>();
+      this.configuration = new DefaultConfiguration<>();
+      this.configuration.enableFeature(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES);
+    }
+  }
+
+  /**
+   * Generate a new dynamic context that is based on this object.
+   * <p>
+   * This method can be used to create a new sub-context where changes can be made
+   * without affecting this context. This is useful for setting information that
+   * is only used in a limited evaluation scope, such as variables.
+   *
+   * @return a new dynamic context
+   */
+  @NonNull
+  public DynamicContext subContext() {
+    return new DynamicContext(this);
+  }
+
+  /**
+   * Get the static context associated with this dynamic context.
+   *
+   * @return the associated static context
+   */
   @NonNull
   public StaticContext getStaticContext() {
-    return staticContext;
+    return sharedState.staticContext;
   }
 
+  /**
+   * Get the default time zone used for evaluation.
+   *
+   * @return the time zone identifier object
+   */
   @NonNull
   public ZoneId getImplicitTimeZone() {
-    return implicitTimeZone;
+    return sharedState.implicitTimeZone;
   }
 
+  /**
+   * Get the current date and time.
+   *
+   * @return the current date and time
+   */
   @NonNull
   public ZonedDateTime getCurrentDateTime() {
-    return currentDateTime;
+    return sharedState.currentDateTime;
   }
 
   @SuppressWarnings("null")
   @NonNull
   public Map<URI, INodeItem> getAvailableDocuments() {
-    return Collections.unmodifiableMap(availableDocuments);
+    return Collections.unmodifiableMap(sharedState.availableDocuments);
   }
 
   public IDocumentLoader getDocumentLoader() {
-    return documentLoader;
+    return sharedState.documentLoader;
   }
 
   public void setDocumentLoader(@NonNull IDocumentLoader documentLoader) {
-    this.documentLoader = new CachingLoader(documentLoader);
+    this.sharedState.documentLoader = new CachingLoader(documentLoader);
   }
 
   public ISequence<?> getCachedResult(@NonNull CallingContext callingContext) {
-    return functionResultCache.get(callingContext);
+    return sharedState.functionResultCache.get(callingContext);
   }
 
   @NonNull
   public DynamicContext disablePredicateEvaluation() {
-    this.configuration.disableFeature(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES);
+    this.sharedState.configuration.disableFeature(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES);
     return this;
   }
 
   @NonNull
   public IConfiguration<MetapathEvaluationFeature<?>> getConfiguration() {
-    return configuration;
+    return sharedState.configuration;
   }
 
   public void cacheResult(@NonNull CallingContext callingContext, @NonNull ISequence<?> result) {
-    ISequence<?> old = functionResultCache.put(callingContext, result);
+    ISequence<?> old = sharedState.functionResultCache.put(callingContext, result);
     assert old == null;
   }
 
   @NonNull
-  public ISequence<?> getVariableValue(String name) {
+  public ISequence<?> getVariableValue(@NonNull String name) {
     return ObjectUtils.requireNonNull(letVariableMap.get(name));
   }
 
-  public void setVariableValue(String name, ISequence<?> boundValue) {
+  /**
+   * Bind the variable {@code name} to the sequence {@code value}.
+   *
+   * @param name
+   *          the name of the variable to bind
+   * @param boundValue
+   *          the value to bind to the variable
+   */
+  public void bindVariableValue(@NonNull String name, @NonNull ISequence<?> boundValue) {
     letVariableMap.put(name, boundValue);
-  }
-
-  public void clearVariableValue(String name) {
-    letVariableMap.remove(name);
   }
 
   private class CachingLoader implements IDocumentLoader {
@@ -169,43 +222,13 @@ public class DynamicContext { // NOPMD - intentional data class
     }
 
     @Override
-    public IDocumentNodeItem loadAsNodeItem(Path path) throws IOException {
-      URI uri = path.toUri();
-      IDocumentNodeItem retval = availableDocuments.get(uri);
-      if (retval == null) {
-        retval = getProxiedDocumentLoader().loadAsNodeItem(path);
-        availableDocuments.put(uri, retval);
-      }
-      return retval;
-    }
-
-    @Override
-    public IDocumentNodeItem loadAsNodeItem(URL url) throws IOException, URISyntaxException {
-      URI uri = ObjectUtils.notNull(url.toURI());
-      IDocumentNodeItem retval = availableDocuments.get(uri);
-      if (retval == null) {
-        retval = getProxiedDocumentLoader().loadAsNodeItem(uri);
-        availableDocuments.put(uri, retval);
-      }
-      return retval;
-    }
-
-    @Override
     public IDocumentNodeItem loadAsNodeItem(URI uri) throws IOException {
-      IDocumentNodeItem retval = availableDocuments.get(uri);
+      IDocumentNodeItem retval = sharedState.availableDocuments.get(uri);
       if (retval == null) {
         retval = getProxiedDocumentLoader().loadAsNodeItem(uri);
-        availableDocuments.put(uri, retval);
+        sharedState.availableDocuments.put(uri, retval);
       }
       return retval;
-    }
-
-    @Override
-    public @NonNull IDocumentNodeItem loadAsNodeItem(
-        @NonNull InputStream is,
-        @NonNull URI documentUri) throws IOException {
-      throw new UnsupportedOperationException();
-      // return getProxiedDocumentLoader().loadAsNodeItem(is, documentUri);
     }
 
     public class ContextUriResolver implements IUriResolver {
@@ -232,4 +255,5 @@ public class DynamicContext { // NOPMD - intentional data class
       }
     }
   }
+
 }
