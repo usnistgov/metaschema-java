@@ -26,9 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.metapath.cst;
 
-import gov.nist.secauto.metaschema.core.metapath.StaticContext;
-import gov.nist.secauto.metaschema.core.metapath.StaticMetapathException;
-import gov.nist.secauto.metaschema.core.metapath.antlr.AbstractAstVisitor;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AbbrevforwardstepContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AbbrevreversestepContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AdditiveexprContext;
@@ -90,7 +87,6 @@ import gov.nist.secauto.metaschema.core.metapath.function.ComparisonFunctions;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -102,15 +98,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -119,177 +108,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * <a href="https://www.antlr.org/">ANTLRv4</a> into a compact syntax tree
  * (CST).
  */
-@SuppressWarnings("PMD.CouplingBetweenObjects")
+@SuppressWarnings({ "PMD.GodClass", "PMD.CyclomaticComplexity" }) // acceptable complexity
 public class BuildCSTVisitor
-    extends AbstractAstVisitor<IExpression> {
-
-  private static final Pattern QUALIFIED_NAME_PATTERN = Pattern.compile("^Q\\{([^}]*)\\}(.+)$");
-
-  @SuppressWarnings("null")
-  @Override
-  @NonNull
-  public IExpression visit(ParseTree tree) {
-    assert tree != null;
-    return super.visit(tree);
-  }
-
-  // TODO: verify javadocs are accurate for the following n-ary functions.
-
-  /**
-   * Parse the provided context as a simple n-ary phrase, which will be one of the
-   * following.
-   * <ol>
-   * <li><code>expr</code> for which the expr will be returned</li>
-   * <li><code>left (operator right)*</code> for which a collection of the left
-   * and right members will be returned based on what is provided by the supplier.
-   * </ol>
-   *
-   * @param <CONTEXT>
-   *          the context type to parse
-   * @param <NODE>
-   *          the type of expression
-   * @param context
-   *          the context instance
-   * @param supplier
-   *          a supplier that will instantiate an expression based on the provided
-   *          collection
-   * @return the left expression or the supplied expression for a collection
-   */
-  @NonNull
-  protected <CONTEXT extends ParserRuleContext, NODE extends IExpression> IExpression
-      handleNAiryCollection(
-          @NonNull CONTEXT context,
-          @NonNull Function<List<NODE>, IExpression> supplier) {
-    return handleNAiryCollection(context, 1, 2, (ctx, idx) -> {
-      // skip operator, since we know what it is
-      ParseTree tree = ctx.getChild(idx + 1);
-      @SuppressWarnings({ "unchecked", "null" })
-      @NonNull NODE node = (NODE) tree.accept(this);
-      return node;
-    }, supplier);
-  }
-
-  /**
-   * Parse the provided context as a simple n-ary phrase, which will be one of the
-   * following.
-   * <ol>
-   * <li><code>expr</code> for which the expr will be returned</li>
-   * <li><code>left (operator right)*</code> for which a collection of the left
-   * and right members will be returned based on what is provided by the supplier.
-   * </ol>
-   *
-   * @param <CONTEXT>
-   *          the context type to parse
-   * @param <EXPRESSION>
-   *          the child expression type
-   * @param context
-   *          the context instance
-   * @param startIndex
-   *          the starting context child position
-   * @param step
-   *          the amount to advance the loop over the context children
-   * @param parser
-   *          a binary function used to parse the context children
-   * @param supplier
-   *          a supplier that will instantiate an expression based on the provided
-   *          collection
-   * @return the left expression or the supplied expression for a collection
-   */
-  @NonNull
-  protected <CONTEXT extends ParserRuleContext, EXPRESSION extends IExpression> IExpression
-      handleNAiryCollection(
-          @NonNull CONTEXT context,
-          int startIndex,
-          int step,
-          @NonNull BiFunction<CONTEXT, Integer, EXPRESSION> parser,
-          @NonNull Function<List<EXPRESSION>, IExpression> supplier) {
-    int numChildren = context.getChildCount();
-
-    if (numChildren == 0) {
-      throw new IllegalStateException("there should always be a child expression");
-    } else if (startIndex > numChildren) {
-      throw new IllegalStateException("Start index is out of bounds");
-    }
-
-    ParseTree leftTree = context.getChild(0);
-    @SuppressWarnings({ "unchecked", "null" })
-    @NonNull EXPRESSION leftResult = (EXPRESSION) leftTree.accept(this);
-
-    IExpression retval;
-    if (numChildren == 1) {
-      retval = leftResult;
-    } else {
-      List<EXPRESSION> children = new ArrayList<>(numChildren - 1 / step);
-      children.add(leftResult);
-      for (int i = startIndex; i < numChildren; i = i + step) {
-        EXPRESSION result = parser.apply(context, i);
-        children.add(result);
-      }
-      IExpression result = ObjectUtils.notNull(supplier.apply(children));
-      retval = result;
-    }
-    return retval;
-  }
-
-  /**
-   * Parse the provided context as a simple n-ary phrase, which will be one of the
-   * following.
-   * <ol>
-   * <li><code>expr</code> for which the expr will be returned</li>
-   * <li><code>left (operator right)*</code> for which a collection of the left
-   * and right members will be returned based on what is provided by the supplier.
-   * </ol>
-   *
-   * @param <CONTEXT>
-   *          the context type to parse
-   * @param context
-   *          the context instance
-   * @param startingIndex
-   *          the index of the first child expression, which must be a
-   *          non-negative value that is less than the number of children
-   * @param step
-   *          the amount to advance the loop over the context children
-   * @param parser
-   *          a trinary function used to parse the context children and supply a
-   *          result
-   * @return the left expression or the supplied expression
-   */
-  protected <CONTEXT extends ParserRuleContext> IExpression handleGroupedNAiry(
-      @NonNull CONTEXT context,
-      int startingIndex,
-      int step,
-      @NonNull ITriFunction<CONTEXT, Integer, IExpression, IExpression> parser) {
-    int numChildren = context.getChildCount();
-    if (startingIndex >= numChildren) {
-      throw new IndexOutOfBoundsException(
-          String.format("The starting index '%d' exceeds the child count '%d'",
-              startingIndex,
-              numChildren));
-    }
-
-    IExpression retval = null;
-    if (numChildren > 0) {
-      ParseTree leftTree = context.getChild(startingIndex);
-      IExpression result = ObjectUtils.notNull(leftTree.accept(this));
-
-      for (int i = startingIndex + 1; i < numChildren; i = i + step) {
-        result = parser.apply(context, i, result);
-      }
-      retval = result;
-    }
-    return retval;
-  }
-
-  @FunctionalInterface
-  interface ITriFunction<T, U, V, R> {
-
-    R apply(T argT, U argU, V argV);
-
-    default <W> ITriFunction<T, U, V, W> andThen(Function<? super R, ? extends W> after) {
-      Objects.requireNonNull(after);
-      return (T t, U u, V v) -> after.apply(apply(t, u, v));
-    }
-  }
+    extends AbstractCSTVisitorBase {
 
   /* ============================================================
    * Expressions - https://www.w3.org/TR/xpath-31/#id-expressions
@@ -371,6 +192,14 @@ public class BuildCSTVisitor
    * =========================================================================
    */
 
+  /**
+   * Parse a list of arguments.
+   *
+   * @param context
+   *          the argument list AST
+   * @return a stream of CST expressions for each argument, in the original
+   *         argument order
+   */
   @NonNull
   protected Stream<IExpression> parseArgumentList(@NonNull ArgumentlistContext context) {
     int numChildren = context.getChildCount();
@@ -408,13 +237,29 @@ public class BuildCSTVisitor
    * =========================================================================
    */
 
-  @SuppressWarnings("null")
+  /**
+   * Parse a predicate AST.
+   *
+   * @param predicate
+   *          the predicate expression
+   * @return the CST expression generated for the predicate
+   */
   @NonNull
-  protected IExpression parsePredicate(@NonNull PredicateContext context) {
+  protected IExpression parsePredicate(@NonNull PredicateContext predicate) {
     // the expression is always the second child
-    return visit(context.getChild(1));
+    return visit(predicate.getChild(1));
   }
 
+  /**
+   * Parse a series of predicate ASTs.
+   *
+   * @param context
+   *          the parse tree node containing the predicates
+   * @param staringChild
+   *          the first child node corresponding to a predicate
+   * @return the list of CST predicate expressions in the same order as the
+   *         original predicate list
+   */
   @NonNull
   protected List<IExpression> parsePredicates(@NonNull ParseTree context, int staringChild) {
     int numChildren = context.getChildCount();
@@ -990,7 +835,6 @@ public class BuildCSTVisitor
    * =======================================================================
    */
 
-  @SuppressWarnings("resource")
   @Override
   protected IExpression handleArrowexpr(ArrowexprContext context) {
     // TODO: handle additional syntax for varef and parenthesized
@@ -1003,84 +847,13 @@ public class BuildCSTVisitor
       String name = fcCtx.eqname().getText();
       assert name != null;
 
-      Stream<IExpression> args = parseArgumentList(ObjectUtils.notNull(fcCtx.argumentlist()));
-      args = Stream.concat(Stream.of(left), args);
-      assert args != null;
+      try (Stream<IExpression> args = Stream.concat(
+          Stream.of(left),
+          parseArgumentList(ObjectUtils.notNull(fcCtx.argumentlist())))) {
+        assert args != null;
 
-      return new FunctionCall(name, ObjectUtils.notNull(args.collect(Collectors.toUnmodifiableList())));
+        return new FunctionCall(name, ObjectUtils.notNull(args.collect(Collectors.toUnmodifiableList())));
+      }
     });
-  }
-
-  /* =====
-   * Other
-   * =====
-   */
-
-  /**
-   * Get the QName for an
-   * <a href="https://www.w3.org/TR/xpath-31/#dt-expanded-qname">expanded
-   * QName</a>.
-   *
-   * @param eqname
-   *          the expanded QName
-   * @param context
-   *          the Metapath evaluation static context
-   * @param requireNamespace
-   *          if {@code true} require the resulting QName to have a namespace, or
-   *          {@code false} otherwise
-   * @return the QName
-   * @throws StaticMetapathException
-   *           if the expanded QName prefix is not bound or if the resulting
-   *           namespace is invalid
-   */
-  @NonNull
-  static QName toQName(@NonNull EqnameContext eqname, @NonNull StaticContext context, boolean requireNamespace) {
-    String namespaceUri;
-    String localName;
-    TerminalNode node;
-    if ((node = eqname.URIQualifiedName()) != null) {
-      // BracedURILiteral - Q{uri}name -
-      // https://www.w3.org/TR/xpath-31/#doc-xpath31-BracedURILiteral
-      Matcher matcher = QUALIFIED_NAME_PATTERN.matcher(node.getText());
-      if (matcher.matches()) {
-        namespaceUri = matcher.group(1);
-        localName = matcher.group(2);
-      } else {
-        // the syntax should always match above, since ANTLR is parsing it
-        throw new IllegalStateException();
-      }
-    } else {
-      String prefix;
-      String[] tokens = eqname.getText().split(":", 2);
-      if (tokens.length == 2) {
-        // lexical QName with prefix - prefix:name
-        // https://www.w3.org/TR/xpath-31/#dt-qname
-        prefix = ObjectUtils.notNull(tokens[0]);
-        localName = tokens[1];
-      } else {
-        // lexical QName without prefix - name
-        // https://www.w3.org/TR/xpath-31/#dt-qname
-        prefix = "";
-        localName = tokens[0];
-      }
-      namespaceUri = context.lookupNamespaceForPrefix(prefix);
-      if (namespaceUri == null && requireNamespace) {
-        throw new StaticMetapathException(
-            StaticMetapathException.PREFIX_NOT_EXPANDABLE,
-            String.format("The static context does not have a namespace URI configured for prefix '%s'.", prefix));
-      }
-    }
-
-    QName retval;
-    if (namespaceUri == null) {
-      retval = new QName(localName);
-    } else {
-      if ("http://www.w3.org/2000/xmlns/".equals(namespaceUri)) {
-        throw new StaticMetapathException(StaticMetapathException.NAMESPACE_MISUSE,
-            "The namespace of an expanded QName cannot be: http://www.w3.org/2000/xmlns/");
-      }
-      retval = new QName(namespaceUri, localName);
-    }
-    return retval;
   }
 }

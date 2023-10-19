@@ -38,8 +38,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * An implementation of
- * <a href="https://www.w3.org/TR/xpath-31/#doc-xpath31-IfExpr">IfExpr</a>
- * supporting conditional evaluation.
+ * <a href="https://www.w3.org/TR/xpath-31/#doc-xpath31-IfExpr">If
+ * expression</a> supporting conditional evaluation.
  */
 @SuppressWarnings("PMD.ShortClassName")
 public class If
@@ -49,7 +49,7 @@ public class If
   private final IExpression elseExpression;
 
   /**
-   * Construct a new conditional experession.
+   * Construct a new conditional expression.
    *
    * @param testExpression
    *          the first expression to evaluate

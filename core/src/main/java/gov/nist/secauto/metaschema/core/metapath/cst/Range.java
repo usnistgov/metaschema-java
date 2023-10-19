@@ -45,8 +45,17 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class Range
     extends AbstractBinaryExpression<IExpression, IExpression> {
 
-  public Range(@NonNull IExpression left, @NonNull IExpression right) {
-    super(left, right);
+  /**
+   * Construct a new range expression.
+   *
+   * @param start
+   *          the expressions representing the start of the range
+   * @param end
+   *          the expressions representing the end of the range
+   *
+   */
+  public Range(@NonNull IExpression start, @NonNull IExpression end) {
+    super(start, end);
   }
 
   @Override

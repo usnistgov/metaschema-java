@@ -26,53 +26,42 @@
 
 package gov.nist.secauto.metaschema.core.metapath.cst;
 
-import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import static gov.nist.secauto.metaschema.core.metapath.TestUtils.integer;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Collections;
-import java.util.List;
+import gov.nist.secauto.metaschema.core.metapath.ExpressionTestBase;
+import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public final class EmptySequence<RESULT_TYPE extends IItem>
-    extends AbstractExpression {
-  @NonNull
-  private static final EmptySequence<?> SINGLETON = new EmptySequence<>();
-
-  /**
-   * Get a singleton CST node instance representing an expression that returns an
-   * empty sequence.
-   *
-   * @param <T>
-   *          the Java type of the resulting empty sequence
-   * @return the singleton CST node instance
-   */
-  @SuppressWarnings("unchecked")
-  @NonNull
-  public static <T extends IItem> EmptySequence<T> instance() {
-    return (EmptySequence<T>) SINGLETON;
+class RangeTest
+    extends ExpressionTestBase {
+  private static Stream<Arguments> provideValues() { // NOPMD - false positive
+    return Stream.of(
+        Arguments.of(
+            ISequence.of(integer(2), integer(3), integer(4), integer(5)),
+            MetapathExpression.compile("2 to 5")),
+        Arguments.of(
+            ISequence.empty(),
+            MetapathExpression.compile("() to 2")),
+        Arguments.of(
+            ISequence.empty(),
+            MetapathExpression.compile("2 to ()")),
+        Arguments.of(
+            ISequence.empty(),
+            MetapathExpression.compile("5 to 2")));
   }
 
-  private EmptySequence() {
-    // disable construction
+  @ParameterizedTest
+  @MethodSource("provideValues")
+  void testRange(@NonNull ISequence<?> expected, @NonNull MetapathExpression metapath) {
+    assertEquals(expected, metapath.evaluateAs(null, MetapathExpression.ResultType.SEQUENCE, newDynamicContext()));
   }
-
-  @SuppressWarnings("null")
-  @Override
-  public List<? extends IExpression> getChildren() {
-    // no children
-    return Collections.emptyList();
-  }
-
-  @Override
-  public ISequence<RESULT_TYPE> accept(DynamicContext dynamicContext, ISequence<?> focus) {
-    return ISequence.empty();
-  }
-
-  @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitEmptySequence(this, context);
-  }
-
 }

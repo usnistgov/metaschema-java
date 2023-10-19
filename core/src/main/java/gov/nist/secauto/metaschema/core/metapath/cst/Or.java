@@ -36,10 +36,31 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class Or // NOPMD - intentional name
+/**
+ * An implementation of
+ * <a href="https://www.w3.org/TR/xpath-31/#id-logical-expressions">Or
+ * expression</a> supporting conditional evaluation.
+ * <p>
+ * Determines the logical conjunction of the result of evaluating a list of
+ * expressions. The boolean result of each expression is determined by applying
+ * {@link FnBoolean#fnBooleanAsPrimitive(ISequence)} to each function's
+ * {@link ISequence} result.
+ * <p>
+ * This implementation will short-circuit and return {@code true} when the first
+ * expression evaluates to {@code true}, otherwise it will return {@code false}.
+ */
+@SuppressWarnings("PMD.ShortClassName")
+public class Or
     extends AbstractNAryExpression
     implements IBooleanLogicExpression {
 
+  /**
+   * Construct a new "or" logical expression.
+   *
+   * @param expressions
+   *          the expressions to evaluate
+   *
+   */
   @SuppressWarnings("null")
   public Or(@NonNull IExpression... expressions) {
     this(Arrays.asList(expressions));

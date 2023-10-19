@@ -35,18 +35,30 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * An implementation of
+ * <a href="https://www.w3.org/TR/xpath-31/#id-logical-expressions">And
+ * expression</a> supporting conditional evaluation.
+ * <p>
+ * Determines the logical conjunction of the result of evaluating a list of
+ * expressions. The boolean result of each expression is determined by applying
+ * {@link FnBoolean#fnBooleanAsPrimitive(ISequence)} to each function's
+ * {@link ISequence} result.
+ * <p>
+ * This implementation will short-circuit and return {@code false} when the
+ * first expression evaluates to {@code false}, otherwise it will return
+ * {@code true}.
+ */
 public class And // NOPMD - intentional name
     extends AbstractNAryExpression
     implements IBooleanLogicExpression {
 
   /**
-   * Determines the logical conjunction of the result of evaluating a list of
-   * expressions. The boolean result of each expression is determined by applying
-   * {@link FnBoolean#fnBooleanAsPrimitive(ISequence)} to each function's
-   * {@link ISequence} result.
+   * Construct a new "and" logical expression.
    *
    * @param expressions
-   *          the list of expressions
+   *          the expressions to evaluate
+   *
    */
   public And(@NonNull List<IExpression> expressions) {
     super(expressions);

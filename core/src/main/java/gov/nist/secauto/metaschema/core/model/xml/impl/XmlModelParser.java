@@ -157,15 +157,16 @@ public class XmlModelParser {
     container.getModelInstances().add(assembly);
   }
 
-  public void parseChoice(
+  // REFACTOR: move up to calling location
+  public static void parseChoice(
       @NonNull ChoiceType xmlObject,
       @NonNull IModelContainer parent,
       @NonNull IStandardModelContainerSupport container) {
     MODEL_PARSER.parse(xmlObject, Pair.of(parent, container));
   }
 
-  // TODO: move back to calling location
-  public void parseModel(
+  // REFACTOR: move up to calling location
+  public static void parseModel(
       @NonNull AssemblyModelType xmlObject,
       @NonNull IModelContainer parent,
       @NonNull IStandardModelContainerSupport container) {

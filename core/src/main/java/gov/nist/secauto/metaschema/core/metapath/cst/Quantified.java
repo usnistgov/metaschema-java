@@ -41,11 +41,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -72,14 +69,17 @@ public class Quantified
     this.satisfies = satisfies;
   }
 
+  @NonNull
   public Quantifier getQuantifier() {
     return quantifier;
   }
 
+  @NonNull
   public Map<String, IExpression> getInClauses() {
     return inClauses;
   }
 
+  @NonNull
   public IExpression getSatisfies() {
     return satisfies;
   }
@@ -109,7 +109,9 @@ public class Quantified
         String var = clauseKeys.get(idx);
         IItem item = product.get(idx);
 
-        subDynamicContext.setVariableValue(var, ISequence.of(item));
+        assert var != null;
+
+        subDynamicContext.bindVariableValue(var, ISequence.of(item));
       }
       boolean result = FnBoolean.fnBooleanAsPrimitive(getSatisfies().accept(subDynamicContext, focus));
       if (Quantifier.EVERY.equals(quantifier) && !result) {
@@ -135,8 +137,8 @@ public class Quantified
     return visitor.visitQuantified(this, context);
   }
 
-  public static <T extends IItem> Iterable<List<T>>
-      cartesianProduct(final List<? extends Collection<? extends T>> axes) {
+  public static <T extends IItem> Iterable<List<T>> cartesianProduct(
+      @NonNull List<? extends Collection<? extends T>> axes) {
     return new CartesianProduct<>(axes);
   }
 
@@ -226,9 +228,18 @@ public class Quantified
       return new CartesianProductIterator<T>(dimensions);
     }
 
-    public Stream<List<T>> stream() {
-      int characteristics = Spliterator.ORDERED | Spliterator.SIZED | Spliterator.IMMUTABLE;
-      return StreamSupport.stream(Spliterators.spliterator(iterator(), size, characteristics), false);
-    }
+    // /**
+    // * Get a stream of list items, representing each Cartesian product, based on
+    // * this iterator.
+    // *
+    // * @return a stream of list items representing each Cartesian product
+    // */
+    // @NonNull
+    // public Stream<List<T>> stream() {
+    // int characteristics = Spliterator.ORDERED | Spliterator.SIZED |
+    // Spliterator.IMMUTABLE;
+    // return StreamSupport.stream(Spliterators.spliterator(iterator(), size,
+    // characteristics), false);
+    // }
   }
 }

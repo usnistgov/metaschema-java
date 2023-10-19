@@ -181,16 +181,20 @@ public class DynamicContext { // NOPMD - intentional data class
   }
 
   @NonNull
-  public ISequence<?> getVariableValue(String name) {
+  public ISequence<?> getVariableValue(@NonNull String name) {
     return ObjectUtils.requireNonNull(letVariableMap.get(name));
   }
 
-  public void setVariableValue(String name, ISequence<?> boundValue) {
+  /**
+   * Bind the variable {@code name} to the sequence {@code value}.
+   *
+   * @param name
+   *          the name of the variable to bind
+   * @param boundValue
+   *          the value to bind to the variable
+   */
+  public void bindVariableValue(@NonNull String name, @NonNull ISequence<?> boundValue) {
     letVariableMap.put(name, boundValue);
-  }
-
-  public void clearVariableValue(String name) {
-    letVariableMap.remove(name);
   }
 
   private class CachingLoader implements IDocumentLoader {

@@ -49,6 +49,15 @@ class MarkupXmlStreamWriterTest {
 
   @Test
   void testHTML() throws XMLStreamException {
+
+    XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
+    assert factory instanceof WstxOutputFactory;
+    factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
+    XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(System.out);
+    NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
+        List.of(NamespaceEventImpl.constructNamespace(null, NS_PREFIX, NAMESPACE)));
+    xmlStreamWriter.setNamespaceContext(nsContext);
+
     String html = "<h1>Example</h1>\n"
         + "<p><a href=\"link\">text</a><q>quote1</q></p>\n"
         + "<table>\n"
@@ -63,17 +72,7 @@ class MarkupXmlStreamWriterTest {
         + "<p>Some <q><em>more</em></q> <strong>text</strong> <img src=\"src\" alt=\"alt\" /></p>\n";
 
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
-    AstCollectingVisitor visitor = new AstCollectingVisitor();
-    visitor.collect(ms.getDocument());
-    // System.out.println(visitor.getAst());
-
-    XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
-    assert factory instanceof WstxOutputFactory;
-    factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
-    XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(System.out);
-    NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
-        List.of(NamespaceEventImpl.constructNamespace(null, NS_PREFIX, NAMESPACE)));
-    xmlStreamWriter.setNamespaceContext(nsContext);
+    // System.out.println(AstCollectingVisitor.asString(ms.getDocument()));
 
     ms.writeXHtml(NAMESPACE, xmlStreamWriter);
     xmlStreamWriter.close();

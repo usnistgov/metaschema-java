@@ -42,6 +42,11 @@ public final class ContextItem
   @NonNull
   private static final ContextItem SINGLETON = new ContextItem();
 
+  /**
+   * Get the singleton context item CST node.
+   *
+   * @return the singleton instance
+   */
   @NonNull
   public static ContextItem instance() {
     return SINGLETON;

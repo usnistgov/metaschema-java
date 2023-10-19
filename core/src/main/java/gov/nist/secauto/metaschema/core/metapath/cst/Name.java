@@ -45,6 +45,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class Name // NOPMD - intentional
     implements IExpression {
 
+  @NonNull
   private final String value;
 
   /**
@@ -57,6 +58,12 @@ public class Name // NOPMD - intentional
     this.value = value;
   }
 
+  /**
+   * Get the string value of the name.
+   *
+   * @return the string value of the name
+   */
+  @NonNull
   public String getValue() {
     return value;
   }

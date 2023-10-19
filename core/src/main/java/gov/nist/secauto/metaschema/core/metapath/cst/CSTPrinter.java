@@ -53,6 +53,13 @@ public final class CSTPrinter {
     // disable construction
   }
 
+  /**
+   * Generate a string representation of the CST tree.
+   *
+   * @param expr
+   *          an expression that is a branch in the tree to visualize.
+   * @return a string representation of the CST graph
+   */
   public static String toString(@NonNull IExpression expr) {
     return new CSTPrinterVisitor().visit(expr);
   }

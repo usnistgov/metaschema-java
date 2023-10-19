@@ -35,6 +35,11 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * An implementation of
+ * <a href="https://www.w3.org/TR/xpath-31/#id-let-expressions">Let
+ * expression</a> supporting variable value binding.
+ */
 public class Let implements IExpression { // NOPMD class name ok
   @NonNull
   private final Name name;
@@ -43,22 +48,47 @@ public class Let implements IExpression { // NOPMD class name ok
   @NonNull
   private final IExpression returnExpression;
 
+  /**
+   * Construct a new Let CST expression.
+   *
+   * @param name
+   *          the variable name
+   * @param boundExpression
+   *          the expression bound to the variable
+   * @param returnExpression
+   *          the inner expression to evaluate with the variable in-scope
+   */
   public Let(@NonNull Name name, @NonNull IExpression boundExpression, @NonNull IExpression returnExpression) {
     this.name = name;
     this.boundExpression = boundExpression;
     this.returnExpression = returnExpression;
   }
 
+  /**
+   * Get the variable name.
+   *
+   * @return the variable name
+   */
   @NonNull
   public Name getName() {
     return name;
   }
 
+  /**
+   * Get the expression bound to the variable.
+   *
+   * @return the bound expression
+   */
   @NonNull
   public IExpression getBoundExpression() {
     return boundExpression;
   }
 
+  /**
+   * Get the inner expression to evaluate with the variable in-scope.
+   *
+   * @return the inner expression
+   */
   @NonNull
   public IExpression getReturnExpression() {
     return returnExpression;
@@ -83,7 +113,7 @@ public class Let implements IExpression { // NOPMD class name ok
 
     DynamicContext subDynamicContext = dynamicContext.subContext();
 
-    subDynamicContext.setVariableValue(name, result);
+    subDynamicContext.bindVariableValue(name, result);
 
     return getReturnExpression().accept(subDynamicContext, focus);
   }

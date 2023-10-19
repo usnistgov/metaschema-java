@@ -220,6 +220,13 @@ public abstract class AbstractAstVisitor<R> // NOPMD
    * ==================================================================
    */
 
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
   protected abstract R handleVarref(@NonNull VarrefContext ctx);
 
   @Override
@@ -777,6 +784,13 @@ public abstract class AbstractAstVisitor<R> // NOPMD
    * ====================================================================
    */
 
+  /**
+   * Handle the provided expression.
+   *
+   * @param ctx
+   *          the provided expression context
+   * @return the result
+   */
   protected abstract R handleLet(@NonNull LetexprContext ctx);
 
   @Override

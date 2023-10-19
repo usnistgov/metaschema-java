@@ -30,6 +30,7 @@ package gov.nist.secauto.metaschema.core.metapath;
  * MPST: Exceptions related to the Metapath static context and static
  * evaluation.
  */
+@SuppressWarnings("PMD.DataClass")
 public class StaticMetapathException
     extends AbstractCodedMetapathException {
   /**
@@ -37,9 +38,21 @@ public class StaticMetapathException
    * is a <a href="https://www.w3.org/TR/xpath-31/#dt-static-error">static
    * error</a> if an expression is not a valid instance of the Metapath grammar.
    */
-  // TODO: need a grammar link
+  // TODO: need a Metapath grammar link
   public static final int INVALID_PATH_GRAMMAR = 3;
 
+  /**
+   * <a href= "https://www.w3.org/TR/xpath-31/#ERRXPST0017">err:MPST0017</a>: It
+   * is a <a href="https://www.w3.org/TR/xpath-31/#dt-static-error">static
+   * error</a> if the
+   * <a href="https://www.w3.org/TR/xpath-31/#dt-expanded-qname">expanded
+   * QName</a> and number of arguments in a static function call do not match the
+   * name and arity of a
+   * <a href="https://www.w3.org/TR/xpath-31/#dt-known-func-signatures">function
+   * signature</a> in the
+   * <a href="https://www.w3.org/TR/xpath-31/#dt-static-context">static
+   * context</a>.
+   */
   public static final int NO_FUNCTION_MATCH = 17;
 
   /**

@@ -45,12 +45,11 @@ import gov.nist.secauto.metaschema.core.metapath.cst.path.RootSlashPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.Step;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Used to support processing a Metapath expression based on the visitor
  * pattern. Each type of expression node in the Metapath abstract syntax tree
- * (AST) is represented.
+ * (AST) is represented as a "visit" method.
  *
  * @param <RESULT>
  *          the result of processing any node
@@ -59,84 +58,432 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  */
 public interface IExpressionVisitor<RESULT, CONTEXT> {
 
-  @Nullable
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitAddition(@NonNull Addition expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitAnd(@NonNull And expr, @NonNull CONTEXT context);
 
-  RESULT visitExcept(@NonNull Except except, @NonNull CONTEXT context);
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
+  RESULT visitExcept(@NonNull Except expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitAxis(@NonNull Axis expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitStep(@NonNull Step expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitValueComparison(@NonNull ValueComparison expr, @NonNull CONTEXT context);
 
-  RESULT visitGeneralComparison(@NonNull GeneralComparison generalComparison, @NonNull CONTEXT context);
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
+  RESULT visitGeneralComparison(@NonNull GeneralComparison expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitContextItem(@NonNull ContextItem expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitDecimalLiteral(@NonNull DecimalLiteral expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitDivision(@NonNull Division expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitFlag(@NonNull Flag expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitFunctionCall(@NonNull FunctionCall expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitIntegerDivision(@NonNull IntegerDivision expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitIntegerLiteral(@NonNull IntegerLiteral expr, @NonNull CONTEXT context);
 
-  RESULT visitIntersect(@NonNull Intersect intersect, @NonNull CONTEXT context);
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
+  RESULT visitIntersect(@NonNull Intersect expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitMetapath(@NonNull Metapath expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitModulo(@NonNull Modulo expr, @NonNull CONTEXT context);
 
-  RESULT visitModelInstance(@NonNull ModelInstance modelInstance, @NonNull CONTEXT context);
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
+  RESULT visitModelInstance(@NonNull ModelInstance expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitMultiplication(@NonNull Multiplication expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitName(@NonNull Name expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitNegate(@NonNull Negate expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitOr(@NonNull Or expr, @NonNull CONTEXT context);
 
-  RESULT visitPredicate(@NonNull Predicate predicate, @NonNull CONTEXT context);
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
+  RESULT visitPredicate(@NonNull Predicate expr, @NonNull CONTEXT context);
 
-  RESULT visitRelativeDoubleSlashPath(@NonNull RelativeDoubleSlashPath relativeDoubleSlashPath,
-      @NonNull CONTEXT context);
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
+  RESULT visitRelativeDoubleSlashPath(@NonNull RelativeDoubleSlashPath expr, @NonNull CONTEXT context);
 
-  RESULT visitRelativeSlashPath(@NonNull RelativeSlashPath relativeSlashPath, @NonNull CONTEXT context);
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
+  RESULT visitRelativeSlashPath(@NonNull RelativeSlashPath expr, @NonNull CONTEXT context);
 
-  RESULT visitRootDoubleSlashPath(@NonNull RootDoubleSlashPath rootDoubleSlashPath, @NonNull CONTEXT context);
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
+  RESULT visitRootDoubleSlashPath(@NonNull RootDoubleSlashPath expr, @NonNull CONTEXT context);
 
-  RESULT visitRootSlashOnlyPath(@NonNull RootSlashOnlyPath rootSlashOnlyPath, @NonNull CONTEXT context);
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
+  RESULT visitRootSlashOnlyPath(@NonNull RootSlashOnlyPath expr, @NonNull CONTEXT context);
 
-  RESULT visitRootSlashPath(@NonNull RootSlashPath rootSlashPath, @NonNull CONTEXT context);
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
+  RESULT visitRootSlashPath(@NonNull RootSlashPath expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitStringConcat(@NonNull StringConcat expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitStringLiteral(@NonNull StringLiteral expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitSubtraction(@NonNull Subtraction expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitUnion(@NonNull Union expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitWildcard(@NonNull Wildcard expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitLet(@NonNull Let expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitVariableReference(@NonNull VariableReference expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitEmptySequence(@NonNull EmptySequence<?> expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitRange(@NonNull Range expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitIf(@NonNull If expr, @NonNull CONTEXT context);
 
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
   RESULT visitQuantified(@NonNull Quantified expr, @NonNull CONTEXT context);
-
 }
