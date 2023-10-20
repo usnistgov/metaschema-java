@@ -35,7 +35,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * a new {@link INodeItem} instance, that is orphaned from any parent nodes,
  * supported by an {@link IFlagDefinition}.
  */
-class FlagDefinitionNodeItemImpl
+class FlagGlobalDefinitionNodeItemImpl
     extends AbstractGlobalDefinitionNodeItem<IFlagDefinition, IFlagInstance>
     implements IFlagNodeItem, IFeatureNoDataAtomicValuedItem {
 
@@ -48,7 +48,7 @@ class FlagDefinitionNodeItemImpl
    * @param parent
    *          the item for the Metaschema containing this definition
    */
-  public FlagDefinitionNodeItemImpl(
+  public FlagGlobalDefinitionNodeItemImpl(
       @NonNull IFlagDefinition definition,
       @NonNull IModuleNodeItem parent) {
     super(definition, parent);

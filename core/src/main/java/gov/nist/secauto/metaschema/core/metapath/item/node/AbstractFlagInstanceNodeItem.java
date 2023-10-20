@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.metapath.item.node;
 
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 
@@ -74,5 +75,19 @@ abstract class AbstractFlagInstanceNodeItem
   @Override
   public URI getBaseUri() {
     return getDefinition().getContainingModule().getLocation();
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder()
+        .append(getInstance().getXmlQName().toString());
+    IAnyAtomicItem value = toAtomicItem();
+    if (value != null) {
+      builder
+          .append('(')
+          .append(value.asString())
+          .append(')');
+    }
+    return builder.toString();
   }
 }
