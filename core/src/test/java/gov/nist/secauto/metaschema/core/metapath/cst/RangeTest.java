@@ -47,21 +47,21 @@ class RangeTest
     return Stream.of(
         Arguments.of(
             ISequence.of(integer(2), integer(3), integer(4), integer(5)),
-            MetapathExpression.compile("2 to 5")),
+            "2 to 5"),
         Arguments.of(
             ISequence.empty(),
-            MetapathExpression.compile("() to 2")),
+            "() to 2"),
         Arguments.of(
             ISequence.empty(),
-            MetapathExpression.compile("2 to ()")),
+            "2 to ()"),
         Arguments.of(
             ISequence.empty(),
-            MetapathExpression.compile("5 to 2")));
+            "5 to 2"));
   }
 
   @ParameterizedTest
   @MethodSource("provideValues")
-  void testRange(@NonNull ISequence<?> expected, @NonNull MetapathExpression metapath) {
-    assertEquals(expected, metapath.evaluateAs(null, MetapathExpression.ResultType.SEQUENCE, newDynamicContext()));
+  void testRange(@NonNull ISequence<?> expected, @NonNull String metapath) {
+    assertEquals(expected, MetapathExpression.compile(metapath).evaluateAs(null, MetapathExpression.ResultType.SEQUENCE, newDynamicContext()));
   }
 }
