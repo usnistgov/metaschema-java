@@ -55,8 +55,7 @@ class StreamSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE
   public List<ITEM_TYPE> asList() {
     synchronized (this) {
       if (list == null) {
-        list = asStream()
-            .collect(Collectors.toUnmodifiableList());
+        list = asStream().collect(Collectors.toUnmodifiableList());
       }
       assert list != null;
       return list;

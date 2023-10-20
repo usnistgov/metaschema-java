@@ -62,6 +62,8 @@ class RangeTest
   @ParameterizedTest
   @MethodSource("provideValues")
   void testRange(@NonNull ISequence<?> expected, @NonNull String metapath) {
-    assertEquals(expected, MetapathExpression.compile(metapath).evaluateAs(null, MetapathExpression.ResultType.SEQUENCE, newDynamicContext()));
+    assertEquals(
+        expected,
+        MetapathExpression.compile(metapath).evaluateAs(null, MetapathExpression.ResultType.SEQUENCE, newDynamicContext()));
   }
 }

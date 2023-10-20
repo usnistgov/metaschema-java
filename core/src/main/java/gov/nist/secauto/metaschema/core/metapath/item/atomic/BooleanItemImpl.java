@@ -73,6 +73,11 @@ class BooleanItemImpl implements IBooleanItem {
   }
 
   @Override
+  public String toString() {
+    return asString();
+  }
+
+  @Override
   public int hashCode() {
     return Boolean.hashCode(booleanValue);
   }

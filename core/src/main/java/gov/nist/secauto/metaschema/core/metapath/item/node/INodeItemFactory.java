@@ -100,7 +100,7 @@ public interface INodeItemFactory {
   default IFlagNodeItem newFlagNodeItem(
       @NonNull IFlagDefinition definition,
       @NonNull IModuleNodeItem parent) {
-    return new FlagDefinitionNodeItemImpl(definition, parent);
+    return new FlagGlobalDefinitionNodeItemImpl(definition, parent);
   }
 
   /**
