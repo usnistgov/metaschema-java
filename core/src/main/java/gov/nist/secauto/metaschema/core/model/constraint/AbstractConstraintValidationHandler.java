@@ -88,16 +88,10 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
       @SuppressWarnings("unused") @NonNull INodeItem node,
       @NonNull ISequence<? extends INodeItem> targets) {
     return String.format(
-        "The cardinality '%d' is below the required minimum '%d' at: %s.",
+        "The cardinality '%d' is below the required minimum '%d' for items matching '%s'.",
         targets.size(),
         constraint.getMinOccurs(),
-        targets.safeStream()
-            .map(item -> new StringBuilder(12)
-                .append('\'')
-                .append(toPath(item))
-                .append('\'')
-                .toString())
-            .collect(CustomCollectors.joiningWithOxfordComma("and")));
+        constraint.getTarget().getPath());
   }
 
   @SuppressWarnings("null")
