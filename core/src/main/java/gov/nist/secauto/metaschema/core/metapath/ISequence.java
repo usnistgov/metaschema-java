@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
@@ -56,7 +57,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * @param <ITEM_TYPE>
  *          the Java type of the items in a sequence
  */
-public interface ISequence<ITEM_TYPE extends IItem> extends Collection<ITEM_TYPE> {
+public interface ISequence<ITEM_TYPE extends IItem> extends List<ITEM_TYPE> {
   @SuppressWarnings("rawtypes")
   ISequence EMPTY = new EmptyListImpl<>();
 
@@ -331,5 +332,55 @@ public interface ISequence<ITEM_TYPE extends IItem> extends Collection<ITEM_TYPE
   @Override
   default void clear() {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  default boolean addAll(int index, Collection<? extends ITEM_TYPE> c) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  default ITEM_TYPE get(int index) {
+    return asList().get(index);
+  }
+
+  @Override
+  default ITEM_TYPE set(int index, ITEM_TYPE element) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  default void add(int index, ITEM_TYPE element) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  default ITEM_TYPE remove(int index) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  default int indexOf(Object obj) {
+    return asList().indexOf(obj);
+  }
+
+  @Override
+  default int lastIndexOf(Object obj) {
+    return asList().lastIndexOf(obj);
+  }
+
+  @Override
+  default ListIterator<ITEM_TYPE> listIterator() {
+    return asList().listIterator();
+  }
+
+  @Override
+  default ListIterator<ITEM_TYPE> listIterator(int index) {
+    return asList().listIterator(index);
+  }
+
+  @Override
+  default List<ITEM_TYPE> subList(int fromIndex, int toIndex) {
+    return asList().subList(fromIndex, toIndex);
   }
 }

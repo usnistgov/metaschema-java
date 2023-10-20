@@ -108,6 +108,7 @@ public class DefaultFunctionLibrary
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-generate-id
     // P2: https://www.w3.org/TR/xpath-functions-31/#func-has-children
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-head
+    registerFunction(FnHead.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-hours-from-dateTime
     // https://www.w3.org/TR/xpath-functions-31/#func-hours-from-duration
     // https://www.w3.org/TR/xpath-functions-31/#func-hours-from-time
@@ -169,6 +170,7 @@ public class DefaultFunctionLibrary
     registerFunction(FnSum.SIGNATURE_ONE_ARG);
     registerFunction(FnSum.SIGNATURE_TWO_ARG);
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-tail
+    registerFunction(FnTail.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-timezone-from-date
     // https://www.w3.org/TR/xpath-functions-31/#func-timezone-from-dateTime
     // https://www.w3.org/TR/xpath-functions-31/#func-timezone-from-time
