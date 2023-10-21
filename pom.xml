@@ -121,7 +121,7 @@
 		<dependency.commons-io.version>2.14.0</dependency.commons-io.version>
 		<dependency.commons-lang3.version>3.13.0</dependency.commons-lang3.version>
 		<dependency.commons-text.version>1.10.0</dependency.commons-text.version>
-		<dependency.everit-json.version>1.14.2</dependency.everit-json.version>
+		<dependency.everit-json.version>1.14.3</dependency.everit-json.version>
 		<dependency.flexmark.version>0.64.8</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.32</dependency.freemarker.version>
 		<dependency.inject-resources-junit-jupiter.version>0.3.3</dependency.inject-resources-junit-jupiter.version>
@@ -690,6 +690,32 @@
 						<forkNode implementation="org.apache.maven.plugin.surefire.extensions.SurefireForkNodeFactory" />
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-pmd-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>pmd-verify</id>
+							<goals>
+								<goal>check</goal>
+							</goals>
+							<configuration>
+								<failurePriority>2</failurePriority>
+								<!-- fail on error for all builds -->
+								<failOnViolation>true</failOnViolation>
+								<printFailingErrors>true</printFailingErrors>
+								<format>sarif</format>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>com.github.spotbugs</groupId>
+					<artifactId>spotbugs-maven-plugin</artifactId>
+					<configuration>
+						<sarifOutput>true</sarifOutput>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -697,61 +723,22 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-toolchains-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<!--                        <inherited>false</inherited>-->
+				<executions>
+					<execution>
+						<id>attach-descriptor</id>
+						<inherited>false</inherited>
+						<goals>
+							<goal>attach-descriptor</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-	<profiles>
-		<profile>
-			<id>reporting</id>
-			<build>
-				<pluginManagement>
-					<plugins>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-pmd-plugin</artifactId>
-							<executions>
-								<execution>
-									<id>pmd-verify</id>
-									<goals>
-										<goal>check</goal>
-									</goals>
-									<configuration>
-										<failurePriority>2</failurePriority>
-										<!-- fail on error for all builds -->
-										<failOnViolation>true</failOnViolation>
-										<printFailingErrors>true</printFailingErrors>
-										<format>sarif</format>
-									</configuration>
-								</execution>
-							</executions>
-						</plugin>
-						<plugin>
-							<groupId>com.github.spotbugs</groupId>
-							<artifactId>spotbugs-maven-plugin</artifactId>
-							<configuration>
-								<sarifOutput>true</sarifOutput>
-							</configuration>
-						</plugin>
-					</plugins>
-				</pluginManagement>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-site-plugin</artifactId>
-						<!--                        <inherited>false</inherited>-->
-						<executions>
-							<execution>
-								<id>attach-descriptor</id>
-								<inherited>false</inherited>
-								<goals>
-									<goal>attach-descriptor</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 	<modules>
 		<module>core</module>
 		<module>databind</module>
