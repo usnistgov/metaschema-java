@@ -59,7 +59,7 @@ class XmlChoiceInstance
     this.xmlChoice = xmlChoice;
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
       IStandardModelContainerSupport retval = new DefaultModelContainerSupport();
-      new XmlModelParser().parseChoice(xmlChoice, parent, retval);
+      XmlModelParser.parseChoice(xmlChoice, parent, retval);
       return retval;
     }));
   }

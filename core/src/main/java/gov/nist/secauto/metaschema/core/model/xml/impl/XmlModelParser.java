@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.model.xml.impl;
 
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
@@ -55,7 +56,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 //@SuppressWarnings("PMD.CouplingBetweenObjects")
-public class XmlModelParser {
+public final class XmlModelParser {
   @SuppressWarnings("PMD.UseConcurrentHashMap")
   @NonNull
   private static final XmlObjectParser<Pair<IModelContainer, IStandardModelContainerSupport>> MODEL_PARSER
@@ -93,6 +94,10 @@ public class XmlModelParser {
           return retval;
         }
       };
+
+  private XmlModelParser() {
+    // disable construction
+  }
 
   private static void handleField(
       @NonNull XmlObject obj,
@@ -157,6 +162,16 @@ public class XmlModelParser {
     container.getModelInstances().add(assembly);
   }
 
+  /**
+   * Parse a choice XMLBeans object.
+   *
+   * @param xmlObject
+   *          the XMLBeans object
+   * @param parent
+   *          the parent Metaschema node, either an assembly definition or choice
+   * @param container
+   *          the model container
+   */
   // REFACTOR: move up to calling location
   public static void parseChoice(
       @NonNull ChoiceType xmlObject,
@@ -165,10 +180,20 @@ public class XmlModelParser {
     MODEL_PARSER.parse(xmlObject, Pair.of(parent, container));
   }
 
+  /**
+   * Parse a choice XMLBeans object.
+   *
+   * @param xmlObject
+   *          the XMLBeans object
+   * @param parent
+   *          the parent Metaschema assembly definition
+   * @param container
+   *          the model container
+   */
   // REFACTOR: move up to calling location
   public static void parseModel(
       @NonNull AssemblyModelType xmlObject,
-      @NonNull IModelContainer parent,
+      @NonNull IAssemblyDefinition parent,
       @NonNull IStandardModelContainerSupport container) {
     MODEL_PARSER.parse(xmlObject, Pair.of(parent, container));
   }

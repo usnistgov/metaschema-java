@@ -41,6 +41,14 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 @Target({ TYPE, FIELD })
 public @interface ValueConstraints {
   /**
+   * Get the let statements for the type of field this annotation is applied to.
+   *
+   * @return the let statements or an empty array if no let statements are defined
+   */
+  @NonNull
+  Let[] lets() default {};
+
+  /**
    * Get the allowed value constraints for the type or field this annotation is
    * applied to.
    *

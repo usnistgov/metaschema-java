@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.core.model.xml.xmlbeans.handler;
 
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 
-public final class ConstraintLevelEnum {
-  private ConstraintLevelEnum() {
+public final class ConstraintLevelType {
+  private ConstraintLevelType() {
     // disable construction
   }
 
@@ -41,7 +41,7 @@ public final class ConstraintLevelEnum {
    * @param target
    *          the XML value to cast to a boolean
    */
-  public static void encodeLevelType(IConstraint.Level obj, org.apache.xmlbeans.SimpleValue target) {
+  public static void encodeConstraintLevelType(IConstraint.Level obj, org.apache.xmlbeans.SimpleValue target) {
     if (obj != null) {
       switch (obj) {
       case CRITICAL:
@@ -69,7 +69,7 @@ public final class ConstraintLevelEnum {
    *          the XML value to cast to a boolean
    * @return the associated boolean value
    */
-  public static IConstraint.Level decodeLevelType(org.apache.xmlbeans.SimpleValue obj) {
+  public static IConstraint.Level decodeConstraintLevelType(org.apache.xmlbeans.SimpleValue obj) {
     String value = obj.getStringValue();
     IConstraint.Level retval;
     switch (value) {

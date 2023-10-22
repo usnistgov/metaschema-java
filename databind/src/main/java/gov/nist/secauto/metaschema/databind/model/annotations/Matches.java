@@ -83,7 +83,7 @@ public @interface Matches {
   Level level() default IConstraint.Level.ERROR;
 
   /**
-   * An optional metapath that points to the target flag or field value that the
+   * An optional Metapath that points to the target flag or field value that the
    * constraint applies to. If omitted the target will be ".", which means the
    * target is the value of the {@link BoundFlag}, {@link BoundField} or
    * {@link MetaschemaFieldValue} annotation the constraint appears on. In the

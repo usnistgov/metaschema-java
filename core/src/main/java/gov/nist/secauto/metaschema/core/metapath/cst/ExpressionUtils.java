@@ -39,6 +39,17 @@ public final class ExpressionUtils {
     // disable
   }
 
+  /**
+   * Analyze an expression to determine its static result type.
+   *
+   * @param <RESULT_TYPE>
+   *          the Java type of the analysis result
+   * @param baseType
+   *          the Java classs for the base type to use for analysis
+   * @param expressions
+   *          the expressions to analyze
+   * @return the static result type
+   */
   @NonNull
   public static <RESULT_TYPE> Class<? extends RESULT_TYPE> analyzeStaticResultType(
       @NonNull Class<RESULT_TYPE> baseType,
@@ -98,15 +109,11 @@ public final class ExpressionUtils {
   }
 
   @Nullable
-  private static Class<?> getCommonBaseClass(@NonNull Class<?> baseType,
-      @NonNull Class<?> first, @NonNull List<Class<?>> expressionClasses) {
-    boolean match = true;
-    for (Class<?> clazz : expressionClasses) {
-      if (!first.isAssignableFrom(clazz)) {
-        match = false;
-        break;
-      }
-    }
+  private static Class<?> getCommonBaseClass(
+      @NonNull Class<?> baseType,
+      @NonNull Class<?> first,
+      @NonNull List<Class<?>> expressionClasses) {
+    boolean match = checkDerivedFrom(first, expressionClasses);
 
     Class<?> retval = null;
     if (match) {
@@ -127,7 +134,8 @@ public final class ExpressionUtils {
     return retval;
   }
 
-  private static boolean checkDerivedFrom(@NonNull Class<?> baseType,
+  private static boolean checkDerivedFrom(
+      @NonNull Class<?> baseType,
       @NonNull List<Class<?>> expressionClasses) {
     boolean retval = true;
     for (Class<?> clazz : expressionClasses) {

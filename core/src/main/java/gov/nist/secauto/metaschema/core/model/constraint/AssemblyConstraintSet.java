@@ -24,12 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.constraint.impl;
-
-import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IIndexConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
-import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
+package gov.nist.secauto.metaschema.core.model.constraint;
 
 import java.util.LinkedList;
 import java.util.List;

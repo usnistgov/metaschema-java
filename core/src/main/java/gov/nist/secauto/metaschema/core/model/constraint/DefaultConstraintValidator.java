@@ -50,6 +50,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -75,30 +76,33 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
   @NonNull
   private final Map<String, List<KeyRef>> indexNameToKeyRefMap = new ConcurrentHashMap<>();
   @NonNull
-  private final DynamicContext metapathContext;
-  @NonNull
   private final IConstraintValidationHandler handler;
 
-  public DefaultConstraintValidator(
-      @NonNull DynamicContext metapathContext,
-      @NonNull IConstraintValidationHandler handler) {
-    this.metapathContext = metapathContext;
+  /**
+   * Construct a new constraint validator instance.
+   *
+   * @param handler
+   *          the validation handler to use for handling constraint violations
+   */
+  public DefaultConstraintValidator(@NonNull IConstraintValidationHandler handler) {
     this.handler = handler;
   }
 
+  /**
+   * Get the validation handler to use for handling constraint violations.
+   *
+   * @return the handler
+   */
   @NonNull
-  public IConstraintValidationHandler getConstraintValidationHandler() {
+  protected IConstraintValidationHandler getConstraintValidationHandler() {
     return handler;
   }
 
-  @NonNull
-  protected DynamicContext getMetapathContext() {
-    return metapathContext;
-  }
-
   @Override
-  public void validate(@NonNull INodeItem item) {
-    item.accept(new Visitor(), null);
+  public void validate(
+      @NonNull INodeItem item,
+      @NonNull DynamicContext dynamicContext) {
+    item.accept(new Visitor(), dynamicContext);
   }
 
   /**
@@ -106,17 +110,22 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
    *
    * @param item
    *          the flag item to validate
+   * @param dynamicContext
+   *          the Metapath dynamic execution context to use for Metapath
+   *          evaluation
    * @throws MetapathException
    *           if an error occurred while evaluating a Metapath used in a
    *           constraint
    */
-  protected void validateFlag(@NonNull IFlagNodeItem item) {
+  protected void validateFlag(
+      @NonNull IFlagNodeItem item,
+      @NonNull DynamicContext dynamicContext) {
     IFlagDefinition definition = item.getDefinition();
 
-    validateExpect(definition.getExpectConstraints(), item);
-    validateAllowedValues(definition.getAllowedValuesConstraints(), item);
-    validateIndexHasKey(definition.getIndexHasKeyConstraints(), item);
-    validateMatches(definition.getMatchesConstraints(), item);
+    validateExpect(definition.getExpectConstraints(), item, dynamicContext);
+    validateAllowedValues(definition.getAllowedValuesConstraints(), item, dynamicContext);
+    validateIndexHasKey(definition.getIndexHasKeyConstraints(), item, dynamicContext);
+    validateMatches(definition.getMatchesConstraints(), item, dynamicContext);
   }
 
   /**
@@ -124,17 +133,22 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
    *
    * @param item
    *          the field item to validate
+   * @param dynamicContext
+   *          the Metapath dynamic execution context to use for Metapath
+   *          evaluation
    * @throws MetapathException
    *           if an error occurred while evaluating a Metapath used in a
    *           constraint
    */
-  protected void validateField(@NonNull IFieldNodeItem item) {
+  protected void validateField(
+      @NonNull IFieldNodeItem item,
+      @NonNull DynamicContext dynamicContext) {
     IFieldDefinition definition = item.getDefinition();
 
-    validateExpect(definition.getExpectConstraints(), item);
-    validateAllowedValues(definition.getAllowedValuesConstraints(), item);
-    validateIndexHasKey(definition.getIndexHasKeyConstraints(), item);
-    validateMatches(definition.getMatchesConstraints(), item);
+    validateExpect(definition.getExpectConstraints(), item, dynamicContext);
+    validateAllowedValues(definition.getAllowedValuesConstraints(), item, dynamicContext);
+    validateIndexHasKey(definition.getIndexHasKeyConstraints(), item, dynamicContext);
+    validateMatches(definition.getMatchesConstraints(), item, dynamicContext);
   }
 
   /**
@@ -142,35 +156,45 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
    *
    * @param item
    *          the assembly item to validate
+   * @param dynamicContext
+   *          the Metapath dynamic execution context to use for Metapath
+   *          evaluation
    * @throws MetapathException
    *           if an error occurred while evaluating a Metapath used in a
    *           constraint
    */
-  protected void validateAssembly(@NonNull IAssemblyNodeItem item) {
+  protected void validateAssembly(
+      @NonNull IAssemblyNodeItem item,
+      @NonNull DynamicContext dynamicContext) {
     IAssemblyDefinition definition = item.getDefinition();
 
-    validateExpect(definition.getExpectConstraints(), item);
-    validateAllowedValues(definition.getAllowedValuesConstraints(), item);
-    validateIndexHasKey(definition.getIndexHasKeyConstraints(), item);
-    validateMatches(definition.getMatchesConstraints(), item);
-    validateHasCardinality(definition.getHasCardinalityConstraints(), item);
-    validateIndex(definition.getIndexConstraints(), item);
-    validateUnique(definition.getUniqueConstraints(), item);
+    validateExpect(definition.getExpectConstraints(), item, dynamicContext);
+    validateAllowedValues(definition.getAllowedValuesConstraints(), item, dynamicContext);
+    validateIndexHasKey(definition.getIndexHasKeyConstraints(), item, dynamicContext);
+    validateMatches(definition.getMatchesConstraints(), item, dynamicContext);
+    validateHasCardinality(definition.getHasCardinalityConstraints(), item, dynamicContext);
+    validateIndex(definition.getIndexConstraints(), item, dynamicContext);
+    validateUnique(definition.getUniqueConstraints(), item, dynamicContext);
   }
 
-  protected void validateHasCardinality(@NonNull List<? extends ICardinalityConstraint> constraints,
-      @NonNull List<? extends IAssemblyNodeItem> items) {
-
-    items.stream().forEachOrdered(item -> {
-      assert item != null;
-      validateHasCardinality(constraints, item);
-    });
-  }
-
-  protected void validateHasCardinality(@NonNull List<? extends ICardinalityConstraint> constraints,
-      @NonNull IAssemblyNodeItem item) {
+  /**
+   * Evaluates the provided collection of {@code constraints} in the context of
+   * the {@code item}.
+   *
+   * @param constraints
+   *          the constraints to execute
+   * @param item
+   *          the focus of Metapath evaluation
+   * @param dynamicContext
+   *          the Metapath dynamic execution context to use for Metapath
+   *          evaluation
+   */
+  private void validateHasCardinality(
+      @NonNull List<? extends ICardinalityConstraint> constraints,
+      @NonNull IAssemblyNodeItem item,
+      @NonNull DynamicContext dynamicContext) {
     for (ICardinalityConstraint constraint : constraints) {
-      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, getMetapathContext());
+      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, dynamicContext);
       try {
         validateHasCardinality(constraint, item, targets);
       } catch (MetapathException ex) {
@@ -179,8 +203,23 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     }
   }
 
-  protected void validateHasCardinality(@NonNull ICardinalityConstraint constraint, @NonNull IAssemblyNodeItem node,
-      ISequence<? extends INodeItem> targets) {
+  /**
+   * Evaluates the provided {@code constraint} against each of the
+   * {@code targets}.
+   *
+   * @param constraint
+   *          the constraint to execute
+   * @param node
+   *          the original focus of Metapath evaluation for identifying the
+   *          targets
+   * @param targets
+   *          the focus of Metapath evaluation for evaluating any constraint
+   *          Metapath clauses
+   */
+  private void validateHasCardinality(
+      @NonNull ICardinalityConstraint constraint,
+      @NonNull IAssemblyNodeItem node,
+      @NonNull ISequence<? extends INodeItem> targets) {
     int itemCount = targets.size();
 
     Integer minOccurs = constraint.getMinOccurs();
@@ -194,28 +233,53 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     }
   }
 
-  protected void validateIndex(@NonNull List<? extends IIndexConstraint> constraints,
-      @NonNull List<? extends IAssemblyNodeItem> items) {
-    items.stream().forEachOrdered(item -> {
-      assert item != null;
-      validateIndex(constraints, item);
-    });
-  }
-
-  protected void validateIndex(@NonNull List<? extends IIndexConstraint> constraints,
-      @NonNull IAssemblyNodeItem item) {
+  /**
+   * Evaluates the provided collection of {@code constraints} in the context of
+   * the {@code item}.
+   *
+   * @param constraints
+   *          the constraints to execute
+   * @param item
+   *          the focus of Metapath evaluation
+   * @param dynamicContext
+   *          the Metapath dynamic execution context to use for Metapath
+   *          evaluation
+   */
+  private void validateIndex(
+      @NonNull List<? extends IIndexConstraint> constraints,
+      @NonNull IAssemblyNodeItem item,
+      @NonNull DynamicContext dynamicContext) {
     for (IIndexConstraint constraint : constraints) {
-      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, getMetapathContext());
+      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, dynamicContext);
       try {
-        validateIndex(constraint, item, targets);
+        validateIndex(constraint, item, targets, dynamicContext);
       } catch (MetapathException ex) {
         rethrowConstraintError(constraint, item, ex);
       }
     }
   }
 
-  protected void validateIndex(@NonNull IIndexConstraint constraint, @NonNull IAssemblyNodeItem node,
-      @NonNull ISequence<? extends INodeItem> targets) {
+  /**
+   * Evaluates the provided {@code constraint} against each of the
+   * {@code targets}.
+   *
+   * @param constraint
+   *          the constraint to execute
+   * @param node
+   *          the original focus of Metapath evaluation for identifying the
+   *          targets
+   * @param targets
+   *          the focus of Metapath evaluation for evaluating any constraint
+   *          Metapath clauses
+   * @param dynamicContext
+   *          the Metapath dynamic execution context to use for Metapath
+   *          evaluation
+   */
+  private void validateIndex(
+      @NonNull IIndexConstraint constraint,
+      @NonNull IAssemblyNodeItem node,
+      @NonNull ISequence<? extends INodeItem> targets,
+      @NonNull DynamicContext dynamicContext) {
     String indexName = constraint.getName();
     if (indexNameToIndexMap.containsKey(indexName)) {
       getConstraintValidationHandler().handleIndexDuplicateViolation(constraint, node);
@@ -228,7 +292,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
           assert item != null;
           if (item.hasValue()) {
             try {
-              INodeItem oldItem = index.put(item, metapathContext);
+              INodeItem oldItem = index.put(item, dynamicContext);
               if (oldItem != null) {
                 getConstraintValidationHandler().handleIndexDuplicateKeyViolation(constraint, node, oldItem, item);
               }
@@ -240,36 +304,60 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     indexNameToIndexMap.put(indexName, index);
   }
 
-  protected void validateUnique(@NonNull List<? extends IUniqueConstraint> constraints,
-      @NonNull List<? extends IAssemblyNodeItem> items) {
-
-    items.stream().forEachOrdered(item -> {
-      assert item != null;
-      validateUnique(constraints, item);
-    });
-  }
-
-  protected void validateUnique(@NonNull List<? extends IUniqueConstraint> constraints,
-      @NonNull IAssemblyNodeItem item) {
+  /**
+   * Evaluates the provided collection of {@code constraints} in the context of
+   * the {@code item}.
+   *
+   * @param constraints
+   *          the constraints to execute
+   * @param item
+   *          the focus of Metapath evaluation
+   * @param dynamicContext
+   *          the Metapath dynamic execution context to use for Metapath
+   *          evaluation
+   */
+  private void validateUnique(
+      @NonNull List<? extends IUniqueConstraint> constraints,
+      @NonNull IAssemblyNodeItem item,
+      @NonNull DynamicContext dynamicContext) {
     for (IUniqueConstraint constraint : constraints) {
-      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, getMetapathContext());
+      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, dynamicContext);
       try {
-        validateUnique(constraint, item, targets);
+        validateUnique(constraint, item, targets, dynamicContext);
       } catch (MetapathException ex) {
         rethrowConstraintError(constraint, item, ex);
       }
     }
   }
 
-  protected void validateUnique(@NonNull IUniqueConstraint constraint,
-      @NonNull IAssemblyNodeItem node, @NonNull ISequence<? extends INodeItem> targets) {
+  /**
+   * Evaluates the provided {@code constraint} against each of the
+   * {@code targets}.
+   *
+   * @param constraint
+   *          the constraint to execute
+   * @param node
+   *          the original focus of Metapath evaluation for identifying the
+   *          targets
+   * @param targets
+   *          the focus of Metapath evaluation for evaluating any constraint
+   *          Metapath clauses
+   * @param dynamicContext
+   *          the Metapath dynamic execution context to use for Metapath
+   *          evaluation
+   */
+  private void validateUnique(
+      @NonNull IUniqueConstraint constraint,
+      @NonNull IAssemblyNodeItem node,
+      @NonNull ISequence<? extends INodeItem> targets,
+      @NonNull DynamicContext dynamicContext) {
     IIndex index = IIndex.newInstance(constraint.getKeyFields());
     targets.asStream()
         .forEachOrdered(item -> {
           assert item != null;
           if (item.hasValue()) {
             try {
-              INodeItem oldItem = index.put(item, metapathContext);
+              INodeItem oldItem = index.put(item, dynamicContext);
               if (oldItem != null) {
                 getConstraintValidationHandler().handleUniqueKeyViolation(constraint, node, oldItem, item);
               }
@@ -281,11 +369,25 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
         });
   }
 
-  protected void validateMatches(@NonNull List<? extends IMatchesConstraint> constraints,
-      @NonNull IDefinitionNodeItem<?, ?> item) {
+  /**
+   * Evaluates the provided collection of {@code constraints} in the context of
+   * the {@code item}.
+   *
+   * @param constraints
+   *          the constraints to execute
+   * @param item
+   *          the focus of Metapath evaluation
+   * @param dynamicContext
+   *          the Metapath dynamic execution context to use for Metapath
+   *          evaluation
+   */
+  private void validateMatches(
+      @NonNull List<? extends IMatchesConstraint> constraints,
+      @NonNull IDefinitionNodeItem<?, ?> item,
+      @NonNull DynamicContext dynamicContext) {
 
     for (IMatchesConstraint constraint : constraints) {
-      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, getMetapathContext());
+      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, dynamicContext);
       try {
         validateMatches(constraint, item, targets);
       } catch (MetapathException ex) {
@@ -294,8 +396,23 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     }
   }
 
-  protected void validateMatches(@NonNull IMatchesConstraint constraint, @NonNull INodeItem node,
-      ISequence<? extends INodeItem> targets) {
+  /**
+   * Evaluates the provided {@code constraint} against each of the
+   * {@code targets}.
+   *
+   * @param constraint
+   *          the constraint to execute
+   * @param node
+   *          the original focus of Metapath evaluation for identifying the
+   *          targets
+   * @param targets
+   *          the focus of Metapath evaluation for evaluating any constraint
+   *          Metapath clauses
+   */
+  private void validateMatches(
+      @NonNull IMatchesConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull ISequence<? extends INodeItem> targets) {
     targets.asStream()
         .forEachOrdered(item -> {
           assert item != null;
@@ -320,17 +437,43 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
         });
   }
 
-  protected void validateIndexHasKey(
+  /**
+   * Evaluates the provided collection of {@code constraints} in the context of
+   * the {@code item}.
+   *
+   * @param constraints
+   *          the constraints to execute
+   * @param item
+   *          the focus of Metapath evaluation
+   * @param dynamicContext
+   *          the Metapath dynamic execution context to use for Metapath
+   *          evaluation
+   */
+  private void validateIndexHasKey(
       @NonNull List<? extends IIndexHasKeyConstraint> constraints,
-      @NonNull IDefinitionNodeItem<?, ?> node) {
+      @NonNull IDefinitionNodeItem<?, ?> item,
+      @NonNull DynamicContext dynamicContext) {
 
     for (IIndexHasKeyConstraint constraint : constraints) {
-      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(node, getMetapathContext());
-      validateIndexHasKey(constraint, node, targets);
+      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, dynamicContext);
+      validateIndexHasKey(constraint, item, targets);
     }
   }
 
-  protected void validateIndexHasKey(
+  /**
+   * Evaluates the provided {@code constraint} against each of the
+   * {@code targets}.
+   *
+   * @param constraint
+   *          the constraint to execute
+   * @param node
+   *          the original focus of Metapath evaluation for identifying the
+   *          targets
+   * @param targets
+   *          the focus of Metapath evaluation for evaluating any constraint
+   *          Metapath clauses
+   */
+  private void validateIndexHasKey(
       @NonNull IIndexHasKeyConstraint constraint,
       @NonNull IDefinitionNodeItem<?, ?> node,
       @NonNull ISequence<? extends INodeItem> targets) {
@@ -346,16 +489,49 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     keyRefItems.add(keyRef);
   }
 
-  protected void validateExpect(@NonNull List<? extends IExpectConstraint> constraints,
-      @NonNull IDefinitionNodeItem<?, ?> item) {
+  /**
+   * Evaluates the provided collection of {@code constraints} in the context of
+   * the {@code item}.
+   *
+   * @param constraints
+   *          the constraints to execute
+   * @param item
+   *          the focus of Metapath evaluation
+   * @param dynamicContext
+   *          the Metapath dynamic execution context to use for Metapath
+   *          evaluation
+   */
+  private void validateExpect(
+      @NonNull List<? extends IExpectConstraint> constraints,
+      @NonNull IDefinitionNodeItem<?, ?> item,
+      @NonNull DynamicContext dynamicContext) {
     for (IExpectConstraint constraint : constraints) {
-      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, getMetapathContext());
-      validateExpect(constraint, item, targets);
+      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, dynamicContext);
+      validateExpect(constraint, item, targets, dynamicContext);
     }
   }
 
-  protected void validateExpect(@NonNull IExpectConstraint constraint, @NonNull INodeItem node,
-      @NonNull ISequence<? extends INodeItem> targets) {
+  /**
+   * Evaluates the provided {@code constraint} against each of the
+   * {@code targets}.
+   *
+   * @param constraint
+   *          the constraint to execute
+   * @param node
+   *          the original focus of Metapath evaluation for identifying the
+   *          targets
+   * @param targets
+   *          the focus of Metapath evaluation for evaluating any constraint
+   *          Metapath clauses
+   * @param dynamicContext
+   *          the Metapath dynamic execution context to use for Metapath
+   *          evaluation
+   */
+  private void validateExpect(
+      @NonNull IExpectConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull ISequence<? extends INodeItem> targets,
+      @NonNull DynamicContext dynamicContext) {
     targets.asStream()
         .map(item -> (INodeItem) item)
         .forEachOrdered(item -> {
@@ -363,9 +539,9 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
           if (item.hasValue()) {
             MetapathExpression metapath = constraint.getTest();
             try {
-              ISequence<?> result = metapath.evaluate(item, getMetapathContext());
+              ISequence<?> result = metapath.evaluate(item, dynamicContext);
               if (!FnBoolean.fnBoolean(result).toBoolean()) {
-                getConstraintValidationHandler().handleExpectViolation(constraint, node, item, getMetapathContext());
+                getConstraintValidationHandler().handleExpectViolation(constraint, node, item, dynamicContext);
               }
             } catch (MetapathException ex) {
               rethrowConstraintError(constraint, item, ex);
@@ -374,16 +550,41 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
         });
   }
 
-  protected void validateAllowedValues(@NonNull List<? extends IAllowedValuesConstraint> constraints,
-      @NonNull IDefinitionNodeItem<?, ?> item) {
+  /**
+   * Evaluates the provided collection of {@code constraints} in the context of
+   * the {@code item}.
+   *
+   * @param constraints
+   *          the constraints to execute
+   * @param item
+   *          the focus of Metapath evaluation
+   * @param dynamicContext
+   *          the Metapath dynamic execution context to use for Metapath
+   *          evaluation
+   */
+  private void validateAllowedValues(
+      @NonNull List<? extends IAllowedValuesConstraint> constraints,
+      @NonNull IDefinitionNodeItem<?, ?> item,
+      @NonNull DynamicContext dynamicContext) {
     for (IAllowedValuesConstraint constraint : constraints) {
-      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, getMetapathContext());
+      ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, dynamicContext);
       validateAllowedValues(constraint, targets);
     }
   }
 
-  protected void validateAllowedValues(@NonNull IAllowedValuesConstraint constraint,
-      ISequence<? extends IDefinitionNodeItem<?, ?>> targets) {
+  /**
+   * Evaluates the provided {@code constraint} against each of the
+   * {@code targets}.
+   *
+   * @param constraint
+   *          the constraint to execute
+   * @param targets
+   *          the focus of Metapath evaluation for evaluating any constraint
+   *          Metapath clauses
+   */
+  private void validateAllowedValues(
+      @NonNull IAllowedValuesConstraint constraint,
+      @NonNull ISequence<? extends IDefinitionNodeItem<?, ?>> targets) {
     targets.asStream().forEachOrdered(item -> {
       assert item != null;
       if (item.hasValue()) {
@@ -396,8 +597,10 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     });
   }
 
-  private static void rethrowConstraintError(@NonNull IConstraint constraint, INodeItem item,
-      MetapathException ex) {
+  private static void rethrowConstraintError(
+      @NonNull IConstraint constraint,
+      @NonNull INodeItem item,
+      @NonNull MetapathException ex) {
     StringBuilder builder = new StringBuilder(128);
     builder.append("A ")
         .append(constraint.getClass().getName())
@@ -442,6 +645,13 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     valueStatus.registerAllowedValue(allowedValues);
   }
 
+  /**
+   * Evaluate the value associated with the {@code targetItem} and update the
+   * status tracker.
+   *
+   * @param targetItem
+   *          the item whose value will be validated
+   */
   protected void handleAllowedValues(@NonNull INodeItem targetItem) {
     ValueStatus valueStatus = valueMap.remove(targetItem);
     if (valueStatus != null) {
@@ -450,7 +660,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
   }
 
   @Override
-  public void finalizeValidation() {
+  public void finalizeValidation(DynamicContext dynamicContext) {
     // key references
     for (Map.Entry<String, List<KeyRef>> entry : indexNameToKeyRefMap.entrySet()) {
       String indexName = entry.getKey();
@@ -464,7 +674,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
           assert item != null;
 
           try {
-            List<String> key = IIndex.toKey(item, constraint.getKeyFields(), getMetapathContext());
+            List<String> key = IIndex.toKey(item, constraint.getKeyFields(), dynamicContext);
 
             INodeItem referencedItem = index.get(key);
 
@@ -548,37 +758,76 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
   }
 
   class Visitor
-      extends AbstractNodeItemVisitor<Void, Void> {
+      extends AbstractNodeItemVisitor<DynamicContext, Void> {
+
+    @NonNull
+    private DynamicContext handleLetStatements(
+        @NonNull INodeItem focus,
+        @NonNull Map<String, ILet> letExpressions,
+        @NonNull DynamicContext dynamicContext) {
+
+      DynamicContext retval;
+      Collection<ILet> lets = letExpressions.values();
+      if (lets.isEmpty()) {
+        retval = dynamicContext;
+      } else {
+        final DynamicContext subContext = dynamicContext.subContext();
+
+        for (ILet let : lets) {
+          String name = let.getName();
+          ISequence<?> result = let.getValueExpression().evaluate(focus, subContext);
+          subContext.bindVariableValue(name, result);
+        }
+        retval = subContext;
+      }
+      return retval;
+    }
+
     @Override
-    public Void visitDocument(@NonNull IDocumentNodeItem item, Void context) {
+    public Void visitDocument(@NonNull IDocumentNodeItem item, DynamicContext context) {
       return super.visitDocument(item, context);
     }
 
     @Override
-    public Void visitFlag(@NonNull IFlagNodeItem item, Void context) {
-      validateFlag(item);
-      super.visitFlag(item, context);
+    public Void visitFlag(@NonNull IFlagNodeItem item, DynamicContext context) {
+      assert context != null;
+
+      IFlagDefinition definition = item.getDefinition();
+      DynamicContext effectiveContext = handleLetStatements(item, definition.getLetExpressions(), context);
+
+      validateFlag(item, effectiveContext);
+      super.visitFlag(item, effectiveContext);
       handleAllowedValues(item);
       return null;
     }
 
     @Override
-    public Void visitField(@NonNull IFieldNodeItem item, Void context) {
-      validateField(item);
-      super.visitField(item, context);
+    public Void visitField(@NonNull IFieldNodeItem item, DynamicContext context) {
+      assert context != null;
+
+      IFieldDefinition definition = item.getDefinition();
+      DynamicContext effectiveContext = handleLetStatements(item, definition.getLetExpressions(), context);
+
+      validateField(item, effectiveContext);
+      super.visitField(item, effectiveContext);
       handleAllowedValues(item);
       return null;
     }
 
     @Override
-    public Void visitAssembly(@NonNull IAssemblyNodeItem item, Void context) {
-      validateAssembly(item);
-      super.visitAssembly(item, context);
+    public Void visitAssembly(@NonNull IAssemblyNodeItem item, DynamicContext context) {
+      assert context != null;
+
+      IAssemblyDefinition definition = item.getDefinition();
+      DynamicContext effectiveContext = handleLetStatements(item, definition.getLetExpressions(), context);
+
+      validateAssembly(item, effectiveContext);
+      super.visitAssembly(item, effectiveContext);
       return null;
     }
 
     @Override
-    public Void visitMetaschema(@NonNull IModuleNodeItem item, Void context) {
+    public Void visitMetaschema(@NonNull IModuleNodeItem item, DynamicContext context) {
       throw new UnsupportedOperationException("not needed");
     }
 

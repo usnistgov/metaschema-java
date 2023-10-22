@@ -24,21 +24,19 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.constraint.impl;
+package gov.nist.secauto.metaschema.core.model.constraint;
 
-import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
-
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class ValueConstraintSet implements IValueConstrained { // NOPMD - intentional
+  @SuppressWarnings("PMD.UseConcurrentHashMap") // need ordering
+  @NonNull
+  private final Map<String, ILet> lets = new LinkedHashMap<>();
   @NonNull
   private final List<IConstraint> constraints = new LinkedList<>();
   @NonNull
@@ -49,6 +47,16 @@ public class ValueConstraintSet implements IValueConstrained { // NOPMD - intent
   private final List<IIndexHasKeyConstraint> indexHasKeyConstraints = new LinkedList<>();
   @NonNull
   private final List<IExpectConstraint> expectConstraints = new LinkedList<>();
+
+  @Override
+  public Map<String, ILet> getLetExpressions() {
+    return lets;
+  }
+
+  @Override
+  public ILet addLetExpression(ILet let) {
+    return lets.put(let.getName(), let);
+  }
 
   @Override
   public List<IConstraint> getConstraints() {

@@ -81,11 +81,23 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
     return item.toPath(getPathFormatter());
   }
 
+  /**
+   * Construct a new violation message for the provided {@code constraint} applied
+   * to the {@code node}.
+   *
+   * @param constraint
+   *          the constraint the requested message pertains to
+   * @param node
+   *          the item the constraint targeted
+   * @param targets
+   *          the targets matching the constraint
+   * @return the new message
+   */
   @SuppressWarnings("null")
   @NonNull
   protected String newCardinalityMinimumViolationMessage(
       @NonNull ICardinalityConstraint constraint,
-      @SuppressWarnings("unused") @NonNull INodeItem node,
+      @NonNull INodeItem node,
       @NonNull ISequence<? extends INodeItem> targets) {
     return String.format(
         "The cardinality '%d' is below the required minimum '%d' for items matching '%s'.",
@@ -94,11 +106,23 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
         constraint.getTarget().getPath());
   }
 
+  /**
+   * Construct a new violation message for the provided {@code constraint} applied
+   * to the {@code node}.
+   *
+   * @param constraint
+   *          the constraint the requested message pertains to
+   * @param node
+   *          the item the constraint targeted
+   * @param targets
+   *          the targets matching the constraint
+   * @return the new message
+   */
   @SuppressWarnings("null")
   @NonNull
   protected String newCardinalityMaximumViolationMessage(
       @NonNull ICardinalityConstraint constraint,
-      @SuppressWarnings("unused") @NonNull INodeItem node,
+      @NonNull INodeItem node,
       @NonNull ISequence<? extends INodeItem> targets) {
     return String.format(
         "The cardinality '%d' is greater than the required maximum '%d' at: %s.",
@@ -113,38 +137,79 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
             .collect(CustomCollectors.joiningWithOxfordComma("and")));
   }
 
+  /**
+   * Construct a new violation message for the provided {@code constraint} applied
+   * to the {@code node}.
+   *
+   * @param constraint
+   *          the constraint the requested message pertains to
+   * @param node
+   *          the item the constraint targeted
+   * @param oldItem
+   *          the original item matching the constraint
+   * @param newItem
+   *          the new item matching the constraint
+   * @return the new message
+   */
   @SuppressWarnings("null")
   @NonNull
   protected String newIndexDuplicateKeyViolationMessage(
       @NonNull IIndexConstraint constraint,
-      @SuppressWarnings("unused") @NonNull INodeItem node,
+      @NonNull INodeItem node,
       @NonNull INodeItem oldItem,
-      @NonNull INodeItem target) {
+      @NonNull INodeItem newItem) {
     // TODO: render the key paths
     return String.format("Index '%s' has duplicate key for items at paths '%s' and '%s'",
         constraint.getName(),
         toPath(oldItem),
-        toPath(target));
+        toPath(newItem));
   }
 
+  /**
+   * Construct a new violation message for the provided {@code constraint} applied
+   * to the {@code node}.
+   *
+   * @param constraint
+   *          the constraint the requested message pertains to
+   * @param node
+   *          the item the constraint targeted
+   * @param oldItem
+   *          the original item matching the constraint
+   * @param newItem
+   *          the new item matching the constraint
+   * @return the new message
+   */
   @SuppressWarnings("null")
   @NonNull
   protected String newUniqueKeyViolationMessage(
-      @SuppressWarnings("unused") @NonNull IUniqueConstraint constraint,
-      @SuppressWarnings("unused") @NonNull INodeItem node,
+      @NonNull IUniqueConstraint constraint,
+      @NonNull INodeItem node,
       @NonNull INodeItem oldItem,
-      @NonNull INodeItem target) {
-    // TODO: render the key paths
+      @NonNull INodeItem newItem) {
     return String.format("Unique constraint violation at paths '%s' and '%s'",
         toPath(oldItem),
-        toPath(target));
+        toPath(newItem));
   }
 
+  /**
+   * Construct a new violation message for the provided {@code constraint} applied
+   * to the {@code node}.
+   *
+   * @param constraint
+   *          the constraint the requested message pertains to
+   * @param node
+   *          the item the constraint targeted
+   * @param target
+   *          the target matching the constraint
+   * @param value
+   *          the target's value
+   * @return the new message
+   */
   @SuppressWarnings("null")
   @NonNull
   protected String newMatchPatternViolationMessage(
       @NonNull IMatchesConstraint constraint,
-      @SuppressWarnings("unused") @NonNull INodeItem node,
+      @NonNull INodeItem node,
       @NonNull INodeItem target,
       @NonNull String value) {
     return String.format("Value '%s' did not match the pattern '%s' at path '%s'",
@@ -153,11 +218,25 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
         toPath(target));
   }
 
+  /**
+   * Construct a new violation message for the provided {@code constraint} applied
+   * to the {@code node}.
+   *
+   * @param constraint
+   *          the constraint the requested message pertains to
+   * @param node
+   *          the item the constraint targeted
+   * @param target
+   *          the target matching the constraint
+   * @param value
+   *          the target's value
+   * @return the new message
+   */
   @SuppressWarnings("null")
   @NonNull
   protected String newMatchDatatypeViolationMessage(
       @NonNull IMatchesConstraint constraint,
-      @SuppressWarnings("unused") @NonNull INodeItem node,
+      @NonNull INodeItem node,
       @NonNull INodeItem target,
       @NonNull String value) {
     IDataTypeAdapter<?> adapter = constraint.getDataType();
@@ -165,6 +244,21 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
         adapter.getPreferredName(), toPath(target));
   }
 
+  /**
+   * Construct a new violation message for the provided {@code constraint} applied
+   * to the {@code node}.
+   *
+   * @param constraint
+   *          the constraint the requested message pertains to
+   * @param node
+   *          the item the constraint targeted
+   * @param target
+   *          the target matching the constraint
+   * @param dynamicContext
+   *          the Metapath dynamic execution context to use for Metapath
+   *          evaluation
+   * @return the new message
+   */
   @SuppressWarnings("null")
   @NonNull
   protected CharSequence newExpectViolationMessage(
@@ -183,6 +277,16 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
     return message;
   }
 
+  /**
+   * Construct a new violation message for the provided {@code constraint} applied
+   * to the {@code node}.
+   *
+   * @param constraints
+   *          the constraints the requested message pertains to
+   * @param target
+   *          the target matching the constraint
+   * @return the new message
+   */
   @SuppressWarnings("null")
   @NonNull
   protected CharSequence newAllowedValuesViolationMessage(
@@ -202,6 +306,16 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
         toPath(target));
   }
 
+  /**
+   * Construct a new violation message for the provided {@code constraint} applied
+   * to the {@code node}.
+   *
+   * @param constraint
+   *          the constraint the requested message pertains to
+   * @param node
+   *          the item the constraint targeted
+   * @return the new message
+   */
   @SuppressWarnings("null")
   @NonNull
   protected CharSequence newIndexDuplicateViolationMessage(
@@ -212,11 +326,25 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
         node.getMetapath());
   }
 
+  /**
+   * Construct a new violation message for the provided {@code constraint} applied
+   * to the {@code node}.
+   *
+   * @param constraint
+   *          the constraint the requested message pertains to
+   * @param node
+   *          the item the constraint targeted
+   * @param target
+   *          the target matching the constraint
+   * @param key
+   *          the key derived from the target that failed to be found in the index
+   * @return the new message
+   */
   @SuppressWarnings("null")
   @NonNull
   protected CharSequence newIndexMissMessage(
       @NonNull IIndexHasKeyConstraint constraint,
-      @SuppressWarnings("unused") @NonNull INodeItem node,
+      @NonNull INodeItem node,
       @NonNull INodeItem target,
       @NonNull List<String> key) {
     String keyValues = key.stream()
@@ -227,5 +355,4 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
         constraint.getIndexName(),
         target.getMetapath());
   }
-
 }

@@ -40,7 +40,7 @@ import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
-import gov.nist.secauto.metaschema.core.model.constraint.impl.ValueConstraintSet;
+import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFlagDefinitionType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -135,6 +135,12 @@ class XmlInlineFlagDefinition
   @Override
   public Integer getIndex() {
     return getXmlFlag().isSetIndex() ? getXmlFlag().getIndex().intValue() : null;
+  }
+
+  @Override
+  public Object getDefaultValue() {
+    // inline definitions do not have an instance default value
+    return null;
   }
 
   @Override

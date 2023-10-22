@@ -60,6 +60,18 @@ public class Quantified
   @NonNull
   private final IExpression satisfies;
 
+  /**
+   * Construct a new quantified expression.
+   *
+   * @param quantifier
+   *          the quantifier operation
+   * @param inClauses
+   *          the set of expressions that define the variables to use for
+   *          determining the Cartesian product for evaluation
+   * @param satisfies
+   *          the expression used for evaluation using the Cartesian product of
+   *          the variables
+   */
   public Quantified(
       @NonNull Quantifier quantifier,
       @NonNull Map<String, IExpression> inClauses,
@@ -69,16 +81,33 @@ public class Quantified
     this.satisfies = satisfies;
   }
 
+  /**
+   * Get the quantifier operation.
+   *
+   * @return the quantifier operations
+   */
   @NonNull
   public Quantifier getQuantifier() {
     return quantifier;
   }
 
+  /**
+   * Get the set of expressions that define the variables to use for determining
+   * the Cartesian product for evaluation.
+   *
+   * @return the variable names mapped to the associated Metapath expression
+   */
   @NonNull
   public Map<String, IExpression> getInClauses() {
     return inClauses;
   }
 
+  /**
+   * Get the expression used for evaluation using the Cartesian product of the
+   * variables.
+   *
+   * @return the evaluation expression
+   */
   @NonNull
   public IExpression getSatisfies() {
     return satisfies;

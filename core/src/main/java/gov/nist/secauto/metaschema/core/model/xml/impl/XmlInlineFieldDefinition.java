@@ -45,7 +45,7 @@ import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
-import gov.nist.secauto.metaschema.core.model.constraint.impl.ValueConstraintSet;
+import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFieldDefinitionType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -151,6 +151,12 @@ class XmlInlineFieldDefinition
   @Override
   public Integer getIndex() {
     return getXmlField().isSetIndex() ? getXmlField().getIndex().intValue() : null;
+  }
+
+  @Override
+  public Object getDefaultValue() {
+    // inline definitions do not have an instance default value
+    return null;
   }
 
   @Override

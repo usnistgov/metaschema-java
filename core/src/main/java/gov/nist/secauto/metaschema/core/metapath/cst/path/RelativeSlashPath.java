@@ -36,6 +36,15 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class RelativeSlashPath
     extends AbstractRelativePathExpression {
 
+  /**
+   * Construct a new expression that finds a child of the {@code left} expression
+   * using the {@code right} expression.
+   *
+   * @param left
+   *          the context path
+   * @param right
+   *          the path to evaluate in the context of the left
+   */
   public RelativeSlashPath(@NonNull IExpression left, @NonNull IExpression right) {
     super(left, right);
   }

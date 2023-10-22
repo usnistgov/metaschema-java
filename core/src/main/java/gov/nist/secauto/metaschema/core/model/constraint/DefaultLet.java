@@ -24,37 +24,54 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.metapath.cst.path;
+package gov.nist.secauto.metaschema.core.model.constraint;
 
-import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.cst.IExpression;
-import gov.nist.secauto.metaschema.core.metapath.cst.IExpressionVisitor;
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class RootDoubleSlashPath
-    extends AbstractRootPathExpression {
+public class DefaultLet implements ILet {
+  @NonNull
+  private final String name;
+  @NonNull
+  private final MetapathExpression valueExpression;
+  @NonNull
+  private final ISource source;
 
   /**
-   * Construct a new expression that finds an ancestor of the document root using
-   * the {@code right} expression.
+   * Construct a new let statement.
    *
-   * @param node
-   *          the path to evaluate relative to the document root
+   * @param name
+   *          the variable name
+   * @param metapath
+   *          the Metapath expression used to query the value
+   * @param source
+   *          the source of the let statement
    */
-  public RootDoubleSlashPath(@NonNull IExpression node) {
-    super(node);
+  // REFACTOR: move construction to an "of" method on ILet and make this class an
+  // impl class.
+  public DefaultLet(
+      @NonNull String name,
+      @NonNull MetapathExpression metapath,
+      @NonNull ISource source) {
+    this.name = name;
+    this.valueExpression = metapath;
+    this.source = source;
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitRootDoubleSlashPath(this, context);
+  public String getName() {
+    return name;
   }
 
   @Override
-  public ISequence<?> accept(
-      DynamicContext dynamicContext, ISequence<?> context) {
-    return ISequence.of(search(getExpression(), dynamicContext, context));
+  public MetapathExpression getValueExpression() {
+    return valueExpression;
+  }
+
+  @Override
+  @NonNull
+  public ISource getSource() {
+    return source;
   }
 }

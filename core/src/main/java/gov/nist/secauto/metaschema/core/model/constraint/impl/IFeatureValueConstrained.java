@@ -30,10 +30,12 @@ import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstrain
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.ILet;
 import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 
 import java.util.List;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -46,6 +48,16 @@ public interface IFeatureValueConstrained extends IValueConstrained {
    */
   @NonNull
   IValueConstrained getConstraintSupport();
+
+  @Override
+  default ILet addLetExpression(ILet let) {
+    return getConstraintSupport().addLetExpression(let);
+  }
+
+  @Override
+  default Map<String, ILet> getLetExpressions() {
+    return getConstraintSupport().getLetExpressions();
+  }
 
   @Override
   default List<? extends IConstraint> getConstraints() {
@@ -73,17 +85,17 @@ public interface IFeatureValueConstrained extends IValueConstrained {
   }
 
   @Override
-  default void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
+  default void addConstraint(IAllowedValuesConstraint constraint) {
     getConstraintSupport().addConstraint(constraint);
   }
 
   @Override
-  default void addConstraint(@NonNull IMatchesConstraint constraint) {
+  default void addConstraint(IMatchesConstraint constraint) {
     getConstraintSupport().addConstraint(constraint);
   }
 
   @Override
-  default void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
+  default void addConstraint(IIndexHasKeyConstraint constraint) {
     getConstraintSupport().addConstraint(constraint);
   }
 

@@ -50,9 +50,9 @@
 		javaname="java.util.regex.Pattern">
 		<xb:staticHandler>gov.nist.secauto.metaschema.core.model.xml.xmlbeans.handler.RegexTypeHandler</xb:staticHandler>
 	</xb:usertype>
-	<xb:usertype name="meta:LevelType"
+	<xb:usertype name="meta:ConstraintLevelType"
 		javaname="gov.nist.secauto.metaschema.core.model.constraint.IConstraint.Level">
-		<xb:staticHandler>gov.nist.secauto.metaschema.core.model.xml.xmlbeans.handler.ConstraintLevelEnum</xb:staticHandler>
+		<xb:staticHandler>gov.nist.secauto.metaschema.core.model.xml.xmlbeans.handler.ConstraintLevelType</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="meta:ExtensibleEnumType"
 		javaname="gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint.Extensible">

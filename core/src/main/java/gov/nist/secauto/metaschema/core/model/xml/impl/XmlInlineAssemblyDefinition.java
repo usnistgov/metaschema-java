@@ -40,9 +40,9 @@ import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
-import gov.nist.secauto.metaschema.core.model.constraint.impl.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -212,7 +212,7 @@ class XmlInlineAssemblyDefinition
       this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
         IStandardModelContainerSupport retval = new DefaultModelContainerSupport();
         if (xmlAssembly.isSetModel()) {
-          new XmlModelParser().parseModel(ObjectUtils.notNull(xmlAssembly.getModel()), this, retval);
+          XmlModelParser.parseModel(ObjectUtils.notNull(xmlAssembly.getModel()), this, retval);
         }
         return retval;
       }));

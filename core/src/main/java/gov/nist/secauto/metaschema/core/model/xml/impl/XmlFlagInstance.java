@@ -42,11 +42,14 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class XmlFlagInstance
     extends AbstractFlagInstance {
   @NonNull
   private final FlagReferenceType xmlFlag;
+  @Nullable
+  private final Object defaultValue;
 
   /**
    * Constructs a new Metaschema flag instance definition from an XML
@@ -60,6 +63,11 @@ class XmlFlagInstance
   public XmlFlagInstance(@NonNull FlagReferenceType xmlFlag, @NonNull IFlagContainer parent) {
     super(parent);
     this.xmlFlag = xmlFlag;
+    Object defaultValue = null;
+    if (xmlFlag.isSetDefault()) {
+      defaultValue = getDefinition().getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlFlag.getDefault()));
+    }
+    this.defaultValue = defaultValue;
   }
 
   /**
@@ -98,6 +106,11 @@ class XmlFlagInstance
   @Override
   public String getName() {
     return getXmlFlag().getRef();
+  }
+
+  @Override
+  public Object getDefaultValue() {
+    return defaultValue;
   }
 
   @SuppressWarnings("null")

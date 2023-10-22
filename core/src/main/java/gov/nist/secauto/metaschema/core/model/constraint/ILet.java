@@ -24,45 +24,35 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.validation;
+package gov.nist.secauto.metaschema.core.model.constraint;
 
-import gov.nist.secauto.metaschema.core.metapath.item.node.AbstractNodeItemVisitor;
-import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.IFieldNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.IFlagNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraintValidator;
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class ValidatingNodeItemVisitor
-    extends AbstractNodeItemVisitor<Boolean, IConstraintValidator> {
+@SuppressWarnings("PMD.ShortClassName")
+public interface ILet {
+  /**
+   * Get the name of the let variable.
+   *
+   * @return the name
+   */
+  @NonNull
+  String getName();
 
-  @Override
-  protected Boolean defaultResult() {
-    return Boolean.TRUE;
-  }
+  /**
+   * Get the Metapath expression to use to query the value.
+   *
+   * @return the Metapath expression to use to query the value
+   */
+  @NonNull
+  MetapathExpression getValueExpression();
 
-  @Override
-  public Boolean visitFlag(IFlagNodeItem item, IConstraintValidator context) {
-    context.validate(item);
-    return super.visitFlag(item, context);
-  }
-
-  @Override
-  public Boolean visitField(IFieldNodeItem item, IConstraintValidator context) {
-    context.validate(item);
-    return super.visitField(item, context);
-  }
-
-  @Override
-  public Boolean visitAssembly(IAssemblyNodeItem item, IConstraintValidator context) {
-    context.validate(item);
-    return super.visitAssembly(item, context);
-  }
-
-  @Override
-  public Boolean visitMetaschema(@NonNull IModuleNodeItem item, IConstraintValidator context) {
-    throw new UnsupportedOperationException("validation of a metaschema node item is not needed");
-  }
+  /**
+   * Information about the source resource containing the let statement.
+   *
+   * @return the source information
+   */
+  @NonNull
+  ISource getSource();
 }

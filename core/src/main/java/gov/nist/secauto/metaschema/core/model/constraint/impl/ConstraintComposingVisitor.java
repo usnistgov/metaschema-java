@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstaints;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class ConstraintComposingVisitor
-    implements INodeItemVisitor<Void, ITargetedConstaints> {
+    implements INodeItemVisitor<ITargetedConstaints, Void> {
 
   @Override
   public Void visitDocument(@NonNull IDocumentNodeItem item, ITargetedConstaints context) {

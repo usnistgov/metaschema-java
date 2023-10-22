@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractConstraintBuilder;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractKeyConstraintBuilder;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultLet;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
@@ -41,6 +42,7 @@ import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IKeyField;
+import gov.nist.secauto.metaschema.core.model.constraint.ILet;
 import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
@@ -52,6 +54,7 @@ import gov.nist.secauto.metaschema.databind.model.annotations.Index;
 import gov.nist.secauto.metaschema.databind.model.annotations.IndexHasKey;
 import gov.nist.secauto.metaschema.databind.model.annotations.IsUnique;
 import gov.nist.secauto.metaschema.databind.model.annotations.KeyField;
+import gov.nist.secauto.metaschema.databind.model.annotations.Let;
 import gov.nist.secauto.metaschema.databind.model.annotations.Matches;
 import gov.nist.secauto.metaschema.databind.model.annotations.NullJavaTypeAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.Property;
@@ -359,5 +362,10 @@ final class ConstraintFactory {
     }
 
     return builder.build();
+  }
+
+  @NonNull
+  static ILet newLetExpression(@NonNull Let annotation, @NonNull ISource source) {
+    return new DefaultLet(annotation.name(), MetapathExpression.compile(annotation.target()), source);
   }
 }

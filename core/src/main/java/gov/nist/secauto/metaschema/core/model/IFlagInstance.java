@@ -32,7 +32,7 @@ import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IFlagInstance extends INamedInstance, IFlag {
+public interface IFlagInstance extends IFlag, IValuedInstance {
 
   @Override
   IFlagContainer getParentContainer();
@@ -47,7 +47,7 @@ public interface IFlagInstance extends INamedInstance, IFlag {
   @Override
   default QName getXmlQName() {
     // flags always have a qname
-    return ObjectUtils.requireNonNull(INamedInstance.super.getXmlQName());
+    return ObjectUtils.requireNonNull(IValuedInstance.super.getXmlQName());
   }
 
   @Override

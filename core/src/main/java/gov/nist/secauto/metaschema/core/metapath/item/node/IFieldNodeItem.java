@@ -62,7 +62,7 @@ public interface IFieldNodeItem
   }
 
   @Override
-  default <RESULT, CONTEXT> RESULT accept(@NonNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+  default <CONTEXT, RESULT> RESULT accept(@NonNull INodeItemVisitor<CONTEXT, RESULT> visitor, CONTEXT context) {
     return visitor.visitField(this, context);
   }
 }

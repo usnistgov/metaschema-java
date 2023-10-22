@@ -24,37 +24,17 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.metapath.cst.path;
+package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.cst.IExpression;
-import gov.nist.secauto.metaschema.core.metapath.cst.IExpressionVisitor;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
-public class RootDoubleSlashPath
-    extends AbstractRootPathExpression {
+public interface IValuedModelElement extends IModelElement {
 
   /**
-   * Construct a new expression that finds an ancestor of the document root using
-   * the {@code right} expression.
+   * Retrieves the default data value for this model construct.
    *
-   * @param node
-   *          the path to evaluate relative to the document root
+   * @return the default value or {@code null} if there is no default
    */
-  public RootDoubleSlashPath(@NonNull IExpression node) {
-    super(node);
-  }
-
-  @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitRootDoubleSlashPath(this, context);
-  }
-
-  @Override
-  public ISequence<?> accept(
-      DynamicContext dynamicContext, ISequence<?> context) {
-    return ISequence.of(search(getExpression(), dynamicContext, context));
-  }
+  @Nullable
+  Object getDefaultValue();
 }

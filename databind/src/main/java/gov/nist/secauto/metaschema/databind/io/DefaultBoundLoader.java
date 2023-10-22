@@ -153,22 +153,6 @@ public class DefaultBoundLoader
     return modelDetector;
   }
 
-  //
-  // @NonNull
-  // private static BufferedInputStream toBufferedInputStream(@NonNull InputStream
-  // is) {
-  // return toBufferedInputStream(is, LOOK_AHEAD_BYTES);
-  // }
-  //
-  // @NonNull
-  // private static BufferedInputStream toBufferedInputStream(@NonNull InputStream
-  // is, int lookaheadSize) {
-  // BufferedInputStream bis = new BufferedInputStream(is, lookaheadSize); //
-  // NOPMD - stream not owned
-  // bis.mark(lookaheadSize);
-  // return bis;
-  // }
-
   @Override
   public <CLASS> CLASS load(@NonNull URI uri) throws IOException {
     URI resourceUri = resolve(uri);
@@ -231,7 +215,7 @@ public class DefaultBoundLoader
   }
 
   @NonNull
-  public IDocumentNodeItem loadAsNodeItem(@NonNull InputStream is, @NonNull URI documentUri) throws IOException {
+  private IDocumentNodeItem loadAsNodeItem(@NonNull InputStream is, @NonNull URI documentUri) throws IOException {
     FormatDetector.Result formatMatch = getFormatDetector().detect(is);
     Format format = formatMatch.getFormat();
 

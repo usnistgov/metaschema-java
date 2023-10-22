@@ -68,6 +68,11 @@ public class Step implements IExpression { // NOPMD - intentional
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, List.of(step));
   }
 
+  /**
+   * Get the axis to use for the step.
+   *
+   * @return the step axis to use
+   */
   @NonNull
   public Axis getAxis() {
     return axisExpression;

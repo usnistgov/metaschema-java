@@ -41,31 +41,33 @@ import gov.nist.secauto.metaschema.core.model.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IKeyConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IKeyField;
+import gov.nist.secauto.metaschema.core.model.constraint.ILet;
 import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.AllowedValueType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.AllowedValuesType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ConstraintLetType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ConstraintType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.DefineAssemblyConstraintsType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.DefineFieldConstraintsType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.DefineFlagConstraintsType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.EnumType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ExpectConstraintType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.HasCardinalityConstraintType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.IndexHasKeyConstraintType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.KeyConstraintType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.KeyConstraintType.KeyField;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.MatchesConstraintType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.PropertyType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.RemarksType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedAllowedValuesType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedExpectConstraintType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedIndexConstraintType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedIndexHasKeyConstraintType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedKeyConstraintType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedMatchesConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.TargetedAllowedValuesConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.TargetedExpectConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.TargetedHasCardinalityConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.TargetedIndexConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.TargetedIndexHasKeyConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.TargetedKeyConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.TargetedMatchesConstraintType;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -74,6 +76,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.impl.values.XmlValueNotSupportedException;
 
 import java.math.BigInteger;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -132,13 +135,13 @@ public final class ConstraintXmlSupport {
         @Override
         protected Handler<Pair<ISource, IValueConstrained>> identifyHandler(XmlCursor cursor, XmlObject obj) {
           Handler<Pair<ISource, IValueConstrained>> retval;
-          if (obj instanceof ScopedAllowedValuesType) {
+          if (obj instanceof TargetedAllowedValuesConstraintType) {
             retval = ConstraintXmlSupport::handleScopedAllowedValues;
-          } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
+          } else if (obj instanceof TargetedIndexHasKeyConstraintType) {
             retval = ConstraintXmlSupport::handleScopedIndexHasKey;
-          } else if (obj instanceof ScopedMatchesConstraintType) {
+          } else if (obj instanceof TargetedMatchesConstraintType) {
             retval = ConstraintXmlSupport::handleScopedMatches;
-          } else if (obj instanceof ScopedExpectConstraintType) {
+          } else if (obj instanceof TargetedExpectConstraintType) {
             retval = ConstraintXmlSupport::handleScopedExpect;
           } else {
             retval = super.identifyHandler(cursor, obj);
@@ -170,19 +173,19 @@ public final class ConstraintXmlSupport {
         @Override
         protected Handler<Pair<ISource, IModelConstrained>> identifyHandler(XmlCursor cursor, XmlObject obj) {
           Handler<Pair<ISource, IModelConstrained>> retval;
-          if (obj instanceof ScopedAllowedValuesType) {
+          if (obj instanceof TargetedAllowedValuesConstraintType) {
             retval = ConstraintXmlSupport::handleScopedAllowedValues;
-          } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
+          } else if (obj instanceof TargetedIndexHasKeyConstraintType) {
             retval = ConstraintXmlSupport::handleScopedIndexHasKey;
-          } else if (obj instanceof ScopedMatchesConstraintType) {
+          } else if (obj instanceof TargetedMatchesConstraintType) {
             retval = ConstraintXmlSupport::handleScopedMatches;
-          } else if (obj instanceof ScopedExpectConstraintType) {
+          } else if (obj instanceof TargetedExpectConstraintType) {
             retval = ConstraintXmlSupport::handleScopedExpect;
-          } else if (obj instanceof ScopedIndexConstraintType) {
+          } else if (obj instanceof TargetedIndexConstraintType) {
             retval = ConstraintXmlSupport::handleScopedIndex;
-          } else if (obj instanceof ScopedKeyConstraintType) {
+          } else if (obj instanceof TargetedKeyConstraintType) {
             retval = ConstraintXmlSupport::handleScopedIsUnique;
-          } else if (obj instanceof HasCardinalityConstraintType) {
+          } else if (obj instanceof TargetedHasCardinalityConstraintType) {
             retval = ConstraintXmlSupport::handleScopedHasCardinality;
           } else {
             retval = super.identifyHandler(cursor, obj);
@@ -191,6 +194,17 @@ public final class ConstraintXmlSupport {
         }
 
       };
+
+  private static void parseLets(
+      @NonNull List<ConstraintLetType> letList,
+      @NonNull IValueConstrained constraints,
+      @NonNull ISource source) {
+    for (ConstraintLetType xmlLet : letList) {
+      assert xmlLet != null;
+      ILet let = ModelFactory.newLet(xmlLet, source);
+      constraints.addLetExpression(let);
+    }
+  }
 
   /**
    * Parse a set of constraints from the provided XMLBeans {@code xmlObject} and
@@ -207,6 +221,7 @@ public final class ConstraintXmlSupport {
       @NonNull IValueConstrained constraints,
       @NonNull DefineFlagConstraintsType xmlObject,
       @NonNull ISource source) {
+    parseLets(ObjectUtils.notNull(xmlObject.getLetList()), constraints, source);
     parse(
         FLAG_PARSER,
         constraints,
@@ -229,6 +244,7 @@ public final class ConstraintXmlSupport {
       @NonNull IValueConstrained constraints,
       @NonNull DefineFieldConstraintsType xmlObject,
       @NonNull ISource source) {
+    parseLets(ObjectUtils.notNull(xmlObject.getLetList()), constraints, source);
     parse(
         FIELD_PARSER,
         constraints,
@@ -251,6 +267,7 @@ public final class ConstraintXmlSupport {
       @NonNull IModelConstrained constraints,
       @NonNull DefineAssemblyConstraintsType xmlObject,
       @NonNull ISource source) {
+    parseLets(ObjectUtils.notNull(xmlObject.getLetList()), constraints, source);
     parse(
         ASSEMBLY_PARSER,
         constraints,
@@ -290,7 +307,7 @@ public final class ConstraintXmlSupport {
       @NonNull XmlObject obj,
       Pair<ISource, ? extends IValueConstrained> state) {
     IAllowedValuesConstraint constraint = ModelFactory.newAllowedValuesConstraint(
-        (ScopedAllowedValuesType) obj,
+        (TargetedAllowedValuesConstraintType) obj,
         ObjectUtils.notNull(state.getLeft()));
     state.getRight().addConstraint(constraint);
   }
@@ -308,7 +325,7 @@ public final class ConstraintXmlSupport {
       @NonNull XmlObject obj,
       Pair<ISource, ? extends IValueConstrained> state) {
     IMatchesConstraint constraint = ModelFactory.newMatchesConstraint(
-        (ScopedMatchesConstraintType) obj,
+        (TargetedMatchesConstraintType) obj,
         ObjectUtils.notNull(state.getLeft()));
     state.getRight().addConstraint(constraint);
   }
@@ -326,7 +343,7 @@ public final class ConstraintXmlSupport {
       @NonNull XmlObject obj,
       Pair<ISource, ? extends IValueConstrained> state) {
     IIndexHasKeyConstraint constraint = ModelFactory.newIndexHasKeyConstraint(
-        (ScopedIndexHasKeyConstraintType) obj,
+        (TargetedIndexHasKeyConstraintType) obj,
         ObjectUtils.notNull(state.getLeft()));
     state.getRight().addConstraint(constraint);
   }
@@ -344,28 +361,28 @@ public final class ConstraintXmlSupport {
       @NonNull XmlObject obj,
       Pair<ISource, ? extends IValueConstrained> state) {
     IExpectConstraint constraint = ModelFactory.newExpectConstraint(
-        (ScopedExpectConstraintType) obj,
+        (TargetedExpectConstraintType) obj,
         ObjectUtils.notNull(state.getLeft()));
     state.getRight().addConstraint(constraint);
   }
 
   private static void handleScopedIndex(@NonNull XmlObject obj, Pair<ISource, IModelConstrained> state) {
     IIndexConstraint constraint = ModelFactory.newIndexConstraint(
-        (ScopedIndexConstraintType) obj,
+        (TargetedIndexConstraintType) obj,
         ObjectUtils.notNull(state.getLeft()));
     state.getRight().addConstraint(constraint);
   }
 
   private static void handleScopedIsUnique(@NonNull XmlObject obj, Pair<ISource, IModelConstrained> state) {
     IUniqueConstraint constraint = ModelFactory.newUniqueConstraint(
-        (ScopedKeyConstraintType) obj,
+        (TargetedKeyConstraintType) obj,
         ObjectUtils.notNull(state.getLeft()));
     state.getRight().addConstraint(constraint);
   }
 
   private static void handleScopedHasCardinality(@NonNull XmlObject obj, Pair<ISource, IModelConstrained> state) {
     ICardinalityConstraint constraint = ModelFactory.newCardinalityConstraint(
-        (HasCardinalityConstraintType) obj,
+        (TargetedHasCardinalityConstraintType) obj,
         ObjectUtils.notNull(state.getLeft()));
     state.getRight().addConstraint(constraint);
   }
@@ -435,7 +452,7 @@ public final class ConstraintXmlSupport {
 
     @Override
     public Void visitAllowedValues(IAllowedValuesConstraint constraint, DefineAssemblyConstraintsType state) {
-      ScopedAllowedValuesType bean = state.addNewAllowedValues();
+      TargetedAllowedValuesConstraintType bean = state.addNewAllowedValues();
       assert bean != null;
       applyCommonValues(constraint, bean);
 
@@ -452,7 +469,7 @@ public final class ConstraintXmlSupport {
         assert value.equals(allowedValue.getValue());
 
         MarkupLine description = allowedValue.getDescription();
-        EnumType enumType = bean.addNewEnum();
+        AllowedValueType enumType = bean.addNewEnum();
         enumType.setValue(value);
 
         XmlbeansMarkupVisitor.visit(description, IModule.METASCHEMA_XML_NS, enumType);
@@ -469,7 +486,7 @@ public final class ConstraintXmlSupport {
 
     @Override
     public Void visitCardinalityConstraint(ICardinalityConstraint constraint, DefineAssemblyConstraintsType state) {
-      HasCardinalityConstraintType bean = state.addNewHasCardinality();
+      TargetedHasCardinalityConstraintType bean = state.addNewHasCardinality();
       assert bean != null;
       applyCommonValues(constraint, bean);
 
@@ -494,7 +511,7 @@ public final class ConstraintXmlSupport {
 
     @Override
     public Void visitExpectConstraint(IExpectConstraint constraint, DefineAssemblyConstraintsType state) {
-      ScopedExpectConstraintType bean = state.addNewExpect();
+      TargetedExpectConstraintType bean = state.addNewExpect();
       assert bean != null;
       applyCommonValues(constraint, bean);
 
@@ -516,7 +533,7 @@ public final class ConstraintXmlSupport {
 
     @Override
     public Void visitMatchesConstraint(IMatchesConstraint constraint, DefineAssemblyConstraintsType state) {
-      ScopedMatchesConstraintType bean = state.addNewMatches();
+      TargetedMatchesConstraintType bean = state.addNewMatches();
       assert bean != null;
       applyCommonValues(constraint, bean);
 
@@ -566,7 +583,7 @@ public final class ConstraintXmlSupport {
 
     @Override
     public Void visitIndexConstraint(IIndexConstraint constraint, DefineAssemblyConstraintsType state) {
-      ScopedIndexConstraintType bean = state.addNewIndex();
+      TargetedIndexConstraintType bean = state.addNewIndex();
       assert bean != null;
       applyCommonValues(constraint, bean);
       applyKeyFields(constraint, bean);
@@ -584,7 +601,7 @@ public final class ConstraintXmlSupport {
 
     @Override
     public Void visitIndexHasKeyConstraint(IIndexHasKeyConstraint constraint, DefineAssemblyConstraintsType state) {
-      ScopedIndexHasKeyConstraintType bean = state.addNewIndexHasKey();
+      TargetedIndexHasKeyConstraintType bean = state.addNewIndexHasKey();
       assert bean != null;
       applyCommonValues(constraint, bean);
       applyKeyFields(constraint, bean);
@@ -602,7 +619,7 @@ public final class ConstraintXmlSupport {
 
     @Override
     public Void visitUniqueConstraint(IUniqueConstraint constraint, DefineAssemblyConstraintsType state) {
-      ScopedIndexHasKeyConstraintType bean = state.addNewIndexHasKey();
+      TargetedIndexHasKeyConstraintType bean = state.addNewIndexHasKey();
       assert bean != null;
       applyCommonValues(constraint, bean);
       applyKeyFields(constraint, bean);

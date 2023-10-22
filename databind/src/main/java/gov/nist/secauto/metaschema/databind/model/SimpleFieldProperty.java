@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
@@ -123,12 +124,18 @@ class SimpleFieldProperty
 
   private final class ScalarFieldDefinition
       implements IBoundFieldDefinition, IFeatureFlagContainer<IBoundFlagInstance> {
+    @NonNull
     private final Lazy<IValueConstrained> constraints;
 
     private ScalarFieldDefinition() {
-      this.constraints = Lazy.lazy(() -> new ValueConstraintSupport(
-          getField().getAnnotation(ValueConstraints.class),
-          ISource.modelSource()));
+      this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
+        IValueConstrained retval = new ValueConstraintSet();
+        ValueConstraints valueAnnotation = getField().getAnnotation(ValueConstraints.class);
+        if (valueAnnotation != null) {
+          ConstraintSupport.parse(valueAnnotation, ISource.modelSource(), retval);
+        }
+        return retval;
+      }));
     }
 
     @Override

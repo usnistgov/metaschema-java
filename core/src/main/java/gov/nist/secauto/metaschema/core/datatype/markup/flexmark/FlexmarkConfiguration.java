@@ -146,6 +146,13 @@ public final class FlexmarkConfiguration {
     return options.toImmutable();
   }
 
+  /**
+   * Get a new flexmark configuration.
+   *
+   * @param options
+   *          the current set of options.
+   * @return the configuration
+   */
   public static DataSet newFlexmarkConfig(@Nullable DataHolder options) {
     return options == null ? FLEXMARK_CONFIG : DataSet.merge(FLEXMARK_CONFIG, options);
   }

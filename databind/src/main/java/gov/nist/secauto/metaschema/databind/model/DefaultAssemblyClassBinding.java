@@ -32,6 +32,7 @@ import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -107,10 +108,18 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
 
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new ClassBindingFlagContainerSupport(this, null)));
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> new ClassBindingModelContainerSupport(this)));
-    this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> new AssemblyConstraintSupport(
-        clazz.getAnnotation(ValueConstraints.class),
-        clazz.getAnnotation(AssemblyConstraints.class),
-        ISource.modelSource())));
+    this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
+      IModelConstrained retval = new AssemblyConstraintSet();
+      ValueConstraints valueAnnotation = clazz.getAnnotation(ValueConstraints.class);
+      if (valueAnnotation != null) {
+        ConstraintSupport.parse(valueAnnotation, ISource.modelSource(), retval);
+      }
+      AssemblyConstraints assemblyAnnotation = clazz.getAnnotation(AssemblyConstraints.class);
+      if (assemblyAnnotation != null) {
+        ConstraintSupport.parse(assemblyAnnotation, ISource.modelSource(), retval);
+      }
+      return retval;
+    }));
   }
 
   @SuppressWarnings("null")

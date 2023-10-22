@@ -55,6 +55,8 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 @SuppressWarnings("PMD.TooManyStaticImports")
 class DefaultConstraintValidatorTest {
   @RegisterExtension
@@ -75,15 +77,20 @@ class DefaultConstraintValidatorTest {
         .allowedOther(true)
         .build();
 
+    DynamicContext dynamicContext = StaticContext.builder()
+        .build().dynamicContext();
+
     context.checking(new Expectations() {
       { // NOPMD - intentional
         allowing(flag).getDefinition();
         will(returnValue(flagDefinition));
-        allowing(flag).accept(with(any(DefaultConstraintValidator.Visitor.class)), with(aNull(Void.class)));
-        will(new FlagVisitorAction());
+        allowing(flag).accept(with(any(DefaultConstraintValidator.Visitor.class)), with(dynamicContext));
+        will(new FlagVisitorAction(dynamicContext));
         allowing(flag).toPath(with(any(IPathFormatter.class)));
         will(returnValue("flag/path"));
 
+        allowing(flagDefinition).getLetExpressions();
+        will(returnValue(CollectionUtil.emptyMap()));
         allowing(flagDefinition).getAllowedValuesConstraints();
         will(returnValue(CollectionUtil.singletonList(allowedValues)));
         allowing(flagDefinition).getExpectConstraints();
@@ -94,13 +101,10 @@ class DefaultConstraintValidatorTest {
         will(returnValue(CollectionUtil.emptyList()));
       }
     });
-
-    DynamicContext dynamicContext = StaticContext.builder()
-        .build().dynamicContext();
     FindingCollectingConstraintValidationHandler handler = new FindingCollectingConstraintValidationHandler();
-    DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext, handler);
-    validator.validate(flag);
-    validator.finalizeValidation();
+    DefaultConstraintValidator validator = new DefaultConstraintValidator(handler);
+    validator.validate(flag, dynamicContext);
+    validator.finalizeValidation(dynamicContext);
 
     assertTrue(handler.isPassing(), "doesn't pass");
   }
@@ -128,15 +132,20 @@ class DefaultConstraintValidatorTest {
     List<? extends IAllowedValuesConstraint> allowedValuesConstraints
         = List.of(allowedValues1, allowedValues2);
 
+    DynamicContext dynamicContext = StaticContext.builder()
+        .build().dynamicContext();
+
     context.checking(new Expectations() {
       { // NOPMD - intentional
         allowing(flag).getDefinition();
         will(returnValue(flagDefinition));
-        allowing(flag).accept(with(any(DefaultConstraintValidator.Visitor.class)), with(aNull(Void.class)));
-        will(new FlagVisitorAction());
+        allowing(flag).accept(with(any(DefaultConstraintValidator.Visitor.class)), with(dynamicContext));
+        will(new FlagVisitorAction(dynamicContext));
         allowing(flag).toPath(with(any(IPathFormatter.class)));
         will(returnValue("flag/path"));
 
+        allowing(flagDefinition).getLetExpressions();
+        will(returnValue(CollectionUtil.emptyMap()));
         allowing(flagDefinition).getAllowedValuesConstraints();
         will(returnValue(allowedValuesConstraints));
         allowing(flagDefinition).getExpectConstraints();
@@ -147,13 +156,10 @@ class DefaultConstraintValidatorTest {
         will(returnValue(CollectionUtil.emptyList()));
       }
     });
-
-    DynamicContext dynamicContext = StaticContext.builder()
-        .build().dynamicContext();
     FindingCollectingConstraintValidationHandler handler = new FindingCollectingConstraintValidationHandler();
-    DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext, handler);
-    validator.validate(flag);
-    validator.finalizeValidation();
+    DefaultConstraintValidator validator = new DefaultConstraintValidator(handler);
+    validator.validate(flag, dynamicContext);
+    validator.finalizeValidation(dynamicContext);
 
     assertTrue(handler.isPassing(), "doesn't pass");
   }
@@ -182,22 +188,27 @@ class DefaultConstraintValidatorTest {
     List<? extends IAllowedValuesConstraint> allowedValuesConstraints
         = List.of(allowedValues1, allowedValues2);
 
+    DynamicContext dynamicContext = StaticContext.builder()
+        .build().dynamicContext();
+
     context.checking(new Expectations() {
       { // NOPMD - intentional
         allowing(flag1).getDefinition();
         will(returnValue(flagDefinition));
-        allowing(flag1).accept(with(any(DefaultConstraintValidator.Visitor.class)), with(aNull(Void.class)));
-        will(new FlagVisitorAction());
+        allowing(flag1).accept(with(any(DefaultConstraintValidator.Visitor.class)), with(dynamicContext));
+        will(new FlagVisitorAction(dynamicContext));
         allowing(flag1).toPath(with(any(IPathFormatter.class)));
         will(returnValue("flag1/path"));
 
         allowing(flag2).getDefinition();
         will(returnValue(flagDefinition));
-        allowing(flag2).accept(with(any(DefaultConstraintValidator.Visitor.class)), with(aNull(Void.class)));
-        will(new FlagVisitorAction());
+        allowing(flag2).accept(with(any(DefaultConstraintValidator.Visitor.class)), with(any(DynamicContext.class)));
+        will(new FlagVisitorAction(dynamicContext));
         allowing(flag2).toPath(with(any(IPathFormatter.class)));
         will(returnValue("flag2/path"));
 
+        allowing(flagDefinition).getLetExpressions();
+        will(returnValue(CollectionUtil.emptyMap()));
         allowing(flagDefinition).getAllowedValuesConstraints();
         will(returnValue(allowedValuesConstraints));
         allowing(flagDefinition).getExpectConstraints();
@@ -208,14 +219,11 @@ class DefaultConstraintValidatorTest {
         will(returnValue(CollectionUtil.emptyList()));
       }
     });
-
-    DynamicContext dynamicContext = StaticContext.builder()
-        .build().dynamicContext();
     FindingCollectingConstraintValidationHandler handler = new FindingCollectingConstraintValidationHandler();
-    DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext, handler);
-    validator.validate(flag1);
-    validator.validate(flag2);
-    validator.finalizeValidation();
+    DefaultConstraintValidator validator = new DefaultConstraintValidator(handler);
+    validator.validate(flag1, dynamicContext);
+    validator.validate(flag2, dynamicContext);
+    validator.finalizeValidation(dynamicContext);
     assertAll(
         () -> assertFalse(handler.isPassing(), "must pass"),
         () -> assertThat("only 1 finding", handler.getFindings(), hasSize(1)),
@@ -224,9 +232,12 @@ class DefaultConstraintValidatorTest {
 
   private static class FlagVisitorAction
       extends CustomAction {
+    @NonNull
+    private DynamicContext dynamicContext;
 
-    public FlagVisitorAction() {
+    public FlagVisitorAction(@NonNull DynamicContext dynamicContext) {
       super("return the flag");
+      this.dynamicContext = dynamicContext;
     }
 
     @Override
@@ -234,7 +245,7 @@ class DefaultConstraintValidatorTest {
       IFlagNodeItem thisFlag = (IFlagNodeItem) invocation.getInvokedObject();
       assert thisFlag != null;
       DefaultConstraintValidator.Visitor visitor = (DefaultConstraintValidator.Visitor) invocation.getParameter(0);
-      return visitor.visitFlag(thisFlag, null);
+      return visitor.visitFlag(thisFlag, dynamicContext);
     }
   }
 }

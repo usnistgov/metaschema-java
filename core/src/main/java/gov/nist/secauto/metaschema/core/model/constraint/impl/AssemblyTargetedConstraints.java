@@ -28,12 +28,7 @@ package gov.nist.secauto.metaschema.core.model.constraint.impl;
 
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
-import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
-
-import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -45,7 +40,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  */
 public class AssemblyTargetedConstraints
     extends AbstractDefinitionTargetedConstraints<IAssemblyDefinition, IModelConstrained>
-    implements IModelConstrained {
+    implements IFeatureModelConstrained {
 
   /**
    * Construct a new set of targeted constraints.
@@ -59,36 +54,6 @@ public class AssemblyTargetedConstraints
       @NonNull MetapathExpression target,
       @NonNull IModelConstrained constraints) {
     super(target, constraints);
-  }
-
-  @Override
-  public List<? extends IIndexConstraint> getIndexConstraints() {
-    return getConstraintSupport().getIndexConstraints();
-  }
-
-  @Override
-  public List<? extends IUniqueConstraint> getUniqueConstraints() {
-    return getConstraintSupport().getUniqueConstraints();
-  }
-
-  @Override
-  public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
-    return getConstraintSupport().getHasCardinalityConstraints();
-  }
-
-  @Override
-  public void addConstraint(@NonNull IIndexConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull IUniqueConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  public void addConstraint(@NonNull ICardinalityConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
   }
 
   @Override

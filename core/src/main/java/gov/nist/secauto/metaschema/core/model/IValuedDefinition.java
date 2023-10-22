@@ -29,13 +29,12 @@ package gov.nist.secauto.metaschema.core.model;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * This marker interface identifies Metaschema definition types that have
  * associated values (i.e., field, flag).
  */
-public interface IValuedDefinition extends IDefinition {
+public interface IValuedDefinition extends IDefinition, IValuedModelElement {
   /**
    * Retrieves the data type of the definition's value.
    *
@@ -43,12 +42,4 @@ public interface IValuedDefinition extends IDefinition {
    */
   @NonNull
   IDataTypeAdapter<?> getJavaTypeAdapter();
-
-  /**
-   * Retrieves the default data value for this model construct.
-   *
-   * @return the default value or {@code null} if there is no default
-   */
-  @Nullable
-  Object getDefaultValue();
 }

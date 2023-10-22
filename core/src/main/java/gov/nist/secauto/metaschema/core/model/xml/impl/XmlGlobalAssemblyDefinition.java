@@ -35,9 +35,9 @@ import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
-import gov.nist.secauto.metaschema.core.model.constraint.impl.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -85,7 +85,7 @@ class XmlGlobalAssemblyDefinition
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
       IStandardModelContainerSupport retval = new DefaultModelContainerSupport();
       if (xmlAssembly.isSetModel()) {
-        new XmlModelParser().parseModel(ObjectUtils.notNull(xmlAssembly.getModel()), this, retval);
+        XmlModelParser.parseModel(ObjectUtils.notNull(xmlAssembly.getModel()), this, retval);
       }
       return retval;
     }));

@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
@@ -57,7 +58,9 @@ public class DefaultFieldClassBinding
   private final MetaschemaField metaschemaField;
   private IBoundFieldValueInstance fieldValue;
   private IBoundFlagInstance jsonValueKeyFlagInstance;
+  @NonNull
   private final Lazy<ClassBindingFlagContainerSupport> flagContainer;
+  @NonNull
   private final Lazy<IValueConstrained> constraints;
 
   /**
@@ -98,10 +101,17 @@ public class DefaultFieldClassBinding
       @NonNull IBindingContext bindingContext) {
     super(clazz, bindingContext);
     this.metaschemaField = ObjectUtils.notNull(clazz.getAnnotation(MetaschemaField.class));
-    this.flagContainer = Lazy.lazy(() -> new ClassBindingFlagContainerSupport(this, this::handleFlagInstance));
-    this.constraints = Lazy.lazy(() -> new ValueConstraintSupport(
-        clazz.getAnnotation(ValueConstraints.class),
-        ISource.modelSource()));
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
+      return new ClassBindingFlagContainerSupport(this, this::handleFlagInstance);
+    }));
+    this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
+      IValueConstrained retval = new ValueConstraintSet();
+      ValueConstraints valueAnnotation = clazz.getAnnotation(ValueConstraints.class);
+      if (valueAnnotation != null) {
+        ConstraintSupport.parse(valueAnnotation, ISource.modelSource(), retval);
+      }
+      return retval;
+    }));
   }
 
   @SuppressWarnings("null")

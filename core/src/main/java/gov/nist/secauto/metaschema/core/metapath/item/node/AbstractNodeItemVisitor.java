@@ -34,12 +34,12 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * Used by implementations of this class to visit a sequence of node items in a
  * directed graph, using depth-first ordering.
  *
- * @param <RESULT>
- *          the type of result produced by visitation
  * @param <CONTEXT>
  *          the type of data to pass to each visited node
+ * @param <RESULT>
+ *          the type of result produced by visitation
  */
-public abstract class AbstractNodeItemVisitor<RESULT, CONTEXT> implements INodeItemVisitor<RESULT, CONTEXT> {
+public abstract class AbstractNodeItemVisitor<CONTEXT, RESULT> implements INodeItemVisitor<CONTEXT, RESULT> {
   /**
    * Visit the provided {@code item}.
    *

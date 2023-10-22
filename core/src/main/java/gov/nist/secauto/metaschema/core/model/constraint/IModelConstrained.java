@@ -59,9 +59,27 @@ public interface IModelConstrained extends IValueConstrained {
   @NonNull
   List<? extends ICardinalityConstraint> getHasCardinalityConstraints();
 
+  /**
+   * Add a new constraint.
+   *
+   * @param constraint
+   *          the constraint to add
+   */
   void addConstraint(@NonNull IIndexConstraint constraint);
 
+  /**
+   * Add a new constraint.
+   *
+   * @param constraint
+   *          the constraint to add
+   */
   void addConstraint(@NonNull IUniqueConstraint constraint);
 
+  /**
+   * Add a new constraint.
+   *
+   * @param constraint
+   *          the constraint to add
+   */
   void addConstraint(@NonNull ICardinalityConstraint constraint);
 }

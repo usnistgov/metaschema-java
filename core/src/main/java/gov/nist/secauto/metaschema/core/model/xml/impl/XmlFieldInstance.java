@@ -46,11 +46,14 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class XmlFieldInstance
     extends AbstractFieldInstance {
   @NonNull
   private final FieldReferenceType xmlField;
+  @Nullable
+  private final Object defaultValue;
 
   /**
    * Constructs a new Metaschema field instance definition from an XML
@@ -66,6 +69,11 @@ class XmlFieldInstance
       @NonNull IModelContainer container) {
     super(container);
     this.xmlField = xmlField;
+    Object defaultValue = null;
+    if (xmlField.isSetDefault()) {
+      defaultValue = getDefinition().getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlField.getDefault()));
+    }
+    this.defaultValue = defaultValue;
   }
 
   /**
@@ -138,6 +146,11 @@ class XmlFieldInstance
       }
     }
     return retval;
+  }
+
+  @Override
+  public Object getDefaultValue() {
+    return defaultValue;
   }
 
   @Override

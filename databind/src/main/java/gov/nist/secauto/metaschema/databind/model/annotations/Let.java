@@ -24,37 +24,44 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.metapath.cst.path;
+package gov.nist.secauto.metaschema.databind.model.annotations;
 
-import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.cst.IExpression;
-import gov.nist.secauto.metaschema.core.metapath.cst.IExpressionVisitor;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class RootDoubleSlashPath
-    extends AbstractRootPathExpression {
+@Documented
+@Retention(RUNTIME)
+@Target({ TYPE, FIELD })
+public @interface Let {
+  /**
+   * The variable name.
+   *
+   * @return the variable name
+   */
+  @NonNull
+  String name();
 
   /**
-   * Construct a new expression that finds an ancestor of the document root using
-   * the {@code right} expression.
+   * A Metapath to use the query the values assigned to the variable.
    *
-   * @param node
-   *          the path to evaluate relative to the document root
+   * @return the value Metapath
    */
-  public RootDoubleSlashPath(@NonNull IExpression node) {
-    super(node);
-  }
+  @NonNull
+  String target();
 
-  @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitRootDoubleSlashPath(this, context);
-  }
-
-  @Override
-  public ISequence<?> accept(
-      DynamicContext dynamicContext, ISequence<?> context) {
-    return ISequence.of(search(getExpression(), dynamicContext, context));
-  }
+  /**
+   * Any remarks about the let statement, encoded as an escaped Markdown string.
+   *
+   * @return an encoded Markdown string or an empty string if no remarks are
+   *         provided
+   */
+  @NonNull
+  String remarks() default "";
 }
