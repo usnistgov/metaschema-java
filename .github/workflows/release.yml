@@ -3,6 +3,13 @@ on:
     tags:
     - "v*"
   workflow_dispatch:
+    inputs:
+      release:
+        description: 'Delpoy release?'
+        default: false
+      website:
+        description: 'Deploy website?'
+        default: false
 name: Deploy Tagged Release
 jobs:
   deploy-to-nexus:
@@ -14,7 +21,6 @@ jobs:
     steps:
     - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
       with:
-        token: ${{ secrets.COMMIT_TOKEN }}
         submodules: recursive
         filter: tree:0
     # -------------------------
@@ -39,6 +45,7 @@ jobs:
     # Maven Deploy
     # -------------------------
     - name: Deploy Maven Artifacts
+      if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && contains('true', github.event.inputs.release))
       run: |
         mvn -B -e -Pgpg -Prelease -Preporting deploy
         # mvn -Pgpg -Prelease nexus-staging:close -DstagingDescription="closing to release"
@@ -47,6 +54,7 @@ jobs:
         MAVEN_CENTRAL_TOKEN: ${{ secrets.SONATYPE_PASSWORD }}
         MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
     - name: Create release
+      if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && contains('true', github.event.inputs.release))
       uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844
       with:
         draft: true
@@ -58,12 +66,14 @@ jobs:
     # Maven Site
     # -------------------------
     - name: Build Website
+      if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && contains('true', github.event.inputs.website))
       run: |
         mvn -B -e -Prelease -Preporting install site site:stage
     - name: Website Deploy
-      uses: ad-m/github-push-action@40bf560936a8022e68a3c00e7d2abefaf01305a6
+      uses: peaceiris/actions-gh-pages@373f7f263a76c20808c831209c920827a82a2847
+      if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && contains('true', github.event.inputs.website))
       with:
-        github_token: ${{ secrets.COMMIT_TOKEN }}
-        branch: nist-pages
-        force: true
+        personal_token: ${{ secrets.COMMIT_TOKEN }}
+        publish_dir: ./public
         directory: 'target/staging'
+        publish_branch: test-pages
