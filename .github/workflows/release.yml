@@ -6,10 +6,15 @@ on:
     inputs:
       release:
         description: 'Delpoy release?'
+        type: boolean
         default: false
       website:
         description: 'Deploy website?'
+        type: boolean
         default: false
+      pages-branch:
+        description: 'Pages branch name'
+        default: nist-pages
 name: Deploy Tagged Release
 jobs:
   deploy-to-nexus:
@@ -74,6 +79,5 @@ jobs:
       if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && contains('true', github.event.inputs.website))
       with:
         personal_token: ${{ secrets.COMMIT_TOKEN }}
-        publish_dir: ./public
-        directory: 'target/staging'
-        publish_branch: test-pages
+        publish_dir: ./target/staging
+        publish_branch: (github.event_name == 'workflow_dispatch' && github.event.inputs.pages-branch) || 'nist-pages'
