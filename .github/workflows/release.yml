@@ -80,4 +80,5 @@ jobs:
       with:
         personal_token: ${{ secrets.COMMIT_TOKEN }}
         publish_dir: ./target/staging
+        external_repository: ${{ github.repository }}
         publish_branch: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.pages-branch) || 'nist-pages' }}
