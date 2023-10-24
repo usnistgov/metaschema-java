@@ -32,12 +32,15 @@ import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 import java.lang.reflect.Field;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class ClassBindingFieldProperty
     extends AbstractFieldProperty {
 
   @NonNull
   private final IFieldClassBinding definition;
+  @Nullable
+  private final Object defaultValue;
 
   /**
    * Construct a new bound flag instance based on a Java property. The name of the
@@ -73,6 +76,8 @@ class ClassBindingFieldProperty
                 getDefinition().getJavaTypeAdapter().getPreferredName()));
       }
     }
+    this.defaultValue
+        = ModelUtil.resolveDefaultValue(getFieldAnnotation().defaultValue(), this.getDefinition().getJavaTypeAdapter());
   }
 
   @Override
@@ -86,16 +91,21 @@ class ClassBindingFieldProperty
   }
 
   @Override
+  public Object getDefaultValue() {
+    return defaultValue;
+  }
+
+  @Override
   public Object defaultValue() throws BindingException {
     Object retval = null;
     if (getMaxOccurs() == 1) {
       IFieldClassBinding definition = getDefinition();
       IBoundFieldValueInstance fieldValue = definition.getFieldValueInstance();
 
-      Object defaultValue = fieldValue.getDefaultValue();
-      if (defaultValue != null) {
+      Object fieldValueDefault = getEffectiveDefaultValue();
+      if (fieldValueDefault != null) {
         retval = definition.newInstance();
-        fieldValue.setValue(retval, defaultValue);
+        fieldValue.setValue(retval, fieldValueDefault);
 
         for (IBoundFlagInstance flag : definition.getFlagInstances()) {
           Object flagDefault = flag.defaultValue();

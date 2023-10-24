@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldValue;
+import gov.nist.secauto.metaschema.databind.model.annotations.FieldValue;
 
 @MetaschemaField(name = "flagged-bound-field", moduleClass = TestMetaschema.class)
 public class FlaggedBoundField {
@@ -42,6 +42,6 @@ public class FlaggedBoundField {
   @BoundFlag(useName = "field-other-flag", typeAdapter = BooleanAdapter.class)
   private String other; // NOPMD - intentional
 
-  @MetaschemaFieldValue(valueKeyName = "field-value")
+  @FieldValue(valueKeyName = "field-value")
   private String _value; // NOPMD - intentional
 }

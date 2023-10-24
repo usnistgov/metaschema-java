@@ -105,6 +105,17 @@ public @interface BoundField {
   int useIndex() default Integer.MIN_VALUE;
 
   /**
+   * The default value of the field represented as a string.
+   * <p>
+   * The value {@link Constants#NULL_VALUE} is used to indicate if no default
+   * value is provided.
+   *
+   * @return the default value
+   */
+  @NonNull
+  String defaultValue() default Constants.NULL_VALUE;
+
+  /**
    * The namespace to use for associated XML elements.
    * <p>
    * If the value is "##default", then element name is derived from the namespace

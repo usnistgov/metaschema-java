@@ -649,6 +649,7 @@
 					<artifactId>spotbugs-maven-plugin</artifactId>
 					<configuration>
 						<excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
+                        <sarifOutput>true</sarifOutput>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -708,13 +709,6 @@
 							</configuration>
 						</execution>
 					</executions>
-				</plugin>
-				<plugin>
-					<groupId>com.github.spotbugs</groupId>
-					<artifactId>spotbugs-maven-plugin</artifactId>
-					<configuration>
-						<sarifOutput>true</sarifOutput>
-					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>

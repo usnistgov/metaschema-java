@@ -71,12 +71,12 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
+import gov.nist.secauto.metaschema.databind.model.annotations.FieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaPackage;
 import gov.nist.secauto.metaschema.databind.model.annotations.Module;
 import gov.nist.secauto.metaschema.databind.model.annotations.XmlNs;
@@ -702,7 +702,7 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
       @NonNull IFieldValueTypeInfo typeInfo,
       @NonNull FieldSpec.Builder builder) {
     IFieldDefinition definition = typeInfo.getParentDefinitionTypeInfo().getDefinition();
-    AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(MetaschemaFieldValue.class);
+    AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(FieldValue.class);
 
     IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
 
@@ -832,6 +832,12 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
 
       if (MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != fieldInstance.isInXmlWrapped()) {
         retval.addMember("inXmlWrapped", "$L", fieldInstance.isInXmlWrapped());
+      }
+
+      IDataTypeAdapter<?> valueDataType = fieldInstance.getDefinition().getJavaTypeAdapter();
+      Object defaultValue = fieldInstance.getDefaultValue();
+      if (defaultValue != null) {
+        retval.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
       }
     }
     return retval;

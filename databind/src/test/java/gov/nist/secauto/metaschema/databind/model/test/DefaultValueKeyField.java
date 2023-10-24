@@ -27,14 +27,14 @@
 package gov.nist.secauto.metaschema.databind.model.test;
 
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldValue;
+import gov.nist.secauto.metaschema.databind.model.annotations.FieldValue;
 
 @SuppressWarnings("PMD")
 @MetaschemaField(
     name = "simple-field",
     moduleClass = TestMetaschema.class)
 public class DefaultValueKeyField {
-  @MetaschemaFieldValue
+  @FieldValue
   private String _value;
 
   public DefaultValueKeyField() {

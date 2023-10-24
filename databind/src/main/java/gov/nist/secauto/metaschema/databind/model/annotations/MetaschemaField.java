@@ -41,8 +41,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * This annotation indicates that the target class represents a Module field.
  * <p>
- * Classes with this annotation must have a field with the
- * {@link MetaschemaFieldValue} annotation.
+ * Classes with this annotation must have a field with the {@link FieldValue}
+ * annotation.
  */
 @Documented
 @Retention(RUNTIME)

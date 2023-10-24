@@ -56,7 +56,10 @@ class SimpleFieldProperty
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   @Nullable
-  private final Object defaultValue;
+  private final Object definitionDefaultValue;
+  @Nullable
+  private final Object instanceDefaultValue;
+
   @NonNull
   private final Lazy<ScalarFieldDefinition> definition;
 
@@ -77,12 +80,12 @@ class SimpleFieldProperty
     BoundFieldValue boundFieldValue = field.getAnnotation(BoundFieldValue.class);
     if (boundFieldValue == null) {
       this.javaTypeAdapter = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
-      this.defaultValue = null; // NOPMD readability
+      this.definitionDefaultValue = null; // NOPMD readability
     } else {
       this.javaTypeAdapter = ModelUtil.getDataTypeAdapter(
           boundFieldValue.typeAdapter(),
           parentClassBinding.getBindingContext());
-      this.defaultValue = ModelUtil.resolveDefaultValue(boundFieldValue.defaultValue(), this.javaTypeAdapter);
+      this.definitionDefaultValue = ModelUtil.resolveDefaultValue(boundFieldValue.defaultValue(), this.javaTypeAdapter);
     }
 
     Class<?> itemType = getItemType();
@@ -97,6 +100,8 @@ class SimpleFieldProperty
               javaTypeAdapter.getJavaClass().getName()));
     }
     this.definition = ObjectUtils.notNull(Lazy.lazy(() -> new ScalarFieldDefinition()));
+    this.instanceDefaultValue
+        = ModelUtil.resolveDefaultValue(getFieldAnnotation().defaultValue(), this.javaTypeAdapter);
   }
 
   @Override
@@ -113,13 +118,14 @@ class SimpleFieldProperty
     return IDataTypeHandler.newDataTypeHandler(this);
   }
 
-  protected Object getDefaultValue() {
-    return defaultValue;
+  @Override
+  public Object getDefaultValue() {
+    return instanceDefaultValue;
   }
 
   @Override
   public Object defaultValue() {
-    return getMaxOccurs() == 1 ? getDefaultValue() : getPropertyInfo().newPropertyCollector().getValue();
+    return getMaxOccurs() == 1 ? getEffectiveDefaultValue() : getPropertyInfo().newPropertyCollector().getValue();
   }
 
   private final class ScalarFieldDefinition
@@ -249,7 +255,7 @@ class SimpleFieldProperty
 
     @Override
     public Object getDefaultValue() {
-      return SimpleFieldProperty.this.getDefaultValue();
+      return definitionDefaultValue;
     }
   }
 }

@@ -40,7 +40,7 @@ import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldValue;
+import gov.nist.secauto.metaschema.databind.model.annotations.FieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
 import java.util.Objects;
@@ -182,7 +182,7 @@ public class DefaultFieldClassBinding
 
     if (retval == null) {
       for (java.lang.reflect.Field field : fields) {
-        if (!field.isAnnotationPresent(MetaschemaFieldValue.class)) {
+        if (!field.isAnnotationPresent(FieldValue.class)) {
           // skip fields that aren't a field or assembly instance
           continue;
         }
@@ -210,7 +210,7 @@ public class DefaultFieldClassBinding
           throw new IllegalArgumentException(
               String.format("Class '%s' is missing the '%s' annotation on one of its fields.",
                   getBoundClass().getName(),
-                  MetaschemaFieldValue.class.getName()));
+                  FieldValue.class.getName()));
         }
 
         this.fieldValue = new DefaultFieldValueProperty(this, field);

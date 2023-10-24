@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldValue;
+import gov.nist.secauto.metaschema.databind.model.annotations.FieldValue;
 
 import java.util.List;
 
@@ -95,7 +95,7 @@ public class MultiFieldAssembly {
     @BoundFlag
     private String flag;
 
-    @MetaschemaFieldValue(valueKeyName = "a-value")
+    @FieldValue(valueKeyName = "a-value")
     private String _value;
 
     public ValueKeyField() {
@@ -114,7 +114,7 @@ public class MultiFieldAssembly {
     @BoundFlag
     private String flag;
 
-    @MetaschemaFieldValue
+    @FieldValue
     private String _value;
 
     public DefaultValueKeyField() {

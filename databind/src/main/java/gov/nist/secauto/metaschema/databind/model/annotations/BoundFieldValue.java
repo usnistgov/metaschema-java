@@ -54,7 +54,7 @@ public @interface BoundFieldValue {
   Class<? extends IDataTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
 
   /**
-   * The default value of the flag represented as a string.
+   * The default value of the field represented as a string.
    * <p>
    * The value {@link Constants#NULL_VALUE} is used to indicate if no default
    * value is provided.

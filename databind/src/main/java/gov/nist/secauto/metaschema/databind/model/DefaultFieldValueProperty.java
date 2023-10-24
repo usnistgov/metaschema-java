@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.ModelType;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaFieldValue;
+import gov.nist.secauto.metaschema.databind.model.annotations.FieldValue;
 
 import java.lang.reflect.Field;
 
@@ -44,7 +44,7 @@ class DefaultFieldValueProperty
   @NonNull
   private final Field field;
   @NonNull
-  private final MetaschemaFieldValue fieldValue;
+  private final FieldValue fieldValue;
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   @Nullable
@@ -56,12 +56,12 @@ class DefaultFieldValueProperty
       @NonNull Field field) {
     super(fieldClassBinding);
     this.field = ObjectUtils.requireNonNull(field, "field");
-    MetaschemaFieldValue valueAnnotation = field.getAnnotation(MetaschemaFieldValue.class);
+    FieldValue valueAnnotation = field.getAnnotation(FieldValue.class);
     if (valueAnnotation == null) {
       throw new IllegalArgumentException(
           String.format("Class '%s' is missing the '%s' annotation.",
               fieldClassBinding.getBoundClass().getName(),
-              MetaschemaFieldValue.class.getName()));
+              FieldValue.class.getName()));
     }
     this.fieldValue = valueAnnotation;
 
@@ -81,7 +81,7 @@ class DefaultFieldValueProperty
   }
 
   @NonNull
-  private MetaschemaFieldValue getFieldValueAnnotation() {
+  private FieldValue getFieldValueAnnotation() {
     return fieldValue;
   }
 

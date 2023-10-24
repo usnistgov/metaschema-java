@@ -111,6 +111,7 @@ class DefaultFlagProperty
     return flag;
   }
 
+  @Override
   public Object getDefaultValue() {
     return this.defaultValue;
   }

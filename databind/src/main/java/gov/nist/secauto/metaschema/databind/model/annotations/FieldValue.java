@@ -44,7 +44,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 @Documented
 @Retention(RUNTIME)
 @Target({ FIELD })
-public @interface MetaschemaFieldValue {
+public @interface FieldValue {
   /**
    * The Module data type adapter for the field's value.
    *
@@ -53,7 +53,7 @@ public @interface MetaschemaFieldValue {
   Class<? extends IDataTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
 
   /**
-   * The default value of the flag represented as a string.
+   * The default value of the field represented as a string.
    * <p>
    * The value {@link Constants#NULL_VALUE} is used to indicate if no default
    * value is provided.

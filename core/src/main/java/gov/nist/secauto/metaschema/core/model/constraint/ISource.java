@@ -73,8 +73,8 @@ public interface ISource {
    * @return the source descriptor
    */
   @NonNull
-  static ISource modelSource(@NonNull URI location) {
-    return ExternalModelSource.instance(location);
+  static ISource modelSource(@Nullable URI location) {
+    return location == null ? modelSource() : ExternalModelSource.instance(location);
   }
 
   /**

@@ -101,14 +101,11 @@ public abstract class AbstractDeserializer<CLASS>
     }
 
     if (isValidating()) {
-      StaticContext staticContext = StaticContext.instance();
-      DynamicContext dynamicContext = staticContext.dynamicContext();
+      DynamicContext dynamicContext = StaticContext.instance().dynamicContext();
       dynamicContext.setDocumentLoader(getBindingContext().newBoundLoader());
-      DefaultConstraintValidator validator = new DefaultConstraintValidator(
-          dynamicContext,
-          getConstraintValidationHandler());
-      validator.validate(nodeItem);
-      validator.finalizeValidation();
+      DefaultConstraintValidator validator = new DefaultConstraintValidator(getConstraintValidationHandler());
+      validator.validate(nodeItem, dynamicContext);
+      validator.finalizeValidation(dynamicContext);
     }
     return nodeItem;
   }
