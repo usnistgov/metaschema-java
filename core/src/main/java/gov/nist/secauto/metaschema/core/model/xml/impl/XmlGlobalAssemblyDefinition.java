@@ -39,6 +39,7 @@ import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -152,7 +153,7 @@ class XmlGlobalAssemblyDefinition
   public Integer getUseIndex() {
     Integer retval = null;
     if (getXmlAssembly().isSetUseName()) {
-      GlobalAssemblyDefinitionType.UseName useName = getXmlAssembly().getUseName();
+      UseNameType useName = getXmlAssembly().getUseName();
       if (useName.isSetIndex()) {
         retval = useName.getIndex().intValue();
       }

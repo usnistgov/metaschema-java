@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.AssemblyReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.MarkupLineDatatype;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -122,7 +123,7 @@ class XmlAssemblyInstance
   public Integer getUseIndex() {
     Integer retval = null;
     if (getXmlAssembly().isSetUseName()) {
-      AssemblyReferenceType.UseName useName = getXmlAssembly().getUseName();
+      UseNameType useName = getXmlAssembly().getUseName();
       if (useName.isSetIndex()) {
         retval = useName.getIndex().intValue();
       }

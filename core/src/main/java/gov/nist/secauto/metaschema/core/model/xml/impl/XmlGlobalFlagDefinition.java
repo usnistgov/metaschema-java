@@ -39,6 +39,7 @@ import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFlagDefinitionType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -151,7 +152,7 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   public Integer getUseIndex() {
     Integer retval = null;
     if (getXmlFlag().isSetUseName()) {
-      GlobalFlagDefinitionType.UseName useName = getXmlFlag().getUseName();
+      UseNameType useName = getXmlFlag().getUseName();
       if (useName.isSetIndex()) {
         retval = useName.getIndex().intValue();
       }

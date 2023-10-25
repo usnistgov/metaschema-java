@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.FlagReferenceType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -133,7 +134,7 @@ class XmlFlagInstance
   public Integer getUseIndex() {
     Integer retval = null;
     if (getXmlFlag().isSetUseName()) {
-      FlagReferenceType.UseName useName = getXmlFlag().getUseName();
+      UseNameType useName = getXmlFlag().getUseName();
       if (useName.isSetIndex()) {
         retval = useName.getIndex().intValue();
       }

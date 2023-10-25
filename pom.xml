@@ -739,6 +739,7 @@
 		<module>schemagen</module>
 		<module>metaschema-maven-plugin</module>
 		<module>metaschema-testing</module>
+		<module>databind-metaschema</module>
 		<module>cli-processor</module>
 		<module>metaschema-cli</module>
 		<!-- <module>metaschema-freemarker-support</module> -->

@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.FieldReferenceType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -140,7 +141,7 @@ class XmlFieldInstance
   public Integer getUseIndex() {
     Integer retval = null;
     if (getXmlField().isSetUseName()) {
-      FieldReferenceType.UseName useName = getXmlField().getUseName();
+      UseNameType useName = getXmlField().getUseName();
       if (useName.isSetIndex()) {
         retval = useName.getIndex().intValue();
       }

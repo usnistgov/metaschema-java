@@ -41,6 +41,7 @@ import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFieldDefinitionType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -151,7 +152,7 @@ class XmlGlobalFieldDefinition
   public Integer getUseIndex() {
     Integer retval = null;
     if (getXmlField().isSetUseName()) {
-      GlobalFieldDefinitionType.UseName useName = getXmlField().getUseName();
+      UseNameType useName = getXmlField().getUseName();
       if (useName.isSetIndex()) {
         retval = useName.getIndex().intValue();
       }
