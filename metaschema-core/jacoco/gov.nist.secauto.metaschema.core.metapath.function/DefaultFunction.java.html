@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultFunction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath.function</a> &gt; <span class="el_source">DefaultFunction.java</span></div><h1>DefaultFunction.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath.function;
+
+import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.InvalidTypeMetapathException;
+import gov.nist.secauto.metaschema.core.metapath.MetapathException;
+import gov.nist.secauto.metaschema.core.metapath.function.library.FnData;
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyUriItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+/**
+ * Provides a concrete implementation of a function call executor.
+ */
+<span class="fc" id="L54">public class DefaultFunction</span>
+    extends AbstractFunction {
+  // private static final Logger logger =
+  // LogManager.getLogger(AbstractFunction.class);
+
+  @NonNull
+  private final Set&lt;FunctionProperty&gt; properties;
+  @NonNull
+  private final ISequenceType result;
+  @NonNull
+  private final IFunctionExecutor handler;
+
+  /**
+   * Construct a new function signature.
+   *
+   * @param name
+   *          the name of the function
+   * @param properties
+   *          the characteristics of the function
+   * @param arguments
+   *          the argument signatures or an empty list
+   * @param result
+   *          the type of the result
+   * @param handler
+   *          the handler to call to execute the function
+   */
+  @SuppressWarnings({ &quot;null&quot;, &quot;PMD.LooseCoupling&quot; })
+  DefaultFunction(
+      @NonNull String name,
+      @NonNull String namespace,
+      @NonNull EnumSet&lt;FunctionProperty&gt; properties,
+      @NonNull List&lt;IArgument&gt; arguments,
+      @NonNull ISequenceType result,
+      @NonNull IFunctionExecutor handler) {
+<span class="fc" id="L88">    super(name, namespace, arguments);</span>
+<span class="fc" id="L89">    this.properties = Collections.unmodifiableSet(properties);</span>
+<span class="fc" id="L90">    this.result = result;</span>
+<span class="fc" id="L91">    this.handler = handler;</span>
+<span class="fc" id="L92">  }</span>
+
+  @Override
+  public Set&lt;FunctionProperty&gt; getProperties() {
+<span class="fc" id="L96">    return properties;</span>
+  }
+
+  @Override
+  public ISequenceType getResult() {
+<span class="nc" id="L101">    return result;</span>
+  }
+  //
+  // @Override
+  // public boolean isSupported(List&lt;IExpression&lt;?&gt;&gt; expressionArguments) {
+  // boolean retval;
+  // if (expressionArguments.isEmpty() &amp;&amp; getArguments().isEmpty()) {
+  // // no arguments
+  // retval = true;
+  // // } else if (arity() == 1 &amp;&amp; expressionArguments.isEmpty()) {
+  // // // the context item will be the argument
+  // // // TODO: check the context item for type compatibility
+  // // retval = true;
+  // } else if ((expressionArguments.size() == getArguments().size())
+  // || (isArityUnbounded() &amp;&amp; expressionArguments.size() &gt;
+  // getArguments().size())) {
+  // retval = true;
+  // // check that argument requirements are satisfied
+  // Iterator&lt;IArgument&gt; argumentIterator = getArguments().iterator();
+  // Iterator&lt;IExpression&lt;?&gt;&gt; expressionIterator = expressionArguments.iterator();
+  //
+  // IArgument argument = null;
+  // while (argumentIterator.hasNext()) {
+  // argument = argumentIterator.next();
+  // IExpression&lt;?&gt; expression = expressionIterator.hasNext() ?
+  // expressionIterator.next() : null;
+  //
+  // if (expression != null) {
+  // // is the expression supported by the argument?
+  // retval = argument.isSupported(expression);
+  // if (!retval) {
+  // break;
+  // }
+  // } else {
+  // // there are no more expression arguments. Make sure that the remaining
+  // arguments are optional
+  // if (!argument.getSequenceType().getOccurrence().isOptional()) {
+  // retval = false;
+  // break;
+  // }
+  // }
+  // }
+  //
+  // if (retval &amp;&amp; expressionIterator.hasNext()) {
+  // if (isArityUnbounded()) {
+  // // check remaining expressions against the last argument
+  // while (expressionIterator.hasNext()) {
+  // IExpression&lt;?&gt; expression = expressionIterator.next();
+  // @SuppressWarnings(&quot;null&quot;)
+  // boolean result = argument.isSupported(expression);
+  // if (!result) {
+  // retval = result;
+  // break;
+  // }
+  // }
+  // } else {
+  // // there are extra expressions, which do not match the arguments
+  // retval = false;
+  // }
+  // }
+  // } else {
+  // retval = false;
+  // }
+  // return retval;
+  // }
+
+  /**
+   * Converts arguments in an attempt to align with the function's signature.
+   *
+   * @param function
+   *          the function
+   * @param parameters
+   *          the argument parameters
+   * @return the converted argument list
+   */
+  @NonNull
+  public static List&lt;ISequence&lt;?&gt;&gt; convertArguments(
+      @NonNull IFunction function,
+      @NonNull List&lt;ISequence&lt;?&gt;&gt; parameters) {
+<span class="fc" id="L180">    @NonNull List&lt;ISequence&lt;?&gt;&gt; retval = new ArrayList&lt;&gt;(parameters.size());</span>
+
+<span class="fc" id="L182">    Iterator&lt;IArgument&gt; argumentIterator = function.getArguments().iterator();</span>
+<span class="fc" id="L183">    Iterator&lt;ISequence&lt;?&gt;&gt; parametersIterator = parameters.iterator();</span>
+
+<span class="fc" id="L185">    IArgument argument = null;</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">    while (parametersIterator.hasNext()) {</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">      if (argumentIterator.hasNext()) {</span>
+<span class="nc" id="L188">        argument = argumentIterator.next();</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">      } else if (!function.isArityUnbounded()) {</span>
+<span class="nc" id="L190">        throw new InvalidTypeMetapathException(</span>
+            null,
+<span class="nc" id="L192">            String.format(&quot;argument signature doesn't match '%s'&quot;, function.toSignature()));</span>
+      }
+
+<span class="nc bnc" id="L195" title="All 2 branches missed.">      assert argument != null;</span>
+
+<span class="nc" id="L197">      ISequence&lt;?&gt; parameter = parametersIterator.next();</span>
+
+<span class="nc" id="L199">      int size = parameter.size();</span>
+<span class="nc" id="L200">      Occurrence occurrence = argument.getSequenceType().getOccurrence();</span>
+<span class="nc bnc" id="L201" title="All 5 branches missed.">      switch (occurrence) {</span>
+      case ONE: {
+<span class="nc bnc" id="L203" title="All 2 branches missed.">        if (size != 1) {</span>
+<span class="nc" id="L204">          throw new InvalidTypeMetapathException(</span>
+              null,
+<span class="nc" id="L206">              String.format(&quot;a sequence of one expected, but found '%d'&quot;, size));</span>
+        }
+
+<span class="nc" id="L209">        IItem item = FunctionUtils.getFirstItem(parameter, true);</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">        parameter = item == null ? ISequence.empty() : ISequence.of(item);</span>
+<span class="nc" id="L211">        break;</span>
+      }
+      case ZERO_OR_ONE: {
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        if (size &gt; 1) {</span>
+<span class="nc" id="L215">          throw new InvalidTypeMetapathException(</span>
+              null,
+<span class="nc" id="L217">              String.format(&quot;a sequence of zero or one expected, but found '%d'&quot;, size));</span>
+        }
+
+<span class="nc" id="L220">        IItem item = FunctionUtils.getFirstItem(parameter, false);</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">        parameter = item == null ? ISequence.empty() : ISequence.of(item);</span>
+<span class="nc" id="L222">        break;</span>
+      }
+      case ONE_OR_MORE:
+<span class="nc bnc" id="L225" title="All 2 branches missed.">        if (size &lt; 1) {</span>
+<span class="nc" id="L226">          throw new InvalidTypeMetapathException(</span>
+              null,
+<span class="nc" id="L228">              String.format(&quot;a sequence of zero or more expected, but found '%d'&quot;, size));</span>
+        }
+        break;
+      case ZERO:
+<span class="nc bnc" id="L232" title="All 2 branches missed.">        if (size != 0) {</span>
+<span class="nc" id="L233">          throw new InvalidTypeMetapathException(</span>
+              null,
+<span class="nc" id="L235">              String.format(&quot;an empty sequence expected, but found '%d'&quot;, size));</span>
+        }
+        break;
+      case ZERO_OR_MORE:
+      default:
+        // do nothing
+      }
+
+<span class="nc" id="L243">      Class&lt;? extends IItem&gt; argumentClass = argument.getSequenceType().getType();</span>
+
+      // apply function conversion and type promotion to the parameter
+<span class="nc" id="L246">      parameter = convertSequence(argument, parameter);</span>
+
+      // check resulting values
+<span class="nc bnc" id="L249" title="All 2 branches missed.">      for (IItem item : parameter.asList()) {</span>
+<span class="nc" id="L250">        Class&lt;? extends IItem&gt; itemClass = item.getClass();</span>
+<span class="nc bnc" id="L251" title="All 2 branches missed.">        if (!argumentClass.isAssignableFrom(itemClass)) {</span>
+<span class="nc" id="L252">          throw new InvalidTypeMetapathException(</span>
+              item,
+<span class="nc" id="L254">              String.format(&quot;The type '%s' is not a subtype of '%s'&quot;, itemClass.getName(), argumentClass.getName()));</span>
+        }
+<span class="nc" id="L256">      }</span>
+
+<span class="nc" id="L258">      retval.add(parameter);</span>
+<span class="nc" id="L259">    }</span>
+<span class="fc" id="L260">    return retval;</span>
+  }
+
+  /**
+   * Based on XPath 3.1
+   * &lt;a href=&quot;https://www.w3.org/TR/xpath-31/#dt-function-conversion&quot;&gt;function
+   * conversion&lt;/a&gt; rules.
+   *
+   * @param argument
+   *          the function argument signature details
+   * @param sequence
+   *          the sequence to convert
+   * @return the converted sequence
+   */
+  @NonNull
+  protected static ISequence&lt;?&gt; convertSequence(@NonNull IArgument argument, @NonNull ISequence&lt;?&gt; sequence) {
+    @NonNull ISequence&lt;?&gt; retval;
+<span class="nc bnc" id="L277" title="All 2 branches missed.">    if (sequence.isEmpty()) {</span>
+<span class="nc" id="L278">      retval = ISequence.empty();</span>
+    } else {
+<span class="nc" id="L280">      ISequenceType requiredSequenceType = argument.getSequenceType();</span>
+<span class="nc" id="L281">      Class&lt;? extends IItem&gt; requiredSequenceTypeClass = requiredSequenceType.getType();</span>
+
+<span class="nc" id="L283">      List&lt;IItem&gt; result = new ArrayList&lt;&gt;(sequence.size());</span>
+
+<span class="nc" id="L285">      boolean atomize = IAnyAtomicItem.class.isAssignableFrom(requiredSequenceTypeClass);</span>
+
+<span class="nc bnc" id="L287" title="All 2 branches missed.">      for (IItem item : sequence.asList()) {</span>
+<span class="nc bnc" id="L288" title="All 2 branches missed.">        assert item != null;</span>
+<span class="nc bnc" id="L289" title="All 2 branches missed.">        if (atomize) {</span>
+<span class="nc" id="L290">          item = FnData.fnDataItem(item); // NOPMD - intentional</span>
+
+          // if (IUntypedAtomicItem.class.isInstance(item)) { // NOPMD
+          // // TODO: apply cast to atomic type
+          // }
+
+          // promote URIs to strings if a string is required
+<span class="nc bnc" id="L297" title="All 4 branches missed.">          if (IStringItem.class.equals(requiredSequenceTypeClass) &amp;&amp; IAnyUriItem.class.isInstance(item)) {</span>
+<span class="nc" id="L298">            item = IStringItem.cast((IAnyUriItem) item); // NOPMD - intentional</span>
+          }
+        }
+
+        // item = requiredSequenceType.
+<span class="nc bnc" id="L303" title="All 2 branches missed.">        if (!requiredSequenceTypeClass.isInstance(item)) {</span>
+<span class="nc" id="L304">          throw new InvalidTypeMetapathException(</span>
+              item,
+<span class="nc" id="L306">              String.format(&quot;The type '%s' is not a subtype of '%s'&quot;, item.getClass().getName(),</span>
+<span class="nc" id="L307">                  requiredSequenceTypeClass.getName()));</span>
+        }
+<span class="nc" id="L309">        result.add(item);</span>
+<span class="nc" id="L310">      }</span>
+<span class="nc" id="L311">      retval = ISequence.of(result);</span>
+    }
+<span class="nc" id="L313">    return retval;</span>
+  }
+
+  @Override
+  public ISequence&lt;?&gt; execute(
+      @NonNull List&lt;ISequence&lt;?&gt;&gt; arguments,
+      @NonNull DynamicContext dynamicContext,
+      @NonNull ISequence&lt;?&gt; focus) {
+    try {
+<span class="fc" id="L322">      List&lt;ISequence&lt;?&gt;&gt; convertedArguments = convertArguments(this, arguments);</span>
+
+<span class="pc bpc" id="L324" title="1 of 2 branches missed.">      IItem contextItem = isFocusDepenent() ? FunctionUtils.requireFirstItem(focus, true) : null;</span>
+
+<span class="fc" id="L326">      CallingContext callingContext = null;</span>
+<span class="fc" id="L327">      ISequence&lt;?&gt; result = null;</span>
+<span class="pc bpc" id="L328" title="1 of 2 branches missed.">      if (isDeterministic()) {</span>
+        // check cache
+<span class="fc" id="L330">        callingContext = new CallingContext(arguments, contextItem);</span>
+        // attempt to get the result from the cache
+<span class="fc" id="L332">        result = dynamicContext.getCachedResult(callingContext);</span>
+      }
+
+<span class="fc bfc" id="L335" title="All 2 branches covered.">      if (result == null) {</span>
+        // logger.info(String.format(&quot;Executing function '%s' with arguments '%s'.&quot;,
+        // toSignature(),
+        // convertedArguments.toString()));
+
+        // INodeItem actualFocus = focus == null ? null : focus.getNodeItem();
+        // if (isFocusDepenent() &amp;&amp; actualFocus == null) {
+        // throw new
+        // DynamicMetapathException(DynamicMetapathException.DYNAMIC_CONTEXT_ABSENT,
+        // &quot;Null
+        // focus&quot;);
+        // }
+        // result = handler.execute(this, convertedArguments, dynamicContext,
+        // actualFocus);
+<span class="fc" id="L349">        result = handler.execute(this, convertedArguments, dynamicContext, contextItem);</span>
+
+<span class="pc bpc" id="L351" title="1 of 2 branches missed.">        if (callingContext != null) {</span>
+          // add result to cache
+<span class="fc" id="L353">          dynamicContext.cacheResult(callingContext, result);</span>
+        }
+      }
+
+      // logger.info(String.format(&quot;Executed function '%s' with arguments '%s'
+      // producing result '%s'&quot;,
+      // toSignature(), convertedArguments.toString(), result.asList().toString()));
+<span class="fc" id="L360">      return result;</span>
+<span class="nc" id="L361">    } catch (MetapathException ex) {</span>
+<span class="nc" id="L362">      throw new MetapathException(String.format(&quot;Unable to execute function '%s'&quot;, toSignature()), ex);</span>
+    }
+  }
+
+  @Override
+  public int hashCode() {
+<span class="fc" id="L368">    return Objects.hash(getName(), getNamespace(), getArguments(), handler, properties, result);</span>
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+<span class="pc bpc" id="L373" title="1 of 2 branches missed.">    if (this == obj) {</span>
+<span class="fc" id="L374">      return true; // NOPMD - readability</span>
+    }
+<span class="nc bnc" id="L376" title="All 2 branches missed.">    if (obj == null) {</span>
+<span class="nc" id="L377">      return false; // NOPMD - readability</span>
+    }
+<span class="nc bnc" id="L379" title="All 2 branches missed.">    if (getClass() != obj.getClass()) {</span>
+<span class="nc" id="L380">      return false; // NOPMD - readability</span>
+    }
+<span class="nc" id="L382">    DefaultFunction other = (DefaultFunction) obj;</span>
+<span class="nc bnc" id="L383" title="All 2 branches missed.">    return Objects.equals(getName(), other.getName())</span>
+<span class="nc bnc" id="L384" title="All 2 branches missed.">        &amp;&amp; Objects.equals(getNamespace(), other.getNamespace())</span>
+<span class="nc bnc" id="L385" title="All 2 branches missed.">        &amp;&amp; Objects.equals(getArguments(), other.getArguments())</span>
+<span class="nc bnc" id="L386" title="All 2 branches missed.">        &amp;&amp; Objects.equals(handler, other.handler)</span>
+<span class="nc bnc" id="L387" title="All 2 branches missed.">        &amp;&amp; Objects.equals(properties, other.properties)</span>
+<span class="nc bnc" id="L388" title="All 2 branches missed.">        &amp;&amp; Objects.equals(result, other.result);</span>
+  }
+
+  @Override
+  public String toString() {
+<span class="nc" id="L393">    return toSignature();</span>
+  }
+
+  @Override
+  public String toSignature() {
+<span class="nc" id="L398">    StringBuilder builder = new StringBuilder()</span>
+<span class="nc" id="L399">        .append(&quot;Q{&quot;)</span>
+<span class="nc" id="L400">        .append(getNamespace())</span>
+<span class="nc" id="L401">        .append('}')</span>
+<span class="nc" id="L402">        .append(getName()) // name</span>
+<span class="nc" id="L403">        .append('('); // arguments</span>
+
+<span class="nc" id="L405">    List&lt;IArgument&gt; arguments = getArguments();</span>
+<span class="nc bnc" id="L406" title="All 2 branches missed.">    if (arguments.isEmpty()) {</span>
+<span class="nc" id="L407">      builder.append(&quot;()&quot;);</span>
+    } else {
+<span class="nc" id="L409">      builder.append(arguments.stream().map(argument -&gt; argument.toSignature()).collect(Collectors.joining(&quot;,&quot;)));</span>
+
+<span class="nc bnc" id="L411" title="All 2 branches missed.">      if (isArityUnbounded()) {</span>
+<span class="nc" id="L412">        builder.append(&quot;, ...&quot;);</span>
+      }
+    }
+
+<span class="nc" id="L416">    builder.append(&quot;) as &quot;)</span>
+<span class="nc" id="L417">        .append(getResult().toSignature());// return type</span>
+
+<span class="nc" id="L419">    return builder.toString();</span>
+  }
+
+  public final class CallingContext {
+    @Nullable
+    private final IItem contextItem;
+    @NonNull
+    private final List&lt;ISequence&lt;?&gt;&gt; arguments;
+
+    /**
+     * Set up the execution context for this function.
+     *
+     * @param arguments
+     *          the function arguments
+     * @param contextItem
+     *          the current node context
+     */
+<span class="fc" id="L436">    private CallingContext(@NonNull List&lt;ISequence&lt;?&gt;&gt; arguments, @Nullable IItem contextItem) {</span>
+<span class="fc" id="L437">      this.contextItem = contextItem;</span>
+<span class="fc" id="L438">      this.arguments = arguments;</span>
+<span class="fc" id="L439">    }</span>
+
+    /**
+     * Get the function instance associated with the calling context.
+     *
+     * @return the function instance
+     */
+    @NonNull
+    public DefaultFunction getFunction() {
+<span class="fc" id="L448">      return DefaultFunction.this;</span>
+    }
+
+    /**
+     * Get the node item focus associated with the calling context.
+     *
+     * @return the function instance
+     */
+    @Nullable
+    public IItem getContextItem() {
+<span class="nc" id="L458">      return contextItem;</span>
+    }
+
+    /**
+     * Get the arguments associated with the calling context.
+     *
+     * @return the arguments
+     */
+    @NonNull
+    public List&lt;ISequence&lt;?&gt;&gt; getArguments() {
+<span class="nc" id="L468">      return arguments;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L473">      final int prime = 31;</span>
+<span class="fc" id="L474">      int result = 1;</span>
+<span class="fc" id="L475">      result = prime * result + getFunction().hashCode();</span>
+<span class="fc" id="L476">      result = prime * result + Objects.hash(contextItem, arguments);</span>
+<span class="fc" id="L477">      return result;</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="pc bpc" id="L482" title="1 of 2 branches missed.">      if (this == obj) {</span>
+<span class="nc" id="L483">        return true; // NOPMD - readability</span>
+      }
+<span class="pc bpc" id="L485" title="1 of 2 branches missed.">      if (obj == null) {</span>
+<span class="nc" id="L486">        return false; // NOPMD - readability</span>
+      }
+<span class="pc bpc" id="L488" title="1 of 2 branches missed.">      if (getClass() != obj.getClass()) {</span>
+<span class="nc" id="L489">        return false; // NOPMD - readability</span>
+      }
+<span class="fc" id="L491">      CallingContext other = (CallingContext) obj;</span>
+<span class="pc bpc" id="L492" title="1 of 2 branches missed.">      if (!getFunction().equals(other.getFunction())) {</span>
+<span class="nc" id="L493">        return false; // NOPMD - readability</span>
+      }
+<span class="pc bpc" id="L495" title="2 of 4 branches missed.">      return Objects.equals(arguments, other.arguments) &amp;&amp; Objects.equals(contextItem, other.contextItem);</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

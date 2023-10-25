@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractConstraintValidationHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.constraint</a> &gt; <span class="el_source">AbstractConstraintValidationHandler.java</span></div><h1>AbstractConstraintValidationHandler.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.constraint;
+
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.format.IPathFormatter;
+import gov.nist.secauto.metaschema.core.metapath.function.library.FnData;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.util.CustomCollectors;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L42">public abstract class AbstractConstraintValidationHandler implements IConstraintValidationHandler {</span>
+  @NonNull
+  public abstract IPathFormatter getPathFormatter();
+
+  protected String toPath(@NonNull INodeItem nodeItem) {
+<span class="fc" id="L47">    return nodeItem.toPath(getPathFormatter());</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  protected String newCardinalityMinimumViolationMessage(
+      @NonNull ICardinalityConstraint constraint,
+      @SuppressWarnings(&quot;unused&quot;) @NonNull INodeItem node,
+      @NonNull ISequence&lt;? extends INodeItem&gt; targets) {
+    // TODO: render the item paths instead of the expression
+<span class="nc" id="L57">    return String.format(</span>
+        &quot;The cardinality '%d' is below the required minimum '%d' for items matching the expression '%s'.&quot;,
+<span class="nc" id="L59">        targets.size(), constraint.getMinOccurs(), constraint.getTarget().getPath());</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  protected String newCardinalityMaximumViolationMessage(
+      @NonNull ICardinalityConstraint constraint,
+      @SuppressWarnings(&quot;unused&quot;) @NonNull INodeItem node,
+      @NonNull ISequence&lt;? extends INodeItem&gt; targets) {
+    // TODO: render the item paths instead of the expression
+<span class="nc" id="L69">    return String.format(</span>
+        &quot;The cardinality '%d' is greater than the required maximum '%d' for items matching the expression '%s'.&quot;,
+<span class="nc" id="L71">        targets.size(), constraint.getMinOccurs(), constraint.getTarget().getPath());</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  protected String newIndexDuplicateKeyViolationMessage(
+      @NonNull IIndexConstraint constraint,
+      @SuppressWarnings(&quot;unused&quot;) @NonNull INodeItem node,
+      @NonNull INodeItem oldItem,
+      @NonNull INodeItem target) {
+    // TODO: render the key paths
+<span class="nc" id="L82">    return String.format(&quot;Index '%s' has duplicate key for items at paths '%s' and '%s'&quot;, constraint.getName(),</span>
+<span class="nc" id="L83">        toPath(oldItem), toPath(target));</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  protected String newUniqueKeyViolationMessage(
+      @SuppressWarnings(&quot;unused&quot;) @NonNull IUniqueConstraint constraint,
+      @SuppressWarnings(&quot;unused&quot;) @NonNull INodeItem node,
+      @NonNull INodeItem oldItem,
+      @NonNull INodeItem target) {
+    // TODO: render the key paths
+<span class="nc" id="L94">    return String.format(&quot;Unique constraint violation at paths '%s' and '%s'&quot;,</span>
+<span class="nc" id="L95">        toPath(oldItem), toPath(target));</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  protected String newMatchPatternViolationMessage(
+      @NonNull IMatchesConstraint constraint,
+      @SuppressWarnings(&quot;unused&quot;) @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull String value) {
+<span class="nc" id="L105">    return String.format(&quot;Value '%s' did not match the pattern '%s' at path '%s'&quot;,</span>
+        value,
+<span class="nc" id="L107">        constraint.getPattern().pattern(),</span>
+<span class="nc" id="L108">        toPath(target));</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  protected String newMatchDatatypeViolationMessage(
+      @NonNull IMatchesConstraint constraint,
+      @SuppressWarnings(&quot;unused&quot;) @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull String value) {
+<span class="nc" id="L118">    IDataTypeAdapter&lt;?&gt; adapter = constraint.getDataType();</span>
+<span class="nc" id="L119">    return String.format(&quot;Value '%s' did not conform to the data type '%s' at path '%s'&quot;, value,</span>
+<span class="nc" id="L120">        adapter.getPreferredName(), toPath(target));</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  protected CharSequence newExpectViolationMessage(
+      @NonNull IExpectConstraint constraint,
+      @SuppressWarnings(&quot;unused&quot;) @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull DynamicContext dynamicContext) {
+    CharSequence message;
+<span class="nc bnc" id="L131" title="All 2 branches missed.">    if (constraint.getMessage() != null) {</span>
+<span class="nc" id="L132">      message = constraint.generateMessage(target, dynamicContext);</span>
+    } else {
+<span class="nc" id="L134">      message = String.format(&quot;Expect constraint '%s' did not match the data at path '%s'&quot;,</span>
+<span class="nc" id="L135">          constraint.getTest().getPath(),</span>
+<span class="nc" id="L136">          toPath(target));</span>
+    }
+<span class="nc" id="L138">    return message;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  protected CharSequence newAllowedValuesViolationMessage(
+      @NonNull List&lt;IAllowedValuesConstraint&gt; constraints,
+      @NonNull INodeItem target) {
+
+<span class="fc" id="L147">    String allowedValues = constraints.stream()</span>
+<span class="fc" id="L148">        .flatMap(constraint -&gt; constraint.getAllowedValues().values().stream())</span>
+<span class="fc" id="L149">        .map(allowedValue -&gt; allowedValue.getValue())</span>
+<span class="fc" id="L150">        .sorted()</span>
+<span class="fc" id="L151">        .distinct()</span>
+<span class="fc" id="L152">        .collect(CustomCollectors.joiningWithOxfordComma(&quot;or&quot;));</span>
+
+<span class="fc" id="L154">    return String.format(&quot;Value '%s' doesn't match one of '%s' at path '%s'&quot;,</span>
+<span class="fc" id="L155">        FnData.fnDataItem(target).asString(),</span>
+        allowedValues,
+<span class="fc" id="L157">        toPath(target));</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  protected CharSequence newIndexDuplicateViolationMessage(
+      @NonNull IIndexConstraint constraint,
+      @NonNull INodeItem node) {
+<span class="nc" id="L165">    return String.format(&quot;Duplicate index named '%s' found at path '%s'&quot;,</span>
+<span class="nc" id="L166">        constraint.getName(),</span>
+<span class="nc" id="L167">        node.getMetapath());</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  protected CharSequence newIndexMissMessage(
+      @NonNull IIndexHasKeyConstraint constraint,
+      @SuppressWarnings(&quot;unused&quot;) @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull List&lt;String&gt; key) {
+<span class="nc" id="L177">    String keyValues = key.stream()</span>
+<span class="nc" id="L178">        .collect(Collectors.joining(&quot;,&quot;));</span>
+
+<span class="nc" id="L180">    return String.format(&quot;Key reference [%s] not found in index '%s' for item at path '%s'&quot;,</span>
+        keyValues,
+<span class="nc" id="L182">        constraint.getIndexName(),</span>
+<span class="nc" id="L183">        target.getMetapath());</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

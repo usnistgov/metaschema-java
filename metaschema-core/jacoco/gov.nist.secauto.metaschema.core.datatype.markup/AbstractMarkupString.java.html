@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractMarkupString.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.datatype.markup</a> &gt; <span class="el_source">AbstractMarkupString.java</span></div><h1>AbstractMarkupString.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.datatype.markup;
+
+import com.ctc.wstx.api.WstxOutputProperties;
+import com.ctc.wstx.stax.WstxOutputFactory;
+import com.vladsch.flexmark.formatter.Formatter;
+import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.ast.Document;
+import com.vladsch.flexmark.util.ast.Node;
+
+import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.AstCollectingVisitor;
+import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.FlexmarkFactory;
+import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.IMarkupVisitor;
+import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.IMarkupWriter;
+import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.InsertAnchorExtension.InsertAnchorNode;
+import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.InsertVisitor;
+import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.MarkupVisitor;
+import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.MarkupXmlEventWriter;
+import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.MarkupXmlStreamWriter;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codehaus.stax2.XMLOutputFactory2;
+import org.codehaus.stax2.XMLStreamWriter2;
+import org.codehaus.stax2.evt.XMLEventFactory2;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.TextNode;
+import org.jsoup.select.NodeTraversor;
+import org.jsoup.select.NodeVisitor;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+public abstract class AbstractMarkupString&lt;TYPE extends AbstractMarkupString&lt;TYPE&gt;&gt;
+    implements IMarkupString&lt;TYPE&gt; {
+<span class="fc" id="L77">  private static final Logger LOGGER = LogManager.getLogger(FlexmarkFactory.class);</span>
+
+<span class="fc" id="L79">  private static final Pattern QUOTE_TAG_REPLACEMENT_PATTERN</span>
+<span class="fc" id="L80">      = Pattern.compile(&quot;&lt;/?q&gt;&quot;);</span>
+
+  //
+  // @NonNull
+  // private static final String DEFAULT_HTML_NS = &quot;http://www.w3.org/1999/xhtml&quot;;
+  // @NonNull
+  // private static final String DEFAULT_HTML_PREFIX = &quot;&quot;;
+
+  @NonNull
+  private final Document document;
+
+<span class="fc" id="L91">  public AbstractMarkupString(@NonNull Document document) {</span>
+<span class="fc" id="L92">    this.document = document;</span>
+<span class="fc" id="L93">  }</span>
+
+  @Override
+  public Document getDocument() {
+<span class="fc" id="L97">    return document;</span>
+  }
+
+  // @Override
+  // public void writeHtml(@NonNull XMLStreamWriter2 xmlStreamWriter, @NonNull
+  // String namespace)
+  // throws XMLStreamException {
+  //
+  //
+  // IMarkupString&lt;?&gt; markupString = (IMarkupString&lt;&gt;)value;
+  //
+  // MarkupXmlStreamWriter writingVisitor
+  // = new MarkupXmlStreamWriter(namespace, markupString.isBlock());
+  // writingVisitor.visitChildren(getDocument(), xmlStreamWriter);
+  // xmlStreamWriter.flush();
+  // }
+  //
+  // @Override
+  // public void writeHtml(@NonNull OutputStream os, @Nullable String namespace,
+  // @Nullable String
+  // prefix)
+  // throws XMLStreamException {
+  // XMLOutputFactory2 factory = (XMLOutputFactory2)
+  // XMLOutputFactory.newInstance();
+  // assert factory instanceof WstxOutputFactory;
+  // factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
+  // XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2)
+  // factory.createXMLStreamWriter(os);
+  //
+  // String effectiveNamespace = namespace == null ? DEFAULT_HTML_NS : namespace;
+  // String effectivePrefix = prefix == null ? DEFAULT_HTML_PREFIX : prefix;
+  // NamespaceContext nsContext =
+  // MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
+  // List.of(NamespaceEventImpl.constructNamespace(null, effectivePrefix,
+  // effectiveNamespace)));
+  // xmlStreamWriter.setNamespaceContext(nsContext);
+  //
+  //
+  // writeHtml(xmlStreamWriter, effectiveNamespace);
+  // }
+
+  @NonNull
+  protected static Document parseHtml(@NonNull String html, @NonNull FlexmarkHtmlConverter htmlParser,
+      @NonNull Parser markdownParser) {
+<span class="fc" id="L141">    org.jsoup.nodes.Document document = Jsoup.parse(html);</span>
+
+    // Fix for usnistgov/liboscal-java#5
+    // Caused by not stripping out extra newlines inside HTML tags
+<span class="fc" id="L145">    NodeTraversor.traverse(new NodeVisitor() {</span>
+
+      @Override
+      public void head(org.jsoup.nodes.Node node, int depth) {
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        if (node instanceof TextNode) {</span>
+<span class="fc" id="L150">          TextNode textNode = (TextNode) node;</span>
+
+<span class="fc" id="L152">          org.jsoup.nodes.Node parent = textNode.parent();</span>
+
+<span class="fc bfc" id="L154" title="All 4 branches covered.">          if (!isTag(parent, &quot;code&quot;) || !isTag(parent.parent(), &quot;pre&quot;)) {</span>
+<span class="fc" id="L155">            node.replaceWith(new TextNode(textNode.text()));</span>
+          }
+        }
+<span class="fc" id="L158">      }</span>
+
+      private boolean isTag(@Nullable org.jsoup.nodes.Node node, @NonNull String tagName) {
+<span class="pc bpc" id="L161" title="1 of 4 branches missed.">        return node != null &amp;&amp; tagName.equals(node.normalName());</span>
+      }
+
+    }, document);
+
+<span class="fc" id="L166">    String markdown = htmlParser.convert(document);</span>
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">    assert markdown != null;</span>
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">    if (LOGGER.isDebugEnabled()) {</span>
+<span class="nc" id="L169">      LOGGER.debug(&quot;html-&gt;markdown: {}&quot;, markdown);</span>
+    }
+<span class="fc" id="L171">    return parseMarkdown(markdown, markdownParser);</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  protected static Document parseMarkdown(@NonNull String markdown, @NonNull Parser parser) {
+<span class="fc" id="L177">    return parser.parse(markdown);</span>
+  }
+
+  @Override
+  public String toXHtml(@NonNull String namespace) throws XMLStreamException, IOException {
+
+    String retval;
+
+<span class="fc" id="L185">    Document document = getDocument();</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">    if (document.hasChildren()) {</span>
+
+<span class="fc" id="L188">      XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();</span>
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">      assert factory instanceof WstxOutputFactory;</span>
+<span class="fc" id="L190">      factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);</span>
+<span class="fc" id="L191">      try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {</span>
+<span class="fc" id="L192">        XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);</span>
+
+<span class="fc" id="L194">        writeXHtml(namespace, ObjectUtils.notNull(xmlStreamWriter));</span>
+
+<span class="fc" id="L196">        xmlStreamWriter.flush();</span>
+<span class="fc" id="L197">        xmlStreamWriter.close();</span>
+<span class="fc" id="L198">        os.flush();</span>
+<span class="fc" id="L199">        retval = ObjectUtils.notNull(os.toString(StandardCharsets.UTF_8));</span>
+      }
+<span class="fc" id="L201">    } else {</span>
+<span class="fc" id="L202">      retval = &quot;&quot;;</span>
+    }
+<span class="fc" id="L204">    return retval;</span>
+  }
+
+  @Override
+  public String toHtml() {
+    // String html;
+    // try {
+    // html = toXHtml(&quot;&quot;);
+    // } catch(RuntimeException ex) {
+    // throw ex;
+    // } catch (Throwable ex) {
+    // throw new RuntimeException(ex);
+    // }
+    // return QUOTE_TAG_REPLACEMENT_PATTERN.matcher(html)
+    // .replaceAll(&quot;&amp;quot;&quot;);
+<span class="fc" id="L219">    String html = getFlexmarkFactory().getHtmlRenderer().render(getDocument());</span>
+<span class="fc" id="L220">    return ObjectUtils.notNull(QUOTE_TAG_REPLACEMENT_PATTERN.matcher(html)</span>
+<span class="fc" id="L221">        .replaceAll(&quot;&amp;quot;&quot;));</span>
+  }
+
+  @Override
+  public String toMarkdown() {
+<span class="fc" id="L226">    return toMarkdown(getFlexmarkFactory().getFormatter());</span>
+  }
+
+  @Override
+  public String toMarkdown(Formatter formatter) {
+<span class="fc" id="L231">    return ObjectUtils.notNull(formatter.render(getDocument()));</span>
+  }
+
+  @Override
+  public void writeXHtml(String namespace, XMLStreamWriter2 streamWriter) throws XMLStreamException {
+<span class="fc" id="L236">    Document document = getDocument();</span>
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">    if (document.hasChildren()) {</span>
+<span class="fc" id="L238">      IMarkupWriter&lt;XMLStreamWriter, XMLStreamException&gt; writer = new MarkupXmlStreamWriter(</span>
+          namespace,
+<span class="fc" id="L240">          getFlexmarkFactory().getListOptions(),</span>
+          streamWriter);
+
+<span class="fc" id="L243">      IMarkupVisitor&lt;XMLStreamWriter, XMLStreamException&gt; visitor = new MarkupVisitor&lt;&gt;(isBlock());</span>
+<span class="fc" id="L244">      visitor.visitDocument(document, writer);</span>
+<span class="fc" id="L245">    } else {</span>
+<span class="nc" id="L246">      streamWriter.writeCharacters(&quot;&quot;);</span>
+    }
+<span class="fc" id="L248">  }</span>
+
+  @Override
+  public void writeXHtml(String namespace, XMLEventFactory2 eventFactory, XMLEventWriter eventWriter)
+      throws XMLStreamException {
+<span class="nc" id="L253">    Document document = getDocument();</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">    if (document.hasChildren()) {</span>
+
+<span class="nc" id="L256">      IMarkupWriter&lt;XMLEventWriter, XMLStreamException&gt; writer = new MarkupXmlEventWriter(</span>
+          namespace,
+<span class="nc" id="L258">          getFlexmarkFactory().getListOptions(),</span>
+          eventWriter,
+          eventFactory);
+
+<span class="nc" id="L262">      IMarkupVisitor&lt;XMLEventWriter, XMLStreamException&gt; visitor = new MarkupVisitor&lt;&gt;(isBlock());</span>
+<span class="nc" id="L263">      visitor.visitDocument(getDocument(), writer);</span>
+<span class="nc" id="L264">    } else {</span>
+<span class="nc" id="L265">      eventWriter.add(eventFactory.createSpace(&quot;&quot;));</span>
+    }
+
+<span class="nc" id="L268">  }</span>
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public Stream&lt;Node&gt; getNodesAsStream() {
+<span class="nc" id="L273">    return Stream.concat(Stream.of(getDocument()),</span>
+<span class="nc" id="L274">        StreamSupport.stream(getDocument().getDescendants().spliterator(), false));</span>
+  }
+
+  @Override
+  @NonNull
+  public List&lt;InsertAnchorNode&gt; getInserts() {
+<span class="nc" id="L280">    return getInserts(insert -&gt; true);</span>
+  }
+
+  /**
+   * Retrieve all insert statements that are contained within this markup text
+   * that match the provided filter.
+   *
+   * @param filter
+   *          a filter used to identify matching insert statements
+   * @return the matching insert statements
+   */
+  @Override
+  @NonNull
+  public List&lt;InsertAnchorNode&gt; getInserts(@NonNull Predicate&lt;InsertAnchorNode&gt; filter) {
+<span class="nc" id="L294">    InsertVisitor visitor = new InsertVisitor(filter);</span>
+<span class="nc" id="L295">    visitor.visitChildren(getDocument());</span>
+<span class="nc" id="L296">    return visitor.getInserts();</span>
+  }
+
+  @Override
+  public String toString() {
+<span class="nc" id="L301">    return AstCollectingVisitor.asString(getDocument());</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

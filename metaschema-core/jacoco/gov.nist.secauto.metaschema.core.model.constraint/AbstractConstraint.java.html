@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractConstraint.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.constraint</a> &gt; <span class="el_source">AbstractConstraint.java</span></div><h1>AbstractConstraint.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.constraint;
+
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+public abstract class AbstractConstraint implements IConstraint { // NOPMD - intentional data class
+  @Nullable
+  private final String id;
+  @Nullable
+  private final String formalName;
+  @Nullable
+  private final MarkupLine description;
+  @NonNull
+  private final ISource source;
+  @NonNull
+  private final Level level;
+  @NonNull
+  private final MetapathExpression target;
+  @Nullable
+  private final MarkupMultiline remarks;
+  @NonNull
+  private final Map&lt;QName, Set&lt;String&gt;&gt; properties;
+
+  /**
+   * Construct a new Metaschema constraint.
+   *
+   * @param id
+   *          the optional identifier for the constraint
+   * @param formalName
+   *          the constraint's formal name or {@code null} if not provided
+   * @param description
+   *          the constraint's semantic description or {@code null} if not
+   *          provided
+   * @param source
+   *          information about the constraint source
+   * @param level
+   *          the significance of a violation of this constraint
+   * @param target
+   *          the Metapath expression identifying the nodes the constraint targets
+   * @param properties
+   *          a collection of associated properties
+   * @param remarks
+   *          optional remarks describing the intent of the constraint
+   */
+  protected AbstractConstraint(
+      @Nullable String id,
+      @Nullable String formalName,
+      @Nullable MarkupLine description,
+      @NonNull ISource source,
+      @NonNull Level level,
+      @NonNull MetapathExpression target,
+      @NonNull Map&lt;QName, Set&lt;String&gt;&gt; properties,
+<span class="fc" id="L93">      @Nullable MarkupMultiline remarks) {</span>
+<span class="fc" id="L94">    Objects.requireNonNull(target);</span>
+<span class="fc" id="L95">    this.id = id;</span>
+<span class="fc" id="L96">    this.formalName = formalName;</span>
+<span class="fc" id="L97">    this.description = description;</span>
+<span class="fc" id="L98">    this.source = source;</span>
+<span class="fc" id="L99">    this.level = ObjectUtils.requireNonNull(level, &quot;level&quot;);</span>
+<span class="fc" id="L100">    this.target = ObjectUtils.requireNonNull(target, &quot;target&quot;);</span>
+<span class="fc" id="L101">    this.properties = properties;</span>
+<span class="fc" id="L102">    this.remarks = remarks;</span>
+<span class="fc" id="L103">  }</span>
+
+  @Override
+  public String getId() {
+<span class="nc" id="L107">    return id;</span>
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+<span class="nc" id="L112">    return description;</span>
+  }
+
+  @Override
+  public String getFormalName() {
+<span class="nc" id="L117">    return formalName;</span>
+  }
+
+  @Override
+  public ISource getSource() {
+<span class="nc" id="L122">    return source;</span>
+  }
+
+  @Override
+  @NonNull
+  public Level getLevel() {
+<span class="fc" id="L128">    return level;</span>
+  }
+
+  @Override
+  public MetapathExpression getTarget() {
+<span class="fc" id="L133">    return target;</span>
+  }
+
+  @Override
+  public Map&lt;QName, Set&lt;String&gt;&gt; getProperties() {
+<span class="nc" id="L138">    return CollectionUtil.unmodifiableMap(properties);</span>
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+<span class="nc" id="L143">    return remarks;</span>
+  }
+
+<span class="fc" id="L146">  public abstract static class AbstractConstraintBuilder&lt;</span>
+      T extends AbstractConstraintBuilder&lt;T,
+          R&gt;,
+      R extends AbstractConstraint&gt; {
+    private String id;
+    private String formalName;
+    private MarkupLine description;
+    private ISource source;
+<span class="fc" id="L154">    @NonNull</span>
+    private Level level = IConstraint.DEFAULT_LEVEL;
+<span class="fc" id="L156">    @NonNull</span>
+    private MetapathExpression target = IConstraint.DEFAULT_TARGET;
+<span class="fc" id="L158">    @NonNull</span>
+    private Map&lt;QName, Set&lt;String&gt;&gt; properties = new LinkedHashMap&lt;&gt;(); // NOPMD not thread safe
+    private MarkupMultiline remarks;
+
+    protected abstract T getThis();
+
+    public T identifier(@NonNull String id) {
+<span class="nc" id="L165">      this.id = id;</span>
+<span class="nc" id="L166">      return getThis();</span>
+    }
+
+    public T formalName(@NonNull String name) {
+<span class="nc" id="L170">      this.formalName = name;</span>
+<span class="nc" id="L171">      return getThis();</span>
+    }
+
+    public T description(@NonNull MarkupLine description) {
+<span class="nc" id="L175">      this.description = description;</span>
+<span class="nc" id="L176">      return getThis();</span>
+    }
+
+    public T source(@NonNull ISource source) {
+<span class="fc" id="L180">      this.source = source;</span>
+<span class="fc" id="L181">      return getThis();</span>
+    }
+
+    public T level(@NonNull Level level) {
+<span class="fc" id="L185">      this.level = level;</span>
+<span class="fc" id="L186">      return getThis();</span>
+    }
+
+    public T target(@NonNull MetapathExpression target) {
+<span class="fc" id="L190">      this.target = target;</span>
+<span class="fc" id="L191">      return getThis();</span>
+    }
+
+    public T properties(@NonNull Map&lt;QName, Set&lt;String&gt;&gt; properties) {
+<span class="nc" id="L195">      this.properties = properties;</span>
+<span class="nc" id="L196">      return getThis();</span>
+    }
+
+    public T property(@NonNull QName name, @NonNull String value) {
+<span class="nc" id="L200">      return property(name, CollectionUtil.singleton(value));</span>
+    }
+
+    public T property(@NonNull QName name, @NonNull Set&lt;String&gt; newValues) {
+<span class="nc" id="L204">      Set&lt;String&gt; existingValues = properties.get(name);</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">      if (existingValues == null) {</span>
+<span class="nc" id="L206">        existingValues = new LinkedHashSet&lt;&gt;();</span>
+<span class="nc" id="L207">        properties.put(name, existingValues);</span>
+      }
+
+<span class="nc" id="L210">      existingValues.addAll(newValues);</span>
+<span class="nc" id="L211">      return getThis();</span>
+    }
+
+    public T remarks(@NonNull MarkupMultiline remarks) {
+<span class="nc" id="L215">      this.remarks = remarks;</span>
+<span class="nc" id="L216">      return getThis();</span>
+    }
+
+    protected void validate() {
+<span class="fc" id="L220">      ObjectUtils.requireNonNull(getSource());</span>
+<span class="fc" id="L221">    }</span>
+
+    @NonNull
+    protected abstract R newInstance();
+
+    @NonNull
+    public R build() {
+<span class="fc" id="L228">      validate();</span>
+<span class="fc" id="L229">      return newInstance();</span>
+    }
+
+    protected String getId() {
+<span class="fc" id="L233">      return id;</span>
+    }
+
+    protected String getFormalName() {
+<span class="fc" id="L237">      return formalName;</span>
+    }
+
+    protected MarkupLine getDescription() {
+<span class="fc" id="L241">      return description;</span>
+    }
+
+    protected ISource getSource() {
+<span class="fc" id="L245">      return source;</span>
+    }
+
+    @NonNull
+    protected Level getLevel() {
+<span class="fc" id="L250">      return level;</span>
+    }
+
+    @NonNull
+    protected MetapathExpression getTarget() {
+<span class="fc" id="L255">      return target;</span>
+    }
+
+    @NonNull
+    protected Map&lt;QName, Set&lt;String&gt;&gt; getProperties() {
+<span class="fc" id="L260">      return properties;</span>
+    }
+
+    protected MarkupMultiline getRemarks() {
+<span class="fc" id="L264">      return remarks;</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

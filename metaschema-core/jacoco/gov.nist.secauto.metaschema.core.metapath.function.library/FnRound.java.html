@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FnRound.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath.function.library</a> &gt; <span class="el_source">FnRound.java</span></div><h1>FnRound.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath.function.library;
+
+import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
+import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
+import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
+import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public final class FnRound {
+  private static final String NAME = &quot;round&quot;;
+
+  @NonNull
+<span class="fc" id="L48">  static final IFunction SIGNATURE = NumericFunction.signature(</span>
+      MetapathConstants.NS_XPATH_FUNCTIONS,
+      NAME,
+      INumericItem::round);
+
+  @NonNull
+<span class="fc" id="L54">  static final IFunction SIGNATURE_WITH_PRECISION = IFunction.builder()</span>
+<span class="fc" id="L55">      .name(NAME)</span>
+<span class="fc" id="L56">      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)</span>
+<span class="fc" id="L57">      .argument(IArgument.newBuilder()</span>
+<span class="fc" id="L58">          .name(&quot;arg1&quot;)</span>
+<span class="fc" id="L59">          .type(INumericItem.class)</span>
+<span class="fc" id="L60">          .zeroOrOne()</span>
+<span class="fc" id="L61">          .build())</span>
+<span class="fc" id="L62">      .argument(IArgument.newBuilder()</span>
+<span class="fc" id="L63">          .name(&quot;precision&quot;)</span>
+<span class="fc" id="L64">          .type(IIntegerItem.class)</span>
+<span class="fc" id="L65">          .one()</span>
+<span class="fc" id="L66">          .build())</span>
+<span class="fc" id="L67">      .returnType(INumericItem.class)</span>
+<span class="fc" id="L68">      .returnZeroOrOne()</span>
+<span class="fc" id="L69">      .functionHandler(FnRound::executeTwoArg)</span>
+<span class="fc" id="L70">      .build();</span>
+
+  private FnRound() {
+    // disable construction
+  }
+
+  @SuppressWarnings(&quot;unused&quot;)
+  @NonNull
+  private static ISequence&lt;INumericItem&gt; executeTwoArg(
+      @NonNull IFunction function,
+      @NonNull List&lt;ISequence&lt;?&gt;&gt; arguments,
+      @NonNull DynamicContext dynamicContext,
+      IItem focus) {
+<span class="nc" id="L83">    ISequence&lt;? extends INumericItem&gt; sequence = FunctionUtils.asType(</span>
+<span class="nc" id="L84">        ObjectUtils.requireNonNull(arguments.get(0)));</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">    if (sequence.isEmpty()) {</span>
+<span class="nc" id="L86">      return ISequence.empty(); // NOPMD - readability</span>
+    }
+
+<span class="nc" id="L89">    INumericItem item = FunctionUtils.getFirstItem(sequence, true);</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">    if (item == null) {</span>
+<span class="nc" id="L91">      return ISequence.empty(); // NOPMD - readability</span>
+    }
+
+<span class="nc" id="L94">    @NonNull IIntegerItem precision = FunctionUtils.asType(</span>
+<span class="nc" id="L95">        FunctionUtils.requireFirstItem(</span>
+<span class="nc" id="L96">            ObjectUtils.requireNonNull(arguments.get(1)),</span>
+            true));
+
+<span class="nc" id="L99">    INumericItem result = item.round(precision);</span>
+<span class="nc" id="L100">    return ISequence.of(result);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

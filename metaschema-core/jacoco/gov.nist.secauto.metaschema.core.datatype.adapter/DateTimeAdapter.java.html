@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DateTimeAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.datatype.adapter</a> &gt; <span class="el_source">DateTimeAdapter.java</span></div><h1>DateTimeAdapter.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.datatype.adapter;
+
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
+
+import gov.nist.secauto.metaschema.core.datatype.AbstractCustomJavaDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.datatype.object.DateTime;
+import gov.nist.secauto.metaschema.core.metapath.function.InvalidValueForCastFunctionException;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDateItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDateTimeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IUntypedAtomicItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public class DateTimeAdapter
+    extends AbstractCustomJavaDataTypeAdapter&lt;DateTime, IDateTimeItem&gt; {
+  @NonNull
+<span class="fc" id="L52">  private static final List&lt;String&gt; NAMES = ObjectUtils.notNull(</span>
+<span class="fc" id="L53">      List.of(</span>
+          &quot;date-time&quot;,
+          // for backwards compatibility with original type name
+          &quot;dateTime&quot;));
+
+  DateTimeAdapter() {
+<span class="fc" id="L59">    super(DateTime.class);</span>
+<span class="fc" id="L60">  }</span>
+
+  @Override
+  public List&lt;String&gt; getNames() {
+<span class="fc" id="L64">    return NAMES;</span>
+  }
+
+  @Override
+  public JsonFormatTypes getJsonRawType() {
+<span class="nc" id="L69">    return JsonFormatTypes.STRING;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public DateTime parse(String value) {
+    try {
+<span class="fc" id="L76">      return new DateTime(ZonedDateTime.from(DateFormats.DATE_TIME_WITH_TZ.parse(value)), true); // NOPMD - readability</span>
+<span class="fc" id="L77">    } catch (DateTimeParseException ex) {</span>
+      try {
+<span class="fc" id="L79">        LocalDateTime dateTime = LocalDateTime.from(DateFormats.DATE_TIME_WITHOUT_TZ.parse(value));</span>
+<span class="fc" id="L80">        return new DateTime(ZonedDateTime.of(dateTime, ZoneOffset.UTC), false);</span>
+<span class="nc" id="L81">      } catch (DateTimeParseException ex2) {</span>
+<span class="nc" id="L82">        IllegalArgumentException newEx = new IllegalArgumentException(ex2.getLocalizedMessage(), ex2);</span>
+<span class="nc" id="L83">        newEx.addSuppressed(ex);</span>
+<span class="nc" id="L84">        throw newEx; // NOPMD - it's ok</span>
+      }
+    }
+  }
+
+  @Override
+  public String asString(Object obj) {
+<span class="nc" id="L91">    DateTime value = (DateTime) obj;</span>
+    String retval;
+<span class="nc bnc" id="L93" title="All 2 branches missed.">    if (value.hasTimeZone()) {</span>
+      @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L95">      @NonNull String formatted = DateFormats.DATE_TIME_WITH_TZ.format(value.getValue());</span>
+<span class="nc" id="L96">      retval = formatted;</span>
+<span class="nc" id="L97">    } else {</span>
+      @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L99">      @NonNull String formatted = DateFormats.DATE_TIME_WITHOUT_TZ.format(value.getValue());</span>
+<span class="nc" id="L100">      retval = formatted;</span>
+    }
+<span class="nc" id="L102">    return retval;</span>
+  }
+
+  @Override
+  public Class&lt;IDateTimeItem&gt; getItemClass() {
+<span class="nc" id="L107">    return IDateTimeItem.class;</span>
+  }
+
+  @Override
+  public IDateTimeItem newItem(Object value) {
+<span class="nc" id="L112">    DateTime item = toValue(value);</span>
+<span class="nc" id="L113">    return IDateTimeItem.valueOf(item);</span>
+  }
+
+  @Override
+  protected IDateTimeItem castInternal(@NonNull IAnyAtomicItem item) {
+    // TODO: bring up to spec
+    IDateTimeItem retval;
+<span class="nc bnc" id="L120" title="All 2 branches missed.">    if (item instanceof IDateItem) {</span>
+<span class="nc" id="L121">      retval = IDateTimeItem.valueOf(((IDateItem) item).asZonedDateTime());</span>
+<span class="nc bnc" id="L122" title="All 4 branches missed.">    } else if (item instanceof IStringItem || item instanceof IUntypedAtomicItem) {</span>
+<span class="nc" id="L123">      retval = super.castInternal(item);</span>
+    } else {
+<span class="nc" id="L125">      throw new InvalidValueForCastFunctionException(</span>
+<span class="nc" id="L126">          String.format(&quot;unsupported item type '%s'&quot;, item.getClass().getName()));</span>
+    }
+<span class="nc" id="L128">    return retval;</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

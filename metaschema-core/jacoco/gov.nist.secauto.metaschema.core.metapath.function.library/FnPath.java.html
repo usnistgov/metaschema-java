@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FnPath.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath.function.library</a> &gt; <span class="el_source">FnPath.java</span></div><h1>FnPath.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath.function.library;
+
+import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.InvalidTypeMetapathException;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
+import gov.nist.secauto.metaschema.core.metapath.format.IPathFormatter;
+import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
+import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
+import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+/**
+ * Since a node doesn't have a base URI in Metaschema, this is an alias for the
+ * document-uri function.
+ */
+public final class FnPath {
+
+  @NonNull
+<span class="fc" id="L54">  static final IFunction SIGNATURE_NO_ARG = IFunction.builder()</span>
+<span class="fc" id="L55">      .name(&quot;path&quot;)</span>
+<span class="fc" id="L56">      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)</span>
+<span class="fc" id="L57">      .deterministic()</span>
+<span class="fc" id="L58">      .contextDependent()</span>
+<span class="fc" id="L59">      .focusDependent()</span>
+<span class="fc" id="L60">      .returnType(IStringItem.class)</span>
+<span class="fc" id="L61">      .returnZeroOrOne()</span>
+<span class="fc" id="L62">      .functionHandler(FnPath::executeNoArg)</span>
+<span class="fc" id="L63">      .build();</span>
+
+  @NonNull
+<span class="fc" id="L66">  static final IFunction SIGNATURE_ONE_ARG = IFunction.builder()</span>
+<span class="fc" id="L67">      .name(&quot;path&quot;)</span>
+<span class="fc" id="L68">      .namespace(MetapathConstants.NS_XPATH_FUNCTIONS)</span>
+<span class="fc" id="L69">      .deterministic()</span>
+<span class="fc" id="L70">      .contextIndependent()</span>
+<span class="fc" id="L71">      .focusIndependent()</span>
+<span class="fc" id="L72">      .argument(IArgument.newBuilder()</span>
+<span class="fc" id="L73">          .name(&quot;arg1&quot;)</span>
+<span class="fc" id="L74">          .type(INodeItem.class)</span>
+<span class="fc" id="L75">          .zeroOrOne()</span>
+<span class="fc" id="L76">          .build())</span>
+<span class="fc" id="L77">      .returnType(IStringItem.class)</span>
+<span class="fc" id="L78">      .returnZeroOrOne()</span>
+<span class="fc" id="L79">      .functionHandler(FnPath::executeOneArg)</span>
+<span class="fc" id="L80">      .build();</span>
+
+  private FnPath() {
+    // disable construction
+  }
+
+  @SuppressWarnings(&quot;unused&quot;)
+  @NonNull
+  private static ISequence&lt;IStringItem&gt; executeNoArg(@NonNull IFunction function,
+      @NonNull List&lt;ISequence&lt;?&gt;&gt; arguments,
+      @NonNull DynamicContext dynamicContext,
+      IItem focus) {
+
+<span class="nc" id="L93">    INodeItem item = FunctionUtils.requireTypeOrNull(INodeItem.class, focus);</span>
+
+    ISequence&lt;IStringItem&gt; retval;
+<span class="nc bnc" id="L96" title="All 2 branches missed.">    if (item == null) {</span>
+<span class="nc" id="L97">      retval = ISequence.empty();</span>
+    } else {
+<span class="nc" id="L99">      retval = ISequence.of(IStringItem.valueOf(item.toPath(IPathFormatter.METAPATH_PATH_FORMATER)));</span>
+    }
+<span class="nc" id="L101">    return retval;</span>
+  }
+
+  @SuppressWarnings(&quot;unused&quot;)
+  @NonNull
+  private static ISequence&lt;IStringItem&gt; executeOneArg(@NonNull IFunction function,
+      @NonNull List&lt;ISequence&lt;?&gt;&gt; arguments,
+      @NonNull DynamicContext dynamicContext,
+      IItem focus) {
+
+<span class="nc" id="L111">    return fnPath(ObjectUtils.requireNonNull(arguments.get(0)));</span>
+  }
+
+  /**
+   * An implementation of XPath 3.1
+   * &lt;a href=&quot;https://www.w3.org/TR/xpath-functions-31/#func-data&quot;&gt;fn:data&lt;/a&gt;
+   * supporting &lt;a href=&quot;https://www.w3.org/TR/xpath-31/#id-atomization&quot;&gt;item
+   * atomization&lt;/a&gt;.
+   *
+   * @param sequence
+   *          the sequence of items to atomize
+   * @return the atomized result
+   */
+  @NonNull
+  public static ISequence&lt;IStringItem&gt; fnPath(@NonNull ISequence&lt;?&gt; sequence) {
+<span class="nc" id="L126">    IItem item = FunctionUtils.getFirstItem(sequence, true);</span>
+
+    ISequence&lt;IStringItem&gt; retval;
+<span class="nc bnc" id="L129" title="All 2 branches missed.">    if (item == null) {</span>
+<span class="nc" id="L130">      retval = ISequence.empty();</span>
+    } else {
+      try {
+<span class="nc" id="L133">        retval = ISequence.of(fnPath((INodeItem) item));</span>
+<span class="nc" id="L134">      } catch (ClassCastException ex) {</span>
+<span class="nc" id="L135">        throw new InvalidTypeMetapathException(</span>
+            item,
+<span class="nc" id="L137">            String.format(&quot;Expected a '%s', but received a '%s'&quot;,</span>
+<span class="nc" id="L138">                INodeItem.class.getName(),</span>
+<span class="nc" id="L139">                item.getClass().getName()),</span>
+            ex);
+<span class="nc" id="L141">      }</span>
+    }
+<span class="nc" id="L143">    return retval;</span>
+  }
+
+  /**
+   * An implementation of
+   * &lt;a href=&quot;https://www.w3.org/TR/xpath-31/#id-atomization&quot;&gt;item
+   * atomization&lt;/a&gt;.
+   *
+   * @param item
+   *          the item to atomize
+   * @return the atomized result
+   */
+  @Nullable
+  public static IStringItem fnPath(@Nullable INodeItem item) {
+<span class="nc bnc" id="L157" title="All 2 branches missed.">    return item == null ? null : IStringItem.valueOf(item.toPath(IPathFormatter.METAPATH_PATH_FORMATER));</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

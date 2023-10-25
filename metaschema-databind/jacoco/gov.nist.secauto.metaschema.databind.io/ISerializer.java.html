@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ISerializer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.io</a> &gt; <span class="el_source">ISerializer.java</span></div><h1>ISerializer.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.io;
+
+import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+/**
+ * Implementations of this interface are able to write data in a bound object
+ * instance of the parameterized type to a structured data format.
+ *
+ * @param &lt;CLASS&gt;
+ *          the Java type from which data can be written
+ */
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">public interface ISerializer&lt;CLASS&gt; extends IMutableConfiguration&lt;SerializationFeature&lt;?&gt;&gt; {</span>
+
+  @Override
+  ISerializer&lt;CLASS&gt; enableFeature(SerializationFeature&lt;?&gt; feature);
+
+  @Override
+  ISerializer&lt;CLASS&gt; disableFeature(SerializationFeature&lt;?&gt; feature);
+
+  @Override
+  ISerializer&lt;CLASS&gt; applyConfiguration(IConfiguration&lt;SerializationFeature&lt;?&gt;&gt; other);
+
+  @Override
+  ISerializer&lt;CLASS&gt; set(SerializationFeature&lt;?&gt; feature, Object value);
+
+  /**
+   * Write data from a bound class instance to the {@link OutputStream}.
+   * &lt;p&gt;
+   * This method does not have ownership of the the provided output stream and
+   * will not close it.
+   *
+   * @param data
+   *          the instance data
+   * @param os
+   *          the output stream to write to
+   * @throws IOException
+   *           if an error occurred while writing data to the stream
+   */
+  default void serialize(@NonNull CLASS data, @NonNull OutputStream os) throws IOException {
+<span class="nc" id="L81">    OutputStreamWriter writer = new OutputStreamWriter(os, StandardCharsets.UTF_8);</span>
+<span class="nc" id="L82">    serialize(data, writer);</span>
+<span class="nc" id="L83">    writer.flush();</span>
+<span class="nc" id="L84">  }</span>
+
+  /**
+   * Write data from a bound class instance to the {@link File}.
+   *
+   * @param data
+   *          the instance data
+   * @param path
+   *          the file to write to
+   * @param openOptions
+   *          options specifying how the file is opened
+   * @throws IOException
+   *           if an error occurred while writing data to the file indicated by
+   *           the {@code path} parameter
+   */
+  default void serialize(@NonNull CLASS data, @NonNull Path path, OpenOption... openOptions) throws IOException {
+<span class="nc" id="L100">    try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, openOptions)) {</span>
+<span class="nc bnc" id="L101" title="All 4 branches missed.">      assert writer != null;</span>
+<span class="nc" id="L102">      serialize(data, writer);</span>
+    }
+<span class="nc" id="L104">  }</span>
+
+  /**
+   * Write data from a bound class instance to the {@link File}.
+   *
+   * @param data
+   *          the instance data
+   * @param file
+   *          the file to write to
+   * @throws IOException
+   *           if an error occurred while writing data to the stream
+   */
+  default void serialize(@NonNull CLASS data, @NonNull File file) throws IOException {
+<span class="nc" id="L117">    serialize(data, ObjectUtils.notNull(file.toPath()), StandardOpenOption.CREATE, StandardOpenOption.WRITE,</span>
+        StandardOpenOption.TRUNCATE_EXISTING);
+<span class="nc" id="L119">  }</span>
+
+  /**
+   * Write data from a bound class instance to the {@link Writer}.
+   *
+   * @param data
+   *          the instance data
+   * @param writer
+   *          the writer to write to
+   * @throws IOException
+   *           if an error occurred while writing data to the stream
+   */
+  void serialize(@NonNull CLASS data, @NonNull Writer writer) throws IOException;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

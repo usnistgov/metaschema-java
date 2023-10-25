@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InsertAnchorExtension.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.datatype.markup.flexmark</a> &gt; <span class="el_source">InsertAnchorExtension.java</span></div><h1>InsertAnchorExtension.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.datatype.markup.flexmark; // NOPMD AST processor
+
+import com.vladsch.flexmark.formatter.Formatter;
+import com.vladsch.flexmark.formatter.MarkdownWriter;
+import com.vladsch.flexmark.formatter.NodeFormatter;
+import com.vladsch.flexmark.formatter.NodeFormatterContext;
+import com.vladsch.flexmark.formatter.NodeFormatterFactory;
+import com.vladsch.flexmark.formatter.NodeFormattingHandler;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.html.HtmlWriter;
+import com.vladsch.flexmark.html.renderer.NodeRenderer;
+import com.vladsch.flexmark.html.renderer.NodeRendererContext;
+import com.vladsch.flexmark.html.renderer.NodeRendererFactory;
+import com.vladsch.flexmark.html.renderer.NodeRenderingHandler;
+import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
+import com.vladsch.flexmark.html2md.converter.HtmlMarkdownWriter;
+import com.vladsch.flexmark.html2md.converter.HtmlNodeConverterContext;
+import com.vladsch.flexmark.html2md.converter.HtmlNodeRenderer;
+import com.vladsch.flexmark.html2md.converter.HtmlNodeRendererFactory;
+import com.vladsch.flexmark.html2md.converter.HtmlNodeRendererHandler;
+import com.vladsch.flexmark.parser.InlineParser;
+import com.vladsch.flexmark.parser.InlineParserExtension;
+import com.vladsch.flexmark.parser.InlineParserExtensionFactory;
+import com.vladsch.flexmark.parser.LightInlineParser;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.data.DataHolder;
+import com.vladsch.flexmark.util.data.DataKey;
+import com.vladsch.flexmark.util.data.MutableDataHolder;
+import com.vladsch.flexmark.util.misc.Extension;
+import com.vladsch.flexmark.util.sequence.BasedSequence;
+import com.vladsch.flexmark.util.sequence.CharSubSequence;
+
+import org.jsoup.nodes.Element;
+
+import java.util.Collections;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L69">public class InsertAnchorExtension</span>
+    implements Parser.ParserExtension, HtmlRenderer.HtmlRendererExtension,
+    Formatter.FormatterExtension, FlexmarkHtmlConverter.HtmlConverterExtension {
+<span class="fc" id="L72">  public static final DataKey&lt;Boolean&gt; ENABLE_INLINE_INSERT_ANCHORS</span>
+<span class="fc" id="L73">      = new DataKey&lt;&gt;(&quot;ENABLE_INLINE_INSERT_ANCHORS&quot;, true);</span>
+<span class="fc" id="L74">  public static final DataKey&lt;Boolean&gt; ENABLE_RENDERING = new DataKey&lt;&gt;(&quot;ENABLE_RENDERING&quot;, true);</span>
+
+  public static Extension create() {
+<span class="fc" id="L77">    return new InsertAnchorExtension();</span>
+  }
+
+  @Override
+  public void parserOptions(MutableDataHolder options) {
+    // do nothing
+<span class="fc" id="L83">  }</span>
+
+  @Override
+  public void rendererOptions(MutableDataHolder options) {
+    // do nothing
+<span class="fc" id="L88">  }</span>
+
+  @Override
+  public void extend(HtmlRenderer.Builder rendererBuilder, String rendererType) {
+<span class="fc" id="L92">    rendererBuilder.nodeRendererFactory(new InsertAnchorNodeRenderer.Factory());</span>
+<span class="fc" id="L93">  }</span>
+
+  @Override
+  public void extend(Parser.Builder parserBuilder) {
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">    if (ENABLE_INLINE_INSERT_ANCHORS.get(parserBuilder)) {</span>
+<span class="fc" id="L98">      parserBuilder.customInlineParserExtensionFactory(new InsertAnchorInlineParser.Factory());</span>
+    }
+<span class="fc" id="L100">  }</span>
+
+  @Override
+  public void extend(Formatter.Builder builder) {
+<span class="fc" id="L104">    builder.nodeFormatterFactory(new InsertAnchorFormatter.Factory());</span>
+<span class="fc" id="L105">  }</span>
+
+  @Override
+  public void extend(FlexmarkHtmlConverter.Builder builder) {
+<span class="fc" id="L109">    builder.htmlNodeRendererFactory(new InsertAnchorHtmlNodeRenderer.Factory());</span>
+<span class="fc" id="L110">  }</span>
+
+  private static class InsertAnchorOptions {
+    public final boolean enableInlineInsertAnchors;
+    public final boolean enableRendering;
+
+<span class="fc" id="L116">    public InsertAnchorOptions(DataHolder options) {</span>
+<span class="fc" id="L117">      enableInlineInsertAnchors = ENABLE_INLINE_INSERT_ANCHORS.get(options);</span>
+<span class="fc" id="L118">      enableRendering = ENABLE_RENDERING.get(options);</span>
+<span class="fc" id="L119">    }</span>
+  }
+
+  private static class InsertAnchorNodeRenderer implements NodeRenderer {
+    private final InsertAnchorOptions options;
+
+<span class="fc" id="L125">    public InsertAnchorNodeRenderer(DataHolder options) {</span>
+<span class="fc" id="L126">      this.options = new InsertAnchorOptions(options);</span>
+<span class="fc" id="L127">    }</span>
+
+    @Override
+    public Set&lt;NodeRenderingHandler&lt;?&gt;&gt; getNodeRenderingHandlers() {
+<span class="fc" id="L131">      return Collections.singleton(new NodeRenderingHandler&lt;&gt;(InsertAnchorNode.class, this::render));</span>
+    }
+
+    @SuppressWarnings(&quot;unused&quot;)
+    protected void render(InsertAnchorNode node, NodeRendererContext context, HtmlWriter html) {
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">      if (options.enableRendering) {</span>
+<span class="fc" id="L137">        html.attr(&quot;type&quot;, node.getType()).attr(&quot;id-ref&quot;, node.getIdReference()).withAttr().tagVoid(&quot;insert&quot;);</span>
+      }
+<span class="fc" id="L139">    }</span>
+
+    // @Override
+    // public Set&lt;NodeRenderingHandler&lt;?&gt;&gt; getNodeRenderingHandlers() {
+    // HashSet&lt;NodeRenderingHandler&lt;?&gt;&gt; set = new
+    // HashSet&lt;NodeRenderingHandler&lt;?&gt;&gt;();
+    // set.add(new NodeRenderingHandler&lt;Macro&gt;(Macro.class, new
+    // CustomNodeRenderer&lt;Macro&gt;() {
+    // @Override
+    // public void render(Macro node, NodeRendererContext context, HtmlWriter html)
+    // {
+    // MacroNodeRenderer.this.render(node, context, html); }
+    // }));
+<span class="fc" id="L152">    public static class Factory implements NodeRendererFactory {</span>
+
+      @Override
+      public NodeRenderer apply(DataHolder options) {
+<span class="fc" id="L156">        return new InsertAnchorNodeRenderer(options);</span>
+      }
+
+    }
+
+  }
+
+  private static class InsertAnchorInlineParser implements InlineParserExtension {
+<span class="fc" id="L164">    private static final Pattern PATTERN = Pattern.compile(&quot;\\{\\{\\s*insert:\\s*([^\\s]+),\\s*([^\\s]+)\\s*\\}\\}&quot;);</span>
+
+<span class="fc" id="L166">    public InsertAnchorInlineParser(@SuppressWarnings(&quot;unused&quot;) LightInlineParser inlineParser) {</span>
+      // do nothing
+<span class="fc" id="L168">    }</span>
+
+    @Override
+    public void finalizeDocument(InlineParser inlineParser) {
+      // do nothing
+<span class="fc" id="L173">    }</span>
+
+    @Override
+    public void finalizeBlock(InlineParser inlineParser) {
+      // do nothing
+<span class="fc" id="L178">    }</span>
+
+    @Override
+    public boolean parse(LightInlineParser inlineParser) {
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">      if (inlineParser.peek() == '{') {</span>
+<span class="fc" id="L183">        BasedSequence input = inlineParser.getInput();</span>
+<span class="fc" id="L184">        Matcher matcher = inlineParser.matcher(PATTERN);</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        if (matcher != null) {</span>
+<span class="fc" id="L186">          BasedSequence type = input.subSequence(matcher.start(1), matcher.end(1));</span>
+<span class="fc" id="L187">          BasedSequence idReference = input.subSequence(matcher.start(2), matcher.end(2));</span>
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">          assert type != null;</span>
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">          assert idReference != null;</span>
+<span class="fc" id="L190">          inlineParser.appendNode(new InsertAnchorNode(type, idReference));</span>
+<span class="fc" id="L191">          return true; // NOPMD - readability</span>
+        }
+      }
+<span class="fc" id="L194">      return false;</span>
+    }
+
+<span class="fc" id="L197">    public static class Factory implements InlineParserExtensionFactory {</span>
+      @Override
+      public Set&lt;Class&lt;?&gt;&gt; getAfterDependents() {
+<span class="nc" id="L200">        return Collections.emptySet();</span>
+      }
+
+      @Override
+      public CharSequence getCharacters() {
+<span class="fc" id="L205">        return &quot;{&quot;;</span>
+      }
+
+      @Override
+      public Set&lt;Class&lt;?&gt;&gt; getBeforeDependents() {
+<span class="nc" id="L210">        return Collections.emptySet();</span>
+      }
+
+      @Override
+      public InlineParserExtension apply(LightInlineParser lightInlineParser) {
+<span class="fc" id="L215">        return new InsertAnchorInlineParser(lightInlineParser);</span>
+      }
+
+      @Override
+      public boolean affectsGlobalScope() {
+<span class="nc" id="L220">        return false;</span>
+      }
+    }
+  }
+
+  private static class InsertAnchorFormatter implements NodeFormatter {
+    private final InsertAnchorOptions options;
+
+<span class="fc" id="L228">    public InsertAnchorFormatter(DataHolder options) {</span>
+<span class="fc" id="L229">      this.options = new InsertAnchorOptions(options);</span>
+<span class="fc" id="L230">    }</span>
+
+    @Override
+    public Set&lt;NodeFormattingHandler&lt;?&gt;&gt; getNodeFormattingHandlers() {
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">      return options.enableInlineInsertAnchors</span>
+<span class="fc" id="L235">          ? Collections.singleton(new NodeFormattingHandler&lt;&gt;(InsertAnchorNode.class, this::render))</span>
+<span class="nc" id="L236">          : Collections.emptySet();</span>
+    }
+
+    @SuppressWarnings(&quot;unused&quot;)
+    protected void render(InsertAnchorNode node, NodeFormatterContext context, MarkdownWriter markdown) {
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">      if (options.enableRendering) {</span>
+<span class="fc" id="L242">        markdown.append(&quot;{{ insert: &quot;);</span>
+<span class="fc" id="L243">        markdown.append(node.getType());</span>
+<span class="fc" id="L244">        markdown.append(&quot;, &quot;);</span>
+<span class="fc" id="L245">        markdown.append(node.getIdReference());</span>
+<span class="fc" id="L246">        markdown.append(&quot; }}&quot;);</span>
+      }
+<span class="fc" id="L248">    }</span>
+
+    @Override
+    public Set&lt;Class&lt;?&gt;&gt; getNodeClasses() {
+<span class="fc" id="L252">      return Collections.singleton(InsertAnchorNode.class);</span>
+    }
+
+<span class="fc" id="L255">    public static class Factory implements NodeFormatterFactory {</span>
+
+      @Override
+      public NodeFormatter create(DataHolder options) {
+<span class="fc" id="L259">        return new InsertAnchorFormatter(options);</span>
+      }
+
+    }
+  }
+
+  private static class InsertAnchorHtmlNodeRenderer implements HtmlNodeRenderer {
+    private final InsertAnchorOptions options;
+
+<span class="fc" id="L268">    public InsertAnchorHtmlNodeRenderer(DataHolder options) {</span>
+<span class="fc" id="L269">      this.options = new InsertAnchorOptions(options);</span>
+<span class="fc" id="L270">    }</span>
+
+    @Override
+    public Set&lt;HtmlNodeRendererHandler&lt;?&gt;&gt; getHtmlNodeRendererHandlers() {
+<span class="pc bpc" id="L274" title="1 of 2 branches missed.">      return options.enableInlineInsertAnchors</span>
+<span class="fc" id="L275">          ? Collections.singleton(new HtmlNodeRendererHandler&lt;&gt;(&quot;insert&quot;, Element.class, this::processInsert))</span>
+<span class="nc" id="L276">          : Collections.emptySet();</span>
+    }
+
+    private void processInsert( // NOPMD used as lambda
+        Element node,
+        @SuppressWarnings(&quot;unused&quot;) HtmlNodeConverterContext context,
+        HtmlMarkdownWriter out) {
+
+<span class="fc" id="L284">      String type = node.attr(&quot;type&quot;);</span>
+<span class="fc" id="L285">      String idRef = node.attr(&quot;id-ref&quot;);</span>
+
+<span class="fc" id="L287">      out.append(&quot;{{ insert: &quot;);</span>
+<span class="fc" id="L288">      out.append(type);</span>
+<span class="fc" id="L289">      out.append(&quot;, &quot;);</span>
+<span class="fc" id="L290">      out.append(idRef);</span>
+<span class="fc" id="L291">      out.append(&quot; }}&quot;);</span>
+<span class="fc" id="L292">    }</span>
+
+<span class="fc" id="L294">    public static class Factory implements HtmlNodeRendererFactory {</span>
+
+      @Override
+      public HtmlNodeRenderer apply(DataHolder options) {
+<span class="fc" id="L298">        return new InsertAnchorHtmlNodeRenderer(options);</span>
+      }
+    }
+  }
+
+  public static class InsertAnchorNode
+      extends Node {
+
+    @NonNull
+    private BasedSequence type;
+    @NonNull
+    private BasedSequence idReference;
+
+    @SuppressWarnings(&quot;null&quot;)
+    public InsertAnchorNode(@NonNull String type, @NonNull String idReference) {
+<span class="nc" id="L313">      this(CharSubSequence.of(type), CharSubSequence.of(idReference));</span>
+<span class="nc" id="L314">    }</span>
+
+<span class="fc" id="L316">    public InsertAnchorNode(@NonNull BasedSequence type, @NonNull BasedSequence idReference) {</span>
+<span class="fc" id="L317">      this.type = type;</span>
+<span class="fc" id="L318">      this.idReference = idReference;</span>
+<span class="fc" id="L319">    }</span>
+
+    @NonNull
+    public BasedSequence getType() {
+<span class="fc" id="L323">      return type;</span>
+    }
+
+    @NonNull
+    public BasedSequence getIdReference() {
+<span class="fc" id="L328">      return idReference;</span>
+    }
+
+    public void setIdReference(@NonNull BasedSequence value) {
+<span class="nc" id="L332">      this.idReference = value;</span>
+<span class="nc" id="L333">    }</span>
+
+    @Override
+    @NonNull
+    public BasedSequence[] getSegments() {
+<span class="nc" id="L338">      @NonNull BasedSequence[] retval = { getType(), getIdReference() };</span>
+<span class="nc" id="L339">      return retval;</span>
+    }
+
+    @Override
+    public void getAstExtra(StringBuilder out) {
+<span class="fc" id="L344">      segmentSpanChars(out, getType(), &quot;type&quot;);</span>
+<span class="fc" id="L345">      segmentSpanChars(out, getIdReference(), &quot;id-ref&quot;);</span>
+<span class="fc" id="L346">    }</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

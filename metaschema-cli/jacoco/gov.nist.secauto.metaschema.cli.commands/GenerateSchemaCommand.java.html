@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GenerateSchemaCommand.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Command Line Tool</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.cli.commands</a> &gt; <span class="el_source">GenerateSchemaCommand.java</span></div><h1>GenerateSchemaCommand.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.cli.commands;
+
+import gov.nist.secauto.metaschema.cli.processor.CLIProcessor.CallingContext;
+import gov.nist.secauto.metaschema.cli.processor.ExitCode;
+import gov.nist.secauto.metaschema.cli.processor.ExitStatus;
+import gov.nist.secauto.metaschema.cli.processor.InvalidArgumentException;
+import gov.nist.secauto.metaschema.cli.processor.OptionUtils;
+import gov.nist.secauto.metaschema.cli.processor.command.AbstractTerminalCommand;
+import gov.nist.secauto.metaschema.cli.processor.command.DefaultExtraArgument;
+import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;
+import gov.nist.secauto.metaschema.cli.processor.command.ICommandExecutor;
+import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
+import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
+import gov.nist.secauto.metaschema.core.util.CustomCollectors;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.io.Format;
+import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator.SchemaFormat;
+import gov.nist.secauto.metaschema.schemagen.SchemaGenerationFeature;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L67">public class GenerateSchemaCommand</span>
+    extends AbstractTerminalCommand {
+<span class="fc" id="L69">  private static final Logger LOGGER = LogManager.getLogger(GenerateSchemaCommand.class);</span>
+
+  @NonNull
+  private static final String COMMAND = &quot;generate-schema&quot;;
+  @NonNull
+  private static final List&lt;ExtraArgument&gt; EXTRA_ARGUMENTS;
+  @NonNull
+<span class="fc" id="L76">  private static final Option OVERWRITE_OPTION = ObjectUtils.notNull(</span>
+<span class="fc" id="L77">      Option.builder()</span>
+<span class="fc" id="L78">          .longOpt(&quot;overwrite&quot;)</span>
+<span class="fc" id="L79">          .desc(&quot;overwrite the destination if it exists&quot;)</span>
+<span class="fc" id="L80">          .build());</span>
+  @NonNull
+<span class="fc" id="L82">  private static final Option AS_OPTION = ObjectUtils.notNull(</span>
+<span class="fc" id="L83">      Option.builder()</span>
+<span class="fc" id="L84">          .longOpt(&quot;as&quot;)</span>
+<span class="fc" id="L85">          .required()</span>
+<span class="fc" id="L86">          .hasArg()</span>
+<span class="fc" id="L87">          .argName(&quot;FORMAT&quot;)</span>
+<span class="fc" id="L88">          .desc(&quot;source format: xml, json, or yaml&quot;)</span>
+<span class="fc" id="L89">          .build());</span>
+  @NonNull
+<span class="fc" id="L91">  private static final Option INLINE_TYPES_OPTION = ObjectUtils.notNull(</span>
+<span class="fc" id="L92">      Option.builder()</span>
+<span class="fc" id="L93">          .longOpt(&quot;inline-types&quot;)</span>
+<span class="fc" id="L94">          .desc(&quot;definitions declared inline will be generated as inline types&quot;)</span>
+<span class="fc" id="L95">          .build());</span>
+
+  static {
+<span class="fc" id="L98">    EXTRA_ARGUMENTS = ObjectUtils.notNull(List.of(</span>
+        new DefaultExtraArgument(&quot;metaschema-module-file&quot;, true),
+        new DefaultExtraArgument(&quot;destination-schema-file&quot;, false)));
+<span class="fc" id="L101">  }</span>
+
+  @Override
+  public String getName() {
+<span class="fc" id="L105">    return COMMAND;</span>
+  }
+
+  @Override
+  public String getDescription() {
+<span class="fc" id="L110">    return &quot;Generate a schema for the specified Module module&quot;;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public Collection&lt;? extends Option&gt; gatherOptions() {
+<span class="fc" id="L116">    return List.of(</span>
+        OVERWRITE_OPTION,
+        AS_OPTION,
+        INLINE_TYPES_OPTION);
+  }
+
+  @Override
+  public List&lt;ExtraArgument&gt; getExtraArguments() {
+<span class="nc" id="L124">    return EXTRA_ARGUMENTS;</span>
+  }
+
+  @SuppressWarnings(&quot;PMD.PreserveStackTrace&quot;) // intended
+  @Override
+  public void validateOptions(CallingContext callingContext, CommandLine cmdLine) throws InvalidArgumentException {
+    try {
+<span class="fc" id="L131">      String asFormatText = cmdLine.getOptionValue(AS_OPTION);</span>
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">      if (asFormatText != null) {</span>
+<span class="fc" id="L133">        SchemaFormat.valueOf(asFormatText.toUpperCase(Locale.ROOT));</span>
+      }
+<span class="nc" id="L135">    } catch (IllegalArgumentException ex) {</span>
+<span class="nc" id="L136">      InvalidArgumentException newEx = new InvalidArgumentException( // NOPMD - intentional</span>
+<span class="nc" id="L137">          String.format(&quot;Invalid '%s' argument. The format must be one of: %s.&quot;,</span>
+<span class="nc" id="L138">              OptionUtils.toArgument(AS_OPTION),</span>
+<span class="nc" id="L139">              Arrays.asList(Format.values()).stream()</span>
+<span class="nc" id="L140">                  .map(format -&gt; format.name())</span>
+<span class="nc" id="L141">                  .collect(CustomCollectors.joiningWithOxfordComma(&quot;and&quot;))));</span>
+<span class="nc" id="L142">      newEx.setOption(AS_OPTION);</span>
+<span class="nc" id="L143">      newEx.addSuppressed(ex);</span>
+<span class="nc" id="L144">      throw newEx;</span>
+<span class="fc" id="L145">    }</span>
+
+<span class="fc" id="L147">    List&lt;String&gt; extraArgs = cmdLine.getArgList();</span>
+<span class="pc bpc" id="L148" title="2 of 4 branches missed.">    if (extraArgs.isEmpty() || extraArgs.size() &gt; 2) {</span>
+<span class="nc" id="L149">      throw new InvalidArgumentException(&quot;Illegal number of arguments.&quot;);</span>
+    }
+
+<span class="fc" id="L152">    Path module = Paths.get(extraArgs.get(0));</span>
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">    if (!Files.exists(module)) {</span>
+<span class="nc" id="L154">      throw new InvalidArgumentException(&quot;The provided metaschema module '&quot; + module + &quot;' does not exist.&quot;);</span>
+    }
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">    if (!Files.isReadable(module)) {</span>
+<span class="nc" id="L157">      throw new InvalidArgumentException(&quot;The provided metaschema module '&quot; + module + &quot;' is not readable.&quot;);</span>
+    }
+<span class="fc" id="L159">  }</span>
+
+  @Override
+  public ICommandExecutor newExecutor(CallingContext callingContext, CommandLine cmdLine) {
+<span class="fc" id="L163">    return ICommandExecutor.using(callingContext, cmdLine, this::executeCommand);</span>
+  }
+
+  @SuppressWarnings({
+      &quot;PMD.OnlyOneReturn&quot;, // readability
+      &quot;unused&quot;
+  })
+  protected ExitStatus executeCommand(
+      @NonNull CallingContext callingContext,
+      @NonNull CommandLine cmdLine) {
+<span class="fc" id="L173">    List&lt;String&gt; extraArgs = cmdLine.getArgList();</span>
+
+<span class="fc" id="L175">    Path destination = null;</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">    if (extraArgs.size() &gt; 1) {</span>
+<span class="fc" id="L177">      destination = Paths.get(extraArgs.get(1)).toAbsolutePath();</span>
+    }
+
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">    if (destination != null) {</span>
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">      if (Files.exists(destination)) {</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">        if (!cmdLine.hasOption(OVERWRITE_OPTION)) {</span>
+<span class="nc" id="L183">          return ExitCode.INVALID_ARGUMENTS.exitMessage( // NOPMD readability</span>
+<span class="nc" id="L184">              String.format(&quot;The provided destination '%s' already exists and the '%s' option was not provided.&quot;,</span>
+                  destination,
+<span class="nc" id="L186">                  OptionUtils.toArgument(OVERWRITE_OPTION)));</span>
+        }
+<span class="nc bnc" id="L188" title="All 2 branches missed.">        if (!Files.isWritable(destination)) {</span>
+<span class="nc" id="L189">          return ExitCode.IO_ERROR.exitMessage( // NOPMD readability</span>
+              &quot;The provided destination '&quot; + destination + &quot;' is not writable.&quot;);
+        }
+      } else {
+<span class="fc" id="L193">        Path parent = destination.getParent();</span>
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">        if (parent != null) {</span>
+          try {
+<span class="fc" id="L196">            Files.createDirectories(parent);</span>
+<span class="nc" id="L197">          } catch (IOException ex) {</span>
+<span class="nc" id="L198">            return ExitCode.INVALID_TARGET.exit().withThrowable(ex); // NOPMD readability</span>
+<span class="fc" id="L199">          }</span>
+        }
+      }
+    }
+
+<span class="fc" id="L204">    String asFormatText = cmdLine.getOptionValue(AS_OPTION);</span>
+<span class="fc" id="L205">    SchemaFormat asFormat = SchemaFormat.valueOf(asFormatText.toUpperCase(Locale.ROOT));</span>
+
+<span class="fc" id="L207">    IMutableConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; configuration = new DefaultConfiguration&lt;&gt;();</span>
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">    if (cmdLine.hasOption(INLINE_TYPES_OPTION)) {</span>
+<span class="nc" id="L209">      configuration.enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">      if (SchemaFormat.JSON.equals(asFormat)) {</span>
+<span class="nc" id="L211">        configuration.disableFeature(SchemaGenerationFeature.INLINE_CHOICE_DEFINITIONS);</span>
+      } else {
+<span class="nc" id="L213">        configuration.enableFeature(SchemaGenerationFeature.INLINE_CHOICE_DEFINITIONS);</span>
+      }
+    }
+
+<span class="fc" id="L217">    Path input = Paths.get(extraArgs.get(0));</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">    assert input != null;</span>
+    try {
+<span class="fc" id="L220">      ModuleLoader loader = new ModuleLoader();</span>
+<span class="fc" id="L221">      loader.allowEntityResolution();</span>
+<span class="fc" id="L222">      IModule module = loader.load(input);</span>
+
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">      if (LOGGER.isInfoEnabled()) {</span>
+<span class="fc" id="L225">        LOGGER.info(&quot;Generating {} schema for '{}'.&quot;, asFormat.name(), input);</span>
+      }
+<span class="pc bpc" id="L227" title="1 of 2 branches missed.">      if (destination == null) {</span>
+        @SuppressWarnings({ &quot;resource&quot;, &quot;PMD.CloseResource&quot; }) // not owned
+<span class="nc" id="L229">        OutputStream os = ObjectUtils.notNull(System.out);</span>
+<span class="nc" id="L230">        ISchemaGenerator.generateSchema(module, os, asFormat, configuration);</span>
+<span class="nc" id="L231">      } else {</span>
+<span class="fc" id="L232">        ISchemaGenerator.generateSchema(module, destination, asFormat, configuration);</span>
+      }
+<span class="nc" id="L234">    } catch (IOException | MetaschemaException ex) {</span>
+<span class="nc" id="L235">      return ExitCode.PROCESSING_ERROR.exit().withThrowable(ex); // NOPMD readability</span>
+<span class="fc" id="L236">    }</span>
+<span class="pc bpc" id="L237" title="2 of 4 branches missed.">    if (destination != null &amp;&amp; LOGGER.isInfoEnabled()) {</span>
+<span class="fc" id="L238">      LOGGER.info(&quot;Generated {} schema file: {}&quot;, asFormat.toString(), destination);</span>
+    }
+<span class="fc" id="L240">    return ExitCode.OK.exit();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

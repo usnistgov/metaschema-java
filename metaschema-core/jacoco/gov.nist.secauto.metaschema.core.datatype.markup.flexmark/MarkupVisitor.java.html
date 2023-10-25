@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MarkupVisitor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.datatype.markup.flexmark</a> &gt; <span class="el_source">MarkupVisitor.java</span></div><h1>MarkupVisitor.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.datatype.markup.flexmark;
+
+import com.vladsch.flexmark.ast.AutoLink;
+import com.vladsch.flexmark.ast.BlockQuote;
+import com.vladsch.flexmark.ast.BulletList;
+import com.vladsch.flexmark.ast.Code;
+import com.vladsch.flexmark.ast.CodeBlock;
+import com.vladsch.flexmark.ast.Emphasis;
+import com.vladsch.flexmark.ast.FencedCodeBlock;
+import com.vladsch.flexmark.ast.HardLineBreak;
+import com.vladsch.flexmark.ast.Heading;
+import com.vladsch.flexmark.ast.HtmlBlock;
+import com.vladsch.flexmark.ast.HtmlCommentBlock;
+import com.vladsch.flexmark.ast.HtmlEntity;
+import com.vladsch.flexmark.ast.HtmlInline;
+import com.vladsch.flexmark.ast.Image;
+import com.vladsch.flexmark.ast.IndentedCodeBlock;
+import com.vladsch.flexmark.ast.Link;
+import com.vladsch.flexmark.ast.LinkRef;
+import com.vladsch.flexmark.ast.ListItem;
+import com.vladsch.flexmark.ast.MailLink;
+import com.vladsch.flexmark.ast.OrderedList;
+import com.vladsch.flexmark.ast.Paragraph;
+import com.vladsch.flexmark.ast.Reference;
+import com.vladsch.flexmark.ast.SoftLineBreak;
+import com.vladsch.flexmark.ast.StrongEmphasis;
+import com.vladsch.flexmark.ast.Text;
+import com.vladsch.flexmark.ast.TextBase;
+import com.vladsch.flexmark.ast.ThematicBreak;
+import com.vladsch.flexmark.ext.gfm.strikethrough.Subscript;
+import com.vladsch.flexmark.ext.superscript.Superscript;
+import com.vladsch.flexmark.ext.tables.TableBlock;
+import com.vladsch.flexmark.ext.typographic.TypographicQuotes;
+import com.vladsch.flexmark.ext.typographic.TypographicSmarts;
+import com.vladsch.flexmark.util.ast.Block;
+import com.vladsch.flexmark.util.ast.Document;
+import com.vladsch.flexmark.util.ast.Node;
+
+import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.InsertAnchorExtension.InsertAnchorNode;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+/**
+ *
+ * This implementation is stateless.
+ *
+ * @param &lt;T&gt;
+ *          the type of stream to write to
+ * @param &lt;E&gt;
+ *          the type of exception that can be thrown when a writing error occurs
+ */
+<span class="fc" id="L80">@SuppressFBWarnings(&quot;THROWS_METHOD_THROWS_CLAUSE_THROWABLE&quot;)</span>
+public class MarkupVisitor&lt;T, E extends Throwable&gt; implements IMarkupVisitor&lt;T, E&gt; {
+  private final boolean handleBlockElements;
+
+<span class="fc" id="L84">  public MarkupVisitor(boolean handleBlockElements) {</span>
+<span class="fc" id="L85">    this.handleBlockElements = handleBlockElements;</span>
+<span class="fc" id="L86">  }</span>
+
+  protected boolean isHandleBlockElements() {
+<span class="fc" id="L89">    return handleBlockElements;</span>
+  }
+
+  @Override
+  public void visitDocument(Document document, IMarkupWriter&lt;T, E&gt; writer) throws E {
+<span class="fc" id="L94">    visitChildren(document, writer);</span>
+<span class="fc" id="L95">  }</span>
+
+  protected void visitChildren(@NonNull Node parentNode, @NonNull IMarkupWriter&lt;T, E&gt; writer) throws E {
+<span class="fc bfc" id="L98" title="All 2 branches covered.">    for (Node node : parentNode.getChildren()) {</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">      assert node != null;</span>
+<span class="fc" id="L100">      visit(node, writer);</span>
+<span class="fc" id="L101">    }</span>
+<span class="fc" id="L102">  }</span>
+
+  protected void visit(@NonNull Node node, @NonNull IMarkupWriter&lt;T, E&gt; writer) throws E {
+<span class="fc" id="L105">    boolean handled = processInlineElements(node, writer);</span>
+<span class="pc bpc" id="L106" title="1 of 4 branches missed.">    if (!handled &amp;&amp; node instanceof Block) {</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">      if (isHandleBlockElements()) {</span>
+<span class="fc" id="L108">        handled = processBlockElements(node, writer);</span>
+      } else {
+<span class="fc" id="L110">        visitChildren(node, writer);</span>
+<span class="fc" id="L111">        handled = true;</span>
+      }
+    }
+
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">    if (!handled) {</span>
+<span class="nc" id="L116">      throw new UnsupportedOperationException(</span>
+<span class="nc" id="L117">          String.format(&quot;Node '%s' not handled. AST: %s&quot;, node.getNodeName(), node.toAstString(true)));</span>
+    }
+<span class="fc" id="L119">  }</span>
+
+  protected boolean processInlineElements( // NOPMD dispatch method
+      @NonNull Node node,
+      @NonNull IMarkupWriter&lt;T, E&gt; writer) throws E { // NOPMD - acceptable
+<span class="fc" id="L124">    boolean retval = true;</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">    if (node instanceof Text) {</span>
+<span class="fc" id="L126">      writer.writeText((Text) node);</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">    } else if (node instanceof TextBase) {</span>
+<span class="fc" id="L128">      writer.writeText((TextBase) node);</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">    } else if (node instanceof HtmlEntity) {</span>
+<span class="fc" id="L130">      writer.writeHtmlEntity((HtmlEntity) node);</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">    } else if (node instanceof TypographicSmarts) {</span>
+<span class="nc" id="L132">      writer.writeHtmlEntity((TypographicSmarts) node);</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">    } else if (node instanceof TypographicQuotes) {</span>
+<span class="fc" id="L134">      writer.writeTypographicQuotes((TypographicQuotes) node, this::visit);</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">    } else if (node instanceof Code) {</span>
+<span class="fc" id="L136">      writer.writeCode((Code) node, this::visit);</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">    } else if (node instanceof StrongEmphasis) {</span>
+<span class="fc" id="L138">      writer.writeElement(&quot;strong&quot;, node, this::visit);</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">    } else if (node instanceof Emphasis) {</span>
+<span class="fc" id="L140">      writer.writeElement(&quot;em&quot;, node, this::visit);</span>
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">    } else if (node instanceof ListItem) {</span>
+<span class="nc" id="L142">      writer.writeElement(&quot;li&quot;, node, this::visit);</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">    } else if (node instanceof Link) {</span>
+<span class="fc" id="L144">      writer.writeLink((Link) node, this::visit);</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">    } else if (node instanceof AutoLink) {</span>
+<span class="fc" id="L146">      writer.writeLink((AutoLink) node);</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">    } else if (node instanceof MailLink) {</span>
+<span class="fc" id="L148">      writer.writeLink((MailLink) node);</span>
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">    } else if (node instanceof Subscript) {</span>
+<span class="nc" id="L150">      writer.writeElement(&quot;sub&quot;, node, this::visit);</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">    } else if (node instanceof Superscript) {</span>
+<span class="nc" id="L152">      writer.writeElement(&quot;sup&quot;, node, this::visit);</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">    } else if (node instanceof Image) {</span>
+<span class="fc" id="L154">      writer.writeImage((Image) node);</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">    } else if (node instanceof InsertAnchorNode) {</span>
+<span class="fc" id="L156">      writer.writeInsertAnchor((InsertAnchorNode) node);</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">    } else if (node instanceof SoftLineBreak) {</span>
+<span class="fc" id="L158">      writer.writeText(&quot;\n&quot;);</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">    } else if (node instanceof HardLineBreak) {</span>
+<span class="fc" id="L160">      writer.writeBreak((HardLineBreak) node);</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">    } else if (node instanceof HtmlInline) {</span>
+<span class="nc" id="L162">      writer.writeInlineHtml((HtmlInline) node);</span>
+<span class="pc bpc" id="L163" title="2 of 4 branches missed.">    } else if (node instanceof LinkRef || node instanceof Reference) {</span>
+<span class="nc" id="L164">      throw new UnsupportedOperationException(</span>
+<span class="nc" id="L165">          String.format(</span>
+              &quot;Link references are not supported by Metaschema.&quot;
+                  + &quot; Perhaps you have an unescaped bracket in the following string? %s&quot;,
+<span class="nc" id="L168">              ObjectUtils.notNull(node.getParent()).getChars()));</span>
+    } else {
+<span class="fc" id="L170">      retval = false;</span>
+    }
+<span class="fc" id="L172">    return retval;</span>
+  }
+
+  protected boolean processBlockElements( // NOPMD dispatch method
+      @NonNull Node node,
+      @NonNull IMarkupWriter&lt;T, E&gt; writer) throws E {
+<span class="fc" id="L178">    boolean retval = true;</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">    if (node instanceof Paragraph) {</span>
+<span class="fc" id="L180">      writer.writeParagraph((Paragraph) node, this::visit);</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">    } else if (node instanceof Heading) {</span>
+<span class="fc" id="L182">      writer.writeHeading((Heading) node, this::visit);</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">    } else if (node instanceof OrderedList) {</span>
+<span class="fc" id="L184">      writer.writeList(&quot;ol&quot;, (OrderedList) node, this::visit);</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">    } else if (node instanceof BulletList) {</span>
+<span class="fc" id="L186">      writer.writeList(&quot;ul&quot;, (BulletList) node, this::visit);</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">    } else if (node instanceof TableBlock) {</span>
+<span class="fc" id="L188">      writer.writeTable((TableBlock) node, this::visit);</span>
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">    } else if (node instanceof HtmlBlock) {</span>
+<span class="nc" id="L190">      writer.writeBlockHtml((HtmlBlock) node);</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">    } else if (node instanceof HtmlCommentBlock) {</span>
+<span class="fc" id="L192">      writer.writeComment((HtmlCommentBlock) node);</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">    } else if (node instanceof IndentedCodeBlock) {</span>
+<span class="fc" id="L194">      writer.writeCodeBlock((IndentedCodeBlock) node, this::visit);</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">    } else if (node instanceof FencedCodeBlock) {</span>
+<span class="fc" id="L196">      writer.writeCodeBlock((FencedCodeBlock) node, this::visit);</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">    } else if (node instanceof CodeBlock) {</span>
+<span class="fc" id="L198">      writer.writeCodeBlock((CodeBlock) node, this::visit);</span>
+<span class="fc bfc" id="L199" title="All 2 branches covered.">    } else if (node instanceof BlockQuote) {</span>
+<span class="fc" id="L200">      writer.writeBlockQuote((BlockQuote) node, this::visit);</span>
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">    } else if (node instanceof ThematicBreak) {</span>
+<span class="fc" id="L202">      writer.writeBreak((ThematicBreak) node);</span>
+    } else {
+<span class="nc" id="L204">      retval = false;</span>
+    }
+
+    // if (retval &amp;&amp; node.getNextAny(Block.class) != null) {
+    // writer.writeText(&quot;\n&quot;);
+    // }
+<span class="fc" id="L210">    return retval;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

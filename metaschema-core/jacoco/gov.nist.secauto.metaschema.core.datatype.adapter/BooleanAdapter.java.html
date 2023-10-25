@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BooleanAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.datatype.adapter</a> &gt; <span class="el_source">BooleanAdapter.java</span></div><h1>BooleanAdapter.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.datatype.adapter;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
+
+import gov.nist.secauto.metaschema.core.datatype.AbstractDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.metapath.function.InvalidValueForCastFunctionException;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.io.IOException;
+import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public class BooleanAdapter
+    extends AbstractDataTypeAdapter&lt;Boolean, IBooleanItem&gt; {
+  @NonNull
+<span class="fc" id="L49">  private static final List&lt;String&gt; NAMES = ObjectUtils.notNull(</span>
+<span class="fc" id="L50">      List.of(&quot;boolean&quot;));</span>
+
+  BooleanAdapter() {
+<span class="fc" id="L53">    super(Boolean.class);</span>
+<span class="fc" id="L54">  }</span>
+
+  @Override
+  public List&lt;String&gt; getNames() {
+<span class="fc" id="L58">    return NAMES;</span>
+  }
+
+  @Override
+  public JsonFormatTypes getJsonRawType() {
+<span class="nc" id="L63">    return JsonFormatTypes.BOOLEAN;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public Boolean parse(String value) {
+<span class="fc" id="L69">    return Boolean.valueOf(value);</span>
+  }
+
+  @Override
+  public Boolean parse(JsonParser parser) throws IOException {
+<span class="fc" id="L74">    Boolean value = parser.getBooleanValue();</span>
+    // skip over value
+<span class="fc" id="L76">    parser.nextToken();</span>
+<span class="fc" id="L77">    return value;</span>
+  }
+
+  @Override
+  public void writeJsonValue(Object value, JsonGenerator generator)
+      throws IOException {
+    try {
+<span class="nc" id="L84">      generator.writeBoolean((Boolean) value);</span>
+<span class="nc" id="L85">    } catch (ClassCastException ex) {</span>
+<span class="nc" id="L86">      throw new IOException(ex);</span>
+<span class="nc" id="L87">    }</span>
+<span class="nc" id="L88">  }</span>
+
+  @Override
+  public Boolean copy(Object obj) {
+    // the value is immutable
+<span class="nc" id="L93">    return (Boolean) obj;</span>
+  }
+
+  @Override
+  public Class&lt;IBooleanItem&gt; getItemClass() {
+<span class="fc" id="L98">    return IBooleanItem.class;</span>
+  }
+
+  @Override
+  public IBooleanItem newItem(Object value) {
+<span class="fc" id="L103">    Boolean item = toValue(value);</span>
+<span class="fc" id="L104">    return IBooleanItem.valueOf(item);</span>
+  }
+
+  @Override
+  protected IBooleanItem castInternal(@NonNull IAnyAtomicItem item) {
+    IBooleanItem retval;
+<span class="fc bfc" id="L110" title="All 2 branches covered.">    if (item instanceof INumericItem) {</span>
+<span class="fc" id="L111">      retval = castToBoolean((INumericItem) item);</span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">    } else if (item instanceof IStringItem) {</span>
+<span class="fc" id="L113">      retval = castToBoolean((IStringItem) item);</span>
+    } else {
+<span class="nc" id="L115">      retval = castToBoolean(item.newStringItem());</span>
+    }
+<span class="fc" id="L117">    return retval;</span>
+  }
+
+  /**
+   * Cast the provided numeric value to a boolean. Any non-zero value will be
+   * {@code true}, or {@code false} otherwise.
+   *
+   * @param item
+   *          the item to cast
+   * @return {@code true} if the item value is non-zero, or {@code false}
+   *         otherwise
+   */
+  @NonNull
+  protected IBooleanItem castToBoolean(@NonNull INumericItem item) {
+<span class="fc" id="L131">    return IBooleanItem.valueOf(item.toEffectiveBoolean());</span>
+  }
+
+  /**
+   * If the string is a numeric value, treat it as so. Otherwise parse the value
+   * as a boolean string.
+   *
+   * @param item
+   *          the item to cast
+   * @return the effective boolean value of the string
+   * @throws InvalidValueForCastFunctionException
+   *           if the provided item cannot be cast to a boolean value by any means
+   */
+  @NonNull
+  protected IBooleanItem castToBoolean(@NonNull IStringItem item) {
+    IBooleanItem retval;
+    try {
+<span class="fc" id="L148">      INumericItem numeric = INumericItem.cast(item);</span>
+<span class="fc" id="L149">      retval = castToBoolean(numeric);</span>
+<span class="fc" id="L150">    } catch (InvalidValueForCastFunctionException ex) {</span>
+<span class="fc" id="L151">      retval = super.castInternal(item);</span>
+<span class="fc" id="L152">    }</span>
+<span class="fc" id="L153">    return retval;</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ASTPrinter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath</a> &gt; <span class="el_source">ASTPrinter.java</span></div><h1>ASTPrinter.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath;
+
+import gov.nist.secauto.metaschema.core.metapath.ASTPrinter.State;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+@SuppressWarnings(&quot;PMD.CouplingBetweenObjects&quot;)
+final class ASTPrinter
+    extends AbstractExpressionVisitor&lt;String, State&gt; {
+
+<span class="nc" id="L38">  private static final ASTPrinter SINGLETON = new ASTPrinter();</span>
+
+  /**
+   * Get the singleton instance.
+   *
+   * @return the instance
+   */
+  public static ASTPrinter instance() {
+<span class="nc" id="L46">    return SINGLETON;</span>
+  }
+
+  private ASTPrinter() {
+    // disable construction
+  }
+
+  @Override
+  protected String visitChildren(IExpression expr, State context) {
+<span class="nc" id="L55">    context.push();</span>
+<span class="nc" id="L56">    String result = super.visitChildren(expr, context);</span>
+<span class="nc" id="L57">    context.pop();</span>
+<span class="nc" id="L58">    return result;</span>
+  }
+
+  @Override
+  protected String aggregateResult(String result, String nextResult, State context) {
+<span class="nc" id="L63">    StringBuilder buffer = new StringBuilder();</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">    if (result != null) {</span>
+<span class="nc" id="L65">      buffer.append(result);</span>
+      // buffer.append(&quot; ar &quot;+System.lineSeparator());
+    }
+
+<span class="nc" id="L69">    buffer.append(context.getIndentation())</span>
+<span class="nc" id="L70">        .append(nextResult);</span>
+<span class="nc" id="L71">    return buffer.toString();</span>
+  }
+
+  @Override
+  protected String defaultResult() {
+<span class="nc" id="L76">    return &quot;&quot;;</span>
+  }
+
+  /**
+   * Append the {@code childResult} to the record produced for the current node.
+   *
+   * @param expr
+   *          the current node
+   * @param childResult
+   *          the output generated for the curren't node's children
+   * @param context
+   *          the output context state
+   * @return the string representation of the node tree for the current node and
+   *         its children
+   */
+  @SuppressWarnings(&quot;static-method&quot;)
+  protected String appendNode(@NonNull IExpression expr, @Nullable String childResult, @NonNull State context) {
+<span class="nc" id="L93">    StringBuilder buffer = new StringBuilder();</span>
+<span class="nc" id="L94">    buffer.append(context.getIndentation())</span>
+<span class="nc" id="L95">        .append(expr.toASTString());</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">    if (childResult != null) {</span>
+<span class="nc" id="L97">      buffer.append(System.lineSeparator())</span>
+<span class="nc" id="L98">          .append(childResult);</span>
+    }
+<span class="nc" id="L100">    return buffer.toString();</span>
+  }
+
+  /**
+   * Visit a node and produce a string representation of its the node tree.
+   *
+   * @param expression
+   *          the node to build the node tree for
+   * @return the string representation of the node tree for the provided
+   *         expression node and its children
+   */
+  public String visit(@NonNull IExpression expression) {
+<span class="nc" id="L112">    return visit(expression, new State());</span>
+  }
+
+  @Override
+  public String visitAddition(Addition expr, State context) {
+<span class="nc" id="L117">    return appendNode(expr, super.visitAddition(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitAnd(And expr, State context) {
+<span class="nc" id="L122">    return appendNode(expr, super.visitAnd(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitStep(Step expr, State context) {
+<span class="nc" id="L127">    return appendNode(expr, super.visitStep(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitValueComparison(ValueComparison expr, State context) {
+<span class="nc" id="L132">    return appendNode(expr, super.visitValueComparison(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitGeneralComparison(GeneralComparison expr, State context) {
+<span class="nc" id="L137">    return appendNode(expr, super.visitGeneralComparison(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitContextItem(ContextItem expr, State context) {
+<span class="nc" id="L142">    return appendNode(expr, super.visitContextItem(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitDecimalLiteral(DecimalLiteral expr, State context) {
+<span class="nc" id="L147">    return appendNode(expr, super.visitDecimalLiteral(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitDivision(Division expr, State context) {
+<span class="nc" id="L152">    return appendNode(expr, super.visitDivision(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitExcept(@NonNull Except expr, State context) {
+<span class="nc" id="L157">    return appendNode(expr, super.visitExcept(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitFlag(Flag expr, State context) {
+<span class="nc" id="L162">    return appendNode(expr, super.visitFlag(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitFunctionCall(FunctionCall expr, State context) {
+<span class="nc" id="L167">    return appendNode(expr, super.visitFunctionCall(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitIntegerDivision(IntegerDivision expr, State context) {
+<span class="nc" id="L172">    return appendNode(expr, super.visitIntegerDivision(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitIntegerLiteral(IntegerLiteral expr, State context) {
+<span class="nc" id="L177">    return appendNode(expr, super.visitIntegerLiteral(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitIntersect(Intersect expr, State context) {
+<span class="nc" id="L182">    return appendNode(expr, super.visitIntersect(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitMetapath(Metapath expr, State context) {
+<span class="nc" id="L187">    return appendNode(expr, super.visitMetapath(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitModulo(Modulo expr, State context) {
+<span class="nc" id="L192">    return appendNode(expr, super.visitModulo(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitModelInstance(ModelInstance expr, State context) {
+<span class="nc" id="L197">    return appendNode(expr, super.visitModelInstance(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitMultiplication(Multiplication expr, State context) {
+<span class="nc" id="L202">    return appendNode(expr, super.visitMultiplication(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitName(Name expr, State context) {
+<span class="nc" id="L207">    return appendNode(expr, super.visitName(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitNegate(Negate expr, State context) {
+<span class="nc" id="L212">    return appendNode(expr, super.visitNegate(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitOr(Or expr, State context) {
+<span class="nc" id="L217">    return appendNode(expr, super.visitOr(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitAxis(Axis expr, State context) {
+<span class="nc" id="L222">    return appendNode(expr, super.visitAxis(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitPredicate(Predicate expr, State context) {
+<span class="nc" id="L227">    return appendNode(expr, super.visitPredicate(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr, State context) {
+<span class="nc" id="L232">    return appendNode(expr, super.visitRelativeDoubleSlashPath(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitRelativeSlashPath(RelativeSlashPath expr, State context) {
+<span class="nc" id="L237">    return appendNode(expr, super.visitRelativeSlashPath(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitRootDoubleSlashPath(RootDoubleSlashPath expr, State context) {
+<span class="nc" id="L242">    return appendNode(expr, super.visitRootDoubleSlashPath(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitRootSlashOnlyPath(RootSlashOnlyPath expr, State context) {
+<span class="nc" id="L247">    return appendNode(expr, super.visitRootSlashOnlyPath(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitRootSlashPath(RootSlashPath expr, State context) {
+<span class="nc" id="L252">    return appendNode(expr, super.visitRootSlashPath(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitStringConcat(StringConcat expr, State context) {
+<span class="nc" id="L257">    return appendNode(expr, super.visitStringConcat(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitStringLiteral(StringLiteral expr, State context) {
+<span class="nc" id="L262">    return appendNode(expr, super.visitStringLiteral(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitSubtraction(Subtraction expr, State context) {
+<span class="nc" id="L267">    return appendNode(expr, super.visitSubtraction(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitUnion(Union expr, State context) {
+<span class="nc" id="L272">    return appendNode(expr, super.visitUnion(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitWildcard(Wildcard expr, State context) {
+<span class="nc" id="L277">    return appendNode(expr, super.visitWildcard(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitLet(Let expr, State context) {
+<span class="nc" id="L282">    return appendNode(expr, super.visitLet(expr, context), context);</span>
+  }
+
+  @Override
+  public String visitVariableReference(VariableReference expr, State context) {
+<span class="nc" id="L287">    return appendNode(expr, super.visitVariableReference(expr, context), context);</span>
+  }
+
+<span class="nc" id="L290">  static class State {</span>
+    private int indentation; // 0;
+    private int lastIndentation; // 0;
+<span class="nc" id="L293">    private String indentationPadding = &quot;&quot;;</span>
+
+    public String getIndentation() {
+<span class="nc bnc" id="L296" title="All 2 branches missed.">      if (indentation != lastIndentation) {</span>
+<span class="nc" id="L297">        StringBuilder buffer = new StringBuilder();</span>
+<span class="nc bnc" id="L298" title="All 2 branches missed.">        for (int i = 0; i &lt; indentation; i++) {</span>
+<span class="nc" id="L299">          buffer.append(&quot;  &quot;);</span>
+        }
+<span class="nc" id="L301">        lastIndentation = indentation;</span>
+<span class="nc" id="L302">        indentationPadding = buffer.toString();</span>
+      }
+<span class="nc" id="L304">      return indentationPadding;</span>
+    }
+
+    public State push() {
+<span class="nc" id="L308">      indentation++;</span>
+<span class="nc" id="L309">      return this;</span>
+    }
+
+    public State pop() {
+<span class="nc" id="L313">      indentation--;</span>
+<span class="nc" id="L314">      return this;</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

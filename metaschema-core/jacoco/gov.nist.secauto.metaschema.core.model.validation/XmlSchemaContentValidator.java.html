@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XmlSchemaContentValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.validation</a> &gt; <span class="el_source">XmlSchemaContentValidator.java</span></div><h1>XmlSchemaContentValidator.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.validation;
+
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.Level;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.xml.XMLConstants;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public class XmlSchemaContentValidator
+    extends AbstractContentValidator {
+  private final Schema schema;
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  private static Schema toSchema(@NonNull List&lt;? extends Source&gt; schemaSources) throws SAXException {
+<span class="nc" id="L59">    SchemaFactory schemafactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);</span>
+    // schemafactory.setResourceResolver(new ClasspathResourceResolver());
+    Schema retval;
+<span class="nc bnc" id="L62" title="All 2 branches missed.">    if (schemaSources.isEmpty()) {</span>
+<span class="nc" id="L63">      retval = schemafactory.newSchema();</span>
+    } else {
+<span class="nc" id="L65">      retval = schemafactory.newSchema(schemaSources.toArray(new Source[0]));</span>
+    }
+
+    // TODO verify source input streams are closed
+<span class="nc" id="L69">    return retval;</span>
+  }
+
+  public XmlSchemaContentValidator(@NonNull List&lt;? extends Source&gt; schemaSources) throws SAXException {
+<span class="nc" id="L73">    this(toSchema(ObjectUtils.requireNonNull(schemaSources, &quot;schemaSources&quot;)));</span>
+<span class="nc" id="L74">  }</span>
+
+<span class="nc" id="L76">  protected XmlSchemaContentValidator(@NonNull Schema schema) {</span>
+<span class="nc" id="L77">    this.schema = ObjectUtils.requireNonNull(schema, &quot;schema&quot;);</span>
+<span class="nc" id="L78">  }</span>
+
+  public Schema getSchema() {
+<span class="nc" id="L81">    return schema;</span>
+  }
+
+  @Override
+  public IValidationResult validate(InputStream is, URI documentUri) throws IOException {
+<span class="nc" id="L86">    Source xmlSource = new StreamSource(is, documentUri.toASCIIString());</span>
+
+<span class="nc" id="L88">    Validator validator = schema.newValidator();</span>
+<span class="nc" id="L89">    XmlValidationErrorHandler errorHandler = new XmlValidationErrorHandler(documentUri);</span>
+<span class="nc" id="L90">    validator.setErrorHandler(errorHandler);</span>
+    try {
+<span class="nc" id="L92">      validator.validate(xmlSource);</span>
+<span class="nc" id="L93">    } catch (SAXException ex) {</span>
+<span class="nc" id="L94">      throw new IOException(String.format(&quot;Unexpected failure during validation of '%s'&quot;, documentUri), ex);</span>
+<span class="nc" id="L95">    }</span>
+<span class="nc" id="L96">    return errorHandler;</span>
+  }
+
+  public static class XmlValidationFinding implements IValidationFinding {
+    @NonNull
+    private final URI documentUri;
+    @NonNull
+    private final SAXParseException exception;
+    @NonNull
+    private final Level severity;
+
+    public XmlValidationFinding(@NonNull Level severity, @NonNull SAXParseException exception,
+<span class="nc" id="L108">        @NonNull URI documentUri) {</span>
+<span class="nc" id="L109">      this.documentUri = ObjectUtils.requireNonNull(documentUri, &quot;documentUri&quot;);</span>
+<span class="nc" id="L110">      this.exception = ObjectUtils.requireNonNull(exception, &quot;exception&quot;);</span>
+<span class="nc" id="L111">      this.severity = ObjectUtils.requireNonNull(severity, &quot;severity&quot;);</span>
+<span class="nc" id="L112">    }</span>
+
+    @Override
+    public Level getSeverity() {
+<span class="nc" id="L116">      return severity;</span>
+    }
+
+    @SuppressWarnings(&quot;null&quot;)
+    @Override
+    public URI getDocumentUri() {
+<span class="nc" id="L122">      String systemId = getCause().getSystemId();</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">      return systemId == null ? documentUri : URI.create(systemId);</span>
+    }
+
+    @SuppressWarnings(&quot;null&quot;)
+    @Override
+    public String getMessage() {
+<span class="nc" id="L129">      return getCause().getLocalizedMessage();</span>
+    }
+
+    @NonNull
+    @Override
+    public SAXParseException getCause() {
+<span class="nc" id="L135">      return exception;</span>
+    }
+  }
+
+  private static class XmlValidationErrorHandler implements ErrorHandler, IValidationResult {
+    @NonNull
+    private final URI documentUri;
+<span class="nc" id="L142">    @NonNull</span>
+    private final List&lt;XmlValidationFinding&gt; findings = new LinkedList&lt;&gt;();
+<span class="nc" id="L144">    @NonNull</span>
+    private Level highestSeverity = Level.INFORMATIONAL;
+
+<span class="nc" id="L147">    public XmlValidationErrorHandler(@NonNull URI documentUri) {</span>
+<span class="nc" id="L148">      this.documentUri = ObjectUtils.requireNonNull(documentUri, &quot;documentUri&quot;);</span>
+<span class="nc" id="L149">    }</span>
+
+    @NonNull
+    public URI getDocumentUri() {
+<span class="nc" id="L153">      return documentUri;</span>
+    }
+
+    private void adjustHighestSeverity(@NonNull Level severity) {
+<span class="nc bnc" id="L157" title="All 2 branches missed.">      if (highestSeverity.ordinal() &lt; severity.ordinal()) {</span>
+<span class="nc" id="L158">        highestSeverity = severity;</span>
+      }
+<span class="nc" id="L160">    }</span>
+
+    @SuppressWarnings(&quot;null&quot;)
+    @Override
+    public void warning(SAXParseException ex) throws SAXException {
+<span class="nc" id="L165">      findings.add(new XmlValidationFinding(Level.WARNING, ex, getDocumentUri()));</span>
+<span class="nc" id="L166">      adjustHighestSeverity(Level.WARNING);</span>
+<span class="nc" id="L167">    }</span>
+
+    @SuppressWarnings(&quot;null&quot;)
+    @Override
+    public void error(SAXParseException ex) throws SAXException {
+<span class="nc" id="L172">      findings.add(new XmlValidationFinding(Level.ERROR, ex, getDocumentUri()));</span>
+<span class="nc" id="L173">      adjustHighestSeverity(Level.ERROR);</span>
+<span class="nc" id="L174">    }</span>
+
+    @SuppressWarnings(&quot;null&quot;)
+    @Override
+    public void fatalError(SAXParseException ex) throws SAXException {
+<span class="nc" id="L179">      findings.add(new XmlValidationFinding(Level.CRITICAL, ex, getDocumentUri()));</span>
+<span class="nc" id="L180">      adjustHighestSeverity(Level.CRITICAL);</span>
+<span class="nc" id="L181">    }</span>
+
+    @SuppressWarnings(&quot;null&quot;)
+    @Override
+    @NonNull
+    public List&lt;XmlValidationFinding&gt; getFindings() {
+<span class="nc" id="L187">      return Collections.unmodifiableList(findings);</span>
+    }
+
+    @Override
+    public Level getHighestSeverity() {
+<span class="nc" id="L192">      return highestSeverity;</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

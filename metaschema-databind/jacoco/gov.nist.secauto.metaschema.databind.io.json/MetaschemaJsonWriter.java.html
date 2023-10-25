@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MetaschemaJsonWriter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.io.json</a> &gt; <span class="el_source">MetaschemaJsonWriter.java</span></div><h1>MetaschemaJsonWriter.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.io.json;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.util.Map;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public class MetaschemaJsonWriter implements IJsonWritingContext {
+<span class="nc" id="L50">  private static final Logger LOGGER = LogManager.getLogger(MetaschemaJsonWriter.class);</span>
+
+  @NonNull
+  private final JsonGenerator writer;
+
+  /**
+   * Construct a new Module-aware JSON writer.
+   *
+   * @param generator
+   *          the JSON generator to write with
+   * @see DefaultJsonProblemHandler
+   */
+  public MetaschemaJsonWriter(
+<span class="nc" id="L63">      @NonNull JsonGenerator generator) {</span>
+<span class="nc" id="L64">    this.writer = generator;</span>
+<span class="nc" id="L65">  }</span>
+
+  @Override
+  public JsonGenerator getWriter() {
+<span class="nc" id="L69">    return writer;</span>
+  }
+
+  /**
+   * Writes data in a bound object to JSON. This assembly must be a root assembly
+   * for which a call to {@link IAssemblyClassBinding#isRoot()} will return
+   * {@code true}.
+   *
+   * @param targetDefinition
+   *          the definition describing the root element data to write
+   * @param targetObject
+   *          the bound object
+   * @throws IOException
+   *           if an error occurred while reading the JSON
+   */
+  public void write(
+      @NonNull IAssemblyClassBinding targetDefinition,
+      @NonNull Object targetObject) throws IOException {
+<span class="nc bnc" id="L87" title="All 2 branches missed.">    if (!targetDefinition.isRoot()) {</span>
+<span class="nc" id="L88">      throw new UnsupportedOperationException(</span>
+<span class="nc" id="L89">          String.format(&quot;The assembly '%s' is not a root assembly.&quot;, targetDefinition.getBoundClass().getName()));</span>
+    }
+    // first write the initial START_OBJECT
+<span class="nc" id="L92">    writer.writeStartObject();</span>
+
+<span class="nc" id="L94">    writer.writeFieldName(targetDefinition.getRootJsonName());</span>
+
+    // Make a temporary data type handler for the root class
+<span class="nc" id="L97">    IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(targetDefinition);</span>
+<span class="nc" id="L98">    dataTypeHandler.writeItem(targetObject, this);</span>
+
+    // end of root object
+<span class="nc" id="L101">    writer.writeEndObject();</span>
+<span class="nc" id="L102">  }</span>
+
+  @Override
+  public void writeDefinitionValue(
+      IClassBinding targetDefinition,
+      Object targetObject,
+      Map&lt;String, ? extends IBoundNamedInstance&gt; instances) throws IOException {
+<span class="nc bnc" id="L109" title="All 2 branches missed.">    for (IBoundNamedInstance property : instances.values()) {</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">      assert property != null;</span>
+<span class="nc" id="L111">      writeInstance(property, targetObject);</span>
+<span class="nc" id="L112">    }</span>
+
+<span class="nc bnc" id="L114" title="All 2 branches missed.">    if (targetDefinition instanceof IFieldClassBinding) {</span>
+<span class="nc" id="L115">      IFieldClassBinding fieldDefinition = (IFieldClassBinding) targetDefinition;</span>
+<span class="nc" id="L116">      IBoundFieldValueInstance fieldValueInstance = fieldDefinition.getFieldValueInstance();</span>
+<span class="nc" id="L117">      Object fieldValue = fieldValueInstance.getValue(targetObject);</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">      if (fieldValue != null) {</span>
+        String valueKeyName;
+<span class="nc" id="L120">        IBoundFlagInstance jsonValueKey = fieldDefinition.getJsonValueKeyFlagInstance();</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if (jsonValueKey != null) {</span>
+<span class="nc" id="L122">          valueKeyName = jsonValueKey.getValueAsString(jsonValueKey.getValue(targetObject));</span>
+        } else {
+<span class="nc" id="L124">          valueKeyName = fieldValueInstance.getJsonValueKeyName();</span>
+        }
+<span class="nc" id="L126">        writer.writeFieldName(valueKeyName);</span>
+<span class="nc" id="L127">        fieldValueInstance.getJavaTypeAdapter().writeJsonValue(fieldValue, writer);</span>
+      }
+    }
+<span class="nc" id="L130">  }</span>
+
+  /**
+   * Write the instance data contained in the {@code parentObject} based on the
+   * structure described by the {@code targetInstance}.
+   *
+   * @param targetInstance
+   *          the instance to write data for
+   * @param parentObject
+   *          the Java object containing the instance data to write
+   * @throws IOException
+   *           if an error occurred while writing the data
+   */
+  protected void writeInstance(
+      @NonNull IBoundNamedInstance targetInstance,
+      @NonNull Object parentObject)
+      throws IOException {
+<span class="nc bnc" id="L147" title="All 2 branches missed.">    if (targetInstance instanceof IBoundFlagInstance) {</span>
+<span class="nc" id="L148">      writeFlagInstanceValue((IBoundFlagInstance) targetInstance, parentObject);</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">    } else if (targetInstance instanceof IBoundNamedModelInstance) {</span>
+<span class="nc" id="L150">      writeModelInstanceValues((IBoundNamedModelInstance) targetInstance, parentObject);</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">    } else if (targetInstance instanceof IBoundFieldValueInstance) {</span>
+<span class="nc" id="L152">      writeFieldValueInstanceValue((IBoundFieldValueInstance) targetInstance, parentObject);</span>
+    } else {
+<span class="nc" id="L154">      throw new UnsupportedOperationException(</span>
+<span class="nc" id="L155">          String.format(&quot;Unsupported class binding type: %s&quot;, targetInstance.getClass().getName()));</span>
+    }
+<span class="nc" id="L157">  }</span>
+
+  /**
+   * Write the instance data contained in the {@code parentObject} based on the
+   * structure described by the {@code targetInstance}.
+   *
+   * @param targetInstance
+   *          the instance to write data for
+   * @param parentObject
+   *          the Java object containing the instance data to write
+   * @throws IOException
+   *           if an error occurred while writing the data
+   */
+  protected void writeFlagInstanceValue(
+      @NonNull IBoundFlagInstance targetInstance,
+      @NonNull Object parentObject) throws IOException {
+<span class="nc" id="L173">    Object value = targetInstance.getValue(parentObject);</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">    if (value != null) {</span>
+      // write the field name
+<span class="nc" id="L176">      writer.writeFieldName(targetInstance.getJsonName());</span>
+
+      // write the value
+<span class="nc" id="L179">      targetInstance.getDefinition().getJavaTypeAdapter().writeJsonValue(value, writer);</span>
+    }
+<span class="nc" id="L181">  }</span>
+
+  /**
+   * Write the instance data contained in the {@code parentObject} based on the
+   * structure described by the {@code targetInstance}.
+   *
+   * @param targetInstance
+   *          the instance to write data for
+   * @param parentObject
+   *          the Java object containing the instance data to write
+   * @throws IOException
+   *           if an error occurred while writing the data
+   */
+  protected void writeModelInstanceValues(
+      @NonNull IBoundNamedModelInstance targetInstance,
+      @NonNull Object parentObject) throws IOException {
+<span class="nc" id="L197">    IModelPropertyInfo propertyInfo = targetInstance.getPropertyInfo();</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">    if (propertyInfo.isValueSet(parentObject)) {</span>
+      // write the field name
+<span class="nc" id="L200">      writer.writeFieldName(targetInstance.getJsonName());</span>
+
+      // dispatch to the property info implementation to address cardinality
+<span class="nc" id="L203">      propertyInfo.writeValues(parentObject, this);</span>
+    }
+<span class="nc" id="L205">  }</span>
+
+  /**
+   * Write the instance data contained in the {@code parentObject} based on the
+   * structure described by the {@code targetInstance}.
+   *
+   * @param targetInstance
+   *          the instance to write data for
+   * @param parentObject
+   *          the Java object containing the instance data to write
+   * @throws IOException
+   *           if an error occurred while writing the data
+   */
+  protected void writeFieldValueInstanceValue(
+      @NonNull IBoundFieldValueInstance targetInstance,
+      @NonNull Object parentObject) throws IOException {
+<span class="nc" id="L221">    Object value = targetInstance.getValue(parentObject);</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">    if (value != null) {</span>
+      // There are two modes:
+      // 1) use of a JSON value key, or
+      // 2) a simple value named &quot;value&quot;
+<span class="nc" id="L226">      IBoundFlagInstance jsonValueKey = targetInstance.getParentClassBinding().getJsonValueKeyFlagInstance();</span>
+
+      String valueKeyName;
+<span class="nc bnc" id="L229" title="All 2 branches missed.">      if (jsonValueKey != null) {</span>
+        // this is the JSON value key case
+<span class="nc" id="L231">        valueKeyName = jsonValueKey.getValue(parentObject).toString();</span>
+      } else {
+<span class="nc" id="L233">        valueKeyName = targetInstance.getJsonValueKeyName();</span>
+      }
+<span class="nc" id="L235">      writer.writeFieldName(valueKeyName);</span>
+<span class="nc" id="L236">      LOGGER.info(&quot;FIELD: {}&quot;, valueKeyName);</span>
+<span class="nc" id="L237">      targetInstance.getJavaTypeAdapter().writeJsonValue(value, writer);</span>
+    }
+<span class="nc" id="L239">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

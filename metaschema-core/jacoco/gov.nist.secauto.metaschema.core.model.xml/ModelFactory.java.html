@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ModelFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.xml</a> &gt; <span class="el_source">ModelFactory.java</span></div><h1>ModelFactory.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.xml;
+
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.constraint.AbstractConstraint.AbstractConstraintBuilder;
+import gov.nist.secauto.metaschema.core.model.constraint.AbstractKeyConstraint.AbstractKeyConstraintBuilder;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultAllowedValue;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultCardinalityConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultExpectConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultIndexConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultKeyField;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultMatchesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultUniqueConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ISource;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.Level;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.AllowedValuesType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.EnumType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ExpectConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.HasCardinalityConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.IndexHasKeyConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.KeyConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.MatchesConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.PropertyType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.RemarksType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedAllowedValuesType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedExpectConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedIndexConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedIndexHasKeyConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedKeyConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedMatchesConstraintType;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+@SuppressWarnings(&quot;PMD.CouplingBetweenObjects&quot;)
+final class ModelFactory {
+  private ModelFactory() {
+    // disable
+  }
+
+  @NonNull
+  private static MetapathExpression target(@Nullable MetapathExpression target) {
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">    return target == null ? IConstraint.DEFAULT_TARGET : target;</span>
+  }
+
+  @NonNull
+  private static Level level(@Nullable Level level) {
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">    return level == null ? IConstraint.DEFAULT_LEVEL : level;</span>
+  }
+
+  @NonNull
+  private static MarkupMultiline remarks(@NonNull RemarksType remarks) {
+<span class="nc" id="L94">    return MarkupStringConverter.toMarkupString(remarks);</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  static Map&lt;QName, Set&lt;String&gt;&gt; toProperties(@NonNull List&lt;PropertyType&gt; properties) {
+<span class="nc" id="L100">    return properties.stream()</span>
+<span class="nc" id="L101">        .map(prop -&gt; {</span>
+<span class="nc" id="L102">          String name = prop.getName();</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">          String namespace = prop.isSetNamespace() ? prop.getNamespace() : IModule.METASCHEMA_XML_NS;</span>
+<span class="nc" id="L104">          QName qname = new QName(namespace, name);</span>
+<span class="nc" id="L105">          String value = prop.getValue();</span>
+
+<span class="nc" id="L107">          return Map.entry(qname, value);</span>
+        })
+<span class="nc" id="L109">        .collect(Collectors.groupingBy(Map.Entry&lt;QName, String&gt;::getKey,</span>
+<span class="nc" id="L110">            Collectors.mapping(Map.Entry&lt;QName, String&gt;::getValue, Collectors.toSet())));</span>
+  }
+
+  @NonNull
+  static Map&lt;String, DefaultAllowedValue&gt; toAllowedValues(@NonNull AllowedValuesType xmlConstraint) {
+<span class="fc" id="L115">    Map&lt;String, DefaultAllowedValue&gt; allowedValues // NOPMD - intentional</span>
+<span class="fc" id="L116">        = new LinkedHashMap&lt;&gt;(xmlConstraint.sizeOfEnumArray());</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">    for (EnumType xmlEnum : xmlConstraint.getEnumList()) {</span>
+<span class="fc" id="L118">      @SuppressWarnings(&quot;null&quot;) DefaultAllowedValue allowedValue = new DefaultAllowedValue( // NOPMD - intentional</span>
+<span class="fc" id="L119">          xmlEnum.getValue(),</span>
+<span class="fc" id="L120">          MarkupStringConverter.toMarkupString(xmlEnum));</span>
+<span class="fc" id="L121">      allowedValues.put(allowedValue.getValue(), allowedValue);</span>
+<span class="fc" id="L122">    }</span>
+<span class="fc" id="L123">    return CollectionUtil.unmodifiableMap(allowedValues);</span>
+  }
+
+  @NonNull
+  static DefaultAllowedValuesConstraint newAllowedValuesConstraint(
+      @NonNull ScopedAllowedValuesType xmlConstraint,
+      @NonNull ISource source) {
+<span class="fc" id="L130">    return newAllowedValuesConstraint(xmlConstraint, target(xmlConstraint.getTarget()), source);</span>
+  }
+
+  @NonNull
+  static DefaultAllowedValuesConstraint newAllowedValuesConstraint(
+      @NonNull AllowedValuesType xmlConstraint,
+      @NonNull ISource source) {
+<span class="fc" id="L137">    return newAllowedValuesConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE, source);</span>
+  }
+
+  @NonNull
+  static DefaultAllowedValuesConstraint newAllowedValuesConstraint(
+      @NonNull AllowedValuesType xmlConstraint,
+      @NonNull MetapathExpression target,
+      @NonNull ISource source) {
+
+<span class="fc" id="L146">    DefaultAllowedValuesConstraint.Builder builder = DefaultAllowedValuesConstraint.builder();</span>
+
+<span class="fc" id="L148">    applyToBuilder(xmlConstraint, target, source, builder);</span>
+
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">    if (xmlConstraint.isSetRemarks()) {</span>
+<span class="nc" id="L151">      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));</span>
+    }
+
+<span class="fc" id="L154">    builder.allowedValues(toAllowedValues(xmlConstraint));</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">    if (xmlConstraint.isSetAllowOther()) {</span>
+<span class="fc" id="L156">      builder.allowedOther(xmlConstraint.getAllowOther());</span>
+    }
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">    if (xmlConstraint.isSetExtensible()) {</span>
+<span class="nc" id="L159">      builder.extensible(ObjectUtils.notNull(xmlConstraint.getExtensible()));</span>
+    }
+
+<span class="fc" id="L162">    return builder.build();</span>
+  }
+
+  @NonNull
+  private static &lt;T extends AbstractConstraintBuilder&lt;T, ?&gt;&gt; T applyToBuilder(
+      @NonNull ConstraintType xmlConstraint,
+      @NonNull MetapathExpression target,
+      @NonNull ISource source,
+      @NonNull T builder) {
+
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">    if (xmlConstraint.isSetId()) {</span>
+<span class="nc" id="L173">      builder.identifier(ObjectUtils.notNull(xmlConstraint.getId()));</span>
+    }
+<span class="fc" id="L175">    builder.target(target);</span>
+<span class="fc" id="L176">    builder.source(source);</span>
+<span class="fc" id="L177">    builder.level(level(xmlConstraint.getLevel()));</span>
+<span class="fc" id="L178">    return builder;</span>
+  }
+
+  @NonNull
+  static DefaultMatchesConstraint newMatchesConstraint(
+      @NonNull ScopedMatchesConstraintType xmlConstraint,
+      @NonNull ISource source) {
+<span class="nc" id="L185">    return newMatchesConstraint(xmlConstraint, target(xmlConstraint.getTarget()), source);</span>
+  }
+
+  @NonNull
+  static DefaultMatchesConstraint newMatchesConstraint(
+      @NonNull MatchesConstraintType xmlConstraint,
+      @NonNull ISource source) {
+<span class="nc" id="L192">    return newMatchesConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE, source);</span>
+  }
+
+  @NonNull
+  static DefaultMatchesConstraint newMatchesConstraint(
+      @NonNull MatchesConstraintType xmlConstraint,
+      @NonNull MetapathExpression target,
+      @NonNull ISource source) {
+<span class="nc" id="L200">    DefaultMatchesConstraint.Builder builder = DefaultMatchesConstraint.builder();</span>
+
+<span class="nc" id="L202">    applyToBuilder(xmlConstraint, target, source, builder);</span>
+
+<span class="nc bnc" id="L204" title="All 2 branches missed.">    if (xmlConstraint.isSetRemarks()) {</span>
+<span class="nc" id="L205">      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));</span>
+    }
+
+<span class="nc bnc" id="L208" title="All 2 branches missed.">    if (xmlConstraint.isSetRegex()) {</span>
+<span class="nc" id="L209">      builder.regex(ObjectUtils.notNull(xmlConstraint.getRegex()));</span>
+    }
+<span class="nc bnc" id="L211" title="All 2 branches missed.">    if (xmlConstraint.isSetDatatype()) {</span>
+<span class="nc" id="L212">      builder.datatype(ObjectUtils.notNull(xmlConstraint.getDatatype()));</span>
+    }
+
+<span class="nc" id="L215">    return builder.build();</span>
+  }
+
+  static void buildKeyFields(
+      @NonNull KeyConstraintType xmlConstraint,
+      @NonNull AbstractKeyConstraintBuilder&lt;?, ?&gt; builder) {
+<span class="nc bnc" id="L221" title="All 2 branches missed.">    for (KeyConstraintType.KeyField xmlKeyField : xmlConstraint.getKeyFieldList()) {</span>
+<span class="nc" id="L222">      @SuppressWarnings(&quot;null&quot;) DefaultKeyField keyField</span>
+          = new DefaultKeyField( // NOPMD - intentional
+<span class="nc" id="L224">              xmlKeyField.getTarget(),</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">              xmlKeyField.isSetPattern() ? xmlKeyField.getPattern() : null, // NOPMD - intentional</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">              xmlKeyField.isSetRemarks() ? remarks(xmlKeyField.getRemarks()) : null);</span>
+<span class="nc" id="L227">      builder.keyField(keyField);</span>
+<span class="nc" id="L228">    }</span>
+<span class="nc" id="L229">  }</span>
+
+  @NonNull
+  static DefaultUniqueConstraint newUniqueConstraint(
+      @NonNull ScopedKeyConstraintType xmlConstraint,
+      @NonNull ISource source) {
+<span class="nc" id="L235">    DefaultUniqueConstraint.Builder builder = DefaultUniqueConstraint.builder();</span>
+
+<span class="nc" id="L237">    applyToBuilder(xmlConstraint, target(xmlConstraint.getTarget()), source, builder);</span>
+
+<span class="nc bnc" id="L239" title="All 2 branches missed.">    if (xmlConstraint.isSetRemarks()) {</span>
+<span class="nc" id="L240">      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));</span>
+    }
+
+<span class="nc" id="L243">    buildKeyFields(xmlConstraint, builder);</span>
+
+<span class="nc" id="L245">    return builder.build();</span>
+  }
+
+  @NonNull
+  static DefaultIndexConstraint newIndexConstraint(
+      @NonNull ScopedIndexConstraintType xmlConstraint,
+      @NonNull ISource source) {
+<span class="nc" id="L252">    DefaultIndexConstraint.Builder builder = DefaultIndexConstraint.builder();</span>
+
+<span class="nc" id="L254">    applyToBuilder(xmlConstraint, target(xmlConstraint.getTarget()), source, builder);</span>
+
+<span class="nc bnc" id="L256" title="All 2 branches missed.">    if (xmlConstraint.isSetRemarks()) {</span>
+<span class="nc" id="L257">      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));</span>
+    }
+
+<span class="nc" id="L260">    builder.name(ObjectUtils.requireNonNull(xmlConstraint.getName()));</span>
+<span class="nc" id="L261">    buildKeyFields(xmlConstraint, builder);</span>
+
+<span class="nc" id="L263">    return builder.build();</span>
+  }
+
+  @NonNull
+  static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(
+      @NonNull ScopedIndexHasKeyConstraintType xmlConstraint,
+      @NonNull ISource source) {
+<span class="nc" id="L270">    return newIndexHasKeyConstraint(xmlConstraint, target(xmlConstraint.getTarget()), source);</span>
+  }
+
+  @NonNull
+  static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(
+      @NonNull IndexHasKeyConstraintType xmlConstraint,
+      @NonNull ISource source) {
+<span class="nc" id="L277">    return newIndexHasKeyConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE, source);</span>
+
+  }
+
+  @NonNull
+  static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(
+      @NonNull IndexHasKeyConstraintType xmlConstraint,
+      @NonNull MetapathExpression target,
+      @NonNull ISource source) {
+<span class="nc" id="L286">    DefaultIndexHasKeyConstraint.Builder builder = DefaultIndexHasKeyConstraint.builder();</span>
+
+<span class="nc" id="L288">    applyToBuilder(xmlConstraint, target, source, builder);</span>
+
+<span class="nc bnc" id="L290" title="All 2 branches missed.">    if (xmlConstraint.isSetRemarks()) {</span>
+<span class="nc" id="L291">      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));</span>
+    }
+
+<span class="nc" id="L294">    builder.name(ObjectUtils.requireNonNull(xmlConstraint.getName()));</span>
+<span class="nc" id="L295">    buildKeyFields(xmlConstraint, builder);</span>
+
+<span class="nc" id="L297">    return builder.build();</span>
+  }
+
+  @NonNull
+  static DefaultExpectConstraint newExpectConstraint(
+      @NonNull ScopedExpectConstraintType xmlConstraint,
+      @NonNull ISource source) {
+<span class="fc" id="L304">    return newExpectConstraint(xmlConstraint, target(xmlConstraint.getTarget()), source);</span>
+  }
+
+  @NonNull
+  static DefaultExpectConstraint newExpectConstraint(
+      @NonNull ExpectConstraintType xmlConstraint,
+      @NonNull ISource source) {
+<span class="nc" id="L311">    return newExpectConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE, source);</span>
+  }
+
+  @NonNull
+  static DefaultExpectConstraint newExpectConstraint(
+      @NonNull ExpectConstraintType xmlConstraint,
+      @NonNull MetapathExpression target,
+      @NonNull ISource source) {
+
+<span class="fc" id="L320">    DefaultExpectConstraint.Builder builder = DefaultExpectConstraint.builder();</span>
+
+<span class="fc" id="L322">    applyToBuilder(xmlConstraint, target, source, builder);</span>
+
+<span class="pc bpc" id="L324" title="1 of 2 branches missed.">    if (xmlConstraint.isSetRemarks()) {</span>
+<span class="nc" id="L325">      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));</span>
+    }
+
+<span class="pc bpc" id="L328" title="1 of 2 branches missed.">    if (xmlConstraint.isSetMessage()) {</span>
+<span class="nc" id="L329">      builder.message(ObjectUtils.notNull(xmlConstraint.getMessage()));</span>
+    }
+
+<span class="fc" id="L332">    builder.test(ObjectUtils.requireNonNull(xmlConstraint.getTest()));</span>
+
+<span class="fc" id="L334">    return builder.build();</span>
+  }
+
+  @NonNull
+  static DefaultCardinalityConstraint newCardinalityConstraint(
+      @NonNull HasCardinalityConstraintType xmlConstraint,
+      @NonNull ISource source) {
+
+<span class="nc" id="L342">    DefaultCardinalityConstraint.Builder builder = DefaultCardinalityConstraint.builder();</span>
+
+<span class="nc" id="L344">    applyToBuilder(xmlConstraint, target(xmlConstraint.getTarget()), source, builder);</span>
+
+<span class="nc bnc" id="L346" title="All 2 branches missed.">    if (xmlConstraint.isSetRemarks()) {</span>
+<span class="nc" id="L347">      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));</span>
+    }
+
+<span class="nc bnc" id="L350" title="All 2 branches missed.">    if (xmlConstraint.isSetMinOccurs()) {</span>
+<span class="nc" id="L351">      builder.minOccurs(xmlConstraint.getMinOccurs().intValueExact());</span>
+    }
+
+<span class="nc bnc" id="L354" title="All 2 branches missed.">    if (xmlConstraint.isSetMaxOccurs()) {</span>
+<span class="nc" id="L355">      builder.maxOccurs(xmlConstraint.getMaxOccurs().intValueExact());</span>
+    }
+
+<span class="nc" id="L358">    return builder.build();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

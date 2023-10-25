@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HtmlCodeRenderExtension.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.datatype.markup.flexmark</a> &gt; <span class="el_source">HtmlCodeRenderExtension.java</span></div><h1>HtmlCodeRenderExtension.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.datatype.markup.flexmark;
+
+import com.vladsch.flexmark.ast.Code;
+import com.vladsch.flexmark.ast.Text;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.html.HtmlRendererOptions;
+import com.vladsch.flexmark.html.HtmlWriter;
+import com.vladsch.flexmark.html.renderer.NodeRenderer;
+import com.vladsch.flexmark.html.renderer.NodeRendererContext;
+import com.vladsch.flexmark.html.renderer.NodeRendererFactory;
+import com.vladsch.flexmark.html.renderer.NodeRenderingHandler;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.data.DataHolder;
+import com.vladsch.flexmark.util.data.MutableDataHolder;
+import com.vladsch.flexmark.util.sequence.Escaping;
+import com.vladsch.flexmark.util.sequence.Range;
+import com.vladsch.flexmark.util.sequence.SequenceUtils;
+
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.Collections;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+<span class="fc" id="L56">public class HtmlCodeRenderExtension</span>
+    implements HtmlRenderer.HtmlRendererExtension {
+<span class="fc" id="L58">  private static final Pattern EOL_PATTERN = Pattern.compile(&quot;\r\n|\r|\n&quot;);</span>
+
+  public static HtmlCodeRenderExtension create() {
+<span class="fc" id="L61">    return new HtmlCodeRenderExtension();</span>
+  }
+
+  @Override
+  public void rendererOptions(MutableDataHolder options) {
+    // do nothing
+<span class="fc" id="L67">  }</span>
+
+  @Override
+  public void extend(HtmlRenderer.Builder rendererBuilder, String rendererType) {
+<span class="fc" id="L71">    rendererBuilder.nodeRendererFactory(new CodeNodeHtmlRenderer.Factory());</span>
+<span class="fc" id="L72">  }</span>
+
+  static final class CodeNodeHtmlRenderer implements NodeRenderer {
+    private final boolean codeSoftLineBreaks;
+
+<span class="fc" id="L77">    private CodeNodeHtmlRenderer(DataHolder options) {</span>
+<span class="fc" id="L78">      codeSoftLineBreaks = Parser.CODE_SOFT_LINE_BREAKS.get(options);</span>
+<span class="fc" id="L79">    }</span>
+
+    @Override
+    public @Nullable Set&lt;NodeRenderingHandler&lt;?&gt;&gt; getNodeRenderingHandlers() {
+<span class="fc" id="L83">      return Collections.singleton(</span>
+          new NodeRenderingHandler&lt;&gt;(Code.class, this::render));
+    }
+
+    @SuppressFBWarnings(value = &quot;RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT&quot;, justification = &quot;false positive&quot;)
+    private void render( // NOPMD actually used in lambda
+        @NonNull Code node,
+        @NonNull NodeRendererContext context,
+        @NonNull HtmlWriter html) {
+<span class="fc" id="L92">      HtmlRendererOptions htmlOptions = context.getHtmlOptions();</span>
+
+<span class="pc bpc" id="L94" title="2 of 4 branches missed.">      boolean customTag = htmlOptions.codeStyleHtmlOpen != null || htmlOptions.codeStyleHtmlClose != null;</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">      if (customTag) {</span>
+<span class="nc" id="L96">        html.raw(ObjectUtils.notNull(htmlOptions.codeStyleHtmlOpen));</span>
+      } else {
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if (context.getHtmlOptions().sourcePositionParagraphLines) {</span>
+<span class="nc" id="L99">          html.withAttr().tag(&quot;code&quot;);</span>
+        } else {
+<span class="fc" id="L101">          html.srcPos(node.getText()).withAttr().tag(&quot;code&quot;);</span>
+        }
+      }
+
+<span class="pc bpc" id="L105" title="3 of 4 branches missed.">      if (codeSoftLineBreaks &amp;&amp; !htmlOptions.isSoftBreakAllSpaces) {</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        for (Node child : node.getChildren()) {</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">          if (child instanceof Text) {</span>
+<span class="nc" id="L108">            html.text(Escaping.collapseWhitespace(child.getChars(), false));</span>
+          } else {
+<span class="nc" id="L110">            context.render(child);</span>
+          }
+<span class="nc" id="L112">        }</span>
+      } else {
+<span class="fc" id="L114">        String text = EOL_PATTERN.matcher(node.getText()).replaceAll(&quot; &quot;);</span>
+<span class="fc bfc" id="L115" title="All 6 branches covered.">        if (!text.isBlank() &amp;&amp; SequenceUtils.startsWithWhitespace(text) &amp;&amp; SequenceUtils.endsWithWhitespace(text)) {</span>
+<span class="fc" id="L116">          html.text(SequenceUtils.subSequence(text, Range.of(1, text.length() - 1)));</span>
+        } else {
+<span class="fc" id="L118">          html.raw(Escaping.escapeHtml(text, false));</span>
+        }
+        // html.text(Escaping.collapseWhitespace(node.getText(), true));
+      }
+
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">      if (customTag) {</span>
+<span class="nc" id="L124">        html.raw(ObjectUtils.notNull(htmlOptions.codeStyleHtmlClose));</span>
+      } else {
+<span class="fc" id="L126">        html.tag(&quot;/code&quot;);</span>
+      }
+<span class="fc" id="L128">    }</span>
+
+<span class="fc" id="L130">    public static class Factory implements NodeRendererFactory {</span>
+
+      @Override
+      public NodeRenderer apply(DataHolder options) {
+<span class="fc" id="L134">        return new CodeNodeHtmlRenderer(options);</span>
+      }
+
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CLIProcessor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema CLI Framework</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.cli.processor</a> &gt; <span class="el_source">CLIProcessor.java</span></div><h1>CLIProcessor.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.cli.processor;
+
+import static org.fusesource.jansi.Ansi.ansi;
+
+import gov.nist.secauto.metaschema.cli.processor.command.CommandService;
+import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;
+import gov.nist.secauto.metaschema.cli.processor.command.ICommand;
+import gov.nist.secauto.metaschema.cli.processor.command.ICommandExecutor;
+import gov.nist.secauto.metaschema.core.util.IVersionInfo;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.fusesource.jansi.AnsiConsole;
+import org.fusesource.jansi.AnsiPrintStream;
+
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+public class CLIProcessor {
+<span class="nc" id="L71">  private static final Logger LOGGER = LogManager.getLogger(CLIProcessor.class);</span>
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+<span class="nc" id="L75">  public static final Option HELP_OPTION = Option.builder(&quot;h&quot;)</span>
+<span class="nc" id="L76">      .longOpt(&quot;help&quot;)</span>
+<span class="nc" id="L77">      .desc(&quot;display this help message&quot;)</span>
+<span class="nc" id="L78">      .build();</span>
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+<span class="nc" id="L81">  public static final Option NO_COLOR_OPTION = Option.builder()</span>
+<span class="nc" id="L82">      .longOpt(&quot;no-color&quot;)</span>
+<span class="nc" id="L83">      .desc(&quot;do not colorize output&quot;)</span>
+<span class="nc" id="L84">      .build();</span>
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+<span class="nc" id="L87">  public static final Option QUIET_OPTION = Option.builder(&quot;q&quot;)</span>
+<span class="nc" id="L88">      .longOpt(&quot;quiet&quot;)</span>
+<span class="nc" id="L89">      .desc(&quot;minimize output to include only errors&quot;)</span>
+<span class="nc" id="L90">      .build();</span>
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+<span class="nc" id="L93">  public static final Option SHOW_STACK_TRACE_OPTION = Option.builder()</span>
+<span class="nc" id="L94">      .longOpt(&quot;show-stack-trace&quot;)</span>
+<span class="nc" id="L95">      .desc(&quot;display the stack trace associated with an error&quot;)</span>
+<span class="nc" id="L96">      .build();</span>
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+<span class="nc" id="L99">  public static final Option VERSION_OPTION = Option.builder()</span>
+<span class="nc" id="L100">      .longOpt(&quot;version&quot;)</span>
+<span class="nc" id="L101">      .desc(&quot;display the application version&quot;)</span>
+<span class="nc" id="L102">      .build();</span>
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+<span class="nc" id="L105">  public static final List&lt;Option&gt; OPTIONS = List.of(</span>
+      HELP_OPTION,
+      NO_COLOR_OPTION,
+      QUIET_OPTION,
+      SHOW_STACK_TRACE_OPTION,
+      VERSION_OPTION);
+
+<span class="nc" id="L112">  @NonNull</span>
+  private final List&lt;ICommand&gt; commands = new LinkedList&lt;&gt;();
+  @NonNull
+  private final String exec;
+  @NonNull
+  private final List&lt;IVersionInfo&gt; versionInfos;
+
+  public static void main(String... args) {
+<span class="nc" id="L120">    System.setProperty(&quot;java.util.logging.manager&quot;, &quot;org.apache.logging.log4j.jul.LogManager&quot;);</span>
+<span class="nc" id="L121">    CLIProcessor processor = new CLIProcessor(&quot;metaschema-cli&quot;);</span>
+
+<span class="nc" id="L123">    CommandService.getInstance().getCommands().stream().forEach(command -&gt; {</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">      assert command != null;</span>
+<span class="nc" id="L125">      processor.addCommandHandler(command);</span>
+<span class="nc" id="L126">    });</span>
+<span class="nc" id="L127">    System.exit(processor.process(args).getExitCode().getStatusCode());</span>
+<span class="nc" id="L128">  }</span>
+
+  @SuppressWarnings(&quot;null&quot;)
+  public CLIProcessor(@NonNull String exec) {
+<span class="nc" id="L132">    this(exec, List.of());</span>
+<span class="nc" id="L133">  }</span>
+
+<span class="nc" id="L135">  public CLIProcessor(@NonNull String exec, @NonNull List&lt;IVersionInfo&gt; versionInfos) {</span>
+<span class="nc" id="L136">    this.exec = exec;</span>
+<span class="nc" id="L137">    this.versionInfos = versionInfos;</span>
+<span class="nc" id="L138">    AnsiConsole.systemInstall();</span>
+<span class="nc" id="L139">  }</span>
+
+  /**
+   * Gets the command used to execute for use in help text.
+   *
+   * @return the command name
+   */
+  @NonNull
+  public String getExec() {
+<span class="nc" id="L148">    return exec;</span>
+  }
+
+  /**
+   * Retrieve the version information for this application.
+   *
+   * @return the versionInfo
+   */
+  @NonNull
+  public List&lt;IVersionInfo&gt; getVersionInfos() {
+<span class="nc" id="L158">    return versionInfos;</span>
+  }
+
+  public void addCommandHandler(@NonNull ICommand handler) {
+<span class="nc" id="L162">    commands.add(handler);</span>
+<span class="nc" id="L163">  }</span>
+
+  /**
+   * Process a set of CLIProcessor arguments.
+   * &lt;p&gt;
+   * process().getExitCode().getStatusCode()
+   *
+   * @param args
+   *          the arguments to process
+   * @return the exit status
+   */
+  @NonNull
+  public ExitStatus process(String... args) {
+<span class="nc" id="L176">    return parseCommand(args);</span>
+  }
+
+  @NonNull
+  private ExitStatus parseCommand(String... args) {
+<span class="nc" id="L181">    List&lt;String&gt; commandArgs = Arrays.asList(args);</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">    assert commandArgs != null;</span>
+<span class="nc" id="L183">    CallingContext callingContext = new CallingContext(commandArgs);</span>
+
+    ExitStatus status;
+    // the first two arguments should be the &lt;command&gt; and &lt;operation&gt;, where &lt;type&gt;
+    // is the object type
+    // the &lt;operation&gt; is performed against.
+<span class="nc bnc" id="L189" title="All 2 branches missed.">    if (commandArgs.isEmpty()) {</span>
+<span class="nc" id="L190">      status = ExitCode.INVALID_COMMAND.exit();</span>
+<span class="nc" id="L191">      callingContext.showHelp();</span>
+    } else {
+<span class="nc" id="L193">      status = callingContext.processCommand();</span>
+    }
+<span class="nc" id="L195">    return status;</span>
+  }
+
+  protected List&lt;ICommand&gt; getTopLevelCommands() {
+<span class="nc" id="L199">    List&lt;ICommand&gt; retval = Collections.unmodifiableList(commands);</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">    assert retval != null;</span>
+<span class="nc" id="L201">    return retval;</span>
+  }
+
+  private static void handleNoColor() {
+<span class="nc" id="L205">    System.setProperty(AnsiConsole.JANSI_MODE, AnsiConsole.JANSI_MODE_STRIP);</span>
+<span class="nc" id="L206">    AnsiConsole.systemUninstall();</span>
+<span class="nc" id="L207">  }</span>
+
+  @SuppressWarnings(&quot;resource&quot;)
+  public static void handleQuiet() {
+<span class="nc" id="L211">    LoggerContext ctx = (LoggerContext) LogManager.getContext(false); // NOPMD not closable here</span>
+<span class="nc" id="L212">    Configuration config = ctx.getConfiguration();</span>
+<span class="nc" id="L213">    LoggerConfig loggerConfig = config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);</span>
+<span class="nc" id="L214">    Level oldLevel = loggerConfig.getLevel();</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">    if (oldLevel.isLessSpecificThan(Level.ERROR)) {</span>
+<span class="nc" id="L216">      loggerConfig.setLevel(Level.ERROR);</span>
+<span class="nc" id="L217">      ctx.updateLoggers();</span>
+    }
+<span class="nc" id="L219">  }</span>
+
+  protected void showVersion() {
+<span class="nc" id="L222">    @SuppressWarnings(&quot;resource&quot;) PrintStream out = AnsiConsole.out(); // NOPMD - not owner</span>
+<span class="nc" id="L223">    getVersionInfos().stream().forEach((info) -&gt; {</span>
+<span class="nc" id="L224">      out.println(ansi()</span>
+<span class="nc" id="L225">          .bold().a(info.getName()).boldOff()</span>
+<span class="nc" id="L226">          .a(&quot; &quot;)</span>
+<span class="nc" id="L227">          .bold().a(info.getVersion()).boldOff()</span>
+<span class="nc" id="L228">          .a(&quot; built at &quot;)</span>
+<span class="nc" id="L229">          .bold().a(info.getBuildTimestamp()).boldOff()</span>
+<span class="nc" id="L230">          .a(&quot; from branch &quot;)</span>
+<span class="nc" id="L231">          .bold().a(info.getGitBranch()).boldOff()</span>
+<span class="nc" id="L232">          .a(&quot; (&quot;)</span>
+<span class="nc" id="L233">          .bold().a(info.getGitCommit()).boldOff()</span>
+<span class="nc" id="L234">          .a(&quot;) at &quot;)</span>
+<span class="nc" id="L235">          .bold().a(info.getGitOriginUrl()).boldOff()</span>
+<span class="nc" id="L236">          .reset());</span>
+<span class="nc" id="L237">    });</span>
+<span class="nc" id="L238">    out.flush();</span>
+<span class="nc" id="L239">  }</span>
+
+  // @SuppressWarnings(&quot;null&quot;)
+  // @NonNull
+  // public String[] getArgArray() {
+  // return Stream.concat(options.stream(), extraArgs.stream()).toArray(size -&gt;
+  // new String[size]);
+  // }
+
+<span class="nc" id="L248">  public class CallingContext {</span>
+    @NonNull
+    private final List&lt;Option&gt; options;
+    @NonNull
+    private final Deque&lt;ICommand&gt; calledCommands;
+    @NonNull
+    private final List&lt;String&gt; extraArgs;
+
+<span class="nc" id="L256">    public CallingContext(@NonNull List&lt;String&gt; args) {</span>
+<span class="nc" id="L257">      Map&lt;String, ICommand&gt; topLevelCommandMap = getTopLevelCommands().stream()</span>
+<span class="nc" id="L258">          .collect(Collectors.toUnmodifiableMap(ICommand::getName, Function.identity()));</span>
+
+<span class="nc" id="L260">      List&lt;Option&gt; options = new LinkedList&lt;&gt;(OPTIONS);</span>
+<span class="nc" id="L261">      Deque&lt;ICommand&gt; calledCommands = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L262">      List&lt;String&gt; extraArgs = new LinkedList&lt;&gt;();</span>
+
+<span class="nc" id="L264">      boolean endArgs = false;</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">      for (String arg : args) {</span>
+<span class="nc bnc" id="L266" title="All 2 branches missed.">        if (endArgs) {</span>
+<span class="nc" id="L267">          extraArgs.add(arg);</span>
+        } else {
+<span class="nc bnc" id="L269" title="All 2 branches missed.">          if (arg.startsWith(&quot;-&quot;)) {</span>
+<span class="nc" id="L270">            extraArgs.add(arg);</span>
+<span class="nc bnc" id="L271" title="All 2 branches missed.">          } else if (&quot;--&quot;.equals(arg)) {</span>
+<span class="nc" id="L272">            endArgs = true;</span>
+          } else {
+            ICommand command;
+<span class="nc bnc" id="L275" title="All 2 branches missed.">            if (calledCommands.isEmpty()) {</span>
+<span class="nc" id="L276">              command = topLevelCommandMap.get(arg);</span>
+            } else {
+<span class="nc" id="L278">              command = calledCommands.getLast();</span>
+<span class="nc" id="L279">              command = command.getSubCommandByName(arg);</span>
+            }
+
+<span class="nc bnc" id="L282" title="All 2 branches missed.">            if (command == null) {</span>
+<span class="nc" id="L283">              extraArgs.add(arg);</span>
+<span class="nc" id="L284">              endArgs = true;</span>
+            } else {
+<span class="nc" id="L286">              calledCommands.add(command);</span>
+            }
+          }
+        }
+<span class="nc" id="L290">      }</span>
+
+<span class="nc bnc" id="L292" title="All 2 branches missed.">      if (LOGGER.isDebugEnabled()) {</span>
+<span class="nc" id="L293">        String commandChain = calledCommands.stream()</span>
+<span class="nc" id="L294">            .map(command -&gt; command.getName())</span>
+<span class="nc" id="L295">            .collect(Collectors.joining(&quot; -&gt; &quot;));</span>
+<span class="nc" id="L296">        LOGGER.debug(&quot;Processing command chain: {}&quot;, commandChain);</span>
+      }
+
+<span class="nc bnc" id="L299" title="All 2 branches missed.">      for (ICommand cmd : calledCommands) {</span>
+<span class="nc" id="L300">        options.addAll(cmd.gatherOptions());</span>
+<span class="nc" id="L301">      }</span>
+
+<span class="nc" id="L303">      options = Collections.unmodifiableList(options);</span>
+<span class="nc" id="L304">      extraArgs = Collections.unmodifiableList(extraArgs);</span>
+
+<span class="nc bnc" id="L306" title="All 2 branches missed.">      assert options != null;</span>
+<span class="nc bnc" id="L307" title="All 2 branches missed.">      assert extraArgs != null;</span>
+
+<span class="nc" id="L309">      this.options = options;</span>
+<span class="nc" id="L310">      this.calledCommands = calledCommands;</span>
+<span class="nc" id="L311">      this.extraArgs = extraArgs;</span>
+<span class="nc" id="L312">    }</span>
+
+    @Nullable
+    public ICommand getTargetCommand() {
+<span class="nc" id="L316">      return calledCommands.peekLast();</span>
+    }
+
+    @NonNull
+    protected List&lt;Option&gt; getOptionsList() {
+<span class="nc" id="L321">      return options;</span>
+    }
+
+    @NonNull
+    private Deque&lt;ICommand&gt; getCalledCommands() {
+<span class="nc" id="L326">      return calledCommands;</span>
+    }
+
+    @NonNull
+    protected List&lt;String&gt; getExtraArgs() {
+<span class="nc" id="L331">      return extraArgs;</span>
+    }
+
+    protected Options toOptions() {
+<span class="nc" id="L335">      Options retval = new Options();</span>
+<span class="nc bnc" id="L336" title="All 2 branches missed.">      for (Option option : getOptionsList()) {</span>
+<span class="nc" id="L337">        retval.addOption(option);</span>
+<span class="nc" id="L338">      }</span>
+<span class="nc" id="L339">      return retval;</span>
+    }
+
+    @SuppressWarnings(&quot;PMD.OnlyOneReturn&quot;) // readability
+    @NonNull
+    public ExitStatus processCommand() {
+<span class="nc" id="L345">      CommandLineParser parser = new DefaultParser();</span>
+      CommandLine cmdLine;
+      try {
+<span class="nc" id="L348">        cmdLine = parser.parse(toOptions(), getExtraArgs().toArray(new String[0]));</span>
+<span class="nc" id="L349">      } catch (ParseException ex) {</span>
+<span class="nc" id="L350">        String msg = ex.getMessage();</span>
+<span class="nc bnc" id="L351" title="All 2 branches missed.">        assert msg != null;</span>
+<span class="nc" id="L352">        return handleInvalidCommand(msg);</span>
+<span class="nc" id="L353">      }</span>
+
+<span class="nc bnc" id="L355" title="All 2 branches missed.">      if (cmdLine.hasOption(NO_COLOR_OPTION)) {</span>
+<span class="nc" id="L356">        handleNoColor();</span>
+      }
+
+<span class="nc bnc" id="L359" title="All 2 branches missed.">      if (cmdLine.hasOption(QUIET_OPTION)) {</span>
+<span class="nc" id="L360">        handleQuiet();</span>
+      }
+
+<span class="nc" id="L363">      ExitStatus retval = null;</span>
+<span class="nc bnc" id="L364" title="All 2 branches missed.">      if (cmdLine.hasOption(VERSION_OPTION)) {</span>
+<span class="nc" id="L365">        showVersion();</span>
+<span class="nc" id="L366">        retval = ExitCode.OK.exit();</span>
+<span class="nc bnc" id="L367" title="All 2 branches missed.">      } else if (cmdLine.hasOption(HELP_OPTION)) {</span>
+<span class="nc" id="L368">        showHelp();</span>
+<span class="nc" id="L369">        retval = ExitCode.OK.exit();</span>
+        // } else {
+        // retval = handleInvalidCommand(commandResult, options,
+        // &quot;Invalid command arguments: &quot; +
+        // cmdLine.getArgList().stream().collect(Collectors.joining(&quot; &quot;)));
+      }
+
+<span class="nc bnc" id="L376" title="All 2 branches missed.">      if (retval == null) {</span>
+<span class="nc" id="L377">        retval = invokeCommand(cmdLine);</span>
+      }
+
+<span class="nc" id="L380">      retval.generateMessage(cmdLine.hasOption(SHOW_STACK_TRACE_OPTION));</span>
+<span class="nc" id="L381">      return retval;</span>
+    }
+
+    @SuppressWarnings({
+        &quot;PMD.OnlyOneReturn&quot;, // readability
+        &quot;PMD.AvoidCatchingGenericException&quot; // needed here
+    })
+    protected ExitStatus invokeCommand(@NonNull CommandLine cmdLine) {
+      ExitStatus retval;
+      try {
+<span class="nc bnc" id="L391" title="All 2 branches missed.">        for (ICommand cmd : getCalledCommands()) {</span>
+          try {
+<span class="nc" id="L393">            cmd.validateOptions(this, cmdLine);</span>
+<span class="nc" id="L394">          } catch (InvalidArgumentException ex) {</span>
+<span class="nc" id="L395">            String msg = ex.getMessage();</span>
+<span class="nc bnc" id="L396" title="All 2 branches missed.">            assert msg != null;</span>
+<span class="nc" id="L397">            return handleInvalidCommand(msg);</span>
+<span class="nc" id="L398">          }</span>
+<span class="nc" id="L399">        }</span>
+
+<span class="nc" id="L401">        ICommand targetCommand = getTargetCommand();</span>
+<span class="nc bnc" id="L402" title="All 2 branches missed.">        if (targetCommand == null) {</span>
+<span class="nc" id="L403">          retval = ExitCode.INVALID_COMMAND.exit();</span>
+        } else {
+<span class="nc" id="L405">          ICommandExecutor executor = targetCommand.newExecutor(this, cmdLine);</span>
+<span class="nc" id="L406">          retval = executor.execute();</span>
+        }
+
+<span class="nc bnc" id="L409" title="All 2 branches missed.">        if (ExitCode.INVALID_COMMAND.equals(retval.getExitCode())) {</span>
+<span class="nc" id="L410">          showHelp();</span>
+        }
+<span class="nc" id="L412">      } catch (RuntimeException ex) {</span>
+<span class="nc" id="L413">        retval = ExitCode.RUNTIME_ERROR</span>
+<span class="nc" id="L414">            .exitMessage(String.format(&quot;An uncaught runtime error occured. %s&quot;, ex.getLocalizedMessage()))</span>
+<span class="nc" id="L415">            .withThrowable(ex);</span>
+<span class="nc" id="L416">      }</span>
+<span class="nc" id="L417">      return retval;</span>
+    }
+
+    @NonNull
+    public ExitStatus handleInvalidCommand(
+        @NonNull String message) {
+<span class="nc" id="L423">      showHelp();</span>
+
+<span class="nc" id="L425">      ExitStatus retval = ExitCode.INVALID_COMMAND.exitMessage(message);</span>
+<span class="nc" id="L426">      retval.generateMessage(false);</span>
+<span class="nc" id="L427">      return retval;</span>
+    }
+
+    /**
+     * Callback for providing a help header.
+     *
+     * @return the header or {@code null}
+     */
+    @Nullable
+    protected String buildHelpHeader() {
+      // TODO: build a suitable header
+<span class="nc" id="L438">      return null;</span>
+    }
+
+    /**
+     * Callback for providing a help footer.
+     *
+     * @param exec
+     *          the executable name
+     *
+     * @return the footer or {@code null}
+     */
+    @NonNull
+    private String buildHelpFooter() {
+
+<span class="nc" id="L452">      ICommand targetCommand = getTargetCommand();</span>
+      Collection&lt;ICommand&gt; subCommands;
+<span class="nc bnc" id="L454" title="All 2 branches missed.">      if (targetCommand == null) {</span>
+<span class="nc" id="L455">        subCommands = getTopLevelCommands();</span>
+      } else {
+<span class="nc" id="L457">        subCommands = targetCommand.getSubCommands();</span>
+      }
+
+      String retval;
+<span class="nc bnc" id="L461" title="All 2 branches missed.">      if (subCommands.isEmpty()) {</span>
+<span class="nc" id="L462">        retval = &quot;&quot;;</span>
+      } else {
+<span class="nc" id="L464">        StringBuilder builder = new StringBuilder(64);</span>
+<span class="nc" id="L465">        builder</span>
+<span class="nc" id="L466">            .append(System.lineSeparator())</span>
+<span class="nc" id="L467">            .append(&quot;The following are available commands:&quot;)</span>
+<span class="nc" id="L468">            .append(System.lineSeparator());</span>
+
+<span class="nc" id="L470">        int length = subCommands.stream()</span>
+<span class="nc" id="L471">            .mapToInt(command -&gt; command.getName().length())</span>
+<span class="nc" id="L472">            .max().orElse(0);</span>
+
+<span class="nc bnc" id="L474" title="All 2 branches missed.">        for (ICommand command : subCommands) {</span>
+<span class="nc" id="L475">          builder.append(</span>
+<span class="nc" id="L476">              ansi()</span>
+<span class="nc" id="L477">                  .render(String.format(&quot;   @|bold %-&quot; + length + &quot;s|@ %s%n&quot;,</span>
+<span class="nc" id="L478">                      command.getName(),</span>
+<span class="nc" id="L479">                      command.getDescription())));</span>
+<span class="nc" id="L480">        }</span>
+<span class="nc" id="L481">        builder</span>
+<span class="nc" id="L482">            .append(System.lineSeparator())</span>
+<span class="nc" id="L483">            .append('\'')</span>
+<span class="nc" id="L484">            .append(getExec())</span>
+<span class="nc" id="L485">            .append(&quot; &lt;command&gt; --help' will show help on that specific command.&quot;)</span>
+<span class="nc" id="L486">            .append(System.lineSeparator());</span>
+<span class="nc" id="L487">        retval = builder.toString();</span>
+<span class="nc bnc" id="L488" title="All 2 branches missed.">        assert retval != null;</span>
+      }
+<span class="nc" id="L490">      return retval;</span>
+    }
+
+    /**
+     * Get the CLI syntax.
+     *
+     * @return the CLI syntax to display in help output
+     */
+    protected String buildHelpCliSyntax() {
+
+<span class="nc" id="L500">      StringBuilder builder = new StringBuilder(64);</span>
+<span class="nc" id="L501">      builder.append(getExec());</span>
+
+<span class="nc" id="L503">      Deque&lt;ICommand&gt; calledCommands = getCalledCommands();</span>
+<span class="nc bnc" id="L504" title="All 2 branches missed.">      if (!calledCommands.isEmpty()) {</span>
+<span class="nc" id="L505">        builder.append(calledCommands.stream()</span>
+<span class="nc" id="L506">            .map(ICommand::getName)</span>
+<span class="nc" id="L507">            .collect(Collectors.joining(&quot; &quot;, &quot; &quot;, &quot;&quot;)));</span>
+      }
+
+      // output calling commands
+<span class="nc" id="L511">      ICommand targetCommand = getTargetCommand();</span>
+<span class="nc bnc" id="L512" title="All 2 branches missed.">      if (targetCommand == null) {</span>
+<span class="nc" id="L513">        builder.append(&quot; &lt;command&gt;&quot;);</span>
+      } else {
+<span class="nc" id="L515">        Collection&lt;ICommand&gt; subCommands = targetCommand.getSubCommands();</span>
+
+<span class="nc bnc" id="L517" title="All 2 branches missed.">        if (!subCommands.isEmpty()) {</span>
+<span class="nc" id="L518">          builder.append(' ');</span>
+<span class="nc bnc" id="L519" title="All 2 branches missed.">          if (!targetCommand.isSubCommandRequired()) {</span>
+<span class="nc" id="L520">            builder.append('[');</span>
+          }
+
+<span class="nc" id="L523">          builder.append(&quot;&lt;command&gt;&quot;);</span>
+
+<span class="nc bnc" id="L525" title="All 2 branches missed.">          if (!targetCommand.isSubCommandRequired()) {</span>
+<span class="nc" id="L526">            builder.append(']');</span>
+          }
+        }
+      }
+
+      // output required options
+<span class="nc" id="L532">      getOptionsList().stream()</span>
+<span class="nc" id="L533">          .filter(option -&gt; option.isRequired())</span>
+<span class="nc" id="L534">          .forEach(option -&gt; {</span>
+<span class="nc" id="L535">            builder</span>
+<span class="nc" id="L536">                .append(' ')</span>
+<span class="nc" id="L537">                .append(OptionUtils.toArgument(ObjectUtils.notNull(option)));</span>
+<span class="nc bnc" id="L538" title="All 2 branches missed.">            if (option.hasArg()) {</span>
+<span class="nc" id="L539">              builder</span>
+<span class="nc" id="L540">                  .append('=')</span>
+<span class="nc" id="L541">                  .append(option.getArgName());</span>
+            }
+<span class="nc" id="L543">          });</span>
+
+      // output non-required option placeholder
+<span class="nc" id="L546">      builder.append(&quot; [&lt;options&gt;]&quot;);</span>
+
+      // output extra arguments
+<span class="nc bnc" id="L549" title="All 2 branches missed.">      if (targetCommand != null) {</span>
+        // handle extra arguments
+<span class="nc bnc" id="L551" title="All 2 branches missed.">        for (ExtraArgument argument : targetCommand.getExtraArguments()) {</span>
+<span class="nc" id="L552">          builder.append(' ');</span>
+<span class="nc bnc" id="L553" title="All 2 branches missed.">          if (!argument.isRequired()) {</span>
+<span class="nc" id="L554">            builder.append('[');</span>
+          }
+
+<span class="nc" id="L557">          builder.append('&lt;');</span>
+<span class="nc" id="L558">          builder.append(argument.getName());</span>
+<span class="nc" id="L559">          builder.append('&gt;');</span>
+
+<span class="nc bnc" id="L561" title="All 2 branches missed.">          if (argument.getNumber() &gt; 1) {</span>
+<span class="nc" id="L562">            builder.append(&quot;...&quot;);</span>
+          }
+
+<span class="nc bnc" id="L565" title="All 2 branches missed.">          if (!argument.isRequired()) {</span>
+<span class="nc" id="L566">            builder.append(']');</span>
+          }
+<span class="nc" id="L568">        }</span>
+      }
+
+<span class="nc" id="L571">      String retval = builder.toString();</span>
+<span class="nc bnc" id="L572" title="All 2 branches missed.">      assert retval != null;</span>
+<span class="nc" id="L573">      return retval;</span>
+    }
+
+    public void showHelp() {
+
+<span class="nc" id="L578">      HelpFormatter formatter = new HelpFormatter();</span>
+<span class="nc" id="L579">      formatter.setLongOptSeparator(&quot;=&quot;);</span>
+
+<span class="nc" id="L581">      AnsiPrintStream out = AnsiConsole.out();</span>
+<span class="nc" id="L582">      int terminalWidth = Math.max(out.getTerminalWidth(), 40);</span>
+
+<span class="nc" id="L584">      @SuppressWarnings(&quot;resource&quot;) PrintWriter writer = new PrintWriter( // NOPMD not owned</span>
+          out,
+          true,
+          StandardCharsets.UTF_8);
+<span class="nc" id="L588">      formatter.printHelp(</span>
+          writer,
+          terminalWidth,
+<span class="nc" id="L591">          buildHelpCliSyntax(),</span>
+<span class="nc" id="L592">          buildHelpHeader(),</span>
+<span class="nc" id="L593">          toOptions(),</span>
+          HelpFormatter.DEFAULT_LEFT_PAD,
+          HelpFormatter.DEFAULT_DESC_PAD,
+<span class="nc" id="L596">          buildHelpFooter(),</span>
+          false);
+<span class="nc" id="L598">      writer.flush();</span>
+<span class="nc" id="L599">    }</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

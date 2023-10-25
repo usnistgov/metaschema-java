@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClassDataTypeHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.model.info</a> &gt; <span class="el_source">ClassDataTypeHandler.java</span></div><h1>ClassDataTypeHandler.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.model.info;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
+import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
+import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
+
+<span class="fc" id="L65">class ClassDataTypeHandler implements IDataTypeHandler {</span>
+  private final boolean jsonKeyRequired;
+  @NonNull
+  private final IClassBinding classBinding;
+
+  @NonNull
+  private final Lazy&lt;Map&lt;String, ? extends IBoundNamedInstance&gt;&gt; propertyMap;
+
+  /**
+   * Generates a mapping of property names to associated Module instances.
+   * &lt;p&gt;
+   * If {@code requiresJsonKey} is {@code true} then the instance used as the JSON
+   * key is not included in the mapping.
+   * &lt;p&gt;
+   * If the {@code targetDefinition} is an instance of {@link IFieldDefinition}
+   * and a JSON value key property is configured, then the value key flag and
+   * value are also ommitted from the mapping. Otherwise, the value is included in
+   * the mapping.
+   *
+   * @param targetDefinition
+   *          the Module bound definition to generate the instance map for
+   * @param requiresJsonKey
+   *          if {@code true} then the instance used as the JSON key is not
+   *          included in the mapping, or {@code false} otherwise
+   * @return a mapping of JSON property to related Module instance
+   */
+  @NonNull
+  private static Map&lt;String, ? extends IBoundNamedInstance&gt; getInstancesToParse(
+      @NonNull IClassBinding targetDefinition,
+      boolean requiresJsonKey) {
+<span class="fc" id="L95">    Collection&lt;? extends IBoundFlagInstance&gt; flags = targetDefinition.getFlagInstances();</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">    int flagCount = flags.size() - (requiresJsonKey ? 1 : 0);</span>
+
+    @SuppressWarnings(&quot;resource&quot;) Stream&lt;? extends IBoundNamedInstance&gt; instanceStream;
+<span class="fc bfc" id="L99" title="All 2 branches covered.">    if (targetDefinition instanceof IAssemblyClassBinding) {</span>
+      // use all child instances
+<span class="fc" id="L101">      instanceStream = ((IAssemblyClassBinding) targetDefinition).getModelInstances().stream();</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">    } else if (targetDefinition instanceof IFieldClassBinding) {</span>
+<span class="fc" id="L103">      IFieldClassBinding targetFieldDefinition = (IFieldClassBinding) targetDefinition;</span>
+
+<span class="fc" id="L105">      IBoundFlagInstance jsonValueKeyFlag = targetFieldDefinition.getJsonValueKeyFlagInstance();</span>
+<span class="pc bpc" id="L106" title="2 of 4 branches missed.">      if (jsonValueKeyFlag == null &amp;&amp; flagCount &gt; 0) {</span>
+        // the field value is handled as named field
+<span class="fc" id="L108">        IBoundFieldValueInstance fieldValue = targetFieldDefinition.getFieldValueInstance();</span>
+<span class="fc" id="L109">        instanceStream = Stream.of(fieldValue);</span>
+<span class="fc" id="L110">      } else {</span>
+        // only the value, with no flags or a JSON value key flag
+<span class="nc" id="L112">        instanceStream = Stream.empty();</span>
+      }
+<span class="fc" id="L114">    } else {</span>
+<span class="nc" id="L115">      throw new UnsupportedOperationException(</span>
+<span class="nc" id="L116">          String.format(&quot;Unsupported class binding type: %s&quot;, targetDefinition.getClass().getName()));</span>
+    }
+
+<span class="fc bfc" id="L119" title="All 2 branches covered.">    if (requiresJsonKey) {</span>
+<span class="fc" id="L120">      IBoundFlagInstance jsonKey = targetDefinition.getJsonKeyFlagInstance();</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">      assert jsonKey != null;</span>
+<span class="fc" id="L122">      instanceStream = Stream.concat(</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">          flags.stream().filter((flag) -&gt; !jsonKey.equals(flag)),</span>
+          instanceStream);
+<span class="fc" id="L125">    } else {</span>
+<span class="fc" id="L126">      instanceStream = Stream.concat(</span>
+<span class="fc" id="L127">          flags.stream(),</span>
+          instanceStream);
+    }
+<span class="fc" id="L130">    return ObjectUtils.notNull(instanceStream.collect(</span>
+<span class="fc" id="L131">        Collectors.toUnmodifiableMap(</span>
+            IBoundNamedInstance::getJsonName,
+<span class="fc" id="L133">            Function.identity())));</span>
+  }
+
+  public ClassDataTypeHandler(
+      @Nullable IBoundNamedModelInstance targetInstance,
+<span class="fc" id="L138">      @NonNull IClassBinding classBinding) {</span>
+<span class="fc" id="L139">    this.classBinding = classBinding;</span>
+
+<span class="fc bfc" id="L141" title="All 4 branches covered.">    this.jsonKeyRequired = targetInstance != null &amp;&amp; targetInstance.getPropertyInfo().isJsonKeyRequired();</span>
+<span class="fc" id="L142">    this.propertyMap = ObjectUtils.notNull(Lazy.lazy(() -&gt; getInstancesToParse(</span>
+        classBinding,
+        this.jsonKeyRequired)));
+<span class="fc" id="L145">  }</span>
+
+  @Override
+  public IDataTypeAdapter&lt;?&gt; getJavaTypeAdapter() {
+    // this is always null
+<span class="nc" id="L150">    return null;</span>
+  }
+
+  @Override
+  @NonNull
+  public IClassBinding getClassBinding() {
+<span class="fc" id="L156">    return classBinding;</span>
+  }
+
+  @Override
+  public boolean isUnwrappedValueAllowedInXml() {
+    // classes are always wrapped
+<span class="nc" id="L162">    return false;</span>
+  }
+
+  @Override
+  public boolean isJsonKeyRequired() {
+<span class="fc" id="L167">    return jsonKeyRequired;</span>
+  }
+
+  @NonNull
+  protected Map&lt;String, ? extends IBoundNamedInstance&gt; getJsonInstanceMap() {
+<span class="fc" id="L172">    return ObjectUtils.notNull(propertyMap.get());</span>
+  }
+
+  @SuppressWarnings(&quot;resource&quot;) // not owned
+  private boolean readItemJsonKey(
+      @NonNull Object targetObject,
+      IJsonParsingContext context) throws IOException {
+<span class="fc" id="L179">    JsonParser parser = context.getReader(); // NOPMD - intentional</span>
+<span class="fc" id="L180">    IClassBinding definition = getClassBinding();</span>
+
+<span class="fc" id="L182">    IBoundFlagInstance jsonKey = definition.getJsonKeyFlagInstance();</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">    if (jsonKey == null) {</span>
+<span class="nc" id="L184">      throw new IOException(String.format(&quot;JSON key not defined for object '%s'%s&quot;,</span>
+<span class="nc" id="L185">          definition.toCoordinates(), JsonUtil.generateLocationMessage(parser)));</span>
+    }
+
+    // the field will be the JSON key
+<span class="fc" id="L189">    String key = ObjectUtils.notNull(parser.getCurrentName());</span>
+
+<span class="fc" id="L191">    Object value = jsonKey.getDefinition().getJavaTypeAdapter().parse(key);</span>
+<span class="fc" id="L192">    jsonKey.setValue(targetObject, value.toString());</span>
+
+    // advance past the FIELD_NAME
+<span class="fc" id="L195">    JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);</span>
+
+<span class="fc" id="L197">    boolean keyObjectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">    if (keyObjectWrapper) {</span>
+<span class="fc" id="L199">      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);</span>
+    }
+
+<span class="fc" id="L202">    return keyObjectWrapper;</span>
+  }
+
+  @SuppressWarnings({
+      &quot;resource&quot;, // not owned
+      &quot;PMD.NPathComplexity&quot;, &quot;PMD.CyclomaticComplexity&quot; // ok
+  })
+  @Override
+  public &lt;T&gt; T readItem(Object parentObject, IJsonParsingContext context)
+      throws IOException {
+<span class="fc" id="L212">    JsonParser parser = context.getReader(); // NOPMD - intentional</span>
+<span class="fc" id="L213">    boolean objectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">    if (objectWrapper) {</span>
+<span class="fc" id="L215">      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);</span>
+    }
+
+    Object targetObject;
+    try {
+<span class="fc" id="L220">      targetObject = classBinding.newInstance();</span>
+<span class="fc" id="L221">      classBinding.callBeforeDeserialize(targetObject, parentObject);</span>
+<span class="nc" id="L222">    } catch (BindingException ex) {</span>
+<span class="nc" id="L223">      throw new IOException(ex);</span>
+<span class="fc" id="L224">    }</span>
+
+<span class="fc" id="L226">    IClassBinding definition = getClassBinding();</span>
+<span class="fc" id="L227">    boolean readJsonKey = isJsonKeyRequired();</span>
+<span class="fc" id="L228">    boolean keyObjectWrapper = false;</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">    if (readJsonKey) {</span>
+<span class="fc" id="L230">      keyObjectWrapper = readItemJsonKey(targetObject, context);</span>
+    }
+
+<span class="fc bfc" id="L233" title="All 4 branches covered.">    if (keyObjectWrapper || JsonToken.FIELD_NAME.equals(parser.currentToken())) {</span>
+<span class="fc" id="L234">      context.readDefinitionValue(definition, targetObject, getJsonInstanceMap());</span>
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">    } else if (parser.currentToken().isScalarValue()) {</span>
+      // this is just a value
+<span class="fc" id="L237">      IFieldClassBinding fieldDefinition = (IFieldClassBinding) definition;</span>
+<span class="fc" id="L238">      Object fieldValue = fieldDefinition.getJavaTypeAdapter().parse(parser);</span>
+<span class="fc" id="L239">      fieldDefinition.getFieldValueInstance().setValue(targetObject, fieldValue);</span>
+    }
+
+    try {
+<span class="fc" id="L243">      classBinding.callAfterDeserialize(targetObject, parentObject);</span>
+<span class="nc" id="L244">    } catch (BindingException ex) {</span>
+<span class="nc" id="L245">      throw new IOException(ex);</span>
+<span class="fc" id="L246">    }</span>
+
+<span class="fc bfc" id="L248" title="All 2 branches covered.">    if (keyObjectWrapper) {</span>
+      // advance past the END_OBJECT for the JSON key
+<span class="fc" id="L250">      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);</span>
+    }
+
+<span class="fc bfc" id="L253" title="All 2 branches covered.">    if (objectWrapper) {</span>
+<span class="fc" id="L254">      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);</span>
+    }
+<span class="fc" id="L256">    return ObjectUtils.asType(targetObject);</span>
+  }
+
+  @Override
+  public Object readItem(Object parentInstance, StartElement start, IXmlParsingContext context)
+      throws IOException, XMLStreamException {
+<span class="fc" id="L262">    return context.readDefinitionValue(getClassBinding(), parentInstance, start);</span>
+  }
+
+  @Override
+  public void writeItem(Object item, QName currentParentName, IXmlWritingContext context)
+      throws IOException, XMLStreamException {
+<span class="fc" id="L268">    context.writeDefinitionValue(classBinding, item, currentParentName);</span>
+<span class="fc" id="L269">  }</span>
+
+  @SuppressWarnings(&quot;resource&quot;) // not owned
+  @Override
+  public void writeItem(Object targetObject, IJsonWritingContext context) throws IOException {
+<span class="nc" id="L274">    JsonGenerator writer = context.getWriter();</span>
+
+<span class="nc" id="L276">    writer.writeStartObject();</span>
+
+<span class="nc" id="L278">    IClassBinding definition = getClassBinding();</span>
+<span class="nc" id="L279">    boolean writeJsonKey = isJsonKeyRequired();</span>
+<span class="nc bnc" id="L280" title="All 2 branches missed.">    if (writeJsonKey) {</span>
+<span class="nc" id="L281">      IBoundFlagInstance jsonKey = definition.getJsonKeyFlagInstance();</span>
+<span class="nc bnc" id="L282" title="All 2 branches missed.">      assert jsonKey != null;</span>
+
+      // the field will be the JSON key
+<span class="nc" id="L285">      Object flagValue = jsonKey.getValue(targetObject);</span>
+<span class="nc" id="L286">      String key = jsonKey.getValueAsString(flagValue);</span>
+<span class="nc bnc" id="L287" title="All 2 branches missed.">      if (key == null) {</span>
+<span class="nc" id="L288">        throw new IOException(new NullPointerException(&quot;Null key value&quot;));</span>
+      }
+<span class="nc" id="L290">      writer.writeFieldName(key);</span>
+
+      // next the value will be a start object
+<span class="nc" id="L293">      writer.writeStartObject();</span>
+    }
+
+<span class="nc" id="L296">    context.writeDefinitionValue(</span>
+        classBinding,
+        targetObject,
+<span class="nc" id="L299">        getJsonInstanceMap());</span>
+
+<span class="nc bnc" id="L301" title="All 2 branches missed.">    if (writeJsonKey) {</span>
+<span class="nc" id="L302">      writer.writeEndObject();</span>
+    }
+
+<span class="nc" id="L305">    writer.writeEndObject();</span>
+<span class="nc" id="L306">  }</span>
+
+  @Override
+  public Object copyItem(@NonNull Object fromItem, Object parentInstance) throws BindingException {
+<span class="nc" id="L310">    return classBinding.copyBoundObject(fromItem, parentInstance);</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

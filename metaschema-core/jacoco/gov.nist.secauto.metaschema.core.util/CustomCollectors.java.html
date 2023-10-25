@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CustomCollectors.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.util</a> &gt; <span class="el_source">CustomCollectors.java</span></div><h1>CustomCollectors.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.util;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public final class CustomCollectors {
+  private CustomCollectors() {
+    // disable
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static &lt;T&gt; Function&lt;T, T&gt; identity() {
+<span class="fc" id="L51">    return Function.identity();</span>
+  }
+
+  public static Collector&lt;CharSequence, ?, String&gt; joiningWithOxfordComma(@NonNull String conjunction) {
+<span class="fc" id="L55">    return Collectors.collectingAndThen(Collectors.toList(), withOxfordComma(conjunction));</span>
+  }
+
+  private static Function&lt;List&lt;CharSequence&gt;, String&gt; withOxfordComma(@NonNull String conjunction) {
+<span class="fc" id="L59">    return list -&gt; {</span>
+<span class="fc" id="L60">      int size = list.size();</span>
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">      if (size &lt; 2) {</span>
+<span class="nc" id="L62">        return String.join(&quot;&quot;, list);</span>
+      }
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">      if (size == 2) {</span>
+<span class="fc" id="L65">        return String.join(&quot; &quot; + conjunction + &quot; &quot;, list);</span>
+      }
+      // else there are 3 or more
+<span class="nc" id="L68">      int last = size - 1;</span>
+<span class="nc" id="L69">      return String.join(&quot;, &quot; + conjunction + &quot; &quot;,</span>
+<span class="nc" id="L70">          String.join(&quot;, &quot;, list.subList(0, last)),</span>
+<span class="nc" id="L71">          list.get(last));</span>
+    };
+  }
+
+  /**
+   * Produce a new stream with duplicates removed based on the provided
+   * {@code keyMapper}. When a duplicate key is encountered, the second item is
+   * used. The original sequencing is preserved if the input stream is sequential.
+   *
+   * @param &lt;V&gt;
+   *          the item value for the streams
+   * @param &lt;K&gt;
+   *          the key type
+   * @param stream
+   *          the stream to reduce
+   * @param keyMapper
+   *          the key function to use to find unique items
+   * @return a new stream
+   */
+  public static &lt;V, K&gt; Stream&lt;V&gt; distinctByKey(
+      @NonNull Stream&lt;V&gt; stream,
+      @NonNull Function&lt;? super V, ? extends K&gt; keyMapper) {
+<span class="nc" id="L93">    return distinctByKey(stream, keyMapper, (key, value1, value2) -&gt; value2);</span>
+  }
+
+  /**
+   * Produce a new stream with duplicates removed based on the provided
+   * {@code keyMapper}. When a duplicate key is encountered, the provided
+   * {@code duplicateHandler} is used to determine which item to keep. The
+   * original sequencing is preserved if the input stream is sequential.
+   *
+   * @param &lt;V&gt;
+   *          the item value for the streams
+   * @param &lt;K&gt;
+   *          the key type
+   * @param stream
+   *          the stream to reduce
+   * @param keyMapper
+   *          the key function to use to find unique items
+   * @param duplicateHander
+   *          used to determine which of two duplicates to keep
+   * @return a new stream
+   */
+  public static &lt;V, K&gt; Stream&lt;V&gt; distinctByKey(
+      @NonNull Stream&lt;V&gt; stream,
+      @NonNull Function&lt;? super V, ? extends K&gt; keyMapper,
+      @NonNull DuplicateHandler&lt;K, V&gt; duplicateHander) {
+<span class="nc" id="L118">    Map&lt;K, V&gt; uniqueRoles = stream</span>
+<span class="nc" id="L119">        .collect(toMap(</span>
+            keyMapper,
+<span class="nc" id="L121">            identity(),</span>
+            duplicateHander,
+            LinkedHashMap::new));
+<span class="nc" id="L124">    return uniqueRoles.values().stream();</span>
+  }
+
+  @NonNull
+  public static &lt;T, K, V&gt; Collector&lt;T, ?, Map&lt;K, V&gt;&gt; toMap(
+      @NonNull Function&lt;? super T, ? extends K&gt; keyMapper,
+      @NonNull Function&lt;? super T, ? extends V&gt; valueMapper,
+      @NonNull DuplicateHandler&lt;K, V&gt; duplicateHander) {
+<span class="fc" id="L132">    return toMap(keyMapper, valueMapper, duplicateHander, HashMap::new);</span>
+  }
+
+  @NonNull
+  public static &lt;T, K, V, M extends Map&lt;K, V&gt;&gt; Collector&lt;T, ?, M&gt; toMap(
+      @NonNull Function&lt;? super T, ? extends K&gt; keyMapper,
+      @NonNull Function&lt;? super T, ? extends V&gt; valueMapper,
+      @NonNull DuplicateHandler&lt;K, V&gt; duplicateHander,
+      Supplier&lt;M&gt; supplier) {
+<span class="fc" id="L141">    return ObjectUtils.notNull(</span>
+<span class="fc" id="L142">        Collector.of(</span>
+            supplier,
+            (map, item) -&gt; {
+<span class="fc" id="L145">              K key = keyMapper.apply(item);</span>
+<span class="fc" id="L146">              V value = Objects.requireNonNull(valueMapper.apply(item));</span>
+<span class="fc" id="L147">              V oldValue = map.get(key);</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">              if (oldValue != null) {</span>
+<span class="fc" id="L149">                value = duplicateHander.handle(key, oldValue, value);</span>
+              }
+<span class="fc" id="L151">              map.put(key, value);</span>
+<span class="fc" id="L152">            },</span>
+            (map1, map2) -&gt; {
+<span class="nc" id="L154">              map2.forEach((key, value) -&gt; {</span>
+<span class="nc" id="L155">                V oldValue = map1.get(key);</span>
+<span class="nc" id="L156">                V newValue = value;</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">                if (oldValue != null) {</span>
+<span class="nc" id="L158">                  newValue = duplicateHander.handle(key, oldValue, value);</span>
+                }
+<span class="nc" id="L160">                map1.put(key, newValue);</span>
+<span class="nc" id="L161">              });</span>
+<span class="nc" id="L162">              return map1;</span>
+            }));
+  }
+
+  @FunctionalInterface
+  public interface DuplicateHandler&lt;K, V&gt; {
+    @NonNull
+    V handle(K key, @NonNull V value1, V value2);
+  }
+
+  @NonNull
+  public static &lt;T&gt; BinaryOperator&lt;T&gt; useFirstMapper() {
+<span class="nc" id="L174">    return (value1, value2) -&gt; value1;</span>
+  }
+
+  @NonNull
+  public static &lt;T&gt; BinaryOperator&lt;T&gt; useLastMapper() {
+<span class="nc" id="L179">    return (value1, value2) -&gt; value2;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

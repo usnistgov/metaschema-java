@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.configuration</a> &gt; <span class="el_source">DefaultConfiguration.java</span></div><h1>DefaultConfiguration.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.configuration;
+
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+/**
+ * Provides a basic configuration management implementation that allows mutable
+ * access to configuration state.
+ *
+ * @param &lt;T&gt;
+ *          the type of managed features
+ */
+public class DefaultConfiguration&lt;T extends IConfigurationFeature&lt;?&gt;&gt;
+    implements IMutableConfiguration&lt;T&gt; {
+  @NonNull
+  private Map&lt;T, Object&gt; featureValues;
+
+  /**
+   * Create a new configuration.
+   *
+   */
+<span class="fc" id="L52">  public DefaultConfiguration() {</span>
+<span class="fc" id="L53">    this.featureValues = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L54">  }</span>
+
+  /**
+   * Create a new configuration based on the provided feature value map.
+   *
+   * @param featureValues
+   *          the set of enabled features
+   */
+<span class="nc" id="L62">  public DefaultConfiguration(@NonNull Map&lt;T, Object&gt; featureValues) {</span>
+<span class="nc" id="L63">    this.featureValues = new HashMap&lt;&gt;(featureValues);</span>
+<span class="nc" id="L64">  }</span>
+
+  /**
+   * Create a new configuration based on the provided configuration.
+   *
+   * @param original
+   *          the original configuration
+   */
+  public DefaultConfiguration(@NonNull DefaultConfiguration&lt;T&gt; original) {
+<span class="nc" id="L73">    this(original.getFeatureValues());</span>
+<span class="nc" id="L74">  }</span>
+
+  @Override
+  public Map&lt;T, Object&gt; getFeatureValues() {
+<span class="fc" id="L78">    return CollectionUtil.unmodifiableMap(featureValues);</span>
+  }
+
+  private void ensureBooleanValue(@NonNull T feature) {
+<span class="fc" id="L82">    Class&lt;?&gt; valueClass = feature.getValueClass();</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">    if (!Boolean.class.isAssignableFrom(valueClass)) {</span>
+<span class="nc" id="L84">      throw new UnsupportedOperationException(</span>
+<span class="nc" id="L85">          String.format(&quot;Feature value class '%s' is boolean valued.&quot;, valueClass.getName()));</span>
+    }
+<span class="fc" id="L87">  }</span>
+
+  @Override
+  public boolean isFeatureEnabled(@NonNull T feature) {
+<span class="fc" id="L91">    ensureBooleanValue(feature);</span>
+<span class="fc" id="L92">    return get(feature);</span>
+  }
+
+  @Override
+  public IMutableConfiguration&lt;T&gt; enableFeature(@NonNull T feature) {
+<span class="fc" id="L97">    ensureBooleanValue(feature);</span>
+<span class="fc" id="L98">    featureValues.put(feature, true);</span>
+<span class="fc" id="L99">    return this;</span>
+  }
+
+  @Override
+  public IMutableConfiguration&lt;T&gt; disableFeature(@NonNull T feature) {
+<span class="fc" id="L104">    ensureBooleanValue(feature);</span>
+<span class="fc" id="L105">    featureValues.put(feature, false);</span>
+<span class="fc" id="L106">    return this;</span>
+  }
+
+  @Override
+  public IMutableConfiguration&lt;T&gt; applyConfiguration(@NonNull IConfiguration&lt;T&gt; original) {
+<span class="nc" id="L111">    this.featureValues.putAll(original.getFeatureValues());</span>
+<span class="nc" id="L112">    return this;</span>
+  }
+
+  @Override
+  public IMutableConfiguration&lt;T&gt; set(T feature, Object value) {
+<span class="nc" id="L117">    Class&lt;?&gt; featureValueClass = feature.getValueClass();</span>
+<span class="nc" id="L118">    Class&lt;?&gt; valueClass = value.getClass();</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">    if (!featureValueClass.isAssignableFrom(valueClass)) {</span>
+<span class="nc" id="L120">      throw new UnsupportedOperationException(</span>
+<span class="nc" id="L121">          String.format(&quot;Provided value of class '%s' is not assignment compatible with feature value class '%s'.&quot;,</span>
+<span class="nc" id="L122">              valueClass.getName(),</span>
+<span class="nc" id="L123">              featureValueClass.getName()));</span>
+    }
+<span class="nc" id="L125">    featureValues.put(feature, value);</span>
+<span class="nc" id="L126">    return this;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

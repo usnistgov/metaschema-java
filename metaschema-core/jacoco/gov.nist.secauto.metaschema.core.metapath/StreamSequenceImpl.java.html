@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StreamSequenceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath</a> &gt; <span class="el_source">StreamSequenceImpl.java</span></div><h1>StreamSequenceImpl.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath;
+
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L40">class StreamSequenceImpl&lt;ITEM_TYPE extends IItem&gt; implements ISequence&lt;ITEM_TYPE&gt; {</span>
+  private Stream&lt;ITEM_TYPE&gt; stream;
+  private List&lt;ITEM_TYPE&gt; list;
+
+<span class="fc" id="L44">  public StreamSequenceImpl(@NonNull Stream&lt;ITEM_TYPE&gt; stream) {</span>
+<span class="fc" id="L45">    Objects.requireNonNull(stream, &quot;stream&quot;);</span>
+<span class="fc" id="L46">    this.stream = stream;</span>
+<span class="fc" id="L47">  }</span>
+
+  @Override
+  public boolean isEmpty() {
+<span class="fc" id="L51">    return asList().isEmpty();</span>
+  }
+
+  @Override
+  public List&lt;ITEM_TYPE&gt; asList() {
+<span class="fc" id="L56">    synchronized (this) {</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">      if (list == null) {</span>
+<span class="fc" id="L58">        list = asStream().collect(Collectors.toUnmodifiableList());</span>
+      }
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">      assert list != null;</span>
+<span class="fc" id="L61">      return list;</span>
+    }
+  }
+
+  @Override
+  public Stream&lt;ITEM_TYPE&gt; asStream() {
+    @NonNull Stream&lt;ITEM_TYPE&gt; retval;
+<span class="fc" id="L68">    synchronized (this) {</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">      if (list == null) {</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">        if (stream == null) {</span>
+<span class="nc" id="L71">          throw new IllegalStateException(&quot;stream is already consumed&quot;);</span>
+        }
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        assert stream != null;</span>
+<span class="fc" id="L74">        retval = stream;</span>
+<span class="fc" id="L75">        stream = null; // NOPMD - readability</span>
+      } else {
+<span class="nc" id="L77">        retval = ObjectUtils.notNull(list.stream());</span>
+      }
+<span class="fc" id="L79">    }</span>
+<span class="fc" id="L80">    return retval;</span>
+  }
+
+  @Override
+  public void forEach(Consumer&lt;? super ITEM_TYPE&gt; action) {
+<span class="nc" id="L85">    asStream().forEachOrdered(action);</span>
+<span class="nc" id="L86">  }</span>
+
+  @Override
+  public String toString() {
+<span class="nc" id="L90">    return asList().toString();</span>
+  }
+
+  @Override
+  public int size() {
+<span class="nc" id="L95">    return asList().size();</span>
+  }
+
+  @Override
+  public void collect() {
+<span class="nc" id="L100">    asList();</span>
+<span class="nc" id="L101">  }</span>
+
+  @Override
+  public boolean equals(Object other) {
+    // must either be the same instance or a sequence that has the same list
+    // contents
+<span class="nc bnc" id="L107" title="All 4 branches missed.">    return other == this</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        || other instanceof ISequence &amp;&amp; asList().equals(((ISequence&lt;?&gt;) other).asList());</span>
+  }
+
+  @Override
+  public int hashCode() {
+<span class="nc" id="L113">    return asList().hashCode();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

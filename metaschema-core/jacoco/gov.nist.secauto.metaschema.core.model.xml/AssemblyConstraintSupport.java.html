@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AssemblyConstraintSupport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.xml</a> &gt; <span class="el_source">AssemblyConstraintSupport.java</span></div><h1>AssemblyConstraintSupport.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.xml;
+
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultCardinalityConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultExpectConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultIndexConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultMatchesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultUniqueConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
+import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ISource;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraintVisitor;
+import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IIndexConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IKeyConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IKeyField;
+import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
+import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.DefineAssemblyConstraintsType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.EnumType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.HasCardinalityConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.KeyConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.KeyConstraintType.KeyField;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.PropertyType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.RemarksType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedAllowedValuesType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedExpectConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedIndexConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedIndexHasKeyConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedKeyConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedMatchesConstraintType;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
+
+import java.math.BigInteger;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+/**
+ * Provides support for parsing and maintaining a set of Metaschema constraints.
+ * Constraints are parsed from XML.
+ */
+<span class="fc" id="L89">@SuppressWarnings(&quot;PMD.CouplingBetweenObjects&quot;)</span>
+class AssemblyConstraintSupport
+    extends ValueConstraintSupport
+    implements IModelConstrained {
+  @NonNull
+  private static final String PATH = &quot;declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';&quot;
+      + &quot;$this/m:allowed-values|$this/m:index|$this/m:index-has-key|$this/m:is-unique|&quot;
+      + &quot;$this/m:has-cardinality|$this/m:matches|$this/m:expect&quot;;
+<span class="pc" id="L97">  @NonNull</span>
+  private final List&lt;IIndexConstraint&gt; indexConstraints = new LinkedList&lt;&gt;();
+<span class="pc" id="L99">  @NonNull</span>
+  private final List&lt;IUniqueConstraint&gt; uniqueConstraints = new LinkedList&lt;&gt;();
+<span class="pc" id="L101">  @NonNull</span>
+  private final List&lt;ICardinalityConstraint&gt; cardinalityConstraints = new LinkedList&lt;&gt;();
+
+  public static AssemblyConstraintSupport newInstance(
+      @NonNull GlobalAssemblyDefinitionType definition,
+      @NonNull ISource source) {
+    AssemblyConstraintSupport retval;
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">    if (definition.isSetConstraint()) {</span>
+<span class="fc" id="L109">      retval = new AssemblyConstraintSupport(ObjectUtils.notNull(definition.getConstraint()), source);</span>
+    } else {
+<span class="nc" id="L111">      retval = new AssemblyConstraintSupport();</span>
+    }
+<span class="fc" id="L113">    return retval;</span>
+  }
+
+<span class="nc" id="L116">  public AssemblyConstraintSupport() {</span>
+    // do nothing
+<span class="nc" id="L118">  }</span>
+
+  /**
+   * Generate a set of constraints from the provided XMLBeans instance.
+   *
+   * @param xmlConstraints
+   *          the XMLBeans instance
+   * @param source
+   *          information about the source of the constraints
+   */
+  public AssemblyConstraintSupport( // NOPMD - unavoidable
+      @NonNull DefineAssemblyConstraintsType xmlConstraints,
+<span class="fc" id="L130">      @NonNull ISource source) {</span>
+<span class="fc" id="L131">    try (XmlCursor cursor = xmlConstraints.newCursor()) {</span>
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">      assert cursor != null;</span>
+<span class="fc" id="L133">      parse(source, cursor, PATH);</span>
+    }
+<span class="fc" id="L135">  }</span>
+
+  @Override
+  protected boolean parseXmlObject(
+      @NonNull ISource source,
+      @NonNull XmlObject obj) {
+<span class="fc" id="L141">    boolean handled = false;</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">    if (obj instanceof ScopedAllowedValuesType) {</span>
+<span class="fc" id="L143">      DefaultAllowedValuesConstraint constraint</span>
+<span class="fc" id="L144">          = ModelFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj, source);</span>
+<span class="fc" id="L145">      addConstraint(constraint);</span>
+<span class="fc" id="L146">      handled = true;</span>
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">    } else if (obj instanceof ScopedIndexConstraintType) {</span>
+<span class="nc" id="L148">      DefaultIndexConstraint constraint</span>
+<span class="nc" id="L149">          = ModelFactory.newIndexConstraint((ScopedIndexConstraintType) obj, source);</span>
+<span class="nc" id="L150">      addConstraint(constraint);</span>
+<span class="nc" id="L151">      handled = true;</span>
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">    } else if (obj instanceof ScopedIndexHasKeyConstraintType) {</span>
+<span class="nc" id="L153">      DefaultIndexHasKeyConstraint constraint</span>
+<span class="nc" id="L154">          = ModelFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj, source);</span>
+<span class="nc" id="L155">      addConstraint(constraint);</span>
+<span class="nc" id="L156">      handled = true;</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">    } else if (obj instanceof ScopedKeyConstraintType) {</span>
+<span class="nc" id="L158">      DefaultUniqueConstraint constraint</span>
+<span class="nc" id="L159">          = ModelFactory.newUniqueConstraint((ScopedKeyConstraintType) obj, source);</span>
+<span class="nc" id="L160">      addConstraint(constraint);</span>
+<span class="nc" id="L161">      handled = true;</span>
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">    } else if (obj instanceof HasCardinalityConstraintType) {</span>
+<span class="nc" id="L163">      DefaultCardinalityConstraint constraint</span>
+<span class="nc" id="L164">          = ModelFactory.newCardinalityConstraint((HasCardinalityConstraintType) obj, source);</span>
+<span class="nc" id="L165">      addConstraint(constraint);</span>
+<span class="nc" id="L166">      handled = true;</span>
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">    } else if (obj instanceof ScopedMatchesConstraintType) {</span>
+<span class="nc" id="L168">      DefaultMatchesConstraint constraint</span>
+<span class="nc" id="L169">          = ModelFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj, source);</span>
+<span class="nc" id="L170">      addConstraint(constraint);</span>
+<span class="nc" id="L171">      handled = true;</span>
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">    } else if (obj instanceof ScopedExpectConstraintType) {</span>
+<span class="fc" id="L173">      DefaultExpectConstraint constraint</span>
+<span class="fc" id="L174">          = ModelFactory.newExpectConstraint((ScopedExpectConstraintType) obj, source);</span>
+<span class="fc" id="L175">      addConstraint(constraint);</span>
+<span class="fc" id="L176">      handled = true;</span>
+    }
+<span class="fc" id="L178">    return handled;</span>
+  }
+
+  @Override
+  public List&lt;IIndexConstraint&gt; getIndexConstraints() {
+<span class="fc" id="L183">    synchronized (this) {</span>
+<span class="fc" id="L184">      return indexConstraints;</span>
+    }
+  }
+
+  @Override
+  public List&lt;IUniqueConstraint&gt; getUniqueConstraints() {
+<span class="fc" id="L190">    synchronized (this) {</span>
+<span class="fc" id="L191">      return uniqueConstraints;</span>
+    }
+  }
+
+  @Override
+  public List&lt;ICardinalityConstraint&gt; getHasCardinalityConstraints() {
+<span class="fc" id="L197">    synchronized (this) {</span>
+<span class="fc" id="L198">      return cardinalityConstraints;</span>
+    }
+  }
+
+  @Override
+  public final void addConstraint(@NonNull IIndexConstraint constraint) {
+<span class="nc" id="L204">    synchronized (this) {</span>
+<span class="nc" id="L205">      getConstraints().add(constraint);</span>
+<span class="nc" id="L206">      indexConstraints.add(constraint);</span>
+<span class="nc" id="L207">    }</span>
+<span class="nc" id="L208">  }</span>
+
+  @Override
+  public final void addConstraint(@NonNull IUniqueConstraint constraint) {
+<span class="nc" id="L212">    synchronized (this) {</span>
+<span class="nc" id="L213">      getConstraints().add(constraint);</span>
+<span class="nc" id="L214">      uniqueConstraints.add(constraint);</span>
+<span class="nc" id="L215">    }</span>
+<span class="nc" id="L216">  }</span>
+
+  @Override
+  public final void addConstraint(@NonNull ICardinalityConstraint constraint) {
+<span class="nc" id="L220">    synchronized (this) {</span>
+<span class="nc" id="L221">      getConstraints().add(constraint);</span>
+<span class="nc" id="L222">      cardinalityConstraints.add(constraint);</span>
+<span class="nc" id="L223">    }</span>
+<span class="nc" id="L224">  }</span>
+
+  public final DefineAssemblyConstraintsType generate() {
+<span class="nc" id="L227">    DefineAssemblyConstraintsType retval = DefineAssemblyConstraintsType.Factory.newInstance();</span>
+
+<span class="nc" id="L229">    XmlbeanGeneratingVisitor visitor = new XmlbeanGeneratingVisitor();</span>
+
+<span class="nc bnc" id="L231" title="All 2 branches missed.">    for (IConstraint constraint : getConstraints()) {</span>
+<span class="nc" id="L232">      constraint.accept(visitor, retval);</span>
+<span class="nc" id="L233">    }</span>
+<span class="nc" id="L234">    return retval;</span>
+  }
+
+<span class="nc" id="L237">  private static final class XmlbeanGeneratingVisitor</span>
+      implements IConstraintVisitor&lt;DefineAssemblyConstraintsType, Void&gt; {
+
+    private static void applyCommonValues(@NonNull IConstraint constraint, @NonNull ConstraintType bean) {
+<span class="nc" id="L241">      MarkupLine description = constraint.getDescription();</span>
+<span class="nc bnc" id="L242" title="All 2 branches missed.">      if (description != null) {</span>
+<span class="nc" id="L243">        bean.setDescription(MarkupStringConverter.toMarkupLineDatatype(description));</span>
+      }
+<span class="nc" id="L245">      String formalName = constraint.getFormalName();</span>
+<span class="nc bnc" id="L246" title="All 2 branches missed.">      if (formalName != null) {</span>
+<span class="nc" id="L247">        bean.setFormalName(formalName);</span>
+      }
+
+<span class="nc" id="L250">      String id = constraint.getId();</span>
+<span class="nc bnc" id="L251" title="All 2 branches missed.">      if (id != null) {</span>
+<span class="nc" id="L252">        bean.setId(constraint.getId());</span>
+      }
+
+<span class="nc" id="L255">      IConstraint.Level level = constraint.getLevel();</span>
+<span class="nc bnc" id="L256" title="All 2 branches missed.">      if (!IConstraint.DEFAULT_LEVEL.equals(level)) {</span>
+<span class="nc" id="L257">        bean.setLevel(level);</span>
+      }
+
+<span class="nc bnc" id="L260" title="All 2 branches missed.">      for (Map.Entry&lt;QName, Set&lt;String&gt;&gt; entry : constraint.getProperties().entrySet()) {</span>
+<span class="nc" id="L261">        QName qname = entry.getKey();</span>
+<span class="nc" id="L262">        Set&lt;String&gt; values = entry.getValue();</span>
+<span class="nc bnc" id="L263" title="All 2 branches missed.">        for (String value : values) {</span>
+<span class="nc" id="L264">          PropertyType prop = bean.addNewProp();</span>
+<span class="nc" id="L265">          prop.setName(qname.getLocalPart());</span>
+
+<span class="nc" id="L267">          String namespace = qname.getNamespaceURI();</span>
+<span class="nc bnc" id="L268" title="All 4 branches missed.">          if (namespace != null &amp;&amp; !namespace.isEmpty()) {</span>
+<span class="nc" id="L269">            prop.setNamespace(namespace);</span>
+          }
+<span class="nc" id="L271">          prop.setValue(value);</span>
+<span class="nc" id="L272">        }</span>
+<span class="nc" id="L273">      }</span>
+<span class="nc" id="L274">    }</span>
+
+    @Override
+    public Void visitAllowedValues(IAllowedValuesConstraint constraint, DefineAssemblyConstraintsType state) {
+<span class="nc" id="L278">      ScopedAllowedValuesType bean = state.addNewAllowedValues();</span>
+<span class="nc bnc" id="L279" title="All 2 branches missed.">      assert bean != null;</span>
+<span class="nc" id="L280">      applyCommonValues(constraint, bean);</span>
+
+<span class="nc bnc" id="L282" title="All 2 branches missed.">      if (Boolean.compare(IAllowedValuesConstraint.DEFAULT_ALLOW_OTHER, constraint.isAllowedOther()) != 0) {</span>
+<span class="nc" id="L283">        bean.setAllowOther(constraint.isAllowedOther());</span>
+      }
+<span class="nc" id="L285">      bean.setTarget(constraint.getTarget());</span>
+<span class="nc" id="L286">      bean.setExtensible(constraint.getExtensible());</span>
+
+<span class="nc bnc" id="L288" title="All 2 branches missed.">      for (Map.Entry&lt;String, ? extends IAllowedValue&gt; entry : constraint.getAllowedValues().entrySet()) {</span>
+<span class="nc" id="L289">        String value = entry.getKey();</span>
+<span class="nc" id="L290">        IAllowedValue allowedValue = entry.getValue();</span>
+
+<span class="nc bnc" id="L292" title="All 2 branches missed.">        assert value.equals(allowedValue.getValue());</span>
+
+<span class="nc" id="L294">        MarkupLine description = allowedValue.getDescription();</span>
+<span class="nc" id="L295">        EnumType enumType = bean.addNewEnum();</span>
+<span class="nc" id="L296">        enumType.setValue(value);</span>
+
+<span class="nc" id="L298">        XmlbeansMarkupVisitor.visit(description, IModule.METASCHEMA_XML_NS, enumType);</span>
+<span class="nc" id="L299">      }</span>
+
+<span class="nc" id="L301">      MarkupMultiline remarks = constraint.getRemarks();</span>
+<span class="nc bnc" id="L302" title="All 2 branches missed.">      if (remarks != null) {</span>
+<span class="nc" id="L303">        RemarksType remarksType = bean.addNewRemarks();</span>
+<span class="nc bnc" id="L304" title="All 2 branches missed.">        assert remarksType != null;</span>
+<span class="nc" id="L305">        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);</span>
+      }
+<span class="nc" id="L307">      return null;</span>
+    }
+
+    @Override
+    public Void visitCardinalityConstraint(ICardinalityConstraint constraint, DefineAssemblyConstraintsType state) {
+<span class="nc" id="L312">      HasCardinalityConstraintType bean = state.addNewHasCardinality();</span>
+<span class="nc bnc" id="L313" title="All 2 branches missed.">      assert bean != null;</span>
+<span class="nc" id="L314">      applyCommonValues(constraint, bean);</span>
+
+<span class="nc" id="L316">      Integer minOccurs = constraint.getMinOccurs();</span>
+<span class="nc bnc" id="L317" title="All 2 branches missed.">      if (minOccurs != null) {</span>
+<span class="nc" id="L318">        bean.setMinOccurs(BigInteger.valueOf(minOccurs));</span>
+      }
+
+<span class="nc" id="L321">      Integer maxOccurs = constraint.getMaxOccurs();</span>
+<span class="nc bnc" id="L322" title="All 2 branches missed.">      if (maxOccurs != null) {</span>
+<span class="nc" id="L323">        bean.setMaxOccurs(BigInteger.valueOf(maxOccurs));</span>
+      }
+
+<span class="nc" id="L326">      MarkupMultiline remarks = constraint.getRemarks();</span>
+<span class="nc bnc" id="L327" title="All 2 branches missed.">      if (remarks != null) {</span>
+<span class="nc" id="L328">        RemarksType remarksType = bean.addNewRemarks();</span>
+<span class="nc bnc" id="L329" title="All 2 branches missed.">        assert remarksType != null;</span>
+<span class="nc" id="L330">        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);</span>
+      }
+<span class="nc" id="L332">      return null;</span>
+    }
+
+    @Override
+    public Void visitExpectConstraint(IExpectConstraint constraint, DefineAssemblyConstraintsType state) {
+<span class="nc" id="L337">      ScopedExpectConstraintType bean = state.addNewExpect();</span>
+<span class="nc bnc" id="L338" title="All 2 branches missed.">      assert bean != null;</span>
+<span class="nc" id="L339">      applyCommonValues(constraint, bean);</span>
+
+<span class="nc" id="L341">      bean.setTest(constraint.getTest());</span>
+
+<span class="nc" id="L343">      String message = constraint.getMessage();</span>
+<span class="nc bnc" id="L344" title="All 2 branches missed.">      if (message != null) {</span>
+<span class="nc" id="L345">        bean.setMessage(message);</span>
+      }
+
+<span class="nc" id="L348">      MarkupMultiline remarks = constraint.getRemarks();</span>
+<span class="nc bnc" id="L349" title="All 2 branches missed.">      if (remarks != null) {</span>
+<span class="nc" id="L350">        RemarksType remarksType = bean.addNewRemarks();</span>
+<span class="nc bnc" id="L351" title="All 2 branches missed.">        assert remarksType != null;</span>
+<span class="nc" id="L352">        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);</span>
+      }
+<span class="nc" id="L354">      return null;</span>
+    }
+
+    @Override
+    public Void visitMatchesConstraint(IMatchesConstraint constraint, DefineAssemblyConstraintsType state) {
+<span class="nc" id="L359">      ScopedMatchesConstraintType bean = state.addNewMatches();</span>
+<span class="nc bnc" id="L360" title="All 2 branches missed.">      assert bean != null;</span>
+<span class="nc" id="L361">      applyCommonValues(constraint, bean);</span>
+
+<span class="nc" id="L363">      Pattern pattern = constraint.getPattern();</span>
+<span class="nc bnc" id="L364" title="All 2 branches missed.">      if (pattern != null) {</span>
+<span class="nc" id="L365">        bean.setRegex(pattern);</span>
+      }
+
+<span class="nc" id="L368">      IDataTypeAdapter&lt;?&gt; dataType = constraint.getDataType();</span>
+<span class="nc bnc" id="L369" title="All 2 branches missed.">      if (dataType != null) {</span>
+<span class="nc" id="L370">        bean.setDatatype(dataType);</span>
+      }
+
+<span class="nc" id="L373">      MarkupMultiline remarks = constraint.getRemarks();</span>
+<span class="nc bnc" id="L374" title="All 2 branches missed.">      if (remarks != null) {</span>
+<span class="nc" id="L375">        RemarksType remarksType = bean.addNewRemarks();</span>
+<span class="nc bnc" id="L376" title="All 2 branches missed.">        assert remarksType != null;</span>
+<span class="nc" id="L377">        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);</span>
+      }
+<span class="nc" id="L379">      return null;</span>
+    }
+
+    private static void applyKeyFields(@NonNull IKeyConstraint constraint, @NonNull KeyConstraintType bean) {
+<span class="nc bnc" id="L383" title="All 2 branches missed.">      for (IKeyField keyField : constraint.getKeyFields()) {</span>
+<span class="nc" id="L384">        KeyField keyFieldBean = bean.addNewKeyField();</span>
+<span class="nc bnc" id="L385" title="All 2 branches missed.">        assert keyField != null;</span>
+<span class="nc bnc" id="L386" title="All 2 branches missed.">        assert keyFieldBean != null;</span>
+<span class="nc" id="L387">        applyKeyField(keyField, keyFieldBean);</span>
+<span class="nc" id="L388">      }</span>
+<span class="nc" id="L389">    }</span>
+
+    private static void applyKeyField(@NonNull IKeyField keyField, @NonNull KeyField bean) {
+<span class="nc" id="L392">      Pattern pattern = keyField.getPattern();</span>
+<span class="nc bnc" id="L393" title="All 2 branches missed.">      if (pattern != null) {</span>
+<span class="nc" id="L394">        bean.setPattern(pattern);</span>
+      }
+
+<span class="nc" id="L397">      bean.setTarget(keyField.getTarget());</span>
+
+<span class="nc" id="L399">      MarkupMultiline remarks = keyField.getRemarks();</span>
+<span class="nc bnc" id="L400" title="All 2 branches missed.">      if (remarks != null) {</span>
+<span class="nc" id="L401">        RemarksType remarksType = bean.addNewRemarks();</span>
+<span class="nc bnc" id="L402" title="All 2 branches missed.">        assert remarksType != null;</span>
+<span class="nc" id="L403">        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);</span>
+      }
+<span class="nc" id="L405">    }</span>
+
+    @Override
+    public Void visitIndexConstraint(IIndexConstraint constraint, DefineAssemblyConstraintsType state) {
+<span class="nc" id="L409">      ScopedIndexConstraintType bean = state.addNewIndex();</span>
+<span class="nc bnc" id="L410" title="All 2 branches missed.">      assert bean != null;</span>
+<span class="nc" id="L411">      applyCommonValues(constraint, bean);</span>
+<span class="nc" id="L412">      applyKeyFields(constraint, bean);</span>
+
+<span class="nc" id="L414">      bean.setName(constraint.getName());</span>
+
+<span class="nc" id="L416">      MarkupMultiline remarks = constraint.getRemarks();</span>
+<span class="nc bnc" id="L417" title="All 2 branches missed.">      if (remarks != null) {</span>
+<span class="nc" id="L418">        RemarksType remarksType = bean.addNewRemarks();</span>
+<span class="nc bnc" id="L419" title="All 2 branches missed.">        assert remarksType != null;</span>
+<span class="nc" id="L420">        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);</span>
+      }
+<span class="nc" id="L422">      return null;</span>
+    }
+
+    @Override
+    public Void visitIndexHasKeyConstraint(IIndexHasKeyConstraint constraint, DefineAssemblyConstraintsType state) {
+<span class="nc" id="L427">      ScopedIndexHasKeyConstraintType bean = state.addNewIndexHasKey();</span>
+<span class="nc bnc" id="L428" title="All 2 branches missed.">      assert bean != null;</span>
+<span class="nc" id="L429">      applyCommonValues(constraint, bean);</span>
+<span class="nc" id="L430">      applyKeyFields(constraint, bean);</span>
+
+<span class="nc" id="L432">      bean.setName(constraint.getIndexName());</span>
+
+<span class="nc" id="L434">      MarkupMultiline remarks = constraint.getRemarks();</span>
+<span class="nc bnc" id="L435" title="All 2 branches missed.">      if (remarks != null) {</span>
+<span class="nc" id="L436">        RemarksType remarksType = bean.addNewRemarks();</span>
+<span class="nc bnc" id="L437" title="All 2 branches missed.">        assert remarksType != null;</span>
+<span class="nc" id="L438">        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);</span>
+      }
+<span class="nc" id="L440">      return null;</span>
+    }
+
+    @Override
+    public Void visitUniqueConstraint(IUniqueConstraint constraint, DefineAssemblyConstraintsType state) {
+<span class="nc" id="L445">      ScopedIndexHasKeyConstraintType bean = state.addNewIndexHasKey();</span>
+<span class="nc bnc" id="L446" title="All 2 branches missed.">      assert bean != null;</span>
+<span class="nc" id="L447">      applyCommonValues(constraint, bean);</span>
+<span class="nc" id="L448">      applyKeyFields(constraint, bean);</span>
+
+<span class="nc" id="L450">      MarkupMultiline remarks = constraint.getRemarks();</span>
+<span class="nc bnc" id="L451" title="All 2 branches missed.">      if (remarks != null) {</span>
+<span class="nc" id="L452">        RemarksType remarksType = bean.addNewRemarks();</span>
+<span class="nc bnc" id="L453" title="All 2 branches missed.">        assert remarksType != null;</span>
+<span class="nc" id="L454">        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);</span>
+      }
+<span class="nc" id="L456">      return null;</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

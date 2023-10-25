@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IProduction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.codegen</a> &gt; <span class="el_source">IProduction.java</span></div><h1>IProduction.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.codegen;
+
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+/**
+ * Information about Java classes generated for a collection of Module modules.
+ */
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">public interface IProduction {</span>
+
+  /**
+   * Get information about the Java classes generated for each Module module in
+   * the collection.
+   *
+   * @return the Java class information for each module
+   */
+  @NonNull
+  Collection&lt;IGeneratedModuleClass&gt; getModuleProductions();
+
+  /**
+   * Get information about the Java classes generated for the provided Module
+   * {@code module}.
+   *
+   * @param module
+   *          the Module module to get information for
+   * @return the Java class information for the module or {@code null} if this
+   *         production did not involve generating classes for the provided module
+   */
+  @Nullable
+  IGeneratedModuleClass getModuleProduction(@NonNull IModule module);
+
+  /**
+   * Get a stream of all definition Java classes generated as part of this
+   * production.
+   * &lt;p&gt;
+   * This will include each unique class generated for all Module modules
+   * associated with this production.
+   *
+   * @return the stream of generated Java classes
+   */
+  @NonNull
+  Stream&lt;IGeneratedDefinitionClass&gt; getGlobalDefinitionClassesAsStream();
+
+  /**
+   * Get a stream of all Java classes generated as part of this production,
+   * including module, definition, and package-info classes.
+   *
+   * @return the stream of generated Java classes
+   */
+  @NonNull
+  Stream&lt;? extends IGeneratedClass&gt; getGeneratedClasses();
+
+  /**
+   * Create a new production for the provided set of Module {@code modules}.
+   *
+   * @param modules
+   *          the Module modules to generate and compile classes for
+   * @param typeResolver
+   *          the resolve used to determine type names
+   * @param classDir
+   *          the directory to generate and compile classes in
+   * @return the production information
+   * @throws IOException
+   *           if an error occurred while generating or compiling the classes
+   */
+  @NonNull
+  static IProduction of( // NOPMD - intentional
+      @NonNull Collection&lt;? extends IModule&gt; modules,
+      @NonNull ITypeResolver typeResolver,
+      @NonNull Path classDir) throws IOException {
+
+<span class="fc" id="L108">    IMetaschemaClassFactory classFactory = IMetaschemaClassFactory.newInstance(typeResolver);</span>
+
+<span class="fc" id="L110">    ProductionImpl retval = new ProductionImpl();</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">    for (IModule module : modules) {</span>
+<span class="pc bpc" id="L112" title="2 of 4 branches missed.">      assert module != null;</span>
+<span class="fc" id="L113">      retval.addModule(module, classFactory, classDir);</span>
+<span class="fc" id="L114">    }</span>
+
+<span class="fc" id="L116">    Map&lt;String, PackageMetadata&gt; packageNameToPackageMetadataMap = new HashMap&lt;&gt;(); // NOPMD - no concurrency</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">    for (IGeneratedModuleClass moduleProduction : retval.getModuleProductions()) {</span>
+<span class="fc" id="L118">      String packageName = moduleProduction.getPackageName();</span>
+
+<span class="fc" id="L120">      PackageMetadata metadata = packageNameToPackageMetadataMap.get(packageName);</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">      if (metadata == null) {</span>
+<span class="fc" id="L122">        metadata = new PackageMetadata(moduleProduction); // NOPMD - intentional</span>
+<span class="fc" id="L123">        packageNameToPackageMetadataMap.put(metadata.getPackageName(), metadata);</span>
+      } else {
+<span class="nc" id="L125">        metadata.addModule(moduleProduction);</span>
+      }
+<span class="fc" id="L127">    }</span>
+
+<span class="fc bfc" id="L129" title="All 2 branches covered.">    for (PackageMetadata metadata : packageNameToPackageMetadataMap.values()) {</span>
+<span class="pc bpc" id="L130" title="2 of 4 branches missed.">      assert metadata != null;</span>
+<span class="fc" id="L131">      retval.addPackage(</span>
+          metadata,
+          classFactory,
+          classDir);
+<span class="fc" id="L135">    }</span>
+<span class="fc" id="L136">    return retval;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

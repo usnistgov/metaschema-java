@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FieldDefinitionJsonSchema.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema XML and JSON Schema Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.schemagen.json.schema</a> &gt; <span class="el_source">FieldDefinitionJsonSchema.java</span></div><h1>FieldDefinitionJsonSchema.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.schemagen.json.schema;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.schemagen.FlagInstanceFilter;
+import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
+import gov.nist.secauto.metaschema.schemagen.json.property.FlagInstanceJsonProperty;
+import gov.nist.secauto.metaschema.schemagen.json.property.IJsonProperty.PropertyCollection;
+
+import java.io.IOException;
+import java.util.Collection;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L46">public class FieldDefinitionJsonSchema</span>
+    extends AbstractDefinitionJsonSchema&lt;IFieldDefinition&gt; {
+
+  public FieldDefinitionJsonSchema(
+      @NonNull IFieldDefinition definition) {
+<span class="fc" id="L51">    super(definition);</span>
+<span class="fc" id="L52">  }</span>
+
+  @Override
+  public void resolveSubSchemas(JsonGenerationState state) {
+<span class="fc" id="L56">    state.getDataTypeSchemaForDefinition(getDefinition());</span>
+
+<span class="fc bfc" id="L58" title="All 2 branches covered.">    for (IFlagInstance instance : getDefinition().getFlagInstances()) {</span>
+<span class="fc" id="L59">      state.getSchema(instance.getDefinition());</span>
+<span class="fc" id="L60">    }</span>
+<span class="fc" id="L61">  }</span>
+
+  @SuppressWarnings(&quot;PMD.CognitiveComplexity&quot;)
+  @Override
+  protected void generateBody(JsonGenerationState state, ObjectNode obj) throws IOException {
+<span class="fc" id="L66">    IFieldDefinition definition = getDefinition();</span>
+
+<span class="fc" id="L68">    Collection&lt;? extends IFlagInstance&gt; flags = definition.getFlagInstances();</span>
+<span class="fc" id="L69">    IFlagInstance jsonKeyFlag = definition.getJsonKeyFlagInstance();</span>
+<span class="pc bpc" id="L70" title="1 of 6 branches missed.">    if (flags.isEmpty() || (jsonKeyFlag != null &amp;&amp; flags.size() == 1)) { // NOPMD - readability</span>
+      // field is a simple data type value if there are no flags or if the only flag
+      // is a JSON key
+<span class="fc" id="L73">      state.getDataTypeSchemaForDefinition(definition).generateSchemaOrRef(state, obj);</span>
+    } else {
+<span class="fc" id="L75">      obj.put(&quot;type&quot;, &quot;object&quot;);</span>
+
+      // determine the flag instances to generate
+<span class="fc" id="L78">      IFlagInstance jsonValueKeyFlag = definition.getJsonValueKeyFlagInstance();</span>
+<span class="fc" id="L79">      flags = FlagInstanceFilter.filterFlags(flags, jsonKeyFlag, jsonValueKeyFlag);</span>
+
+<span class="fc" id="L81">      PropertyCollection properties = new PropertyCollection();</span>
+
+      // generate flag properties
+<span class="fc bfc" id="L84" title="All 2 branches covered.">      for (IFlagInstance flag : flags) {</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        assert flag != null;</span>
+<span class="fc" id="L86">        new FlagInstanceJsonProperty(flag).generateProperty(properties, state); // NOPMD unavoidable instantiation</span>
+<span class="fc" id="L87">      }</span>
+
+      // generate value property
+<span class="fc bfc" id="L90" title="All 2 branches covered.">      if (jsonValueKeyFlag == null) {</span>
+<span class="fc" id="L91">        generateSimpleFieldValueInstance(properties, state);</span>
+      }
+
+<span class="fc" id="L94">      properties.generate(obj);</span>
+
+<span class="fc bfc" id="L96" title="All 2 branches covered.">      if (jsonValueKeyFlag == null) {</span>
+<span class="fc" id="L97">        obj.put(&quot;additionalProperties&quot;, false);</span>
+      } else {
+        ObjectNode additionalPropertiesTypeNode;
+
+<span class="fc" id="L101">        additionalPropertiesTypeNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());</span>
+        // the type of the additional properties must be the datatype of the field value
+<span class="fc" id="L103">        state.getDataTypeSchemaForDefinition(definition).generateSchemaOrRef(state, additionalPropertiesTypeNode);</span>
+
+<span class="fc" id="L105">        ObjectNode additionalPropertiesNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());</span>
+<span class="fc" id="L106">        ArrayNode allOf = additionalPropertiesNode.putArray(&quot;allOf&quot;);</span>
+<span class="fc" id="L107">        allOf.add(additionalPropertiesTypeNode);</span>
+<span class="fc" id="L108">        allOf.addObject()</span>
+<span class="fc" id="L109">            .put(&quot;minProperties&quot;, properties.getRequired().size() + 1)</span>
+<span class="fc" id="L110">            .put(&quot;maxProperties&quot;, properties.getProperties().size() + 1);</span>
+
+<span class="fc" id="L112">        obj.set(&quot;additionalProperties&quot;, additionalPropertiesNode);</span>
+      }
+    }
+<span class="fc" id="L115">  }</span>
+
+  public void generateSimpleFieldValueInstance(
+      @NonNull PropertyCollection properties,
+      @NonNull JsonGenerationState state) {
+
+<span class="fc" id="L121">    IFieldDefinition definition = getDefinition();</span>
+
+<span class="fc" id="L123">    String propertyName = definition.getJsonValueKeyName();</span>
+
+<span class="fc" id="L125">    ObjectNode propertyObject = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());</span>
+<span class="fc" id="L126">    state.getDataTypeSchemaForDefinition(definition).generateSchemaOrRef(state, propertyObject);</span>
+
+<span class="fc" id="L128">    properties.addProperty(propertyName, propertyObject);</span>
+<span class="fc" id="L129">    properties.addRequired(propertyName);</span>
+<span class="fc" id="L130">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

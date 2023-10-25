@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ValueConstraintSupport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.model</a> &gt; <span class="el_source">ValueConstraintSupport.java</span></div><h1>ValueConstraintSupport.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.model;
+
+import gov.nist.secauto.metaschema.core.metapath.MetapathException;
+import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ISource;
+import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
+import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+/**
+ * Support for constraints on valued objects (i.e., fields and flags).
+ */
+class ValueConstraintSupport implements IValueConstrained { // NOPMD - intentional data class
+  @NonNull
+  private final List&lt;IConstraint&gt; constraints;
+  @NonNull
+  private final List&lt;IAllowedValuesConstraint&gt; allowedValuesConstraints;
+  @NonNull
+  private final List&lt;IMatchesConstraint&gt; matchesConstraints;
+  @NonNull
+  private final List&lt;IIndexHasKeyConstraint&gt; indexHasKeyConstraints;
+  @NonNull
+  private final List&lt;IExpectConstraint&gt; expectConstraints;
+
+<span class="nc" id="L63">  public ValueConstraintSupport() {</span>
+<span class="nc" id="L64">    this.constraints = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L65">    this.allowedValuesConstraints = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L66">    this.matchesConstraints = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L67">    this.indexHasKeyConstraints = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L68">    this.expectConstraints = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L69">  }</span>
+
+  /**
+   * Generate constraints from a {@link BoundFlag} annotation.
+   *
+   * @param valueAnnotation
+   *          the annotation where the constraints are defined
+   * @param source
+   *          information about the source of the constraint
+   */
+  @SuppressWarnings(&quot;null&quot;)
+  public ValueConstraintSupport( // NOPMD - intentional
+      @Nullable ValueConstraints valueAnnotation,
+<span class="fc" id="L82">      @NonNull ISource source) {</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">    if (valueAnnotation == null) {</span>
+<span class="fc" id="L84">      this.allowedValuesConstraints = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L85">      this.matchesConstraints = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L86">      this.indexHasKeyConstraints = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L87">      this.expectConstraints = new LinkedList&lt;&gt;();</span>
+    } else {
+      try {
+<span class="nc" id="L90">        allowedValuesConstraints = Arrays.stream(valueAnnotation.allowedValues())</span>
+<span class="nc" id="L91">            .map(annotation -&gt; ConstraintFactory.newAllowedValuesConstraint(annotation, source))</span>
+<span class="nc" id="L92">            .collect(Collectors.toCollection(LinkedList::new));</span>
+
+<span class="nc" id="L94">        matchesConstraints = Arrays.stream(valueAnnotation.matches())</span>
+<span class="nc" id="L95">            .map(annotation -&gt; ConstraintFactory.newMatchesConstraint(annotation, source))</span>
+<span class="nc" id="L96">            .collect(Collectors.toCollection(LinkedList::new));</span>
+
+<span class="nc" id="L98">        indexHasKeyConstraints = Arrays.stream(valueAnnotation.indexHasKey())</span>
+<span class="nc" id="L99">            .map(annotation -&gt; ConstraintFactory.newIndexHasKeyConstraint(annotation, source))</span>
+<span class="nc" id="L100">            .collect(Collectors.toCollection(LinkedList::new));</span>
+
+<span class="nc" id="L102">        expectConstraints = Arrays.stream(valueAnnotation.expect())</span>
+<span class="nc" id="L103">            .map(annotation -&gt; ConstraintFactory.newExpectConstraint(annotation, source))</span>
+<span class="nc" id="L104">            .collect(Collectors.toCollection(LinkedList::new));</span>
+<span class="nc" id="L105">      } catch (MetapathException ex) {</span>
+<span class="nc" id="L106">        throw new MetapathException(</span>
+<span class="nc" id="L107">            String.format(&quot;Unable to compile a Metapath in '%s'. %s&quot;, source.getSource(), ex.getLocalizedMessage()),</span>
+            ex);
+<span class="nc" id="L109">      }</span>
+    }
+<span class="fc" id="L111">    constraints = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L112">    constraints.addAll(allowedValuesConstraints);</span>
+<span class="fc" id="L113">    constraints.addAll(matchesConstraints);</span>
+<span class="fc" id="L114">    constraints.addAll(indexHasKeyConstraints);</span>
+<span class="fc" id="L115">    constraints.addAll(expectConstraints);</span>
+<span class="fc" id="L116">  }</span>
+
+  @Override
+  public List&lt;IConstraint&gt; getConstraints() {
+<span class="fc" id="L120">    return constraints;</span>
+  }
+
+  @Override
+  public List&lt;IAllowedValuesConstraint&gt; getAllowedValuesConstraints() {
+<span class="fc" id="L125">    return allowedValuesConstraints;</span>
+  }
+
+  @Override
+  public List&lt;IMatchesConstraint&gt; getMatchesConstraints() {
+<span class="fc" id="L130">    return matchesConstraints;</span>
+  }
+
+  @Override
+  public List&lt;IIndexHasKeyConstraint&gt; getIndexHasKeyConstraints() {
+<span class="fc" id="L135">    return indexHasKeyConstraints;</span>
+  }
+
+  @Override
+  public List&lt;IExpectConstraint&gt; getExpectConstraints() {
+<span class="fc" id="L140">    return expectConstraints;</span>
+  }
+
+  @Override
+  public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
+<span class="nc" id="L145">    constraints.add(constraint);</span>
+<span class="nc" id="L146">    allowedValuesConstraints.add(constraint);</span>
+<span class="nc" id="L147">  }</span>
+
+  @Override
+  public void addConstraint(@NonNull IMatchesConstraint constraint) {
+<span class="nc" id="L151">    constraints.add(constraint);</span>
+<span class="nc" id="L152">    matchesConstraints.add(constraint);</span>
+<span class="nc" id="L153">  }</span>
+
+  @Override
+  public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
+<span class="nc" id="L157">    constraints.add(constraint);</span>
+<span class="nc" id="L158">    indexHasKeyConstraints.add(constraint);</span>
+<span class="nc" id="L159">  }</span>
+
+  @Override
+  public void addConstraint(@NonNull IExpectConstraint constraint) {
+<span class="fc" id="L163">    constraints.add(constraint);</span>
+<span class="fc" id="L164">    expectConstraints.add(constraint);</span>
+<span class="fc" id="L165">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

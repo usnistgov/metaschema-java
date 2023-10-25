@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultFunctionLibrary.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath.function.library</a> &gt; <span class="el_source">DefaultFunctionLibrary.java</span></div><h1>DefaultFunctionLibrary.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath.function.library;
+
+import com.google.auto.service.AutoService;
+
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
+import gov.nist.secauto.metaschema.core.metapath.function.FunctionLibrary;
+import gov.nist.secauto.metaschema.core.metapath.function.IFunctionLibrary;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDateItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDateTimeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDecimalItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDurationItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.INcNameItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.INonNegativeIntegerItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IPositiveIntegerItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
+
+@AutoService(IFunctionLibrary.class)
+public class DefaultFunctionLibrary
+    extends FunctionLibrary {
+
+  /**
+   * Initialize the built-in function library.
+   */
+<span class="fc" id="L53">  public DefaultFunctionLibrary() { // NOPMD - intentional</span>
+    // https://www.w3.org/TR/xpath-functions-31/#func-abs
+<span class="fc" id="L55">    registerFunction(NumericFunction.signature(MetapathConstants.NS_XPATH_FUNCTIONS, &quot;abs&quot;, INumericItem::abs));</span>
+    // https://www.w3.org/TR/xpath-functions-31/#func-adjust-dateTime-to-timezone
+    // https://www.w3.org/TR/xpath-functions-31/#func-adjust-date-to-timezone
+    // https://www.w3.org/TR/xpath-functions-31/#func-adjust-time-to-timezone
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-avg
+    // https://www.w3.org/TR/xpath-functions-31/#func-base-uri
+<span class="fc" id="L61">    registerFunction(FnBaseUri.SIGNATURE_NO_ARG);</span>
+<span class="fc" id="L62">    registerFunction(FnBaseUri.SIGNATURE_ONE_ARG);</span>
+    // https://www.w3.org/TR/xpath-functions-31/#func-boolean
+<span class="fc" id="L64">    registerFunction(FnBoolean.SIGNATURE);</span>
+    // https://www.w3.org/TR/xpath-functions-31/#func-ceiling
+<span class="fc" id="L66">    registerFunction(NumericFunction.signature(MetapathConstants.NS_XPATH_FUNCTIONS, &quot;ceiling&quot;, INumericItem::ceiling));</span>
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-compare
+<span class="fc" id="L68">    registerFunction(FnCompare.SIGNATURE);</span>
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-concat
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-contains
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-count
+    // https://www.w3.org/TR/xpath-functions-31/#func-current-date
+    // https://www.w3.org/TR/xpath-functions-31/#func-current-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-current-time
+    // https://www.w3.org/TR/xpath-functions-31/#func-data
+<span class="fc" id="L76">    registerFunction(FnData.SIGNATURE_NO_ARG);</span>
+<span class="fc" id="L77">    registerFunction(FnData.SIGNATURE_ONE_ARG);</span>
+    // https://www.w3.org/TR/xpath-functions-31/#func-day-from-date
+    // https://www.w3.org/TR/xpath-functions-31/#func-day-from-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-days-from-duration
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-deep-equal
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-distinct-values
+    // https://www.w3.org/TR/xpath-functions-31/#func-doc
+<span class="fc" id="L84">    registerFunction(FnDoc.SIGNATURE);</span>
+    // https://www.w3.org/TR/xpath-functions-31/#func-doc-available
+    // https://www.w3.org/TR/xpath-functions-31/#func-document-uri
+<span class="fc" id="L87">    registerFunction(FnDocumentUri.SIGNATURE_NO_ARG);</span>
+<span class="fc" id="L88">    registerFunction(FnDocumentUri.SIGNATURE_ONE_ARG);</span>
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-empty
+    // https://www.w3.org/TR/xpath-functions-31/#func-encode-for-uri
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-ends-with
+    // https://www.w3.org/TR/xpath-functions-31/#func-exactly-one
+    // https://www.w3.org/TR/xpath-functions-31/#func-exists
+<span class="fc" id="L94">    registerFunction(FnExists.SIGNATURE);</span>
+<span class="fc" id="L95">    registerFunction(FnFalse.SIGNATURE);</span>
+    // https://www.w3.org/TR/xpath-functions-31/#func-floor
+<span class="fc" id="L97">    registerFunction(NumericFunction.signature(MetapathConstants.NS_XPATH_FUNCTIONS, &quot;floor&quot;, INumericItem::floor));</span>
+    // https://www.w3.org/TR/xpath-functions-31/#func-format-date
+    // https://www.w3.org/TR/xpath-functions-31/#func-format-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-format-integer
+    // https://www.w3.org/TR/xpath-functions-31/#func-format-number
+    // https://www.w3.org/TR/xpath-functions-31/#func-format-time
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-generate-id
+    // https://www.w3.org/TR/xpath-functions-31/#func-has-children
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-head
+    // https://www.w3.org/TR/xpath-functions-31/#func-hours-from-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-hours-from-duration
+    // https://www.w3.org/TR/xpath-functions-31/#func-hours-from-time
+    // https://www.w3.org/TR/xpath-functions-31/#func-implicit-timezone
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-index-of
+    // https://www.w3.org/TR/xpath-functions-31/#func-innermost
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-insert-before
+    // https://www.w3.org/TR/xpath-functions-31/#func-iri-to-uri
+    // https://www.w3.org/TR/xpath-functions-31/#func-last
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-lower-case
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-matches
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-max
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-min
+    // https://www.w3.org/TR/xpath-functions-31/#func-minutes-from-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-minutes-from-duration
+    // https://www.w3.org/TR/xpath-functions-31/#func-minutes-from-time
+    // https://www.w3.org/TR/xpath-functions-31/#func-month-from-date
+    // https://www.w3.org/TR/xpath-functions-31/#func-month-from-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-months-from-duration
+    // https://www.w3.org/TR/xpath-functions-31/#func-normalize-space
+    // https://www.w3.org/TR/xpath-functions-31/#func-normalize-unicode
+    // https://www.w3.org/TR/xpath-functions-31/#func-not
+<span class="fc" id="L128">    registerFunction(FnNot.SIGNATURE);</span>
+    // https://www.w3.org/TR/xpath-functions-31/#func-number
+    // https://www.w3.org/TR/xpath-functions-31/#func-one-or-more
+    // https://www.w3.org/TR/xpath-functions-31/#func-outermost
+    // https://www.w3.org/TR/xpath-functions-31/#func-parse-ietf-date
+    // https://www.w3.org/TR/xpath-functions-31/#func-path
+<span class="fc" id="L134">    registerFunction(FnPath.SIGNATURE_NO_ARG);</span>
+<span class="fc" id="L135">    registerFunction(FnPath.SIGNATURE_ONE_ARG);</span>
+    // https://www.w3.org/TR/xpath-functions-31/#func-position
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-remove
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-replace
+    // https://www.w3.org/TR/xpath-functions-31/#func-resolve-uri
+<span class="fc" id="L140">    registerFunction(FnResolveUri.SIGNATURE_ONE_ARG);</span>
+<span class="fc" id="L141">    registerFunction(FnResolveUri.SIGNATURE_TWO_ARG);</span>
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-reverse
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-root
+    // https://www.w3.org/TR/xpath-functions-31/#func-round
+<span class="fc" id="L145">    registerFunction(FnRound.SIGNATURE);</span>
+<span class="fc" id="L146">    registerFunction(FnRound.SIGNATURE_WITH_PRECISION);</span>
+    // https://www.w3.org/TR/xpath-functions-31/#func-round-half-to-even
+    // https://www.w3.org/TR/xpath-functions-31/#func-seconds-from-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-seconds-from-duration
+    // https://www.w3.org/TR/xpath-functions-31/#func-seconds-from-time
+    // https://www.w3.org/TR/xpath-functions-31/#func-starts-with
+<span class="fc" id="L152">    registerFunction(FnStartsWith.SIGNATURE);</span>
+    // https://www.w3.org/TR/xpath-functions-31/#func-static-base-uri
+<span class="fc" id="L154">    registerFunction(FnStaticBaseUri.SIGNATURE);</span>
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-string-join
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-string-length
+    // https://www.w3.org/TR/xpath-functions-31/#func-subsequence
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-substring
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-substring-after
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-substring-before
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-sum
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-tail
+    // https://www.w3.org/TR/xpath-functions-31/#func-timezone-from-date
+    // https://www.w3.org/TR/xpath-functions-31/#func-timezone-from-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-timezone-from-time
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-tokenize
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-translate
+<span class="fc" id="L168">    registerFunction(FnTrue.SIGNATURE);</span>
+    // https://www.w3.org/TR/xpath-functions-31/#func-unparsed-text
+    // https://www.w3.org/TR/xpath-functions-31/#func-unparsed-text-available
+    // https://www.w3.org/TR/xpath-functions-31/#func-unparsed-text-lines
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-upper-case
+    // https://www.w3.org/TR/xpath-functions-31/#func-year-from-date
+    // https://www.w3.org/TR/xpath-functions-31/#func-year-from-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-years-from-duration
+    // https://www.w3.org/TR/xpath-functions-31/#func-zero-or-one
+
+    // xpath casting functions
+<span class="fc" id="L179">    registerFunction(</span>
+<span class="fc" id="L180">        CastFunction.signature(MetapathConstants.NS_XML_SCHEMA, &quot;boolean&quot;, IBooleanItem.class, IBooleanItem::cast));</span>
+<span class="fc" id="L181">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_XML_SCHEMA, &quot;date&quot;, IDateItem.class, IDateItem::cast));
+<span class="fc" id="L183">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_XML_SCHEMA, &quot;dateTime&quot;, IDateTimeItem.class, IDateTimeItem::cast));
+<span class="fc" id="L185">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_XML_SCHEMA, &quot;decimal&quot;, IDecimalItem.class, IDecimalItem::cast));
+<span class="fc" id="L187">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_XML_SCHEMA, &quot;duration&quot;, IDurationItem.class, IDurationItem::cast));
+<span class="fc" id="L189">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_XML_SCHEMA, &quot;integer&quot;, IIntegerItem.class, IIntegerItem::cast));
+<span class="fc" id="L191">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_XML_SCHEMA, &quot;NCName&quot;, INcNameItem.class, INcNameItem::cast));
+<span class="fc" id="L193">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_XML_SCHEMA, &quot;nonNegativeInteger&quot;, INonNegativeIntegerItem.class,
+        INonNegativeIntegerItem::cast));
+<span class="fc" id="L196">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_XML_SCHEMA, &quot;positiveInteger&quot;, IPositiveIntegerItem.class,
+        IPositiveIntegerItem::cast));
+<span class="fc" id="L199">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_XML_SCHEMA, &quot;string&quot;, IStringItem.class, IStringItem::cast));
+
+    // metapath casting functions
+<span class="fc" id="L203">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_METAPATH, &quot;boolean&quot;, IBooleanItem.class, IBooleanItem::cast));
+<span class="fc" id="L205">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_METAPATH, &quot;date&quot;, IDateItem.class, IDateItem::cast));
+<span class="fc" id="L207">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_METAPATH, &quot;date-time&quot;, IDateTimeItem.class, IDateTimeItem::cast));
+<span class="fc" id="L209">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_METAPATH, &quot;decimal&quot;, IDecimalItem.class, IDecimalItem::cast));
+<span class="fc" id="L211">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_METAPATH, &quot;duration&quot;, IDurationItem.class, IDurationItem::cast));
+<span class="fc" id="L213">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_METAPATH, &quot;integer&quot;, IIntegerItem.class, IIntegerItem::cast));
+<span class="fc" id="L215">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_METAPATH, &quot;ncname&quot;, INcNameItem.class, INcNameItem::cast));
+<span class="fc" id="L217">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_METAPATH, &quot;non-negative-integer&quot;, INonNegativeIntegerItem.class,
+        INonNegativeIntegerItem::cast));
+<span class="fc" id="L220">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_METAPATH, &quot;positive-integer&quot;, IPositiveIntegerItem.class,
+        IPositiveIntegerItem::cast));
+<span class="fc" id="L223">    registerFunction(CastFunction.signature(</span>
+        MetapathConstants.NS_METAPATH, &quot;string&quot;, IStringItem.class, IStringItem::cast));
+
+    // extra functions
+<span class="fc" id="L227">    registerFunction(MpRecurseDepth.SIGNATURE_ONE_ARG);</span>
+<span class="fc" id="L228">    registerFunction(MpRecurseDepth.SIGNATURE_TWO_ARG);</span>
+<span class="fc" id="L229">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IIndex.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.constraint</a> &gt; <span class="el_source">IIndex.java</span></div><h1>IIndex.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.constraint;
+
+import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.core.metapath.InvalidTypeMetapathException;
+import gov.nist.secauto.metaschema.core.metapath.MetapathException;
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression.ResultType;
+import gov.nist.secauto.metaschema.core.metapath.function.library.FnData;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+<span class="nc bnc" id="L48" title="All 2 branches missed.">public interface IIndex {</span>
+
+  /**
+   * Construct a new index using the provided key field components to generate
+   * keys.
+   *
+   * @param keyFields
+   *          the key field components to use to generate keys by default
+   * @return the new index
+   */
+  @NonNull
+  static IIndex newInstance(@NonNull List&lt;? extends IKeyField&gt; keyFields) {
+<span class="nc" id="L60">    return new DefaultIndex(keyFields);</span>
+  }
+
+  /**
+   * Check if a key contains information other than {@code null} Strings.
+   *
+   * @param key
+   *          the key to check
+   * @return {@code true} if the series of key values contains only {@code null}
+   *         values, or {@code false} otherwise
+   */
+  static boolean isAllNulls(@NonNull Iterable&lt;String&gt; key) {
+<span class="nc bnc" id="L72" title="All 2 branches missed.">    for (String value : key) {</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">      if (value != null) {</span>
+<span class="nc" id="L74">        return false; // NOPMD readability</span>
+      }
+<span class="nc" id="L76">    }</span>
+<span class="nc" id="L77">    return true;</span>
+  }
+
+  /**
+   * Retrieve the key field components used to generate a key for this index.
+   *
+   * @return the key field components
+   */
+  @NonNull
+  List&lt;IKeyField&gt; getKeyFields();
+
+  /**
+   * Store the provided item in the index using the index's key field components
+   * to generate the key.
+   *
+   * @param item
+   *          the item to store in the index
+   * @param dynamicContext
+   *          the Metapath evaluation context
+   * @return the previous item stored in the index, or {@code null} otherwise
+   */
+  @Nullable
+  default INodeItem put(@NonNull INodeItem item, @NonNull DynamicContext dynamicContext) {
+<span class="nc" id="L100">    List&lt;String&gt; key = toKey(item, getKeyFields(), dynamicContext);</span>
+<span class="nc" id="L101">    return put(item, key);</span>
+  }
+
+  /**
+   * Store the provided item using the provided key.
+   *
+   * @param item
+   *          the item to store
+   * @param key
+   *          the key to store the item with
+   * @return the previous item stored in the index using the key, or {@code null}
+   *         otherwise
+   */
+  @Nullable
+  INodeItem put(@NonNull INodeItem item, @NonNull List&lt;String&gt; key);
+
+  /**
+   * Retrieve the item from the index that matches the key generated by evaluating
+   * the index's default key field components against the provided item.
+   *
+   * @param item
+   *          the item to store in the index
+   * @param dynamicContext
+   *          the Metapath evaluation context
+   * @return the previous item stored in the index, or {@code null} otherwise
+   */
+  @Nullable
+  default INodeItem get(@NonNull INodeItem item, @NonNull DynamicContext dynamicContext) {
+<span class="nc" id="L129">    List&lt;String&gt; key = toKey(item, getKeyFields(), dynamicContext);</span>
+<span class="nc" id="L130">    return get(key);</span>
+  }
+
+  /**
+   * Retrieve the item from the index that matches the provided key.
+   *
+   * @param key
+   *          the key to use for lookup
+   * @return the item with the matching key or {@code null} if no matching item
+   *         was found
+   */
+  INodeItem get(List&lt;String&gt; key);
+
+  /**
+   * Construct a key by evaluating the provided key field components against the
+   * provided item.
+   *
+   * @param item
+   *          the item to generate the key from
+   * @param keyFields
+   *          the key field components used to generate the key
+   * @param dynamicContext
+   *          the Metapath evaluation context
+   * @return a new key
+   */
+  @NonNull
+  static List&lt;String&gt; toKey(@NonNull INodeItem item, @NonNull List&lt;? extends IKeyField&gt; keyFields,
+      @NonNull DynamicContext dynamicContext) {
+<span class="nc" id="L158">    return CollectionUtil.unmodifiableList(</span>
+<span class="nc" id="L159">        ObjectUtils.notNull(keyFields.stream()</span>
+<span class="nc" id="L160">            .map(keyField -&gt; {</span>
+<span class="nc bnc" id="L161" title="All 4 branches missed.">              assert keyField != null;</span>
+<span class="nc" id="L162">              return buildKeyItem(item, keyField, dynamicContext);</span>
+            })
+<span class="nc" id="L164">            .collect(Collectors.toCollection(ArrayList::new))));</span>
+  }
+
+  /**
+   * Evaluates the provided key field component against the item to generate a key
+   * value.
+   *
+   * @param item
+   *          the item to generate the key value from
+   * @param keyField
+   *          the key field component used to generate the key value
+   * @param dynamicContext
+   *          the Metapath evaluation context
+   * @return the key value or {@code null} if the evaluation resulted in no value
+   */
+  @Nullable
+  private static String buildKeyItem(
+      @NonNull INodeItem item,
+      @NonNull IKeyField keyField,
+      @NonNull DynamicContext dynamicContext) {
+<span class="nc" id="L184">    MetapathExpression keyPath = keyField.getTarget();</span>
+
+    INodeItem keyItem;
+    try {
+<span class="nc" id="L188">      keyItem = keyPath.evaluateAs(item, ResultType.NODE, dynamicContext);</span>
+<span class="nc" id="L189">    } catch (InvalidTypeMetapathException ex) {</span>
+<span class="nc" id="L190">      throw new MetapathException(&quot;Key path did not result in a single node&quot;, ex);</span>
+<span class="nc" id="L191">    }</span>
+
+<span class="nc" id="L193">    String keyValue = null;</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">    if (keyItem != null) {</span>
+<span class="nc" id="L195">      keyValue = FnData.fnDataItem(keyItem).asString();</span>
+<span class="nc" id="L196">      Pattern pattern = keyField.getPattern();</span>
+<span class="nc bnc" id="L197" title="All 2 branches missed.">      if (pattern != null) {</span>
+<span class="nc" id="L198">        keyValue = applyPattern(keyItem, keyValue, pattern);</span>
+      }
+    } // empty key
+<span class="nc" id="L201">    return keyValue;</span>
+  }
+
+  /**
+   * Apply the key value pattern, if configured, to generate the final key value.
+   *
+   * @param keyItem
+   *          the node item used to form the key field
+   * @param pattern
+   *          the key field pattern configuration from the constraint
+   * @param keyValue
+   *          the current key value
+   * @return the final key value
+   */
+  private static String applyPattern(@NonNull INodeItem keyItem, @NonNull String keyValue,
+      @NonNull Pattern pattern) {
+<span class="nc" id="L217">    Matcher matcher = pattern.matcher(keyValue);</span>
+<span class="nc bnc" id="L218" title="All 2 branches missed.">    if (!matcher.matches()) {</span>
+<span class="nc" id="L219">      throw new MetapathException(</span>
+<span class="nc" id="L220">          String.format(&quot;Key field declares the pattern '%s' which does not match the value '%s' of node '%s'&quot;,</span>
+<span class="nc" id="L221">              pattern.pattern(), keyValue, keyItem.getMetapath()));</span>
+    }
+
+<span class="nc bnc" id="L224" title="All 2 branches missed.">    if (matcher.groupCount() != 1) {</span>
+<span class="nc" id="L225">      throw new MetapathException(String.format(</span>
+          &quot;The first group was not a match for value '%s' of node '%s' for key field pattern '%s'&quot;,
+<span class="nc" id="L227">          keyValue, keyItem.getMetapath(), pattern.pattern()));</span>
+    }
+<span class="nc" id="L229">    return matcher.group(1);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

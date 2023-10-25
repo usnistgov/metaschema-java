@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MetaschemaJsonReader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.io.json</a> &gt; <span class="el_source">MetaschemaJsonReader.java</span></div><h1>MetaschemaJsonReader.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.io.json;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+
+import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
+import gov.nist.secauto.metaschema.databind.model.info.IPropertyCollector;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+public class MetaschemaJsonReader
+    implements IJsonParsingContext {
+<span class="fc" id="L57">  private static final Logger LOGGER = LogManager.getLogger(MetaschemaJsonReader.class);</span>
+
+  @NonNull
+  private final JsonParser parser;
+  @NonNull
+  private final IJsonProblemHandler problemHandler;
+
+  /**
+   * Construct a new Module-aware JSON parser using the default problem handler.
+   *
+   * @param parser
+   *          the JSON parser to parse with
+   * @see DefaultJsonProblemHandler
+   */
+  public MetaschemaJsonReader(
+      @NonNull JsonParser parser) {
+<span class="fc" id="L73">    this(parser, new DefaultJsonProblemHandler());</span>
+<span class="fc" id="L74">  }</span>
+
+  /**
+   * Construct a new Module-aware JSON parser.
+   *
+   * @param parser
+   *          the JSON parser to parse with
+   * @param problemHandler
+   *          the problem handler implementation to use
+   */
+  public MetaschemaJsonReader(
+      @NonNull JsonParser parser,
+<span class="fc" id="L86">      @NonNull IJsonProblemHandler problemHandler) {</span>
+<span class="fc" id="L87">    this.parser = parser;</span>
+<span class="fc" id="L88">    this.problemHandler = problemHandler;</span>
+<span class="fc" id="L89">  }</span>
+
+  @Override
+  public JsonParser getReader() {
+<span class="fc" id="L93">    return parser;</span>
+  }
+
+  @Override
+  public IJsonProblemHandler getProblemHandler() {
+<span class="fc" id="L98">    return problemHandler;</span>
+  }
+
+  /**
+   * Parses JSON into a bound object. This assembly must be a root assembly for
+   * which a call to {@link IAssemblyClassBinding#isRoot()} will return
+   * {@code true}.
+   * &lt;p&gt;
+   * This method expects the parser's current token to be:
+   * &lt;ul&gt;
+   * &lt;li&gt;{@code null} indicating that the parser has not yet parsed a JSON
+   * node;&lt;/li&gt;
+   * &lt;li&gt;a {@link JsonToken#START_OBJECT} which represents the object wrapper
+   * containing the root field,&lt;/li&gt;
+   * &lt;li&gt;a {@link JsonToken#FIELD_NAME} representing the root field to parse,
+   * or&lt;/li&gt;
+   * &lt;li&gt;a peer field to the root field that will be handled by the
+   * {@link IJsonProblemHandler#handleUnknownProperty(IClassBinding, Object, String, IJsonParsingContext)}
+   * method.&lt;/li&gt;
+   * &lt;/ul&gt;
+   * &lt;p&gt;
+   * After parsing the current token will be:
+   * &lt;ul&gt;
+   * &lt;li&gt;the next token after the {@link JsonToken#END_OBJECT} corresponding to
+   * the initial {@link JsonToken#START_OBJECT} parsed by this method;&lt;/li&gt;
+   * &lt;li&gt;the next token after the {@link JsonToken#END_OBJECT} for the root
+   * field's value; or&lt;/li&gt;
+   * &lt;li&gt;the next token after all fields and associated values have been parsed
+   * looking for the root field. This next token will be the
+   * {@link JsonToken#END_OBJECT} for the object containing the fields. In this
+   * case the method will throw an {@link IOException} indicating the root was not
+   * found.&lt;/li&gt;
+   * &lt;/ul&gt;
+   *
+   * @param &lt;T&gt;
+   *          the Java type of the resulting bound instance
+   * @param targetDefinition
+   *          the definition describing the root element data to parse
+   * @return the bound object instance representing the JSON object
+   * @throws IOException
+   *           if an error occurred while parsing the JSON
+   */
+  @SuppressWarnings({
+      &quot;PMD.CyclomaticComplexity&quot;, &quot;PMD.NPathComplexity&quot; // acceptable
+  })
+  @Nullable
+  public &lt;T&gt; T read(@NonNull IAssemblyClassBinding targetDefinition) throws IOException {
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">    if (!targetDefinition.isRoot()) {</span>
+<span class="nc" id="L146">      throw new UnsupportedOperationException(</span>
+<span class="nc" id="L147">          String.format(&quot;The assembly '%s' is not a root assembly.&quot;, targetDefinition.getBoundClass().getName()));</span>
+    }
+
+<span class="fc" id="L150">    boolean objectWrapper = false;</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">    if (parser.currentToken() == null) {</span>
+<span class="fc" id="L152">      parser.nextToken();</span>
+    }
+
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">    if (JsonToken.START_OBJECT.equals(parser.currentToken())) {</span>
+      // advance past the start object to the field name
+<span class="fc" id="L157">      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);</span>
+<span class="fc" id="L158">      objectWrapper = true;</span>
+    }
+
+<span class="fc" id="L161">    String rootFieldName = targetDefinition.getRootJsonName();</span>
+    JsonToken token;
+<span class="fc" id="L163">    Object instance = null;</span>
+<span class="pc bpc" id="L164" title="2 of 4 branches missed.">    while (!(JsonToken.END_OBJECT.equals(token = parser.currentToken()) || token == null)) {</span>
+<span class="pc bpc" id="L165" title="1 of 2 branches missed.">      if (!JsonToken.FIELD_NAME.equals(token)) {</span>
+<span class="nc" id="L166">        throw new IOException(String.format(&quot;Expected FIELD_NAME token, found '%s'&quot;, token.toString()));</span>
+      }
+
+<span class="fc" id="L169">      String fieldName = parser.currentName();</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">      if (fieldName.equals(rootFieldName)) {</span>
+        // process the object value, bound to the requested class
+<span class="fc" id="L172">        JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);</span>
+
+        // Make a temporary data type handler for the top-level definition
+<span class="fc" id="L175">        IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(targetDefinition);</span>
+
+        // read the top-level definition
+<span class="fc" id="L178">        instance = dataTypeHandler.readItem(null, this);</span>
+
+        // stop now, since we found the root field
+<span class="fc" id="L181">        break;</span>
+      }
+
+<span class="pc bpc" id="L184" title="1 of 2 branches missed.">      if (!getProblemHandler().handleUnknownProperty(targetDefinition, instance, fieldName, this)) {</span>
+<span class="nc" id="L185">        LOGGER.warn(&quot;Skipping unhandled top-level JSON field '{}'.&quot;, fieldName);</span>
+<span class="nc" id="L186">        JsonUtil.skipNextValue(parser);</span>
+      }
+<span class="fc" id="L188">    }</span>
+
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">    if (instance == null) {</span>
+<span class="nc" id="L191">      throw new IOException(String.format(&quot;Failed to find root field '%s'.&quot;, rootFieldName));</span>
+    }
+
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">    if (objectWrapper) {</span>
+      // advance past the end object
+<span class="fc" id="L196">      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);</span>
+    }
+
+<span class="fc" id="L199">    return ObjectUtils.asType(instance);</span>
+  }
+
+  /**
+   * Read the data associated with the {@code instance} and apply it to the
+   * provided {@code parentObject}.
+   * &lt;p&gt;
+   * Consumes the field if the field's name matches. If it matches, then
+   * {@code true} is returned after parsing the value. Otherwise, {@code false} is
+   * returned to indicate the property was not parsed.
+   *
+   * @param targetInstance
+   *          the instance to parse data for
+   * @param parentObject
+   *          the Java object that data parsed by this method will be stored in
+   * @return {@code true} if the instance was parsed, or {@code false} if the data
+   *         did not contain information for this instance
+   * @throws IOException
+   *           if an error occurred while parsing the data
+   */
+  protected boolean readInstance(
+      @NonNull IBoundNamedInstance targetInstance,
+      @NonNull Object parentObject) throws IOException {
+    // the parser's current token should be the JSON field name
+<span class="fc" id="L223">    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);</span>
+
+<span class="fc" id="L225">    String propertyName = parser.currentName();</span>
+<span class="pc bpc" id="L226" title="1 of 2 branches missed.">    if (LOGGER.isTraceEnabled()) {</span>
+<span class="nc" id="L227">      LOGGER.trace(&quot;reading property {}&quot;, propertyName);</span>
+    }
+
+<span class="fc" id="L230">    boolean handled = targetInstance.getJsonName().equals(propertyName);</span>
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">    if (handled) {</span>
+      // advance past the field name
+<span class="fc" id="L233">      parser.nextToken();</span>
+
+<span class="fc" id="L235">      Object value = readInstanceValue(targetInstance, parentObject);</span>
+
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">      if (value != null) {</span>
+<span class="fc" id="L238">        targetInstance.setValue(parentObject, value);</span>
+      }
+    }
+
+    // the current token will be either the next instance field name or the end of
+    // the parent object
+<span class="fc" id="L244">    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);</span>
+<span class="fc" id="L245">    return handled;</span>
+  }
+
+  /**
+   * Read the data associated with the {@code instance}.
+   *
+   * @param instance
+   *          the instance that describes the syntax of the data to read
+   * @param parentObject
+   *          the Java object that data parsed by this method will be stored in
+   * @return the parsed value(s)
+   * @throws IOException
+   *           if an error occurred while parsing the input
+   */
+  protected Object readInstanceValue(
+      @NonNull IBoundNamedInstance instance,
+      @NonNull Object parentObject) throws IOException {
+    Object value;
+<span class="fc bfc" id="L263" title="All 2 branches covered.">    if (instance instanceof IBoundNamedModelInstance) {</span>
+
+      // Deal with the collection or value type
+<span class="fc" id="L266">      IModelPropertyInfo info = ((IBoundNamedModelInstance) instance).getPropertyInfo();</span>
+<span class="fc" id="L267">      IPropertyCollector collector = info.newPropertyCollector();</span>
+
+      // let the property info parse the value
+<span class="fc" id="L270">      info.readValues(collector, parentObject, this);</span>
+
+      // get the underlying value
+<span class="fc" id="L273">      value = collector.getValue();</span>
+<span class="fc bfc" id="L274" title="All 2 branches covered.">    } else if (instance instanceof IBoundFlagInstance) {</span>
+      // just read the value directly
+<span class="fc" id="L276">      value = ((IBoundFlagInstance) instance).getDefinition().getJavaTypeAdapter().parse(parser);</span>
+<span class="pc bpc" id="L277" title="1 of 2 branches missed.">    } else if (instance instanceof IBoundFieldValueInstance) {</span>
+      // just read the value directly
+<span class="fc" id="L279">      value = ((IBoundFieldValueInstance) instance).getJavaTypeAdapter().parse(parser);</span>
+    } else {
+<span class="nc" id="L281">      throw new UnsupportedOperationException(</span>
+<span class="nc" id="L282">          String.format(&quot;Unsupported instance type: %s&quot;, instance.getClass().getName()));</span>
+    }
+<span class="fc" id="L284">    return value;</span>
+  }
+
+  // @SuppressFBWarnings(value = &quot;UC_USELESS_CONDITION&quot;, justification = &quot;false
+  // positive&quot;)
+  @SuppressWarnings({
+      &quot;PMD.CyclomaticComplexity&quot;, &quot;PMD.CognitiveComplexity&quot; // acceptable
+  })
+  @Override
+  public void readDefinitionValue(
+      IClassBinding targetDefinition,
+      Object targetObject,
+      Map&lt;String, ? extends IBoundNamedInstance&gt; instances) throws IOException {
+<span class="fc" id="L297">    IBoundFlagInstance valueKeyFlag = null;</span>
+<span class="fc bfc" id="L298" title="All 2 branches covered.">    if (targetDefinition instanceof IFieldClassBinding) {</span>
+<span class="fc" id="L299">      IFieldClassBinding targetFieldDefinition = (IFieldClassBinding) targetDefinition;</span>
+<span class="fc" id="L300">      valueKeyFlag = targetFieldDefinition.getJsonValueKeyFlagInstance();</span>
+    }
+
+    // make a copy, since we use the remaining values to initialize default values
+<span class="fc" id="L304">    Map&lt;String, ? extends IBoundNamedInstance&gt; remainingInstances = new HashMap&lt;&gt;(instances); // NOPMD not concurrent</span>
+
+    // handle each property
+<span class="fc bfc" id="L307" title="All 2 branches covered.">    while (!JsonToken.END_OBJECT.equals(parser.currentToken())) {</span>
+<span class="fc" id="L308">      boolean handled = false;</span>
+<span class="fc" id="L309">      String propertyName = parser.getCurrentName();</span>
+<span class="pc bpc" id="L310" title="1 of 2 branches missed.">      assert propertyName != null;</span>
+
+<span class="pc bpc" id="L312" title="1 of 2 branches missed.">      if (JsonToken.FIELD_NAME.equals(parser.currentToken())) {</span>
+        // found a matching property
+<span class="fc" id="L314">        IBoundNamedInstance property = remainingInstances.get(propertyName);</span>
+<span class="pc bpc" id="L315" title="1 of 2 branches missed.">        if (property != null) {</span>
+<span class="fc" id="L316">          handled = readInstance(property, targetObject);</span>
+<span class="fc" id="L317">          remainingInstances.remove(propertyName);</span>
+        }
+<span class="fc" id="L319">      } else {</span>
+<span class="nc" id="L320">        throw new IOException(</span>
+<span class="nc" id="L321">            String.format(&quot;Unexpected token: &quot; + JsonUtil.toString(parser)));</span>
+      }
+
+<span class="pc bpc" id="L324" title="1 of 2 branches missed.">      if (!handled) {</span>
+<span class="nc bnc" id="L325" title="All 2 branches missed.">        if (valueKeyFlag != null) {</span>
+          // Handle JSON value key flag case
+<span class="nc" id="L327">          IFieldClassBinding targetFieldDefinition = (IFieldClassBinding) targetDefinition;</span>
+<span class="nc" id="L328">          valueKeyFlag.setValue(targetObject,</span>
+<span class="nc" id="L329">              valueKeyFlag.getDefinition().getJavaTypeAdapter().parse(propertyName));</span>
+
+          // advance past the FIELD_NAME to get the value
+<span class="nc" id="L332">          JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);</span>
+
+<span class="nc" id="L334">          IBoundFieldValueInstance fieldValue = targetFieldDefinition.getFieldValueInstance();</span>
+<span class="nc" id="L335">          fieldValue.setValue(</span>
+              targetObject,
+<span class="nc" id="L337">              fieldValue.getJavaTypeAdapter().parse(parser));</span>
+<span class="nc" id="L338">          valueKeyFlag = null; // NOPMD used as boolean check to avoid value key check</span>
+<span class="nc bnc" id="L339" title="All 2 branches missed.">        } else if (!getProblemHandler().handleUnknownProperty(</span>
+            targetDefinition,
+            targetObject,
+            propertyName,
+            this)) {
+          // handle unrecognized property case
+<span class="nc bnc" id="L345" title="All 2 branches missed.">          if (LOGGER.isWarnEnabled()) {</span>
+<span class="nc" id="L346">            LOGGER.warn(&quot;Unrecognized property named '{}' at '{}'&quot;, propertyName,</span>
+<span class="nc" id="L347">                JsonUtil.toString(ObjectUtils.notNull(parser.getCurrentLocation())));</span>
+          }
+<span class="nc" id="L349">          JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);</span>
+<span class="nc" id="L350">          JsonUtil.skipNextValue(parser);</span>
+        }
+      }
+<span class="fc" id="L353">    }</span>
+
+<span class="fc bfc" id="L355" title="All 2 branches covered.">    if (!remainingInstances.isEmpty()) {</span>
+<span class="fc" id="L356">      getProblemHandler().handleMissingInstances(</span>
+          targetDefinition,
+          targetObject,
+<span class="fc" id="L359">          ObjectUtils.notNull(remainingInstances.values()));</span>
+    }
+<span class="fc" id="L361">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

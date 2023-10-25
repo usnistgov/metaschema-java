@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FunctionUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath.function</a> &gt; <span class="el_source">FunctionUtils.java</span></div><h1>FunctionUtils.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath.function;
+
+import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.InvalidTypeMetapathException;
+import gov.nist.secauto.metaschema.core.metapath.TypeMetapathException;
+import gov.nist.secauto.metaschema.core.metapath.function.library.FnData;
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDecimalItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.math.BigInteger;
+import java.math.MathContext;
+import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+public final class FunctionUtils {
+<span class="fc" id="L47">  public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;</span>
+
+  private FunctionUtils() {
+    // disable
+  }
+
+  /**
+   * Converts a {@link INumericItem} value to an integer value.
+   *
+   * @param value
+   *          the value to convert
+   * @return the integer value
+   * @throws ArithmeticException
+   *           if the provided value will not exactly fit in an {@code int}
+   */
+  public static int asInteger(@NonNull INumericItem value) {
+<span class="fc" id="L63">    return asInteger(value.asInteger());</span>
+  }
+
+  /**
+   * Converts a {@link BigInteger} value to an integer value.
+   *
+   * @param value
+   *          the value to convert
+   * @return the integer value
+   * @throws ArithmeticException
+   *           if the provided value will not exactly fit in an {@code int}
+   */
+  public static int asInteger(@NonNull BigInteger value) {
+<span class="fc" id="L76">    return value.intValueExact();</span>
+  }
+
+  /**
+   * Converts a {@link INumericItem} value to a long value.
+   *
+   * @param value
+   *          the value to convert
+   * @return the long value
+   * @throws ArithmeticException
+   *           if the provided value will not exactly fit in an {@code long}
+   */
+  public static long asLong(@NonNull INumericItem value) {
+<span class="nc" id="L89">    return asLong(value.asInteger());</span>
+  }
+
+  /**
+   * Converts a {@link BigInteger} value to a long value.
+   *
+   * @param value
+   *          the value to convert
+   * @return the long value
+   * @throws ArithmeticException
+   *           if the provided value will not exactly fit in an {@code long}
+   */
+  public static long asLong(@NonNull BigInteger value) {
+<span class="nc" id="L102">    return value.longValueExact();</span>
+  }
+
+  /**
+   * Retrieves the first item in a sequence. If the sequence is empty, a
+   * {@link TypeMetapathException} exception is thrown. If requireSingleton is
+   * {@code true} and the sequence contains more than one item, a
+   * {@link TypeMetapathException} is thrown.
+   *
+   * @param &lt;ITEM&gt;
+   *          the item type to return derived from the provided sequence
+   * @param sequence
+   *          the sequence to retrieve the first item from
+   * @param requireSingleton
+   *          if {@code true} then a {@link TypeMetapathException} is thrown if
+   *          the sequence contains more than one item
+   * @return {@code null} if the sequence is empty, or the item otherwise
+   * @throws TypeMetapathException
+   *           if the sequence is empty, or contains more than one item and
+   *           requireSingleton is {@code true}
+   */
+  @NonNull
+  public static &lt;ITEM extends IItem&gt; ITEM requireFirstItem(@NonNull ISequence&lt;ITEM&gt; sequence,
+      boolean requireSingleton) {
+<span class="nc bnc" id="L126" title="All 2 branches missed.">    if (sequence.isEmpty()) {</span>
+<span class="nc" id="L127">      throw new InvalidTypeMetapathException(</span>
+          null,
+          &quot;Expected a non-empty sequence, but sequence was empty.&quot;);
+    }
+<span class="nc" id="L131">    List&lt;ITEM&gt; items = sequence.asList();</span>
+<span class="nc bnc" id="L132" title="All 4 branches missed.">    if (requireSingleton &amp;&amp; items.size() != 1) {</span>
+<span class="nc" id="L133">      throw new InvalidTypeMetapathException(</span>
+          null,
+<span class="nc" id="L135">          String.format(&quot;sequence expected to contain one item, but found '%d'&quot;, items.size()));</span>
+    }
+<span class="nc" id="L137">    return ObjectUtils.notNull(items.iterator().next());</span>
+  }
+
+  /**
+   * Retrieves the first item in a sequence. If the sequence is empty, a
+   * {@code null} result is returned. If requireSingleton is {@code true} and the
+   * sequence contains more than one item, a {@link TypeMetapathException} is
+   * thrown.
+   *
+   * @param &lt;ITEM&gt;
+   *          the item type to return derived from the provided sequence
+   * @param sequence
+   *          the sequence to retrieve the first item from
+   * @param requireSingleton
+   *          if {@code true} then a {@link TypeMetapathException} is thrown if
+   *          the sequence contains more than one item
+   * @return {@code null} if the sequence is empty, or the item otherwise
+   * @throws TypeMetapathException
+   *           if the sequence contains more than one item and requireSingleton is
+   *           {@code true}
+   */
+  @Nullable
+  public static &lt;ITEM extends IItem&gt; ITEM getFirstItem(@NonNull ISequence&lt;ITEM&gt; sequence, boolean requireSingleton) {
+<span class="fc" id="L160">    @Nullable ITEM retval = null;</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">    if (!sequence.isEmpty()) {</span>
+<span class="fc" id="L162">      List&lt;ITEM&gt; items = sequence.asList();</span>
+<span class="pc bpc" id="L163" title="1 of 4 branches missed.">      if (requireSingleton &amp;&amp; items.size() != 1) {</span>
+<span class="nc" id="L164">        throw new InvalidTypeMetapathException(</span>
+            null,
+<span class="nc" id="L166">            String.format(&quot;sequence expected to contain one item, but found '%d'&quot;, items.size()));</span>
+      }
+<span class="fc" id="L168">      retval = items.iterator().next();</span>
+    }
+<span class="fc" id="L170">    return retval;</span>
+  }
+
+  /**
+   * Gets the first item of the provided sequence as a {@link INumericItem} value.
+   * If the sequence is empty, then a {@code null} value is returned.
+   *
+   * @param sequence
+   *          a Metapath sequence containing the value to convert
+   * @param requireSingleton
+   *          if {@code true} then a {@link TypeMetapathException} is thrown if
+   *          the sequence contains more than one item
+   * @return the numeric item value, or {@code null} if the result is an empty
+   *         sequence
+   * @throws TypeMetapathException
+   *           if the sequence contains more than one item, or the item cannot be
+   *           cast to a numeric value
+   *
+   */
+  @Nullable
+  public static INumericItem toNumeric(@NonNull ISequence&lt;?&gt; sequence, boolean requireSingleton) {
+<span class="nc" id="L191">    IItem item = getFirstItem(sequence, requireSingleton);</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">    return item == null ? null : toNumeric(item);</span>
+  }
+
+  /**
+   * Gets the provided item value as a {@link INumericItem} value.
+   *
+   * @param item
+   *          the value to convert
+   * @return the numeric item value
+   * @throws TypeMetapathException
+   *           if the sequence contains more than one item, or the item cannot be
+   *           cast to a numeric value
+   */
+  @NonNull
+  public static INumericItem toNumeric(@NonNull IItem item) {
+    // atomize
+<span class="nc" id="L208">    IAnyAtomicItem atomicItem = FnData.fnDataItem(item);</span>
+<span class="nc" id="L209">    return toNumeric(atomicItem);</span>
+  }
+
+  /**
+   * Gets the provided item value as a {@link INumericItem} value.
+   *
+   * @param item
+   *          the value to convert
+   * @return the numeric item value
+   * @throws TypeMetapathException
+   *           if the item cannot be cast to a numeric value
+   */
+  @NonNull
+  public static INumericItem toNumeric(@NonNull IAnyAtomicItem item) {
+    try {
+<span class="fc" id="L224">      return IDecimalItem.cast(item);</span>
+<span class="nc" id="L225">    } catch (InvalidValueForCastFunctionException ex) {</span>
+<span class="nc" id="L226">      throw new InvalidTypeMetapathException(item, ex.getLocalizedMessage(), ex);</span>
+    }
+  }
+
+  /**
+   * Gets the provided item value as a {@link INumericItem} value. If the item is
+   * {@code null}, then a {@code null} value is returned.
+   *
+   * @param item
+   *          the value to convert
+   * @return the numeric item value
+   * @throws TypeMetapathException
+   *           if the item cannot be cast to a numeric value
+   */
+  @Nullable
+  public static INumericItem toNumericOrNull(@Nullable IAnyAtomicItem item) {
+<span class="nc bnc" id="L242" title="All 2 branches missed.">    return item == null ? null : toNumeric(item);</span>
+  }
+
+  @SuppressWarnings(&quot;unchecked&quot;)
+  @NonNull
+  public static &lt;TYPE extends IItem&gt; TYPE asType(@NonNull IItem item) {
+<span class="nc" id="L248">    return (TYPE) item;</span>
+  }
+
+  @SuppressWarnings(&quot;unchecked&quot;)
+  @NonNull
+  public static &lt;TYPE extends IItem&gt; ISequence&lt;TYPE&gt; asType(@NonNull ISequence&lt;?&gt; sequence) {
+<span class="nc" id="L254">    return (ISequence&lt;TYPE&gt;) sequence;</span>
+  }
+
+  @SuppressWarnings(&quot;unchecked&quot;)
+  @Nullable
+  public static &lt;TYPE extends IItem&gt; TYPE asTypeOrNull(@Nullable IItem item) {
+<span class="nc" id="L260">    return (TYPE) item;</span>
+  }
+
+  @NonNull
+  public static &lt;TYPE extends IItem&gt; TYPE requireType(Class&lt;TYPE&gt; clazz, IItem item) {
+<span class="nc bnc" id="L265" title="All 2 branches missed.">    if (item == null) {</span>
+<span class="nc" id="L266">      throw new InvalidTypeMetapathException(</span>
+          null,
+<span class="nc" id="L268">          String.format(&quot;Expected non-null type '%s', but the node was null.&quot;,</span>
+<span class="nc" id="L269">              clazz.getName()));</span>
+<span class="nc bnc" id="L270" title="All 2 branches missed.">    } else if (!clazz.isInstance(item)) {</span>
+<span class="nc" id="L271">      throw new InvalidTypeMetapathException(</span>
+          item,
+<span class="nc" id="L273">          String.format(&quot;Expected type '%s', but the node was type '%s'.&quot;,</span>
+<span class="nc" id="L274">              clazz.getName(),</span>
+<span class="nc" id="L275">              item.getClass().getName()));</span>
+    }
+<span class="nc" id="L277">    return FunctionUtils.asType(item);</span>
+  }
+
+  @Nullable
+  public static &lt;TYPE extends IItem&gt; TYPE requireTypeOrNull(Class&lt;TYPE&gt; clazz, @Nullable IItem item) {
+<span class="nc bnc" id="L282" title="All 4 branches missed.">    if (item == null || clazz.isInstance(item)) {</span>
+<span class="nc" id="L283">      return FunctionUtils.asTypeOrNull(item);</span>
+    }
+<span class="nc" id="L285">    throw new InvalidTypeMetapathException(</span>
+        item,
+<span class="nc" id="L287">        String.format(&quot;Expected type '%s', but the node was type '%s'.&quot;,</span>
+<span class="nc" id="L288">            clazz.getName(),</span>
+<span class="nc" id="L289">            item.getClass().getName()));</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

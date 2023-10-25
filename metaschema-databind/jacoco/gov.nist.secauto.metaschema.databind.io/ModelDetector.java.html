@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ModelDetector.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.io</a> &gt; <span class="el_source">ModelDetector.java</span></div><h1>ModelDetector.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.io;
+
+import com.ctc.wstx.stax.WstxInputFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.io.MergedStream;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
+import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
+import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.io.json.JsonFactoryFactory;
+import gov.nist.secauto.metaschema.databind.io.yaml.impl.YamlFactoryFactory;
+
+import org.codehaus.stax2.XMLEventReader2;
+import org.codehaus.stax2.XMLInputFactory2;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+/**
+ * Provides a means to analyze content to determine what type of bound data it
+ * contains.
+ */
+<span class="fc" id="L65">public class ModelDetector {</span>
+  @NonNull
+  private final IBindingContext bindingContext;
+  @NonNull
+  private final IConfiguration&lt;DeserializationFeature&lt;?&gt;&gt; configuration;
+
+  /**
+   * Construct a new format detector using the default configuration.
+   *
+   * @param bindingContext
+   *          information about how Java classes are bound to Module definitions
+   */
+  public ModelDetector(
+      @NonNull IBindingContext bindingContext) {
+<span class="nc" id="L79">    this(bindingContext, new DefaultConfiguration&lt;&gt;());</span>
+<span class="nc" id="L80">  }</span>
+
+  /**
+   * Construct a new format detector using the provided {@code configuration}.
+   *
+   * @param bindingContext
+   *          information about how Java classes are bound to Module definitions
+   * @param configuration
+   *          the deserialization configuration
+   */
+  public ModelDetector(
+      @NonNull IBindingContext bindingContext,
+<span class="fc" id="L92">      @NonNull IConfiguration&lt;DeserializationFeature&lt;?&gt;&gt; configuration) {</span>
+<span class="fc" id="L93">    this.bindingContext = bindingContext;</span>
+<span class="fc" id="L94">    this.configuration = configuration;</span>
+<span class="fc" id="L95">  }</span>
+
+  private int getLookaheadLimit() {
+<span class="fc" id="L98">    return configuration.get(DeserializationFeature.FORMAT_DETECTION_LOOKAHEAD_LIMIT);</span>
+  }
+
+  @NonNull
+  private IBindingContext getBindingContext() {
+<span class="fc" id="L103">    return bindingContext;</span>
+  }
+
+  @NonNull
+  private IConfiguration&lt;DeserializationFeature&lt;?&gt;&gt; getConfiguration() {
+<span class="nc" id="L108">    return configuration;</span>
+  }
+
+  /**
+   * Analyzes the data from the provided {@code inputStream} to determine it's
+   * model.
+   *
+   * @param inputStream
+   *          the resource stream to analyze
+   * @param format
+   *          the expected format of the data to read
+   * @return the analysis result
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   */
+  @NonNull
+  public Result detect(@NonNull InputStream inputStream, @NonNull Format format)
+      throws IOException {
+<span class="fc" id="L126">    byte[] buf = ObjectUtils.notNull(inputStream.readNBytes(getLookaheadLimit()));</span>
+
+    Class&lt;?&gt; clazz;
+<span class="fc" id="L129">    try (InputStream bis = new ByteArrayInputStream(buf)) {</span>
+<span class="pc bpc" id="L130" title="3 of 4 branches missed.">      switch (format) {</span>
+      case JSON:
+<span class="fc" id="L132">        clazz = detectModelJsonClass(ObjectUtils.notNull(</span>
+<span class="fc" id="L133">            JsonFactoryFactory.instance().createParser(bis)));</span>
+<span class="fc" id="L134">        break;</span>
+      case YAML:
+<span class="nc" id="L136">        YAMLFactory factory = YamlFactoryFactory.newParserFactoryInstance(getConfiguration());</span>
+<span class="nc" id="L137">        clazz = detectModelJsonClass(ObjectUtils.notNull(factory.createParser(bis)));</span>
+<span class="nc" id="L138">        break;</span>
+      case XML:
+<span class="nc" id="L140">        clazz = detectModelXmlClass(ObjectUtils.notNull(bis));</span>
+<span class="nc" id="L141">        break;</span>
+      default:
+<span class="nc" id="L143">        throw new UnsupportedOperationException(</span>
+<span class="nc" id="L144">            String.format(&quot;The format '%s' dataStream not supported&quot;, format));</span>
+      }
+    }
+
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">    if (clazz == null) {</span>
+<span class="nc" id="L149">      throw new IllegalStateException(</span>
+<span class="nc" id="L150">          String.format(&quot;Detected format '%s', but unable to detect the bound data type&quot;, format.name()));</span>
+    }
+
+<span class="fc" id="L153">    return new Result(clazz, inputStream, buf);</span>
+  }
+
+  @NonNull
+  private Class&lt;?&gt; detectModelXmlClass(@NonNull InputStream is) throws IOException {
+    QName startElementQName;
+    try {
+<span class="nc" id="L160">      XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">      assert xmlInputFactory instanceof WstxInputFactory;</span>
+<span class="nc" id="L162">      xmlInputFactory.configureForXmlConformance();</span>
+<span class="nc" id="L163">      xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, false);</span>
+
+<span class="nc" id="L165">      Reader reader = new InputStreamReader(is, Charset.forName(&quot;UTF8&quot;));</span>
+<span class="nc" id="L166">      XMLEventReader2 eventReader = (XMLEventReader2) xmlInputFactory.createXMLEventReader(reader);</span>
+<span class="nc bnc" id="L167" title="All 4 branches missed.">      while (eventReader.hasNext() &amp;&amp; !eventReader.peek().isStartElement()) {</span>
+<span class="nc" id="L168">        eventReader.nextEvent();</span>
+      }
+
+<span class="nc bnc" id="L171" title="All 2 branches missed.">      if (!eventReader.peek().isStartElement()) {</span>
+<span class="nc" id="L172">        throw new IOException(&quot;Unable to detect a start element&quot;);</span>
+      }
+
+<span class="nc" id="L175">      StartElement start = eventReader.nextEvent().asStartElement();</span>
+<span class="nc" id="L176">      startElementQName = ObjectUtils.notNull(start.getName());</span>
+<span class="nc" id="L177">    } catch (XMLStreamException ex) {</span>
+<span class="nc" id="L178">      throw new IOException(ex);</span>
+<span class="nc" id="L179">    }</span>
+
+<span class="nc" id="L181">    Class&lt;?&gt; clazz = getBindingContext().getBoundClassForXmlQName(startElementQName);</span>
+
+<span class="nc bnc" id="L183" title="All 2 branches missed.">    if (clazz == null) {</span>
+<span class="nc" id="L184">      throw new IOException(&quot;Unrecognized element name: &quot; + startElementQName.toString());</span>
+    }
+<span class="nc" id="L186">    return clazz;</span>
+  }
+
+  @Nullable
+  private Class&lt;?&gt; detectModelJsonClass(@NonNull JsonParser parser) throws IOException {
+<span class="fc" id="L191">    Class&lt;?&gt; retval = null;</span>
+<span class="fc" id="L192">    JsonUtil.advanceAndAssert(parser, JsonToken.START_OBJECT);</span>
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">    outer: while (JsonToken.FIELD_NAME.equals(parser.nextToken())) {</span>
+<span class="fc" id="L194">      String name = ObjectUtils.notNull(parser.getCurrentName());</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">      if (&quot;$schema&quot;.equals(name)) {</span>
+        // do nothing
+<span class="fc" id="L197">        parser.nextToken();</span>
+        // JsonUtil.skipNextValue(parser);
+      } else {
+<span class="fc" id="L200">        retval = getBindingContext().getBoundClassForJsonName(name);</span>
+<span class="fc" id="L201">        break outer;</span>
+      }
+<span class="fc" id="L203">    }</span>
+<span class="fc" id="L204">    return retval;</span>
+  }
+
+  public static class Result {
+    @NonNull
+    private final Class&lt;?&gt; boundClass;
+    @NonNull
+    private final InputStream dataStream;
+
+    private Result(
+        @NonNull Class&lt;?&gt; clazz,
+        @NonNull InputStream is,
+<span class="fc" id="L216">        @NonNull byte[] buf) {</span>
+<span class="fc" id="L217">      this.boundClass = clazz;</span>
+<span class="fc" id="L218">      this.dataStream = new MergedStream(null, is, buf, 0, buf.length);</span>
+<span class="fc" id="L219">    }</span>
+
+    /**
+     * Get the Java class representing the detected bound object.
+     *
+     * @return the Java class
+     */
+    @NonNull
+    public Class&lt;?&gt; getBoundClass() {
+<span class="fc" id="L228">      return boundClass;</span>
+    }
+
+    /**
+     * Get an {@link InputStream} that can be used to read the analyzed data from
+     * the start.
+     *
+     * @return the stream
+     */
+    @NonNull
+    public InputStream getDataStream() {
+<span class="fc" id="L239">      return dataStream;</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

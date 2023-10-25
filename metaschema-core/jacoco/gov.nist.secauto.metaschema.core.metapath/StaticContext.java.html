@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StaticContext.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath</a> &gt; <span class="el_source">StaticContext.java</span></div><h1>StaticContext.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath;
+
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+public final class StaticContext {
+  @Nullable
+  private final URI baseUri;
+  @NonNull
+  private final Map&lt;String, URI&gt; knownNamespaces;
+
+  @NonNull
+  public static StaticContext newInstance() {
+<span class="nc" id="L46">    return builder().build();</span>
+  }
+
+  @NonNull
+  public static Builder builder() {
+<span class="fc" id="L51">    return new Builder();</span>
+  }
+
+  private StaticContext(
+      @Nullable URI baseUri,
+<span class="fc" id="L56">      @NonNull Map&lt;String, URI&gt; knownNamespaces) {</span>
+<span class="fc" id="L57">    this.baseUri = baseUri;</span>
+<span class="fc" id="L58">    this.knownNamespaces = knownNamespaces;</span>
+<span class="fc" id="L59">  }</span>
+
+  /**
+   * Get the static base URI to use in resolving URIs handled by the Metapath
+   * processor. This URI, if provided, will be used when a document base URI is
+   * not available.
+   *
+   * @return the base URI or {@code null} if not defined
+   */
+  @Nullable
+  public URI getBaseUri() {
+<span class="nc" id="L70">    synchronized (this) {</span>
+<span class="nc" id="L71">      return baseUri;</span>
+    }
+  }
+
+  @Nullable
+  public URI getUriForPrefix(@NonNull String prefix) {
+<span class="nc" id="L77">    return knownNamespaces.get(prefix);</span>
+  }
+
+  /**
+   * Generate a new dynamic context.
+   *
+   * @return the generated dynamic context
+   */
+  @NonNull
+  public DynamicContext newDynamicContext() {
+<span class="fc" id="L87">    return new DynamicContext(this);</span>
+  }
+
+  public static class Builder {
+    private URI baseUri;
+<span class="fc" id="L92">    @NonNull</span>
+    private final Map&lt;String, URI&gt; knownNamespaces = new ConcurrentHashMap&lt;&gt;();
+
+<span class="fc" id="L95">    private Builder() {</span>
+<span class="fc" id="L96">      knownNamespaces.put(</span>
+          MetapathConstants.PREFIX_METAPATH,
+          MetapathConstants.NS_METAPATH);
+<span class="fc" id="L99">      knownNamespaces.put(</span>
+          MetapathConstants.PREFIX_XML_SCHEMA,
+          MetapathConstants.NS_XML_SCHEMA);
+<span class="fc" id="L102">      knownNamespaces.put(</span>
+          MetapathConstants.PREFIX_XPATH_FUNCTIONS,
+          MetapathConstants.NS_XPATH_FUNCTIONS);
+<span class="fc" id="L105">      knownNamespaces.put(</span>
+          MetapathConstants.PREFIX_XPATH_FUNCTIONS_MATH,
+          MetapathConstants.NS_XPATH_FUNCTIONS_MATH);
+<span class="fc" id="L108">    }</span>
+
+    /**
+     * Sets the static base URI to use in resolving URIs handled by the Metapath
+     * processor, when a document base URI is not available. There is only a single
+     * base URI. Subsequent calls to this method will change the base URI.
+     *
+     * @param uri
+     *          the base URI to use
+     * @return this builder
+     */
+    @NonNull
+    public Builder baseUri(@NonNull URI uri) {
+<span class="fc" id="L121">      this.baseUri = uri;</span>
+<span class="fc" id="L122">      return this;</span>
+    }
+
+    @NonNull
+    public Builder namespace(@NonNull String prefix, @NonNull URI uri) {
+<span class="nc" id="L127">      this.knownNamespaces.put(prefix, uri);</span>
+<span class="nc" id="L128">      return this;</span>
+    }
+
+    @NonNull
+    public StaticContext build() {
+<span class="fc" id="L133">      return new StaticContext(</span>
+          baseUri,
+<span class="fc" id="L135">          CollectionUtil.unmodifiableMap(knownNamespaces));</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

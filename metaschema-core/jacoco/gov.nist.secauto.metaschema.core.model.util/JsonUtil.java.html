@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JsonUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.util</a> &gt; <span class="el_source">JsonUtil.java</span></div><h1>JsonUtil.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.util;
+
+import com.fasterxml.jackson.core.JsonLocation;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+
+import gov.nist.secauto.metaschema.core.util.CustomCollectors;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+public final class JsonUtil {
+<span class="nc" id="L52">  private static final Logger LOGGER = LogManager.getLogger(JsonUtil.class);</span>
+
+  private JsonUtil() {
+    // disable construction
+  }
+
+  @NonNull
+  public static JSONObject toJsonObject(@NonNull InputStream schemaInputStream) {
+<span class="nc" id="L60">    return new JSONObject(new JSONTokener(schemaInputStream));</span>
+  }
+
+  @NonNull
+  public static JSONObject toJsonObject(@NonNull Reader reader) {
+<span class="nc" id="L65">    return new JSONObject(new JSONTokener(reader));</span>
+  }
+
+  /**
+   * Generate an informational string describing the token at the current location
+   * of the provided {@code parser}.
+   *
+   * @param parser
+   *          the JSON parser
+   * @return the informational string
+   * @throws IOException
+   *           if an error occurred while getting the information from the parser
+   */
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static String toString(@NonNull JsonParser parser) throws IOException {
+<span class="nc" id="L81">    return new StringBuilder(32)</span>
+<span class="nc" id="L82">        .append(parser.currentToken().name())</span>
+<span class="nc" id="L83">        .append(&quot; '&quot;)</span>
+<span class="nc" id="L84">        .append(parser.getText())</span>
+<span class="nc" id="L85">        .append('\'')</span>
+<span class="nc" id="L86">        .append(generateLocationMessage(parser))</span>
+<span class="nc" id="L87">        .toString();</span>
+  }
+
+  /**
+   * Generate an informational string describing the provided {@code location}.
+   *
+   * @param location
+   *          a JSON parser location
+   * @return the informational string
+   */
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static String toString(@NonNull JsonLocation location) {
+<span class="nc" id="L100">    return new StringBuilder(8)</span>
+<span class="nc" id="L101">        .append(location.getLineNr())</span>
+<span class="nc" id="L102">        .append(':')</span>
+<span class="nc" id="L103">        .append(location.getColumnNr())</span>
+<span class="nc" id="L104">        .toString();</span>
+  }
+
+  @Nullable
+  public static JsonToken advanceTo(@NonNull JsonParser parser, JsonToken token) throws IOException {
+<span class="nc" id="L109">    JsonToken currentToken = null;</span>
+<span class="nc bnc" id="L110" title="All 4 branches missed.">    while (parser.hasCurrentToken() &amp;&amp; !token.equals(currentToken = parser.currentToken())) {</span>
+<span class="nc" id="L111">      currentToken = parser.nextToken();</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">      if (LOGGER.isWarnEnabled()) {</span>
+<span class="nc" id="L113">        LOGGER.warn(&quot;skipping over: {}{}&quot;,</span>
+<span class="nc" id="L114">            toString(parser),</span>
+<span class="nc" id="L115">            generateLocationMessage(parser));</span>
+      }
+    }
+<span class="nc" id="L118">    return currentToken;</span>
+  }
+
+  @SuppressWarnings({
+      &quot;resource&quot;, // parser not owned
+      &quot;PMD.CyclomaticComplexity&quot; // acceptable
+  })
+  @Nullable
+  public static JsonToken skipNextValue(@NonNull JsonParser parser) throws IOException {
+
+<span class="nc" id="L128">    JsonToken currentToken = parser.currentToken();</span>
+    // skip the field name
+<span class="nc bnc" id="L130" title="All 2 branches missed.">    if (JsonToken.FIELD_NAME.equals(currentToken)) {</span>
+<span class="nc" id="L131">      currentToken = parser.nextToken();</span>
+    }
+
+<span class="nc bnc" id="L134" title="All 3 branches missed.">    switch (currentToken) {</span>
+    case START_ARRAY:
+    case START_OBJECT:
+<span class="nc" id="L137">      parser.skipChildren();</span>
+<span class="nc" id="L138">      break;</span>
+    case VALUE_FALSE:
+    case VALUE_NULL:
+    case VALUE_NUMBER_FLOAT:
+    case VALUE_NUMBER_INT:
+    case VALUE_STRING:
+    case VALUE_TRUE:
+      // do nothing
+<span class="nc" id="L146">      break;</span>
+    default:
+      // error
+<span class="nc" id="L149">      String msg = String.format(&quot;Unhandled JsonToken %s%s.&quot;,</span>
+<span class="nc" id="L150">          toString(parser),</span>
+<span class="nc" id="L151">          generateLocationMessage(parser));</span>
+<span class="nc" id="L152">      LOGGER.error(msg);</span>
+<span class="nc" id="L153">      throw new UnsupportedOperationException(msg);</span>
+    }
+
+    // advance past the value
+<span class="nc" id="L157">    return parser.nextToken();</span>
+  }
+
+  @SuppressWarnings(&quot;PMD.CyclomaticComplexity&quot;) // acceptable
+  public static boolean checkEndOfValue(@NonNull JsonParser parser, @NonNull JsonToken startToken) {
+<span class="nc" id="L162">    JsonToken currentToken = parser.getCurrentToken();</span>
+
+    boolean retval;
+<span class="nc bnc" id="L165" title="All 4 branches missed.">    switch (startToken) { // NOPMD - intentional fall through</span>
+    case START_OBJECT:
+<span class="nc" id="L167">      retval = JsonToken.END_OBJECT.equals(currentToken);</span>
+<span class="nc" id="L168">      break;</span>
+    case START_ARRAY:
+<span class="nc" id="L170">      retval = JsonToken.END_ARRAY.equals(currentToken);</span>
+<span class="nc" id="L171">      break;</span>
+    case VALUE_EMBEDDED_OBJECT:
+    case VALUE_FALSE:
+    case VALUE_NULL:
+    case VALUE_NUMBER_FLOAT:
+    case VALUE_NUMBER_INT:
+    case VALUE_STRING:
+    case VALUE_TRUE:
+<span class="nc" id="L179">      retval = true;</span>
+<span class="nc" id="L180">      break;</span>
+    default:
+<span class="nc" id="L182">      retval = false;</span>
+    }
+<span class="nc" id="L184">    return retval;</span>
+  }
+
+  public static void assertCurrent(
+      @NonNull JsonParser parser,
+      @NonNull JsonToken... expectedTokens) {
+<span class="nc" id="L190">    JsonToken current = parser.currentToken();</span>
+<span class="nc" id="L191">    assert Arrays.stream(expectedTokens)</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">        .anyMatch(expected -&gt; expected.equals(current)) : getAssertMessage(</span>
+            parser,
+            expectedTokens,
+<span class="nc" id="L195">            parser.currentToken());</span>
+<span class="nc" id="L196">  }</span>
+
+  public static void assertCurrentIsFieldValue(@NonNull JsonParser parser) {
+<span class="nc" id="L199">    JsonToken token = parser.currentToken();</span>
+<span class="nc bnc" id="L200" title="All 4 branches missed.">    assert token.isStructStart() || token.isScalarValue() : String.format(</span>
+        &quot;Expected a START_OBJECT, START_ARRAY, or VALUE_xxx token, but found JsonToken '%s'%s.&quot;,
+        token,
+<span class="nc" id="L203">        generateLocationMessage(parser));</span>
+<span class="nc" id="L204">  }</span>
+
+  @Nullable
+  public static JsonToken assertAndAdvance(
+      @NonNull JsonParser parser,
+      @NonNull JsonToken expectedToken)
+      throws IOException {
+<span class="nc" id="L211">    JsonToken token = parser.currentToken();</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">    assert expectedToken.equals(token) : getAssertMessage(</span>
+        parser,
+        expectedToken,
+        token);
+<span class="nc" id="L216">    return parser.nextToken();</span>
+  }
+
+  @Nullable
+  public static JsonToken advanceAndAssert(
+      @NonNull JsonParser parser,
+      @NonNull JsonToken expectedToken)
+      throws IOException {
+<span class="nc" id="L224">    JsonToken token = parser.nextToken();</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">    assert expectedToken.equals(token) : getAssertMessage(</span>
+        parser,
+        expectedToken,
+        token);
+<span class="nc" id="L229">    return token;</span>
+  }
+
+  @NonNull
+  public static String getAssertMessage(
+      @NonNull JsonParser parser,
+      @NonNull JsonToken expected,
+      JsonToken actual) {
+<span class="nc" id="L237">    return ObjectUtils.notNull(</span>
+<span class="nc" id="L238">        String.format(&quot;Expected JsonToken '%s', but found JsonToken '%s'%s.&quot;,</span>
+            expected,
+            actual,
+<span class="nc" id="L241">            generateLocationMessage(parser)));</span>
+  }
+
+  @NonNull
+  public static String getAssertMessage(
+      @NonNull JsonParser parser,
+      @NonNull JsonToken[] expected,
+      JsonToken actual) {
+<span class="nc" id="L249">    List&lt;JsonToken&gt; expectedTokens = ObjectUtils.notNull(Arrays.asList(expected));</span>
+<span class="nc" id="L250">    return getAssertMessage(parser, expectedTokens, actual);</span>
+  }
+
+  @NonNull
+  public static String getAssertMessage(
+      @NonNull JsonParser parser,
+      @NonNull Collection&lt;JsonToken&gt; expected,
+      JsonToken actual) {
+<span class="nc" id="L258">    return ObjectUtils.notNull(</span>
+<span class="nc" id="L259">        String.format(&quot;Expected JsonToken(s) '%s', but found JsonToken '%s'%s.&quot;,</span>
+<span class="nc" id="L260">            expected.stream().map(token -&gt; token.name()).collect(CustomCollectors.joiningWithOxfordComma(&quot;and&quot;)),</span>
+            actual,
+<span class="nc" id="L262">            generateLocationMessage(parser)));</span>
+  }
+
+  @NonNull
+  public static CharSequence generateLocationMessage(@NonNull JsonParser parser) {
+<span class="nc" id="L267">    JsonLocation location = parser.getCurrentLocation();</span>
+<span class="nc bnc" id="L268" title="All 2 branches missed.">    return location == null ? &quot;&quot; : generateLocationMessage(location);</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public static CharSequence generateLocationMessage(@NonNull JsonLocation location) {
+<span class="nc" id="L274">    return new StringBuilder()</span>
+<span class="nc" id="L275">        .append(&quot; at location '&quot;)</span>
+<span class="nc" id="L276">        .append(location.getLineNr())</span>
+<span class="nc" id="L277">        .append(':')</span>
+<span class="nc" id="L278">        .append(location.getColumnNr())</span>
+<span class="nc" id="L279">        .append('\'');</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

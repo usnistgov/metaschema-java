@@ -1,0 +1,634 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OperationFunctions.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath.function</a> &gt; <span class="el_source">OperationFunctions.java</span></div><h1>OperationFunctions.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath.function; // NOPMD - intentional
+
+import gov.nist.secauto.metaschema.core.metapath.InvalidTypeMetapathException;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBase64BinaryItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDateItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDateTimeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDayTimeDurationItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDecimalItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDurationItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IYearMonthDurationItem;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.Duration;
+import java.time.Period;
+import java.time.ZonedDateTime;
+import java.time.temporal.TemporalAmount;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+<span class="fc" id="L51">public final class OperationFunctions { // NOPMD - intentional</span>
+  private OperationFunctions() {
+    // disable
+  }
+
+  @NonNull
+  public static IDateItem opAddYearMonthDurationToDate(@NonNull IDateItem arg1, @NonNull IYearMonthDurationItem arg2) {
+<span class="nc" id="L58">    return addDurationToDate(arg1.asZonedDateTime(), arg2.getValue());</span>
+  }
+
+  @NonNull
+  public static IDateItem opAddDayTimeDurationToDate(@NonNull IDateItem arg1, @NonNull IDayTimeDurationItem arg2) {
+<span class="nc" id="L63">    return addDurationToDate(arg1.asZonedDateTime(), arg2.getValue());</span>
+  }
+
+  @NonNull
+  private static IDateItem addDurationToDate(@NonNull ZonedDateTime dateTime, @NonNull TemporalAmount duration) {
+    ZonedDateTime result;
+    try {
+<span class="nc" id="L70">      result = dateTime.plus(duration);</span>
+<span class="nc" id="L71">    } catch (ArithmeticException ex) {</span>
+<span class="nc" id="L72">      throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);</span>
+<span class="nc" id="L73">    }</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">    assert result != null;</span>
+<span class="nc" id="L75">    return IDateItem.valueOf(result);</span>
+  }
+
+  @NonNull
+  public static IYearMonthDurationItem opAddYearMonthDurations(@NonNull IYearMonthDurationItem arg1,
+      IYearMonthDurationItem arg2) {
+<span class="nc" id="L81">    Period duration1 = arg1.getValue();</span>
+<span class="nc" id="L82">    Period duration2 = arg2.getValue();</span>
+
+    Period result;
+    try {
+<span class="nc" id="L86">      result = duration1.plus(duration2);</span>
+<span class="nc" id="L87">    } catch (ArithmeticException ex) {</span>
+<span class="nc" id="L88">      throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);</span>
+<span class="nc" id="L89">    }</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">    assert result != null;</span>
+<span class="nc" id="L91">    return IYearMonthDurationItem.valueOf(result);</span>
+  }
+
+  @NonNull
+  public static IDayTimeDurationItem opAddDayTimeDurations(@NonNull IDayTimeDurationItem arg1,
+      @NonNull IDayTimeDurationItem arg2) {
+<span class="nc" id="L97">    Duration duration1 = arg1.getValue();</span>
+<span class="nc" id="L98">    Duration duration2 = arg2.getValue();</span>
+
+    Duration result;
+    try {
+<span class="nc" id="L102">      result = duration1.plus(duration2);</span>
+<span class="nc" id="L103">    } catch (ArithmeticException ex) {</span>
+<span class="nc" id="L104">      throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);</span>
+<span class="nc" id="L105">    }</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">    assert result != null;</span>
+<span class="nc" id="L107">    return IDayTimeDurationItem.valueOf(result);</span>
+  }
+
+  @NonNull
+  public static IDateTimeItem opAddYearMonthDurationToDateTime(@NonNull IDateTimeItem arg1,
+      @NonNull IYearMonthDurationItem arg2) {
+    ZonedDateTime result;
+    try {
+<span class="nc" id="L115">      result = arg1.asZonedDateTime().plus(arg2.getValue());</span>
+<span class="nc" id="L116">    } catch (ArithmeticException ex) {</span>
+<span class="nc" id="L117">      throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);</span>
+<span class="nc" id="L118">    }</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">    assert result != null;</span>
+<span class="nc" id="L120">    return IDateTimeItem.valueOf(result);</span>
+  }
+
+  @NonNull
+  public static IDateTimeItem opAddDayTimeDurationToDateTime(@NonNull IDateTimeItem arg1,
+      @NonNull IDayTimeDurationItem arg2) {
+    ZonedDateTime result;
+    try {
+<span class="nc" id="L128">      result = arg1.asZonedDateTime().plus(arg2.getValue());</span>
+<span class="nc" id="L129">    } catch (ArithmeticException ex) {</span>
+<span class="nc" id="L130">      throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);</span>
+<span class="nc" id="L131">    }</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">    assert result != null;</span>
+<span class="nc" id="L133">    return IDateTimeItem.valueOf(result);</span>
+  }
+
+  @NonNull
+  public static IDayTimeDurationItem opSubtractDates(@NonNull IDateItem arg1, @NonNull IDateItem arg2) {
+<span class="nc" id="L138">    return between(arg1.asZonedDateTime(), arg2.asZonedDateTime());</span>
+  }
+
+  @NonNull
+  public static IDateItem opSubtractYearMonthDurationFromDate(@NonNull IDateItem arg1,
+      @NonNull IYearMonthDurationItem arg2) {
+<span class="nc" id="L144">    return subtractDurationFromDate(arg1.asZonedDateTime(), arg2.getValue());</span>
+  }
+
+  @NonNull
+  public static IDateItem opSubtractDayTimeDurationFromDate(@NonNull IDateItem arg1,
+      @NonNull IDayTimeDurationItem arg2) {
+<span class="nc" id="L150">    return subtractDurationFromDate(arg1.asZonedDateTime(), arg2.getValue());</span>
+  }
+
+  @NonNull
+  private static IDateItem subtractDurationFromDate(@NonNull ZonedDateTime dateTime,
+      @NonNull TemporalAmount duration) {
+    @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L157">    @NonNull ZonedDateTime result = dateTime.minus(duration);</span>
+<span class="nc" id="L158">    return IDateItem.valueOf(result);</span>
+  }
+
+  @NonNull
+  public static IYearMonthDurationItem opSubtractYearMonthDurations(@NonNull IYearMonthDurationItem arg1,
+      IYearMonthDurationItem arg2) {
+<span class="nc" id="L164">    Period duration1 = arg1.getValue();</span>
+<span class="nc" id="L165">    Period duration2 = arg2.getValue();</span>
+
+    @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L168">    @NonNull Period duration = duration1.minus(duration2);</span>
+<span class="nc" id="L169">    return IYearMonthDurationItem.valueOf(duration);</span>
+  }
+
+  @NonNull
+  public static IDayTimeDurationItem opSubtractDayTimeDurations(@NonNull IDayTimeDurationItem arg1,
+      @NonNull IDayTimeDurationItem arg2) {
+<span class="nc" id="L175">    Duration duration1 = arg1.getValue();</span>
+<span class="nc" id="L176">    Duration duration2 = arg2.getValue();</span>
+
+    @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L179">    @NonNull Duration duration = duration1.minus(duration2);</span>
+<span class="nc" id="L180">    return IDayTimeDurationItem.valueOf(duration);</span>
+  }
+
+  @NonNull
+  public static IDayTimeDurationItem opSubtractDateTimes(@NonNull IDateTimeItem arg1, @NonNull IDateTimeItem arg2) {
+<span class="nc" id="L185">    return between(arg1.asZonedDateTime(), arg2.asZonedDateTime());</span>
+  }
+
+  @NonNull
+  private static IDayTimeDurationItem between(@NonNull ZonedDateTime time1, @NonNull ZonedDateTime time2) {
+    @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L191">    @NonNull Duration between = Duration.between(time1, time2);</span>
+<span class="nc" id="L192">    return IDayTimeDurationItem.valueOf(between);</span>
+  }
+
+  @NonNull
+  public static IDateTimeItem opSubtractYearMonthDurationFromDateTime(@NonNull IDateTimeItem arg1,
+      @NonNull IYearMonthDurationItem arg2) {
+    @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L199">    @NonNull ZonedDateTime dateTime = arg1.asZonedDateTime().minus(arg2.getValue());</span>
+<span class="nc" id="L200">    return IDateTimeItem.valueOf(dateTime);</span>
+  }
+
+  @NonNull
+  public static IDateTimeItem opSubtractDayTimeDurationFromDateTime(@NonNull IDateTimeItem arg1,
+      @NonNull IDayTimeDurationItem arg2) {
+
+    @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L208">    @NonNull ZonedDateTime dateTime = arg1.asZonedDateTime().plus(arg2.getValue());</span>
+<span class="nc" id="L209">    return IDateTimeItem.valueOf(dateTime);</span>
+  }
+
+  @NonNull
+  public static IYearMonthDurationItem opMultiplyYearMonthDuration(@NonNull IYearMonthDurationItem arg1,
+      @NonNull INumericItem arg2)
+      throws ArithmeticFunctionException {
+    int arg2Int;
+    try {
+<span class="nc" id="L218">      arg2Int = FunctionUtils.asInteger(arg2.round());</span>
+<span class="nc" id="L219">    } catch (ArithmeticException ex) {</span>
+<span class="nc" id="L220">      throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);</span>
+<span class="nc" id="L221">    }</span>
+
+    @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L224">    @NonNull Period period = arg1.getValue().multipliedBy(arg2Int);</span>
+<span class="nc" id="L225">    return IYearMonthDurationItem.valueOf(period);</span>
+  }
+
+  @NonNull
+  public static IDayTimeDurationItem opMultiplyDayTimeDuration(@NonNull IDayTimeDurationItem arg1,
+      @NonNull INumericItem arg2)
+      throws ArithmeticFunctionException {
+    long arg2Long;
+    try {
+<span class="nc" id="L234">      arg2Long = FunctionUtils.asLong(arg2.round());</span>
+<span class="nc" id="L235">    } catch (ArithmeticException ex) {</span>
+<span class="nc" id="L236">      throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);</span>
+<span class="nc" id="L237">    }</span>
+
+    @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L240">    @NonNull Duration duration = arg1.getValue().multipliedBy(arg2Long);</span>
+<span class="nc" id="L241">    return IDayTimeDurationItem.valueOf(duration);</span>
+  }
+
+  @NonNull
+  public static IYearMonthDurationItem opDivideYearMonthDuration(@NonNull IYearMonthDurationItem arg1,
+      @NonNull INumericItem arg2)
+      throws DateTimeFunctionException {
+<span class="nc" id="L248">    IIntegerItem totalMonths = IIntegerItem.valueOf(arg1.getValue().toTotalMonths());</span>
+<span class="nc" id="L249">    IIntegerItem result = opNumericIntegerDivide(totalMonths, arg2);</span>
+    int months;
+    try {
+<span class="nc" id="L252">      months = FunctionUtils.asInteger(result.asInteger());</span>
+<span class="nc" id="L253">    } catch (ArithmeticException ex) {</span>
+<span class="nc" id="L254">      throw new DateTimeFunctionException(DateTimeFunctionException.DURATION_OVERFLOW_UNDERFLOW_ERROR,</span>
+          &quot;Overflow/underflow in duration operation.&quot;, ex);
+<span class="nc" id="L256">    }</span>
+<span class="nc" id="L257">    int years = months / 12;</span>
+<span class="nc" id="L258">    months = months % 12;</span>
+<span class="nc" id="L259">    return IYearMonthDurationItem.valueOf(years, months, 0);</span>
+  }
+
+  @NonNull
+  public static IDayTimeDurationItem opDivideDayTimeDuration(@NonNull IDayTimeDurationItem arg1,
+      @NonNull INumericItem arg2)
+      throws ArithmeticFunctionException {
+    try {
+      @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L268">      @NonNull Duration duration = arg1.getValue().dividedBy(FunctionUtils.asLong(arg2.round()));</span>
+<span class="nc" id="L269">      return IDayTimeDurationItem</span>
+<span class="nc" id="L270">          .valueOf(duration);</span>
+<span class="nc" id="L271">    } catch (ArithmeticException ex) {</span>
+<span class="nc" id="L272">      throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO, &quot;Division by zero&quot;, ex);</span>
+    }
+  }
+
+  @NonNull
+  public static IDecimalItem opDivideDayTimeDurationByDayTimeDuration(@NonNull IDayTimeDurationItem arg1,
+      IDayTimeDurationItem arg2) {
+<span class="nc" id="L279">    return IDecimalItem.cast(</span>
+<span class="nc" id="L280">        opNumericDivide(</span>
+<span class="nc" id="L281">            IDecimalItem.valueOf(arg1.getValue().toSeconds()),</span>
+<span class="nc" id="L282">            IDecimalItem.valueOf(arg2.getValue().toSeconds())));</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opDateEqual(@NonNull IDateItem arg1, @NonNull IDateItem arg2) {
+<span class="nc" id="L287">    return opDateTimeEqual(IDateTimeItem.cast(arg1), IDateTimeItem.cast(arg2));</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opDateTimeEqual(@NonNull IDateTimeItem arg1, @NonNull IDateTimeItem arg2) {
+<span class="nc" id="L292">    return IBooleanItem.valueOf(arg1.asZonedDateTime().equals(arg2.asZonedDateTime()));</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opDurationEqual(@NonNull IDurationItem arg1, @NonNull IDurationItem arg2) {
+<span class="nc" id="L297">    return IBooleanItem.valueOf(arg1.getValue().equals(arg2.getValue()));</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opBase64BinaryEqual(@NonNull IBase64BinaryItem arg1, @NonNull IBase64BinaryItem arg2) {
+<span class="nc" id="L302">    return IBooleanItem.valueOf(arg1.getValue().equals(arg2.getValue()));</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opDateGreaterThan(@NonNull IDateItem arg1, @NonNull IDateItem arg2) {
+<span class="nc" id="L307">    return opDateTimeGreaterThan(IDateTimeItem.cast(arg1), IDateTimeItem.cast(arg2));</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opDateTimeGreaterThan(@NonNull IDateTimeItem arg1, @NonNull IDateTimeItem arg2) {
+<span class="nc bnc" id="L312" title="All 2 branches missed.">    return IBooleanItem.valueOf(arg1.asZonedDateTime().compareTo(arg2.asZonedDateTime()) &gt; 0);</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opYearMonthDurationGreaterThan(@NonNull IYearMonthDurationItem arg1,
+      @NonNull IYearMonthDurationItem arg2) {
+<span class="nc" id="L318">    Period p1 = arg1.getValue();</span>
+<span class="nc" id="L319">    Period p2 = arg2.getValue();</span>
+
+    // this is only an approximation
+<span class="nc bnc" id="L322" title="All 2 branches missed.">    return IBooleanItem.valueOf(p1.toTotalMonths() &gt; p2.toTotalMonths());</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opDayTimeDurationGreaterThan(
+      @NonNull IDayTimeDurationItem arg1,
+      @NonNull IDayTimeDurationItem arg2) {
+<span class="nc bnc" id="L329" title="All 2 branches missed.">    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg2.getValue()) &gt; 0);</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opBase64BinaryGreaterThan(
+      @NonNull IBase64BinaryItem arg1,
+      @NonNull IBase64BinaryItem arg2) {
+<span class="nc bnc" id="L336" title="All 2 branches missed.">    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg2.getValue()) &gt; 0);</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opDateLessThan(
+      @NonNull IDateItem arg1,
+      @NonNull IDateItem arg2) {
+<span class="nc" id="L343">    return opDateTimeLessThan(IDateTimeItem.cast(arg1), IDateTimeItem.cast(arg2));</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opDateTimeLessThan(
+      @NonNull IDateTimeItem arg1,
+      @NonNull IDateTimeItem arg2) {
+<span class="nc bnc" id="L350" title="All 2 branches missed.">    return IBooleanItem.valueOf(arg1.asZonedDateTime().compareTo(arg2.asZonedDateTime()) &lt; 0);</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opYearMonthDurationLessThan(@NonNull IYearMonthDurationItem arg1,
+      @NonNull IYearMonthDurationItem arg2) {
+<span class="nc" id="L356">    Period p1 = arg1.getValue();</span>
+<span class="nc" id="L357">    Period p2 = arg2.getValue();</span>
+
+    // this is only an approximation
+<span class="nc bnc" id="L360" title="All 2 branches missed.">    return IBooleanItem.valueOf(p1.toTotalMonths() &lt; p2.toTotalMonths());</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opDayTimeDurationLessThan(
+      @NonNull IDayTimeDurationItem arg1,
+      @NonNull IDayTimeDurationItem arg2) {
+<span class="nc bnc" id="L367" title="All 2 branches missed.">    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg2.getValue()) &lt; 0);</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opBase64BinaryLessThan(
+      @NonNull IBase64BinaryItem arg1,
+      @NonNull IBase64BinaryItem arg2) {
+<span class="nc bnc" id="L374" title="All 2 branches missed.">    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg2.getValue()) &lt; 0);</span>
+  }
+
+  @NonNull
+  public static INumericItem opNumericAdd(@NonNull INumericItem left, @NonNull INumericItem right) {
+    INumericItem retval;
+<span class="pc bpc" id="L380" title="3 of 4 branches missed.">    if (left instanceof IDecimalItem || right instanceof IDecimalItem) {</span>
+      // create a decimal result
+<span class="fc" id="L382">      BigDecimal decimalLeft = left.asDecimal();</span>
+<span class="fc" id="L383">      BigDecimal decimalRight = right.asDecimal();</span>
+
+      @SuppressWarnings(&quot;null&quot;)
+<span class="fc" id="L386">      @NonNull BigDecimal result = decimalLeft.add(decimalRight, FunctionUtils.MATH_CONTEXT);</span>
+<span class="fc" id="L387">      retval = IDecimalItem.valueOf(result);</span>
+<span class="fc" id="L388">    } else {</span>
+      // create an integer result
+<span class="nc" id="L390">      BigInteger integerLeft = left.asInteger();</span>
+<span class="nc" id="L391">      BigInteger integerRight = right.asInteger();</span>
+
+      @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L394">      @NonNull BigInteger result = integerLeft.add(integerRight);</span>
+<span class="nc" id="L395">      retval = IIntegerItem.valueOf(result);</span>
+    }
+<span class="fc" id="L397">    return retval;</span>
+  }
+
+  @NonNull
+  public static INumericItem opNumericSubtract(@NonNull INumericItem left, @NonNull INumericItem right) {
+    INumericItem retval;
+<span class="nc bnc" id="L403" title="All 4 branches missed.">    if (left instanceof IDecimalItem || right instanceof IDecimalItem) {</span>
+      // create a decimal result
+<span class="nc" id="L405">      BigDecimal decimalLeft = left.asDecimal();</span>
+<span class="nc" id="L406">      BigDecimal decimalRight = right.asDecimal();</span>
+
+      @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L409">      @NonNull BigDecimal result = decimalLeft.subtract(decimalRight, FunctionUtils.MATH_CONTEXT);</span>
+<span class="nc" id="L410">      retval = IDecimalItem.valueOf(result);</span>
+<span class="nc" id="L411">    } else {</span>
+      // create an integer result
+<span class="nc" id="L413">      BigInteger integerLeft = left.asInteger();</span>
+<span class="nc" id="L414">      BigInteger integerRight = right.asInteger();</span>
+
+      @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L417">      @NonNull BigInteger result = integerLeft.subtract(integerRight);</span>
+<span class="nc" id="L418">      retval = IIntegerItem.valueOf(result);</span>
+    }
+<span class="nc" id="L420">    return retval;</span>
+  }
+
+  @NonNull
+  public static INumericItem opNumericMultiply(@NonNull INumericItem left, @NonNull INumericItem right) {
+    INumericItem retval;
+<span class="nc bnc" id="L426" title="All 4 branches missed.">    if (left instanceof IDecimalItem || right instanceof IDecimalItem) {</span>
+      // create a decimal result
+<span class="nc" id="L428">      BigDecimal decimalLeft = left.asDecimal();</span>
+<span class="nc" id="L429">      BigDecimal decimalRight = right.asDecimal();</span>
+
+      @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L432">      @NonNull BigDecimal result = decimalLeft.multiply(decimalRight, FunctionUtils.MATH_CONTEXT);</span>
+<span class="nc" id="L433">      retval = IDecimalItem.valueOf(result);</span>
+<span class="nc" id="L434">    } else {</span>
+      // create an integer result
+      @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L437">      @NonNull BigInteger result = left.asInteger().multiply(right.asInteger());</span>
+<span class="nc" id="L438">      retval = IIntegerItem.valueOf(result);</span>
+    }
+<span class="nc" id="L440">    return retval;</span>
+  }
+
+  @NonNull
+  public static INumericItem opNumericDivide(@NonNull INumericItem dividend, @NonNull INumericItem divisor) {
+    INumericItem retval;
+<span class="nc bnc" id="L446" title="All 4 branches missed.">    if (dividend instanceof IDecimalItem || divisor instanceof IDecimalItem) {</span>
+      // create a decimal result
+<span class="nc" id="L448">      BigDecimal decimalDivisor = divisor.asDecimal();</span>
+
+<span class="nc bnc" id="L450" title="All 2 branches missed.">      if (BigDecimal.ZERO.equals(decimalDivisor)) {</span>
+<span class="nc" id="L451">        throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,</span>
+            ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
+      }
+
+<span class="nc" id="L455">      BigDecimal decimalDividend = dividend.asDecimal();</span>
+
+      @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L458">      @NonNull BigDecimal result = decimalDividend.divide(decimalDivisor, FunctionUtils.MATH_CONTEXT);</span>
+<span class="nc" id="L459">      retval = IDecimalItem.valueOf(result);</span>
+<span class="nc" id="L460">    } else {</span>
+      // create an integer result
+<span class="nc" id="L462">      BigInteger integerDivisor = divisor.asInteger();</span>
+
+<span class="nc bnc" id="L464" title="All 2 branches missed.">      if (BigInteger.ZERO.equals(integerDivisor)) {</span>
+<span class="nc" id="L465">        throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,</span>
+            ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
+      }
+
+<span class="nc" id="L469">      BigInteger integerDividend = dividend.asInteger();</span>
+
+      @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L472">      @NonNull BigInteger result = integerDividend.divide(integerDivisor);</span>
+<span class="nc" id="L473">      retval = IIntegerItem.valueOf(result);</span>
+    }
+<span class="nc" id="L475">    return retval;</span>
+  }
+
+  @NonNull
+  public static IIntegerItem opNumericIntegerDivide(@NonNull INumericItem dividend, @NonNull INumericItem divisor) {
+    IIntegerItem retval;
+<span class="pc bpc" id="L481" title="1 of 4 branches missed.">    if (dividend instanceof IDecimalItem || divisor instanceof IDecimalItem) {</span>
+      // create a decimal result
+<span class="fc" id="L483">      BigDecimal decimalDivisor = divisor.asDecimal();</span>
+
+<span class="pc bpc" id="L485" title="1 of 2 branches missed.">      if (BigDecimal.ZERO.equals(decimalDivisor)) {</span>
+<span class="nc" id="L486">        throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,</span>
+            ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
+      }
+
+<span class="fc" id="L490">      BigDecimal decimalDividend = dividend.asDecimal();</span>
+
+      @SuppressWarnings(&quot;null&quot;)
+<span class="fc" id="L493">      @NonNull BigInteger result</span>
+<span class="fc" id="L494">          = decimalDividend.divideToIntegralValue(decimalDivisor, FunctionUtils.MATH_CONTEXT).toBigInteger();</span>
+<span class="fc" id="L495">      retval = IIntegerItem.valueOf(result);</span>
+<span class="fc" id="L496">    } else {</span>
+      // create an integer result
+<span class="fc" id="L498">      BigInteger integerDivisor = divisor.asInteger();</span>
+
+<span class="pc bpc" id="L500" title="1 of 2 branches missed.">      if (BigInteger.ZERO.equals(integerDivisor)) {</span>
+<span class="nc" id="L501">        throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,</span>
+            ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
+      }
+
+      @SuppressWarnings(&quot;null&quot;)
+<span class="fc" id="L506">      @NonNull BigInteger result = dividend.asInteger().divide(integerDivisor);</span>
+<span class="fc" id="L507">      retval = IIntegerItem.valueOf(result);</span>
+    }
+<span class="fc" id="L509">    return retval;</span>
+  }
+
+  /**
+   * Based on XPath 3.1 &lt;a href=
+   * &quot;https://www.w3.org/TR/xpath-functions-31/#func-numeric-mod&quot;&gt;func:numeric-mod&lt;/a&gt;.
+   *
+   * @param dividend
+   *          the number to be divided
+   * @param divisor
+   *          the number to divide by
+   * @return the remainder
+   */
+  @NonNull
+  public static INumericItem opNumericMod(@NonNull INumericItem dividend, @NonNull INumericItem divisor) {
+<span class="fc" id="L524">    BigDecimal decimalDivisor = divisor.asDecimal();</span>
+
+<span class="pc bpc" id="L526" title="1 of 2 branches missed.">    if (BigDecimal.ZERO.equals(decimalDivisor)) {</span>
+<span class="nc" id="L527">      throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,</span>
+          ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
+    }
+
+<span class="fc" id="L531">    BigDecimal decimalDividend = dividend.asDecimal();</span>
+
+    INumericItem retval;
+<span class="pc bpc" id="L534" title="1 of 2 branches missed.">    if (BigDecimal.ZERO.equals(decimalDividend)) {</span>
+<span class="nc" id="L535">      retval = dividend;</span>
+    } else {
+      @SuppressWarnings(&quot;null&quot;)
+<span class="fc" id="L538">      @NonNull BigDecimal result = decimalDividend.remainder(decimalDivisor, FunctionUtils.MATH_CONTEXT);</span>
+<span class="fc" id="L539">      retval = IDecimalItem.valueOf(result);</span>
+    }
+<span class="fc" id="L541">    return retval;</span>
+  }
+
+  @NonNull
+  public static INumericItem opNumericUnaryMinus(@NonNull INumericItem item) {
+    INumericItem retval;
+<span class="nc bnc" id="L547" title="All 2 branches missed.">    if (item instanceof IDecimalItem) {</span>
+      // create a decimal result
+<span class="nc" id="L549">      BigDecimal decimal = item.asDecimal();</span>
+
+      @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L552">      @NonNull BigDecimal result = decimal.negate(FunctionUtils.MATH_CONTEXT);</span>
+<span class="nc" id="L553">      retval = IDecimalItem.valueOf(result);</span>
+<span class="nc bnc" id="L554" title="All 2 branches missed.">    } else if (item instanceof IIntegerItem) {</span>
+      // create a decimal result
+<span class="nc" id="L556">      BigInteger integer = item.asInteger();</span>
+
+      @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L559">      @NonNull BigInteger result = integer.negate();</span>
+<span class="nc" id="L560">      retval = IIntegerItem.valueOf(result);</span>
+<span class="nc" id="L561">    } else {</span>
+<span class="nc" id="L562">      throw new InvalidTypeMetapathException(item);</span>
+    }
+<span class="nc" id="L564">    return retval;</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opNumericEqual(@Nullable INumericItem arg1, @Nullable INumericItem arg2) {
+    IBooleanItem retval;
+<span class="pc bpc" id="L570" title="2 of 4 branches missed.">    if (arg1 == null || arg2 == null) {</span>
+<span class="nc" id="L571">      retval = IBooleanItem.FALSE;</span>
+<span class="pc bpc" id="L572" title="1 of 4 branches missed.">    } else if (arg1 instanceof IDecimalItem || arg2 instanceof IDecimalItem) {</span>
+<span class="fc" id="L573">      retval = IBooleanItem.valueOf(arg1.asDecimal().equals(arg2.asDecimal()));</span>
+    } else {
+<span class="fc" id="L575">      retval = IBooleanItem.valueOf(arg1.asInteger().equals(arg2.asInteger()));</span>
+    }
+<span class="fc" id="L577">    return retval;</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opNumericGreaterThan(@Nullable INumericItem arg1, @Nullable INumericItem arg2) {
+    IBooleanItem retval;
+<span class="pc bpc" id="L583" title="2 of 4 branches missed.">    if (arg1 == null || arg2 == null) {</span>
+<span class="nc" id="L584">      retval = IBooleanItem.FALSE;</span>
+<span class="pc bpc" id="L585" title="2 of 4 branches missed.">    } else if (arg1 instanceof IDecimalItem || arg2 instanceof IDecimalItem) {</span>
+<span class="nc" id="L586">      int result = arg1.asDecimal().compareTo(arg2.asDecimal());</span>
+<span class="nc bnc" id="L587" title="All 2 branches missed.">      retval = IBooleanItem.valueOf(result &gt; 0);</span>
+<span class="nc" id="L588">    } else {</span>
+<span class="fc" id="L589">      int result = arg1.asInteger().compareTo(arg2.asInteger());</span>
+<span class="fc bfc" id="L590" title="All 2 branches covered.">      retval = IBooleanItem.valueOf(result &gt; 0);</span>
+    }
+<span class="fc" id="L592">    return retval;</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opNumericLessThan(@Nullable INumericItem arg1, @Nullable INumericItem arg2) {
+    IBooleanItem retval;
+<span class="pc bpc" id="L598" title="2 of 4 branches missed.">    if (arg1 == null || arg2 == null) {</span>
+<span class="nc" id="L599">      retval = IBooleanItem.FALSE;</span>
+<span class="pc bpc" id="L600" title="2 of 4 branches missed.">    } else if (arg1 instanceof IDecimalItem || arg2 instanceof IDecimalItem) {</span>
+<span class="nc" id="L601">      int result = arg1.asDecimal().compareTo(arg2.asDecimal());</span>
+<span class="nc bnc" id="L602" title="All 2 branches missed.">      retval = IBooleanItem.valueOf(result &lt; 0);</span>
+<span class="nc" id="L603">    } else {</span>
+<span class="fc" id="L604">      int result = arg1.asInteger().compareTo(arg2.asInteger());</span>
+<span class="fc bfc" id="L605" title="All 2 branches covered.">      retval = IBooleanItem.valueOf(result &lt; 0);</span>
+    }
+<span class="fc" id="L607">    return retval;</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opBooleanEqual(@Nullable IBooleanItem arg1, @Nullable IBooleanItem arg2) {
+<span class="pc bpc" id="L612" title="1 of 4 branches missed.">    boolean left = arg1 != null &amp;&amp; arg1.toBoolean();</span>
+<span class="pc bpc" id="L613" title="1 of 4 branches missed.">    boolean right = arg2 != null &amp;&amp; arg2.toBoolean();</span>
+
+<span class="fc bfc" id="L615" title="All 2 branches covered.">    return IBooleanItem.valueOf(left == right);</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opBooleanGreaterThan(@Nullable IBooleanItem arg1, @Nullable IBooleanItem arg2) {
+<span class="pc bpc" id="L620" title="2 of 4 branches missed.">    boolean left = arg1 != null &amp;&amp; arg1.toBoolean();</span>
+<span class="pc bpc" id="L621" title="2 of 4 branches missed.">    boolean right = arg2 != null &amp;&amp; arg2.toBoolean();</span>
+
+<span class="pc bpc" id="L623" title="2 of 4 branches missed.">    return IBooleanItem.valueOf(left &amp;&amp; !right);</span>
+  }
+
+  @NonNull
+  public static IBooleanItem opBooleanLessThan(@Nullable IBooleanItem arg1, @Nullable IBooleanItem arg2) {
+<span class="pc bpc" id="L628" title="2 of 4 branches missed.">    boolean left = arg1 != null &amp;&amp; arg1.toBoolean();</span>
+<span class="pc bpc" id="L629" title="2 of 4 branches missed.">    boolean right = arg2 != null &amp;&amp; arg2.toBoolean();</span>
+
+<span class="pc bpc" id="L631" title="3 of 4 branches missed.">    return IBooleanItem.valueOf(!left &amp;&amp; right);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

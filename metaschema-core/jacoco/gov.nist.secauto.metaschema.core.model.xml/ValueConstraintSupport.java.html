@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ValueConstraintSupport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.xml</a> &gt; <span class="el_source">ValueConstraintSupport.java</span></div><h1>ValueConstraintSupport.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.xml;
+
+import gov.nist.secauto.metaschema.core.metapath.MetapathException;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultExpectConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultMatchesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ISource;
+import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.AllowedValuesType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.DefineFieldConstraintsType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.DefineFlagConstraintsType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ExpectConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.IndexHasKeyConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.MatchesConstraintType;
+
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.impl.values.XmlValueNotSupportedException;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L57">class ValueConstraintSupport implements IValueConstrained { // NOPMD - intentional</span>
+  private static final String PATH = &quot;declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';&quot;
+      + &quot;$this/m:allowed-values|$this/m:matches|$this/m:index-has-key|$this/m:expect&quot;;
+
+<span class="pc" id="L61">  @NonNull</span>
+  private final List&lt;IConstraint&gt; constraints = new LinkedList&lt;&gt;();
+<span class="pc" id="L63">  @NonNull</span>
+  private final List&lt;IAllowedValuesConstraint&gt; allowedValuesConstraints = new LinkedList&lt;&gt;();
+<span class="pc" id="L65">  @NonNull</span>
+  private final List&lt;IMatchesConstraint&gt; matchesConstraints = new LinkedList&lt;&gt;();
+<span class="pc" id="L67">  @NonNull</span>
+  private final List&lt;IIndexHasKeyConstraint&gt; indexHasKeyConstraints = new LinkedList&lt;&gt;();
+<span class="pc" id="L69">  @NonNull</span>
+  private final List&lt;IExpectConstraint&gt; expectConstraints = new LinkedList&lt;&gt;();
+
+<span class="fc" id="L72">  public ValueConstraintSupport() {</span>
+    // empty constraints
+<span class="fc" id="L74">  }</span>
+
+  /**
+   * Generate a set of constraints from the provided XMLBeans instance.
+   *
+   * @param xmlConstraints
+   *          the XMLBeans instance
+   * @param source
+   *          information about the source of the constraints
+   */
+  @SuppressWarnings(&quot;PMD.ConstructorCallsOverridableMethod&quot;)
+  public ValueConstraintSupport( // NOPMD - intentional
+      @NonNull DefineFlagConstraintsType xmlConstraints,
+<span class="fc" id="L87">      @NonNull ISource source) {</span>
+<span class="fc" id="L88">    try (XmlCursor cursor = xmlConstraints.newCursor()) {</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">      assert cursor != null;</span>
+<span class="fc" id="L90">      parse(source, cursor, PATH);</span>
+    }
+<span class="fc" id="L92">  }</span>
+
+  /**
+   * Generate a set of constraints from the provided XMLBeans instance.
+   *
+   * @param xmlConstraints
+   *          the XMLBeans instance
+   * @param source
+   *          information about the source of the constraints
+   */
+  @SuppressWarnings(&quot;PMD.ConstructorCallsOverridableMethod&quot;)
+  public ValueConstraintSupport( // NOPMD - intentional
+      @NonNull DefineFieldConstraintsType xmlConstraints,
+<span class="nc" id="L105">      @NonNull ISource source) {</span>
+<span class="nc" id="L106">    try (XmlCursor cursor = xmlConstraints.newCursor()) {</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">      assert cursor != null;</span>
+<span class="nc" id="L108">      parse(source, cursor, PATH);</span>
+    }
+<span class="nc" id="L110">  }</span>
+
+  protected final void parse(
+      @NonNull ISource source,
+      @NonNull XmlCursor cursor,
+      @NonNull String path) {
+    try {
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">      assert cursor != null;</span>
+<span class="fc" id="L118">      cursor.selectPath(path);</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">      while (cursor.toNextSelection()) {</span>
+<span class="fc" id="L120">        XmlObject obj = cursor.getObject();</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        assert obj != null;</span>
+<span class="fc" id="L122">        parseXmlObject(source, obj);</span>
+<span class="fc" id="L123">      }</span>
+<span class="nc" id="L124">    } catch (MetapathException | XmlValueNotSupportedException ex) {</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">      if (ex.getCause() instanceof MetapathException) {</span>
+<span class="nc" id="L126">        throw new MetapathException(</span>
+<span class="nc" id="L127">            String.format(&quot;Unable to compile a Metapath in '%s'. %s&quot;,</span>
+<span class="nc" id="L128">                source.getSource(),</span>
+<span class="nc" id="L129">                ex.getLocalizedMessage()),</span>
+            ex);
+      }
+<span class="nc" id="L132">      throw ex;</span>
+<span class="fc" id="L133">    }</span>
+<span class="fc" id="L134">  }</span>
+
+  protected boolean parseXmlObject(
+      @NonNull ISource source,
+      @NonNull XmlObject obj) {
+<span class="fc" id="L139">    boolean handled = false;</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">    if (obj instanceof AllowedValuesType) {</span>
+<span class="fc" id="L141">      DefaultAllowedValuesConstraint constraint</span>
+<span class="fc" id="L142">          = ModelFactory.newAllowedValuesConstraint((AllowedValuesType) obj, source);</span>
+<span class="fc" id="L143">      addConstraint(constraint);</span>
+<span class="fc" id="L144">      handled = true;</span>
+<span class="pc bnc" id="L145" title="All 2 branches missed.">    } else if (obj instanceof MatchesConstraintType) {</span>
+<span class="nc" id="L146">      DefaultMatchesConstraint constraint</span>
+<span class="nc" id="L147">          = ModelFactory.newMatchesConstraint((MatchesConstraintType) obj, source);</span>
+<span class="nc" id="L148">      addConstraint(constraint);</span>
+<span class="nc" id="L149">      handled = true;</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">    } else if (obj instanceof IndexHasKeyConstraintType) {</span>
+<span class="nc" id="L151">      DefaultIndexHasKeyConstraint constraint</span>
+<span class="nc" id="L152">          = ModelFactory.newIndexHasKeyConstraint((IndexHasKeyConstraintType) obj, source);</span>
+<span class="nc" id="L153">      addConstraint(constraint);</span>
+<span class="nc" id="L154">      handled = true;</span>
+<span class="nc bnc" id="L155" title="All 2 branches missed.">    } else if (obj instanceof ExpectConstraintType) {</span>
+<span class="nc" id="L156">      DefaultExpectConstraint constraint = ModelFactory.newExpectConstraint((ExpectConstraintType) obj, source);</span>
+<span class="nc" id="L157">      addConstraint(constraint);</span>
+<span class="nc" id="L158">      handled = true;</span>
+    }
+<span class="fc" id="L160">    return handled;</span>
+  }
+
+  @Override
+  public List&lt;IConstraint&gt; getConstraints() {
+<span class="fc" id="L165">    synchronized (this) {</span>
+<span class="fc" id="L166">      return constraints;</span>
+    }
+  }
+
+  @Override
+  public List&lt;IAllowedValuesConstraint&gt; getAllowedValuesConstraints() {
+<span class="fc" id="L172">    synchronized (this) {</span>
+<span class="fc" id="L173">      return allowedValuesConstraints;</span>
+    }
+  }
+
+  @Override
+  public List&lt;IMatchesConstraint&gt; getMatchesConstraints() {
+<span class="fc" id="L179">    synchronized (this) {</span>
+<span class="fc" id="L180">      return matchesConstraints;</span>
+    }
+  }
+
+  @Override
+  public List&lt;IIndexHasKeyConstraint&gt; getIndexHasKeyConstraints() {
+<span class="fc" id="L186">    synchronized (this) {</span>
+<span class="fc" id="L187">      return indexHasKeyConstraints;</span>
+    }
+  }
+
+  @Override
+  public List&lt;IExpectConstraint&gt; getExpectConstraints() {
+<span class="fc" id="L193">    synchronized (this) {</span>
+<span class="fc" id="L194">      return expectConstraints;</span>
+    }
+  }
+
+  @Override
+  public final void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
+<span class="fc" id="L200">    synchronized (this) {</span>
+<span class="fc" id="L201">      constraints.add(constraint);</span>
+<span class="fc" id="L202">      allowedValuesConstraints.add(constraint);</span>
+<span class="fc" id="L203">    }</span>
+<span class="fc" id="L204">  }</span>
+
+  @Override
+  public final void addConstraint(@NonNull IMatchesConstraint constraint) {
+<span class="nc" id="L208">    synchronized (this) {</span>
+<span class="nc" id="L209">      constraints.add(constraint);</span>
+<span class="nc" id="L210">      matchesConstraints.add(constraint);</span>
+<span class="nc" id="L211">    }</span>
+<span class="nc" id="L212">  }</span>
+
+  @Override
+  public final void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
+<span class="nc" id="L216">    synchronized (this) {</span>
+<span class="nc" id="L217">      constraints.add(constraint);</span>
+<span class="nc" id="L218">      indexHasKeyConstraints.add(constraint);</span>
+<span class="nc" id="L219">    }</span>
+<span class="nc" id="L220">  }</span>
+
+  @Override
+  public final void addConstraint(@NonNull IExpectConstraint constraint) {
+<span class="fc" id="L224">    synchronized (this) {</span>
+<span class="fc" id="L225">      constraints.add(constraint);</span>
+<span class="fc" id="L226">      expectConstraints.add(constraint);</span>
+<span class="fc" id="L227">    }</span>
+<span class="fc" id="L228">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

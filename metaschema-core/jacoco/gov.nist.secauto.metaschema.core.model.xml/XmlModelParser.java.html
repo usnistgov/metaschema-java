@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XmlModelParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.xml</a> &gt; <span class="el_source">XmlModelParser.java</span></div><h1>XmlModelParser.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.xml;
+
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.AssemblyReferenceType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ChoiceType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.FieldReferenceType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupAsType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFieldDefinitionType;
+import gov.nist.secauto.metaschema.core.util.CustomCollectors;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
+
+import java.math.BigInteger;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+@SuppressWarnings(&quot;PMD.CouplingBetweenObjects&quot;)
+<span class="nc" id="L62">class XmlModelParser {</span>
+  private Map&lt;String, INamedModelInstance&gt; namedModelInstances;
+  private Map&lt;String, IFieldInstance&gt; fieldInstances;
+  private Map&lt;String, IAssemblyInstance&gt; assemblyInstances;
+  private List&lt;IModelInstance&gt; modelInstances;
+
+  // TODO: move back to calling location
+  void parseChoice(XmlObject xmlObject, @NonNull IModelContainer container) {
+<span class="nc" id="L70">    try (XmlCursor cursor = xmlObject.newCursor()) {</span>
+<span class="nc" id="L71">      cursor.selectPath(&quot;declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';&quot;</span>
+          + &quot;$this/m:assembly|$this/m:define-assembly|$this/m:field&quot;
+          + &quot;|$this/m:define-field&quot;);
+<span class="nc" id="L74">      parseInternal(cursor, container);</span>
+    }
+<span class="nc" id="L76">  }</span>
+
+  // TODO: move back to calling location
+  void parseModel(XmlObject xmlObject, @NonNull IModelContainer container) {
+    // handle the model
+<span class="nc" id="L81">    try (XmlCursor cursor = xmlObject.newCursor()) {</span>
+<span class="nc" id="L82">      cursor.selectPath(&quot;declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';&quot;</span>
+          + &quot;$this/m:model/m:assembly|$this/m:model/m:define-assembly|$this/m:model/m:field&quot;
+          + &quot;|$this/m:model/m:define-field|$this/m:model/m:choice&quot;);
+
+<span class="nc" id="L86">      parseInternal(cursor, container);</span>
+    }
+<span class="nc" id="L88">  }</span>
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  protected &lt;S&gt; Stream&lt;S&gt; append(@NonNull Stream&lt;S&gt; original, @NonNull S item) {
+<span class="nc" id="L93">    Stream&lt;S&gt; newStream = Stream.of(item).sequential();</span>
+<span class="nc" id="L94">    return Stream.concat(original, newStream);</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  private void parseInternal(XmlCursor cursor, @NonNull IModelContainer container) {
+
+    // ensure the streams are treated as sequential, since concatenated streams will
+    // only be sequential
+    // if both streams are sequential
+<span class="nc" id="L103">    Stream&lt;IFieldInstance&gt; fieldInstances = Stream.empty();</span>
+<span class="nc" id="L104">    fieldInstances = fieldInstances.sequential();</span>
+<span class="nc" id="L105">    Stream&lt;IAssemblyInstance&gt; assemblyInstances = Stream.empty();</span>
+<span class="nc" id="L106">    assemblyInstances = assemblyInstances.sequential();</span>
+<span class="nc" id="L107">    Stream&lt;INamedModelInstance&gt; namedModelInstances = Stream.empty();</span>
+<span class="nc" id="L108">    namedModelInstances = namedModelInstances.sequential();</span>
+<span class="nc" id="L109">    Stream&lt;IModelInstance&gt; modelInstances = Stream.empty();</span>
+<span class="nc" id="L110">    modelInstances = modelInstances.sequential();</span>
+
+<span class="nc bnc" id="L112" title="All 2 branches missed.">    while (cursor.toNextSelection()) {</span>
+<span class="nc" id="L113">      XmlObject obj = cursor.getObject();</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">      if (obj instanceof FieldReferenceType) {</span>
+<span class="nc" id="L115">        XmlFieldInstance field</span>
+            = new XmlFieldInstance((FieldReferenceType) obj, container); // NOPMD - intentional
+<span class="nc" id="L117">        fieldInstances = append(fieldInstances, field);</span>
+<span class="nc" id="L118">        namedModelInstances = append(namedModelInstances, field);</span>
+<span class="nc" id="L119">        modelInstances = append(modelInstances, field);</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">      } else if (obj instanceof InlineFieldDefinitionType) {</span>
+<span class="nc" id="L121">        XmlInlineFieldDefinition field</span>
+            = new XmlInlineFieldDefinition((InlineFieldDefinitionType) obj, container); // NOPMD - intentional
+<span class="nc" id="L123">        fieldInstances = append(fieldInstances, field);</span>
+<span class="nc" id="L124">        namedModelInstances = append(namedModelInstances, field);</span>
+<span class="nc" id="L125">        modelInstances = append(modelInstances, field);</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">      } else if (obj instanceof AssemblyReferenceType) {</span>
+<span class="nc" id="L127">        XmlAssemblyInstance assembly</span>
+            = new XmlAssemblyInstance((AssemblyReferenceType) obj, container); // NOPMD - intentional
+<span class="nc" id="L129">        assemblyInstances = append(assemblyInstances, assembly);</span>
+<span class="nc" id="L130">        namedModelInstances = append(namedModelInstances, assembly);</span>
+<span class="nc" id="L131">        modelInstances = append(modelInstances, assembly);</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">      } else if (obj instanceof InlineAssemblyDefinitionType) {</span>
+<span class="nc" id="L133">        XmlInlineAssemblyDefinition assembly</span>
+            = new XmlInlineAssemblyDefinition((InlineAssemblyDefinitionType) obj, container); // NOPMD - intentional
+<span class="nc" id="L135">        assemblyInstances = append(assemblyInstances, assembly);</span>
+<span class="nc" id="L136">        namedModelInstances = append(namedModelInstances, assembly);</span>
+<span class="nc" id="L137">        modelInstances = append(modelInstances, assembly);</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">      } else if (obj instanceof ChoiceType) {</span>
+<span class="nc" id="L139">        XmlChoiceInstance choice</span>
+            = new XmlChoiceInstance((ChoiceType) obj, container); // NOPMD - intentional
+        // assemblyInstances.putAll(choice.getAssemblyInstanceMap());
+        // fieldInstances..putAll(choice.getFieldInstanceMap());
+<span class="nc" id="L143">        modelInstances = append(modelInstances, choice);</span>
+      }
+<span class="nc" id="L145">    }</span>
+
+<span class="nc" id="L147">    this.fieldInstances = fieldInstances</span>
+<span class="nc" id="L148">        .collect(Collectors.toMap(IFieldInstance::getEffectiveName, Function.identity(),</span>
+<span class="nc" id="L149">            CustomCollectors.useFirstMapper(), LinkedHashMap::new));</span>
+<span class="nc" id="L150">    this.assemblyInstances = assemblyInstances</span>
+<span class="nc" id="L151">        .collect(Collectors.toMap(IAssemblyInstance::getEffectiveName, Function.identity(),</span>
+<span class="nc" id="L152">            CustomCollectors.useFirstMapper(), LinkedHashMap::new));</span>
+<span class="nc" id="L153">    this.modelInstances = modelInstances</span>
+<span class="nc" id="L154">        .collect(Collectors.toUnmodifiableList());</span>
+<span class="nc" id="L155">    this.namedModelInstances = namedModelInstances</span>
+<span class="nc" id="L156">        .collect(Collectors.toMap(INamedModelInstance::getEffectiveName, Function.identity(),</span>
+<span class="nc" id="L157">            CustomCollectors.useFirstMapper(), LinkedHashMap::new));</span>
+<span class="nc" id="L158">  }</span>
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public Map&lt;String, IFieldInstance&gt; getFieldInstances() {
+<span class="nc bnc" id="L163" title="All 2 branches missed.">    return fieldInstances == null ? Collections.emptyMap() : fieldInstances;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public Map&lt;String, IAssemblyInstance&gt; getAssemblyInstances() {
+<span class="nc bnc" id="L169" title="All 2 branches missed.">    return assemblyInstances == null ? Collections.emptyMap() : assemblyInstances;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  public Map&lt;String, INamedModelInstance&gt; getNamedModelInstances() {
+<span class="nc bnc" id="L175" title="All 2 branches missed.">    return namedModelInstances == null ? Collections.emptyMap() : namedModelInstances;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  protected List&lt;IModelInstance&gt; getModelInstances() {
+<span class="nc bnc" id="L181" title="All 2 branches missed.">    return modelInstances == null ? Collections.emptyList() : modelInstances;</span>
+  }
+
+  @NonNull
+  public static JsonGroupAsBehavior getJsonGroupAsBehavior(@Nullable GroupAsType groupAs) {
+<span class="nc" id="L186">    JsonGroupAsBehavior retval = MetaschemaModelConstants.DEFAULT_JSON_GROUP_AS_BEHAVIOR;</span>
+<span class="nc bnc" id="L187" title="All 4 branches missed.">    if (groupAs != null &amp;&amp; groupAs.isSetInJson()) {</span>
+<span class="nc" id="L188">      retval = ObjectUtils.notNull(groupAs.getInJson());</span>
+    }
+<span class="nc" id="L190">    return retval;</span>
+  }
+
+  @NonNull
+  public static XmlGroupAsBehavior getXmlGroupAsBehavior(@Nullable GroupAsType groupAs) {
+<span class="nc" id="L195">    XmlGroupAsBehavior retval = MetaschemaModelConstants.DEFAULT_XML_GROUP_AS_BEHAVIOR;</span>
+<span class="nc bnc" id="L196" title="All 4 branches missed.">    if (groupAs != null &amp;&amp; groupAs.isSetInXml()) {</span>
+<span class="nc" id="L197">      retval = ObjectUtils.notNull(groupAs.getInXml());</span>
+    }
+<span class="nc" id="L199">    return retval;</span>
+  }
+
+  public static int getMinOccurs(@Nullable BigInteger value) {
+<span class="nc" id="L203">    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">    if (value != null) {</span>
+<span class="nc" id="L205">      retval = value.intValueExact();</span>
+    }
+<span class="nc" id="L207">    return retval;</span>
+  }
+
+  public static int getMaxOccurs(@Nullable Object value) {
+<span class="nc" id="L211">    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">    if (value != null) {</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">      if (value instanceof String) {</span>
+        // unbounded
+<span class="nc" id="L215">        retval = -1;</span>
+<span class="nc bnc" id="L216" title="All 2 branches missed.">      } else if (value instanceof BigInteger) {</span>
+<span class="nc" id="L217">        retval = ((BigInteger) value).intValueExact();</span>
+      } else {
+<span class="nc" id="L219">        throw new IllegalStateException(&quot;Invalid type: &quot; + value.getClass().getName());</span>
+      }
+    }
+<span class="nc" id="L222">    return retval;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

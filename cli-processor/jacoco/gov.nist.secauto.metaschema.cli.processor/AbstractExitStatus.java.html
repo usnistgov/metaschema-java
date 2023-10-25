@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractExitStatus.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema CLI Framework</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.cli.processor</a> &gt; <span class="el_source">AbstractExitStatus.java</span></div><h1>AbstractExitStatus.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.cli.processor;
+
+import org.apache.logging.log4j.LogBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+public abstract class AbstractExitStatus implements ExitStatus {
+<span class="fc" id="L38">  private static final Logger LOGGER = LogManager.getLogger(AbstractExitStatus.class);</span>
+
+  @NonNull
+  private final ExitCode exitCode;
+
+  private Throwable throwable;
+
+  /**
+   * Construct a new exit status based on the provided {@code exitCode}.
+   *
+   * @param exitCode
+   *          the exit code
+   */
+<span class="fc" id="L51">  public AbstractExitStatus(@NonNull ExitCode exitCode) {</span>
+<span class="fc" id="L52">    this.exitCode = exitCode;</span>
+<span class="fc" id="L53">  }</span>
+
+  @Override
+  public ExitCode getExitCode() {
+<span class="fc" id="L57">    return exitCode;</span>
+  }
+
+  /**
+   * Get the associated throwable.
+   *
+   * @return the throwable or {@code null}
+   */
+  @Override
+  public Throwable getThrowable() {
+<span class="fc" id="L67">    return throwable;</span>
+  }
+
+  @Override
+  @SuppressFBWarnings(value = &quot;EI_EXPOSE_REP2&quot;, justification = &quot;intended as a exposed property&quot;)
+  public ExitStatus withThrowable(@NonNull Throwable throwable) {
+<span class="fc" id="L73">    this.throwable = throwable;</span>
+<span class="fc" id="L74">    return this;</span>
+  }
+
+  /**
+   * Get the associated message.
+   *
+   * @return the message or {@code null}
+   */
+  @Nullable
+  protected abstract String getMessage();
+
+  @Override
+  public void generateMessage(boolean showStackTrace) {
+<span class="fc" id="L87">    LogBuilder logBuilder = null;</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">    if (getExitCode().getStatusCode() &lt;= 0) {</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">      if (LOGGER.isInfoEnabled()) {</span>
+<span class="nc" id="L90">        logBuilder = LOGGER.atInfo();</span>
+      }
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">    } else if (LOGGER.isErrorEnabled()) {</span>
+<span class="fc" id="L93">      logBuilder = LOGGER.atError();</span>
+    }
+
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">    if (logBuilder != null) {</span>
+<span class="fc" id="L97">      Throwable throwable = getThrowable();</span>
+<span class="pc bpc" id="L98" title="1 of 4 branches missed.">      if (showStackTrace &amp;&amp; throwable != null) {</span>
+<span class="fc" id="L99">        logBuilder.withThrowable(throwable);</span>
+      }
+
+<span class="fc" id="L102">      String message = getMessage();</span>
+<span class="pc bpc" id="L103" title="2 of 4 branches missed.">      if (message == null &amp;&amp; throwable != null) {</span>
+<span class="fc" id="L104">        message = throwable.getLocalizedMessage();</span>
+      }
+
+<span class="pc bpc" id="L107" title="2 of 4 branches missed.">      if (message != null &amp;&amp; !message.isEmpty()) {</span>
+<span class="fc" id="L108">        logBuilder.log(message);</span>
+<span class="nc bnc" id="L109" title="All 4 branches missed.">      } else if (throwable != null &amp;&amp; showStackTrace) {</span>
+        // log the throwable
+<span class="nc" id="L111">        logBuilder.log();</span>
+      }
+    }
+<span class="fc" id="L114">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

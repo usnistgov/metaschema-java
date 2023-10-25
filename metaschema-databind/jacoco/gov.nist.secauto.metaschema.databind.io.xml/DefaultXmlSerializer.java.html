@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultXmlSerializer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.io.xml</a> &gt; <span class="el_source">DefaultXmlSerializer.java</span></div><h1>DefaultXmlSerializer.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.io.xml;
+
+import com.ctc.wstx.api.WstxOutputProperties;
+import com.ctc.wstx.stax.WstxOutputFactory;
+
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.io.AbstractSerializer;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+
+import org.codehaus.stax2.XMLOutputFactory2;
+import org.codehaus.stax2.XMLStreamWriter2;
+
+import java.io.IOException;
+import java.io.Writer;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L47">public class DefaultXmlSerializer&lt;CLASS&gt;</span>
+    extends AbstractSerializer&lt;CLASS&gt; {
+  private XMLOutputFactory2 xmlOutputFactory;
+
+  /**
+   * Construct a new XML serializer based on the top-level assembly indicated by
+   * the provided {@code classBinding}.
+   *
+   * @param classBinding
+   *          the bound Module assembly definition that describes the data to
+   *          serialize
+   */
+  public DefaultXmlSerializer(@NonNull IAssemblyClassBinding classBinding) {
+<span class="fc" id="L60">    super(classBinding);</span>
+<span class="fc" id="L61">  }</span>
+
+  /**
+   * Get the configured XML output factory used to create {@link XMLStreamWriter2}
+   * instances.
+   *
+   * @return the factory
+   */
+  @NonNull
+  protected final XMLOutputFactory2 getXMLOutputFactory() {
+<span class="fc" id="L71">    synchronized (this) {</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">      if (xmlOutputFactory == null) {</span>
+<span class="fc" id="L73">        xmlOutputFactory = (XMLOutputFactory2) XMLOutputFactory.newInstance();</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        assert xmlOutputFactory instanceof WstxOutputFactory;</span>
+<span class="fc" id="L75">        xmlOutputFactory.configureForSpeed();</span>
+<span class="fc" id="L76">        xmlOutputFactory.setProperty(WstxOutputProperties.P_USE_DOUBLE_QUOTES_IN_XML_DECL, true);</span>
+<span class="fc" id="L77">        xmlOutputFactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);</span>
+      }
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">      assert xmlOutputFactory != null;</span>
+<span class="fc" id="L80">      return xmlOutputFactory;</span>
+    }
+  }
+
+  /**
+   * Override the default {@link XMLOutputFactory2} instance with a custom
+   * factory.
+   *
+   * @param xmlOutputFactory
+   *          the new factory
+   */
+  protected void setXMLOutputFactory(@NonNull XMLOutputFactory2 xmlOutputFactory) {
+<span class="nc" id="L92">    synchronized (this) {</span>
+<span class="nc" id="L93">      this.xmlOutputFactory = xmlOutputFactory;</span>
+<span class="nc" id="L94">    }</span>
+<span class="nc" id="L95">  }</span>
+
+  /**
+   * Create a new stream writer using the provided writer.
+   *
+   * @param writer
+   *          the writer to use for output
+   * @return the stream writer created by the output factory
+   * @throws IOException
+   *           if an error occurred while creating the writer
+   */
+  @NonNull
+  protected final XMLStreamWriter2 newXMLStreamWriter(@NonNull Writer writer) throws IOException {
+    try {
+<span class="fc" id="L109">      return ObjectUtils.notNull((XMLStreamWriter2) getXMLOutputFactory().createXMLStreamWriter(writer));</span>
+<span class="nc" id="L110">    } catch (XMLStreamException ex) {</span>
+<span class="nc" id="L111">      throw new IOException(ex);</span>
+    }
+  }
+
+  @Override
+  public void serialize(CLASS data, Writer writer) throws IOException {
+<span class="fc" id="L117">    XMLStreamWriter2 streamWriter = newXMLStreamWriter(writer);</span>
+<span class="fc" id="L118">    IOException caughtException = null;</span>
+<span class="fc" id="L119">    IAssemblyClassBinding classBinding = getClassBinding();</span>
+
+<span class="fc" id="L121">    MetaschemaXmlWriter xmlGenerator = new MetaschemaXmlWriter(streamWriter);</span>
+
+    try {
+<span class="fc" id="L124">      xmlGenerator.write(classBinding, data);</span>
+<span class="fc" id="L125">      streamWriter.flush();</span>
+<span class="nc" id="L126">    } catch (XMLStreamException ex) {</span>
+<span class="nc" id="L127">      caughtException = new IOException(ex);</span>
+<span class="nc" id="L128">      throw caughtException;</span>
+    } finally { // NOPMD - exception handling is needed
+      try {
+<span class="fc" id="L131">        streamWriter.close();</span>
+<span class="nc" id="L132">      } catch (XMLStreamException ex) {</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (caughtException == null) {</span>
+<span class="nc" id="L134">          throw new IOException(ex);</span>
+        }
+<span class="nc" id="L136">        caughtException.addSuppressed(ex);</span>
+<span class="nc" id="L137">        throw caughtException; // NOPMD - intentional</span>
+<span class="fc" id="L138">      }</span>
+    }
+<span class="fc" id="L140">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

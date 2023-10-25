@@ -1,0 +1,18 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+Metaschema CLI Framework,gov.nist.secauto.metaschema.cli.processor,CLIProcessor,246,0,10,0,83,0,20,0,15,0
+Metaschema CLI Framework,gov.nist.secauto.metaschema.cli.processor,Version,34,0,0,0,10,0,5,0,5,0
+Metaschema CLI Framework,gov.nist.secauto.metaschema.cli.processor,NonMessageExitStatus,0,6,0,0,0,3,0,2,0,2
+Metaschema CLI Framework,gov.nist.secauto.metaschema.cli.processor,CLIProcessor.CallingContext,676,0,74,0,185,0,55,0,18,0
+Metaschema CLI Framework,gov.nist.secauto.metaschema.cli.processor,AbstractExitStatus,13,66,14,10,4,22,11,7,0,6
+Metaschema CLI Framework,gov.nist.secauto.metaschema.cli.processor,OptionUtils,11,0,2,0,1,0,2,0,1,0
+Metaschema CLI Framework,gov.nist.secauto.metaschema.cli.processor,InvalidArgumentException,11,0,0,0,5,0,3,0,3,0
+Metaschema CLI Framework,gov.nist.secauto.metaschema.cli.processor,ExitCode,13,108,0,0,2,14,2,4,2,4
+Metaschema CLI Framework,gov.nist.secauto.metaschema.cli.processor,MessageExitStatus,53,0,6,0,13,0,6,0,3,0
+Metaschema CLI Framework,gov.nist.secauto.metaschema.cli.processor.command,CommandService,40,0,2,0,11,0,7,0,6,0
+Metaschema CLI Framework,gov.nist.secauto.metaschema.cli.processor.command,ICommandExecutor.new ICommandExecutor() {...},20,0,0,0,2,0,2,0,2,0
+Metaschema CLI Framework,gov.nist.secauto.metaschema.cli.processor.command,AbstractCommandExecutor,21,0,0,0,7,0,4,0,4,0
+Metaschema CLI Framework,gov.nist.secauto.metaschema.cli.processor.command,AbstractParentCommand,74,0,2,0,20,0,9,0,8,0
+Metaschema CLI Framework,gov.nist.secauto.metaschema.cli.processor.command,ICommandExecutor,7,0,0,0,1,0,1,0,1,0
+Metaschema CLI Framework,gov.nist.secauto.metaschema.cli.processor.command,ICommand,18,0,0,0,7,0,6,0,6,0
+Metaschema CLI Framework,gov.nist.secauto.metaschema.cli.processor.command,AbstractTerminalCommand,16,0,0,0,4,0,4,0,4,0
+Metaschema CLI Framework,gov.nist.secauto.metaschema.cli.processor.command,DefaultExtraArgument,35,0,2,0,12,0,6,0,5,0

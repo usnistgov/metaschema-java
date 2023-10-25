@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XmlInlineAssemblyDefinition.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.xml</a> &gt; <span class="el_source">XmlInlineAssemblyDefinition.java</span></div><h1>XmlInlineAssemblyDefinition.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.xml; // NOPMD - excessive public methods and coupling is unavoidable
+
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.AbstractAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureModelContainer;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IModelInstance;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ExternalModelSource;
+import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
+
+/**
+ * Represents a Metaschema assembly definition declared locally as an instance.
+ */
+class XmlInlineAssemblyDefinition
+    extends AbstractAssemblyInstance {
+  @NonNull
+  private final InlineAssemblyDefinitionType xmlAssembly;
+  @NonNull
+  private final InternalAssemblyDefinition assemblyDefinition;
+
+  /**
+   * Constructs a new Metaschema assembly definition from an XML representation
+   * bound to Java objects.
+   *
+   * @param xmlAssembly
+   *          the XML representation bound to Java objects
+   * @param parent
+   *          the parent container, either a choice or assembly
+   */
+  public XmlInlineAssemblyDefinition(
+      @NonNull InlineAssemblyDefinitionType xmlAssembly,
+      @NonNull IModelContainer parent) {
+<span class="nc" id="L85">    super(parent);</span>
+<span class="nc" id="L86">    this.xmlAssembly = xmlAssembly;</span>
+<span class="nc" id="L87">    this.assemblyDefinition = new InternalAssemblyDefinition();</span>
+<span class="nc" id="L88">  }</span>
+
+  @Override
+  public InternalAssemblyDefinition getDefinition() {
+<span class="nc" id="L92">    return assemblyDefinition;</span>
+  }
+
+  // ----------------------------------------
+  // - Start Annotation driven code - CPD-OFF
+  // ----------------------------------------
+
+  /**
+   * Get the underlying XML model.
+   *
+   * @return the XML model
+   */
+  protected InlineAssemblyDefinitionType getXmlAssembly() {
+<span class="nc" id="L105">    return xmlAssembly;</span>
+  }
+
+  @Override
+  public String getFormalName() {
+<span class="nc bnc" id="L110" title="All 2 branches missed.">    return getXmlAssembly().isSetFormalName() ? getXmlAssembly().getFormalName() : null;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public MarkupLine getDescription() {
+<span class="nc bnc" id="L116" title="All 2 branches missed.">    return getXmlAssembly().isSetDescription()</span>
+<span class="nc" id="L117">        ? MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription())</span>
+<span class="nc" id="L118">        : null;</span>
+  }
+
+  @Override
+  public Map&lt;QName, Set&lt;String&gt;&gt; getProperties() {
+<span class="nc" id="L123">    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlAssembly().getPropList()));</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public String getName() {
+<span class="nc" id="L129">    return getXmlAssembly().getName();</span>
+  }
+
+  @Override
+  public String getGroupAsName() {
+<span class="nc bnc" id="L134" title="All 2 branches missed.">    return getXmlAssembly().isSetGroupAs() ? getXmlAssembly().getGroupAs().getName() : null;</span>
+  }
+
+  @Override
+  public int getMinOccurs() {
+<span class="nc" id="L139">    return XmlModelParser.getMinOccurs(getXmlAssembly().getMinOccurs());</span>
+  }
+
+  @Override
+  public int getMaxOccurs() {
+<span class="nc" id="L144">    return XmlModelParser.getMaxOccurs(getXmlAssembly().getMaxOccurs());</span>
+  }
+
+  @Override
+  public JsonGroupAsBehavior getJsonGroupAsBehavior() {
+<span class="nc" id="L149">    return XmlModelParser.getJsonGroupAsBehavior(getXmlAssembly().getGroupAs());</span>
+  }
+
+  @Override
+  public XmlGroupAsBehavior getXmlGroupAsBehavior() {
+<span class="nc" id="L154">    return XmlModelParser.getXmlGroupAsBehavior(getXmlAssembly().getGroupAs());</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public MarkupMultiline getRemarks() {
+<span class="nc bnc" id="L160" title="All 2 branches missed.">    return getXmlAssembly().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getRemarks()) : null;</span>
+  }
+
+  // --------------------------------------
+  // - End Annotation driven code - CPD-ON
+  // --------------------------------------
+
+  @Override
+  public String getUseName() {
+    // an inline definition doesn't have a use name
+<span class="nc" id="L170">    return null;</span>
+  }
+
+  @Override
+  public Object getValue(@NonNull Object parentValue) {
+    // there is no value
+<span class="nc" id="L176">    return null;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public Collection&lt;?&gt; getItemValues(Object instanceValue) {
+    // there are no item values
+<span class="nc" id="L183">    return Collections.emptyList();</span>
+  }
+
+  /**
+   * The corresponding definition for the local flag instance.
+   */
+  @SuppressWarnings(&quot;PMD.GodClass&quot;)
+  private final class InternalAssemblyDefinition
+      implements IAssemblyDefinition,
+      IFeatureInlinedDefinition&lt;IAssemblyInstance&gt;,
+      IFeatureModelContainer&lt;IModelInstance, INamedModelInstance, IFieldInstance, IAssemblyInstance, IChoiceInstance&gt;,
+      IFeatureFlagContainer&lt;IFlagInstance&gt; {
+    private final Lazy&lt;XmlFlagContainerSupport&gt; flagContainer;
+    private final Lazy&lt;XmlModelContainerSupport&gt; modelContainer;
+    private final Lazy&lt;IModelConstrained&gt; constraints;
+
+<span class="nc" id="L199">    private InternalAssemblyDefinition() {</span>
+<span class="nc" id="L200">      this.flagContainer = Lazy.lazy(() -&gt; new XmlFlagContainerSupport(xmlAssembly, this));</span>
+<span class="nc" id="L201">      this.modelContainer = Lazy.lazy(() -&gt; new XmlModelContainerSupport(xmlAssembly, this));</span>
+<span class="nc" id="L202">      this.constraints = Lazy.lazy(() -&gt; {</span>
+        IModelConstrained retval;
+<span class="nc bnc" id="L204" title="All 2 branches missed.">        if (getXmlAssembly().isSetConstraint()) {</span>
+<span class="nc" id="L205">          retval = new AssemblyConstraintSupport(</span>
+<span class="nc" id="L206">              ObjectUtils.notNull(getXmlAssembly().getConstraint()),</span>
+<span class="nc" id="L207">              ExternalModelSource.instance(</span>
+<span class="nc" id="L208">                  ObjectUtils.requireNonNull(getContainingModule().getLocation())));</span>
+        } else {
+<span class="nc" id="L210">          retval = new AssemblyConstraintSupport();</span>
+        }
+<span class="nc" id="L212">        return retval;</span>
+      });
+<span class="nc" id="L214">    }</span>
+
+    // REFACTOR: get rid of this and similar methods
+    @Override
+    public boolean isInline() {
+<span class="nc" id="L219">      return true;</span>
+    }
+
+    @Override
+    @NonNull
+    public IAssemblyInstance getInlineInstance() {
+<span class="nc" id="L225">      return XmlInlineAssemblyDefinition.this;</span>
+    }
+
+    @Override
+    public String getFormalName() {
+<span class="nc" id="L230">      return XmlInlineAssemblyDefinition.this.getFormalName();</span>
+    }
+
+    @Override
+    public MarkupLine getDescription() {
+<span class="nc" id="L235">      return XmlInlineAssemblyDefinition.this.getDescription();</span>
+    }
+
+    @Override
+    public @NonNull Map&lt;QName, Set&lt;String&gt;&gt; getProperties() {
+<span class="nc" id="L240">      return XmlInlineAssemblyDefinition.this.getProperties();</span>
+    }
+
+    @Override
+    public ModuleScopeEnum getModuleScope() {
+<span class="nc" id="L245">      return ModuleScopeEnum.LOCAL;</span>
+    }
+
+    @Override
+    public String getName() {
+<span class="nc" id="L250">      return XmlInlineAssemblyDefinition.this.getName();</span>
+    }
+
+    @Override
+    public String getUseName() {
+      // always use the name instead
+<span class="nc" id="L256">      return null;</span>
+    }
+
+    @Override
+    public boolean isRoot() {
+      // a local assembly is never a root
+<span class="nc" id="L262">      return false;</span>
+    }
+
+    @Override
+    public String getRootName() {
+      // a local assembly is never a root
+<span class="nc" id="L268">      return null;</span>
+    }
+
+    @SuppressWarnings(&quot;null&quot;)
+    @Override
+    public XmlFlagContainerSupport getFlagContainer() {
+<span class="nc" id="L274">      return flagContainer.get();</span>
+    }
+
+    @SuppressWarnings(&quot;null&quot;)
+    @Override
+    public XmlModelContainerSupport getModelContainer() {
+<span class="nc" id="L280">      return modelContainer.get();</span>
+    }
+
+    @SuppressWarnings(&quot;null&quot;)
+    @Override
+    public IModelConstrained getConstraintSupport() {
+<span class="nc" id="L286">      return constraints.get();</span>
+    }
+
+    @Override
+    public MarkupMultiline getRemarks() {
+<span class="nc" id="L291">      return XmlInlineAssemblyDefinition.this.getRemarks();</span>
+    }
+
+    @Override
+    public IModule getContainingModule() {
+<span class="nc" id="L296">      return XmlInlineAssemblyDefinition.super.getContainingDefinition().getContainingModule();</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

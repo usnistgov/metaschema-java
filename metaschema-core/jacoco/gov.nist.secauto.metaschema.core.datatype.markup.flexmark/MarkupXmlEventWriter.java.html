@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MarkupXmlEventWriter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.datatype.markup.flexmark</a> &gt; <span class="el_source">MarkupXmlEventWriter.java</span></div><h1>MarkupXmlEventWriter.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.datatype.markup.flexmark;
+
+import com.vladsch.flexmark.parser.ListOptions;
+
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import org.codehaus.stax2.evt.XMLEventFactory2;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartElement;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public class MarkupXmlEventWriter
+    extends AbstractMarkupWriter&lt;XMLEventWriter, XMLStreamException&gt; {
+
+  @NonNull
+  protected final XMLEventFactory2 eventFactory;
+
+  public MarkupXmlEventWriter(
+      @NonNull String namespace,
+      @NonNull ListOptions listOptions,
+      @NonNull XMLEventWriter writer,
+      @NonNull XMLEventFactory2 eventFactory) {
+<span class="nc" id="L61">    super(namespace, listOptions, writer);</span>
+<span class="nc" id="L62">    this.eventFactory = Objects.requireNonNull(eventFactory, &quot;eventFactory&quot;);</span>
+<span class="nc" id="L63">  }</span>
+
+  @NonNull
+  protected XMLEventFactory2 getEventFactory() {
+<span class="nc" id="L67">    return eventFactory;</span>
+  }
+
+  @NonNull
+  protected List&lt;Attribute&gt; handleAttributes(@NonNull Map&lt;String, String&gt; attributes) {
+    List&lt;Attribute&gt; attrs;
+<span class="nc bnc" id="L73" title="All 2 branches missed.">    if (attributes.isEmpty()) {</span>
+<span class="nc" id="L74">      attrs = CollectionUtil.emptyList();</span>
+    } else {
+<span class="nc" id="L76">      attrs = ObjectUtils.notNull(attributes.entrySet().stream()</span>
+<span class="nc" id="L77">          .map((entry) -&gt; eventFactory.createAttribute(entry.getKey(), entry.getValue()))</span>
+<span class="nc" id="L78">          .collect(Collectors.toList()));</span>
+    }
+<span class="nc" id="L80">    return attrs;</span>
+  }
+
+  @Override
+  public void writeEmptyElement(QName qname, Map&lt;String, String&gt; attributes) throws XMLStreamException {
+<span class="nc" id="L85">    List&lt;Attribute&gt; attrs = handleAttributes(attributes);</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">    StartElement start = eventFactory.createStartElement(qname, attrs.isEmpty() ? null : attrs.iterator(), null);</span>
+
+<span class="nc" id="L88">    XMLEventWriter stream = getStream();</span>
+<span class="nc" id="L89">    stream.add(start);</span>
+
+<span class="nc" id="L91">    EndElement end = eventFactory.createEndElement(qname, null);</span>
+<span class="nc" id="L92">    stream.add(end);</span>
+<span class="nc" id="L93">  }</span>
+
+  @Override
+  public void writeElementStart(QName qname, Map&lt;String, String&gt; attributes) throws XMLStreamException {
+<span class="nc" id="L97">    List&lt;Attribute&gt; attrs = handleAttributes(attributes);</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">    StartElement start = eventFactory.createStartElement(qname, attrs.isEmpty() ? null : attrs.iterator(), null);</span>
+<span class="nc" id="L99">    getStream().add(start);</span>
+<span class="nc" id="L100">  }</span>
+
+  @Override
+  public void writeElementEnd(QName qname) throws XMLStreamException {
+<span class="nc" id="L104">    EndElement end = eventFactory.createEndElement(qname, null);</span>
+<span class="nc" id="L105">    getStream().add(end);</span>
+<span class="nc" id="L106">  }</span>
+
+  @Override
+  public void writeText(CharSequence text) throws XMLStreamException {
+<span class="nc" id="L110">    getStream().add(eventFactory.createCharacters(text.toString()));</span>
+<span class="nc" id="L111">  }</span>
+
+  @Override
+  protected void writeHtmlEntityInternal(String entityText) throws XMLStreamException {
+<span class="nc" id="L115">    getStream().add(eventFactory.createEntityReference(entityText, null));</span>
+<span class="nc" id="L116">  }</span>
+
+  @Override
+  protected void writeComment(CharSequence text) throws XMLStreamException {
+<span class="nc" id="L120">    getStream().add(eventFactory.createComment(text.toString()));</span>
+<span class="nc" id="L121">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

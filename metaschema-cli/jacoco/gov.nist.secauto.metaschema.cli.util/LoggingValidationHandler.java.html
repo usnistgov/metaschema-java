@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoggingValidationHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Command Line Tool</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.cli.util</a> &gt; <span class="el_source">LoggingValidationHandler.java</span></div><h1>LoggingValidationHandler.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.cli.util;
+
+import static org.fusesource.jansi.Ansi.ansi;
+
+import gov.nist.secauto.metaschema.core.model.constraint.ConstraintValidationFinding;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.Level;
+import gov.nist.secauto.metaschema.core.model.validation.IValidationFinding;
+import gov.nist.secauto.metaschema.core.model.validation.IValidationResult;
+import gov.nist.secauto.metaschema.core.model.validation.JsonSchemaContentValidator.JsonValidationFinding;
+import gov.nist.secauto.metaschema.core.model.validation.XmlSchemaContentValidator.XmlValidationFinding;
+
+import org.apache.logging.log4j.LogBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.Ansi.Color;
+import org.xml.sax.SAXParseException;
+
+import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public final class LoggingValidationHandler {
+<span class="nc" id="L50">  private static final Logger LOGGER = LogManager.getLogger(LoggingValidationHandler.class);</span>
+
+<span class="nc" id="L52">  private static final LoggingValidationHandler NO_LOG_EXCPTION_INSTANCE = new LoggingValidationHandler(false);</span>
+<span class="nc" id="L53">  private static final LoggingValidationHandler LOG_EXCPTION_INSTANCE = new LoggingValidationHandler(true);</span>
+
+  private final boolean logExceptions;
+
+  public static LoggingValidationHandler instance() {
+<span class="nc" id="L58">    return instance(false);</span>
+  }
+
+  public static LoggingValidationHandler instance(boolean logExceptions) {
+<span class="nc bnc" id="L62" title="All 2 branches missed.">    return logExceptions ? LOG_EXCPTION_INSTANCE : NO_LOG_EXCPTION_INSTANCE;</span>
+  }
+
+<span class="nc" id="L65">  protected LoggingValidationHandler(boolean logExceptions) {</span>
+<span class="nc" id="L66">    this.logExceptions = logExceptions;</span>
+<span class="nc" id="L67">  }</span>
+
+  public boolean isLogExceptions() {
+<span class="nc" id="L70">    return logExceptions;</span>
+  }
+
+  public boolean handleValidationResults(IValidationResult result) {
+<span class="nc" id="L74">    handleValidationFindings(result.getFindings());</span>
+<span class="nc" id="L75">    return result.isPassing();</span>
+  }
+
+  public void handleValidationFindings(@NonNull List&lt;? extends IValidationFinding&gt; findings) {
+<span class="nc bnc" id="L79" title="All 2 branches missed.">    for (IValidationFinding finding : findings) {</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">      if (finding instanceof JsonValidationFinding) {</span>
+<span class="nc" id="L81">        handleJsonValidationFinding((JsonValidationFinding) finding);</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">      } else if (finding instanceof XmlValidationFinding) {</span>
+<span class="nc" id="L83">        handleXmlValidationFinding((XmlValidationFinding) finding);</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">      } else if (finding instanceof ConstraintValidationFinding) {</span>
+<span class="nc" id="L85">        handleConstraintValidationFinding((ConstraintValidationFinding) finding);</span>
+      } else {
+<span class="nc" id="L87">        throw new IllegalStateException();</span>
+      }
+<span class="nc" id="L89">    }</span>
+<span class="nc" id="L90">  }</span>
+
+  private void handleJsonValidationFinding(@NonNull JsonValidationFinding finding) {
+<span class="nc" id="L93">    Ansi ansi = generatePreamble(finding.getSeverity());</span>
+
+<span class="nc" id="L95">    getLogger(finding).log(</span>
+<span class="nc" id="L96">        ansi.a('[')</span>
+<span class="nc" id="L97">            .fgBright(Color.WHITE)</span>
+<span class="nc" id="L98">            .a(finding.getCause().getPointerToViolation())</span>
+<span class="nc" id="L99">            .reset()</span>
+<span class="nc" id="L100">            .a(']')</span>
+<span class="nc" id="L101">            .format(&quot; %s [%s]&quot;,</span>
+<span class="nc" id="L102">                finding.getMessage(),</span>
+<span class="nc" id="L103">                finding.getDocumentUri().toString()));</span>
+<span class="nc" id="L104">  }</span>
+
+  private void handleXmlValidationFinding(XmlValidationFinding finding) {
+<span class="nc" id="L107">    Ansi ansi = generatePreamble(finding.getSeverity());</span>
+<span class="nc" id="L108">    SAXParseException ex = finding.getCause();</span>
+
+<span class="nc" id="L110">    getLogger(finding).log(</span>
+<span class="nc" id="L111">        ansi.format(&quot;%s [%s{%d,%d}]&quot;,</span>
+<span class="nc" id="L112">            finding.getMessage(),</span>
+<span class="nc" id="L113">            finding.getDocumentUri().toString(),</span>
+<span class="nc" id="L114">            ex.getLineNumber(),</span>
+<span class="nc" id="L115">            ex.getColumnNumber()));</span>
+<span class="nc" id="L116">  }</span>
+
+  private void handleConstraintValidationFinding(@NonNull ConstraintValidationFinding finding) {
+<span class="nc" id="L119">    Ansi ansi = generatePreamble(finding.getSeverity());</span>
+
+<span class="nc" id="L121">    getLogger(finding).log(</span>
+<span class="nc" id="L122">        ansi.format(&quot;[%s] %s&quot;, finding.getNode().getMetapath(), finding.getMessage()));</span>
+<span class="nc" id="L123">  }</span>
+
+  @NonNull
+  private LogBuilder getLogger(@NonNull IValidationFinding finding) {
+    LogBuilder retval;
+<span class="nc bnc" id="L128" title="All 5 branches missed.">    switch (finding.getSeverity()) {</span>
+    case CRITICAL:
+<span class="nc" id="L130">      retval = LOGGER.atFatal();</span>
+<span class="nc" id="L131">      break;</span>
+    case ERROR:
+<span class="nc" id="L133">      retval = LOGGER.atError();</span>
+<span class="nc" id="L134">      break;</span>
+    case WARNING:
+<span class="nc" id="L136">      retval = LOGGER.atWarn();</span>
+<span class="nc" id="L137">      break;</span>
+    case INFORMATIONAL:
+<span class="nc" id="L139">      retval = LOGGER.atInfo();</span>
+<span class="nc" id="L140">      break;</span>
+    default:
+<span class="nc" id="L142">      throw new IllegalArgumentException(&quot;Unknown level: &quot; + finding.getSeverity().name());</span>
+    }
+
+<span class="nc bnc" id="L145" title="All 2 branches missed.">    assert retval != null;</span>
+
+<span class="nc bnc" id="L147" title="All 4 branches missed.">    if (finding.getCause() != null &amp;&amp; isLogExceptions()) {</span>
+<span class="nc" id="L148">      retval.withThrowable(finding.getCause());</span>
+    }
+
+<span class="nc" id="L151">    return retval;</span>
+  }
+
+  @SuppressWarnings(&quot;static-method&quot;)
+  @NonNull
+  private Ansi generatePreamble(@NonNull Level level) {
+<span class="nc" id="L157">    Ansi ansi = ansi().fgBright(Color.WHITE).a('[').reset();</span>
+
+<span class="nc bnc" id="L159" title="All 5 branches missed.">    switch (level) {</span>
+    case CRITICAL:
+<span class="nc" id="L161">      ansi = ansi.fgRed().a(&quot;CRITICAL&quot;).reset();</span>
+<span class="nc" id="L162">      break;</span>
+    case ERROR:
+<span class="nc" id="L164">      ansi = ansi.fgBrightRed().a(&quot;ERROR&quot;).reset();</span>
+<span class="nc" id="L165">      break;</span>
+    case WARNING:
+<span class="nc" id="L167">      ansi = ansi.fgBrightYellow().a(&quot;WARNING&quot;).reset();</span>
+<span class="nc" id="L168">      break;</span>
+    case INFORMATIONAL:
+<span class="nc" id="L170">      ansi = ansi.fgBrightBlue().a(&quot;INFO&quot;).reset();</span>
+<span class="nc" id="L171">      break;</span>
+    default:
+<span class="nc" id="L173">      ansi = ansi().fgBright(Color.MAGENTA).a(level.name()).reset();</span>
+      break;
+    }
+<span class="nc" id="L176">    ansi = ansi.fgBright(Color.WHITE).a(&quot;] &quot;).reset();</span>
+
+<span class="nc bnc" id="L178" title="All 2 branches missed.">    assert ansi != null;</span>
+<span class="nc" id="L179">    return ansi;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

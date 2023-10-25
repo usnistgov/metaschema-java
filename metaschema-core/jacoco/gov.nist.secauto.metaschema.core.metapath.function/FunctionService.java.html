@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FunctionService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath.function</a> &gt; <span class="el_source">FunctionService.java</span></div><h1>FunctionService.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath.function;
+
+import gov.nist.secauto.metaschema.core.metapath.IExpression;
+import gov.nist.secauto.metaschema.core.metapath.StaticMetapathException;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.ServiceLoader.Provider;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
+
+public final class FunctionService {
+<span class="fc" id="L42">  private static final Lazy&lt;FunctionService&gt; INSTANCE = Lazy.lazy(() -&gt; new FunctionService());</span>
+  @NonNull
+  private final ServiceLoader&lt;IFunctionLibrary&gt; loader;
+  @NonNull
+  private IFunctionLibrary library;
+
+  /**
+   * Get the singleton instance of the function service.
+   *
+   * @return the service instance
+   */
+  public static FunctionService getInstance() {
+<span class="fc" id="L54">    return INSTANCE.get();</span>
+  }
+
+  /**
+   * Construct a new function service.
+   */
+  @SuppressWarnings(&quot;null&quot;)
+<span class="fc" id="L61">  public FunctionService() {</span>
+<span class="fc" id="L62">    this.loader = ServiceLoader.load(IFunctionLibrary.class);</span>
+<span class="fc" id="L63">    this.library = load();</span>
+<span class="fc" id="L64">  }</span>
+
+  /**
+   * Load all known functions registered with this function service.
+   *
+   * @return the function library
+   */
+  @NonNull
+  public IFunctionLibrary load() {
+<span class="fc" id="L73">    ServiceLoader&lt;IFunctionLibrary&gt; loader = getLoader();</span>
+
+<span class="fc" id="L75">    FunctionLibrary functionLibrary = new FunctionLibrary();</span>
+<span class="fc" id="L76">    loader.stream()</span>
+<span class="fc" id="L77">        .map(Provider&lt;IFunctionLibrary&gt;::get)</span>
+<span class="fc" id="L78">        .flatMap(library -&gt; {</span>
+<span class="fc" id="L79">          return library.getFunctionsAsStream();</span>
+        })
+<span class="fc" id="L81">        .forEachOrdered(function -&gt; functionLibrary.registerFunction(ObjectUtils.requireNonNull(function)));</span>
+
+<span class="fc" id="L83">    synchronized (this) {</span>
+<span class="fc" id="L84">      this.library = functionLibrary;</span>
+<span class="fc" id="L85">    }</span>
+<span class="fc" id="L86">    return functionLibrary;</span>
+  }
+
+  /**
+   * Get the function service loader instance.
+   *
+   * @return the service loader instance.
+   */
+  @NonNull
+  private ServiceLoader&lt;IFunctionLibrary&gt; getLoader() {
+<span class="fc" id="L96">    return loader;</span>
+  }
+
+  /**
+   * Retrieve the function with the provided name that supports the signature of
+   * the provided methods, if such a function exists.
+   *
+   * @param name
+   *          the name of a group of functions
+   * @param arguments
+   *          a list of argument expressions for use in determining an argument
+   *          signature match
+   * @return the matching function or {@code null} if no match exists
+   * @throws StaticMetapathException
+   *           if a matching function was not found
+   */
+  @SuppressWarnings(&quot;null&quot;)
+  public IFunction getFunction(@NonNull String name, @NonNull IExpression... arguments) {
+<span class="nc" id="L114">    return getFunction(name, Arrays.asList(arguments));</span>
+  }
+
+  /**
+   * Retrieve the function with the provided name that supports the signature of
+   * the provided methods, if such a function exists.
+   *
+   * @param name
+   *          the name of a group of functions
+   * @param arguments
+   *          a list of argument expressions for use in determining an argument
+   *          signature match
+   * @return the matching function
+   * @throws StaticMetapathException
+   *           if a matching function was not found
+   */
+  public IFunction getFunction(@NonNull String name, @NonNull List&lt;IExpression&gt; arguments) {
+    IFunction retval;
+<span class="fc" id="L132">    synchronized (this) {</span>
+<span class="fc" id="L133">      retval = library.getFunction(name, arguments);</span>
+<span class="fc" id="L134">    }</span>
+
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">    if (retval == null) {</span>
+<span class="nc" id="L137">      throw new StaticMetapathException(StaticMetapathException.NO_FUNCTION_MATCH,</span>
+<span class="nc" id="L138">          String.format(&quot;unable to find function with name '%s' having arity '%d'&quot;, name, arguments.size()));</span>
+    }
+<span class="fc" id="L140">    return retval;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

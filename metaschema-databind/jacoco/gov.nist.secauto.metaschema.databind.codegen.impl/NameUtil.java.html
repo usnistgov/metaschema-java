@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NameUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.codegen.impl</a> &gt; <span class="el_source">NameUtil.java</span></div><h1>NameUtil.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+/*
+ * This code is based on https://github.com/eclipse-ee4j/jaxb-ri/blob/master/jaxb-ri/core/src/main/java/org/glassfish/jaxb/core/api/impl/NameUtil.java
+ *
+ * Copyright (c) 1997, 2022 Oracle and/or its affiliates. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Distribution License v. 1.0, which is available at
+ * http://www.eclipse.org/org/documents/edl-v10.php.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+package gov.nist.secauto.metaschema.databind.codegen.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+/**
+ * Methods that convert strings into various formats.
+ */
+@SuppressWarnings(&quot;PMD&quot;)
+<span class="fc" id="L49">class NameUtil {</span>
+  protected static boolean isPunct(char ch) {
+<span class="pc bpc" id="L51" title="7 of 16 branches missed.">    return ch == '-' || ch == '.' || ch == ':' || ch == '_' || ch == '·' || ch == '·' || ch == '۝' || ch == '۞';</span>
+  }
+
+  /**
+   * Capitalizes the first character of the specified string, and de-capitalize
+   * the rest of characters.
+   *
+   * @param str
+   *          the string to capitalize
+   * @return the capitalized string
+   */
+  public static String capitalize(String str) {
+<span class="fc bfc" id="L63" title="All 2 branches covered.">    if (!Character.isLowerCase(str.charAt(0))) {</span>
+<span class="fc" id="L64">      return str;</span>
+    }
+<span class="fc" id="L66">    StringBuilder sb = new StringBuilder(str.length());</span>
+<span class="fc" id="L67">    sb.append(String.valueOf(str.charAt(0)).toUpperCase(Locale.ENGLISH));</span>
+<span class="fc" id="L68">    sb.append(str.substring(1).toLowerCase(Locale.ENGLISH));</span>
+<span class="fc" id="L69">    return sb.toString();</span>
+  }
+
+  // Precondition: s[start] is not punctuation
+  @SuppressWarnings({
+      &quot;checkstyle:MissingSwitchDefaultCheck&quot;, // intentional
+  })
+  private static int nextBreak(String str, int start) {
+<span class="fc" id="L77">    int len = str.length();</span>
+
+<span class="fc" id="L79">    char c1 = str.charAt(start);</span>
+<span class="fc" id="L80">    int t1 = classify(c1);</span>
+
+<span class="fc bfc" id="L82" title="All 2 branches covered.">    for (int i = start + 1; i &lt; len; i++) {</span>
+      // shift (c1,t1) into (c0,t0)
+      // char c0 = c1; --- conceptually, but c0 won't be used
+<span class="fc" id="L85">      int t0 = t1;</span>
+
+<span class="fc" id="L87">      c1 = str.charAt(i);</span>
+<span class="fc" id="L88">      t1 = classify(c1);</span>
+
+<span class="pc bpc" id="L90" title="2 of 4 branches missed.">      switch (actionTable[t0 * 5 + t1]) {</span>
+      case ACTION_CHECK_PUNCT:
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (isPunct(c1)) {</span>
+<span class="nc" id="L93">          return i;</span>
+        }
+        break;
+      case ACTION_CHECK_C2:
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (i &lt; len - 1) {</span>
+<span class="nc" id="L98">          char c2 = str.charAt(i + 1);</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">          if (Character.isLowerCase(c2)) {</span>
+<span class="nc" id="L100">            return i;</span>
+          }
+<span class="nc" id="L102">        }</span>
+        break;
+      case ACTION_BREAK:
+<span class="fc" id="L105">        return i;</span>
+      }
+    }
+<span class="fc" id="L108">    return -1;</span>
+  }
+
+  // the 5-category classification that we use in this code
+  // to find work breaks
+  protected static final int UPPER_LETTER = 0;
+  protected static final int LOWER_LETTER = 1;
+  protected static final int OTHER_LETTER = 2;
+  protected static final int DIGIT = 3;
+  protected static final int OTHER = 4;
+
+  /**
+   * Look up table for actions. type0*5+type1 would yield the action to be taken.
+   */
+<span class="fc" id="L122">  private static final byte[] actionTable = new byte[5 * 5];</span>
+
+  // action constants. see nextBreak for the meaning
+  private static final byte ACTION_CHECK_PUNCT = 0;
+  private static final byte ACTION_CHECK_C2 = 1;
+  private static final byte ACTION_BREAK = 2;
+  private static final byte ACTION_NOBREAK = 3;
+
+  /**
+   * Decide the action to be taken given the classification of the preceding
+   * character 't0' and the classification of the next character 't1'.
+   */
+  private static byte decideAction(int t0, int t1) {
+<span class="fc bfc" id="L135" title="All 4 branches covered.">    if (t0 == OTHER &amp;&amp; t1 == OTHER) {</span>
+<span class="fc" id="L136">      return ACTION_CHECK_PUNCT;</span>
+    }
+<span class="fc bfc" id="L138" title="All 6 branches covered.">    if ((t0 == DIGIT) ^ (t1 == DIGIT)) {</span>
+<span class="fc" id="L139">      return ACTION_BREAK;</span>
+    }
+<span class="fc bfc" id="L141" title="All 4 branches covered.">    if (t0 == LOWER_LETTER &amp;&amp; t1 != LOWER_LETTER) {</span>
+<span class="fc" id="L142">      return ACTION_BREAK;</span>
+    }
+<span class="fc bfc" id="L144" title="All 6 branches covered.">    if ((t0 &lt;= OTHER_LETTER) ^ (t1 &lt;= OTHER_LETTER)) {</span>
+<span class="fc" id="L145">      return ACTION_BREAK;</span>
+    }
+<span class="fc bfc" id="L147" title="All 6 branches covered.">    if ((t0 == OTHER_LETTER) ^ (t1 == OTHER_LETTER)) {</span>
+<span class="fc" id="L148">      return ACTION_BREAK;</span>
+    }
+<span class="fc bfc" id="L150" title="All 4 branches covered.">    if (t0 == UPPER_LETTER &amp;&amp; t1 == UPPER_LETTER) {</span>
+<span class="fc" id="L151">      return ACTION_CHECK_C2;</span>
+    }
+
+<span class="fc" id="L154">    return ACTION_NOBREAK;</span>
+  }
+
+  static {
+    // initialize the action table
+<span class="fc bfc" id="L159" title="All 2 branches covered.">    for (int t0 = 0; t0 &lt; 5; t0++) {</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">      for (int t1 = 0; t1 &lt; 5; t1++) {</span>
+<span class="fc" id="L161">        actionTable[t0 * 5 + t1] = decideAction(t0, t1);</span>
+      }
+    }
+<span class="fc" id="L164">  }</span>
+
+  /**
+   * Classify a character into 5 categories that determine the word break.
+   *
+   * @param ch
+   *          the character
+   * @return the categorization
+   */
+  protected static int classify(char ch) {
+<span class="pc bpc" id="L174" title="1 of 5 branches missed.">    switch (Character.getType(ch)) {</span>
+    case Character.UPPERCASE_LETTER:
+<span class="fc" id="L176">      return UPPER_LETTER;</span>
+    case Character.LOWERCASE_LETTER:
+<span class="fc" id="L178">      return LOWER_LETTER;</span>
+    case Character.TITLECASE_LETTER:
+    case Character.MODIFIER_LETTER:
+    case Character.OTHER_LETTER:
+<span class="nc" id="L182">      return OTHER_LETTER;</span>
+    case Character.DECIMAL_DIGIT_NUMBER:
+<span class="fc" id="L184">      return DIGIT;</span>
+    default:
+<span class="fc" id="L186">      return OTHER;</span>
+    }
+  }
+
+  /**
+   * Tokenizes a string into words and capitalizes the first character of each
+   * word.
+   * &lt;p&gt;
+   * This method uses a change in character type as a splitter of two words. For
+   * example, &quot;abc100ghi&quot; will be splitted into {&quot;Abc&quot;, &quot;100&quot;,&quot;Ghi&quot;}.
+   *
+   * @param str
+   *          the string to split into a word list
+   * @return the word list
+   */
+  public static List&lt;String&gt; toWordList(String str) {
+<span class="fc" id="L202">    ArrayList&lt;String&gt; retval = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L203">    int len = str.length();</span>
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">    for (int i = 0; i &lt; len;) {</span>
+
+      // Skip punctuation
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">      while (i &lt; len) {</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">        if (!isPunct(str.charAt(i))) {</span>
+<span class="fc" id="L209">          break;</span>
+        }
+<span class="fc" id="L211">        i++;</span>
+      }
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">      if (i &gt;= len) {</span>
+<span class="nc" id="L214">        break;</span>
+      }
+
+      // Find next break and collect word
+<span class="fc" id="L218">      int breakPos = nextBreak(str, i);</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">      String word = (breakPos == -1) ? str.substring(i) : str.substring(i, breakPos);</span>
+<span class="fc" id="L220">      retval.add(escape(capitalize(word)));</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">      if (breakPos == -1) {</span>
+<span class="fc" id="L222">        break;</span>
+      }
+<span class="fc" id="L224">      i = breakPos;</span>
+<span class="fc" id="L225">    }</span>
+
+    // we can't guarantee a valid Java identifier anyway,
+    // so there's not much point in rejecting things in this way.
+    // if (ss.size() == 0)
+    // throw new IllegalArgumentException(&quot;Zero-length identifier&quot;);
+<span class="fc" id="L231">    return retval;</span>
+  }
+
+  protected static String toMixedCaseName(List&lt;String&gt; ss, boolean startUpper) {
+<span class="fc" id="L235">    StringBuilder sb = new StringBuilder();</span>
+<span class="pc bpc" id="L236" title="1 of 2 branches missed.">    if (!ss.isEmpty()) {</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">      sb.append(startUpper ? ss.get(0) : ss.get(0).toLowerCase(Locale.ENGLISH));</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">      for (int i = 1; i &lt; ss.size(); i++) {</span>
+<span class="fc" id="L239">        sb.append(ss.get(i));</span>
+      }
+    }
+<span class="fc" id="L242">    return sb.toString();</span>
+  }
+
+  protected static String toMixedCaseVariableName(String[] ss,
+      boolean startUpper,
+      boolean cdrUpper) {
+<span class="nc bnc" id="L248" title="All 2 branches missed.">    if (cdrUpper) {</span>
+<span class="nc bnc" id="L249" title="All 2 branches missed.">      for (int i = 1; i &lt; ss.length; i++) {</span>
+<span class="nc" id="L250">        ss[i] = capitalize(ss[i]);</span>
+      }
+    }
+<span class="nc" id="L253">    StringBuilder sb = new StringBuilder();</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">    if (ss.length &gt; 0) {</span>
+<span class="nc bnc" id="L255" title="All 2 branches missed.">      sb.append(startUpper ? ss[0] : ss[0].toLowerCase(Locale.ENGLISH));</span>
+<span class="nc bnc" id="L256" title="All 2 branches missed.">      for (int i = 1; i &lt; ss.length; i++) {</span>
+<span class="nc" id="L257">        sb.append(ss[i]);</span>
+      }
+    }
+<span class="nc" id="L260">    return sb.toString();</span>
+  }
+
+  /**
+   * Formats a string into &quot;THIS_KIND_OF_FORMAT_ABC_DEF&quot;.
+   *
+   * @param str
+   *          the string to format
+   * @return Always return a string but there's no guarantee that the generated
+   *         code is a valid Java identifier.
+   */
+  public String toConstantName(String str) {
+<span class="nc" id="L272">    return toConstantName(toWordList(str));</span>
+  }
+
+  /**
+   * Formats a string into &quot;THIS_KIND_OF_FORMAT_ABC_DEF&quot;.
+   *
+   * @param ss
+   *          a list of words
+   * @return Always return a string but there's no guarantee that the generated
+   *         code is a valid Java identifier.
+   */
+  public String toConstantName(List&lt;String&gt; ss) {
+<span class="nc" id="L284">    StringBuilder sb = new StringBuilder();</span>
+<span class="nc bnc" id="L285" title="All 2 branches missed.">    if (!ss.isEmpty()) {</span>
+<span class="nc" id="L286">      sb.append(ss.get(0).toUpperCase(Locale.ENGLISH));</span>
+<span class="nc bnc" id="L287" title="All 2 branches missed.">      for (int i = 1; i &lt; ss.size(); i++) {</span>
+<span class="nc" id="L288">        sb.append('_');</span>
+<span class="nc" id="L289">        sb.append(ss.get(i).toUpperCase(Locale.ENGLISH));</span>
+      }
+    }
+<span class="nc" id="L292">    return sb.toString();</span>
+  }
+
+  /**
+   * Escapes characters is the given string so that they can be printed by only
+   * using US-ASCII characters.
+   *
+   * The escaped characters will be appended to the given StringBuffer.
+   *
+   * @param sb
+   *          StringBuffer that receives escaped string.
+   * @param str
+   *          String to be escaped. &lt;code&gt;s.substring(start)&lt;/code&gt; will be
+   *          escaped and copied to the string buffer.
+   * @param start
+   *          the starting position in the string
+   */
+  @SuppressWarnings({
+      &quot;checkstyle:MissingSwitchDefaultCheck&quot;, // intentional
+      &quot;checkstyle:AvoidEscapedUnicodeCharactersCheck&quot; // ok
+  })
+  public static void escape(StringBuilder sb, String str, int start) {
+<span class="nc" id="L314">    int len = str.length();</span>
+<span class="nc bnc" id="L315" title="All 2 branches missed.">    for (int i = start; i &lt; len; i++) {</span>
+<span class="nc" id="L316">      char ch = str.charAt(i);</span>
+<span class="nc bnc" id="L317" title="All 2 branches missed.">      if (Character.isJavaIdentifierPart(ch)) {</span>
+<span class="nc" id="L318">        sb.append(ch);</span>
+      } else {
+<span class="nc" id="L320">        sb.append('_');</span>
+<span class="nc bnc" id="L321" title="All 2 branches missed.">        if (ch &lt;= '\u000f') {</span>
+<span class="nc" id="L322">          sb.append(&quot;000&quot;);</span>
+<span class="nc bnc" id="L323" title="All 2 branches missed.">        } else if (ch &lt;= '\u00ff') {</span>
+<span class="nc" id="L324">          sb.append(&quot;00&quot;);</span>
+<span class="nc bnc" id="L325" title="All 2 branches missed.">        } else if (ch &lt;= '\u0fff') {</span>
+<span class="nc" id="L326">          sb.append('0');</span>
+        }
+<span class="nc" id="L328">        sb.append(Integer.toString(ch, 16));</span>
+      }
+    }
+<span class="nc" id="L331">  }</span>
+
+  /**
+   * Escapes characters that are unusable as Java identifiers by replacing unsafe
+   * characters with safe characters.
+   */
+  private static String escape(String str) {
+<span class="fc" id="L338">    int len = str.length();</span>
+<span class="fc bfc" id="L339" title="All 2 branches covered.">    for (int i = 0; i &lt; len; i++) {</span>
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">      if (!Character.isJavaIdentifierPart(str.charAt(i))) {</span>
+<span class="nc" id="L341">        StringBuilder sb = new StringBuilder(str.substring(0, i));</span>
+<span class="nc" id="L342">        escape(sb, str, i);</span>
+<span class="nc" id="L343">        return sb.toString();</span>
+      }
+    }
+<span class="fc" id="L346">    return str;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

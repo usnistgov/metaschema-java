@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ModelInstanceTypeInfoImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.codegen.typeinfo</a> &gt; <span class="el_source">ModelInstanceTypeInfoImpl.java</span></div><h1>ModelInstanceTypeInfoImpl.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
+
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
+
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.List;
+import java.util.Map;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+class ModelInstanceTypeInfoImpl
+    extends AbstractInstanceTypeInfo&lt;INamedModelInstance, IAssemblyDefinitionTypeInfo&gt;
+    implements IModelInstanceTypeInfo {
+<span class="fc" id="L51">  private static final Logger LOGGER = LogManager.getLogger(ModelInstanceTypeInfoImpl.class);</span>
+
+  public ModelInstanceTypeInfoImpl(@NonNull INamedModelInstance instance,
+      @NonNull IAssemblyDefinitionTypeInfo parentDefinition) {
+<span class="fc" id="L55">    super(instance, parentDefinition);</span>
+<span class="fc" id="L56">  }</span>
+
+  @Override
+  public @NonNull String getBaseName() {
+<span class="fc" id="L60">    INamedModelInstance modelInstance = getInstance();</span>
+    String retval;
+<span class="pc bpc" id="L62" title="1 of 4 branches missed.">    if (modelInstance.getMaxOccurs() == -1 || modelInstance.getMaxOccurs() &gt; 1) {</span>
+<span class="fc" id="L63">      retval = ObjectUtils.notNull(modelInstance.getGroupAsName());</span>
+    } else {
+<span class="fc" id="L65">      retval = modelInstance.getEffectiveName();</span>
+    }
+<span class="fc" id="L67">    return retval;</span>
+  }
+
+  @Override
+  public String getItemBaseName() {
+<span class="fc" id="L72">    return getInstance().getEffectiveName();</span>
+  }
+
+  @Override
+  public @NonNull TypeName getJavaItemType() {
+<span class="fc" id="L77">    INamedModelInstance instance = getInstance();</span>
+
+    TypeName retval;
+<span class="fc bfc" id="L80" title="All 2 branches covered.">    if (instance instanceof IFieldInstance) {</span>
+<span class="fc" id="L81">      IFieldInstance fieldInstance = (IFieldInstance) instance;</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">      if (fieldInstance.getDefinition().isSimple()) {</span>
+<span class="fc" id="L83">        IDataTypeAdapter&lt;?&gt; dataType = fieldInstance.getDefinition().getJavaTypeAdapter();</span>
+        // this is a simple value
+<span class="fc" id="L85">        retval = ObjectUtils.notNull(ClassName.get(dataType.getJavaClass()));</span>
+<span class="fc" id="L86">      } else {</span>
+<span class="fc" id="L87">        retval = getParentDefinitionTypeInfo().getTypeResolver().getClassName(fieldInstance.getDefinition());</span>
+      }
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">    } else if (instance instanceof IAssemblyInstance) {</span>
+<span class="fc" id="L90">      IAssemblyInstance assemblyInstance = (IAssemblyInstance) instance;</span>
+<span class="fc" id="L91">      retval = getParentDefinitionTypeInfo().getTypeResolver().getClassName(assemblyInstance.getDefinition());</span>
+<span class="fc" id="L92">    } else {</span>
+<span class="nc" id="L93">      String msg = String.format(&quot;Unknown model instance type: %s&quot;, instance.getClass().getCanonicalName());</span>
+<span class="nc" id="L94">      LOGGER.error(msg);</span>
+<span class="nc" id="L95">      throw new IllegalStateException(msg);</span>
+    }
+<span class="fc" id="L97">    return retval;</span>
+  }
+
+  @Override
+  public @NonNull TypeName getJavaFieldType() {
+<span class="fc" id="L102">    TypeName item = getJavaItemType();</span>
+
+    @NonNull TypeName retval;
+<span class="fc" id="L105">    INamedModelInstance instance = getInstance();</span>
+<span class="fc" id="L106">    int maxOccurance = instance.getMaxOccurs();</span>
+<span class="pc bpc" id="L107" title="1 of 4 branches missed.">    if (maxOccurance == -1 || maxOccurance &gt; 1) {</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">      if (JsonGroupAsBehavior.KEYED.equals(instance.getJsonGroupAsBehavior())) {</span>
+<span class="fc" id="L109">        retval = ObjectUtils.notNull(</span>
+<span class="fc" id="L110">            ParameterizedTypeName.get(ClassName.get(Map.class), ClassName.get(String.class), item));</span>
+      } else {
+<span class="fc" id="L112">        retval = ObjectUtils.notNull(ParameterizedTypeName.get(ClassName.get(List.class), item));</span>
+      }
+    } else {
+<span class="fc" id="L115">      retval = item;</span>
+    }
+
+<span class="fc" id="L118">    return retval;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

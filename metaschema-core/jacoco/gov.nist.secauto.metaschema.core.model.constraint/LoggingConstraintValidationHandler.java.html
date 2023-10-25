@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoggingConstraintValidationHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.constraint</a> &gt; <span class="el_source">LoggingConstraintValidationHandler.java</span></div><h1>LoggingConstraintValidationHandler.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.constraint;
+
+import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.MetapathException;
+import gov.nist.secauto.metaschema.core.metapath.format.IPathFormatter;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.Level;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import org.apache.logging.log4j.LogBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+<span class="nc" id="L48">public class LoggingConstraintValidationHandler</span>
+    extends AbstractConstraintValidationHandler {
+<span class="nc" id="L50">  private static final Logger LOGGER = LogManager.getLogger(DefaultConstraintValidator.class);</span>
+<span class="nc" id="L51">  @NonNull</span>
+  private IPathFormatter pathFormatter = IPathFormatter.METAPATH_PATH_FORMATER;
+
+  @Override
+  @NonNull
+  public IPathFormatter getPathFormatter() {
+<span class="nc" id="L57">    return pathFormatter;</span>
+  }
+
+  public void setPathFormatter(@NonNull IPathFormatter pathFormatter) {
+<span class="nc" id="L61">    this.pathFormatter = Objects.requireNonNull(pathFormatter, &quot;pathFormatter&quot;);</span>
+<span class="nc" id="L62">  }</span>
+
+  protected LogBuilder getLogBuilder(@NonNull Level level) {
+    LogBuilder retval;
+<span class="nc bnc" id="L66" title="All 5 branches missed.">    switch (level) {</span>
+    case CRITICAL:
+<span class="nc" id="L68">      retval = LOGGER.atFatal();</span>
+<span class="nc" id="L69">      break;</span>
+    case ERROR:
+<span class="nc" id="L71">      retval = LOGGER.atError();</span>
+<span class="nc" id="L72">      break;</span>
+    case WARNING:
+<span class="nc" id="L74">      retval = LOGGER.atWarn();</span>
+<span class="nc" id="L75">      break;</span>
+    case INFORMATIONAL:
+<span class="nc" id="L77">      retval = LOGGER.atInfo();</span>
+<span class="nc" id="L78">      break;</span>
+    default:
+<span class="nc" id="L80">      throw new UnsupportedOperationException(String.format(&quot;unsupported level '%s'&quot;, level));</span>
+    }
+<span class="nc" id="L82">    return retval;</span>
+  }
+
+  @Override
+  protected String toPath(@NonNull INodeItem nodeItem) {
+<span class="nc" id="L87">    return nodeItem.toPath(getPathFormatter());</span>
+  }
+
+  protected boolean isLogged(@NonNull Level level) {
+    boolean retval;
+<span class="nc bnc" id="L92" title="All 5 branches missed.">    switch (level) {</span>
+    case CRITICAL:
+<span class="nc" id="L94">      retval = LOGGER.isFatalEnabled();</span>
+<span class="nc" id="L95">      break;</span>
+    case ERROR:
+<span class="nc" id="L97">      retval = LOGGER.isErrorEnabled();</span>
+<span class="nc" id="L98">      break;</span>
+    case WARNING:
+<span class="nc" id="L100">      retval = LOGGER.isWarnEnabled();</span>
+<span class="nc" id="L101">      break;</span>
+    case INFORMATIONAL:
+<span class="nc" id="L103">      retval = LOGGER.isInfoEnabled();</span>
+<span class="nc" id="L104">      break;</span>
+    default:
+<span class="nc" id="L106">      throw new UnsupportedOperationException(String.format(&quot;unsupported level '%s'&quot;, level));</span>
+    }
+<span class="nc" id="L108">    return retval;</span>
+  }
+
+  protected void logConstraint(
+      @NonNull Level level,
+      @NonNull INodeItem node,
+      @NonNull CharSequence message,
+      @Nullable Throwable cause) {
+<span class="nc" id="L116">    LogBuilder builder = getLogBuilder(level);</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">    if (cause != null) {</span>
+<span class="nc" id="L118">      builder.withThrowable(cause);</span>
+    }
+
+<span class="nc" id="L121">    builder.log(&quot;{}: ({}) {}&quot;, level.name(), toPath(node), message);</span>
+<span class="nc" id="L122">  }</span>
+
+  @Override
+  public void handleCardinalityMinimumViolation(
+      @NonNull ICardinalityConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull ISequence&lt;? extends INodeItem&gt; targets) {
+<span class="nc" id="L129">    Level level = constraint.getLevel();</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">    if (isLogged(level)) {</span>
+<span class="nc" id="L131">      logConstraint(level, node, newCardinalityMinimumViolationMessage(constraint, node, targets), null);</span>
+    }
+<span class="nc" id="L133">  }</span>
+
+  @Override
+  public void handleCardinalityMaximumViolation(
+      @NonNull ICardinalityConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull ISequence&lt;? extends INodeItem&gt; targets) {
+<span class="nc" id="L140">    Level level = constraint.getLevel();</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">    if (isLogged(level)) {</span>
+<span class="nc" id="L142">      logConstraint(level, node, newCardinalityMaximumViolationMessage(constraint, node, targets), null);</span>
+    }
+<span class="nc" id="L144">  }</span>
+
+  @Override
+  public void handleIndexDuplicateKeyViolation(
+      @NonNull IIndexConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem oldItem,
+      @NonNull INodeItem target) {
+<span class="nc" id="L152">    Level level = constraint.getLevel();</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">    if (isLogged(level)) {</span>
+<span class="nc" id="L154">      logConstraint(level, target, newIndexDuplicateKeyViolationMessage(constraint, node, oldItem, target), null);</span>
+    }
+<span class="nc" id="L156">  }</span>
+
+  @Override
+  public void handleUniqueKeyViolation(
+      @NonNull IUniqueConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem oldItem,
+      @NonNull INodeItem target) {
+<span class="nc" id="L164">    Level level = constraint.getLevel();</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">    if (isLogged(level)) {</span>
+<span class="nc" id="L166">      logConstraint(level, target, newUniqueKeyViolationMessage(constraint, node, oldItem, target), null);</span>
+    }
+<span class="nc" id="L168">  }</span>
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public void handleKeyMatchError(
+      @NonNull IKeyConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull MetapathException cause) {
+<span class="nc" id="L177">    Level level = constraint.getLevel();</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">    if (isLogged(level)) {</span>
+<span class="nc" id="L179">      logConstraint(level, target, cause.getLocalizedMessage(), cause);</span>
+    }
+<span class="nc" id="L181">  }</span>
+
+  @Override
+  public void handleMatchPatternViolation(
+      @NonNull IMatchesConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull String value) {
+<span class="nc" id="L189">    Level level = constraint.getLevel();</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">    if (isLogged(level)) {</span>
+<span class="nc" id="L191">      logConstraint(level, target, newMatchPatternViolationMessage(constraint, node, target, value), null);</span>
+    }
+<span class="nc" id="L193">  }</span>
+
+  @Override
+  public void handleMatchDatatypeViolation(
+      @NonNull IMatchesConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull String value,
+      @NonNull IllegalArgumentException cause) {
+<span class="nc" id="L202">    Level level = constraint.getLevel();</span>
+<span class="nc bnc" id="L203" title="All 2 branches missed.">    if (isLogged(level)) {</span>
+<span class="nc" id="L204">      logConstraint(level, target, newMatchDatatypeViolationMessage(constraint, node, target, value), cause);</span>
+    }
+<span class="nc" id="L206">  }</span>
+
+  @Override
+  public void handleExpectViolation(
+      @NonNull IExpectConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull DynamicContext dynamicContext) {
+<span class="nc" id="L214">    Level level = constraint.getLevel();</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">    if (isLogged(level)) {</span>
+<span class="nc" id="L216">      logConstraint(level, target, newExpectViolationMessage(constraint, node, target, dynamicContext), null);</span>
+    }
+<span class="nc" id="L218">  }</span>
+
+  @Override
+  public void handleAllowedValuesViolation(@NonNull List&lt;IAllowedValuesConstraint&gt; failedConstraints,
+      @NonNull INodeItem target) {
+
+<span class="nc" id="L224">    Level level = ObjectUtils.notNull(failedConstraints.stream()</span>
+<span class="nc" id="L225">        .map(IConstraint::getLevel)</span>
+<span class="nc" id="L226">        .max(Comparator.comparing(Level::ordinal))</span>
+<span class="nc" id="L227">        .get());</span>
+<span class="nc bnc" id="L228" title="All 2 branches missed.">    if (isLogged(level)) {</span>
+<span class="nc" id="L229">      logConstraint(level, target, newAllowedValuesViolationMessage(failedConstraints, target), null);</span>
+    }
+<span class="nc" id="L231">  }</span>
+
+  @Override
+  public void handleIndexDuplicateViolation(IIndexConstraint constraint, INodeItem node) {
+<span class="nc" id="L235">    Level level = Level.CRITICAL;</span>
+<span class="nc bnc" id="L236" title="All 2 branches missed.">    if (isLogged(level)) {</span>
+<span class="nc" id="L237">      logConstraint(level, node, newIndexDuplicateViolationMessage(constraint, node), null);</span>
+    }
+<span class="nc" id="L239">  }</span>
+
+  @Override
+  public void handleIndexMiss(IIndexHasKeyConstraint constraint, INodeItem node, INodeItem target, List&lt;String&gt; key) {
+<span class="nc" id="L243">    Level level = constraint.getLevel();</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">    if (isLogged(level)) {</span>
+<span class="nc" id="L245">      logConstraint(level, node, newIndexMissMessage(constraint, node, target, key), null);</span>
+    }
+<span class="nc" id="L247">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

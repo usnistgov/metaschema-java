@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractClassBinding.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.model</a> &gt; <span class="el_source">AbstractClassBinding.java</span></div><h1>AbstractClassBinding.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.model;
+
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Locale;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+abstract class AbstractClassBinding implements IClassBinding {
+  // private static final Logger logger =
+  // LogManager.getLogger(AbstractClassBinding.class);
+
+  @NonNull
+  private final IBindingContext bindingContext;
+  @NonNull
+  private final Class&lt;?&gt; clazz;
+  private final Method beforeDeserializeMethod;
+  private final Method afterDeserializeMethod;
+  // REFACTOR: use lazy instead
+  private IModule module;
+
+  /**
+   * Construct a new class binding for the provided class.
+   *
+   * @param clazz
+   *          the bound class
+   * @param bindingContext
+   *          the class binding context for which this class is participating
+   */
+<span class="fc" id="L63">  public AbstractClassBinding(@NonNull Class&lt;?&gt; clazz, @NonNull IBindingContext bindingContext) {</span>
+<span class="fc" id="L64">    this.bindingContext = ObjectUtils.requireNonNull(bindingContext, &quot;bindingContext&quot;);</span>
+<span class="fc" id="L65">    this.clazz = ObjectUtils.requireNonNull(clazz, &quot;clazz&quot;);</span>
+<span class="fc" id="L66">    this.beforeDeserializeMethod = ClassIntrospector.getMatchingMethod(clazz, &quot;beforeDeserialize&quot;, Object.class);</span>
+<span class="fc" id="L67">    this.afterDeserializeMethod = ClassIntrospector.getMatchingMethod(clazz, &quot;afterDeserialize&quot;, Object.class);</span>
+<span class="fc" id="L68">  }</span>
+
+  @Override
+  public boolean isInline() {
+<span class="nc bnc" id="L72" title="All 2 branches missed.">    return getBoundClass().getEnclosingClass() != null;</span>
+  }
+
+  @Override
+  public Class&lt;?&gt; getBoundClass() {
+<span class="fc" id="L77">    return clazz;</span>
+  }
+
+  @Override
+  public IBindingContext getBindingContext() {
+<span class="fc" id="L82">    return bindingContext;</span>
+  }
+
+  @Override
+  public String getUseName() { // NOPMD
+    // a use name is never provided
+<span class="fc" id="L88">    return null;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public String toCoordinates() {
+<span class="nc" id="L94">    return String.format(&quot;%s IClassBinding(%s): %s&quot;, getModelType().name().toLowerCase(Locale.ROOT), getName(),</span>
+<span class="nc" id="L95">        getBoundClass().getName());</span>
+  }
+
+  @Override
+  public @NonNull ModuleScopeEnum getModuleScope() {
+    // TODO: is this the right value?
+<span class="fc" id="L101">    return ModuleScopeEnum.INHERITED;</span>
+  }
+
+  protected abstract Class&lt;? extends IModule&gt; getModuleClass();
+
+  @SuppressWarnings(&quot;null&quot;)
+  @NonNull
+  protected IModule initModule() {
+<span class="fc" id="L109">    synchronized (this) {</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">      if (module == null) {</span>
+<span class="fc" id="L111">        Class&lt;? extends IModule&gt; metaschemaClass = getModuleClass();</span>
+<span class="fc" id="L112">        module = getBindingContext().getModuleByClass(metaschemaClass);</span>
+      }
+<span class="fc" id="L114">      return module;</span>
+    }
+  }
+
+  @Override
+  public IModule getContainingModule() {
+<span class="fc" id="L120">    return initModule();</span>
+  }
+
+  /**
+   * Gets a new instance of the bound class.
+   *
+   * @param &lt;CLASS&gt;
+   *          the type of the bound class
+   * @return a Java object for the class
+   * @throws BindingException
+   *           if the instance cannot be created due to a binding error
+   */
+  @Override
+  @NonNull
+  public &lt;CLASS&gt; CLASS newInstance() throws BindingException {
+<span class="fc" id="L135">    Class&lt;?&gt; clazz = getBoundClass();</span>
+    try {
+<span class="fc" id="L137">      @SuppressWarnings(&quot;unchecked&quot;) Constructor&lt;CLASS&gt; constructor</span>
+<span class="fc" id="L138">          = (Constructor&lt;CLASS&gt;) clazz.getDeclaredConstructor();</span>
+<span class="fc" id="L139">      return ObjectUtils.notNull(constructor.newInstance());</span>
+<span class="nc" id="L140">    } catch (NoSuchMethodException ex) {</span>
+<span class="nc" id="L141">      String msg = String.format(&quot;Class '%s' does not have a required no-arg constructor.&quot;, clazz.getName());</span>
+<span class="nc" id="L142">      throw new BindingException(msg, ex);</span>
+<span class="nc" id="L143">    } catch (InstantiationException | IllegalAccessException | IllegalArgumentException</span>
+        | InvocationTargetException ex) {
+<span class="nc" id="L145">      throw new BindingException(ex);</span>
+    }
+  }
+
+  /**
+   * Calls the method named &quot;beforeDeserialize&quot; on each class in the object's
+   * hierarchy if the method exists on the class.
+   * &lt;p&gt;
+   * These methods can be used to set the initial state of the target bound object
+   * before data is read and applied during deserialization.
+   *
+   * @param targetObject
+   *          the data object target to call the method(s) on
+   * @param parentObject
+   *          the object target's parent object, which is used as the method
+   *          argument
+   * @throws BindingException
+   *           if an error occurs while calling the method
+   */
+  @Override
+  public void callBeforeDeserialize(Object targetObject, Object parentObject) throws BindingException {
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">    if (beforeDeserializeMethod != null) {</span>
+      try {
+<span class="nc" id="L168">        beforeDeserializeMethod.invoke(targetObject, parentObject);</span>
+<span class="nc" id="L169">      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {</span>
+<span class="nc" id="L170">        throw new BindingException(ex);</span>
+<span class="nc" id="L171">      }</span>
+    }
+<span class="fc" id="L173">  }</span>
+
+  /**
+   * Calls the method named &quot;afterDeserialize&quot; on each class in the object's
+   * hierarchy if the method exists.
+   * &lt;p&gt;
+   * These methods can be used to modify the state of the target bound object
+   * after data is read and applied during deserialization.
+   *
+   * @param targetObject
+   *          the data object target to call the method(s) on
+   * @param parentObject
+   *          the object target's parent object, which is used as the method
+   *          argument
+   * @throws BindingException
+   *           if an error occurs while calling the method
+   */
+  @Override
+  public void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">    if (afterDeserializeMethod != null) {</span>
+      try {
+<span class="nc" id="L194">        afterDeserializeMethod.invoke(targetObject, parentObject);</span>
+<span class="nc" id="L195">      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {</span>
+<span class="nc" id="L196">        throw new BindingException(ex);</span>
+<span class="nc" id="L197">      }</span>
+    }
+<span class="fc" id="L199">  }</span>
+
+  @Override
+  public Object copyBoundObject(Object item, Object parentInstance) throws BindingException {
+<span class="nc" id="L203">    Object instance = newInstance();</span>
+
+<span class="nc" id="L205">    callBeforeDeserialize(instance, parentInstance);</span>
+
+<span class="nc" id="L207">    copyBoundObjectInternal(item, instance);</span>
+
+<span class="nc" id="L209">    callAfterDeserialize(instance, parentInstance);</span>
+
+<span class="nc" id="L211">    return instance;</span>
+  }
+
+  protected void copyBoundObjectInternal(@NonNull Object fromInstance, @NonNull Object toInstance)
+      throws BindingException {
+<span class="nc bnc" id="L216" title="All 2 branches missed.">    for (IBoundFlagInstance property : getFlagInstances()) {</span>
+<span class="nc" id="L217">      property.copyBoundObject(fromInstance, toInstance);</span>
+<span class="nc" id="L218">    }</span>
+<span class="nc" id="L219">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

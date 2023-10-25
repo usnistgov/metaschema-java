@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/*</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * Portions of this software was developed by employees of the National Institute</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * of Standards and Technology (NIST), an agency of the Federal Government and is</a>
+<span class="sourceLineNo">004</span><a id="line.4"> * being made available as a public service. Pursuant to title 17 United States</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * Code Section 105, works of NIST employees are not subject to copyright</a>
+<span class="sourceLineNo">006</span><a id="line.6"> * protection in the United States. This software may be subject to foreign</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * copyright. Permission in the United States and in foreign countries, to the</a>
+<span class="sourceLineNo">008</span><a id="line.8"> * extent that NIST may hold copyright, to use, copy, modify, create derivative</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * works, and distribute this software and its documentation without fee is hereby</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * granted on a non-exclusive basis, provided that this notice and disclaimer</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * of warranty appears in all copies.</a>
+<span class="sourceLineNo">012</span><a id="line.12"> *</a>
+<span class="sourceLineNo">013</span><a id="line.13"> * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE</a>
+<span class="sourceLineNo">018</span><a id="line.18"> * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR</a>
+<span class="sourceLineNo">023</span><a id="line.23"> * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.</a>
+<span class="sourceLineNo">025</span><a id="line.25"> */</a>
+<span class="sourceLineNo">026</span><a id="line.26"></a>
+<span class="sourceLineNo">027</span><a id="line.27">package gov.nist.secauto.metaschema.core.util;</a>
+<span class="sourceLineNo">028</span><a id="line.28"></a>
+<span class="sourceLineNo">029</span><a id="line.29">import edu.umd.cs.findbugs.annotations.NonNull;</a>
+<span class="sourceLineNo">030</span><a id="line.30">import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;</a>
+<span class="sourceLineNo">031</span><a id="line.31"></a>
+<span class="sourceLineNo">032</span><a id="line.32">/**</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * Wraps a resource to make it {@link AutoCloseable}.</a>
+<span class="sourceLineNo">034</span><a id="line.34"> *</a>
+<span class="sourceLineNo">035</span><a id="line.35"> * @param &lt;T&gt;</a>
+<span class="sourceLineNo">036</span><a id="line.36"> *          the resource type</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * @param &lt;E&gt;</a>
+<span class="sourceLineNo">038</span><a id="line.38"> *          the exception type that may be thrown if an error occurs when</a>
+<span class="sourceLineNo">039</span><a id="line.39"> *          closing the resource</a>
+<span class="sourceLineNo">040</span><a id="line.40"> */</a>
+<span class="sourceLineNo">041</span><a id="line.41">public class AutoCloser&lt;T, E extends Exception&gt; implements AutoCloseable {</a>
+<span class="sourceLineNo">042</span><a id="line.42">  @NonNull</a>
+<span class="sourceLineNo">043</span><a id="line.43">  private final T resource;</a>
+<span class="sourceLineNo">044</span><a id="line.44">  @NonNull</a>
+<span class="sourceLineNo">045</span><a id="line.45">  private final Closer&lt;T, E&gt; closeLambda;</a>
+<span class="sourceLineNo">046</span><a id="line.46"></a>
+<span class="sourceLineNo">047</span><a id="line.47">  /**</a>
+<span class="sourceLineNo">048</span><a id="line.48">   * Adapt the the provided {@code resource} to be {@link AutoCloseable}, using a</a>
+<span class="sourceLineNo">049</span><a id="line.49">   * provided closer {@code lambda}.</a>
+<span class="sourceLineNo">050</span><a id="line.50">   *</a>
+<span class="sourceLineNo">051</span><a id="line.51">   * @param &lt;T&gt;</a>
+<span class="sourceLineNo">052</span><a id="line.52">   *          the resource's type</a>
+<span class="sourceLineNo">053</span><a id="line.53">   * @param &lt;E&gt;</a>
+<span class="sourceLineNo">054</span><a id="line.54">   *          the exception type that can be thrown when closing</a>
+<span class="sourceLineNo">055</span><a id="line.55">   * @param resource</a>
+<span class="sourceLineNo">056</span><a id="line.56">   *          the object to adapt</a>
+<span class="sourceLineNo">057</span><a id="line.57">   * @param lambda</a>
+<span class="sourceLineNo">058</span><a id="line.58">   *          the lambda to use as a callback on close</a>
+<span class="sourceLineNo">059</span><a id="line.59">   * @return the resource wrapped in an {@link AutoCloseable}</a>
+<span class="sourceLineNo">060</span><a id="line.60">   */</a>
+<span class="sourceLineNo">061</span><a id="line.61">  @NonNull</a>
+<span class="sourceLineNo">062</span><a id="line.62">  public static &lt;T, E extends Exception&gt; AutoCloser&lt;T, E&gt; autoClose(</a>
+<span class="sourceLineNo">063</span><a id="line.63">      @NonNull T resource,</a>
+<span class="sourceLineNo">064</span><a id="line.64">      @NonNull Closer&lt;T, E&gt; lambda) {</a>
+<span class="sourceLineNo">065</span><a id="line.65">    return new AutoCloser&lt;&gt;(resource, lambda);</a>
+<span class="sourceLineNo">066</span><a id="line.66">  }</a>
+<span class="sourceLineNo">067</span><a id="line.67"></a>
+<span class="sourceLineNo">068</span><a id="line.68">  /**</a>
+<span class="sourceLineNo">069</span><a id="line.69">   * Adapt the provided {@code resource} to be {@link AutoCloseable}, using a</a>
+<span class="sourceLineNo">070</span><a id="line.70">   * provided closer {@code lambda}.</a>
+<span class="sourceLineNo">071</span><a id="line.71">   *</a>
+<span class="sourceLineNo">072</span><a id="line.72">   * @param resource</a>
+<span class="sourceLineNo">073</span><a id="line.73">   *          the object to adapt</a>
+<span class="sourceLineNo">074</span><a id="line.74">   * @param lambda</a>
+<span class="sourceLineNo">075</span><a id="line.75">   *          the lambda to use as a callback on close</a>
+<span class="sourceLineNo">076</span><a id="line.76">   */</a>
+<span class="sourceLineNo">077</span><a id="line.77">  public AutoCloser(@NonNull T resource, @NonNull Closer&lt;T, E&gt; lambda) {</a>
+<span class="sourceLineNo">078</span><a id="line.78">    this.resource = resource;</a>
+<span class="sourceLineNo">079</span><a id="line.79">    this.closeLambda = lambda;</a>
+<span class="sourceLineNo">080</span><a id="line.80">  }</a>
+<span class="sourceLineNo">081</span><a id="line.81"></a>
+<span class="sourceLineNo">082</span><a id="line.82">  /**</a>
+<span class="sourceLineNo">083</span><a id="line.83">   * Get the wrapped resource.</a>
+<span class="sourceLineNo">084</span><a id="line.84">   *</a>
+<span class="sourceLineNo">085</span><a id="line.85">   * @return the resource object</a>
+<span class="sourceLineNo">086</span><a id="line.86">   */</a>
+<span class="sourceLineNo">087</span><a id="line.87">  @NonNull</a>
+<span class="sourceLineNo">088</span><a id="line.88">  public T getResource() {</a>
+<span class="sourceLineNo">089</span><a id="line.89">    return resource;</a>
+<span class="sourceLineNo">090</span><a id="line.90">  }</a>
+<span class="sourceLineNo">091</span><a id="line.91"></a>
+<span class="sourceLineNo">092</span><a id="line.92">  @Override</a>
+<span class="sourceLineNo">093</span><a id="line.93">  @SuppressFBWarnings("THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION")</a>
+<span class="sourceLineNo">094</span><a id="line.94">  public void close() throws E {</a>
+<span class="sourceLineNo">095</span><a id="line.95">    closeLambda.close(getResource());</a>
+<span class="sourceLineNo">096</span><a id="line.96">  }</a>
+<span class="sourceLineNo">097</span><a id="line.97"></a>
+<span class="sourceLineNo">098</span><a id="line.98">  @FunctionalInterface</a>
+<span class="sourceLineNo">099</span><a id="line.99">  public interface Closer&lt;T, E extends Exception&gt; {</a>
+<span class="sourceLineNo">100</span><a id="line.100">    /**</a>
+<span class="sourceLineNo">101</span><a id="line.101">     * This method is called to auto-close the resource.</a>
+<span class="sourceLineNo">102</span><a id="line.102">     *</a>
+<span class="sourceLineNo">103</span><a id="line.103">     * @param object</a>
+<span class="sourceLineNo">104</span><a id="line.104">     *          the resource to auto-close</a>
+<span class="sourceLineNo">105</span><a id="line.105">     * @throws E</a>
+<span class="sourceLineNo">106</span><a id="line.106">     *           the exception type that can be thrown when closing</a>
+<span class="sourceLineNo">107</span><a id="line.107">     */</a>
+<span class="sourceLineNo">108</span><a id="line.108">    @SuppressFBWarnings("THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION")</a>
+<span class="sourceLineNo">109</span><a id="line.109">    void close(@NonNull T object) throws E;</a>
+<span class="sourceLineNo">110</span><a id="line.110">  }</a>
+<span class="sourceLineNo">111</span><a id="line.111">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

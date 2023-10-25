@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XmlSchemaGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema XML and JSON Schema Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.schemagen.xml</a> &gt; <span class="el_source">XmlSchemaGenerator.java</span></div><h1>XmlSchemaGenerator.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.schemagen.xml; // NOPMD
+
+import com.ctc.wstx.stax.WstxOutputFactory;
+
+import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.util.AutoCloser;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.schemagen.AbstractSchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
+import gov.nist.secauto.metaschema.schemagen.SchemaGenerationFeature;
+import gov.nist.secauto.metaschema.schemagen.xml.datatype.XmlDatatypeManager;
+import gov.nist.secauto.metaschema.schemagen.xml.impl.XmlGenerationState;
+import gov.nist.secauto.metaschema.schemagen.xml.schematype.IXmlType;
+
+import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.Serializer;
+import net.sf.saxon.s9api.Xslt30Transformer;
+import net.sf.saxon.s9api.XsltCompiler;
+import net.sf.saxon.s9api.XsltExecutable;
+
+import org.codehaus.stax2.XMLOutputFactory2;
+import org.codehaus.stax2.XMLStreamWriter2;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.stream.StreamSource;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+<span class="fc" id="L71">public class XmlSchemaGenerator</span>
+    extends AbstractSchemaGenerator&lt;
+        AutoCloser&lt;XMLStreamWriter2, SchemaGenerationException&gt;,
+        XmlDatatypeManager,
+        XmlGenerationState&gt; {
+  // private static final Logger LOGGER =
+  // LogManager.getLogger(XmlSchemaGenerator.class);
+
+  @NonNull
+  public static final String PREFIX_XML_SCHEMA = &quot;xs&quot;;
+  @NonNull
+  public static final String NS_XML_SCHEMA = &quot;http://www.w3.org/2001/XMLSchema&quot;;
+  @NonNull
+  private static final String PREFIX_XML_SCHEMA_VERSIONING = &quot;vs&quot;;
+  @NonNull
+  private static final String NS_XML_SCHEMA_VERSIONING = &quot;http://www.w3.org/2007/XMLSchema-versioning&quot;;
+  @NonNull
+  public static final String NS_XHTML = &quot;http://www.w3.org/1999/xhtml&quot;;
+
+  @NonNull
+  private final XMLOutputFactory2 xmlOutputFactory;
+
+  @NonNull
+  private static XMLOutputFactory2 defaultXMLOutputFactory() {
+<span class="fc" id="L95">    XMLOutputFactory2 xmlOutputFactory = (XMLOutputFactory2) XMLOutputFactory.newInstance();</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">    assert xmlOutputFactory instanceof WstxOutputFactory;</span>
+<span class="fc" id="L97">    xmlOutputFactory.configureForSpeed();</span>
+<span class="fc" id="L98">    xmlOutputFactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);</span>
+<span class="fc" id="L99">    return xmlOutputFactory;</span>
+  }
+
+  public XmlSchemaGenerator() {
+<span class="fc" id="L103">    this(defaultXMLOutputFactory());</span>
+<span class="fc" id="L104">  }</span>
+
+  @SuppressFBWarnings(&quot;EI_EXPOSE_REP2&quot;)
+<span class="fc" id="L107">  public XmlSchemaGenerator(@NonNull XMLOutputFactory2 xmlOutputFactory) {</span>
+<span class="fc" id="L108">    this.xmlOutputFactory = xmlOutputFactory;</span>
+<span class="fc" id="L109">  }</span>
+
+  protected XMLOutputFactory2 getXmlOutputFactory() {
+<span class="fc" id="L112">    return xmlOutputFactory;</span>
+  }
+
+  @Override
+  protected AutoCloser&lt;XMLStreamWriter2, SchemaGenerationException&gt; newWriter(
+      Writer out) {
+    XMLStreamWriter2 writer;
+    try {
+<span class="fc" id="L120">      writer = ObjectUtils.notNull((XMLStreamWriter2) getXmlOutputFactory().createXMLStreamWriter(out));</span>
+<span class="nc" id="L121">    } catch (XMLStreamException ex) {</span>
+<span class="nc" id="L122">      throw new SchemaGenerationException(ex);</span>
+<span class="fc" id="L123">    }</span>
+<span class="fc" id="L124">    return AutoCloser.autoClose(writer, t -&gt; {</span>
+      try {
+<span class="nc" id="L126">        t.close();</span>
+<span class="nc" id="L127">      } catch (XMLStreamException ex) {</span>
+<span class="nc" id="L128">        throw new SchemaGenerationException(ex);</span>
+<span class="nc" id="L129">      }</span>
+<span class="nc" id="L130">    });</span>
+  }
+
+  @Override
+  protected XmlGenerationState newGenerationState(
+      IModule module,
+      AutoCloser&lt;XMLStreamWriter2, SchemaGenerationException&gt; schemaWriter,
+      IConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; configuration) {
+<span class="fc" id="L138">    return new XmlGenerationState(module, schemaWriter, configuration);</span>
+  }
+
+  @Override
+  public void generateFromModule(
+      @NonNull IModule module,
+      @NonNull Writer out,
+      @NonNull IConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; configuration) {
+<span class="fc" id="L146">    try (StringWriter stringWriter = new StringWriter()) {</span>
+<span class="fc" id="L147">      super.generateFromModule(module, stringWriter, configuration);</span>
+<span class="fc" id="L148">      stringWriter.flush();</span>
+
+<span class="fc" id="L150">      try (StringReader stringReader = new StringReader(stringWriter.toString())) {</span>
+<span class="fc" id="L151">        Processor processor = new Processor(false);</span>
+<span class="fc" id="L152">        XsltCompiler compiler = processor.newXsltCompiler();</span>
+<span class="fc" id="L153">        try (InputStream is = getClass().getResourceAsStream(&quot;/identity.xsl&quot;)) {</span>
+<span class="fc" id="L154">          XsltExecutable stylesheet = compiler.compile(new StreamSource(is));</span>
+<span class="fc" id="L155">          Xslt30Transformer transformer = stylesheet.load30();</span>
+<span class="fc" id="L156">          Serializer serializer = processor.newSerializer(out);</span>
+<span class="fc" id="L157">          StreamSource source = new StreamSource(stringReader);</span>
+<span class="fc" id="L158">          transformer.transform(source, serializer);</span>
+        }
+      }
+<span class="nc" id="L161">    } catch (IOException | SaxonApiException ex) {</span>
+<span class="nc" id="L162">      throw new SchemaGenerationException(ex);</span>
+<span class="fc" id="L163">    }</span>
+<span class="fc" id="L164">  }</span>
+
+  @Override
+  protected void generateSchema(XmlGenerationState state) {
+
+    try {
+<span class="fc" id="L170">      String targetNS = state.getDefaultNS();</span>
+
+      // analyze all definitions
+<span class="fc" id="L173">      Map&lt;String, String&gt; prefixToNamespaceMap = new HashMap&lt;&gt;(); // NOPMD concurrency not needed</span>
+<span class="fc" id="L174">      final List&lt;IAssemblyDefinition&gt; rootAssemblyDefinitions = analyzeDefinitions(</span>
+          state,
+          (entry, definition) -&gt; {
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">            assert entry != null;</span>
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">            assert definition != null;</span>
+<span class="fc" id="L179">            IXmlType type = state.getTypeForDefinition(definition);</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">            if (!entry.isInline()) {</span>
+<span class="fc" id="L181">              QName qname = type.getQName();</span>
+<span class="fc" id="L182">              String namespace = qname.getNamespaceURI();</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">              if (!targetNS.equals(namespace)) {</span>
+                // collect namespaces and prefixes for definitions with a different namespace
+<span class="nc" id="L185">                prefixToNamespaceMap.computeIfAbsent(qname.getPrefix(), x -&gt; namespace);</span>
+              }
+            }
+<span class="fc" id="L188">          });</span>
+
+      // write some root elements
+<span class="fc" id="L191">      XMLStreamWriter2 writer = state.getXMLStreamWriter();</span>
+<span class="fc" id="L192">      writer.writeStartDocument(&quot;UTF-8&quot;, &quot;1.0&quot;);</span>
+<span class="fc" id="L193">      writer.writeStartElement(PREFIX_XML_SCHEMA, &quot;schema&quot;, NS_XML_SCHEMA);</span>
+<span class="fc" id="L194">      writer.writeDefaultNamespace(targetNS);</span>
+<span class="fc" id="L195">      writer.writeNamespace(PREFIX_XML_SCHEMA_VERSIONING, NS_XML_SCHEMA_VERSIONING);</span>
+
+      // write namespaces for all indexed definitions
+<span class="pc bpc" id="L198" title="1 of 2 branches missed.">      for (Map.Entry&lt;String, String&gt; entry : prefixToNamespaceMap.entrySet()) {</span>
+<span class="nc" id="L199">        state.writeNamespace(entry.getKey(), entry.getValue());</span>
+<span class="nc" id="L200">      }</span>
+
+<span class="fc" id="L202">      IModule module = state.getModule();</span>
+
+      // write remaining root attributes
+<span class="fc" id="L205">      writer.writeAttribute(&quot;targetNamespace&quot;, targetNS);</span>
+<span class="fc" id="L206">      writer.writeAttribute(&quot;elementFormDefault&quot;, &quot;qualified&quot;);</span>
+<span class="fc" id="L207">      writer.writeAttribute(NS_XML_SCHEMA_VERSIONING, &quot;minVersion&quot;, &quot;1.0&quot;);</span>
+<span class="fc" id="L208">      writer.writeAttribute(NS_XML_SCHEMA_VERSIONING, &quot;maxVersion&quot;, &quot;1.1&quot;);</span>
+<span class="fc" id="L209">      writer.writeAttribute(&quot;version&quot;, module.getVersion());</span>
+
+<span class="fc" id="L211">      generateSchemaMetadata(module, state);</span>
+
+<span class="fc bfc" id="L213" title="All 2 branches covered.">      for (IAssemblyDefinition definition : rootAssemblyDefinitions) {</span>
+<span class="fc" id="L214">        QName xmlQName = definition.getRootXmlQName();</span>
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">        if (xmlQName != null</span>
+<span class="pc bpc" id="L216" title="2 of 4 branches missed.">            &amp;&amp; (xmlQName.getNamespaceURI() == null || state.getDefaultNS().equals(xmlQName.getNamespaceURI()))) {</span>
+<span class="fc" id="L217">          generateRootElement(definition, state);</span>
+        }
+<span class="fc" id="L219">      }</span>
+
+<span class="fc" id="L221">      state.generateXmlTypes();</span>
+
+<span class="fc" id="L223">      writer.writeEndElement(); // xs:schema</span>
+<span class="fc" id="L224">      writer.writeEndDocument();</span>
+<span class="fc" id="L225">      writer.flush();</span>
+<span class="nc" id="L226">    } catch (XMLStreamException ex) {</span>
+<span class="nc" id="L227">      throw new SchemaGenerationException(ex);</span>
+<span class="fc" id="L228">    }</span>
+<span class="fc" id="L229">  }</span>
+
+  protected static void generateSchemaMetadata(
+      @NonNull IModule module,
+      @NonNull XmlGenerationState state)
+      throws XMLStreamException {
+<span class="fc" id="L235">    String targetNS = ObjectUtils.notNull(module.getXmlNamespace().toASCIIString());</span>
+<span class="fc" id="L236">    state.writeStartElement(PREFIX_XML_SCHEMA, &quot;annotation&quot;, NS_XML_SCHEMA);</span>
+<span class="fc" id="L237">    state.writeStartElement(PREFIX_XML_SCHEMA, &quot;appinfo&quot;, NS_XML_SCHEMA);</span>
+
+<span class="fc" id="L239">    state.writeStartElement(targetNS, &quot;schema-name&quot;);</span>
+
+<span class="fc" id="L241">    module.getName().writeXHtml(targetNS, state.getXMLStreamWriter());</span>
+
+<span class="fc" id="L243">    state.writeEndElement();</span>
+
+<span class="fc" id="L245">    state.writeStartElement(targetNS, &quot;schema-version&quot;);</span>
+<span class="fc" id="L246">    state.writeCharacters(module.getVersion());</span>
+<span class="fc" id="L247">    state.writeEndElement();</span>
+
+<span class="fc" id="L249">    state.writeStartElement(targetNS, &quot;short-name&quot;);</span>
+<span class="fc" id="L250">    state.writeCharacters(module.getShortName());</span>
+<span class="fc" id="L251">    state.writeEndElement();</span>
+
+<span class="fc" id="L253">    state.writeEndElement();</span>
+
+<span class="fc" id="L255">    MarkupMultiline remarks = module.getRemarks();</span>
+<span class="fc bfc" id="L256" title="All 2 branches covered.">    if (remarks != null) {</span>
+<span class="fc" id="L257">      state.writeStartElement(PREFIX_XML_SCHEMA, &quot;documentation&quot;, NS_XML_SCHEMA);</span>
+
+<span class="fc" id="L259">      remarks.writeXHtml(targetNS, state.getXMLStreamWriter());</span>
+<span class="fc" id="L260">      state.writeEndElement();</span>
+    }
+
+<span class="fc" id="L263">    state.writeEndElement();</span>
+<span class="fc" id="L264">  }</span>
+
+  private static void generateRootElement(@NonNull IAssemblyDefinition definition, @NonNull XmlGenerationState state)
+      throws XMLStreamException {
+<span class="pc bpc" id="L268" title="1 of 2 branches missed.">    assert definition.isRoot();</span>
+
+<span class="fc" id="L270">    XMLStreamWriter2 writer = state.getXMLStreamWriter();</span>
+<span class="fc" id="L271">    QName xmlQName = definition.getRootXmlQName();</span>
+
+<span class="fc" id="L273">    writer.writeStartElement(PREFIX_XML_SCHEMA, &quot;element&quot;, NS_XML_SCHEMA);</span>
+<span class="fc" id="L274">    writer.writeAttribute(&quot;name&quot;, xmlQName.getLocalPart());</span>
+<span class="fc" id="L275">    writer.writeAttribute(&quot;type&quot;, state.getTypeForDefinition(definition).getTypeReference());</span>
+
+<span class="fc" id="L277">    writer.writeEndElement();</span>
+<span class="fc" id="L278">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

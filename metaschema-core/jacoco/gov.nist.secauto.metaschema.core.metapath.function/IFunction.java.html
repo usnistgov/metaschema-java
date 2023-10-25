@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IFunction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath.function</a> &gt; <span class="el_source">IFunction.java</span></div><h1>IFunction.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath.function;
+
+import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.MetapathException;
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public interface IFunction {
+<span class="fc" id="L48">  enum FunctionProperty {</span>
+    /**
+     * Indicates that the function will produce identical results for the same
+     * arguments (see XPath 3.1 &lt;a href=
+     * &quot;https://www.w3.org/TR/xpath-functions-31/#dt-deterministic&quot;&gt;deterministic&lt;/a&gt;).
+     * If not assigned to a function definition, a function call with the same
+     * arguments is not guaranteed to produce the same results in the same order for
+     * subsequent calls within the same execution context.
+     */
+<span class="fc" id="L57">    DETERMINISTIC,</span>
+    /**
+     * Indicates that the result of the function depends on property values within
+     * the static or dynamic context and the provided arguments (see XPath 3.1
+     * &lt;a href=
+     * &quot;https://www.w3.org/TR/xpath-functions-31/#dt-context-dependent&quot;&gt;context-dependent&lt;/a&gt;).
+     * If not assigned to a function definition, a call will not be affected by the
+     * property values within the static or dynamic context and will not have any
+     * arguments.
+     */
+<span class="fc" id="L67">    CONTEXT_DEPENDENT,</span>
+    /**
+     * Indicates that the result of the function depends on the current focus (see
+     * XPath 3.1 &lt;a href=
+     * &quot;https://www.w3.org/TR/xpath-functions-31/#dt-focus-independent&quot;&gt;focus-dependent&lt;/a&gt;).
+     * If not assigned to a function definition, a call will not be affected by the
+     * current focus.
+     */
+<span class="fc" id="L75">    FOCUS_DEPENDENT,</span>
+    /**
+     * The function allows the last argument to be repeated any number of times.
+     */
+<span class="fc" id="L79">    UNBOUNDED_ARITY;</span>
+  }
+
+  /**
+   * Retrieve the name of the function.
+   *
+   * @return the function's name
+   */
+  @NonNull
+  String getName();
+
+  /**
+   * Retrieve the namespace of the function.
+   *
+   * @return the function's namespace
+   */
+  @NonNull
+  String getNamespace();
+
+  /**
+   * Retrieve the namespace qualified name of the function.
+   *
+   * @return the namespace qualified name
+   */
+  @NonNull
+  default QName getQName() {
+<span class="fc" id="L105">    return new QName(getNamespace(), getName());</span>
+  }
+
+  /**
+   * Retrieve the set of assigned function properties.
+   *
+   * @return the set of properties or an empty set
+   */
+  @NonNull
+  Set&lt;FunctionProperty&gt; getProperties();
+
+  /**
+   * Retrieve the list of function arguments.
+   *
+   * @return the function arguments or an empty list if there are none
+   */
+  @NonNull
+  List&lt;IArgument&gt; getArguments();
+
+  /**
+   * Determine the number of arguments the function has.
+   *
+   * @return the number of function arguments
+   */
+  int arity();
+
+  /**
+   * Determines if the result of the function call will produce identical results
+   * when provided the same implicit or explicit arguments.
+   *
+   * @return {@code true} if function is deterministic or {@code false} otherwise
+   * @see FunctionProperty#DETERMINISTIC
+   */
+  default boolean isDeterministic() {
+<span class="fc" id="L139">    return getProperties().contains(FunctionProperty.DETERMINISTIC);</span>
+  }
+
+  /**
+   * Determines if the result of the function call depends on property values
+   * within the static or dynamic context and the provided arguments.
+   *
+   * @return {@code true} if function is context dependent or {@code false}
+   *         otherwise
+   * @see FunctionProperty#CONTEXT_DEPENDENT
+   */
+  default boolean isContextDepenent() {
+<span class="nc" id="L151">    return getProperties().contains(FunctionProperty.CONTEXT_DEPENDENT);</span>
+  }
+
+  /**
+   * Determines if the result of the function call depends on the current focus.
+   *
+   * @return {@code true} if function is focus dependent or {@code false}
+   *         otherwise
+   * @see FunctionProperty#FOCUS_DEPENDENT
+   */
+  default boolean isFocusDepenent() {
+<span class="fc" id="L162">    return getProperties().contains(FunctionProperty.FOCUS_DEPENDENT);</span>
+  }
+
+  /**
+   * Determines if the final argument can be repeated.
+   *
+   * @return {@code true} if the final argument can be repeated or {@code false}
+   *         otherwise
+   * @see FunctionProperty#UNBOUNDED_ARITY
+   */
+  default boolean isArityUnbounded() {
+<span class="nc" id="L173">    return getProperties().contains(FunctionProperty.UNBOUNDED_ARITY);</span>
+  }
+
+  /**
+   * Retrieve the function result sequence type.
+   *
+   * @return the function result sequence type
+   */
+  @NonNull
+  ISequenceType getResult();
+
+  // /**
+  // * Determines by static analysis if the function supports the expression
+  // arguments provided.
+  // *
+  // * @param arguments
+  // * the expression arguments to evaluate
+  // * @return {@code true} if the arguments are supported or {@code false}
+  // otherwise
+  // */
+  // boolean isSupported(List&lt;IExpression&lt;?&gt;&gt; arguments);
+
+  @NonNull
+  ISequence&lt;?&gt; execute(
+      @NonNull List&lt;ISequence&lt;?&gt;&gt; arguments,
+      @NonNull DynamicContext dynamicContext,
+      @NonNull ISequence&lt;?&gt; focus) throws MetapathException;
+
+  /**
+   * Get the signature of the function as a string.
+   *
+   * @return the signature
+   */
+  String toSignature();
+
+  @NonNull
+  static Builder builder() {
+<span class="fc" id="L210">    return new Builder();</span>
+  }
+
+  @SuppressWarnings(&quot;PMD.LooseCoupling&quot;)
+<span class="fc" id="L214">  class Builder {</span>
+    private String name;
+    private String namespace;
+<span class="fc" id="L217">    @SuppressWarnings(&quot;null&quot;)</span>
+    @NonNull
+<span class="fc" id="L219">    private final EnumSet&lt;FunctionProperty&gt; properties = EnumSet.noneOf(FunctionProperty.class);</span>
+<span class="fc" id="L220">    @NonNull</span>
+    private final List&lt;IArgument&gt; arguments = new LinkedList&lt;&gt;();
+<span class="fc" id="L222">    private Class&lt;? extends IItem&gt; returnType = IItem.class;</span>
+<span class="fc" id="L223">    private Occurrence returnOccurrence = Occurrence.ONE;</span>
+    private IFunctionExecutor functionHandler;
+
+    @NonNull
+    public Builder name(@NonNull String name) {
+<span class="fc" id="L228">      Objects.requireNonNull(name, &quot;name&quot;);</span>
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">      if (name.isBlank()) {</span>
+<span class="nc" id="L230">        throw new IllegalArgumentException(&quot;the name must be non-blank&quot;);</span>
+      }
+<span class="fc" id="L232">      this.name = name.trim();</span>
+<span class="fc" id="L233">      return this;</span>
+    }
+
+    @NonNull
+    public Builder namespace(@NonNull URI uri) {
+<span class="fc" id="L238">      return namespace(ObjectUtils.notNull(uri.toASCIIString()));</span>
+    }
+
+    @NonNull
+    public Builder namespace(@NonNull String name) {
+<span class="fc" id="L243">      Objects.requireNonNull(name, &quot;name&quot;);</span>
+<span class="pc bpc" id="L244" title="1 of 2 branches missed.">      if (name.isBlank()) {</span>
+<span class="nc" id="L245">        throw new IllegalArgumentException(&quot;the name must be non-blank&quot;);</span>
+      }
+<span class="fc" id="L247">      this.namespace = name.trim();</span>
+<span class="fc" id="L248">      return this;</span>
+    }
+
+    @NonNull
+    public Builder deterministic() {
+<span class="fc" id="L253">      properties.add(FunctionProperty.DETERMINISTIC);</span>
+<span class="fc" id="L254">      return this;</span>
+    }
+
+    @NonNull
+    public Builder nonDeterministic() {
+<span class="nc" id="L259">      properties.remove(FunctionProperty.DETERMINISTIC);</span>
+<span class="nc" id="L260">      return this;</span>
+    }
+
+    @NonNull
+    public Builder contextDependent() {
+<span class="fc" id="L265">      properties.add(FunctionProperty.CONTEXT_DEPENDENT);</span>
+<span class="fc" id="L266">      return this;</span>
+    }
+
+    @NonNull
+    public Builder contextIndependent() {
+<span class="fc" id="L271">      properties.remove(FunctionProperty.CONTEXT_DEPENDENT);</span>
+<span class="fc" id="L272">      return this;</span>
+    }
+
+    @NonNull
+    public Builder focusDependent() {
+<span class="fc" id="L277">      properties.add(FunctionProperty.FOCUS_DEPENDENT);</span>
+<span class="fc" id="L278">      return this;</span>
+    }
+
+    @NonNull
+    public Builder focusIndependent() {
+<span class="fc" id="L283">      properties.remove(FunctionProperty.FOCUS_DEPENDENT);</span>
+<span class="fc" id="L284">      return this;</span>
+    }
+
+    @NonNull
+    public Builder allowUnboundedArity(boolean allow) {
+<span class="nc bnc" id="L289" title="All 2 branches missed.">      if (allow) {</span>
+<span class="nc" id="L290">        properties.add(FunctionProperty.UNBOUNDED_ARITY);</span>
+      } else {
+<span class="nc" id="L292">        properties.remove(FunctionProperty.UNBOUNDED_ARITY);</span>
+      }
+<span class="nc" id="L294">      return this;</span>
+    }
+
+    @NonNull
+    public Builder returnType(@NonNull Class&lt;? extends IItem&gt; type) {
+<span class="fc" id="L299">      Objects.requireNonNull(type, &quot;type&quot;);</span>
+<span class="fc" id="L300">      this.returnType = type;</span>
+<span class="fc" id="L301">      return this;</span>
+    }
+
+    @NonNull
+    public Builder returnZeroOrOne() {
+<span class="fc" id="L306">      return returnOccurrence(Occurrence.ZERO_OR_ONE);</span>
+    }
+
+    @NonNull
+    public Builder returnOne() {
+<span class="fc" id="L311">      return returnOccurrence(Occurrence.ONE);</span>
+    }
+
+    @NonNull
+    public Builder returnZeroOrMore() {
+<span class="fc" id="L316">      return returnOccurrence(Occurrence.ZERO_OR_MORE);</span>
+    }
+
+    @NonNull
+    public Builder returnOneOrMore() {
+<span class="nc" id="L321">      return returnOccurrence(Occurrence.ONE_OR_MORE);</span>
+    }
+
+    @NonNull
+    public Builder returnOccurrence(@NonNull Occurrence occurrence) {
+<span class="fc" id="L326">      Objects.requireNonNull(occurrence, &quot;occurrence&quot;);</span>
+<span class="fc" id="L327">      this.returnOccurrence = occurrence;</span>
+<span class="fc" id="L328">      return this;</span>
+    }
+
+    @NonNull
+    public Builder argument(@NonNull IArgument.Builder builder) {
+<span class="nc" id="L333">      return argument(builder.build());</span>
+    }
+
+    @NonNull
+    public Builder argument(@NonNull IArgument argument) {
+<span class="fc" id="L338">      Objects.requireNonNull(argument, &quot;argument&quot;);</span>
+<span class="fc" id="L339">      this.arguments.add(argument);</span>
+<span class="fc" id="L340">      return this;</span>
+    }
+
+    @NonNull
+    public Builder functionHandler(@NonNull IFunctionExecutor handler) {
+<span class="fc" id="L345">      Objects.requireNonNull(handler, &quot;handler&quot;);</span>
+<span class="fc" id="L346">      this.functionHandler = handler;</span>
+<span class="fc" id="L347">      return this;</span>
+    }
+
+    @NonNull
+    public IFunction build() {
+      ISequenceType sequenceType;
+<span class="pc bpc" id="L353" title="1 of 2 branches missed.">      if (returnType == null) {</span>
+<span class="nc" id="L354">        sequenceType = ISequenceType.EMPTY;</span>
+      } else {
+<span class="fc" id="L356">        sequenceType = new SequenceTypeImpl(</span>
+            returnType,
+<span class="fc" id="L358">            ObjectUtils.requireNonNull(returnOccurrence, &quot;the return occurrence must not be null&quot;));</span>
+      }
+
+<span class="pc bpc" id="L361" title="3 of 4 branches missed.">      if (properties.contains(FunctionProperty.UNBOUNDED_ARITY) &amp;&amp; arguments.isEmpty()) {</span>
+<span class="nc" id="L362">        throw new IllegalStateException(&quot;to allow unbounded arity, at least one argument must be provided&quot;);</span>
+      }
+
+<span class="fc" id="L365">      return new DefaultFunction(</span>
+<span class="fc" id="L366">          ObjectUtils.requireNonNull(name, &quot;the name must not be null&quot;),</span>
+<span class="fc" id="L367">          ObjectUtils.requireNonNull(namespace, &quot;the namespace must not be null&quot;),</span>
+          properties,
+          new ArrayList&lt;&gt;(arguments),
+          sequenceType,
+<span class="fc" id="L371">          ObjectUtils.requireNonNull(functionHandler, &quot;the function handler must not be null&quot;));</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

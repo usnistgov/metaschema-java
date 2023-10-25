@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FunctionCall.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.metapath</a> &gt; <span class="el_source">FunctionCall.java</span></div><h1>FunctionCall.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.metapath;
+
+import gov.nist.secauto.metaschema.core.metapath.function.FunctionService;
+import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+class FunctionCall implements IExpression {
+  @NonNull
+  private final String name;
+  @NonNull
+  private final List&lt;IExpression&gt; arguments;
+  private IFunction function;
+
+  /**
+   * Construct a new function call expression.
+   *
+   * @param name
+   *          the function name
+   * @param arguments
+   *          the expressions used to provide arguments to the function call
+   */
+<span class="fc" id="L55">  protected FunctionCall(@NonNull String name, @NonNull List&lt;IExpression&gt; arguments) {</span>
+<span class="fc" id="L56">    this.name = Objects.requireNonNull(name, &quot;name&quot;);</span>
+<span class="fc" id="L57">    this.arguments = Objects.requireNonNull(arguments, &quot;arguments&quot;);</span>
+<span class="fc" id="L58">  }</span>
+
+  /**
+   * Retrieve the associated function.
+   *
+   * @return the function or {@code null} if no function matched the defined name
+   *         and arguments
+   * @throws StaticMetapathException
+   *           if the function was not found
+   */
+  public IFunction getFunction() {
+<span class="fc" id="L69">    synchronized (this) {</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">      if (function == null) {</span>
+<span class="fc" id="L71">        function = FunctionService.getInstance().getFunction(name, arguments);</span>
+      }
+<span class="fc" id="L73">      return function;</span>
+    }
+  }
+
+  @Override
+  public List&lt;IExpression&gt; getChildren() {
+<span class="fc" id="L79">    return arguments;</span>
+  }
+
+  @Override
+  public Class&lt;? extends IItem&gt; getBaseResultType() {
+<span class="nc" id="L84">    Class&lt;? extends IItem&gt; retval = getFunction().getResult().getType();</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">    if (retval == null) {</span>
+<span class="nc" id="L86">      retval = IItem.class;</span>
+    }
+<span class="nc" id="L88">    return retval;</span>
+  }
+
+  @SuppressWarnings(&quot;null&quot;)
+  @Override
+  public String toASTString() {
+<span class="nc" id="L94">    return String.format(&quot;%s[name=%s]&quot;, getClass().getName(), getFunction().getName());</span>
+  }
+
+  @Override
+  public &lt;RESULT, CONTEXT&gt; RESULT accept(IExpressionVisitor&lt;RESULT, CONTEXT&gt; visitor, CONTEXT context) {
+<span class="nc" id="L99">    return visitor.visitFunctionCall(this, context);</span>
+  }
+
+  @Override
+  public ISequence&lt;?&gt; accept(DynamicContext dynamicContext, ISequence&lt;?&gt; focus) {
+<span class="fc" id="L104">    List&lt;ISequence&lt;?&gt;&gt; arguments = ObjectUtils.notNull(getChildren().stream().map(expression -&gt; {</span>
+<span class="nc" id="L105">      @NonNull ISequence&lt;?&gt; result = expression.accept(dynamicContext, focus);</span>
+<span class="nc" id="L106">      return result;</span>
+<span class="fc" id="L107">    }).collect(Collectors.toList()));</span>
+
+<span class="fc" id="L109">    IFunction function = getFunction();</span>
+<span class="fc" id="L110">    return function.execute(arguments, dynamicContext, focus);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

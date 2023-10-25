@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractSchemaGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema XML and JSON Schema Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.schemagen</a> &gt; <span class="el_source">AbstractSchemaGenerator.java</span></div><h1>AbstractSchemaGenerator.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.schemagen;
+
+import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.schemagen.datatype.IDatatypeManager;
+
+import java.io.Writer;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.BiConsumer;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+/**
+ * Thsi abstract class provides a common implementation shared by all schema
+ * generators.
+ *
+ * @param &lt;T&gt;
+ *          the writer type
+ * @param &lt;D&gt;
+ *          the {@link IDatatypeManager} type
+ * @param &lt;S&gt;
+ *          the {@link IGenerationState} type
+ */
+<span class="fc" id="L55">public abstract class AbstractSchemaGenerator&lt;</span>
+    T extends AutoCloseable,
+    D extends IDatatypeManager,
+    S extends AbstractGenerationState&lt;
+        T, D&gt;&gt;
+    implements ISchemaGenerator {
+
+  /**
+   * Create a new writer to use to write the schema.
+   *
+   * @param out
+   *          the {@link Writer} to write the schema content to
+   * @return the schema writer
+   * @throws SchemaGenerationException
+   *           if an error occurred while creating the writer
+   */
+  @NonNull
+  protected abstract T newWriter(@NonNull Writer out);
+
+  /**
+   * Create a new schema generation state object.
+   *
+   * @param module
+   *          the Metaschema module to generate the schema for
+   * @param schemaWriter
+   *          the writer to use to write the schema
+   * @param configuration
+   *          the generation configuration
+   * @return the schema generation state used for context and writing
+   * @throws SchemaGenerationException
+   *           if an error occurred while creating the generation state object
+   */
+  @NonNull
+  protected abstract S newGenerationState(
+      @NonNull IModule module,
+      @NonNull T schemaWriter,
+      @NonNull IConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; configuration);
+
+  /**
+   * Called to generate the actual schema content.
+   *
+   * @param generationState
+   *          the generation state object
+   */
+  protected abstract void generateSchema(@NonNull S generationState);
+
+  @Override
+  public void generateFromModule(
+      IModule metaschema,
+      Writer out,
+      IConfiguration&lt;SchemaGenerationFeature&lt;?&gt;&gt; configuration) {
+    // IInlineStrategy inlineStrategy =
+    // IInlineStrategy.newInlineStrategy(configuration);
+    try {
+      // avoid automatically closing streams not owned by the generator
+<span class="fc" id="L110">      @SuppressWarnings(&quot;PMD.CloseResource&quot;) T schemaWriter = newWriter(out);</span>
+<span class="fc" id="L111">      S generationState = newGenerationState(metaschema, schemaWriter, configuration);</span>
+<span class="fc" id="L112">      generateSchema(generationState);</span>
+<span class="fc" id="L113">      generationState.flushWriter();</span>
+<span class="nc" id="L114">    } catch (SchemaGenerationException ex) { // NOPMD avoid nesting same exception</span>
+<span class="nc" id="L115">      throw ex;</span>
+<span class="nc" id="L116">    } catch (Exception ex) { // NOPMD need to catch close exception</span>
+<span class="nc" id="L117">      throw new SchemaGenerationException(ex);</span>
+<span class="fc" id="L118">    }</span>
+<span class="fc" id="L119">  }</span>
+
+  /**
+   * Determine the collection of root definitions.
+   *
+   * @param generationState
+   *          the schema generation state used for context and writing
+   * @param handler
+   *          a callback to execute on each identified root definition
+   * @return the list of identified root definitions
+   */
+  protected List&lt;IAssemblyDefinition&gt; analyzeDefinitions(
+      @NonNull S generationState,
+      @Nullable BiConsumer&lt;ModuleIndex.DefinitionEntry, IDefinition&gt; handler) {
+    // TODO: use of handler here is confusing and introduces side effects. Consider
+    // refactoring this in
+    // the caller
+
+<span class="fc" id="L137">    List&lt;IAssemblyDefinition&gt; rootAssemblyDefinitions = new LinkedList&lt;&gt;();</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">    for (ModuleIndex.DefinitionEntry entry : generationState.getMetaschemaIndex().getDefinitions()) {</span>
+
+<span class="fc" id="L140">      boolean referenced = entry.isReferenced();</span>
+
+<span class="fc" id="L142">      IDefinition definition = ObjectUtils.notNull(entry.getDefinition());</span>
+<span class="fc bfc" id="L143" title="All 4 branches covered.">      if (definition instanceof IAssemblyDefinition &amp;&amp; ((IAssemblyDefinition) definition).isRoot()) {</span>
+        // found root definition
+<span class="fc" id="L145">        IAssemblyDefinition assemblyDefinition = (IAssemblyDefinition) definition;</span>
+<span class="fc" id="L146">        rootAssemblyDefinitions.add(assemblyDefinition);</span>
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">        if (!referenced) {</span>
+<span class="nc" id="L148">          referenced = true;</span>
+<span class="nc" id="L149">          entry.incrementReferenceCount();</span>
+        }
+
+      }
+
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">      if (!referenced) {</span>
+        // skip unreferenced definitions
+<span class="nc" id="L156">        continue;</span>
+      }
+
+<span class="pc bpc" id="L159" title="1 of 2 branches missed.">      if (handler != null) {</span>
+<span class="fc" id="L160">        handler.accept(entry, definition);</span>
+      }
+<span class="fc" id="L162">    }</span>
+<span class="fc" id="L163">    return rootAssemblyDefinitions;</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

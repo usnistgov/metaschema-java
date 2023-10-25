@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultIndexHasKeyConstraint.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Core API</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.core.model.constraint</a> &gt; <span class="el_source">DefaultIndexHasKeyConstraint.java</span></div><h1>DefaultIndexHasKeyConstraint.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model.constraint;
+
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+public final class DefaultIndexHasKeyConstraint
+    extends AbstractKeyConstraint
+    implements IIndexHasKeyConstraint {
+  @NonNull
+  private final String indexName;
+
+  /**
+   * Create a key reference constraint, which uses a set of key fields to build a
+   * key to match against an index.
+   *
+   * @param id
+   *          the optional identifier for the constraint
+   * @param formalName
+   *          the constraint's formal indexName or {@code null} if not provided
+   * @param description
+   *          the constraint's semantic description or {@code null} if not
+   *          provided
+   * @param source
+   *          information about the constraint source
+   * @param level
+   *          the significance of a violation of this constraint
+   * @param target
+   *          the Metapath expression identifying the nodes the constraint targets
+   * @param properties
+   *          a collection of associated properties
+   * @param indexName
+   *          a reference to the indexName of the index
+   * @param keyFields
+   *          a list of key fields associated with the constraint
+   * @param remarks
+   *          optional remarks describing the intent of the constraint
+   */
+  private DefaultIndexHasKeyConstraint(
+      @Nullable String id,
+      @Nullable String formalName,
+      @Nullable MarkupLine description,
+      @NonNull ISource source,
+      @NonNull Level level,
+      @NonNull MetapathExpression target,
+      @NonNull Map&lt;QName, Set&lt;String&gt;&gt; properties,
+      @NonNull String indexName,
+      @NonNull List&lt;DefaultKeyField&gt; keyFields,
+      @Nullable MarkupMultiline remarks) {
+<span class="nc" id="L86">    super(id, formalName, description, source, level, target, properties, keyFields, remarks);</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">    if (indexName.isBlank()) {</span>
+<span class="nc" id="L88">      throw new IllegalArgumentException(&quot;The index indexName must be a non-blank string&quot;);</span>
+    }
+<span class="nc" id="L90">    this.indexName = indexName;</span>
+<span class="nc" id="L91">  }</span>
+
+  @Override
+  public String getIndexName() {
+<span class="nc" id="L95">    return indexName;</span>
+  }
+
+  @Override
+  public &lt;T, R&gt; R accept(IConstraintVisitor&lt;T, R&gt; visitor, T state) {
+<span class="nc" id="L100">    return visitor.visitIndexHasKeyConstraint(this, state);</span>
+  }
+
+  @NonNull
+  public static Builder builder() {
+<span class="nc" id="L105">    return new Builder();</span>
+  }
+
+  public static final class Builder
+      extends AbstractKeyConstraintBuilder&lt;Builder, DefaultIndexHasKeyConstraint&gt; {
+    private String indexName;
+
+    private Builder() {
+      // disable construction
+    }
+
+    public Builder name(@NonNull String name) {
+<span class="nc" id="L117">      this.indexName = name;</span>
+<span class="nc" id="L118">      return this;</span>
+    }
+
+    @Override
+    protected Builder getThis() {
+<span class="nc" id="L123">      return this;</span>
+    }
+
+    @Override
+    protected void validate() {
+<span class="nc" id="L128">      super.validate();</span>
+
+<span class="nc" id="L130">      ObjectUtils.requireNonNull(indexName);</span>
+<span class="nc" id="L131">    }</span>
+
+    protected String getIndexName() {
+<span class="nc" id="L134">      return indexName;</span>
+    }
+
+    @Override
+    protected DefaultIndexHasKeyConstraint newInstance() {
+<span class="nc" id="L139">      return new DefaultIndexHasKeyConstraint(</span>
+<span class="nc" id="L140">          getId(),</span>
+<span class="nc" id="L141">          getFormalName(),</span>
+<span class="nc" id="L142">          getDescription(),</span>
+<span class="nc" id="L143">          ObjectUtils.notNull(getSource()),</span>
+<span class="nc" id="L144">          getLevel(),</span>
+<span class="nc" id="L145">          getTarget(),</span>
+<span class="nc" id="L146">          getProperties(),</span>
+<span class="nc" id="L147">          ObjectUtils.notNull(getIndexName()),</span>
+<span class="nc" id="L148">          getKeyFields(),</span>
+<span class="nc" id="L149">          getRemarks());</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

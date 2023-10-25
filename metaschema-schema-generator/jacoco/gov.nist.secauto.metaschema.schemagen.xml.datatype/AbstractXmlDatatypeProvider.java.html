@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractXmlDatatypeProvider.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema XML and JSON Schema Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.schemagen.xml.datatype</a> &gt; <span class="el_source">AbstractXmlDatatypeProvider.java</span></div><h1>AbstractXmlDatatypeProvider.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.schemagen.xml.datatype;
+
+import gov.nist.secauto.metaschema.schemagen.datatype.IDatatypeContent;
+import gov.nist.secauto.metaschema.schemagen.datatype.IDatatypeProvider;
+
+import org.codehaus.stax2.XMLStreamWriter2;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.stream.XMLStreamException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+<span class="fc" id="L49">public abstract class AbstractXmlDatatypeProvider implements IDatatypeProvider {</span>
+  private Map&lt;String, IDatatypeContent&gt; datatypes;
+
+  protected abstract InputStream getSchemaResource();
+
+  private void initSchema() {
+<span class="fc" id="L55">    synchronized (this) {</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">      if (datatypes == null) {</span>
+<span class="fc" id="L57">        try (InputStream is = getSchemaResource()) {</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">          assert is != null;</span>
+<span class="fc" id="L59">          JDom2XmlSchemaLoader loader = new JDom2XmlSchemaLoader(is);</span>
+
+<span class="fc" id="L61">          List&lt;Element&gt; elements = queryElements(loader);</span>
+
+<span class="fc" id="L63">          datatypes = Collections.unmodifiableMap(handleResults(elements));</span>
+<span class="nc" id="L64">        } catch (JDOMException | IOException ex) {</span>
+<span class="nc" id="L65">          throw new IllegalStateException(ex);</span>
+<span class="fc" id="L66">        }</span>
+      }
+<span class="fc" id="L68">    }</span>
+<span class="fc" id="L69">  }</span>
+
+  @NonNull
+  protected abstract List&lt;Element&gt; queryElements(JDom2XmlSchemaLoader loader);
+
+  @NonNull
+  protected abstract Map&lt;String, IDatatypeContent&gt; handleResults(@NonNull List&lt;Element&gt; items);
+
+  @Override
+  @SuppressFBWarnings({ &quot;IS2_INCONSISTENT_SYNC&quot;, &quot;MT_CORRECTNESS&quot;, &quot;EI_EXPOSE_REP&quot; })
+  public Map&lt;String, IDatatypeContent&gt; getDatatypes() {
+<span class="fc" id="L80">    initSchema();</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">    assert datatypes != null;</span>
+<span class="fc" id="L82">    return datatypes;</span>
+  }
+
+  @Override
+  public Set&lt;String&gt; generateDatatypes(Set&lt;String&gt; requiredTypes, @NonNull XMLStreamWriter2 writer)
+      throws XMLStreamException {
+<span class="fc" id="L88">    Map&lt;String, IDatatypeContent&gt; datatypes = getDatatypes();</span>
+
+<span class="fc" id="L90">    Set&lt;String&gt; providedDatatypes = new LinkedHashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">    for (IDatatypeContent datatype : datatypes.values()) {</span>
+<span class="fc" id="L92">      String type = datatype.getTypeName();</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">      if (requiredTypes.contains(type)) {</span>
+<span class="fc" id="L94">        providedDatatypes.add(type);</span>
+<span class="fc" id="L95">        providedDatatypes.addAll(datatype.getDependencies());</span>
+      }
+<span class="fc" id="L97">    }</span>
+
+<span class="fc bfc" id="L99" title="All 2 branches covered.">    for (IDatatypeContent datatype : datatypes.values()) {</span>
+<span class="fc" id="L100">      String type = datatype.getTypeName();</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">      if (providedDatatypes.contains(type)) {</span>
+<span class="fc" id="L102">        datatype.write(writer);</span>
+      }
+<span class="fc" id="L104">    }</span>
+<span class="fc" id="L105">    return providedDatatypes;</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

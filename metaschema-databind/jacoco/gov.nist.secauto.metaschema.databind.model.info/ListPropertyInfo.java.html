@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ListPropertyInfo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.model.info</a> &gt; <span class="el_source">ListPropertyInfo.java</span></div><h1>ListPropertyInfo.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.model.info;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+
+import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
+import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
+import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
+import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+
+import org.codehaus.stax2.XMLEventReader2;
+
+import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+<span class="fc" id="L58">class ListPropertyInfo</span>
+    extends AbstractModelPropertyInfo {
+
+  public ListPropertyInfo(
+      @NonNull IBoundNamedModelInstance property) {
+<span class="fc" id="L63">    super(property);</span>
+<span class="fc" id="L64">  }</span>
+
+  @Override
+  public Class&lt;?&gt; getItemType() {
+<span class="fc" id="L68">    ParameterizedType actualType = (ParameterizedType) getProperty().getType();</span>
+    // this is a List so there is only a single generic type
+<span class="fc" id="L70">    return ObjectUtils.notNull((Class&lt;?&gt;) actualType.getActualTypeArguments()[0]);</span>
+  }
+
+  @Override
+  public ListPropertyCollector newPropertyCollector() {
+<span class="fc" id="L75">    return new ListPropertyCollector();</span>
+  }
+
+  @Override
+  public List&lt;? extends Object&gt; getItemsFromParentInstance(Object parentInstance) {
+<span class="nc" id="L80">    Object value = getProperty().getValue(parentInstance);</span>
+<span class="nc" id="L81">    return getItemsFromValue(value);</span>
+  }
+
+  @Override
+  public List&lt;? extends Object&gt; getItemsFromValue(Object value) {
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">    return value == null ? CollectionUtil.emptyList() : (List&lt;?&gt;) value;</span>
+  }
+
+  @Override
+  public int getItemCount(Object value) {
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">    return value == null ? 0 : ((List&lt;?&gt;) value).size();</span>
+  }
+
+  @Override
+  public boolean readValues(
+      IPropertyCollector collector,
+      Object parentInstance,
+      StartElement start,
+      IXmlParsingContext context) throws IOException, XMLStreamException {
+<span class="fc" id="L100">    XMLEventReader2 eventReader = context.getReader();</span>
+
+    // TODO: is this needed?
+    // consume extra whitespace between elements
+<span class="fc" id="L104">    XmlEventUtil.skipWhitespace(eventReader);</span>
+
+<span class="fc" id="L106">    QName expectedFieldItemQName = getProperty().getXmlQName();</span>
+
+<span class="fc" id="L108">    boolean handled = false;</span>
+    XMLEvent event;
+
+<span class="fc bfc" id="L111" title="All 2 branches covered.">    while ((event = eventReader.peek()).isStartElement()</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        &amp;&amp; expectedFieldItemQName.equals(event.asStartElement().getName())) {</span>
+
+<span class="fc" id="L114">      Object value = context.readModelInstanceValue(getProperty(), parentInstance, start);</span>
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">      if (value != null) {</span>
+<span class="fc" id="L116">        collector.add(value);</span>
+<span class="fc" id="L117">        handled = true;</span>
+      }
+
+      // consume extra whitespace between elements
+<span class="fc" id="L121">      XmlEventUtil.skipWhitespace(eventReader);</span>
+<span class="fc" id="L122">    }</span>
+
+<span class="fc" id="L124">    return handled;</span>
+  }
+
+  @SuppressWarnings({
+      &quot;resource&quot;, // not owned
+      &quot;PMD.ImplicitSwitchFallThrough&quot; // false positive
+  })
+
+  @Override
+  public void readValues(
+      IPropertyCollector collector,
+      Object parentInstance,
+      IJsonParsingContext context)
+      throws IOException {
+<span class="fc" id="L138">    JsonParser parser = context.getReader();</span>
+
+<span class="pc bpc" id="L140" title="1 of 3 branches missed.">    switch (parser.currentToken()) {</span>
+    case START_ARRAY: {
+      // this is an array, we need to parse the array wrapper then each item
+<span class="fc" id="L143">      JsonUtil.assertAndAdvance(parser, JsonToken.START_ARRAY);</span>
+
+      // parse items
+<span class="fc bfc" id="L146" title="All 2 branches covered.">      while (!JsonToken.END_ARRAY.equals(parser.currentToken())) {</span>
+<span class="fc" id="L147">        Object value = getProperty().getDataTypeHandler().readItem(parentInstance, context);</span>
+<span class="fc" id="L148">        collector.add(value);</span>
+<span class="fc" id="L149">      }</span>
+
+      // this is the other side of the array wrapper, advance past it
+<span class="fc" id="L152">      JsonUtil.assertAndAdvance(parser, JsonToken.END_ARRAY);</span>
+<span class="fc" id="L153">      break;</span>
+    }
+    case VALUE_NULL: {
+<span class="nc" id="L156">      JsonUtil.assertAndAdvance(parser, JsonToken.VALUE_NULL);</span>
+<span class="nc" id="L157">      break;</span>
+    }
+    default:
+      // this is a singleton, just parse the value as a single item
+<span class="fc" id="L161">      Object value = getProperty().getDataTypeHandler().readItem(parentInstance, context);</span>
+<span class="fc" id="L162">      collector.add(value);</span>
+    }
+<span class="fc" id="L164">  }</span>
+
+  @Override
+  public void writeValues(Object value, QName parentName, IXmlWritingContext context)
+      throws XMLStreamException, IOException {
+<span class="fc" id="L169">    IBoundNamedModelInstance property = getProperty();</span>
+<span class="fc" id="L170">    List&lt;? extends Object&gt; items = getItemsFromValue(value);</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">    for (Object item : items) {</span>
+<span class="fc" id="L172">      context.writeInstanceValue(property, ObjectUtils.requireNonNull(item), parentName);</span>
+<span class="fc" id="L173">    }</span>
+<span class="fc" id="L174">  }</span>
+
+  @Override
+  public void writeValues(Object parentInstance, IJsonWritingContext context) throws IOException {
+<span class="nc" id="L178">    List&lt;? extends Object&gt; items = getItemsFromParentInstance(parentInstance);</span>
+
+    @SuppressWarnings(&quot;resource&quot;) // not owned
+<span class="nc" id="L181">    JsonGenerator writer = context.getWriter(); // NOPMD - intentional</span>
+
+<span class="nc" id="L183">    boolean writeArray = false;</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">    if (JsonGroupAsBehavior.LIST.equals(getProperty().getJsonGroupAsBehavior())</span>
+<span class="nc bnc" id="L185" title="All 4 branches missed.">        || JsonGroupAsBehavior.SINGLETON_OR_LIST.equals(getProperty().getJsonGroupAsBehavior()) &amp;&amp; items.size() &gt; 1) {</span>
+      // write array, then items
+<span class="nc" id="L187">      writeArray = true;</span>
+<span class="nc" id="L188">      writer.writeStartArray();</span>
+    } // only other option is a singleton value, write item
+
+<span class="nc bnc" id="L191" title="All 2 branches missed.">    for (Object targetObject : items) {</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">      assert targetObject != null;</span>
+<span class="nc" id="L193">      getProperty().getDataTypeHandler().writeItem(targetObject, context);</span>
+<span class="nc" id="L194">    }</span>
+
+<span class="nc bnc" id="L196" title="All 2 branches missed.">    if (writeArray) {</span>
+      // write the end array
+<span class="nc" id="L198">      writer.writeEndArray();</span>
+    }
+<span class="nc" id="L200">  }</span>
+
+  @Override
+  public boolean isValueSet(Object parentInstance) throws IOException {
+<span class="nc" id="L204">    List&lt;? extends Object&gt; items = getItemsFromParentInstance(parentInstance);</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">    return !items.isEmpty();</span>
+  }
+
+  @Override
+  public void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
+      throws BindingException {
+<span class="nc" id="L211">    IBoundNamedModelInstance property = getProperty();</span>
+
+<span class="nc bnc" id="L213" title="All 2 branches missed.">    for (Object item : getItemsFromParentInstance(fromInstance)) {</span>
+<span class="nc" id="L214">      collector.add(property.copyItem(ObjectUtils.requireNonNull(item), toInstance));</span>
+<span class="nc" id="L215">    }</span>
+<span class="nc" id="L216">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

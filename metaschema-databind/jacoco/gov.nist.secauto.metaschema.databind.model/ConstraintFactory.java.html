@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConstraintFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Data/Object Binding and Code Generation</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.databind.model</a> &gt; <span class="el_source">ConstraintFactory.java</span></div><h1>ConstraintFactory.java</h1><pre class="source lang-java linenums">/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.databind.model;
+
+import gov.nist.secauto.metaschema.core.datatype.DataTypeService;
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.model.constraint.AbstractConstraint.AbstractConstraintBuilder;
+import gov.nist.secauto.metaschema.core.model.constraint.AbstractKeyConstraint.AbstractKeyConstraintBuilder;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultAllowedValue;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultCardinalityConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultExpectConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultIndexConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultKeyField;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultMatchesConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultUniqueConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.ISource;
+import gov.nist.secauto.metaschema.databind.model.annotations.AllowedValue;
+import gov.nist.secauto.metaschema.databind.model.annotations.AllowedValues;
+import gov.nist.secauto.metaschema.databind.model.annotations.Expect;
+import gov.nist.secauto.metaschema.databind.model.annotations.HasCardinality;
+import gov.nist.secauto.metaschema.databind.model.annotations.Index;
+import gov.nist.secauto.metaschema.databind.model.annotations.IndexHasKey;
+import gov.nist.secauto.metaschema.databind.model.annotations.IsUnique;
+import gov.nist.secauto.metaschema.databind.model.annotations.KeyField;
+import gov.nist.secauto.metaschema.databind.model.annotations.Matches;
+import gov.nist.secauto.metaschema.databind.model.annotations.NullJavaTypeAdapter;
+import gov.nist.secauto.metaschema.databind.model.annotations.Property;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+final class ConstraintFactory {
+<span class="nc" id="L74">  private static final Logger LOGGER = LogManager.getLogger(ConstraintFactory.class);</span>
+
+  private ConstraintFactory() {
+    // disable
+  }
+
+  static MarkupMultiline toRemarks(@NonNull String remarks) {
+<span class="nc bnc" id="L81" title="All 2 branches missed.">    return remarks.isBlank() ? null : MarkupMultiline.fromMarkdown(remarks);</span>
+  }
+
+  @NonNull
+  static MetapathExpression toMetapath(@NonNull String metapath) {
+<span class="nc" id="L86">    String path = metapath;</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">    if (path.startsWith(&quot;/&quot;)) {</span>
+<span class="nc" id="L88">      String newPath = &quot;.&quot; + path;</span>
+
+<span class="nc bnc" id="L90" title="All 2 branches missed.">      if (LOGGER.isInfoEnabled()) {</span>
+<span class="nc" id="L91">        StringBuilder builder = new StringBuilder(80)</span>
+<span class="nc" id="L92">            .append(&quot;The path '&quot;)</span>
+<span class="nc" id="L93">            .append(path)</span>
+<span class="nc" id="L94">            .append(&quot;' is not properly contextualized using '.'. Using '&quot;)</span>
+<span class="nc" id="L95">            .append(newPath)</span>
+<span class="nc" id="L96">            .append(&quot;' instead.&quot;);</span>
+<span class="nc" id="L97">        LOGGER.atInfo().log(builder.toString());</span>
+      }
+<span class="nc" id="L99">      path = newPath;</span>
+    }
+
+<span class="nc bnc" id="L102" title="All 2 branches missed.">    return path.isBlank() ? IConstraint.DEFAULT_TARGET : MetapathExpression.compile(path);</span>
+  }
+
+  @NonNull
+  static &lt;T extends AbstractConstraintBuilder&lt;T, ?&gt;&gt; T applyId(@NonNull T builder, @NonNull String id) {
+<span class="nc bnc" id="L107" title="All 2 branches missed.">    if (!id.isBlank()) {</span>
+<span class="nc" id="L108">      builder.identifier(id);</span>
+    }
+<span class="nc" id="L110">    return builder;</span>
+  }
+
+  @NonNull
+  static &lt;T extends AbstractConstraintBuilder&lt;T, ?&gt;&gt; T applyFormalName(@NonNull T builder, @NonNull String name) {
+<span class="nc bnc" id="L115" title="All 2 branches missed.">    if (!name.isBlank()) {</span>
+<span class="nc" id="L116">      builder.formalName(name);</span>
+    }
+<span class="nc" id="L118">    return builder;</span>
+  }
+
+  @NonNull
+  static &lt;T extends AbstractConstraintBuilder&lt;T, ?&gt;&gt; T applyDescription(@NonNull T builder, @NonNull String value) {
+<span class="nc bnc" id="L123" title="All 2 branches missed.">    if (!value.isBlank()) {</span>
+<span class="nc" id="L124">      builder.description(MarkupLine.fromMarkdown(value));</span>
+    }
+<span class="nc" id="L126">    return builder;</span>
+  }
+
+  @NonNull
+  static &lt;T extends AbstractConstraintBuilder&lt;T, ?&gt;&gt; T applyTarget(@NonNull T builder, @NonNull String target) {
+<span class="nc" id="L131">    builder.target(toMetapath(target));</span>
+<span class="nc" id="L132">    return builder;</span>
+  }
+
+  @NonNull
+  static &lt;T extends AbstractConstraintBuilder&lt;T, ?&gt;&gt; T applyProperties(
+      @NonNull T builder,
+      @Nullable Property... properties) {
+<span class="nc bnc" id="L139" title="All 2 branches missed.">    if (properties != null) {</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">      for (Property property : properties) {</span>
+<span class="nc" id="L141">        String name = property.name();</span>
+<span class="nc" id="L142">        String namespace = property.namespace();</span>
+        @SuppressWarnings(&quot;PMD.AvoidInstantiatingObjectsInLoops&quot;) // ok
+<span class="nc" id="L144">        QName qname = new QName(namespace, name);</span>
+
+<span class="nc" id="L146">        String[] values = property.values();</span>
+<span class="nc" id="L147">        List&lt;String&gt; valueList = Arrays.asList(values);</span>
+        @SuppressWarnings(&quot;PMD.AvoidInstantiatingObjectsInLoops&quot;) // ok
+<span class="nc" id="L149">        Set&lt;String&gt; valueSet = new LinkedHashSet&lt;&gt;(valueList);</span>
+<span class="nc" id="L150">        builder.property(qname, valueSet);</span>
+      }
+    }
+<span class="nc" id="L153">    return builder;</span>
+  }
+
+  static &lt;T extends AbstractConstraintBuilder&lt;T, ?&gt;&gt; T applyRemarks(@NonNull T builder, @NonNull String remarks) {
+<span class="nc bnc" id="L157" title="All 2 branches missed.">    if (!remarks.isBlank()) {</span>
+<span class="nc" id="L158">      builder.remarks(MarkupMultiline.fromMarkdown(remarks));</span>
+    }
+<span class="nc" id="L160">    return builder;</span>
+  }
+
+  @NonNull
+  static DefaultAllowedValuesConstraint.Builder applyAllowedValues(
+      @NonNull DefaultAllowedValuesConstraint.Builder builder,
+      @NonNull AllowedValues constraint) {
+<span class="nc bnc" id="L167" title="All 2 branches missed.">    for (AllowedValue value : constraint.values()) {</span>
+<span class="nc" id="L168">      DefaultAllowedValue allowedValue</span>
+<span class="nc" id="L169">          = new DefaultAllowedValue(value.value(), MarkupLine.fromMarkdown(value.description())); // NOPMD - intentional</span>
+<span class="nc" id="L170">      builder.allowedValue(allowedValue);</span>
+    }
+<span class="nc" id="L172">    return builder;</span>
+  }
+
+  @Nullable
+  static Pattern toPattern(@NonNull String pattern) {
+<span class="nc bnc" id="L177" title="All 2 branches missed.">    return pattern.isBlank() ? null : Pattern.compile(pattern);</span>
+  }
+
+  @Nullable
+  static String toMessage(@NonNull String message) {
+<span class="nc bnc" id="L182" title="All 2 branches missed.">    return message.isBlank() ? null : message;</span>
+  }
+
+  @Nullable
+  static IDataTypeAdapter&lt;?&gt; toDataType(@NonNull Class&lt;? extends IDataTypeAdapter&lt;?&gt;&gt; adapterClass) {
+<span class="nc bnc" id="L187" title="All 2 branches missed.">    return adapterClass.isAssignableFrom(NullJavaTypeAdapter.class) ? null</span>
+<span class="nc" id="L188">        : DataTypeService.getInstance().getJavaTypeAdapterByClass(adapterClass);</span>
+  }
+
+  @NonNull
+  static DefaultAllowedValuesConstraint newAllowedValuesConstraint(
+      @NonNull AllowedValues constraint,
+      @NonNull ISource source) {
+<span class="nc" id="L195">    DefaultAllowedValuesConstraint.Builder builder = DefaultAllowedValuesConstraint.builder();</span>
+<span class="nc" id="L196">    applyId(builder, constraint.id());</span>
+<span class="nc" id="L197">    applyFormalName(builder, constraint.formalName());</span>
+<span class="nc" id="L198">    applyDescription(builder, constraint.description());</span>
+<span class="nc" id="L199">    builder</span>
+<span class="nc" id="L200">        .source(source)</span>
+<span class="nc" id="L201">        .level(constraint.level());</span>
+<span class="nc" id="L202">    applyTarget(builder, constraint.target());</span>
+<span class="nc" id="L203">    applyProperties(builder, constraint.properties());</span>
+<span class="nc" id="L204">    applyRemarks(builder, constraint.remarks());</span>
+
+<span class="nc" id="L206">    applyAllowedValues(builder, constraint);</span>
+<span class="nc" id="L207">    builder.allowedOther(constraint.allowOthers());</span>
+<span class="nc" id="L208">    builder.extensible(constraint.extensible());</span>
+
+<span class="nc" id="L210">    return builder.build();</span>
+  }
+
+  @NonNull
+  static DefaultMatchesConstraint newMatchesConstraint(Matches constraint, @NonNull ISource source) {
+<span class="nc" id="L215">    DefaultMatchesConstraint.Builder builder = DefaultMatchesConstraint.builder();</span>
+<span class="nc" id="L216">    applyId(builder, constraint.id());</span>
+<span class="nc" id="L217">    applyFormalName(builder, constraint.formalName());</span>
+<span class="nc" id="L218">    applyDescription(builder, constraint.description());</span>
+<span class="nc" id="L219">    builder</span>
+<span class="nc" id="L220">        .source(source)</span>
+<span class="nc" id="L221">        .level(constraint.level());</span>
+<span class="nc" id="L222">    applyTarget(builder, constraint.target());</span>
+<span class="nc" id="L223">    applyProperties(builder, constraint.properties());</span>
+<span class="nc" id="L224">    applyRemarks(builder, constraint.remarks());</span>
+
+<span class="nc" id="L226">    Pattern pattern = toPattern(constraint.pattern());</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">    if (pattern != null) {</span>
+<span class="nc" id="L228">      builder.regex(pattern);</span>
+    }
+
+<span class="nc" id="L231">    IDataTypeAdapter&lt;?&gt; dataType = toDataType(constraint.typeAdapter());</span>
+<span class="nc bnc" id="L232" title="All 2 branches missed.">    if (dataType != null) {</span>
+<span class="nc" id="L233">      builder.datatype(dataType);</span>
+    }
+
+<span class="nc" id="L236">    return builder.build();</span>
+  }
+
+  @NonNull
+  static &lt;T extends AbstractKeyConstraintBuilder&lt;T, ?&gt;&gt; T applyKeyFields(@NonNull T builder,
+      @NonNull KeyField... keyFields) {
+<span class="nc bnc" id="L242" title="All 2 branches missed.">    for (KeyField keyField : keyFields) {</span>
+      @SuppressWarnings(&quot;PMD.AvoidInstantiatingObjectsInLoops&quot;) // ok
+<span class="nc" id="L244">      DefaultKeyField field = new DefaultKeyField(</span>
+<span class="nc" id="L245">          toMetapath(keyField.target()),</span>
+<span class="nc" id="L246">          toPattern(keyField.pattern()),</span>
+<span class="nc" id="L247">          toRemarks(keyField.remarks()));</span>
+<span class="nc" id="L248">      builder.keyField(field);</span>
+    }
+<span class="nc" id="L250">    return builder;</span>
+  }
+
+  @NonNull
+  static DefaultUniqueConstraint newUniqueConstraint(@NonNull IsUnique constraint, @NonNull ISource source) {
+<span class="nc" id="L255">    DefaultUniqueConstraint.Builder builder = DefaultUniqueConstraint.builder();</span>
+<span class="nc" id="L256">    applyId(builder, constraint.id());</span>
+<span class="nc" id="L257">    applyFormalName(builder, constraint.formalName());</span>
+<span class="nc" id="L258">    applyDescription(builder, constraint.description());</span>
+<span class="nc" id="L259">    builder</span>
+<span class="nc" id="L260">        .source(source)</span>
+<span class="nc" id="L261">        .level(constraint.level());</span>
+<span class="nc" id="L262">    applyTarget(builder, constraint.target());</span>
+<span class="nc" id="L263">    applyProperties(builder, constraint.properties());</span>
+<span class="nc" id="L264">    applyRemarks(builder, constraint.remarks());</span>
+
+<span class="nc" id="L266">    applyKeyFields(builder, constraint.keyFields());</span>
+
+<span class="nc" id="L268">    return builder.build();</span>
+  }
+
+  @NonNull
+  static DefaultIndexConstraint newIndexConstraint(@NonNull Index constraint, @NonNull ISource source) {
+<span class="nc" id="L273">    DefaultIndexConstraint.Builder builder = DefaultIndexConstraint.builder();</span>
+<span class="nc" id="L274">    applyId(builder, constraint.id());</span>
+<span class="nc" id="L275">    applyFormalName(builder, constraint.formalName());</span>
+<span class="nc" id="L276">    applyDescription(builder, constraint.description());</span>
+<span class="nc" id="L277">    builder</span>
+<span class="nc" id="L278">        .source(source)</span>
+<span class="nc" id="L279">        .level(constraint.level());</span>
+<span class="nc" id="L280">    applyTarget(builder, constraint.target());</span>
+<span class="nc" id="L281">    applyProperties(builder, constraint.properties());</span>
+<span class="nc" id="L282">    applyRemarks(builder, constraint.remarks());</span>
+
+<span class="nc" id="L284">    builder.name(constraint.name());</span>
+<span class="nc" id="L285">    applyKeyFields(builder, constraint.keyFields());</span>
+
+<span class="nc" id="L287">    return builder.build();</span>
+  }
+
+  @NonNull
+  static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(@NonNull IndexHasKey constraint,
+      @NonNull ISource source) {
+<span class="nc" id="L293">    DefaultIndexHasKeyConstraint.Builder builder = DefaultIndexHasKeyConstraint.builder();</span>
+<span class="nc" id="L294">    applyId(builder, constraint.id());</span>
+<span class="nc" id="L295">    applyFormalName(builder, constraint.formalName());</span>
+<span class="nc" id="L296">    applyDescription(builder, constraint.description());</span>
+<span class="nc" id="L297">    builder</span>
+<span class="nc" id="L298">        .source(source)</span>
+<span class="nc" id="L299">        .level(constraint.level());</span>
+<span class="nc" id="L300">    applyTarget(builder, constraint.target());</span>
+<span class="nc" id="L301">    applyProperties(builder, constraint.properties());</span>
+<span class="nc" id="L302">    applyRemarks(builder, constraint.remarks());</span>
+
+<span class="nc" id="L304">    builder.name(constraint.indexName());</span>
+<span class="nc" id="L305">    applyKeyFields(builder, constraint.keyFields());</span>
+
+<span class="nc" id="L307">    return builder.build();</span>
+  }
+
+  @NonNull
+  static DefaultExpectConstraint newExpectConstraint(@NonNull Expect constraint, @NonNull ISource source) {
+<span class="nc" id="L312">    DefaultExpectConstraint.Builder builder = DefaultExpectConstraint.builder();</span>
+<span class="nc" id="L313">    applyId(builder, constraint.id());</span>
+<span class="nc" id="L314">    applyFormalName(builder, constraint.formalName());</span>
+<span class="nc" id="L315">    applyDescription(builder, constraint.description());</span>
+<span class="nc" id="L316">    builder</span>
+<span class="nc" id="L317">        .source(source)</span>
+<span class="nc" id="L318">        .level(constraint.level());</span>
+<span class="nc" id="L319">    applyTarget(builder, constraint.target());</span>
+<span class="nc" id="L320">    applyProperties(builder, constraint.properties());</span>
+<span class="nc" id="L321">    applyRemarks(builder, constraint.remarks());</span>
+
+<span class="nc" id="L323">    builder.test(toMetapath(constraint.test()));</span>
+
+<span class="nc" id="L325">    String message = constraint.message();</span>
+<span class="nc bnc" id="L326" title="All 2 branches missed.">    if (!message.isBlank()) {</span>
+<span class="nc" id="L327">      builder.message(message);</span>
+    }
+
+<span class="nc" id="L330">    return builder.build();</span>
+  }
+
+  @Nullable
+  static Integer toCardinality(int value) {
+<span class="nc bnc" id="L335" title="All 2 branches missed.">    return value &lt; 0 ? null : value;</span>
+  }
+
+  @NonNull
+  static DefaultCardinalityConstraint newCardinalityConstraint(@NonNull HasCardinality constraint,
+      @NonNull ISource source) {
+<span class="nc" id="L341">    DefaultCardinalityConstraint.Builder builder = DefaultCardinalityConstraint.builder();</span>
+<span class="nc" id="L342">    applyId(builder, constraint.id());</span>
+<span class="nc" id="L343">    applyFormalName(builder, constraint.formalName());</span>
+<span class="nc" id="L344">    applyDescription(builder, constraint.description());</span>
+<span class="nc" id="L345">    builder</span>
+<span class="nc" id="L346">        .source(source)</span>
+<span class="nc" id="L347">        .level(constraint.level());</span>
+<span class="nc" id="L348">    applyTarget(builder, constraint.target());</span>
+<span class="nc" id="L349">    applyProperties(builder, constraint.properties());</span>
+<span class="nc" id="L350">    applyRemarks(builder, constraint.remarks());</span>
+
+<span class="nc" id="L352">    Integer min = toCardinality(constraint.minOccurs());</span>
+<span class="nc bnc" id="L353" title="All 2 branches missed.">    if (min != null) {</span>
+<span class="nc" id="L354">      builder.minOccurs(min);</span>
+    }
+<span class="nc" id="L356">    Integer max = toCardinality(constraint.maxOccurs());</span>
+<span class="nc bnc" id="L357" title="All 2 branches missed.">    if (max != null) {</span>
+<span class="nc" id="L358">      builder.maxOccurs(max);</span>
+    }
+
+<span class="nc" id="L361">    return builder.build();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

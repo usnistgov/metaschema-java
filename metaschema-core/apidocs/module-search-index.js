@@ -1,0 +1,1 @@
+moduleSearchIndex = [{"l":"gov.nist.secauto.metaschema.core"}]
