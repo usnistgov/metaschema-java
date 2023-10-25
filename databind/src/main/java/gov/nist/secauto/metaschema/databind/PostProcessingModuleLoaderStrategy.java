@@ -26,44 +26,55 @@
 
 package gov.nist.secauto.metaschema.databind;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.MetaschemaException;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
-import gov.nist.secauto.metaschema.core.model.xml.ConstraintLoader;
-import gov.nist.secauto.metaschema.core.model.xml.ExternalConstraintsModulePostProcessor;
+import gov.nist.secauto.metaschema.core.model.xml.IModulePostProcessor;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.test.TestMetaschema;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-class DefaultBindingContextTest {
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-  @Test
-  void testConstraints() throws MetaschemaException, IOException { // NOPMD - intentional
-    ConstraintLoader constraintLoader = new ConstraintLoader();
-    IConstraintSet constraintSet = constraintLoader.load(
-        ObjectUtils.notNull(Paths.get("src/test/resources/content/constraints.xml")));
+class PostProcessingModuleLoaderStrategy
+    extends AbstractModuleLoaderStrategy {
+  @NonNull
+  private final List<IModulePostProcessor> modulePostProcessors;
+  private final Set<IModule> resolvedModules = new HashSet<>();
 
-    ExternalConstraintsModulePostProcessor postProcessor
-        = new ExternalConstraintsModulePostProcessor(CollectionUtil.singleton(constraintSet));
-    IBindingContext bindingContext = new DefaultBindingContext(CollectionUtil.singletonList(postProcessor));
-    IModule module = bindingContext.getModuleByClass(TestMetaschema.class);
-
-    IAssemblyDefinition root = module.getExportedAssemblyDefinitionByName("root");
-
-    assertNotNull(root, "root not found");
-    List<? extends IConstraint> constraints = root.getConstraints();
-    assertFalse(constraints.isEmpty(), "a constraint was expected");
+  protected PostProcessingModuleLoaderStrategy(
+      @NonNull IBindingContext bindingContext,
+      @NonNull List<IModulePostProcessor> modulePostProcessors) {
+    super(bindingContext);
+    this.modulePostProcessors = CollectionUtil.unmodifiableList(new ArrayList<>(modulePostProcessors));
   }
 
+  @NonNull
+  protected List<IModulePostProcessor> getModulePostProcessors() {
+    return modulePostProcessors;
+  }
+
+  @Override
+  public IClassBinding getClassBinding(@NonNull Class<?> clazz) {
+    IClassBinding retval = super.getClassBinding(clazz);
+    if (retval != null) {
+      // force loading of metaschema information to apply constraints
+      IModule module = retval.getContainingModule();
+      synchronized (resolvedModules) {
+        if (!resolvedModules.contains(module)) {
+          // add first, to avoid loops
+          resolvedModules.add(module);
+          handleModule(module);
+        }
+      }
+    }
+    return retval;
+  }
+
+  private void handleModule(@NonNull IModule module) {
+    for (IModulePostProcessor postProcessor : getModulePostProcessors())
+      postProcessor.processModule(module);
+  }
 }

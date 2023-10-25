@@ -24,46 +24,60 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind;
+package gov.nist.secauto.metaschema.core.model.xml;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.metapath.function.library.FnPath;
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
-import gov.nist.secauto.metaschema.core.model.xml.ConstraintLoader;
-import gov.nist.secauto.metaschema.core.model.xml.ExternalConstraintsModulePostProcessor;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.test.TestMetaschema;
 
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Paths;
-import java.util.List;
 
-class DefaultBindingContextTest {
+public class MetaConstraintLoaderTest {
 
   @Test
-  void testConstraints() throws MetaschemaException, IOException { // NOPMD - intentional
-    ConstraintLoader constraintLoader = new ConstraintLoader();
-    IConstraintSet constraintSet = constraintLoader.load(
-        ObjectUtils.notNull(Paths.get("src/test/resources/content/constraints.xml")));
+  void test() throws MetaschemaException, IOException {
+
+    IConstraintSet constraintSet = new MetaConstraintLoader()
+        .load(Paths.get("src/test/resources/computer-metaschema-meta-constraints.xml"));
 
     ExternalConstraintsModulePostProcessor postProcessor
         = new ExternalConstraintsModulePostProcessor(CollectionUtil.singleton(constraintSet));
-    IBindingContext bindingContext = new DefaultBindingContext(CollectionUtil.singletonList(postProcessor));
-    IModule module = bindingContext.getModuleByClass(TestMetaschema.class);
+    ModuleLoader loader = new ModuleLoader(CollectionUtil.singletonList(postProcessor));
+    URI moduleUri = ObjectUtils.notNull(
+        Paths.get("metaschema/website/content/specification/computer-example.xml").toUri());
+    IModule module = loader.load(moduleUri);
 
-    IAssemblyDefinition root = module.getExportedAssemblyDefinitionByName("root");
+    MetapathExpression expression = MetapathExpression.compile("//@id");
+    IModuleNodeItem moduleItem = INodeItemFactory.instance().newModuleNodeItem(module);
+    for (IItem item : expression.evaluate(moduleItem)) {
+      IDefinitionNodeItem<?, ?> nodeItem = (IDefinitionNodeItem<?, ?>) item;
+      System.out.print(FnPath.fnPath(nodeItem));
+      System.out.print(": ");
+      System.out.println(Long.toString(nodeItem.getDefinition().getMatchesConstraints().stream()
+          .filter(matches -> MetaschemaDataTypeProvider.UUID.equals(matches.getDataType()))
+          .count()));
+    }
 
-    assertNotNull(root, "root not found");
-    List<? extends IConstraint> constraints = root.getConstraints();
-    assertFalse(constraints.isEmpty(), "a constraint was expected");
+    expression.evaluate(moduleItem).asStream()
+        .map(item -> (IDefinitionNodeItem<?, ?>) item)
+        .forEach(item -> assertEquals(1, item.getDefinition().getMatchesConstraints().stream()
+            .filter(matches -> MetaschemaDataTypeProvider.UUID.equals(matches.getDataType()))
+            .count()));
   }
 
 }

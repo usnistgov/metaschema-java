@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 
@@ -89,7 +88,13 @@ public class DefaultConstraintSet implements IConstraintSet {
     return resourceLocation;
   }
 
-  @Override
+  /**
+   * Get the set of Metaschema scoped constraints to apply by a {@link QName}
+   * formed from the Metaschema namespace and short name.
+   *
+   * @return the mapping of QName to scoped constraints
+   */
+  @NonNull
   public Map<QName, List<IScopedContraints>> getScopedContraints() {
     return scopedContraints;
   }
@@ -100,13 +105,13 @@ public class DefaultConstraintSet implements IConstraintSet {
   }
 
   @Override
-  public Stream<ITargetedConstaints> getTargetedConstraintsForModule(@NonNull IModule module) {
+  public Iterable<ITargetedConstaints> getTargetedConstraintsForModule(@NonNull IModule module) {
     QName qname = module.getQName();
 
     Map<QName, List<IScopedContraints>> map = getScopedContraints();
     List<IScopedContraints> scopes = map.getOrDefault(qname, CollectionUtil.emptyList());
-    return ObjectUtils.notNull(scopes.stream()
-        .flatMap(scoped -> scoped.getTargetedContraints().stream()));
+    return CollectionUtil.toIterable(ObjectUtils.notNull(scopes.stream()
+        .flatMap(scoped -> scoped.getTargetedContraints().stream())));
   }
 
 }

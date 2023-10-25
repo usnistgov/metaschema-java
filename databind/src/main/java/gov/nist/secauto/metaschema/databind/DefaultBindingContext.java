@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind;
 import gov.nist.secauto.metaschema.core.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
+import gov.nist.secauto.metaschema.core.model.xml.IModulePostProcessor;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
@@ -51,7 +51,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -96,12 +95,12 @@ public class DefaultBindingContext implements IBindingContext {
   /**
    * Construct a new binding context.
    *
-   * @param externalConstraintSets
-   *          the set of external constraints to configure this binding to use
+   * @param modulePostProcessors
+   *          a list of module post processors to call after loading a module
    */
-  public DefaultBindingContext(@NonNull Set<IConstraintSet> externalConstraintSets) {
+  public DefaultBindingContext(@NonNull List<IModulePostProcessor> modulePostProcessors) {
     // only allow extended classes
-    moduleLoaderStrategy = new ExternalConstraintsModuleLoaderStrategy(this, externalConstraintSets);
+    moduleLoaderStrategy = new PostProcessingModuleLoaderStrategy(this, modulePostProcessors);
   }
 
   /**

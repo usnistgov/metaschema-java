@@ -26,97 +26,16 @@
 
 package gov.nist.secauto.metaschema.core.model.constraint;
 
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression.ResultType;
-import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
-import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.MetaschemaException;
-import gov.nist.secauto.metaschema.core.model.constraint.impl.ConstraintComposingVisitor;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IConstraintSet {
+  @NonNull
+  Iterable<ITargetedConstaints> getTargetedConstraintsForModule(@NonNull IModule module);
 
   @NonNull
-  static Set<IConstraintSet> resolveConstraintSets(@NonNull Set<IConstraintSet> constraintSets) {
-    return ObjectUtils.notNull(constraintSets.stream()
-        .flatMap(set -> resolveConstraintSet(ObjectUtils.notNull(set)))
-        .distinct()
-        .collect(Collectors.toUnmodifiableSet()));
-  }
-
-  @NonNull
-  private static Stream<IConstraintSet> resolveConstraintSet(@NonNull IConstraintSet constraintSet) {
-    return ObjectUtils.notNull(Stream.concat(
-        Stream.of(constraintSet),
-        constraintSet.getImportedConstraintSets().stream()));
-  }
-
-  @NonNull
-  static List<ITargetedConstaints> getTargetedConstraintsForMetaschema(
-      @NonNull Set<IConstraintSet> constraintSets,
-      @NonNull IModule module) {
-    return ObjectUtils.notNull(resolveConstraintSets(constraintSets).stream()
-        .flatMap(set -> set.getTargetedConstraintsForModule(module))
-        .collect(Collectors.toUnmodifiableList()));
-  }
-
-  static void applyConstraintSetToModule(
-      @NonNull Set<IConstraintSet> constraintSets,
-      @NonNull IModule module) throws MetaschemaException {
-    Set<IConstraintSet> resolvedConstraintSets = resolveConstraintSets(constraintSets);
-
-    ConstraintComposingVisitor visitor = new ConstraintComposingVisitor();
-    IModuleNodeItem item = INodeItemFactory.instance().newModuleNodeItem(module);
-
-    for (ITargetedConstaints targeted : getTargetedConstraintsForMetaschema(resolvedConstraintSets, module)) {
-      MetapathExpression targetExpression = targeted.getTargetExpression();
-      INodeItem node = targetExpression.evaluateAs(item, ResultType.NODE);
-      if (node == null) {
-        throw new MetaschemaException(String.format("Target not found for expression '%s' on metaschema '%s'.",
-            targetExpression.getPath(),
-            module.getQName()));
-      } else if (node instanceof IDefinitionNodeItem) {
-        IDefinition nodeDefinition = ((IDefinitionNodeItem<?, ?>) node).getDefinition();
-        IModule nodeModule = nodeDefinition.getContainingModule();
-        if (!module.equals(nodeModule)) {
-          throw new MetaschemaException(
-              String.format("Target definition '%s' in metaschema '%s' is not in the scoped metaschema '%s'.",
-                  nodeDefinition.getName(),
-                  nodeModule.getQName(),
-                  module.getQName()));
-        }
-      }
-      node.accept(visitor, targeted);
-    }
-
-  }
-
-  @NonNull
-  Stream<ITargetedConstaints> getTargetedConstraintsForModule(@NonNull IModule module);
-
   Collection<IConstraintSet> getImportedConstraintSets();
-
-  /**
-   * Get the set of Metaschema scoped constraints to apply by a {@link QName}
-   * formed from the Metaschema namespace and short name.
-   *
-   * @return the mapping of QName to scoped constraints
-   */
-  @NonNull
-  Map<QName, List<IScopedContraints>> getScopedContraints();
 }
