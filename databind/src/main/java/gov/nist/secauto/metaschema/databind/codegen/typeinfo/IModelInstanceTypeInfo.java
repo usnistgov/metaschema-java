@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.IModelInstance;
 
 public interface IModelInstanceTypeInfo extends IInstanceTypeInfo {
   @Override
-  INamedModelInstance getInstance();
+  IModelInstance getInstance();
 }

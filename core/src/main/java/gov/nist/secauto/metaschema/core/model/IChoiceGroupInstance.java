@@ -24,33 +24,36 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
-
-import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+package gov.nist.secauto.metaschema.core.model;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-/**
- * Java class type information for an {@link IAssemblyDefinition} used for
- * generating a Java class for the definition.
- */
-public interface IAssemblyDefinitionTypeInfo extends IModelDefinitionTypeInfo {
+public interface IChoiceGroupInstance extends IModelInstance, IModelContainer {
 
   /**
-   * Construct a new type info based on the provided definition.
+   * Provides the Metaschema model type of "CHOICE".
    *
-   * @param definition
-   *          the definition associated with the type info
-   * @param typeResolver
-   *          a resolver used to look up related type information
-   * @return the type info for the definition
+   * @return the model type
    */
-  @NonNull
-  static IAssemblyDefinitionTypeInfo newTypeInfo(@NonNull IAssemblyDefinition definition,
-      @NonNull ITypeResolver typeResolver) {
-    return new AssemblyDefinitionTypeInfoImpl(definition, typeResolver);
+  @Override
+  default ModelType getModelType() {
+    return ModelType.CHOICE_GROUP;
   }
 
   @Override
-  IAssemblyDefinition getDefinition();
+  default IAssemblyDefinition getOwningDefinition() {
+    return getParentContainer().getOwningDefinition();
+  }
+
+  @Override
+  default String getGroupAsXmlNamespace() {
+    return getContainingModule().getXmlNamespace().toASCIIString();
+  }
+
+  @NonNull
+  String getJsonDiscriminatorProperty();
+
+  @Nullable
+  String getJsonKeyFlagName();
 }

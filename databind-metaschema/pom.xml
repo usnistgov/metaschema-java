@@ -101,38 +101,38 @@
 							</includes>
 						</configuration>
 					</execution>
-					<execution>
-						<id>generate-xml-schemas</id>
-						<goals>
-							<goal>generate-schemas</goal>
-						</goals>
-						<configuration>
-							<metaschemaDir>${project.basedir}/../core/metaschema/schema/metaschema</metaschemaDir>
-							<outputDirectory>${project.build.directory}/generated-resources/metaschema/schema/xml</outputDirectory>
-							<includes>
-								<include>metaschema-metaschema.xml</include>
-							</includes>
-							<formats>
-								<format>xsd</format>
-							</formats>
-						</configuration>
-					</execution>
-					<execution>
-						<id>generate-json-schemas</id>
-						<goals>
-							<goal>generate-schemas</goal>
-						</goals>
-						<configuration>
-							<metaschemaDir>${project.basedir}/../core/metaschema/schema/metaschema</metaschemaDir>
-							<outputDirectory>${project.build.directory}/generated-resources/oscal/schema/json</outputDirectory>
-							<includes>
-								<include>metaschema-metaschema.xml</include>
-							</includes>
-							<formats>
-								<format>json</format>
-							</formats>
-						</configuration>
-					</execution>
+<!--					<execution>-->
+<!--						<id>generate-xml-schemas</id>-->
+<!--						<goals>-->
+<!--							<goal>generate-schemas</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<metaschemaDir>${project.basedir}/../core/metaschema/schema/metaschema</metaschemaDir>-->
+<!--							<outputDirectory>${project.build.directory}/generated-resources/metaschema/schema/xml</outputDirectory>-->
+<!--							<includes>-->
+<!--								<include>metaschema-metaschema.xml</include>-->
+<!--							</includes>-->
+<!--							<formats>-->
+<!--								<format>xsd</format>-->
+<!--							</formats>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--					<execution>-->
+<!--						<id>generate-json-schemas</id>-->
+<!--						<goals>-->
+<!--							<goal>generate-schemas</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<metaschemaDir>${project.basedir}/../core/metaschema/schema/metaschema</metaschemaDir>-->
+<!--							<outputDirectory>${project.build.directory}/generated-resources/oscal/schema/json</outputDirectory>-->
+<!--							<includes>-->
+<!--								<include>metaschema-metaschema.xml</include>-->
+<!--							</includes>-->
+<!--							<formats>-->
+<!--								<format>json</format>-->
+<!--							</formats>-->
+<!--						</configuration>-->
+<!--					</execution>-->
 				</executions>
 			</plugin>
 			<plugin>

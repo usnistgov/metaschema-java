@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind.codegen.impl;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.AnnotationSpec.Builder;
@@ -85,7 +85,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 @SuppressWarnings({
     "PMD.GodClass" // utility class
 })
-final class AnnotationGenerator {
+public final class AnnotationGenerator {
   private static final Logger LOGGER = LogManager.getLogger(AnnotationGenerator.class);
 
   private AnnotationGenerator() {

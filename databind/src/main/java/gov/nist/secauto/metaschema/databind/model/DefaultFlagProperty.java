@@ -236,6 +236,7 @@ class DefaultFlagProperty
 
     @Override
     public boolean isInline() {
+      // flags are always inline
       return true;
     }
 

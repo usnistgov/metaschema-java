@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath.item.node;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
@@ -255,6 +256,9 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
           } else if (instance instanceof IChoiceInstance) {
             // descend into the choice
             retval = getNamedModelInstances((IChoiceInstance) instance);
+          } else if (instance instanceof IChoiceGroupInstance) {
+            // descend into the choice group
+            retval = getNamedModelInstances((IChoiceGroupInstance) instance);
           } else {
             throw new UnsupportedOperationException("unsupported instance type: " + instance.getClass().getName());
           }

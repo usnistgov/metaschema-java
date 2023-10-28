@@ -38,6 +38,7 @@ import java.lang.annotation.Target;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+// REFACTOR: Move this and other ancillary annotations to child annotations under the main binding annotation
 @Documented
 @Retention(RUNTIME)
 @Target({ FIELD })

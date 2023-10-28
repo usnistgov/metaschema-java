@@ -87,6 +87,10 @@ class XmlFlagInstance
         .getScopedFlagDefinitionByName(getName()));
   }
 
+  // ----------------------------------------
+  // - Start XmlBeans driven code - CPD-OFF -
+  // ----------------------------------------
+
   @Override
   public String getFormalName() {
     return getXmlFlag().isSetFormalName() ? getXmlFlag().getFormalName() : null;
@@ -110,22 +114,6 @@ class XmlFlagInstance
   }
 
   @Override
-  public Object getDefaultValue() {
-    return defaultValue;
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public MarkupMultiline getRemarks() {
-    return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
-  }
-
-  @Override
-  public boolean isRequired() {
-    return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : MetaschemaModelConstants.DEFAULT_FLAG_REQUIRED;
-  }
-
-  @Override
   public String getUseName() {
     return getXmlFlag().isSetUseName() ? getXmlFlag().getUseName().getStringValue() : null;
   }
@@ -143,8 +131,22 @@ class XmlFlagInstance
   }
 
   @Override
-  public Object getValue(@NonNull Object parentValue) {
-    // there is no value
-    return null;
+  public Object getDefaultValue() {
+    return defaultValue;
   }
+
+  @SuppressWarnings("null")
+  @Override
+  public MarkupMultiline getRemarks() {
+    return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
+  }
+
+  @Override
+  public boolean isRequired() {
+    return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : MetaschemaModelConstants.DEFAULT_FLAG_REQUIRED;
+  }
+
+  // -------------------------------------
+  // - End XmlBeans driven code - CPD-ON -
+  // -------------------------------------
 }

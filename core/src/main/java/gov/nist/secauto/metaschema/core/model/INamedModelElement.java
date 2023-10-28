@@ -164,12 +164,26 @@ public interface INamedModelElement extends IModelElement {
   String getName();
 
   /**
+   * Retrieve the index value to use for binary naming.
+   *
+   * @return the name index or {@code null} if no name index is defined
+   */
+  @Nullable
+  default Integer getIndex() {
+    // no index by default
+    return null;
+  }
+
+  /**
    * Retrieve the name to use for the model element, instead of the name.
    *
    * @return the use name or {@code null} if no use name is defined
    */
   @Nullable
-  String getUseName();
+  default String getUseName() {
+    // no use-name by default
+    return null;
+  }
 
   /**
    * Get the name to use based on the provided names. This method will return the
@@ -190,20 +204,15 @@ public interface INamedModelElement extends IModelElement {
   }
 
   /**
-   * Retrieve the index value to use for binary naming.
-   *
-   * @return the name index or {@code null} if no name index is defined
-   */
-  @Nullable
-  Integer getIndex();
-
-  /**
    * Retrieve the index value to use for binary naming, instead of the name.
    *
    * @return the use name index or {@code null} if no use name index is defined
    */
   @Nullable
-  Integer getUseIndex();
+  default Integer getUseIndex() {
+    // no use-name index by default
+    return null;
+  }
 
   /**
    * Get the index value to use for binary naming based on the provided index

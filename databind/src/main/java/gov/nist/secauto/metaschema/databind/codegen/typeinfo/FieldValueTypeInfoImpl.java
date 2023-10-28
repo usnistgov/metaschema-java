@@ -26,13 +26,24 @@
 
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
+import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeName;
+
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IFieldDefinitionTypeInfo;
+import gov.nist.secauto.metaschema.databind.model.annotations.FieldValue;
+
+import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class FieldValueTypeInfoImpl
-    extends AbstractTypeInfo<IFieldDefinitionTypeInfo>
+    extends AbstractPropertyTypeInfo<IFieldDefinitionTypeInfo>
     implements IFieldValueTypeInfo {
 
   public FieldValueTypeInfoImpl(@NonNull IFieldDefinitionTypeInfo parentDefinition) {
@@ -51,4 +62,30 @@ class FieldValueTypeInfoImpl
         getParentDefinitionTypeInfo().getDefinition().getJavaTypeAdapter().getJavaClass());
   }
 
+  @Override
+  protected Set<IFlagContainer> buildField(FieldSpec.Builder builder) {
+    Set<IFlagContainer> retval = super.buildField(builder);
+
+    IFieldDefinition definition = getParentDefinitionTypeInfo().getDefinition();
+    AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(FieldValue.class);
+
+    IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
+
+    // a field object always has a single value
+    if (!definition.hasJsonValueKeyFlagInstance()) {
+      fieldValue.addMember("valueKeyName", "$S", definition.getJsonValueKeyName());
+    } // else do nothing, the annotation will be on the flag
+
+    if (!MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType)) {
+      fieldValue.addMember("typeAdapter", "$T.class", valueDataType.getClass());
+    }
+
+    Object defaultValue = definition.getDefaultValue();
+    if (defaultValue != null) {
+      fieldValue.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
+    }
+
+    builder.addAnnotation(fieldValue.build());
+    return retval;
+  }
 }

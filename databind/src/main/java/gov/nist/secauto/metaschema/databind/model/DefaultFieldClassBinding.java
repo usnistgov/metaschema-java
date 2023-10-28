@@ -38,9 +38,9 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.databind.model.annotations.FieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.databind.model.annotations.FieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
 import java.util.Objects;
@@ -217,11 +217,6 @@ public class DefaultFieldClassBinding
       }
       return this.fieldValue;
     }
-  }
-
-  @Override
-  public boolean isInline() {
-    return false;
   }
 
   @Override

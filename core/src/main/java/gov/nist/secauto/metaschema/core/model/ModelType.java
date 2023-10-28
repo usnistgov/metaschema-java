@@ -33,5 +33,6 @@ public enum ModelType {
   ASSEMBLY,
   FIELD,
   FLAG,
-  CHOICE;
+  CHOICE,
+  CHOICE_GROUP;
 }

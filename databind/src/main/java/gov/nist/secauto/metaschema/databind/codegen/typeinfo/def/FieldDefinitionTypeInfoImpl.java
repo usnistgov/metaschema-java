@@ -24,9 +24,11 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo.def;
 
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IFieldValueTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 

@@ -36,7 +36,8 @@ public interface IFeatureModelContainer<
     NMI extends INamedModelInstance,
     FI extends IFieldInstance,
     AI extends IAssemblyInstance,
-    CI extends IChoiceInstance>
+    CI extends IChoiceInstance,
+    CG extends IChoiceGroupInstance>
     extends IModelContainer {
   /**
    * Lazy initialize the model instances associated with this definition.
@@ -44,7 +45,7 @@ public interface IFeatureModelContainer<
    * @return the flag container
    */
   @NonNull
-  IModelContainerSupport<MI, NMI, FI, AI, CI> getModelContainer();
+  IModelContainerSupport<MI, NMI, FI, AI, CI, CG> getModelContainer();
 
   @Override
   default NMI getModelInstanceByName(String name) {
@@ -82,6 +83,11 @@ public interface IFeatureModelContainer<
   @Override
   default List<CI> getChoiceInstances() {
     return getModelContainer().getChoiceInstances();
+  }
+
+  @Override
+  default List<CG> getChoiceGroupInstances() {
+    return getModelContainer().getChoiceGroupInstances();
   }
 
   @Override

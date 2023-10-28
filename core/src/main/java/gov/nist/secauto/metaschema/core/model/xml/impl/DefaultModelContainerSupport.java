@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IModelInstance;
@@ -116,6 +117,23 @@ public class DefaultModelContainerSupport
     return getModelInstances().stream()
         .filter(obj -> obj instanceof IChoiceInstance)
         .map(obj -> (IChoiceInstance) obj)
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Get a listing of all choice group instances.
+   *
+   * @return the listing
+   */
+  @Override
+  @SuppressWarnings("null")
+  @NonNull
+  public List<IChoiceGroupInstance> getChoiceGroupInstances() {
+    // this shouldn't get called all that often, so this is better than allocating
+    // memory
+    return getModelInstances().stream()
+        .filter(obj -> obj instanceof IChoiceGroupInstance)
+        .map(obj -> (IChoiceGroupInstance) obj)
         .collect(Collectors.toList());
   }
 }

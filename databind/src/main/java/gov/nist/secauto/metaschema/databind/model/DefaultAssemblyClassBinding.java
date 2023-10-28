@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
@@ -135,7 +136,8 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
       IBoundNamedModelInstance,
       IBoundFieldInstance,
       IBoundAssemblyInstance,
-      IChoiceInstance> getModelContainer() {
+      IChoiceInstance,
+      IChoiceGroupInstance> getModelContainer() {
     return modelContainer.get();
   }
 
@@ -149,6 +151,12 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   @NonNull
   private MetaschemaAssembly getMetaschemaAssemblyAnnotation() {
     return metaschemaAssembly;
+  }
+
+  @Override
+  public IBoundAssemblyInstance getInlineInstance() {
+    Class<?> parentClass = getBoundClass().getEnclosingClass();
+    return parentClass == null ? null : (IBoundAssemblyInstance) getBindingContext().getClassBinding(parentClass);
   }
 
   @Override
@@ -175,16 +183,6 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   public Integer getIndex() {
     int value = getMetaschemaAssemblyAnnotation().index();
     return value == Integer.MIN_VALUE ? null : value;
-  }
-
-  @Override
-  public boolean isInline() {
-    return false;
-  }
-
-  @Override
-  public IBoundAssemblyInstance getInlineInstance() {
-    return null;
   }
 
   @Override

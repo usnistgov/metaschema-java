@@ -24,10 +24,14 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo.def;
 
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.INamedInstance;
+import gov.nist.secauto.metaschema.core.model.IInstance;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IInstanceTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IPropertyTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,10 +51,10 @@ abstract class AbstractDefinitionTypeInfo<DEF extends IDefinition> implements ID
   private final ITypeResolver typeResolver;
   @SuppressWarnings("PMD.UseConcurrentHashMap") // need ordered map
   @NonNull
-  private final Map<String, ITypeInfo> propertyNameToInstanceTypeInfoMap = new LinkedHashMap<>();
+  private final Map<String, IPropertyTypeInfo> propertyNameToInstanceTypeInfoMap = new LinkedHashMap<>();
   @SuppressWarnings("PMD.UseConcurrentHashMap") // need ordered map
   @NonNull
-  private final Map<INamedInstance, IInstanceTypeInfo> instanceToInstanceTypeInfoMap = new LinkedHashMap<>();
+  private final Map<IInstance, IInstanceTypeInfo> instanceToInstanceTypeInfoMap = new LinkedHashMap<>();
 
   public AbstractDefinitionTypeInfo(@NonNull DEF definition, @NonNull ITypeResolver typeResolver) {
     this.definition = definition;
@@ -81,7 +85,7 @@ abstract class AbstractDefinitionTypeInfo<DEF extends IDefinition> implements ID
    * @param typeInfo
    *          the instance type info to add
    */
-  protected final void addPropertyTypeInfo(@NonNull ITypeInfo typeInfo) {
+  protected final void addPropertyTypeInfo(@NonNull IPropertyTypeInfo typeInfo) {
     String name = typeInfo.getPropertyName();
     ITypeInfo oldContext = propertyNameToInstanceTypeInfoMap.put(name, typeInfo);
     if (oldContext != null) {
@@ -105,14 +109,14 @@ abstract class AbstractDefinitionTypeInfo<DEF extends IDefinition> implements ID
 
   @SuppressWarnings("null")
   @Override
-  public Collection<ITypeInfo> getPropertyTypeInfos() {
+  public Collection<IPropertyTypeInfo> getPropertyTypeInfos() {
     initInstanceTypeInfos();
     return propertyNameToInstanceTypeInfoMap.values();
   }
 
   @Override
   @Nullable
-  public IInstanceTypeInfo getInstanceTypeInfo(@NonNull INamedInstance instance) {
+  public IInstanceTypeInfo getInstanceTypeInfo(@NonNull IInstance instance) {
     initInstanceTypeInfos();
     return instanceToInstanceTypeInfoMap.get(instance);
   }

@@ -39,8 +39,6 @@ import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,7 +50,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 class XmlFieldInstance
     extends AbstractFieldInstance {
   @NonNull
-  private final FieldReferenceType xmlField;
+  private final FieldReferenceType xmlObject;
   @Nullable
   private final Object defaultValue;
 
@@ -60,30 +58,20 @@ class XmlFieldInstance
    * Constructs a new Metaschema field instance definition from an XML
    * representation bound to Java objects.
    *
-   * @param xmlField
+   * @param xmlObject
    *          the XML representation bound to Java objects
    * @param container
    *          the parent container, either a choice or assembly
    */
+  @SuppressWarnings("PMD.NullAssignment")
   public XmlFieldInstance(
-      @NonNull FieldReferenceType xmlField,
+      @NonNull FieldReferenceType xmlObject,
       @NonNull IModelContainer container) {
     super(container);
-    this.xmlField = xmlField;
-    Object defaultValue = null;
-    if (xmlField.isSetDefault()) {
-      defaultValue = getDefinition().getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlField.getDefault()));
-    }
-    this.defaultValue = defaultValue;
-  }
-
-  /**
-   * Get the underlying XML data.
-   *
-   * @return the underlying XML data
-   */
-  protected FieldReferenceType getXmlField() {
-    return xmlField;
+    this.xmlObject = xmlObject;
+    this.defaultValue = xmlObject.isSetDefault()
+        ? getDefinition().getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlObject.getDefault()))
+        : null;
   }
 
   @Override
@@ -92,14 +80,27 @@ class XmlFieldInstance
     return ObjectUtils.notNull(getContainingModule().getScopedFieldDefinitionByName(getName()));
   }
 
+  // ----------------------------------------
+  // - Start XmlBeans driven code - CPD-OFF -
+  // ----------------------------------------
+
+  /**
+   * Get the underlying XML data.
+   *
+   * @return the underlying XML data
+   */
+  protected FieldReferenceType getXmlObject() {
+    return xmlObject;
+  }
+
   @Override
   public boolean isInXmlWrapped() {
     boolean retval;
     if (getDefinition().getJavaTypeAdapter().isUnrappedValueAllowedInXml()) {
       // default value
       retval = MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
-      if (getXmlField().isSetInXml()) {
-        retval = getXmlField().getInXml().booleanValue();
+      if (getXmlObject().isSetInXml()) {
+        retval = getXmlObject().getInXml().booleanValue();
       }
     } else {
       // All other data types get "wrapped"
@@ -108,40 +109,38 @@ class XmlFieldInstance
     return retval;
   }
 
-  @SuppressWarnings("CPD-START")
   @Override
   public String getFormalName() {
-    return getXmlField().isSetFormalName() ? getXmlField().getFormalName() : null;
+    return getXmlObject().isSetFormalName() ? getXmlObject().getFormalName() : null;
   }
 
-  @SuppressWarnings("null")
   @Override
   public MarkupLine getDescription() {
-    return getXmlField().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlField().getDescription())
+    return getXmlObject().isSetDescription()
+        ? MarkupStringConverter.toMarkupString(ObjectUtils.notNull(getXmlObject().getDescription()))
         : null;
   }
 
   @Override
   public Map<QName, Set<String>> getProperties() {
-    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlField().getPropList()));
+    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 
-  @SuppressWarnings("null")
   @Override
   public String getName() {
-    return getXmlField().getRef();
+    return ObjectUtils.requireNonNull(getXmlObject().getRef());
   }
 
   @Override
   public String getUseName() {
-    return getXmlField().isSetUseName() ? getXmlField().getUseName().getStringValue() : null;
+    return getXmlObject().isSetUseName() ? getXmlObject().getUseName().getStringValue() : null;
   }
 
   @Override
   public Integer getUseIndex() {
     Integer retval = null;
-    if (getXmlField().isSetUseName()) {
-      UseNameType useName = getXmlField().getUseName();
+    if (getXmlObject().isSetUseName()) {
+      UseNameType useName = getXmlObject().getUseName();
       if (useName.isSetIndex()) {
         retval = useName.getIndex().intValue();
       }
@@ -156,46 +155,36 @@ class XmlFieldInstance
 
   @Override
   public String getGroupAsName() {
-    return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : null;
+    return getXmlObject().isSetGroupAs() ? getXmlObject().getGroupAs().getName() : null;
   }
 
   @Override
   public int getMinOccurs() {
-    return XmlModelParser.getMinOccurs(getXmlField().getMinOccurs());
+    return XmlModelParser.getMinOccurs(getXmlObject().getMinOccurs());
   }
 
   @Override
   public int getMaxOccurs() {
-    return XmlModelParser.getMaxOccurs(getXmlField().getMaxOccurs());
+    return XmlModelParser.getMaxOccurs(getXmlObject().getMaxOccurs());
   }
 
   @Override
   public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-    return XmlModelParser.getJsonGroupAsBehavior(getXmlField().getGroupAs());
+    return XmlModelParser.getJsonGroupAsBehavior(getXmlObject().getGroupAs());
   }
 
   @Override
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    return XmlModelParser.getXmlGroupAsBehavior(getXmlField().getGroupAs());
+    return XmlModelParser.getXmlGroupAsBehavior(getXmlObject().getGroupAs());
   }
 
   @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
-    return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
+    return getXmlObject().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlObject().getRemarks()) : null;
   }
 
-  @SuppressWarnings("CPD-END")
-  @Override
-  public Object getValue(@NonNull Object parentValue) {
-    // there is no value
-    return null;
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public Collection<?> getItemValues(Object instanceValue) {
-    // there are no item values
-    return Collections.emptyList();
-  }
+  // -------------------------------------
+  // - End XmlBeans driven code - CPD-ON -
+  // -------------------------------------
 }

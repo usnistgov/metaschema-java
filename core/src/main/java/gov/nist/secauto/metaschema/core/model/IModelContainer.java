@@ -115,6 +115,13 @@ public interface IModelContainer extends IContainer {
   List<? extends IChoiceInstance> getChoiceInstances();
 
   /**
+   * Get all choice group instances within the container.
+   *
+   * @return a list of choice instances
+   */
+  List<? extends IChoiceGroupInstance> getChoiceGroupInstances();
+
+  /**
    * Get all model instances within the container.
    *
    * @return an ordered collection of model instances

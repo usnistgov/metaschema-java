@@ -27,10 +27,11 @@
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionTypeInfo;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IFlagInstanceTypeInfo extends IInstanceTypeInfo {
+public interface IFlagInstanceTypeInfo extends INamedInstanceTypeInfo {
   /**
    * Construct a new type information object for the provided {@code instance}.
    *

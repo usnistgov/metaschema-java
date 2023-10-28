@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.core.metapath.item.atomic;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.core.metapath.item.IAtomicValuedItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.Set;

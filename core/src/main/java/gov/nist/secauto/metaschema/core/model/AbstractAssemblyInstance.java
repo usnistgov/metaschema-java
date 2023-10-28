@@ -45,4 +45,5 @@ public abstract class AbstractAssemblyInstance
   public String getGroupAsXmlNamespace() {
     return getContainingModule().getXmlNamespace().toASCIIString();
   }
+
 }

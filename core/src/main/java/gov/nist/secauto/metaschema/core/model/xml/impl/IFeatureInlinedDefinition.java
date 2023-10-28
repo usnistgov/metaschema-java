@@ -24,33 +24,62 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
+package gov.nist.secauto.metaschema.core.model.xml.impl;
 
-import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.core.model.INamedInstance;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Java class type information for an {@link IFieldDefinition} used for
- * generating a Java class for the definition.
+ * A trait indicating that the implementation is a localized definition that is
+ * declared in-line as an instance.
+ *
+ * @param <DEFINITION>
+ *          the associated definition Java type
+ * @param <INSTANCE>
+ *          the associated instance Java type
  */
-public interface IFieldDefinitionTypeInfo extends IModelDefinitionTypeInfo {
-
-  /**
-   * Construct a new type info based on the provided definition.
-   *
-   * @param definition
-   *          the definition associated with the type info
-   * @param typeResolver
-   *          a resolver used to look up related type information
-   * @return the type info for the definition
-   */
-  @NonNull
-  static IFieldDefinitionTypeInfo newTypeInfo(@NonNull IFieldDefinition definition,
-      @NonNull ITypeResolver typeResolver) {
-    return new FieldDefinitionTypeInfoImpl(definition, typeResolver);
+public interface IFeatureInlinedDefinition<DEFINITION extends IDefinition, INSTANCE extends INamedInstance>
+    extends IDefinition, INamedInstance {
+  @Override
+  default boolean isInline() {
+    return true;
   }
 
   @Override
-  IFieldDefinition getDefinition();
+  DEFINITION getDefinition();
+
+  @Override
+  @NonNull
+  INSTANCE getInlineInstance();
+
+  @Override
+  default String getEffectiveFormalName() {
+    return getFormalName();
+  }
+
+  @Override
+  default MarkupLine getEffectiveDescription() {
+    return getDescription();
+  }
+
+  @Override
+  default String getEffectiveName() {
+    // don't use use-name
+    return getName();
+  }
+
+  @Override
+  default Integer getEffectiveIndex() {
+    return getIndex();
+  }
+
+  @Override
+  default String toCoordinates() {
+    // Ensure classes that implement INamedInstance and IDefinition use this
+    return INamedInstance.super.toCoordinates();
+  }
+
 }

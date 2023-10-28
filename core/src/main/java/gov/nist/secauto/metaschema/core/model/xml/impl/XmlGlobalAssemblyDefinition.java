@@ -55,7 +55,8 @@ import nl.talsmasoftware.lazy4j.Lazy;
 class XmlGlobalAssemblyDefinition
     implements IAssemblyDefinition,
     IFeatureStandardModelContainer,
-    IFeatureFlagContainer<IFlagInstance> {
+    IFeatureFlagContainer<IFlagInstance>,
+    IFeatureGlobalDefinition<IAssemblyInstance> {
 
   @NonNull
   private final GlobalAssemblyDefinitionType xmlAssembly;
@@ -120,8 +121,13 @@ class XmlGlobalAssemblyDefinition
     return metaschema;
   }
 
+  @Override
+  public IAssemblyInstance getInlineInstance() {
+    return IFeatureGlobalDefinition.super.getInlineInstance();
+  }
+
   // ----------------------------------------
-  // - Start Annotation driven code - CPD-OFF
+  // - Start XmlBeans driven code - CPD-OFF -
   // ----------------------------------------
 
   /**
@@ -130,30 +136,30 @@ class XmlGlobalAssemblyDefinition
    * @return the underlying XML data
    */
   @NonNull
-  protected GlobalAssemblyDefinitionType getXmlAssembly() {
+  protected GlobalAssemblyDefinitionType getXmlObject() {
     return xmlAssembly;
   }
 
   @Override
   public String getName() {
-    return ObjectUtils.requireNonNull(getXmlAssembly().getName());
+    return ObjectUtils.requireNonNull(getXmlObject().getName());
   }
 
   @Override
   public Integer getIndex() {
-    return getXmlAssembly().isSetIndex() ? getXmlAssembly().getIndex().intValue() : null;
+    return getXmlObject().isSetIndex() ? getXmlObject().getIndex().intValue() : null;
   }
 
   @Override
   public String getUseName() {
-    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName().getStringValue() : null;
+    return getXmlObject().isSetUseName() ? getXmlObject().getUseName().getStringValue() : null;
   }
 
   @Override
   public Integer getUseIndex() {
     Integer retval = null;
-    if (getXmlAssembly().isSetUseName()) {
-      UseNameType useName = getXmlAssembly().getUseName();
+    if (getXmlObject().isSetUseName()) {
+      UseNameType useName = getXmlObject().getUseName();
       if (useName.isSetIndex()) {
         retval = useName.getIndex().intValue();
       }
@@ -163,36 +169,36 @@ class XmlGlobalAssemblyDefinition
 
   @Override
   public String getFormalName() {
-    return getXmlAssembly().isSetFormalName() ? getXmlAssembly().getFormalName() : null;
+    return getXmlObject().isSetFormalName() ? getXmlObject().getFormalName() : null;
   }
 
   @SuppressWarnings("null")
   @Override
   public MarkupLine getDescription() {
-    return getXmlAssembly().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription())
+    return getXmlObject().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlObject().getDescription())
         : null;
   }
 
   @Override
   public Map<QName, Set<String>> getProperties() {
-    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlAssembly().getPropList()));
+    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 
   @Override
   public boolean isRoot() {
-    return getXmlAssembly().isSetRootName();
+    return getXmlObject().isSetRootName();
   }
 
   @Override
   public String getRootName() {
-    return getXmlAssembly().isSetRootName() ? getXmlAssembly().getRootName().getStringValue() : null;
+    return getXmlObject().isSetRootName() ? getXmlObject().getRootName().getStringValue() : null;
   }
 
   @Override
   public Integer getRootIndex() {
     Integer retval = null;
-    if (getXmlAssembly().isSetRootName()) {
-      GlobalAssemblyDefinitionType.RootName rootName = getXmlAssembly().getRootName();
+    if (getXmlObject().isSetRootName()) {
+      GlobalAssemblyDefinitionType.RootName rootName = getXmlObject().getRootName();
       if (rootName.isSetIndex()) {
         retval = rootName.getIndex().intValue();
       }
@@ -203,28 +209,16 @@ class XmlGlobalAssemblyDefinition
   @SuppressWarnings("null")
   @Override
   public ModuleScopeEnum getModuleScope() {
-    return getXmlAssembly().isSetScope() ? getXmlAssembly().getScope() : IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
+    return getXmlObject().isSetScope() ? getXmlObject().getScope() : IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
   }
 
   @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
-    return getXmlAssembly().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getRemarks()) : null;
+    return getXmlObject().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlObject().getRemarks()) : null;
   }
 
-  // --------------------------------------
-  // - End Annotation driven code - CPD-ON
-  // --------------------------------------
-
-  @Override
-  public boolean isInline() {
-    // global
-    return false;
-  }
-
-  @Override
-  public IAssemblyInstance getInlineInstance() {
-    // global
-    return null;
-  }
+  // -------------------------------------
+  // - End XmlBeans driven code - CPD-ON -
+  // -------------------------------------
 }

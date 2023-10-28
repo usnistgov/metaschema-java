@@ -156,7 +156,7 @@ class SimpleFieldProperty
     }
 
     @Override
-    public @NonNull Object getFieldValue(@NonNull Object item) {
+    public Object getFieldValue(@NonNull Object item) {
       return item;
     }
 
@@ -167,6 +167,7 @@ class SimpleFieldProperty
 
     @Override
     public boolean isInline() {
+      // scalar fields are always inline
       return true;
     }
 

@@ -35,7 +35,7 @@ public interface ITypeInfo {
   /**
    * Get the name to use for the property. If the property is a collection type,
    * then this will be the group-as name, else this will be the use name or the
-   * name if not use name is set.
+   * name if the use name is not set.
    *
    * @return the name
    */

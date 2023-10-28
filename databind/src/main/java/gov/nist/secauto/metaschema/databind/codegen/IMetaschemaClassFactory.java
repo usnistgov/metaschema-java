@@ -27,8 +27,8 @@
 package gov.nist.secauto.metaschema.databind.codegen;
 
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IModelDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IModelDefinitionTypeInfo;
 
 import java.io.IOException;
 import java.net.URI;

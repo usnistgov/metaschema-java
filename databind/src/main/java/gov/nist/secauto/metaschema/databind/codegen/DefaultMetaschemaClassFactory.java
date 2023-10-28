@@ -37,44 +37,29 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.WildcardTypeName;
 
-import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelInstance;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
-import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IAssemblyDefinitionTypeInfo;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IFieldDefinitionTypeInfo;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IFieldValueTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.impl.AnnotationGenerator;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IFlagInstanceTypeInfo;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IInstanceTypeInfo;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IModelDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IModelInstanceTypeInfo;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IPropertyTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IFieldDefinitionTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IModelDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.AbstractBoundModule;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
-import gov.nist.secauto.metaschema.databind.model.annotations.FieldValue;
-import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
-import gov.nist.secauto.metaschema.databind.model.annotations.JsonFieldValueKeyFlag;
-import gov.nist.secauto.metaschema.databind.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaPackage;
@@ -83,8 +68,8 @@ import gov.nist.secauto.metaschema.databind.model.annotations.XmlNs;
 import gov.nist.secauto.metaschema.databind.model.annotations.XmlNsForm;
 import gov.nist.secauto.metaschema.databind.model.annotations.XmlSchema;
 
-import org.apache.commons.lang3.builder.MultilineRecursiveToStringStyle;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -573,68 +558,18 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
     // builder.addMethod(copyBuilder.build());
 
     // generate all the properties and access methods
-    for (ITypeInfo property : typeInfo.getPropertyTypeInfos()) {
+    for (IPropertyTypeInfo property : typeInfo.getPropertyTypeInfos()) {
       assert property != null;
-      additionalChildClasses.addAll(buildClass(property, builder));
+      additionalChildClasses.addAll(property.build(builder));
     }
 
     // generate a toString method that will help with debugging
     MethodSpec.Builder toString = MethodSpec.methodBuilder("toString").addModifiers(Modifier.PUBLIC)
         .returns(String.class).addAnnotation(Override.class);
     toString.addStatement("return new $T(this, $T.MULTI_LINE_STYLE).toString()", ReflectionToStringBuilder.class,
-        MultilineRecursiveToStringStyle.class);
+        ToStringStyle.class);
     builder.addMethod(toString.build());
     return CollectionUtil.unmodifiableSet(additionalChildClasses);
-  }
-
-  /**
-   * Build the Java class data for the property.
-   *
-   * @param typeInfo
-   *          the type information for the Java property to build
-   * @param builder
-   *          the class builder
-   * @return the set of additional child definitions that need to be built
-   */
-  @NonNull
-  protected Set<IFlagContainer> buildClass(
-      @NonNull ITypeInfo typeInfo,
-      @NonNull TypeSpec.Builder builder) {
-
-    TypeName javaFieldType = typeInfo.getJavaFieldType();
-    FieldSpec.Builder field = FieldSpec.builder(javaFieldType, typeInfo.getJavaFieldName())
-        .addModifiers(Modifier.PRIVATE);
-    assert field != null;
-
-    final Set<IFlagContainer> retval = buildField(typeInfo, field);
-
-    FieldSpec valueField = ObjectUtils.notNull(field.build());
-    builder.addField(valueField);
-
-    String propertyName = typeInfo.getPropertyName();
-    {
-      MethodSpec.Builder method = MethodSpec.methodBuilder("get" + propertyName)
-          .returns(javaFieldType)
-          .addModifiers(Modifier.PUBLIC);
-      assert method != null;
-      method.addStatement("return $N", valueField);
-      builder.addMethod(method.build());
-    }
-
-    {
-      ParameterSpec valueParam = ParameterSpec.builder(javaFieldType, "value").build();
-      MethodSpec.Builder method = MethodSpec.methodBuilder("set" + propertyName)
-          .addModifiers(Modifier.PUBLIC)
-          .addParameter(valueParam);
-      assert method != null;
-      method.addStatement("$N = $N", valueField, valueParam);
-      builder.addMethod(method.build());
-    }
-
-    if (typeInfo instanceof IModelInstanceTypeInfo) {
-      buildExtraMethods((IModelInstanceTypeInfo) typeInfo, builder, valueField);
-    }
-    return retval;
   }
 
   /**
@@ -665,39 +600,7 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
     builder.addMember("moduleClass", "$T.class", getTypeResolver().getClassName(module));
   }
 
-  /**
-   * Generate the Java field associated with this property.
-   *
-   * @param typeInfo
-   *          the type information for the Java property to build
-   * @param builder
-   *          the field builder
-   * @return the set of definitions used by this field
-   */
-  @NonNull
-  protected Set<IFlagContainer> buildField(
-      @NonNull ITypeInfo typeInfo,
-      @NonNull FieldSpec.Builder builder) {
-    Set<IFlagContainer> retval = null;
-    if (typeInfo instanceof IFlagInstanceTypeInfo) {
-      buildFieldForFlag((IFlagInstanceTypeInfo) typeInfo, builder);
-    } else if (typeInfo instanceof IModelInstanceTypeInfo) {
-      retval = buildFieldForModelInstance((IModelInstanceTypeInfo) typeInfo, builder);
-    } else if (typeInfo instanceof IFieldValueTypeInfo) {
-      buildFieldForFieldValue((IFieldValueTypeInfo) typeInfo, builder);
-    }
-    return retval == null ? CollectionUtil.emptySet() : retval;
-  }
-
-  protected void buildFieldForInstance(
-      @NonNull IInstanceTypeInfo typeInfo,
-      @NonNull FieldSpec.Builder builder) {
-    MarkupLine description = typeInfo.getInstance().getDescription();
-    if (description != null) {
-      builder.addJavadoc("$S", description.toHtml());
-    }
-  }
-
+  /*
   protected void buildFieldForFieldValue(
       @NonNull IFieldValueTypeInfo typeInfo,
       @NonNull FieldSpec.Builder builder) {
@@ -722,213 +625,7 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
 
     builder.addAnnotation(fieldValue.build());
   }
-
-  @SuppressWarnings("PMD.CyclomaticComplexity") // acceptable
-  protected void buildFieldForFlag(
-      @NonNull IFlagInstanceTypeInfo typeInfo,
-      @NonNull FieldSpec.Builder builder) {
-    IFlagInstance instance = typeInfo.getInstance();
-
-    AnnotationSpec.Builder annotation
-        = AnnotationSpec.builder(BoundFlag.class);
-
-    String formalName = instance.getEffectiveFormalName();
-    if (formalName != null) {
-      annotation.addMember("formalName", "$S", formalName);
-    }
-
-    MarkupLine description = instance.getEffectiveDescription();
-    if (description != null) {
-      annotation.addMember("description", "$S", description.toMarkdown());
-    }
-
-    annotation.addMember("useName", "$S", instance.getEffectiveName());
-
-    if (instance.isRequired()) {
-      annotation.addMember("required", "$L", true);
-    }
-
-    IFlagDefinition definition = instance.getDefinition();
-
-    IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
-    annotation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
-
-    MarkupMultiline remarks = instance.getRemarks();
-    if (remarks != null) {
-      annotation.addMember("remarks", "$S", remarks.toMarkdown());
-    }
-
-    builder.addAnnotation(annotation.build());
-
-    AnnotationGenerator.buildValueConstraints(builder, definition);
-
-    IFlagContainer parent = instance.getContainingDefinition();
-    if (parent.hasJsonKey() && instance.equals(parent.getJsonKeyFlagInstance())) {
-      builder.addAnnotation(JsonKey.class);
-    }
-
-    if (parent instanceof IFieldDefinition) {
-      IFieldDefinition parentField = (IFieldDefinition) parent;
-
-      if (parentField.hasJsonValueKeyFlagInstance() && instance.equals(parentField.getJsonValueKeyFlagInstance())) {
-        builder.addAnnotation(JsonFieldValueKeyFlag.class);
-      }
-    }
-  }
-
-  @SuppressWarnings("PMD.NPathComplexity")
-  @NonNull
-  protected AnnotationSpec.Builder generateBindingAnnotation(
-      @NonNull IModelInstanceTypeInfo typeInfo) {
-    // determine which annotation to apply
-    AnnotationSpec.Builder retval;
-    INamedModelInstance modelInstance = typeInfo.getInstance();
-    if (modelInstance instanceof IFieldInstance) {
-      retval = AnnotationSpec.builder(BoundField.class);
-    } else if (modelInstance instanceof IAssemblyInstance) {
-      retval = AnnotationSpec.builder(BoundAssembly.class);
-    } else {
-      throw new UnsupportedOperationException(
-          String.format("ModelContainer instance '%s' of type '%s' is not supported.",
-              modelInstance.getName(), modelInstance.getClass().getName()));
-    }
-
-    String formalName = modelInstance.getEffectiveFormalName();
-    if (formalName != null) {
-      retval.addMember("formalName", "$S", formalName);
-    }
-
-    MarkupLine description = modelInstance.getEffectiveDescription();
-    if (description != null) {
-      retval.addMember("description", "$S", description.toMarkdown());
-    }
-
-    retval.addMember("useName", "$S", modelInstance.getEffectiveName());
-
-    String namespace = modelInstance.getXmlNamespace();
-    if (namespace == null) {
-      retval.addMember("namespace", "$S", "##none");
-    } else if (!modelInstance.getContainingModule().getXmlNamespace().toASCIIString().equals(namespace)) {
-      retval.addMember("namespace", "$S", namespace);
-    } // otherwise use the ##default
-
-    int minOccurs = modelInstance.getMinOccurs();
-    if (minOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
-      retval.addMember("minOccurs", "$L", minOccurs);
-    }
-
-    int maxOccurs = modelInstance.getMaxOccurs();
-    if (maxOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS) {
-      retval.addMember("maxOccurs", "$L", maxOccurs);
-    }
-
-    MarkupMultiline remarks = modelInstance.getRemarks();
-    if (remarks != null) {
-      retval.addMember("remarks", "$S", remarks.toMarkdown());
-    }
-
-    if (modelInstance instanceof IFieldInstance) {
-      IFieldInstance fieldInstance = (IFieldInstance) modelInstance;
-
-      if (MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != fieldInstance.isInXmlWrapped()) {
-        retval.addMember("inXmlWrapped", "$L", fieldInstance.isInXmlWrapped());
-      }
-
-      IDataTypeAdapter<?> valueDataType = fieldInstance.getDefinition().getJavaTypeAdapter();
-      Object defaultValue = fieldInstance.getDefaultValue();
-      if (defaultValue != null) {
-        retval.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
-      }
-    }
-    return retval;
-  }
-
-  @NonNull
-  protected AnnotationSpec.Builder generateGroupAsAnnotation(
-      @NonNull IModelInstanceTypeInfo typeInfo) {
-    AnnotationSpec.Builder groupAsAnnoation = AnnotationSpec.builder(GroupAs.class);
-
-    INamedModelInstance modelInstance = typeInfo.getInstance();
-
-    groupAsAnnoation.addMember("name", "$S",
-        ObjectUtils.requireNonNull(modelInstance.getGroupAsName(), "The grouping name must be non-null"));
-
-    String groupAsNamespace = modelInstance.getGroupAsXmlNamespace();
-    if (groupAsNamespace == null) {
-      groupAsAnnoation.addMember("namespace", "$S", "##none");
-    } else if (!modelInstance.getContainingModule().getXmlNamespace().toASCIIString().equals(groupAsNamespace)) {
-      groupAsAnnoation.addMember("namespace", "$S", groupAsNamespace);
-    } // otherwise use the ##default
-
-    JsonGroupAsBehavior jsonGroupAsBehavior = modelInstance.getJsonGroupAsBehavior();
-    assert jsonGroupAsBehavior != null;
-    if (!MetaschemaModelConstants.DEFAULT_JSON_GROUP_AS_BEHAVIOR.equals(jsonGroupAsBehavior)) {
-      groupAsAnnoation.addMember("inJson", "$T.$L",
-          JsonGroupAsBehavior.class, jsonGroupAsBehavior.toString());
-    }
-
-    XmlGroupAsBehavior xmlGroupAsBehavior = modelInstance.getXmlGroupAsBehavior();
-    assert xmlGroupAsBehavior != null;
-    if (!MetaschemaModelConstants.DEFAULT_XML_GROUP_AS_BEHAVIOR.equals(xmlGroupAsBehavior)) {
-      groupAsAnnoation.addMember("inXml", "$T.$L",
-          XmlGroupAsBehavior.class, xmlGroupAsBehavior.toString());
-    }
-    return groupAsAnnoation;
-  }
-
-  @SuppressWarnings("PMD.CognitiveComplexity")
-  public Set<IFlagContainer> buildFieldForModelInstance(
-      @NonNull IModelInstanceTypeInfo typeInfo,
-      @NonNull FieldSpec.Builder builder) { // NOPMD - intentional
-    buildFieldForInstance(typeInfo, builder);
-
-    builder.addAnnotation(generateBindingAnnotation(typeInfo).build());
-
-    INamedModelInstance modelInstance = typeInfo.getInstance();
-    IFlagContainer definition = modelInstance.getDefinition();
-    if (modelInstance instanceof IFieldInstance) {
-      // handle the field value related info
-      IFieldDefinition fieldDefinition = (IFieldDefinition) definition;
-      if (fieldDefinition.isSimple()) {
-        // this is a simple field, without flags
-        // we need to add the BoundFieldValue annotation to the property
-        // fieldAnnoation.addMember("valueName", "$S",
-        // fieldDefinition.getJsonValueKeyName());
-        IDataTypeAdapter<?> valueDataType = fieldDefinition.getJavaTypeAdapter();
-
-        Object defaultValue = fieldDefinition.getDefaultValue();
-
-        if (!MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType) || defaultValue != null) {
-          AnnotationSpec.Builder boundFieldValueAnnotation = AnnotationSpec.builder(BoundFieldValue.class);
-
-          if (!MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType)) {
-            boundFieldValueAnnotation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
-          }
-
-          if (defaultValue != null) {
-            boundFieldValueAnnotation.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
-          }
-          builder.addAnnotation(boundFieldValueAnnotation.build());
-        }
-
-        AnnotationGenerator.buildValueConstraints(builder, fieldDefinition);
-      }
-    }
-
-    int maxOccurs = modelInstance.getMaxOccurs();
-    if (maxOccurs == -1 || maxOccurs > 1) {
-      // requires a group-as
-      builder.addAnnotation(generateGroupAsAnnotation(typeInfo).build());
-    }
-
-    Set<IFlagContainer> retval = new HashSet<>();
-    if (definition.isInline() && !(definition instanceof IFieldDefinition && definition.isSimple())) {
-      // this is an inline definition that must be built as a child class
-      retval.add(definition);
-    }
-    return retval.isEmpty() ? CollectionUtil.emptySet() : CollectionUtil.unmodifiableSet(retval);
-  }
-
+  */
   /**
    * This method can be implemented by subclasses to create additional methods.
    *
@@ -944,7 +641,7 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
       @NonNull IModelInstanceTypeInfo typeInfo,
       @NonNull TypeSpec.Builder builder,
       @NonNull FieldSpec valueField) {
-    INamedModelInstance instance = typeInfo.getInstance();
+    IModelInstance instance = typeInfo.getInstance();
     int maxOccurance = instance.getMaxOccurs();
     if (maxOccurance == -1 || maxOccurance > 1) {
       TypeName itemType = typeInfo.getJavaItemType();
@@ -953,57 +650,12 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
       String itemPropertyName = ClassUtils.toPropertyName(typeInfo.getItemBaseName());
 
       if (JsonGroupAsBehavior.KEYED.equals(instance.getJsonGroupAsBehavior())) {
-        IFlagInstance jsonKey = instance.getDefinition().getJsonKeyFlagInstance();
-        if (jsonKey == null) {
-          throw new IllegalStateException(
-              String.format("JSON key not defined for property: %s", instance.toCoordinates()));
-        }
-
-        // get the json key property on the instance's definition
-        IModelDefinitionTypeInfo instanceTypeInfo = typeResolver.getTypeInfo(instance.getDefinition());
-        IFlagInstanceTypeInfo jsonKeyTypeInfo = instanceTypeInfo.getFlagInstanceTypeInfo(jsonKey);
-
-        if (jsonKeyTypeInfo == null) {
-          throw new IllegalStateException(
-              String.format("Unable to identify JSON key for property: %s", instance.toCoordinates()));
-        }
-
-        {
-          // create add method
-          MethodSpec.Builder method = MethodSpec.methodBuilder("add" + itemPropertyName)
-              .addParameter(valueParam)
-              .returns(itemType)
-              .addModifiers(Modifier.PUBLIC)
-              .addJavadoc("Add a new {@link $T} item to the underlying collection.\n", itemType)
-              .addJavadoc("@param item the item to add\n")
-              .addJavadoc("@return the existing {@link $T} item in the collection or {@code null} if not item exists\n",
-                  itemType)
-              .addStatement("$1T value = $2T.requireNonNull($3N,\"$3N value cannot be null\")",
-                  itemType, ObjectUtils.class, valueParam)
-              .addStatement("$1T key = $2T.requireNonNull($3N.$4N(),\"$3N key cannot be null\")",
-                  String.class, ObjectUtils.class, valueParam, "get" + jsonKeyTypeInfo.getPropertyName())
-              .beginControlFlow("if ($N == null)", valueField)
-              .addStatement("$N = new $T<>()", valueField, LinkedHashMap.class)
-              .endControlFlow()
-              .addStatement("return $N.put(key, value)", valueField);
-
-          builder.addMethod(method.build());
-        }
-        {
-          // create remove method
-          MethodSpec.Builder method = MethodSpec.methodBuilder("remove" + itemPropertyName)
-              .addParameter(valueParam)
-              .returns(TypeName.BOOLEAN)
-              .addModifiers(Modifier.PUBLIC)
-              .addJavadoc("Remove the {@link $T} item from the underlying collection.\n", itemType)
-              .addJavadoc("@param item the item to remove\n")
-              .addJavadoc("@return {@code true} if the item was removed or {@code false} otherwise\n")
-              .addStatement("$1T value = $2T.requireNonNull($3N,\"$3N value cannot be null\")",
-                  itemType, ObjectUtils.class, valueParam)
-              .addStatement("$1T key = $2T.requireNonNull($3N.$4N(),\"$3N key cannot be null\")",
-                  String.class, ObjectUtils.class, valueParam, "get" + jsonKeyTypeInfo.getPropertyName())
-              .addStatement("return $1N == null ? false : $1N.remove(key, value)", valueField);
-          builder.addMethod(method.build());
+        if (instance instanceof INamedModelInstance) {
+          buildKeyedMethods((INamedModelInstance) instance, builder, itemType, itemPropertyName, valueParam,
+              valueField);
+        } else {
+          // FIXME: implement choice group
+          throw new UnsupportedOperationException();
         }
       } else {
         {
@@ -1041,5 +693,68 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
         }
       }
     }
+  }
+
+  private void buildKeyedMethods(
+      @NonNull INamedModelInstance instance,
+      @NonNull TypeSpec.Builder builder,
+      @NonNull TypeName itemType,
+      @NonNull String itemPropertyName,
+      @NonNull ParameterSpec valueParam,
+      @NonNull FieldSpec valueField) {
+
+    IFlagInstance jsonKey = instance.getDefinition().getJsonKeyFlagInstance();
+    if (jsonKey == null) {
+      throw new IllegalStateException(
+          String.format("JSON key not defined for property: %s", instance.toCoordinates()));
+    }
+
+    // get the json key property on the instance's definition
+    IModelDefinitionTypeInfo instanceTypeInfo = typeResolver.getTypeInfo(instance.getDefinition());
+    IFlagInstanceTypeInfo jsonKeyTypeInfo = instanceTypeInfo.getFlagInstanceTypeInfo(jsonKey);
+
+    if (jsonKeyTypeInfo == null) {
+      throw new IllegalStateException(
+          String.format("Unable to identify JSON key for property: %s", instance.toCoordinates()));
+    }
+
+    {
+      // create add method
+      MethodSpec.Builder method = MethodSpec.methodBuilder("add" + itemPropertyName)
+          .addParameter(valueParam)
+          .returns(itemType)
+          .addModifiers(Modifier.PUBLIC)
+          .addJavadoc("Add a new {@link $T} item to the underlying collection.\n", itemType)
+          .addJavadoc("@param item the item to add\n")
+          .addJavadoc("@return the existing {@link $T} item in the collection or {@code null} if not item exists\n",
+              itemType)
+          .addStatement("$1T value = $2T.requireNonNull($3N,\"$3N value cannot be null\")",
+              itemType, ObjectUtils.class, valueParam)
+          .addStatement("$1T key = $2T.requireNonNull($3N.$4N(),\"$3N key cannot be null\")",
+              String.class, ObjectUtils.class, valueParam, "get" + jsonKeyTypeInfo.getPropertyName())
+          .beginControlFlow("if ($N == null)", valueField)
+          .addStatement("$N = new $T<>()", valueField, LinkedHashMap.class)
+          .endControlFlow()
+          .addStatement("return $N.put(key, value)", valueField);
+
+      builder.addMethod(method.build());
+    }
+    {
+      // create remove method
+      MethodSpec.Builder method = MethodSpec.methodBuilder("remove" + itemPropertyName)
+          .addParameter(valueParam)
+          .returns(TypeName.BOOLEAN)
+          .addModifiers(Modifier.PUBLIC)
+          .addJavadoc("Remove the {@link $T} item from the underlying collection.\n", itemType)
+          .addJavadoc("@param item the item to remove\n")
+          .addJavadoc("@return {@code true} if the item was removed or {@code false} otherwise\n")
+          .addStatement("$1T value = $2T.requireNonNull($3N,\"$3N value cannot be null\")",
+              itemType, ObjectUtils.class, valueParam)
+          .addStatement("$1T key = $2T.requireNonNull($3N.$4N(),\"$3N key cannot be null\")",
+              String.class, ObjectUtils.class, valueParam, "get" + jsonKeyTypeInfo.getPropertyName())
+          .addStatement("return $1N == null ? false : $1N.remove(key, value)", valueField);
+      builder.addMethod(method.build());
+    }
+
   }
 }

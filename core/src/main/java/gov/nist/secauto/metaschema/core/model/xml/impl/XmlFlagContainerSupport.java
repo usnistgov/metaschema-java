@@ -35,6 +35,8 @@ import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.FlagReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFieldDefinitionType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedInlineAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedInlineFieldDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFieldDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFlagDefinitionType;
@@ -146,6 +148,26 @@ class XmlFlagContainerSupport implements IFlagContainerSupport<IFlagInstance> {
   /**
    * Generate a set of constraints from the provided XMLBeans instance.
    *
+   * @param xmlField
+   *          the XMLBeans instance
+   * @param container
+   *          the field containing the flag
+   */
+  public XmlFlagContainerSupport(
+      @NonNull GroupedInlineFieldDefinitionType xmlField,
+      @NonNull IFieldDefinition container) {
+    // handle flags
+    if (xmlField.getFlagList().size() > 0 || xmlField.getDefineFlagList().size() > 0) {
+      this.flagInstances = parseLocalFlags(xmlField, container);
+    } else {
+      this.flagInstances = CollectionUtil.emptyMap();
+    }
+    this.jsonKeyFlag = null;
+  }
+
+  /**
+   * Generate a set of constraints from the provided XMLBeans instance.
+   *
    * @param xmlAssembly
    *          the XMLBeans instance
    * @param container
@@ -181,6 +203,26 @@ class XmlFlagContainerSupport implements IFlagContainerSupport<IFlagInstance> {
       this.flagInstances = CollectionUtil.emptyMap();
     }
     this.jsonKeyFlag = xmlAssembly.isSetJsonKey() ? flagInstances.get(xmlAssembly.getJsonKey().getFlagRef()) : null;
+  }
+
+  /**
+   * Generate a set of constraints from the provided XMLBeans instance.
+   *
+   * @param xmlAssembly
+   *          the XMLBeans instance
+   * @param container
+   *          the assembly containing the flag
+   */
+  public XmlFlagContainerSupport(
+      @NonNull GroupedInlineAssemblyDefinitionType xmlAssembly,
+      @NonNull IAssemblyDefinition container) {
+    // handle flags
+    if (xmlAssembly.getFlagList().size() > 0 || xmlAssembly.getDefineFlagList().size() > 0) {
+      this.flagInstances = parseLocalFlags(xmlAssembly, container);
+    } else {
+      this.flagInstances = CollectionUtil.emptyMap();
+    }
+    this.jsonKeyFlag = null;
   }
 
   /**

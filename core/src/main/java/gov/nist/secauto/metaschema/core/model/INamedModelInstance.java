@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.Collection;
@@ -62,5 +63,8 @@ public interface INamedModelInstance extends INamedInstance, IModelInstance {
    * @return the item values or an empty collection if no item values exist
    */
   @NonNull
-  Collection<?> getItemValues(Object instanceValue);
+  default Collection<?> getItemValues(Object instanceValue) {
+    // no item values by default
+    return CollectionUtil.emptyList();
+  }
 }

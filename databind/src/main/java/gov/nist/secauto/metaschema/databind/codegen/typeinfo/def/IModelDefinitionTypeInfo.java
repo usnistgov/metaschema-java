@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo.def;
 
 import com.squareup.javapoet.ClassName;
 
@@ -32,6 +32,8 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IFlagInstanceTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
 import java.util.Collection;
 

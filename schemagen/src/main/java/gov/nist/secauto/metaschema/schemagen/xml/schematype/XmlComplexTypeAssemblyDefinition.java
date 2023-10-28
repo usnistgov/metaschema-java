@@ -131,7 +131,7 @@ public class XmlComplexTypeAssemblyDefinition
       generateChoiceModelInstance((IChoiceInstance) modelInstance, state);
       break;
     default:
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException(modelInstance.getModelType().toString());
     }
 
     if (grouped) {

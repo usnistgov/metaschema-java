@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.core.metapath.item.node;
 
 import gov.nist.secauto.metaschema.core.metapath.format.IPathFormatter;
-import gov.nist.secauto.metaschema.core.metapath.item.IAtomicValuedItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAtomicValuedItem;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 

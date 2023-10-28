@@ -44,7 +44,7 @@ class MetaschemaModuleTest {
   void testFile() throws MetaschemaException, IOException {
     ModuleLoader loader = new ModuleLoader();
     URI moduleUri = ObjectUtils.notNull(
-        Paths.get("metaschema/schema/metaschema/metaschema-metaschema.xml").toUri());
+        Paths.get("metaschema/schema/metaschema/metaschema-module-metaschema.xml").toUri());
     IModule module = loader.load(moduleUri);
     assertFalse(module.getExportedRootAssemblyDefinitions().isEmpty(), "no roots found");
   }

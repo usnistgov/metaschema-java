@@ -32,13 +32,10 @@ import gov.nist.secauto.metaschema.core.model.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
 import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
@@ -47,8 +44,6 @@ import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineAssemblyDefinit
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -61,36 +56,102 @@ import nl.talsmasoftware.lazy4j.Lazy;
  * Represents a Metaschema assembly definition declared locally as an instance.
  */
 class XmlInlineAssemblyDefinition
-    extends AbstractAssemblyInstance {
+    extends AbstractAssemblyInstance
+    implements IAssemblyDefinition,
+    IFeatureStandardModelContainer,
+    IFeatureFlagContainer<IFlagInstance>,
+    IFeatureInlinedDefinition<IAssemblyDefinition, IAssemblyInstance> {
   @NonNull
-  private final InlineAssemblyDefinitionType xmlAssembly;
+  private final InlineAssemblyDefinitionType xmlObject;
+
   @NonNull
-  private final InternalAssemblyDefinition assemblyDefinition;
+  private final Lazy<XmlFlagContainerSupport> flagContainer;
+  @NonNull
+  private final Lazy<IStandardModelContainerSupport> modelContainer;
+  @NonNull
+  private final Lazy<IModelConstrained> constraints;
 
   /**
    * Constructs a new Metaschema assembly definition from an XML representation
    * bound to Java objects.
    *
-   * @param xmlAssembly
+   * @param xmlObject
    *          the XML representation bound to Java objects
    * @param parent
    *          the parent container, either a choice or assembly
    */
   public XmlInlineAssemblyDefinition(
-      @NonNull InlineAssemblyDefinitionType xmlAssembly,
+      @NonNull InlineAssemblyDefinitionType xmlObject,
       @NonNull IModelContainer parent) {
     super(parent);
-    this.xmlAssembly = xmlAssembly;
-    this.assemblyDefinition = new InternalAssemblyDefinition();
+    this.xmlObject = xmlObject;
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this)));
+    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
+      IStandardModelContainerSupport retval = new DefaultModelContainerSupport();
+      if (xmlObject.isSetModel()) {
+        XmlModelParser.parseModel(ObjectUtils.notNull(xmlObject.getModel()), this, retval);
+      }
+      return retval;
+    }));
+    this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
+      IModelConstrained retval = new AssemblyConstraintSet();
+      if (getXmlObject().isSetConstraint()) {
+        ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(getXmlObject().getConstraint()),
+            ISource.modelSource(ObjectUtils.requireNonNull(getContainingModule().getLocation())));
+      }
+      return retval;
+    }));
   }
 
   @Override
-  public InternalAssemblyDefinition getDefinition() {
-    return assemblyDefinition;
+  public IAssemblyDefinition getDefinition() {
+    return this;
+  }
+
+  @Override
+  @NonNull
+  public IAssemblyInstance getInlineInstance() {
+    return this;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public XmlFlagContainerSupport getFlagContainer() {
+    return flagContainer.get();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public IStandardModelContainerSupport getModelContainer() {
+    return modelContainer.get();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public IModelConstrained getConstraintSupport() {
+    return constraints.get();
+  }
+
+  @Override
+  public boolean isRoot() {
+    // a local assembly is never a root
+    return false;
+  }
+
+  @Override
+  public String getRootName() {
+    // a local assembly is never a root
+    return null;
+  }
+
+  @Override
+  public Integer getRootIndex() {
+    // a local assembly is never a root
+    return null;
   }
 
   // ----------------------------------------
-  // - Start Annotation driven code - CPD-OFF
+  // - Start XmlBeans driven code - CPD-OFF -
   // ----------------------------------------
 
   /**
@@ -98,232 +159,71 @@ class XmlInlineAssemblyDefinition
    *
    * @return the XML model
    */
-  protected InlineAssemblyDefinitionType getXmlAssembly() {
-    return xmlAssembly;
+  protected InlineAssemblyDefinitionType getXmlObject() {
+    return xmlObject;
   }
 
   @Override
   public String getFormalName() {
-    return getXmlAssembly().isSetFormalName() ? getXmlAssembly().getFormalName() : null;
+    return getXmlObject().isSetFormalName() ? getXmlObject().getFormalName() : null;
   }
 
   @SuppressWarnings("null")
   @Override
   public MarkupLine getDescription() {
-    return getXmlAssembly().isSetDescription()
-        ? MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription())
+    return getXmlObject().isSetDescription()
+        ? MarkupStringConverter.toMarkupString(getXmlObject().getDescription())
         : null;
   }
 
   @Override
   public Map<QName, Set<String>> getProperties() {
-    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlAssembly().getPropList()));
+    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 
   @SuppressWarnings("null")
   @Override
   public String getName() {
-    return getXmlAssembly().getName();
+    return getXmlObject().getName();
   }
 
   @Override
   public Integer getIndex() {
-    return getXmlAssembly().isSetIndex() ? getXmlAssembly().getIndex().intValue() : null;
+    return getXmlObject().isSetIndex() ? getXmlObject().getIndex().intValue() : null;
   }
 
   @Override
   public String getGroupAsName() {
-    return getXmlAssembly().isSetGroupAs() ? getXmlAssembly().getGroupAs().getName() : null;
+    return getXmlObject().isSetGroupAs() ? getXmlObject().getGroupAs().getName() : null;
   }
 
   @Override
   public int getMinOccurs() {
-    return XmlModelParser.getMinOccurs(getXmlAssembly().getMinOccurs());
+    return XmlModelParser.getMinOccurs(getXmlObject().getMinOccurs());
   }
 
   @Override
   public int getMaxOccurs() {
-    return XmlModelParser.getMaxOccurs(getXmlAssembly().getMaxOccurs());
+    return XmlModelParser.getMaxOccurs(getXmlObject().getMaxOccurs());
   }
 
   @Override
   public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-    return XmlModelParser.getJsonGroupAsBehavior(getXmlAssembly().getGroupAs());
+    return XmlModelParser.getJsonGroupAsBehavior(getXmlObject().getGroupAs());
   }
 
   @Override
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    return XmlModelParser.getXmlGroupAsBehavior(getXmlAssembly().getGroupAs());
+    return XmlModelParser.getXmlGroupAsBehavior(getXmlObject().getGroupAs());
   }
 
   @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
-    return getXmlAssembly().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getRemarks()) : null;
+    return getXmlObject().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlObject().getRemarks()) : null;
   }
 
-  // --------------------------------------
-  // - End Annotation driven code - CPD-ON
-  // --------------------------------------
-
-  @Override
-  public String getUseName() {
-    // an inline definition doesn't have a use name
-    return null;
-  }
-
-  @Override
-  public Integer getUseIndex() {
-    // an inline definition doesn't have a use name index
-    return null;
-  }
-
-  @Override
-  public Object getValue(@NonNull Object parentValue) {
-    // there is no value
-    return null;
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public Collection<?> getItemValues(Object instanceValue) {
-    // there are no item values
-    return Collections.emptyList();
-  }
-
-  /**
-   * The corresponding definition for the local flag instance.
-   */
-  @SuppressWarnings("PMD.GodClass")
-  private final class InternalAssemblyDefinition
-      implements IAssemblyDefinition,
-      IFeatureInlinedDefinition<IAssemblyInstance>,
-      IFeatureStandardModelContainer,
-      IFeatureFlagContainer<IFlagInstance> {
-    @NonNull
-    private final Lazy<XmlFlagContainerSupport> flagContainer;
-    @NonNull
-    private final Lazy<IStandardModelContainerSupport> modelContainer;
-    @NonNull
-    private final Lazy<IModelConstrained> constraints;
-
-    private InternalAssemblyDefinition() {
-      this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlAssembly, this)));
-      this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-        IStandardModelContainerSupport retval = new DefaultModelContainerSupport();
-        if (xmlAssembly.isSetModel()) {
-          XmlModelParser.parseModel(ObjectUtils.notNull(xmlAssembly.getModel()), this, retval);
-        }
-        return retval;
-      }));
-      this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
-        IModelConstrained retval = new AssemblyConstraintSet();
-        if (getXmlAssembly().isSetConstraint()) {
-          ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(getXmlAssembly().getConstraint()),
-              ISource.modelSource(ObjectUtils.requireNonNull(getContainingModule().getLocation())));
-        }
-        return retval;
-      }));
-    }
-
-    // REFACTOR: get rid of this and similar methods
-    @Override
-    public boolean isInline() {
-      return true;
-    }
-
-    @Override
-    @NonNull
-    public IAssemblyInstance getInlineInstance() {
-      return XmlInlineAssemblyDefinition.this;
-    }
-
-    @Override
-    public String getFormalName() {
-      return XmlInlineAssemblyDefinition.this.getFormalName();
-    }
-
-    @Override
-    public MarkupLine getDescription() {
-      return XmlInlineAssemblyDefinition.this.getDescription();
-    }
-
-    @Override
-    public @NonNull Map<QName, Set<String>> getProperties() {
-      return XmlInlineAssemblyDefinition.this.getProperties();
-    }
-
-    @Override
-    public ModuleScopeEnum getModuleScope() {
-      return ModuleScopeEnum.LOCAL;
-    }
-
-    @Override
-    public String getName() {
-      return XmlInlineAssemblyDefinition.this.getName();
-    }
-
-    @Override
-    public Integer getIndex() {
-      return XmlInlineAssemblyDefinition.this.getIndex();
-    }
-
-    @Override
-    public String getUseName() {
-      // always use the name instead
-      return null;
-    }
-
-    @Override
-    public Integer getUseIndex() {
-      // always use the name index instead
-      return null;
-    }
-
-    @Override
-    public boolean isRoot() {
-      // a local assembly is never a root
-      return false;
-    }
-
-    @Override
-    public String getRootName() {
-      // a local assembly is never a root
-      return null;
-    }
-
-    @Override
-    public Integer getRootIndex() {
-      // a local assembly is never a root
-      return null;
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    public XmlFlagContainerSupport getFlagContainer() {
-      return flagContainer.get();
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    public IStandardModelContainerSupport getModelContainer() {
-      return modelContainer.get();
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    public IModelConstrained getConstraintSupport() {
-      return constraints.get();
-    }
-
-    @Override
-    public MarkupMultiline getRemarks() {
-      return XmlInlineAssemblyDefinition.this.getRemarks();
-    }
-
-    @Override
-    public IModule getContainingModule() {
-      return XmlInlineAssemblyDefinition.super.getContainingDefinition().getContainingModule();
-    }
-  }
+  // -------------------------------------
+  // - End XmlBeans driven code - CPD-ON -
+  // -------------------------------------
 }

@@ -88,5 +88,8 @@ public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IFi
    *          the field item
    * @return the field's value or {@code null} if it has no value
    */
-  Object getFieldValue(@NonNull Object item);
+  default Object getFieldValue(@NonNull Object item) {
+    // no value by default
+    return null;
+  }
 }

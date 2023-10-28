@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionTypeInfo;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 

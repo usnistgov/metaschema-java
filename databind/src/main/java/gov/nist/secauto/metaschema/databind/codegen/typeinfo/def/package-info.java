@@ -24,30 +24,4 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
-
-import gov.nist.secauto.metaschema.core.model.MetaschemaException;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.io.BindingException;
-
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.nio.file.Paths;
-
-class MetaschemaMetaschemaTest
-    extends AbstractMetaschemaTest {
-
-  @Test
-  void testMetaschemaMetaschema() throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-    runTests(
-        ObjectUtils.notNull(
-            Paths.get("../core/metaschema/schema/metaschema/metaschema-metaschema.xml")),
-        ObjectUtils.notNull(
-            Paths.get("../databind-metaschema/src/main/metaschema-bindings/metaschema-metaschema-bindings.xml")),
-        null,
-        "gov.nist.secauto.metaschema.metaschema.model.METASCHEMA",
-        ObjectUtils.notNull(generationDir),
-        null);
-  }
-}
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo.def;

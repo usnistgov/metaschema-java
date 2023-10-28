@@ -39,8 +39,6 @@ import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,34 +48,22 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 class XmlAssemblyInstance
     extends AbstractAssemblyInstance {
-  // private static final Logger logger =
-  // LogManager.getLogger(XmlAssemblyInstance.class);
-
-  private final AssemblyReferenceType xmlAssembly;
+  private final AssemblyReferenceType xmlObject;
 
   /**
    * Constructs a new Metaschema Assembly instance definition from an XML
    * representation bound to Java objects.
    *
-   * @param xmlAssembly
+   * @param xmlObject
    *          the XML representation bound to Java objects
    * @param parent
    *          the parent container, either a choice or assembly
    */
   public XmlAssemblyInstance(
-      @NonNull AssemblyReferenceType xmlAssembly,
+      @NonNull AssemblyReferenceType xmlObject,
       @NonNull IModelContainer parent) {
     super(parent);
-    this.xmlAssembly = xmlAssembly;
-  }
-
-  /**
-   * Get the underlying XML data.
-   *
-   * @return the underlying XML data
-   */
-  protected AssemblyReferenceType getXmlAssembly() {
-    return xmlAssembly;
+    this.xmlObject = xmlObject;
   }
 
   @Override
@@ -87,21 +73,34 @@ class XmlAssemblyInstance
         .getScopedAssemblyDefinitionByName(getName()));
   }
 
+  // ----------------------------------------
+  // - Start XmlBeans driven code - CPD-OFF -
+  // ----------------------------------------
+
+  /**
+   * Get the underlying XML data.
+   *
+   * @return the underlying XML data
+   */
+  protected AssemblyReferenceType getXmlObject() {
+    return xmlObject;
+  }
+
   @Override
   public String getFormalName() {
-    return getXmlAssembly().isSetFormalName() ? getXmlAssembly().getFormalName() : null;
+    return getXmlObject().isSetFormalName() ? getXmlObject().getFormalName() : null;
   }
 
   @Override
   public Map<QName, Set<String>> getProperties() {
-    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlAssembly().getPropList()));
+    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 
   @Override
   public MarkupLine getDescription() {
     MarkupLine retval = null;
-    if (getXmlAssembly().isSetDescription()) {
-      MarkupLineDatatype description = getXmlAssembly().getDescription();
+    if (getXmlObject().isSetDescription()) {
+      MarkupLineDatatype description = getXmlObject().getDescription();
       assert description != null;
       retval = MarkupStringConverter.toMarkupString(description);
     }
@@ -111,19 +110,19 @@ class XmlAssemblyInstance
   @SuppressWarnings("null")
   @Override
   public String getName() {
-    return getXmlAssembly().getRef();
+    return getXmlObject().getRef();
   }
 
   @Override
   public String getUseName() {
-    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName().getStringValue() : null;
+    return getXmlObject().isSetUseName() ? getXmlObject().getUseName().getStringValue() : null;
   }
 
   @Override
   public Integer getUseIndex() {
     Integer retval = null;
-    if (getXmlAssembly().isSetUseName()) {
-      UseNameType useName = getXmlAssembly().getUseName();
+    if (getXmlObject().isSetUseName()) {
+      UseNameType useName = getXmlObject().getUseName();
       if (useName.isSetIndex()) {
         retval = useName.getIndex().intValue();
       }
@@ -133,45 +132,36 @@ class XmlAssemblyInstance
 
   @Override
   public String getGroupAsName() {
-    return getXmlAssembly().isSetGroupAs() ? getXmlAssembly().getGroupAs().getName() : null;
+    return getXmlObject().isSetGroupAs() ? getXmlObject().getGroupAs().getName() : null;
   }
 
   @Override
   public int getMinOccurs() {
-    return XmlModelParser.getMinOccurs(getXmlAssembly().getMinOccurs());
+    return XmlModelParser.getMinOccurs(getXmlObject().getMinOccurs());
   }
 
   @Override
   public int getMaxOccurs() {
-    return XmlModelParser.getMaxOccurs(getXmlAssembly().getMaxOccurs());
+    return XmlModelParser.getMaxOccurs(getXmlObject().getMaxOccurs());
   }
 
   @Override
   public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-    return XmlModelParser.getJsonGroupAsBehavior(getXmlAssembly().getGroupAs());
+    return XmlModelParser.getJsonGroupAsBehavior(getXmlObject().getGroupAs());
   }
 
   @Override
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    return XmlModelParser.getXmlGroupAsBehavior(getXmlAssembly().getGroupAs());
+    return XmlModelParser.getXmlGroupAsBehavior(getXmlObject().getGroupAs());
   }
 
   @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
-    return getXmlAssembly().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getRemarks()) : null;
+    return getXmlObject().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlObject().getRemarks()) : null;
   }
 
-  @Override
-  public Object getValue(@NonNull Object parentInstance) {
-    // there is no value
-    return null;
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public Collection<?> getItemValues(Object instanceValue) {
-    // there are no item values
-    return Collections.emptyList();
-  }
+  // -------------------------------------
+  // - End XmlBeans driven code - CPD-ON -
+  // -------------------------------------
 }

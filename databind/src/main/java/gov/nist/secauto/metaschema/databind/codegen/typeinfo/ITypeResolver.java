@@ -27,12 +27,17 @@
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.TypeName;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IFieldDefinitionTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IModelDefinitionTypeInfo;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -101,6 +106,16 @@ public interface ITypeResolver {
   ClassName getClassName(@NonNull IFlagContainer definition);
 
   /**
+   * Get the name of the class associated with the provided definition.
+   *
+   * @param typeInfo
+   *          the type information for the instance pertaining to the class
+   * @return the class name information for the definition
+   */
+  @NonNull
+  ClassName getClassName(@NonNull INamedModelInstanceTypeInfo typeInfo);
+
+  /**
    * Get the name of the base class to use for the class associated with the
    * provided definition.
    *
@@ -121,4 +136,8 @@ public interface ITypeResolver {
    */
   @NonNull
   String getPackageName(@NonNull IModule module);
+
+  @NonNull
+  TypeName getClassName(IChoiceGroupInstance instance);
+
 }

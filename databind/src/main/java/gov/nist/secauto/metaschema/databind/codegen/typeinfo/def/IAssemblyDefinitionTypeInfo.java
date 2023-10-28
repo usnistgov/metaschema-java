@@ -24,24 +24,34 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo.def;
+
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * A trait indicating that the implementation is a localized definition that is
- * declared in-line as an instance.
- *
- * @param <INSTANCE>
- *          the associated instance type
+ * Java class type information for an {@link IAssemblyDefinition} used for
+ * generating a Java class for the definition.
  */
-public interface IFeatureInlinedDefinition<INSTANCE extends INamedInstance> extends IDefinition {
-  @Override
-  default boolean isInline() {
-    return true;
+public interface IAssemblyDefinitionTypeInfo extends IModelDefinitionTypeInfo {
+
+  /**
+   * Construct a new type info based on the provided definition.
+   *
+   * @param definition
+   *          the definition associated with the type info
+   * @param typeResolver
+   *          a resolver used to look up related type information
+   * @return the type info for the definition
+   */
+  @NonNull
+  static IAssemblyDefinitionTypeInfo newTypeInfo(@NonNull IAssemblyDefinition definition,
+      @NonNull ITypeResolver typeResolver) {
+    return new AssemblyDefinitionTypeInfoImpl(definition, typeResolver);
   }
 
   @Override
-  @NonNull
-  INSTANCE getInlineInstance();
+  IAssemblyDefinition getDefinition();
 }

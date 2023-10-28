@@ -33,7 +33,6 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
@@ -41,7 +40,6 @@ import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
-import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
@@ -50,8 +48,6 @@ import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFieldDefinition
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,41 +58,50 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 class XmlInlineFieldDefinition
-    extends AbstractFieldInstance {
+    extends AbstractFieldInstance
+    implements IFieldDefinition,
+    IFeatureFlagContainer<IFlagInstance>,
+    IFeatureInlinedDefinition<IFieldDefinition, IFieldInstance> {
   @NonNull
-  private final InlineFieldDefinitionType xmlField;
+  private final InlineFieldDefinitionType xmlObject;
+  @Nullable
+  private final Object defaultValue;
   @NonNull
-  private final InternalFieldDefinition fieldDefinition;
+  private final Lazy<XmlFlagContainerSupport> flagContainer;
+  @NonNull
+  private final Lazy<IValueConstrained> constraints;
 
   /**
    * Constructs a new Metaschema field definition from an XML representation bound
    * to Java objects.
    *
-   * @param xmlField
+   * @param xmlObject
    *          the XML representation bound to Java objects
    * @param parent
    *          the parent container, either a choice or assembly
    */
+  @SuppressWarnings("PMD.NullAssignment")
   public XmlInlineFieldDefinition(
-      @NonNull InlineFieldDefinitionType xmlField,
+      @NonNull InlineFieldDefinitionType xmlObject,
       @NonNull IModelContainer parent) {
     super(parent);
-    this.xmlField = xmlField;
-    this.fieldDefinition = new InternalFieldDefinition(xmlField);
-  }
-
-  @Override
-  public InternalFieldDefinition getDefinition() {
-    return fieldDefinition;
-  }
-
-  @Override
-  public IModule getContainingModule() {
-    return getContainingDefinition().getContainingModule();
+    this.xmlObject = xmlObject;
+    this.defaultValue = xmlObject.isSetDefault()
+        ? getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlObject.getDefault()))
+        : null;
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this)));
+    this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
+      IValueConstrained retval = new ValueConstraintSet();
+      if (getXmlObject().isSetConstraint()) {
+        ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(getXmlObject().getConstraint()),
+            ISource.modelSource(ObjectUtils.requireNonNull(getContainingModule().getLocation())));
+      }
+      return retval;
+    }));
   }
 
   // ----------------------------------------
-  // - Start annotation driven code - CPD-OFF
+  // - Start XmlBeans driven code - CPD-OFF -
   // ----------------------------------------
 
   /**
@@ -105,8 +110,47 @@ class XmlInlineFieldDefinition
    * @return the XML model
    */
   @NonNull
-  protected final InlineFieldDefinitionType getXmlField() {
-    return xmlField;
+  protected final InlineFieldDefinitionType getXmlObject() {
+    return xmlObject;
+  }
+
+  @Override
+  public IFieldDefinition getDefinition() {
+    return this;
+  }
+
+  @Override
+  @NonNull
+  public IFieldInstance getInlineInstance() {
+    return this;
+  }
+
+  @Override
+  public IModule getContainingModule() {
+    return getContainingDefinition().getContainingModule();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public XmlFlagContainerSupport getFlagContainer() {
+    return flagContainer.get();
+  }
+
+  /**
+   * Used to generate the instances for the constraints in a lazy fashion when the
+   * constraints are first accessed.
+   *
+   * @return the constraints instance
+   */
+  @SuppressWarnings("null")
+  @Override
+  public IValueConstrained getConstraintSupport() {
+    return constraints.get();
+  }
+
+  @Override
+  public Object getDefaultValue() {
+    return defaultValue;
   }
 
   @Override
@@ -115,8 +159,8 @@ class XmlInlineFieldDefinition
     if (MarkupDataTypeProvider.MARKUP_MULTILINE.equals(getDefinition().getJavaTypeAdapter())) {
       // default value
       retval = MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
-      if (getXmlField().isSetInXml()) {
-        retval = getXmlField().getInXml();
+      if (getXmlObject().isSetInXml()) {
+        retval = getXmlObject().getInXml();
       }
     } else {
       // All other data types get "wrapped"
@@ -127,260 +171,98 @@ class XmlInlineFieldDefinition
 
   @Override
   public String getFormalName() {
-    return getXmlField().isSetFormalName() ? getXmlField().getFormalName() : null;
+    return getXmlObject().isSetFormalName() ? getXmlObject().getFormalName() : null;
   }
 
   @SuppressWarnings("null")
   @Override
   public MarkupLine getDescription() {
-    return getXmlField().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlField().getDescription())
+    return getXmlObject().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlObject().getDescription())
         : null;
   }
 
   @Override
   public Map<QName, Set<String>> getProperties() {
-    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlField().getPropList()));
+    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 
   @SuppressWarnings("null")
   @Override
   public String getName() {
-    return getXmlField().getName();
+    return getXmlObject().getName();
   }
 
   @Override
   public Integer getIndex() {
-    return getXmlField().isSetIndex() ? getXmlField().getIndex().intValue() : null;
-  }
-
-  @Override
-  public Object getDefaultValue() {
-    // inline definitions do not have an instance default value
-    return null;
+    return getXmlObject().isSetIndex() ? getXmlObject().getIndex().intValue() : null;
   }
 
   @Override
   public String getGroupAsName() {
-    return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : null;
+    return getXmlObject().isSetGroupAs() ? getXmlObject().getGroupAs().getName() : null;
   }
 
   @Override
   public int getMinOccurs() {
-    return XmlModelParser.getMinOccurs(getXmlField().getMinOccurs());
+    return XmlModelParser.getMinOccurs(getXmlObject().getMinOccurs());
   }
 
   @Override
   public int getMaxOccurs() {
-    return XmlModelParser.getMaxOccurs(getXmlField().getMaxOccurs());
+    return XmlModelParser.getMaxOccurs(getXmlObject().getMaxOccurs());
   }
 
   @Override
   public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-    return XmlModelParser.getJsonGroupAsBehavior(getXmlField().getGroupAs());
+    return XmlModelParser.getJsonGroupAsBehavior(getXmlObject().getGroupAs());
   }
 
   @Override
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    return XmlModelParser.getXmlGroupAsBehavior(getXmlField().getGroupAs());
+    return XmlModelParser.getXmlGroupAsBehavior(getXmlObject().getGroupAs());
   }
 
   @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
-    return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
-  }
-
-  // --------------------------------------
-  // - End annotation driven code - CPD-ON
-  // --------------------------------------
-
-  @Override
-  public String getUseName() {
-    // an inline definition doesn't have a use name
-    return null;
-  }
-
-  @Override
-  public Integer getUseIndex() {
-    // an inline definition doesn't have a use name index
-    return null;
-  }
-
-  @Override
-  public Object getValue(@NonNull Object parentValue) {
-    // there is no value
-    return null;
+    return getXmlObject().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlObject().getRemarks()) : null;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<?> getItemValues(Object instanceValue) {
-    // there are no item values
-    return Collections.emptyList();
+  public IDataTypeAdapter<?> getJavaTypeAdapter() {
+    return getXmlObject().isSetAsType() ? getXmlObject().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
   }
 
-  /**
-   * The corresponding definition for the local flag instance.
-   */
-  private final class InternalFieldDefinition
-      implements IFieldDefinition,
-      IFeatureInlinedDefinition<IFieldInstance>,
-      IFeatureFlagContainer<IFlagInstance> {
-    @Nullable
-    private final Object defaultValue;
-    private final Lazy<XmlFlagContainerSupport> flagContainer;
-    private final Lazy<IValueConstrained> constraints;
-
-    private InternalFieldDefinition(
-        @NonNull InlineFieldDefinitionType xmlField) {
-      Object defaultValue = null;
-      if (xmlField.isSetDefault()) {
-        defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlField.getDefault()));
-      }
-      this.defaultValue = defaultValue;
-      this.flagContainer = Lazy.lazy(() -> new XmlFlagContainerSupport(xmlField, this));
-      this.constraints = Lazy.lazy(() -> {
-        IValueConstrained retval = new ValueConstraintSet();
-        if (getXmlField().isSetConstraint()) {
-          ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(getXmlField().getConstraint()),
-              ISource.modelSource(ObjectUtils.requireNonNull(getContainingModule().getLocation())));
-        }
-        return retval;
-      });
-    }
-
-    // ----------------------------------------
-    // - Start annotation driven code - CPD-OFF
-    // ----------------------------------------
-
-    @SuppressWarnings("null")
-    @Override
-    public IDataTypeAdapter<?> getJavaTypeAdapter() {
-      return getXmlField().isSetAsType() ? getXmlField().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
-    }
-
-    @Override
-    public boolean hasJsonValueKeyFlagInstance() {
-      return getXmlField().isSetJsonValueKeyFlag() && getXmlField().getJsonValueKeyFlag().isSetFlagRef();
-    }
-
-    @Override
-    public IFlagInstance getJsonValueKeyFlagInstance() {
-      IFlagInstance retval = null;
-      if (getXmlField().isSetJsonValueKeyFlag() && getXmlField().getJsonValueKeyFlag().isSetFlagRef()) {
-        retval = getFlagInstanceByName(ObjectUtils.notNull(getXmlField().getJsonValueKeyFlag().getFlagRef()));
-      }
-      return retval;
-    }
-
-    @Override
-    public String getJsonValueKeyName() {
-      String retval = null;
-
-      if (getXmlField().isSetJsonValueKey()) {
-        retval = getXmlField().getJsonValueKey();
-      }
-
-      if (retval == null || retval.isEmpty()) {
-        retval = getJavaTypeAdapter().getDefaultJsonValueKey();
-      }
-      return retval;
-    }
-
-    // --------------------------------------
-    // - End annotation driven code - CPD-ON
-    // --------------------------------------
-
-    @Override
-    public Object getDefaultValue() {
-      return defaultValue;
-    }
-
-    @Override
-    public boolean isInline() {
-      return true;
-    }
-
-    @Override
-    @NonNull
-    public IFieldInstance getInlineInstance() {
-      return XmlInlineFieldDefinition.this;
-    }
-
-    @Override
-    public String getFormalName() {
-      return XmlInlineFieldDefinition.this.getFormalName();
-    }
-
-    @Override
-    public MarkupLine getDescription() {
-      return XmlInlineFieldDefinition.this.getDescription();
-    }
-
-    @Override
-    public @NonNull Map<QName, Set<String>> getProperties() {
-      return XmlInlineFieldDefinition.this.getProperties();
-    }
-
-    @Override
-    public ModuleScopeEnum getModuleScope() {
-      return ModuleScopeEnum.LOCAL;
-    }
-
-    @Override
-    public String getName() {
-      return XmlInlineFieldDefinition.this.getName();
-    }
-
-    @Override
-    public Integer getIndex() {
-      return XmlInlineFieldDefinition.this.getIndex();
-    }
-
-    @Override
-    public String getUseName() {
-      // always use the name instead
-      return null;
-    }
-
-    @Override
-    public Integer getUseIndex() {
-      // always use the name index instead
-      return null;
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    public XmlFlagContainerSupport getFlagContainer() {
-      return flagContainer.get();
-    }
-
-    /**
-     * Used to generate the instances for the constraints in a lazy fashion when the
-     * constraints are first accessed.
-     *
-     * @return the constraints instance
-     */
-    @SuppressWarnings("null")
-    @Override
-    public IValueConstrained getConstraintSupport() {
-      return constraints.get();
-    }
-
-    @Override
-    public MarkupMultiline getRemarks() {
-      return XmlInlineFieldDefinition.this.getRemarks();
-    }
-
-    @Override
-    public IModule getContainingModule() {
-      return XmlInlineFieldDefinition.super.getContainingDefinition().getContainingModule();
-    }
-
-    @Override
-    public Object getFieldValue(@NonNull Object parentFieldValue) {
-      // there is no value
-      return null;
-    }
+  @Override
+  public boolean hasJsonValueKeyFlagInstance() {
+    return getXmlObject().isSetJsonValueKeyFlag() && getXmlObject().getJsonValueKeyFlag().isSetFlagRef();
   }
+
+  @Override
+  public IFlagInstance getJsonValueKeyFlagInstance() {
+    IFlagInstance retval = null;
+    if (getXmlObject().isSetJsonValueKeyFlag() && getXmlObject().getJsonValueKeyFlag().isSetFlagRef()) {
+      retval = getFlagInstanceByName(ObjectUtils.notNull(getXmlObject().getJsonValueKeyFlag().getFlagRef()));
+    }
+    return retval;
+  }
+
+  @Override
+  public String getJsonValueKeyName() {
+    String retval = null;
+
+    if (getXmlObject().isSetJsonValueKey()) {
+      retval = getXmlObject().getJsonValueKey();
+    }
+
+    if (retval == null || retval.isEmpty()) {
+      retval = getJavaTypeAdapter().getDefaultJsonValueKey();
+    }
+    return retval;
+  }
+
+  // -------------------------------------
+  // - End XmlBeans driven code - CPD-ON -
+  // -------------------------------------
 }

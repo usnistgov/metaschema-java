@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
@@ -50,7 +51,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 class ClassBindingModelContainerSupport
     implements IModelContainerSupport<IBoundNamedModelInstance, IBoundNamedModelInstance, IBoundFieldInstance,
-        IBoundAssemblyInstance, IChoiceInstance> {
+        IBoundAssemblyInstance, IChoiceInstance, IChoiceGroupInstance> {
   @NonNull
   private final Map<String, IBoundNamedModelInstance> modelInstances;
   @NonNull
@@ -149,5 +150,10 @@ class ClassBindingModelContainerSupport
   public List<IChoiceInstance> getChoiceInstances() {
     // choices are not exposed by this API
     return CollectionUtil.emptyList();
+  }
+
+  @Override
+  public List<IChoiceGroupInstance> getChoiceGroupInstances() {
+    throw new UnsupportedOperationException();
   }
 }

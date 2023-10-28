@@ -96,7 +96,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
     super(parentClassBinding);
     this.field = ObjectUtils.requireNonNull(field, "field");
 
-    GroupAs annotation = field.getAnnotation(GroupAs.class);
+    GroupAs groupAs = field.getAnnotation(GroupAs.class);
     // if (annotation == null && (getMaxOccurs() == -1 || getMaxOccurs() > 1)) {
     // throw new IllegalStateException(String.format("Field '%s' on class '%s' is
     // missing the '%s'
@@ -104,10 +104,9 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
     // field.getName(), parentClassBinding.getBoundClass().getName(),
     // GroupAs.class.getName()));
     // }
-    this.groupAs = annotation == null ? SINGLETON_GROUP_AS : new SimpleGroupAs(annotation, parentClassBinding);
+    this.groupAs = IGroupAs.newInstance(groupAs, parentClassBinding);
     this.propertyInfo = ObjectUtils.notNull(Lazy.lazy(() -> IModelPropertyInfo.newPropertyInfo(this)));
     this.dataTypeHandler = ObjectUtils.notNull(Lazy.lazy(this::newDataTypeHandler));
-
   }
 
   // REFACTOR: remove this method if possible
@@ -202,6 +201,13 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
    * A data object to record the group as selections.
    */
   private interface IGroupAs {
+    @NonNull
+    static IGroupAs newInstance(
+        @Nullable GroupAs groupAs,
+        @NonNull IAssemblyClassBinding parentClassBinding) {
+      return groupAs == null ? SINGLETON_GROUP_AS : new SimpleGroupAs(groupAs, parentClassBinding);
+    }
+
     @NonNull
     String getGroupAsName();
 

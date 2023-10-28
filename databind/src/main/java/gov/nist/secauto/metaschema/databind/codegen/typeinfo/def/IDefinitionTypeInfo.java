@@ -24,10 +24,13 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo.def;
 
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.INamedInstance;
+import gov.nist.secauto.metaschema.core.model.IInstance;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IInstanceTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IPropertyTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
 import java.util.Collection;
 
@@ -71,7 +74,7 @@ public interface IDefinitionTypeInfo {
    * @return the type information
    */
   @Nullable
-  IInstanceTypeInfo getInstanceTypeInfo(@NonNull INamedInstance instance);
+  IInstanceTypeInfo getInstanceTypeInfo(@NonNull IInstance instance);
 
   /**
    * Get the type information for all instance values on this definition.
@@ -88,5 +91,5 @@ public interface IDefinitionTypeInfo {
    * @return the type information
    */
   @NonNull
-  Collection<ITypeInfo> getPropertyTypeInfos();
+  Collection<IPropertyTypeInfo> getPropertyTypeInfos();
 }

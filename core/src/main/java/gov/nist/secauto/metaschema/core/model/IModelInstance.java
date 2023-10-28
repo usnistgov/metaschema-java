@@ -97,15 +97,22 @@ public interface IModelInstance extends IInstance {
    *         when {@link #getMaxOccurs()} = 1
    */
   @Nullable
-  String getGroupAsName();
+  default String getGroupAsName() {
+    // no group-as by default
+    return null;
+  }
 
   /**
    * Retrieve the XML namespace for this group.
    *
    * @return the XML namespace or {@code null} if no namespace is used
    */
+  // REFACTOR: analyze implementations to move up?
   @Nullable
-  String getGroupAsXmlNamespace();
+  default String getGroupAsXmlNamespace() {
+    // no group-as by default
+    return null;
+  }
 
   /**
    * Gets the configured JSON group-as strategy. A JSON group-as strategy is only
@@ -115,7 +122,9 @@ public interface IModelInstance extends IInstance {
    *         {@link #getMaxOccurs()} = 1
    */
   @NonNull
-  JsonGroupAsBehavior getJsonGroupAsBehavior();
+  default JsonGroupAsBehavior getJsonGroupAsBehavior() {
+    return JsonGroupAsBehavior.NONE;
+  }
 
   /**
    * Gets the configured XML group-as strategy. A XML group-as strategy is only
@@ -125,5 +134,7 @@ public interface IModelInstance extends IInstance {
    *         if {@link #getMaxOccurs()} = 1
    */
   @NonNull
-  XmlGroupAsBehavior getXmlGroupAsBehavior();
+  default XmlGroupAsBehavior getXmlGroupAsBehavior() {
+    return XmlGroupAsBehavior.UNGROUPED;
+  }
 }

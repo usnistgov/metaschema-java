@@ -24,13 +24,22 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo.def;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.IModelInstance;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.AssemblyInstanceTypeInfoImpl;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ChoiceGroupTypeInfoImpl;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.FieldInstanceTypeInfoImpl;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IChoiceGroupTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IModelInstanceTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -62,11 +71,20 @@ class AssemblyDefinitionTypeInfoImpl
       if (instance instanceof IChoiceInstance) {
         processModel((IChoiceInstance) instance);
         continue;
+      } else if (instance instanceof IChoiceGroupInstance) {
+        processModel((IChoiceGroupInstance) instance);
+        continue;
       }
 
       // else the instance is an object model instance with a name
       newObjectModelInstance((INamedModelInstance) instance);
     }
+  }
+
+  private IChoiceGroupTypeInfo processModel(@NonNull IChoiceGroupInstance instance) {
+    IChoiceGroupTypeInfo retval = new ChoiceGroupTypeInfoImpl(instance, this);
+    addPropertyTypeInfo(retval);
+    return retval;
   }
 
   /**
@@ -79,7 +97,14 @@ class AssemblyDefinitionTypeInfoImpl
    */
   @NonNull
   protected IModelInstanceTypeInfo newObjectModelInstance(@NonNull INamedModelInstance instance) {
-    IModelInstanceTypeInfo retval = new ModelInstanceTypeInfoImpl(instance, this);
+    IModelInstanceTypeInfo retval;
+    if (instance instanceof IAssemblyInstance) {
+      retval = new AssemblyInstanceTypeInfoImpl((IAssemblyInstance) instance, this);
+    } else if (instance instanceof IFieldInstance) {
+      retval = new FieldInstanceTypeInfoImpl((IFieldInstance) instance, this);
+    } else {
+      throw new UnsupportedOperationException(instance.getClass().getName());
+    }
     addPropertyTypeInfo(retval);
     return retval;
   }

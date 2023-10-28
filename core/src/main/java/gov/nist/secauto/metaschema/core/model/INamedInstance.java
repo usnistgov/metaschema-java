@@ -49,68 +49,6 @@ public interface INamedInstance extends IInstance, INamedModelElement {
   @NonNull
   IDefinition getDefinition();
 
-  /**
-   * Get the XML qualified name to use in XML.
-   *
-   * @return the XML qualified name, or {@code null} if there isn't one
-   */
-  default QName getXmlQName() {
-    return new QName(getXmlNamespace(), getEffectiveName());
-  }
-
-  /**
-   * Retrieve the XML namespace for this instance.
-   *
-   * @return the XML namespace or {@code null} if no namespace is defined
-   */
-  default String getXmlNamespace() {
-    return getContainingModule().getXmlNamespace().toASCIIString();
-  }
-
-  /**
-   * Get the current value from the provided {@code parentInstance} object. The
-   * provided object must be of the type associated with the definition containing
-   * this property.
-   *
-   * @param parentInstance
-   *          the object associated with the definition containing this property
-   * @return the value if available, or {@code null} otherwise
-   */
-  Object getValue(@NonNull Object parentInstance);
-
-  /**
-   * Generates a "coordinate" string for the provided information element
-   * instance.
-   *
-   * A coordinate consists of the element's:
-   * <ul>
-   * <li>containing Metaschema module's short name</li>
-   * <li>model type</li>
-   * <li>name</li>
-   * <li>hash code</li>
-   * <li>the hash code of the definition</li>
-   * </ul>
-   *
-   * @return the coordinate
-   */
-  @SuppressWarnings("null")
-  @Override
-  default String toCoordinates() {
-    IDefinition definition = getDefinition();
-    return String.format("%s:%s:%s@%d(%d)",
-        getContainingDefinition().getContainingModule().getShortName(),
-        getModelType(),
-        definition.getName(),
-        hashCode(),
-        definition.isInline() ? 0 : definition.hashCode());
-  }
-
-  @Override
-  default Integer getIndex() {
-    // does not have an index
-    return null;
-  }
-
   @Override
   @NonNull
   default String getEffectiveName() {
@@ -145,5 +83,64 @@ public interface INamedInstance extends IInstance, INamedModelElement {
   default MarkupLine getEffectiveDescription() {
     MarkupLine result = getDescription();
     return result == null ? getDefinition().getEffectiveDescription() : result;
+  }
+
+  /**
+   * Get the XML qualified name to use in XML.
+   *
+   * @return the XML qualified name, or {@code null} if there isn't one
+   */
+  default QName getXmlQName() {
+    return new QName(getXmlNamespace(), getEffectiveName());
+  }
+
+  /**
+   * Retrieve the XML namespace for this instance.
+   *
+   * @return the XML namespace or {@code null} if no namespace is defined
+   */
+  default String getXmlNamespace() {
+    return getContainingModule().getXmlNamespace().toASCIIString();
+  }
+
+  /**
+   * Get the current value from the provided {@code parentInstance} object. The
+   * provided object must be of the type associated with the definition containing
+   * this property.
+   *
+   * @param parentInstance
+   *          the object associated with the definition containing this property
+   * @return the value if available, or {@code null} otherwise
+   */
+  default Object getValue(@NonNull Object parentInstance) {
+    // no value by default
+    return null;
+  }
+
+  /**
+   * Generates a "coordinate" string for the provided information element
+   * instance.
+   *
+   * A coordinate consists of the element's:
+   * <ul>
+   * <li>containing Metaschema module's short name</li>
+   * <li>model type</li>
+   * <li>name</li>
+   * <li>hash code</li>
+   * <li>the hash code of the definition</li>
+   * </ul>
+   *
+   * @return the coordinate
+   */
+  @SuppressWarnings("null")
+  @Override
+  default String toCoordinates() {
+    IDefinition definition = getDefinition();
+    return String.format("%s:%s:%s@%d(%d)",
+        getContainingDefinition().getContainingModule().getShortName(),
+        getModelType(),
+        definition.getName(),
+        hashCode(),
+        definition.isInline() ? 0 : definition.hashCode());
   }
 }
