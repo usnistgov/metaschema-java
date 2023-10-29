@@ -27,10 +27,12 @@
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.FieldSpec.Builder;
 import com.squareup.javapoet.TypeName;
 
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
@@ -59,24 +61,44 @@ public class ChoiceGroupTypeInfoImpl
   }
 
   @Override
-  protected void buildFieldBinding(
-      Builder fieldSpec,
-      AnnotationSpec.Builder bindingAnnotationSpec) {
-    IChoiceGroupInstance modelInstance = getInstance();
+  public AnnotationSpec.Builder buildBindingAnnotation() {
+    AnnotationSpec.Builder retval = super.buildBindingAnnotation();
 
-    String discriminator = modelInstance.getJsonDiscriminatorProperty();
+    IChoiceGroupInstance choiceGroup = getInstance();
+
+    String discriminator = choiceGroup.getJsonDiscriminatorProperty();
     if (!MetaschemaModelConstants.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME.equals(discriminator)) {
-      bindingAnnotationSpec.addMember("discriminator", "$S", discriminator);
+      retval.addMember("discriminator", "$S", discriminator);
     }
 
-    int minOccurs = modelInstance.getMinOccurs();
+    int minOccurs = choiceGroup.getMinOccurs();
     if (minOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
-      bindingAnnotationSpec.addMember("minOccurs", "$L", minOccurs);
+      retval.addMember("minOccurs", "$L", minOccurs);
     }
 
-    int maxOccurs = modelInstance.getMaxOccurs();
+    int maxOccurs = choiceGroup.getMaxOccurs();
     if (maxOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS) {
-      bindingAnnotationSpec.addMember("maxOccurs", "$L", maxOccurs);
+      retval.addMember("maxOccurs", "$L", maxOccurs);
     }
+
+    IAssemblyDefinitionTypeInfo parentTypeInfo = getParentDefinitionTypeInfo();
+    ITypeResolver typeResolver = parentTypeInfo.getTypeResolver();
+    for (INamedModelInstance modelInstance : getInstance().getNamedModelInstances()) {
+      assert modelInstance != null;
+      IModelInstanceTypeInfo instanceTypeInfo = typeResolver.getTypeInfo(modelInstance, parentTypeInfo);
+
+      AnnotationSpec annotation = instanceTypeInfo.buildBindingAnnotation().build();
+      if (modelInstance instanceof IFieldInstance) {
+        retval.addMember("fields", "$L", annotation);
+      } else if (modelInstance instanceof IAssemblyInstance) {
+        retval.addMember("assemblies", "$L", annotation);
+      }
+    }
+
+    if (maxOccurs == -1 || maxOccurs > 1) {
+      // requires a group-as
+      retval.addMember("groupAs", "$L", generateGroupAsAnnotation().build());
+    }
+    return retval;
   }
 }

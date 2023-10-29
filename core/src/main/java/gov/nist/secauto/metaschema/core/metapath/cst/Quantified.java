@@ -166,6 +166,15 @@ public class Quantified
     return visitor.visitQuantified(this, context);
   }
 
+  /**
+   * Get the Cartesian product of the provided lists of value axis.
+   *
+   * @param <T>
+   *          the Java type of value item
+   * @param axes
+   *          the values to compute the Cartesian product of
+   * @return an iterator of lists contain the Cartesian product of the axis values
+   */
   public static <T extends IItem> Iterable<List<T>> cartesianProduct(
       @NonNull List<? extends Collection<? extends T>> axes) {
     return new CartesianProduct<>(axes);

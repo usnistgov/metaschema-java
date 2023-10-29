@@ -26,53 +26,56 @@
 
 package gov.nist.secauto.metaschema.databind.model.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.ModelUtil;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
-/**
- * Identifies a field on a class annotated with the {@link MetaschemaField}
- * annotation as the Module field's value.
- */
-@Documented
-@Retention(RUNTIME)
-@Target({ FIELD })
-public @interface FieldValue {
-  /**
-   * The Module data type adapter for the field's value.
-   *
-   * @return the data type adapter
-   */
-  Class<? extends IDataTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
-
-  /**
-   * The default value of the field represented as a string.
-   * <p>
-   * The value {@link Constants#NULL_VALUE} is used to indicate if no default
-   * value is provided.
-   *
-   * @return the default value
-   */
+class DefaultGroupAs implements IGroupAs {
   @NonNull
-  String defaultValue() default Constants.NULL_VALUE;
-
-  /**
-   * The name of the JSON property that contains the field's value. If this value
-   * is provided, the the name will be used as the property name. Otherwise, the
-   * property name will default to a value defined by the data type.
-   * <p>
-   * Use of this annotation is mutually exclusive with the
-   * {@link JsonFieldValueKeyFlag} annotation.
-   *
-   * @return the name
-   */
+  private final String name;
   @NonNull
-  String valueKeyName() default Constants.NO_STRING_VALUE;
+  private final Lazy<String> namespace;
+  @NonNull
+  private final GroupAs annotation;
+
+  DefaultGroupAs(@NonNull GroupAs annotation, @NonNull IClassBinding parentDefinition) {
+    this.annotation = annotation;
+    {
+      String value = ModelUtil.resolveNoneOrDefault(annotation.name(), null);
+      if (value == null) {
+        throw new IllegalStateException(
+            String.format("The %s#groupName value '%s' resulted in an invalid null value",
+                GroupAs.class.getName(),
+                annotation.name()));
+      }
+      this.name = value;
+    }
+    this.namespace = ObjectUtils.notNull(
+        Lazy.lazy(() -> ModelUtil.resolveNamespace(annotation.namespace(), parentDefinition)));
+  }
+
+  @Override
+  public String getGroupAsName() {
+    return name;
+  }
+
+  @Override
+  public String getGroupAsXmlNamespace() {
+    return namespace.get();
+  }
+
+  @Override
+  public JsonGroupAsBehavior getJsonGroupAsBehavior() {
+    return annotation.inJson();
+  }
+
+  @Override
+  public XmlGroupAsBehavior getXmlGroupAsBehavior() {
+    return annotation.inXml();
+  }
 }

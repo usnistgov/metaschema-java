@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.databind.model.annotations;
 
 import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
@@ -50,7 +51,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  */
 @Documented
 @Retention(RUNTIME)
-@Target({ FIELD })
+@Target({ FIELD, METHOD })
 public @interface BoundAssembly {
   /**
    * Get the documentary formal name of the assembly.
@@ -128,4 +129,16 @@ public @interface BoundAssembly {
    */
   @NonNull
   String remarks() default Constants.NO_STRING_VALUE;
+
+  /**
+   * Used to provide grouping information.
+   * <p>
+   * This annotation is required when the value of {@link #maxOccurs()} is greater
+   * than 1.
+   *
+   * @return the configured {@link GroupAs} or the default value with a
+   *         {@code null} {@link GroupAs#name()}
+   */
+  @NonNull
+  GroupAs groupAs() default @GroupAs(name = Constants.NULL_VALUE);
 }

@@ -72,6 +72,7 @@ class XmlInlineFlagDefinition
    *          the parent definition, which must be a definition type that can
    *          contain flags.
    */
+  @SuppressWarnings("PMD.NullAssignment")
   public XmlInlineFlagDefinition(@NonNull InlineFlagDefinitionType xmlObject, @NonNull IFlagContainer parent) {
     super(parent);
     this.xmlFlag = xmlObject;
@@ -102,7 +103,7 @@ class XmlInlineFlagDefinition
   @Override
   @NonNull
   public IFlagInstance getInlineInstance() {
-    return XmlInlineFlagDefinition.this;
+    return this;
   }
 
   /**

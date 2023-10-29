@@ -24,47 +24,57 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind.codegen.impl;
 
 import com.squareup.javapoet.ClassName;
 
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.codegen.IGeneratedDefinitionClass;
+import gov.nist.secauto.metaschema.databind.codegen.IGeneratedModuleClass;
 
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-/**
- * Contains information about a generated class.
- */
-class DefaultGeneratedClass implements IGeneratedClass {
+public class DefaultGeneratedModuleClass
+    extends DefaultGeneratedClass
+    implements IGeneratedModuleClass {
   @NonNull
-  private final Path classFile;
+  private final IModule module;
   @NonNull
-  private final ClassName className;
+  private final Map<IFlagContainer, IGeneratedDefinitionClass> definitionClassMap;
+  @NonNull
+  private final String packageName;
 
-  /**
-   * Construct a new class information object for a generated class.
-   *
-   * @param classFile
-   *          the file the class was written to
-   * @param className
-   *          the type info for the class
-   */
-  public DefaultGeneratedClass(@NonNull Path classFile, @NonNull ClassName className) {
-    this.classFile = ObjectUtils.requireNonNull(classFile, "classFile");
-    this.className = ObjectUtils.requireNonNull(className, "className");
+  public DefaultGeneratedModuleClass(
+      @NonNull IModule module,
+      @NonNull ClassName className,
+      @NonNull Path classFile,
+      @NonNull Map<IFlagContainer, IGeneratedDefinitionClass> definitionClassMap,
+      @NonNull String packageName) {
+    super(classFile, className);
+    this.module = module;
+    this.definitionClassMap = CollectionUtil.unmodifiableMap(definitionClassMap);
+    this.packageName = packageName;
   }
 
   @Override
-  @NonNull
-  public Path getClassFile() {
-    return classFile;
+  public IModule getModule() {
+    return module;
   }
 
   @Override
-  @NonNull
-  public ClassName getClassName() {
-    return className;
+  public Collection<IGeneratedDefinitionClass> getGeneratedDefinitionClasses() {
+    return ObjectUtils.notNull(definitionClassMap.values());
+  }
+
+  @Override
+  public String getPackageName() {
+    return packageName;
   }
 }

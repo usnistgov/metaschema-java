@@ -24,10 +24,12 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
+import gov.nist.secauto.metaschema.databind.codegen.IGeneratedClass;
+import gov.nist.secauto.metaschema.databind.codegen.IGeneratedDefinitionClass;
+import gov.nist.secauto.metaschema.databind.codegen.IGeneratedModuleClass;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IModelDefinitionTypeInfo;
 
 import java.io.IOException;

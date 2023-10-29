@@ -28,23 +28,16 @@ package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.FieldSpec.Builder;
 import com.squareup.javapoet.TypeName;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.codegen.impl.AnnotationGenerator;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
-
-import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -78,54 +71,27 @@ public class FieldInstanceTypeInfoImpl
   }
 
   @Override
-  public Set<IFlagContainer> buildField(FieldSpec.Builder builder) {
-    Set<IFlagContainer> retval = super.buildField(builder);
-
-    IFieldDefinition fieldDefinition = getInstance().getDefinition();
-
-    // handle the field value related info
-    if (fieldDefinition.isSimple()) {
-      // this is a simple field, without flags
-      // we need to add the BoundFieldValue annotation to the property
-      // fieldAnnoation.addMember("valueName", "$S",
-      // fieldDefinition.getJsonValueKeyName());
-      IDataTypeAdapter<?> valueDataType = fieldDefinition.getJavaTypeAdapter();
-
-      Object defaultValue = fieldDefinition.getDefaultValue();
-
-      if (!MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType) || defaultValue != null) {
-        AnnotationSpec.Builder boundFieldValueAnnotation = AnnotationSpec.builder(BoundFieldValue.class);
-
-        if (!MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType)) {
-          boundFieldValueAnnotation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
-        }
-
-        if (defaultValue != null) {
-          boundFieldValueAnnotation.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
-        }
-        builder.addAnnotation(boundFieldValueAnnotation.build());
-      }
-
-      AnnotationGenerator.buildValueConstraints(builder, fieldDefinition);
-    }
-    return retval;
-  }
-
-  @Override
-  protected void buildFieldBinding(Builder fieldSpec, AnnotationSpec.Builder bindingAnnotationSpec) {
-    super.buildFieldBinding(fieldSpec, bindingAnnotationSpec);
+  public AnnotationSpec.Builder buildBindingAnnotation() {
+    AnnotationSpec.Builder retval = super.buildBindingAnnotation();
 
     IFieldInstance fieldInstance = getInstance();
 
     if (MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != fieldInstance.isInXmlWrapped()) {
-      bindingAnnotationSpec.addMember("inXmlWrapped", "$L", fieldInstance.isInXmlWrapped());
+      retval.addMember("inXmlWrapped", "$L", fieldInstance.isInXmlWrapped());
     }
 
     IDataTypeAdapter<?> valueDataType = fieldInstance.getDefinition().getJavaTypeAdapter();
     Object defaultValue = fieldInstance.getDefaultValue();
     if (defaultValue != null) {
-      bindingAnnotationSpec.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
+      retval.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
     }
-  }
 
+    IFieldDefinition fieldDefinition = getInstance().getDefinition();
+    // handle the field value related info
+    if (fieldDefinition.isSimple() && !MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType)) {
+      // this is a simple field, without flags
+      retval.addMember("typeAdapter", "$T.class", valueDataType.getClass());
+    }
+    return retval;
+  }
 }

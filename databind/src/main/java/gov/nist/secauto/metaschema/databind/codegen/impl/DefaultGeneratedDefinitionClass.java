@@ -24,12 +24,13 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind.codegen.impl;
 
 import com.squareup.javapoet.ClassName;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.databind.codegen.IGeneratedDefinitionClass;
 
 import java.nio.file.Path;
 
@@ -39,7 +40,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * Contains information about a generated class for a Module definition.
  */
 // TODO: make package private
-class DefaultGeneratedDefinitionClass
+public class DefaultGeneratedDefinitionClass
     extends DefaultGeneratedClass
     implements IGeneratedDefinitionClass {
   @NonNull

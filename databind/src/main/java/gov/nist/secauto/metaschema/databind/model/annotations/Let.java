@@ -26,11 +26,10 @@
 
 package gov.nist.secauto.metaschema.databind.model.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -38,7 +37,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 @Documented
 @Retention(RUNTIME)
-@Target({ TYPE, FIELD })
+@Target(ElementType.ANNOTATION_TYPE)
 public @interface Let {
   /**
    * The variable name.

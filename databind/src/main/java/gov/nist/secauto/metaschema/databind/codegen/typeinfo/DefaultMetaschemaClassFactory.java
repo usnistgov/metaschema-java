@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.codegen;
+package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
@@ -51,11 +51,14 @@ import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
+import gov.nist.secauto.metaschema.databind.codegen.IGeneratedClass;
+import gov.nist.secauto.metaschema.databind.codegen.IGeneratedDefinitionClass;
+import gov.nist.secauto.metaschema.databind.codegen.IGeneratedModuleClass;
 import gov.nist.secauto.metaschema.databind.codegen.impl.AnnotationGenerator;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IFlagInstanceTypeInfo;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IModelInstanceTypeInfo;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IPropertyTypeInfo;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
+import gov.nist.secauto.metaschema.databind.codegen.impl.DefaultGeneratedClass;
+import gov.nist.secauto.metaschema.databind.codegen.impl.DefaultGeneratedDefinitionClass;
+import gov.nist.secauto.metaschema.databind.codegen.impl.DefaultGeneratedModuleClass;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IFieldDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IModelDefinitionTypeInfo;
@@ -97,7 +100,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
     "PMD.GodClass", // ok
     "PMD.CyclomaticComplexity" // ok
 })
-class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
+public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
   @NonNull
   private final ITypeResolver typeResolver;
 
@@ -487,10 +490,10 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
       metaschemaAssembly.addMember("remarks", "$S", remarks.toMarkdown());
     }
 
-    builder.addAnnotation(metaschemaAssembly.build());
+    AnnotationGenerator.buildValueConstraints(metaschemaAssembly, definition);
+    AnnotationGenerator.buildAssemblyConstraints(metaschemaAssembly, definition);
 
-    AnnotationGenerator.buildValueConstraints(builder, definition);
-    AnnotationGenerator.buildAssemblyConstraints(builder, definition);
+    builder.addAnnotation(metaschemaAssembly.build());
     return retval;
   }
 
@@ -515,10 +518,10 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
 
     buildCommonProperties(typeInfo, metaschemaField);
 
-    builder.addAnnotation(metaschemaField.build());
-
     IFieldDefinition definition = typeInfo.getDefinition();
-    AnnotationGenerator.buildValueConstraints(builder, definition);
+    AnnotationGenerator.buildValueConstraints(metaschemaField, (IFlagContainer) definition);
+
+    builder.addAnnotation(metaschemaField.build());
     return retval;
   }
 
@@ -605,7 +608,7 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
       @NonNull IFieldValueTypeInfo typeInfo,
       @NonNull FieldSpec.Builder builder) {
     IFieldDefinition definition = typeInfo.getParentDefinitionTypeInfo().getDefinition();
-    AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(FieldValue.class);
+    AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(BoundFieldValue.class);
 
     IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
 
@@ -645,7 +648,7 @@ class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
     int maxOccurance = instance.getMaxOccurs();
     if (maxOccurance == -1 || maxOccurance > 1) {
       TypeName itemType = typeInfo.getJavaItemType();
-      ParameterSpec valueParam = ParameterSpec.builder(itemType, "item").build();
+      ParameterSpec valueParam = ObjectUtils.notNull(ParameterSpec.builder(itemType, "item").build());
 
       String itemPropertyName = ClassUtils.toPropertyName(typeInfo.getItemBaseName());
 

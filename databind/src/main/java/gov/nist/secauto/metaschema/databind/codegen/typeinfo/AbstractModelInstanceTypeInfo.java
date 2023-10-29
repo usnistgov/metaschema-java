@@ -48,7 +48,8 @@ import java.util.Set;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance, PARENT extends IDefinitionTypeInfo>
-    extends AbstractInstanceTypeInfo<INSTANCE, PARENT> {
+    extends AbstractInstanceTypeInfo<INSTANCE, PARENT>
+    implements IModelInstanceTypeInfo {
 
   protected AbstractModelInstanceTypeInfo(@NonNull INSTANCE instance, @NonNull PARENT parentDefinition) {
     super(instance, parentDefinition);
@@ -83,26 +84,18 @@ abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance, PA
   @NonNull
   protected abstract AnnotationSpec.Builder newBindingAnnotation();
 
-  protected abstract void buildFieldBinding(
-      @NonNull FieldSpec.Builder fieldSpec,
-      @NonNull AnnotationSpec.Builder bindingAnnotationSpec);
+  @Override
+  public AnnotationSpec.Builder buildBindingAnnotation() {
+    return newBindingAnnotation();
+  }
 
   @Override
   public Set<IFlagContainer> buildField(FieldSpec.Builder builder) {
     Set<IFlagContainer> retval = super.buildField(builder);
 
-    AnnotationSpec.Builder annotation = newBindingAnnotation();
-
-    buildFieldBinding(builder, annotation);
+    AnnotationSpec.Builder annotation = buildBindingAnnotation();
 
     builder.addAnnotation(annotation.build());
-
-    IModelInstance modelInstance = getInstance();
-    int maxOccurs = modelInstance.getMaxOccurs();
-    if (maxOccurs == -1 || maxOccurs > 1) {
-      // requires a group-as
-      builder.addAnnotation(generateGroupAsAnnotation().build());
-    }
 
     return retval;
   }

@@ -27,16 +27,11 @@
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo.def;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.IModelInstance;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.AssemblyInstanceTypeInfoImpl;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ChoiceGroupTypeInfoImpl;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.FieldInstanceTypeInfoImpl;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IChoiceGroupTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IModelInstanceTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
@@ -82,7 +77,7 @@ class AssemblyDefinitionTypeInfoImpl
   }
 
   private IChoiceGroupTypeInfo processModel(@NonNull IChoiceGroupInstance instance) {
-    IChoiceGroupTypeInfo retval = new ChoiceGroupTypeInfoImpl(instance, this);
+    IChoiceGroupTypeInfo retval = getTypeResolver().getTypeInfo(instance, this);
     addPropertyTypeInfo(retval);
     return retval;
   }
@@ -96,15 +91,9 @@ class AssemblyDefinitionTypeInfoImpl
    * @return the new property generator
    */
   @NonNull
-  protected IModelInstanceTypeInfo newObjectModelInstance(@NonNull INamedModelInstance instance) {
-    IModelInstanceTypeInfo retval;
-    if (instance instanceof IAssemblyInstance) {
-      retval = new AssemblyInstanceTypeInfoImpl((IAssemblyInstance) instance, this);
-    } else if (instance instanceof IFieldInstance) {
-      retval = new FieldInstanceTypeInfoImpl((IFieldInstance) instance, this);
-    } else {
-      throw new UnsupportedOperationException(instance.getClass().getName());
-    }
+  protected IModelInstanceTypeInfo newObjectModelInstance(
+      @NonNull INamedModelInstance instance) {
+    IModelInstanceTypeInfo retval = getTypeResolver().getTypeInfo(instance, this);
     addPropertyTypeInfo(retval);
     return retval;
   }

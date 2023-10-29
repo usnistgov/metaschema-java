@@ -38,7 +38,7 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
-import gov.nist.secauto.metaschema.databind.model.annotations.FieldValue;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
@@ -106,10 +106,8 @@ public class DefaultFieldClassBinding
     }));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();
-      ValueConstraints valueAnnotation = clazz.getAnnotation(ValueConstraints.class);
-      if (valueAnnotation != null) {
-        ConstraintSupport.parse(valueAnnotation, ISource.modelSource(), retval);
-      }
+      ValueConstraints valueAnnotation = this.metaschemaField.valueConstraints();
+      ConstraintSupport.parse(valueAnnotation, ISource.modelSource(), retval);
       return retval;
     }));
   }
@@ -133,7 +131,7 @@ public class DefaultFieldClassBinding
 
   @Override
   public String getFormalName() {
-    return ModelUtil.resolveToString(getMetaschemaFieldAnnotation().formalName());
+    return ModelUtil.resolveNoneOrValue(getMetaschemaFieldAnnotation().formalName());
   }
 
   @Override
@@ -182,7 +180,7 @@ public class DefaultFieldClassBinding
 
     if (retval == null) {
       for (java.lang.reflect.Field field : fields) {
-        if (!field.isAnnotationPresent(FieldValue.class)) {
+        if (!field.isAnnotationPresent(BoundFieldValue.class)) {
           // skip fields that aren't a field or assembly instance
           continue;
         }
@@ -210,7 +208,7 @@ public class DefaultFieldClassBinding
           throw new IllegalArgumentException(
               String.format("Class '%s' is missing the '%s' annotation on one of its fields.",
                   getBoundClass().getName(),
-                  FieldValue.class.getName()));
+                  BoundFieldValue.class.getName()));
         }
 
         this.fieldValue = new DefaultFieldValueProperty(this, field);

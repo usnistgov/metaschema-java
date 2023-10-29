@@ -74,7 +74,8 @@ class PostProcessingModuleLoaderStrategy
   }
 
   private void handleModule(@NonNull IModule module) {
-    for (IModulePostProcessor postProcessor : getModulePostProcessors())
+    for (IModulePostProcessor postProcessor : getModulePostProcessors()) {
       postProcessor.processModule(module);
+    }
   }
 }

@@ -26,55 +26,57 @@
 
 package gov.nist.secauto.metaschema.databind.model.annotations;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-@Documented
-@Retention(RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
-public @interface GroupAs {
-  /**
-   * The name to use for an XML grouping element wrapper or a JSON/YAML grouping
-   * property.
-   *
-   * @return the name
-   */
+/**
+ * A data object to record the group as selections.
+ */
+public interface IGroupAs {
   @NonNull
-  String name();
+  IGroupAs SINGLETON_GROUP_AS = new IGroupAs() {
+    @Override
+    public String getGroupAsName() {
+      return null;
+    }
 
-  /**
-   * XML target namespace of the XML grouping element.
-   * <p>
-   * If the value is "##default", then element name is derived from the namespace
-   * provided in the package-info.
-   *
-   * @return the namespace
-   */
-  @NonNull
-  String namespace() default Constants.DEFAULT_STRING_VALUE;
+    @Override
+    public String getGroupAsXmlNamespace() {
+      return null;
+    }
 
-  /**
-   * Describes how to handle collections in JSON/YAML.
-   *
-   * @return the JSON collection strategy
-   */
-  @NonNull
-  JsonGroupAsBehavior inJson() default JsonGroupAsBehavior.SINGLETON_OR_LIST;
+    @Override
+    public JsonGroupAsBehavior getJsonGroupAsBehavior() {
+      return JsonGroupAsBehavior.NONE;
+    }
 
-  /**
-   * Describes how to handle collections in XML.
-   *
-   * @return the XML collection strategy
-   */
+    @Override
+    public XmlGroupAsBehavior getXmlGroupAsBehavior() {
+      return XmlGroupAsBehavior.UNGROUPED;
+    }
+  };
+
   @NonNull
-  XmlGroupAsBehavior inXml() default XmlGroupAsBehavior.UNGROUPED;
+  static IGroupAs of(@NonNull GroupAs groupAs, @NonNull IAssemblyClassBinding parentClassBinding) {
+    return Constants.NULL_VALUE.equals(groupAs.name())
+        ? SINGLETON_GROUP_AS
+        : new DefaultGroupAs(groupAs, parentClassBinding);
+  }
+
+  @Nullable
+  String getGroupAsName();
+
+  @Nullable
+  String getGroupAsXmlNamespace();
+
+  @NonNull
+  JsonGroupAsBehavior getJsonGroupAsBehavior();
+
+  @NonNull
+  XmlGroupAsBehavior getXmlGroupAsBehavior();
+
 }

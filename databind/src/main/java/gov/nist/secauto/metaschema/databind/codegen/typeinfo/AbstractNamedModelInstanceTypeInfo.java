@@ -103,42 +103,51 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
   }
 
   @Override
-  protected void buildFieldBinding(FieldSpec.Builder fieldSpec, AnnotationSpec.Builder bindingAnnotationSpec) {
+  public AnnotationSpec.Builder buildBindingAnnotation() {
+    AnnotationSpec.Builder retval = super.buildBindingAnnotation();
+
     INamedModelInstance modelInstance = getInstance();
 
     String formalName = modelInstance.getEffectiveFormalName();
     if (formalName != null) {
-      bindingAnnotationSpec.addMember("formalName", "$S", formalName);
+      retval.addMember("formalName", "$S", formalName);
     }
 
     MarkupLine description = modelInstance.getEffectiveDescription();
     if (description != null) {
-      bindingAnnotationSpec.addMember("description", "$S", description.toMarkdown());
+      retval.addMember("description", "$S", description.toMarkdown());
     }
 
-    bindingAnnotationSpec.addMember("useName", "$S", modelInstance.getEffectiveName());
+    retval.addMember("useName", "$S", modelInstance.getEffectiveName());
 
     String namespace = modelInstance.getXmlNamespace();
     if (namespace == null) {
-      bindingAnnotationSpec.addMember("namespace", "$S", "##none");
+      retval.addMember("namespace", "$S", "##none");
     } else if (!modelInstance.getContainingModule().getXmlNamespace().toASCIIString().equals(namespace)) {
-      bindingAnnotationSpec.addMember("namespace", "$S", namespace);
+      retval.addMember("namespace", "$S", namespace);
     } // otherwise use the ##default
 
     int minOccurs = modelInstance.getMinOccurs();
     if (minOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
-      bindingAnnotationSpec.addMember("minOccurs", "$L", minOccurs);
+      retval.addMember("minOccurs", "$L", minOccurs);
     }
 
     int maxOccurs = modelInstance.getMaxOccurs();
     if (maxOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS) {
-      bindingAnnotationSpec.addMember("maxOccurs", "$L", maxOccurs);
+      retval.addMember("maxOccurs", "$L", maxOccurs);
     }
 
     MarkupMultiline remarks = modelInstance.getRemarks();
     if (remarks != null) {
-      bindingAnnotationSpec.addMember("remarks", "$S", remarks.toMarkdown());
+      retval.addMember("remarks", "$S", remarks.toMarkdown());
     }
+
+    if (maxOccurs == -1 || maxOccurs > 1) {
+      // requires a group-as
+      retval.addMember("groupAs", "$L", generateGroupAsAnnotation().build());
+    }
+
+    return retval;
   }
 
   @Override

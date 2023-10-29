@@ -29,10 +29,26 @@ package gov.nist.secauto.metaschema.core.model;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+/**
+ * Represents an arbitrary grouping of Metaschema model instances.
+ */
 public interface IGroupedModelInstance extends INamedModelInstance {
+  /**
+   * Get the discriminator JSON property name to use to identify the type of a
+   * given instance object.
+   *
+   * @return the discriminator property name or {@code null} if the effective name
+   *         should be used instead
+   */
   @Nullable
   String getDiscriminatorValue();
 
+  /**
+   * Get the effective discriminator JSON property name to use to identify the
+   * type of a given instance object.
+   *
+   * @return the discriminator property name
+   */
   @NonNull
   default String getEffectiveDisciminatorValue() {
     String retval = getDiscriminatorValue();

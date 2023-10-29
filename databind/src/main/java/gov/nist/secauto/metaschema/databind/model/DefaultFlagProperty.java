@@ -138,7 +138,7 @@ class DefaultFlagProperty
 
   @Override
   public String getFormalName() {
-    return ModelUtil.resolveToString(getFlagAnnotation().formalName());
+    return ModelUtil.resolveNoneOrValue(getFlagAnnotation().formalName());
   }
 
   @Override
@@ -148,7 +148,7 @@ class DefaultFlagProperty
 
   @Override
   public String getUseName() {
-    return ModelUtil.resolveToString(getFlagAnnotation().useName());
+    return ModelUtil.resolveNoneOrValue(getFlagAnnotation().useName());
   }
 
   @Override
@@ -194,10 +194,8 @@ class DefaultFlagProperty
     private InternalFlagDefinition() {
       this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
         IValueConstrained retval = new ValueConstraintSet();
-        ValueConstraints valueAnnotation = getField().getAnnotation(ValueConstraints.class);
-        if (valueAnnotation != null) {
-          ConstraintSupport.parse(valueAnnotation, ISource.modelSource(), retval);
-        }
+        ValueConstraints valueAnnotation = getFlagAnnotation().valueConstraints();
+        ConstraintSupport.parse(valueAnnotation, ISource.modelSource(), retval);
         return retval;
       }));
     }

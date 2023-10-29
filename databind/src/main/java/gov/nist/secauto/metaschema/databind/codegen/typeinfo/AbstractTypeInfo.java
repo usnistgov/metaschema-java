@@ -38,7 +38,7 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
   private String propertyName;
   private String fieldName;
 
-  public AbstractTypeInfo(@NonNull PARENT parentDefinition) {
+  protected AbstractTypeInfo(@NonNull PARENT parentDefinition) {
     this.parentDefinition = parentDefinition;
   }
 

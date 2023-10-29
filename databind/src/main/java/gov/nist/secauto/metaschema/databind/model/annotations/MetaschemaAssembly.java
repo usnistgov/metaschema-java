@@ -128,4 +128,18 @@ public @interface MetaschemaAssembly {
    */
   @NonNull
   String remarks() default Constants.NO_STRING_VALUE;
+
+  /**
+   * Get the value constraints defined for this Metaschema assembly definition.
+   *
+   * @return the value constraints
+   */
+  ValueConstraints valueConstraints() default @ValueConstraints;
+
+  /**
+   * Get the model constraints defined for this Metaschema assembly definition.
+   *
+   * @return the value constraints
+   */
+  AssemblyConstraints modelConstraints() default @AssemblyConstraints;
 }

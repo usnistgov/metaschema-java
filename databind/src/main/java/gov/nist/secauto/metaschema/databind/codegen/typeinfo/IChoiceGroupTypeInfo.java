@@ -27,5 +27,5 @@
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 public interface IChoiceGroupTypeInfo extends IModelInstanceTypeInfo {
-
+  // no other methods
 }

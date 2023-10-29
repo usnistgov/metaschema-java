@@ -36,7 +36,7 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvi
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IFieldDefinitionTypeInfo;
-import gov.nist.secauto.metaschema.databind.model.annotations.FieldValue;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 
 import java.util.Set;
 
@@ -64,10 +64,9 @@ class FieldValueTypeInfoImpl
 
   @Override
   protected Set<IFlagContainer> buildField(FieldSpec.Builder builder) {
-    Set<IFlagContainer> retval = super.buildField(builder);
 
     IFieldDefinition definition = getParentDefinitionTypeInfo().getDefinition();
-    AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(FieldValue.class);
+    AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(BoundFieldValue.class);
 
     IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
 
@@ -84,6 +83,8 @@ class FieldValueTypeInfoImpl
     if (defaultValue != null) {
       fieldValue.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
     }
+
+    Set<IFlagContainer> retval = super.buildField(builder);
 
     builder.addAnnotation(fieldValue.build());
     return retval;

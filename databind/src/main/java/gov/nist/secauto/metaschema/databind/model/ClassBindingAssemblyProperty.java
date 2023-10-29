@@ -28,8 +28,12 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
+import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
+import gov.nist.secauto.metaschema.databind.model.annotations.IGroupAs;
 import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 
 import java.lang.reflect.Field;
@@ -44,6 +48,8 @@ class ClassBindingAssemblyProperty
   @NonNull
   private final BoundAssembly assembly;
   @NonNull
+  private final IGroupAs groupAs;
+  @NonNull
   private final IAssemblyClassBinding definition;
 
   protected ClassBindingAssemblyProperty(
@@ -51,18 +57,34 @@ class ClassBindingAssemblyProperty
       @NonNull IAssemblyClassBinding definition,
       @NonNull IAssemblyClassBinding parentClassBinding) {
     super(field, parentClassBinding);
-    if (field.isAnnotationPresent(BoundAssembly.class)) {
-      this.assembly = ObjectUtils.notNull(field.getAnnotation(BoundAssembly.class));
-    } else {
-      throw new IllegalArgumentException(String.format("BoundField '%s' on class '%s' is missing the '%s' annotation.",
-          field.getName(), parentClassBinding.getBoundClass().getName(), BoundAssembly.class.getName()));
-    }
-    this.definition = definition;
-  }
 
-  @NonNull
-  private BoundAssembly getAssemblyAnnotation() {
-    return assembly;
+    this.definition = definition;
+    BoundAssembly boundAssembly = field.getAnnotation(BoundAssembly.class);
+    if (boundAssembly == null) {
+      throw new IllegalArgumentException(
+          String.format("BoundField '%s' on class '%s' is missing the '%s' annotation.",
+              field.getName(),
+              parentClassBinding.getBoundClass().getName(),
+              BoundAssembly.class.getName()));
+    }
+    this.assembly = boundAssembly;
+    this.groupAs = IGroupAs.of(boundAssembly.groupAs(), parentClassBinding);
+    if ((getMaxOccurs() == -1 || getMaxOccurs() > 1)) {
+      if (IGroupAs.SINGLETON_GROUP_AS.equals(this.groupAs)) {
+        throw new IllegalStateException(String.format("Field '%s' on class '%s' is missing the '%s' annotation.",
+            field.getName(),
+            parentClassBinding.getBoundClass().getName(),
+            GroupAs.class.getName()));
+      }
+    } else if (!IGroupAs.SINGLETON_GROUP_AS.equals(this.groupAs)) {
+      // max is 1 and a groupAs is set
+      throw new IllegalStateException(
+          String.format(
+              "Field '%s' on class '%s' has the '%s' annotation, but maxOccurs=1. A groupAs must not be specfied.",
+              field.getName(),
+              parentClassBinding.getBoundClass().getName(),
+              GroupAs.class.getName()));
+    }
   }
 
   @Override
@@ -81,9 +103,18 @@ class ClassBindingAssemblyProperty
     return definition;
   }
 
+  // ------------------------------------------
+  // - Start annotation driven code - CPD-OFF -
+  // ------------------------------------------
+
+  @NonNull
+  private BoundAssembly getAssemblyAnnotation() {
+    return assembly;
+  }
+
   @Override
   public String getFormalName() {
-    return ModelUtil.resolveToString(getAssemblyAnnotation().formalName());
+    return ModelUtil.resolveNoneOrValue(getAssemblyAnnotation().formalName());
   }
 
   @Override
@@ -98,7 +129,7 @@ class ClassBindingAssemblyProperty
 
   @Override
   public String getUseName() {
-    return ModelUtil.resolveToString(getAssemblyAnnotation().useName());
+    return ModelUtil.resolveNoneOrValue(getAssemblyAnnotation().useName());
   }
 
   @Override
@@ -114,13 +145,33 @@ class ClassBindingAssemblyProperty
   }
 
   @Override
-  public int getMinOccurs() {
+  public final int getMinOccurs() {
     return getAssemblyAnnotation().minOccurs();
   }
 
   @Override
-  public int getMaxOccurs() {
+  public final int getMaxOccurs() {
     return getAssemblyAnnotation().maxOccurs();
+  }
+
+  @Override
+  public String getGroupAsName() {
+    return groupAs.getGroupAsName();
+  }
+
+  @Override
+  public String getGroupAsXmlNamespace() {
+    return groupAs.getGroupAsXmlNamespace();
+  }
+
+  @Override
+  public JsonGroupAsBehavior getJsonGroupAsBehavior() {
+    return groupAs.getJsonGroupAsBehavior();
+  }
+
+  @Override
+  public XmlGroupAsBehavior getXmlGroupAsBehavior() {
+    return groupAs.getXmlGroupAsBehavior();
   }
 
   @Override
@@ -137,4 +188,7 @@ class ClassBindingAssemblyProperty
         getName());
   }
 
+  // ---------------------------------------
+  // - End annotation driven code - CPD-ON -
+  // ---------------------------------------
 }

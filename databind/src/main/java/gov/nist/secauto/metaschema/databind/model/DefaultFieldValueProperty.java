@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.ModelType;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.annotations.FieldValue;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 
 import java.lang.reflect.Field;
 
@@ -44,7 +44,7 @@ class DefaultFieldValueProperty
   @NonNull
   private final Field field;
   @NonNull
-  private final FieldValue fieldValue;
+  private final BoundFieldValue fieldValue;
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   @Nullable
@@ -56,12 +56,12 @@ class DefaultFieldValueProperty
       @NonNull Field field) {
     super(fieldClassBinding);
     this.field = ObjectUtils.requireNonNull(field, "field");
-    FieldValue valueAnnotation = field.getAnnotation(FieldValue.class);
+    BoundFieldValue valueAnnotation = field.getAnnotation(BoundFieldValue.class);
     if (valueAnnotation == null) {
       throw new IllegalArgumentException(
           String.format("Class '%s' is missing the '%s' annotation.",
               fieldClassBinding.getBoundClass().getName(),
-              FieldValue.class.getName()));
+              BoundFieldValue.class.getName()));
     }
     this.fieldValue = valueAnnotation;
 
@@ -81,7 +81,7 @@ class DefaultFieldValueProperty
   }
 
   @NonNull
-  private FieldValue getFieldValueAnnotation() {
+  private BoundFieldValue getFieldValueAnnotation() {
     return fieldValue;
   }
 
@@ -92,7 +92,7 @@ class DefaultFieldValueProperty
 
   @Override
   public String getJsonValueKeyName() {
-    String name = ModelUtil.resolveToString(getFieldValueAnnotation().valueKeyName());
+    String name = ModelUtil.resolveNoneOrValue(getFieldValueAnnotation().valueKeyName());
     if (name == null) {
       name = getJavaTypeAdapter().getDefaultJsonValueKey();
     }

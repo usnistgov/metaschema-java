@@ -27,6 +27,8 @@
 package gov.nist.secauto.metaschema.databind.codegen;
 
 import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IMetaschemaClassFactory;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
 import java.io.IOException;
@@ -91,8 +93,9 @@ public interface IProduction {
    *
    * @param modules
    *          the Module modules to generate and compile classes for
-   * @param typeResolver
-   *          the resolve used to determine type names
+   * @param bindingConfiguration
+   *          binding customizations that can be used to set namespaces, class
+   *          names, and other aspects of generated classes
    * @param classDir
    *          the directory to generate and compile classes in
    * @return the production information
@@ -102,8 +105,10 @@ public interface IProduction {
   @NonNull
   static IProduction of( // NOPMD - intentional
       @NonNull Collection<? extends IModule> modules,
-      @NonNull ITypeResolver typeResolver,
+      @NonNull IBindingConfiguration bindingConfiguration,
       @NonNull Path classDir) throws IOException {
+
+    ITypeResolver typeResolver = ITypeResolver.newTypeResolver(bindingConfiguration);
 
     IMetaschemaClassFactory classFactory = IMetaschemaClassFactory.newInstance(typeResolver);
 

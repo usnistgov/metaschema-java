@@ -26,11 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
 import gov.nist.secauto.metaschema.databind.model.info.IPropertyCollector;
@@ -39,7 +36,6 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 abstract class AbstractNamedModelProperty // NOPMD - intentional
@@ -49,32 +45,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
   // LogManager.getLogger(AbstractNamedModelProperty.class);
 
   @NonNull
-  private static final IGroupAs SINGLETON_GROUP_AS = new IGroupAs() {
-    @Override
-    public String getGroupAsName() {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getGroupAsXmlNamespace() {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-      return JsonGroupAsBehavior.NONE;
-    }
-
-    @Override
-    public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-      return XmlGroupAsBehavior.UNGROUPED;
-    }
-  };
-
-  @NonNull
   private final Field field;
-  @NonNull
-  private final IGroupAs groupAs;
   @NonNull
   private final Lazy<IModelPropertyInfo> propertyInfo;
   @NonNull
@@ -95,16 +66,6 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
       @NonNull IAssemblyClassBinding parentClassBinding) {
     super(parentClassBinding);
     this.field = ObjectUtils.requireNonNull(field, "field");
-
-    GroupAs groupAs = field.getAnnotation(GroupAs.class);
-    // if (annotation == null && (getMaxOccurs() == -1 || getMaxOccurs() > 1)) {
-    // throw new IllegalStateException(String.format("Field '%s' on class '%s' is
-    // missing the '%s'
-    // annotation.",
-    // field.getName(), parentClassBinding.getBoundClass().getName(),
-    // GroupAs.class.getName()));
-    // }
-    this.groupAs = IGroupAs.newInstance(groupAs, parentClassBinding);
     this.propertyInfo = ObjectUtils.notNull(Lazy.lazy(() -> IModelPropertyInfo.newPropertyInfo(this)));
     this.dataTypeHandler = ObjectUtils.notNull(Lazy.lazy(this::newDataTypeHandler));
   }
@@ -127,26 +88,6 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
 
   @Override
   public abstract int getMaxOccurs();
-
-  @Override
-  public String getGroupAsName() {
-    return groupAs.getGroupAsName();
-  }
-
-  @Override
-  public String getGroupAsXmlNamespace() {
-    return groupAs.getGroupAsXmlNamespace();
-  }
-
-  @Override
-  public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-    return groupAs.getJsonGroupAsBehavior();
-  }
-
-  @Override
-  public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    return groupAs.getXmlGroupAsBehavior();
-  }
 
   /**
    * Gets information about the bound property.
@@ -195,75 +136,6 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
   @Override
   public Object copyItem(Object fromItem, Object toInstance) throws BindingException {
     return getDataTypeHandler().copyItem(fromItem, toInstance);
-  }
-
-  /**
-   * A data object to record the group as selections.
-   */
-  private interface IGroupAs {
-    @NonNull
-    static IGroupAs newInstance(
-        @Nullable GroupAs groupAs,
-        @NonNull IAssemblyClassBinding parentClassBinding) {
-      return groupAs == null ? SINGLETON_GROUP_AS : new SimpleGroupAs(groupAs, parentClassBinding);
-    }
-
-    @NonNull
-    String getGroupAsName();
-
-    @Nullable
-    String getGroupAsXmlNamespace();
-
-    @NonNull
-    JsonGroupAsBehavior getJsonGroupAsBehavior();
-
-    @NonNull
-    XmlGroupAsBehavior getXmlGroupAsBehavior();
-  }
-
-  private static final class SimpleGroupAs implements IGroupAs {
-    @NonNull
-    private final String name;
-    @NonNull
-    private final Lazy<String> namespace;
-    @NonNull
-    private final GroupAs annotation;
-
-    private SimpleGroupAs(@NonNull GroupAs annotation, @NonNull IClassBinding parentDefinition) {
-      this.annotation = annotation;
-      {
-        String value = ModelUtil.resolveLocalName(annotation.name(), null);
-        if (value == null) {
-          throw new IllegalStateException(
-              String.format("The %s#groupName value '%s' resulted in an invalid null value",
-                  GroupAs.class.getName(),
-                  annotation.name()));
-        }
-        this.name = value;
-      }
-      this.namespace = ObjectUtils.notNull(
-          Lazy.lazy(() -> ModelUtil.resolveNamespace(annotation.namespace(), parentDefinition)));
-    }
-
-    @Override
-    public String getGroupAsName() {
-      return name;
-    }
-
-    @Override
-    public String getGroupAsXmlNamespace() {
-      return namespace.get();
-    }
-
-    @Override
-    public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-      return annotation.inJson();
-    }
-
-    @Override
-    public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-      return annotation.inXml();
-    }
   }
 
 }

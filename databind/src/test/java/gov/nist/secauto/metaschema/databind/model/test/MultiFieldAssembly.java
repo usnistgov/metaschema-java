@@ -29,11 +29,11 @@ package gov.nist.secauto.metaschema.databind.model.test;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.databind.model.annotations.FieldValue;
 
 import java.util.List;
 
@@ -47,10 +47,10 @@ public class MultiFieldAssembly {
   private String field1;
 
   @BoundField(useName = "field2",
-      maxOccurs = -1)
-  @GroupAs(name = "fields2",
-      inXml = XmlGroupAsBehavior.GROUPED,
-      inJson = JsonGroupAsBehavior.LIST)
+      maxOccurs = -1,
+      groupAs = @GroupAs(name = "fields2",
+          inXml = XmlGroupAsBehavior.GROUPED,
+          inJson = JsonGroupAsBehavior.LIST))
   private List<String> _field2;
 
   @BoundField
@@ -95,7 +95,7 @@ public class MultiFieldAssembly {
     @BoundFlag
     private String flag;
 
-    @FieldValue(valueKeyName = "a-value")
+    @BoundFieldValue(valueKeyName = "a-value")
     private String _value;
 
     public ValueKeyField() {
@@ -114,7 +114,7 @@ public class MultiFieldAssembly {
     @BoundFlag
     private String flag;
 
-    @FieldValue
+    @BoundFieldValue
     private String _value;
 
     public DefaultValueKeyField() {

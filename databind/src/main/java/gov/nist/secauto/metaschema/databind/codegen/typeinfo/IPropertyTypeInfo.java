@@ -46,6 +46,12 @@ public interface IPropertyTypeInfo extends ITypeInfo {
    */
   Set<? extends IFlagContainer> build(@NonNull TypeSpec.Builder builder);
 
+  /**
+   * Get the Javadoc description for the current property.
+   *
+   * @param builder
+   *          the field builder to annotate with the Javadoc
+   */
   default void buildFieldJavadoc(@NonNull FieldSpec.Builder builder) {
     // do nothing by default
   }

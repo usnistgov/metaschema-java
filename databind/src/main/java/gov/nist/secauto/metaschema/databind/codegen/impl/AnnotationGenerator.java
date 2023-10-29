@@ -28,8 +28,6 @@ package gov.nist.secauto.metaschema.databind.codegen.impl;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.AnnotationSpec.Builder;
-import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
@@ -92,6 +90,16 @@ public final class AnnotationGenerator {
     // disable construction
   }
 
+  /**
+   * Get the default vale of the given member of an annotation.
+   *
+   * @param annotation
+   *          the annotation to analyze
+   * @param member
+   *          the annotation member to analyze
+   * @return the default value for the annotation member or {@code null} if there
+   *         is not default value
+   */
   public static Object getDefaultValue(Class<?> annotation, String member) {
     Method method;
     try {
@@ -135,22 +143,22 @@ public final class AnnotationGenerator {
   }
 
   public static void buildValueConstraints(
-      @NonNull FieldSpec.Builder builder,
+      @NonNull AnnotationSpec.Builder builder,
       @NonNull IValuedDefinition definition) {
     if (!definition.getConstraints().isEmpty()) {
-      AnnotationSpec.Builder valueConstraintsAnnotation = AnnotationSpec.builder(ValueConstraints.class);
+      AnnotationSpec.Builder annotation = AnnotationSpec.builder(ValueConstraints.class);
 
-      applyAllowedValuesConstraints(valueConstraintsAnnotation, definition.getAllowedValuesConstraints());
-      applyIndexHasKeyConstraints(valueConstraintsAnnotation, definition.getIndexHasKeyConstraints());
-      applyMatchesConstraints(valueConstraintsAnnotation, definition.getMatchesConstraints());
-      applyExpectConstraints(valueConstraintsAnnotation, definition.getExpectConstraints());
+      applyAllowedValuesConstraints(annotation, definition.getAllowedValuesConstraints());
+      applyIndexHasKeyConstraints(annotation, definition.getIndexHasKeyConstraints());
+      applyMatchesConstraints(annotation, definition.getMatchesConstraints());
+      applyExpectConstraints(annotation, definition.getExpectConstraints());
 
-      builder.addAnnotation(valueConstraintsAnnotation.build());
+      builder.addMember("valueConstraints", "$L", annotation.build());
     }
   }
 
   public static void buildValueConstraints(
-      @NonNull TypeSpec.Builder builder,
+      @NonNull AnnotationSpec.Builder builder,
       @NonNull IFlagContainer definition) {
 
     List<? extends IAllowedValuesConstraint> allowedValues = definition.getAllowedValuesConstraints();
@@ -166,12 +174,12 @@ public final class AnnotationGenerator {
       applyMatchesConstraints(annotation, matches);
       applyExpectConstraints(annotation, expects);
 
-      builder.addAnnotation(annotation.build());
+      builder.addMember("valueConstraints", "$L", annotation.build());
     }
   }
 
   public static void buildAssemblyConstraints(
-      @NonNull TypeSpec.Builder builder,
+      @NonNull AnnotationSpec.Builder builder,
       @NonNull IAssemblyDefinition definition) {
 
     List<? extends IIndexConstraint> index = definition.getIndexConstraints();
@@ -185,7 +193,7 @@ public final class AnnotationGenerator {
       applyUniqueConstraints(annotation, unique);
       applyHasCardinalityConstraints(definition, annotation, cardinality);
 
-      builder.addAnnotation(annotation.build());
+      builder.addMember("modelConstraints", "$L", annotation.build());
     }
   }
 

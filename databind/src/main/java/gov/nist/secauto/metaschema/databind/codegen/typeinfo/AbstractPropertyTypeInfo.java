@@ -47,7 +47,13 @@ public abstract class AbstractPropertyTypeInfo<PARENT extends IDefinitionTypeInf
     extends AbstractTypeInfo<PARENT>
     implements IPropertyTypeInfo {
 
-  public AbstractPropertyTypeInfo(@NonNull PARENT parentDefinition) {
+  /**
+   * Construct a new type information for a Java property.
+   *
+   * @param parentDefinition
+   *          the definition containing the data this property is based on
+   */
+  protected AbstractPropertyTypeInfo(@NonNull PARENT parentDefinition) {
     super(parentDefinition);
   }
 

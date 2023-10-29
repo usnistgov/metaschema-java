@@ -103,7 +103,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
     }
     this.metaschemaAssembly = ObjectUtils.notNull(clazz.getAnnotation(MetaschemaAssembly.class));
     String namespace = ObjectUtils.notNull(ModelUtil.resolveNamespace(this.metaschemaAssembly.rootNamespace(), this));
-    String localName = ModelUtil.resolveLocalName(this.metaschemaAssembly.rootName(), null);
+    String localName = ModelUtil.resolveNoneOrDefault(this.metaschemaAssembly.rootName(), null);
 
     this.xmlRootQName = localName == null ? null : new QName(namespace, localName);
 
@@ -111,14 +111,11 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> new ClassBindingModelContainerSupport(this)));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IModelConstrained retval = new AssemblyConstraintSet();
-      ValueConstraints valueAnnotation = clazz.getAnnotation(ValueConstraints.class);
-      if (valueAnnotation != null) {
-        ConstraintSupport.parse(valueAnnotation, ISource.modelSource(), retval);
-      }
-      AssemblyConstraints assemblyAnnotation = clazz.getAnnotation(AssemblyConstraints.class);
-      if (assemblyAnnotation != null) {
-        ConstraintSupport.parse(assemblyAnnotation, ISource.modelSource(), retval);
-      }
+      ValueConstraints valueAnnotation = this.metaschemaAssembly.valueConstraints();
+      ConstraintSupport.parse(valueAnnotation, ISource.modelSource(), retval);
+
+      AssemblyConstraints assemblyAnnotation = this.metaschemaAssembly.modelConstraints();
+      ConstraintSupport.parse(assemblyAnnotation, ISource.modelSource(), retval);
       return retval;
     }));
   }
@@ -161,7 +158,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
 
   @Override
   public String getFormalName() {
-    return ModelUtil.resolveToString(getMetaschemaAssemblyAnnotation().formalName());
+    return ModelUtil.resolveNoneOrValue(getMetaschemaAssemblyAnnotation().formalName());
   }
 
   @Override

@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.databind.model.annotations;
 
 import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
@@ -46,7 +47,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  */
 @Documented
 @Retention(RUNTIME)
-@Target({ FIELD })
+@Target({ FIELD, METHOD })
 public @interface BoundChoiceGroup {
   /**
    * The discriminator to use for determining the type of child elements in JSON.
@@ -70,4 +71,34 @@ public @interface BoundChoiceGroup {
    * @return a positive number or {@code -1} to indicate "unbounded"
    */
   int maxOccurs() default MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
+
+  /**
+   * Used to provide grouping information.
+   * <p>
+   * This annotation is required when the value of {@link #maxOccurs()} is greater
+   * than 1.
+   *
+   * @return the configured {@link GroupAs} or the default value with a
+   *         {@code null} {@link GroupAs#name()}
+   */
+  GroupAs groupAs() default @GroupAs(name = Constants.NULL_VALUE);
+
+  String jsonKey() default Constants.NO_STRING_VALUE;
+
+  /**
+   * The the assemblies that may occur within this choice group.
+   *
+   * @return an array of assembly bindings which may occur within this choice
+   *         group
+   */
+  @NonNull
+  BoundAssembly[] assemblies() default {};
+
+  /**
+   * The the fields that may occur within this choice group.
+   *
+   * @return an array of field bindings which may occur within this choice group
+   */
+  @NonNull
+  BoundAssembly[] fields() default {};
 }

@@ -102,9 +102,9 @@ public class FlagInstanceTypeInfoImpl
       annotation.addMember("remarks", "$S", remarks.toMarkdown());
     }
 
-    builder.addAnnotation(annotation.build());
+    AnnotationGenerator.buildValueConstraints(annotation, definition);
 
-    AnnotationGenerator.buildValueConstraints(builder, definition);
+    builder.addAnnotation(annotation.build());
 
     IFlagContainer parent = instance.getContainingDefinition();
     if (parent.hasJsonKey() && instance.equals(parent.getJsonKeyFlagInstance())) {

@@ -78,9 +78,7 @@ public class ExternalConstraintsModulePostProcessor implements IModulePostProces
         MetapathExpression targetExpression = targeted.getTargetExpression();
         ISequence<?> items = targetExpression.evaluateAs(moduleItem, ResultType.SEQUENCE);
 
-        if (items == null || items.isEmpty()) {
-          // target did not match
-        } else {
+        if (items != null && !items.isEmpty()) {
           for (IItem item : items) {
             if (item instanceof IDefinitionNodeItem) {
               ((IDefinitionNodeItem<?, ?>) item).accept(visitor, targeted);
