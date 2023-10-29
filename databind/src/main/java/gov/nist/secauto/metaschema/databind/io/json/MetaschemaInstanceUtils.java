@@ -29,11 +29,11 @@ package gov.nist.secauto.metaschema.databind.io.json;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IBoundFieldValueInstance;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IBoundNamedInstance;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IFieldClassBinding;
 
 import java.util.Collection;
 import java.util.Map;
@@ -50,7 +50,7 @@ final class MetaschemaInstanceUtils {
   }
 
   /**
-   * Generates a mapping of property names to associated Module instances.
+   * Generates a mapping of property names to associated Metaschema instances.
    * <p>
    * If {@code requiresJsonKey} is {@code true} then the instance used as the JSON
    * key is not included in the mapping.
@@ -76,7 +76,7 @@ final class MetaschemaInstanceUtils {
 
     @SuppressWarnings("resource") Stream<? extends IBoundNamedInstance> instanceStream;
     if (targetDefinition instanceof IAssemblyClassBinding) {
-      instanceStream = ((IAssemblyClassBinding) targetDefinition).getModelInstances().stream();
+      instanceStream = ((IAssemblyClassBinding) targetDefinition).getNamedModelInstances().stream();
       // .flatMap((instance) -> {
       // return instance instanceof IChoiceInstance ?
       // ((IChoiceInstance)instance).getNamedModelInstances().stream()

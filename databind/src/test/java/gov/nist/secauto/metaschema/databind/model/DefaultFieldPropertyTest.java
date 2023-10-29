@@ -72,7 +72,8 @@ class DefaultFieldPropertyTest {
       assert jsonParser != null;
 
       IBindingContext bindingContext = IBindingContext.instance();
-      IAssemblyClassBinding classBinding = (IAssemblyClassBinding) bindingContext.getClassBinding(SimpleAssembly.class);
+      IAssemblyClassBinding classBinding
+          = (IAssemblyClassBinding) bindingContext.getClassBindingStrategy(SimpleAssembly.class);
       assert classBinding != null;
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
@@ -97,7 +98,7 @@ class DefaultFieldPropertyTest {
       jsonParser.nextToken();
 
       IBindingContext bindingContext = IBindingContext.instance();
-      IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
+      IClassBinding classBinding = bindingContext.getClassBindingStrategy(MultiFieldAssembly.class);
       assert classBinding != null;
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
@@ -133,7 +134,7 @@ class DefaultFieldPropertyTest {
       jsonParser.nextToken();
 
       IBindingContext bindingContext = IBindingContext.instance();
-      IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
+      IClassBinding classBinding = bindingContext.getClassBindingStrategy(MultiFieldAssembly.class);
       assert classBinding != null;
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
@@ -162,7 +163,7 @@ class DefaultFieldPropertyTest {
       jsonParser.nextToken();
 
       IBindingContext bindingContext = IBindingContext.instance();
-      IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
+      IClassBinding classBinding = bindingContext.getClassBindingStrategy(MultiFieldAssembly.class);
       assert classBinding != null;
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
@@ -189,7 +190,7 @@ class DefaultFieldPropertyTest {
       jsonParser.nextToken();
 
       IBindingContext bindingContext = IBindingContext.instance();
-      IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
+      IClassBinding classBinding = bindingContext.getClassBindingStrategy(MultiFieldAssembly.class);
       assert classBinding != null;
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);

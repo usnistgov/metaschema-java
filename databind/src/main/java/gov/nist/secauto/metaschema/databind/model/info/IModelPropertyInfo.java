@@ -26,13 +26,14 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
+import gov.nist.secauto.metaschema.core.model.IModelInstance;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.strategy.impl.IModelInstanceBindingStrategy;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -53,12 +54,12 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface IModelPropertyInfo {
 
   @NonNull
-  static IModelPropertyInfo newPropertyInfo(
-      @NonNull IBoundNamedModelInstance instance) {
+  static IModelPropertyInfo newPropertyInfo(@NonNull IModelInstanceBindingStrategy<?> strategy) {
     // create the property info
-    Type type = instance.getType();
-    Field field = instance.getField();
+    Type type = strategy.getType();
+    Field field = strategy.getField();
 
+    IModelInstance instance = strategy.getInstance();
     IModelPropertyInfo retval;
     if (instance.getMaxOccurs() == -1 || instance.getMaxOccurs() > 1) {
       // collection case
@@ -70,13 +71,15 @@ public interface IModelPropertyInfo {
         case KEYED:
           throw new IllegalStateException(
               String.format("The field '%s' on class '%s' has data type of '%s'," + " but should have a type of '%s'.",
-                  field.getName(), instance.getParentClassBinding().getBoundClass().getName(),
+                  field.getName(),
+                  field.getDeclaringClass().getName(),
                   field.getType().getName(), Map.class.getName()));
         case LIST:
         case SINGLETON_OR_LIST:
           throw new IllegalStateException(
               String.format("The field '%s' on class '%s' has data type of '%s'," + " but should have a type of '%s'.",
-                  field.getName(), instance.getParentClassBinding().getBoundClass().getName(),
+                  field.getName(),
+                  field.getDeclaringClass().getName(),
                   field.getType().getName(), List.class.getName()));
         default:
           // this should not occur
@@ -90,21 +93,21 @@ public interface IModelPropertyInfo {
           throw new IllegalArgumentException(String.format(
               "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
               field.getName(),
-              instance.getParentClassBinding().getBoundClass().getName(),
+              field.getDeclaringClass().getName(),
               field.getType().getName(),
               Map.class.getName()));
         }
-        retval = new MapPropertyInfo(instance);
+        retval = new MapPropertyInfo(strategy);
       } else {
         if (!List.class.isAssignableFrom(rawType)) {
           throw new IllegalArgumentException(String.format(
               "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
               field.getName(),
-              instance.getParentClassBinding().getBoundClass().getName(),
+              field.getDeclaringClass().getName(),
               field.getType().getName(),
               List.class.getName()));
         }
-        retval = new ListPropertyInfo(instance);
+        retval = new ListPropertyInfo(strategy);
       }
     } else {
       // single value case
@@ -113,10 +116,10 @@ public interface IModelPropertyInfo {
             "The field '%s' on class '%s' has a data parmeterized type of '%s',"
                 + " but the occurance is not multi-valued.",
             field.getName(),
-            instance.getParentClassBinding().getBoundClass().getName(),
+            field.getDeclaringClass().getName(),
             field.getType().getName()));
       }
-      retval = new SingletonPropertyInfo(instance);
+      retval = new SingletonPropertyInfo(strategy);
     }
     return retval;
   }
@@ -127,7 +130,7 @@ public interface IModelPropertyInfo {
    * @return the property
    */
   @NonNull
-  IBoundNamedModelInstance getProperty();
+  IModelInstanceBindingStrategy<?> getInstanceStrategy();
 
   int getItemCount(@Nullable Object value);
 
@@ -151,7 +154,7 @@ public interface IModelPropertyInfo {
    * Read the value data for the property. At the point that this is called, the
    * parser must be located just after the property/field name has been parsed.
    * This method will return a value based on the property's value type as
-   * reported by {@link #getProperty()}.
+   * reported by {@link #getInstanceStrategy()}.
    *
    * @param collector
    *          used to hold parsed values
@@ -198,7 +201,7 @@ public interface IModelPropertyInfo {
 
   @NonNull
   default Collection<? extends Object> getItemsFromParentInstance(@NonNull Object parentInstance) {
-    Object value = getProperty().getValue(parentInstance);
+    Object value = getInstanceStrategy().getValue(parentInstance);
     return getItemsFromValue(value);
   }
 

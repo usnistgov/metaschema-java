@@ -26,20 +26,22 @@
 
 package gov.nist.secauto.metaschema.databind.io.xml;
 
-import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.info.IPropertyCollector;
+import gov.nist.secauto.metaschema.databind.strategy.IAssemblyDefinitionBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.IFlagInstanceBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.IInstanceBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.impl.IFieldDefinitionBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.impl.IFieldValueBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.impl.IModelInstanceBindingStrategy;
 
 import org.codehaus.stax2.XMLEventReader2;
 
@@ -112,8 +114,8 @@ public class MetaschemaXmlReader
    *
    * @param <CLASS>
    *          the returned object type
-   * @param targetDefinition
-   *          the definition describing the root element data to read
+   * @param bindingStrategy
+   *          the definition info describing the root element data to read
    * @return the parsed object
    * @throws XMLStreamException
    *           if an error occurred while parsing XML events
@@ -121,7 +123,8 @@ public class MetaschemaXmlReader
    *           if an error occurred while parsing the input
    */
   @NonNull
-  public <CLASS> CLASS read(@NonNull IAssemblyClassBinding targetDefinition) throws IOException, XMLStreamException {
+  public <CLASS> CLASS read(@NonNull IClassBindingStrategy<IAssemblyDefinition> bindingStrategy)
+      throws IOException, XMLStreamException {
 
     // we may be at the START_DOCUMENT
     if (reader.peek().isStartDocument()) {
@@ -130,12 +133,12 @@ public class MetaschemaXmlReader
 
     XmlEventUtil.skipEvents(reader, XMLStreamConstants.CHARACTERS, XMLStreamConstants.PROCESSING_INSTRUCTION);
 
-    QName rootQName = targetDefinition.getRootXmlQName();
+    QName rootQName = bindingStrategy.getDefinition().getRootXmlQName();
     XMLEvent event = XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.START_ELEMENT, rootQName);
 
     StartElement start = ObjectUtils.notNull(event.asStartElement());
 
-    CLASS retval = readDefinitionValue(targetDefinition, null, start);
+    CLASS retval = readDefinitionValue(bindingStrategy, null, start);
 
     XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, rootQName);
 
@@ -149,27 +152,27 @@ public class MetaschemaXmlReader
   @SuppressWarnings("PMD.CyclomaticComplexity")
   @Override
   public <T> T readDefinitionValue(
-      IClassBinding targetDefinition,
+      IClassBindingStrategy<? extends IFlagContainer> bindingStrategy,
       Object parentObject,
       StartElement start) throws IOException, XMLStreamException {
 
     Object targetObject;
     try {
-      targetObject = targetDefinition.newInstance();
-      targetDefinition.callBeforeDeserialize(targetObject, parentObject);
+      targetObject = bindingStrategy.newInstance();
+      bindingStrategy.callBeforeDeserialize(targetObject, parentObject);
     } catch (BindingException ex) {
       throw new IOException(ex);
     }
 
-    readFlagInstances(targetDefinition, targetObject, start);
+    readFlagInstances(bindingStrategy, targetObject, start);
 
-    if (targetDefinition instanceof IAssemblyClassBinding) {
-      readModelInstances((IAssemblyClassBinding) targetDefinition, targetObject, start);
-    } else if (targetDefinition instanceof IFieldClassBinding) {
-      readFieldValue((IFieldClassBinding) targetDefinition, targetObject);
+    if (bindingStrategy instanceof IAssemblyDefinitionBindingStrategy) {
+      readModelInstances((IAssemblyDefinitionBindingStrategy) bindingStrategy, targetObject, start);
+    } else if (bindingStrategy instanceof IFieldDefinitionBindingStrategy) {
+      readFieldValue((IFieldDefinitionBindingStrategy) bindingStrategy, targetObject);
     } else {
       throw new UnsupportedOperationException(
-          String.format("Unsupported class binding type: %s", targetDefinition.getClass().getName()));
+          String.format("Unsupported class binding type: %s", bindingStrategy.getDefinition().getClass().getName()));
     }
 
     XmlEventUtil.skipWhitespace(reader);
@@ -183,7 +186,7 @@ public class MetaschemaXmlReader
     }
 
     try {
-      targetDefinition.callAfterDeserialize(targetObject, parentObject);
+      bindingStrategy.callAfterDeserialize(targetObject, parentObject);
     } catch (BindingException ex) {
       throw new IOException(ex);
     }
@@ -194,8 +197,9 @@ public class MetaschemaXmlReader
    * Read the XML attribute data described by the {@code targetDefinition} and
    * apply it to the provided {@code targetObject}.
    *
-   * @param targetDefinition
-   *          the Module definition that describes the syntax of the data to read
+   * @param bindingStrategy
+   *          the Module definition info that describes the syntax of the data to
+   *          read
    * @param targetObject
    *          the Java object that data parsed by this method will be stored in
    * @param start
@@ -206,19 +210,21 @@ public class MetaschemaXmlReader
    *           if an error occurred while parsing XML events
    */
   protected void readFlagInstances(
-      @NonNull IClassBinding targetDefinition,
+      @NonNull IClassBindingStrategy<? extends IFlagContainer> bindingStrategy,
       @NonNull Object targetObject,
       @NonNull StartElement start) throws IOException, XMLStreamException {
 
-    Map<QName, IBoundFlagInstance> flagInstanceMap = targetDefinition.getFlagInstances().stream()
-        .collect(Collectors.toMap(IBoundFlagInstance::getXmlQName, Function.identity()));
+    Map<QName, ? extends IFlagInstanceBindingStrategy> flagInstanceMap = bindingStrategy.getFlagInstances().stream()
+        .collect(Collectors.toMap(
+            instance -> instance.getInstance().getXmlQName(),
+            Function.identity()));
 
     for (Attribute attribute : CollectionUtil.toIterable(ObjectUtils.notNull(start.getAttributes()))) {
       QName qname = attribute.getName();
-      IBoundFlagInstance instance = flagInstanceMap.get(qname);
+      IFlagInstanceBindingStrategy instance = flagInstanceMap.get(qname);
       if (instance == null) {
         // unrecognized flag
-        if (!getProblemHandler().handleUnknownAttribute(targetDefinition, targetObject, attribute, this)) {
+        if (!getProblemHandler().handleUnknownAttribute(bindingStrategy, targetObject, attribute, this)) {
           throw new IOException(
               String.format("Unrecognized attribute '%s'%s.",
                   qname,
@@ -226,7 +232,7 @@ public class MetaschemaXmlReader
         }
       } else {
         // get the attribute value
-        Object value = instance.getDefinition().getJavaTypeAdapter().parse(ObjectUtils.notNull(attribute.getValue()));
+        Object value = instance.getValueFromString(ObjectUtils.notNull(attribute.getValue()));
         // apply the value to the parentObject
         instance.setValue(targetObject, value);
         flagInstanceMap.remove(qname);
@@ -235,7 +241,7 @@ public class MetaschemaXmlReader
 
     if (!flagInstanceMap.isEmpty()) {
       getProblemHandler().handleMissingFlagInstances(
-          targetDefinition,
+          bindingStrategy,
           targetObject,
           ObjectUtils.notNull(flagInstanceMap.values()));
     }
@@ -245,8 +251,9 @@ public class MetaschemaXmlReader
    * Read the XML element data described by the {@code targetDefinition} and apply
    * it to the provided {@code targetObject}.
    *
-   * @param targetDefinition
-   *          the Module definition that describes the syntax of the data to read
+   * @param bindingStrategy
+   *          the Module definition info that describes the syntax of the data to
+   *          read
    * @param targetObject
    *          the Java object that data parsed by this method will be stored in
    * @param start
@@ -257,38 +264,40 @@ public class MetaschemaXmlReader
    *           if an error occurred while parsing XML events
    */
   protected void readModelInstances(
-      @NonNull IAssemblyClassBinding targetDefinition,
+      @NonNull IAssemblyDefinitionBindingStrategy bindingStrategy,
       @NonNull Object targetObject,
       @NonNull StartElement start)
       throws IOException, XMLStreamException {
-    Set<IBoundNamedModelInstance> unhandledProperties = new HashSet<>();
-    for (IBoundNamedModelInstance modelProperty : targetDefinition.getModelInstances()) {
+    Set<IModelInstanceBindingStrategy<?>> unhandledProperties = new HashSet<>();
+    for (IModelInstanceBindingStrategy<?> modelProperty : bindingStrategy.getModelInstances()) {
       assert modelProperty != null;
+
       if (!readModelInstanceValues(modelProperty, targetObject, start)) {
         unhandledProperties.add(modelProperty);
       }
     }
 
     // process all properties that did not get a value
-    getProblemHandler().handleMissingModelInstances(targetDefinition, targetObject, unhandledProperties);
+    getProblemHandler().handleMissingModelInstances(bindingStrategy, targetObject, unhandledProperties);
   }
 
   /**
    * Read the XML element and text data described by the {@code targetDefinition}
    * and apply it to the provided {@code targetObject}.
    *
-   * @param targetDefinition
-   *          the Module definition that describes the syntax of the data to read
+   * @param bindingStrategy
+   *          the Module definition info that describes the syntax of the data to
+   *          read
    * @param targetObject
    *          the Java object that data parsed by this method will be stored in
    * @throws IOException
    *           if an error occurred while parsing the input
    */
   protected void readFieldValue(
-      @NonNull IFieldClassBinding targetDefinition,
+      @NonNull IFieldDefinitionBindingStrategy bindingStrategy,
       @NonNull Object targetObject)
       throws IOException {
-    IBoundFieldValueInstance fieldValue = targetDefinition.getFieldValueInstance();
+    IFieldValueBindingStrategy fieldValue = bindingStrategy.getFieldValue();
 
     // parse the value
     Object value = fieldValue.getJavaTypeAdapter().parse(reader);
@@ -298,7 +307,7 @@ public class MetaschemaXmlReader
   /**
    * Determine if the next data to read corresponds to the next model instance.
    *
-   * @param targetInstance
+   * @param instance
    *          the model instance that describes the syntax of the data to read
    * @return {@code true} if the Module instance needs to be parsed, or
    *         {@code false} otherwise
@@ -307,7 +316,7 @@ public class MetaschemaXmlReader
    */
   @SuppressWarnings("PMD.OnlyOneReturn")
   protected boolean isNextInstance(
-      @NonNull IBoundNamedModelInstance targetInstance)
+      @NonNull IModelInstanceBindingStrategy<?> instance)
       throws XMLStreamException {
 
     XmlEventUtil.skipWhitespace(reader);
@@ -319,25 +328,7 @@ public class MetaschemaXmlReader
 
     QName nextQName = ObjectUtils.notNull(nextEvent.asStartElement().getName());
 
-    if (nextQName.equals(targetInstance.getXmlGroupAsQName())) {
-      // we are to parse the grouping element
-      return true;
-    }
-
-    if (nextQName.equals(targetInstance.getXmlQName())) {
-      // we are to parse the element
-      return true;
-    }
-
-    if (targetInstance instanceof IBoundFieldInstance) {
-      IBoundFieldInstance fieldInstance = (IBoundFieldInstance) targetInstance;
-      IDataTypeAdapter<?> adapter = fieldInstance.getDefinition().getJavaTypeAdapter();
-      // we are to parse the data type
-      return !fieldInstance.isInXmlWrapped()
-          && adapter.isUnrappedValueAllowedInXml()
-          && adapter.canHandleQName(nextQName);
-    }
-    return false;
+    return instance.canHandleQName(nextQName);
   }
 
   /**
@@ -358,7 +349,7 @@ public class MetaschemaXmlReader
    *           if an error occurred while parsing XML events
    */
   protected boolean readModelInstanceValues(
-      @NonNull IBoundNamedModelInstance instance,
+      @NonNull IModelInstanceBindingStrategy<?> instance,
       @NonNull Object parentObject,
       @NonNull StartElement start)
       throws IOException, XMLStreamException {
@@ -368,7 +359,7 @@ public class MetaschemaXmlReader
 
       StartElement currentStart = start;
 
-      QName groupQName = instance.getXmlGroupAsQName();
+      QName groupQName = instance.getInstance().getXmlGroupAsQName();
       if (groupQName != null) {
         // we are to parse the grouping element, if the next token matches
         XMLEvent groupEvent = XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.START_ELEMENT, groupQName);
@@ -394,14 +385,22 @@ public class MetaschemaXmlReader
     return handled;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public <T> T readModelInstanceValue(IBoundNamedModelInstance instance, Object parentObject, StartElement start)
+  public <T> T readModelInstanceValue(IModelInstanceBindingStrategy<?> instance, Object parentObject,
+      StartElement start)
       throws XMLStreamException, IOException {
     Object retval;
-    if (instance instanceof IBoundAssemblyInstance) {
-      retval = readModelInstanceValue((IBoundAssemblyInstance) instance, parentObject, start);
-    } else if (instance instanceof IBoundFieldInstance) {
-      retval = readModelInstanceValue((IBoundFieldInstance) instance, parentObject, start);
+    if (instance.isInstanceOf(IAssemblyInstance.class)) {
+      retval = readAssemblyModelInstanceValue(
+          (IModelInstanceBindingStrategy<? extends IAssemblyInstance>) instance,
+          parentObject,
+          start);
+    } else if (instance.isInstanceOf(IFieldInstance.class)) {
+      retval = readFieldModelInstanceValue(
+          (IModelInstanceBindingStrategy<? extends IFieldInstance>) instance,
+          parentObject,
+          start);
     } else {
       throw new UnsupportedOperationException(
           String.format("Unsupported instance type: %s", instance.getClass().getName()));
@@ -426,8 +425,8 @@ public class MetaschemaXmlReader
    *           if an error occurred while parsing XML events
    */
   @Nullable
-  protected Object readModelInstanceValue(
-      @NonNull IBoundAssemblyInstance instance,
+  protected Object readAssemblyModelInstanceValue(
+      @NonNull IInstanceBindingStrategy<? extends IAssemblyInstance> instance,
       @NonNull Object parentObject,
       @NonNull StartElement start) throws XMLStreamException, IOException {
     // consume extra whitespace between elements
@@ -438,12 +437,12 @@ public class MetaschemaXmlReader
     if (event.isStartElement()) {
       StartElement nextStart = event.asStartElement();
       QName nextQName = nextStart.getName();
-      if (instance.getXmlQName().equals(nextQName)) {
+      if (instance.getInstance().getXmlQName().equals(nextQName)) {
         // Consume the start element
         reader.nextEvent();
 
         // consume the value
-        retval = instance.getDataTypeHandler().readItem(parentObject, nextStart, this);
+        retval = instance.readItem(parentObject, nextStart, this);
 
         // consume the end element
         XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, nextQName);
@@ -470,16 +469,12 @@ public class MetaschemaXmlReader
    *           if an error occurred while parsing XML events
    */
   @NonNull
-  protected Object readModelInstanceValue(
-      @NonNull IBoundFieldInstance instance,
+  protected Object readFieldModelInstanceValue(
+      @NonNull IModelInstanceBindingStrategy<? extends IFieldInstance> instance,
       @NonNull Object parentObject,
       @NonNull StartElement start) throws XMLStreamException, IOException {
     // figure out if we need to parse the wrapper or not
-    IDataTypeAdapter<?> adapter = instance.getDefinition().getJavaTypeAdapter();
-    boolean parseWrapper = true;
-    if (!instance.isInXmlWrapped() && adapter.isUnrappedValueAllowedInXml()) {
-      parseWrapper = false;
-    }
+    boolean parseWrapper = instance.getInstance().isInXmlWrapped() || !instance.isUnwrappedValueAllowedInXml();
 
     StartElement currentStart = start;
     if (parseWrapper) {
@@ -487,7 +482,7 @@ public class MetaschemaXmlReader
       // parse any whitespace before the element
       XmlEventUtil.skipWhitespace(reader);
 
-      QName xmlQName = instance.getXmlQName();
+      QName xmlQName = instance.getInstance().getXmlQName();
       XMLEvent event = reader.peek();
       if (event.isStartElement() && xmlQName.equals(event.asStartElement().getName())) {
         // Consume the start element
@@ -501,7 +496,7 @@ public class MetaschemaXmlReader
     }
 
     // consume the value
-    Object retval = instance.getDataTypeHandler().readItem(parentObject, currentStart, this);
+    Object retval = instance.readItem(parentObject, currentStart, this);
 
     if (parseWrapper) {
       // consume the end element

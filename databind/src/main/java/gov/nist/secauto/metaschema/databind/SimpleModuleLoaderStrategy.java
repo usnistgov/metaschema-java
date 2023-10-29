@@ -26,13 +26,129 @@
 
 package gov.nist.secauto.metaschema.databind;
 
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.IBindingContext.IModuleLoaderStrategy;
+import gov.nist.secauto.metaschema.databind.model.annotations.Module;
+import gov.nist.secauto.metaschema.databind.strategy.IBindingStrategyFactory;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.impl.BindingStrategyFactory;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class SimpleModuleLoaderStrategy
-    extends AbstractModuleLoaderStrategy {
+public class SimpleModuleLoaderStrategy implements IModuleLoaderStrategy {
+  @NonNull
+  private final IBindingStrategyFactory bindingStrategyfactory = BindingStrategyFactory.instance();
 
+  @NonNull
+  private final IBindingContext bindingContext;
+  @NonNull
+  private final Map<Class<?>, IModule> modulesByClass = new ConcurrentHashMap<>();
+
+  /**
+   * Construct a new basic module loader.
+   *
+   * @param bindingContext
+   *          the binding context used to initialize new modules
+   */
   public SimpleModuleLoaderStrategy(@NonNull IBindingContext bindingContext) {
-    super(bindingContext);
+    this.bindingContext = bindingContext;
   }
 
+  /**
+   * Get the factory for binding information objects.
+   *
+   * @return the factory
+   */
+  @NonNull
+  protected IBindingStrategyFactory getBindingStrategyfactory() {
+    return bindingStrategyfactory;
+  }
+
+  /**
+   * Get the binding context for use in initializing new modules.
+   *
+   * @return the binding context
+   */
+  @NonNull
+  protected IBindingContext getBindingContext() {
+    return bindingContext;
+  }
+
+  @Override
+  public IModule loadModule(Class<? extends IModule> clazz) {
+    IModule retval = modulesByClass.get(clazz);
+    if (retval == null) {
+      retval = loadModuleInternal(clazz);
+      modulesByClass.put(clazz, retval);
+    }
+    return retval;
+  }
+
+  /**
+   * Create a new Module instance for a given class annotated by the
+   * {@link Module} annotation.
+   * <p>
+   * Will also load any imported Metaschemas.
+   *
+   * @param clazz
+   *          the Module class
+   * @return the new Module instance
+   */
+  @NonNull
+  protected IModule loadModuleInternal(Class<? extends IModule> clazz) {
+
+    if (!clazz.isAnnotationPresent(Module.class)) {
+      throw new IllegalStateException(String.format("The class '%s' is missing the '%s' annotation",
+          clazz.getCanonicalName(), Module.class.getCanonicalName()));
+    }
+
+    Module moduleAnnotation = clazz.getAnnotation(Module.class);
+
+    List<IModule> importedModules;
+    if (moduleAnnotation.imports().length > 0) {
+      importedModules = new ArrayList<>(moduleAnnotation.imports().length);
+      for (Class<? extends IModule> importClass : moduleAnnotation.imports()) {
+        assert importClass != null;
+        IModule moduleImport = loadModule(importClass);
+        importedModules.add(moduleImport);
+      }
+    } else {
+      importedModules = CollectionUtil.emptyList();
+    }
+    return createInstance(clazz, importedModules);
+  }
+
+  @NonNull
+  private IModule createInstance(
+      @NonNull Class<? extends IModule> clazz,
+      @NonNull List<? extends IModule> importedModules) {
+
+    Constructor<? extends IModule> constructor;
+    try {
+      constructor = clazz.getDeclaredConstructor(List.class, IBindingContext.class);
+    } catch (NoSuchMethodException ex) {
+      throw new IllegalArgumentException(ex);
+    }
+
+    try {
+      // instantiate the module
+      return ObjectUtils.notNull(constructor.newInstance(importedModules, getBindingContext()));
+    } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+      throw new IllegalArgumentException(ex);
+    }
+  }
+
+  @Override
+  public IClassBindingStrategy<?> getClassBindingStrategy(Class<?> clazz) {
+    return getBindingStrategyfactory().newClassBindingStrategy(clazz);
+  }
 }

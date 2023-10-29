@@ -30,6 +30,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
+import gov.nist.secauto.metaschema.core.model.IModelInstance;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
@@ -40,7 +41,7 @@ import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.strategy.impl.IModelInstanceBindingStrategy;
 
 import org.codehaus.stax2.XMLEventReader2;
 
@@ -58,14 +59,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 class ListPropertyInfo
     extends AbstractModelPropertyInfo {
 
-  public ListPropertyInfo(
-      @NonNull IBoundNamedModelInstance property) {
-    super(property);
+  public ListPropertyInfo(@NonNull IModelInstanceBindingStrategy<?> instanceStrategy) {
+    super(instanceStrategy);
   }
 
   @Override
   public Class<?> getItemType() {
-    ParameterizedType actualType = (ParameterizedType) getProperty().getType();
+    ParameterizedType actualType = (ParameterizedType) getInstanceStrategy().getType();
     // this is a List so there is only a single generic type
     return ObjectUtils.notNull((Class<?>) actualType.getActualTypeArguments()[0]);
   }
@@ -77,7 +77,7 @@ class ListPropertyInfo
 
   @Override
   public List<? extends Object> getItemsFromParentInstance(Object parentInstance) {
-    Object value = getProperty().getValue(parentInstance);
+    Object value = getInstanceStrategy().getValue(parentInstance);
     return getItemsFromValue(value);
   }
 
@@ -103,15 +103,13 @@ class ListPropertyInfo
     // consume extra whitespace between elements
     XmlEventUtil.skipWhitespace(eventReader);
 
-    QName expectedFieldItemQName = getProperty().getXmlQName();
-
+    IModelInstanceBindingStrategy<?> instanceStrategy = getInstanceStrategy();
     boolean handled = false;
     XMLEvent event;
-
     while ((event = eventReader.peek()).isStartElement()
-        && expectedFieldItemQName.equals(event.asStartElement().getName())) {
+        && instanceStrategy.canHandleQName(ObjectUtils.notNull(event.asStartElement().getName()))) {
 
-      Object value = context.readModelInstanceValue(getProperty(), parentInstance, start);
+      Object value = context.readModelInstanceValue(getInstanceStrategy(), parentInstance, start);
       if (value != null) {
         collector.add(value);
         handled = true;
@@ -144,7 +142,7 @@ class ListPropertyInfo
 
       // parse items
       while (!JsonToken.END_ARRAY.equals(parser.currentToken())) {
-        Object value = getProperty().getDataTypeHandler().readItem(parentInstance, context);
+        Object value = getInstanceStrategy().readItem(parentInstance, context);
         collector.add(value);
       }
 
@@ -158,7 +156,7 @@ class ListPropertyInfo
     }
     default:
       // this is a singleton, just parse the value as a single item
-      Object value = getProperty().getDataTypeHandler().readItem(parentInstance, context);
+      Object value = getInstanceStrategy().readItem(parentInstance, context);
       collector.add(value);
     }
   }
@@ -166,10 +164,9 @@ class ListPropertyInfo
   @Override
   public void writeValues(Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
-    IBoundNamedModelInstance property = getProperty();
     List<? extends Object> items = getItemsFromValue(value);
     for (Object item : items) {
-      context.writeInstanceValue(property, ObjectUtils.requireNonNull(item), parentName);
+      context.writeInstanceValue(getInstanceStrategy(), ObjectUtils.requireNonNull(item), parentName);
     }
   }
 
@@ -180,9 +177,11 @@ class ListPropertyInfo
     @SuppressWarnings("resource") // not owned
     JsonGenerator writer = context.getWriter(); // NOPMD - intentional
 
+    IModelInstance instance = getInstanceStrategy().getInstance();
     boolean writeArray = false;
-    if (JsonGroupAsBehavior.LIST.equals(getProperty().getJsonGroupAsBehavior())
-        || JsonGroupAsBehavior.SINGLETON_OR_LIST.equals(getProperty().getJsonGroupAsBehavior()) && items.size() > 1) {
+    if (JsonGroupAsBehavior.LIST.equals(instance.getJsonGroupAsBehavior())
+        || JsonGroupAsBehavior.SINGLETON_OR_LIST.equals(instance.getJsonGroupAsBehavior())
+            && items.size() > 1) {
       // write array, then items
       writeArray = true;
       writer.writeStartArray();
@@ -190,7 +189,7 @@ class ListPropertyInfo
 
     for (Object targetObject : items) {
       assert targetObject != null;
-      getProperty().getDataTypeHandler().writeItem(targetObject, context);
+      getInstanceStrategy().writeItem(targetObject, context);
     }
 
     if (writeArray) {
@@ -208,10 +207,10 @@ class ListPropertyInfo
   @Override
   public void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
       throws BindingException {
-    IBoundNamedModelInstance property = getProperty();
+    IModelInstanceBindingStrategy<?> property = getInstanceStrategy();
 
     for (Object item : getItemsFromParentInstance(fromInstance)) {
-      collector.add(property.copyItem(ObjectUtils.requireNonNull(item), toInstance));
+      collector.add(property.deepCopy(ObjectUtils.requireNonNull(item), toInstance));
     }
   }
 }

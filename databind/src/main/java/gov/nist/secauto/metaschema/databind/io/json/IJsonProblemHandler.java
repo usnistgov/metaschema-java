@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.databind.io.json;
 
 import gov.nist.secauto.metaschema.databind.io.IProblemHandler;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.strategy.IPropertyBindingStrategy;
 
 import java.io.IOException;
 
@@ -40,8 +40,9 @@ public interface IJsonProblemHandler extends IProblemHandler {
    * Callback used to handle a JSON property that is unknown to the model being
    * parsed.
    *
-   * @param classBinding
-   *          the bound class currently describing the data being parsed
+   * @param bindingStrategy
+   *          the binding info for the object on which the missing properties were
+   *          found
    * @param targetObject
    *          the Java object for the {@code parentDefinition}
    * @param fieldName
@@ -54,7 +55,7 @@ public interface IJsonProblemHandler extends IProblemHandler {
    *           if an error occurred while handling the unrecognized data
    */
   boolean handleUnknownProperty(
-      @NonNull IClassBinding classBinding,
+      @NonNull IPropertyBindingStrategy bindingStrategy,
       @Nullable Object targetObject,
       @NonNull String fieldName,
       @NonNull IJsonParsingContext parsingContext) throws IOException;

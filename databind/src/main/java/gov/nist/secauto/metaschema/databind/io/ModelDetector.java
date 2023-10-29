@@ -178,7 +178,7 @@ public class ModelDetector {
       throw new IOException(ex);
     }
 
-    Class<?> clazz = getBindingContext().getBoundClassForXmlQName(startElementQName);
+    Class<?> clazz = getBindingContext().getBoundClassForXmlQName(startElementQName).getBoundClass();
 
     if (clazz == null) {
       throw new IOException("Unrecognized element name: " + startElementQName.toString());

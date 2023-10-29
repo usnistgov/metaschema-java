@@ -31,8 +31,8 @@ import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.metapath.IDocumentLoader;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.DefaultBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.MetaschemaBindingContext;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -359,7 +359,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * leave the provided {@link InputStream} at a position beyond the last parsed
    * location. If you want to avoid this possibility, use and implementation of
    * {@link IDeserializer#deserialize(InputStream, URI)} instead, such as what is
-   * provided by {@link DefaultBindingContext#newDeserializer(Format, Class)}.
+   * provided by {@link MetaschemaBindingContext#newDeserializer(Format, Class)}.
    *
    * @param <CLASS>
    *          the Java type to load data into

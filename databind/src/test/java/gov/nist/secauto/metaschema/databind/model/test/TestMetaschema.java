@@ -31,8 +31,8 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.model.AbstractBoundModule;
 import gov.nist.secauto.metaschema.databind.model.annotations.Module;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.impl.AbstractBoundModule;
 
 import java.net.URI;
 import java.util.List;

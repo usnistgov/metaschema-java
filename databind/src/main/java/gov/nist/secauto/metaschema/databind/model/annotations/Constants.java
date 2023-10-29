@@ -39,6 +39,10 @@ public final class Constants {
    * implementations to recognize the "no default value" state.
    */
   public static final String NULL_VALUE = "\u0000";
+  /**
+   * An unspecified class value.
+   */
+  public static final Class<?> NULL_CLASS = Void.class;
 
   private Constants() {
     // disable construction

@@ -26,17 +26,20 @@
 
 package gov.nist.secauto.metaschema.databind.io.xml;
 
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.databind.io.json.DefaultJsonProblemHandler;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.strategy.IAssemblyDefinitionBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.IFlagInstanceBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.IInstanceBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.impl.IFieldDefinitionBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.impl.IFieldValueBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.impl.IModelInstanceBindingStrategy;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 
@@ -59,8 +62,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
    *          the XML stream writer to write with
    * @see DefaultJsonProblemHandler
    */
-  public MetaschemaXmlWriter(
-      @NonNull XMLStreamWriter2 writer) {
+  public MetaschemaXmlWriter(@NonNull XMLStreamWriter2 writer) {
     this.writer = writer;
   }
 
@@ -71,11 +73,11 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
   /**
    * Writes data in a bound object to XML. This assembly must be a root assembly
-   * for which a call to {@link IAssemblyClassBinding#isRoot()} will return
+   * for which a call to {@link IAssemblyDefinition#isRoot()} will return
    * {@code true}.
    *
-   * @param targetDefinition
-   *          the definition describing the root element data to write
+   * @param bindingStrategy
+   *          the definition info describing the root element data to write
    * @param targetObject
    *          the bound object
    * @throws XMLStreamException
@@ -84,11 +86,11 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
    *           if an error occurred while writing the output
    */
   public void write(
-      @NonNull IAssemblyClassBinding targetDefinition,
+      @NonNull IClassBindingStrategy<IAssemblyDefinition> bindingStrategy,
       @NonNull Object targetObject) throws XMLStreamException, IOException {
     writer.writeStartDocument("UTF-8", "1.0");
 
-    QName rootQName = targetDefinition.getRootXmlQName();
+    QName rootQName = bindingStrategy.getDefinition().getRootXmlQName();
 
     NamespaceContext nsContext = writer.getNamespaceContext();
     String prefix = nsContext.getPrefix(rootQName.getNamespaceURI());
@@ -98,41 +100,47 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
     writer.writeStartElement(prefix, rootQName.getLocalPart(), rootQName.getNamespaceURI());
 
-    writeDefinitionValue(targetDefinition, targetObject, rootQName);
+    writeDefinitionValue(bindingStrategy, targetObject, rootQName);
 
     writer.writeEndElement();
   }
 
   @Override
   public void writeDefinitionValue(
-      @NonNull IClassBinding targetDefinition,
+      @NonNull IClassBindingStrategy<? extends IFlagContainer> bindingStrategy,
       @NonNull Object targetObject,
       @NonNull QName parentName) throws IOException {
     // write flags
-    for (IBoundFlagInstance flag : targetDefinition.getFlagInstances()) {
+    for (IFlagInstanceBindingStrategy flag : bindingStrategy.getFlagInstances()) {
       assert flag != null;
       writeFlagInstance(flag, targetObject);
     }
 
-    if (targetDefinition instanceof IAssemblyClassBinding) {
-      for (IBoundNamedModelInstance modelProperty : ((IAssemblyClassBinding) targetDefinition).getModelInstances()) {
+    if (bindingStrategy instanceof IAssemblyDefinitionBindingStrategy) {
+      for (IModelInstanceBindingStrategy<?> modelProperty : ((IAssemblyDefinitionBindingStrategy) bindingStrategy)
+          .getModelInstances()) {
         assert modelProperty != null;
-        writeModelInstanceValues(modelProperty, targetObject, parentName);
+        if (modelProperty instanceof IBoundNamedModelInstance) {
+          writeModelInstanceValues((IBoundNamedModelInstance) modelProperty, targetObject, parentName);
+        } else {
+          throw new UnsupportedOperationException(modelProperty.getClass().getName());
+        }
       }
-    } else if (targetDefinition instanceof IFieldClassBinding) {
-      IBoundFieldValueInstance fieldValueInstance = ((IFieldClassBinding) targetDefinition).getFieldValueInstance();
+    } else if (bindingStrategy instanceof IFieldDefinitionBindingStrategy) {
+      IFieldValueBindingStrategy fieldValue = ((IFieldDefinitionBindingStrategy) bindingStrategy)
+          .getFieldValue();
 
-      Object value = fieldValueInstance.getValue(targetObject);
+      Object value = fieldValue.getValue(targetObject);
       if (value != null) {
         try {
-          fieldValueInstance.getJavaTypeAdapter().writeXmlValue(value, parentName, writer);
+          fieldValue.writeItem(value, parentName, this);
         } catch (XMLStreamException ex) {
           throw new IOException(ex);
         }
       }
     } else {
       throw new UnsupportedOperationException(
-          String.format("Unsupported class binding type: %s", targetDefinition.getClass().getName()));
+          String.format("Unsupported class binding type: %s", bindingStrategy.toCoordinates()));
     }
   }
 
@@ -140,7 +148,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
    * Write the data described by the provided {@code targetInstance} as an XML
    * attribute.
    *
-   * @param targetInstance
+   * @param flagStrategy
    *          the model instance that describes the syntax of the data to write
    * @param parentObject
    *          the Java object that data written by this method is stored in
@@ -148,15 +156,16 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
    *           if an error occurred while writing the XML
    */
   protected void writeFlagInstance(
-      @NonNull IBoundFlagInstance targetInstance,
+      @NonNull IFlagInstanceBindingStrategy flagStrategy,
       @NonNull Object parentObject)
       throws IOException {
-    Object objectValue = targetInstance.getValue(parentObject);
-    String value
-        = objectValue == null ? null : targetInstance.getDefinition().getJavaTypeAdapter().asString(objectValue);
+    Object objectValue = flagStrategy.getValue(parentObject);
+    String value = objectValue == null
+        ? null
+        : flagStrategy.toStringFromItem(objectValue);
 
     if (value != null) {
-      QName name = targetInstance.getXmlQName();
+      QName name = flagStrategy.getInstance().getXmlQName();
       try {
         if (name.getNamespaceURI().isEmpty()) {
           writer.writeAttribute(name.getLocalPart(), value);
@@ -219,30 +228,55 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     return true;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public void writeInstanceValue(
-      @NonNull IBoundNamedModelInstance targetInstance,
+      IModelInstanceBindingStrategy<?> instanceStrategy,
+      Object targetObject,
+      QName parentName) throws IOException {
+    // figure out how to parse the item
+    if (instanceStrategy.isInstanceOf(INamedModelInstance.class)) {
+      writeNamedModelInstanceValue(
+          (IInstanceBindingStrategy<? extends INamedModelInstance>) instanceStrategy,
+          targetObject,
+          parentName);
+    } else if (instanceStrategy.isInstanceOf(IChoiceGroupInstance.class)) {
+      writeChoiceGroupInstanceValue(
+          (IInstanceBindingStrategy<? extends IChoiceGroupInstance>) instanceStrategy,
+          targetObject,
+          parentName);
+    } else {
+      throw new UnsupportedOperationException(
+          String.format("Unsupported instance type: %s", instanceStrategy.getClass().getName()));
+    }
+  }
+
+  private void writeChoiceGroupInstanceValue(
+      @NonNull IInstanceBindingStrategy<? extends IChoiceGroupInstance> instanceStrategy,
+      @NonNull Object targetObject,
+      @NonNull QName parentName) {
+    throw new UnsupportedOperationException();
+  }
+
+  private void writeNamedModelInstanceValue(
+      @NonNull IInstanceBindingStrategy<? extends INamedModelInstance> instanceStrategy,
       @NonNull Object targetObject,
       @NonNull QName parentName) throws IOException {
-    // figure out how to parse the item
-    IDataTypeHandler handler = targetInstance.getDataTypeHandler();
 
     // figure out if we need to write the wrapper or not
-    boolean writeWrapper = targetInstance instanceof IBoundAssemblyInstance
-        || ((IBoundFieldInstance) targetInstance).isInXmlWrapped()
-        || !handler.isUnwrappedValueAllowedInXml();
+    boolean writeWrapper = !instanceStrategy.isUnwrappedValueAllowedInXml();
 
     try {
       QName currentParentName;
       if (writeWrapper) {
-        currentParentName = targetInstance.getXmlQName();
+        currentParentName = instanceStrategy.getInstance().getXmlQName();
         writer.writeStartElement(currentParentName.getNamespaceURI(), currentParentName.getLocalPart());
       } else {
         currentParentName = parentName;
       }
 
       // write the value
-      handler.writeItem(targetObject, currentParentName, this);
+      instanceStrategy.writeItem(targetObject, currentParentName, this);
 
       if (writeWrapper) {
         writer.writeEndElement();
@@ -250,5 +284,6 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     } catch (XMLStreamException ex) {
       throw new IOException(ex);
     }
+
   }
 }

@@ -31,10 +31,11 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.databind.io.SerializationFeature;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -49,12 +50,12 @@ public class DefaultJsonSerializer<CLASS>
    * Construct a new Module binding-based deserializer that reads JSON-based
    * Module content.
    *
-   * @param classBinding
+   * @param bindingStrategy
    *          the assembly class binding describing the Java objects this
    *          deserializer parses data into
    */
-  public DefaultJsonSerializer(@NonNull IAssemblyClassBinding classBinding) {
-    super(classBinding);
+  public DefaultJsonSerializer(@NonNull IClassBindingStrategy<IAssemblyDefinition> bindingStrategy) {
+    super(bindingStrategy);
   }
 
   /**
@@ -100,11 +101,10 @@ public class DefaultJsonSerializer<CLASS>
   @Override
   public void serialize(CLASS data, Writer writer) throws IOException {
     try (JsonGenerator generator = newJsonGenerator(writer)) {
-      IAssemblyClassBinding classBinding = getClassBinding();
 
       MetaschemaJsonWriter jsonWriter = new MetaschemaJsonWriter(generator);
 
-      jsonWriter.write(classBinding, data);
+      jsonWriter.write(getBindingStrategy(), data);
     }
   }
 

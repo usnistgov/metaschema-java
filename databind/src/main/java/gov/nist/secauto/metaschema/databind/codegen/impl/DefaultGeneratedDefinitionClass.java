@@ -71,4 +71,5 @@ public class DefaultGeneratedDefinitionClass
   public boolean isRootClass() {
     return definition instanceof IAssemblyDefinition && ((IAssemblyDefinition) definition).isRoot();
   }
+
 }

@@ -29,9 +29,10 @@ package gov.nist.secauto.metaschema.databind.io;
 import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IConfigurationFeature;
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
 
 import java.util.Map;
 
@@ -41,12 +42,12 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 abstract class AbstractSerializationBase<T extends IConfigurationFeature<?>>
     implements IMutableConfiguration<T> {
   @NonNull
-  private final IAssemblyClassBinding classBinding;
+  private final IClassBindingStrategy<IAssemblyDefinition> bindingStrategy;
   @NonNull
   private final DefaultConfiguration<T> configuration;
 
-  protected AbstractSerializationBase(@NonNull IAssemblyClassBinding classBinding) {
-    this.classBinding = ObjectUtils.requireNonNull(classBinding, "classBinding");
+  protected AbstractSerializationBase(@NonNull IClassBindingStrategy<IAssemblyDefinition> bindingStrategy) {
+    this.bindingStrategy = ObjectUtils.requireNonNull(bindingStrategy, "bindingStrategy");
     this.configuration = new DefaultConfiguration<>();
   }
 
@@ -57,7 +58,7 @@ abstract class AbstractSerializationBase<T extends IConfigurationFeature<?>>
    */
   @NonNull
   protected IBindingContext getBindingContext() {
-    return classBinding.getBindingContext();
+    return bindingStrategy.getBindingContext();
   }
 
   /**
@@ -67,8 +68,8 @@ abstract class AbstractSerializationBase<T extends IConfigurationFeature<?>>
    * @return the class binding for the Module assembly
    */
   @NonNull
-  protected IAssemblyClassBinding getClassBinding() {
-    return classBinding;
+  protected IClassBindingStrategy<IAssemblyDefinition> getBindingStrategy() {
+    return bindingStrategy;
   }
 
   @SuppressWarnings("unused")

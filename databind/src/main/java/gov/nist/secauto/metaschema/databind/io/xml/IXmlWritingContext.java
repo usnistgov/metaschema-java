@@ -26,9 +26,10 @@
 
 package gov.nist.secauto.metaschema.databind.io.xml;
 
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.databind.io.IWritingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.impl.IModelInstanceBindingStrategy;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 
@@ -43,9 +44,8 @@ public interface IXmlWritingContext extends IWritingContext<XMLStreamWriter2> {
    * Write the data described by the provided {@code targetDefinition} as an XML
    * element.
    *
-   * @param targetDefinition
-   *          the bound Module definition describing the structure of the XML data
-   *          to write
+   * @param bindingStrategy
+   *          the binding info describing the structure of the XML data to write
    * @param targetObject
    *          the Java object data to write
    * @param parentName
@@ -54,7 +54,7 @@ public interface IXmlWritingContext extends IWritingContext<XMLStreamWriter2> {
    *           if an error occurred while writing the XML
    */
   void writeDefinitionValue(
-      @NonNull IClassBinding targetDefinition,
+      @NonNull IClassBindingStrategy<? extends IFlagContainer> bindingStrategy,
       @NonNull Object targetObject,
       @NonNull QName parentName) throws IOException;
 
@@ -62,8 +62,9 @@ public interface IXmlWritingContext extends IWritingContext<XMLStreamWriter2> {
    * Write the data described by the provided {@code targetDefinition} as an XML
    * element.
    *
-   * @param targetInstance
-   *          the model instance that describes the syntax of the data to write
+   * @param instanceStrategy
+   *          the model instance strategy that describes the syntax of the data to
+   *          write
    * @param targetObject
    *          the Java object data to write
    * @param parentName
@@ -72,7 +73,7 @@ public interface IXmlWritingContext extends IWritingContext<XMLStreamWriter2> {
    *           if an error occurred while writing the XML
    */
   void writeInstanceValue(
-      @NonNull IBoundNamedModelInstance targetInstance,
+      @NonNull IModelInstanceBindingStrategy<?> instanceStrategy,
       @NonNull Object targetObject,
       @NonNull QName parentName) throws IOException;
 }

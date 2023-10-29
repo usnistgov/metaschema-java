@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.strategy.impl.IModelInstanceBindingStrategy;
 
 import java.io.IOException;
 import java.util.List;
@@ -46,8 +46,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 class SingletonPropertyInfo
     extends AbstractModelPropertyInfo {
 
-  public SingletonPropertyInfo(
-      @NonNull IBoundNamedModelInstance property) {
+  public SingletonPropertyInfo(@NonNull IModelInstanceBindingStrategy<?> property) {
     super(property);
   }
 
@@ -76,7 +75,7 @@ class SingletonPropertyInfo
     // JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
     // }
 
-    Object value = getProperty().getDataTypeHandler().readItem(parentInstance, context);
+    Object value = getInstanceStrategy().readItem(parentInstance, context);
     collector.add(value);
 
     // if (isObject) {
@@ -89,7 +88,7 @@ class SingletonPropertyInfo
   public boolean readValues(IPropertyCollector collector, Object parentInstance, StartElement start,
       IXmlParsingContext context) throws IOException, XMLStreamException {
     boolean handled = true;
-    Object value = context.readModelInstanceValue(getProperty(), parentInstance, start);
+    Object value = context.readModelInstanceValue(getInstanceStrategy(), parentInstance, start);
     if (value != null) {
       collector.add(value);
       handled = true;
@@ -99,7 +98,7 @@ class SingletonPropertyInfo
 
   @Override
   public Class<?> getItemType() {
-    return (Class<?>) getProperty().getType();
+    return (Class<?>) getInstanceStrategy().getType();
   }
 
   @Override
@@ -110,32 +109,28 @@ class SingletonPropertyInfo
   @Override
   public void writeValues(@NonNull Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
-    context.writeInstanceValue(getProperty(), value, parentName);
+    context.writeInstanceValue(getInstanceStrategy(), value, parentName);
   }
 
   @Override
   public void writeValues(Object parentObject, IJsonWritingContext context) throws IOException {
-    IBoundNamedModelInstance property = getProperty();
-    getProperty().getDataTypeHandler().writeItem(
-        ObjectUtils.notNull(property.getValue(parentObject)),
+    IModelInstanceBindingStrategy<?> instanceStrategy = getInstanceStrategy();
+    instanceStrategy.writeItem(
+        ObjectUtils.notNull(instanceStrategy.getValue(parentObject)),
         context);
   }
 
   @Override
   public boolean isValueSet(Object parentInstance) throws IOException {
-    return getProperty().getValue(parentInstance) != null;
+    return getInstanceStrategy().getValue(parentInstance) != null;
   }
 
   @Override
   public void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
       throws BindingException {
-    IBoundNamedModelInstance property = getProperty();
-
-    Object value = property.getValue(fromInstance);
-
-    Object copiedValue = property.copyItem(ObjectUtils.requireNonNull(value), toInstance);
-
+    IModelInstanceBindingStrategy<?> instanceStrategy = getInstanceStrategy();
+    Object value = instanceStrategy.getValue(fromInstance);
+    Object copiedValue = instanceStrategy.deepCopy(ObjectUtils.requireNonNull(value), toInstance);
     collector.add(copiedValue);
   }
-
 }

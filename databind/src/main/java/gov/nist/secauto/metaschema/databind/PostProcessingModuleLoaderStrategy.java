@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.xml.IModulePostProcessor;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,7 +39,7 @@ import java.util.Set;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class PostProcessingModuleLoaderStrategy
-    extends AbstractModuleLoaderStrategy {
+    extends SimpleModuleLoaderStrategy {
   @NonNull
   private final List<IModulePostProcessor> modulePostProcessors;
   private final Set<IModule> resolvedModules = new HashSet<>();
@@ -57,17 +57,16 @@ class PostProcessingModuleLoaderStrategy
   }
 
   @Override
-  public IClassBinding getClassBinding(@NonNull Class<?> clazz) {
-    IClassBinding retval = super.getClassBinding(clazz);
-    if (retval != null) {
-      // force loading of metaschema information to apply constraints
-      IModule module = retval.getContainingModule();
-      synchronized (resolvedModules) {
-        if (!resolvedModules.contains(module)) {
-          // add first, to avoid loops
-          resolvedModules.add(module);
-          handleModule(module);
-        }
+  public IClassBindingStrategy<?> getClassBindingStrategy(Class<?> clazz) {
+    IClassBindingStrategy<?> retval = super.getClassBindingStrategy(clazz);
+
+    // force loading of metaschema information to apply constraints
+    IModule module = retval.getDefinition().getContainingModule();
+    synchronized (resolvedModules) {
+      if (!resolvedModules.contains(module)) {
+        // add first, to avoid loops
+        resolvedModules.add(module);
+        handleModule(module);
       }
     }
     return retval;

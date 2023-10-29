@@ -37,9 +37,8 @@ import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.strategy.IFlagInstanceBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.impl.IModelInstanceBindingStrategy;
 
 import org.codehaus.stax2.XMLEventReader2;
 
@@ -73,9 +72,8 @@ class MapPropertyInfo
     return value == null ? 0 : ((Map<?, ?>) value).size();
   }
 
-  public MapPropertyInfo(
-      @NonNull IBoundNamedModelInstance property) {
-    super(property);
+  public MapPropertyInfo(@NonNull IModelInstanceBindingStrategy<?> instanceStrategy) {
+    super(instanceStrategy);
   }
 
   @Override
@@ -86,7 +84,7 @@ class MapPropertyInfo
   @SuppressWarnings("null")
   @NonNull
   public Class<?> getKeyType() {
-    ParameterizedType actualType = (ParameterizedType) getProperty().getType();
+    ParameterizedType actualType = (ParameterizedType) getInstanceStrategy().getType();
     // this is a Map so the first generic type is the key
     return (Class<?>) actualType.getActualTypeArguments()[0];
   }
@@ -99,7 +97,7 @@ class MapPropertyInfo
   @SuppressWarnings("null")
   @NonNull
   public Class<?> getValueType() {
-    ParameterizedType actualType = (ParameterizedType) getProperty().getType();
+    ParameterizedType actualType = (ParameterizedType) getInstanceStrategy().getType();
     // this is a Map so the second generic type is the value
     return (Class<?>) actualType.getActualTypeArguments()[1];
   }
@@ -125,7 +123,7 @@ class MapPropertyInfo
       // a map item will always start with a FIELD_NAME, since this represents the key
       JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME);
 
-      Object value = getProperty().getDataTypeHandler().readItem(parentInstance, context);
+      Object value = getInstanceStrategy().readItem(parentInstance, context);
       collector.add(value);
 
       // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all
@@ -141,18 +139,19 @@ class MapPropertyInfo
   @Override
   public boolean readValues(IPropertyCollector collector, Object parentInstance, StartElement start,
       IXmlParsingContext context) throws IOException, XMLStreamException {
-    QName qname = getProperty().getXmlQName();
     XMLEventReader2 eventReader = context.getReader();
 
     // consume extra whitespace between elements
     XmlEventUtil.skipWhitespace(eventReader);
 
+    IModelInstanceBindingStrategy<?> instanceStrategy = getInstanceStrategy();
     boolean handled = false;
     XMLEvent event;
-    while ((event = eventReader.peek()).isStartElement() && qname.equals(event.asStartElement().getName())) {
+    while ((event = eventReader.peek()).isStartElement()
+        && instanceStrategy.canHandleQName(ObjectUtils.notNull(event.asStartElement().getName()))) {
 
       // Consume the start element
-      Object value = context.readModelInstanceValue(getProperty(), parentInstance, start);
+      Object value = context.readModelInstanceValue(getInstanceStrategy(), parentInstance, start);
       if (value != null) {
         collector.add(value);
         handled = true;
@@ -168,10 +167,10 @@ class MapPropertyInfo
   @Override
   public void writeValues(Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
-    IBoundNamedModelInstance property = getProperty();
+    IModelInstanceBindingStrategy<?> instanceStrategy = getInstanceStrategy();
     @SuppressWarnings("unchecked") Map<String, ? extends Object> items = (Map<String, ? extends Object>) value;
     for (Object item : items.values()) {
-      context.writeInstanceValue(property, ObjectUtils.notNull(item), parentName);
+      context.writeInstanceValue(instanceStrategy, ObjectUtils.notNull(item), parentName);
     }
   }
 
@@ -179,7 +178,7 @@ class MapPropertyInfo
   public void writeValues(Object parentInstance, IJsonWritingContext context) throws IOException {
     for (Object targetObject : getItemsFromParentInstance(parentInstance)) {
       assert targetObject != null;
-      getProperty().getDataTypeHandler().writeItem(targetObject, context);
+      getInstanceStrategy().writeItem(targetObject, context);
     }
   }
 
@@ -192,10 +191,10 @@ class MapPropertyInfo
   @Override
   public void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
       throws BindingException {
-    IBoundNamedModelInstance property = getProperty();
+    IModelInstanceBindingStrategy<?> instanceStrategy = getInstanceStrategy();
 
     for (Object item : getItemsFromParentInstance(fromInstance)) {
-      collector.add(property.copyItem(ObjectUtils.requireNonNull(item), toInstance));
+      collector.add(instanceStrategy.deepCopy(ObjectUtils.requireNonNull(item), toInstance));
     }
   }
 
@@ -203,17 +202,16 @@ class MapPropertyInfo
     @NonNull
     private final Map<String, Object> map = new LinkedHashMap<>(); // NOPMD - single threaded
     @Nullable
-    private final IBoundFlagInstance jsonKey;
+    private final IFlagInstanceBindingStrategy jsonKey;
 
     protected MapPropertyCollector() {
-      IClassBinding classBinding = getProperty().getDataTypeHandler().getClassBinding();
-      this.jsonKey = classBinding == null ? null : classBinding.getJsonKeyFlagInstance();
+      this.jsonKey = getInstanceStrategy().getJsonKey();
       if (this.jsonKey == null) {
         throw new IllegalStateException("No JSON key found");
       }
     }
 
-    protected IBoundFlagInstance getJsonKey() {
+    protected IFlagInstanceBindingStrategy getJsonKey() {
       return jsonKey;
     }
 

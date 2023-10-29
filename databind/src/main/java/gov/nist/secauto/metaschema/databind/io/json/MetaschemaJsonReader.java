@@ -29,18 +29,20 @@ package gov.nist.secauto.metaschema.databind.io.json;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
 import gov.nist.secauto.metaschema.databind.model.info.IPropertyCollector;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IBoundFieldValueInstance;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IBoundNamedInstance;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -131,8 +133,8 @@ public class MetaschemaJsonReader
    *
    * @param <T>
    *          the Java type of the resulting bound instance
-   * @param targetDefinition
-   *          the definition describing the root element data to parse
+   * @param bindingStrategy
+   *          the definition info describing the root element data to parse
    * @return the bound object instance representing the JSON object
    * @throws IOException
    *           if an error occurred while parsing the JSON
@@ -141,10 +143,10 @@ public class MetaschemaJsonReader
       "PMD.CyclomaticComplexity", "PMD.NPathComplexity" // acceptable
   })
   @Nullable
-  public <T> T read(@NonNull IAssemblyClassBinding targetDefinition) throws IOException {
-    if (!targetDefinition.isRoot()) {
+  public <T> T read(@NonNull IClassBindingStrategy<IAssemblyDefinition> bindingStrategy) throws IOException {
+    if (!bindingStrategy.getDefinition().isRoot()) {
       throw new UnsupportedOperationException(
-          String.format("The assembly '%s' is not a root assembly.", targetDefinition.getBoundClass().getName()));
+          String.format("The assembly '%s' is not a root assembly.", bindingStrategy.getBoundClass().getName()));
     }
 
     boolean objectWrapper = false;
@@ -217,7 +219,7 @@ public class MetaschemaJsonReader
    *           if an error occurred while parsing the data
    */
   protected boolean readInstance(
-      @NonNull IBoundNamedInstance targetInstance,
+      @NonNull IBoundNamedModelInstance targetInstance,
       @NonNull Object parentObject) throws IOException {
     // the parser's current token should be the JSON field name
     JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);

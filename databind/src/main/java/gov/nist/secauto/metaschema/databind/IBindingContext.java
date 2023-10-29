@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.core.metapath.StaticContext;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.core.model.constraint.FindingCollectingConstraintValidationHandler;
@@ -43,7 +43,6 @@ import gov.nist.secauto.metaschema.core.model.validation.IValidationResult;
 import gov.nist.secauto.metaschema.core.model.validation.JsonSchemaContentValidator;
 import gov.nist.secauto.metaschema.core.model.validation.XmlSchemaContentValidator;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.codegen.ModuleCompilerHelper;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
 import gov.nist.secauto.metaschema.databind.io.Format;
@@ -51,17 +50,16 @@ import gov.nist.secauto.metaschema.databind.io.IBoundLoader;
 import gov.nist.secauto.metaschema.databind.io.IDeserializer;
 import gov.nist.secauto.metaschema.databind.io.ISerializer;
 import gov.nist.secauto.metaschema.databind.io.yaml.YamlOperations;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.impl.RootAssemblyBindingMatcher;
 
 import org.json.JSONObject;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -76,7 +74,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * Provides information supporting a binding between a set of Module models and
  * corresponding Java classes.
  */
-public interface IBindingContext extends IModuleLoaderStrategy {
+public interface IBindingContext {
 
   /**
    * Get the singleton {@link IBindingContext} instance, which can be used to load
@@ -86,7 +84,7 @@ public interface IBindingContext extends IModuleLoaderStrategy {
    */
   @NonNull
   static IBindingContext instance() {
-    return DefaultBindingContext.instance();
+    return MetaschemaBindingContext.instance();
   }
 
   /**
@@ -100,6 +98,51 @@ public interface IBindingContext extends IModuleLoaderStrategy {
   IBindingContext registerBindingMatcher(@NonNull IBindingMatcher matcher);
 
   /**
+   * Register a class binding strategy for a given bound class.
+   *
+   * @param <T>
+   *          the Java type of the bound definition
+   * @param strategy
+   *          the strategy to register
+   * @param boundClass
+   *          the class to be bound to the strategy
+   * @return the old registered strategy or {@code null} if no stategy was
+   *         registered for the bound class
+   */
+  @Nullable
+  <T extends IDefinition> IClassBindingStrategy<?> registerClassBindingStrategy(
+      @NonNull IClassBindingStrategy<T> strategy);
+
+  /**
+   * Get the {@link IClassBindingStrategy} instance associated with the provided
+   * Java class.
+   * <p>
+   * Typically the class will have a {@link MetaschemaAssembly} or
+   * {@link MetaschemaField} annotation.
+   *
+   * @param clazz
+   *          the class binding to load
+   * @return the associated class binding instance
+   * @throws IllegalArgumentException
+   *           if the class was not bound
+   */
+  IClassBindingStrategy<?> getClassBindingStrategy(@NonNull Class<?> clazz);
+
+  /**
+   * Load a bound Metaschema module implemented by the provided class.
+   * <p>
+   * Also registers any associated bound classes.
+   * <p>
+   * Implementations are expected to return the same IModule instance for multiple
+   * calls to this method with the same class argument.
+   *
+   * @param clazz
+   *          the class implementing a bound Metaschema module
+   * @return the loaded module
+   */
+  IModule loadModule(@NonNull Class<? extends IModule> clazz);
+
+  /**
    * Determine the bound class for the provided XML {@link QName}.
    *
    * @param rootQName
@@ -108,7 +151,7 @@ public interface IBindingContext extends IModuleLoaderStrategy {
    * @see IBindingContext#registerBindingMatcher(IBindingMatcher)
    */
   @Nullable
-  Class<?> getBoundClassForXmlQName(@NonNull QName rootQName);
+  IClassBindingStrategy<IAssemblyDefinition> getBoundClassForXmlQName(@NonNull QName rootQName);
 
   /**
    * Determine the bound class for the provided JSON/YAML property/item name using
@@ -120,7 +163,7 @@ public interface IBindingContext extends IModuleLoaderStrategy {
    * @see IBindingContext#registerBindingMatcher(IBindingMatcher)
    */
   @Nullable
-  Class<?> getBoundClassForJsonName(@NonNull String rootName);
+  IClassBindingStrategy<IAssemblyDefinition> getBoundClassForJsonName(@NonNull String rootName);
 
   /**
    * Get's the {@link IDataTypeAdapter} associated with the specified Java class,
@@ -152,56 +195,14 @@ public interface IBindingContext extends IModuleLoaderStrategy {
    * @throws IOException
    *           if an error occurred while generating or loading the classes
    */
-  @SuppressWarnings("PMD.UseProperClassLoader") // false positive
   @NonNull
-  default IBindingContext registerModule(
-      @NonNull IModule module,
-      @NonNull Path compilePath) throws IOException {
-    Files.createDirectories(compilePath);
-
-    ClassLoader classLoader = ModuleCompilerHelper.newClassLoader(
-        compilePath,
-        ObjectUtils.notNull(Thread.currentThread().getContextClassLoader()));
-
-    ModuleCompilerHelper.compileMetaschema(module, compilePath).getGlobalDefinitionClassesAsStream()
-        .filter(definitionInfo -> {
-          boolean retval = false;
-          IFlagContainer definition = definitionInfo.getDefinition();
-          if (definition instanceof IAssemblyDefinition) {
-            IAssemblyDefinition assembly = (IAssemblyDefinition) definition;
-            if (assembly.isRoot()) {
-              retval = true;
-            }
-          }
-          return retval;
-        })
-        .map(
-            generatedClass -> {
-              try {
-                @SuppressWarnings("unchecked") Class<IAssemblyClassBinding> clazz
-                    = ObjectUtils.notNull((Class<IAssemblyClassBinding>) classLoader
-                        .loadClass(generatedClass.getClassName().reflectionName()));
-
-                IAssemblyDefinition definition = (IAssemblyDefinition) generatedClass.getDefinition();
-                return new DynamicBindingMatcher(
-                    definition,
-                    clazz);
-              } catch (ClassNotFoundException ex) {
-                throw new IllegalStateException(ex);
-              }
-            })
-        .forEachOrdered(
-            matcher -> registerBindingMatcher(
-                ObjectUtils.notNull(
-                    matcher)));
-    return this;
-  }
+  IBindingContext registerModule(@NonNull IModule module, @NonNull Path compilePath) throws IOException;
 
   /**
    * Gets a data {@link ISerializer} which can be used to write Java instance data
-   * for the provided class to the requested format. The provided class must be a
-   * bound Java class with a {@link MetaschemaAssembly} or {@link MetaschemaField}
-   * annotation for which a {@link IClassBinding} exists.
+   * for the provided class in the requested format.
+   * <p>
+   * The provided class must be a registered bound Java class.
    *
    * @param <CLASS>
    *          the Java type this deserializer can write data from
@@ -217,16 +218,17 @@ public interface IBindingContext extends IModuleLoaderStrategy {
    *           if the provided class is not bound to a Module assembly or field
    * @throws UnsupportedOperationException
    *           if the requested format is not supported by the implementation
-   * @see #getClassBinding(Class)
+   * @see #getClassBindingStrategy(Class)
+   * @see #registerClassBindingStrategy(IClassBindingStrategy)
    */
   @NonNull
   <CLASS> ISerializer<CLASS> newSerializer(@NonNull Format format, @NonNull Class<CLASS> clazz);
 
   /**
    * Gets a data {@link IDeserializer} which can be used to read Java instance
-   * data for the provided class from the requested format. The provided class
-   * must be a bound Java class with a {@link MetaschemaAssembly} or
-   * {@link MetaschemaField} annotation for which a {@link IClassBinding} exists.
+   * data for the provided class from the requested format.
+   * <p>
+   * The provided class must be a registered bound Java class.
    *
    * @param <CLASS>
    *          the Java type this deserializer can read data into
@@ -242,7 +244,7 @@ public interface IBindingContext extends IModuleLoaderStrategy {
    *           if the provided class is not bound to a Module assembly or field
    * @throws UnsupportedOperationException
    *           if the requested format is not supported by the implementation
-   * @see #getClassBinding(Class)
+   * @see #getClassBindingStrategy(Class)
    */
   @NonNull
   <CLASS> IDeserializer<CLASS> newDeserializer(@NonNull Format format, @NonNull Class<CLASS> clazz);
@@ -380,6 +382,40 @@ public interface IBindingContext extends IModuleLoaderStrategy {
     return validate(nodeItem);
   }
 
+  interface IModuleLoaderStrategy {
+    /**
+     * Load the bound Metaschema module represented by the provided class.
+     * <p>
+     * Implementations are allowed to return a cached instance if the module has
+     * already been loaded.
+     *
+     * @param clazz
+     *          the Module class
+     * @return the module
+     * @throws IllegalStateException
+     *           if an error occurred while processing the associated module
+     *           information
+     */
+    @NonNull
+    IModule loadModule(@NonNull Class<? extends IModule> clazz);
+
+    /**
+     * Get the {@link IClassBindingStrategy} instance associated with the provided
+     * Java class.
+     * <p>
+     * Typically the class will have a {@link MetaschemaAssembly} or
+     * {@link MetaschemaField} annotation.
+     *
+     * @param clazz
+     *          the class binding to load
+     * @return the associated class binding instance
+     * @throws IllegalArgumentException
+     *           if the class was not bound
+     */
+    @NonNull
+    IClassBindingStrategy<?> getClassBindingStrategy(@NonNull Class<?> clazz);
+  }
+
   interface IValidationSchemaProvider {
     /**
      * Get a JSON schema to use for content validation.
@@ -402,4 +438,43 @@ public interface IBindingContext extends IModuleLoaderStrategy {
     List<Source> getXmlSchemas() throws IOException;
   }
 
+  /**
+   * Implementations of this interface provide a means by which a bound class can
+   * be found that corresponds to an XML element, JSON property, or YAML item
+   * name.
+   */
+  interface IBindingMatcher {
+    /**
+     * Construct a new root matcher from the provided class binding strategy.
+     *
+     * @param strategy
+     *          an assembly class binding strategy for an assembly that is a root.
+     * @return the new matcher
+     * @see IAssemblyDefinition#isRoot()
+     */
+    @NonNull
+    static IBindingMatcher rootMatcher(@NonNull IClassBindingStrategy<IAssemblyDefinition> strategy) {
+      return new RootAssemblyBindingMatcher(strategy);
+    }
+
+    /**
+     * Determine the bound class for the provided XML {@link QName}.
+     *
+     * @param rootQName
+     *          the root XML element's QName
+     * @return the class binding strategy for the class or {@code null} if not
+     *         recognized
+     */
+    IClassBindingStrategy<IAssemblyDefinition> getBoundClassForXmlQName(QName rootQName);
+
+    /**
+     * Determine the bound class for the provided JSON/YAML property/item name.
+     *
+     * @param rootName
+     *          the JSON/YAML property/item name
+     * @return the class binding strategy for the class or {@code null} if not
+     *         recognized
+     */
+    IClassBindingStrategy<IAssemblyDefinition> getBoundClassForJsonName(String rootName);
+  }
 }

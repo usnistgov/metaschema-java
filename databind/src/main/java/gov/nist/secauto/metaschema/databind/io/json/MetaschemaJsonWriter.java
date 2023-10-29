@@ -28,15 +28,15 @@ package gov.nist.secauto.metaschema.databind.io.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IBoundFieldValueInstance;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IBoundNamedInstance;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,31 +71,30 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
 
   /**
    * Writes data in a bound object to JSON. This assembly must be a root assembly
-   * for which a call to {@link IAssemblyClassBinding#isRoot()} will return
+   * for which a call to {@link IAssemblyDefinition#isRoot()} will return
    * {@code true}.
    *
-   * @param targetDefinition
-   *          the definition describing the root element data to write
+   * @param bindingStrategy
+   *          the definition info describing the root element data to write
    * @param targetObject
    *          the bound object
    * @throws IOException
    *           if an error occurred while reading the JSON
    */
   public void write(
-      @NonNull IAssemblyClassBinding targetDefinition,
+      @NonNull IClassBindingStrategy<IAssemblyDefinition> bindingStrategy,
       @NonNull Object targetObject) throws IOException {
-    if (!targetDefinition.isRoot()) {
+    if (!bindingStrategy.getDefinition().isRoot()) {
       throw new UnsupportedOperationException(
-          String.format("The assembly '%s' is not a root assembly.", targetDefinition.getBoundClass().getName()));
+          String.format("The assembly '%s' is not a root assembly.", bindingStrategy.getBoundClass().getName()));
     }
     // first write the initial START_OBJECT
     writer.writeStartObject();
 
-    writer.writeFieldName(targetDefinition.getRootJsonName());
+    writer.writeFieldName(bindingStrategy.getDefinition().getRootJsonName());
 
     // Make a temporary data type handler for the root class
-    IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(targetDefinition);
-    dataTypeHandler.writeItem(targetObject, this);
+    bindingStrategy.writeItem(targetObject, this);
 
     // end of root object
     writer.writeEndObject();
@@ -223,7 +222,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       // There are two modes:
       // 1) use of a JSON value key, or
       // 2) a simple value named "value"
-      IBoundFlagInstance jsonValueKey = targetInstance.getParentClassBinding().getJsonValueKeyFlagInstance();
+      IBoundFlagInstance jsonValueKey = targetInstance.getContainingDefinition().getJsonValueKeyFlagInstance();
 
       String valueKeyName;
       if (jsonValueKey != null) {

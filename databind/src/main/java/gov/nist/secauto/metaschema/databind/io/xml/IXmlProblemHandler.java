@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.databind.io.xml;
 
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.databind.io.IProblemHandler;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.strategy.IAssemblyDefinitionBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.IFlagInstanceBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.impl.IModelInstanceBindingStrategy;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -46,7 +46,7 @@ public interface IXmlProblemHandler extends IProblemHandler {
    * Callback used to handle an attribute that is unknown to the model being
    * parsed.
    *
-   * @param parentDefinition
+   * @param bindingStrategy
    *          the bound class currently describing the data being parsed
    * @param targetObject
    *          the Java object for the {@code parentDefinition}
@@ -60,7 +60,7 @@ public interface IXmlProblemHandler extends IProblemHandler {
    *           if an error occurred while handling the unrecognized data
    */
   default boolean handleUnknownAttribute(
-      @NonNull IFlagContainer parentDefinition,
+      @NonNull IClassBindingStrategy<? extends IFlagContainer> bindingStrategy,
       @NonNull Object targetObject,
       @NonNull Attribute attribute,
       @NonNull IXmlParsingContext parsingContext) throws IOException {
@@ -70,8 +70,8 @@ public interface IXmlProblemHandler extends IProblemHandler {
   /**
    * Callback used to handle an element that is unknown to the model being parsed.
    *
-   * @param parentDefinition
-   *          the bound assembly class on which the missing instances are found
+   * @param bindingStrategy
+   *          the bound assembly info on which the missing instances are found
    * @param targetObject
    *          the Java object for the {@code parentDefinition}
    * @param start
@@ -84,7 +84,7 @@ public interface IXmlProblemHandler extends IProblemHandler {
    *           if an error occurred while handling the unrecognized data
    */
   default boolean handleUnknownElement(
-      @NonNull IAssemblyClassBinding parentDefinition,
+      @NonNull IAssemblyDefinitionBindingStrategy bindingStrategy,
       @NonNull Object targetObject,
       @NonNull StartElement start,
       @NonNull IXmlParsingContext parsingContext) throws IOException {
@@ -98,7 +98,7 @@ public interface IXmlProblemHandler extends IProblemHandler {
    * This can be used to supply default or prescribed values based on application
    * logic.
    *
-   * @param parentDefinition
+   * @param bindingStrategy
    *          the bound assembly class on which the missing instances are found
    * @param targetObject
    *          the Java object for the {@code parentDefinition}
@@ -108,11 +108,11 @@ public interface IXmlProblemHandler extends IProblemHandler {
    *           if an error occurred while handling the missing instances
    */
   default void handleMissingFlagInstances(
-      @NonNull IClassBinding parentDefinition,
+      @NonNull IClassBindingStrategy<? extends IFlagContainer> bindingStrategy,
       @NonNull Object targetObject,
-      @NonNull Collection<IBoundFlagInstance> unhandledInstances)
+      @NonNull Collection<? extends IFlagInstanceBindingStrategy> unhandledInstances)
       throws IOException {
-    handleMissingInstances(parentDefinition, targetObject, unhandledInstances);
+    handleMissingInstances(bindingStrategy, targetObject, unhandledInstances);
   }
 
   /**
@@ -122,8 +122,8 @@ public interface IXmlProblemHandler extends IProblemHandler {
    * This can be used to supply default or prescribed values based on application
    * logic.
    *
-   * @param parentDefinition
-   *          the bound assembly class on which the missing instances are found
+   * @param bindingStrategy
+   *          the bound assembly info for which the missing instances are found
    * @param targetObject
    *          the Java object for the {@code parentDefinition}
    * @param unhandledInstances
@@ -132,11 +132,11 @@ public interface IXmlProblemHandler extends IProblemHandler {
    *           if an error occurred while handling the missing instances
    */
   default void handleMissingModelInstances(
-      @NonNull IAssemblyClassBinding parentDefinition,
+      @NonNull IAssemblyDefinitionBindingStrategy bindingStrategy,
       @NonNull Object targetObject,
-      @NonNull Collection<IBoundNamedModelInstance> unhandledInstances)
+      @NonNull Collection<? extends IModelInstanceBindingStrategy<?>> unhandledInstances)
       throws IOException {
-    handleMissingInstances(parentDefinition, targetObject, unhandledInstances);
+    handleMissingInstances(bindingStrategy, targetObject, unhandledInstances);
 
   }
 }

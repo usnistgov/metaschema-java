@@ -26,9 +26,10 @@
 
 package gov.nist.secauto.metaschema.databind.io.xml;
 
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.databind.io.IParsingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.impl.IModelInstanceBindingStrategy;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamReader2;
@@ -51,8 +52,8 @@ public interface IXmlParsingContext extends IParsingContext<XMLEventReader2, IXm
    *
    * @param <T>
    *          the resulting object type
-   * @param targetInstance
-   *          the instance to parse data for
+   * @param instanceStrategy
+   *          the instance strategy to parse data for
    * @param parentObject
    *          the Java object that data parsed by this method will be stored in
    * @param start
@@ -65,7 +66,7 @@ public interface IXmlParsingContext extends IParsingContext<XMLEventReader2, IXm
    */
   @Nullable
   <T> T readModelInstanceValue(
-      @NonNull IBoundNamedModelInstance targetInstance,
+      @NonNull IModelInstanceBindingStrategy<?> instanceStrategy,
       @NonNull Object parentObject,
       @NonNull StartElement start) throws XMLStreamException, IOException;
 
@@ -85,8 +86,9 @@ public interface IXmlParsingContext extends IParsingContext<XMLEventReader2, IXm
    *
    * @param <T>
    *          the resulting object type
-   * @param targetDefinition
-   *          the Module definition that describes the syntax of the data to read
+   * @param bindingStrategy
+   *          the Module definition info that describes the syntax of the data to
+   *          read
    * @param parentObject
    *          the Java object parent of the target object, which can be
    *          {@code null} if there is no parent
@@ -101,7 +103,7 @@ public interface IXmlParsingContext extends IParsingContext<XMLEventReader2, IXm
    */
   @NonNull
   <T> T readDefinitionValue(
-      @NonNull IClassBinding targetDefinition,
+      @NonNull IClassBindingStrategy<? extends IFlagContainer> bindingStrategy,
       @Nullable Object parentObject,
       @NonNull StartElement start) throws IOException, XMLStreamException;
 }

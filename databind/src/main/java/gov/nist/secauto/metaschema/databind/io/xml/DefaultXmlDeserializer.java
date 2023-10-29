@@ -30,10 +30,11 @@ import com.ctc.wstx.stax.WstxInputFactory;
 
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.util.AutoCloser;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.AbstractDeserializer;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
@@ -53,24 +54,21 @@ public class DefaultXmlDeserializer<CLASS>
     extends AbstractDeserializer<CLASS> {
   private XMLInputFactory2 xmlInputFactory;
 
-  @NonNull
-  private final IAssemblyClassBinding rootDefinition;
-
   /**
    * Construct a new Module binding-based deserializer that reads XML-based Module
    * content.
    *
-   * @param classBinding
-   *          the assembly class binding describing the Java objects this
+   * @param bindingStrategy
+   *          the assembly class binding info describing the Java objects this
    *          deserializer parses data into
    */
-  public DefaultXmlDeserializer(@NonNull IAssemblyClassBinding classBinding) {
-    super(classBinding);
-    if (!classBinding.isRoot()) {
+  public DefaultXmlDeserializer(@NonNull IClassBindingStrategy<IAssemblyDefinition> bindingStrategy) {
+    super(bindingStrategy);
+    if (!bindingStrategy.getDefinition().isRoot()) {
       throw new UnsupportedOperationException(
-          String.format("The assembly '%s' is not a root assembly.", classBinding.getBoundClass().getName()));
+          String.format("The bound assembly class '%s' is not a root assembly.",
+              bindingStrategy.getBoundClass().getName()));
     }
-    this.rootDefinition = classBinding;
   }
 
   /**
@@ -118,7 +116,7 @@ public class DefaultXmlDeserializer<CLASS>
   @Override
   protected final IDocumentNodeItem deserializeToNodeItemInternal(Reader reader, URI documentUri) throws IOException {
     Object value = deserializeToValue(reader, documentUri);
-    return INodeItemFactory.instance().newDocumentNodeItem(rootDefinition, documentUri, value);
+    return INodeItemFactory.instance().newDocumentNodeItem(getBindingStrategy().getDefinition(), documentUri, value);
   }
 
   @Override
@@ -139,7 +137,7 @@ public class DefaultXmlDeserializer<CLASS>
     MetaschemaXmlReader parser = new MetaschemaXmlReader(reader, new DefaultXmlProblemHandler());
 
     try {
-      return parser.read(rootDefinition);
+      return parser.read(getBindingStrategy());
     } catch (IOException | XMLStreamException | AssertionError ex) {
       throw new IOException(
           String.format("An unexpected error occured during parsing: %s", ex.getMessage()),

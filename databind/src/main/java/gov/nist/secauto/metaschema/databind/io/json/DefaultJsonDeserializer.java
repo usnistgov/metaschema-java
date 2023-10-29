@@ -32,11 +32,11 @@ import com.fasterxml.jackson.core.JsonParser;
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -52,12 +52,12 @@ public class DefaultJsonDeserializer<CLASS>
    * Construct a new JSON deserializer that will parse the bound class identified
    * by the {@code classBinding}.
    *
-   * @param classBinding
+   * @param bindingStrategy
    *          the bound class information for the Java type this deserializer is
    *          operating on
    */
-  public DefaultJsonDeserializer(@NonNull IAssemblyClassBinding classBinding) {
-    super(classBinding);
+  public DefaultJsonDeserializer(@NonNull IClassBindingStrategy<IAssemblyDefinition> bindingStrategy) {
+    super(bindingStrategy);
   }
 
   /**
@@ -112,14 +112,14 @@ public class DefaultJsonDeserializer<CLASS>
     INodeItem retval;
     try (JsonParser jsonParser = newJsonParser(reader)) {
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
-      IAssemblyClassBinding classBinding = getClassBinding();
       IConfiguration<DeserializationFeature<?>> configuration = getConfiguration();
 
-      if (classBinding.isRoot()
+      IClassBindingStrategy<IAssemblyDefinition> bindingStrategy = getBindingStrategy();
+      if (bindingStrategy.getDefinition().isRoot()
           && configuration.isFeatureEnabled(DeserializationFeature.DESERIALIZE_JSON_ROOT_PROPERTY)) {
 
         // now parse the root property
-        CLASS value = ObjectUtils.requireNonNull(parser.read(classBinding));
+        CLASS value = ObjectUtils.requireNonNull(parser.read(bindingStrategy));
 
         // // we should be at the end object
         // JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
@@ -127,15 +127,12 @@ public class DefaultJsonDeserializer<CLASS>
         // // advance past the end object
         // JsonToken end = parser.nextToken();
 
-        retval = INodeItemFactory.instance().newDocumentNodeItem(classBinding, documentUri, value);
+        retval = INodeItemFactory.instance().newDocumentNodeItem(bindingStrategy.getDefinition(), documentUri, value);
       } else {
-        // Make a temporary data type handler for the top-level definition
-        IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(classBinding);
-
         // read the top-level definition
-        CLASS value = dataTypeHandler.readItem(null, parser);
+        @SuppressWarnings("unchecked") CLASS value = (CLASS) bindingStrategy.readItem(null, parser);
 
-        retval = INodeItemFactory.instance().newAssemblyNodeItem(classBinding, documentUri, value);
+        retval = INodeItemFactory.instance().newAssemblyNodeItem(bindingStrategy.getDefinition(), documentUri, value);
       }
       return retval;
     }

@@ -28,9 +28,10 @@ package gov.nist.secauto.metaschema.databind.io.yaml;
 
 import com.fasterxml.jackson.core.JsonFactory;
 
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.databind.io.json.DefaultJsonSerializer;
 import gov.nist.secauto.metaschema.databind.io.yaml.impl.YamlFactoryFactory;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -41,12 +42,12 @@ public class DefaultYamlSerializer<CLASS>
    * Construct a new YAML serializer that will generate YAML content based on data
    * in the bound class identified by the {@code classBinding}.
    *
-   * @param classBinding
+   * @param bindingStrategy
    *          the bound class information for the Java type this serializer is
    *          operating on
    */
-  public DefaultYamlSerializer(@NonNull IAssemblyClassBinding classBinding) {
-    super(classBinding);
+  public DefaultYamlSerializer(@NonNull IClassBindingStrategy<IAssemblyDefinition> bindingStrategy) {
+    super(bindingStrategy);
   }
 
   @Override

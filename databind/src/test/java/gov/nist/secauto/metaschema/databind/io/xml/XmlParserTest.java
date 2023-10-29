@@ -39,9 +39,9 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.AbstractBoundModelTestSupport;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IBoundFieldInstance;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.test.FlaggedAssembly;
 import gov.nist.secauto.metaschema.databind.model.test.MultiFieldAssembly;
 import gov.nist.secauto.metaschema.databind.model.test.ValueKeyField;
@@ -87,7 +87,8 @@ class XmlParserTest
     IBindingContext bindingContext = getBindingContext();
 
     IAssemblyClassBinding assembly
-        = ObjectUtils.requireNonNull((IAssemblyClassBinding) bindingContext.getClassBinding(MultiFieldAssembly.class));
+        = ObjectUtils
+            .requireNonNull((IAssemblyClassBinding) bindingContext.getClassBindingStrategy(MultiFieldAssembly.class));
 
     IBoundFieldInstance field1Property
         = ObjectUtils.requireNonNull((IBoundFieldInstance) assembly.getModelInstanceByName("field1"));
@@ -114,7 +115,8 @@ class XmlParserTest
 
     IBindingContext bindingContext = getBindingContext();
     IAssemblyClassBinding assembly
-        = ObjectUtils.requireNonNull((IAssemblyClassBinding) bindingContext.getClassBinding(FlaggedAssembly.class));
+        = ObjectUtils
+            .requireNonNull((IAssemblyClassBinding) bindingContext.getClassBindingStrategy(FlaggedAssembly.class));
 
     IBoundFlagInstance idProperty = assembly.getFlagInstanceByName("id");
     assert idProperty != null;
@@ -159,7 +161,8 @@ class XmlParserTest
     IBindingContext bindingContext = getBindingContext();
 
     IAssemblyClassBinding assembly
-        = ObjectUtils.requireNonNull((IAssemblyClassBinding) bindingContext.getClassBinding(MultiFieldAssembly.class));
+        = ObjectUtils
+            .requireNonNull((IAssemblyClassBinding) bindingContext.getClassBindingStrategy(MultiFieldAssembly.class));
 
     IBoundFieldInstance field1Property
         = ObjectUtils.requireNonNull((IBoundFieldInstance) assembly.getModelInstanceByName("field1"));
@@ -198,7 +201,7 @@ class XmlParserTest
     IBindingContext bindingContext = getBindingContext();
 
     IFieldClassBinding field
-        = ObjectUtils.requireNonNull((IFieldClassBinding) bindingContext.getClassBinding(ValueKeyField.class));
+        = ObjectUtils.requireNonNull((IFieldClassBinding) bindingContext.getClassBindingStrategy(ValueKeyField.class));
 
     ValueKeyField obj = (ValueKeyField) parser.readDefinitionValue(field, null, start);
 

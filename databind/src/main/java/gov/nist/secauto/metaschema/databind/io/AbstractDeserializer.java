@@ -31,11 +31,12 @@ import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.StaticContext;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintValidationHandler;
 import gov.nist.secauto.metaschema.core.model.constraint.LoggingConstraintValidationHandler;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -58,12 +59,12 @@ public abstract class AbstractDeserializer<CLASS>
   /**
    * Construct a new deserializer.
    *
-   * @param classBinding
+   * @param bindingStrategy
    *          the bound class information for the Java type this deserializer is
    *          operating on
    */
-  protected AbstractDeserializer(@NonNull IAssemblyClassBinding classBinding) {
-    super(classBinding);
+  protected AbstractDeserializer(@NonNull IClassBindingStrategy<IAssemblyDefinition> bindingStrategy) {
+    super(bindingStrategy);
   }
 
   /**

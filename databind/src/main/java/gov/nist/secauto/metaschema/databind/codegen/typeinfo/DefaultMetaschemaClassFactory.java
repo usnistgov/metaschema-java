@@ -62,7 +62,6 @@ import gov.nist.secauto.metaschema.databind.codegen.impl.DefaultGeneratedModuleC
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IFieldDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IModelDefinitionTypeInfo;
-import gov.nist.secauto.metaschema.databind.model.AbstractBoundModule;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaPackage;
@@ -70,6 +69,7 @@ import gov.nist.secauto.metaschema.databind.model.annotations.Module;
 import gov.nist.secauto.metaschema.databind.model.annotations.XmlNs;
 import gov.nist.secauto.metaschema.databind.model.annotations.XmlNsForm;
 import gov.nist.secauto.metaschema.databind.model.annotations.XmlSchema;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.impl.AbstractBoundModule;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;

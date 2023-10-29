@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.databind.codegen;
 
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -48,4 +49,7 @@ public interface IGeneratedDefinitionClass extends IGeneratedClass {
    *         otherwise
    */
   boolean isRootClass();
+
+  IClassBindingStrategy<IFlagContainer, ?> newClassBindingStrategy();
+
 }

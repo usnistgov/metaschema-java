@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.strategy.impl.IModelInstanceBindingStrategy;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -35,15 +35,14 @@ abstract class AbstractModelPropertyInfo
     implements IModelPropertyInfo {
 
   @NonNull
-  private final IBoundNamedModelInstance property;
+  private final IModelInstanceBindingStrategy<?> instanceStrategy;
 
-  public AbstractModelPropertyInfo(
-      @NonNull IBoundNamedModelInstance property) {
-    this.property = ObjectUtils.requireNonNull(property, "property");
+  public AbstractModelPropertyInfo(@NonNull IModelInstanceBindingStrategy<?> instanceStrategy) {
+    this.instanceStrategy = ObjectUtils.requireNonNull(instanceStrategy, "instanceStrategy");
   }
 
   @Override
-  public IBoundNamedModelInstance getProperty() {
-    return property;
+  public IModelInstanceBindingStrategy<?> getInstanceStrategy() {
+    return instanceStrategy;
   }
 }

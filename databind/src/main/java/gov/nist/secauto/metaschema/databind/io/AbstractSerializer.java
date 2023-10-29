@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.databind.io;
 
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -45,12 +46,12 @@ public abstract class AbstractSerializer<CLASS>
   /**
    * Construct a new serializer.
    *
-   * @param classBinding
+   * @param bindingStrategy
    *          the bound class information for the Java type this serializer is
    *          operating on
    */
-  public AbstractSerializer(@NonNull IAssemblyClassBinding classBinding) {
-    super(classBinding);
+  public AbstractSerializer(@NonNull IClassBindingStrategy<IAssemblyDefinition> bindingStrategy) {
+    super(bindingStrategy);
   }
 
   @Override

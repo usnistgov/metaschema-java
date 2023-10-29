@@ -26,10 +26,11 @@
 
 package gov.nist.secauto.metaschema.databind.io;
 
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.IJavaFieldBinding;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.IInstanceBindingStrategy;
 
-import java.io.IOException;
 import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -38,9 +39,9 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
 
   @Override
   public void handleMissingInstances(
-      IClassBinding parentDefinition,
+      IClassBindingStrategy<? extends IFlagContainer> containingDefinition,
       Object targetObject,
-      Collection<? extends IBoundNamedInstance> unhandledInstances) throws IOException {
+      Collection<? extends IInstanceBindingStrategy<?>> unhandledInstances) {
     applyDefaults(targetObject, unhandledInstances);
   }
 
@@ -48,28 +49,22 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
    * A utility method for applying default values for the provided
    * {@code unhandledInstances}.
    *
-   * @param <TYPE>
-   *          the instance Java type to handle
    * @param targetObject
    *          the Java object to apply default values to
    * @param unhandledInstances
    *          the collection of unhandled instances to assign default values for
-   * @throws IOException
-   *           if an error occurred while determining the default value for an
-   *           instance
    */
-  protected static <TYPE extends IBoundNamedInstance> void applyDefaults(
+  protected static void applyDefaults(
       @NonNull Object targetObject,
-      @NonNull Collection<TYPE> unhandledInstances) throws IOException {
-    for (TYPE instance : unhandledInstances) {
-      Object value;
-      try {
-        value = instance.defaultValue();
-      } catch (BindingException ex) {
-        throw new IOException(ex);
-      }
-      if (value != null) {
-        instance.setValue(targetObject, value);
+      @NonNull Collection<? extends IInstanceBindingStrategy<?>> unhandledInstances) {
+    for (IInstanceBindingStrategy<?> instance : unhandledInstances) {
+      if (instance instanceof IJavaFieldBinding) {
+        IJavaFieldBinding fieldBinding = (IJavaFieldBinding) instance;
+
+        Object value = fieldBinding.getDefaultValue();
+        if (value != null) {
+          fieldBinding.setValue(targetObject, value);
+        }
       }
     }
   }

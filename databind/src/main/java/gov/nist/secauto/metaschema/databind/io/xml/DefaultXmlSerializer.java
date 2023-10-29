@@ -29,9 +29,10 @@ package gov.nist.secauto.metaschema.databind.io.xml;
 import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxOutputFactory;
 
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.AbstractSerializer;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
 
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -52,12 +53,12 @@ public class DefaultXmlSerializer<CLASS>
    * Construct a new XML serializer based on the top-level assembly indicated by
    * the provided {@code classBinding}.
    *
-   * @param classBinding
-   *          the bound Module assembly definition that describes the data to
+   * @param bindingStrategy
+   *          the bound Module assembly definition info that describes the data to
    *          serialize
    */
-  public DefaultXmlSerializer(@NonNull IAssemblyClassBinding classBinding) {
-    super(classBinding);
+  public DefaultXmlSerializer(@NonNull IClassBindingStrategy<IAssemblyDefinition> bindingStrategy) {
+    super(bindingStrategy);
   }
 
   /**
@@ -116,12 +117,13 @@ public class DefaultXmlSerializer<CLASS>
   public void serialize(CLASS data, Writer writer) throws IOException {
     XMLStreamWriter2 streamWriter = newXMLStreamWriter(writer);
     IOException caughtException = null;
-    IAssemblyClassBinding classBinding = getClassBinding();
+
+    IClassBindingStrategy<IAssemblyDefinition> strategy = getBindingStrategy();
 
     MetaschemaXmlWriter xmlGenerator = new MetaschemaXmlWriter(streamWriter);
 
     try {
-      xmlGenerator.write(classBinding, data);
+      xmlGenerator.write(strategy, data);
       streamWriter.flush();
     } catch (XMLStreamException ex) {
       caughtException = new IOException(ex);

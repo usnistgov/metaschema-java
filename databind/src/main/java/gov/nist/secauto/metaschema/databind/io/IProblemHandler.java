@@ -26,8 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.io;
 
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
+import gov.nist.secauto.metaschema.databind.strategy.IInstanceBindingStrategy;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -43,8 +44,9 @@ public interface IProblemHandler {
    * This can be used to supply default or prescribed values based on application
    * logic.
    *
-   * @param parentDefinition
-   *          the bound class on which the missing properties are found
+   * @param bindingStrategy
+   *          the binding info for the object on which the missing properties were
+   *          found
    * @param targetObject
    *          the Java object for the {@code parentDefinition}
    * @param unhandledInstances
@@ -53,8 +55,8 @@ public interface IProblemHandler {
    *           if an error occurred while handling the missing instances
    */
   void handleMissingInstances(
-      @NonNull IClassBinding parentDefinition,
+      @NonNull IClassBindingStrategy<? extends IFlagContainer> bindingStrategy,
       @NonNull Object targetObject,
-      @NonNull Collection<? extends IBoundNamedInstance> unhandledInstances)
+      @NonNull Collection<? extends IInstanceBindingStrategy<?>> unhandledInstances)
       throws IOException;
 }

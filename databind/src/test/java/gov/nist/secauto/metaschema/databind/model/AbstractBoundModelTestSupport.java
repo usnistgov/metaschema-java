@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.DefaultBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.model.oldmodel.impl.AbstractBoundModule;
 import gov.nist.secauto.metaschema.databind.model.test.RootBoundAssembly;
 
 import org.jmock.junit5.JUnit5Mockery;
@@ -77,7 +78,7 @@ public class AbstractBoundModelTestSupport {
 
   @NonNull
   protected IClassBinding registerClassBinding(@NonNull Class<?> clazz) {
-    return ObjectUtils.requireNonNull(getBindingContext().getClassBinding(clazz));
+    return ObjectUtils.requireNonNull(getBindingContext().getClassBindingStrategy(clazz));
   }
 
   @NonNull

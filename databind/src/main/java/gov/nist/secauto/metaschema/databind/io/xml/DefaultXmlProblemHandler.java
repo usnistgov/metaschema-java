@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.databind.io.xml;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.databind.io.AbstractProblemHandler;
+import gov.nist.secauto.metaschema.databind.strategy.IClassBindingStrategy;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,7 +63,7 @@ public class DefaultXmlProblemHandler
 
   @Override
   public boolean handleUnknownAttribute(
-      IFlagContainer parentDefinition,
+      IClassBindingStrategy<? extends IFlagContainer> bindingStrategy,
       Object targetObject,
       Attribute attribute,
       IXmlParsingContext parsingContext) {
