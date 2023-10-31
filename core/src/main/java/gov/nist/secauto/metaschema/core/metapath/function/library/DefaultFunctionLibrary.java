@@ -116,6 +116,7 @@ public class DefaultFunctionLibrary
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-index-of
     // https://www.w3.org/TR/xpath-functions-31/#func-innermost
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-insert-before
+    registerFunction(FnInsertBefore.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-iri-to-uri
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-last
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-lower-case
