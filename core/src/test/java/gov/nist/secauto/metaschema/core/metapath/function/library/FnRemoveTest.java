@@ -41,26 +41,22 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class FnReverseTest
+class FnRemoveTest
     extends ExpressionTestBase {
   private static Stream<Arguments> provideValues() { // NOPMD - false positive
     return Stream.of(
         Arguments.of(
-            ISequence.of(string("c"), string("b"),string("a")),
-              "reverse(('a', 'b', 'c'))"),
+            ISequence.of(string("a"), string("b"),string("c")),
+              "remove(('a', 'b', 'c'), 0)"),
         Arguments.of(
-            ISequence.of(string("hello")),
-            "reverse(('hello'))"),
+            ISequence.of(string("b"),string("c")),
+              "remove(('a', 'b', 'c'), 1)"),
+        Arguments.of(
+            ISequence.of(string("a"), string("b"),string("c")),
+              "remove(('a', 'b', 'c'), 6)"),
         Arguments.of(
             ISequence.empty(),
-            "reverse(())"));
-        // TODO: Add tests when Metapath array syntax supported.
-        //Arguments.of(
-        //    ISequence.of(array([1, 2, 3])),
-        //    "reverse(([1,2,3]))"),
-        //Arguments.of(
-        //    ISequence.of(array([1, 2, 3]), array([1, 2, 3])),
-        //    "reverse(([1,2,3],[4,5,6]))");
+            "remove((), 3)"));
   }
 
   @ParameterizedTest
