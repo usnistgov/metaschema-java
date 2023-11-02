@@ -34,10 +34,9 @@ import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.INumericItem;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -49,7 +48,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public final class FnInsertBefore {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
-      .name("insert-Before")
+      .name("insert-before")
       .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .deterministic()
       .contextIndependent()
@@ -78,27 +77,68 @@ public final class FnInsertBefore {
     // disable construction
   }
 
+  /**
+   * An implementation of XPath 3.1
+   * <a href="https://www.w3.org/TR/xpath-functions-31/#insert-before">fn:insert-before</a>.
+   *
+   * @param target
+   *          the sequence of Metapath items that is the target of insertion
+   * @param position
+   *          the integer position of the item to insert before
+   * @param inserts
+   *          the sequence of Metapath items to be inserted into the target
+   * @return the sequence of Metapath items with insertions
+   */
   @SuppressWarnings("unused")
   @NonNull
   private static ISequence<?> execute(@NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
       IItem focus) {
-    ISequence<?> target = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
+    ISequence<IItem> target = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
     IIntegerItem position = FunctionUtils.getFirstItem(FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1))), true);
-    ISequence<?> inserts = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(2)));
+    ISequence<IItem> inserts = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(2)));
     return ISequence.of(fnInsertBefore(target, position, inserts));
   }
 
   /**
-   * Identify if there is at least one item in the {@code sequence}.
+   * Insert sequence of Metapath items into an existing target sequence.
    *
-   * @param sequence
-   *          the sequence to check
-   * @return {@code true} if the sequence contains at least one item, or
-   *         {@code false} otherwise
+   * @param target
+   *          the sequence of Metapath items that is the target of insertion
+   * @param position
+   *          the integer position of the item to insert before
+   * @param inserts
+   *          the sequence of Metapath items to be inserted into the target
+   * @return the sequence of Metapath items with insertions
    */
-  public static List<? extends IItem> fnInsertBefore(List< ? extends IItem> target, IIntegerItem position, List< ? extends IItem> inserts ) {
-    return sequence.size() <= 1 ? CollectionUtil.emptyList() : sequence.subList(1, sequence.size() );
+  public static <T extends IItem>List<T> fnInsertBefore(List<T> target, IIntegerItem positionItem, List<T> inserts) {
+    if(target.isEmpty()) {
+      return inserts;
+    }
+
+    if(inserts.isEmpty()) {
+      return target;
+    }
+
+    int position = positionItem.asInteger().intValue();
+
+    if (position < 1) {
+      position = 1;
+    } else if (position > target.size()) {
+      position = target.size() + 1;
+    }
+
+    List<T> newSequence = new ArrayList<>(target.size() + inserts.size());
+
+    if (position == 1) {
+      newSequence.addAll(inserts);
+      newSequence.addAll(target);
+    } else {
+      newSequence.addAll(target.subList(0, position - 1));
+      newSequence.addAll(inserts);
+      newSequence.addAll(target.subList(position - 1, target.size()));
+    }
+    return newSequence;
   }
 }

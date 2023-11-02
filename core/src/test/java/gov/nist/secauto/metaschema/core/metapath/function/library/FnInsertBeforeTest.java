@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.metapath.function.library;
 
-import static gov.nist.secauto.metaschema.core.metapath.TestUtils.integer;
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.string;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -48,8 +47,7 @@ class FnInsertBeforeTest
     return Stream.of(
         Arguments.of(
             ISequence.of(string("z"), string("a"),string("b"), string("c")),
-              "insert-before(('a', 'b', 'c'), 0, 'z')"),
-        
+            "insert-before(('a', 'b', 'c'), 0, 'z')"),
         Arguments.of(
             ISequence.of(string("z"), string("a"),string("b"), string("c")),
             "insert-before(('a', 'b', 'c'), 1, 'z')"),
@@ -61,7 +59,7 @@ class FnInsertBeforeTest
             "insert-before(('a', 'b', 'c'), 3, 'z')"),
         Arguments.of(
             ISequence.of(string("a"),string("b"), string("c"), string("z")),
-            "insert-before(('a', 'b', 'c'), 0, 'z')"));
+            "insert-before(('a', 'b', 'c'), 4, 'z')"));
   }
 
   @ParameterizedTest
