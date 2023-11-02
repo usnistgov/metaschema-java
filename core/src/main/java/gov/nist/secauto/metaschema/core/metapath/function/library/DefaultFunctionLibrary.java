@@ -148,7 +148,8 @@ public class DefaultFunctionLibrary
     // https://www.w3.org/TR/xpath-functions-31/#func-resolve-uri
     registerFunction(FnResolveUri.SIGNATURE_ONE_ARG);
     registerFunction(FnResolveUri.SIGNATURE_TWO_ARG);
-    // P1: https://www.w3.org/TR/xpath-functions-31/#func-reverse
+    // https://www.w3.org/TR/xpath-functions-31/#func-reverse
+    registerFunction(FnReverse.SIGNATURE_ONE_ARG);
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-root
     // https://www.w3.org/TR/xpath-functions-31/#func-round
     registerFunction(FnRound.SIGNATURE);
