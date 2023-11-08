@@ -104,7 +104,8 @@ public final class FnData {
 
   @SuppressWarnings("unused")
   @NonNull
-  private static ISequence<IAnyAtomicItem> executeOneArg(@NonNull IFunction function,
+  private static ISequence<IAnyAtomicItem> executeOneArg(
+      @NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
       IItem focus) {

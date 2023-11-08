@@ -33,62 +33,75 @@ import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
-import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public final class FnCompare {
+public final class FnConcat {
+  @NonNull
+  static final IFunction SIGNATURE = IFunction.builder()
+      .name("concat")
+      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
+      .deterministic()
+      .contextIndependent()
+      .focusIndependent()
+      .argument(IArgument.builder()
+          .name("arg1")
+          .type(IAnyAtomicItem.class)
+          .zeroOrOne()
+          .build())
+      .argument(IArgument.builder()
+          .name("arg2")
+          .type(IAnyAtomicItem.class)
+          .zeroOrOne()
+          .build())
+      .allowUnboundedArity(true)
+      .returnType(IStringItem.class)
+      .returnOne()
+      .functionHandler(FnConcat::execute)
+      .build();
 
-  private FnCompare() {
+  private FnConcat() {
     // disable construction
   }
 
   @NonNull
-  static final IFunction SIGNATURE = IFunction.builder()
-      .name("compare")
-      .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
-      .deterministic()
-      .contextDependent()
-      .focusIndependent()
-      .argument(IArgument.builder()
-          .name("comparand1")
-          .type(IStringItem.class)
-          .zeroOrOne()
-          .build())
-      .argument(IArgument.builder()
-          .name("comparand2")
-          .type(IStringItem.class)
-          .zeroOrOne()
-          .build())
-      .returnType(IIntegerItem.class)
-      .returnZeroOrOne()
-      .functionHandler(FnCompare::execute)
-      .build();
-
-  @SuppressWarnings("unused")
-  @NonNull
-  private static ISequence<IIntegerItem> execute(
+  private static ISequence<IStringItem> execute(
       @NonNull IFunction function,
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
       IItem focus) {
-    IStringItem comparand1 = FunctionUtils.getFirstItem(
-        FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0))), true);
 
-    IStringItem comparand2 = FunctionUtils.getFirstItem(
-        FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1))), true);
+    return ISequence.of(concat(ObjectUtils.notNull(arguments.stream()
+        .map(arg -> {
+          assert arg != null;
+          return (IAnyAtomicItem) FunctionUtils.getFirstItem(arg, true);
+        }))));
+  }
 
-    ISequence<IIntegerItem> retval;
-    if (comparand1 == null || comparand2 == null) {
-      retval = ISequence.empty();
-    } else {
-      IIntegerItem result = IIntegerItem.valueOf(comparand1.compareTo(comparand2));
-      retval = ISequence.of(result);
-    }
-    return retval;
+  @NonNull
+  public static IStringItem concat(IAnyAtomicItem... items) {
+    return concat(ObjectUtils.notNull(Arrays.asList(items)));
+  }
+
+  @NonNull
+  public static IStringItem concat(@NonNull List<? extends IAnyAtomicItem> items) {
+    return concat(ObjectUtils.notNull(items.stream()));
+  }
+
+  @NonNull
+  public static IStringItem concat(@NonNull Stream<? extends IAnyAtomicItem> items) {
+    return IStringItem.valueOf(ObjectUtils.notNull(items
+        .map(item -> {
+          return item == null ? "" : IStringItem.cast(item).asString();
+        })
+        .collect(Collectors.joining())));
   }
 }

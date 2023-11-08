@@ -120,6 +120,7 @@ public class FunctionLibrary implements IFunctionLibrary {
 
   private static class NamedFunctionSet {
     private final Map<Integer, IFunction> arityToFunctionMap;
+    private IFunction unboundedArity;
 
     public NamedFunctionSet() {
       this.arityToFunctionMap = new HashMap<>();
@@ -133,12 +134,20 @@ public class FunctionLibrary implements IFunctionLibrary {
 
     @Nullable
     public IFunction getFunctionWithArity(int arity) {
-      return arityToFunctionMap.get(arity);
+      IFunction retval = arityToFunctionMap.get(arity);
+      if (retval == null && unboundedArity != null && unboundedArity.arity() < arity) {
+        retval = unboundedArity;
+      }
+      return retval;
     }
 
     @Nullable
     public IFunction addFunction(@NonNull IFunction function) {
-      return arityToFunctionMap.put(function.arity(), function);
+      IFunction old = arityToFunctionMap.put(function.arity(), function);
+      if (function.isArityUnbounded()) {
+        unboundedArity = function;
+      }
+      return old;
     }
   }
 }

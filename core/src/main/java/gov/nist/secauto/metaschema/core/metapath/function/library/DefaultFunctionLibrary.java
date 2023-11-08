@@ -68,6 +68,7 @@ public class DefaultFunctionLibrary
     registerFunction(FnCeiling.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-compare
     registerFunction(FnCompare.SIGNATURE);
+    registerFunction(FnConcat.SIGNATURE);
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-concat
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-contains
     // https://www.w3.org/TR/xpath-functions-31/#func-count
