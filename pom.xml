@@ -118,9 +118,9 @@
 
 		<dependency.antlr4.version>4.10.1</dependency.antlr4.version>
 		<dependency.auto-service.version>1.1.1</dependency.auto-service.version>
-		<dependency.commons-cli.version>1.5.0</dependency.commons-cli.version>
+		<dependency.commons-cli.version>1.6.0</dependency.commons-cli.version>
 		<dependency.commons-collections4.version>4.4</dependency.commons-collections4.version>
-		<dependency.commons-io.version>2.14.0</dependency.commons-io.version>
+		<dependency.commons-io.version>2.15.0</dependency.commons-io.version>
 		<dependency.commons-lang3.version>3.13.0</dependency.commons-lang3.version>
 		<dependency.commons-text.version>1.10.0</dependency.commons-text.version>
 		<dependency.everit-json.version>1.14.3</dependency.everit-json.version>
@@ -137,7 +137,7 @@
 		<dependency.json.version>20231013</dependency.json.version>
 		<dependency.junit5.version>5.9.0</dependency.junit5.version>
 		<dependency.junit5-platform-launcher.version>1.9.0</dependency.junit5-platform-launcher.version>
-		<dependency.log4j2.version>2.21.0</dependency.log4j2.version>
+		<dependency.log4j2.version>2.21.1</dependency.log4j2.version>
 		<dependency.moxy.version>3.0.3</dependency.moxy.version>
 		<dependency.plexus-utils.version>4.0.0</dependency.plexus-utils.version>
 		<dependency.plexus-build-api.version>1.2.0</dependency.plexus-build-api.version>
@@ -153,7 +153,7 @@
 
 		<plugin.antlr4test.version>1.22</plugin.antlr4test.version>
 		<plugin.appassembler.version>2.1.0</plugin.appassembler.version>
-		<plugin.git-commit-id.version>6.0.0</plugin.git-commit-id.version>
+		<plugin.git-commit-id.version>7.0.0</plugin.git-commit-id.version>
 		<plugin.maven-changes.version>2.12.1</plugin.maven-changes.version>
 		<plugin.maven-invoker.version>3.6.0</plugin.maven-invoker.version>
 		<plugin.maven-toolchains.version>3.1.0</plugin.maven-toolchains.version>
