@@ -122,7 +122,7 @@
 		<dependency.commons-collections4.version>4.4</dependency.commons-collections4.version>
 		<dependency.commons-io.version>2.15.0</dependency.commons-io.version>
 		<dependency.commons-lang3.version>3.13.0</dependency.commons-lang3.version>
-		<dependency.commons-text.version>1.10.0</dependency.commons-text.version>
+		<dependency.commons-text.version>1.11.0</dependency.commons-text.version>
 		<dependency.everit-json.version>1.14.3</dependency.everit-json.version>
 		<dependency.flexmark.version>0.64.8</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.32</dependency.freemarker.version>
