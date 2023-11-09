@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionTypeInfo;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -37,7 +38,7 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
   private String propertyName;
   private String fieldName;
 
-  public AbstractTypeInfo(@NonNull PARENT parentDefinition) {
+  protected AbstractTypeInfo(@NonNull PARENT parentDefinition) {
     this.parentDefinition = parentDefinition;
   }
 

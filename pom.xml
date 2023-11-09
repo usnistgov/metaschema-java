@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
@@ -649,6 +651,7 @@
 					<artifactId>spotbugs-maven-plugin</artifactId>
 					<configuration>
 						<excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
+						<sarifOutput>true</sarifOutput>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -687,7 +690,8 @@
 							<excludedEnvironmentVariable>JAVA_TOOL_OPTIONS</excludedEnvironmentVariable>
 						</excludedEnvironmentVariables>
 						<!-- Use of TCP to transmit events to the plugin -->
-						<forkNode implementation="org.apache.maven.plugin.surefire.extensions.SurefireForkNodeFactory" />
+						<forkNode
+							implementation="org.apache.maven.plugin.surefire.extensions.SurefireForkNodeFactory" />
 					</configuration>
 				</plugin>
 				<plugin>
@@ -710,10 +714,33 @@
 					</executions>
 				</plugin>
 				<plugin>
-					<groupId>com.github.spotbugs</groupId>
-					<artifactId>spotbugs-maven-plugin</artifactId>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
 					<configuration>
-						<sarifOutput>true</sarifOutput>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-toolchains-plugin
+										</artifactId>
+										<versionRange>
+											[3.1.0,)
+										</versionRange>
+										<goals>
+											<goal>toolchain</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -745,6 +772,7 @@
 		<module>schemagen</module>
 		<module>metaschema-maven-plugin</module>
 		<module>metaschema-testing</module>
+		<module>databind-metaschema</module>
 		<module>cli-processor</module>
 		<module>metaschema-cli</module>
 		<!-- <module>metaschema-freemarker-support</module> -->

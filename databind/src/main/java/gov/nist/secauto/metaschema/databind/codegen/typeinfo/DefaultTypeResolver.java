@@ -27,8 +27,10 @@
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.TypeName;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IModule;
@@ -36,6 +38,9 @@ import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
 import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IFieldDefinitionTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IModelDefinitionTypeInfo;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -75,14 +80,16 @@ class DefaultTypeResolver implements ITypeResolver {
   public IAssemblyDefinitionTypeInfo getTypeInfo(@NonNull IAssemblyDefinition definition) {
     return ObjectUtils.notNull(assemblyDefinitionToTypeInfoMap.computeIfAbsent(
         definition,
-        (def) -> IAssemblyDefinitionTypeInfo.newTypeInfo(ObjectUtils.notNull(def), this)));
+        (def) -> IAssemblyDefinitionTypeInfo.newTypeInfo(ObjectUtils.notNull(def),
+            this)));
   }
 
   @Override
   public IFieldDefinitionTypeInfo getTypeInfo(@NonNull IFieldDefinition definition) {
     return ObjectUtils.notNull(fieldDefinitionToTypeInfoMap.computeIfAbsent(
         definition,
-        (def) -> IFieldDefinitionTypeInfo.newTypeInfo(ObjectUtils.notNull(def), this)));
+        (def) -> IFieldDefinitionTypeInfo.newTypeInfo(ObjectUtils.notNull(def),
+            this)));
   }
 
   @Override
@@ -93,12 +100,14 @@ class DefaultTypeResolver implements ITypeResolver {
     } else if (definition instanceof IFieldDefinition) {
       retval = getTypeInfo((IFieldDefinition) definition);
     } else {
-      throw new IllegalStateException(String.format("Unknown type '%s'", definition.getClass().getName()));
+      throw new IllegalStateException(String.format("Unknown type '%s'",
+          definition.getClass().getName()));
     }
     return retval;
   }
 
   @Override
+  @NonNull
   public ClassName getClassName(@NonNull IFlagContainer definition) {
     return ObjectUtils.notNull(definitionToTypeMap.computeIfAbsent(
         definition,
@@ -118,6 +127,17 @@ class DefaultTypeResolver implements ITypeResolver {
           }
           return retval;
         }));
+  }
+
+  @Override
+  public ClassName getClassName(@NonNull INamedModelInstanceTypeInfo typeInfo) {
+    return getClassName(typeInfo.getInstance().getDefinition());
+  }
+
+  @Override
+  public TypeName getClassName(IChoiceGroupInstance instance) {
+    // TODO: Support some form of binding override for a common interface type
+    return ObjectUtils.notNull(ClassName.get(Object.class));
   }
 
   @Override

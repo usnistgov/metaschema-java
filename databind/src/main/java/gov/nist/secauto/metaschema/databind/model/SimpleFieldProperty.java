@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
@@ -37,9 +36,10 @@ import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 
@@ -55,7 +55,10 @@ class SimpleFieldProperty
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   @Nullable
-  private final Object defaultValue;
+  private final Object definitionDefaultValue;
+  @Nullable
+  private final Object instanceDefaultValue;
+
   @NonNull
   private final Lazy<ScalarFieldDefinition> definition;
 
@@ -73,16 +76,11 @@ class SimpleFieldProperty
       @NonNull IAssemblyClassBinding parentClassBinding) {
     super(field, parentClassBinding);
 
-    BoundFieldValue boundFieldValue = field.getAnnotation(BoundFieldValue.class);
-    if (boundFieldValue == null) {
-      this.javaTypeAdapter = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
-      this.defaultValue = null; // NOPMD readability
-    } else {
-      this.javaTypeAdapter = ModelUtil.getDataTypeAdapter(
-          boundFieldValue.typeAdapter(),
-          parentClassBinding.getBindingContext());
-      this.defaultValue = ModelUtil.resolveDefaultValue(boundFieldValue.defaultValue(), this.javaTypeAdapter);
-    }
+    BoundField boundField = getFieldAnnotation();
+    this.javaTypeAdapter = ModelUtil.getDataTypeAdapter(
+        boundField.typeAdapter(),
+        parentClassBinding.getBindingContext());
+    this.definitionDefaultValue = ModelUtil.resolveDefaultValue(boundField.defaultValue(), this.javaTypeAdapter);
 
     Class<?> itemType = getItemType();
     if (!itemType.equals(javaTypeAdapter.getJavaClass())) {
@@ -96,6 +94,8 @@ class SimpleFieldProperty
               javaTypeAdapter.getJavaClass().getName()));
     }
     this.definition = ObjectUtils.notNull(Lazy.lazy(() -> new ScalarFieldDefinition()));
+    this.instanceDefaultValue
+        = ModelUtil.resolveDefaultValue(getFieldAnnotation().defaultValue(), this.javaTypeAdapter);
   }
 
   @Override
@@ -112,23 +112,30 @@ class SimpleFieldProperty
     return IDataTypeHandler.newDataTypeHandler(this);
   }
 
-  protected Object getDefaultValue() {
-    return defaultValue;
+  @Override
+  public Object getDefaultValue() {
+    return instanceDefaultValue;
   }
 
   @Override
   public Object defaultValue() {
-    return getMaxOccurs() == 1 ? getDefaultValue() : getPropertyInfo().newPropertyCollector().getValue();
+    return getMaxOccurs() == 1 ? getEffectiveDefaultValue() : getPropertyInfo().newPropertyCollector().getValue();
   }
 
+  // REFACTOR: Cleanup interfaces and methods to use IFeatureInline, etc. Remove
+  // this extra instance. Cleanup default value methods.
   private final class ScalarFieldDefinition
       implements IBoundFieldDefinition, IFeatureFlagContainer<IBoundFlagInstance> {
+    @NonNull
     private final Lazy<IValueConstrained> constraints;
 
     private ScalarFieldDefinition() {
-      this.constraints = Lazy.lazy(() -> new ValueConstraintSupport(
-          getField().getAnnotation(ValueConstraints.class),
-          ISource.modelSource()));
+      this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
+        IValueConstrained retval = new ValueConstraintSet();
+        ValueConstraints valueAnnotation = getFieldAnnotation().valueConstraints();
+        ConstraintSupport.parse(valueAnnotation, ISource.modelSource(), retval);
+        return retval;
+      }));
     }
 
     @Override
@@ -143,7 +150,7 @@ class SimpleFieldProperty
     }
 
     @Override
-    public @NonNull Object getFieldValue(@NonNull Object item) {
+    public Object getFieldValue(@NonNull Object item) {
       return item;
     }
 
@@ -154,6 +161,7 @@ class SimpleFieldProperty
 
     @Override
     public boolean isInline() {
+      // scalar fields are always inline
       return true;
     }
 
@@ -189,7 +197,7 @@ class SimpleFieldProperty
 
     @Override
     public String getUseName() {
-      return ModelUtil.resolveToString(getFieldAnnotation().useName());
+      return ModelUtil.resolveNoneOrValue(getFieldAnnotation().useName());
     }
 
     @Override
@@ -242,7 +250,7 @@ class SimpleFieldProperty
 
     @Override
     public Object getDefaultValue() {
-      return SimpleFieldProperty.this.getDefaultValue();
+      return definitionDefaultValue;
     }
   }
 }

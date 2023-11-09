@@ -27,8 +27,10 @@
 package gov.nist.secauto.metaschema.databind.model.annotations;
 
 import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 
 import java.lang.annotation.Documented;
@@ -51,14 +53,15 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * The field must be either:
  * <ol>
  * <li>A Module data type or a collection whose item value is Module data type,
- * with a {@link BoundFieldValue} annotation on the field.
+ * with a non-null {@link #typeAdapter()}.
  * <li>A type or a collection whose item value is a type based on a class with a
- * {@link MetaschemaField} annotation.</li>
+ * {@link MetaschemaField} annotation, with a property annotated with
+ * {@link BoundFieldValue}.</li>
  * </ol>
  */
 @Documented
 @Retention(RUNTIME)
-@Target({ FIELD })
+@Target({ FIELD, METHOD })
 public @interface BoundField {
   /**
    * Get the documentary formal name of the field.
@@ -105,6 +108,25 @@ public @interface BoundField {
   int useIndex() default Integer.MIN_VALUE;
 
   /**
+   * The Metaschema data type adapter for the field's value.
+   *
+   * @return the data type adapter
+   */
+  @NonNull
+  Class<? extends IDataTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
+
+  /**
+   * The default value of the field represented as a string.
+   * <p>
+   * The value {@link Constants#NULL_VALUE} is used to indicate if no default
+   * value is provided.
+   *
+   * @return the default value
+   */
+  @NonNull
+  String defaultValue() default Constants.NULL_VALUE;
+
+  /**
    * The namespace to use for associated XML elements.
    * <p>
    * If the value is "##default", then element name is derived from the namespace
@@ -144,4 +166,23 @@ public @interface BoundField {
    */
   @NonNull
   String remarks() default Constants.NO_STRING_VALUE;
+
+  /**
+   * Used to provide grouping information.
+   * <p>
+   * This annotation is required when the value of {@link #maxOccurs()} is greater
+   * than 1.
+   *
+   * @return the configured {@link GroupAs} or the default value with a
+   *         {@code null} {@link GroupAs#name()}
+   */
+  @NonNull
+  GroupAs groupAs() default @GroupAs(name = Constants.NULL_VALUE);
+
+  /**
+   * Get the value constraints defined for this Metaschema flag inline definition.
+   *
+   * @return the value constraints
+   */
+  ValueConstraints valueConstraints() default @ValueConstraints;
 }

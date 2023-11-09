@@ -93,7 +93,6 @@ module gov.nist.secauto.metaschema.core {
   exports gov.nist.secauto.metaschema.core.model.util;
   exports gov.nist.secauto.metaschema.core.model.validation;
   exports gov.nist.secauto.metaschema.core.model.xml;
-  // exports gov.nist.secauto.metaschema.core.model.xml.xmlbeans;
   exports gov.nist.secauto.metaschema.core.resource;
   exports gov.nist.secauto.metaschema.core.util;
 

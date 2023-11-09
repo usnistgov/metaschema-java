@@ -59,7 +59,7 @@ public interface IAssemblyNodeItem extends IModelNodeItem<IAssemblyDefinition, I
   }
 
   @Override
-  default <RESULT, CONTEXT> RESULT accept(@NonNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+  default <CONTEXT, RESULT> RESULT accept(@NonNull INodeItemVisitor<CONTEXT, RESULT> visitor, CONTEXT context) {
     return visitor.visitAssembly(this, context);
   }
 }

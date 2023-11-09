@@ -88,7 +88,8 @@ public class AbstractBoundModelTestSupport {
   @SuppressWarnings("null")
   @NonNull
   protected IAssemblyClassBinding getRootAssemblyClassBinding() {
-    return (IAssemblyClassBinding) getBindingContext().getClassBinding(RootBoundAssembly.class);
+    return ObjectUtils.requireNonNull((IAssemblyClassBinding) getBindingContext()
+        .getClassBinding(RootBoundAssembly.class));
   }
 
   @SuppressWarnings("resource")

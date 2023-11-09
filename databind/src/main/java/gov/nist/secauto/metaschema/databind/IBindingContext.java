@@ -290,7 +290,7 @@ public interface IBindingContext extends IModuleLoaderStrategy {
     DynamicContext context = StaticContext.instance().dynamicContext();
     context.setDocumentLoader(loader);
 
-    return new DefaultConstraintValidator(context, handler);
+    return new DefaultConstraintValidator(handler);
   }
 
   /**
@@ -306,8 +306,10 @@ public interface IBindingContext extends IModuleLoaderStrategy {
   default IValidationResult validate(@NonNull INodeItem nodeItem) {
     FindingCollectingConstraintValidationHandler handler = new FindingCollectingConstraintValidationHandler();
     IConstraintValidator validator = newValidator(handler);
-    validator.validate(nodeItem);
-    validator.finalizeValidation();
+    DynamicContext dynamicContext = StaticContext.instance().dynamicContext();
+    dynamicContext.setDocumentLoader(newBoundLoader());
+    validator.validate(nodeItem, dynamicContext);
+    validator.finalizeValidation(dynamicContext);
     return handler;
   }
 

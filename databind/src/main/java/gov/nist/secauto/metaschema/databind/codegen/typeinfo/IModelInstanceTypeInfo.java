@@ -26,9 +26,23 @@
 
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import com.squareup.javapoet.AnnotationSpec;
+
+import gov.nist.secauto.metaschema.core.model.IModelInstance;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IModelInstanceTypeInfo extends IInstanceTypeInfo {
   @Override
-  INamedModelInstance getInstance();
+  IModelInstance getInstance();
+
+  /**
+   * Generate the Metaschema binding annotation for this instance.
+   * <p>
+   * This method uses a builder so child classes can add to the builder as needed.
+   *
+   * @return a builder for the annotation
+   */
+  @NonNull
+  AnnotationSpec.Builder buildBindingAnnotation();
 }

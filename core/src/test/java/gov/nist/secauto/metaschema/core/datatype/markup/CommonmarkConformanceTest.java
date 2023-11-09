@@ -40,7 +40,6 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.XmlMarkupParser;
-import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -58,14 +57,15 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
-import org.xmlresolver.Resolver;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -86,7 +86,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 @SuppressWarnings("PMD.CouplingBetweenObjects")
 class CommonmarkConformanceTest {
-  private static final String SCHEMA_CLASSPATH = "/markup-test.xsd";
+  private static final String SCHEMA_PATH = "src/test/resources/markup-test.xsd";
   private static final Pattern INITIAL_ELEMENT_PATTERN
       = Pattern.compile("^\\s*<([^\\s/>]+)[^>]*>.*", Pattern.DOTALL);
 
@@ -112,8 +112,10 @@ class CommonmarkConformanceTest {
     ObjectMapper mapper = new ObjectMapper();
     // mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-    try (InputStream is = CommonmarkConformanceTest.class.getResourceAsStream("/commonmark-spec.json")) {
-      try (JsonParser parser = mapper.getFactory().createParser(is)) {
+    try (Reader reader = Files.newBufferedReader(
+        Paths.get("src/test/resources/commonmark-spec.json"),
+        StandardCharsets.UTF_8)) {
+      try (JsonParser parser = mapper.getFactory().createParser(reader)) {
         if (parser.nextToken() != JsonToken.START_ARRAY) {
           throw new IllegalStateException();
         }
@@ -130,17 +132,10 @@ class CommonmarkConformanceTest {
     }
   }
 
-  private static Schema loadDataTypeSchema() throws URISyntaxException, SAXException, IOException {
-    URL url = ModuleLoader.class.getResource(SCHEMA_CLASSPATH);
-    // System.out.println(url.toString());
+  private static Schema loadDataTypeSchema() throws SAXException, IOException {
+    Path schemaPath = Paths.get(SCHEMA_PATH).toAbsolutePath();
     SchemaFactory schemafactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-    try (InputStream is
-        = ObjectUtils.requireNonNull(CommonmarkConformanceTest.class.getResourceAsStream(SCHEMA_CLASSPATH))) {
-      StreamSource source = new StreamSource(is, url.toURI().toString());
-
-      schemafactory.setResourceResolver(new Resolver());
-      return schemafactory.newSchema(source);
-    }
+    return schemafactory.newSchema(schemaPath.toUri().toURL());
   }
 
   public boolean isMultilineMarkdown(@NonNull String markdown) {
@@ -223,7 +218,7 @@ class CommonmarkConformanceTest {
   @DisplayName("Markup Tests")
   @TestFactory
   Stream<DynamicNode> generateConversionTests() // NOPMD
-      throws IOException, URISyntaxException, SAXException {
+      throws IOException, SAXException {
     Schema schema = loadDataTypeSchema();
 
     List<Entry> entries = generateTestVectors();

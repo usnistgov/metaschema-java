@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.core.model.util.XmlUtil;
+import gov.nist.secauto.metaschema.core.model.xml.ExternalConstraintsModulePostProcessor;
 import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -136,7 +137,10 @@ public class ValidateContentUsingModuleCommand
         Path modulePath = Paths.get(moduleName);
         assert modulePath != null;
 
-        ModuleLoader loader = new ModuleLoader(constraintSets);
+        ExternalConstraintsModulePostProcessor postProcessor
+            = new ExternalConstraintsModulePostProcessor(constraintSets);
+
+        ModuleLoader loader = new ModuleLoader(CollectionUtil.singletonList(postProcessor));
         loader.allowEntityResolution();
         module = loader.load(modulePath);
       }

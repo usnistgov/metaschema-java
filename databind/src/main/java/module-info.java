@@ -46,7 +46,7 @@ module gov.nist.secauto.metaschema.databind {
   exports gov.nist.secauto.metaschema.databind;
   exports gov.nist.secauto.metaschema.databind.codegen;
   exports gov.nist.secauto.metaschema.databind.codegen.config;
-  exports gov.nist.secauto.metaschema.databind.codegen.typeinfo;
+  // exports gov.nist.secauto.metaschema.databind.codegen.typeinfo;
   exports gov.nist.secauto.metaschema.databind.io;
   exports gov.nist.secauto.metaschema.databind.io.json;
   exports gov.nist.secauto.metaschema.databind.io.xml;

@@ -27,12 +27,20 @@
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.TypeName;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IFieldDefinitionTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IModelDefinitionTypeInfo;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -48,6 +56,48 @@ public interface ITypeResolver {
   @NonNull
   static ITypeResolver newTypeResolver(@NonNull IBindingConfiguration bindingConfiguration) {
     return new DefaultTypeResolver(bindingConfiguration);
+  }
+
+  /**
+   * Get type information for the provided {@code instance}.
+   *
+   * @param instance
+   *          the instance to get type information for
+   * @param parent
+   *          the type information for the parent definition containing this
+   *          instance
+   * @return the type information
+   */
+  @NonNull
+  default INamedModelInstanceTypeInfo getTypeInfo(
+      @NonNull INamedModelInstance instance,
+      @NonNull IAssemblyDefinitionTypeInfo parent) {
+    INamedModelInstanceTypeInfo retval;
+    if (instance instanceof IAssemblyInstance) {
+      retval = new AssemblyInstanceTypeInfoImpl((IAssemblyInstance) instance, parent);
+    } else if (instance instanceof IFieldInstance) {
+      retval = new FieldInstanceTypeInfoImpl((IFieldInstance) instance, parent);
+    } else {
+      throw new UnsupportedOperationException(instance.getClass().getName());
+    }
+    return retval;
+  }
+
+  /**
+   * Get type information for the provided {@code instance}.
+   *
+   * @param instance
+   *          the instance to get type information for
+   * @param parent
+   *          the type information for the parent definition containing this
+   *          instance
+   * @return the type information
+   */
+  @NonNull
+  default IChoiceGroupTypeInfo getTypeInfo(
+      @NonNull IChoiceGroupInstance instance,
+      @NonNull IAssemblyDefinitionTypeInfo parent) {
+    return new ChoiceGroupTypeInfoImpl(instance, parent);
   }
 
   /**
@@ -81,28 +131,48 @@ public interface ITypeResolver {
   IModelDefinitionTypeInfo getTypeInfo(@NonNull IFlagContainer definition);
 
   /**
-   * Get the name of the class associated with the provided Module module.
+   * Get the name of the class associated with the provided Metaschema instance.
+   *
+   * @param instance
+   *          the Metaschema instance to get the class name for
+   * @return the class name information for the Module module
+   */
+  @NonNull
+  TypeName getClassName(IChoiceGroupInstance instance);
+
+  /**
+   * Get the name of the class associated with the provided Metaschema module.
    *
    * @param module
-   *          the Module module that will be built as a class
+   *          the Metaschema module to get the class name for
    * @return the class name information for the Module module
    */
   @NonNull
   ClassName getClassName(@NonNull IModule module);
 
   /**
-   * Get the name of the class associated with the provided definition.
+   * Get the name of the class associated with the provided Metaschema definition.
    *
    * @param definition
-   *          a definition that may be built as a subclass
+   *          the Metaschema definition to get the class name for
    * @return the class name information for the definition
    */
   @NonNull
   ClassName getClassName(@NonNull IFlagContainer definition);
 
   /**
+   * Get the name of the class associated with the provided Metaschema definition.
+   *
+   * @param typeInfo
+   *          the type information to get the class name for
+   * @return the class name information for the definition
+   */
+  @NonNull
+  ClassName getClassName(@NonNull INamedModelInstanceTypeInfo typeInfo);
+
+  /**
    * Get the name of the base class to use for the class associated with the
-   * provided definition.
+   * provided Metaschema definition.
    *
    * @param definition
    *          a definition that may be built as a class

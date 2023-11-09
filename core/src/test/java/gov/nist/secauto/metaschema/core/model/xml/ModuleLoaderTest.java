@@ -83,7 +83,9 @@ class ModuleLoaderTest {
     IConstraintSet constraintSet = constraintLoader.load(
         ObjectUtils.notNull(Paths.get("src/test/resources/content/oscal-constraints.xml")));
 
-    ModuleLoader loader = new ModuleLoader(CollectionUtil.singleton(constraintSet));
+    ExternalConstraintsModulePostProcessor postProcessor
+        = new ExternalConstraintsModulePostProcessor(CollectionUtil.singleton(constraintSet));
+    ModuleLoader loader = new ModuleLoader(CollectionUtil.singletonList(postProcessor));
     loader.allowEntityResolution();
     URI moduleUri = ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));

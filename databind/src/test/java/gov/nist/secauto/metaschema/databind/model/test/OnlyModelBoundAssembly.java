@@ -58,9 +58,9 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
    * An optional array field.
    */
   @BoundField(useName = "simple-array-field",
-      maxOccurs = -1)
-  @GroupAs(name = "simple-array-field-items",
-      inJson = JsonGroupAsBehavior.LIST)
+      maxOccurs = -1,
+      groupAs = @GroupAs(name = "simple-array-field-items",
+          inJson = JsonGroupAsBehavior.LIST))
   private List<String> simpleArrayField;
 
   /**
@@ -68,18 +68,18 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
    */
   @BoundField(useName = "simple-required-array-field",
       minOccurs = 1,
-      maxOccurs = -1)
-  @GroupAs(name = "simple-required-array-field-items",
-      inJson = JsonGroupAsBehavior.LIST)
+      maxOccurs = -1,
+      groupAs = @GroupAs(name = "simple-required-array-field-items",
+          inJson = JsonGroupAsBehavior.LIST))
   private List<String> simpleRequiredArrayField;
 
   /**
    * An optional singleton or array field.
    */
   @BoundField(useName = "simple-singleton-or-array-field",
-      maxOccurs = -1)
-  @GroupAs(name = "simple-singleton-or-array-field-items",
-      inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST)
+      maxOccurs = -1,
+      groupAs = @GroupAs(name = "simple-singleton-or-array-field-items",
+          inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST))
   private List<String> simpleSingletonOrArrayField;
 
   /*
@@ -102,9 +102,9 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
    * An optional array flagged field.
    */
   @BoundField(useName = "flagged-array-field",
-      maxOccurs = -1)
-  @GroupAs(name = "flagged-array-field-items",
-      inJson = JsonGroupAsBehavior.LIST)
+      maxOccurs = -1,
+      groupAs = @GroupAs(name = "flagged-array-field-items",
+          inJson = JsonGroupAsBehavior.LIST))
   private List<FlaggedBoundField> flaggedArrayField;
 
   /**
@@ -112,18 +112,18 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
    */
   @BoundField(useName = "flagged-required-array-field",
       minOccurs = 1,
-      maxOccurs = -1)
-  @GroupAs(name = "flagged-required-array-field-items",
-      inJson = JsonGroupAsBehavior.LIST)
+      maxOccurs = -1,
+      groupAs = @GroupAs(name = "flagged-required-array-field-items",
+          inJson = JsonGroupAsBehavior.LIST))
   private List<FlaggedBoundField> flaggedRequiredArrayField;
 
   /**
    * An optional singleton or array flagged field.
    */
   @BoundField(useName = "flagged-singleton-or-array-field",
-      maxOccurs = -1)
-  @GroupAs(name = "flagged-singleton-or-array-field-items",
-      inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST)
+      maxOccurs = -1,
+      groupAs = @GroupAs(name = "flagged-singleton-or-array-field-items",
+          inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST))
   private List<FlaggedBoundField> flaggedSingletonOrArrayField;
 
   /*
@@ -139,25 +139,25 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
    * An optional array assembly.
    */
   @BoundAssembly(useName = "array-assembly",
-      maxOccurs = -1)
-  @GroupAs(name = "array-assembly-items",
-      inJson = JsonGroupAsBehavior.LIST)
+      maxOccurs = -1,
+      groupAs = @GroupAs(name = "array-assembly-items",
+          inJson = JsonGroupAsBehavior.LIST))
   private List<OnlyModelBoundAssembly> arrayAssembly;
 
   /**
    * An optional singleton or array assembly.
    */
   @BoundAssembly(useName = "singleton-or-array-assembly",
-      maxOccurs = -1)
-  @GroupAs(name = "singleton-or-array-assembly-items",
-      inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST)
+      maxOccurs = -1,
+      groupAs = @GroupAs(name = "singleton-or-array-assembly-items",
+          inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST))
   private List<OnlyModelBoundAssembly> singletonOrArrayAssembly;
   /**
    * An optional keyed assembly.
    */
   @BoundAssembly(useName = "keyed-assembly",
-      maxOccurs = -1)
-  @GroupAs(name = "keyed-assembly-items",
-      inJson = JsonGroupAsBehavior.KEYED)
+      maxOccurs = -1,
+      groupAs = @GroupAs(name = "keyed-assembly-items",
+          inJson = JsonGroupAsBehavior.KEYED))
   private Map<String, FlaggedBoundAssembly> keyedAssembly;
 }

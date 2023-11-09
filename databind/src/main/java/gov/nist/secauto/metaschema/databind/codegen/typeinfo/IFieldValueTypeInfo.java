@@ -27,13 +27,14 @@
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IFieldDefinitionTypeInfo;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides type information related to the value of a {@link IFieldDefinition}.
  */
-public interface IFieldValueTypeInfo extends ITypeInfo {
+public interface IFieldValueTypeInfo extends IPropertyTypeInfo {
   /**
    * Construct a new type info based on the provided parent field definition which
    * contains the field value.

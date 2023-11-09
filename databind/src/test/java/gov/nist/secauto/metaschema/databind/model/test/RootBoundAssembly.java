@@ -54,9 +54,9 @@ public class RootBoundAssembly {
    */
   @BoundField(useName = "keyed-field",
       minOccurs = 1,
-      maxOccurs = -1)
-  @GroupAs(name = "keyed-field-items",
-      inJson = JsonGroupAsBehavior.KEYED)
+      maxOccurs = -1,
+      groupAs = @GroupAs(name = "keyed-field-items",
+          inJson = JsonGroupAsBehavior.KEYED))
   private Map<String, FlaggedBoundField> keyedField; // NOPMD - intentional
 
   /**
@@ -64,8 +64,8 @@ public class RootBoundAssembly {
    */
   @BoundAssembly(useName = "singleton-or-array-assembly",
       minOccurs = 1,
-      maxOccurs = -1)
-  @GroupAs(name = "singleton-or-array-assembly-items",
-      inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST)
+      maxOccurs = -1,
+      groupAs = @GroupAs(name = "singleton-or-array-assembly-items",
+          inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST))
   private List<OnlyModelBoundAssembly> singletonOrArrayAssembly; // NOPMD - intentional
 }

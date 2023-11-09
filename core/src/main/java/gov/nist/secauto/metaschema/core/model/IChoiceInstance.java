@@ -41,11 +41,19 @@ public interface IChoiceInstance extends IModelInstance, IModelContainer {
     return ModelType.CHOICE;
   }
 
-  @Override
-  IModelContainer getParentContainer();
-
+  // REFACTOR: move up?
   @Override
   default IAssemblyDefinition getOwningDefinition() {
     return getParentContainer().getOwningDefinition();
+  }
+
+  @Override
+  default int getMinOccurs() {
+    return 1;
+  }
+
+  @Override
+  default int getMaxOccurs() {
+    return 1;
   }
 }

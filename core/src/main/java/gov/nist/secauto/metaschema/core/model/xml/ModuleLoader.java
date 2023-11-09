@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.core.model.xml;
 import gov.nist.secauto.metaschema.core.model.AbstractLoader;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.core.model.xml.impl.XmlModule;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.METASCHEMADocument;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.MetaschemaImportType;
@@ -52,7 +51,6 @@ import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
@@ -72,24 +70,25 @@ public class ModuleLoader
   private boolean resolveEntities; // = false;
 
   @NonNull
-  private final Set<IConstraintSet> registeredConstraintSets;
+  private final List<IModulePostProcessor> modulePostProcessors;
 
   /**
    * Construct a new Metaschema loader.
    */
   public ModuleLoader() {
-    this(CollectionUtil.emptySet());
+    this(CollectionUtil.emptyList());
   }
 
   /**
-   * Construct a new Metaschema loader, which will incorporate the additional
-   * provided constraints into matching loaded definitions.
+   * Construct a new Metaschema loader, which use the provided module post
+   * processors when loading a module.
    *
-   * @param additionalConstraintSets
-   *          additional constraints to associate with loaded definitions
+   * @param modulePostProcessors
+   *          post processors to perform additional module customization when
+   *          loading
    */
-  public ModuleLoader(@NonNull Set<IConstraintSet> additionalConstraintSets) {
-    this.registeredConstraintSets = CollectionUtil.unmodifiableSet(additionalConstraintSets);
+  public ModuleLoader(@NonNull List<IModulePostProcessor> modulePostProcessors) {
+    this.modulePostProcessors = CollectionUtil.unmodifiableList(new ArrayList<>(modulePostProcessors));
   }
 
   /**
@@ -98,8 +97,8 @@ public class ModuleLoader
    * @return the set of constraints
    */
   @NonNull
-  protected Set<IConstraintSet> getRegisteredConstraintSets() {
-    return registeredConstraintSets;
+  protected List<IModulePostProcessor> getModulePostProcessors() {
+    return modulePostProcessors;
   }
 
   /**
@@ -131,8 +130,9 @@ public class ModuleLoader
       @NonNull List<IModule> importedModules) throws MetaschemaException {
     IModule retval = new XmlModule(resource, xmlObject, importedModules);
 
-    IConstraintSet.applyConstraintSetToModule(getRegisteredConstraintSets(), retval);
-
+    for (IModulePostProcessor postProcessor : getModulePostProcessors()) {
+      postProcessor.processModule(retval);
+    }
     return retval;
   }
 

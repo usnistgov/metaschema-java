@@ -42,33 +42,4 @@ public abstract class AbstractChoiceInstance
     super(parent);
   }
 
-  @Override
-  public int getMinOccurs() {
-    return 1;
-  }
-
-  @Override
-  public int getMaxOccurs() {
-    return 1;
-  }
-
-  @Override
-  public String getGroupAsName() { // NOPMD - this method should return null
-    return null;
-  }
-
-  @Override
-  public String getGroupAsXmlNamespace() { // NOPMD - this method should return null
-    return null;
-  }
-
-  @Override
-  public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-    return JsonGroupAsBehavior.NONE;
-  }
-
-  @Override
-  public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    return XmlGroupAsBehavior.UNGROUPED;
-  }
 }

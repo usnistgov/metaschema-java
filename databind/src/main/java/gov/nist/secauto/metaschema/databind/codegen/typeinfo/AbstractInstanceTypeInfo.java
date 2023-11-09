@@ -26,17 +26,18 @@
 
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
-import gov.nist.secauto.metaschema.core.model.INamedInstance;
+import gov.nist.secauto.metaschema.core.model.IInstance;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionTypeInfo;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-abstract class AbstractInstanceTypeInfo<INSTANCE extends INamedInstance, PARENT extends IDefinitionTypeInfo>
-    extends AbstractTypeInfo<PARENT>
+abstract class AbstractInstanceTypeInfo<INSTANCE extends IInstance, PARENT extends IDefinitionTypeInfo>
+    extends AbstractPropertyTypeInfo<PARENT>
     implements IInstanceTypeInfo {
   @NonNull
   private final INSTANCE instance;
 
-  public AbstractInstanceTypeInfo(@NonNull INSTANCE instance, @NonNull PARENT parentDefinition) {
+  protected AbstractInstanceTypeInfo(@NonNull INSTANCE instance, @NonNull PARENT parentDefinition) {
     super(parentDefinition);
     this.instance = instance;
   }
@@ -45,4 +46,5 @@ abstract class AbstractInstanceTypeInfo<INSTANCE extends INamedInstance, PARENT 
   public INSTANCE getInstance() {
     return instance;
   }
+
 }

@@ -136,4 +136,11 @@ public @interface BoundFlag {
    */
   @NonNull
   String remarks() default Constants.NO_STRING_VALUE;
+
+  /**
+   * Get the value constraints defined for this Metaschema flag inline definition.
+   *
+   * @return the value constraints
+   */
+  ValueConstraints valueConstraints() default @ValueConstraints;
 }

@@ -27,10 +27,12 @@
 package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.metapath.MetapathException;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractConstraintBuilder;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractKeyConstraintBuilder;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultLet;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
@@ -40,25 +42,27 @@ import gov.nist.secauto.metaschema.core.model.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IKeyField;
+import gov.nist.secauto.metaschema.core.model.constraint.ILet;
 import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.AllowedValueType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.AllowedValuesType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ConstraintLetType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ConstraintType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.EnumType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ExpectConstraintType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.HasCardinalityConstraintType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.IndexHasKeyConstraintType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.KeyConstraintType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.MatchesConstraintType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.PropertyType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.RemarksType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedAllowedValuesType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedExpectConstraintType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedIndexConstraintType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedIndexHasKeyConstraintType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedKeyConstraintType;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ScopedMatchesConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.TargetedAllowedValuesConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.TargetedExpectConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.TargetedHasCardinalityConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.TargetedIndexConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.TargetedIndexHasKeyConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.TargetedKeyConstraintType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.TargetedMatchesConstraintType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -73,7 +77,7 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-@SuppressWarnings("PMD.CouplingBetweenObjects")
+@SuppressWarnings({ "PMD.CouplingBetweenObjects", "PMD.GodClass" })
 public final class ModelFactory {
   private ModelFactory() {
     // disable
@@ -103,7 +107,8 @@ public final class ModelFactory {
    */
   @SuppressWarnings("null")
   @NonNull
-  public static Map<QName, Set<String>> toProperties(@NonNull List<PropertyType> properties) {
+  public static Map<QName, Set<String>> toProperties(
+      @NonNull List<PropertyType> properties) {
     return properties.stream()
         .map(prop -> {
           String name = prop.getName();
@@ -125,10 +130,11 @@ public final class ModelFactory {
    * @return the allowed values as a mapping of name to value object
    */
   @NonNull
-  private static Map<String, IAllowedValue> toAllowedValues(@NonNull AllowedValuesType xmlConstraint) {
+  private static Map<String, IAllowedValue> toAllowedValues(
+      @NonNull AllowedValuesType xmlObject) {
     Map<String, IAllowedValue> allowedValues // NOPMD - intentional
-        = new LinkedHashMap<>(xmlConstraint.sizeOfEnumArray());
-    for (EnumType xmlEnum : xmlConstraint.getEnumList()) {
+        = new LinkedHashMap<>(xmlObject.sizeOfEnumArray());
+    for (AllowedValueType xmlEnum : xmlObject.getEnumList()) {
       IAllowedValue allowedValue = IAllowedValue.of(
           ObjectUtils.requireNonNull(xmlEnum.getValue()),
           MarkupStringConverter.toMarkupString(xmlEnum));
@@ -140,7 +146,7 @@ public final class ModelFactory {
   /**
    * Parse the constraint XMLBeans representation.
    *
-   * @param xmlConstraint
+   * @param xmlObject
    *          the XmlObject representing the constraint
    * @param source
    *          the descriptor for the resource containing the constraint
@@ -148,15 +154,15 @@ public final class ModelFactory {
    */
   @NonNull
   public static IAllowedValuesConstraint newAllowedValuesConstraint(
-      @NonNull ScopedAllowedValuesType xmlConstraint,
+      @NonNull TargetedAllowedValuesConstraintType xmlObject,
       @NonNull ISource source) {
-    return newAllowedValuesConstraint(xmlConstraint, target(xmlConstraint.getTarget()), source);
+    return newAllowedValuesConstraint(xmlObject, target(xmlObject.getTarget()), source);
   }
 
   /**
    * Parse the constraint XMLBeans representation.
    *
-   * @param xmlConstraint
+   * @param xmlObject
    *          the XmlObject representing the constraint
    * @param source
    *          the descriptor for the resource containing the constraint
@@ -164,31 +170,31 @@ public final class ModelFactory {
    */
   @NonNull
   public static IAllowedValuesConstraint newAllowedValuesConstraint(
-      @NonNull AllowedValuesType xmlConstraint,
+      @NonNull AllowedValuesType xmlObject,
       @NonNull ISource source) {
-    return newAllowedValuesConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE, source);
+    return newAllowedValuesConstraint(xmlObject, MetapathExpression.CONTEXT_NODE, source);
   }
 
   @NonNull
   private static IAllowedValuesConstraint newAllowedValuesConstraint(
-      @NonNull AllowedValuesType xmlConstraint,
+      @NonNull AllowedValuesType xmlObject,
       @NonNull MetapathExpression target,
       @NonNull ISource source) {
 
     IAllowedValuesConstraint.Builder builder = IAllowedValuesConstraint.builder();
 
-    applyToBuilder(xmlConstraint, target, source, builder);
+    applyToBuilder(xmlObject, target, source, builder);
 
-    if (xmlConstraint.isSetRemarks()) {
-      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
+    if (xmlObject.isSetRemarks()) {
+      builder.remarks(remarks(ObjectUtils.notNull(xmlObject.getRemarks())));
     }
 
-    builder.allowedValues(toAllowedValues(xmlConstraint));
-    if (xmlConstraint.isSetAllowOther()) {
-      builder.allowedOther(xmlConstraint.getAllowOther());
+    builder.allowedValues(toAllowedValues(xmlObject));
+    if (xmlObject.isSetAllowOther()) {
+      builder.allowedOther(xmlObject.getAllowOther());
     }
-    if (xmlConstraint.isSetExtensible()) {
-      builder.extensible(ObjectUtils.notNull(xmlConstraint.getExtensible()));
+    if (xmlObject.isSetExtensible()) {
+      builder.extensible(ObjectUtils.notNull(xmlObject.getExtensible()));
     }
 
     return builder.build();
@@ -196,24 +202,24 @@ public final class ModelFactory {
 
   @NonNull
   private static <T extends AbstractConstraintBuilder<T, ?>> T applyToBuilder(
-      @NonNull ConstraintType xmlConstraint,
+      @NonNull ConstraintType xmlObject,
       @NonNull MetapathExpression target,
       @NonNull ISource source,
       @NonNull T builder) {
 
-    if (xmlConstraint.isSetId()) {
-      builder.identifier(ObjectUtils.notNull(xmlConstraint.getId()));
+    if (xmlObject.isSetId()) {
+      builder.identifier(ObjectUtils.notNull(xmlObject.getId()));
     }
     builder.target(target);
     builder.source(source);
-    builder.level(level(xmlConstraint.getLevel()));
+    builder.level(level(xmlObject.getLevel()));
     return builder;
   }
 
   /**
    * Parse the constraint XMLBeans representation.
    *
-   * @param xmlConstraint
+   * @param xmlObject
    *          the XmlObject representing the constraint
    * @param source
    *          the descriptor for the resource containing the constraint
@@ -221,9 +227,9 @@ public final class ModelFactory {
    */
   @NonNull
   public static IMatchesConstraint newMatchesConstraint(
-      @NonNull ScopedMatchesConstraintType xmlConstraint,
+      @NonNull TargetedMatchesConstraintType xmlObject,
       @NonNull ISource source) {
-    return newMatchesConstraint(xmlConstraint, target(xmlConstraint.getTarget()), source);
+    return newMatchesConstraint(xmlObject, target(xmlObject.getTarget()), source);
   }
 
   /**
@@ -244,31 +250,31 @@ public final class ModelFactory {
 
   @NonNull
   private static IMatchesConstraint newMatchesConstraint(
-      @NonNull MatchesConstraintType xmlConstraint,
+      @NonNull MatchesConstraintType xmlObject,
       @NonNull MetapathExpression target,
       @NonNull ISource source) {
     IMatchesConstraint.Builder builder = IMatchesConstraint.builder();
 
-    applyToBuilder(xmlConstraint, target, source, builder);
+    applyToBuilder(xmlObject, target, source, builder);
 
-    if (xmlConstraint.isSetRemarks()) {
-      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
+    if (xmlObject.isSetRemarks()) {
+      builder.remarks(remarks(ObjectUtils.notNull(xmlObject.getRemarks())));
     }
 
-    if (xmlConstraint.isSetRegex()) {
-      builder.regex(ObjectUtils.notNull(xmlConstraint.getRegex()));
+    if (xmlObject.isSetRegex()) {
+      builder.regex(ObjectUtils.notNull(xmlObject.getRegex()));
     }
-    if (xmlConstraint.isSetDatatype()) {
-      builder.datatype(ObjectUtils.notNull(xmlConstraint.getDatatype()));
+    if (xmlObject.isSetDatatype()) {
+      builder.datatype(ObjectUtils.notNull(xmlObject.getDatatype()));
     }
 
     return builder.build();
   }
 
   private static void buildKeyFields(
-      @NonNull KeyConstraintType xmlConstraint,
+      @NonNull KeyConstraintType xmlObject,
       @NonNull AbstractKeyConstraintBuilder<?, ?> builder) {
-    for (KeyConstraintType.KeyField xmlKeyField : xmlConstraint.getKeyFieldList()) {
+    for (KeyConstraintType.KeyField xmlKeyField : xmlObject.getKeyFieldList()) {
       IKeyField keyField = IKeyField.of(
           ObjectUtils.requireNonNull(xmlKeyField.getTarget()),
           xmlKeyField.isSetPattern() ? xmlKeyField.getPattern() : null, // NOPMD - intentional
@@ -280,7 +286,7 @@ public final class ModelFactory {
   /**
    * Parse the constraint XMLBeans representation.
    *
-   * @param xmlConstraint
+   * @param xmlObject
    *          the XmlObject representing the constraint
    * @param source
    *          the descriptor for the resource containing the constraint
@@ -288,17 +294,17 @@ public final class ModelFactory {
    */
   @NonNull
   public static IUniqueConstraint newUniqueConstraint(
-      @NonNull ScopedKeyConstraintType xmlConstraint,
+      @NonNull TargetedKeyConstraintType xmlObject,
       @NonNull ISource source) {
     IUniqueConstraint.Builder builder = IUniqueConstraint.builder();
 
-    applyToBuilder(xmlConstraint, target(xmlConstraint.getTarget()), source, builder);
+    applyToBuilder(xmlObject, target(xmlObject.getTarget()), source, builder);
 
-    if (xmlConstraint.isSetRemarks()) {
-      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
+    if (xmlObject.isSetRemarks()) {
+      builder.remarks(remarks(ObjectUtils.notNull(xmlObject.getRemarks())));
     }
 
-    buildKeyFields(xmlConstraint, builder);
+    buildKeyFields(xmlObject, builder);
 
     return builder.build();
   }
@@ -306,7 +312,7 @@ public final class ModelFactory {
   /**
    * Parse the constraint XMLBeans representation.
    *
-   * @param xmlConstraint
+   * @param xmlObject
    *          the XmlObject representing the constraint
    * @param source
    *          the descriptor for the resource containing the constraint
@@ -314,18 +320,18 @@ public final class ModelFactory {
    */
   @NonNull
   public static IIndexConstraint newIndexConstraint(
-      @NonNull ScopedIndexConstraintType xmlConstraint,
+      @NonNull TargetedIndexConstraintType xmlObject,
       @NonNull ISource source) {
     IIndexConstraint.Builder builder = IIndexConstraint.builder();
 
-    applyToBuilder(xmlConstraint, target(xmlConstraint.getTarget()), source, builder);
+    applyToBuilder(xmlObject, target(xmlObject.getTarget()), source, builder);
 
-    if (xmlConstraint.isSetRemarks()) {
-      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
+    if (xmlObject.isSetRemarks()) {
+      builder.remarks(remarks(ObjectUtils.notNull(xmlObject.getRemarks())));
     }
 
-    builder.name(ObjectUtils.requireNonNull(xmlConstraint.getName()));
-    buildKeyFields(xmlConstraint, builder);
+    builder.name(ObjectUtils.requireNonNull(xmlObject.getName()));
+    buildKeyFields(xmlObject, builder);
 
     return builder.build();
   }
@@ -333,7 +339,7 @@ public final class ModelFactory {
   /**
    * Parse the constraint XMLBeans representation.
    *
-   * @param xmlConstraint
+   * @param xmlObject
    *          the XmlObject representing the constraint
    * @param source
    *          the descriptor for the resource containing the constraint
@@ -341,15 +347,15 @@ public final class ModelFactory {
    */
   @NonNull
   public static IIndexHasKeyConstraint newIndexHasKeyConstraint(
-      @NonNull ScopedIndexHasKeyConstraintType xmlConstraint,
+      @NonNull TargetedIndexHasKeyConstraintType xmlObject,
       @NonNull ISource source) {
-    return newIndexHasKeyConstraint(xmlConstraint, target(xmlConstraint.getTarget()), source);
+    return newIndexHasKeyConstraint(xmlObject, target(xmlObject.getTarget()), source);
   }
 
   /**
    * Parse the constraint XMLBeans representation.
    *
-   * @param xmlConstraint
+   * @param xmlObject
    *          the XmlObject representing the constraint
    * @param source
    *          the descriptor for the resource containing the constraint
@@ -357,27 +363,27 @@ public final class ModelFactory {
    */
   @NonNull
   public static IIndexHasKeyConstraint newIndexHasKeyConstraint(
-      @NonNull IndexHasKeyConstraintType xmlConstraint,
+      @NonNull IndexHasKeyConstraintType xmlObject,
       @NonNull ISource source) {
-    return newIndexHasKeyConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE, source);
+    return newIndexHasKeyConstraint(xmlObject, MetapathExpression.CONTEXT_NODE, source);
 
   }
 
   @NonNull
   private static IIndexHasKeyConstraint newIndexHasKeyConstraint(
-      @NonNull IndexHasKeyConstraintType xmlConstraint,
+      @NonNull IndexHasKeyConstraintType xmlObject,
       @NonNull MetapathExpression target,
       @NonNull ISource source) {
     IIndexHasKeyConstraint.Builder builder = IIndexHasKeyConstraint.builder();
 
-    applyToBuilder(xmlConstraint, target, source, builder);
+    applyToBuilder(xmlObject, target, source, builder);
 
-    if (xmlConstraint.isSetRemarks()) {
-      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
+    if (xmlObject.isSetRemarks()) {
+      builder.remarks(remarks(ObjectUtils.notNull(xmlObject.getRemarks())));
     }
 
-    builder.name(ObjectUtils.requireNonNull(xmlConstraint.getName()));
-    buildKeyFields(xmlConstraint, builder);
+    builder.name(ObjectUtils.requireNonNull(xmlObject.getName()));
+    buildKeyFields(xmlObject, builder);
 
     return builder.build();
   }
@@ -385,7 +391,7 @@ public final class ModelFactory {
   /**
    * Parse the constraint XMLBeans representation.
    *
-   * @param xmlConstraint
+   * @param xmlObject
    *          the XmlObject representing the constraint
    * @param source
    *          the descriptor for the resource containing the constraint
@@ -393,15 +399,15 @@ public final class ModelFactory {
    */
   @NonNull
   public static IExpectConstraint newExpectConstraint(
-      @NonNull ScopedExpectConstraintType xmlConstraint,
+      @NonNull TargetedExpectConstraintType xmlObject,
       @NonNull ISource source) {
-    return newExpectConstraint(xmlConstraint, target(xmlConstraint.getTarget()), source);
+    return newExpectConstraint(xmlObject, target(xmlObject.getTarget()), source);
   }
 
   /**
    * Parse the constraint XMLBeans representation.
    *
-   * @param xmlConstraint
+   * @param xmlObject
    *          the XmlObject representing the constraint
    * @param source
    *          the descriptor for the resource containing the constraint
@@ -409,9 +415,9 @@ public final class ModelFactory {
    */
   @NonNull
   public static IExpectConstraint newExpectConstraint(
-      @NonNull ExpectConstraintType xmlConstraint,
+      @NonNull ExpectConstraintType xmlObject,
       @NonNull ISource source) {
-    return newExpectConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE, source);
+    return newExpectConstraint(xmlObject, MetapathExpression.CONTEXT_NODE, source);
   }
 
   @NonNull
@@ -440,7 +446,7 @@ public final class ModelFactory {
   /**
    * Parse the constraint XMLBeans representation.
    *
-   * @param xmlConstraint
+   * @param xmlObject
    *          the XmlObject representing the constraint
    * @param source
    *          the descriptor for the resource containing the constraint
@@ -448,25 +454,54 @@ public final class ModelFactory {
    */
   @NonNull
   public static ICardinalityConstraint newCardinalityConstraint(
-      @NonNull HasCardinalityConstraintType xmlConstraint,
+      @NonNull TargetedHasCardinalityConstraintType xmlObject,
       @NonNull ISource source) {
 
     ICardinalityConstraint.Builder builder = ICardinalityConstraint.builder();
 
-    applyToBuilder(xmlConstraint, target(xmlConstraint.getTarget()), source, builder);
+    applyToBuilder(xmlObject, target(xmlObject.getTarget()), source, builder);
 
-    if (xmlConstraint.isSetRemarks()) {
-      builder.remarks(remarks(ObjectUtils.notNull(xmlConstraint.getRemarks())));
+    if (xmlObject.isSetRemarks()) {
+      builder.remarks(remarks(ObjectUtils.notNull(xmlObject.getRemarks())));
     }
 
-    if (xmlConstraint.isSetMinOccurs()) {
-      builder.minOccurs(xmlConstraint.getMinOccurs().intValueExact());
+    if (xmlObject.isSetMinOccurs()) {
+      builder.minOccurs(xmlObject.getMinOccurs().intValueExact());
     }
 
-    if (xmlConstraint.isSetMaxOccurs()) {
-      builder.maxOccurs(xmlConstraint.getMaxOccurs().intValueExact());
+    if (xmlObject.isSetMaxOccurs()) {
+      builder.maxOccurs(xmlObject.getMaxOccurs().intValueExact());
     }
 
     return builder.build();
+  }
+
+  /**
+   * Generate a new Let expression by parsing the provided XMLBeans object.
+   *
+   * @param xmlObject
+   *          the XmlObject representing the constraint
+   * @param source
+   *          the descriptor for the resource containing the constraint
+   * @return the original let statement with the same name or {@code null}
+   */
+  @NonNull
+  public static ILet newLet(
+      @NonNull ConstraintLetType xmlObject,
+      @NonNull ISource source) {
+    try {
+      return new DefaultLet(
+          ObjectUtils.notNull(xmlObject.getVar()),
+          ObjectUtils.notNull(xmlObject.getExpression()),
+          source);
+    } catch (MetapathException ex) {
+      throw new MetapathException(
+          String.format("Unable to compile the let expression '%s=%s'%s. %s",
+              xmlObject.getVar(),
+              xmlObject.getExpression(),
+              source.getSource() == null ? "" : " in " + source.getSource(),
+              ex.getMessage()),
+          ex);
+    }
   }
 }

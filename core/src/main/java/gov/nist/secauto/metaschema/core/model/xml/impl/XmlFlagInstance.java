@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.FlagReferenceType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -42,11 +43,14 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class XmlFlagInstance
     extends AbstractFlagInstance {
   @NonNull
   private final FlagReferenceType xmlFlag;
+  @Nullable
+  private final Object defaultValue;
 
   /**
    * Constructs a new Metaschema flag instance definition from an XML
@@ -60,6 +64,11 @@ class XmlFlagInstance
   public XmlFlagInstance(@NonNull FlagReferenceType xmlFlag, @NonNull IFlagContainer parent) {
     super(parent);
     this.xmlFlag = xmlFlag;
+    Object defaultValue = null;
+    if (xmlFlag.isSetDefault()) {
+      defaultValue = getDefinition().getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlFlag.getDefault()));
+    }
+    this.defaultValue = defaultValue;
   }
 
   /**
@@ -77,6 +86,10 @@ class XmlFlagInstance
     return ObjectUtils.requireNonNull(getContainingDefinition().getContainingModule()
         .getScopedFlagDefinitionByName(getName()));
   }
+
+  // ----------------------------------------
+  // - Start XmlBeans driven code - CPD-OFF -
+  // ----------------------------------------
 
   @Override
   public String getFormalName() {
@@ -100,6 +113,28 @@ class XmlFlagInstance
     return getXmlFlag().getRef();
   }
 
+  @Override
+  public String getUseName() {
+    return getXmlFlag().isSetUseName() ? getXmlFlag().getUseName().getStringValue() : null;
+  }
+
+  @Override
+  public Integer getUseIndex() {
+    Integer retval = null;
+    if (getXmlFlag().isSetUseName()) {
+      UseNameType useName = getXmlFlag().getUseName();
+      if (useName.isSetIndex()) {
+        retval = useName.getIndex().intValue();
+      }
+    }
+    return retval;
+  }
+
+  @Override
+  public Object getDefaultValue() {
+    return defaultValue;
+  }
+
   @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
@@ -111,26 +146,7 @@ class XmlFlagInstance
     return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : MetaschemaModelConstants.DEFAULT_FLAG_REQUIRED;
   }
 
-  @Override
-  public String getUseName() {
-    return getXmlFlag().isSetUseName() ? getXmlFlag().getUseName().getStringValue() : null;
-  }
-
-  @Override
-  public Integer getUseIndex() {
-    Integer retval = null;
-    if (getXmlFlag().isSetUseName()) {
-      FlagReferenceType.UseName useName = getXmlFlag().getUseName();
-      if (useName.isSetIndex()) {
-        retval = useName.getIndex().intValue();
-      }
-    }
-    return retval;
-  }
-
-  @Override
-  public Object getValue(@NonNull Object parentValue) {
-    // there is no value
-    return null;
-  }
+  // -------------------------------------
+  // - End XmlBeans driven code - CPD-ON -
+  // -------------------------------------
 }

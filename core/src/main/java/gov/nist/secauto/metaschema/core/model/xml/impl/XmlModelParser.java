@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.model.xml.impl;
 
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
@@ -38,6 +39,11 @@ import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.AssemblyReferenceType
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ChoiceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.FieldReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupAsType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedAssemblyReferenceType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedChoiceType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedFieldReferenceType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedInlineAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedInlineFieldDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFieldDefinitionType;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -55,7 +61,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 //@SuppressWarnings("PMD.CouplingBetweenObjects")
-public class XmlModelParser {
+public final class XmlModelParser {
   @SuppressWarnings("PMD.UseConcurrentHashMap")
   @NonNull
   private static final XmlObjectParser<Pair<IModelContainer, IStandardModelContainerSupport>> MODEL_PARSER
@@ -70,7 +76,9 @@ public class XmlModelParser {
               Map.entry(new QName(IModule.METASCHEMA_XML_NS, "define-field"),
                   XmlModelParser::handleDefineField),
               Map.entry(new QName(IModule.METASCHEMA_XML_NS, "choice"),
-                  XmlModelParser::handleChoice)))) {
+                  XmlModelParser::handleChoice),
+              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "choice-group"),
+                  XmlModelParser::handleChoiceGroup)))) {
 
         @Override
         protected Handler<Pair<IModelContainer, IStandardModelContainerSupport>> identifyHandler(
@@ -87,12 +95,52 @@ public class XmlModelParser {
             retval = XmlModelParser::handleDefineAssembly;
           } else if (obj instanceof ChoiceType) {
             retval = XmlModelParser::handleChoice;
+          } else if (obj instanceof GroupedChoiceType) {
+            retval = XmlModelParser::handleChoiceGroup;
           } else {
             retval = super.identifyHandler(cursor, obj);
           }
           return retval;
         }
       };
+
+  @SuppressWarnings("PMD.UseConcurrentHashMap")
+  @NonNull
+  private static final XmlObjectParser<Pair<IModelContainer, IStandardModelContainerSupport>> CHOICE_GROUP_PARSER
+      = new XmlObjectParser<>(ObjectUtils.notNull(
+          Map.ofEntries(
+              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "assembly"),
+                  XmlModelParser::handleGroupedAssembly),
+              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "define-assembly"),
+                  XmlModelParser::handleGroupedDefineAssembly),
+              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "field"),
+                  XmlModelParser::handleGroupedField),
+              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "define-field"),
+                  XmlModelParser::handleGroupedDefineField)))) {
+
+        @Override
+        protected Handler<Pair<IModelContainer, IStandardModelContainerSupport>> identifyHandler(
+            XmlCursor cursor,
+            XmlObject obj) {
+          Handler<Pair<IModelContainer, IStandardModelContainerSupport>> retval;
+          if (obj instanceof GroupedFieldReferenceType) {
+            retval = XmlModelParser::handleGroupedField;
+          } else if (obj instanceof GroupedInlineFieldDefinitionType) {
+            retval = XmlModelParser::handleGroupedDefineField;
+          } else if (obj instanceof GroupedAssemblyReferenceType) {
+            retval = XmlModelParser::handleGroupedAssembly;
+          } else if (obj instanceof GroupedInlineAssemblyDefinitionType) {
+            retval = XmlModelParser::handleGroupedDefineAssembly;
+          } else {
+            retval = super.identifyHandler(cursor, obj);
+          }
+          return retval;
+        }
+      };
+
+  private XmlModelParser() {
+    // disable construction
+  }
 
   private static void handleField(
       @NonNull XmlObject obj,
@@ -139,6 +187,51 @@ public class XmlModelParser {
     state.getRight().getModelInstances().add(choice);
   }
 
+  private static void handleChoiceGroup(
+      @NonNull XmlObject obj,
+      Pair<IModelContainer, IStandardModelContainerSupport> state) {
+    XmlChoiceGroupInstance choice = new XmlChoiceGroupInstance(
+        (GroupedChoiceType) obj,
+        ObjectUtils.notNull(state.getLeft()));
+    state.getRight().getModelInstances().add(choice);
+  }
+
+  private static void handleGroupedField(
+      @NonNull XmlObject obj,
+      Pair<IModelContainer, IStandardModelContainerSupport> state) {
+    IFieldInstance field = new XmlGroupedFieldInstance(
+        (GroupedFieldReferenceType) obj,
+        ObjectUtils.notNull(state.getLeft()));
+    append(field, ObjectUtils.notNull(state.getRight()));
+  }
+
+  private static void handleGroupedDefineField(
+      @NonNull XmlObject obj,
+      Pair<IModelContainer, IStandardModelContainerSupport> state) {
+    IFieldInstance field = new XmlGroupedInlineFieldDefinition(
+        (GroupedInlineFieldDefinitionType) obj,
+        ObjectUtils.notNull(state.getLeft()));
+    append(field, ObjectUtils.notNull(state.getRight()));
+  }
+
+  private static void handleGroupedAssembly(
+      @NonNull XmlObject obj,
+      Pair<IModelContainer, IStandardModelContainerSupport> state) {
+    IAssemblyInstance field = new XmlGroupedAssemblyInstance(
+        (GroupedAssemblyReferenceType) obj,
+        ObjectUtils.notNull(state.getLeft()));
+    append(field, ObjectUtils.notNull(state.getRight()));
+  }
+
+  private static void handleGroupedDefineAssembly(
+      @NonNull XmlObject obj,
+      Pair<IModelContainer, IStandardModelContainerSupport> state) {
+    IAssemblyInstance field = new XmlGroupedInlineAssemblyDefinition(
+        (GroupedInlineAssemblyDefinitionType) obj,
+        ObjectUtils.notNull(state.getLeft()));
+    append(field, ObjectUtils.notNull(state.getRight()));
+  }
+
   private static void append(
       @NonNull IFieldInstance field,
       @NonNull IStandardModelContainerSupport container) {
@@ -157,7 +250,16 @@ public class XmlModelParser {
     container.getModelInstances().add(assembly);
   }
 
-  // REFACTOR: move up to calling location
+  /**
+   * Parse a choice XMLBeans object.
+   *
+   * @param xmlObject
+   *          the XMLBeans object
+   * @param parent
+   *          the parent Metaschema node, either an assembly definition or choice
+   * @param container
+   *          the model container
+   */
   public static void parseChoice(
       @NonNull ChoiceType xmlObject,
       @NonNull IModelContainer parent,
@@ -165,10 +267,36 @@ public class XmlModelParser {
     MODEL_PARSER.parse(xmlObject, Pair.of(parent, container));
   }
 
-  // REFACTOR: move up to calling location
+  /**
+   * Parse a choice group XMLBeans object.
+   *
+   * @param xmlObject
+   *          the XMLBeans object
+   * @param parent
+   *          the parent Metaschema node, either an assembly definition or choice
+   * @param container
+   *          the model container
+   */
+  public static void parseChoiceGroup(
+      @NonNull GroupedChoiceType xmlObject,
+      @NonNull IModelContainer parent,
+      @NonNull IStandardModelContainerSupport container) {
+    CHOICE_GROUP_PARSER.parse(xmlObject, Pair.of(parent, container));
+  }
+
+  /**
+   * Parse a choice XMLBeans object.
+   *
+   * @param xmlObject
+   *          the XMLBeans object
+   * @param parent
+   *          the parent Metaschema assembly definition
+   * @param container
+   *          the model container
+   */
   public static void parseModel(
       @NonNull AssemblyModelType xmlObject,
-      @NonNull IModelContainer parent,
+      @NonNull IAssemblyDefinition parent,
       @NonNull IStandardModelContainerSupport container) {
     MODEL_PARSER.parse(xmlObject, Pair.of(parent, container));
   }

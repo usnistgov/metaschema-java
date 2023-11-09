@@ -37,8 +37,9 @@ import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
-import gov.nist.secauto.metaschema.core.model.constraint.impl.ValueConstraintSet;
+import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFlagDefinitionType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -51,7 +52,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
-class XmlGlobalFlagDefinition implements IFlagDefinition {
+class XmlGlobalFlagDefinition implements IFlagDefinition, IFeatureGlobalDefinition<IFlagInstance> {
   @NonNull
   private final GlobalFlagDefinitionType xmlFlag;
   @NonNull
@@ -90,16 +91,6 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
     });
   }
 
-  @Override
-  public IModule getContainingModule() {
-    return module;
-  }
-
-  @Override
-  public Object getDefaultValue() {
-    return defaultValue;
-  }
-
   /**
    * Used to generate the instances for the constraints in a lazy fashion when the
    * constraints are first accessed.
@@ -110,6 +101,21 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   @Override
   public IValueConstrained getConstraintSupport() {
     return constraints.get();
+  }
+
+  @Override
+  public IModule getContainingModule() {
+    return module;
+  }
+
+  @Override
+  public Object getDefaultValue() {
+    return defaultValue;
+  }
+
+  @Override
+  public IFlagInstance getInlineInstance() {
+    return IFeatureGlobalDefinition.super.getInlineInstance();
   }
 
   // ----------------------------------------
@@ -151,7 +157,7 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   public Integer getUseIndex() {
     Integer retval = null;
     if (getXmlFlag().isSetUseName()) {
-      GlobalFlagDefinitionType.UseName useName = getXmlFlag().getUseName();
+      UseNameType useName = getXmlFlag().getUseName();
       if (useName.isSetIndex()) {
         retval = useName.getIndex().intValue();
       }
@@ -190,17 +196,4 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   // --------------------------------------
   // - End annotation driven code - CPD-ON
   // --------------------------------------
-
-  @Override
-  public boolean isInline() {
-    // global
-    return false;
-  }
-
-  @Override
-  public IFlagInstance getInlineInstance() {
-    // global
-    return null;
-  }
-
 }

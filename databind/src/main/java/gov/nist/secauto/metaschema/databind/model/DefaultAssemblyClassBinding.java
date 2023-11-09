@@ -28,10 +28,12 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -101,16 +103,21 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
     }
     this.metaschemaAssembly = ObjectUtils.notNull(clazz.getAnnotation(MetaschemaAssembly.class));
     String namespace = ObjectUtils.notNull(ModelUtil.resolveNamespace(this.metaschemaAssembly.rootNamespace(), this));
-    String localName = ModelUtil.resolveLocalName(this.metaschemaAssembly.rootName(), null);
+    String localName = ModelUtil.resolveNoneOrDefault(this.metaschemaAssembly.rootName(), null);
 
     this.xmlRootQName = localName == null ? null : new QName(namespace, localName);
 
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new ClassBindingFlagContainerSupport(this, null)));
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> new ClassBindingModelContainerSupport(this)));
-    this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> new AssemblyConstraintSupport(
-        clazz.getAnnotation(ValueConstraints.class),
-        clazz.getAnnotation(AssemblyConstraints.class),
-        ISource.modelSource())));
+    this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
+      IModelConstrained retval = new AssemblyConstraintSet();
+      ValueConstraints valueAnnotation = this.metaschemaAssembly.valueConstraints();
+      ConstraintSupport.parse(valueAnnotation, ISource.modelSource(), retval);
+
+      AssemblyConstraints assemblyAnnotation = this.metaschemaAssembly.modelConstraints();
+      ConstraintSupport.parse(assemblyAnnotation, ISource.modelSource(), retval);
+      return retval;
+    }));
   }
 
   @SuppressWarnings("null")
@@ -126,7 +133,8 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
       IBoundNamedModelInstance,
       IBoundFieldInstance,
       IBoundAssemblyInstance,
-      IChoiceInstance> getModelContainer() {
+      IChoiceInstance,
+      IChoiceGroupInstance> getModelContainer() {
     return modelContainer.get();
   }
 
@@ -143,8 +151,14 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   }
 
   @Override
+  public IBoundAssemblyInstance getInlineInstance() {
+    Class<?> parentClass = getBoundClass().getEnclosingClass();
+    return parentClass == null ? null : (IBoundAssemblyInstance) getBindingContext().getClassBinding(parentClass);
+  }
+
+  @Override
   public String getFormalName() {
-    return ModelUtil.resolveToString(getMetaschemaAssemblyAnnotation().formalName());
+    return ModelUtil.resolveNoneOrValue(getMetaschemaAssemblyAnnotation().formalName());
   }
 
   @Override
@@ -166,16 +180,6 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   public Integer getIndex() {
     int value = getMetaschemaAssemblyAnnotation().index();
     return value == Integer.MIN_VALUE ? null : value;
-  }
-
-  @Override
-  public boolean isInline() {
-    return false;
-  }
-
-  @Override
-  public IBoundAssemblyInstance getInlineInstance() {
-    return null;
   }
 
   @Override

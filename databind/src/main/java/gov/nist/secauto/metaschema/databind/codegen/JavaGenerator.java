@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.databind.codegen;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -98,8 +97,6 @@ public final class JavaGenerator {
       LOGGER.info("Generating Java classes in: {}", targetDirectory);
     }
 
-    ITypeResolver typeResolver = ITypeResolver.newTypeResolver(bindingConfiguration);
-
-    return IProduction.of(modules, typeResolver, targetDirectory);
+    return IProduction.of(modules, bindingConfiguration, targetDirectory);
   }
 }

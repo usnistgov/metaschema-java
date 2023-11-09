@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.Constants;
@@ -110,6 +111,7 @@ class DefaultFlagProperty
     return flag;
   }
 
+  @Override
   public Object getDefaultValue() {
     return this.defaultValue;
   }
@@ -136,7 +138,7 @@ class DefaultFlagProperty
 
   @Override
   public String getFormalName() {
-    return ModelUtil.resolveToString(getFlagAnnotation().formalName());
+    return ModelUtil.resolveNoneOrValue(getFlagAnnotation().formalName());
   }
 
   @Override
@@ -146,7 +148,7 @@ class DefaultFlagProperty
 
   @Override
   public String getUseName() {
-    return ModelUtil.resolveToString(getFlagAnnotation().useName());
+    return ModelUtil.resolveNoneOrValue(getFlagAnnotation().useName());
   }
 
   @Override
@@ -186,12 +188,16 @@ class DefaultFlagProperty
   }
 
   private final class InternalFlagDefinition implements IFlagDefinition {
+    @NonNull
     private final Lazy<IValueConstrained> constraints;
 
     private InternalFlagDefinition() {
-      this.constraints = Lazy.lazy(() -> new ValueConstraintSupport(
-          getField().getAnnotation(ValueConstraints.class),
-          ISource.modelSource()));
+      this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
+        IValueConstrained retval = new ValueConstraintSet();
+        ValueConstraints valueAnnotation = getFlagAnnotation().valueConstraints();
+        ConstraintSupport.parse(valueAnnotation, ISource.modelSource(), retval);
+        return retval;
+      }));
     }
 
     @SuppressWarnings("null")
@@ -228,6 +234,7 @@ class DefaultFlagProperty
 
     @Override
     public boolean isInline() {
+      // flags are always inline
       return true;
     }
 

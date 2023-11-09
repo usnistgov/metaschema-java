@@ -26,13 +26,13 @@
 
 package gov.nist.secauto.metaschema.databind.model.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 
 import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -40,7 +40,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 @Documented
 @Retention(RUNTIME)
-@Target({ FIELD })
+@Target(ElementType.ANNOTATION_TYPE)
 public @interface GroupAs {
   /**
    * The name to use for an XML grouping element wrapper or a JSON/YAML grouping

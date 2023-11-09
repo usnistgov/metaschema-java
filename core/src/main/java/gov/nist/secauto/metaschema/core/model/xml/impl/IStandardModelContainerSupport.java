@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
@@ -35,6 +36,6 @@ import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 
 public interface IStandardModelContainerSupport
     extends IModelContainerSupport<
-        IModelInstance, INamedModelInstance, IFieldInstance, IAssemblyInstance, IChoiceInstance> {
+        IModelInstance, INamedModelInstance, IFieldInstance, IAssemblyInstance, IChoiceInstance, IChoiceGroupInstance> {
   // no additional methods
 }

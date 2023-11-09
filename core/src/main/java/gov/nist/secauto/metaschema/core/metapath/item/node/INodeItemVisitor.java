@@ -35,13 +35,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * The {@link AbstractNodeItemVisitor} provides an abstract implementation of
  * this visitor pattern.
  *
- * @param <RESULT>
- *          the type of result produced by visitation
  * @param <CONTEXT>
  *          the type of data to pass to each visited node
+ * @param <RESULT>
+ *          the type of result produced by visitation
  * @see AbstractNodeItemVisitor
  */
-public interface INodeItemVisitor<RESULT, CONTEXT> {
+public interface INodeItemVisitor<CONTEXT, RESULT> {
   /**
    * This callback is called when the {@link IDocumentNodeItem} is visited.
    *

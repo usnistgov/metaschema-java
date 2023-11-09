@@ -31,16 +31,14 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvi
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
-import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
-import gov.nist.secauto.metaschema.core.model.constraint.impl.ValueConstraintSet;
+import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFlagDefinitionType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -55,49 +53,76 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 class XmlInlineFlagDefinition
-    extends AbstractFlagInstance {
+    extends AbstractFlagInstance
+    implements IFlagDefinition, IFeatureInlinedDefinition<IFlagDefinition, IFlagInstance> {
   @NonNull
   private final InlineFlagDefinitionType xmlFlag;
+  @Nullable
+  private final Object defaultValue;
   @NonNull
-  private final InternalFlagDefinition flagDefinition;
   private final Lazy<IValueConstrained> constraints;
 
   /**
    * Constructs a new Metaschema flag definition from an XML representation bound
    * to Java objects.
    *
-   * @param xmlFlag
+   * @param xmlObject
    *          the XML representation bound to Java objects
    * @param parent
    *          the parent definition, which must be a definition type that can
    *          contain flags.
    */
-  public XmlInlineFlagDefinition(@NonNull InlineFlagDefinitionType xmlFlag, @NonNull IFlagContainer parent) {
+  @SuppressWarnings("PMD.NullAssignment")
+  public XmlInlineFlagDefinition(@NonNull InlineFlagDefinitionType xmlObject, @NonNull IFlagContainer parent) {
     super(parent);
-    this.xmlFlag = xmlFlag;
-    this.flagDefinition = new InternalFlagDefinition();
-    this.constraints = Lazy.lazy(() -> {
+    this.xmlFlag = xmlObject;
+    this.defaultValue = xmlObject.isSetDefault()
+        ? getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlObject.getDefault()))
+        : null;
+    this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();
       if (getXmlFlag().isSetConstraint()) {
         ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(getXmlFlag().getConstraint()),
             ISource.modelSource(ObjectUtils.requireNonNull(getContainingModule().getLocation())));
       }
       return retval;
-    });
+    }));
   }
 
   @Override
-  public InternalFlagDefinition getDefinition() {
-    return flagDefinition;
+  public IFlagDefinition getDefinition() {
+    return this;
   }
 
+  // REFACTOR: use default?
   @Override
   public IModule getContainingModule() {
     return getContainingDefinition().getContainingModule();
   }
 
+  @Override
+  @NonNull
+  public IFlagInstance getInlineInstance() {
+    return this;
+  }
+
+  /**
+   * Used to generate the instances for the constraints in a lazy fashion when the
+   * constraints are first accessed.
+   */
+  @SuppressWarnings("null")
+  @Override
+  public IValueConstrained getConstraintSupport() {
+    return constraints.get();
+  }
+
+  @Override
+  public Object getDefaultValue() {
+    return defaultValue;
+  }
+
   // ----------------------------------------
-  // - Start Annotation driven code - CPD-OFF
+  // - Start XmlBeans driven code - CPD-OFF -
   // ----------------------------------------
 
   /**
@@ -107,6 +132,12 @@ class XmlInlineFlagDefinition
    */
   protected final InlineFlagDefinitionType getXmlFlag() {
     return xmlFlag;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public IDataTypeAdapter<?> getJavaTypeAdapter() {
+    return getXmlFlag().isSetAsType() ? getXmlFlag().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
   }
 
   @Override
@@ -148,135 +179,7 @@ class XmlInlineFlagDefinition
     return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
   }
 
-  // --------------------------------------
-  // - End Annotation driven code - CPD-ON
-  // --------------------------------------
-
-  @Override
-  public String getUseName() {
-    // flags cannot use a use-name
-    return null;
-  }
-
-  @Override
-  public Integer getUseIndex() {
-    // an inline definition doesn't have a use name index
-    return null;
-  }
-
-  @Override
-  public Object getValue(@NonNull Object parentValue) {
-    // there is no value
-    return null;
-  }
-
-  /**
-   * The corresponding definition for the local flag instance.
-   */
-  private final class InternalFlagDefinition
-      implements IFlagDefinition,
-      IFeatureInlinedDefinition<IFlagInstance> {
-    @Nullable
-    private final Object defaultValue;
-
-    private InternalFlagDefinition() {
-      Object defaultValue = null;
-      if (getXmlFlag().isSetDefault()) {
-        defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(getXmlFlag().getDefault()));
-      }
-      this.defaultValue = defaultValue;
-    }
-
-    // ----------------------------------------
-    // - Start annotation driven code - CPD-OFF
-    // ----------------------------------------
-
-    @SuppressWarnings("null")
-    @Override
-    public IDataTypeAdapter<?> getJavaTypeAdapter() {
-      return getXmlFlag().isSetAsType() ? getXmlFlag().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
-    }
-
-    // --------------------------------------
-    // - End annotation driven code - CPD-ON
-    // --------------------------------------
-
-    @Override
-    public Object getDefaultValue() {
-      return defaultValue;
-    }
-
-    @Override
-    public boolean isInline() {
-      return true;
-    }
-
-    @Override
-    @NonNull
-    public IFlagInstance getInlineInstance() {
-      return XmlInlineFlagDefinition.this;
-    }
-
-    @Override
-    public String getName() {
-      return XmlInlineFlagDefinition.this.getName();
-    }
-
-    @Override
-    public Integer getIndex() {
-      return XmlInlineFlagDefinition.this.getIndex();
-    }
-
-    @Override
-    public String getUseName() {
-      // always use the name
-      return null;
-    }
-
-    @Override
-    public Integer getUseIndex() {
-      // always use the name index instead
-      return null;
-    }
-
-    @Override
-    public ModuleScopeEnum getModuleScope() {
-      return ModuleScopeEnum.LOCAL;
-    }
-
-    @Override
-    public String getFormalName() {
-      return XmlInlineFlagDefinition.this.getFormalName();
-    }
-
-    @Override
-    public MarkupLine getDescription() {
-      return XmlInlineFlagDefinition.this.getDescription();
-    }
-
-    @Override
-    public Map<QName, Set<String>> getProperties() {
-      return XmlInlineFlagDefinition.this.getProperties();
-    }
-
-    /**
-     * Used to generate the instances for the constraints in a lazy fashion when the
-     * constraints are first accessed.
-     */
-    @SuppressWarnings("null")
-    @Override
-    public IValueConstrained getConstraintSupport() {
-      return constraints.get();
-    }
-
-    @Override
-    public MarkupMultiline getRemarks() {
-      return XmlInlineFlagDefinition.this.getRemarks();
-    }
-
-    @Override
-    public IModule getContainingModule() {
-      return XmlInlineFlagDefinition.super.getContainingDefinition().getContainingModule();
-    }
-  }
+  // -------------------------------------
+  // - End XmlBeans driven code - CPD-ON -
+  // -------------------------------------
 }

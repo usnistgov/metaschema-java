@@ -59,7 +59,7 @@ class XmlChoiceInstance
     this.xmlChoice = xmlChoice;
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
       IStandardModelContainerSupport retval = new DefaultModelContainerSupport();
-      new XmlModelParser().parseChoice(xmlChoice, parent, retval);
+      XmlModelParser.parseChoice(xmlChoice, parent, retval);
       return retval;
     }));
   }
@@ -71,9 +71,13 @@ class XmlChoiceInstance
 
   @Override
   public String getGroupAsName() {
-    // a choice does not have a name
+    // a choice does not have a groups-as name
     return null;
   }
+
+  // ----------------------------------------
+  // - Start XmlBeans driven code - CPD-OFF -
+  // ----------------------------------------
 
   /**
    * Get the underlying XML data.
@@ -81,13 +85,17 @@ class XmlChoiceInstance
    * @return the underlying XML data
    */
   @NonNull
-  protected ChoiceType getXmlChoice() {
+  protected ChoiceType getXmlObject() {
     return xmlChoice;
   }
 
   @Override
   public MarkupMultiline getRemarks() {
-    // TODO: add support when remarks are added
+    // remarks not supported
     return null;
   }
+
+  // -------------------------------------
+  // - End XmlBeans driven code - CPD-ON -
+  // -------------------------------------
 }

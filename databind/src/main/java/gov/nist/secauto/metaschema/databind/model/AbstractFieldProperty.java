@@ -28,7 +28,11 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
+import gov.nist.secauto.metaschema.databind.model.annotations.IGroupAs;
 
 import java.lang.reflect.Field;
 import java.util.Locale;
@@ -39,44 +43,50 @@ public abstract class AbstractFieldProperty
     extends AbstractNamedModelProperty
     implements IBoundFieldInstance {
   @NonNull
-  private final BoundField fieldAnnotation;
+  private final BoundField boundField;
+  @NonNull
+  private final IGroupAs groupAs;
 
   public AbstractFieldProperty(@NonNull Field field, @NonNull IAssemblyClassBinding parentClassBinding) {
     super(field, parentClassBinding);
 
-    BoundField fieldAnnotation = field.getAnnotation(BoundField.class);
-    if (fieldAnnotation == null) {
+    BoundField boundField = field.getAnnotation(BoundField.class);
+    if (boundField == null) {
       throw new IllegalStateException(String.format("Field '%s' on class '%s' is missing the '%s' annotation.",
           field.getName(), parentClassBinding.getBoundClass().getName(), BoundField.class.getName()));
     }
-    this.fieldAnnotation = fieldAnnotation;
+    this.boundField = boundField;
+    this.groupAs = IGroupAs.of(boundField.groupAs(), parentClassBinding);
+    if ((getMaxOccurs() == -1 || getMaxOccurs() > 1)) {
+      if (IGroupAs.SINGLETON_GROUP_AS.equals(this.groupAs)) {
+        throw new IllegalStateException(String.format("Field '%s' on class '%s' is missing the '%s' annotation.",
+            field.getName(),
+            parentClassBinding.getBoundClass().getName(),
+            GroupAs.class.getName()));
+      }
+    } else if (!IGroupAs.SINGLETON_GROUP_AS.equals(this.groupAs)) {
+      // max is 1 and a groupAs is set
+      throw new IllegalStateException(
+          String.format(
+              "Field '%s' on class '%s' has the '%s' annotation, but maxOccurs=1. A groupAs must not be specfied.",
+              field.getName(),
+              parentClassBinding.getBoundClass().getName(),
+              GroupAs.class.getName()));
+    }
   }
+
+  // ------------------------------------------
+  // - Start annotation driven code - CPD-OFF -
+  // ------------------------------------------
 
   @NonNull
   protected BoundField getFieldAnnotation() {
-    return fieldAnnotation;
+    return boundField;
   }
-
-  //
-  // @Override
-  // protected IDataTypeHandler newDataTypeHandler() {
-  // Class<?> itemClass = getItemType();
-  //
-  // IDataTypeHandler retval;
-  // if (itemClass.isAnnotationPresent(MetaschemaField.class)) {
-  // IClassBinding classBinding
-  // =
-  // getParentClassBinding().getBindingContext().getClassBinding(getPropertyInfo().getItemType());
-  // retval = new ClassDataTypeHandler(classBinding, this);
-  // } else {
-  // retval = new JavaTypeAdapterDataTypeHandler(this);
-  // }
-  // return retval;
-  // }
 
   @Override
   public String getFormalName() {
-    return ModelUtil.resolveToString(getFieldAnnotation().formalName());
+    return ModelUtil.resolveNoneOrValue(getFieldAnnotation().formalName());
   }
 
   @Override
@@ -86,7 +96,7 @@ public abstract class AbstractFieldProperty
 
   @Override
   public String getUseName() {
-    return ModelUtil.resolveToString(getFieldAnnotation().useName());
+    return ModelUtil.resolveNoneOrValue(getFieldAnnotation().useName());
   }
 
   @Override
@@ -101,13 +111,33 @@ public abstract class AbstractFieldProperty
   }
 
   @Override
-  public int getMinOccurs() {
+  public final int getMinOccurs() {
     return getFieldAnnotation().minOccurs();
   }
 
   @Override
-  public int getMaxOccurs() {
+  public final int getMaxOccurs() {
     return getFieldAnnotation().maxOccurs();
+  }
+
+  @Override
+  public String getGroupAsName() {
+    return groupAs.getGroupAsName();
+  }
+
+  @Override
+  public String getGroupAsXmlNamespace() {
+    return groupAs.getGroupAsXmlNamespace();
+  }
+
+  @Override
+  public JsonGroupAsBehavior getJsonGroupAsBehavior() {
+    return groupAs.getJsonGroupAsBehavior();
+  }
+
+  @Override
+  public XmlGroupAsBehavior getXmlGroupAsBehavior() {
+    return groupAs.getXmlGroupAsBehavior();
   }
 
   @Override
@@ -123,4 +153,8 @@ public abstract class AbstractFieldProperty
         getParentClassBinding().getBoundClass().getName(),
         getName());
   }
+
+  // ---------------------------------------
+  // - End annotation driven code - CPD-ON -
+  // ---------------------------------------
 }

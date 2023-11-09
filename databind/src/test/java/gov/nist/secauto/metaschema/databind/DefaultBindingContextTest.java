@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.core.model.xml.ConstraintLoader;
+import gov.nist.secauto.metaschema.core.model.xml.ExternalConstraintsModulePostProcessor;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.test.TestMetaschema;
@@ -53,7 +54,9 @@ class DefaultBindingContextTest {
     IConstraintSet constraintSet = constraintLoader.load(
         ObjectUtils.notNull(Paths.get("src/test/resources/content/constraints.xml")));
 
-    IBindingContext bindingContext = new DefaultBindingContext(CollectionUtil.singleton(constraintSet));
+    ExternalConstraintsModulePostProcessor postProcessor
+        = new ExternalConstraintsModulePostProcessor(CollectionUtil.singleton(constraintSet));
+    IBindingContext bindingContext = new DefaultBindingContext(CollectionUtil.singletonList(postProcessor));
     IModule module = bindingContext.getModuleByClass(TestMetaschema.class);
 
     IAssemblyDefinition root = module.getExportedAssemblyDefinitionByName("root");

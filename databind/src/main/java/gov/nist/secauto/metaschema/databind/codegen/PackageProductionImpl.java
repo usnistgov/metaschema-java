@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.codegen;
 
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IMetaschemaClassFactory;
+
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;

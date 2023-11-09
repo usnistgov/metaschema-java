@@ -32,15 +32,15 @@ public interface INodeItemVisitable {
   /**
    * A visitor callback.
    *
-   * @param <RESULT>
-   *          the type of the visitor result
    * @param <CONTEXT>
    *          the type of the context parameter
+   * @param <RESULT>
+   *          the type of the visitor result
    * @param visitor
    *          the calling visitor
    * @param context
    *          a parameter used to pass contextual information between visitors
    * @return the visitor result
    */
-  <RESULT, CONTEXT> RESULT accept(@NonNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
+  <CONTEXT, RESULT> RESULT accept(@NonNull INodeItemVisitor<CONTEXT, RESULT> visitor, CONTEXT context);
 }

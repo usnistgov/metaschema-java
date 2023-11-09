@@ -26,15 +26,31 @@
 
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
+import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeName;
 
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.codegen.impl.AnnotationGenerator;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionTypeInfo;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
+import gov.nist.secauto.metaschema.databind.model.annotations.JsonFieldValueKeyFlag;
+import gov.nist.secauto.metaschema.databind.model.annotations.JsonKey;
+
+import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class FlagInstanceTypeInfoImpl
+public class FlagInstanceTypeInfoImpl
     extends AbstractInstanceTypeInfo<IFlagInstance, IDefinitionTypeInfo>
     implements IFlagInstanceTypeInfo {
   public FlagInstanceTypeInfoImpl(@NonNull IFlagInstance instance, @NonNull IDefinitionTypeInfo parentDefinition) {
@@ -49,5 +65,59 @@ class FlagInstanceTypeInfoImpl
   @Override
   public TypeName getJavaFieldType() {
     return ObjectUtils.notNull(ClassName.get(getInstance().getDefinition().getJavaTypeAdapter().getJavaClass()));
+  }
+
+  @SuppressWarnings("PMD.CyclomaticComplexity") // acceptable
+  @Override
+  public Set<IFlagContainer> buildField(FieldSpec.Builder builder) {
+    super.buildField(builder);
+
+    AnnotationSpec.Builder annotation = AnnotationSpec.builder(BoundFlag.class);
+
+    IFlagInstance instance = getInstance();
+
+    String formalName = instance.getEffectiveFormalName();
+    if (formalName != null) {
+      annotation.addMember("formalName", "$S", formalName);
+    }
+
+    MarkupLine description = instance.getEffectiveDescription();
+    if (description != null) {
+      annotation.addMember("description", "$S", description.toMarkdown());
+    }
+
+    annotation.addMember("useName", "$S", instance.getEffectiveName());
+
+    if (instance.isRequired()) {
+      annotation.addMember("required", "$L", true);
+    }
+
+    IFlagDefinition definition = instance.getDefinition();
+
+    IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
+    annotation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
+
+    MarkupMultiline remarks = instance.getRemarks();
+    if (remarks != null) {
+      annotation.addMember("remarks", "$S", remarks.toMarkdown());
+    }
+
+    AnnotationGenerator.buildValueConstraints(annotation, definition);
+
+    builder.addAnnotation(annotation.build());
+
+    IFlagContainer parent = instance.getContainingDefinition();
+    if (parent.hasJsonKey() && instance.equals(parent.getJsonKeyFlagInstance())) {
+      builder.addAnnotation(JsonKey.class);
+    }
+
+    if (parent instanceof IFieldDefinition) {
+      IFieldDefinition parentField = (IFieldDefinition) parent;
+
+      if (parentField.hasJsonValueKeyFlagInstance() && instance.equals(parentField.getJsonValueKeyFlagInstance())) {
+        builder.addAnnotation(JsonFieldValueKeyFlag.class);
+      }
+    }
+    return CollectionUtil.emptySet();
   }
 }

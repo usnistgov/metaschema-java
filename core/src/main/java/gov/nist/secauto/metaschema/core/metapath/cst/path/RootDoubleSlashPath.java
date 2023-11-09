@@ -36,6 +36,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class RootDoubleSlashPath
     extends AbstractRootPathExpression {
 
+  /**
+   * Construct a new expression that finds an ancestor of the document root using
+   * the {@code right} expression.
+   *
+   * @param node
+   *          the path to evaluate relative to the document root
+   */
   public RootDoubleSlashPath(@NonNull IExpression node) {
     super(node);
   }

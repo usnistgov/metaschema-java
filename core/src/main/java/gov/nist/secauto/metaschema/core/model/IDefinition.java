@@ -41,7 +41,28 @@ public interface IDefinition extends INamedModelElement, IFeatureValueConstraine
    * @return the module scope
    */
   @NonNull
-  ModuleScopeEnum getModuleScope();
+  default ModuleScopeEnum getModuleScope() {
+    return ModuleScopeEnum.LOCAL;
+  }
+
+  /**
+   * Determine if the definition is defined inline, meaning the definition is
+   * declared where it is used.
+   *
+   * @return {@code true} if the definition is declared inline or {@code false} if
+   *         the definition is able to be globally referenced
+   */
+  default boolean isInline() {
+    return false;
+  }
+
+  /**
+   * If {@link #isInline()} is {@code true}, return the instance the definition is
+   * inlined for.
+   *
+   * @return the instance or {@code null} otherwise
+   */
+  INamedInstance getInlineInstance();
 
   /**
    * Generates a coordinate string for the provided information element
@@ -65,21 +86,4 @@ public interface IDefinition extends INamedModelElement, IFeatureValueConstraine
         getModelType(),
         getName(), hashCode());
   }
-
-  /**
-   * Determine if the definition is defined inline, meaning the definition is
-   * declared where it is used.
-   *
-   * @return {@code true} if the definition is declared inline or {@code false} if
-   *         the definition is able to be globally referenced
-   */
-  boolean isInline();
-
-  /**
-   * If {@link #isInline()} is {@code true}, return the instance the definition is
-   * inlined for.
-   *
-   * @return the instance or {@code null} otherwise
-   */
-  INamedInstance getInlineInstance();
 }

@@ -28,6 +28,6 @@ package gov.nist.secauto.metaschema.core.model;
 
 public interface IFeatureStandardModelContainer
     extends IFeatureModelContainer<
-        IModelInstance, INamedModelInstance, IFieldInstance, IAssemblyInstance, IChoiceInstance> {
+        IModelInstance, INamedModelInstance, IFieldInstance, IAssemblyInstance, IChoiceInstance, IChoiceGroupInstance> {
   // no additional methods
 }

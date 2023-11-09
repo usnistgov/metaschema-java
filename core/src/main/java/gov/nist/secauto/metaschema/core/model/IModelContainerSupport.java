@@ -37,7 +37,8 @@ public interface IModelContainerSupport<
     NMI extends INamedModelInstance,
     FI extends IFieldInstance,
     AI extends IAssemblyInstance,
-    CI extends IChoiceInstance> {
+    CI extends IChoiceInstance,
+    CG extends IChoiceGroupInstance> {
 
   /**
    * Get a listing of all model instances.
@@ -81,4 +82,12 @@ public interface IModelContainerSupport<
    */
   @NonNull
   List<CI> getChoiceInstances();
+
+  /**
+   * Get a listing of all choice group instances.
+   *
+   * @return the listing
+   */
+  @NonNull
+  List<CG> getChoiceGroupInstances();
 }

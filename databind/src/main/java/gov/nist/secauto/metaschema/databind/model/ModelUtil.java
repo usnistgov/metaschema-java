@@ -45,18 +45,18 @@ public final class ModelUtil {
   }
 
   /**
-   * Resolves a provided local name value. If the value is {@code null} or
-   * "##default", then the provided default value will be used instead. If the
-   * value is "##none", then the value will be {@code null}. Otherwise, the value
-   * is returned.
+   * Resolves a string value. If the value is {@code null} or "##default", then
+   * the provided default value will be used instead. If the value is "##none",
+   * then the value will be {@code null}. Otherwise, the value is returned.
    *
    * @param value
    *          the requested value
    * @param defaultValue
    *          the default value
-   * @return the resolved value
+   * @return the resolved value or {@code null}
    */
-  public static String resolveLocalName(String value, String defaultValue) {
+  @Nullable
+  public static String resolveNoneOrDefault(@Nullable String value, @Nullable String defaultValue) {
     String retval;
     if (value == null || Constants.DEFAULT_STRING_VALUE.equals(value)) {
       retval = defaultValue;
@@ -106,41 +106,42 @@ public final class ModelUtil {
   }
 
   /**
-   * Get the markup value of a markdown string.
+   * Get the processed value of a string. If the value is "##none", then the value
+   * will be {@code null}. Otherwise the value is returned.
    *
-   * @param annotationValue
-   *          markdown text or {@code "##none"} if no text is provided
-   * @return the markup line content or {@code null} if no markup content was
-   *         provided
-   */
-  @Nullable
-  public static MarkupLine resolveToMarkupLine(@NonNull String annotationValue) {
-    return Constants.NO_STRING_VALUE.equals(annotationValue) ? null : MarkupLine.fromMarkdown(annotationValue);
-  }
-
-  /**
-   * Get the markup value of a markdown string.
-   *
-   * @param annotationValue
-   *          markdown text or {@code "##none"} if no text is provided
-   * @return the markup line content or {@code null} if no markup content was
-   *         provided
-   */
-  @Nullable
-  public static MarkupMultiline resolveToMarkupMultiline(@NonNull String annotationValue) {
-    return Constants.NO_STRING_VALUE.equals(annotationValue) ? null : MarkupMultiline.fromMarkdown(annotationValue);
-  }
-
-  /**
-   * Get the string value of a string.
-   *
-   * @param annotationValue
+   * @param value
    *          text or {@code "##none"} if no text is provided
-   * @return the string content or {@code null} if no string content was provided
+   * @return the resolved value or {@code null}
    */
   @Nullable
-  public static String resolveToString(@NonNull String annotationValue) {
-    return Constants.NO_STRING_VALUE.equals(annotationValue) ? null : annotationValue;
+  public static String resolveNoneOrValue(@NonNull String value) {
+    return Constants.NO_STRING_VALUE.equals(value) ? null : value;
+  }
+
+  /**
+   * Get the markup value of a markdown string.
+   *
+   * @param value
+   *          markdown text or {@code "##none"} if no text is provided
+   * @return the markup line content or {@code null} if no markup content was
+   *         provided
+   */
+  @Nullable
+  public static MarkupLine resolveToMarkupLine(@NonNull String value) {
+    return resolveNoneOrValue(value) == null ? null : MarkupLine.fromMarkdown(value);
+  }
+
+  /**
+   * Get the markup value of a markdown string.
+   *
+   * @param value
+   *          markdown text or {@code "##none"} if no text is provided
+   * @return the markup line content or {@code null} if no markup content was
+   *         provided
+   */
+  @Nullable
+  public static MarkupMultiline resolveToMarkupMultiline(@NonNull String value) {
+    return resolveNoneOrValue(value) == null ? null : MarkupMultiline.fromMarkdown(value);
   }
 
   @NonNull
@@ -163,4 +164,5 @@ public final class ModelUtil {
     }
     return retval;
   }
+
 }

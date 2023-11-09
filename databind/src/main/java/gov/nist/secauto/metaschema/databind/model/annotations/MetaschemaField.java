@@ -42,7 +42,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * This annotation indicates that the target class represents a Module field.
  * <p>
  * Classes with this annotation must have a field with the
- * {@link MetaschemaFieldValue} annotation.
+ * {@link BoundFieldValue} annotation.
  */
 @Documented
 @Retention(RUNTIME)
@@ -123,4 +123,12 @@ public @interface MetaschemaField {
    */
   @NonNull
   String remarks() default Constants.NO_STRING_VALUE;
+
+  /**
+   * Get the value constraints defined for this Metaschema field definition.
+   *
+   * @return the value constraints
+   */
+  ValueConstraints valueConstraints() default @ValueConstraints;
+
 }

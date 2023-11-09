@@ -108,7 +108,7 @@ public class GenerateSchemaMojo
    * <code>inlineDefinitions</code> is also enabled.
    */
   @Parameter(defaultValue = "false")
-  private boolean inlineChoiceDefinitions = false;
+  private boolean inlineChoiceDefinitions; // false;
 
   /**
    * Determine if inlining definitions is required.
@@ -256,21 +256,19 @@ public class GenerateSchemaMojo
     if (shouldExecutionBeSkipped()) {
       getLog().debug(String.format("Schema generation is configured to be skipped. Skipping."));
       generate = false;
-    } else if (!staleFile.exists()) {
+    } else if (staleFile.exists()) {
+      generate = isGenerationRequired();
+    } else {
       getLog().info(String.format("Stale file '%s' doesn't exist! Generating source files.", staleFile.getPath()));
       generate = true;
-    } else {
-      generate = isGenerationRequired();
     }
 
     if (generate) {
       File outputDir = getOutputDirectory();
       getLog().debug(String.format("Using outputDirectory: %s", outputDir.getPath()));
 
-      if (!outputDir.exists()) {
-        if (!outputDir.mkdirs()) {
-          throw new MojoExecutionException("Unable to create output directory: " + outputDir);
-        }
+      if (!outputDir.exists() && !outputDir.mkdirs()) {
+        throw new MojoExecutionException("Unable to create output directory: " + outputDir);
       }
 
       // generate Java sources based on provided Module sources
@@ -291,10 +289,8 @@ public class GenerateSchemaMojo
       generate(modules);
 
       // create the stale file
-      if (!staleFileDirectory.exists()) {
-        if (!staleFileDirectory.mkdirs()) {
-          throw new MojoExecutionException("Unable to create output directory: " + staleFileDirectory);
-        }
+      if (!staleFileDirectory.exists() && !staleFileDirectory.mkdirs()) {
+        throw new MojoExecutionException("Unable to create output directory: " + staleFileDirectory);
       }
       try (OutputStream os
           = Files.newOutputStream(staleFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE,
