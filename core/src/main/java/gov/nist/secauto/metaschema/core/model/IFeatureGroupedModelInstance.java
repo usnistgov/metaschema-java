@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-public interface IFeatureGroupedModelInstance extends IGroupedModelInstance {
+public interface IFeatureGroupedModelInstance extends IGroupedNamedModelInstance {
 
   @Override
   default int getMinOccurs() {

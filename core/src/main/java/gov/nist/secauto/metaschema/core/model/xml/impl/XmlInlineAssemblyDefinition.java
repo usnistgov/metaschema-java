@@ -87,7 +87,7 @@ class XmlInlineAssemblyDefinition
     this.xmlObject = xmlObject;
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this)));
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-      IStandardModelContainerSupport retval = new DefaultModelContainerSupport();
+      IStandardModelContainerSupport retval = new AssemblyModelContainerSupportImpl();
       if (xmlObject.isSetModel()) {
         XmlModelParser.parseModel(ObjectUtils.notNull(xmlObject.getModel()), this, retval);
       }

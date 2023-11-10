@@ -46,7 +46,7 @@ class MetaschemaModuleMetaschemaTest
         ObjectUtils.notNull(
             Paths.get("../databind-metaschema/src/main/metaschema-bindings/metaschema-metaschema-bindings.xml")),
         null,
-        "gov.nist.secauto.metaschema.metaschema.model.METASCHEMA",
+        "gov.nist.secauto.metaschema.databind.model.metaschema.METASCHEMA",
         ObjectUtils.notNull(generationDir),
         null);
   }

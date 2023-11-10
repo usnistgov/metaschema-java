@@ -85,7 +85,7 @@ class XmlGlobalAssemblyDefinition
     this.metaschema = metaschema;
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlAssembly, this)));
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-      IStandardModelContainerSupport retval = new DefaultModelContainerSupport();
+      IStandardModelContainerSupport retval = new AssemblyModelContainerSupportImpl();
       if (xmlAssembly.isSetModel()) {
         XmlModelParser.parseModel(ObjectUtils.notNull(xmlAssembly.getModel()), this, retval);
       }

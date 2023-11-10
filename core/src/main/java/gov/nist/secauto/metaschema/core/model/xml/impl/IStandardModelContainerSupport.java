@@ -36,6 +36,11 @@ import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 
 public interface IStandardModelContainerSupport
     extends IModelContainerSupport<
-        IModelInstance, INamedModelInstance, IFieldInstance, IAssemblyInstance, IChoiceInstance, IChoiceGroupInstance> {
+        IModelInstance,
+        INamedModelInstance,
+        IFieldInstance,
+        IAssemblyInstance,
+        IChoiceInstance,
+        IChoiceGroupInstance> {
   // no additional methods
 }

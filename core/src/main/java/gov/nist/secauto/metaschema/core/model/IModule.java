@@ -43,7 +43,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * The API for accessing information about a given Metaschema.
+ * The API for accessing information about a given Metaschema module.
  * <p>
  * A Metaschem module may import another Metaschema module. This import graph
  * can be accessed using {@link #getImportedModules()}.
