@@ -26,72 +26,72 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import java.util.Collection;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IFeatureModelContainer<
+public abstract class AbstractChoicesModelContainerSupport<
     MI extends IModelInstance,
     NMI extends INamedModelInstance,
     FI extends IFieldInstance,
     AI extends IAssemblyInstance,
     CI extends IChoiceInstance,
     CG extends IChoiceGroupInstance>
-    extends IModelContainer {
-  /**
-   * Lazy initialize the model instances associated with this definition.
-   *
-   * @return the flag container
-   */
+    extends AbstractModelContainerSupport<MI, NMI, FI, AI, CI, CG> {
+
   @NonNull
-  IModelContainerSupport<MI, NMI, FI, AI, CI, CG> getModelContainer();
+  private final Class<CI> choiceClass;
+  @NonNull
+  private final Class<CG> choiceGroupClass;
 
-  @Override
-  default NMI getModelInstanceByName(String name) {
-    return getModelContainer().getNamedModelInstanceMap().get(name);
+  /**
+   * Construct a new model container with support for choice and choice group
+   * members.
+   *
+   * @param choiceClass
+   *          the Java base class for choice members
+   * @param choiceGroupClass
+   *          the Java base class for choice group members
+   */
+  protected AbstractChoicesModelContainerSupport(
+      @NonNull Class<CI> choiceClass,
+      @NonNull Class<CG> choiceGroupClass) {
+    this.choiceClass = choiceClass;
+    this.choiceGroupClass = choiceGroupClass;
   }
 
-  @SuppressWarnings("null")
+  /**
+   * Get a listing of all choice instances.
+   *
+   * @return the listing
+   */
+  @SuppressWarnings("unchecked")
   @Override
-  default Collection<? extends NMI> getNamedModelInstances() {
-    return getModelContainer().getNamedModelInstanceMap().values();
+  public List<CI> getChoiceInstances() {
+    // this shouldn't get called all that often, so this is better than allocating
+    // memory
+    return ObjectUtils.notNull(getModelInstances().stream()
+        .filter(obj -> choiceClass.isInstance(obj))
+        .map(obj -> (CI) obj)
+        .collect(Collectors.toUnmodifiableList()));
   }
 
+  /**
+   * Get a listing of all choice group instances.
+   *
+   * @return the listing
+   */
+  @SuppressWarnings("unchecked")
   @Override
-  default FI getFieldInstanceByName(String name) {
-    return getModelContainer().getFieldInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<? extends FI> getFieldInstances() {
-    return getModelContainer().getFieldInstanceMap().values();
-  }
-
-  @Override
-  default AI getAssemblyInstanceByName(String name) {
-    return getModelContainer().getAssemblyInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<? extends AI> getAssemblyInstances() {
-    return getModelContainer().getAssemblyInstanceMap().values();
-  }
-
-  @Override
-  default List<? extends CI> getChoiceInstances() {
-    return getModelContainer().getChoiceInstances();
-  }
-
-  @Override
-  default List<? extends CG> getChoiceGroupInstances() {
-    return getModelContainer().getChoiceGroupInstances();
-  }
-
-  @Override
-  default Collection<? extends MI> getModelInstances() {
-    return getModelContainer().getModelInstances();
+  public List<CG> getChoiceGroupInstances() {
+    // this shouldn't get called all that often, so this is better than allocating
+    // memory
+    return ObjectUtils.notNull(getModelInstances().stream()
+        .filter(obj -> choiceGroupClass.isInstance(obj))
+        .map(obj -> (CG) obj)
+        .collect(Collectors.toUnmodifiableList()));
   }
 }

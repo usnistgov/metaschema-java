@@ -59,7 +59,7 @@ public class MetaConstraintLoaderTest {
         = new ExternalConstraintsModulePostProcessor(CollectionUtil.singleton(constraintSet));
     ModuleLoader loader = new ModuleLoader(CollectionUtil.singletonList(postProcessor));
     URI moduleUri = ObjectUtils.notNull(
-        Paths.get("metaschema/website/content/specification/computer-example.xml").toUri());
+        Paths.get("metaschema/examples/computer-example.xml").toUri());
     IModule module = loader.load(moduleUri);
 
     MetapathExpression expression = MetapathExpression.compile("//@id");

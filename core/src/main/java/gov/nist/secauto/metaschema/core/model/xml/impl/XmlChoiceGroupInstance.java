@@ -27,10 +27,16 @@
 package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.AbstractModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.AbstractModelInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
@@ -62,7 +68,7 @@ class XmlChoiceGroupInstance
     super(parent);
     this.xmlObject = xmlObject;
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-      IStandardModelContainerSupport retval = new DefaultModelContainerSupport();
+      IStandardModelContainerSupport retval = new ModelContainerSupport();
       XmlModelParser.parseChoiceGroup(xmlObject, parent, retval);
       return retval;
     }));
@@ -133,4 +139,15 @@ class XmlChoiceGroupInstance
   // -------------------------------------
   // - End XmlBeans driven code - CPD-ON -
   // -------------------------------------
+  private static class ModelContainerSupport
+      extends AbstractModelContainerSupport<
+          IModelInstance,
+          INamedModelInstance,
+          IFieldInstance,
+          IAssemblyInstance,
+          IChoiceInstance,
+          IChoiceGroupInstance>
+      implements IStandardModelContainerSupport {
+    // no other methods
+  }
 }

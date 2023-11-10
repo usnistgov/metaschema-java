@@ -26,10 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-
-import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -52,19 +49,5 @@ public interface INamedModelInstance extends INamedInstance, IModelInstance {
       retval = getEffectiveName();
     }
     return retval;
-  }
-
-  /**
-   * Get the item values for the provided {@code instanceValue}. An instance may
-   * be singular or many valued.
-   *
-   * @param instanceValue
-   *          the instance
-   * @return the item values or an empty collection if no item values exist
-   */
-  @NonNull
-  default Collection<?> getItemValues(Object instanceValue) {
-    // no item values by default
-    return CollectionUtil.emptyList();
   }
 }

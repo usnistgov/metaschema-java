@@ -24,37 +24,35 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml.impl;
-
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+package gov.nist.secauto.metaschema.core.model;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class DefaultModelContainerSupport
-    implements IStandardModelContainerSupport {
+public class AbstractModelContainerSupport<
+    MI extends IModelInstance,
+    NMI extends INamedModelInstance,
+    FI extends IFieldInstance,
+    AI extends IAssemblyInstance,
+    CI extends IChoiceInstance,
+    CG extends IChoiceGroupInstance>
+    implements IModelContainerSupport<MI, NMI, FI, AI, CI, CG> {
 
   @NonNull
-  private final List<IModelInstance> modelInstances = new LinkedList<>();
+  private final List<MI> modelInstances = new LinkedList<>();
   @SuppressWarnings("PMD.UseConcurrentHashMap")
   @NonNull
-  private final Map<String, INamedModelInstance> namedModelInstances = new LinkedHashMap<>();
+  private final Map<String, NMI> namedModelInstances = new LinkedHashMap<>();
   @SuppressWarnings("PMD.UseConcurrentHashMap")
   @NonNull
-  private final Map<String, IFieldInstance> fieldInstances = new LinkedHashMap<>();
+  private final Map<String, FI> fieldInstances = new LinkedHashMap<>();
   @SuppressWarnings("PMD.UseConcurrentHashMap")
   @NonNull
-  private final Map<String, IAssemblyInstance> assemblyInstances = new LinkedHashMap<>();
+  private final Map<String, AI> assemblyInstances = new LinkedHashMap<>();
 
   /**
    * Get a listing of all model instances.
@@ -62,8 +60,7 @@ public class DefaultModelContainerSupport
    * @return the listing
    */
   @Override
-  @NonNull
-  public List<IModelInstance> getModelInstances() {
+  public List<MI> getModelInstances() {
     return modelInstances;
   }
 
@@ -74,8 +71,7 @@ public class DefaultModelContainerSupport
    * @return the mapping
    */
   @Override
-  @NonNull
-  public Map<String, INamedModelInstance> getNamedModelInstanceMap() {
+  public Map<String, NMI> getNamedModelInstanceMap() {
     return namedModelInstances;
   }
 
@@ -86,8 +82,7 @@ public class DefaultModelContainerSupport
    * @return the mapping
    */
   @Override
-  @NonNull
-  public Map<String, IFieldInstance> getFieldInstanceMap() {
+  public Map<String, FI> getFieldInstanceMap() {
     return fieldInstances;
   }
 
@@ -98,8 +93,7 @@ public class DefaultModelContainerSupport
    * @return the mapping
    */
   @Override
-  @NonNull
-  public Map<String, IAssemblyInstance> getAssemblyInstanceMap() {
+  public Map<String, AI> getAssemblyInstanceMap() {
     return assemblyInstances;
   }
 
@@ -109,15 +103,8 @@ public class DefaultModelContainerSupport
    * @return the listing
    */
   @Override
-  @SuppressWarnings("null")
-  @NonNull
-  public List<IChoiceInstance> getChoiceInstances() {
-    // this shouldn't get called all that often, so this is better than allocating
-    // memory
-    return getModelInstances().stream()
-        .filter(obj -> obj instanceof IChoiceInstance)
-        .map(obj -> (IChoiceInstance) obj)
-        .collect(Collectors.toList());
+  public List<CI> getChoiceInstances() {
+    throw new UnsupportedOperationException();
   }
 
   /**
@@ -126,14 +113,7 @@ public class DefaultModelContainerSupport
    * @return the listing
    */
   @Override
-  @SuppressWarnings("null")
-  @NonNull
-  public List<IChoiceGroupInstance> getChoiceGroupInstances() {
-    // this shouldn't get called all that often, so this is better than allocating
-    // memory
-    return getModelInstances().stream()
-        .filter(obj -> obj instanceof IChoiceGroupInstance)
-        .map(obj -> (IChoiceGroupInstance) obj)
-        .collect(Collectors.toList());
+  public List<CG> getChoiceGroupInstances() {
+    throw new UnsupportedOperationException();
   }
 }

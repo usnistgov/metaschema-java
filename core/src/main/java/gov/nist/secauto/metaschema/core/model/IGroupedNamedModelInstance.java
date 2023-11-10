@@ -27,68 +27,34 @@
 package gov.nist.secauto.metaschema.core.model;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
- * This marker interface indicates that this object is an instance.
+ * Represents an arbitrary grouping of Metaschema model instances.
  */
-public interface IInstance extends IModelElement {
+public interface IGroupedNamedModelInstance extends INamedModelInstance {
   /**
-   * Retrieve the Metaschema definition on which the instance was declared.
+   * Get the discriminator JSON property name to use to identify the type of a
+   * given instance object.
    *
-   * @return the Metaschema definition on which the instance was declared
+   * @return the discriminator property name or {@code null} if the effective name
+   *         should be used instead
+   */
+  @Nullable
+  String getDiscriminatorValue();
+
+  /**
+   * Get the effective discriminator JSON property name to use to identify the
+   * type of a given instance object.
+   *
+   * @return the discriminator property name
    */
   @NonNull
-  IFlagContainer getContainingDefinition();
-
-  /**
-   * Get the parent model definition that serves as the container of this
-   * instance.
-   *
-   * @return the container
-   */
-  @NonNull
-  IContainer getParentContainer();
-
-  @Override
-  default IModule getContainingModule() {
-    return getContainingDefinition().getContainingModule();
-  }
-
-  /**
-   * Get the current value from the provided {@code parentInstance} object. The
-   * provided object must be of the type associated with the definition containing
-   * this property.
-   *
-   * @param parentInstance
-   *          the object associated with the definition containing this property
-   * @return the value if available, or {@code null} otherwise
-   */
-  default Object getValue(@NonNull Object parentInstance) {
-    // no value by default
-    return null;
-  }
-
-  /**
-   * Generates a "coordinate" string for the provided information element
-   * instance.
-   *
-   * A coordinate consists of the element's:
-   * <ul>
-   * <li>containing Metaschema module's short name</li>
-   * <li>model type</li>
-   * <li>name</li>
-   * <li>hash code</li>
-   * <li>the hash code of the definition</li>
-   * </ul>
-   *
-   * @return the coordinate
-   */
-  @SuppressWarnings("null")
-  @Override
-  default String toCoordinates() {
-    IModule module = getContainingModule();
-
-    // TODO: revisit this to add more context i.e. the containing definition
-    return String.format("%s:%s", module.getShortName(), getModelType());
+  default String getEffectiveDisciminatorValue() {
+    String retval = getDiscriminatorValue();
+    if (retval == null) {
+      retval = getEffectiveName();
+    }
+    return retval;
   }
 }

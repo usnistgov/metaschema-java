@@ -51,9 +51,19 @@ public interface IChoiceGroupInstance extends IModelInstance, IModelContainer {
     return getContainingModule().getXmlNamespace().toASCIIString();
   }
 
+  /**
+   * Get the JSON property to use to discriminate between JSON objects.
+   *
+   * @return the discriminator property
+   */
   @NonNull
   String getJsonDiscriminatorProperty();
 
+  /**
+   * Get the name of the JSON key flag associated with each item object.
+   *
+   * @return the JSON key flag name
+   */
   @Nullable
   String getJsonKeyFlagName();
 }

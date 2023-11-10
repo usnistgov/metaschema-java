@@ -24,37 +24,27 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model;
+package gov.nist.secauto.metaschema.core.model.xml.impl;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import gov.nist.secauto.metaschema.core.model.AbstractChoicesModelContainerSupport;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 
-/**
- * Represents an arbitrary grouping of Metaschema model instances.
- */
-public interface IGroupedModelInstance extends INamedModelInstance {
-  /**
-   * Get the discriminator JSON property name to use to identify the type of a
-   * given instance object.
-   *
-   * @return the discriminator property name or {@code null} if the effective name
-   *         should be used instead
-   */
-  @Nullable
-  String getDiscriminatorValue();
+public class AssemblyModelContainerSupportImpl
+    extends AbstractChoicesModelContainerSupport<
+        IModelInstance,
+        INamedModelInstance,
+        IFieldInstance,
+        IAssemblyInstance,
+        IChoiceInstance,
+        IChoiceGroupInstance>
+    implements IStandardModelContainerSupport {
 
-  /**
-   * Get the effective discriminator JSON property name to use to identify the
-   * type of a given instance object.
-   *
-   * @return the discriminator property name
-   */
-  @NonNull
-  default String getEffectiveDisciminatorValue() {
-    String retval = getDiscriminatorValue();
-    if (retval == null) {
-      retval = getEffectiveName();
-    }
-    return retval;
+  protected AssemblyModelContainerSupportImpl() {
+    super(IChoiceInstance.class, IChoiceGroupInstance.class);
   }
 }

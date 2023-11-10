@@ -26,6 +26,10 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+
+import java.util.Collection;
+
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -69,6 +73,20 @@ public interface IModelInstance extends IInstance {
       }
     }
     return retval;
+  }
+
+  /**
+   * Get the item values for the provided {@code instanceValue}. An instance may
+   * be singular or many valued.
+   *
+   * @param instanceValue
+   *          the instance
+   * @return the item values or an empty collection if no item values exist
+   */
+  @NonNull
+  default Collection<?> getItemValues(Object instanceValue) {
+    // no item values by default
+    return CollectionUtil.emptyList();
   }
 
   /**
