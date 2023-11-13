@@ -33,7 +33,7 @@ import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class AbstractModelContainerSupport<
+public abstract class AbstractModelContainerSupport<
     MI extends IModelInstance,
     NMI extends INamedModelInstance,
     FI extends IFieldInstance,
