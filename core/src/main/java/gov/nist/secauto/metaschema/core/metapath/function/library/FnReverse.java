@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,7 +43,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Implements <a href=
- * "https://www.w3.org/TR/xpath-functions-31/#func-exists">fn:exists</a>.
+ * "https://www.w3.org/TR/xpath-functions-31/#func-reverse">fn:reverse</a>.
  */
 public final class FnReverse {
   @NonNull
@@ -77,18 +78,19 @@ public final class FnReverse {
   }
 
   /**
-   * Identify if there is at least one item in the {@code sequence}.
+   * Reverse the order of items in the {@code sequence}.
    *
    * @param sequence
    *          the sequence to check
-   * @return {@code true} if the sequence contains at least one item, or
-   *         {@code false} otherwise
+   * @return {@code sequence} the new sequence with items in reverse order.
+   *
    */
-  public static List<? extends IItem> fnReverse(List<? extends IItem> target) {
+  public static <T extends IItem> List<T> fnReverse(List<T> target) {
     if (target.size() <= 1) {
       return target;
     }
-    Collections.reverse(target);
-    return target;
+    List<T> newSequence = new ArrayList<>(target);
+    Collections.reverse(newSequence);
+    return newSequence;
   }
 }

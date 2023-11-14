@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.metapath.function.library;
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.bool;
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.integer;
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.string;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -40,6 +41,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
 
@@ -57,16 +59,27 @@ import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
 
 class FnEmptyTest
     extends FunctionTestBase {
-  static Stream<Arguments> provideValues() {
+  private static Stream<Arguments> provideValues() { // NOPMD - false positive
     return Stream.of(
-        Arguments.of(bool(false), new IItem[] { integer(1), integer(2), integer(3) }),
-        Arguments.of(bool(false), new IItem[] { string("hello"), string("world") }),
-        Arguments.of(bool(true), new IItem[] {}));
+        Arguments.of(
+            ISequence.of(bool(false)),
+            "empty((1,2,3))"),
+        Arguments.of(
+            ISequence.of(bool(false)),
+            "empty(('hello','world'))"),
+        Arguments.of(
+            ISequence.of(bool(false)),
+            "empty((''))"));
+    // TODO: Add when we support map constructor syntax.
+    // Arguments.of(
+    // ISequence.of(bool(true)),
+    // "empty(map{})"));
   }
 
   @ParameterizedTest
   @MethodSource("provideValues")
-  void test(@Nullable IBooleanItem expected, @NonNull IItem... items) {
-    assertFunctionResult(FnEmpty.SIGNATURE, ISequence.of(expected), List.of(ISequence.of(items)));
+  void test(@NonNull ISequence<?> expected, @NonNull String metapath) {
+    assertEquals(expected, MetapathExpression.compile(metapath).evaluateAs(null, MetapathExpression.ResultType.SEQUENCE,
+        newDynamicContext()));
   }
 }

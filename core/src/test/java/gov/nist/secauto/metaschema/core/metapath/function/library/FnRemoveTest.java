@@ -46,14 +46,20 @@ class FnRemoveTest
   private static Stream<Arguments> provideValues() { // NOPMD - false positive
     return Stream.of(
         Arguments.of(
-            ISequence.of(string("a"), string("b"),string("c")),
-              "remove(('a', 'b', 'c'), 0)"),
+            ISequence.of(string("a"), string("b"), string("c")),
+            "remove(('a', 'b', 'c'), 0)"),
         Arguments.of(
-            ISequence.of(string("b"),string("c")),
-              "remove(('a', 'b', 'c'), 1)"),
+            ISequence.of(string("b"), string("c")),
+            "remove(('a', 'b', 'c'), 1)"),
         Arguments.of(
-            ISequence.of(string("a"), string("b"),string("c")),
-              "remove(('a', 'b', 'c'), 6)"),
+            ISequence.of(string("a"), string("c")),
+            "remove(('a', 'b', 'c'), 2)"),
+        Arguments.of(
+            ISequence.of(string("a"), string("b")),
+            "remove(('a', 'b', 'c'), 3)"),
+        Arguments.of(
+            ISequence.of(string("a"), string("b"), string("c")),
+            "remove(('a', 'b', 'c'), 6)"),
         Arguments.of(
             ISequence.empty(),
             "remove((), 3)"));

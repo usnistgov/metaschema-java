@@ -36,18 +36,18 @@ import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Implements <a href=
- * "https://www.w3.org/TR/xpath-functions-31/#func-exists">fn:exists</a>.
+ * "https://www.w3.org/TR/xpath-functions-31/#func-remove">fn:remove</a>.
  */
 public final class FnRemove {
   @NonNull
-  static final IFunction SIGNATURE_ONE_ARG = IFunction.builder()
+  static final IFunction SIGNATURE = IFunction.builder()
       .name("remove")
       .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
       .deterministic()
@@ -61,7 +61,7 @@ public final class FnRemove {
       .argument(IArgument.builder()
           .name("position")
           .type(IIntegerItem.class)
-          .zeroOrMore()
+          .one()
           .build())
       .returnType(IItem.class)
       .returnZeroOrMore()
@@ -79,23 +79,33 @@ public final class FnRemove {
       @NonNull DynamicContext dynamicContext,
       IItem focus) {
     ISequence<?> target = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
-    return ISequence.of(fnRemove(target));
+    IIntegerItem position
+        = FunctionUtils.getFirstItem(FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1))), true);
+    return ISequence.of(fnRemove(target, position));
   }
 
   /**
-   * Identify if there is at least one item in the {@code sequence}.
+   * Remove the specified item at {@code position} from the {@code sequence}.
    *
    * @param sequence
    *          the sequence to check
-   * @return {@code true} if the sequence contains at least one item, or
-   *         {@code false} otherwise
+   * @param positionItem
+   *          the position of the item in the sequence
+   * @return {@code sequence} the new sequence with the item removed
    */
-  public static List<? extends IItem> fnRemove(List<? extends IItem> target, IIntegerItem position) {
-    if (target.size() <= 1) {
+  public static <T extends IItem> List<T> fnRemove(List<T> target, IIntegerItem positionItem) {
+    int position = positionItem.asInteger().intValue();
+
+    if (position == 0) {
       return target;
-    } //add else if target.size()< position?
-    
-    target.remove(position); 
-    return target;
+    }
+
+    if (position > target.size()) {
+      return target;
+    }
+
+    List<T> newSequence = new ArrayList<>(target);
+    newSequence.remove(position-1);
+    return newSequence;
   }
 }

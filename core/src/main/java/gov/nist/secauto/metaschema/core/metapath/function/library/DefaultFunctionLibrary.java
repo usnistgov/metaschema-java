@@ -144,6 +144,7 @@ public class DefaultFunctionLibrary
     registerFunction(FnPath.SIGNATURE_ONE_ARG);
     // P2: https://www.w3.org/TR/xpath-functions-31/#func-position
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-remove
+    registerFunction(FnRemove.SIGNATURE);
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-replace
     // https://www.w3.org/TR/xpath-functions-31/#func-resolve-uri
     registerFunction(FnResolveUri.SIGNATURE_ONE_ARG);

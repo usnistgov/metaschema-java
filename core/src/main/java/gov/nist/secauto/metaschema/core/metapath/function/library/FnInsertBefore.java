@@ -78,8 +78,8 @@ public final class FnInsertBefore {
   }
 
   /**
-   * An implementation of XPath 3.1
-   * <a href="https://www.w3.org/TR/xpath-functions-31/#insert-before">fn:insert-before</a>.
+   * An implementation of XPath 3.1 <a href=
+   * "https://www.w3.org/TR/xpath-functions-31/#insert-before">fn:insert-before</a>.
    *
    * @param target
    *          the sequence of Metapath items that is the target of insertion
@@ -96,7 +96,8 @@ public final class FnInsertBefore {
       @NonNull DynamicContext dynamicContext,
       IItem focus) {
     ISequence<IItem> target = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
-    IIntegerItem position = FunctionUtils.getFirstItem(FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1))), true);
+    IIntegerItem position
+        = FunctionUtils.getFirstItem(FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1))), true);
     ISequence<IItem> inserts = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(2)));
     return ISequence.of(fnInsertBefore(target, position, inserts));
   }
@@ -112,12 +113,12 @@ public final class FnInsertBefore {
    *          the sequence of Metapath items to be inserted into the target
    * @return the sequence of Metapath items with insertions
    */
-  public static <T extends IItem>List<T> fnInsertBefore(List<T> target, IIntegerItem positionItem, List<T> inserts) {
-    if(target.isEmpty()) {
+  public static <T extends IItem> List<T> fnInsertBefore(List<T> target, IIntegerItem positionItem, List<T> inserts) {
+    if (target.isEmpty()) {
       return inserts;
     }
 
-    if(inserts.isEmpty()) {
+    if (inserts.isEmpty()) {
       return target;
     }
 

@@ -76,14 +76,14 @@ public final class FnTail {
   }
 
   /**
-   * Identify if there is at least one item in the {@code sequence}.
+   * Return the last item in the {@code sequence}.
    *
    * @param sequence
    *          the sequence to check
-   * @return {@code true} if the sequence contains at least one item, or
-   *         {@code false} otherwise
+   * @return {@code IItem} the last item in the sequence {@code null} otherwise
+   *         null for no items
    */
   public static List<? extends IItem> fnTail(List<? extends IItem> sequence) {
-    return sequence.size() <= 1 ? CollectionUtil.emptyList() : sequence.subList(1, sequence.size() );
+    return sequence.size() <= 1 ? CollectionUtil.emptyList() : sequence.subList(1, sequence.size());
   }
 }

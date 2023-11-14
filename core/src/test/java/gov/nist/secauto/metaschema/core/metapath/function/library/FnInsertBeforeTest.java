@@ -46,19 +46,19 @@ class FnInsertBeforeTest
   private static Stream<Arguments> provideValues() { // NOPMD - false positive
     return Stream.of(
         Arguments.of(
-            ISequence.of(string("z"), string("a"),string("b"), string("c")),
+            ISequence.of(string("z"), string("a"), string("b"), string("c")),
             "insert-before(('a', 'b', 'c'), 0, 'z')"),
         Arguments.of(
-            ISequence.of(string("z"), string("a"),string("b"), string("c")),
+            ISequence.of(string("z"), string("a"), string("b"), string("c")),
             "insert-before(('a', 'b', 'c'), 1, 'z')"),
         Arguments.of(
-            ISequence.of(string("a"), string("z"),string("b"), string("c")),
+            ISequence.of(string("a"), string("z"), string("b"), string("c")),
             "insert-before(('a', 'b', 'c'), 2, 'z')"),
         Arguments.of(
-            ISequence.of(string("a"), string("b"),string("z"), string("c")),
+            ISequence.of(string("a"), string("b"), string("z"), string("c")),
             "insert-before(('a', 'b', 'c'), 3, 'z')"),
         Arguments.of(
-            ISequence.of(string("a"),string("b"), string("c"), string("z")),
+            ISequence.of(string("a"), string("b"), string("c"), string("z")),
             "insert-before(('a', 'b', 'c'), 4, 'z')"));
   }
 

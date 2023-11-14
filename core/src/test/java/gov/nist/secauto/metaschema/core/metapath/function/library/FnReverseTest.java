@@ -46,21 +46,21 @@ class FnReverseTest
   private static Stream<Arguments> provideValues() { // NOPMD - false positive
     return Stream.of(
         Arguments.of(
-            ISequence.of(string("c"), string("b"),string("a")),
-              "reverse(('a', 'b', 'c'))"),
+            ISequence.of(string("c"), string("b"), string("a")),
+            "reverse(('a', 'b', 'c'))"),
         Arguments.of(
             ISequence.of(string("hello")),
             "reverse(('hello'))"),
         Arguments.of(
             ISequence.empty(),
             "reverse(())"));
-        // TODO: Add tests when Metapath array syntax supported.
-        //Arguments.of(
-        //    ISequence.of(array([1, 2, 3])),
-        //    "reverse(([1,2,3]))"),
-        //Arguments.of(
-        //    ISequence.of(array([1, 2, 3]), array([1, 2, 3])),
-        //    "reverse(([1,2,3],[4,5,6]))");
+    // TODO: Add tests when Metapath array syntax supported.
+    // Arguments.of(
+    // ISequence.of(array([1, 2, 3])),
+    // "reverse(([1,2,3]))"),
+    // Arguments.of(
+    // ISequence.of(array([1, 2, 3]), array([1, 2, 3])),
+    // "reverse(([1,2,3],[4,5,6]))");
   }
 
   @ParameterizedTest

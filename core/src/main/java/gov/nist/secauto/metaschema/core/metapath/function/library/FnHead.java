@@ -41,8 +41,8 @@ import java.util.List;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Implements <a href=
- * "https://www.w3.org/TR/xpath-functions-31/#func-exists">fn:exists</a>.
+ * Implements
+ * <a href= "https://www.w3.org/TR/xpath-functions-31/#func-head">fn:head</a>.
  */
 public final class FnHead {
   @NonNull
@@ -77,12 +77,12 @@ public final class FnHead {
   }
 
   /**
-   * Identify if there is at least one item in the {@code sequence}.
+   * Return the first item in the {@code sequence}.
    *
    * @param sequence
    *          the sequence to check
-   * @return {@code true} if the sequence contains at least one item, or
-   *         {@code false} otherwise
+   * @return {@code IItem} first item in the sequence for a sequence {@code null}
+   *         otherwise no item is returned
    */
   public static IItem fnHead(List<? extends IItem> sequence) {
     return sequence.isEmpty() ? null : sequence.get(0);

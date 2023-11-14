@@ -47,7 +47,7 @@ class FnTailTest
   private static Stream<Arguments> provideValues() { // NOPMD - false positive
     return Stream.of(
         Arguments.of(
-            ISequence.of(integer(2),integer(3),integer(4),integer(5)),
+            ISequence.of(integer(2), integer(3), integer(4), integer(5)),
             "tail(1 to 5)"),
         Arguments.of(
             ISequence.of(string("b"), string("c")),
