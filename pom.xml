@@ -146,7 +146,7 @@
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
 		<dependency.thymeleaf.version>3.0.15.RELEASE</dependency.thymeleaf.version>
 		<dependency.woodstox.version>6.5.1</dependency.woodstox.version>
-		<dependency.xmlbeans.version>5.1.1</dependency.xmlbeans.version>
+		<dependency.xmlbeans.version>5.2.0</dependency.xmlbeans.version>
 		<dependency.xmlcalabash.version>1.5.6-120</dependency.xmlcalabash.version>
 		<dependency.xmlresolver.version>5.2.0</dependency.xmlresolver.version>
 		<dependency.xml-apis.version>2.0.2</dependency.xml-apis.version>
