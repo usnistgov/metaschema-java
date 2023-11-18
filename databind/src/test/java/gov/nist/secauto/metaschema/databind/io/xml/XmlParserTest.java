@@ -97,8 +97,8 @@ class XmlParserTest
 
     MultiFieldAssembly obj = new MultiFieldAssembly();
 
-    assertTrue(parser.readModelInstanceValues(field1Property, obj, start));
-    assertFalse(parser.readModelInstanceValues(field2Property, obj, start));
+    assertTrue(parser.readModelInstanceItems(field1Property, obj, start));
+    assertFalse(parser.readModelInstanceItems(field2Property, obj, start));
 
     assertEquals("field1value", obj.getField1());
     assertEquals(null, obj.getField2());
@@ -137,8 +137,13 @@ class XmlParserTest
 
   @Test
   void testXmlReadGroupedField() throws JsonParseException, IOException, XMLStreamException {
-    String xml = "<test xmlns='https://csrc.nist.gov/ns/test/xml'>\n"
-        + " <fields2>\n" + " <field2>field2value</field2>\n" + " </fields2>\n" + "</test>";
+    String xml = new StringBuilder()
+        .append("<test xmlns='https://csrc.nist.gov/ns/test/xml'>\n")
+        .append(" <fields2>\n")
+        .append("   <field2>field2value</field2>\n")
+        .append(" </fields2>\n")
+        .append("</test>")
+        .toString();
     XMLInputFactory factory = XMLInputFactory.newInstance();
     assert factory instanceof WstxInputFactory;
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
@@ -162,15 +167,15 @@ class XmlParserTest
         = ObjectUtils.requireNonNull((IAssemblyClassBinding) bindingContext.getClassBinding(MultiFieldAssembly.class));
 
     IBoundFieldInstance field1Property
-        = ObjectUtils.requireNonNull((IBoundFieldInstance) assembly.getModelInstanceByName("field1"));
+        = ObjectUtils.requireNonNull(assembly.getFieldInstanceByName("field1"));
 
     IBoundFieldInstance field2Property
-        = ObjectUtils.requireNonNull((IBoundFieldInstance) assembly.getModelInstanceByName("field2"));
+        = ObjectUtils.requireNonNull(assembly.getFieldInstanceByName("field2"));
 
     MultiFieldAssembly obj = new MultiFieldAssembly();
 
-    assertFalse(parser.readModelInstanceValues(field1Property, obj, start));
-    assertTrue(parser.readModelInstanceValues(field2Property, obj, start));
+    assertFalse(parser.readModelInstanceItems(field1Property, obj, start));
+    assertTrue(parser.readModelInstanceItems(field2Property, obj, start));
 
     assertEquals(null, obj.getField1());
     assertIterableEquals(Collections.singleton("field2value"),

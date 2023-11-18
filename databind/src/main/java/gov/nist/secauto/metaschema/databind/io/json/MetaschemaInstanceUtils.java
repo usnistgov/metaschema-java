@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
+import gov.nist.secauto.metaschema.databind.model.IFeatureNamedInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 
@@ -68,13 +68,13 @@ final class MetaschemaInstanceUtils {
    * @return a mapping of JSON property to related Module instance
    */
   @NonNull
-  public static Map<String, ? extends IBoundNamedInstance> getInstancesToParse(
+  public static Map<String, ? extends IFeatureNamedInstance> getInstancesToParse(
       @NonNull IClassBinding targetDefinition,
       boolean requiresJsonKey) {
     Collection<? extends IBoundFlagInstance> flags = targetDefinition.getFlagInstances();
     int flagCount = flags.size() - (requiresJsonKey ? 1 : 0);
 
-    @SuppressWarnings("resource") Stream<? extends IBoundNamedInstance> instanceStream;
+    @SuppressWarnings("resource") Stream<? extends IFeatureNamedInstance> instanceStream;
     if (targetDefinition instanceof IAssemblyClassBinding) {
       instanceStream = ((IAssemblyClassBinding) targetDefinition).getModelInstances().stream();
       // .flatMap((instance) -> {
@@ -111,7 +111,7 @@ final class MetaschemaInstanceUtils {
     }
     return ObjectUtils.notNull(instanceStream.collect(
         Collectors.toMap(
-            IBoundNamedInstance::getJsonName,
+            IFeatureNamedInstance::getJsonName,
             Function.identity())));
   }
 }

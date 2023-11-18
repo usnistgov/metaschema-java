@@ -26,38 +26,24 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.model.INamedInstance;
 
-import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import javax.xml.namespace.QName;
 
-abstract class AbstractFlagProperty
-    extends AbstractProperty<IClassBinding>
-    implements IBoundFlagInstance {
+public interface IFeatureNamedInstance extends INamedInstance {
 
-  public AbstractFlagProperty(@NonNull IClassBinding parentClassBinding) {
-    super(parentClassBinding);
+  @Override
+  default String getName() {
+    // delegate to the definition
+    return getDefinition().getName();
   }
 
   @Override
-  public void copyBoundObject(Object fromInstance, Object toInstance) {
-    Object value = getValue(fromInstance);
-    IDataTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();
-    setValue(toInstance, value == null ? null : adapter.copy(value));
-  }
-
-  @Override
-  public String getValueAsString(Object value) {
-    return value == null ? null : getDefinition().getJavaTypeAdapter().asString(value);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public String toCoordinates() {
-    return String.format("%s Instance(%s): %s",
-        getModelType().name().toLowerCase(Locale.ROOT),
-        getParentClassBinding().getBoundClass().getName(),
-        getName());
+  default Map<QName, Set<String>> getProperties() {
+    // TODO: implement
+    throw new UnsupportedOperationException();
   }
 }

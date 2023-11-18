@@ -26,60 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 
-import java.io.IOException;
-
-import javax.xml.namespace.QName;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-
-public interface IBoundFlagInstance
-    extends IBoundJavaProperty,
-    IFlagInstance,
-    IFeatureNamedInstance,
-    IFeatureScalarItemValueHandler {
-
-  /**
-   * Given a bound flag value, get that value as a {@link String}.
-   *
-   * @param value
-   *          the bound flag value, which may be {@code null}
-   * @return the bound flag value as a string, or {@code null} if the flag is not
-   *         defined
-   */
-  // REFACTOR: remove if possible
-  String getValueAsString(Object value);
-
+public interface IBoundGroupedFieldInstance extends IBoundGroupedNamedModelnstance, IFieldInstance {
   @Override
-  default Object getValue(@NonNull Object parent) {
-    return IBoundJavaProperty.super.getValue(parent);
-  }
-
-  @Override
-  default void setValue(@NonNull Object parent, Object value) {
-    IBoundJavaProperty.super.setValue(parent, value);
-  }
-
-  @Override
-  default String getJsonName() {
-    return IFeatureNamedInstance.super.getJsonName();
-  }
-
-  @Override
-  default boolean canHandleJsonPropertyName(String name) {
-    return name.equals(getJsonName());
-  }
-
-  @Override
-  default boolean canHandleXmlQName(QName qname) {
-    return qname.equals(getXmlQName());
-  }
-
-  @Override
-  default Object readValue(Object parentInstance, IJsonParsingContext context) throws IOException {
-    return readItem(parentInstance, context, null);
-  }
+  IFieldClassBinding getDefinition();
 }

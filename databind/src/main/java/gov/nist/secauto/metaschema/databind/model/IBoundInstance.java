@@ -26,60 +26,29 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
-
-import java.io.IOException;
-
-import javax.xml.namespace.QName;
+import gov.nist.secauto.metaschema.core.model.IInstance;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundFlagInstance
-    extends IBoundJavaProperty,
-    IFlagInstance,
-    IFeatureNamedInstance,
-    IFeatureScalarItemValueHandler {
+public interface IBoundInstance extends IBinding, IInstance {
 
   /**
-   * Given a bound flag value, get that value as a {@link String}.
+   * Get the {@link IClassBinding} for the Java class within which this property
+   * exists.
    *
-   * @param value
-   *          the bound flag value, which may be {@code null}
-   * @return the bound flag value as a string, or {@code null} if the flag is not
-   *         defined
+   * @return the containing class's binding
    */
-  // REFACTOR: remove if possible
-  String getValueAsString(Object value);
+  @Override
+  IClassBinding getContainingDefinition();
 
   @Override
-  default Object getValue(@NonNull Object parent) {
-    return IBoundJavaProperty.super.getValue(parent);
+  default IBindingContext getBindingContext() {
+    return getContainingDefinition().getBindingContext();
   }
 
-  @Override
-  default void setValue(@NonNull Object parent, Object value) {
-    IBoundJavaProperty.super.setValue(parent, value);
-  }
-
-  @Override
-  default String getJsonName() {
-    return IFeatureNamedInstance.super.getJsonName();
-  }
-
-  @Override
-  default boolean canHandleJsonPropertyName(String name) {
-    return name.equals(getJsonName());
-  }
-
-  @Override
-  default boolean canHandleXmlQName(QName qname) {
-    return qname.equals(getXmlQName());
-  }
-
-  @Override
-  default Object readValue(Object parentInstance, IJsonParsingContext context) throws IOException {
-    return readItem(parentInstance, context, null);
+  default boolean isInstanceOf(@NonNull Class<? extends IInstance> clazz) {
+    // REFACTOR: is this needed?
+    return clazz.isInstance(this);
   }
 }

@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
@@ -37,6 +37,11 @@ import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
@@ -259,11 +264,11 @@ public class DefaultFieldClassBinding
   }
 
   @Override
-  protected void copyBoundObjectInternal(@NonNull Object fromInstance, @NonNull Object toInstance)
+  protected void deepCopyItemInternal(@NonNull Object fromInstance, @NonNull Object toInstance)
       throws BindingException {
-    super.copyBoundObjectInternal(fromInstance, toInstance);
+    super.deepCopyItemInternal(fromInstance, toInstance);
 
-    getFieldValueInstance().copyBoundObject(fromInstance, toInstance);
+    getFieldValueInstance().deepCopy(fromInstance, toInstance);
   }
 
   @Override

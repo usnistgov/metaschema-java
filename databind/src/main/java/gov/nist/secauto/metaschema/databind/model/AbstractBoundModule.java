@@ -87,7 +87,7 @@ public abstract class AbstractBoundModule
       importedModules = new ArrayList<>(moduleAnnotation.imports().length);
       for (Class<? extends IModule> importClass : moduleAnnotation.imports()) {
         assert importClass != null;
-        IModule moduleImport = bindingContext.getModuleByClass(importClass);
+        IModule moduleImport = bindingContext.loadModule(importClass);
         importedModules.add(moduleImport);
       }
     } else {

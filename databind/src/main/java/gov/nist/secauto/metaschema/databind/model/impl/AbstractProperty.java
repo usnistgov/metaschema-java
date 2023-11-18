@@ -24,62 +24,34 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.impl;
 
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
-
-import java.io.IOException;
-
-import javax.xml.namespace.QName;
+import gov.nist.secauto.metaschema.databind.model.IBoundJavaProperty;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundFlagInstance
-    extends IBoundJavaProperty,
-    IFlagInstance,
-    IFeatureNamedInstance,
-    IFeatureScalarItemValueHandler {
+abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> implements IBoundJavaProperty {
+  @NonNull
+  private final CLASS_BINDING containingDefinition;
 
   /**
-   * Given a bound flag value, get that value as a {@link String}.
+   * Construct a new bound instance based on a Java property.
    *
-   * @param value
-   *          the bound flag value, which may be {@code null}
-   * @return the bound flag value as a string, or {@code null} if the flag is not
-   *         defined
+   * @param containingDefinition
+   *          the class binding for the field's containing class
    */
-  // REFACTOR: remove if possible
-  String getValueAsString(Object value);
-
-  @Override
-  default Object getValue(@NonNull Object parent) {
-    return IBoundJavaProperty.super.getValue(parent);
+  public AbstractProperty(@NonNull CLASS_BINDING containingDefinition) {
+    this.containingDefinition = containingDefinition;
   }
 
   @Override
-  default void setValue(@NonNull Object parent, Object value) {
-    IBoundJavaProperty.super.setValue(parent, value);
+  public CLASS_BINDING getParentContainer() {
+    return getContainingDefinition();
   }
 
   @Override
-  default String getJsonName() {
-    return IFeatureNamedInstance.super.getJsonName();
-  }
-
-  @Override
-  default boolean canHandleJsonPropertyName(String name) {
-    return name.equals(getJsonName());
-  }
-
-  @Override
-  default boolean canHandleXmlQName(QName qname) {
-    return qname.equals(getXmlQName());
-  }
-
-  @Override
-  default Object readValue(Object parentInstance, IJsonParsingContext context) throws IOException {
-    return readItem(parentInstance, context, null);
+  public CLASS_BINDING getContainingDefinition() {
+    return containingDefinition;
   }
 }

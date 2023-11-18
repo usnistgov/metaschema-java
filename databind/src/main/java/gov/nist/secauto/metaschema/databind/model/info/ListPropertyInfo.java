@@ -40,7 +40,7 @@ import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 
 import org.codehaus.stax2.XMLEventReader2;
 
@@ -59,7 +59,7 @@ class ListPropertyInfo
     extends AbstractModelPropertyInfo {
 
   public ListPropertyInfo(
-      @NonNull IBoundNamedModelInstance property) {
+      @NonNull IBoundModelInstance property) {
     super(property);
   }
 
@@ -92,7 +92,7 @@ class ListPropertyInfo
   }
 
   @Override
-  public boolean readValues(
+  public boolean readItems(
       IPropertyCollector collector,
       Object parentInstance,
       StartElement start,
@@ -103,13 +103,13 @@ class ListPropertyInfo
     // consume extra whitespace between elements
     XmlEventUtil.skipWhitespace(eventReader);
 
-    QName expectedFieldItemQName = getProperty().getXmlQName();
+    IBoundModelInstance property = getProperty();
 
     boolean handled = false;
     XMLEvent event;
 
     while ((event = eventReader.peek()).isStartElement()
-        && expectedFieldItemQName.equals(event.asStartElement().getName())) {
+        && property.canHandleXmlQName(ObjectUtils.notNull(event.asStartElement().getName()))) {
 
       Object value = context.readModelInstanceValue(getProperty(), parentInstance, start);
       if (value != null) {
@@ -130,7 +130,7 @@ class ListPropertyInfo
   })
 
   @Override
-  public void readValues(
+  public void readItems(
       IPropertyCollector collector,
       Object parentInstance,
       IJsonParsingContext context)
@@ -144,7 +144,7 @@ class ListPropertyInfo
 
       // parse items
       while (!JsonToken.END_ARRAY.equals(parser.currentToken())) {
-        Object value = getProperty().getDataTypeHandler().readItem(parentInstance, context);
+        Object value = getProperty().readItem(parentInstance, context, null);
         collector.add(value);
       }
 
@@ -158,7 +158,7 @@ class ListPropertyInfo
     }
     default:
       // this is a singleton, just parse the value as a single item
-      Object value = getProperty().getDataTypeHandler().readItem(parentInstance, context);
+      Object value = getProperty().readItem(parentInstance, context, null);
       collector.add(value);
     }
   }
@@ -166,7 +166,7 @@ class ListPropertyInfo
   @Override
   public void writeValues(Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
-    IBoundNamedModelInstance property = getProperty();
+    IBoundModelInstance property = getProperty();
     List<? extends Object> items = getItemsFromValue(value);
     for (Object item : items) {
       context.writeInstanceValue(property, ObjectUtils.requireNonNull(item), parentName);
@@ -190,7 +190,7 @@ class ListPropertyInfo
 
     for (Object targetObject : items) {
       assert targetObject != null;
-      getProperty().getDataTypeHandler().writeItem(targetObject, context);
+      getProperty().writeItem(targetObject, context, null);
     }
 
     if (writeArray) {
@@ -208,10 +208,10 @@ class ListPropertyInfo
   @Override
   public void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
       throws BindingException {
-    IBoundNamedModelInstance property = getProperty();
+    IBoundModelInstance property = getProperty();
 
     for (Object item : getItemsFromParentInstance(fromInstance)) {
-      collector.add(property.copyItem(ObjectUtils.requireNonNull(item), toInstance));
+      collector.add(property.deepCopyItem(ObjectUtils.requireNonNull(item), toInstance));
     }
   }
 }

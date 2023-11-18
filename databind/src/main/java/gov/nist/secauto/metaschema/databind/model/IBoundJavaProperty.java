@@ -26,60 +26,47 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
 
 import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IBoundFlagInstance
-    extends IBoundJavaProperty,
-    IFlagInstance,
-    IFeatureNamedInstance,
-    IFeatureScalarItemValueHandler {
+public interface IBoundJavaProperty extends IBoundInstance, IFeatureJavaField {
 
   /**
-   * Given a bound flag value, get that value as a {@link String}.
+   * Determine if the provided JSON property or YAML key name is associated with
+   * this property.
    *
-   * @param value
-   *          the bound flag value, which may be {@code null}
-   * @return the bound flag value as a string, or {@code null} if the flag is not
-   *         defined
+   * @param name
+   *          the name of the property/key being parsed
+   * @return {@code true} if the property will handle this name, or {@code false}
+   *         otherwise
    */
-  // REFACTOR: remove if possible
-  String getValueAsString(Object value);
+  boolean canHandleJsonPropertyName(String name);
 
-  @Override
-  default Object getValue(@NonNull Object parent) {
-    return IBoundJavaProperty.super.getValue(parent);
-  }
+  /**
+   * Determine if the provided XML qualified name is associated with this
+   * property.
+   *
+   * @param qname
+   *          the XML qualified name of the property being parsed
+   * @return {@code true} if the property will handle this name, or {@code false}
+   *         otherwise
+   */
+  boolean canHandleXmlQName(QName qname);
 
-  @Override
-  default void setValue(@NonNull Object parent, Object value) {
-    IBoundJavaProperty.super.setValue(parent, value);
-  }
+  String getJsonName();
 
-  @Override
-  default String getJsonName() {
-    return IFeatureNamedInstance.super.getJsonName();
-  }
+  @Nullable
+  Object defaultValue() throws BindingException;
 
-  @Override
-  default boolean canHandleJsonPropertyName(String name) {
-    return name.equals(getJsonName());
-  }
-
-  @Override
-  default boolean canHandleXmlQName(QName qname) {
-    return qname.equals(getXmlQName());
-  }
-
-  @Override
-  default Object readValue(Object parentInstance, IJsonParsingContext context) throws IOException {
-    return readItem(parentInstance, context, null);
-  }
+  Object readValue(
+      @NonNull Object parentInstance,
+      @NonNull IJsonParsingContext context)
+      throws IOException;
 }

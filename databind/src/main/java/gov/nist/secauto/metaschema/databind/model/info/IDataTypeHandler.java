@@ -28,15 +28,12 @@ package gov.nist.secauto.metaschema.databind.model.info;
 
 import com.fasterxml.jackson.core.JsonToken;
 
-import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 
 import java.io.IOException;
 
@@ -47,45 +44,10 @@ import javax.xml.stream.events.StartElement;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-// TODO: get rid of functional interfaces
+// REFACTOR: rename to IItemValueHandler
 public interface IDataTypeHandler {
-  @NonNull
-  static IDataTypeHandler newDataTypeHandler(
-      @NonNull IBoundNamedModelInstance targetInstance,
-      @NonNull IClassBinding classBinding) {
-    return new ClassDataTypeHandler(targetInstance, classBinding);
-  }
-
-  @NonNull
-  static IDataTypeHandler newDataTypeHandler(
-      @NonNull IClassBinding classBinding) {
-    return new ClassDataTypeHandler(null, classBinding);
-  }
-
-  @NonNull
-  static IDataTypeHandler newDataTypeHandler(
-      @NonNull IBoundFieldInstance property) {
-    return new JavaTypeAdapterDataTypeHandler(property);
-  }
-
   /**
-   * Get the class binding associated with this handler.
-   *
-   * @return the class binding or {@code null} if the property's item type is not
-   *         a bound class
-   */
-  IClassBinding getClassBinding();
-
-  /**
-   * Get the associated {@link IDataTypeAdapter}, if the data type is not a
-   * complex bound object.
-   *
-   * @return the adpater, or {@code null} otherwise
-   */
-  IDataTypeAdapter<?> getJavaTypeAdapter();
-
-  /**
-   * Indicate if the value supported by this handler allows values without an XML
+   * Indicate if the item supported by this handler allows values without an XML
    * element wrapper.
    * <p>
    * Implementations may proxy this request to the JavaTypeAdapter if it is used
@@ -96,40 +58,39 @@ public interface IDataTypeHandler {
    */
   boolean isUnwrappedValueAllowedInXml();
 
-  boolean isJsonKeyRequired();
-
   /**
    * Parse and return the set of items from the JSON stream.
    * <p>
    * An item is a complete value, which can be a {@link JsonToken#START_OBJECT},
    * or a value token.
    *
-   * @param <T>
-   *          the Java type of the bound object described by this class
-   * @param parentObject
+   * @param parent
    *          the parent Java object to use for serialization callbacks, or
    *          {@code null} if there is no parent
    * @param context
    *          the JSON/YAML parser
-   * @return the Java object representing the set of parsed items
+   * @param jsonKey
+   *          the JSON key to use or {@code null} if no JSON key is configured
+   * @return the Java object representing the parsed item(s)
    * @throws IOException
    *           if an error occurred while parsing
    */
   @NonNull
-  <T> T readItem(
-      @Nullable Object parentObject,
-      @NonNull IJsonParsingContext context) throws IOException;
+  Object readItem(
+      @Nullable Object parent,
+      @NonNull IJsonParsingContext context,
+      @Nullable IBoundFlagInstance jsonKey) throws IOException;
 
   /**
    * Parse and return the set of items from the XML stream.
    *
-   * @param parentObject
+   * @param parent
    *          the parent Java object to use for serialization callbacks
    * @param parentName
    *          the name of the parent (containing) element
    * @param context
    *          the XML writing context
-   * @return the Java object representing the set of parsed items
+   * @return the Java object representing the parsed item(s)
    * @throws IOException
    *           if an error occurred while writing
    * @throws XMLStreamException
@@ -137,30 +98,33 @@ public interface IDataTypeHandler {
    */
   @NonNull
   Object readItem(
-      @NonNull Object parentObject,
+      @NonNull Object parent,
       @NonNull StartElement parentName,
       @NonNull IXmlParsingContext context) throws IOException, XMLStreamException;
 
   /**
    * Write the provided {@code targetObject} as JSON.
    *
-   * @param targetObject
+   * @param item
    *          the data to write
    * @param context
    *          the JSON writing context
+   * @param jsonKey
+   *          the JSON key to use or {@code null} if no JSON key is configured
    * @throws IOException
    *           if an error occurred while writing
    */
   void writeItem(
-      @NonNull Object targetObject,
-      @NonNull IJsonWritingContext context) throws IOException;
+      @NonNull Object item,
+      @NonNull IJsonWritingContext context,
+      @Nullable IBoundFlagInstance jsonKey) throws IOException;
 
   /**
    * Write the provided value as XML.
    *
-   * @param value
+   * @param item
    *          the item to write
-   * @param currentParentName
+   * @param parentName
    *          the name of the parent (containing) element
    * @param context
    *          the JSON serializer
@@ -170,12 +134,12 @@ public interface IDataTypeHandler {
    *           if an error occurred while generating the XML
    */
   void writeItem(
-      @NonNull Object value,
-      @NonNull QName currentParentName,
+      @NonNull Object item,
+      @NonNull QName parentName,
       @NonNull IXmlWritingContext context) throws IOException, XMLStreamException;
 
   /**
-   * Build and return a deep copy of the provided item.
+   * Create and return a deep copy of the provided item.
    *
    * @param item
    *          the item to copy
@@ -186,6 +150,5 @@ public interface IDataTypeHandler {
    *           if an error occurred while analyzing the bound objects
    */
   @NonNull
-  Object copyItem(@NonNull Object item, @Nullable Object parentInstance) throws BindingException;
-
+  Object deepCopyItem(@NonNull Object item, @Nullable Object parentInstance) throws BindingException;
 }

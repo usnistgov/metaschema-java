@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -54,7 +54,7 @@ public interface IModelPropertyInfo {
 
   @NonNull
   static IModelPropertyInfo newPropertyInfo(
-      @NonNull IBoundNamedModelInstance instance) {
+      @NonNull IBoundModelInstance instance) {
     // create the property info
     Type type = instance.getType();
     Field field = instance.getField();
@@ -70,13 +70,15 @@ public interface IModelPropertyInfo {
         case KEYED:
           throw new IllegalStateException(
               String.format("The field '%s' on class '%s' has data type of '%s'," + " but should have a type of '%s'.",
-                  field.getName(), instance.getParentClassBinding().getBoundClass().getName(),
+                  field.getName(),
+                  field.getDeclaringClass().getName(),
                   field.getType().getName(), Map.class.getName()));
         case LIST:
         case SINGLETON_OR_LIST:
           throw new IllegalStateException(
               String.format("The field '%s' on class '%s' has data type of '%s'," + " but should have a type of '%s'.",
-                  field.getName(), instance.getParentClassBinding().getBoundClass().getName(),
+                  field.getName(),
+                  field.getDeclaringClass().getName(),
                   field.getType().getName(), List.class.getName()));
         default:
           // this should not occur
@@ -90,7 +92,7 @@ public interface IModelPropertyInfo {
           throw new IllegalArgumentException(String.format(
               "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
               field.getName(),
-              instance.getParentClassBinding().getBoundClass().getName(),
+              field.getDeclaringClass().getName(),
               field.getType().getName(),
               Map.class.getName()));
         }
@@ -100,7 +102,7 @@ public interface IModelPropertyInfo {
           throw new IllegalArgumentException(String.format(
               "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
               field.getName(),
-              instance.getParentClassBinding().getBoundClass().getName(),
+              field.getDeclaringClass().getName(),
               field.getType().getName(),
               List.class.getName()));
         }
@@ -113,7 +115,7 @@ public interface IModelPropertyInfo {
             "The field '%s' on class '%s' has a data parmeterized type of '%s',"
                 + " but the occurance is not multi-valued.",
             field.getName(),
-            instance.getParentClassBinding().getBoundClass().getName(),
+            field.getDeclaringClass().getName(),
             field.getType().getName()));
       }
       retval = new SingletonPropertyInfo(instance);
@@ -127,7 +129,7 @@ public interface IModelPropertyInfo {
    * @return the property
    */
   @NonNull
-  IBoundNamedModelInstance getProperty();
+  IBoundModelInstance getProperty();
 
   int getItemCount(@Nullable Object value);
 
@@ -162,13 +164,13 @@ public interface IModelPropertyInfo {
    * @throws IOException
    *           if there was an error when reading JSON data
    */
-  void readValues(
+  void readItems(
       @NonNull IPropertyCollector collector,
       @NonNull Object parentInstance,
       @NonNull IJsonParsingContext context)
       throws IOException;
 
-  boolean readValues(
+  boolean readItems(
       @NonNull IPropertyCollector collector,
       @NonNull Object parentInstance,
       @NonNull StartElement start,
@@ -205,6 +207,7 @@ public interface IModelPropertyInfo {
   @NonNull
   Collection<? extends Object> getItemsFromValue(Object value);
 
+  // REFACTOR: Align this method with deepCopy/deepCopyItem
   void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
       throws BindingException;
 }

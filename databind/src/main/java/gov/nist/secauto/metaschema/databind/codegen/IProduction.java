@@ -77,7 +77,7 @@ public interface IProduction {
    * @return the stream of generated Java classes
    */
   @NonNull
-  Stream<IGeneratedDefinitionClass> getGlobalDefinitionClassesAsStream();
+  Collection<IGeneratedDefinitionClass> getGlobalDefinitionClasses();
 
   /**
    * Get a stream of all Java classes generated as part of this production,

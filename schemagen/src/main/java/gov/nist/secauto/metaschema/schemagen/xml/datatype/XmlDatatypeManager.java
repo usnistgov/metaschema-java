@@ -40,22 +40,19 @@ import java.util.stream.Collectors;
 import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 public class XmlDatatypeManager
     extends AbstractDatatypeManager {
   public static final String NS_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
 
   @NonNull
-  private static final List<IDatatypeProvider> DATATYPE_PROVIDERS;
-
-  static {
-    DATATYPE_PROVIDERS = ObjectUtils.notNull(List.of(
-        new XmlCoreDatatypeProvider(),
-        new XmlProseCompositDatatypeProvider(
-            ObjectUtils.notNull(List.of(
-                new XmlMarkupMultilineDatatypeProvider(),
-                new XmlMarkupLineDatatypeProvider())))));
-  }
+  private static final Lazy<List<IDatatypeProvider>> DATATYPE_PROVIDERS = ObjectUtils.notNull(Lazy.lazy(() -> List.of(
+      new XmlCoreDatatypeProvider(),
+      new XmlProseCompositDatatypeProvider(
+          ObjectUtils.notNull(List.of(
+              new XmlMarkupMultilineDatatypeProvider(),
+              new XmlMarkupLineDatatypeProvider()))))));
 
   public void generateDatatypes(@NonNull XMLStreamWriter2 writer) throws XMLStreamException {
     // resolve dependencies
@@ -65,7 +62,7 @@ public class XmlDatatypeManager
         .filter(type -> used.contains(type))
         .collect(Collectors.toCollection(LinkedHashSet::new));
 
-    for (IDatatypeProvider provider : DATATYPE_PROVIDERS) {
+    for (IDatatypeProvider provider : DATATYPE_PROVIDERS.get()) {
       Set<String> providedDatatypes = provider.generateDatatypes(requiredTypes, writer);
       requiredTypes.removeAll(providedDatatypes);
     }

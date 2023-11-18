@@ -57,7 +57,7 @@ class DefaultBindingContextTest {
     ExternalConstraintsModulePostProcessor postProcessor
         = new ExternalConstraintsModulePostProcessor(CollectionUtil.singleton(constraintSet));
     IBindingContext bindingContext = new DefaultBindingContext(CollectionUtil.singletonList(postProcessor));
-    IModule module = bindingContext.getModuleByClass(TestMetaschema.class);
+    IModule module = bindingContext.loadModule(TestMetaschema.class);
 
     IAssemblyDefinition root = module.getExportedAssemblyDefinitionByName("root");
 

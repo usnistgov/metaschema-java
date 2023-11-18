@@ -191,7 +191,6 @@ public interface IDataTypeAdapter<TYPE> {
    * @return {@code true} if the adapter will parse the element, or {@code false}
    *         otherwise
    */
-  // TODO: implement this
   boolean canHandleQName(@NonNull QName nextElementQName);
 
   /**

@@ -26,60 +26,22 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
-
-import java.io.IOException;
-
-import javax.xml.namespace.QName;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundFlagInstance
-    extends IBoundJavaProperty,
-    IFlagInstance,
-    IFeatureNamedInstance,
-    IFeatureScalarItemValueHandler {
+/**
+ * Represents a method of binding a type of Metaschema model construct.
+ *
+ */
+public interface IBinding {
 
   /**
-   * Given a bound flag value, get that value as a {@link String}.
+   * The Metaschema module binding context used to generate and cache Metaschema
+   * module definition bindings to Java classes.
    *
-   * @param value
-   *          the bound flag value, which may be {@code null}
-   * @return the bound flag value as a string, or {@code null} if the flag is not
-   *         defined
+   * @return the binding context used to generate this class binding
    */
-  // REFACTOR: remove if possible
-  String getValueAsString(Object value);
-
-  @Override
-  default Object getValue(@NonNull Object parent) {
-    return IBoundJavaProperty.super.getValue(parent);
-  }
-
-  @Override
-  default void setValue(@NonNull Object parent, Object value) {
-    IBoundJavaProperty.super.setValue(parent, value);
-  }
-
-  @Override
-  default String getJsonName() {
-    return IFeatureNamedInstance.super.getJsonName();
-  }
-
-  @Override
-  default boolean canHandleJsonPropertyName(String name) {
-    return name.equals(getJsonName());
-  }
-
-  @Override
-  default boolean canHandleXmlQName(QName qname) {
-    return qname.equals(getXmlQName());
-  }
-
-  @Override
-  default Object readValue(Object parentInstance, IJsonParsingContext context) throws IOException {
-    return readItem(parentInstance, context, null);
-  }
+  @NonNull
+  IBindingContext getBindingContext();
 }

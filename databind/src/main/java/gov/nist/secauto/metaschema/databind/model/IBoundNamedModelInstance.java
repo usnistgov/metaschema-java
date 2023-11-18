@@ -27,79 +27,29 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
-import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import javax.xml.namespace.QName;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+public interface IBoundNamedModelInstance extends IBoundModelInstance, IFeatureNamedInstance, INamedModelInstance {
 
-/**
- * This marker interface provides common methods for interacting with bound
- * object values.
- */
-public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedModelInstance {
-
-  @NonNull
-  static Class<?> getItemType(@NonNull Field field) {
-    Type fieldType = field.getGenericType();
-    Class<?> rawType = ObjectUtils.notNull(
-        (Class<?>) (fieldType instanceof ParameterizedType ? ((ParameterizedType) fieldType).getRawType() : fieldType));
-
-    Class<?> itemType;
-    if (Map.class.isAssignableFrom(rawType)) {
-      // this is a Map so the second generic type is the value
-      itemType = ObjectUtils.notNull((Class<?>) ((ParameterizedType) fieldType).getActualTypeArguments()[1]);
-    } else if (List.class.isAssignableFrom(rawType)) {
-      // this is a List so there is only a single generic type
-      itemType = ObjectUtils.notNull((Class<?>) ((ParameterizedType) fieldType).getActualTypeArguments()[0]);
-    } else {
-      // non-collection
-      itemType = rawType;
-    }
-    return itemType;
+  @Override
+  default boolean canHandleJsonPropertyName(String name) {
+    return name.equals(getJsonName());
   }
 
   @Override
-  default Class<?> getItemType() {
-    return getPropertyInfo().getItemType();
+  default boolean canHandleXmlQName(QName qname) {
+    // return qname.equals(getXmlGroupAsQName()) // parse the grouping element
+    // || qname.equals(getXmlQName()); // parse the element
+    return qname.equals(getXmlQName()); // parse the element
   }
 
   @Override
-  IAssemblyClassBinding getParentClassBinding();
+  default String getJsonName() {
+    return INamedModelInstance.super.getJsonName();
+  }
 
-  @NonNull
-  IModelPropertyInfo getPropertyInfo();
-
-  @NonNull
-  IDataTypeHandler getDataTypeHandler();
-
-  /**
-   * Get the item values associated with the provided value.
-   *
-   * @param value
-   *          the value which may be a singleton or a collection
-   * @return the ordered collection of values
-   */
-  @Override
-  @NonNull
-  Collection<? extends Object> getItemValues(Object value);
-
-  @NonNull
-  Object copyItem(@NonNull Object fromItem, @NonNull Object toInstance) throws BindingException;
-
-  // void writeItems(List<? extends WritableItem> items, IJsonWritingContext
-  // context);
-
-  // Collection<? extends WritableItem> getItemsToWrite(Collection<? extends
-  // Object> items);
-
-  // void writeItem(Object instance, IJsonWritingContext context);
+  default boolean isValueWrappedInXml() {
+    return true;
+  }
 }

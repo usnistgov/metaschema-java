@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
@@ -37,6 +37,9 @@ import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.Constants;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonFieldValueKeyFlag;
@@ -57,7 +60,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 class DefaultFlagProperty
-    extends AbstractFlagProperty {
+    extends AbstractProperty<IClassBinding>
+    implements IBoundFlagInstance {
   // private static final Logger logger =
   // LogManager.getLogger(DefaultFlagProperty.class);
   @NonNull
@@ -77,13 +81,13 @@ class DefaultFlagProperty
    *
    * @param field
    *          the Java field to bind to
-   * @param parentClassBinding
+   * @param containingDefinition
    *          the class binding for the field's containing class
    */
   public DefaultFlagProperty(
       @NonNull Field field,
-      @NonNull IClassBinding parentClassBinding) {
-    super(parentClassBinding);
+      @NonNull IClassBinding containingDefinition) {
+    super(containingDefinition);
     this.field = ObjectUtils.requireNonNull(field, "field");
     this.flag = ObjectUtils.requireNonNull(field.getAnnotation(BoundFlag.class));
 
@@ -92,7 +96,7 @@ class DefaultFlagProperty
       this.javaTypeAdapter = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
     } else {
       this.javaTypeAdapter = ObjectUtils.requireNonNull(
-          parentClassBinding.getBindingContext().getJavaTypeAdapterInstance(adapterClass));
+          containingDefinition.getBindingContext().getJavaTypeAdapterInstance(adapterClass));
     }
 
     String defaultString = this.flag.defaultValue();
@@ -132,8 +136,8 @@ class DefaultFlagProperty
     return getFlagAnnotation().required();
   }
 
-  @NonNull
-  protected final IDataTypeAdapter<?> getJavaTypeAdapter() {
+  @Override
+  public final IDataTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
 
@@ -160,7 +164,7 @@ class DefaultFlagProperty
 
   @Override
   public String getXmlNamespace() {
-    return ModelUtil.resolveOptionalNamespace(getFlagAnnotation().namespace(), getParentClassBinding());
+    return ModelUtil.resolveOptionalNamespace(getFlagAnnotation().namespace(), getContainingDefinition());
   }
 
   @Override
@@ -184,8 +188,21 @@ class DefaultFlagProperty
     return String.format("%s Instance(%s): %s:%s",
         getModelType().name().toLowerCase(Locale.ROOT),
         getName(),
-        getParentClassBinding().getBoundClass().getName(),
+        getField().getDeclaringClass().getName(),
         getField().getName());
+  }
+
+  @Override
+  public void deepCopy(Object fromInstance, Object toInstance) throws BindingException {
+    Object value = getValue(fromInstance);
+    if (value != null) {
+      setValue(toInstance, deepCopyItem(value, toInstance));
+    }
+  }
+
+  @Override
+  public String getValueAsString(Object value) {
+    return value == null ? null : getDefinition().getJavaTypeAdapter().asString(value);
   }
 
   private final class InternalFlagDefinition implements IFlagDefinition {

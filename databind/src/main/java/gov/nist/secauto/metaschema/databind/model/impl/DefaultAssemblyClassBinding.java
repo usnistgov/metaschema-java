@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
@@ -39,6 +39,12 @@ import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.annotations.AssemblyConstraints;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
@@ -215,12 +221,12 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   }
 
   @Override
-  protected void copyBoundObjectInternal(@NonNull Object fromInstance, @NonNull Object toInstance)
+  protected void deepCopyItemInternal(@NonNull Object fromInstance, @NonNull Object toInstance)
       throws BindingException {
-    super.copyBoundObjectInternal(fromInstance, toInstance);
+    super.deepCopyItemInternal(fromInstance, toInstance);
 
     for (IBoundNamedModelInstance property : getModelInstances()) {
-      property.copyBoundObject(fromInstance, toInstance);
+      property.deepCopy(fromInstance, toInstance);
     }
   }
 

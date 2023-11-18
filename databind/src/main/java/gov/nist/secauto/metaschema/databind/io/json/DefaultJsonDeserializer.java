@@ -36,7 +36,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -129,11 +128,8 @@ public class DefaultJsonDeserializer<CLASS>
 
         retval = INodeItemFactory.instance().newDocumentNodeItem(classBinding, documentUri, value);
       } else {
-        // Make a temporary data type handler for the top-level definition
-        IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(classBinding);
-
         // read the top-level definition
-        CLASS value = dataTypeHandler.readItem(null, parser);
+        @SuppressWarnings("unchecked") CLASS value = (CLASS) classBinding.readItem(null, parser, null);
 
         retval = INodeItemFactory.instance().newAssemblyNodeItem(classBinding, documentUri, value);
       }

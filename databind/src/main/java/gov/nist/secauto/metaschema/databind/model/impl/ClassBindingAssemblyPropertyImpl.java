@@ -24,27 +24,30 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.IGroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
-import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
 import java.lang.reflect.Field;
 import java.util.Locale;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class ClassBindingAssemblyProperty
-    extends AbstractNamedModelProperty
-    implements IBoundAssemblyInstance {
+public class ClassBindingAssemblyPropertyImpl
+    extends AbstractModelProperty
+    implements IBoundAssemblyInstance, IFeatureComplexItemValueHandler {
 
   @NonNull
   private final BoundAssembly assembly;
@@ -53,7 +56,7 @@ class ClassBindingAssemblyProperty
   @NonNull
   private final IAssemblyClassBinding definition;
 
-  protected ClassBindingAssemblyProperty(
+  public ClassBindingAssemblyPropertyImpl(
       @NonNull Field field,
       @NonNull IAssemblyClassBinding definition,
       @NonNull IAssemblyClassBinding parentClassBinding) {
@@ -89,19 +92,24 @@ class ClassBindingAssemblyProperty
   }
 
   @Override
-  protected IDataTypeHandler newDataTypeHandler() {
-    IClassBinding classBinding
-        = getParentClassBinding().getBindingContext().getClassBinding(getPropertyInfo().getItemType());
-    if (classBinding == null) {
-      throw new IllegalStateException(
-          String.format("Class '%s' is not bound", getPropertyInfo().getItemType().getClass().getName()));
-    }
-    return IDataTypeHandler.newDataTypeHandler(this, classBinding);
+  public IAssemblyClassBinding getDefinition() {
+    return definition;
   }
 
   @Override
-  public IAssemblyClassBinding getDefinition() {
+  public IAssemblyClassBinding getClassBinding() {
     return definition;
+  }
+
+  @Override
+  public IBoundFlagInstance getJsonKey() {
+    return getClassBinding().getJsonKeyFlagInstance();
+  }
+
+  @Override
+  public Object getDefaultValue() {
+    // none
+    return null;
   }
 
   // ------------------------------------------
@@ -142,7 +150,7 @@ class ClassBindingAssemblyProperty
   @Override
   public String getXmlNamespace() {
     return ObjectUtils
-        .notNull(ModelUtil.resolveNamespace(getAssemblyAnnotation().namespace(), getParentClassBinding()));
+        .notNull(ModelUtil.resolveNamespace(getAssemblyAnnotation().namespace(), getContainingDefinition()));
   }
 
   @Override
@@ -185,7 +193,7 @@ class ClassBindingAssemblyProperty
   public String toCoordinates() {
     return String.format("%s Instance(%s): %s",
         getModelType().name().toLowerCase(Locale.ROOT),
-        getParentClassBinding().getBoundClass().getName(),
+        getField().getDeclaringClass().getName(),
         getName());
   }
 

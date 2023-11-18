@@ -26,43 +26,17 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.INamedInstance;
+import gov.nist.secauto.metaschema.core.model.IInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IBoundNamedInstance extends INamedInstance {
-
-  @Override
-  default String getName() {
-    // delegate to the definition
-    return getDefinition().getName();
-  }
-
-  @Override
-  default @NonNull Map<QName, Set<String>> getProperties() {
-    // TODO: implement
-    throw new UnsupportedOperationException();
-  }
-
-  /**
-   * Get the {@link IClassBinding} for the Java class within which this property
-   * exists.
-   *
-   * @return the containing class's binding
-   */
-  @NonNull
-  IClassBinding getParentClassBinding();
+public interface IFeatureJavaField extends IInstance {
 
   /**
    * Gets the bound Java field associated with this property.
@@ -102,23 +76,25 @@ public interface IBoundNamedInstance extends INamedInstance {
     return (Class<?>) getType();
   }
 
+  Object getDefaultValue();
+
   /**
    * Get the current value from the provided {@code parentInstance} object. The
    * provided object must be of the type associated with the definition containing
    * this property.
    *
-   * @param parentInstance
+   * @param parent
    *          the object associated with the definition containing this property
    * @return the value if available, or {@code null} otherwise
    */
   @Override
-  default Object getValue(@NonNull Object parentInstance) {
+  default Object getValue(@NonNull Object parent) {
     Field field = getField();
-    boolean accessable = field.canAccess(parentInstance);
+    boolean accessable = field.canAccess(parent);
     field.setAccessible(true); // NOPMD - intentional
     Object retval;
     try {
-      Object result = field.get(parentInstance);
+      Object result = field.get(parent);
       retval = result;
     } catch (IllegalArgumentException | IllegalAccessException ex) {
       throw new IllegalArgumentException(
@@ -159,9 +135,6 @@ public interface IBoundNamedInstance extends INamedInstance {
     }
   }
 
-  @Nullable
-  Object defaultValue() throws BindingException;
-
   /**
    * Copy this instance from one parent object to another.
    *
@@ -172,5 +145,5 @@ public interface IBoundNamedInstance extends INamedInstance {
    * @throws BindingException
    *           if an error occurred while processing the object bindings
    */
-  void copyBoundObject(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException;
+  void deepCopy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException;
 }

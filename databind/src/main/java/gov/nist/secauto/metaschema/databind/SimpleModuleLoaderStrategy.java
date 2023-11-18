@@ -26,13 +26,74 @@
 
 package gov.nist.secauto.metaschema.databind;
 
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.AbstractBoundModule;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
+import gov.nist.secauto.metaschema.databind.model.impl.DefaultAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.impl.DefaultFieldClassBinding;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-class SimpleModuleLoaderStrategy
-    extends AbstractModuleLoaderStrategy {
+public class SimpleModuleLoaderStrategy implements IBindingContext.IModuleLoaderStrategy {
+  @NonNull
+  private final IBindingContext bindingContext;
+  @NonNull
+  private final Map<Class<?>, IModule> modulesByClass = new HashMap<>(); // NOPMD - intentional
+  @NonNull
+  private final Map<Class<?>, IClassBinding> classBindingsByClass = new HashMap<>(); // NOPMD - intentional
 
-  public SimpleModuleLoaderStrategy(@NonNull IBindingContext bindingContext) {
-    super(bindingContext);
+  protected SimpleModuleLoaderStrategy(@NonNull IBindingContext bindingContext) {
+    this.bindingContext = bindingContext;
   }
 
+  @NonNull
+  private IBindingContext getBindingContext() {
+    return bindingContext;
+  }
+
+  @Override
+  public IModule loadModule(@NonNull Class<? extends IModule> clazz) {
+    IModule retval;
+    synchronized (this) {
+      retval = modulesByClass.get(clazz);
+      if (retval == null) {
+        retval = AbstractBoundModule.createInstance(clazz, getBindingContext());
+        modulesByClass.put(clazz, retval);
+      }
+    }
+    return ObjectUtils.notNull(retval);
+  }
+
+  @Override
+  public IClassBinding getClassBinding(@NonNull Class<?> clazz) {
+    IClassBinding retval;
+    synchronized (this) {
+      retval = classBindingsByClass.get(clazz);
+      if (retval == null) {
+        retval = newClassBinding(clazz);
+        if (retval != null) {
+          classBindingsByClass.put(clazz, retval);
+        }
+      }
+    }
+    return retval;
+  }
+
+  @Nullable
+  private IClassBinding newClassBinding(@NonNull Class<?> clazz) {
+    IClassBinding retval = null;
+    if (clazz.isAnnotationPresent(MetaschemaAssembly.class)) {
+      retval = DefaultAssemblyClassBinding.createInstance(clazz, getBindingContext());
+    } else if (clazz.isAnnotationPresent(MetaschemaField.class)) {
+      retval = DefaultFieldClassBinding.createInstance(clazz, getBindingContext());
+    }
+    return retval;
+  }
 }

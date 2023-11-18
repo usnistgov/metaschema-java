@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.databind.io.xml;
 
 import gov.nist.secauto.metaschema.databind.io.IWritingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -72,7 +72,7 @@ public interface IXmlWritingContext extends IWritingContext<XMLStreamWriter2> {
    *           if an error occurred while writing the XML
    */
   void writeInstanceValue(
-      @NonNull IBoundNamedModelInstance targetInstance,
+      @NonNull IBoundModelInstance targetInstance,
       @NonNull Object targetObject,
       @NonNull QName parentName) throws IOException;
 }

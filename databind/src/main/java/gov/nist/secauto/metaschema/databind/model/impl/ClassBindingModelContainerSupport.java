@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
@@ -33,6 +33,11 @@ import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
@@ -111,7 +116,7 @@ class ClassBindingModelContainerSupport
 
           IBoundNamedModelInstance retval;
           if (field.isAnnotationPresent(BoundAssembly.class)
-              && bindingContext.getClassBinding(IBoundNamedModelInstance.getItemType(field)) != null) {
+              && bindingContext.getClassBinding(IBoundModelInstance.getItemType(field)) != null) {
             retval = IBoundAssemblyInstance.newInstance(field, classBinding);
           } else if (field.isAnnotationPresent(BoundField.class)) {
             retval = IBoundFieldInstance.newInstance(field, classBinding);

@@ -29,11 +29,12 @@ package gov.nist.secauto.metaschema.databind.model;
 import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IClassBinding extends IFeatureFlagContainer<IBoundFlagInstance> {
+public interface IClassBinding extends IFeatureFlagContainer<IBoundFlagInstance>, IFeatureComplexItemValueHandler {
   @NonNull
   IBindingContext getBindingContext();
 
@@ -55,18 +56,4 @@ public interface IClassBinding extends IFeatureFlagContainer<IBoundFlagInstance>
   void callAfterDeserialize(
       @NonNull Object targetObject,
       @Nullable Object parentObject) throws BindingException;
-
-  /**
-   * Create a deep copy of the provided bound object.
-   *
-   * @param item
-   *          the bound object to copy
-   * @param parentInstance
-   *          the new object's parent instance or {@code null}
-   * @return the copy
-   * @throws BindingException
-   *           if an error occurred copying content between java instances
-   */
-  @NonNull
-  Object copyBoundObject(@NonNull Object item, Object parentInstance) throws BindingException;
 }

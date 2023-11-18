@@ -26,15 +26,17 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
+
+import java.io.IOException;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IBoundFieldValueInstance extends IBoundNamedInstance {
-
-  @NonNull
-  IDataTypeAdapter<?> getJavaTypeAdapter();
+public interface IBoundFieldValueInstance
+    extends IBoundJavaProperty, IFeatureNamedInstance, IFeatureScalarItemValueHandler {
 
   /**
    * Get the JSON value key name based on either the configured value key name or
@@ -50,10 +52,32 @@ public interface IBoundFieldValueInstance extends IBoundNamedInstance {
     return getJsonValueKeyName();
   }
 
-  @Nullable
-  Object getDefaultValue();
-
   @Override
   @NonNull
-  IFieldClassBinding getParentClassBinding();
+  IFieldClassBinding getContainingDefinition();
+
+  @Override
+  default Object getValue(Object parentInstance) {
+    return IBoundJavaProperty.super.getValue(parentInstance);
+  }
+
+  @Override
+  default boolean canHandleJsonPropertyName(String name) {
+    return name.equals(getJsonName());
+  }
+
+  @Override
+  default boolean canHandleXmlQName(QName qname) {
+    return qname.equals(getXmlQName());
+  }
+
+  @Override
+  default void setValue(Object parentInstance, Object value) {
+    IBoundJavaProperty.super.setValue(parentInstance, value);
+  }
+
+  @Override
+  default Object readValue(Object parentObject, IJsonParsingContext context) throws IOException {
+    return readItem(parentObject, context, null);
+  }
 }

@@ -31,11 +31,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundJavaProperty;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
 
 import org.apache.logging.log4j.LogManager;
@@ -93,9 +92,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
 
     writer.writeFieldName(targetDefinition.getRootJsonName());
 
-    // Make a temporary data type handler for the root class
-    IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(targetDefinition);
-    dataTypeHandler.writeItem(targetObject, this);
+    targetDefinition.writeItem(targetObject, this, null);
 
     // end of root object
     writer.writeEndObject();
@@ -105,8 +102,8 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
   public void writeDefinitionValue(
       IClassBinding targetDefinition,
       Object targetObject,
-      Map<String, ? extends IBoundNamedInstance> instances) throws IOException {
-    for (IBoundNamedInstance property : instances.values()) {
+      Map<String, ? extends IBoundJavaProperty> instances) throws IOException {
+    for (IBoundJavaProperty property : instances.values()) {
       assert property != null;
       writeInstance(property, targetObject);
     }
@@ -141,7 +138,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
    *           if an error occurred while writing the data
    */
   protected void writeInstance(
-      @NonNull IBoundNamedInstance targetInstance,
+      @NonNull IBoundJavaProperty targetInstance,
       @NonNull Object parentObject)
       throws IOException {
     if (targetInstance instanceof IBoundFlagInstance) {
@@ -223,7 +220,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       // There are two modes:
       // 1) use of a JSON value key, or
       // 2) a simple value named "value"
-      IBoundFlagInstance jsonValueKey = targetInstance.getParentClassBinding().getJsonValueKeyFlagInstance();
+      IBoundFlagInstance jsonValueKey = targetInstance.getContainingDefinition().getJsonValueKeyFlagInstance();
 
       String valueKeyName;
       if (jsonValueKey != null) {

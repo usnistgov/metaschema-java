@@ -24,31 +24,14 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind;
+package gov.nist.secauto.metaschema.databind.model;
 
-import javax.xml.namespace.QName;
+import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
 
-/**
- * Implementations of this interface provide a means by which a bound class can
- * be found that corresponds to an XML element, JSON property, or YAML item
- * name.
- */
-public interface IBindingMatcher {
-  /**
-   * Determine the bound class for the provided XML {@link QName}.
-   *
-   * @param rootQName
-   *          the root XML element's QName
-   * @return the bound class or {@code null} if not recognized
-   */
-  Class<?> getBoundClassForXmlQName(QName rootQName);
+public interface IBoundGroupedNamedModelnstance extends IFeatureNamedInstance, IGroupedNamedModelInstance {
+  @Override
+  IBoundChoiceGroupInstance getParentContainer();
 
-  /**
-   * Determine the bound class for the provided JSON/YAML property/item name.
-   *
-   * @param rootName
-   *          the JSON/YAML property/item name
-   * @return the bound class or {@code null} if not recognized
-   */
-  Class<?> getBoundClassForJsonName(String rootName);
+  @Override
+  IAssemblyClassBinding getContainingDefinition();
 }

@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind.io.json;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import gov.nist.secauto.metaschema.databind.io.IWritingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundJavaProperty;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import java.io.IOException;
@@ -55,5 +55,5 @@ public interface IJsonWritingContext extends IWritingContext<JsonGenerator> {
   void writeDefinitionValue(
       @NonNull IClassBinding targetDefinition,
       @NonNull Object targetObject,
-      @NonNull Map<String, ? extends IBoundNamedInstance> instances) throws IOException;
+      @NonNull Map<String, ? extends IBoundJavaProperty> instances) throws IOException;
 }

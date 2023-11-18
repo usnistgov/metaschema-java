@@ -82,7 +82,7 @@ public class AbstractBoundModelTestSupport {
 
   @NonNull
   protected IModule registerModule(@NonNull Class<? extends AbstractBoundModule> clazz) {
-    return getBindingContext().getModuleByClass(clazz);
+    return getBindingContext().loadModule(clazz);
   }
 
   @SuppressWarnings("null")

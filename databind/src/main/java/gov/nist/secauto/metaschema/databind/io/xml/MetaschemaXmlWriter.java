@@ -28,14 +28,13 @@ package gov.nist.secauto.metaschema.databind.io.xml;
 
 import gov.nist.secauto.metaschema.databind.io.json.DefaultJsonProblemHandler;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
 
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -221,28 +220,53 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
   @Override
   public void writeInstanceValue(
-      @NonNull IBoundNamedModelInstance targetInstance,
+      @NonNull IBoundModelInstance targetInstance,
       @NonNull Object targetObject,
       @NonNull QName parentName) throws IOException {
-    // figure out how to parse the item
-    IDataTypeHandler handler = targetInstance.getDataTypeHandler();
+
+    if (targetInstance instanceof IBoundChoiceGroupInstance) {
+      writeChoiceGroupInstanceValue(
+          (IBoundChoiceGroupInstance) targetInstance,
+          targetObject,
+          parentName);
+    } else if (targetInstance instanceof IBoundNamedModelInstance) {
+      writeNamedModelInstanceValue(
+          (IBoundNamedModelInstance) targetInstance,
+          targetObject,
+          parentName);
+    } else {
+      throw new UnsupportedOperationException(
+          String.format("Unsupported instance type: %s", targetInstance.getClass().getName()));
+    }
+  }
+
+  @SuppressWarnings({ "static-method", "unused" })
+  private void writeChoiceGroupInstanceValue(
+      @NonNull IBoundChoiceGroupInstance instance,
+      @NonNull Object targetObject,
+      @NonNull QName parentName) {
+    throw new UnsupportedOperationException();
+  }
+
+  private void writeNamedModelInstanceValue(
+      @NonNull IBoundNamedModelInstance instance,
+      @NonNull Object targetObject,
+      @NonNull QName parentName) throws IOException {
 
     // figure out if we need to write the wrapper or not
-    boolean writeWrapper = targetInstance instanceof IBoundAssemblyInstance
-        || ((IBoundFieldInstance) targetInstance).isInXmlWrapped()
-        || !handler.isUnwrappedValueAllowedInXml();
+    boolean writeWrapper = instance.isValueWrappedInXml();
 
     try {
       QName currentParentName;
       if (writeWrapper) {
-        currentParentName = targetInstance.getXmlQName();
+        currentParentName = instance.getXmlQName();
         writer.writeStartElement(currentParentName.getNamespaceURI(), currentParentName.getLocalPart());
       } else {
         currentParentName = parentName;
       }
 
       // write the value
-      handler.writeItem(targetObject, currentParentName, this);
+      instance.writeItem(targetObject, currentParentName, this);
 
       if (writeWrapper) {
         writer.writeEndElement();

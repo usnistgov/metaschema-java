@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -35,15 +35,15 @@ abstract class AbstractModelPropertyInfo
     implements IModelPropertyInfo {
 
   @NonNull
-  private final IBoundNamedModelInstance property;
+  private final IBoundModelInstance property;
 
   public AbstractModelPropertyInfo(
-      @NonNull IBoundNamedModelInstance property) {
+      @NonNull IBoundModelInstance property) {
     this.property = ObjectUtils.requireNonNull(property, "property");
   }
 
   @Override
-  public IBoundNamedModelInstance getProperty() {
+  public IBoundModelInstance getProperty() {
     return property;
   }
 }

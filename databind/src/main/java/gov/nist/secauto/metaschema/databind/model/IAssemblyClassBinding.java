@@ -59,4 +59,9 @@ public interface IAssemblyClassBinding
   default Map<QName, Set<String>> getProperties() {
     throw new UnsupportedOperationException();
   }
+
+  @Override
+  default IAssemblyClassBinding getClassBinding() {
+    return this;
+  }
 }

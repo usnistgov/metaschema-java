@@ -27,17 +27,22 @@
 package gov.nist.secauto.metaschema.databind;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.databind.IBindingContext.IBindingMatcher;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+// REFACTOR: rename to RootAssemblyBindingMatcher
 class DynamicBindingMatcher implements IBindingMatcher {
+  @NonNull
   private final IAssemblyDefinition definition;
-  private final Class<IAssemblyClassBinding> clazz;
+  private final Class<? extends IAssemblyClassBinding> clazz;
 
-  public DynamicBindingMatcher(@NonNull IAssemblyDefinition definition, @NonNull Class<IAssemblyClassBinding> clazz) {
+  public DynamicBindingMatcher(
+      @NonNull IAssemblyDefinition definition,
+      @NonNull Class<? extends IAssemblyClassBinding> clazz) {
     this.definition = definition;
     this.clazz = clazz;
   }
@@ -46,7 +51,7 @@ class DynamicBindingMatcher implements IBindingMatcher {
     return definition;
   }
 
-  protected Class<IAssemblyClassBinding> getClazz() {
+  protected Class<? extends IAssemblyClassBinding> getClazz() {
     return clazz;
   }
 
@@ -63,14 +68,12 @@ class DynamicBindingMatcher implements IBindingMatcher {
   }
 
   @Override
-  public Class<?> getBoundClassForXmlQName(QName rootQName) {
-    return getRootQName().equals(
-        rootQName) ? getClazz() : null;
+  public Class<? extends IAssemblyClassBinding> getBoundClassForXmlQName(QName rootQName) {
+    return getRootQName().equals(rootQName) ? getClazz() : null;
   }
 
   @Override
-  public Class<?> getBoundClassForJsonName(String rootName) {
-    return getRootJsonName().equals(
-        rootName) ? getClazz() : null;
+  public Class<? extends IAssemblyClassBinding> getBoundClassForJsonName(String rootName) {
+    return getRootJsonName().equals(rootName) ? getClazz() : null;
   }
 }

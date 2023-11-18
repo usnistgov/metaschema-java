@@ -24,11 +24,12 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
 import gov.nist.secauto.metaschema.databind.model.info.IPropertyCollector;
 
@@ -38,18 +39,16 @@ import java.util.Collection;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
-abstract class AbstractNamedModelProperty // NOPMD - intentional
+public abstract class AbstractModelProperty
     extends AbstractProperty<IAssemblyClassBinding>
-    implements IBoundNamedModelInstance {
+    implements IBoundModelInstance {
   // private static final Logger logger =
-  // LogManager.getLogger(AbstractNamedModelProperty.class);
+  // LogManager.getLogger(AbstractModelProperty.class);
 
   @NonNull
   private final Field field;
   @NonNull
   private final Lazy<IModelPropertyInfo> propertyInfo;
-  @NonNull
-  private final Lazy<IDataTypeHandler> dataTypeHandler;
 
   /**
    * Construct a new bound model instance based on a Java property. The name of
@@ -58,24 +57,15 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
    * @param field
    *          the field instance associated with this property
    *
-   * @param parentClassBinding
+   * @param containingDefinition
    *          the class binding for the field's containing class
    */
-  protected AbstractNamedModelProperty(
+  protected AbstractModelProperty(
       @NonNull Field field,
-      @NonNull IAssemblyClassBinding parentClassBinding) {
-    super(parentClassBinding);
+      @NonNull IAssemblyClassBinding containingDefinition) {
+    super(containingDefinition);
     this.field = ObjectUtils.requireNonNull(field, "field");
     this.propertyInfo = ObjectUtils.notNull(Lazy.lazy(() -> IModelPropertyInfo.newPropertyInfo(this)));
-    this.dataTypeHandler = ObjectUtils.notNull(Lazy.lazy(this::newDataTypeHandler));
-  }
-
-  // REFACTOR: remove this method if possible
-  protected abstract IDataTypeHandler newDataTypeHandler();
-
-  @Override
-  public IDataTypeHandler getDataTypeHandler() {
-    return ObjectUtils.notNull(dataTypeHandler.get());
   }
 
   @Override
@@ -106,21 +96,8 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
     return getPropertyInfo().getItemsFromValue(value);
   }
 
-  //
-  // @Override
-  // public void writeItem(Object parentInstance, IJsonParsingContext context) {
-  // IDataTypeHandler supplier = getBindingSupplier();
-  // return supplier.write(parentInstance, context);
-  // }
-  //
-  // @Override
-  // public void writeValue(Object parentInstance, IJsonParsingContext context) {
-  // IModelPropertyInfo info = getPropertyInfo();
-  // return info.writeValue(parentInstance, context);
-  // }
-
   @Override
-  public void copyBoundObject(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException {
+  public void deepCopy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException {
     Object value = getValue(fromInstance);
     if (value != null) {
       IModelPropertyInfo propertyInfo = getPropertyInfo();
@@ -132,10 +109,4 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
     }
     setValue(toInstance, value);
   }
-
-  @Override
-  public Object copyItem(Object fromItem, Object toInstance) throws BindingException {
-    return getDataTypeHandler().copyItem(fromItem, toInstance);
-  }
-
 }

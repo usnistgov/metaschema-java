@@ -24,44 +24,11 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind;
+package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
 
-import java.util.Map;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
-
-interface IModuleLoaderStrategy {
-  /**
-   * Get the Metaschema module identified by the provided class.
-   *
-   * @param clazz
-   *          the Module class
-   * @return the module
-   * @throws IllegalStateException
-   *           if an error occurred while processing the associated module
-   *           information
-   */
-  @NonNull
-  IModule getModuleByClass(@NonNull Class<? extends IModule> clazz);
-
-  /**
-   * Get the {@link IClassBinding} instance for a {@link MetaschemaAssembly} or
-   * {@link MetaschemaField} associated with a Java class.
-   *
-   * @param clazz
-   *          the class binding to load
-   * @return the associated class binding instance or {@code null} if the class is
-   *         not bound
-   */
-  @Nullable
-  IClassBinding getClassBinding(@NonNull Class<?> clazz);
-
-  @NonNull
-  Map<Class<?>, IClassBinding> getClassBindingsByClass();
+public interface IBoundGroupedAssemblyInstance extends IBoundGroupedNamedModelnstance, IAssemblyInstance {
+  @Override
+  IAssemblyClassBinding getDefinition();
 }

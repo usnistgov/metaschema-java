@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.databind.io.xml;
 
 import gov.nist.secauto.metaschema.databind.io.IParsingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -65,7 +65,7 @@ public interface IXmlParsingContext extends IParsingContext<XMLEventReader2, IXm
    */
   @Nullable
   <T> T readModelInstanceValue(
-      @NonNull IBoundNamedModelInstance targetInstance,
+      @NonNull IBoundModelInstance targetInstance,
       @NonNull Object parentObject,
       @NonNull StartElement start) throws XMLStreamException, IOException;
 

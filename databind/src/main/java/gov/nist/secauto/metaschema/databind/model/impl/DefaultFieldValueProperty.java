@@ -24,13 +24,15 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.ModelType;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
+import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
@@ -88,7 +90,7 @@ class DefaultFieldValueProperty
 
   @Override
   public IFieldClassBinding getDefinition() {
-    return getParentClassBinding();
+    return getContainingDefinition();
   }
 
   @Override
@@ -147,7 +149,7 @@ class DefaultFieldValueProperty
   }
 
   @Override
-  public void copyBoundObject(Object fromInstance, Object toInstance) {
+  public void deepCopy(Object fromInstance, Object toInstance) {
     Object value = getValue(fromInstance);
     IDataTypeAdapter<?> adapter = getJavaTypeAdapter();
     setValue(toInstance, value == null ? null : adapter.copy(value));

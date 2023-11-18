@@ -26,10 +26,15 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.model.impl.ClassBindingFieldPropertyImpl;
+import gov.nist.secauto.metaschema.databind.model.impl.SimpleFieldPropertyImpl;
 
 import java.lang.reflect.Field;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -38,20 +43,34 @@ public interface IBoundFieldInstance extends IBoundNamedModelInstance, IFieldIns
   @NonNull
   static IBoundFieldInstance newInstance(
       @NonNull Field field,
-      @NonNull IAssemblyClassBinding parentDefinition) {
-    Class<?> itemType = IBoundNamedModelInstance.getItemType(field);
-    IBindingContext bindingContext = parentDefinition.getBindingContext();
+      @NonNull IAssemblyClassBinding containingDefinition) {
+    Class<?> itemType = IBoundModelInstance.getItemType(field);
+    IBindingContext bindingContext = containingDefinition.getBindingContext();
     IClassBinding classBinding = bindingContext.getClassBinding(itemType);
 
     IBoundFieldInstance retval;
     if (classBinding == null) {
-      retval = new SimpleFieldProperty(field, parentDefinition);
+      retval = new SimpleFieldPropertyImpl(field, containingDefinition);
     } else {
-      retval = new ClassBindingFieldProperty(field, (IFieldClassBinding) classBinding, parentDefinition);
+      retval = new ClassBindingFieldPropertyImpl(field, (IFieldClassBinding) classBinding, containingDefinition);
     }
     return retval;
   }
 
   @Override
   IBoundFieldDefinition getDefinition();
+
+  @Override
+  default boolean canHandleXmlQName(QName qname) {
+    boolean retval = IBoundNamedModelInstance.super.canHandleXmlQName(qname);
+    if (!retval) {
+      IDataTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();
+      // we are to parse the data type
+      retval = !isInXmlWrapped()
+          && adapter.isUnrappedValueAllowedInXml()
+          && adapter.canHandleQName(qname);
+    }
+    return retval;
+  }
+
 }

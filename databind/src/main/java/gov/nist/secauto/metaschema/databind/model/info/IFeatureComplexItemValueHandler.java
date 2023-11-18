@@ -30,7 +30,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -42,8 +41,7 @@ import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundJavaProperty;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 
@@ -60,15 +58,21 @@ import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import nl.talsmasoftware.lazy4j.Lazy;
 
-class ClassDataTypeHandler implements IDataTypeHandler {
-  private final boolean jsonKeyRequired;
+public interface IFeatureComplexItemValueHandler extends IDataTypeHandler {
   @NonNull
-  private final IClassBinding classBinding;
+  IClassBinding getClassBinding();
 
-  @NonNull
-  private final Lazy<Map<String, ? extends IBoundNamedInstance>> propertyMap;
+  @Override
+  default boolean isUnwrappedValueAllowedInXml() {
+    // never for a complex item
+    return false;
+  }
+
+  @Override
+  default Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
+    return getClassBinding().deepCopyItem(item, parentInstance);
+  }
 
   /**
    * Generates a mapping of property names to associated Module instances.
@@ -78,24 +82,21 @@ class ClassDataTypeHandler implements IDataTypeHandler {
    * <p>
    * If the {@code targetDefinition} is an instance of {@link IFieldDefinition}
    * and a JSON value key property is configured, then the value key flag and
-   * value are also ommitted from the mapping. Otherwise, the value is included in
+   * value are also omitted from the mapping. Otherwise, the value is included in
    * the mapping.
    *
-   * @param targetDefinition
-   *          the Module bound definition to generate the instance map for
-   * @param requiresJsonKey
-   *          if {@code true} then the instance used as the JSON key is not
-   *          included in the mapping, or {@code false} otherwise
+   * @param jsonKey
+   *          the flag instance used as the JSON key, or {@code null} otherwise
    * @return a mapping of JSON property to related Module instance
    */
   @NonNull
-  private static Map<String, ? extends IBoundNamedInstance> getInstancesToParse(
-      @NonNull IClassBinding targetDefinition,
-      boolean requiresJsonKey) {
-    Collection<? extends IBoundFlagInstance> flags = targetDefinition.getFlagInstances();
-    int flagCount = flags.size() - (requiresJsonKey ? 1 : 0);
+  default Map<String, ? extends IBoundJavaProperty> getJsonInstanceMap(@Nullable IBoundFlagInstance jsonKey) {
+    IClassBinding targetDefinition = getClassBinding();
 
-    @SuppressWarnings("resource") Stream<? extends IBoundNamedInstance> instanceStream;
+    Collection<? extends IBoundFlagInstance> flags = targetDefinition.getFlagInstances();
+    int flagCount = flags.size() - (jsonKey == null ? 0 : 1);
+
+    @SuppressWarnings("resource") Stream<? extends IBoundJavaProperty> instanceStream;
     if (targetDefinition instanceof IAssemblyClassBinding) {
       // use all child instances
       instanceStream = ((IAssemblyClassBinding) targetDefinition).getModelInstances().stream();
@@ -116,9 +117,7 @@ class ClassDataTypeHandler implements IDataTypeHandler {
           String.format("Unsupported class binding type: %s", targetDefinition.getClass().getName()));
     }
 
-    if (requiresJsonKey) {
-      IBoundFlagInstance jsonKey = targetDefinition.getJsonKeyFlagInstance();
-      assert jsonKey != null;
+    if (jsonKey != null) {
       instanceStream = Stream.concat(
           flags.stream().filter((flag) -> !jsonKey.equals(flag)),
           instanceStream);
@@ -129,77 +128,8 @@ class ClassDataTypeHandler implements IDataTypeHandler {
     }
     return ObjectUtils.notNull(instanceStream.collect(
         Collectors.toUnmodifiableMap(
-            IBoundNamedInstance::getJsonName,
+            IBoundJavaProperty::getJsonName,
             Function.identity())));
-  }
-
-  public ClassDataTypeHandler(
-      @Nullable IBoundNamedModelInstance targetInstance,
-      @NonNull IClassBinding classBinding) {
-    this.classBinding = classBinding;
-
-    this.jsonKeyRequired = targetInstance != null && targetInstance.getPropertyInfo().isJsonKeyRequired();
-    this.propertyMap = ObjectUtils.notNull(Lazy.lazy(() -> getInstancesToParse(
-        classBinding,
-        this.jsonKeyRequired)));
-  }
-
-  @Override
-  public IDataTypeAdapter<?> getJavaTypeAdapter() {
-    // this is always null
-    return null;
-  }
-
-  @Override
-  @NonNull
-  public IClassBinding getClassBinding() {
-    return classBinding;
-  }
-
-  @Override
-  public boolean isUnwrappedValueAllowedInXml() {
-    // classes are always wrapped
-    return false;
-  }
-
-  @Override
-  public boolean isJsonKeyRequired() {
-    return jsonKeyRequired;
-  }
-
-  @NonNull
-  protected Map<String, ? extends IBoundNamedInstance> getJsonInstanceMap() {
-    return ObjectUtils.notNull(propertyMap.get());
-  }
-
-  @SuppressWarnings("resource") // not owned
-  private boolean readItemJsonKey(
-      @NonNull Object targetObject,
-      IJsonParsingContext context) throws IOException {
-    JsonParser parser = context.getReader(); // NOPMD - intentional
-    IClassBinding definition = getClassBinding();
-
-    IBoundFlagInstance jsonKey = definition.getJsonKeyFlagInstance();
-    if (jsonKey == null) {
-      throw new IOException(String.format("JSON key not defined for object '%s'%s",
-          definition.toCoordinates(), JsonUtil.generateLocationMessage(parser)));
-    }
-
-    // the field will be the JSON key
-    String key = ObjectUtils.notNull(parser.getCurrentName());
-
-    Object value = jsonKey.getDefinition().getJavaTypeAdapter().parse(key);
-    jsonKey.setValue(targetObject, value.toString());
-
-    // advance past the FIELD_NAME
-    JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
-
-    boolean keyObjectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
-    if (keyObjectWrapper) {
-      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-    }
-
-    return keyObjectWrapper;
   }
 
   @SuppressWarnings({
@@ -207,7 +137,7 @@ class ClassDataTypeHandler implements IDataTypeHandler {
       "PMD.NPathComplexity", "PMD.CyclomaticComplexity" // ok
   })
   @Override
-  public <T> T readItem(Object parentObject, IJsonParsingContext context)
+  default Object readItem(Object parent, IJsonParsingContext context, IBoundFlagInstance jsonKey)
       throws IOException {
     JsonParser parser = context.getReader(); // NOPMD - intentional
     boolean objectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
@@ -215,24 +145,36 @@ class ClassDataTypeHandler implements IDataTypeHandler {
       JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
     }
 
+    IClassBinding definition = getClassBinding();
     Object targetObject;
     try {
-      targetObject = classBinding.newInstance();
-      classBinding.callBeforeDeserialize(targetObject, parentObject);
+      targetObject = definition.newInstance();
+      definition.callBeforeDeserialize(targetObject, parent);
     } catch (BindingException ex) {
       throw new IOException(ex);
     }
 
-    IClassBinding definition = getClassBinding();
-    boolean readJsonKey = isJsonKeyRequired();
     boolean keyObjectWrapper = false;
-    if (readJsonKey) {
-      keyObjectWrapper = readItemJsonKey(targetObject, context);
+    if (jsonKey != null) {
+      // the field will be the JSON key
+      String key = ObjectUtils.notNull(parser.getCurrentName());
+
+      Object value = jsonKey.getDefinition().getJavaTypeAdapter().parse(key);
+      jsonKey.setValue(targetObject, value.toString());
+
+      // advance past the FIELD_NAME
+      JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
+
+      keyObjectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
+      if (keyObjectWrapper) {
+        JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
+      }
     }
 
     if (keyObjectWrapper || JsonToken.FIELD_NAME.equals(parser.currentToken())) {
-      context.readDefinitionValue(definition, targetObject, getJsonInstanceMap());
+      context.readDefinitionValue(definition, targetObject, getJsonInstanceMap(jsonKey));
     } else if (parser.currentToken().isScalarValue()) {
+      // REFACTOR: need to figure out why this special case exists
       // this is just a value
       IFieldClassBinding fieldDefinition = (IFieldClassBinding) definition;
       Object fieldValue = fieldDefinition.getJavaTypeAdapter().parse(parser);
@@ -240,7 +182,7 @@ class ClassDataTypeHandler implements IDataTypeHandler {
     }
 
     try {
-      classBinding.callAfterDeserialize(targetObject, parentObject);
+      definition.callAfterDeserialize(targetObject, parent);
     } catch (BindingException ex) {
       throw new IOException(ex);
     }
@@ -257,33 +199,28 @@ class ClassDataTypeHandler implements IDataTypeHandler {
   }
 
   @Override
-  public Object readItem(Object parentInstance, StartElement start, IXmlParsingContext context)
+  default Object readItem(Object parent, StartElement start, IXmlParsingContext context)
       throws IOException, XMLStreamException {
-    return context.readDefinitionValue(getClassBinding(), parentInstance, start);
+    return context.readDefinitionValue(getClassBinding(), parent, start);
   }
 
   @Override
-  public void writeItem(Object item, QName currentParentName, IXmlWritingContext context)
+  default void writeItem(Object item, QName currentParentName, IXmlWritingContext context)
       throws IOException, XMLStreamException {
-    context.writeDefinitionValue(classBinding, item, currentParentName);
+    context.writeDefinitionValue(getClassBinding(), item, currentParentName);
   }
 
   @SuppressWarnings("resource") // not owned
   @Override
-  public void writeItem(Object targetObject, IJsonWritingContext context) throws IOException {
+  default void writeItem(Object item, IJsonWritingContext context, IBoundFlagInstance jsonKey) throws IOException {
     JsonGenerator writer = context.getWriter();
 
     writer.writeStartObject();
 
     IClassBinding definition = getClassBinding();
-    boolean writeJsonKey = isJsonKeyRequired();
-    if (writeJsonKey) {
-      IBoundFlagInstance jsonKey = definition.getJsonKeyFlagInstance();
-      assert jsonKey != null;
-
+    if (jsonKey != null) {
       // the field will be the JSON key
-      Object flagValue = jsonKey.getValue(targetObject);
-      String key = jsonKey.getValueAsString(flagValue);
+      String key = jsonKey.toStringFromItem(item);
       if (key == null) {
         throw new IOException(new NullPointerException("Null key value"));
       }
@@ -294,20 +231,14 @@ class ClassDataTypeHandler implements IDataTypeHandler {
     }
 
     context.writeDefinitionValue(
-        classBinding,
-        targetObject,
-        getJsonInstanceMap());
+        definition,
+        item,
+        getJsonInstanceMap(jsonKey));
 
-    if (writeJsonKey) {
+    if (jsonKey != null) {
       writer.writeEndObject();
     }
 
     writer.writeEndObject();
   }
-
-  @Override
-  public Object copyItem(@NonNull Object fromItem, Object parentInstance) throws BindingException {
-    return classBinding.copyBoundObject(fromItem, parentInstance);
-  }
-
 }

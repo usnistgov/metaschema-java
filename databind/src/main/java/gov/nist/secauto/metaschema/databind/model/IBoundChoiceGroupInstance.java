@@ -26,34 +26,14 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
-abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> implements IBoundNamedInstance {
-  @NonNull
-  private final CLASS_BINDING parentClassBinding;
-
-  /**
-   * Construct a new bound instance based on a Java property.
-   *
-   * @param parentClassBinding
-   *          the class binding for the field's containing class
-   */
-  public AbstractProperty(@NonNull CLASS_BINDING parentClassBinding) {
-    this.parentClassBinding = parentClassBinding;
-  }
-
-  @Override
-  public CLASS_BINDING getParentContainer() {
-    return getParentClassBinding();
-  }
-
-  @Override
-  public CLASS_BINDING getContainingDefinition() {
-    return getParentClassBinding();
-  }
-
-  @Override
-  public CLASS_BINDING getParentClassBinding() {
-    return parentClassBinding;
-  }
+public interface IBoundChoiceGroupInstance
+    extends IBoundModelInstance, IChoiceGroupInstance, IFeatureComplexItemValueHandler {
+  // static IBoundModelInstance newInstance(
+  // @NonNull Field field,
+  // @NonNull IAssemblyClassBinding containingDefinition) {
+  // return new ChoiceGroupProperty(field, containingDefinition);
+  // }
 }

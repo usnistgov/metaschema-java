@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
@@ -39,10 +39,14 @@ import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldDefinition;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -51,8 +55,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
-class SimpleFieldProperty
-    extends AbstractFieldProperty {
+public class SimpleFieldPropertyImpl
+    extends AbstractFieldProperty
+    implements IFeatureScalarItemValueHandler {
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   @Nullable
@@ -72,7 +77,7 @@ class SimpleFieldProperty
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */
-  public SimpleFieldProperty(
+  public SimpleFieldPropertyImpl(
       @NonNull Field field,
       @NonNull IAssemblyClassBinding parentClassBinding) {
     super(field, parentClassBinding);
@@ -104,13 +109,15 @@ class SimpleFieldProperty
     return ObjectUtils.notNull(definition.get());
   }
 
+  @Override
   public IDataTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
 
   @Override
-  protected IDataTypeHandler newDataTypeHandler() {
-    return IDataTypeHandler.newDataTypeHandler(this);
+  public IBoundFlagInstance getJsonKey() {
+    // no flags, so no JSON key
+    return null;
   }
 
   @Override
@@ -121,6 +128,16 @@ class SimpleFieldProperty
   @Override
   public Object defaultValue() {
     return getMaxOccurs() == 1 ? getEffectiveDefaultValue() : getPropertyInfo().newPropertyCollector().getValue();
+  }
+
+  @Override
+  public Object getValue(Object parent) {
+    return super.getValue(parent);
+  }
+
+  @Override
+  public void setValue(Object parent, Object value) {
+    super.setValue(parent, value);
   }
 
   // REFACTOR: Cleanup interfaces and methods to use IFeatureInline, etc. Remove
@@ -157,7 +174,7 @@ class SimpleFieldProperty
 
     @Override
     public IDataTypeAdapter<?> getJavaTypeAdapter() {
-      return ObjectUtils.notNull(SimpleFieldProperty.this.getJavaTypeAdapter());
+      return ObjectUtils.notNull(SimpleFieldPropertyImpl.this.getJavaTypeAdapter());
     }
 
     @Override
@@ -168,17 +185,17 @@ class SimpleFieldProperty
 
     @Override
     public IBoundFieldInstance getInlineInstance() {
-      return SimpleFieldProperty.this;
+      return SimpleFieldPropertyImpl.this;
     }
 
     @Override
     public String getFormalName() {
-      return SimpleFieldProperty.this.getFormalName();
+      return SimpleFieldPropertyImpl.this.getFormalName();
     }
 
     @Override
     public MarkupLine getDescription() {
-      return SimpleFieldProperty.this.getDescription();
+      return SimpleFieldPropertyImpl.this.getDescription();
     }
 
     @Override
@@ -203,12 +220,12 @@ class SimpleFieldProperty
 
     @Override
     public MarkupMultiline getRemarks() {
-      return SimpleFieldProperty.this.getRemarks();
+      return SimpleFieldPropertyImpl.this.getRemarks();
     }
 
     @Override
     public String toCoordinates() {
-      return SimpleFieldProperty.this.toCoordinates();
+      return SimpleFieldPropertyImpl.this.toCoordinates();
     }
 
     @Override
@@ -246,7 +263,7 @@ class SimpleFieldProperty
 
     @Override
     public IModule getContainingModule() {
-      return SimpleFieldProperty.this.getContainingModule();
+      return SimpleFieldPropertyImpl.this.getContainingModule();
     }
 
     @Override

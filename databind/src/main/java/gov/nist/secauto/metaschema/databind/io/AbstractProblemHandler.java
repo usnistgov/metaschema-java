@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.io;
 
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundJavaProperty;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
   public void handleMissingInstances(
       IClassBinding parentDefinition,
       Object targetObject,
-      Collection<? extends IBoundNamedInstance> unhandledInstances) throws IOException {
+      Collection<? extends IBoundJavaProperty> unhandledInstances) throws IOException {
     applyDefaults(targetObject, unhandledInstances);
   }
 
@@ -48,8 +48,6 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
    * A utility method for applying default values for the provided
    * {@code unhandledInstances}.
    *
-   * @param <TYPE>
-   *          the instance Java type to handle
    * @param targetObject
    *          the Java object to apply default values to
    * @param unhandledInstances
@@ -58,16 +56,11 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
    *           if an error occurred while determining the default value for an
    *           instance
    */
-  protected static <TYPE extends IBoundNamedInstance> void applyDefaults(
+  protected static void applyDefaults(
       @NonNull Object targetObject,
-      @NonNull Collection<TYPE> unhandledInstances) throws IOException {
-    for (TYPE instance : unhandledInstances) {
-      Object value;
-      try {
-        value = instance.defaultValue();
-      } catch (BindingException ex) {
-        throw new IOException(ex);
-      }
+      @NonNull Collection<? extends IBoundJavaProperty> unhandledInstances) throws IOException {
+    for (IBoundJavaProperty instance : unhandledInstances) {
+      Object value = instance.getDefaultValue();
       if (value != null) {
         instance.setValue(targetObject, value);
       }

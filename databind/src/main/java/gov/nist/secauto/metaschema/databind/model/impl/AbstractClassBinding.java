@@ -24,13 +24,15 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -115,7 +117,7 @@ abstract class AbstractClassBinding implements IClassBinding {
     synchronized (this) {
       if (module == null) {
         Class<? extends IModule> metaschemaClass = getModuleClass();
-        module = getBindingContext().getModuleByClass(metaschemaClass);
+        module = getBindingContext().loadModule(metaschemaClass);
       }
       return module;
     }
@@ -205,22 +207,22 @@ abstract class AbstractClassBinding implements IClassBinding {
   }
 
   @Override
-  public Object copyBoundObject(Object item, Object parentInstance) throws BindingException {
+  public Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
     Object instance = newInstance();
 
     callBeforeDeserialize(instance, parentInstance);
 
-    copyBoundObjectInternal(item, instance);
+    deepCopyItemInternal(item, instance);
 
     callAfterDeserialize(instance, parentInstance);
 
     return instance;
   }
 
-  protected void copyBoundObjectInternal(@NonNull Object fromInstance, @NonNull Object toInstance)
+  protected void deepCopyItemInternal(@NonNull Object fromInstance, @NonNull Object toInstance)
       throws BindingException {
     for (IBoundFlagInstance property : getFlagInstances()) {
-      property.copyBoundObject(fromInstance, toInstance);
+      property.deepCopy(fromInstance, toInstance);
     }
   }
 }

@@ -39,7 +39,7 @@ import java.util.Set;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class PostProcessingModuleLoaderStrategy
-    extends AbstractModuleLoaderStrategy {
+    extends SimpleModuleLoaderStrategy {
   @NonNull
   private final List<IModulePostProcessor> modulePostProcessors;
   private final Set<IModule> resolvedModules = new HashSet<>();

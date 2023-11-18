@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
@@ -177,9 +178,8 @@ public class MetaschemaXmlReader
     XMLEvent nextEvent = ObjectUtils.notNull(reader.peek());
     if (!XmlEventUtil.isEventEndElement(nextEvent, ObjectUtils.notNull(start.getName()))) {
       throw new IOException(
-          String.format("Unrecognized element '%s'%s.",
-              XmlEventUtil.toEventName(nextEvent),
-              XmlEventUtil.generateLocationMessage(nextEvent)));
+          String.format("Unrecognized content %s.",
+              XmlEventUtil.toString(nextEvent)));
     }
 
     try {
@@ -264,7 +264,7 @@ public class MetaschemaXmlReader
     Set<IBoundNamedModelInstance> unhandledProperties = new HashSet<>();
     for (IBoundNamedModelInstance modelProperty : targetDefinition.getModelInstances()) {
       assert modelProperty != null;
-      if (!readModelInstanceValues(modelProperty, targetObject, start)) {
+      if (!readModelInstanceItems(modelProperty, targetObject, start)) {
         unhandledProperties.add(modelProperty);
       }
     }
@@ -313,31 +313,14 @@ public class MetaschemaXmlReader
     XmlEventUtil.skipWhitespace(reader);
 
     XMLEvent nextEvent = reader.peek();
-    if (!nextEvent.isStartElement()) {
-      return false;
-    }
 
-    QName nextQName = ObjectUtils.notNull(nextEvent.asStartElement().getName());
-
-    if (nextQName.equals(targetInstance.getXmlGroupAsQName())) {
-      // we are to parse the grouping element
-      return true;
+    boolean retval = nextEvent.isStartElement();
+    if (retval) {
+      QName qname = ObjectUtils.notNull(nextEvent.asStartElement().getName());
+      retval = qname.equals(targetInstance.getXmlGroupAsQName()) // parse the grouping element
+          || targetInstance.canHandleXmlQName(qname); // parse the instance(s)
     }
-
-    if (nextQName.equals(targetInstance.getXmlQName())) {
-      // we are to parse the element
-      return true;
-    }
-
-    if (targetInstance instanceof IBoundFieldInstance) {
-      IBoundFieldInstance fieldInstance = (IBoundFieldInstance) targetInstance;
-      IDataTypeAdapter<?> adapter = fieldInstance.getDefinition().getJavaTypeAdapter();
-      // we are to parse the data type
-      return !fieldInstance.isInXmlWrapped()
-          && adapter.isUnrappedValueAllowedInXml()
-          && adapter.canHandleQName(nextQName);
-    }
-    return false;
+    return retval;
   }
 
   /**
@@ -357,14 +340,14 @@ public class MetaschemaXmlReader
    * @throws XMLStreamException
    *           if an error occurred while parsing XML events
    */
-  protected boolean readModelInstanceValues(
+  protected boolean readModelInstanceItems(
       @NonNull IBoundNamedModelInstance instance,
       @NonNull Object parentObject,
       @NonNull StartElement start)
       throws IOException, XMLStreamException {
     boolean handled = isNextInstance(instance);
     if (handled) {
-      XmlEventUtil.skipWhitespace(reader);
+      // XmlEventUtil.skipWhitespace(reader);
 
       StartElement currentStart = start;
 
@@ -377,7 +360,7 @@ public class MetaschemaXmlReader
 
       IPropertyCollector collector = instance.getPropertyInfo().newPropertyCollector();
       // There are zero or more named values based on cardinality
-      instance.getPropertyInfo().readValues(collector, parentObject, currentStart, this);
+      instance.getPropertyInfo().readItems(collector, parentObject, currentStart, this);
 
       Object value = collector.getValue();
 
@@ -395,7 +378,7 @@ public class MetaschemaXmlReader
   }
 
   @Override
-  public <T> T readModelInstanceValue(IBoundNamedModelInstance instance, Object parentObject, StartElement start)
+  public <T> T readModelInstanceValue(IBoundModelInstance instance, Object parentObject, StartElement start)
       throws XMLStreamException, IOException {
     Object retval;
     if (instance instanceof IBoundAssemblyInstance) {
@@ -443,7 +426,7 @@ public class MetaschemaXmlReader
         reader.nextEvent();
 
         // consume the value
-        retval = instance.getDataTypeHandler().readItem(parentObject, nextStart, this);
+        retval = instance.readItem(parentObject, nextStart, this);
 
         // consume the end element
         XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, nextQName);
@@ -483,9 +466,7 @@ public class MetaschemaXmlReader
 
     StartElement currentStart = start;
     if (parseWrapper) {
-      // TODO: not sure this is needed, since there is a peek just before this
-      // parse any whitespace before the element
-      XmlEventUtil.skipWhitespace(reader);
+      // XmlEventUtil.skipWhitespace(reader);
 
       QName xmlQName = instance.getXmlQName();
       XMLEvent event = reader.peek();
@@ -501,7 +482,7 @@ public class MetaschemaXmlReader
     }
 
     // consume the value
-    Object retval = instance.getDataTypeHandler().readItem(parentObject, currentStart, this);
+    Object retval = instance.readItem(parentObject, currentStart, this);
 
     if (parseWrapper) {
       // consume the end element

@@ -24,19 +24,24 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
-import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
 import java.lang.reflect.Field;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-class ClassBindingFieldProperty
-    extends AbstractFieldProperty {
+public class ClassBindingFieldPropertyImpl
+    extends AbstractFieldProperty
+    implements IFeatureComplexItemValueHandler {
 
   @NonNull
   private final IFieldClassBinding definition;
@@ -54,7 +59,7 @@ class ClassBindingFieldProperty
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */
-  public ClassBindingFieldProperty(
+  public ClassBindingFieldPropertyImpl(
       @NonNull Field field,
       @NonNull IFieldClassBinding definition,
       @NonNull IAssemblyClassBinding parentClassBinding) {
@@ -87,8 +92,13 @@ class ClassBindingFieldProperty
   }
 
   @Override
-  protected IDataTypeHandler newDataTypeHandler() {
-    return IDataTypeHandler.newDataTypeHandler(this, getDefinition());
+  public IFieldClassBinding getClassBinding() {
+    return definition;
+  }
+
+  @Override
+  public IBoundFlagInstance getJsonKey() {
+    return getClassBinding().getJsonKeyFlagInstance();
   }
 
   @Override

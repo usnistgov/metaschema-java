@@ -33,8 +33,7 @@ import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 
 import java.io.IOException;
 
@@ -43,66 +42,73 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 // TODO: implement can handle QName for XML parsing
-class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
+public interface IFeatureScalarItemValueHandler
+    extends IDataTypeHandler {
+
+  Object getValue(@NonNull Object parent);
+
+  void setValue(@NonNull Object parent, Object value);
+
+  /**
+   * Get the data type adapter supporting the scalar value.
+   *
+   * @return the data type adapter
+   */
   @NonNull
-  private final IBoundFieldInstance property;
-
-  public JavaTypeAdapterDataTypeHandler(IBoundFieldInstance property) {
-    this.property = ObjectUtils.requireNonNull(property, "property");
-  }
+  IDataTypeAdapter<?> getJavaTypeAdapter();
 
   @Override
-  public IDataTypeAdapter<?> getJavaTypeAdapter() {
-    return property.getDefinition().getJavaTypeAdapter();
-  }
-
-  @Override
-  public IClassBinding getClassBinding() {
-    // this is always null
-    return null;
-  }
-
-  @Override
-  public boolean isUnwrappedValueAllowedInXml() {
+  default boolean isUnwrappedValueAllowedInXml() {
     return getJavaTypeAdapter().isUnrappedValueAllowedInXml();
   }
 
-  @Override
-  public boolean isJsonKeyRequired() {
-    return false;
+  default void setValue(@NonNull Object parent, @NonNull String text) {
+    Object item = getValueFromString(text);
+    setValue(parent, item);
   }
 
-  @SuppressWarnings({
-      "resource", // not owned
-      "unchecked" })
+  @Nullable
+  default String toStringFromItem(@NonNull Object parent) {
+    Object item = getValue(parent);
+    return item == null ? null : getJavaTypeAdapter().asString(item);
+  }
+
+  default Object getValueFromString(@NonNull String text) {
+    return getJavaTypeAdapter().parse(text);
+  }
+
+  @SuppressWarnings("resource")
   @Override
-  public <T> T readItem(Object parentInstance, IJsonParsingContext context)
+  default Object readItem(Object parent, IJsonParsingContext context, IBoundFlagInstance jsonKey)
       throws IOException {
-    return (T) getJavaTypeAdapter().parse(context.getReader());
+    assert jsonKey == null;
+    return getJavaTypeAdapter().parse(context.getReader());
   }
 
   @Override
-  public Object readItem(Object parentInstance, StartElement start, IXmlParsingContext context)
+  default Object readItem(Object parentInstance, StartElement start, IXmlParsingContext context)
       throws IOException, XMLStreamException {
     return getJavaTypeAdapter().parse(context.getReader());
   }
 
   @Override
-  public void writeItem(Object item, QName currentParentName, IXmlWritingContext context)
+  default void writeItem(Object item, QName parentName, IXmlWritingContext context)
       throws IOException, XMLStreamException {
-    getJavaTypeAdapter().writeXmlValue(item, currentParentName, context.getWriter());
+    getJavaTypeAdapter().writeXmlValue(item, parentName, context.getWriter());
   }
 
   @SuppressWarnings("resource") // resource not owned
   @Override
-  public void writeItem(Object targetObject, IJsonWritingContext context) throws IOException {
-    getJavaTypeAdapter().writeJsonValue(ObjectUtils.requireNonNull(targetObject), context.getWriter());
+  default void writeItem(Object item, IJsonWritingContext context, IBoundFlagInstance jsonKey) throws IOException {
+    assert jsonKey == null;
+    getJavaTypeAdapter().writeJsonValue(ObjectUtils.requireNonNull(item), context.getWriter());
   }
 
   @Override
-  public Object copyItem(@NonNull Object fromItem, Object parentInstance) throws BindingException {
-    return getJavaTypeAdapter().copy(fromItem);
+  default Object deepCopyItem(Object source, Object parentInstance) throws BindingException {
+    return getJavaTypeAdapter().copy(source);
   }
 }
