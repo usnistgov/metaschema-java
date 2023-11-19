@@ -31,19 +31,19 @@ import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractModelPropertyInfo
-    implements IModelPropertyInfo {
+public abstract class AbstractModelInstanceCollectionInfo
+    implements IModelInstanceCollectionInfo {
 
   @NonNull
-  private final IBoundModelInstance property;
+  private final IBoundModelInstance instance;
 
-  public AbstractModelPropertyInfo(
-      @NonNull IBoundModelInstance property) {
-    this.property = ObjectUtils.requireNonNull(property, "property");
+  public AbstractModelInstanceCollectionInfo(
+      @NonNull IBoundModelInstance instance) {
+    this.instance = ObjectUtils.requireNonNull(instance, "instance");
   }
 
   @Override
-  public IBoundModelInstance getProperty() {
-    return property;
+  public IBoundModelInstance getInstance() {
+    return instance;
   }
 }

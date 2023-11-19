@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind.model;
 import gov.nist.secauto.metaschema.core.model.IModelInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.info.IItemValueHandler;
-import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
+import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -74,11 +74,11 @@ public interface IBoundModelInstance extends IModelInstance, IBoundJavaProperty,
 
   @Override
   default Class<?> getItemType() {
-    return getPropertyInfo().getItemType();
+    return getCollectionInfo().getItemType();
   }
 
   @NonNull
-  IModelPropertyInfo getPropertyInfo();
+  IModelInstanceCollectionInfo getCollectionInfo();
 
   /**
    * Get the item values associated with the provided value.

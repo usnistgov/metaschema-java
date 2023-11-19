@@ -39,7 +39,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IFeatureJavaField extends IInstance {
 
   /**
-   * Gets the bound Java field associated with this property.
+   * Gets the bound Java field associated with this instance.
    *
    * @return the Java field
    */
@@ -81,10 +81,10 @@ public interface IFeatureJavaField extends IInstance {
   /**
    * Get the current value from the provided {@code parentInstance} object. The
    * provided object must be of the type associated with the definition containing
-   * this property.
+   * this instance.
    *
    * @param parent
-   *          the object associated with the definition containing this property
+   *          the object associated with the definition containing this instance
    * @return the value if available, or {@code null} otherwise
    */
   @Override
@@ -109,7 +109,7 @@ public interface IFeatureJavaField extends IInstance {
 
   /**
    * Set the provided value on the provided object. The provided object must be of
-   * the item's type associated with this property.
+   * the item's type associated with this instance.
    *
    * @param parentInstance
    *          the object

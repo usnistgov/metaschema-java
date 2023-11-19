@@ -40,12 +40,11 @@ import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class SingletonPropertyInfo
-    extends AbstractModelPropertyInfo {
+class SingletonCollectionInfo
+    extends AbstractModelInstanceCollectionInfo {
 
-  public SingletonPropertyInfo(
-      @NonNull IBoundModelInstance property) {
-    super(property);
+  public SingletonCollectionInfo(@NonNull IBoundModelInstance instance) {
+    super(instance);
   }
 
   @SuppressWarnings("null")
@@ -61,51 +60,51 @@ class SingletonPropertyInfo
 
   @Override
   public Class<?> getItemType() {
-    return (Class<?>) getProperty().getType();
+    return (Class<?>) getInstance().getType();
   }
 
   @Override
   public void writeValues(@NonNull Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
-    context.writeInstanceValue(getProperty(), value, parentName);
+    context.writeInstanceValue(getInstance(), value, parentName);
   }
 
   @Override
   public void writeValues(Object parentObject, IJsonWritingContext context) throws IOException {
-    IBoundModelInstance property = getProperty();
-    getProperty().writeItem(
-        ObjectUtils.notNull(property.getValue(parentObject)),
+    IBoundModelInstance instance = getInstance();
+    getInstance().writeItem(
+        ObjectUtils.notNull(instance.getValue(parentObject)),
         context,
         null);
   }
 
   @Override
   public boolean isValueSet(Object parentInstance) throws IOException {
-    return getProperty().getValue(parentInstance) != null;
+    return getInstance().getValue(parentInstance) != null;
   }
 
   @Override
-  public Object copy(@NonNull Object fromInstance, @NonNull Object toInstance)
+  public Object copy(@NonNull Object fromObject, @NonNull Object toObject)
       throws BindingException {
-    IBoundModelInstance instance = getProperty();
+    IBoundModelInstance instance = getInstance();
 
-    Object value = instance.getValue(fromInstance);
+    Object value = instance.getValue(fromObject);
 
-    return value == null ? null : instance.deepCopyItem(ObjectUtils.requireNonNull(value), toInstance);
+    return value == null ? null : instance.deepCopyItem(ObjectUtils.requireNonNull(value), toObject);
   }
 
   @Override
   public Object emptyValue() {
-    return getProperty().getDefaultValue();
+    return getInstance().getDefaultValue();
   }
 
   @Override
-  public Object readItems(IModelPropertyInfo.IReadHandler handler) throws IOException {
+  public Object readItems(IModelInstanceCollectionInfo.IReadHandler handler) throws IOException {
     return handler.readSingleton();
   }
 
   @Override
-  public void writeItems(IModelPropertyInfo.IWriteHandler handler, Object value) {
+  public void writeItems(IModelInstanceCollectionInfo.IWriteHandler handler, Object value) {
     handler.writeSingleton(value);
   }
 }

@@ -59,11 +59,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
-class DefaultFlagProperty
+class DefaultFlagInstance
     extends AbstractProperty<IClassBinding>
     implements IBoundFlagInstance {
   // private static final Logger logger =
-  // LogManager.getLogger(DefaultFlagProperty.class);
+  // LogManager.getLogger(DefaultFlagInstance.class);
   @NonNull
   private final Field field;
   @NonNull
@@ -84,7 +84,7 @@ class DefaultFlagProperty
    * @param containingDefinition
    *          the class binding for the field's containing class
    */
-  public DefaultFlagProperty(
+  public DefaultFlagInstance(
       @NonNull Field field,
       @NonNull IClassBinding containingDefinition) {
     super(containingDefinition);
@@ -226,12 +226,12 @@ class DefaultFlagProperty
 
     @Override
     public String getFormalName() {
-      return DefaultFlagProperty.this.getFormalName();
+      return DefaultFlagInstance.this.getFormalName();
     }
 
     @Override
     public MarkupLine getDescription() {
-      return DefaultFlagProperty.this.getDescription();
+      return DefaultFlagInstance.this.getDescription();
     }
 
     @Override
@@ -242,12 +242,12 @@ class DefaultFlagProperty
 
     @Override
     public IDataTypeAdapter<?> getJavaTypeAdapter() {
-      return DefaultFlagProperty.this.getJavaTypeAdapter();
+      return DefaultFlagInstance.this.getJavaTypeAdapter();
     }
 
     @Override
     public Object getDefaultValue() {
-      return DefaultFlagProperty.this.getDefaultValue();
+      return DefaultFlagInstance.this.getDefaultValue();
     }
 
     @Override
@@ -258,7 +258,7 @@ class DefaultFlagProperty
 
     @Override
     public IBoundFlagInstance getInlineInstance() {
-      return DefaultFlagProperty.this;
+      return DefaultFlagInstance.this;
     }
 
     @Override
@@ -268,7 +268,7 @@ class DefaultFlagProperty
 
     @Override
     public Integer getIndex() {
-      return DefaultFlagProperty.this.getIndex();
+      return DefaultFlagInstance.this.getIndex();
     }
 
     @Override
@@ -285,12 +285,12 @@ class DefaultFlagProperty
 
     @Override
     public MarkupMultiline getRemarks() {
-      return DefaultFlagProperty.this.getRemarks();
+      return DefaultFlagInstance.this.getRemarks();
     }
 
     @Override
     public String toCoordinates() {
-      return DefaultFlagProperty.this.toCoordinates();
+      return DefaultFlagInstance.this.toCoordinates();
     }
 
     @Override
@@ -301,7 +301,7 @@ class DefaultFlagProperty
 
     @Override
     public IModule getContainingModule() {
-      return DefaultFlagProperty.this.getContainingModule();
+      return DefaultFlagInstance.this.getContainingModule();
     }
   }
 }

@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
-import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
+import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -38,16 +38,16 @@ import java.util.Collection;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
-public abstract class AbstractModelProperty
+public abstract class AbstractBoundModelInstance
     extends AbstractProperty<IAssemblyClassBinding>
     implements IBoundModelInstance {
   // private static final Logger logger =
-  // LogManager.getLogger(AbstractModelProperty.class);
+  // LogManager.getLogger(AbstractBoundModelInstance.class);
 
   @NonNull
   private final Field field;
   @NonNull
-  private final Lazy<IModelPropertyInfo> propertyInfo;
+  private final Lazy<IModelInstanceCollectionInfo> collectionInfo;
 
   /**
    * Construct a new bound model instance based on a Java property. The name of
@@ -59,12 +59,12 @@ public abstract class AbstractModelProperty
    * @param containingDefinition
    *          the class binding for the field's containing class
    */
-  protected AbstractModelProperty(
+  protected AbstractBoundModelInstance(
       @NonNull Field field,
       @NonNull IAssemblyClassBinding containingDefinition) {
     super(containingDefinition);
     this.field = ObjectUtils.requireNonNull(field, "field");
-    this.propertyInfo = ObjectUtils.notNull(Lazy.lazy(() -> IModelPropertyInfo.newPropertyInfo(this)));
+    this.collectionInfo = ObjectUtils.notNull(Lazy.lazy(() -> IModelInstanceCollectionInfo.of(this)));
   }
 
   @Override
@@ -81,25 +81,25 @@ public abstract class AbstractModelProperty
   /**
    * Gets information about the bound property.
    *
-   * @return the property information for the bound property
+   * @return the collection information for the bound property
    */
   @SuppressWarnings("null")
   @Override
   @NonNull
-  public IModelPropertyInfo getPropertyInfo() {
-    return propertyInfo.get();
+  public IModelInstanceCollectionInfo getCollectionInfo() {
+    return collectionInfo.get();
   }
 
   @Override
   public Collection<? extends Object> getItemValues(Object value) {
-    return getPropertyInfo().getItemsFromValue(value);
+    return getCollectionInfo().getItemsFromValue(value);
   }
 
   @Override
   public void deepCopy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException {
     Object value = getValue(fromInstance);
     if (value != null) {
-      value = getPropertyInfo().copy(fromInstance, toInstance);
+      value = getCollectionInfo().copy(fromInstance, toInstance);
     }
     setValue(toInstance, value);
   }

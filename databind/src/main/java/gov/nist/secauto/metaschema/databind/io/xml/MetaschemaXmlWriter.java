@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
+import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 
@@ -114,9 +114,9 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     }
 
     if (targetDefinition instanceof IAssemblyClassBinding) {
-      for (IBoundNamedModelInstance modelProperty : ((IAssemblyClassBinding) targetDefinition).getModelInstances()) {
-        assert modelProperty != null;
-        writeModelInstanceValues(modelProperty, targetObject, parentName);
+      for (IBoundNamedModelInstance modelInstance : ((IAssemblyClassBinding) targetDefinition).getModelInstances()) {
+        assert modelInstance != null;
+        writeModelInstanceValues(modelInstance, targetObject, parentName);
       }
     } else if (targetDefinition instanceof IFieldClassBinding) {
       IBoundFieldValueInstance fieldValueInstance = ((IFieldClassBinding) targetDefinition).getFieldValueInstance();
@@ -192,9 +192,9 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
       return false; // NOPMD - intentional
     }
 
-    IModelPropertyInfo propertyInfo = targetInstance.getPropertyInfo();
-    if (targetInstance.getMinOccurs() > 0 || propertyInfo.getItemCount(value) > 0) {
-      // only write a property if the wrapper is required or if it has contents
+    IModelInstanceCollectionInfo collectionInfo = targetInstance.getCollectionInfo();
+    if (targetInstance.getMinOccurs() > 0 || collectionInfo.getItemCount(value) > 0) {
+      // only write the instance if the wrapper is required or if it has contents
       QName currentStart = parentName;
 
       try {
@@ -206,7 +206,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
         }
 
         // There are one or more named values based on cardinality
-        propertyInfo.writeValues(value, currentStart, this);
+        collectionInfo.writeValues(value, currentStart, this);
 
         if (groupQName != null) {
           writer.writeEndElement();

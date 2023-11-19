@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.databind.model.IBoundJavaProperty;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
+import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -103,9 +103,9 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       IClassBinding targetDefinition,
       Object targetObject,
       Map<String, ? extends IBoundJavaProperty> instances) throws IOException {
-    for (IBoundJavaProperty property : instances.values()) {
-      assert property != null;
-      writeInstance(property, targetObject);
+    for (IBoundJavaProperty instance : instances.values()) {
+      assert instance != null;
+      writeInstance(instance, targetObject);
     }
 
     if (targetDefinition instanceof IFieldClassBinding) {
@@ -191,13 +191,13 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
   protected void writeModelInstanceValues(
       @NonNull IBoundNamedModelInstance targetInstance,
       @NonNull Object parentObject) throws IOException {
-    IModelPropertyInfo propertyInfo = targetInstance.getPropertyInfo();
-    if (propertyInfo.isValueSet(parentObject)) {
+    IModelInstanceCollectionInfo collectionInfo = targetInstance.getCollectionInfo();
+    if (collectionInfo.isValueSet(parentObject)) {
       // write the field name
       writer.writeFieldName(targetInstance.getJsonName());
 
       // dispatch to the property info implementation to address cardinality
-      propertyInfo.writeValues(parentObject, this);
+      collectionInfo.writeValues(parentObject, this);
     }
   }
 

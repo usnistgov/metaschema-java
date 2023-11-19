@@ -210,10 +210,10 @@ abstract class AbstractClassBinding implements IClassBinding {
     return instance;
   }
 
-  protected void deepCopyItemInternal(@NonNull Object fromInstance, @NonNull Object toInstance)
+  protected void deepCopyItemInternal(@NonNull Object fromObject, @NonNull Object toObject)
       throws BindingException {
-    for (IBoundFlagInstance property : getFlagInstances()) {
-      property.deepCopy(fromInstance, toInstance);
+    for (IBoundFlagInstance instance : getFlagInstances()) {
+      instance.deepCopy(fromObject, toObject);
     }
   }
 }

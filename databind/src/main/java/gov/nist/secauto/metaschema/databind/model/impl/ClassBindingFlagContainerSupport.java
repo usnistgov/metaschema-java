@@ -63,7 +63,7 @@ class ClassBindingFlagContainerSupport implements IFlagContainerSupport<IBoundFl
         .flatMap(field -> {
           Stream<IBoundFlagInstance> stream;
           if (field.isAnnotationPresent(BoundFlag.class)) {
-            stream = Stream.of(new DefaultFlagProperty(field, classBinding));
+            stream = Stream.of(new DefaultFlagInstance(field, classBinding));
           } else {
             stream = Stream.empty();
           }

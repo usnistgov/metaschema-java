@@ -28,25 +28,25 @@ package gov.nist.secauto.metaschema.databind.model.info;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractModelInstanceReadHandler implements IModelPropertyInfo.IReadHandler {
+public abstract class AbstractModelInstanceReadHandler implements IModelInstanceCollectionInfo.IReadHandler {
   @NonNull
-  private final IModelPropertyInfo propertyInfo;
+  private final IModelInstanceCollectionInfo collectionInfo;
   @NonNull
   private final Object parentObject;
 
   protected AbstractModelInstanceReadHandler(
-      @NonNull IModelPropertyInfo propertyInfo,
+      @NonNull IModelInstanceCollectionInfo collectionInfo,
       @NonNull Object parentObject) {
-    this.propertyInfo = propertyInfo;
+    this.collectionInfo = collectionInfo;
     this.parentObject = parentObject;
   }
 
   /**
-   * @return the propertyInfo
+   * @return the collectionInfo
    */
   @NonNull
-  public IModelPropertyInfo getPropertyInfo() {
-    return propertyInfo;
+  public IModelInstanceCollectionInfo getCollectionInfo() {
+    return collectionInfo;
   }
 
   /**

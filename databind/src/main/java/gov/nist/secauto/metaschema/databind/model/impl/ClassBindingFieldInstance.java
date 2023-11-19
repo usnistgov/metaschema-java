@@ -40,8 +40,8 @@ import java.lang.reflect.Field;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class ClassBindingFieldPropertyImpl
-    extends AbstractFieldProperty
+public class ClassBindingFieldInstance
+    extends AbstractBoundFieldInstance
     implements IFeatureComplexItemValueHandler {
 
   @NonNull
@@ -60,7 +60,7 @@ public class ClassBindingFieldPropertyImpl
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */
-  public ClassBindingFieldPropertyImpl(
+  public ClassBindingFieldInstance(
       @NonNull Field field,
       @NonNull IFieldClassBinding definition,
       @NonNull IAssemblyClassBinding parentClassBinding) {
@@ -129,7 +129,7 @@ public class ClassBindingFieldPropertyImpl
         }
       }
     } else {
-      retval = getPropertyInfo().emptyValue();
+      retval = getCollectionInfo().emptyValue();
     }
     return retval;
   }

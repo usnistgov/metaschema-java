@@ -55,8 +55,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
-public class SimpleFieldPropertyImpl
-    extends AbstractFieldProperty
+public class SimpleFieldInstance
+    extends AbstractBoundFieldInstance
     implements IFeatureScalarItemValueHandler {
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
@@ -77,7 +77,7 @@ public class SimpleFieldPropertyImpl
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */
-  public SimpleFieldPropertyImpl(
+  public SimpleFieldInstance(
       @NonNull Field field,
       @NonNull IAssemblyClassBinding parentClassBinding) {
     super(field, parentClassBinding);
@@ -127,7 +127,7 @@ public class SimpleFieldPropertyImpl
 
   @Override
   public Object defaultValue() {
-    return getMaxOccurs() == 1 ? getEffectiveDefaultValue() : getPropertyInfo().emptyValue();
+    return getMaxOccurs() == 1 ? getEffectiveDefaultValue() : getCollectionInfo().emptyValue();
   }
 
   @Override
@@ -174,7 +174,7 @@ public class SimpleFieldPropertyImpl
 
     @Override
     public IDataTypeAdapter<?> getJavaTypeAdapter() {
-      return ObjectUtils.notNull(SimpleFieldPropertyImpl.this.getJavaTypeAdapter());
+      return ObjectUtils.notNull(SimpleFieldInstance.this.getJavaTypeAdapter());
     }
 
     @Override
@@ -185,17 +185,17 @@ public class SimpleFieldPropertyImpl
 
     @Override
     public IBoundFieldInstance getInlineInstance() {
-      return SimpleFieldPropertyImpl.this;
+      return SimpleFieldInstance.this;
     }
 
     @Override
     public String getFormalName() {
-      return SimpleFieldPropertyImpl.this.getFormalName();
+      return SimpleFieldInstance.this.getFormalName();
     }
 
     @Override
     public MarkupLine getDescription() {
-      return SimpleFieldPropertyImpl.this.getDescription();
+      return SimpleFieldInstance.this.getDescription();
     }
 
     @Override
@@ -220,12 +220,12 @@ public class SimpleFieldPropertyImpl
 
     @Override
     public MarkupMultiline getRemarks() {
-      return SimpleFieldPropertyImpl.this.getRemarks();
+      return SimpleFieldInstance.this.getRemarks();
     }
 
     @Override
     public String toCoordinates() {
-      return SimpleFieldPropertyImpl.this.toCoordinates();
+      return SimpleFieldInstance.this.toCoordinates();
     }
 
     @Override
@@ -263,7 +263,7 @@ public class SimpleFieldPropertyImpl
 
     @Override
     public IModule getContainingModule() {
-      return SimpleFieldPropertyImpl.this.getContainingModule();
+      return SimpleFieldInstance.this.getContainingModule();
     }
 
     @Override

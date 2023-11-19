@@ -89,16 +89,16 @@ class XmlParserTest
     IAssemblyClassBinding assembly
         = ObjectUtils.requireNonNull((IAssemblyClassBinding) bindingContext.getClassBinding(MultiFieldAssembly.class));
 
-    IBoundFieldInstance field1Property
+    IBoundFieldInstance field1Instance
         = ObjectUtils.requireNonNull((IBoundFieldInstance) assembly.getModelInstanceByName("field1"));
 
-    IBoundFieldInstance field2Property
+    IBoundFieldInstance field2Instance
         = ObjectUtils.requireNonNull((IBoundFieldInstance) assembly.getModelInstanceByName("field2"));
 
     MultiFieldAssembly obj = new MultiFieldAssembly();
 
-    assertTrue(parser.readModelInstanceItems(field1Property, obj, start));
-    assertFalse(parser.readModelInstanceItems(field2Property, obj, start));
+    assertTrue(parser.readModelInstanceItems(field1Instance, obj, start));
+    assertFalse(parser.readModelInstanceItems(field2Instance, obj, start));
 
     assertEquals("field1value", obj.getField1());
     assertEquals(null, obj.getField2());
@@ -166,16 +166,16 @@ class XmlParserTest
     IAssemblyClassBinding assembly
         = ObjectUtils.requireNonNull((IAssemblyClassBinding) bindingContext.getClassBinding(MultiFieldAssembly.class));
 
-    IBoundFieldInstance field1Property
+    IBoundFieldInstance field1Instance
         = ObjectUtils.requireNonNull(assembly.getFieldInstanceByName("field1"));
 
-    IBoundFieldInstance field2Property
+    IBoundFieldInstance field2Instance
         = ObjectUtils.requireNonNull(assembly.getFieldInstanceByName("field2"));
 
     MultiFieldAssembly obj = new MultiFieldAssembly();
 
-    assertFalse(parser.readModelInstanceItems(field1Property, obj, start));
-    assertTrue(parser.readModelInstanceItems(field2Property, obj, start));
+    assertFalse(parser.readModelInstanceItems(field1Instance, obj, start));
+    assertTrue(parser.readModelInstanceItems(field2Instance, obj, start));
 
     assertEquals(null, obj.getField1());
     assertIterableEquals(Collections.singleton("field2value"),

@@ -46,18 +46,18 @@ import javax.xml.stream.XMLStreamException;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-// REFACTOR: rename to IModelInstanceInfo
 // REFACTOR: make all read and write methods take the value, not the parent instance as an argument
-public interface IModelPropertyInfo {
+public interface IModelInstanceCollectionInfo {
 
   @NonNull
-  static IModelPropertyInfo newPropertyInfo(
+  static IModelInstanceCollectionInfo of(
       @NonNull IBoundModelInstance instance) {
-    // create the property info
+
+    // create the collection info
     Type type = instance.getType();
     Field field = instance.getField();
 
-    IModelPropertyInfo retval;
+    IModelInstanceCollectionInfo retval;
     if (instance.getMaxOccurs() == -1 || instance.getMaxOccurs() > 1) {
       // collection case
       JsonGroupAsBehavior jsonGroupAs = instance.getJsonGroupAsBehavior();
@@ -94,7 +94,7 @@ public interface IModelPropertyInfo {
               field.getType().getName(),
               Map.class.getName()));
         }
-        retval = new MapPropertyInfo(instance);
+        retval = new MapCollectionInfo(instance);
       } else {
         if (!List.class.isAssignableFrom(rawType)) {
           throw new IllegalArgumentException(String.format(
@@ -104,7 +104,7 @@ public interface IModelPropertyInfo {
               field.getType().getName(),
               List.class.getName()));
         }
-        retval = new ListPropertyInfo(instance);
+        retval = new ListCollectionInfo(instance);
       }
     } else {
       // single value case
@@ -116,19 +116,18 @@ public interface IModelPropertyInfo {
             field.getDeclaringClass().getName(),
             field.getType().getName()));
       }
-      retval = new SingletonPropertyInfo(instance);
+      retval = new SingletonCollectionInfo(instance);
     }
     return retval;
   }
 
   /**
-   * Get the associated property for which this info is for.
+   * Get the associated instance for which this info is for.
    *
-   * @return the property
+   * @return the instance
    */
-  // REFACTOR: rename to getInstance
   @NonNull
-  IBoundModelInstance getProperty();
+  IBoundModelInstance getInstance();
 
   int getItemCount(@Nullable Object value);
 
@@ -167,7 +166,7 @@ public interface IModelPropertyInfo {
 
   @NonNull
   default Collection<? extends Object> getItemsFromParentInstance(@NonNull Object parentInstance) {
-    Object value = getProperty().getValue(parentInstance);
+    Object value = getInstance().getValue(parentInstance);
     return getItemsFromValue(value);
   }
 
@@ -210,7 +209,7 @@ public interface IModelPropertyInfo {
     Map<String, ?> readMap() throws IOException;
 
     /**
-     * Read the next item in the collection of items represented by the property.
+     * Read the next item in the collection of items represented by the instance.
      *
      * @return the Java object representing the item, or {@code null} if no items
      *         remain to be read
@@ -228,7 +227,7 @@ public interface IModelPropertyInfo {
     void writeMap(@NonNull Map<String, ?> items);
 
     /**
-     * Write the next item in the collection of items represented by the property.
+     * Write the next item in the collection of items represented by the instance.
      *
      * @param item
      *          the item Java object to write

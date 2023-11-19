@@ -217,7 +217,7 @@ public class DefaultFieldClassBinding
                   BoundFieldValue.class.getName()));
         }
 
-        this.fieldValue = new DefaultFieldValueProperty(this, field);
+        this.fieldValue = new DefaultFieldValueInstance(this, field);
       }
       return this.fieldValue;
     }

@@ -41,7 +41,7 @@ import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
-import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
+import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import org.codehaus.stax2.XMLEventReader2;
 
@@ -267,10 +267,10 @@ public class MetaschemaXmlReader
       @NonNull StartElement start)
       throws IOException, XMLStreamException {
     Set<IBoundNamedModelInstance> unhandledProperties = new HashSet<>();
-    for (IBoundNamedModelInstance modelProperty : targetDefinition.getModelInstances()) {
-      assert modelProperty != null;
-      if (!readModelInstanceItems(modelProperty, targetObject, start)) {
-        unhandledProperties.add(modelProperty);
+    for (IBoundNamedModelInstance modelInstance : targetDefinition.getModelInstances()) {
+      assert modelInstance != null;
+      if (!readModelInstanceItems(modelInstance, targetObject, start)) {
+        unhandledProperties.add(modelInstance);
       }
     }
 
@@ -363,15 +363,15 @@ public class MetaschemaXmlReader
         currentStart = ObjectUtils.notNull(groupEvent.asStartElement());
       }
 
-      IModelPropertyInfo propertyInfo = instance.getPropertyInfo();
+      IModelInstanceCollectionInfo collectionInfo = instance.getCollectionInfo();
 
       ModelInstanceReadHandler handler = new ModelInstanceReadHandler(
-          propertyInfo,
+          collectionInfo,
           parentObject,
           currentStart);
 
       // let the property info decide how to parse the value
-      Object value = propertyInfo.readItems(handler);
+      Object value = collectionInfo.readItems(handler);
       if (value != null) {
         instance.setValue(parentObject, value);
       }
@@ -516,10 +516,10 @@ public class MetaschemaXmlReader
     private final StartElement startElement;
 
     private ModelInstanceReadHandler(
-        @NonNull IModelPropertyInfo propertyInfo,
+        @NonNull IModelInstanceCollectionInfo collectionInfo,
         @NonNull Object parentObject,
         @NonNull StartElement startElement) {
-      super(propertyInfo, parentObject);
+      super(collectionInfo, parentObject);
       this.startElement = startElement;
     }
 
@@ -546,7 +546,7 @@ public class MetaschemaXmlReader
 
     @Override
     public Map<String, ?> readMap() throws IOException {
-      IBoundFlagInstance jsonKey = getPropertyInfo().getProperty().getJsonKey();
+      IBoundFlagInstance jsonKey = getCollectionInfo().getInstance().getJsonKey();
       assert jsonKey != null;
 
       return ObjectUtils.notNull(readCollection()
@@ -569,7 +569,7 @@ public class MetaschemaXmlReader
         // consume extra whitespace between elements
         XmlEventUtil.skipWhitespace(eventReader);
 
-        IBoundModelInstance instance = getPropertyInfo().getProperty();
+        IBoundModelInstance instance = getCollectionInfo().getInstance();
         XMLEvent event;
         while ((event = eventReader.peek()).isStartElement()
             && instance.canHandleXmlQName(ObjectUtils.notNull(event.asStartElement().getName()))) {
@@ -591,7 +591,7 @@ public class MetaschemaXmlReader
 
     @Override
     public Object readItem() throws IOException {
-      return readModelInstanceValue(getPropertyInfo().getProperty(), getParentObject(), getStartElement());
+      return readModelInstanceValue(getCollectionInfo().getInstance(), getParentObject(), getStartElement());
     }
   }
 }

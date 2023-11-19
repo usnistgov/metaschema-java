@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.databind.model;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.model.impl.ClassBindingFieldPropertyImpl;
-import gov.nist.secauto.metaschema.databind.model.impl.SimpleFieldPropertyImpl;
+import gov.nist.secauto.metaschema.databind.model.impl.ClassBindingFieldInstance;
+import gov.nist.secauto.metaschema.databind.model.impl.SimpleFieldInstance;
 
 import java.lang.reflect.Field;
 
@@ -50,9 +50,9 @@ public interface IBoundFieldInstance extends IBoundNamedModelInstance, IFieldIns
 
     IBoundFieldInstance retval;
     if (classBinding == null) {
-      retval = new SimpleFieldPropertyImpl(field, containingDefinition);
+      retval = new SimpleFieldInstance(field, containingDefinition);
     } else {
-      retval = new ClassBindingFieldPropertyImpl(field, (IFieldClassBinding) classBinding, containingDefinition);
+      retval = new ClassBindingFieldInstance(field, (IFieldClassBinding) classBinding, containingDefinition);
     }
     return retval;
   }

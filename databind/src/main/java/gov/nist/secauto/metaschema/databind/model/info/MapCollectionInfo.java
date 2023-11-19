@@ -26,123 +26,125 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-
-import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
-import java.util.LinkedList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class ListPropertyInfo
-    extends AbstractModelPropertyInfo {
+class MapCollectionInfo
+    extends AbstractModelInstanceCollectionInfo {
 
-  public ListPropertyInfo(
-      @NonNull IBoundModelInstance property) {
-    super(property);
-  }
-
+  @SuppressWarnings("null")
   @Override
-  public Class<?> getItemType() {
-    ParameterizedType actualType = (ParameterizedType) getProperty().getType();
-    // this is a List so there is only a single generic type
-    return ObjectUtils.notNull((Class<?>) actualType.getActualTypeArguments()[0]);
-  }
-
-  @Override
-  public List<? extends Object> getItemsFromParentInstance(Object parentInstance) {
-    Object value = getProperty().getValue(parentInstance);
-    return getItemsFromValue(value);
-  }
-
-  @Override
-  public List<? extends Object> getItemsFromValue(Object value) {
-    return value == null ? CollectionUtil.emptyList() : (List<?>) value;
+  public Collection<?> getItemsFromValue(Object value) {
+    return value == null ? List.of() : ((Map<?, ?>) value).values();
   }
 
   @Override
   public int getItemCount(Object value) {
-    return value == null ? 0 : ((List<?>) value).size();
+    return value == null ? 0 : ((Map<?, ?>) value).size();
+  }
+
+  public MapCollectionInfo(@NonNull IBoundModelInstance instance) {
+    super(instance);
+  }
+
+  @Override
+  public boolean isJsonKeyRequired() {
+    return true;
+  }
+
+  @SuppressWarnings("null")
+  @NonNull
+  public Class<?> getKeyType() {
+    ParameterizedType actualType = (ParameterizedType) getInstance().getType();
+    // this is a Map so the first generic type is the key
+    return (Class<?>) actualType.getActualTypeArguments()[0];
+  }
+
+  @Override
+  public Class<?> getItemType() {
+    return getValueType();
+  }
+
+  @SuppressWarnings("null")
+  @NonNull
+  public Class<?> getValueType() {
+    ParameterizedType actualType = (ParameterizedType) getInstance().getType();
+    // this is a Map so the second generic type is the value
+    return (Class<?>) actualType.getActualTypeArguments()[1];
   }
 
   @Override
   public void writeValues(Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
-    IBoundModelInstance property = getProperty();
-    List<? extends Object> items = getItemsFromValue(value);
-    for (Object item : items) {
-      context.writeInstanceValue(property, ObjectUtils.requireNonNull(item), parentName);
+    IBoundModelInstance instance = getInstance();
+    @SuppressWarnings("unchecked") Map<String, ? extends Object> items = (Map<String, ? extends Object>) value;
+    for (Object item : items.values()) {
+      context.writeInstanceValue(instance, ObjectUtils.notNull(item), parentName);
     }
   }
 
   @Override
   public void writeValues(Object parentInstance, IJsonWritingContext context) throws IOException {
-    List<? extends Object> items = getItemsFromParentInstance(parentInstance);
-
-    @SuppressWarnings("resource") // not owned
-    JsonGenerator writer = context.getWriter(); // NOPMD - intentional
-
-    boolean writeArray = false;
-    if (JsonGroupAsBehavior.LIST.equals(getProperty().getJsonGroupAsBehavior())
-        || JsonGroupAsBehavior.SINGLETON_OR_LIST.equals(getProperty().getJsonGroupAsBehavior()) && items.size() > 1) {
-      // write array, then items
-      writeArray = true;
-      writer.writeStartArray();
-    } // only other option is a singleton value, write item
-
-    for (Object targetObject : items) {
+    for (Object targetObject : getItemsFromParentInstance(parentInstance)) {
       assert targetObject != null;
-      getProperty().writeItem(targetObject, context, null);
-    }
-
-    if (writeArray) {
-      // write the end array
-      writer.writeEndArray();
+      getInstance().writeItem(targetObject, context, getInstance().getJsonKey());
     }
   }
 
   @Override
   public boolean isValueSet(Object parentInstance) throws IOException {
-    List<? extends Object> items = getItemsFromParentInstance(parentInstance);
+    Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
     return !items.isEmpty();
   }
 
   @Override
-  public List<?> copy(@NonNull Object fromInstance, @NonNull Object toInstance)
+  public Map<String, ?> copy(@NonNull Object fromInstance, @NonNull Object toInstance)
       throws BindingException {
-    IBoundModelInstance property = getProperty();
+    IBoundModelInstance instance = getInstance();
+    IBoundFlagInstance jsonKey = instance.getJsonKey();
+    assert jsonKey != null;
 
-    List<Object> copy = emptyValue();
+    Map<String, Object> copy = emptyValue();
     for (Object item : getItemsFromParentInstance(fromInstance)) {
-      copy.add(property.deepCopyItem(ObjectUtils.requireNonNull(item), toInstance));
+
+      Object itemCopy = instance.deepCopyItem(ObjectUtils.requireNonNull(item), toInstance);
+      String key = jsonKey.getValue(itemCopy).toString();
+      copy.put(key, itemCopy);
     }
     return copy;
   }
 
   @Override
-  public List<Object> emptyValue() {
-    return new LinkedList<>();
+  public Map<String, Object> emptyValue() {
+    return new LinkedHashMap<>();
   }
 
   @Override
-  public List<?> readItems(IModelPropertyInfo.IReadHandler handler) throws IOException {
-    return handler.readList();
+  public Map<String, ?> readItems(IModelInstanceCollectionInfo.IReadHandler handler) throws IOException {
+    return handler.readMap();
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public void writeItems(IModelPropertyInfo.IWriteHandler handler, Object value) {
-    handler.writeList((List<?>) value);
+  public void writeItems(
+      IModelInstanceCollectionInfo.IWriteHandler handler,
+      Object value) {
+    handler.writeMap((Map<String, ?>) value);
   }
 }

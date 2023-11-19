@@ -41,7 +41,7 @@ import java.lang.reflect.Field;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-class DefaultFieldValueProperty
+class DefaultFieldValueInstance
     extends AbstractProperty<IFieldClassBinding>
     implements IBoundFieldValueInstance {
   @NonNull
@@ -54,7 +54,7 @@ class DefaultFieldValueProperty
   private final Object defaultValue;
 
   @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
-  public DefaultFieldValueProperty(
+  public DefaultFieldValueInstance(
       @NonNull IFieldClassBinding fieldClassBinding,
       @NonNull Field field) {
     super(fieldClassBinding);

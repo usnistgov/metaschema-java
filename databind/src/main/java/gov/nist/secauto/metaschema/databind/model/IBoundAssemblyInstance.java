@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.model.impl.ClassBindingAssemblyPropertyImpl;
+import gov.nist.secauto.metaschema.databind.model.impl.ClassBindingAssemblyInstance;
 
 import java.lang.reflect.Field;
 
@@ -45,7 +45,7 @@ public interface IBoundAssemblyInstance extends IBoundNamedModelInstance, IAssem
     if (classBinding == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", itemType.getName()));
     }
-    return new ClassBindingAssemblyPropertyImpl(field, (IAssemblyClassBinding) classBinding, containingDefinition);
+    return new ClassBindingAssemblyInstance(field, (IAssemblyClassBinding) classBinding, containingDefinition);
   }
 
   @Override

@@ -30,43 +30,54 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.IGroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
 import java.lang.reflect.Field;
 import java.util.Locale;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractFieldProperty
-    extends AbstractModelProperty
-    implements IBoundFieldInstance {
+public class ClassBindingAssemblyInstance
+    extends AbstractBoundModelInstance
+    implements IBoundAssemblyInstance, IFeatureComplexItemValueHandler {
+
   @NonNull
-  private final BoundField boundField;
+  private final BoundAssembly assembly;
   @NonNull
   private final IGroupAs groupAs;
+  @NonNull
+  private final IAssemblyClassBinding definition;
 
-  public AbstractFieldProperty(@NonNull Field field, @NonNull IAssemblyClassBinding parentClassBinding) {
+  public ClassBindingAssemblyInstance(
+      @NonNull Field field,
+      @NonNull IAssemblyClassBinding definition,
+      @NonNull IAssemblyClassBinding parentClassBinding) {
     super(field, parentClassBinding);
 
-    BoundField boundField = field.getAnnotation(BoundField.class);
-    if (boundField == null) {
-      throw new IllegalStateException(String.format("Field '%s' on class '%s' is missing the '%s' annotation.",
-          field.getName(),
-          field.getDeclaringClass().getName(),
-          BoundField.class.getName()));
+    this.definition = definition;
+    BoundAssembly boundAssembly = field.getAnnotation(BoundAssembly.class);
+    if (boundAssembly == null) {
+      throw new IllegalArgumentException(
+          String.format("BoundField '%s' on class '%s' is missing the '%s' annotation.",
+              field.getName(),
+              parentClassBinding.getBoundClass().getName(),
+              BoundAssembly.class.getName()));
     }
-    this.boundField = boundField;
-    this.groupAs = IGroupAs.of(boundField.groupAs(), parentClassBinding);
+    this.assembly = boundAssembly;
+    this.groupAs = IGroupAs.of(boundAssembly.groupAs(), parentClassBinding);
     if ((getMaxOccurs() == -1 || getMaxOccurs() > 1)) {
       if (IGroupAs.SINGLETON_GROUP_AS.equals(this.groupAs)) {
         throw new IllegalStateException(String.format("Field '%s' on class '%s' is missing the '%s' annotation.",
             field.getName(),
-            field.getDeclaringClass().getName(),
+            parentClassBinding.getBoundClass().getName(),
             GroupAs.class.getName()));
       }
     } else if (!IGroupAs.SINGLETON_GROUP_AS.equals(this.groupAs)) {
@@ -75,60 +86,83 @@ public abstract class AbstractFieldProperty
           String.format(
               "Field '%s' on class '%s' has the '%s' annotation, but maxOccurs=1. A groupAs must not be specfied.",
               field.getName(),
-              field.getDeclaringClass().getName(),
+              parentClassBinding.getBoundClass().getName(),
               GroupAs.class.getName()));
     }
+  }
+
+  @Override
+  public IAssemblyClassBinding getDefinition() {
+    return definition;
+  }
+
+  @Override
+  public IAssemblyClassBinding getClassBinding() {
+    return definition;
+  }
+
+  @Override
+  public IBoundFlagInstance getJsonKey() {
+    return JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())
+        ? getClassBinding().getJsonKeyFlagInstance()
+        : null;
+  }
+
+  @Override
+  public Object getDefaultValue() {
+    // none
+    return null;
   }
 
   // ------------------------------------------
   // - Start annotation driven code - CPD-OFF -
   // ------------------------------------------
 
-  @Override
-  public boolean isValueWrappedInXml() {
-    return isInXmlWrapped()
-        || !isUnwrappedValueAllowedInXml();
-  }
-
   @NonNull
-  protected BoundField getFieldAnnotation() {
-    return boundField;
+  private BoundAssembly getAssemblyAnnotation() {
+    return assembly;
   }
 
   @Override
   public String getFormalName() {
-    return ModelUtil.resolveNoneOrValue(getFieldAnnotation().formalName());
+    return ModelUtil.resolveNoneOrValue(getAssemblyAnnotation().formalName());
   }
 
   @Override
   public MarkupLine getDescription() {
-    return ModelUtil.resolveToMarkupLine(getFieldAnnotation().description());
+    return ModelUtil.resolveToMarkupLine(getAssemblyAnnotation().description());
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    return ModelUtil.resolveToMarkupMultiline(getAssemblyAnnotation().remarks());
   }
 
   @Override
   public String getUseName() {
-    return ModelUtil.resolveNoneOrValue(getFieldAnnotation().useName());
+    return ModelUtil.resolveNoneOrValue(getAssemblyAnnotation().useName());
   }
 
   @Override
   public Integer getUseIndex() {
-    int value = getFieldAnnotation().useIndex();
+    int value = getAssemblyAnnotation().useIndex();
     return value == Integer.MIN_VALUE ? null : value;
   }
 
   @Override
-  public boolean isInXmlWrapped() {
-    return getFieldAnnotation().inXmlWrapped();
+  public String getXmlNamespace() {
+    return ObjectUtils
+        .notNull(ModelUtil.resolveNamespace(getAssemblyAnnotation().namespace(), getContainingDefinition()));
   }
 
   @Override
   public final int getMinOccurs() {
-    return getFieldAnnotation().minOccurs();
+    return getAssemblyAnnotation().minOccurs();
   }
 
   @Override
   public final int getMaxOccurs() {
-    return getFieldAnnotation().maxOccurs();
+    return getAssemblyAnnotation().maxOccurs();
   }
 
   @Override
@@ -152,8 +186,8 @@ public abstract class AbstractFieldProperty
   }
 
   @Override
-  public MarkupMultiline getRemarks() {
-    return ModelUtil.resolveToMarkupMultiline(getFieldAnnotation().remarks());
+  public Object defaultValue() {
+    return getCollectionInfo().emptyValue();
   }
 
   @SuppressWarnings("null")

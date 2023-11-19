@@ -37,9 +37,9 @@ public interface IFieldClassBinding extends IClassBinding, IBoundFieldDefinition
   IBoundFlagInstance getJsonValueKeyFlagInstance();
 
   /**
-   * Get the instance for the fiel'd value.
+   * Get the instance for the field's value.
    *
-   * @return the value property
+   * @return the value instance
    */
   @NonNull
   IBoundFieldValueInstance getFieldValueInstance();

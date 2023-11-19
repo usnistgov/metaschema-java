@@ -221,12 +221,12 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   }
 
   @Override
-  protected void deepCopyItemInternal(@NonNull Object fromInstance, @NonNull Object toInstance)
+  protected void deepCopyItemInternal(@NonNull Object fromObject, @NonNull Object toObject)
       throws BindingException {
-    super.deepCopyItemInternal(fromInstance, toInstance);
+    super.deepCopyItemInternal(fromObject, toObject);
 
-    for (IBoundNamedModelInstance property : getModelInstances()) {
-      property.deepCopy(fromInstance, toInstance);
+    for (IBoundNamedModelInstance instance : getModelInstances()) {
+      instance.deepCopy(fromObject, toObject);
     }
   }
 

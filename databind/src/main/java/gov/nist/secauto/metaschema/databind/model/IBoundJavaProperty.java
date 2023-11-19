@@ -36,11 +36,11 @@ public interface IBoundJavaProperty extends IBoundInstance, IFeatureJavaField {
 
   /**
    * Determine if the provided JSON property or YAML key name is associated with
-   * this property.
+   * this instance.
    *
    * @param name
    *          the name of the property/key being parsed
-   * @return {@code true} if the property will handle this name, or {@code false}
+   * @return {@code true} if the instance will handle this name, or {@code false}
    *         otherwise
    */
   boolean canHandleJsonPropertyName(String name);
@@ -51,7 +51,7 @@ public interface IBoundJavaProperty extends IBoundInstance, IFeatureJavaField {
    *
    * @param qname
    *          the XML qualified name of the property being parsed
-   * @return {@code true} if the property will handle this name, or {@code false}
+   * @return {@code true} if the instance will handle this name, or {@code false}
    *         otherwise
    */
   boolean canHandleXmlQName(QName qname);

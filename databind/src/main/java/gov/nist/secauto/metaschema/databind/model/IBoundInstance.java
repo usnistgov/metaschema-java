@@ -34,7 +34,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IBoundInstance extends IBinding, IInstance {
 
   /**
-   * Get the {@link IClassBinding} for the Java class within which this property
+   * Get the {@link IClassBinding} for the Java class within which this instance
    * exists.
    *
    * @return the containing class's binding

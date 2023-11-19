@@ -39,7 +39,7 @@ import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
-import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
+import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -236,14 +236,14 @@ public class MetaschemaJsonReader
         value = ((IBoundFlagInstance) targetInstance).readItem(parentObject, this, null);
       } else if (targetInstance instanceof IBoundModelInstance) {
         IBoundModelInstance instance = (IBoundModelInstance) targetInstance;
-        IModelPropertyInfo propertyInfo = instance.getPropertyInfo();
+        IModelInstanceCollectionInfo collectionInfo = instance.getCollectionInfo();
 
         ModelInstanceReadHandler handler = new ModelInstanceReadHandler(
-            propertyInfo,
+            collectionInfo,
             parentObject);
 
         // let the property info decide how to parse the value
-        value = propertyInfo.readItems(handler);
+        value = collectionInfo.readItems(handler);
       } else if (targetInstance instanceof IBoundFieldValueInstance) {
         value = ((IBoundFieldValueInstance) targetInstance).readItem(parentObject, this, null);
       } else {
@@ -289,9 +289,9 @@ public class MetaschemaJsonReader
 
       if (JsonToken.FIELD_NAME.equals(parser.currentToken())) {
         // found a matching property
-        IBoundJavaProperty property = remainingInstances.get(propertyName);
-        if (property != null) {
-          handled = readInstance(property, targetObject);
+        IBoundJavaProperty instance = remainingInstances.get(propertyName);
+        if (instance != null) {
+          handled = readInstance(instance, targetObject);
           remainingInstances.remove(propertyName);
         }
       } else {
@@ -342,9 +342,9 @@ public class MetaschemaJsonReader
       extends AbstractModelInstanceReadHandler {
 
     protected ModelInstanceReadHandler(
-        @NonNull IModelPropertyInfo propertyInfo,
+        @NonNull IModelInstanceCollectionInfo collectionInfo,
         @NonNull Object parentObject) {
-      super(propertyInfo, parentObject);
+      super(collectionInfo, parentObject);
     }
 
     @Override
@@ -387,7 +387,7 @@ public class MetaschemaJsonReader
     @Override
     public Map<String, ?> readMap() throws IOException {
       JsonParser parser = getReader();
-      IBoundFlagInstance jsonKey = getPropertyInfo().getProperty().getJsonKey();
+      IBoundFlagInstance jsonKey = getCollectionInfo().getInstance().getJsonKey();
       assert jsonKey != null;
 
       Map<String, Object> items = new LinkedHashMap<>();
@@ -423,7 +423,7 @@ public class MetaschemaJsonReader
     @Override
     @NonNull
     public Object readItem() throws IOException {
-      IBoundModelInstance instance = getPropertyInfo().getProperty();
+      IBoundModelInstance instance = getCollectionInfo().getInstance();
       return instance.readItem(getParentObject(), MetaschemaJsonReader.this, instance.getJsonKey());
     }
 
