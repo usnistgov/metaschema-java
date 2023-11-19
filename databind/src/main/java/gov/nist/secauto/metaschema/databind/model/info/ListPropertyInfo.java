@@ -38,7 +38,6 @@ import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,11 +62,6 @@ class ListPropertyInfo
   }
 
   @Override
-  public ListPropertyCollector newPropertyCollector() {
-    return new ListPropertyCollector();
-  }
-
-  @Override
   public List<? extends Object> getItemsFromParentInstance(Object parentInstance) {
     Object value = getProperty().getValue(parentInstance);
     return getItemsFromValue(value);
@@ -82,11 +76,6 @@ class ListPropertyInfo
   public int getItemCount(Object value) {
     return value == null ? 0 : ((List<?>) value).size();
   }
-
-  @SuppressWarnings({
-      "resource", // not owned
-      "PMD.ImplicitSwitchFallThrough" // false positive
-  })
 
   @Override
   public void writeValues(Object value, QName parentName, IXmlWritingContext context)
@@ -131,51 +120,29 @@ class ListPropertyInfo
   }
 
   @Override
-  public void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
+  public List<?> copy(@NonNull Object fromInstance, @NonNull Object toInstance)
       throws BindingException {
     IBoundModelInstance property = getProperty();
 
+    List<Object> copy = emptyValue();
     for (Object item : getItemsFromParentInstance(fromInstance)) {
-      collector.add(property.deepCopyItem(ObjectUtils.requireNonNull(item), toInstance));
+      copy.add(property.deepCopyItem(ObjectUtils.requireNonNull(item), toInstance));
     }
+    return copy;
   }
 
   @Override
-  public boolean readItems(
-      IModelPropertyInfo.IReadHandler handler,
-      IModelPropertyInfo.IPropertyCollector collector) throws IOException {
-    return handler.readList(collector);
+  public List<Object> emptyValue() {
+    return new LinkedList<>();
+  }
+
+  @Override
+  public List<?> readItems(IModelPropertyInfo.IReadHandler handler) throws IOException {
+    return handler.readList();
   }
 
   @Override
   public void writeItems(IModelPropertyInfo.IWriteHandler handler, Object value) {
     handler.writeList((List<?>) value);
-  }
-
-  private static class ListPropertyCollector
-      implements IModelPropertyInfo.IPropertyCollector {
-    @NonNull
-    private final List<Object> collection;
-
-    public ListPropertyCollector() {
-      this.collection = new LinkedList<>();
-    }
-
-    @Override
-    public void add(Object item) {
-      assert item != null;
-      collection.add(item);
-    }
-
-    @NonNull
-    @Override
-    public List<?> getValue() {
-      return collection;
-    }
-
-    @Override
-    public void addAll(Collection<? extends Object> items) {
-      collection.addAll(items);
-    }
   }
 }

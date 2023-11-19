@@ -129,7 +129,7 @@ public class ClassBindingFieldPropertyImpl
         }
       }
     } else {
-      retval = getPropertyInfo().newPropertyCollector().getValue();
+      retval = getPropertyInfo().emptyValue();
     }
     return retval;
   }

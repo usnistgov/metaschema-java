@@ -44,8 +44,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 class MapPropertyInfo
     extends AbstractModelPropertyInfo {
@@ -93,11 +91,6 @@ class MapPropertyInfo
   }
 
   @Override
-  public IPropertyCollector newPropertyCollector() {
-    return new MapPropertyCollector();
-  }
-
-  @Override
   public void writeValues(Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     IBoundModelInstance property = getProperty();
@@ -123,20 +116,30 @@ class MapPropertyInfo
   }
 
   @Override
-  public void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
+  public Map<String, ?> copy(@NonNull Object fromInstance, @NonNull Object toInstance)
       throws BindingException {
-    IBoundModelInstance property = getProperty();
+    IBoundModelInstance instance = getProperty();
+    IBoundFlagInstance jsonKey = instance.getJsonKey();
+    assert jsonKey != null;
 
+    Map<String, Object> copy = emptyValue();
     for (Object item : getItemsFromParentInstance(fromInstance)) {
-      collector.add(property.deepCopyItem(ObjectUtils.requireNonNull(item), toInstance));
+
+      Object itemCopy = instance.deepCopyItem(ObjectUtils.requireNonNull(item), toInstance);
+      String key = jsonKey.getValue(itemCopy).toString();
+      copy.put(key, itemCopy);
     }
+    return copy;
   }
 
   @Override
-  public boolean readItems(
-      IModelPropertyInfo.IReadHandler handler,
-      IPropertyCollector collector) throws IOException {
-    return handler.readMap(collector);
+  public Map<String, Object> emptyValue() {
+    return new LinkedHashMap<>();
+  }
+
+  @Override
+  public Map<String, ?> readItems(IModelPropertyInfo.IReadHandler handler) throws IOException {
+    return handler.readMap();
   }
 
   @SuppressWarnings("unchecked")
@@ -145,48 +148,5 @@ class MapPropertyInfo
       IModelPropertyInfo.IWriteHandler handler,
       Object value) {
     handler.writeMap((Map<String, ?>) value);
-  }
-
-  public class MapPropertyCollector implements IPropertyCollector {
-    @NonNull
-    private final Map<String, Object> map = new LinkedHashMap<>(); // NOPMD - single threaded
-    // REFACTOR: remove this property in favor of getting the JSON key from the
-    // parent
-    @Nullable
-    private final IBoundFlagInstance jsonKey;
-
-    protected MapPropertyCollector() {
-      this.jsonKey = getProperty().getJsonKey();
-      if (this.jsonKey == null) {
-        throw new IllegalStateException("No JSON key found");
-      }
-    }
-
-    protected IBoundFlagInstance getJsonKey() {
-      return jsonKey;
-    }
-
-    @Override
-    public void add(Object item) {
-      assert item != null;
-
-      // lookup the key
-      String key = getJsonKey().getValue(item).toString();
-      map.put(key, item);
-    }
-
-    @Override
-    public void addAll(Collection<?> items) {
-      for (Object item : items) {
-        add(ObjectUtils.requireNonNull(item));
-      }
-    }
-
-    @NonNull
-    @Override
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "this is a data holder")
-    public Map<String, Object> getValue() {
-      return map;
-    }
   }
 }

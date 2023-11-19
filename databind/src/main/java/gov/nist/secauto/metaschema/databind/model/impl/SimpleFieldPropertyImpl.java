@@ -127,7 +127,7 @@ public class SimpleFieldPropertyImpl
 
   @Override
   public Object defaultValue() {
-    return getMaxOccurs() == 1 ? getEffectiveDefaultValue() : getPropertyInfo().newPropertyCollector().getValue();
+    return getMaxOccurs() == 1 ? getEffectiveDefaultValue() : getPropertyInfo().emptyValue();
   }
 
   @Override

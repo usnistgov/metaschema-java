@@ -33,14 +33,12 @@ import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 class SingletonPropertyInfo
     extends AbstractModelPropertyInfo {
@@ -67,11 +65,6 @@ class SingletonPropertyInfo
   }
 
   @Override
-  public IPropertyCollector newPropertyCollector() {
-    return new SingletonPropertyCollector();
-  }
-
-  @Override
   public void writeValues(@NonNull Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     context.writeInstanceValue(getProperty(), value, parentName);
@@ -92,54 +85,27 @@ class SingletonPropertyInfo
   }
 
   @Override
-  public void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
+  public Object copy(@NonNull Object fromInstance, @NonNull Object toInstance)
       throws BindingException {
-    IBoundModelInstance property = getProperty();
+    IBoundModelInstance instance = getProperty();
 
-    Object value = property.getValue(fromInstance);
+    Object value = instance.getValue(fromInstance);
 
-    Object copiedValue = property.deepCopyItem(ObjectUtils.requireNonNull(value), toInstance);
-
-    collector.add(copiedValue);
+    return value == null ? null : instance.deepCopyItem(ObjectUtils.requireNonNull(value), toInstance);
   }
 
   @Override
-  public boolean readItems(
-      IModelPropertyInfo.IReadHandler handler,
-      IModelPropertyInfo.IPropertyCollector collector) throws IOException {
-    return handler.readSingleton(collector);
+  public Object emptyValue() {
+    return getProperty().getDefaultValue();
+  }
+
+  @Override
+  public Object readItems(IModelPropertyInfo.IReadHandler handler) throws IOException {
+    return handler.readSingleton();
   }
 
   @Override
   public void writeItems(IModelPropertyInfo.IWriteHandler handler, Object value) {
     handler.writeSingleton(value);
-  }
-
-  private static class SingletonPropertyCollector implements IModelPropertyInfo.IPropertyCollector {
-    private Object object;
-
-    @Override
-    public void add(Object item) {
-      if (object != null) {
-        throw new IllegalStateException("A value has already been set for this singleton");
-      }
-      object = item;
-    }
-
-    @Override
-    public void addAll(Collection<?> items) {
-      int size = items.size();
-      if (size > 1) {
-        throw new IllegalStateException("Multiple values cannot be set for this singleton");
-      } else if (size == 1) {
-        add(ObjectUtils.notNull(items.iterator().next()));
-      }
-    }
-
-    @Nullable
-    @Override
-    public Object getValue() {
-      return object;
-    }
   }
 }

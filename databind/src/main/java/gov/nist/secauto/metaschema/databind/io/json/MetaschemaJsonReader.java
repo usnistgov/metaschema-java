@@ -40,13 +40,15 @@ import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
-import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo.IPropertyCollector;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -240,14 +242,8 @@ public class MetaschemaJsonReader
             propertyInfo,
             parentObject);
 
-        // Deal with the collection or value type
-        IModelPropertyInfo.IPropertyCollector collector = propertyInfo.newPropertyCollector();
-
-        // let the property info parse the value
-        propertyInfo.readItems(handler, collector);
-
-        // get the underlying value
-        value = collector.getValue();
+        // let the property info decide how to parse the value
+        value = propertyInfo.readItems(handler);
       } else if (targetInstance instanceof IBoundFieldValueInstance) {
         value = ((IBoundFieldValueInstance) targetInstance).readItem(parentObject, this, null);
       } else {
@@ -352,17 +348,16 @@ public class MetaschemaJsonReader
     }
 
     @Override
-    public boolean readSingleton(IPropertyCollector collector) throws IOException {
-      Object value = readItem();
-      collector.add(value);
-      return true;
+    public Object readSingleton() throws IOException {
+      return readItem();
     }
 
     @SuppressWarnings("resource") // no need to close parser
     @Override
-    public boolean readList(IPropertyCollector collector) throws IOException {
+    public List<?> readList() throws IOException {
       JsonParser parser = getReader();
 
+      List<Object> items = new LinkedList<>();
       switch (parser.currentToken()) {
       case START_ARRAY: {
         // this is an array, we need to parse the array wrapper then each item
@@ -370,8 +365,7 @@ public class MetaschemaJsonReader
 
         // parse items
         while (!JsonToken.END_ARRAY.equals(parser.currentToken())) {
-          Object value = readItem();
-          collector.add(value);
+          items.add(readItem());
         }
 
         // this is the other side of the array wrapper, advance past it
@@ -384,16 +378,19 @@ public class MetaschemaJsonReader
       }
       default:
         // this is a singleton, just parse the value as a single item
-        Object value = readItem();
-        collector.add(value);
+        items.add(readItem());
       }
-      return true;
+      return items;
     }
 
     @SuppressWarnings("resource") // no need to close parser
     @Override
-    public boolean readMap(IPropertyCollector collector) throws IOException {
+    public Map<String, ?> readMap() throws IOException {
       JsonParser parser = getReader();
+      IBoundFlagInstance jsonKey = getPropertyInfo().getProperty().getJsonKey();
+      assert jsonKey != null;
+
+      Map<String, Object> items = new LinkedHashMap<>();
 
       // A map value is always wrapped in a START_OBJECT, since fields are used for
       // the keys
@@ -405,8 +402,11 @@ public class MetaschemaJsonReader
         // a map item will always start with a FIELD_NAME, since this represents the key
         JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
 
-        Object value = readItem();
-        collector.add(value);
+        Object item = readItem();
+
+        // lookup the key
+        String key = jsonKey.getValue(item).toString();
+        items.put(key, item);
 
         // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all
         // items have been
@@ -416,7 +416,8 @@ public class MetaschemaJsonReader
 
       // A map value will always end with an end object, which needs to be consumed
       JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
-      return true;
+
+      return items;
     }
 
     @Override

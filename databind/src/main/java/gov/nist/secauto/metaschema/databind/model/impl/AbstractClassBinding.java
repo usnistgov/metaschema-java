@@ -133,8 +133,7 @@ abstract class AbstractClassBinding implements IClassBinding {
   public <CLASS> CLASS newInstance() throws BindingException {
     Class<?> clazz = getBoundClass();
     try {
-      @SuppressWarnings("unchecked")
-      Constructor<CLASS> constructor
+      @SuppressWarnings("unchecked") Constructor<CLASS> constructor
           = (Constructor<CLASS>) clazz.getDeclaredConstructor();
       return ObjectUtils.notNull(constructor.newInstance());
     } catch (NoSuchMethodException ex) {

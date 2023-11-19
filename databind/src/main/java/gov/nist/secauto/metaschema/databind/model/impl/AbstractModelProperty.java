@@ -99,12 +99,7 @@ public abstract class AbstractModelProperty
   public void deepCopy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException {
     Object value = getValue(fromInstance);
     if (value != null) {
-      IModelPropertyInfo propertyInfo = getPropertyInfo();
-      IModelPropertyInfo.IPropertyCollector collector = propertyInfo.newPropertyCollector();
-
-      propertyInfo.copy(fromInstance, toInstance, collector);
-
-      value = collector.getValue();
+      value = getPropertyInfo().copy(fromInstance, toInstance);
     }
     setValue(toInstance, value);
   }

@@ -42,16 +42,19 @@ import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
-import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo.IPropertyCollector;
 
 import org.codehaus.stax2.XMLEventReader2;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;
@@ -367,13 +370,11 @@ public class MetaschemaXmlReader
           parentObject,
           currentStart);
 
-      // Deal with the collection or value type
-      IPropertyCollector collector = propertyInfo.newPropertyCollector();
-
-      // let the property info parse the value
-      propertyInfo.readItems(handler, collector);
-
-      Object value = collector.getValue();
+      // let the property info decide how to parse the value
+      Object value = propertyInfo.readItems(handler);
+      if (value != null) {
+        instance.setValue(parentObject, value);
+      }
 
       // consume extra whitespace between elements
       XmlEventUtil.skipWhitespace(reader);
@@ -382,8 +383,6 @@ public class MetaschemaXmlReader
         // consume the end of the group
         XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, groupQName);
       }
-
-      instance.setValue(parentObject, value);
     }
     return handled;
   }
@@ -535,36 +534,42 @@ public class MetaschemaXmlReader
     }
 
     @Override
-    public boolean readSingleton(IPropertyCollector collector) throws IOException {
-      boolean handled = false;
-      Object value = readItem();
-      if (value != null) {
-        collector.add(value);
-        handled = true;
-      }
-      return handled;
+    public Object readSingleton() throws IOException {
+      return readItem();
     }
 
     @Override
-    public boolean readList(IPropertyCollector collector) throws IOException {
-      return readCollection(collector);
+    public List<?> readList() throws IOException {
+      return ObjectUtils.notNull(readCollection()
+          .collect(Collectors.toCollection(LinkedList::new)));
     }
 
     @Override
-    public boolean readMap(IPropertyCollector collector) throws IOException {
-      return readCollection(collector);
+    public Map<String, ?> readMap() throws IOException {
+      IBoundFlagInstance jsonKey = getPropertyInfo().getProperty().getJsonKey();
+      assert jsonKey != null;
+
+      return ObjectUtils.notNull(readCollection()
+          .collect(Collectors.toMap(
+              item -> {
+                assert item != null;
+                return jsonKey.getValue(item).toString();
+              },
+              Function.identity(),
+              (t, u) -> u,
+              LinkedHashMap::new)));
     }
 
-    private boolean readCollection(IPropertyCollector collector) throws IOException {
+    private Stream<?> readCollection() throws IOException {
       XMLEventReader2 eventReader = getReader();
 
+      Stream<?> retval = Stream.empty();
       try {
         // TODO: is this needed?
         // consume extra whitespace between elements
         XmlEventUtil.skipWhitespace(eventReader);
 
         IBoundModelInstance instance = getPropertyInfo().getProperty();
-        boolean handled = false;
         XMLEvent event;
         while ((event = eventReader.peek()).isStartElement()
             && instance.canHandleXmlQName(ObjectUtils.notNull(event.asStartElement().getName()))) {
@@ -572,17 +577,16 @@ public class MetaschemaXmlReader
           // Consume the start element
           Object value = readItem();
           if (value != null) {
-            collector.add(value);
-            handled = true;
+            retval = Stream.concat(retval, Stream.of(value));
           }
 
           // consume extra whitespace between elements
           XmlEventUtil.skipWhitespace(eventReader);
         }
-        return handled;
       } catch (XMLStreamException ex) {
         throw new IOException(ex);
       }
+      return retval;
     }
 
     @Override

@@ -187,7 +187,7 @@ public class ClassBindingAssemblyPropertyImpl
 
   @Override
   public Object defaultValue() {
-    return getPropertyInfo().newPropertyCollector().getValue();
+    return getPropertyInfo().emptyValue();
   }
 
   @SuppressWarnings("null")

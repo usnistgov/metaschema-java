@@ -140,9 +140,6 @@ public interface IModelPropertyInfo {
   @NonNull
   Class<?> getItemType();
 
-  @NonNull
-  IPropertyCollector newPropertyCollector();
-
   default boolean isJsonKeyRequired() {
     return false;
   }
@@ -177,9 +174,10 @@ public interface IModelPropertyInfo {
   @NonNull
   Collection<? extends Object> getItemsFromValue(Object value);
 
+  Object emptyValue();
+
   // REFACTOR: Align this method with deepCopy/deepCopyItem
-  void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
-      throws BindingException;
+  Object copy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException;
 
   /**
    * Read the value data for the model instance.
@@ -194,64 +192,22 @@ public interface IModelPropertyInfo {
    * @throws IOException
    *           if there was an error when reading the data
    */
-  // REFACTOR: boolean result and collector not needed, just return the value
-  boolean readItems(
-      @NonNull IReadHandler handler,
-      @NonNull IPropertyCollector collector) throws IOException;
+  @Nullable
+  Object readItems(@NonNull IReadHandler handler) throws IOException;
 
   <T> void writeItems(
       @NonNull IWriteHandler handler,
       @NonNull Object value) throws IOException;
 
-  /**
-   * Used to "collect" items together to assign to the property's field. For
-   * fields with a collection type, implementations of this class will handle
-   * managing the underlying collection.
-   */
-  public interface IPropertyCollector {
-    /**
-     * Add an item to the "collection", who's type depends on the property
-     * configuration.
-     *
-     * @param item
-     *          the item to add
-     * @throws IllegalStateException
-     *           if the item cannot be added due to a model inconsistency
-     */
-    void add(@NonNull Object item);
-
-    /**
-     * Add a collection of item to the "collection", who's type depends on the
-     * property configuration.
-     *
-     * @param items
-     *          the items to add
-     * @throws IllegalStateException
-     *           if the item cannot be added due to a model inconsistency
-     */
-    void addAll(@NonNull Collection<?> items);
-
-    /**
-     * Get the current state of the "collection". For single valued
-     * "non-collections" this may return a {@code null} value. For any collection
-     * type, such as {@link List} or {@link Map}, this must return a
-     * non-{@code null} empty collection.
-     *
-     * @return the "collection" value or {@code null} for a single valued instance
-     *         that is not defined
-     */
-    Object getValue();
-  }
-
   public interface IReadHandler {
-    boolean readSingleton(
-        @NonNull IPropertyCollector collector) throws IOException;
+    @Nullable
+    Object readSingleton() throws IOException;
 
-    boolean readList(
-        @NonNull IPropertyCollector collector) throws IOException;
+    @NonNull
+    List<?> readList() throws IOException;
 
-    boolean readMap(
-        @NonNull IPropertyCollector collector) throws IOException;
+    @NonNull
+    Map<String, ?> readMap() throws IOException;
 
     /**
      * Read the next item in the collection of items represented by the property.
