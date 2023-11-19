@@ -50,7 +50,7 @@ public @interface MetaschemaAssembly {
    * If the value is "##none", then the description will be considered
    * {@code null}.
    *
-   * @return a markdown string or {@code "##none"} if no formal name is provided
+   * @return a Markdown string or {@code "##none"} if no formal name is provided
    */
   @NonNull
   String formalName() default Constants.NO_STRING_VALUE;
@@ -67,11 +67,12 @@ public @interface MetaschemaAssembly {
   String description() default Constants.NO_STRING_VALUE;
 
   /**
-   * Get the metaschema class that "owns" this assembly, which is the concrete
-   * implementation of the metaschema containing the assembly.
+   * Get the Metaschema module class that "owns" this assembly, which is the
+   * concrete implementation of the module containing the assembly.
    *
    * @return the {@link IModule} class
    */
+  @NonNull
   Class<? extends IModule> moduleClass();
 
   /**

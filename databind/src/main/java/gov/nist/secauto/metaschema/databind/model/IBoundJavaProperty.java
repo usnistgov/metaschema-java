@@ -27,13 +27,9 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-
-import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IBoundJavaProperty extends IBoundInstance, IFeatureJavaField {
@@ -64,9 +60,4 @@ public interface IBoundJavaProperty extends IBoundInstance, IFeatureJavaField {
 
   @Nullable
   Object defaultValue() throws BindingException;
-
-  Object readValue(
-      @NonNull Object parentInstance,
-      @NonNull IJsonParsingContext context)
-      throws IOException;
 }

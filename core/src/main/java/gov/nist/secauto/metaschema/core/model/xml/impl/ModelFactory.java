@@ -27,12 +27,10 @@
 package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.metapath.MetapathException;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractConstraintBuilder;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractKeyConstraintBuilder;
-import gov.nist.secauto.metaschema.core.model.constraint.DefaultLet;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
@@ -489,19 +487,9 @@ public final class ModelFactory {
   public static ILet newLet(
       @NonNull ConstraintLetType xmlObject,
       @NonNull ISource source) {
-    try {
-      return new DefaultLet(
-          ObjectUtils.notNull(xmlObject.getVar()),
-          ObjectUtils.notNull(xmlObject.getExpression()),
-          source);
-    } catch (MetapathException ex) {
-      throw new MetapathException(
-          String.format("Unable to compile the let expression '%s=%s'%s. %s",
-              xmlObject.getVar(),
-              xmlObject.getExpression(),
-              source.getSource() == null ? "" : " in " + source.getSource(),
-              ex.getMessage()),
-          ex);
-    }
+    return ILet.of(
+        ObjectUtils.notNull(xmlObject.getVar()),
+        ObjectUtils.notNull(xmlObject.getExpression()),
+        source);
   }
 }

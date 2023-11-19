@@ -40,7 +40,9 @@ import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.databind.model.info.IPropertyCollector;
+import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
+import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo.IPropertyCollector;
 
 import org.codehaus.stax2.XMLEventReader2;
 
@@ -358,9 +360,18 @@ public class MetaschemaXmlReader
         currentStart = ObjectUtils.notNull(groupEvent.asStartElement());
       }
 
-      IPropertyCollector collector = instance.getPropertyInfo().newPropertyCollector();
-      // There are zero or more named values based on cardinality
-      instance.getPropertyInfo().readItems(collector, parentObject, currentStart, this);
+      IModelPropertyInfo propertyInfo = instance.getPropertyInfo();
+
+      ModelInstanceReadHandler handler = new ModelInstanceReadHandler(
+          propertyInfo,
+          parentObject,
+          currentStart);
+
+      // Deal with the collection or value type
+      IPropertyCollector collector = propertyInfo.newPropertyCollector();
+
+      // let the property info parse the value
+      propertyInfo.readItems(handler, collector);
 
       Object value = collector.getValue();
 
@@ -379,7 +390,7 @@ public class MetaschemaXmlReader
 
   @Override
   public <T> T readModelInstanceValue(IBoundModelInstance instance, Object parentObject, StartElement start)
-      throws XMLStreamException, IOException {
+      throws IOException {
     Object retval;
     if (instance instanceof IBoundAssemblyInstance) {
       retval = readModelInstanceValue((IBoundAssemblyInstance) instance, parentObject, start);
@@ -405,34 +416,38 @@ public class MetaschemaXmlReader
    * @return the Java object read, or {@code null} if no data was read
    * @throws IOException
    *           if an error occurred while parsing the input
-   * @throws XMLStreamException
-   *           if an error occurred while parsing XML events
    */
   @Nullable
   protected Object readModelInstanceValue(
       @NonNull IBoundAssemblyInstance instance,
       @NonNull Object parentObject,
-      @NonNull StartElement start) throws XMLStreamException, IOException {
-    // consume extra whitespace between elements
-    XmlEventUtil.skipWhitespace(reader);
+      @NonNull StartElement start) throws IOException {
+    try {
+      // consume extra whitespace between elements
+      XmlEventUtil.skipWhitespace(reader);
 
-    Object retval = null;
-    XMLEvent event = reader.peek();
-    if (event.isStartElement()) {
-      StartElement nextStart = event.asStartElement();
-      QName nextQName = nextStart.getName();
-      if (instance.getXmlQName().equals(nextQName)) {
-        // Consume the start element
-        reader.nextEvent();
+      Object retval = null;
+      XMLEvent event = reader.peek();
 
-        // consume the value
-        retval = instance.readItem(parentObject, nextStart, this);
+      // REFACTOR: We can probably guarantee this is a start element
+      if (event.isStartElement()) {
+        StartElement nextStart = event.asStartElement();
+        QName nextQName = nextStart.getName();
+        if (instance.getXmlQName().equals(nextQName)) {
+          // Consume the start element
+          reader.nextEvent();
 
-        // consume the end element
-        XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, nextQName);
+          // consume the value
+          retval = instance.readItem(parentObject, nextStart, this);
+
+          // consume the end element
+          XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, nextQName);
+        }
       }
+      return retval;
+    } catch (XMLStreamException ex) {
+      throw new IOException(ex);
     }
-    return retval;
   }
 
   /**
@@ -449,14 +464,12 @@ public class MetaschemaXmlReader
    * @return the Java object read, or {@code null} if no data was read
    * @throws IOException
    *           if an error occurred while parsing the input
-   * @throws XMLStreamException
-   *           if an error occurred while parsing XML events
    */
   @NonNull
   protected Object readModelInstanceValue(
       @NonNull IBoundFieldInstance instance,
       @NonNull Object parentObject,
-      @NonNull StartElement start) throws XMLStreamException, IOException {
+      @NonNull StartElement start) throws IOException {
     // figure out if we need to parse the wrapper or not
     IDataTypeAdapter<?> adapter = instance.getDefinition().getJavaTypeAdapter();
     boolean parseWrapper = true;
@@ -465,30 +478,116 @@ public class MetaschemaXmlReader
     }
 
     StartElement currentStart = start;
-    if (parseWrapper) {
-      // XmlEventUtil.skipWhitespace(reader);
 
-      QName xmlQName = instance.getXmlQName();
-      XMLEvent event = reader.peek();
-      if (event.isStartElement() && xmlQName.equals(event.asStartElement().getName())) {
-        // Consume the start element
-        currentStart = ObjectUtils.notNull(reader.nextEvent().asStartElement());
-      } else {
-        throw new IOException(String.format("Found '%s' instead of expected element '%s'%s.",
-            event.asStartElement().getName(),
-            xmlQName,
-            XmlEventUtil.generateLocationMessage(event)));
+    try {
+      if (parseWrapper) {
+        // XmlEventUtil.skipWhitespace(reader);
+
+        QName xmlQName = instance.getXmlQName();
+        XMLEvent event = reader.peek();
+        // REFACTOR: We can probably guarantee this is a start element
+        if (event.isStartElement() && xmlQName.equals(event.asStartElement().getName())) {
+          // Consume the start element
+          currentStart = ObjectUtils.notNull(reader.nextEvent().asStartElement());
+        } else {
+          throw new IOException(String.format("Found '%s' instead of expected element '%s'%s.",
+              event.asStartElement().getName(),
+              xmlQName,
+              XmlEventUtil.generateLocationMessage(event)));
+        }
+      }
+
+      // consume the value
+      Object retval = instance.readItem(parentObject, currentStart, this);
+
+      if (parseWrapper) {
+        // consume the end element
+        XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, currentStart.getName());
+      }
+
+      return retval;
+    } catch (XMLStreamException ex) {
+      throw new IOException(ex);
+    }
+  }
+
+  private class ModelInstanceReadHandler
+      extends AbstractModelInstanceReadHandler {
+    @NonNull
+    private final StartElement startElement;
+
+    private ModelInstanceReadHandler(
+        @NonNull IModelPropertyInfo propertyInfo,
+        @NonNull Object parentObject,
+        @NonNull StartElement startElement) {
+      super(propertyInfo, parentObject);
+      this.startElement = startElement;
+    }
+
+    /**
+     * Get the parent start element.
+     *
+     * @return the startElement
+     */
+    @NonNull
+    protected StartElement getStartElement() {
+      return startElement;
+    }
+
+    @Override
+    public boolean readSingleton(IPropertyCollector collector) throws IOException {
+      boolean handled = false;
+      Object value = readItem();
+      if (value != null) {
+        collector.add(value);
+        handled = true;
+      }
+      return handled;
+    }
+
+    @Override
+    public boolean readList(IPropertyCollector collector) throws IOException {
+      return readCollection(collector);
+    }
+
+    @Override
+    public boolean readMap(IPropertyCollector collector) throws IOException {
+      return readCollection(collector);
+    }
+
+    private boolean readCollection(IPropertyCollector collector) throws IOException {
+      XMLEventReader2 eventReader = getReader();
+
+      try {
+        // TODO: is this needed?
+        // consume extra whitespace between elements
+        XmlEventUtil.skipWhitespace(eventReader);
+
+        IBoundModelInstance instance = getPropertyInfo().getProperty();
+        boolean handled = false;
+        XMLEvent event;
+        while ((event = eventReader.peek()).isStartElement()
+            && instance.canHandleXmlQName(ObjectUtils.notNull(event.asStartElement().getName()))) {
+
+          // Consume the start element
+          Object value = readItem();
+          if (value != null) {
+            collector.add(value);
+            handled = true;
+          }
+
+          // consume extra whitespace between elements
+          XmlEventUtil.skipWhitespace(eventReader);
+        }
+        return handled;
+      } catch (XMLStreamException ex) {
+        throw new IOException(ex);
       }
     }
 
-    // consume the value
-    Object retval = instance.readItem(parentObject, currentStart, this);
-
-    if (parseWrapper) {
-      // consume the end element
-      XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, currentStart.getName());
+    @Override
+    public Object readItem() throws IOException {
+      return readModelInstanceValue(getPropertyInfo().getProperty(), getParentObject(), getStartElement());
     }
-
-    return retval;
   }
 }

@@ -59,7 +59,7 @@ import javax.xml.stream.events.StartElement;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IFeatureComplexItemValueHandler extends IDataTypeHandler {
+public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
   @NonNull
   IClassBinding getClassBinding();
 
@@ -96,7 +96,8 @@ public interface IFeatureComplexItemValueHandler extends IDataTypeHandler {
     Collection<? extends IBoundFlagInstance> flags = targetDefinition.getFlagInstances();
     int flagCount = flags.size() - (jsonKey == null ? 0 : 1);
 
-    @SuppressWarnings("resource") Stream<? extends IBoundJavaProperty> instanceStream;
+    @SuppressWarnings("resource")
+    Stream<? extends IBoundJavaProperty> instanceStream;
     if (targetDefinition instanceof IAssemblyClassBinding) {
       // use all child instances
       instanceStream = ((IAssemblyClassBinding) targetDefinition).getModelInstances().stream();

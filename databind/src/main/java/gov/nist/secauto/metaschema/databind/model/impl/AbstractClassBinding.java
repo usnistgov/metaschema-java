@@ -40,6 +40,7 @@ import java.lang.reflect.Method;
 import java.util.Locale;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 abstract class AbstractClassBinding implements IClassBinding {
   // private static final Logger logger =
@@ -49,10 +50,10 @@ abstract class AbstractClassBinding implements IClassBinding {
   private final IBindingContext bindingContext;
   @NonNull
   private final Class<?> clazz;
+  @NonNull
+  private Lazy<IModule> module;
   private final Method beforeDeserializeMethod;
   private final Method afterDeserializeMethod;
-  // REFACTOR: use lazy instead
-  private IModule module;
 
   /**
    * Construct a new class binding for the provided class.
@@ -65,6 +66,7 @@ abstract class AbstractClassBinding implements IClassBinding {
   public AbstractClassBinding(@NonNull Class<?> clazz, @NonNull IBindingContext bindingContext) {
     this.bindingContext = ObjectUtils.requireNonNull(bindingContext, "bindingContext");
     this.clazz = ObjectUtils.requireNonNull(clazz, "clazz");
+    this.module = ObjectUtils.notNull(Lazy.lazy(() -> getBindingContext().loadModule(getModuleClass())));
     this.beforeDeserializeMethod = ClassIntrospector.getMatchingMethod(clazz, "beforeDeserialize", Object.class);
     this.afterDeserializeMethod = ClassIntrospector.getMatchingMethod(clazz, "afterDeserialize", Object.class);
   }
@@ -109,23 +111,12 @@ abstract class AbstractClassBinding implements IClassBinding {
     return ModuleScopeEnum.INHERITED;
   }
 
-  protected abstract Class<? extends IModule> getModuleClass();
-
-  @SuppressWarnings("null")
   @NonNull
-  protected IModule initModule() {
-    synchronized (this) {
-      if (module == null) {
-        Class<? extends IModule> metaschemaClass = getModuleClass();
-        module = getBindingContext().loadModule(metaschemaClass);
-      }
-      return module;
-    }
-  }
+  protected abstract Class<? extends IModule> getModuleClass();
 
   @Override
   public IModule getContainingModule() {
-    return initModule();
+    return ObjectUtils.notNull(module.get());
   }
 
   /**
@@ -142,7 +133,8 @@ abstract class AbstractClassBinding implements IClassBinding {
   public <CLASS> CLASS newInstance() throws BindingException {
     Class<?> clazz = getBoundClass();
     try {
-      @SuppressWarnings("unchecked") Constructor<CLASS> constructor
+      @SuppressWarnings("unchecked")
+      Constructor<CLASS> constructor
           = (Constructor<CLASS>) clazz.getDeclaredConstructor();
       return ObjectUtils.notNull(constructor.newInstance());
     } catch (NoSuchMethodException ex) {

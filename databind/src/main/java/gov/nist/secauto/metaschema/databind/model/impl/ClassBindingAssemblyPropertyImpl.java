@@ -103,7 +103,9 @@ public class ClassBindingAssemblyPropertyImpl
 
   @Override
   public IBoundFlagInstance getJsonKey() {
-    return getClassBinding().getJsonKeyFlagInstance();
+    return JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())
+        ? getClassBinding().getJsonKeyFlagInstance()
+        : null;
   }
 
   @Override

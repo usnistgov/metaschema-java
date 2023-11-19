@@ -27,31 +27,23 @@
 package gov.nist.secauto.metaschema.databind.model.info;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
-import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 
-import org.codehaus.stax2.XMLEventReader2;
-
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -91,77 +83,10 @@ class ListPropertyInfo
     return value == null ? 0 : ((List<?>) value).size();
   }
 
-  @Override
-  public boolean readItems(
-      IPropertyCollector collector,
-      Object parentInstance,
-      StartElement start,
-      IXmlParsingContext context) throws IOException, XMLStreamException {
-    XMLEventReader2 eventReader = context.getReader();
-
-    // TODO: is this needed?
-    // consume extra whitespace between elements
-    XmlEventUtil.skipWhitespace(eventReader);
-
-    IBoundModelInstance property = getProperty();
-
-    boolean handled = false;
-    XMLEvent event;
-
-    while ((event = eventReader.peek()).isStartElement()
-        && property.canHandleXmlQName(ObjectUtils.notNull(event.asStartElement().getName()))) {
-
-      Object value = context.readModelInstanceValue(getProperty(), parentInstance, start);
-      if (value != null) {
-        collector.add(value);
-        handled = true;
-      }
-
-      // consume extra whitespace between elements
-      XmlEventUtil.skipWhitespace(eventReader);
-    }
-
-    return handled;
-  }
-
   @SuppressWarnings({
       "resource", // not owned
       "PMD.ImplicitSwitchFallThrough" // false positive
   })
-
-  @Override
-  public void readItems(
-      IPropertyCollector collector,
-      Object parentInstance,
-      IJsonParsingContext context)
-      throws IOException {
-    JsonParser parser = context.getReader();
-
-    switch (parser.currentToken()) {
-    case START_ARRAY: {
-      // this is an array, we need to parse the array wrapper then each item
-      JsonUtil.assertAndAdvance(parser, JsonToken.START_ARRAY);
-
-      // parse items
-      while (!JsonToken.END_ARRAY.equals(parser.currentToken())) {
-        Object value = getProperty().readItem(parentInstance, context, null);
-        collector.add(value);
-      }
-
-      // this is the other side of the array wrapper, advance past it
-      JsonUtil.assertAndAdvance(parser, JsonToken.END_ARRAY);
-      break;
-    }
-    case VALUE_NULL: {
-      JsonUtil.assertAndAdvance(parser, JsonToken.VALUE_NULL);
-      break;
-    }
-    default:
-      // this is a singleton, just parse the value as a single item
-      Object value = getProperty().readItem(parentInstance, context, null);
-      collector.add(value);
-    }
-  }
 
   @Override
   public void writeValues(Object value, QName parentName, IXmlWritingContext context)
@@ -212,6 +137,45 @@ class ListPropertyInfo
 
     for (Object item : getItemsFromParentInstance(fromInstance)) {
       collector.add(property.deepCopyItem(ObjectUtils.requireNonNull(item), toInstance));
+    }
+  }
+
+  @Override
+  public boolean readItems(
+      IModelPropertyInfo.IReadHandler handler,
+      IModelPropertyInfo.IPropertyCollector collector) throws IOException {
+    return handler.readList(collector);
+  }
+
+  @Override
+  public void writeItems(IModelPropertyInfo.IWriteHandler handler, Object value) {
+    handler.writeList((List<?>) value);
+  }
+
+  private static class ListPropertyCollector
+      implements IModelPropertyInfo.IPropertyCollector {
+    @NonNull
+    private final List<Object> collection;
+
+    public ListPropertyCollector() {
+      this.collection = new LinkedList<>();
+    }
+
+    @Override
+    public void add(Object item) {
+      assert item != null;
+      collection.add(item);
+    }
+
+    @NonNull
+    @Override
+    public List<?> getValue() {
+      return collection;
+    }
+
+    @Override
+    public void addAll(Collection<? extends Object> items) {
+      collection.addAll(items);
     }
   }
 }

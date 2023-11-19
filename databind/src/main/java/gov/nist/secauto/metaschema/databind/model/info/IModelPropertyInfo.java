@@ -28,9 +28,7 @@ package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 
@@ -44,12 +42,12 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-// TODO: make all read and write methods take the value, not the parent instance as an argument
+// REFACTOR: rename to IModelInstanceInfo
+// REFACTOR: make all read and write methods take the value, not the parent instance as an argument
 public interface IModelPropertyInfo {
 
   @NonNull
@@ -128,6 +126,7 @@ public interface IModelPropertyInfo {
    *
    * @return the property
    */
+  // REFACTOR: rename to getInstance
   @NonNull
   IBoundModelInstance getProperty();
 
@@ -147,35 +146,6 @@ public interface IModelPropertyInfo {
   default boolean isJsonKeyRequired() {
     return false;
   }
-
-  // TODO is the following needed?
-  /**
-   * Read the value data for the property. At the point that this is called, the
-   * parser must be located just after the property/field name has been parsed.
-   * This method will return a value based on the property's value type as
-   * reported by {@link #getProperty()}.
-   *
-   * @param collector
-   *          used to hold parsed values
-   * @param context
-   *          the JSON parsing context
-   * @param parentInstance
-   *          the instance the property is on
-   * @throws IOException
-   *           if there was an error when reading JSON data
-   */
-  void readItems(
-      @NonNull IPropertyCollector collector,
-      @NonNull Object parentInstance,
-      @NonNull IJsonParsingContext context)
-      throws IOException;
-
-  boolean readItems(
-      @NonNull IPropertyCollector collector,
-      @NonNull Object parentInstance,
-      @NonNull StartElement start,
-      @NonNull IXmlParsingContext context)
-      throws IOException, XMLStreamException;
 
   /**
    * Write a {@code value} that is not {@code null}.
@@ -210,4 +180,105 @@ public interface IModelPropertyInfo {
   // REFACTOR: Align this method with deepCopy/deepCopyItem
   void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
       throws BindingException;
+
+  /**
+   * Read the value data for the model instance.
+   * <p>
+   * This method will return a value based on the instance's value type.
+   *
+   * @param handler
+   *          the item parsing handler
+   * @param collector
+   *          used to hold parsed values
+   * @return {@code true} if data was read, or {@code false} otherwise
+   * @throws IOException
+   *           if there was an error when reading the data
+   */
+  // REFACTOR: boolean result and collector not needed, just return the value
+  boolean readItems(
+      @NonNull IReadHandler handler,
+      @NonNull IPropertyCollector collector) throws IOException;
+
+  <T> void writeItems(
+      @NonNull IWriteHandler handler,
+      @NonNull Object value) throws IOException;
+
+  /**
+   * Used to "collect" items together to assign to the property's field. For
+   * fields with a collection type, implementations of this class will handle
+   * managing the underlying collection.
+   */
+  public interface IPropertyCollector {
+    /**
+     * Add an item to the "collection", who's type depends on the property
+     * configuration.
+     *
+     * @param item
+     *          the item to add
+     * @throws IllegalStateException
+     *           if the item cannot be added due to a model inconsistency
+     */
+    void add(@NonNull Object item);
+
+    /**
+     * Add a collection of item to the "collection", who's type depends on the
+     * property configuration.
+     *
+     * @param items
+     *          the items to add
+     * @throws IllegalStateException
+     *           if the item cannot be added due to a model inconsistency
+     */
+    void addAll(@NonNull Collection<?> items);
+
+    /**
+     * Get the current state of the "collection". For single valued
+     * "non-collections" this may return a {@code null} value. For any collection
+     * type, such as {@link List} or {@link Map}, this must return a
+     * non-{@code null} empty collection.
+     *
+     * @return the "collection" value or {@code null} for a single valued instance
+     *         that is not defined
+     */
+    Object getValue();
+  }
+
+  public interface IReadHandler {
+    boolean readSingleton(
+        @NonNull IPropertyCollector collector) throws IOException;
+
+    boolean readList(
+        @NonNull IPropertyCollector collector) throws IOException;
+
+    boolean readMap(
+        @NonNull IPropertyCollector collector) throws IOException;
+
+    /**
+     * Read the next item in the collection of items represented by the property.
+     *
+     * @return the Java object representing the item, or {@code null} if no items
+     *         remain to be read
+     * @throws IOException
+     *           if an error occurred while parsing the input
+     */
+    Object readItem() throws IOException;
+  }
+
+  public interface IWriteHandler {
+    void writeSingleton(@NonNull Object item);
+
+    void writeList(@NonNull List<?> items);
+
+    void writeMap(@NonNull Map<String, ?> items);
+
+    /**
+     * Write the next item in the collection of items represented by the property.
+     *
+     * @param item
+     *          the item Java object to write
+     * @throws IOException
+     *           if an error occurred while parsing the input
+     */
+    void writeItem(@NonNull Object item) throws IOException;
+  }
 }

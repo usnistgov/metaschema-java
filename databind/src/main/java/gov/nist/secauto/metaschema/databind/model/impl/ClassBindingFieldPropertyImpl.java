@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model.impl;
 
+import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
@@ -98,7 +99,9 @@ public class ClassBindingFieldPropertyImpl
 
   @Override
   public IBoundFlagInstance getJsonKey() {
-    return getClassBinding().getJsonKeyFlagInstance();
+    return JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())
+        ? getClassBinding().getJsonKeyFlagInstance()
+        : null;
   }
 
   @Override

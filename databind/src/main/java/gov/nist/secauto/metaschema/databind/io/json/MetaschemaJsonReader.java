@@ -35,8 +35,12 @@ import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundJavaProperty;
+import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
+import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo.IPropertyCollector;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -225,7 +229,31 @@ public class MetaschemaJsonReader
       // advance past the field name
       parser.nextToken();
 
-      Object value = targetInstance.readValue(parentObject, this);
+      Object value;
+      if (targetInstance instanceof IBoundFlagInstance) {
+        value = ((IBoundFlagInstance) targetInstance).readItem(parentObject, this, null);
+      } else if (targetInstance instanceof IBoundModelInstance) {
+        IBoundModelInstance instance = (IBoundModelInstance) targetInstance;
+        IModelPropertyInfo propertyInfo = instance.getPropertyInfo();
+
+        ModelInstanceReadHandler handler = new ModelInstanceReadHandler(
+            propertyInfo,
+            parentObject);
+
+        // Deal with the collection or value type
+        IModelPropertyInfo.IPropertyCollector collector = propertyInfo.newPropertyCollector();
+
+        // let the property info parse the value
+        propertyInfo.readItems(handler, collector);
+
+        // get the underlying value
+        value = collector.getValue();
+      } else if (targetInstance instanceof IBoundFieldValueInstance) {
+        value = ((IBoundFieldValueInstance) targetInstance).readItem(parentObject, this, null);
+      } else {
+        throw new UnsupportedOperationException(
+            String.format("Unsupported instance type: %s", targetInstance.getClass().getName()));
+      }
 
       if (value != null) {
         targetInstance.setValue(parentObject, value);
@@ -312,5 +340,91 @@ public class MetaschemaJsonReader
           targetObject,
           ObjectUtils.notNull(remainingInstances.values()));
     }
+  }
+
+  private class ModelInstanceReadHandler
+      extends AbstractModelInstanceReadHandler {
+
+    protected ModelInstanceReadHandler(
+        @NonNull IModelPropertyInfo propertyInfo,
+        @NonNull Object parentObject) {
+      super(propertyInfo, parentObject);
+    }
+
+    @Override
+    public boolean readSingleton(IPropertyCollector collector) throws IOException {
+      Object value = readItem();
+      collector.add(value);
+      return true;
+    }
+
+    @SuppressWarnings("resource") // no need to close parser
+    @Override
+    public boolean readList(IPropertyCollector collector) throws IOException {
+      JsonParser parser = getReader();
+
+      switch (parser.currentToken()) {
+      case START_ARRAY: {
+        // this is an array, we need to parse the array wrapper then each item
+        JsonUtil.assertAndAdvance(parser, JsonToken.START_ARRAY);
+
+        // parse items
+        while (!JsonToken.END_ARRAY.equals(parser.currentToken())) {
+          Object value = readItem();
+          collector.add(value);
+        }
+
+        // this is the other side of the array wrapper, advance past it
+        JsonUtil.assertAndAdvance(parser, JsonToken.END_ARRAY);
+        break;
+      }
+      case VALUE_NULL: {
+        JsonUtil.assertAndAdvance(parser, JsonToken.VALUE_NULL);
+        break;
+      }
+      default:
+        // this is a singleton, just parse the value as a single item
+        Object value = readItem();
+        collector.add(value);
+      }
+      return true;
+    }
+
+    @SuppressWarnings("resource") // no need to close parser
+    @Override
+    public boolean readMap(IPropertyCollector collector) throws IOException {
+      JsonParser parser = getReader();
+
+      // A map value is always wrapped in a START_OBJECT, since fields are used for
+      // the keys
+      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
+
+      // process all map items
+      while (!JsonToken.END_OBJECT.equals(parser.currentToken())) {
+
+        // a map item will always start with a FIELD_NAME, since this represents the key
+        JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
+
+        Object value = readItem();
+        collector.add(value);
+
+        // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all
+        // items have been
+        // read
+        JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
+      }
+
+      // A map value will always end with an end object, which needs to be consumed
+      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
+      return true;
+    }
+
+    @Override
+    @NonNull
+    public Object readItem() throws IOException {
+      IBoundModelInstance instance = getPropertyInfo().getProperty();
+      return instance.readItem(getParentObject(), MetaschemaJsonReader.this, instance.getJsonKey());
+    }
+
   }
 }

@@ -46,7 +46,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 // TODO: implement can handle QName for XML parsing
 public interface IFeatureScalarItemValueHandler
-    extends IDataTypeHandler {
+    extends IItemValueHandler {
 
   Object getValue(@NonNull Object parent);
 

@@ -31,7 +31,6 @@ import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
-import gov.nist.secauto.metaschema.databind.model.info.IPropertyCollector;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -101,7 +100,7 @@ public abstract class AbstractModelProperty
     Object value = getValue(fromInstance);
     if (value != null) {
       IModelPropertyInfo propertyInfo = getPropertyInfo();
-      IPropertyCollector collector = propertyInfo.newPropertyCollector();
+      IModelPropertyInfo.IPropertyCollector collector = propertyInfo.newPropertyCollector();
 
       propertyInfo.copy(fromInstance, toInstance, collector);
 

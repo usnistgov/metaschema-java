@@ -37,7 +37,6 @@ import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
@@ -123,11 +122,6 @@ class XmlInlineFieldDefinition
   @NonNull
   public IFieldInstance getInlineInstance() {
     return this;
-  }
-
-  @Override
-  public IModule getContainingModule() {
-    return getContainingDefinition().getContainingModule();
   }
 
   @SuppressWarnings("null")

@@ -26,10 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
-
-import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
@@ -74,10 +71,5 @@ public interface IBoundFieldValueInstance
   @Override
   default void setValue(Object parentInstance, Object value) {
     IBoundJavaProperty.super.setValue(parentInstance, value);
-  }
-
-  @Override
-  default Object readValue(Object parentObject, IJsonParsingContext context) throws IOException {
-    return readItem(parentObject, context, null);
   }
 }

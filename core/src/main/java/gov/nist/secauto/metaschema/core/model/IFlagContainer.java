@@ -36,15 +36,6 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * either a field or assembly.
  */
 public interface IFlagContainer extends IDefinition, IContainer {
-  /**
-   * Retrieve the Metaschema definition containing this container.
-   *
-   * @return the containing Metaschema definition
-   */
-  @Override
-  @NonNull
-  IFlagContainer getOwningDefinition();
-
   @Override
   INamedModelInstance getInlineInstance();
 

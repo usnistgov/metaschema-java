@@ -24,54 +24,37 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.constraint;
-
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+package gov.nist.secauto.metaschema.databind.model.info;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class DefaultLet implements ILet {
+public abstract class AbstractModelInstanceReadHandler implements IModelPropertyInfo.IReadHandler {
   @NonNull
-  private final String name;
+  private final IModelPropertyInfo propertyInfo;
   @NonNull
-  private final MetapathExpression valueExpression;
-  @NonNull
-  private final ISource source;
+  private final Object parentObject;
+
+  protected AbstractModelInstanceReadHandler(
+      @NonNull IModelPropertyInfo propertyInfo,
+      @NonNull Object parentObject) {
+    this.propertyInfo = propertyInfo;
+    this.parentObject = parentObject;
+  }
 
   /**
-   * Construct a new let statement.
-   *
-   * @param name
-   *          the variable name
-   * @param metapath
-   *          the Metapath expression used to query the value
-   * @param source
-   *          the source of the let statement
+   * @return the propertyInfo
    */
-  // REFACTOR: move construction to an "of" method on ILet and make this class an
-  // impl class.
-  public DefaultLet(
-      @NonNull String name,
-      @NonNull MetapathExpression metapath,
-      @NonNull ISource source) {
-    this.name = name;
-    this.valueExpression = metapath;
-    this.source = source;
-  }
-
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  @Override
-  public MetapathExpression getValueExpression() {
-    return valueExpression;
-  }
-
-  @Override
   @NonNull
-  public ISource getSource() {
-    return source;
+  public IModelPropertyInfo getPropertyInfo() {
+    return propertyInfo;
   }
+
+  /**
+   * @return the parentObject
+   */
+  @NonNull
+  public Object getParentObject() {
+    return parentObject;
+  }
+
 }

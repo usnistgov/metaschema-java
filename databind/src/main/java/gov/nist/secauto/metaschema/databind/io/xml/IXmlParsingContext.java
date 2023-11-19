@@ -60,14 +60,12 @@ public interface IXmlParsingContext extends IParsingContext<XMLEventReader2, IXm
    * @return the Java object read, or {@code null} if no data was read
    * @throws IOException
    *           if an error occurred while parsing the input
-   * @throws XMLStreamException
-   *           if an error occurred while parsing XML events
    */
   @Nullable
   <T> T readModelInstanceValue(
       @NonNull IBoundModelInstance targetInstance,
       @NonNull Object parentObject,
-      @NonNull StartElement start) throws XMLStreamException, IOException;
+      @NonNull StartElement start) throws IOException;
 
   /**
    * Reads a XML element storing the associated data in a Java class instance,

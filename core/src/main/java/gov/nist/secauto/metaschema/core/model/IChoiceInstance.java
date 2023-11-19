@@ -41,7 +41,6 @@ public interface IChoiceInstance extends IModelInstance, IModelContainer {
     return ModelType.CHOICE;
   }
 
-  // REFACTOR: move up?
   @Override
   default IAssemblyDefinition getOwningDefinition() {
     return getParentContainer().getOwningDefinition();

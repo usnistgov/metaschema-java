@@ -28,5 +28,5 @@
  * class.
  */
 
-// REFACTOR: Consider removing some child annotations in favor of Object values
+// REFACTOR: Consider removing some child annotations in favor of Class values
 package gov.nist.secauto.metaschema.databind.model.annotations;

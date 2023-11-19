@@ -44,8 +44,7 @@ import javax.xml.stream.events.StartElement;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-// REFACTOR: rename to IItemValueHandler
-public interface IDataTypeHandler {
+public interface IItemValueHandler {
   /**
    * Indicate if the item supported by this handler allows values without an XML
    * element wrapper.

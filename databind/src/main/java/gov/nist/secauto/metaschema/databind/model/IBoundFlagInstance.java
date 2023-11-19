@@ -27,10 +27,7 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
-
-import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
@@ -76,10 +73,5 @@ public interface IBoundFlagInstance
   @Override
   default boolean canHandleXmlQName(QName qname) {
     return qname.equals(getXmlQName());
-  }
-
-  @Override
-  default Object readValue(Object parentInstance, IJsonParsingContext context) throws IOException {
-    return readItem(parentInstance, context, null);
   }
 }

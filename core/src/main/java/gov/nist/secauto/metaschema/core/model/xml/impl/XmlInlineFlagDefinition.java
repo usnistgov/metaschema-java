@@ -34,7 +34,6 @@ import gov.nist.secauto.metaschema.core.model.AbstractFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
@@ -92,12 +91,6 @@ class XmlInlineFlagDefinition
   @Override
   public IFlagDefinition getDefinition() {
     return this;
-  }
-
-  // REFACTOR: use default?
-  @Override
-  public IModule getContainingModule() {
-    return getContainingDefinition().getContainingModule();
   }
 
   @Override

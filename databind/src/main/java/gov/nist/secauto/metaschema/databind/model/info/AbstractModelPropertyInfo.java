@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-abstract class AbstractModelPropertyInfo
+public abstract class AbstractModelPropertyInfo
     implements IModelPropertyInfo {
 
   @NonNull

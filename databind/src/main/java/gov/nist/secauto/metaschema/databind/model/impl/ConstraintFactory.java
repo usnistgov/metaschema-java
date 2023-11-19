@@ -33,7 +33,6 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractConstraintBuilder;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractKeyConstraintBuilder;
-import gov.nist.secauto.metaschema.core.model.constraint.DefaultLet;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
@@ -366,6 +365,6 @@ final class ConstraintFactory {
 
   @NonNull
   static ILet newLetExpression(@NonNull Let annotation, @NonNull ISource source) {
-    return new DefaultLet(annotation.name(), MetapathExpression.compile(annotation.target()), source);
+    return ILet.of(annotation.name(), annotation.target(), source);
   }
 }

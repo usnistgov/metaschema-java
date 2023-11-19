@@ -28,12 +28,9 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IModelInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemValueHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
-import gov.nist.secauto.metaschema.databind.model.info.IPropertyCollector;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -48,7 +45,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * This marker interface provides common methods for interacting with bound
  * object values.
  */
-public interface IBoundModelInstance extends IModelInstance, IBoundJavaProperty, IDataTypeHandler {
+public interface IBoundModelInstance extends IModelInstance, IBoundJavaProperty, IItemValueHandler {
   @Override
   IAssemblyClassBinding getContainingDefinition();
 
@@ -93,22 +90,4 @@ public interface IBoundModelInstance extends IModelInstance, IBoundJavaProperty,
   @Override
   @NonNull
   Collection<? extends Object> getItemValues(Object value);
-
-  @Override
-  default Object readValue(
-      @NonNull Object parentInstance,
-      @NonNull IJsonParsingContext context)
-      throws IOException {
-
-    IModelPropertyInfo propertyInfo = getPropertyInfo();
-
-    // Deal with the collection or value type
-    IPropertyCollector collector = propertyInfo.newPropertyCollector();
-
-    // let the property info parse the value
-    propertyInfo.readItems(collector, parentInstance, context);
-
-    // get the underlying value
-    return collector.getValue();
-  }
 }

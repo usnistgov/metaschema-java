@@ -28,20 +28,19 @@ package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class SingletonPropertyInfo
     extends AbstractModelPropertyInfo {
@@ -60,41 +59,6 @@ class SingletonPropertyInfo
   @Override
   public int getItemCount(Object value) {
     return value == null ? 0 : 1;
-  }
-
-  @Override
-  public void readItems(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
-      throws IOException {
-
-    // JsonParser parser = context.getReader();
-    //
-    // boolean isObject = JsonToken.START_OBJECT.equals(parser.currentToken()); //
-    // TODO: is this object
-    // check needed?
-    // if (isObject) {
-    // // read the object's START_OBJECT
-    // JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-    // }
-
-    Object value = getProperty().readItem(parentInstance, context, null);
-    collector.add(value);
-
-    // if (isObject) {
-    // // read the object's END_OBJECT
-    // JsonUtil.assertAndAdvance(context.getReader(), JsonToken.END_OBJECT);
-    // }
-  }
-
-  @Override
-  public boolean readItems(IPropertyCollector collector, Object parentInstance, StartElement start,
-      IXmlParsingContext context) throws IOException, XMLStreamException {
-    boolean handled = true;
-    Object value = context.readModelInstanceValue(getProperty(), parentInstance, start);
-    if (value != null) {
-      collector.add(value);
-      handled = true;
-    }
-    return handled;
   }
 
   @Override
@@ -139,4 +103,43 @@ class SingletonPropertyInfo
     collector.add(copiedValue);
   }
 
+  @Override
+  public boolean readItems(
+      IModelPropertyInfo.IReadHandler handler,
+      IModelPropertyInfo.IPropertyCollector collector) throws IOException {
+    return handler.readSingleton(collector);
+  }
+
+  @Override
+  public void writeItems(IModelPropertyInfo.IWriteHandler handler, Object value) {
+    handler.writeSingleton(value);
+  }
+
+  private static class SingletonPropertyCollector implements IModelPropertyInfo.IPropertyCollector {
+    private Object object;
+
+    @Override
+    public void add(Object item) {
+      if (object != null) {
+        throw new IllegalStateException("A value has already been set for this singleton");
+      }
+      object = item;
+    }
+
+    @Override
+    public void addAll(Collection<?> items) {
+      int size = items.size();
+      if (size > 1) {
+        throw new IllegalStateException("Multiple values cannot be set for this singleton");
+      } else if (size == 1) {
+        add(ObjectUtils.notNull(items.iterator().next()));
+      }
+    }
+
+    @Nullable
+    @Override
+    public Object getValue() {
+      return object;
+    }
+  }
 }

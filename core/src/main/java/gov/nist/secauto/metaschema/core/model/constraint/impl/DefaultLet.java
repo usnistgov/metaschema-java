@@ -24,38 +24,54 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.info;
+package gov.nist.secauto.metaschema.core.model.constraint.impl;
 
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.model.constraint.ILet;
+import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 
-import java.util.Collection;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+public class DefaultLet implements ILet {
+  @NonNull
+  private final String name;
+  @NonNull
+  private final MetapathExpression valueExpression;
+  @NonNull
+  private final ISource source;
 
-class SingletonPropertyCollector implements IPropertyCollector {
-  private Object object;
-
-  @Override
-  public void add(Object item) {
-    if (object != null) {
-      throw new IllegalStateException("A value has already been set for this singleton");
-    }
-    object = item;
+  /**
+   * Construct a new let statement.
+   *
+   * @param name
+   *          the variable name
+   * @param metapath
+   *          the Metapath expression used to query the value
+   * @param source
+   *          the source of the let statement
+   */
+  public DefaultLet(
+      @NonNull String name,
+      @NonNull MetapathExpression metapath,
+      @NonNull ISource source) {
+    this.name = name;
+    this.valueExpression = metapath;
+    this.source = source;
   }
 
   @Override
-  public void addAll(Collection<?> items) {
-    int size = items.size();
-    if (size > 1) {
-      throw new IllegalStateException("Multiple values cannot be set for this singleton");
-    } else if (size == 1) {
-      add(ObjectUtils.notNull(items.iterator().next()));
-    }
+  public String getName() {
+    return name;
   }
 
-  @Nullable
   @Override
-  public Object getValue() {
-    return object;
+  public MetapathExpression getValueExpression() {
+    return valueExpression;
+  }
+
+  @Override
+  @NonNull
+  public ISource getSource() {
+    return source;
   }
 }

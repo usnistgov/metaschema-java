@@ -26,21 +26,12 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-
-import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
-import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
-
-import org.codehaus.stax2.XMLEventReader2;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -51,8 +42,6 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -109,67 +98,11 @@ class MapPropertyInfo
   }
 
   @Override
-  public void readItems(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
-      throws IOException {
-    @SuppressWarnings("resource") // not owned
-    JsonParser jsonParser = context.getReader(); // NOPMD - intentional
-
-    // A map value is always wrapped in a START_OBJECT, since fields are used for
-    // the keys
-    JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
-
-    // process all map items
-    while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
-
-      // a map item will always start with a FIELD_NAME, since this represents the key
-      JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME);
-
-      Object value = getProperty().readItem(parentInstance, context, getProperty().getJsonKey());
-      collector.add(value);
-
-      // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all
-      // items have been
-      // read
-      JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
-    }
-
-    // A map value will always end with an end object, which needs to be consumed
-    JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
-  }
-
-  @Override
-  public boolean readItems(IPropertyCollector collector, Object parentInstance, StartElement start,
-      IXmlParsingContext context) throws IOException, XMLStreamException {
-    XMLEventReader2 eventReader = context.getReader();
-
-    // consume extra whitespace between elements
-    XmlEventUtil.skipWhitespace(eventReader);
-
-    IBoundModelInstance property = getProperty();
-    boolean handled = false;
-    XMLEvent event;
-    while ((event = eventReader.peek()).isStartElement()
-        && property.canHandleXmlQName(ObjectUtils.notNull(event.asStartElement().getName()))) {
-
-      // Consume the start element
-      Object value = context.readModelInstanceValue(getProperty(), parentInstance, start);
-      if (value != null) {
-        collector.add(value);
-        handled = true;
-      }
-
-      // consume extra whitespace between elements
-      XmlEventUtil.skipWhitespace(eventReader);
-    }
-
-    return handled;
-  }
-
-  @Override
   public void writeValues(Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     IBoundModelInstance property = getProperty();
-    @SuppressWarnings("unchecked") Map<String, ? extends Object> items = (Map<String, ? extends Object>) value;
+    @SuppressWarnings("unchecked")
+    Map<String, ? extends Object> items = (Map<String, ? extends Object>) value;
     for (Object item : items.values()) {
       context.writeInstanceValue(property, ObjectUtils.notNull(item), parentName);
     }
@@ -197,6 +130,21 @@ class MapPropertyInfo
     for (Object item : getItemsFromParentInstance(fromInstance)) {
       collector.add(property.deepCopyItem(ObjectUtils.requireNonNull(item), toInstance));
     }
+  }
+
+  @Override
+  public boolean readItems(
+      IModelPropertyInfo.IReadHandler handler,
+      IPropertyCollector collector) throws IOException {
+    return handler.readMap(collector);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public void writeItems(
+      IModelPropertyInfo.IWriteHandler handler,
+      Object value) {
+    handler.writeMap((Map<String, ?>) value);
   }
 
   public class MapPropertyCollector implements IPropertyCollector {

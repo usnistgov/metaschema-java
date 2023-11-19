@@ -66,7 +66,6 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * {@link #getFieldDefinitions()}, and {@link #getFlagDefinitions()}, along with
  * similarly named access methods.
  */
-// REFACTOR: rename to IModule
 public interface IModule {
   String METASCHEMA_XML_NS = "http://csrc.nist.gov/ns/oscal/metaschema/1.0";
 

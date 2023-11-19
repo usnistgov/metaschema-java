@@ -26,12 +26,63 @@
 
 package gov.nist.secauto.metaschema.core.model.constraint;
 
+import gov.nist.secauto.metaschema.core.metapath.MetapathException;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultLet;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 @SuppressWarnings("PMD.ShortClassName")
 public interface ILet {
+  /**
+   * Create a new Let expression by compiling the provided Metapath expression
+   * string.
+   *
+   * @param name
+   *          the let expression variable name
+   * @param valueExpression
+   *          a Metapath expression string representing the variable value
+   * @param source
+   *          the source descriptor for the resource containing the constraint
+   * @return the original let statement with the same name or {@code null}
+   */
+  @NonNull
+  static ILet of(
+      @NonNull String name,
+      @NonNull String valueExpression,
+      @NonNull ISource source) {
+    try {
+      return of(name, MetapathExpression.compile(valueExpression), source);
+    } catch (MetapathException ex) {
+      throw new MetapathException(
+          String.format("Unable to compile the let expression '%s=%s'%s. %s",
+              name,
+              valueExpression,
+              source.getSource() == null ? "" : " in " + source.getSource(),
+              ex.getMessage()),
+          ex);
+    }
+  }
+
+  /**
+   * Create a new Let expression.
+   *
+   * @param name
+   *          the let expression variable name
+   * @param valueExpression
+   *          a Metapath expression representing the variable value
+   * @param source
+   *          the source descriptor for the resource containing the constraint
+   * @return the original let statement with the same name or {@code null}
+   */
+  @NonNull
+  static ILet of(
+      @NonNull String name,
+      @NonNull MetapathExpression valueExpression,
+      @NonNull ISource source) {
+    return new DefaultLet(name, valueExpression, source);
+  }
+
   /**
    * Get the name of the let variable.
    *
