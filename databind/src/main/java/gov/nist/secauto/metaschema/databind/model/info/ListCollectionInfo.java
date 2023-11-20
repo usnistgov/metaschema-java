@@ -70,13 +70,7 @@ class ListCollectionInfo
   }
 
   @Override
-  public boolean isValueSet(Object parentInstance) throws IOException {
-    List<? extends Object> items = getItemsFromParentInstance(parentInstance);
-    return !items.isEmpty();
-  }
-
-  @Override
-  public List<?> copy(@NonNull Object fromInstance, @NonNull Object toInstance)
+  public List<?> deepCopyItems(@NonNull Object fromInstance, @NonNull Object toInstance)
       throws BindingException {
     IBoundModelInstance instance = getInstance();
 

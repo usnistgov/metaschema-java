@@ -85,7 +85,6 @@ public class AbstractBoundModelTestSupport {
     return getBindingContext().loadModule(clazz);
   }
 
-  @SuppressWarnings("null")
   @NonNull
   protected IAssemblyClassBinding getRootAssemblyClassBinding() {
     return ObjectUtils.requireNonNull((IAssemblyClassBinding) getBindingContext()

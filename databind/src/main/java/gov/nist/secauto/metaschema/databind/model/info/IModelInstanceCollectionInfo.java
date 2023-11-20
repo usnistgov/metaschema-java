@@ -41,7 +41,6 @@ import java.util.Map;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-// REFACTOR: make all read and write methods take the value, not the parent instance as an argument
 public interface IModelInstanceCollectionInfo {
 
   @NonNull
@@ -124,6 +123,13 @@ public interface IModelInstanceCollectionInfo {
   @NonNull
   IBoundModelInstance getInstance();
 
+  /**
+   * Get the number of items associated with the value.
+   *
+   * @param value
+   *          the value to identify items for
+   * @return the number of items, which will be {@code 0} if value is {@code null}
+   */
   int getItemCount(@Nullable Object value);
 
   /**
@@ -133,15 +139,6 @@ public interface IModelInstanceCollectionInfo {
    */
   @NonNull
   Class<?> getItemType();
-
-  default boolean isJsonKeyRequired() {
-    return false;
-  }
-
-  // void writeValues(@NonNull Object parentInstance, @NonNull IJsonWritingContext
-  // context) throws IOException;
-
-  boolean isValueSet(@NonNull Object parentInstance) throws IOException;
 
   @NonNull
   default Collection<? extends Object> getItemsFromParentInstance(@NonNull Object parentInstance) {
@@ -154,8 +151,7 @@ public interface IModelInstanceCollectionInfo {
 
   Object emptyValue();
 
-  // REFACTOR: Align this method with deepCopy/deepCopyItem
-  Object copy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException;
+  Object deepCopyItems(@NonNull Object fromObject, @NonNull Object toObject) throws BindingException;
 
   /**
    * Read the value data for the model instance.

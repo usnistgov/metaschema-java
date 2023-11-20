@@ -59,12 +59,7 @@ class SingletonCollectionInfo
   }
 
   @Override
-  public boolean isValueSet(Object parentInstance) throws IOException {
-    return getInstance().getValue(parentInstance) != null;
-  }
-
-  @Override
-  public Object copy(@NonNull Object fromObject, @NonNull Object toObject)
+  public Object deepCopyItems(@NonNull Object fromObject, @NonNull Object toObject)
       throws BindingException {
     IBoundModelInstance instance = getInstance();
 

@@ -58,11 +58,6 @@ class MapCollectionInfo
     super(instance);
   }
 
-  @Override
-  public boolean isJsonKeyRequired() {
-    return true;
-  }
-
   @SuppressWarnings("null")
   @NonNull
   public Class<?> getKeyType() {
@@ -85,13 +80,7 @@ class MapCollectionInfo
   }
 
   @Override
-  public boolean isValueSet(Object parentInstance) throws IOException {
-    Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
-    return !items.isEmpty();
-  }
-
-  @Override
-  public Map<String, ?> copy(@NonNull Object fromInstance, @NonNull Object toInstance)
+  public Map<String, ?> deepCopyItems(@NonNull Object fromInstance, @NonNull Object toInstance)
       throws BindingException {
     IBoundModelInstance instance = getInstance();
     IBoundFlagInstance jsonKey = instance.getJsonKey();

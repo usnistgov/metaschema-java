@@ -99,7 +99,7 @@ public abstract class AbstractBoundModelInstance
   public void deepCopy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException {
     Object value = getValue(fromInstance);
     if (value != null) {
-      value = getCollectionInfo().copy(fromInstance, toInstance);
+      value = getCollectionInfo().deepCopyItems(fromInstance, toInstance);
     }
     setValue(toInstance, value);
   }
