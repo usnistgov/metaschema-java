@@ -47,6 +47,7 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IModelDefinitionTypeInfo;
+import gov.nist.secauto.metaschema.databind.model.annotations.Constants;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -104,50 +105,55 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
 
   @Override
   public AnnotationSpec.Builder buildBindingAnnotation() {
-    AnnotationSpec.Builder retval = super.buildBindingAnnotation();
+    AnnotationSpec.Builder annotation = super.buildBindingAnnotation();
 
-    INamedModelInstance modelInstance = getInstance();
+    INamedModelInstance instance = getInstance();
 
-    String formalName = modelInstance.getEffectiveFormalName();
+    String formalName = instance.getEffectiveFormalName();
     if (formalName != null) {
-      retval.addMember("formalName", "$S", formalName);
+      annotation.addMember("formalName", "$S", formalName);
     }
 
-    MarkupLine description = modelInstance.getEffectiveDescription();
+    MarkupLine description = instance.getEffectiveDescription();
     if (description != null) {
-      retval.addMember("description", "$S", description.toMarkdown());
+      annotation.addMember("description", "$S", description.toMarkdown());
     }
 
-    retval.addMember("useName", "$S", modelInstance.getEffectiveName());
+    annotation.addMember("useName", "$S", instance.getEffectiveName());
 
-    String namespace = modelInstance.getXmlNamespace();
+    Integer index = instance.getEffectiveIndex();
+    if (index != null) {
+      annotation.addMember("useIndex", "$L", index);
+    }
+
+    String namespace = instance.getXmlNamespace();
     if (namespace == null) {
-      retval.addMember("namespace", "$S", "##none");
-    } else if (!modelInstance.getContainingModule().getXmlNamespace().toASCIIString().equals(namespace)) {
-      retval.addMember("namespace", "$S", namespace);
+      annotation.addMember("namespace", "$S", Constants.NO_STRING_VALUE);
+    } else if (!instance.getContainingModule().getXmlNamespace().toASCIIString().equals(namespace)) {
+      annotation.addMember("namespace", "$S", namespace);
     } // otherwise use the ##default
 
-    int minOccurs = modelInstance.getMinOccurs();
+    int minOccurs = instance.getMinOccurs();
     if (minOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
-      retval.addMember("minOccurs", "$L", minOccurs);
+      annotation.addMember("minOccurs", "$L", minOccurs);
     }
 
-    int maxOccurs = modelInstance.getMaxOccurs();
+    int maxOccurs = instance.getMaxOccurs();
     if (maxOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS) {
-      retval.addMember("maxOccurs", "$L", maxOccurs);
+      annotation.addMember("maxOccurs", "$L", maxOccurs);
     }
 
-    MarkupMultiline remarks = modelInstance.getRemarks();
+    MarkupMultiline remarks = instance.getRemarks();
     if (remarks != null) {
-      retval.addMember("remarks", "$S", remarks.toMarkdown());
+      annotation.addMember("remarks", "$S", remarks.toMarkdown());
     }
 
     if (maxOccurs == -1 || maxOccurs > 1) {
       // requires a group-as
-      retval.addMember("groupAs", "$L", generateGroupAsAnnotation().build());
+      annotation.addMember("groupAs", "$L", generateGroupAsAnnotation().build());
     }
 
-    return retval;
+    return annotation;
   }
 
   @Override

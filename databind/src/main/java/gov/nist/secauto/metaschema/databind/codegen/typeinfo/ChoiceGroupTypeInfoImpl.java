@@ -81,17 +81,25 @@ public class ChoiceGroupTypeInfoImpl
       retval.addMember("maxOccurs", "$L", maxOccurs);
     }
 
+    String jsonKeyName = choiceGroup.getJsonKeyFlagName();
+    if (jsonKeyName != null) {
+      retval.addMember("jsonKey", "$S", jsonKeyName);
+    }
+
     IAssemblyDefinitionTypeInfo parentTypeInfo = getParentDefinitionTypeInfo();
     ITypeResolver typeResolver = parentTypeInfo.getTypeResolver();
     for (INamedModelInstance modelInstance : getInstance().getNamedModelInstances()) {
       assert modelInstance != null;
       IModelInstanceTypeInfo instanceTypeInfo = typeResolver.getTypeInfo(modelInstance, parentTypeInfo);
 
-      AnnotationSpec annotation = instanceTypeInfo.buildBindingAnnotation().build();
+      AnnotationSpec.Builder annotation = instanceTypeInfo.buildBindingAnnotation();
+
+      annotation.addMember("binding", "$T.class", instanceTypeInfo.getJavaItemType());
+
       if (modelInstance instanceof IFieldInstance) {
-        retval.addMember("fields", "$L", annotation);
+        retval.addMember("fields", "$L", annotation.build());
       } else if (modelInstance instanceof IAssemblyInstance) {
-        retval.addMember("assemblies", "$L", annotation);
+        retval.addMember("assemblies", "$L", annotation.build());
       }
     }
 

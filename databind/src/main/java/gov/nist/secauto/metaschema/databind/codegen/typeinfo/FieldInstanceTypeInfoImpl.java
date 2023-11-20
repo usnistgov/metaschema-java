@@ -34,8 +34,10 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.codegen.impl.AnnotationGenerator;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 
@@ -72,26 +74,31 @@ public class FieldInstanceTypeInfoImpl
 
   @Override
   public AnnotationSpec.Builder buildBindingAnnotation() {
-    AnnotationSpec.Builder retval = super.buildBindingAnnotation();
+    AnnotationSpec.Builder annotation = super.buildBindingAnnotation();
 
-    IFieldInstance fieldInstance = getInstance();
+    IFieldInstance instance = getInstance();
 
-    if (MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != fieldInstance.isInXmlWrapped()) {
-      retval.addMember("inXmlWrapped", "$L", fieldInstance.isInXmlWrapped());
+    if (MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != instance.isInXmlWrapped()) {
+      annotation.addMember("inXmlWrapped", "$L", instance.isInXmlWrapped());
     }
 
-    IDataTypeAdapter<?> valueDataType = fieldInstance.getDefinition().getJavaTypeAdapter();
-    Object defaultValue = fieldInstance.getDefaultValue();
+    IDataTypeAdapter<?> valueDataType = instance.getDefinition().getJavaTypeAdapter();
+    Object defaultValue = instance.getDefaultValue();
     if (defaultValue != null) {
-      retval.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
+      annotation.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
     }
 
-    IFieldDefinition fieldDefinition = getInstance().getDefinition();
+    IFieldDefinition definition = instance.getDefinition();
     // handle the field value related info
-    if (fieldDefinition.isSimple() && !MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType)) {
+    if (definition.isSimple() && !MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType)) {
       // this is a simple field, without flags
-      retval.addMember("typeAdapter", "$T.class", valueDataType.getClass());
+      annotation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
     }
-    return retval;
+
+    if (definition.isInline()) {
+      AnnotationGenerator.buildValueConstraints(annotation, (IFlagContainer) definition);
+    }
+
+    return annotation;
   }
 }

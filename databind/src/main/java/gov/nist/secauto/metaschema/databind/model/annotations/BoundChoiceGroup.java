@@ -81,8 +81,17 @@ public @interface BoundChoiceGroup {
    * @return the configured {@link GroupAs} or the default value with a
    *         {@code null} {@link GroupAs#name()}
    */
+  @NonNull
   GroupAs groupAs() default @GroupAs(name = Constants.NULL_VALUE);
 
+  /**
+   * The name of a common flag to use as the JSON key that appears on all
+   * associated {@link #assemblies()} and {@link #fields()}.
+   *
+   * @return the configured JSON key flag name or
+   *         {@link Constants#NO_STRING_VALUE} if no JSON key is configured
+   */
+  @NonNull
   String jsonKey() default Constants.NO_STRING_VALUE;
 
   /**

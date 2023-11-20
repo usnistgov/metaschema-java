@@ -31,5 +31,4 @@ import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 public interface INamedModelInstanceTypeInfo extends IModelInstanceTypeInfo {
   @Override
   INamedModelInstance getInstance();
-
 }

@@ -43,6 +43,7 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.impl.AnnotationGenerator;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
+import gov.nist.secauto.metaschema.databind.model.annotations.Constants;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonKey;
 
@@ -88,13 +89,30 @@ public class FlagInstanceTypeInfoImpl
 
     annotation.addMember("useName", "$S", instance.getEffectiveName());
 
-    if (instance.isRequired()) {
-      annotation.addMember("required", "$L", true);
+    Integer index = instance.getEffectiveIndex();
+    if (index != null) {
+      annotation.addMember("useIndex", "$L", index);
+    }
+
+    String namespace = instance.getXmlNamespace();
+    if (namespace != null) {
+      if (namespace.equals(instance.getContainingModule().getXmlNamespace().toASCIIString())) {
+        namespace = Constants.DEFAULT_STRING_VALUE;
+      }
+      annotation.addMember("namespace", "$S", namespace);
     }
 
     IFlagDefinition definition = instance.getDefinition();
 
     IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
+    Object defaultValue = instance.getDefaultValue();
+    if (defaultValue != null) {
+      annotation.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
+    }
+
+    if (instance.isRequired()) {
+      annotation.addMember("required", "$L", true);
+    }
     annotation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
 
     MarkupMultiline remarks = instance.getRemarks();

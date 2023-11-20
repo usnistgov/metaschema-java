@@ -59,8 +59,8 @@ public class ClassBindingAssemblyInstance
   public ClassBindingAssemblyInstance(
       @NonNull Field field,
       @NonNull IAssemblyClassBinding definition,
-      @NonNull IAssemblyClassBinding parentClassBinding) {
-    super(field, parentClassBinding);
+      @NonNull IAssemblyClassBinding containingDefinition) {
+    super(field, containingDefinition);
 
     this.definition = definition;
     BoundAssembly boundAssembly = field.getAnnotation(BoundAssembly.class);
@@ -68,16 +68,16 @@ public class ClassBindingAssemblyInstance
       throw new IllegalArgumentException(
           String.format("BoundField '%s' on class '%s' is missing the '%s' annotation.",
               field.getName(),
-              parentClassBinding.getBoundClass().getName(),
+              containingDefinition.getBoundClass().getName(),
               BoundAssembly.class.getName()));
     }
     this.assembly = boundAssembly;
-    this.groupAs = IGroupAs.of(boundAssembly.groupAs(), parentClassBinding);
+    this.groupAs = IGroupAs.of(boundAssembly.groupAs(), containingDefinition);
     if ((getMaxOccurs() == -1 || getMaxOccurs() > 1)) {
       if (IGroupAs.SINGLETON_GROUP_AS.equals(this.groupAs)) {
         throw new IllegalStateException(String.format("Field '%s' on class '%s' is missing the '%s' annotation.",
             field.getName(),
-            parentClassBinding.getBoundClass().getName(),
+            containingDefinition.getBoundClass().getName(),
             GroupAs.class.getName()));
       }
     } else if (!IGroupAs.SINGLETON_GROUP_AS.equals(this.groupAs)) {
@@ -86,7 +86,7 @@ public class ClassBindingAssemblyInstance
           String.format(
               "Field '%s' on class '%s' has the '%s' annotation, but maxOccurs=1. A groupAs must not be specfied.",
               field.getName(),
-              parentClassBinding.getBoundClass().getName(),
+              containingDefinition.getBoundClass().getName(),
               GroupAs.class.getName()));
     }
   }
@@ -119,50 +119,50 @@ public class ClassBindingAssemblyInstance
   // ------------------------------------------
 
   @NonNull
-  private BoundAssembly getAssemblyAnnotation() {
+  private BoundAssembly getAnnotation() {
     return assembly;
   }
 
   @Override
   public String getFormalName() {
-    return ModelUtil.resolveNoneOrValue(getAssemblyAnnotation().formalName());
+    return ModelUtil.resolveNoneOrValue(getAnnotation().formalName());
   }
 
   @Override
   public MarkupLine getDescription() {
-    return ModelUtil.resolveToMarkupLine(getAssemblyAnnotation().description());
+    return ModelUtil.resolveToMarkupLine(getAnnotation().description());
   }
 
   @Override
   public MarkupMultiline getRemarks() {
-    return ModelUtil.resolveToMarkupMultiline(getAssemblyAnnotation().remarks());
+    return ModelUtil.resolveToMarkupMultiline(getAnnotation().remarks());
   }
 
   @Override
   public String getUseName() {
-    return ModelUtil.resolveNoneOrValue(getAssemblyAnnotation().useName());
+    return ModelUtil.resolveNoneOrValue(getAnnotation().useName());
   }
 
   @Override
   public Integer getUseIndex() {
-    int value = getAssemblyAnnotation().useIndex();
+    int value = getAnnotation().useIndex();
     return value == Integer.MIN_VALUE ? null : value;
   }
 
   @Override
   public String getXmlNamespace() {
     return ObjectUtils
-        .notNull(ModelUtil.resolveNamespace(getAssemblyAnnotation().namespace(), getContainingDefinition()));
+        .notNull(ModelUtil.resolveNamespace(getAnnotation().namespace(), getContainingDefinition()));
   }
 
   @Override
   public final int getMinOccurs() {
-    return getAssemblyAnnotation().minOccurs();
+    return getAnnotation().minOccurs();
   }
 
   @Override
   public final int getMaxOccurs() {
-    return getAssemblyAnnotation().maxOccurs();
+    return getAnnotation().maxOccurs();
   }
 
   @Override
