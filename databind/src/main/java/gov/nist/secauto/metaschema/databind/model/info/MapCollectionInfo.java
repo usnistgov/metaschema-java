@@ -28,8 +28,6 @@ package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 
@@ -39,9 +37,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -90,24 +85,6 @@ class MapCollectionInfo
   }
 
   @Override
-  public void writeValues(Object value, QName parentName, IXmlWritingContext context)
-      throws XMLStreamException, IOException {
-    IBoundModelInstance instance = getInstance();
-    @SuppressWarnings("unchecked") Map<String, ? extends Object> items = (Map<String, ? extends Object>) value;
-    for (Object item : items.values()) {
-      context.writeInstanceValue(instance, ObjectUtils.notNull(item), parentName);
-    }
-  }
-
-  @Override
-  public void writeValues(Object parentInstance, IJsonWritingContext context) throws IOException {
-    for (Object targetObject : getItemsFromParentInstance(parentInstance)) {
-      assert targetObject != null;
-      getInstance().writeItem(targetObject, context, getInstance().getJsonKey());
-    }
-  }
-
-  @Override
   public boolean isValueSet(Object parentInstance) throws IOException {
     Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
     return !items.isEmpty();
@@ -144,7 +121,7 @@ class MapCollectionInfo
   @Override
   public void writeItems(
       IModelInstanceCollectionInfo.IWriteHandler handler,
-      Object value) {
+      Object value) throws IOException {
     handler.writeMap((Map<String, ?>) value);
   }
 }

@@ -28,19 +28,23 @@ package gov.nist.secauto.metaschema.databind.io.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
+import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundJavaProperty;
+import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceWriteHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -191,13 +195,17 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
   protected void writeModelInstanceValues(
       @NonNull IBoundNamedModelInstance targetInstance,
       @NonNull Object parentObject) throws IOException {
-    IModelInstanceCollectionInfo collectionInfo = targetInstance.getCollectionInfo();
-    if (collectionInfo.isValueSet(parentObject)) {
+    Object value = targetInstance.getValue(parentObject);
+    if (value != null) {
       // write the field name
       writer.writeFieldName(targetInstance.getJsonName());
 
+      IModelInstanceCollectionInfo collectionInfo = targetInstance.getCollectionInfo();
+
+      ModelInstanceWriteHandler handler = new ModelInstanceWriteHandler(collectionInfo);
+
       // dispatch to the property info implementation to address cardinality
-      collectionInfo.writeValues(parentObject, this);
+      collectionInfo.writeItems(handler, value);
     }
   }
 
@@ -232,6 +240,43 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       writer.writeFieldName(valueKeyName);
       LOGGER.info("FIELD: {}", valueKeyName);
       targetInstance.getJavaTypeAdapter().writeJsonValue(value, writer);
+    }
+  }
+
+  private class ModelInstanceWriteHandler
+      extends AbstractModelInstanceWriteHandler {
+    public ModelInstanceWriteHandler(
+        @NonNull IModelInstanceCollectionInfo collectionInfo) {
+      super(collectionInfo);
+    }
+
+    @Override
+    public void writeList(List<?> items) throws IOException {
+      @SuppressWarnings("resource") // not owned
+      JsonGenerator writer = getWriter();
+      IBoundModelInstance instance = getCollectionInfo().getInstance();
+
+      boolean writeArray = false;
+      if (JsonGroupAsBehavior.LIST.equals(instance.getJsonGroupAsBehavior())
+          || JsonGroupAsBehavior.SINGLETON_OR_LIST.equals(instance.getJsonGroupAsBehavior())
+              && items.size() > 1) {
+        // write array, then items
+        writeArray = true;
+        writer.writeStartArray();
+      } // only other option is a singleton value, write item
+
+      super.writeList(items);
+
+      if (writeArray) {
+        // write the end array
+        writer.writeEndArray();
+      }
+    }
+
+    @Override
+    public void writeItem(Object item) throws IOException {
+      IBoundModelInstance instance = getCollectionInfo().getInstance();
+      instance.writeItem(item, MetaschemaJsonWriter.this, instance.getJsonKey());
     }
   }
 }

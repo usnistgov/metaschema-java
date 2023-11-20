@@ -347,11 +347,6 @@ public class MetaschemaJsonReader
       super(collectionInfo, parentObject);
     }
 
-    @Override
-    public Object readSingleton() throws IOException {
-      return readItem();
-    }
-
     @SuppressWarnings("resource") // no need to close parser
     @Override
     public List<?> readList() throws IOException {
@@ -426,6 +421,5 @@ public class MetaschemaJsonReader
       IBoundModelInstance instance = getCollectionInfo().getInstance();
       return instance.readItem(getParentObject(), MetaschemaJsonReader.this, instance.getJsonKey());
     }
-
   }
 }

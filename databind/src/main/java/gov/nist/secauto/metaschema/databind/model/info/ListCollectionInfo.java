@@ -26,23 +26,15 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-
-import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -78,42 +70,6 @@ class ListCollectionInfo
   }
 
   @Override
-  public void writeValues(Object value, QName parentName, IXmlWritingContext context)
-      throws XMLStreamException, IOException {
-    IBoundModelInstance instance = getInstance();
-    List<? extends Object> items = getItemsFromValue(value);
-    for (Object item : items) {
-      context.writeInstanceValue(instance, ObjectUtils.requireNonNull(item), parentName);
-    }
-  }
-
-  @Override
-  public void writeValues(Object parentInstance, IJsonWritingContext context) throws IOException {
-    List<? extends Object> items = getItemsFromParentInstance(parentInstance);
-
-    @SuppressWarnings("resource") // not owned
-    JsonGenerator writer = context.getWriter(); // NOPMD - intentional
-
-    boolean writeArray = false;
-    if (JsonGroupAsBehavior.LIST.equals(getInstance().getJsonGroupAsBehavior())
-        || JsonGroupAsBehavior.SINGLETON_OR_LIST.equals(getInstance().getJsonGroupAsBehavior()) && items.size() > 1) {
-      // write array, then items
-      writeArray = true;
-      writer.writeStartArray();
-    } // only other option is a singleton value, write item
-
-    for (Object targetObject : items) {
-      assert targetObject != null;
-      getInstance().writeItem(targetObject, context, null);
-    }
-
-    if (writeArray) {
-      // write the end array
-      writer.writeEndArray();
-    }
-  }
-
-  @Override
   public boolean isValueSet(Object parentInstance) throws IOException {
     List<? extends Object> items = getItemsFromParentInstance(parentInstance);
     return !items.isEmpty();
@@ -142,7 +98,7 @@ class ListCollectionInfo
   }
 
   @Override
-  public void writeItems(IModelInstanceCollectionInfo.IWriteHandler handler, Object value) {
+  public void writeItems(IModelInstanceCollectionInfo.IWriteHandler handler, Object value) throws IOException {
     handler.writeList((List<?>) value);
   }
 }

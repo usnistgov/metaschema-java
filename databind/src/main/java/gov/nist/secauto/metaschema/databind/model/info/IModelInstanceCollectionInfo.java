@@ -28,8 +28,6 @@ package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 
 import java.io.IOException;
@@ -39,9 +37,6 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -143,24 +138,8 @@ public interface IModelInstanceCollectionInfo {
     return false;
   }
 
-  /**
-   * Write a {@code value} that is not {@code null}.
-   *
-   * @param value
-   *          the value to write
-   * @param parentName
-   *          the XML qualified name of the parent element to write
-   * @param context
-   *          the XML serialization context
-   * @throws XMLStreamException
-   *           if an error occurred while generating XML events
-   * @throws IOException
-   *           if an error occurred while writing to the output stream
-   */
-  void writeValues(@NonNull Object value, @NonNull QName parentName, @NonNull IXmlWritingContext context)
-      throws XMLStreamException, IOException;
-
-  void writeValues(@NonNull Object parentInstance, @NonNull IJsonWritingContext context) throws IOException;
+  // void writeValues(@NonNull Object parentInstance, @NonNull IJsonWritingContext
+  // context) throws IOException;
 
   boolean isValueSet(@NonNull Object parentInstance) throws IOException;
 
@@ -200,7 +179,9 @@ public interface IModelInstanceCollectionInfo {
 
   public interface IReadHandler {
     @Nullable
-    Object readSingleton() throws IOException;
+    default Object readSingleton() throws IOException {
+      return readItem();
+    }
 
     @NonNull
     List<?> readList() throws IOException;
@@ -220,11 +201,13 @@ public interface IModelInstanceCollectionInfo {
   }
 
   public interface IWriteHandler {
-    void writeSingleton(@NonNull Object item);
+    default void writeSingleton(@NonNull Object item) throws IOException {
+      writeItem(item);
+    }
 
-    void writeList(@NonNull List<?> items);
+    void writeList(@NonNull List<?> items) throws IOException;
 
-    void writeMap(@NonNull Map<String, ?> items);
+    void writeMap(@NonNull Map<String, ?> items) throws IOException;
 
     /**
      * Write the next item in the collection of items represented by the instance.

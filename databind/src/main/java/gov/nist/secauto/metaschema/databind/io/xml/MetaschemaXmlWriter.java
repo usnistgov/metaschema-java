@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceWriteHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -193,6 +194,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     }
 
     IModelInstanceCollectionInfo collectionInfo = targetInstance.getCollectionInfo();
+
     if (targetInstance.getMinOccurs() > 0 || collectionInfo.getItemCount(value) > 0) {
       // only write the instance if the wrapper is required or if it has contents
       QName currentStart = parentName;
@@ -205,8 +207,14 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
           currentStart = groupQName;
         }
 
+        ModelInstanceWriteHandler handler = new ModelInstanceWriteHandler(
+            collectionInfo,
+            currentStart);
+
         // There are one or more named values based on cardinality
-        collectionInfo.writeValues(value, currentStart, this);
+        collectionInfo.writeItems(handler, value);
+
+        // collectionInfo.writeValues(value, currentStart, this);
 
         if (groupQName != null) {
           writer.writeEndElement();
@@ -273,6 +281,32 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
       }
     } catch (XMLStreamException ex) {
       throw new IOException(ex);
+    }
+  }
+
+  private class ModelInstanceWriteHandler
+      extends AbstractModelInstanceWriteHandler {
+    @NonNull
+    private final QName parentQName;
+
+    public ModelInstanceWriteHandler(
+        @NonNull IModelInstanceCollectionInfo collectionInfo,
+        @NonNull QName parentQName) {
+      super(collectionInfo);
+      this.parentQName = parentQName;
+    }
+
+    /**
+     * @return the parentQName
+     */
+    @NonNull
+    protected QName getParentQName() {
+      return parentQName;
+    }
+
+    @Override
+    public void writeItem(Object item) throws IOException {
+      writeInstanceValue(getCollectionInfo().getInstance(), item, getParentQName());
     }
   }
 }

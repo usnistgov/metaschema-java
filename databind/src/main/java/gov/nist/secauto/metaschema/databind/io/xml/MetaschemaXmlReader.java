@@ -534,11 +534,6 @@ public class MetaschemaXmlReader
     }
 
     @Override
-    public Object readSingleton() throws IOException {
-      return readItem();
-    }
-
-    @Override
     public List<?> readList() throws IOException {
       return ObjectUtils.notNull(readCollection()
           .collect(Collectors.toCollection(LinkedList::new)));

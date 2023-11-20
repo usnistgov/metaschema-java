@@ -27,64 +27,44 @@
 package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class SingletonCollectionInfo
-    extends AbstractModelInstanceCollectionInfo {
+public abstract class AbstractModelInstanceWriteHandler implements IModelInstanceCollectionInfo.IWriteHandler {
+  @NonNull
+  private final IModelInstanceCollectionInfo collectionInfo;
 
-  public SingletonCollectionInfo(@NonNull IBoundModelInstance instance) {
-    super(instance);
+  public AbstractModelInstanceWriteHandler(
+      @NonNull IModelInstanceCollectionInfo collectionInfo) {
+    this.collectionInfo = collectionInfo;
   }
 
-  @SuppressWarnings("null")
-  @Override
-  public List<?> getItemsFromValue(Object value) {
-    return value == null ? List.of() : List.of(value);
-  }
-
-  @Override
-  public int getItemCount(Object value) {
-    return value == null ? 0 : 1;
-  }
-
-  @Override
-  public Class<?> getItemType() {
-    return (Class<?>) getInstance().getType();
+  /**
+   * @return the collectionInfo
+   */
+  @NonNull
+  public IModelInstanceCollectionInfo getCollectionInfo() {
+    return collectionInfo;
   }
 
   @Override
-  public boolean isValueSet(Object parentInstance) throws IOException {
-    return getInstance().getValue(parentInstance) != null;
+  public void writeList(List<?> items) throws IOException {
+    writeCollection(items);
   }
 
   @Override
-  public Object copy(@NonNull Object fromObject, @NonNull Object toObject)
-      throws BindingException {
-    IBoundModelInstance instance = getInstance();
-
-    Object value = instance.getValue(fromObject);
-
-    return value == null ? null : instance.deepCopyItem(ObjectUtils.requireNonNull(value), toObject);
+  public void writeMap(Map<String, ?> items) throws IOException {
+    writeCollection(ObjectUtils.notNull(items.values()));
   }
 
-  @Override
-  public Object emptyValue() {
-    return getInstance().getDefaultValue();
-  }
-
-  @Override
-  public Object readItems(IModelInstanceCollectionInfo.IReadHandler handler) throws IOException {
-    return handler.readSingleton();
-  }
-
-  @Override
-  public void writeItems(IModelInstanceCollectionInfo.IWriteHandler handler, Object value) throws IOException {
-    handler.writeSingleton(value);
+  private void writeCollection(@NonNull Collection<?> items) throws IOException {
+    for (Object item : items) {
+      writeItem(ObjectUtils.requireNonNull(item));
+    }
   }
 }
