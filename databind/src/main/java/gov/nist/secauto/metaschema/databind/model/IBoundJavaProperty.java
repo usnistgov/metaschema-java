@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.databind.io.BindingException;
-
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -59,5 +57,5 @@ public interface IBoundJavaProperty extends IBoundInstance, IFeatureJavaField {
   String getJsonName();
 
   @Nullable
-  Object defaultValue() throws BindingException;
+  Object getEffectiveDefaultValue();
 }

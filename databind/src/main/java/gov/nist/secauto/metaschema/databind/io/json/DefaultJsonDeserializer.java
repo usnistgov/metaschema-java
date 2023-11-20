@@ -129,7 +129,7 @@ public class DefaultJsonDeserializer<CLASS>
         retval = INodeItemFactory.instance().newDocumentNodeItem(classBinding, documentUri, value);
       } else {
         // read the top-level definition
-        @SuppressWarnings("unchecked") CLASS value = (CLASS) classBinding.readItem(null, parser, null);
+        @SuppressWarnings("unchecked") CLASS value = (CLASS) classBinding.readItem(null, parser);
 
         retval = INodeItemFactory.instance().newAssemblyNodeItem(classBinding, documentUri, value);
       }

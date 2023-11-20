@@ -68,8 +68,6 @@ public interface IItemValueHandler {
    *          {@code null} if there is no parent
    * @param context
    *          the JSON/YAML parser
-   * @param jsonKey
-   *          the JSON key to use or {@code null} if no JSON key is configured
    * @return the Java object representing the parsed item(s)
    * @throws IOException
    *           if an error occurred while parsing
@@ -77,8 +75,7 @@ public interface IItemValueHandler {
   @NonNull
   Object readItem(
       @Nullable Object parent,
-      @NonNull IJsonParsingContext context,
-      @Nullable IBoundFlagInstance jsonKey) throws IOException;
+      @NonNull IJsonParsingContext context) throws IOException;
 
   /**
    * Parse and return the set of items from the XML stream.

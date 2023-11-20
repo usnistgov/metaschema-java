@@ -61,6 +61,9 @@ public interface IBoundFlagInstance
   }
 
   @Override
+  Object getEffectiveDefaultValue();
+
+  @Override
   default String getJsonName() {
     return IFeatureNamedInstance.super.getJsonName();
   }
@@ -74,4 +77,5 @@ public interface IBoundFlagInstance
   default boolean canHandleXmlQName(QName qname) {
     return qname.equals(getXmlQName());
   }
+
 }

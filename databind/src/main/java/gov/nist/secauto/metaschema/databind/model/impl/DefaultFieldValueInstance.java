@@ -83,6 +83,11 @@ class DefaultFieldValueInstance
     return defaultValue;
   }
 
+  @Override
+  public Object getEffectiveDefaultValue() {
+    return getDefaultValue();
+  }
+
   @NonNull
   private BoundFieldValue getFieldValueAnnotation() {
     return fieldValue;
@@ -153,10 +158,5 @@ class DefaultFieldValueInstance
     Object value = getValue(fromInstance);
     IDataTypeAdapter<?> adapter = getJavaTypeAdapter();
     setValue(toInstance, value == null ? null : adapter.copy(value));
-  }
-
-  @Override
-  public Object defaultValue() {
-    return getDefaultValue();
   }
 }

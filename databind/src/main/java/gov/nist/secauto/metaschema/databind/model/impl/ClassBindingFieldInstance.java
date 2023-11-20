@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
@@ -105,24 +104,29 @@ public class ClassBindingFieldInstance
   }
 
   @Override
+  public IBoundFlagInstance getItemJsonKey(Object item) {
+    return getJsonKey();
+  }
+
+  @Override
   public Object getDefaultValue() {
     return defaultValue;
   }
 
   @Override
-  public Object defaultValue() throws BindingException {
+  public Object getEffectiveDefaultValue() {
     Object retval = null;
     if (getMaxOccurs() == 1) {
       IFieldClassBinding definition = getDefinition();
       IBoundFieldValueInstance fieldValue = definition.getFieldValueInstance();
 
-      Object fieldValueDefault = getEffectiveDefaultValue();
+      Object fieldValueDefault = fieldValue.getEffectiveDefaultValue();
       if (fieldValueDefault != null) {
         retval = definition.newInstance();
         fieldValue.setValue(retval, fieldValueDefault);
 
         for (IBoundFlagInstance flag : definition.getFlagInstances()) {
-          Object flagDefault = flag.defaultValue();
+          Object flagDefault = flag.getEffectiveDefaultValue();
           if (flagDefault != null) {
             flag.setValue(retval, flagDefault);
           }

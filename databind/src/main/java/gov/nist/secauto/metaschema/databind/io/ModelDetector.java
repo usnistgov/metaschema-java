@@ -39,7 +39,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.json.JsonFactoryFactory;
 import gov.nist.secauto.metaschema.databind.io.yaml.impl.YamlFactoryFactory;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
@@ -155,7 +154,7 @@ public class ModelDetector {
   }
 
   @NonNull
-  private Class<? extends IAssemblyClassBinding> detectModelXmlClass(@NonNull InputStream is) throws IOException {
+  private Class<?> detectModelXmlClass(@NonNull InputStream is) throws IOException {
     QName startElementQName;
     try {
       XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
@@ -179,7 +178,7 @@ public class ModelDetector {
       throw new IOException(ex);
     }
 
-    Class<? extends IAssemblyClassBinding> clazz = getBindingContext().getBoundClassForRootXmlQName(startElementQName);
+    Class<?> clazz = getBindingContext().getBoundClassForRootXmlQName(startElementQName);
     if (clazz == null) {
       throw new IOException("Unrecognized element name: " + startElementQName.toString());
     }
@@ -187,8 +186,8 @@ public class ModelDetector {
   }
 
   @Nullable
-  private Class<? extends IAssemblyClassBinding> detectModelJsonClass(@NonNull JsonParser parser) throws IOException {
-    Class<? extends IAssemblyClassBinding> retval = null;
+  private Class<?> detectModelJsonClass(@NonNull JsonParser parser) throws IOException {
+    Class<?> retval = null;
     JsonUtil.advanceAndAssert(parser, JsonToken.START_OBJECT);
     outer: while (JsonToken.FIELD_NAME.equals(parser.nextToken())) {
       String name = ObjectUtils.notNull(parser.getCurrentName());
@@ -197,7 +196,8 @@ public class ModelDetector {
         parser.nextToken();
         // JsonUtil.skipNextValue(parser);
       } else {
-        retval = getBindingContext().getBoundClassForRootJsonName(name);
+        IBindingContext bindingContext = getBindingContext();
+        retval = bindingContext.getBoundClassForRootJsonName(name);
         break outer;
       }
     }

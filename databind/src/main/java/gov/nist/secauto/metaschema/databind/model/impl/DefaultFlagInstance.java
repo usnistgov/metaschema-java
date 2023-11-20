@@ -122,6 +122,11 @@ class DefaultFlagInstance
   }
 
   @Override
+  public Object getEffectiveDefaultValue() {
+    return getDefaultValue();
+  }
+
+  @Override
   public boolean isJsonKey() {
     return getField().isAnnotationPresent(JsonKey.class);
   }
@@ -175,11 +180,6 @@ class DefaultFlagInstance
   @Override
   public IFlagDefinition getDefinition() {
     return ObjectUtils.notNull(definition.get());
-  }
-
-  @Override
-  public Object defaultValue() {
-    return getDefaultValue();
   }
 
   @SuppressWarnings("null")

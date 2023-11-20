@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.databind.io.IProblemHandler;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import java.io.IOException;
@@ -134,7 +134,7 @@ public interface IXmlProblemHandler extends IProblemHandler {
   default void handleMissingModelInstances(
       @NonNull IAssemblyClassBinding parentDefinition,
       @NonNull Object targetObject,
-      @NonNull Collection<IBoundNamedModelInstance> unhandledInstances)
+      @NonNull Collection<IBoundModelInstance> unhandledInstances)
       throws IOException {
     handleMissingInstances(parentDefinition, targetObject, unhandledInstances);
 

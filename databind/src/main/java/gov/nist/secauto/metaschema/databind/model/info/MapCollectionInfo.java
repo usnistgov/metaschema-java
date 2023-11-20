@@ -82,12 +82,13 @@ class MapCollectionInfo
   @Override
   public Map<String, ?> deepCopyItems(@NonNull Object fromInstance, @NonNull Object toInstance)
       throws BindingException {
-    IBoundModelInstance instance = getInstance();
-    IBoundFlagInstance jsonKey = instance.getJsonKey();
-    assert jsonKey != null;
 
+    IBoundModelInstance instance = getInstance();
     Map<String, Object> copy = emptyValue();
     for (Object item : getItemsFromParentInstance(fromInstance)) {
+
+      IBoundFlagInstance jsonKey = instance.getItemJsonKey(item);
+      assert jsonKey != null;
 
       Object itemCopy = instance.deepCopyItem(ObjectUtils.requireNonNull(item), toInstance);
       String key = jsonKey.getValue(itemCopy).toString();

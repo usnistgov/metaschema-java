@@ -47,14 +47,14 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-class ClassBindingFlagContainerSupport implements IFlagContainerSupport<IBoundFlagInstance> {
+class FlagContainerSupport implements IFlagContainerSupport<IBoundFlagInstance> {
   @NonNull
   private final Map<String, IBoundFlagInstance> flagInstances;
   @Nullable
   private IBoundFlagInstance jsonKeyFlag;
 
   @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
-  public ClassBindingFlagContainerSupport(
+  public FlagContainerSupport(
       @NonNull IClassBinding classBinding,
       @Nullable Consumer<IBoundFlagInstance> peeker) {
     Class<?> clazz = classBinding.getBoundClass();

@@ -115,8 +115,8 @@ public class SimpleFieldInstance
   }
 
   @Override
-  public IBoundFlagInstance getJsonKey() {
-    // no flags, so no JSON key
+  public IBoundFlagInstance getItemJsonKey(Object item) {
+    // no flags, no JSON key
     return null;
   }
 
@@ -126,8 +126,8 @@ public class SimpleFieldInstance
   }
 
   @Override
-  public Object defaultValue() {
-    return getMaxOccurs() == 1 ? getEffectiveDefaultValue() : getCollectionInfo().emptyValue();
+  public Object getEffectiveDefaultValue() {
+    return getMaxOccurs() == 1 ? getDefaultValue() : getCollectionInfo().emptyValue();
   }
 
   @Override

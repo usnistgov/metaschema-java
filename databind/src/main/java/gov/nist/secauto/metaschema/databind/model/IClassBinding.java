@@ -39,7 +39,7 @@ public interface IClassBinding extends IFeatureFlagContainer<IBoundFlagInstance>
   IBindingContext getBindingContext();
 
   @NonNull
-  <CLASS> CLASS newInstance() throws BindingException;
+  <CLASS> CLASS newInstance();
 
   /**
    * The class this binding is for.
@@ -48,6 +48,12 @@ public interface IClassBinding extends IFeatureFlagContainer<IBoundFlagInstance>
    */
   @NonNull
   Class<?> getBoundClass();
+
+  @Override
+  default IBoundFlagInstance getJsonKey() {
+    // no JSON key
+    return null;
+  }
 
   void callBeforeDeserialize(
       @NonNull Object targetObject,

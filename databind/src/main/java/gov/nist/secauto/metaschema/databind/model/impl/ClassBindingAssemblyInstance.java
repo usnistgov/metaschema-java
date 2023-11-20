@@ -109,9 +109,19 @@ public class ClassBindingAssemblyInstance
   }
 
   @Override
+  public IBoundFlagInstance getItemJsonKey(Object item) {
+    return getJsonKey();
+  }
+
+  @Override
   public Object getDefaultValue() {
     // none
     return null;
+  }
+
+  @Override
+  public Object getEffectiveDefaultValue() {
+    return getCollectionInfo().emptyValue();
   }
 
   // ------------------------------------------
@@ -183,11 +193,6 @@ public class ClassBindingAssemblyInstance
   @Override
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
     return groupAs.getXmlGroupAsBehavior();
-  }
-
-  @Override
-  public Object defaultValue() {
-    return getCollectionInfo().emptyValue();
   }
 
   @SuppressWarnings("null")

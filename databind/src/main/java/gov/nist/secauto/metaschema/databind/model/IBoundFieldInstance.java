@@ -61,6 +61,9 @@ public interface IBoundFieldInstance extends IBoundNamedModelInstance, IFieldIns
   IBoundFieldDefinition getDefinition();
 
   @Override
+  Object getEffectiveDefaultValue();
+
+  @Override
   default boolean canHandleXmlQName(QName qname) {
     boolean retval = IBoundNamedModelInstance.super.canHandleXmlQName(qname);
     if (!retval) {

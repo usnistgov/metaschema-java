@@ -132,12 +132,15 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
             Function.identity())));
   }
 
+  @Nullable
+  IBoundFlagInstance getJsonKey();
+
   @SuppressWarnings({
       "resource", // not owned
       "PMD.NPathComplexity", "PMD.CyclomaticComplexity" // ok
   })
   @Override
-  default Object readItem(Object parent, IJsonParsingContext context, IBoundFlagInstance jsonKey)
+  default Object readItem(Object parent, IJsonParsingContext context)
       throws IOException {
     JsonParser parser = context.getReader(); // NOPMD - intentional
     boolean objectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
@@ -154,6 +157,7 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
       throw new IOException(ex);
     }
 
+    IBoundFlagInstance jsonKey = getJsonKey();
     boolean keyObjectWrapper = false;
     if (jsonKey != null) {
       // the field will be the JSON key

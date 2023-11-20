@@ -115,7 +115,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     }
 
     if (targetDefinition instanceof IAssemblyClassBinding) {
-      for (IBoundNamedModelInstance modelInstance : ((IAssemblyClassBinding) targetDefinition).getModelInstances()) {
+      for (IBoundModelInstance modelInstance : ((IAssemblyClassBinding) targetDefinition).getModelInstances()) {
         assert modelInstance != null;
         writeModelInstanceValues(modelInstance, targetObject, parentName);
       }
@@ -184,7 +184,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
    *           if an error occurred while writing the XML
    */
   protected boolean writeModelInstanceValues(
-      @NonNull IBoundNamedModelInstance targetInstance,
+      @NonNull IBoundModelInstance targetInstance,
       @NonNull Object parentObject,
       @NonNull QName parentName)
       throws IOException {

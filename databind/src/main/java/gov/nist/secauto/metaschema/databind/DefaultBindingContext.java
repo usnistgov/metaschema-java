@@ -230,13 +230,10 @@ public class DefaultBindingContext implements IBindingContext {
         && ((IAssemblyDefinition) definition).isRoot();
   }
 
-  private static IBindingMatcher newBindingMatcher(IGeneratedDefinitionClass definitionInfo, ClassLoader classLoader) {
-    IAssemblyDefinition definition = (IAssemblyDefinition) definitionInfo.getDefinition();
+  private IBindingMatcher newBindingMatcher(IGeneratedDefinitionClass definitionInfo, ClassLoader classLoader) {
     try {
-      @SuppressWarnings("unchecked") Class<? extends IAssemblyClassBinding> clazz
-          = ObjectUtils.notNull((Class<? extends IAssemblyClassBinding>) classLoader.loadClass(
-              definitionInfo.getClassName().reflectionName()));
-      return new DynamicBindingMatcher(definition, clazz);
+      return registerBindingMatcher(ObjectUtils.notNull(classLoader.loadClass(
+          definitionInfo.getClassName().reflectionName())));
     } catch (ClassNotFoundException ex) {
       throw new IllegalStateException(ex);
     }
@@ -267,8 +264,8 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public Class<? extends IAssemblyClassBinding> getBoundClassForRootXmlQName(@NonNull QName rootQName) {
-    Class<? extends IAssemblyClassBinding> retval = null;
+  public Class<?> getBoundClassForRootXmlQName(@NonNull QName rootQName) {
+    Class<?> retval = null;
     for (IBindingMatcher matcher : getBindingMatchers()) {
       retval = matcher.getBoundClassForXmlQName(rootQName);
       if (retval != null) {
@@ -279,8 +276,8 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public Class<? extends IAssemblyClassBinding> getBoundClassForRootJsonName(@NonNull String rootName) {
-    Class<? extends IAssemblyClassBinding> retval = null;
+  public Class<?> getBoundClassForRootJsonName(@NonNull String rootName) {
+    Class<?> retval = null;
     for (IBindingMatcher matcher : getBindingMatchers()) {
       retval = matcher.getBoundClassForJsonName(rootName);
       if (retval != null) {
@@ -296,7 +293,7 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public <CLASS> CLASS copyBoundObject(@NonNull CLASS other, Object parentInstance) throws BindingException {
+  public <CLASS> CLASS deepCopy(@NonNull CLASS other, Object parentInstance) throws BindingException {
     IClassBinding classBinding = getClassBinding(other.getClass());
     if (classBinding == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", other.getClass().getName()));

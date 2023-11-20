@@ -125,23 +125,23 @@ abstract class AbstractClassBinding implements IClassBinding {
    * @param <CLASS>
    *          the type of the bound class
    * @return a Java object for the class
-   * @throws BindingException
+   * @throws RuntimeException
    *           if the instance cannot be created due to a binding error
    */
   @Override
   @NonNull
-  public <CLASS> CLASS newInstance() throws BindingException {
+  public <CLASS> CLASS newInstance() {
     Class<?> clazz = getBoundClass();
     try {
-      @SuppressWarnings("unchecked") Constructor<CLASS> constructor
+      @SuppressWarnings("unchecked")
+      Constructor<CLASS> constructor
           = (Constructor<CLASS>) clazz.getDeclaredConstructor();
       return ObjectUtils.notNull(constructor.newInstance());
     } catch (NoSuchMethodException ex) {
       String msg = String.format("Class '%s' does not have a required no-arg constructor.", clazz.getName());
-      throw new BindingException(msg, ex);
-    } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-        | InvocationTargetException ex) {
-      throw new BindingException(ex);
+      throw new RuntimeException(msg, ex);
+    } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+      throw new RuntimeException(ex);
     }
   }
 

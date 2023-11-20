@@ -95,6 +95,20 @@ public interface IBindingContext {
   @NonNull
   IBindingContext registerBindingMatcher(@NonNull IBindingMatcher matcher);
 
+  @NonNull
+  default IBindingMatcher registerBindingMatcher(@NonNull Class<?> clazz) {
+    IClassBinding classBinding = getClassBinding(clazz);
+
+    if (classBinding instanceof IAssemblyClassBinding) {
+      IAssemblyClassBinding assemblyClassBinding = (IAssemblyClassBinding) classBinding;
+      IBindingMatcher matcher = IBindingMatcher.of(assemblyClassBinding);
+      registerBindingMatcher(matcher);
+      return matcher;
+    }
+    throw new IllegalArgumentException(
+        String.format("The provided class '%s' is not a root assembly.", clazz.getName()));
+  }
+
   /**
    * Register a class binding strategy for a given bound class.
    *
@@ -145,7 +159,7 @@ public interface IBindingContext {
    * @see IBindingContext#registerBindingMatcher(IBindingMatcher)
    */
   @Nullable
-  Class<? extends IAssemblyClassBinding> getBoundClassForRootXmlQName(@NonNull QName rootQName);
+  Class<?> getBoundClassForRootXmlQName(@NonNull QName rootQName);
 
   /**
    * Determine the bound class for the provided JSON/YAML property/item name using
@@ -157,7 +171,7 @@ public interface IBindingContext {
    * @see IBindingContext#registerBindingMatcher(IBindingMatcher)
    */
   @Nullable
-  Class<? extends IAssemblyClassBinding> getBoundClassForRootJsonName(@NonNull String rootName);
+  Class<?> getBoundClassForRootJsonName(@NonNull String rootName);
 
   /**
    * Get's the {@link IDataTypeAdapter} associated with the specified Java class,
@@ -274,7 +288,7 @@ public interface IBindingContext {
    *           if the provided class is not bound to a Module assembly or field
    */
   @NonNull
-  <CLASS> CLASS copyBoundObject(@NonNull CLASS other, Object parentInstance) throws BindingException;
+  <CLASS> CLASS deepCopy(@NonNull CLASS other, Object parentInstance) throws BindingException;
 
   /**
    * Get a new single use constraint validator.
@@ -442,6 +456,15 @@ public interface IBindingContext {
    * name.
    */
   interface IBindingMatcher {
+    @NonNull
+    static IBindingMatcher of(IAssemblyClassBinding classBinding) {
+      if (!classBinding.isRoot()) {
+        throw new IllegalArgumentException(
+            String.format("The provided class '%s' is not a root assembly.", classBinding.getBoundClass().getName()));
+      }
+      return new RootAssemblyBindingMatcher(classBinding);
+    }
+
     /**
      * Determine the bound class for the provided XML {@link QName}.
      *
@@ -450,7 +473,7 @@ public interface IBindingContext {
      * @return the bound class for the XML qualified name or {@code null} if not
      *         recognized
      */
-    Class<? extends IAssemblyClassBinding> getBoundClassForXmlQName(QName rootQName);
+    Class<?> getBoundClassForXmlQName(QName rootQName);
 
     /**
      * Determine the bound class for the provided JSON/YAML property/item name.
@@ -460,6 +483,6 @@ public interface IBindingContext {
      * @return the bound class for the JSON property name or {@code null} if not
      *         recognized
      */
-    Class<? extends IAssemblyClassBinding> getBoundClassForJsonName(String rootName);
+    Class<?> getBoundClassForJsonName(String rootName);
   }
 }

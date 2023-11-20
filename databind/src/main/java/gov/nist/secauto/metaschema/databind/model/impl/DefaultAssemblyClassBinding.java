@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
@@ -41,8 +40,10 @@ import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.annotations.AssemblyConstraints;
@@ -67,7 +68,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   private final MetaschemaAssembly metaschemaAssembly;
   private final QName xmlRootQName;
   @NonNull
-  private final Lazy<ClassBindingFlagContainerSupport> flagContainer;
+  private final Lazy<FlagContainerSupport> flagContainer;
   @NonNull
   private final Lazy<ClassBindingModelContainerSupport> modelContainer;
   @NonNull
@@ -114,7 +115,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
 
     this.xmlRootQName = localName == null ? null : new QName(namespace, localName);
 
-    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new ClassBindingFlagContainerSupport(this, null)));
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new FlagContainerSupport(this, null)));
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> new ClassBindingModelContainerSupport(this)));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IModelConstrained retval = new AssemblyConstraintSet();
@@ -136,12 +137,12 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   @SuppressWarnings("null")
   @Override
   public IModelContainerSupport<
-      IBoundNamedModelInstance,
+      IBoundModelInstance,
       IBoundNamedModelInstance,
       IBoundFieldInstance,
       IBoundAssemblyInstance,
       IChoiceInstance,
-      IChoiceGroupInstance> getModelContainer() {
+      IBoundChoiceGroupInstance> getModelContainer() {
     return modelContainer.get();
   }
 
@@ -225,7 +226,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
       throws BindingException {
     super.deepCopyItemInternal(fromObject, toObject);
 
-    for (IBoundNamedModelInstance instance : getModelInstances()) {
+    for (IBoundModelInstance instance : getModelInstances()) {
       instance.deepCopy(fromObject, toObject);
     }
   }

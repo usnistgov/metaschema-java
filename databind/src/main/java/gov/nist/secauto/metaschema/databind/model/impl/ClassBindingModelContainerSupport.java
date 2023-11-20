@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.databind.model.impl;
 
-import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
@@ -35,10 +34,12 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
 
@@ -55,10 +56,14 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class ClassBindingModelContainerSupport
-    implements IModelContainerSupport<IBoundNamedModelInstance, IBoundNamedModelInstance, IBoundFieldInstance,
-        IBoundAssemblyInstance, IChoiceInstance, IChoiceGroupInstance> {
+    implements IModelContainerSupport<IBoundModelInstance, IBoundNamedModelInstance, IBoundFieldInstance,
+        IBoundAssemblyInstance, IChoiceInstance, IBoundChoiceGroupInstance> {
   @NonNull
-  private final Map<String, IBoundNamedModelInstance> modelInstances;
+  private final List<IBoundModelInstance> modelInstances;
+  @NonNull
+  private final List<IBoundChoiceGroupInstance> choiceGroupInstances;
+  @NonNull
+  private final Map<String, IBoundNamedModelInstance> namedModelInstances;
   @NonNull
   private final Map<String, IBoundFieldInstance> fieldInstances;
   @NonNull
@@ -67,9 +72,25 @@ class ClassBindingModelContainerSupport
   public ClassBindingModelContainerSupport(
       @NonNull IAssemblyClassBinding classBinding) {
     Class<?> clazz = classBinding.getBoundClass();
-    this.modelInstances = CollectionUtil.unmodifiableMap(ObjectUtils.notNull(
+    this.modelInstances = CollectionUtil.unmodifiableList(ObjectUtils.notNull(
         getModelInstanceFieldStream(classBinding, clazz)
-            .collect(Collectors.toMap(instance -> instance.getEffectiveName(), Function.identity(),
+            .collect(Collectors.toUnmodifiableList())));
+
+    this.choiceGroupInstances = CollectionUtil.unmodifiableList(ObjectUtils.notNull(
+        getModelInstances().stream()
+            .filter(instance -> instance instanceof IBoundChoiceGroupInstance)
+            .map(instance -> (IBoundChoiceGroupInstance) instance)
+            .map(ObjectUtils::notNull)
+            .collect(Collectors.toUnmodifiableList())));
+
+    this.namedModelInstances = CollectionUtil.unmodifiableMap(ObjectUtils.notNull(
+        getModelInstances().stream()
+            .filter(instance -> instance instanceof IBoundNamedModelInstance)
+            .map(instance -> (IBoundNamedModelInstance) instance)
+            .map(ObjectUtils::notNull)
+            .collect(Collectors.toMap(
+                instance -> instance.getEffectiveName(),
+                Function.identity(),
                 CustomCollectors.useLastMapper(),
                 LinkedHashMap::new))));
 
@@ -78,7 +99,9 @@ class ClassBindingModelContainerSupport
             .filter(instance -> instance instanceof IBoundFieldInstance)
             .map(instance -> (IBoundFieldInstance) instance)
             .map(ObjectUtils::notNull)
-            .collect(Collectors.toMap(IBoundFieldInstance::getEffectiveName, Function.identity(),
+            .collect(Collectors.toMap(
+                IBoundFieldInstance::getEffectiveName,
+                Function.identity(),
                 CustomCollectors.useLastMapper(),
                 LinkedHashMap::new))));
 
@@ -87,16 +110,18 @@ class ClassBindingModelContainerSupport
             .filter(instance -> instance instanceof IBoundAssemblyInstance)
             .map(instance -> (IBoundAssemblyInstance) instance)
             .map(ObjectUtils::notNull)
-            .collect(Collectors.toMap(IBoundAssemblyInstance::getEffectiveName, Function.identity(),
+            .collect(Collectors.toMap(
+                IBoundAssemblyInstance::getEffectiveName,
+                Function.identity(),
                 CustomCollectors.useLastMapper(),
                 LinkedHashMap::new))));
   }
 
-  protected Stream<IBoundNamedModelInstance> getModelInstanceFieldStream(
+  protected Stream<IBoundModelInstance> getModelInstanceFieldStream(
       @NonNull IAssemblyClassBinding classBinding,
       @NonNull Class<?> clazz) {
 
-    Stream<IBoundNamedModelInstance> superInstances;
+    Stream<IBoundModelInstance> superInstances;
     Class<?> superClass = clazz.getSuperclass();
     if (superClass == null) {
       superInstances = Stream.empty();
@@ -114,12 +139,14 @@ class ClassBindingModelContainerSupport
         .map(field -> {
           assert field != null;
 
-          IBoundNamedModelInstance retval;
+          IBoundModelInstance retval;
           if (field.isAnnotationPresent(BoundAssembly.class)
               && bindingContext.getClassBinding(IBoundModelInstance.getItemType(field)) != null) {
             retval = IBoundAssemblyInstance.newInstance(field, classBinding);
           } else if (field.isAnnotationPresent(BoundField.class)) {
             retval = IBoundFieldInstance.newInstance(field, classBinding);
+          } else if (field.isAnnotationPresent(BoundChoiceGroup.class)) {
+            retval = IBoundChoiceGroupInstance.newInstance(field, classBinding);
           } else {
             throw new IllegalStateException(
                 String.format("The field '%s' on class '%s' is not bound", field.getName(), clazz.getName()));
@@ -132,13 +159,13 @@ class ClassBindingModelContainerSupport
   }
 
   @Override
-  public Collection<IBoundNamedModelInstance> getModelInstances() {
-    return ObjectUtils.notNull(getNamedModelInstanceMap().values());
+  public Collection<IBoundModelInstance> getModelInstances() {
+    return modelInstances;
   }
 
   @Override
   public Map<String, IBoundNamedModelInstance> getNamedModelInstanceMap() {
-    return modelInstances;
+    return namedModelInstances;
   }
 
   @Override
@@ -158,7 +185,7 @@ class ClassBindingModelContainerSupport
   }
 
   @Override
-  public List<IChoiceGroupInstance> getChoiceGroupInstances() {
-    throw new UnsupportedOperationException();
+  public List<IBoundChoiceGroupInstance> getChoiceGroupInstances() {
+    return choiceGroupInstances;
   }
 }

@@ -174,7 +174,7 @@ public class MetaschemaJsonReader
         JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
 
         // read the top-level definition
-        instance = targetDefinition.readItem(null, this, null);
+        instance = targetDefinition.readItem(null, this);
 
         // stop now, since we found the root field
         break;
@@ -233,7 +233,7 @@ public class MetaschemaJsonReader
 
       Object value;
       if (targetInstance instanceof IBoundFlagInstance) {
-        value = ((IBoundFlagInstance) targetInstance).readItem(parentObject, this, null);
+        value = ((IBoundFlagInstance) targetInstance).readItem(parentObject, this);
       } else if (targetInstance instanceof IBoundModelInstance) {
         IBoundModelInstance instance = (IBoundModelInstance) targetInstance;
         IModelInstanceCollectionInfo collectionInfo = instance.getCollectionInfo();
@@ -245,7 +245,7 @@ public class MetaschemaJsonReader
         // let the property info decide how to parse the value
         value = collectionInfo.readItems(handler);
       } else if (targetInstance instanceof IBoundFieldValueInstance) {
-        value = ((IBoundFieldValueInstance) targetInstance).readItem(parentObject, this, null);
+        value = ((IBoundFieldValueInstance) targetInstance).readItem(parentObject, this);
       } else {
         throw new UnsupportedOperationException(
             String.format("Unsupported instance type: %s", targetInstance.getClass().getName()));
@@ -382,8 +382,8 @@ public class MetaschemaJsonReader
     @Override
     public Map<String, ?> readMap() throws IOException {
       JsonParser parser = getReader();
-      IBoundFlagInstance jsonKey = getCollectionInfo().getInstance().getJsonKey();
-      assert jsonKey != null;
+
+      IBoundModelInstance instance = getCollectionInfo().getInstance();
 
       Map<String, Object> items = new LinkedHashMap<>();
 
@@ -400,6 +400,9 @@ public class MetaschemaJsonReader
         Object item = readItem();
 
         // lookup the key
+        IBoundFlagInstance jsonKey = instance.getItemJsonKey(item);
+        assert jsonKey != null;
+
         String key = jsonKey.getValue(item).toString();
         items.put(key, item);
 
@@ -419,7 +422,7 @@ public class MetaschemaJsonReader
     @NonNull
     public Object readItem() throws IOException {
       IBoundModelInstance instance = getCollectionInfo().getInstance();
-      return instance.readItem(getParentObject(), MetaschemaJsonReader.this, instance.getJsonKey());
+      return instance.readItem(getParentObject(), MetaschemaJsonReader.this);
     }
   }
 }

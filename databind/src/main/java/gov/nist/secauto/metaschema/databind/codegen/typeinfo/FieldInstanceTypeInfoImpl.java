@@ -34,7 +34,6 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.impl.AnnotationGenerator;
@@ -95,8 +94,8 @@ public class FieldInstanceTypeInfoImpl
       annotation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
     }
 
-    if (definition.isInline()) {
-      AnnotationGenerator.buildValueConstraints(annotation, (IFlagContainer) definition);
+    if (definition.isSimple()) {
+      AnnotationGenerator.buildValueConstraints(annotation, definition);
     }
 
     return annotation;

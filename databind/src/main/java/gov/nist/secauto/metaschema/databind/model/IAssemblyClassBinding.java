@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFeatureModelContainer;
 
@@ -43,12 +42,12 @@ import javax.xml.namespace.QName;
 public interface IAssemblyClassBinding
     extends IClassBinding, IAssemblyDefinition,
     IFeatureModelContainer<
-        IBoundNamedModelInstance,
+        IBoundModelInstance,
         IBoundNamedModelInstance,
         IBoundFieldInstance,
         IBoundAssemblyInstance,
         IChoiceInstance,
-        IChoiceGroupInstance> {
+        IBoundChoiceGroupInstance> {
 
   @Override
   default IAssemblyClassBinding getOwningDefinition() {

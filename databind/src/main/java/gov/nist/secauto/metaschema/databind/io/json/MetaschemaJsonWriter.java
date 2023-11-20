@@ -276,7 +276,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
     @Override
     public void writeItem(Object item) throws IOException {
       IBoundModelInstance instance = getCollectionInfo().getInstance();
-      instance.writeItem(item, MetaschemaJsonWriter.this, instance.getJsonKey());
+      instance.writeItem(item, MetaschemaJsonWriter.this, instance.getItemJsonKey(item));
     }
   }
 }

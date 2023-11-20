@@ -65,7 +65,7 @@ public class DefaultFieldClassBinding
   private IBoundFieldValueInstance fieldValue;
   private IBoundFlagInstance jsonValueKeyFlagInstance;
   @NonNull
-  private final Lazy<ClassBindingFlagContainerSupport> flagContainer;
+  private final Lazy<FlagContainerSupport> flagContainer;
   @NonNull
   private final Lazy<IValueConstrained> constraints;
 
@@ -108,7 +108,7 @@ public class DefaultFieldClassBinding
     super(clazz, bindingContext);
     this.metaschemaField = ObjectUtils.notNull(clazz.getAnnotation(MetaschemaField.class));
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-      return new ClassBindingFlagContainerSupport(this, this::handleFlagInstance);
+      return new FlagContainerSupport(this, this::handleFlagInstance);
     }));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();

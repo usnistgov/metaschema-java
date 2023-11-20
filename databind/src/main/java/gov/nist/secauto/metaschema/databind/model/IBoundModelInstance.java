@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * This marker interface provides common methods for interacting with bound
@@ -69,9 +68,6 @@ public interface IBoundModelInstance extends IModelInstance, IBoundJavaProperty,
     return itemType;
   }
 
-  @Nullable
-  IBoundFlagInstance getJsonKey();
-
   @Override
   default Class<?> getItemType() {
     return getCollectionInfo().getItemType();
@@ -90,4 +86,6 @@ public interface IBoundModelInstance extends IModelInstance, IBoundJavaProperty,
   @Override
   @NonNull
   Collection<? extends Object> getItemValues(Object value);
+
+  IBoundFlagInstance getItemJsonKey(@NonNull Object item);
 }

@@ -82,9 +82,8 @@ public interface IFeatureScalarItemValueHandler
 
   @SuppressWarnings("resource")
   @Override
-  default Object readItem(Object parent, IJsonParsingContext context, IBoundFlagInstance jsonKey)
+  default Object readItem(Object parent, IJsonParsingContext context)
       throws IOException {
-    assert jsonKey == null;
     return getJavaTypeAdapter().parse(context.getReader());
   }
 

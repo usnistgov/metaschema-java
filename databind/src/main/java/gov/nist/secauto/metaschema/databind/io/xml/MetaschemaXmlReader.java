@@ -37,7 +37,6 @@ import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
@@ -266,8 +265,8 @@ public class MetaschemaXmlReader
       @NonNull Object targetObject,
       @NonNull StartElement start)
       throws IOException, XMLStreamException {
-    Set<IBoundNamedModelInstance> unhandledProperties = new HashSet<>();
-    for (IBoundNamedModelInstance modelInstance : targetDefinition.getModelInstances()) {
+    Set<IBoundModelInstance> unhandledProperties = new HashSet<>();
+    for (IBoundModelInstance modelInstance : targetDefinition.getModelInstances()) {
       assert modelInstance != null;
       if (!readModelInstanceItems(modelInstance, targetObject, start)) {
         unhandledProperties.add(modelInstance);
@@ -312,7 +311,7 @@ public class MetaschemaXmlReader
    */
   @SuppressWarnings("PMD.OnlyOneReturn")
   protected boolean isNextInstance(
-      @NonNull IBoundNamedModelInstance targetInstance)
+      @NonNull IBoundModelInstance targetInstance)
       throws XMLStreamException {
 
     XmlEventUtil.skipWhitespace(reader);
@@ -346,7 +345,7 @@ public class MetaschemaXmlReader
    *           if an error occurred while parsing XML events
    */
   protected boolean readModelInstanceItems(
-      @NonNull IBoundNamedModelInstance instance,
+      @NonNull IBoundModelInstance instance,
       @NonNull Object parentObject,
       @NonNull StartElement start)
       throws IOException, XMLStreamException {
@@ -541,13 +540,15 @@ public class MetaschemaXmlReader
 
     @Override
     public Map<String, ?> readMap() throws IOException {
-      IBoundFlagInstance jsonKey = getCollectionInfo().getInstance().getJsonKey();
-      assert jsonKey != null;
+      IBoundModelInstance instance = getCollectionInfo().getInstance();
 
       return ObjectUtils.notNull(readCollection()
           .collect(Collectors.toMap(
               item -> {
                 assert item != null;
+
+                IBoundFlagInstance jsonKey = instance.getItemJsonKey(item);
+                assert jsonKey != null;
                 return jsonKey.getValue(item).toString();
               },
               Function.identity(),
