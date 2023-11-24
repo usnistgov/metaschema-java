@@ -26,9 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.io.BindingException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -36,7 +34,7 @@ import java.lang.reflect.Type;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IFeatureJavaField extends IInstance {
+public interface IFeatureJavaField extends IBoundInstance {
 
   /**
    * Gets the bound Java field associated with this instance.
@@ -75,8 +73,6 @@ public interface IFeatureJavaField extends IInstance {
   default Class<?> getItemType() {
     return (Class<?>) getType();
   }
-
-  Object getDefaultValue();
 
   /**
    * Get the current value from the provided {@code parentInstance} object. The
@@ -117,12 +113,13 @@ public interface IFeatureJavaField extends IInstance {
    *          a value, which may be a simple {@link Type} or a
    *          {@link ParameterizedType} for a collection
    */
-  default void setValue(@NonNull Object parentInstance, Object value) {
+  @Override
+  default void setValue(@NonNull Object parentObject, Object value) {
     Field field = getField();
-    boolean accessable = field.canAccess(parentInstance);
+    boolean accessable = field.canAccess(parentObject);
     field.setAccessible(true); // NOPMD - intentional
     try {
-      field.set(parentInstance, value);
+      field.set(parentObject, value);
     } catch (IllegalArgumentException | IllegalAccessException ex) {
       throw new IllegalArgumentException(
           String.format(
@@ -135,15 +132,4 @@ public interface IFeatureJavaField extends IInstance {
     }
   }
 
-  /**
-   * Copy this instance from one parent object to another.
-   *
-   * @param fromInstance
-   *          the object to copy from
-   * @param toInstance
-   *          the object to copy to
-   * @throws BindingException
-   *           if an error occurred while processing the object bindings
-   */
-  void deepCopy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException;
 }

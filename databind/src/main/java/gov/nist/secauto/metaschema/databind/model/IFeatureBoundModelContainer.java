@@ -29,10 +29,10 @@ package gov.nist.secauto.metaschema.databind.model;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFeatureModelContainer;
 
-public interface IFeatureBoundModelContainer
+public interface IFeatureBoundModelContainer<MI extends IBoundModelInstance>
     extends IBinding,
     IFeatureModelContainer<
-        IBoundModelInstance,
+        MI,
         IBoundNamedModelInstance,
         IBoundFieldInstance,
         IBoundAssemblyInstance,

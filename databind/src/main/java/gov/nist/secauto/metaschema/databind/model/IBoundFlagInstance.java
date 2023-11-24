@@ -34,8 +34,8 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundFlagInstance
-    extends IBoundJavaProperty,
-    IFlagInstance,
+    extends IFlagInstance,
+    IFeatureJavaField,
     IFeatureNamedInstance,
     IFeatureScalarItemValueHandler {
 
@@ -52,16 +52,13 @@ public interface IBoundFlagInstance
 
   @Override
   default Object getValue(@NonNull Object parent) {
-    return IBoundJavaProperty.super.getValue(parent);
+    return IFeatureJavaField.super.getValue(parent);
   }
 
   @Override
   default void setValue(@NonNull Object parent, Object value) {
-    IBoundJavaProperty.super.setValue(parent, value);
+    IFeatureJavaField.super.setValue(parent, value);
   }
-
-  @Override
-  Object getEffectiveDefaultValue();
 
   @Override
   default String getJsonName() {
@@ -77,5 +74,4 @@ public interface IBoundFlagInstance
   default boolean canHandleXmlQName(QName qname) {
     return qname.equals(getXmlQName());
   }
-
 }

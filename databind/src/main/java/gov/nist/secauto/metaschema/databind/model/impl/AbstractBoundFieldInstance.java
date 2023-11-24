@@ -84,12 +84,6 @@ public abstract class AbstractBoundFieldInstance
   // - Start annotation driven code - CPD-OFF -
   // ------------------------------------------
 
-  @Override
-  public boolean isValueWrappedInXml() {
-    return isInXmlWrapped()
-        || !isUnwrappedValueAllowedInXml();
-  }
-
   @NonNull
   protected BoundField getAnnotation() {
     return boundField;

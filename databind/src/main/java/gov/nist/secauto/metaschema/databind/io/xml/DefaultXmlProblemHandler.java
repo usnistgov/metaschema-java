@@ -71,7 +71,7 @@ public class DefaultXmlProblemHandler
     if (LOGGER.isWarnEnabled() && !IGNORED_QNAMES.contains(qname)) {
       LOGGER.atWarn().log("Skipping unrecognized attribute '{}'{}.",
           qname,
-          XmlEventUtil.generateLocationMessage(attribute));
+          XmlEventUtil.generateLocationMessage(attribute.getLocation()));
     }
     // always ignore
     return true;

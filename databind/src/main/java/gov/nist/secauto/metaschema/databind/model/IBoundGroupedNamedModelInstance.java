@@ -27,11 +27,33 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
 
-public interface IBoundGroupedNamedModelnstance extends IFeatureNamedInstance, IGroupedNamedModelInstance {
+public interface IBoundGroupedNamedModelInstance
+    extends IGroupedNamedModelInstance, IBoundNamedModelInstance {
   @Override
   IBoundChoiceGroupInstance getParentContainer();
 
   @Override
   IAssemblyClassBinding getContainingDefinition();
+
+  @Override
+  default String getJsonName() {
+    return IBoundNamedModelInstance.super.getJsonName();
+  }
+
+  @Override
+  default Object getValue(Object parent) {
+    throw new UnsupportedOperationException("unneeded");
+  }
+
+  @Override
+  default void setValue(Object parent, Object value) {
+    throw new UnsupportedOperationException("unneeded");
+  }
+
+  @Override
+  default void deepCopy(Object fromInstance, Object toInstance) throws BindingException {
+    throw new UnsupportedOperationException("unneeded");
+  }
 }

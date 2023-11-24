@@ -65,8 +65,11 @@ public interface IInstance extends IModelElement {
    * @return the value if available, or {@code null} otherwise
    */
   default Object getValue(@NonNull Object parentInstance) {
-    // no value by default
-    return null;
+    return getDefaultValue();
+  }
+
+  default Object getEffectiveDefaultValue() {
+    return getDefaultValue();
   }
 
   /**

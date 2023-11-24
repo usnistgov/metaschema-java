@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
@@ -48,7 +48,7 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class AssemblyModelContainerSupport
-    extends AbstractModelContainerSupport {
+    extends AbstractModelContainerSupport<IFeatureCollectionModelInstance> {
   @NonNull
   private final List<IBoundChoiceGroupInstance> choiceGroupInstances;
 
@@ -64,10 +64,10 @@ class AssemblyModelContainerSupport
             .collect(Collectors.toUnmodifiableList())));
   }
 
-  protected static IBoundModelInstance newBoundModelInstance(
+  protected static IFeatureCollectionModelInstance newBoundModelInstance(
       @NonNull Field field,
       @NonNull IAssemblyClassBinding classBinding) {
-    IBoundModelInstance retval = null;
+    IFeatureCollectionModelInstance retval = null;
     if (field.isAnnotationPresent(BoundAssembly.class)) {
       retval = IBoundAssemblyInstance.newInstance(field, classBinding);
     } else if (field.isAnnotationPresent(BoundField.class)) {
@@ -79,11 +79,11 @@ class AssemblyModelContainerSupport
   }
 
   @NonNull
-  protected static Stream<IBoundModelInstance> getModelInstanceStream(
+  protected static Stream<IFeatureCollectionModelInstance> getModelInstanceStream(
       @NonNull IAssemblyClassBinding classBinding,
       @NonNull Class<?> clazz) {
 
-    Stream<IBoundModelInstance> superInstances;
+    Stream<IFeatureCollectionModelInstance> superInstances;
     Class<?> superClass = clazz.getSuperclass();
     if (superClass == null) {
       superInstances = Stream.empty();
@@ -102,15 +102,14 @@ class AssemblyModelContainerSupport
         .map(field -> {
           assert field != null;
 
-          IBoundModelInstance retval = newBoundModelInstance(field, classBinding);
+          IFeatureCollectionModelInstance retval = newBoundModelInstance(field, classBinding);
           if (retval == null) {
             throw new IllegalStateException(
                 String.format("The field '%s' on class '%s' is not bound", field.getName(), clazz.getName()));
           }
           return retval;
         })
-        .filter(Objects::nonNull)
-        .map(ObjectUtils::notNull)));
+        .filter(Objects::nonNull)));
   }
 
   @Override

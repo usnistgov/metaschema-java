@@ -86,6 +86,23 @@ public interface INamedInstance extends IInstance, INamedModelElement {
   }
 
   /**
+   * The resolved default value, which allows an instance to override a
+   * definition's default value.
+   *
+   * @return the default value or {@code null} if not defined on either the
+   *         instance or definition
+   */
+  @Override
+  @Nullable
+  default Object getEffectiveDefaultValue() {
+    Object retval = getDefaultValue();
+    if (retval == null) {
+      retval = getDefinition().getDefaultValue();
+    }
+    return retval;
+  }
+
+  /**
    * Get the XML qualified name to use in XML.
    *
    * @return the XML qualified name, or {@code null} if there isn't one

@@ -31,15 +31,17 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundGroupedAssemblyInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class BoundGroupedAssemblyInstance
-    implements IBoundGroupedAssemblyInstance {
+    implements IBoundGroupedAssemblyInstance, IFeatureComplexItemValueHandler {
   @NonNull
   private final BoundGroupedAssembly annotation;
   @NonNull
@@ -58,7 +60,7 @@ public class BoundGroupedAssemblyInstance
             annotation.binding().getName(),
             BoundGroupedAssembly.class.getName(),
             container.getOwningDefinition().getBoundClass().getName()));
-    if (classBinding instanceof IAssemblyClassBinding) {
+    if (!(classBinding instanceof IAssemblyClassBinding)) {
       throw new IllegalArgumentException(
           String.format("Bound class '%s' is not a bound assembly on bound class '%s'",
               annotation.binding().getName(),
@@ -66,6 +68,17 @@ public class BoundGroupedAssemblyInstance
               container.getOwningDefinition().getBoundClass().getName()));
     }
     this.definition = (IAssemblyClassBinding) classBinding;
+  }
+
+  @Override
+  public IClassBinding getClassBinding() {
+    return definition;
+  }
+
+  @Override
+  public IBoundFlagInstance getJsonKey() {
+    String jsonKeyFlagName = getParentContainer().getJsonKeyFlagName();
+    return jsonKeyFlagName == null ? null : getDefinition().getFlagInstanceByName(jsonKeyFlagName);
   }
 
   @Override

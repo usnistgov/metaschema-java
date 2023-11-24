@@ -30,12 +30,15 @@ import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.databind.model.impl.ChoiceGroupInstance;
 
 import java.lang.reflect.Field;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundChoiceGroupInstance
-    extends IBoundModelInstance, IFeatureBoundModelContainer, IChoiceGroupInstance {
-  static IBoundModelInstance newInstance(
+    extends IFeatureCollectionModelInstance, IFeatureBoundModelContainer<IBoundModelInstance>, IChoiceGroupInstance {
+  static IFeatureCollectionModelInstance newInstance(
       @NonNull Field field,
       @NonNull IAssemblyClassBinding containingDefinition) {
     return new ChoiceGroupInstance(field, containingDefinition);
@@ -43,4 +46,10 @@ public interface IBoundChoiceGroupInstance
 
   @Override
   IAssemblyClassBinding getOwningDefinition();
+
+  @NonNull
+  Map<QName, IBoundNamedModelInstance> getQNameToInstanceMap();
+
+  @NonNull
+  IClassBinding getItemInstance(Object item);
 }

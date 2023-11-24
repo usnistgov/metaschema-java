@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind.model.info;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -54,7 +54,7 @@ class MapCollectionInfo
     return value == null ? 0 : ((Map<?, ?>) value).size();
   }
 
-  public MapCollectionInfo(@NonNull IBoundModelInstance instance) {
+  public MapCollectionInfo(@NonNull IFeatureCollectionModelInstance instance) {
     super(instance);
   }
 
@@ -83,7 +83,7 @@ class MapCollectionInfo
   public Map<String, ?> deepCopyItems(@NonNull Object fromInstance, @NonNull Object toInstance)
       throws BindingException {
 
-    IBoundModelInstance instance = getInstance();
+    IFeatureCollectionModelInstance instance = getInstance();
     Map<String, Object> copy = emptyValue();
     for (Object item : getItemsFromParentInstance(fromInstance)) {
 

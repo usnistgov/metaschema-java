@@ -31,7 +31,6 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -116,17 +115,6 @@ public @interface BoundGroupedField {
   Class<? extends IDataTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
 
   /**
-   * The default value of the field represented as a string.
-   * <p>
-   * The value {@link Constants#NULL_VALUE} is used to indicate if no default
-   * value is provided.
-   *
-   * @return the default value
-   */
-  @NonNull
-  String defaultValue() default Constants.NULL_VALUE;
-
-  /**
    * The namespace to use for associated XML elements.
    * <p>
    * If the value is "##default", then element name is derived from the namespace
@@ -135,14 +123,6 @@ public @interface BoundGroupedField {
    * @return the namespace
    */
   String namespace() default Constants.DEFAULT_STRING_VALUE;
-
-  /**
-   * If the data type allows it, determines if the field's value must be wrapped
-   * with an XML element.
-   *
-   * @return {@code true} if the field must be wrapped, or {@code false} otherwise
-   */
-  boolean inXmlWrapped() default MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
 
   /**
    * Get any remarks for this field.

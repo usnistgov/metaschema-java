@@ -23,18 +23,61 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.databind.model.metaschema;
 
-package gov.nist.secauto.metaschema.core.model;
+import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
+import gov.nist.secauto.metaschema.core.datatype.adapter.UriAdapter;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
+import java.lang.Override;
+import java.lang.String;
+import java.net.URI;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+@MetaschemaAssembly(
+    formalName = "Property",
+    name = "property",
+    moduleClass = MetaschemaModule.class
+)
+public class Property {
+  @BoundFlag(
+      formalName = "Property Namespace",
+      useName = "name",
+      defaultValue = "http://csrc.nist.gov/ns/oscal/metaschema/1.0",
+      typeAdapter = UriAdapter.class
+  )
+  private URI _name;
 
-public interface IValuedModelElement extends IModelElement {
+  @BoundFlag(
+      formalName = "Property Value",
+      useName = "value",
+      required = true,
+      typeAdapter = TokenAdapter.class
+  )
+  private String _value;
 
-  /**
-   * Retrieves the default data value for this model construct.
-   *
-   * @return the default value or {@code null} if there is no default
-   */
-  @Nullable
-  Object getDefaultValue();
+  public Property() {
+  }
+
+  public URI getName() {
+    return _name;
+  }
+
+  public void setName(URI value) {
+    _name = value;
+  }
+
+  public String getValue() {
+    return _value;
+  }
+
+  public void setValue(String value) {
+    _value = value;
+  }
+
+  @Override
+  public String toString() {
+    return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();
+  }
 }

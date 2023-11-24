@@ -30,19 +30,15 @@ import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
-import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class BoundGroupedComplexFieldInstance
     extends AbstractBoundGroupedFieldInstance
     implements IFeatureComplexItemValueHandler {
   @NonNull
   private final IFieldClassBinding definition;
-  @Nullable
-  private final Object defaultValue;
 
   public BoundGroupedComplexFieldInstance(
       @NonNull BoundGroupedField annotation,
@@ -50,8 +46,6 @@ public class BoundGroupedComplexFieldInstance
       @NonNull IBoundChoiceGroupInstance container) {
     super(annotation, container);
     this.definition = classBinding;
-
-    this.defaultValue = ModelUtil.resolveDefaultValue(annotation.defaultValue(), getDefinition().getJavaTypeAdapter());
   }
 
   @Override
@@ -65,14 +59,8 @@ public class BoundGroupedComplexFieldInstance
   }
 
   @Override
-  public Object getDefaultValue() {
-    return defaultValue;
-  }
-
-  @Override
   public IBoundFlagInstance getJsonKey() {
     String jsonKeyFlagName = getParentContainer().getJsonKeyFlagName();
     return jsonKeyFlagName == null ? null : getDefinition().getFlagInstanceByName(jsonKeyFlagName);
   }
-
 }

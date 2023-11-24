@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.databind.model.impl.BoundGroupedSimpleFieldIn
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundGroupedFieldInstance extends IBoundGroupedNamedModelnstance, IFieldInstance {
+public interface IBoundGroupedFieldInstance extends IBoundGroupedNamedModelInstance, IFieldInstance {
 
   static IBoundGroupedFieldInstance newInstance(
       @NonNull BoundGroupedField annotation,
@@ -49,4 +49,5 @@ public interface IBoundGroupedFieldInstance extends IBoundGroupedNamedModelnstan
 
   @Override
   IBoundFieldDefinition getDefinition();
+
 }

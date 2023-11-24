@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class ChoiceGroupModelContainerSupport
-    extends AbstractModelContainerSupport {
+    extends AbstractModelContainerSupport<IBoundModelInstance> {
 
   public ChoiceGroupModelContainerSupport(
       @NonNull BoundGroupedAssembly[] assemblies,

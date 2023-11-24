@@ -26,12 +26,12 @@
 
 package gov.nist.secauto.metaschema.databind.model.impl;
 
-import gov.nist.secauto.metaschema.databind.model.IBoundJavaProperty;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> implements IBoundJavaProperty {
+abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> implements IBoundInstance {
   @NonNull
   private final CLASS_BINDING containingDefinition;
 

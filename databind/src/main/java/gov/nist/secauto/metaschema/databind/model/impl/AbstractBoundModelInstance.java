@@ -29,7 +29,8 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IFeatureJavaField;
 import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import java.lang.reflect.Field;
@@ -40,7 +41,7 @@ import nl.talsmasoftware.lazy4j.Lazy;
 
 public abstract class AbstractBoundModelInstance
     extends AbstractProperty<IAssemblyClassBinding>
-    implements IBoundModelInstance {
+    implements IFeatureCollectionModelInstance, IFeatureJavaField {
   // private static final Logger logger =
   // LogManager.getLogger(AbstractBoundModelInstance.class);
 
@@ -70,6 +71,11 @@ public abstract class AbstractBoundModelInstance
   @Override
   public Field getField() {
     return field;
+  }
+
+  @Override
+  public Class<?> getItemType() {
+    return IFeatureCollectionModelInstance.getItemType(getField());
   }
 
   @Override

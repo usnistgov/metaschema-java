@@ -67,5 +67,5 @@ public interface IItemReadHandler {
       throws IOException;
 
   @NonNull
-  Object readChoiceGroupItem(Object parent, IBoundChoiceGroupInstance instance);
+  Object readChoiceGroupItem(Object parent, IBoundChoiceGroupInstance instance) throws IOException;
 }

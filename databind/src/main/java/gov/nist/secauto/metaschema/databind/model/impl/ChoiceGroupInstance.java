@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
@@ -51,6 +52,8 @@ import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -67,6 +70,8 @@ public class ChoiceGroupInstance
   private final IGroupAs groupAs;
   @NonNull
   private final Lazy<ChoiceGroupModelContainerSupport> modelContainer;
+  @NonNull
+  private final Lazy<Map<QName, IBoundNamedModelInstance>> qnameToInstanceMap;
 
   public ChoiceGroupInstance(
       @NonNull Field field,
@@ -105,6 +110,16 @@ public class ChoiceGroupInstance
         annotation.assemblies(),
         annotation.fields(),
         this)));
+    this.qnameToInstanceMap = ObjectUtils.notNull(Lazy.lazy(() -> Collections.unmodifiableMap(
+        getNamedModelInstances().stream()
+            .collect(CustomCollectors.toMap(item -> item.getXmlQName(), CustomCollectors.identity(),
+                (key, vOld, vNew) -> vNew)))));
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Map<QName, IBoundNamedModelInstance> getQNameToInstanceMap() {
+    return qnameToInstanceMap.get();
   }
 
   @SuppressWarnings("null")
@@ -125,14 +140,8 @@ public class ChoiceGroupInstance
   }
 
   @Override
-  public Object getDefaultValue() {
-    // none
-    return null;
-  }
-
-  @Override
   public Object getEffectiveDefaultValue() {
-    return getCollectionInfo().emptyValue();
+    return super.getCollectionInfo().emptyValue();
   }
 
   @Override
@@ -202,13 +211,17 @@ public class ChoiceGroupInstance
 
   @Override
   public boolean canHandleXmlQName(QName qname) {
-    // TODO Auto-generated method stub
-    return false;
+    return qnameToInstanceMap.get().containsKey(qname);
   }
 
   @Override
   public String getJsonName() {
-    throw new UnsupportedOperationException();
+    return getGroupAsName();
+  }
+
+  @Override
+  public IClassBinding getItemInstance(Object item) {
+    return ObjectUtils.requireNonNull(getBindingContext().getClassBinding(item.getClass()));
   }
 
   @Override
@@ -223,12 +236,6 @@ public class ChoiceGroupInstance
       retval = classBinding.getFlagInstanceByName(jsonKeyFlagName);
     }
     return retval;
-  }
-
-  @Override
-  public boolean isUnwrappedValueAllowedInXml() {
-    // choice group instances must always be wrapped
-    return false;
   }
 
   @Override

@@ -32,7 +32,6 @@ import gov.nist.secauto.metaschema.core.model.AbstractFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.FieldReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
@@ -95,18 +94,7 @@ class XmlFieldInstance
 
   @Override
   public boolean isInXmlWrapped() {
-    boolean retval;
-    if (getDefinition().getJavaTypeAdapter().isUnrappedValueAllowedInXml()) {
-      // default value
-      retval = MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
-      if (getXmlObject().isSetInXml()) {
-        retval = getXmlObject().getInXml().booleanValue();
-      }
-    } else {
-      // All other data types get "wrapped"
-      retval = true;
-    }
-    return retval;
+    return getXmlObject().getInXml().booleanValue();
   }
 
   @Override

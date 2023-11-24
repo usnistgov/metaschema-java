@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.io.xml;
 
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.databind.io.json.DefaultJsonProblemHandler;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
@@ -34,6 +35,7 @@ import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceWriteHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
@@ -118,7 +120,8 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     }
 
     if (targetDefinition instanceof IAssemblyClassBinding) {
-      for (IBoundModelInstance modelInstance : ((IAssemblyClassBinding) targetDefinition).getModelInstances()) {
+      for (IFeatureCollectionModelInstance modelInstance : ((IAssemblyClassBinding) targetDefinition)
+          .getModelInstances()) {
         assert modelInstance != null;
         writeModelInstanceValues(modelInstance, targetObject, parentName);
       }
@@ -187,7 +190,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
    *           if an error occurred while writing the XML
    */
   protected boolean writeModelInstanceValues(
-      @NonNull IBoundModelInstance targetInstance,
+      @NonNull IFeatureCollectionModelInstance targetInstance,
       @NonNull Object parentObject,
       @NonNull QName parentName)
       throws IOException {
@@ -265,7 +268,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
       @NonNull QName parentName) throws IOException {
 
     // figure out if we need to write the wrapper or not
-    boolean writeWrapper = instance.isValueWrappedInXml();
+    boolean writeWrapper = !(instance instanceof IFieldInstance) || ((IFieldInstance) instance).isValueWrappedInXml();
 
     try {
       QName currentParentName;

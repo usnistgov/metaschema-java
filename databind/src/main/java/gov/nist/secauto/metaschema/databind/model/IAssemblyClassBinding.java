@@ -38,7 +38,7 @@ import javax.xml.namespace.QName;
  * class.
  */
 public interface IAssemblyClassBinding
-    extends IClassBinding, IAssemblyDefinition, IFeatureBoundModelContainer {
+    extends IClassBinding, IAssemblyDefinition, IFeatureBoundModelContainer<IFeatureCollectionModelInstance> {
 
   @Override
   default IAssemblyClassBinding getOwningDefinition() {

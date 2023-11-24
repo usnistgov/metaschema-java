@@ -36,12 +36,12 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundAssemblyInstance extends IBoundNamedModelInstance, IAssemblyInstance {
 
-  static IBoundAssemblyInstance newInstance(
+  static IFeatureCollectionModelInstance newInstance(
       @NonNull Field field,
       @NonNull IAssemblyClassBinding containingDefinition) {
     IBindingContext bindingContext = containingDefinition.getBindingContext();
 
-    Class<?> itemType = IBoundModelInstance.getItemType(field);
+    Class<?> itemType = IFeatureCollectionModelInstance.getItemType(field);
     IClassBinding classBinding = bindingContext.getClassBinding(itemType);
     if (classBinding == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", itemType.getName()));

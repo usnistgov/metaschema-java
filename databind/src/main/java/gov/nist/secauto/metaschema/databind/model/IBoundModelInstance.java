@@ -27,66 +27,13 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IModelInstance;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.info.IItemValueHandler;
-import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * This marker interface provides common methods for interacting with bound
  * object values.
  */
-public interface IBoundModelInstance extends IModelInstance, IBoundJavaProperty, IItemValueHandler {
+public interface IBoundModelInstance extends IModelInstance, IBoundInstance, IItemValueHandler {
   @Override
   IAssemblyClassBinding getContainingDefinition();
-
-  @NonNull
-  static Class<?> getItemType(@NonNull Field field) {
-    Type fieldType = field.getGenericType();
-    Class<?> rawType = ObjectUtils.notNull(
-        (Class<?>) (fieldType instanceof ParameterizedType ? ((ParameterizedType) fieldType).getRawType() : fieldType));
-
-    Class<?> itemType;
-    if (Map.class.isAssignableFrom(rawType)) {
-      // this is a Map so the second generic type is the value
-      itemType = ObjectUtils.notNull((Class<?>) ((ParameterizedType) fieldType).getActualTypeArguments()[1]);
-    } else if (List.class.isAssignableFrom(rawType)) {
-      // this is a List so there is only a single generic type
-      itemType = ObjectUtils.notNull((Class<?>) ((ParameterizedType) fieldType).getActualTypeArguments()[0]);
-    } else {
-      // non-collection
-      itemType = rawType;
-    }
-    return itemType;
-  }
-
-  @Override
-  default Class<?> getItemType() {
-    return getCollectionInfo().getItemType();
-  }
-
-  @NonNull
-  IModelInstanceCollectionInfo getCollectionInfo();
-
-  /**
-   * Get the item values associated with the provided value.
-   *
-   * @param value
-   *          the value which may be a singleton or a collection
-   * @return the ordered collection of values
-   */
-  @Override
-  @NonNull
-  Collection<? extends Object> getItemValues(Object value);
-
-  // REFACTOR: Is this needed? Can we get the JSON key from the instance?
-  IBoundFlagInstance getItemJsonKey(@NonNull Object item);
 }

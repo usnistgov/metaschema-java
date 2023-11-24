@@ -73,9 +73,8 @@ public class FieldInstanceTypeInfoImpl
   }
 
   @Override
-  protected void buildBindingAnnotationCommon(Builder annotation) {
-
-    super.buildBindingAnnotationCommon(annotation);
+  public AnnotationSpec.Builder buildBindingAnnotation() {
+    AnnotationSpec.Builder annotation = super.buildBindingAnnotation();
 
     IFieldInstance instance = getInstance();
 
@@ -83,21 +82,31 @@ public class FieldInstanceTypeInfoImpl
       annotation.addMember("inXmlWrapped", "$L", instance.isInXmlWrapped());
     }
 
-    IDataTypeAdapter<?> valueDataType = instance.getDefinition().getJavaTypeAdapter();
+    IFieldDefinition definition = instance.getDefinition();
+    IDataTypeAdapter<?> adapter = instance.getDefinition().getJavaTypeAdapter();
+
     Object defaultValue = instance.getDefaultValue();
     if (defaultValue != null) {
-      annotation.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
+      annotation.addMember("defaultValue", "$S", adapter.asString(defaultValue));
     }
 
-    IFieldDefinition definition = instance.getDefinition();
     // handle the field value related info
-    if (definition.isSimple() && !MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType)) {
+    if (definition.isSimple() && !MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(adapter)) {
       // this is a simple field, without flags
-      annotation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
+      annotation.addMember("typeAdapter", "$T.class", adapter.getClass());
     }
 
     if (definition.isSimple()) {
       AnnotationGenerator.buildValueConstraints(annotation, definition);
     }
+    return annotation;
+  }
+
+  @Override
+  protected void buildBindingAnnotationCommon(Builder annotation) {
+
+    super.buildBindingAnnotationCommon(annotation);
+
+    IFieldInstance instance = getInstance();
   }
 }

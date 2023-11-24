@@ -41,19 +41,6 @@ public interface IFeatureScalarItemValueHandler
 
   void setValue(@NonNull Object parent, Object value);
 
-  /**
-   * Get the data type adapter supporting the scalar value.
-   *
-   * @return the data type adapter
-   */
-  @NonNull
-  IDataTypeAdapter<?> getJavaTypeAdapter();
-
-  @Override
-  default boolean isUnwrappedValueAllowedInXml() {
-    return getJavaTypeAdapter().isUnrappedValueAllowedInXml();
-  }
-
   default void setValue(@NonNull Object parent, @NonNull String text) {
     Object item = getValueFromString(text);
     setValue(parent, item);
@@ -68,6 +55,14 @@ public interface IFeatureScalarItemValueHandler
   default Object getValueFromString(@NonNull String text) {
     return getJavaTypeAdapter().parse(text);
   }
+
+  /**
+   * Get the data type adapter supporting the scalar value.
+   *
+   * @return the data type adapter
+   */
+  @NonNull
+  IDataTypeAdapter<?> getJavaTypeAdapter();
 
   @Override
   default Object readItem(Object parent, IItemReadHandler handler) throws IOException {

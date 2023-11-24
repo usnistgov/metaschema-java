@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.databind.model.impl.BoundGroupedAssemblyInsta
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundGroupedAssemblyInstance
-    extends IBoundGroupedNamedModelnstance, IAssemblyInstance, IFeatureGroupedModelInstance {
+    extends IBoundGroupedNamedModelInstance, IAssemblyInstance, IFeatureGroupedModelInstance {
   @Override
   IAssemblyClassBinding getDefinition();
 

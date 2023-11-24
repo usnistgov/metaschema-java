@@ -62,7 +62,7 @@ public interface IXmlParsingContext extends IParsingContext<XMLEventReader2, IXm
    *           if an error occurred while parsing the input
    */
   @Nullable
-  <T> T readModelInstanceValue(
+  <T> T readModelInstanceValueDispatch(
       @NonNull IBoundModelInstance targetInstance,
       @NonNull Object parentObject,
       @NonNull StartElement start) throws IOException;

@@ -35,18 +35,6 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IItemValueHandler {
   /**
-   * Indicate if the item supported by this handler allows values without an XML
-   * element wrapper.
-   * <p>
-   * Implementations may proxy this request to the JavaTypeAdapter if it is used
-   * or return {@code false} otherwise.
-   *
-   * @return {@code true} if the underlying data type is allowed to be unwrapped,
-   *         or {@code false} otherwise
-   */
-  boolean isUnwrappedValueAllowedInXml();
-
-  /**
    * Parse and return an item.
    *
    * @param parent

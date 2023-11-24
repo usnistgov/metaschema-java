@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.core.model.xml.impl; // NOPMD - intentional
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractFieldInstance;
@@ -38,7 +37,6 @@ import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
@@ -149,18 +147,7 @@ class XmlInlineFieldDefinition
 
   @Override
   public boolean isInXmlWrapped() {
-    boolean retval;
-    if (MarkupDataTypeProvider.MARKUP_MULTILINE.equals(getDefinition().getJavaTypeAdapter())) {
-      // default value
-      retval = MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
-      if (getXmlObject().isSetInXml()) {
-        retval = getXmlObject().getInXml();
-      }
-    } else {
-      // All other data types get "wrapped"
-      retval = true;
-    }
-    return retval;
+    return getXmlObject().getInXml();
   }
 
   @Override

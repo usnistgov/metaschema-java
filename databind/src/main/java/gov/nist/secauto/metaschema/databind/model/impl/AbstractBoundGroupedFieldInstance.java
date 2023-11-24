@@ -111,9 +111,4 @@ public abstract class AbstractBoundGroupedFieldInstance implements IBoundGrouped
   protected Class<?> getBoundClass() {
     return getAnnotation().binding();
   }
-
-  @Override
-  public boolean isInXmlWrapped() {
-    return getAnnotation().inXmlWrapped();
-  }
 }

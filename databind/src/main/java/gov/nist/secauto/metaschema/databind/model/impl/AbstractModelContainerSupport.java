@@ -47,11 +47,11 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractModelContainerSupport
-    implements IModelContainerSupport<IBoundModelInstance, IBoundNamedModelInstance, IBoundFieldInstance,
+public abstract class AbstractModelContainerSupport<MI extends IBoundModelInstance>
+    implements IModelContainerSupport<MI, IBoundNamedModelInstance, IBoundFieldInstance,
         IBoundAssemblyInstance, IChoiceInstance, IBoundChoiceGroupInstance> {
   @NonNull
-  private final List<IBoundModelInstance> modelInstances;
+  private final List<MI> modelInstances;
   @NonNull
   private final Map<String, IBoundNamedModelInstance> namedModelInstances;
   @NonNull
@@ -59,7 +59,7 @@ public abstract class AbstractModelContainerSupport
   @NonNull
   private final Map<String, IBoundAssemblyInstance> assemblyInstances;
 
-  public AbstractModelContainerSupport(@NonNull Stream<IBoundModelInstance> instances) {
+  public AbstractModelContainerSupport(@NonNull Stream<MI> instances) {
     this.modelInstances = CollectionUtil.unmodifiableList(ObjectUtils.notNull(instances
         .collect(Collectors.toUnmodifiableList())));
 
@@ -98,7 +98,7 @@ public abstract class AbstractModelContainerSupport
   }
 
   @Override
-  public Collection<IBoundModelInstance> getModelInstances() {
+  public Collection<MI> getModelInstances() {
     return modelInstances;
   }
 

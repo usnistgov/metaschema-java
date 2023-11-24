@@ -39,8 +39,8 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.AbstractBoundModelTestSupport;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.test.FlaggedAssembly;
 import gov.nist.secauto.metaschema.databind.model.test.MultiFieldAssembly;
@@ -89,11 +89,11 @@ class XmlParserTest
     IAssemblyClassBinding assembly
         = ObjectUtils.requireNonNull((IAssemblyClassBinding) bindingContext.getClassBinding(MultiFieldAssembly.class));
 
-    IBoundFieldInstance field1Instance
-        = ObjectUtils.requireNonNull((IBoundFieldInstance) assembly.getModelInstanceByName("field1"));
+    IFeatureCollectionModelInstance field1Instance
+        = ObjectUtils.requireNonNull((IFeatureCollectionModelInstance) assembly.getModelInstanceByName("field1"));
 
-    IBoundFieldInstance field2Instance
-        = ObjectUtils.requireNonNull((IBoundFieldInstance) assembly.getModelInstanceByName("field2"));
+    IFeatureCollectionModelInstance field2Instance
+        = ObjectUtils.requireNonNull((IFeatureCollectionModelInstance) assembly.getModelInstanceByName("field2"));
 
     MultiFieldAssembly obj = new MultiFieldAssembly();
 
@@ -166,11 +166,11 @@ class XmlParserTest
     IAssemblyClassBinding assembly
         = ObjectUtils.requireNonNull((IAssemblyClassBinding) bindingContext.getClassBinding(MultiFieldAssembly.class));
 
-    IBoundFieldInstance field1Instance
-        = ObjectUtils.requireNonNull(assembly.getFieldInstanceByName("field1"));
+    IFeatureCollectionModelInstance field1Instance
+        = ObjectUtils.requireNonNull((IFeatureCollectionModelInstance) assembly.getFieldInstanceByName("field1"));
 
-    IBoundFieldInstance field2Instance
-        = ObjectUtils.requireNonNull(assembly.getFieldInstanceByName("field2"));
+    IFeatureCollectionModelInstance field2Instance
+        = ObjectUtils.requireNonNull((IFeatureCollectionModelInstance) assembly.getFieldInstanceByName("field2"));
 
     MultiFieldAssembly obj = new MultiFieldAssembly();
 

@@ -36,9 +36,10 @@ import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundJavaProperty;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
@@ -221,7 +222,7 @@ public class MetaschemaJsonReader
    *           if an error occurred while parsing the data
    */
   protected boolean readInstance(
-      @NonNull IBoundJavaProperty targetInstance,
+      @NonNull IBoundInstance targetInstance,
       @NonNull Object parentObject) throws IOException {
     // the parser's current token should be the JSON field name
     JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
@@ -239,8 +240,8 @@ public class MetaschemaJsonReader
       Object value;
       if (targetInstance instanceof IBoundFlagInstance) {
         value = ((IBoundFlagInstance) targetInstance).readItem(parentObject, this);
-      } else if (targetInstance instanceof IBoundModelInstance) {
-        IBoundModelInstance instance = (IBoundModelInstance) targetInstance;
+      } else if (targetInstance instanceof IFeatureCollectionModelInstance) {
+        IFeatureCollectionModelInstance instance = (IFeatureCollectionModelInstance) targetInstance;
         IModelInstanceCollectionInfo collectionInfo = instance.getCollectionInfo();
 
         ModelInstanceReadHandler handler = new ModelInstanceReadHandler(
@@ -276,7 +277,7 @@ public class MetaschemaJsonReader
   public void readDefinitionValue(
       IClassBinding targetDefinition,
       Object targetObject,
-      Map<String, ? extends IBoundJavaProperty> instances) throws IOException {
+      Map<String, ? extends IBoundInstance> instances) throws IOException {
     IBoundFlagInstance valueKeyFlag = null;
     if (targetDefinition instanceof IFieldClassBinding) {
       IFieldClassBinding targetFieldDefinition = (IFieldClassBinding) targetDefinition;
@@ -284,7 +285,7 @@ public class MetaschemaJsonReader
     }
 
     // make a copy, since we use the remaining values to initialize default values
-    Map<String, ? extends IBoundJavaProperty> remainingInstances = new HashMap<>(instances); // NOPMD not concurrent
+    Map<String, ? extends IBoundInstance> remainingInstances = new HashMap<>(instances); // NOPMD not concurrent
 
     // handle each property
     while (!JsonToken.END_OBJECT.equals(parser.currentToken())) {
@@ -294,7 +295,7 @@ public class MetaschemaJsonReader
 
       if (JsonToken.FIELD_NAME.equals(parser.currentToken())) {
         // found a matching property
-        IBoundJavaProperty instance = remainingInstances.get(propertyName);
+        IBoundInstance instance = remainingInstances.get(propertyName);
         if (instance != null) {
           handled = readInstance(instance, targetObject);
           remainingInstances.remove(propertyName);
@@ -475,7 +476,7 @@ public class MetaschemaJsonReader
     public Map<String, ?> readMap() throws IOException {
       JsonParser parser = getReader();
 
-      IBoundModelInstance instance = getCollectionInfo().getInstance();
+      IFeatureCollectionModelInstance instance = getCollectionInfo().getInstance();
 
       Map<String, Object> items = new LinkedHashMap<>();
 

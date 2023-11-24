@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -42,7 +43,7 @@ class ListCollectionInfo
     extends AbstractModelInstanceCollectionInfo {
 
   public ListCollectionInfo(
-      @NonNull IBoundModelInstance instance) {
+      @NonNull IFeatureCollectionModelInstance instance) {
     super(instance);
   }
 

@@ -40,12 +40,6 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
   IClassBinding getClassBinding();
 
   @Override
-  default boolean isUnwrappedValueAllowedInXml() {
-    // never for a complex item
-    return false;
-  }
-
-  @Override
   default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
     return handler.readComplexItem(parent, this);
   }

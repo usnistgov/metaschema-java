@@ -28,26 +28,47 @@ package gov.nist.secauto.metaschema.databind.codegen;
 
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.io.Format;
+import gov.nist.secauto.metaschema.databind.io.IDeserializer;
+import gov.nist.secauto.metaschema.databind.io.ISerializer;
+import gov.nist.secauto.metaschema.databind.model.metaschema.METASCHEMA;
 
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class MetaschemaModuleMetaschemaTest
     extends AbstractMetaschemaTest {
+  @NonNull
+  private static final Path METASCHEMA_FILE
+      = ObjectUtils.notNull(Paths.get("../core/metaschema/schema/metaschema/metaschema-module-metaschema.xml"));
 
   @Test
   void testMetaschemaMetaschema() throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
     runTests(
-        ObjectUtils.notNull(
-            Paths.get("../core/metaschema/schema/metaschema/metaschema-module-metaschema.xml")),
+        ObjectUtils.notNull(METASCHEMA_FILE),
         ObjectUtils.notNull(
             Paths.get("../databind-metaschema/src/main/metaschema-bindings/metaschema-metaschema-bindings.xml")),
         null,
         "gov.nist.secauto.metaschema.databind.model.metaschema.METASCHEMA",
         ObjectUtils.notNull(generationDir),
         null);
+  }
+
+  @Test
+  void testReadMetaschemaAsXml() throws IOException {
+    IBindingContext context = IBindingContext.instance();
+
+    IDeserializer<METASCHEMA> deserializer = context.newDeserializer(Format.XML, METASCHEMA.class);
+    METASCHEMA metaschema = deserializer.deserialize(METASCHEMA_FILE);
+
+    ISerializer<METASCHEMA> serializer = context.newSerializer(Format.YAML, METASCHEMA.class);
+    serializer.serialize(metaschema, Paths.get("target/metaschema.yml"));
   }
 }

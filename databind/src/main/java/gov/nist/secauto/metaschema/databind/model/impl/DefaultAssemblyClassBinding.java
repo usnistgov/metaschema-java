@@ -46,6 +46,7 @@ import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
 import gov.nist.secauto.metaschema.databind.model.annotations.AssemblyConstraints;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
@@ -137,7 +138,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   @SuppressWarnings("null")
   @Override
   public IModelContainerSupport<
-      IBoundModelInstance,
+      IFeatureCollectionModelInstance,
       IBoundNamedModelInstance,
       IBoundFieldInstance,
       IBoundAssemblyInstance,

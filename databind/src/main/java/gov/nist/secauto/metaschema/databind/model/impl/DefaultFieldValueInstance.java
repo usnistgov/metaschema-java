@@ -83,11 +83,6 @@ class DefaultFieldValueInstance
     return defaultValue;
   }
 
-  @Override
-  public Object getEffectiveDefaultValue() {
-    return getDefaultValue();
-  }
-
   @NonNull
   private BoundFieldValue getFieldValueAnnotation() {
     return fieldValue;

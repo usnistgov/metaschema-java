@@ -31,7 +31,7 @@ import javax.xml.namespace.QName;
 public interface IFieldInstance extends IField, INamedModelInstance, IValuedInstance {
   @Override
   default String getXmlNamespace() {
-    return isInXmlWrapped() ? INamedModelInstance.super.getXmlNamespace() : null;
+    return INamedModelInstance.super.getXmlNamespace();
   }
 
   @Override
@@ -41,7 +41,7 @@ public interface IFieldInstance extends IField, INamedModelInstance, IValuedInst
 
   @Override
   default String getGroupAsXmlNamespace() {
-    return isInXmlWrapped() ? getContainingModule().getXmlNamespace().toASCIIString() : null;
+    return getContainingModule().getXmlNamespace().toASCIIString();
   }
 
   @Override
@@ -53,5 +53,17 @@ public interface IFieldInstance extends IField, INamedModelInstance, IValuedInst
    * @return {@code true} if an XML wrapper is required, or {@code false}
    *         otherwise
    */
-  boolean isInXmlWrapped();
+  default boolean isInXmlWrapped() {
+    return true;
+  }
+
+  /**
+   * Indicate if the instance allows values without an XML element wrapper.
+   *
+   * @return {@code true} if the underlying data type is allowed to be unwrapped,
+   *         or {@code false} otherwise
+   */
+  default boolean isValueWrappedInXml() {
+    return isInXmlWrapped() || !getDefinition().getJavaTypeAdapter().isUnrappedValueAllowedInXml();
+  }
 }

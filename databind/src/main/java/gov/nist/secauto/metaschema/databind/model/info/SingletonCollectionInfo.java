@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.databind.model.info;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,7 +39,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 class SingletonCollectionInfo
     extends AbstractModelInstanceCollectionInfo {
 
-  public SingletonCollectionInfo(@NonNull IBoundModelInstance instance) {
+  public SingletonCollectionInfo(@NonNull IFeatureCollectionModelInstance instance) {
     super(instance);
   }
 
@@ -55,7 +56,7 @@ class SingletonCollectionInfo
 
   @Override
   public Class<?> getItemType() {
-    return (Class<?>) getInstance().getType();
+    return getInstance().getItemType();
   }
 
   @Override

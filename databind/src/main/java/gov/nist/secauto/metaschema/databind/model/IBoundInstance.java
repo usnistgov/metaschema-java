@@ -28,6 +28,12 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IInstance;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -47,8 +53,51 @@ public interface IBoundInstance extends IBinding, IInstance {
     return getContainingDefinition().getBindingContext();
   }
 
-  default boolean isInstanceOf(@NonNull Class<? extends IInstance> clazz) {
-    // REFACTOR: is this needed?
-    return clazz.isInstance(this);
-  }
+  /**
+   * Determine if the provided JSON property or YAML key name is associated with
+   * this instance.
+   *
+   * @param name
+   *          the name of the property/key being parsed
+   * @return {@code true} if the instance will handle this name, or {@code false}
+   *         otherwise
+   */
+  boolean canHandleJsonPropertyName(String name);
+
+  /**
+   * Determine if the provided XML qualified name is associated with this
+   * property.
+   *
+   * @param qname
+   *          the XML qualified name of the property being parsed
+   * @return {@code true} if the instance will handle this name, or {@code false}
+   *         otherwise
+   */
+  boolean canHandleXmlQName(@NonNull QName qname);
+
+  String getJsonName();
+
+  /**
+   * Set the provided value on the provided object. The provided object must be of
+   * the item's type associated with this instance.
+   *
+   * @param parentObject
+   *          the object
+   * @param value
+   *          a value, which may be a simple {@link Type} or a
+   *          {@link ParameterizedType} for a collection
+   */
+  void setValue(@NonNull Object parentObject, Object value);
+
+  /**
+   * Copy this instance from one parent object to another.
+   *
+   * @param fromInstance
+   *          the object to copy from
+   * @param toInstance
+   *          the object to copy to
+   * @throws BindingException
+   *           if an error occurred while processing the object bindings
+   */
+  void deepCopy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException;
 }

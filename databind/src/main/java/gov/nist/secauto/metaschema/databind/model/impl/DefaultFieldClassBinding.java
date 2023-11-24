@@ -161,11 +161,6 @@ public class DefaultFieldClassBinding
     return value == Integer.MIN_VALUE ? null : value;
   }
 
-  @Override
-  public Object getDefaultValue() {
-    return getFieldValueInstance().getDefaultValue();
-  }
-
   /**
    * Collect all fields that are part of the model for this class.
    *
@@ -206,6 +201,7 @@ public class DefaultFieldClassBinding
    *
    * @return the field value instance
    */
+  // REFACTOR: Use lazy instead
   protected IBoundFieldValueInstance initalizeFieldValueInstance() {
     synchronized (this) {
       if (this.fieldValue == null) {

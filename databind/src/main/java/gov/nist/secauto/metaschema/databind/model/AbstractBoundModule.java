@@ -49,13 +49,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 public abstract class AbstractBoundModule
     extends AbstractModule {
   @NonNull
   private final IBindingContext bindingContext;
-  private Map<String, IAssemblyClassBinding> assemblyDefinitions;
-  private Map<String, IFieldClassBinding> fieldDefinitions;
+  @NonNull
+  private Lazy<Map<String, IAssemblyClassBinding>> assemblyDefinitions;
+  @NonNull
+  private Lazy<Map<String, IFieldClassBinding>> fieldDefinitions;
 
   /**
    * Create a new Module instance for a given class annotated by the
@@ -129,6 +132,22 @@ public abstract class AbstractBoundModule
       @NonNull IBindingContext bindingContext) {
     super(importedModules);
     this.bindingContext = bindingContext;
+    this.assemblyDefinitions = ObjectUtils.notNull(Lazy.lazy(() -> Arrays.stream(getAssemblyClasses())
+        .map(clazz -> {
+          assert clazz != null;
+          return (IAssemblyClassBinding) ObjectUtils.requireNonNull(bindingContext.getClassBinding(clazz));
+        })
+        .collect(Collectors.toUnmodifiableMap(
+            IAssemblyClassBinding::getName,
+            Function.identity()))));
+    this.fieldDefinitions = ObjectUtils.notNull(Lazy.lazy(() -> Arrays.stream(getFieldClasses())
+        .map(clazz -> {
+          assert clazz != null;
+          return (IFieldClassBinding) ObjectUtils.requireNonNull(bindingContext.getClassBinding(clazz));
+        })
+        .collect(Collectors.toUnmodifiableMap(
+            IFieldClassBinding::getName,
+            Function.identity()))));
   }
 
   /**
@@ -171,35 +190,8 @@ public abstract class AbstractBoundModule
     return retval;
   }
 
-  protected void initDefinitions() {
-    synchronized (this) {
-      if (assemblyDefinitions == null) {
-        IBindingContext bindingContext = getBindingContext();
-        this.assemblyDefinitions = Arrays.stream(getAssemblyClasses())
-            .map(clazz -> {
-              assert clazz != null;
-              return (IAssemblyClassBinding) ObjectUtils.requireNonNull(bindingContext.getClassBinding(clazz));
-            })
-            .collect(Collectors.toUnmodifiableMap(
-                IAssemblyClassBinding::getName,
-                Function.identity()));
-        this.fieldDefinitions = Arrays.stream(getFieldClasses())
-            .map(clazz -> {
-              assert clazz != null;
-              return (IFieldClassBinding) ObjectUtils.requireNonNull(bindingContext.getClassBinding(clazz));
-            })
-            .collect(Collectors.toUnmodifiableMap(
-                IFieldClassBinding::getName,
-                Function.identity()));
-      }
-    }
-
-  }
-
-  @SuppressWarnings("null")
-  protected @NonNull Map<String, ? extends IAssemblyDefinition> getAssemblyDefinitionMap() {
-    initDefinitions();
-    return assemblyDefinitions;
+  protected Map<String, IAssemblyClassBinding> getAssemblyDefinitionMap() {
+    return assemblyDefinitions.get();
   }
 
   @SuppressWarnings("null")
@@ -209,13 +201,12 @@ public abstract class AbstractBoundModule
   }
 
   @Override
-  public IAssemblyDefinition getAssemblyDefinitionByName(@NonNull String name) {
+  public IAssemblyClassBinding getAssemblyDefinitionByName(@NonNull String name) {
     return getAssemblyDefinitionMap().get(name);
   }
 
-  protected Map<String, ? extends IFieldDefinition> getFieldDefinitionMap() {
-    initDefinitions();
-    return fieldDefinitions;
+  protected Map<String, IFieldClassBinding> getFieldDefinitionMap() {
+    return fieldDefinitions.get();
   }
 
   @SuppressWarnings("null")

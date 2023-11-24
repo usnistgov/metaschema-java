@@ -51,7 +51,6 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class XmlGroupedInlineFieldDefinition
@@ -62,8 +61,6 @@ public class XmlGroupedInlineFieldDefinition
 
   @NonNull
   private final GroupedInlineFieldDefinitionType xmlObject;
-  @Nullable
-  private final Object defaultValue;
   @NonNull
   private final Lazy<XmlFlagContainerSupport> flagContainer;
   @NonNull
@@ -84,9 +81,6 @@ public class XmlGroupedInlineFieldDefinition
       @NonNull IModelContainer parent) {
     super(parent);
     this.xmlObject = xmlObject;
-    this.defaultValue
-        = xmlObject.isSetDefault() ? getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlObject.getDefault()))
-            : null;
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this)));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();
@@ -116,17 +110,6 @@ public class XmlGroupedInlineFieldDefinition
   @Override
   public IValueConstrained getConstraintSupport() {
     return ObjectUtils.notNull(constraints.get());
-  }
-
-  @Override
-  public Object getDefaultValue() {
-    return defaultValue;
-  }
-
-  @Override
-  public boolean isInXmlWrapped() {
-    // never wrapped
-    return false;
   }
 
   // ----------------------------------------

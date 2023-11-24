@@ -27,15 +27,17 @@
 package gov.nist.secauto.metaschema.databind.io.json;
 
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundJavaProperty;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -68,13 +70,14 @@ final class MetaschemaJsonUtil {
    * @return a mapping of JSON property to related Module instance
    */
   @NonNull
-  public static Map<String, ? extends IBoundJavaProperty> getJsonInstanceMap(
+  public static Map<String, ? extends IBoundInstance> getJsonInstanceMap(
       @NonNull IClassBinding targetDefinition,
       @Nullable IBoundFlagInstance jsonKey) {
     Collection<? extends IBoundFlagInstance> flags = targetDefinition.getFlagInstances();
     int flagCount = flags.size() - (jsonKey == null ? 0 : 1);
 
-    @SuppressWarnings("resource") Stream<? extends IBoundJavaProperty> instanceStream;
+    @SuppressWarnings("resource")
+    Stream<? extends IBoundInstance> instanceStream;
     if (targetDefinition instanceof IAssemblyClassBinding) {
       // use all child instances
       instanceStream = ((IAssemblyClassBinding) targetDefinition).getModelInstances().stream();
@@ -104,9 +107,11 @@ final class MetaschemaJsonUtil {
           flags.stream(),
           instanceStream);
     }
-    return ObjectUtils.notNull(instanceStream.collect(
-        Collectors.toUnmodifiableMap(
-            IBoundJavaProperty::getJsonName,
-            Function.identity())));
+    return CollectionUtil.unmodifiableMap(ObjectUtils.notNull(instanceStream.collect(
+        Collectors.toMap(
+            IBoundInstance::getJsonName,
+            Function.identity(),
+            (v1, v2) -> v2,
+            LinkedHashMap::new))));
   }
 }

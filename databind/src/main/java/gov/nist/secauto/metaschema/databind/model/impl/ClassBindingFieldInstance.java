@@ -110,30 +110,21 @@ public class ClassBindingFieldInstance
 
   @Override
   public Object getDefaultValue() {
-    return defaultValue;
-  }
-
-  @Override
-  public Object getEffectiveDefaultValue() {
     Object retval = null;
-    if (getMaxOccurs() == 1) {
-      IFieldClassBinding definition = getDefinition();
-      IBoundFieldValueInstance fieldValue = definition.getFieldValueInstance();
+    IFieldClassBinding definition = getDefinition();
+    IBoundFieldValueInstance fieldValue = definition.getFieldValueInstance();
 
-      Object fieldValueDefault = fieldValue.getEffectiveDefaultValue();
-      if (fieldValueDefault != null) {
-        retval = definition.newInstance();
-        fieldValue.setValue(retval, fieldValueDefault);
+    Object fieldValueDefault = fieldValue.getDefaultValue();
+    if (fieldValueDefault != null) {
+      retval = definition.newInstance();
+      fieldValue.setValue(retval, fieldValueDefault);
 
-        for (IBoundFlagInstance flag : definition.getFlagInstances()) {
-          Object flagDefault = flag.getEffectiveDefaultValue();
-          if (flagDefault != null) {
-            flag.setValue(retval, flagDefault);
-          }
+      for (IBoundFlagInstance flag : definition.getFlagInstances()) {
+        Object flagDefault = flag.getEffectiveDefaultValue();
+        if (flagDefault != null) {
+          flag.setValue(retval, flagDefault);
         }
       }
-    } else {
-      retval = getCollectionInfo().emptyValue();
     }
     return retval;
   }

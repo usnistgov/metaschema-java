@@ -43,15 +43,12 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class XmlGroupedFieldInstance
     extends AbstractFieldInstance
     implements IFeatureGroupedModelInstance {
   @NonNull
   private final GroupedFieldReferenceType xmlObject;
-  @Nullable
-  private final Object defaultValue;
 
   /**
    * Constructs a new Metaschema field definition from an XML representation bound
@@ -68,26 +65,12 @@ public class XmlGroupedFieldInstance
       @NonNull IModelContainer parent) {
     super(parent);
     this.xmlObject = xmlObject;
-    this.defaultValue = xmlObject.isSetDefault()
-        ? getDefinition().getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlObject.getDefault()))
-        : null;
   }
 
   @Override
   public IFieldDefinition getDefinition() {
     // this will always be not null
     return ObjectUtils.notNull(getContainingModule().getScopedFieldDefinitionByName(getName()));
-  }
-
-  @Override
-  public Object getDefaultValue() {
-    return defaultValue;
-  }
-
-  @Override
-  public boolean isInXmlWrapped() {
-    // grouped items are never wrapped
-    return false;
   }
 
   // ----------------------------------------

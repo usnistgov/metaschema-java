@@ -113,17 +113,6 @@ public class ClassBindingAssemblyInstance
     return getJsonKey();
   }
 
-  @Override
-  public Object getDefaultValue() {
-    // none
-    return null;
-  }
-
-  @Override
-  public Object getEffectiveDefaultValue() {
-    return getCollectionInfo().emptyValue();
-  }
-
   // ------------------------------------------
   // - Start annotation driven code - CPD-OFF -
   // ------------------------------------------

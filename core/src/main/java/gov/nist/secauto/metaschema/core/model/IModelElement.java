@@ -72,4 +72,14 @@ public interface IModelElement {
    */
   @NonNull
   IModule getContainingModule();
+
+  /**
+   * Retrieves the default data value for this model construct.
+   *
+   * @return the default value or {@code null} if there is no default
+   */
+  default Object getDefaultValue() {
+    // no value by default
+    return null;
+  }
 }

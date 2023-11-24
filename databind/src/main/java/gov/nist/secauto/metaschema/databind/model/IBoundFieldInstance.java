@@ -41,14 +41,14 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IBoundFieldInstance extends IBoundNamedModelInstance, IFieldInstance {
 
   @NonNull
-  static IBoundFieldInstance newInstance(
+  static IFeatureCollectionModelInstance newInstance(
       @NonNull Field field,
       @NonNull IAssemblyClassBinding containingDefinition) {
-    Class<?> itemType = IBoundModelInstance.getItemType(field);
+    Class<?> itemType = IFeatureCollectionModelInstance.getItemType(field);
     IBindingContext bindingContext = containingDefinition.getBindingContext();
     IClassBinding classBinding = bindingContext.getClassBinding(itemType);
 
-    IBoundFieldInstance retval;
+    IFeatureCollectionModelInstance retval;
     if (classBinding == null) {
       retval = new SimpleFieldInstance(field, containingDefinition);
     } else {
@@ -61,16 +61,12 @@ public interface IBoundFieldInstance extends IBoundNamedModelInstance, IFieldIns
   IBoundFieldDefinition getDefinition();
 
   @Override
-  Object getEffectiveDefaultValue();
-
-  @Override
   default boolean canHandleXmlQName(QName qname) {
     boolean retval = IBoundNamedModelInstance.super.canHandleXmlQName(qname);
     if (!retval) {
       IDataTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();
       // we are to parse the data type
-      retval = !isInXmlWrapped()
-          && adapter.isUnrappedValueAllowedInXml()
+      retval = !isValueWrappedInXml()
           && adapter.canHandleQName(qname);
     }
     return retval;

@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -45,7 +45,7 @@ public interface IModelInstanceCollectionInfo {
 
   @NonNull
   static IModelInstanceCollectionInfo of(
-      @NonNull IBoundModelInstance instance) {
+      @NonNull IFeatureCollectionModelInstance instance) {
 
     // create the collection info
     Type type = instance.getType();
@@ -121,7 +121,7 @@ public interface IModelInstanceCollectionInfo {
    * @return the instance
    */
   @NonNull
-  IBoundModelInstance getInstance();
+  IFeatureCollectionModelInstance getInstance();
 
   /**
    * Get the number of items associated with the value.

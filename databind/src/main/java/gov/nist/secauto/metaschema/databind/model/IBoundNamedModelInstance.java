@@ -48,8 +48,4 @@ public interface IBoundNamedModelInstance extends IBoundModelInstance, IFeatureN
   default String getJsonName() {
     return INamedModelInstance.super.getJsonName();
   }
-
-  default boolean isValueWrappedInXml() {
-    return true;
-  }
 }

@@ -59,5 +59,5 @@ public interface IItemWriteHandler {
   void writeComplexItem(@NonNull Object item, @NonNull IFeatureComplexItemValueHandler handler)
       throws IOException;
 
-  void writeChoiceGroupItem(@NonNull Object item, @NonNull IBoundChoiceGroupInstance instance);
+  void writeChoiceGroupItem(@NonNull Object item, @NonNull IBoundChoiceGroupInstance instance) throws IOException;
 }

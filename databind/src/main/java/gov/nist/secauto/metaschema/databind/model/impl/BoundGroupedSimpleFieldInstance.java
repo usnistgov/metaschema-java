@@ -50,7 +50,6 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class BoundGroupedSimpleFieldInstance
@@ -58,8 +57,6 @@ public class BoundGroupedSimpleFieldInstance
     implements IBoundFieldDefinition, IFeatureScalarItemValueHandler, IFeatureFlagContainer<IBoundFlagInstance> {
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
-  @Nullable
-  private final Object defaultValue;
   @NonNull
   private final Lazy<IValueConstrained> constraints;
 
@@ -70,7 +67,6 @@ public class BoundGroupedSimpleFieldInstance
     this.javaTypeAdapter = ModelUtil.getDataTypeAdapter(
         annotation.typeAdapter(),
         container.getBindingContext());
-    this.defaultValue = ModelUtil.resolveDefaultValue(annotation.defaultValue(), this.javaTypeAdapter);
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();
       ValueConstraints valueAnnotation = getAnnotation().valueConstraints();
@@ -80,13 +76,23 @@ public class BoundGroupedSimpleFieldInstance
   }
 
   @Override
-  public Object getFieldValue(Object item) {
-    return item;
+  public Object getValue(Object parent) {
+    return super.getValue(parent);
   }
 
   @Override
-  public Object getDefaultValue() {
-    return defaultValue;
+  public void setValue(Object parent, Object value) {
+    super.setValue(parent, value);
+  }
+
+  @Override
+  public Object getValueFromString(String text) {
+    return IFeatureScalarItemValueHandler.super.getValueFromString(text);
+  }
+
+  @Override
+  public Object getFieldValue(Object item) {
+    return item;
   }
 
   @Override
@@ -151,15 +157,5 @@ public class BoundGroupedSimpleFieldInstance
   @Override
   public String toCoordinates() {
     return IBoundFieldDefinition.super.toCoordinates();
-  }
-
-  @Override
-  public Object getValue(Object parent) {
-    return getParentContainer().getValue(parent);
-  }
-
-  @Override
-  public void setValue(Object parent, Object value) {
-    getParentContainer().setValue(parent, value);
   }
 }

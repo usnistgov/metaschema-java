@@ -33,7 +33,7 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundFieldValueInstance
-    extends IBoundJavaProperty, IFeatureNamedInstance, IFeatureScalarItemValueHandler {
+    extends IFeatureJavaField, IFeatureNamedInstance, IFeatureScalarItemValueHandler {
 
   /**
    * Get the JSON value key name based on either the configured value key name or
@@ -55,7 +55,7 @@ public interface IBoundFieldValueInstance
 
   @Override
   default Object getValue(Object parentInstance) {
-    return IBoundJavaProperty.super.getValue(parentInstance);
+    return IFeatureJavaField.super.getValue(parentInstance);
   }
 
   @Override
@@ -70,6 +70,6 @@ public interface IBoundFieldValueInstance
 
   @Override
   default void setValue(Object parentInstance, Object value) {
-    IBoundJavaProperty.super.setValue(parentInstance, value);
+    IFeatureJavaField.super.setValue(parentInstance, value);
   }
 }

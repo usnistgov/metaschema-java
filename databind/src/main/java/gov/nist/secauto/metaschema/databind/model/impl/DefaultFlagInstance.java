@@ -59,6 +59,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
+// REFACTOR: flatten instance and definition
 class DefaultFlagInstance
     extends AbstractProperty<IClassBinding>
     implements IBoundFlagInstance {
@@ -118,12 +119,7 @@ class DefaultFlagInstance
 
   @Override
   public Object getDefaultValue() {
-    return this.defaultValue;
-  }
-
-  @Override
-  public Object getEffectiveDefaultValue() {
-    return getDefaultValue();
+    return defaultValue;
   }
 
   @Override

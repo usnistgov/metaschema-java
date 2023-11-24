@@ -34,11 +34,11 @@ import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundJavaProperty;
+import gov.nist.secauto.metaschema.databind.model.IBoundGroupedNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceWriteHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
@@ -49,6 +49,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -111,28 +112,40 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
   public void writeDefinitionValue(
       IClassBinding targetDefinition,
       Object targetObject,
-      Map<String, ? extends IBoundJavaProperty> instances) throws IOException {
-    for (IBoundJavaProperty instance : instances.values()) {
+      Map<String, ? extends IBoundInstance> instances) throws IOException {
+    if (targetDefinition instanceof IBoundGroupedNamedModelInstance) {
+      IBoundGroupedNamedModelInstance groupedInstance = (IBoundGroupedNamedModelInstance) targetDefinition;
+
+      String discriminatorProperty = groupedInstance.getParentContainer().getJsonDiscriminatorProperty();
+      String discriminatorValue = groupedInstance.getEffectiveDisciminatorValue();
+
+      writer.writeStringField(discriminatorProperty, discriminatorValue);
+    }
+
+    for (IBoundInstance instance : instances.values()) {
       assert instance != null;
       writeInstance(instance, targetObject);
     }
 
-    if (targetDefinition instanceof IFieldClassBinding) {
-      IFieldClassBinding fieldDefinition = (IFieldClassBinding) targetDefinition;
-      IBoundFieldValueInstance fieldValueInstance = fieldDefinition.getFieldValueInstance();
-      Object fieldValue = fieldValueInstance.getValue(targetObject);
-      if (fieldValue != null) {
-        String valueKeyName;
-        IBoundFlagInstance jsonValueKey = fieldDefinition.getJsonValueKeyFlagInstance();
-        if (jsonValueKey != null) {
-          valueKeyName = jsonValueKey.getValueAsString(jsonValueKey.getValue(targetObject));
-        } else {
-          valueKeyName = fieldValueInstance.getJsonValueKeyName();
-        }
-        writer.writeFieldName(valueKeyName);
-        fieldValueInstance.getJavaTypeAdapter().writeJsonValue(fieldValue, writer);
-      }
-    }
+    // if (targetDefinition instanceof IFieldClassBinding) {
+    // IFieldClassBinding fieldDefinition = (IFieldClassBinding) targetDefinition;
+    // IBoundFieldValueInstance fieldValueInstance =
+    // fieldDefinition.getFieldValueInstance();
+    // Object fieldValue = fieldValueInstance.getValue(targetObject);
+    // if (fieldValue != null) {
+    // String valueKeyName;
+    // IBoundFlagInstance jsonValueKey =
+    // fieldDefinition.getJsonValueKeyFlagInstance();
+    // if (jsonValueKey != null) {
+    // valueKeyName =
+    // jsonValueKey.getValueAsString(jsonValueKey.getValue(targetObject));
+    // } else {
+    // valueKeyName = fieldValueInstance.getJsonValueKeyName();
+    // }
+    // writer.writeFieldName(valueKeyName);
+    // fieldValueInstance.getJavaTypeAdapter().writeJsonValue(fieldValue, writer);
+    // }
+    // }
   }
 
   /**
@@ -147,13 +160,13 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
    *           if an error occurred while writing the data
    */
   protected void writeInstance(
-      @NonNull IBoundJavaProperty targetInstance,
+      @NonNull IBoundInstance targetInstance,
       @NonNull Object parentObject)
       throws IOException {
     if (targetInstance instanceof IBoundFlagInstance) {
       writeFlagInstanceValue((IBoundFlagInstance) targetInstance, parentObject);
-    } else if (targetInstance instanceof IBoundNamedModelInstance) {
-      writeModelInstanceValues((IBoundNamedModelInstance) targetInstance, parentObject);
+    } else if (targetInstance instanceof IFeatureCollectionModelInstance) {
+      writeModelInstanceValues((IFeatureCollectionModelInstance) targetInstance, parentObject);
     } else if (targetInstance instanceof IBoundFieldValueInstance) {
       writeFieldValueInstanceValue((IBoundFieldValueInstance) targetInstance, parentObject);
     } else {
@@ -177,7 +190,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
       @NonNull IBoundFlagInstance targetInstance,
       @NonNull Object parentObject) throws IOException {
     Object value = targetInstance.getValue(parentObject);
-    if (value != null) {
+    if (value != null && !value.equals(targetInstance.getDefaultValue())) {
       // write the field name
       writer.writeFieldName(targetInstance.getJsonName());
 
@@ -198,20 +211,25 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
    *           if an error occurred while writing the data
    */
   protected void writeModelInstanceValues(
-      @NonNull IBoundNamedModelInstance targetInstance,
+      @NonNull IFeatureCollectionModelInstance targetInstance,
       @NonNull Object parentObject) throws IOException {
     Object value = targetInstance.getValue(parentObject);
 
-    if (value != null && !targetInstance.getItemValues(value).isEmpty()) {
-      // write the field name
-      writer.writeFieldName(targetInstance.getJsonName());
+    if (value != null) {
+      Collection<?> items = targetInstance.getItemValues(value);
+      if (!items.isEmpty()
+          && (targetInstance.getMaxOccurs() != 1
+              || !items.iterator().next().equals(targetInstance.getDefaultValue()))) {
+        // write the field name
+        writer.writeFieldName(targetInstance.getJsonName());
 
-      IModelInstanceCollectionInfo collectionInfo = targetInstance.getCollectionInfo();
+        IModelInstanceCollectionInfo collectionInfo = targetInstance.getCollectionInfo();
 
-      ModelInstanceWriteHandler handler = new ModelInstanceWriteHandler(collectionInfo);
+        ModelInstanceWriteHandler handler = new ModelInstanceWriteHandler(collectionInfo);
 
-      // dispatch to the property info implementation to address cardinality
-      collectionInfo.writeItems(handler, value);
+        // dispatch to the property info implementation to address cardinality
+        collectionInfo.writeItems(handler, value);
+      }
     }
   }
 
@@ -230,7 +248,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
       @NonNull IBoundFieldValueInstance targetInstance,
       @NonNull Object parentObject) throws IOException {
     Object value = targetInstance.getValue(parentObject);
-    if (value != null) {
+    if (value != null && !value.equals(targetInstance.getDefaultValue())) {
       // There are two modes:
       // 1) use of a JSON value key, or
       // 2) a simple value named "value"
@@ -244,7 +262,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
         valueKeyName = targetInstance.getJsonValueKeyName();
       }
       writer.writeFieldName(valueKeyName);
-      LOGGER.info("FIELD: {}", valueKeyName);
+      // LOGGER.info("FIELD: {}", valueKeyName);
       targetInstance.getJavaTypeAdapter().writeJsonValue(value, writer);
     }
   }
@@ -289,8 +307,9 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
   }
 
   @Override
-  public void writeChoiceGroupItem(Object item, IBoundChoiceGroupInstance instance) {
-    throw new UnsupportedOperationException("implement");
+  public void writeChoiceGroupItem(Object item, IBoundChoiceGroupInstance instance) throws IOException {
+    IClassBinding itemInstance = instance.getItemInstance(item);
+    itemInstance.writeItem(item, this);
   }
 
   private class ModelInstanceWriteHandler

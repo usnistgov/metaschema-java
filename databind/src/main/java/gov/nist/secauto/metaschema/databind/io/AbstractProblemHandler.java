@@ -26,8 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.io;
 
-import gov.nist.secauto.metaschema.databind.model.IBoundJavaProperty;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -40,7 +41,7 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
   public void handleMissingInstances(
       IClassBinding parentDefinition,
       Object targetObject,
-      Collection<? extends IBoundJavaProperty> unhandledInstances) throws IOException {
+      Collection<? extends IBoundInstance> unhandledInstances) throws IOException {
     applyDefaults(targetObject, unhandledInstances);
   }
 
@@ -58,9 +59,16 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
    */
   protected static void applyDefaults(
       @NonNull Object targetObject,
-      @NonNull Collection<? extends IBoundJavaProperty> unhandledInstances) throws IOException {
-    for (IBoundJavaProperty instance : unhandledInstances) {
-      Object value = instance.getEffectiveDefaultValue();
+      @NonNull Collection<? extends IBoundInstance> unhandledInstances) throws IOException {
+    for (IBoundInstance instance : unhandledInstances) {
+
+      Object value;
+      if (instance instanceof IFeatureCollectionModelInstance
+          && ((IFeatureCollectionModelInstance) instance).getMaxOccurs() != 1) {
+        value = ((IFeatureCollectionModelInstance) instance).getCollectionInfo().emptyValue();
+      } else {
+        value = instance.getEffectiveDefaultValue();
+      }
       if (value != null) {
         instance.setValue(targetObject, value);
       }

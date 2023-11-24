@@ -96,7 +96,7 @@ class XmlChoiceGroupInstance
   @Override
   public String getJsonDiscriminatorProperty() {
     return getXmlObject().isSetDiscriminator()
-        ? ObjectUtils.requireNonNull(getXmlObject().getDiscriminator().getInJson())
+        ? ObjectUtils.requireNonNull(getXmlObject().getDiscriminator())
         : MetaschemaModelConstants.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME;
   }
 

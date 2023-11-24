@@ -23,39 +23,51 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.databind.model.metaschema;
 
-package gov.nist.secauto.metaschema.databind.model;
+import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
+import java.lang.Override;
+import java.lang.String;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-import javax.xml.namespace.QName;
-
-import edu.umd.cs.findbugs.annotations.Nullable;
-
-public interface IBoundJavaProperty extends IBoundInstance, IFeatureJavaField {
-
+/**
+ * Used in JSON (and similar formats) to identify a flag that will be used as the property name in an object hold a collection of sibling objects. Requires that siblings must never share <code>json-key</code> values.
+ */
+@MetaschemaAssembly(
+    formalName = "JSON Key",
+    description = "Used in JSON (and similar formats) to identify a flag that will be used as the property name in an object hold a collection of sibling objects. Requires that siblings must never share `json-key` values.",
+    name = "json-key",
+    moduleClass = MetaschemaModule.class
+)
+public class JsonKey {
   /**
-   * Determine if the provided JSON property or YAML key name is associated with
-   * this instance.
-   *
-   * @param name
-   *          the name of the property/key being parsed
-   * @return {@code true} if the instance will handle this name, or {@code false}
-   *         otherwise
+   * "References the flag that will serve as the JSON key."
    */
-  boolean canHandleJsonPropertyName(String name);
+  @BoundFlag(
+      formalName = "JSON Key Flag Reference",
+      description = "References the flag that will serve as the JSON key.",
+      useName = "flag-ref",
+      required = true,
+      typeAdapter = TokenAdapter.class
+  )
+  private String _flagRef;
 
-  /**
-   * Determine if the provided XML qualified name is associated with this
-   * property.
-   *
-   * @param qname
-   *          the XML qualified name of the property being parsed
-   * @return {@code true} if the instance will handle this name, or {@code false}
-   *         otherwise
-   */
-  boolean canHandleXmlQName(QName qname);
+  public JsonKey() {
+  }
 
-  String getJsonName();
+  public String getFlagRef() {
+    return _flagRef;
+  }
 
-  @Nullable
-  Object getEffectiveDefaultValue();
+  public void setFlagRef(String value) {
+    _flagRef = value;
+  }
+
+  @Override
+  public String toString() {
+    return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();
+  }
 }
