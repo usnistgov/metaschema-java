@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
@@ -40,6 +41,9 @@ import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -436,7 +440,7 @@ public class MetaschemaXmlReader
           reader.nextEvent();
 
           // consume the value
-          retval = instance.readItem(parentObject, nextStart, this);
+          retval = instance.readItem(parentObject, new ItemReadHandler(nextStart));
 
           // consume the end element
           XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, nextQName);
@@ -496,7 +500,7 @@ public class MetaschemaXmlReader
       }
 
       // consume the value
-      Object retval = instance.readItem(parentObject, currentStart, this);
+      Object retval = instance.readItem(parentObject, new ItemReadHandler(currentStart));
 
       if (parseWrapper) {
         // consume the end element
@@ -590,4 +594,41 @@ public class MetaschemaXmlReader
       return readModelInstanceValue(getCollectionInfo().getInstance(), getParentObject(), getStartElement());
     }
   }
+
+  private class ItemReadHandler implements IItemReadHandler {
+    @NonNull
+    private final StartElement startElement;
+
+    private ItemReadHandler(@NonNull StartElement startElement) {
+      this.startElement = startElement;
+    }
+
+    /**
+     * @return the startElement
+     */
+    @NonNull
+    protected StartElement getStartElement() {
+      return startElement;
+    }
+
+    @Override
+    public Object readScalarItem(Object parent, IFeatureScalarItemValueHandler handler) throws IOException {
+      return handler.getJavaTypeAdapter().parse(getReader());
+    }
+
+    @Override
+    public Object readComplexItem(Object parent, IFeatureComplexItemValueHandler handler) throws IOException {
+      try {
+        return readDefinitionValue(handler.getClassBinding(), parent, getStartElement());
+      } catch (XMLStreamException ex) {
+        throw new IOException(ex);
+      }
+    }
+
+    @Override
+    public Object readChoiceGroupItem(Object parent, IBoundChoiceGroupInstance instance) {
+      throw new UnsupportedOperationException("implement");
+    }
+  }
+
 }

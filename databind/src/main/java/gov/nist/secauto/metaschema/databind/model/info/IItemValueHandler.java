@@ -27,14 +27,8 @@
 package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
 import java.io.IOException;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -71,60 +65,18 @@ public interface IItemValueHandler {
       throws IOException;
 
   /**
-   * Write the provided {@code targetObject} as JSON.
+   * Write the provided item.
    *
    * @param item
    *          the data to write
-   * @param context
-   *          the JSON writing context
-   * @param jsonKey
-   *          the JSON key to use or {@code null} if no JSON key is configured
+   * @param handler
+   *          the item writing handler
    * @throws IOException
    *           if an error occurred while writing
    */
   void writeItem(
       @NonNull Object item,
-      @NonNull IItemWriteHandler context) throws IOException;
-
-  /**
-   * Parse and return the set of items from the XML stream.
-   *
-   * @param parent
-   *          the parent Java object to use for serialization callbacks
-   * @param parentName
-   *          the name of the parent (containing) element
-   * @param context
-   *          the XML writing context
-   * @return the Java object representing the parsed item(s)
-   * @throws IOException
-   *           if an error occurred while writing
-   * @throws XMLStreamException
-   *           if an error occurred while generating the XML
-   */
-  @NonNull
-  Object readItem(
-      @NonNull Object parent,
-      @NonNull StartElement parentName,
-      @NonNull IXmlParsingContext context) throws IOException, XMLStreamException;
-
-  /**
-   * Write the provided value as XML.
-   *
-   * @param item
-   *          the item to write
-   * @param parentName
-   *          the name of the parent (containing) element
-   * @param context
-   *          the JSON serializer
-   * @throws IOException
-   *           if an error occurred while writing
-   * @throws XMLStreamException
-   *           if an error occurred while generating the XML
-   */
-  void writeItem(
-      @NonNull Object item,
-      @NonNull QName parentName,
-      @NonNull IXmlWritingContext context) throws IOException, XMLStreamException;
+      @NonNull IItemWriteHandler handler) throws IOException;
 
   /**
    * Create and return a deep copy of the provided item.

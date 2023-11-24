@@ -33,8 +33,6 @@ import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
@@ -55,8 +53,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
@@ -243,20 +239,6 @@ public class ChoiceGroupInstance
   @Override
   public void writeItem(Object item, IItemWriteHandler handler) throws IOException {
     handler.writeChoiceGroupItem(item, this);
-  }
-
-  @Override
-  public Object readItem(Object parent, StartElement parentName, IXmlParsingContext context)
-      throws IOException, XMLStreamException {
-    // TODO Auto-generated method stub
-    return this;
-  }
-
-  @Override
-  public void writeItem(Object item, QName parentName, IXmlWritingContext context)
-      throws IOException, XMLStreamException {
-    // TODO Auto-generated method stub
-
   }
 
   @Override

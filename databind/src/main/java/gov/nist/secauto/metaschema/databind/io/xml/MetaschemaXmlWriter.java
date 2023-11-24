@@ -36,6 +36,9 @@ import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceWriteHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -253,7 +256,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
       @NonNull IBoundChoiceGroupInstance instance,
       @NonNull Object targetObject,
       @NonNull QName parentName) {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("implement");
   }
 
   private void writeNamedModelInstanceValue(
@@ -274,7 +277,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
       }
 
       // write the value
-      instance.writeItem(targetObject, currentParentName, this);
+      instance.writeItem(targetObject, new ItemWriteHandler(currentParentName));
 
       if (writeWrapper) {
         writer.writeEndElement();
@@ -309,6 +312,42 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     @Override
     public void writeItem(Object item) throws IOException {
       writeInstanceValue(getCollectionInfo().getInstance(), item, getParentQName());
+    }
+  }
+
+  private class ItemWriteHandler implements IItemWriteHandler {
+    @NonNull
+    private final QName parentQName;
+
+    private ItemWriteHandler(@NonNull QName parentQName) {
+      this.parentQName = parentQName;
+    }
+
+    /**
+     * @return the startElement
+     */
+    @NonNull
+    protected QName getParentQName() {
+      return parentQName;
+    }
+
+    @Override
+    public void writeScalarItem(Object item, IFeatureScalarItemValueHandler handler) throws IOException {
+      try {
+        handler.getJavaTypeAdapter().writeXmlValue(item, getParentQName(), getWriter());
+      } catch (XMLStreamException ex) {
+        throw new IOException(ex);
+      }
+    }
+
+    @Override
+    public void writeComplexItem(Object item, IFeatureComplexItemValueHandler handler) throws IOException {
+      writeDefinitionValue(handler.getClassBinding(), item, getParentQName());
+    }
+
+    @Override
+    public void writeChoiceGroupItem(Object item, IBoundChoiceGroupInstance instance) {
+      throw new UnsupportedOperationException("implement");
     }
   }
 }

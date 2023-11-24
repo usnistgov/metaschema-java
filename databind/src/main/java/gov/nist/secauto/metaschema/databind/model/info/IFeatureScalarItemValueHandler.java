@@ -28,19 +28,12 @@ package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 
 import java.io.IOException;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-// TODO: implement can handle QName for XML parsing
 public interface IFeatureScalarItemValueHandler
     extends IItemValueHandler {
 
@@ -84,18 +77,6 @@ public interface IFeatureScalarItemValueHandler
   @Override
   default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
     handler.writeScalarItem(item, this);
-  }
-
-  @Override
-  default Object readItem(Object parentInstance, StartElement start, IXmlParsingContext context)
-      throws IOException, XMLStreamException {
-    return getJavaTypeAdapter().parse(context.getReader());
-  }
-
-  @Override
-  default void writeItem(Object item, QName parentName, IXmlWritingContext context)
-      throws IOException, XMLStreamException {
-    getJavaTypeAdapter().writeXmlValue(item, parentName, context.getWriter());
   }
 
   @Override

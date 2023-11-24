@@ -27,16 +27,10 @@
 package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
-import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 
 import java.io.IOException;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -68,16 +62,4 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
 
   @Nullable
   IBoundFlagInstance getJsonKey();
-
-  @Override
-  default Object readItem(Object parent, StartElement start, IXmlParsingContext context)
-      throws IOException, XMLStreamException {
-    return context.readDefinitionValue(getClassBinding(), parent, start);
-  }
-
-  @Override
-  default void writeItem(Object item, QName currentParentName, IXmlWritingContext context)
-      throws IOException, XMLStreamException {
-    context.writeDefinitionValue(getClassBinding(), item, currentParentName);
-  }
 }
