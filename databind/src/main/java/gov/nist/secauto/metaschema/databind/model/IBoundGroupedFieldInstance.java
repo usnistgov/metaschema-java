@@ -27,8 +27,26 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
+import gov.nist.secauto.metaschema.databind.model.impl.BoundGroupedComplexFieldInstance;
+import gov.nist.secauto.metaschema.databind.model.impl.BoundGroupedSimpleFieldInstance;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundGroupedFieldInstance extends IBoundGroupedNamedModelnstance, IFieldInstance {
+
+  static IBoundGroupedFieldInstance newInstance(
+      @NonNull BoundGroupedField annotation,
+      @NonNull IBoundChoiceGroupInstance container) {
+    IBindingContext bindingContext = container.getBindingContext();
+    IClassBinding classBinding = bindingContext.getClassBinding(annotation.binding());
+
+    return classBinding == null
+        ? new BoundGroupedSimpleFieldInstance(annotation, container)
+        : new BoundGroupedComplexFieldInstance(annotation, (IFieldClassBinding) classBinding, container);
+  }
+
   @Override
-  IFieldClassBinding getDefinition();
+  IBoundFieldDefinition getDefinition();
 }

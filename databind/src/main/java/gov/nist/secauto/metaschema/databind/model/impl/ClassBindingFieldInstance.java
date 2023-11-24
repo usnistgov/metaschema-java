@@ -83,7 +83,7 @@ public class ClassBindingFieldInstance
       }
     }
     this.defaultValue
-        = ModelUtil.resolveDefaultValue(getFieldAnnotation().defaultValue(), this.getDefinition().getJavaTypeAdapter());
+        = ModelUtil.resolveDefaultValue(getAnnotation().defaultValue(), this.getDefinition().getJavaTypeAdapter());
   }
 
   @Override

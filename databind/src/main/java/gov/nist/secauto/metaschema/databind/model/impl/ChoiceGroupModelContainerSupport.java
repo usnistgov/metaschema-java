@@ -24,23 +24,38 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.impl;
 
-import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.databind.model.impl.ChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundGroupedAssemblyInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundGroupedFieldInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
 
-import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundChoiceGroupInstance
-    extends IBoundModelInstance, IFeatureBoundModelContainer, IChoiceGroupInstance {
-  static IBoundModelInstance newInstance(
-      @NonNull Field field,
-      @NonNull IAssemblyClassBinding containingDefinition) {
-    return new ChoiceGroupInstance(field, containingDefinition);
-  }
+public class ChoiceGroupModelContainerSupport
+    extends AbstractModelContainerSupport {
 
-  @Override
-  IAssemblyClassBinding getOwningDefinition();
+  public ChoiceGroupModelContainerSupport(
+      @NonNull BoundGroupedAssembly[] assemblies,
+      @NonNull BoundGroupedField[] fields,
+      @NonNull IBoundChoiceGroupInstance container) {
+    super(ObjectUtils.notNull(Stream.concat(
+        Arrays.stream(assemblies)
+            .map(instance -> {
+              assert instance != null;
+              return (IBoundModelInstance) IBoundGroupedAssemblyInstance.newInstance(instance, container);
+            }),
+        Arrays.stream(fields)
+            .map(instance -> {
+              assert instance != null;
+              return (IBoundModelInstance) IBoundGroupedFieldInstance.newInstance(instance, container);
+            }))));
+  }
 }

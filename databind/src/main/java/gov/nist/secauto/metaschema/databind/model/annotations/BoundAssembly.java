@@ -142,14 +142,4 @@ public @interface BoundAssembly {
    */
   @NonNull
   GroupAs groupAs() default @GroupAs(name = Constants.NULL_VALUE);
-
-  /**
-   * The bound class associated with this assembly.
-   * <p>
-   * This is optional when used on a field or method, and required when used with
-   * an annotation type value, i.e. {@link BoundChoiceGroup}.
-   *
-   * @return the bound class or {@link Void} if no bound class is referenced
-   */
-  Class<?> binding() default Void.class;
 }

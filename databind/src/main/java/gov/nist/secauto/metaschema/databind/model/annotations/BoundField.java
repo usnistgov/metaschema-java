@@ -180,19 +180,10 @@ public @interface BoundField {
   GroupAs groupAs() default @GroupAs(name = Constants.NULL_VALUE);
 
   /**
-   * Get the value constraints defined for this Metaschema flag inline definition.
+   * Get the value constraints defined for this Metaschema field inline
+   * definition.
    *
    * @return the value constraints
    */
   ValueConstraints valueConstraints() default @ValueConstraints;
-
-  /**
-   * The bound class associated with this field.
-   * <p>
-   * This is optional when used on a field or method, and required when used with
-   * an annotation type value, i.e. {@link BoundChoiceGroup}.
-   *
-   * @return the bound class or {@link Void} if no bound class is referenced
-   */
-  Class<?> binding() default Void.class;
 }

@@ -37,7 +37,6 @@ import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldDefinition;
@@ -49,7 +48,6 @@ import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -82,7 +80,7 @@ public class SimpleFieldInstance
       @NonNull IAssemblyClassBinding parentClassBinding) {
     super(field, parentClassBinding);
 
-    BoundField boundField = getFieldAnnotation();
+    BoundField boundField = getAnnotation();
     this.javaTypeAdapter = ModelUtil.getDataTypeAdapter(
         boundField.typeAdapter(),
         parentClassBinding.getBindingContext());
@@ -101,7 +99,7 @@ public class SimpleFieldInstance
     }
     this.definition = ObjectUtils.notNull(Lazy.lazy(() -> new ScalarFieldDefinition()));
     this.instanceDefaultValue
-        = ModelUtil.resolveDefaultValue(getFieldAnnotation().defaultValue(), this.javaTypeAdapter);
+        = ModelUtil.resolveDefaultValue(getAnnotation().defaultValue(), this.javaTypeAdapter);
   }
 
   @Override
@@ -150,7 +148,7 @@ public class SimpleFieldInstance
     private ScalarFieldDefinition() {
       this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
         IValueConstrained retval = new ValueConstraintSet();
-        ValueConstraints valueAnnotation = getFieldAnnotation().valueConstraints();
+        ValueConstraints valueAnnotation = getAnnotation().valueConstraints();
         ConstraintSupport.parse(valueAnnotation, ISource.modelSource(), retval);
         return retval;
       }));
@@ -215,7 +213,7 @@ public class SimpleFieldInstance
 
     @Override
     public String getUseName() {
-      return ModelUtil.resolveNoneOrValue(getFieldAnnotation().useName());
+      return ModelUtil.resolveNoneOrValue(getAnnotation().useName());
     }
 
     @Override
@@ -226,17 +224,6 @@ public class SimpleFieldInstance
     @Override
     public String toCoordinates() {
       return SimpleFieldInstance.this.toCoordinates();
-    }
-
-    @Override
-    public IBoundFlagInstance getFlagInstanceByName(String name) {
-      // scalar fields do not have flags
-      return null;
-    }
-
-    @Override
-    public Collection<? extends IBoundFlagInstance> getFlagInstances() {
-      return CollectionUtil.emptyList();
     }
 
     @Override
@@ -251,8 +238,7 @@ public class SimpleFieldInstance
 
     @Override
     public String getJsonValueKeyName() {
-      // this will never be used
-      return getJavaTypeAdapter().getDefaultJsonValueKey();
+      throw new UnsupportedOperationException("should never get called");
     }
 
     @Override

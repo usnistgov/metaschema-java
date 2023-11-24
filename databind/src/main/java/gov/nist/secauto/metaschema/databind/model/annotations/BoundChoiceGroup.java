@@ -101,7 +101,7 @@ public @interface BoundChoiceGroup {
    *         group
    */
   @NonNull
-  BoundAssembly[] assemblies() default {};
+  BoundGroupedAssembly[] assemblies() default {};
 
   /**
    * The the fields that may occur within this choice group.
@@ -109,5 +109,5 @@ public @interface BoundChoiceGroup {
    * @return an array of field bindings which may occur within this choice group
    */
   @NonNull
-  BoundAssembly[] fields() default {};
+  BoundGroupedField[] fields() default {};
 }

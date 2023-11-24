@@ -26,9 +26,15 @@
 
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
+import com.squareup.javapoet.AnnotationSpec;
+
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface INamedModelInstanceTypeInfo extends IModelInstanceTypeInfo {
   @Override
   INamedModelInstance getInstance();
+
+  AnnotationSpec.Builder buildGroupedBindingAnnotation(@NonNull Class<?> annotationClass);
 }

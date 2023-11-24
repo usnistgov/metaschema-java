@@ -196,7 +196,8 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       @NonNull IBoundNamedModelInstance targetInstance,
       @NonNull Object parentObject) throws IOException {
     Object value = targetInstance.getValue(parentObject);
-    if (value != null) {
+
+    if (value != null && !targetInstance.getItemValues(value).isEmpty()) {
       // write the field name
       writer.writeFieldName(targetInstance.getJsonName());
 

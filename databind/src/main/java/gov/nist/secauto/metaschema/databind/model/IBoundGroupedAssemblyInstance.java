@@ -27,8 +27,20 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureGroupedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.impl.BoundGroupedAssemblyInstance;
 
-public interface IBoundGroupedAssemblyInstance extends IBoundGroupedNamedModelnstance, IAssemblyInstance {
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public interface IBoundGroupedAssemblyInstance
+    extends IBoundGroupedNamedModelnstance, IAssemblyInstance, IFeatureGroupedModelInstance {
   @Override
   IAssemblyClassBinding getDefinition();
+
+  static IBoundGroupedAssemblyInstance newInstance(
+      @NonNull BoundGroupedAssembly annotation,
+      @NonNull IBoundChoiceGroupInstance container) {
+    return new BoundGroupedAssemblyInstance(annotation, container);
+  }
 }

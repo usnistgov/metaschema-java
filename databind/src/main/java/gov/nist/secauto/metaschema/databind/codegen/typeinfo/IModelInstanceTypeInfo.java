@@ -41,6 +41,9 @@ public interface IModelInstanceTypeInfo extends IInstanceTypeInfo {
    * <p>
    * This method uses a builder so child classes can add to the builder as needed.
    *
+   * @param annotation
+   *          if not {@code null} will seed the annotation to build
+   *
    * @return a builder for the annotation
    */
   @NonNull

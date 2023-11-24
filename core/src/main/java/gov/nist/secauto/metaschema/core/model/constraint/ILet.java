@@ -46,6 +46,7 @@ public interface ILet {
    *          the source descriptor for the resource containing the constraint
    * @return the original let statement with the same name or {@code null}
    */
+  @SuppressWarnings("PMD.ShortMethodName")
   @NonNull
   static ILet of(
       @NonNull String name,
@@ -75,6 +76,7 @@ public interface ILet {
    *          the source descriptor for the resource containing the constraint
    * @return the original let statement with the same name or {@code null}
    */
+  @SuppressWarnings("PMD.ShortMethodName")
   @NonNull
   static ILet of(
       @NonNull String name,

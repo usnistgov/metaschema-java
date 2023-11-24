@@ -91,44 +91,44 @@ public abstract class AbstractBoundFieldInstance
   }
 
   @NonNull
-  protected BoundField getFieldAnnotation() {
+  protected BoundField getAnnotation() {
     return boundField;
   }
 
   @Override
   public String getFormalName() {
-    return ModelUtil.resolveNoneOrValue(getFieldAnnotation().formalName());
+    return ModelUtil.resolveNoneOrValue(getAnnotation().formalName());
   }
 
   @Override
   public MarkupLine getDescription() {
-    return ModelUtil.resolveToMarkupLine(getFieldAnnotation().description());
+    return ModelUtil.resolveToMarkupLine(getAnnotation().description());
   }
 
   @Override
   public String getUseName() {
-    return ModelUtil.resolveNoneOrValue(getFieldAnnotation().useName());
+    return ModelUtil.resolveNoneOrValue(getAnnotation().useName());
   }
 
   @Override
   public Integer getUseIndex() {
-    int value = getFieldAnnotation().useIndex();
+    int value = getAnnotation().useIndex();
     return value == Integer.MIN_VALUE ? null : value;
   }
 
   @Override
   public boolean isInXmlWrapped() {
-    return getFieldAnnotation().inXmlWrapped();
+    return getAnnotation().inXmlWrapped();
   }
 
   @Override
   public final int getMinOccurs() {
-    return getFieldAnnotation().minOccurs();
+    return getAnnotation().minOccurs();
   }
 
   @Override
   public final int getMaxOccurs() {
-    return getFieldAnnotation().maxOccurs();
+    return getAnnotation().maxOccurs();
   }
 
   @Override
@@ -153,7 +153,7 @@ public abstract class AbstractBoundFieldInstance
 
   @Override
   public MarkupMultiline getRemarks() {
-    return ModelUtil.resolveToMarkupMultiline(getFieldAnnotation().remarks());
+    return ModelUtil.resolveToMarkupMultiline(getAnnotation().remarks());
   }
 
   @SuppressWarnings("null")

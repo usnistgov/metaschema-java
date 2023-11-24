@@ -128,13 +128,13 @@ abstract class AbstractClassBinding implements IClassBinding {
    * @throws RuntimeException
    *           if the instance cannot be created due to a binding error
    */
+  @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
   @Override
   @NonNull
   public <CLASS> CLASS newInstance() {
     Class<?> clazz = getBoundClass();
     try {
-      @SuppressWarnings("unchecked")
-      Constructor<CLASS> constructor
+      @SuppressWarnings("unchecked") Constructor<CLASS> constructor
           = (Constructor<CLASS>) clazz.getDeclaredConstructor();
       return ObjectUtils.notNull(constructor.newInstance());
     } catch (NoSuchMethodException ex) {

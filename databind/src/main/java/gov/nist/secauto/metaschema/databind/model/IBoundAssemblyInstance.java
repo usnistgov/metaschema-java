@@ -39,8 +39,9 @@ public interface IBoundAssemblyInstance extends IBoundNamedModelInstance, IAssem
   static IBoundAssemblyInstance newInstance(
       @NonNull Field field,
       @NonNull IAssemblyClassBinding containingDefinition) {
-    Class<?> itemType = IBoundModelInstance.getItemType(field);
     IBindingContext bindingContext = containingDefinition.getBindingContext();
+
+    Class<?> itemType = IBoundModelInstance.getItemType(field);
     IClassBinding classBinding = bindingContext.getClassBinding(itemType);
     if (classBinding == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", itemType.getName()));

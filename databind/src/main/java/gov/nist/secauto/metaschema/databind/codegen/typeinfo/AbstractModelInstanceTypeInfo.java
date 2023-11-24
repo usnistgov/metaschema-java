@@ -85,11 +85,6 @@ abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance, PA
   protected abstract AnnotationSpec.Builder newBindingAnnotation();
 
   @Override
-  public AnnotationSpec.Builder buildBindingAnnotation() {
-    return newBindingAnnotation();
-  }
-
-  @Override
   public Set<IFlagContainer> buildField(FieldSpec.Builder builder) {
     Set<IFlagContainer> retval = super.buildField(builder);
 

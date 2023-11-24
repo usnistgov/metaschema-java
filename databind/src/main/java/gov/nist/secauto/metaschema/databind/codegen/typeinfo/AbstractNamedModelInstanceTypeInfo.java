@@ -103,9 +103,7 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
     return retval.isEmpty() ? CollectionUtil.emptySet() : CollectionUtil.unmodifiableSet(retval);
   }
 
-  @Override
-  public AnnotationSpec.Builder buildBindingAnnotation() {
-    AnnotationSpec.Builder annotation = super.buildBindingAnnotation();
+  protected void buildBindingAnnotationCommon(@NonNull AnnotationSpec.Builder annotation) {
 
     INamedModelInstance instance = getInstance();
 
@@ -133,6 +131,32 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
       annotation.addMember("namespace", "$S", namespace);
     } // otherwise use the ##default
 
+    MarkupMultiline remarks = instance.getRemarks();
+    if (remarks != null) {
+      annotation.addMember("remarks", "$S", remarks.toMarkdown());
+    }
+
+  }
+
+  @Override
+  public AnnotationSpec.Builder buildGroupedBindingAnnotation(Class<?> annotationClass) {
+    AnnotationSpec.Builder annotation = ObjectUtils.notNull(AnnotationSpec.builder(annotationClass));
+
+    buildBindingAnnotationCommon(annotation);
+
+    annotation.addMember("binding", "$T.class", getJavaItemType());
+
+    return annotation;
+  }
+
+  @Override
+  public AnnotationSpec.Builder buildBindingAnnotation() {
+    AnnotationSpec.Builder annotation = newBindingAnnotation();
+
+    buildBindingAnnotationCommon(annotation);
+
+    INamedModelInstance instance = getInstance();
+
     int minOccurs = instance.getMinOccurs();
     if (minOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
       annotation.addMember("minOccurs", "$L", minOccurs);
@@ -142,12 +166,6 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
     if (maxOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS) {
       annotation.addMember("maxOccurs", "$L", maxOccurs);
     }
-
-    MarkupMultiline remarks = instance.getRemarks();
-    if (remarks != null) {
-      annotation.addMember("remarks", "$S", remarks.toMarkdown());
-    }
-
     if (maxOccurs == -1 || maxOccurs > 1) {
       // requires a group-as
       annotation.addMember("groupAs", "$L", generateGroupAsAnnotation().build());

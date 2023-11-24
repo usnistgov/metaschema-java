@@ -31,37 +31,27 @@ import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
-import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class ClassBindingModelContainerSupport
+public abstract class AbstractModelContainerSupport
     implements IModelContainerSupport<IBoundModelInstance, IBoundNamedModelInstance, IBoundFieldInstance,
         IBoundAssemblyInstance, IChoiceInstance, IBoundChoiceGroupInstance> {
   @NonNull
   private final List<IBoundModelInstance> modelInstances;
-  @NonNull
-  private final List<IBoundChoiceGroupInstance> choiceGroupInstances;
   @NonNull
   private final Map<String, IBoundNamedModelInstance> namedModelInstances;
   @NonNull
@@ -69,19 +59,9 @@ class ClassBindingModelContainerSupport
   @NonNull
   private final Map<String, IBoundAssemblyInstance> assemblyInstances;
 
-  public ClassBindingModelContainerSupport(
-      @NonNull IAssemblyClassBinding classBinding) {
-    Class<?> clazz = classBinding.getBoundClass();
-    this.modelInstances = CollectionUtil.unmodifiableList(ObjectUtils.notNull(
-        getModelInstanceFieldStream(classBinding, clazz)
-            .collect(Collectors.toUnmodifiableList())));
-
-    this.choiceGroupInstances = CollectionUtil.unmodifiableList(ObjectUtils.notNull(
-        getModelInstances().stream()
-            .filter(instance -> instance instanceof IBoundChoiceGroupInstance)
-            .map(instance -> (IBoundChoiceGroupInstance) instance)
-            .map(ObjectUtils::notNull)
-            .collect(Collectors.toUnmodifiableList())));
+  public AbstractModelContainerSupport(@NonNull Stream<IBoundModelInstance> instances) {
+    this.modelInstances = CollectionUtil.unmodifiableList(ObjectUtils.notNull(instances
+        .collect(Collectors.toUnmodifiableList())));
 
     this.namedModelInstances = CollectionUtil.unmodifiableMap(ObjectUtils.notNull(
         getModelInstances().stream()
@@ -117,47 +97,6 @@ class ClassBindingModelContainerSupport
                 LinkedHashMap::new))));
   }
 
-  protected Stream<IBoundModelInstance> getModelInstanceFieldStream(
-      @NonNull IAssemblyClassBinding classBinding,
-      @NonNull Class<?> clazz) {
-
-    Stream<IBoundModelInstance> superInstances;
-    Class<?> superClass = clazz.getSuperclass();
-    if (superClass == null) {
-      superInstances = Stream.empty();
-    } else {
-      // get instances from superclass
-      superInstances = getModelInstanceFieldStream(classBinding, superClass);
-    }
-
-    IBindingContext bindingContext = classBinding.getBindingContext();
-    return Stream.concat(superInstances, Arrays.stream(clazz.getDeclaredFields())
-        // skip this field, since it is ignored
-        .filter(field -> !field.isAnnotationPresent(Ignore.class))
-        // skip fields that aren't a Module field or assembly instance
-        .filter(field -> field.isAnnotationPresent(BoundField.class) || field.isAnnotationPresent(BoundAssembly.class))
-        .map(field -> {
-          assert field != null;
-
-          IBoundModelInstance retval;
-          if (field.isAnnotationPresent(BoundAssembly.class)
-              && bindingContext.getClassBinding(IBoundModelInstance.getItemType(field)) != null) {
-            retval = IBoundAssemblyInstance.newInstance(field, classBinding);
-          } else if (field.isAnnotationPresent(BoundField.class)) {
-            retval = IBoundFieldInstance.newInstance(field, classBinding);
-          } else if (field.isAnnotationPresent(BoundChoiceGroup.class)) {
-            retval = IBoundChoiceGroupInstance.newInstance(field, classBinding);
-          } else {
-            throw new IllegalStateException(
-                String.format("The field '%s' on class '%s' is not bound", field.getName(), clazz.getName()));
-          }
-          // TODO: handle choice
-          return retval;
-        })
-        .filter(Objects::nonNull)
-        .map(ObjectUtils::notNull));
-  }
-
   @Override
   public Collection<IBoundModelInstance> getModelInstances() {
     return modelInstances;
@@ -186,6 +125,6 @@ class ClassBindingModelContainerSupport
 
   @Override
   public List<IBoundChoiceGroupInstance> getChoiceGroupInstances() {
-    return choiceGroupInstances;
+    return CollectionUtil.emptyList();
   }
 }

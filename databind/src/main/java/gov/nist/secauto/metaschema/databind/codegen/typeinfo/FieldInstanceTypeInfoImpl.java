@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.AnnotationSpec.Builder;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
 
@@ -72,8 +73,9 @@ public class FieldInstanceTypeInfoImpl
   }
 
   @Override
-  public AnnotationSpec.Builder buildBindingAnnotation() {
-    AnnotationSpec.Builder annotation = super.buildBindingAnnotation();
+  protected void buildBindingAnnotationCommon(Builder annotation) {
+
+    super.buildBindingAnnotationCommon(annotation);
 
     IFieldInstance instance = getInstance();
 
@@ -97,7 +99,5 @@ public class FieldInstanceTypeInfoImpl
     if (definition.isSimple()) {
       AnnotationGenerator.buildValueConstraints(annotation, definition);
     }
-
-    return annotation;
   }
 }

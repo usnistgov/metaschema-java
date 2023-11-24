@@ -24,23 +24,55 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.impl;
 
-import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.databind.model.impl.ChoiceGroupInstance;
-
-import java.lang.reflect.Field;
+import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
+import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IBoundChoiceGroupInstance
-    extends IBoundModelInstance, IFeatureBoundModelContainer, IChoiceGroupInstance {
-  static IBoundModelInstance newInstance(
-      @NonNull Field field,
-      @NonNull IAssemblyClassBinding containingDefinition) {
-    return new ChoiceGroupInstance(field, containingDefinition);
+public class BoundGroupedComplexFieldInstance
+    extends AbstractBoundGroupedFieldInstance
+    implements IFeatureComplexItemValueHandler {
+  @NonNull
+  private final IFieldClassBinding definition;
+  @Nullable
+  private final Object defaultValue;
+
+  public BoundGroupedComplexFieldInstance(
+      @NonNull BoundGroupedField annotation,
+      @NonNull IFieldClassBinding classBinding,
+      @NonNull IBoundChoiceGroupInstance container) {
+    super(annotation, container);
+    this.definition = classBinding;
+
+    this.defaultValue = ModelUtil.resolveDefaultValue(annotation.defaultValue(), getDefinition().getJavaTypeAdapter());
   }
 
   @Override
-  IAssemblyClassBinding getOwningDefinition();
+  public IFieldClassBinding getDefinition() {
+    return definition;
+  }
+
+  @Override
+  public IFieldClassBinding getClassBinding() {
+    return definition;
+  }
+
+  @Override
+  public Object getDefaultValue() {
+    return defaultValue;
+  }
+
+  @Override
+  public IBoundFlagInstance getJsonKey() {
+    String jsonKeyFlagName = getParentContainer().getJsonKeyFlagName();
+    return jsonKeyFlagName == null ? null : getDefinition().getFlagInstanceByName(jsonKeyFlagName);
+  }
+
 }

@@ -70,7 +70,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
   @NonNull
   private final Lazy<FlagContainerSupport> flagContainer;
   @NonNull
-  private final Lazy<ClassBindingModelContainerSupport> modelContainer;
+  private final Lazy<AssemblyModelContainerSupport> modelContainer;
   @NonNull
   private final Lazy<IModelConstrained> constraints;
 
@@ -116,7 +116,7 @@ public class DefaultAssemblyClassBinding // NOPMD - ok
     this.xmlRootQName = localName == null ? null : new QName(namespace, localName);
 
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new FlagContainerSupport(this, null)));
-    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> new ClassBindingModelContainerSupport(this)));
+    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> new AssemblyModelContainerSupport(this)));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IModelConstrained retval = new AssemblyConstraintSet();
       ValueConstraints valueAnnotation = this.metaschemaAssembly.valueConstraints();

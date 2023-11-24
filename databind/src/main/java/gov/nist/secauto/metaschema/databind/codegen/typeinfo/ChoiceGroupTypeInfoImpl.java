@@ -37,6 +37,8 @@ import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -62,7 +64,7 @@ public class ChoiceGroupTypeInfoImpl
 
   @Override
   public AnnotationSpec.Builder buildBindingAnnotation() {
-    AnnotationSpec.Builder retval = super.buildBindingAnnotation();
+    AnnotationSpec.Builder retval = newBindingAnnotation();
 
     IChoiceGroupInstance choiceGroup = getInstance();
 
@@ -90,11 +92,17 @@ public class ChoiceGroupTypeInfoImpl
     ITypeResolver typeResolver = parentTypeInfo.getTypeResolver();
     for (INamedModelInstance modelInstance : getInstance().getNamedModelInstances()) {
       assert modelInstance != null;
-      IModelInstanceTypeInfo instanceTypeInfo = typeResolver.getTypeInfo(modelInstance, parentTypeInfo);
+      INamedModelInstanceTypeInfo instanceTypeInfo = typeResolver.getTypeInfo(modelInstance, parentTypeInfo);
 
-      AnnotationSpec.Builder annotation = instanceTypeInfo.buildBindingAnnotation();
-
-      annotation.addMember("binding", "$T.class", instanceTypeInfo.getJavaItemType());
+      AnnotationSpec.Builder annotation;
+      if (modelInstance instanceof IFieldInstance) {
+        annotation = instanceTypeInfo.buildGroupedBindingAnnotation(BoundGroupedField.class);
+      } else if (modelInstance instanceof IAssemblyInstance) {
+        annotation = instanceTypeInfo.buildGroupedBindingAnnotation(BoundGroupedAssembly.class);
+      } else {
+        throw new UnsupportedOperationException(String.format("Unsuported named model instance type '%s'.",
+            instanceTypeInfo.getClass().getName()));
+      }
 
       if (modelInstance instanceof IFieldInstance) {
         retval.addMember("fields", "$L", annotation.build());
