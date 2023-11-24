@@ -41,9 +41,6 @@ public interface IItemValueHandler {
    * Implementations may proxy this request to the JavaTypeAdapter if it is used
    * or return {@code false} otherwise.
    *
-   * @param item
-   *          the Java object representing the item
-   *
    * @return {@code true} if the underlying data type is allowed to be unwrapped,
    *         or {@code false} otherwise
    */

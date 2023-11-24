@@ -160,8 +160,6 @@ public interface IModelInstanceCollectionInfo {
    *
    * @param handler
    *          the item parsing handler
-   * @param collector
-   *          used to hold parsed values
    * @return {@code true} if data was read, or {@code false} otherwise
    * @throws IOException
    *           if there was an error when reading the data

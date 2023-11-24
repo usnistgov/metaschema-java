@@ -74,8 +74,7 @@ final class MetaschemaJsonUtil {
     Collection<? extends IBoundFlagInstance> flags = targetDefinition.getFlagInstances();
     int flagCount = flags.size() - (jsonKey == null ? 0 : 1);
 
-    @SuppressWarnings("resource")
-    Stream<? extends IBoundJavaProperty> instanceStream;
+    @SuppressWarnings("resource") Stream<? extends IBoundJavaProperty> instanceStream;
     if (targetDefinition instanceof IAssemblyClassBinding) {
       // use all child instances
       instanceStream = ((IAssemblyClassBinding) targetDefinition).getModelInstances().stream();
