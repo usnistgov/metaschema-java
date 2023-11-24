@@ -31,7 +31,9 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundJavaProperty;
@@ -39,6 +41,9 @@ import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import org.apache.logging.log4j.LogManager;
@@ -55,7 +60,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class MetaschemaJsonReader
-    implements IJsonParsingContext {
+    implements IJsonParsingContext, IItemReadHandler {
   private static final Logger LOGGER = LogManager.getLogger(MetaschemaJsonReader.class);
 
   @NonNull
@@ -336,6 +341,93 @@ public class MetaschemaJsonReader
           targetObject,
           ObjectUtils.notNull(remainingInstances.values()));
     }
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * The item value is associated with a JSON value token.
+   */
+  @SuppressWarnings("resource")
+  @Override
+  public Object readScalarItem(Object parent, IFeatureScalarItemValueHandler handler) throws IOException {
+    return handler.getJavaTypeAdapter().parse(getReader());
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * The item value is associated with a JSON {@link JsonToken#START_OBJECT}.
+   */
+  @SuppressWarnings({
+      "resource", // not owned
+      "PMD.NPathComplexity", "PMD.CyclomaticComplexity" // ok
+  })
+  @Override
+  public Object readComplexItem(Object parent, IFeatureComplexItemValueHandler handler) throws IOException {
+    JsonParser parser = getReader(); // NOPMD - intentional
+    boolean objectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
+    if (objectWrapper) {
+      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
+    }
+
+    IClassBinding definition = handler.getClassBinding();
+    Object targetObject;
+    try {
+      targetObject = definition.newInstance();
+      definition.callBeforeDeserialize(targetObject, parent);
+    } catch (BindingException ex) {
+      throw new IOException(ex);
+    }
+
+    IBoundFlagInstance jsonKey = handler.getJsonKey();
+    boolean keyObjectWrapper = false;
+    if (jsonKey != null) {
+      // the field will be the JSON key
+      String key = ObjectUtils.notNull(parser.getCurrentName());
+
+      Object value = jsonKey.getDefinition().getJavaTypeAdapter().parse(key);
+      jsonKey.setValue(targetObject, value.toString());
+
+      // advance past the FIELD_NAME
+      JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
+
+      keyObjectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
+      if (keyObjectWrapper) {
+        JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
+      }
+    }
+
+    if (keyObjectWrapper || JsonToken.FIELD_NAME.equals(parser.currentToken())) {
+      readDefinitionValue(definition, targetObject, MetaschemaJsonUtil.getJsonInstanceMap(definition, jsonKey));
+    } else if (parser.currentToken().isScalarValue()) {
+      // REFACTOR: need to figure out why this special case exists
+      // this is just a value
+      IFieldClassBinding fieldDefinition = (IFieldClassBinding) definition;
+      Object fieldValue = fieldDefinition.getJavaTypeAdapter().parse(parser);
+      fieldDefinition.getFieldValueInstance().setValue(targetObject, fieldValue);
+    }
+
+    try {
+      definition.callAfterDeserialize(targetObject, parent);
+    } catch (BindingException ex) {
+      throw new IOException(ex);
+    }
+
+    if (keyObjectWrapper) {
+      // advance past the END_OBJECT for the JSON key
+      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
+    }
+
+    if (objectWrapper) {
+      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
+    }
+    return ObjectUtils.asType(targetObject);
+  }
+
+  @Override
+  public Object readChoiceGroupItem(Object parent, IBoundChoiceGroupInstance instance) {
+    throw new UnsupportedOperationException("implement");
   }
 
   private class ModelInstanceReadHandler

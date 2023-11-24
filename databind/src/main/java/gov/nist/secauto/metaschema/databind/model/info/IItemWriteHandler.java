@@ -24,46 +24,40 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model;
+package gov.nist.secauto.metaschema.databind.model.info;
+
+import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
+
+import java.io.IOException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IChoiceGroupInstance extends IModelInstance, IModelContainer {
+public interface IItemWriteHandler {
+  /**
+   * Parse and return an item.
+   *
+   * @param item
+   *          the Java object representing the parsed item
+   * @param handler
+   *          the item handler
+   * @throws IOException
+   *           if an error occurred while parsing
+   */
+  void writeScalarItem(@NonNull Object item, @NonNull IFeatureScalarItemValueHandler handler)
+      throws IOException;
 
   /**
-   * Provides the Metaschema model type of "CHOICE".
+   * Parse and return an item.
    *
-   * @return the model type
+   * @param item
+   *          the Java object representing the parsed item
+   * @param handler
+   *          the item handler
+   * @throws IOException
+   *           if an error occurred while parsing
    */
-  @Override
-  default ModelType getModelType() {
-    return ModelType.CHOICE_GROUP;
-  }
+  void writeComplexItem(@NonNull Object item, @NonNull IFeatureComplexItemValueHandler handler)
+      throws IOException;
 
-  @Override
-  default IAssemblyDefinition getOwningDefinition() {
-    return getParentContainer().getOwningDefinition();
-  }
-
-  @Override
-  default String getGroupAsXmlNamespace() {
-    return getContainingModule().getXmlNamespace().toASCIIString();
-  }
-
-  /**
-   * Get the JSON property to use to discriminate between JSON objects.
-   *
-   * @return the discriminator property
-   */
-  @NonNull
-  String getJsonDiscriminatorProperty();
-
-  /**
-   * Get the name of the JSON key flag associated with each item object.
-   *
-   * @return the JSON key flag name or {@code null} if no JSON key is configured
-   */
-  @Nullable
-  String getJsonKeyFlagName();
+  void writeChoiceGroupItem(@NonNull Object item, @NonNull IBoundChoiceGroupInstance instance);
 }

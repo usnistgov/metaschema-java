@@ -26,14 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
-import com.fasterxml.jackson.core.JsonToken;
-
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 
 import java.io.IOException;
 
@@ -52,30 +47,44 @@ public interface IItemValueHandler {
    * Implementations may proxy this request to the JavaTypeAdapter if it is used
    * or return {@code false} otherwise.
    *
+   * @param item
+   *          the Java object representing the item
+   *
    * @return {@code true} if the underlying data type is allowed to be unwrapped,
    *         or {@code false} otherwise
    */
   boolean isUnwrappedValueAllowedInXml();
 
   /**
-   * Parse and return the set of items from the JSON stream.
-   * <p>
-   * An item is a complete value, which can be a {@link JsonToken#START_OBJECT},
-   * or a value token.
+   * Parse and return an item.
    *
    * @param parent
    *          the parent Java object to use for serialization callbacks, or
    *          {@code null} if there is no parent
-   * @param context
-   *          the JSON/YAML parser
-   * @return the Java object representing the parsed item(s)
+   * @param handler
+   *          the item parsing handler
+   * @return the Java object representing the parsed item
    * @throws IOException
    *           if an error occurred while parsing
    */
-  @NonNull
-  Object readItem(
-      @Nullable Object parent,
-      @NonNull IJsonParsingContext context) throws IOException;
+  Object readItem(Object parent, IItemReadHandler handler)
+      throws IOException;
+
+  /**
+   * Write the provided {@code targetObject} as JSON.
+   *
+   * @param item
+   *          the data to write
+   * @param context
+   *          the JSON writing context
+   * @param jsonKey
+   *          the JSON key to use or {@code null} if no JSON key is configured
+   * @throws IOException
+   *           if an error occurred while writing
+   */
+  void writeItem(
+      @NonNull Object item,
+      @NonNull IItemWriteHandler context) throws IOException;
 
   /**
    * Parse and return the set of items from the XML stream.
@@ -97,23 +106,6 @@ public interface IItemValueHandler {
       @NonNull Object parent,
       @NonNull StartElement parentName,
       @NonNull IXmlParsingContext context) throws IOException, XMLStreamException;
-
-  /**
-   * Write the provided {@code targetObject} as JSON.
-   *
-   * @param item
-   *          the data to write
-   * @param context
-   *          the JSON writing context
-   * @param jsonKey
-   *          the JSON key to use or {@code null} if no JSON key is configured
-   * @throws IOException
-   *           if an error occurred while writing
-   */
-  void writeItem(
-      @NonNull Object item,
-      @NonNull IJsonWritingContext context,
-      @Nullable IBoundFlagInstance jsonKey) throws IOException;
 
   /**
    * Write the provided value as XML.

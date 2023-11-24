@@ -23,47 +23,34 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.databind.model.info;
 
-package gov.nist.secauto.metaschema.core.model;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IChoiceGroupInstance extends IModelInstance, IModelContainer {
-
-  /**
-   * Provides the Metaschema model type of "CHOICE".
-   *
-   * @return the model type
-   */
-  @Override
-  default ModelType getModelType() {
-    return ModelType.CHOICE_GROUP;
-  }
-
-  @Override
-  default IAssemblyDefinition getOwningDefinition() {
-    return getParentContainer().getOwningDefinition();
-  }
-
-  @Override
-  default String getGroupAsXmlNamespace() {
-    return getContainingModule().getXmlNamespace().toASCIIString();
-  }
-
-  /**
-   * Get the JSON property to use to discriminate between JSON objects.
-   *
-   * @return the discriminator property
-   */
-  @NonNull
-  String getJsonDiscriminatorProperty();
-
-  /**
-   * Get the name of the JSON key flag associated with each item object.
-   *
-   * @return the JSON key flag name or {@code null} if no JSON key is configured
-   */
+public interface IModelInstanceReadHandler {
   @Nullable
-  String getJsonKeyFlagName();
+  default Object readSingleton() throws IOException {
+    return readItem();
+  }
+
+  @NonNull
+  List<?> readList() throws IOException;
+
+  @NonNull
+  Map<String, ?> readMap() throws IOException;
+
+  /**
+   * Read the next item in the collection of items represented by the instance.
+   *
+   * @return the Java object representing the item, or {@code null} if no items
+   *         remain to be read
+   * @throws IOException
+   *           if an error occurred while parsing the input
+   */
+  Object readItem() throws IOException;
 }

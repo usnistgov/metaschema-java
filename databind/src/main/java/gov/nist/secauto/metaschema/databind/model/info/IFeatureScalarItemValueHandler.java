@@ -27,13 +27,9 @@
 package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 
 import java.io.IOException;
 
@@ -80,11 +76,14 @@ public interface IFeatureScalarItemValueHandler
     return getJavaTypeAdapter().parse(text);
   }
 
-  @SuppressWarnings("resource")
   @Override
-  default Object readItem(Object parent, IJsonParsingContext context)
-      throws IOException {
-    return getJavaTypeAdapter().parse(context.getReader());
+  default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+    return handler.readScalarItem(parent, this);
+  }
+
+  @Override
+  default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
+    handler.writeScalarItem(item, this);
   }
 
   @Override
@@ -97,13 +96,6 @@ public interface IFeatureScalarItemValueHandler
   default void writeItem(Object item, QName parentName, IXmlWritingContext context)
       throws IOException, XMLStreamException {
     getJavaTypeAdapter().writeXmlValue(item, parentName, context.getWriter());
-  }
-
-  @SuppressWarnings("resource") // resource not owned
-  @Override
-  default void writeItem(Object item, IJsonWritingContext context, IBoundFlagInstance jsonKey) throws IOException {
-    assert jsonKey == null;
-    getJavaTypeAdapter().writeJsonValue(ObjectUtils.requireNonNull(item), context.getWriter());
   }
 
   @Override

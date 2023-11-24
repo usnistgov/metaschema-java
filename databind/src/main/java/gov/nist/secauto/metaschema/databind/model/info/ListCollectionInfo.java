@@ -87,12 +87,12 @@ class ListCollectionInfo
   }
 
   @Override
-  public List<?> readItems(IModelInstanceCollectionInfo.IReadHandler handler) throws IOException {
+  public List<?> readItems(IModelInstanceReadHandler handler) throws IOException {
     return handler.readList();
   }
 
   @Override
-  public void writeItems(IModelInstanceCollectionInfo.IWriteHandler handler, Object value) throws IOException {
+  public void writeItems(IModelInstanceWriteHandler handler, Object value) throws IOException {
     handler.writeList((List<?>) value);
   }
 }

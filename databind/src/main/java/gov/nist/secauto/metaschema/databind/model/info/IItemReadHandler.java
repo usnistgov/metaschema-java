@@ -24,46 +24,48 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model;
+package gov.nist.secauto.metaschema.databind.model.info;
+
+import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
+
+import java.io.IOException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IChoiceGroupInstance extends IModelInstance, IModelContainer {
-
+public interface IItemReadHandler {
   /**
-   * Provides the Metaschema model type of "CHOICE".
+   * Parse and return an item.
    *
-   * @return the model type
-   */
-  @Override
-  default ModelType getModelType() {
-    return ModelType.CHOICE_GROUP;
-  }
-
-  @Override
-  default IAssemblyDefinition getOwningDefinition() {
-    return getParentContainer().getOwningDefinition();
-  }
-
-  @Override
-  default String getGroupAsXmlNamespace() {
-    return getContainingModule().getXmlNamespace().toASCIIString();
-  }
-
-  /**
-   * Get the JSON property to use to discriminate between JSON objects.
-   *
-   * @return the discriminator property
+   * @param parent
+   *          the parent Java object to use for serialization callbacks, or
+   *          {@code null} if there is no parent
+   * @param handler
+   *          the item handler
+   * @return the Java object representing the parsed item
+   * @throws IOException
+   *           if an error occurred while parsing
    */
   @NonNull
-  String getJsonDiscriminatorProperty();
+  Object readScalarItem(@Nullable Object parent, @NonNull IFeatureScalarItemValueHandler handler)
+      throws IOException;
 
   /**
-   * Get the name of the JSON key flag associated with each item object.
+   * Parse and return an item.
    *
-   * @return the JSON key flag name or {@code null} if no JSON key is configured
+   * @param parent
+   *          the parent Java object to use for serialization callbacks, or
+   *          {@code null} if there is no parent
+   * @param handler
+   *          the item handler
+   * @return the Java object representing the parsed item
+   * @throws IOException
+   *           if an error occurred while parsing
    */
-  @Nullable
-  String getJsonKeyFlagName();
+  @NonNull
+  Object readComplexItem(@Nullable Object parent, @NonNull IFeatureComplexItemValueHandler handler)
+      throws IOException;
+
+  @NonNull
+  Object readChoiceGroupItem(Object parent, IBoundChoiceGroupInstance instance);
 }

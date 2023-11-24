@@ -23,47 +23,30 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.databind.model.info;
 
-package gov.nist.secauto.metaschema.core.model;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IChoiceGroupInstance extends IModelInstance, IModelContainer {
-
-  /**
-   * Provides the Metaschema model type of "CHOICE".
-   *
-   * @return the model type
-   */
-  @Override
-  default ModelType getModelType() {
-    return ModelType.CHOICE_GROUP;
+public interface IModelInstanceWriteHandler {
+  default void writeSingleton(@NonNull Object item) throws IOException {
+    writeItem(item);
   }
 
-  @Override
-  default IAssemblyDefinition getOwningDefinition() {
-    return getParentContainer().getOwningDefinition();
-  }
+  void writeList(@NonNull List<?> items) throws IOException;
 
-  @Override
-  default String getGroupAsXmlNamespace() {
-    return getContainingModule().getXmlNamespace().toASCIIString();
-  }
+  void writeMap(@NonNull Map<String, ?> items) throws IOException;
 
   /**
-   * Get the JSON property to use to discriminate between JSON objects.
+   * Write the next item in the collection of items represented by the instance.
    *
-   * @return the discriminator property
+   * @param item
+   *          the item Java object to write
+   * @throws IOException
+   *           if an error occurred while parsing the input
    */
-  @NonNull
-  String getJsonDiscriminatorProperty();
-
-  /**
-   * Get the name of the JSON key flag associated with each item object.
-   *
-   * @return the JSON key flag name or {@code null} if no JSON key is configured
-   */
-  @Nullable
-  String getJsonKeyFlagName();
+  void writeItem(@NonNull Object item) throws IOException;
 }

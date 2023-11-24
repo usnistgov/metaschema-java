@@ -33,8 +33,6 @@ import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
@@ -44,11 +42,14 @@ import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.IGroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -216,20 +217,32 @@ public class ChoiceGroupInstance
 
   @Override
   public IBoundFlagInstance getItemJsonKey(Object item) {
-    // TODO Auto-generated method stub
-    return null;
+    String jsonKeyFlagName = getJsonKeyFlagName();
+    IBoundFlagInstance retval = null;
+
+    if (jsonKeyFlagName != null) {
+      Class<?> clazz = item.getClass();
+
+      IClassBinding classBinding = ObjectUtils.requireNonNull(getBindingContext().getClassBinding(clazz));
+      retval = classBinding.getFlagInstanceByName(jsonKeyFlagName);
+    }
+    return retval;
   }
 
   @Override
   public boolean isUnwrappedValueAllowedInXml() {
-    // TODO Auto-generated method stub
+    // choice group instances must always be wrapped
     return false;
   }
 
   @Override
-  public Object readItem(Object parent, IJsonParsingContext context) throws IOException {
-    // TODO Auto-generated method stub
-    return this;
+  public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+    return handler.readChoiceGroupItem(parent, this);
+  }
+
+  @Override
+  public void writeItem(Object item, IItemWriteHandler handler) throws IOException {
+    handler.writeChoiceGroupItem(item, this);
   }
 
   @Override
@@ -237,12 +250,6 @@ public class ChoiceGroupInstance
       throws IOException, XMLStreamException {
     // TODO Auto-generated method stub
     return this;
-  }
-
-  @Override
-  public void writeItem(Object item, IJsonWritingContext context, IBoundFlagInstance jsonKey) throws IOException {
-    // TODO Auto-generated method stub
-
   }
 
   @Override

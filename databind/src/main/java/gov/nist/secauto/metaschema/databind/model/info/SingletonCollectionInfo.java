@@ -74,12 +74,12 @@ class SingletonCollectionInfo
   }
 
   @Override
-  public Object readItems(IModelInstanceCollectionInfo.IReadHandler handler) throws IOException {
+  public Object readItems(IModelInstanceReadHandler handler) throws IOException {
     return handler.readSingleton();
   }
 
   @Override
-  public void writeItems(IModelInstanceCollectionInfo.IWriteHandler handler, Object value) throws IOException {
+  public void writeItems(IModelInstanceWriteHandler handler, Object value) throws IOException {
     handler.writeSingleton(value);
   }
 }

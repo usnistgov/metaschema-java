@@ -26,31 +26,13 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-
-import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.databind.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.databind.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundJavaProperty;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -70,137 +52,22 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
   }
 
   @Override
+  default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+    return handler.readComplexItem(parent, this);
+  }
+
+  @Override
+  default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
+    handler.writeComplexItem(item, this);
+  }
+
+  @Override
   default Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
     return getClassBinding().deepCopyItem(item, parentInstance);
   }
 
-  /**
-   * Generates a mapping of property names to associated Module instances.
-   * <p>
-   * If {@code requiresJsonKey} is {@code true} then the instance used as the JSON
-   * key is not included in the mapping.
-   * <p>
-   * If the {@code targetDefinition} is an instance of {@link IFieldDefinition}
-   * and a JSON value key property is configured, then the value key flag and
-   * value are also omitted from the mapping. Otherwise, the value is included in
-   * the mapping.
-   *
-   * @param jsonKey
-   *          the flag instance used as the JSON key, or {@code null} otherwise
-   * @return a mapping of JSON property to related Module instance
-   */
-  @NonNull
-  default Map<String, ? extends IBoundJavaProperty> getJsonInstanceMap(@Nullable IBoundFlagInstance jsonKey) {
-    IClassBinding targetDefinition = getClassBinding();
-
-    Collection<? extends IBoundFlagInstance> flags = targetDefinition.getFlagInstances();
-    int flagCount = flags.size() - (jsonKey == null ? 0 : 1);
-
-    @SuppressWarnings("resource") Stream<? extends IBoundJavaProperty> instanceStream;
-    if (targetDefinition instanceof IAssemblyClassBinding) {
-      // use all child instances
-      instanceStream = ((IAssemblyClassBinding) targetDefinition).getModelInstances().stream();
-    } else if (targetDefinition instanceof IFieldClassBinding) {
-      IFieldClassBinding targetFieldDefinition = (IFieldClassBinding) targetDefinition;
-
-      IBoundFlagInstance jsonValueKeyFlag = targetFieldDefinition.getJsonValueKeyFlagInstance();
-      if (jsonValueKeyFlag == null && flagCount > 0) {
-        // the field value is handled as named field
-        IBoundFieldValueInstance fieldValue = targetFieldDefinition.getFieldValueInstance();
-        instanceStream = Stream.of(fieldValue);
-      } else {
-        // only the value, with no flags or a JSON value key flag
-        instanceStream = Stream.empty();
-      }
-    } else {
-      throw new UnsupportedOperationException(
-          String.format("Unsupported class binding type: %s", targetDefinition.getClass().getName()));
-    }
-
-    if (jsonKey != null) {
-      instanceStream = Stream.concat(
-          flags.stream().filter((flag) -> !jsonKey.equals(flag)),
-          instanceStream);
-    } else {
-      instanceStream = Stream.concat(
-          flags.stream(),
-          instanceStream);
-    }
-    return ObjectUtils.notNull(instanceStream.collect(
-        Collectors.toUnmodifiableMap(
-            IBoundJavaProperty::getJsonName,
-            Function.identity())));
-  }
-
   @Nullable
   IBoundFlagInstance getJsonKey();
-
-  @SuppressWarnings({
-      "resource", // not owned
-      "PMD.NPathComplexity", "PMD.CyclomaticComplexity" // ok
-  })
-  @Override
-  default Object readItem(Object parent, IJsonParsingContext context)
-      throws IOException {
-    JsonParser parser = context.getReader(); // NOPMD - intentional
-    boolean objectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
-    if (objectWrapper) {
-      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-    }
-
-    IClassBinding definition = getClassBinding();
-    Object targetObject;
-    try {
-      targetObject = definition.newInstance();
-      definition.callBeforeDeserialize(targetObject, parent);
-    } catch (BindingException ex) {
-      throw new IOException(ex);
-    }
-
-    IBoundFlagInstance jsonKey = getJsonKey();
-    boolean keyObjectWrapper = false;
-    if (jsonKey != null) {
-      // the field will be the JSON key
-      String key = ObjectUtils.notNull(parser.getCurrentName());
-
-      Object value = jsonKey.getDefinition().getJavaTypeAdapter().parse(key);
-      jsonKey.setValue(targetObject, value.toString());
-
-      // advance past the FIELD_NAME
-      JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
-
-      keyObjectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
-      if (keyObjectWrapper) {
-        JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-      }
-    }
-
-    if (keyObjectWrapper || JsonToken.FIELD_NAME.equals(parser.currentToken())) {
-      context.readDefinitionValue(definition, targetObject, getJsonInstanceMap(jsonKey));
-    } else if (parser.currentToken().isScalarValue()) {
-      // REFACTOR: need to figure out why this special case exists
-      // this is just a value
-      IFieldClassBinding fieldDefinition = (IFieldClassBinding) definition;
-      Object fieldValue = fieldDefinition.getJavaTypeAdapter().parse(parser);
-      fieldDefinition.getFieldValueInstance().setValue(targetObject, fieldValue);
-    }
-
-    try {
-      definition.callAfterDeserialize(targetObject, parent);
-    } catch (BindingException ex) {
-      throw new IOException(ex);
-    }
-
-    if (keyObjectWrapper) {
-      // advance past the END_OBJECT for the JSON key
-      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
-    }
-
-    if (objectWrapper) {
-      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
-    }
-    return ObjectUtils.asType(targetObject);
-  }
 
   @Override
   default Object readItem(Object parent, StartElement start, IXmlParsingContext context)
@@ -212,37 +79,5 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
   default void writeItem(Object item, QName currentParentName, IXmlWritingContext context)
       throws IOException, XMLStreamException {
     context.writeDefinitionValue(getClassBinding(), item, currentParentName);
-  }
-
-  @SuppressWarnings("resource") // not owned
-  @Override
-  default void writeItem(Object item, IJsonWritingContext context, IBoundFlagInstance jsonKey) throws IOException {
-    JsonGenerator writer = context.getWriter();
-
-    writer.writeStartObject();
-
-    IClassBinding definition = getClassBinding();
-    if (jsonKey != null) {
-      // the field will be the JSON key
-      String key = jsonKey.toStringFromItem(item);
-      if (key == null) {
-        throw new IOException(new NullPointerException("Null key value"));
-      }
-      writer.writeFieldName(key);
-
-      // next the value will be a start object
-      writer.writeStartObject();
-    }
-
-    context.writeDefinitionValue(
-        definition,
-        item,
-        getJsonInstanceMap(jsonKey));
-
-    if (jsonKey != null) {
-      writer.writeEndObject();
-    }
-
-    writer.writeEndObject();
   }
 }

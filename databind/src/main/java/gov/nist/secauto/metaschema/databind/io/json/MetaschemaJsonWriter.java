@@ -29,7 +29,9 @@ package gov.nist.secauto.metaschema.databind.io.json;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundJavaProperty;
@@ -38,6 +40,9 @@ import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceWriteHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import org.apache.logging.log4j.LogManager;
@@ -49,7 +54,7 @@ import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class MetaschemaJsonWriter implements IJsonWritingContext {
+public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHandler {
   private static final Logger LOGGER = LogManager.getLogger(MetaschemaJsonWriter.class);
 
   @NonNull
@@ -96,7 +101,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
 
     writer.writeFieldName(targetDefinition.getRootJsonName());
 
-    targetDefinition.writeItem(targetObject, this, null);
+    targetDefinition.writeItem(targetObject, this);
 
     // end of root object
     writer.writeEndObject();
@@ -244,6 +249,50 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
     }
   }
 
+  @SuppressWarnings("resource") // not owned
+  @Override
+  public void writeScalarItem(Object item, IFeatureScalarItemValueHandler handler) throws IOException {
+    handler.getJavaTypeAdapter().writeJsonValue(ObjectUtils.requireNonNull(item), getWriter());
+  }
+
+  @SuppressWarnings("resource") // not owned
+  @Override
+  public void writeComplexItem(Object item, IFeatureComplexItemValueHandler handler) throws IOException {
+    JsonGenerator writer = getWriter();
+
+    writer.writeStartObject();
+
+    IClassBinding definition = handler.getClassBinding();
+    IBoundFlagInstance jsonKey = handler.getJsonKey();
+    if (jsonKey != null) {
+      // the field will be the JSON key
+      String key = jsonKey.toStringFromItem(item);
+      if (key == null) {
+        throw new IOException(new NullPointerException("Null key value"));
+      }
+      writer.writeFieldName(key);
+
+      // next the value will be a start object
+      writer.writeStartObject();
+    }
+
+    writeDefinitionValue(
+        definition,
+        item,
+        MetaschemaJsonUtil.getJsonInstanceMap(definition, jsonKey));
+
+    if (jsonKey != null) {
+      writer.writeEndObject();
+    }
+
+    writer.writeEndObject();
+  }
+
+  @Override
+  public void writeChoiceGroupItem(Object item, IBoundChoiceGroupInstance instance) {
+    throw new UnsupportedOperationException("implement");
+  }
+
   private class ModelInstanceWriteHandler
       extends AbstractModelInstanceWriteHandler {
     public ModelInstanceWriteHandler(
@@ -277,7 +326,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
     @Override
     public void writeItem(Object item) throws IOException {
       IBoundModelInstance instance = getCollectionInfo().getInstance();
-      instance.writeItem(item, MetaschemaJsonWriter.this, instance.getItemJsonKey(item));
+      instance.writeItem(item, MetaschemaJsonWriter.this);
     }
   }
 }

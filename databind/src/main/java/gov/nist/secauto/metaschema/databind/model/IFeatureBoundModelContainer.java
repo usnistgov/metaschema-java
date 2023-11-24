@@ -24,46 +24,20 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model;
+package gov.nist.secauto.metaschema.databind.model;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureModelContainer;
 
-public interface IChoiceGroupInstance extends IModelInstance, IModelContainer {
-
-  /**
-   * Provides the Metaschema model type of "CHOICE".
-   *
-   * @return the model type
-   */
+public interface IFeatureBoundModelContainer
+    extends IBinding,
+    IFeatureModelContainer<
+        IBoundModelInstance,
+        IBoundNamedModelInstance,
+        IBoundFieldInstance,
+        IBoundAssemblyInstance,
+        IChoiceInstance,
+        IBoundChoiceGroupInstance> {
   @Override
-  default ModelType getModelType() {
-    return ModelType.CHOICE_GROUP;
-  }
-
-  @Override
-  default IAssemblyDefinition getOwningDefinition() {
-    return getParentContainer().getOwningDefinition();
-  }
-
-  @Override
-  default String getGroupAsXmlNamespace() {
-    return getContainingModule().getXmlNamespace().toASCIIString();
-  }
-
-  /**
-   * Get the JSON property to use to discriminate between JSON objects.
-   *
-   * @return the discriminator property
-   */
-  @NonNull
-  String getJsonDiscriminatorProperty();
-
-  /**
-   * Get the name of the JSON key flag associated with each item object.
-   *
-   * @return the JSON key flag name or {@code null} if no JSON key is configured
-   */
-  @Nullable
-  String getJsonKeyFlagName();
+  IAssemblyClassBinding getOwningDefinition();
 }

@@ -87,5 +87,6 @@ public interface IBoundModelInstance extends IModelInstance, IBoundJavaProperty,
   @NonNull
   Collection<? extends Object> getItemValues(Object value);
 
+  // REFACTOR: Is this needed? Can we get the JSON key from the instance?
   IBoundFlagInstance getItemJsonKey(@NonNull Object item);
 }

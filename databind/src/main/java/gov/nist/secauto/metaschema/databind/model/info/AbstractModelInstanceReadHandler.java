@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.databind.model.info;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractModelInstanceReadHandler implements IModelInstanceCollectionInfo.IReadHandler {
+public abstract class AbstractModelInstanceReadHandler implements IModelInstanceReadHandler {
   @NonNull
   private final IModelInstanceCollectionInfo collectionInfo;
   @NonNull

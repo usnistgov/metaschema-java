@@ -35,7 +35,7 @@ import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractModelInstanceWriteHandler implements IModelInstanceCollectionInfo.IWriteHandler {
+public abstract class AbstractModelInstanceWriteHandler implements IModelInstanceWriteHandler {
   @NonNull
   private final IModelInstanceCollectionInfo collectionInfo;
 

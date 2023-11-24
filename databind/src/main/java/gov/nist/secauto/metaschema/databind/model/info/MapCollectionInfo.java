@@ -103,14 +103,14 @@ class MapCollectionInfo
   }
 
   @Override
-  public Map<String, ?> readItems(IModelInstanceCollectionInfo.IReadHandler handler) throws IOException {
+  public Map<String, ?> readItems(IModelInstanceReadHandler handler) throws IOException {
     return handler.readMap();
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public void writeItems(
-      IModelInstanceCollectionInfo.IWriteHandler handler,
+      IModelInstanceWriteHandler handler,
       Object value) throws IOException {
     handler.writeMap((Map<String, ?>) value);
   }

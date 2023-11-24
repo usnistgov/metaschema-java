@@ -167,52 +167,9 @@ public interface IModelInstanceCollectionInfo {
    *           if there was an error when reading the data
    */
   @Nullable
-  Object readItems(@NonNull IReadHandler handler) throws IOException;
+  Object readItems(@NonNull IModelInstanceReadHandler handler) throws IOException;
 
   <T> void writeItems(
-      @NonNull IWriteHandler handler,
+      @NonNull IModelInstanceWriteHandler handler,
       @NonNull Object value) throws IOException;
-
-  public interface IReadHandler {
-    @Nullable
-    default Object readSingleton() throws IOException {
-      return readItem();
-    }
-
-    @NonNull
-    List<?> readList() throws IOException;
-
-    @NonNull
-    Map<String, ?> readMap() throws IOException;
-
-    /**
-     * Read the next item in the collection of items represented by the instance.
-     *
-     * @return the Java object representing the item, or {@code null} if no items
-     *         remain to be read
-     * @throws IOException
-     *           if an error occurred while parsing the input
-     */
-    Object readItem() throws IOException;
-  }
-
-  public interface IWriteHandler {
-    default void writeSingleton(@NonNull Object item) throws IOException {
-      writeItem(item);
-    }
-
-    void writeList(@NonNull List<?> items) throws IOException;
-
-    void writeMap(@NonNull Map<String, ?> items) throws IOException;
-
-    /**
-     * Write the next item in the collection of items represented by the instance.
-     *
-     * @param item
-     *          the item Java object to write
-     * @throws IOException
-     *           if an error occurred while parsing the input
-     */
-    void writeItem(@NonNull Object item) throws IOException;
-  }
 }
