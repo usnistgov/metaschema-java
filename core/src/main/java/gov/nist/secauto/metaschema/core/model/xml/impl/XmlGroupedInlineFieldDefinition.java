@@ -186,16 +186,7 @@ public class XmlGroupedInlineFieldDefinition
 
   @Override
   public String getJsonValueKeyName() {
-    String retval = null;
-
-    if (getXmlObject().isSetJsonValueKey()) {
-      retval = getXmlObject().getJsonValueKey();
-    }
-
-    if (retval == null || retval.isEmpty()) {
-      retval = getJavaTypeAdapter().getDefaultJsonValueKey();
-    }
-    return retval;
+    return getXmlObject().getJsonValueKey();
   }
 
   // -------------------------------------

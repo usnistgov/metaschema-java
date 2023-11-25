@@ -50,7 +50,7 @@ public class UseName {
       valueKeyName = "name",
       typeAdapter = TokenAdapter.class
   )
-  private String _value;
+  private String _name;
 
   /**
    * "Used for binary formats instead of the textual name."
@@ -66,12 +66,12 @@ public class UseName {
   public UseName() {
   }
 
-  public String getValue() {
-    return _value;
+  public String getName() {
+    return _name;
   }
 
-  public void setValue(String value) {
-    _value = value;
+  public void setName(String value) {
+    _name = value;
   }
 
   public BigInteger getIndex() {

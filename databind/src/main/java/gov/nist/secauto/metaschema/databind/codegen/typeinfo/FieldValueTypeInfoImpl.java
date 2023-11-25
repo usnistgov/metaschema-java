@@ -52,7 +52,8 @@ class FieldValueTypeInfoImpl
 
   @Override
   public String getBaseName() {
-    return "value";
+    String valueKeyName = getParentDefinitionTypeInfo().getDefinition().getJsonValueKeyName();
+    return valueKeyName == null ? "value" : valueKeyName;
   }
 
   @SuppressWarnings("null")
@@ -72,7 +73,7 @@ class FieldValueTypeInfoImpl
 
     // a field object always has a single value
     if (!definition.hasJsonValueKeyFlagInstance()) {
-      fieldValue.addMember("valueKeyName", "$S", definition.getJsonValueKeyName());
+      fieldValue.addMember("valueKeyName", "$S", definition.getEffectiveJsonValueKeyName());
     } // else do nothing, the annotation will be on the flag
 
     if (!MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType)) {

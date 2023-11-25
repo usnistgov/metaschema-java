@@ -30,7 +30,6 @@ import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
 import gov.nist.secauto.metaschema.databind.model.impl.BoundGroupedComplexFieldInstance;
-import gov.nist.secauto.metaschema.databind.model.impl.BoundGroupedSimpleFieldInstance;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -40,11 +39,16 @@ public interface IBoundGroupedFieldInstance extends IBoundGroupedNamedModelInsta
       @NonNull BoundGroupedField annotation,
       @NonNull IBoundChoiceGroupInstance container) {
     IBindingContext bindingContext = container.getBindingContext();
-    IClassBinding classBinding = bindingContext.getClassBinding(annotation.binding());
-
-    return classBinding == null
-        ? new BoundGroupedSimpleFieldInstance(annotation, container)
-        : new BoundGroupedComplexFieldInstance(annotation, (IFieldClassBinding) classBinding, container);
+    Class<?> itemType = annotation.binding();
+    IClassBinding classBinding = bindingContext.getClassBinding(itemType);
+    if (classBinding == null) {
+      throw new IllegalStateException(String.format("Class '%s' is not bound.", itemType.getName()));
+    } else if (!(classBinding instanceof IFieldClassBinding)) {
+      throw new IllegalStateException(String.format("Class '%s' is not a derivative of '%s'.",
+          itemType.getName(),
+          IFieldClassBinding.class.getName()));
+    }
+    return new BoundGroupedComplexFieldInstance(annotation, (IFieldClassBinding) classBinding, container);
   }
 
   @Override

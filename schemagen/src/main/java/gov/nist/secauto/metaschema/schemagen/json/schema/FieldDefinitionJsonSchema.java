@@ -120,7 +120,7 @@ public class FieldDefinitionJsonSchema
 
     IFieldDefinition definition = getDefinition();
 
-    String propertyName = definition.getJsonValueKeyName();
+    String propertyName = definition.getEffectiveJsonValueKeyName();
 
     ObjectNode propertyObject = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
     state.getDataTypeSchemaForDefinition(definition).generateSchemaOrRef(state, propertyObject);

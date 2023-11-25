@@ -54,7 +54,7 @@ public class Remarks {
       valueKeyName = "remark",
       typeAdapter = MarkupMultilineAdapter.class
   )
-  private MarkupMultiline _value;
+  private MarkupMultiline _remark;
 
   /**
    * "Mark as &lsquo;XML&rsquo; for XML-only or &lsquo;JSON&rsquo; for JSON-only remarks."
@@ -72,12 +72,12 @@ public class Remarks {
   public Remarks() {
   }
 
-  public MarkupMultiline getValue() {
-    return _value;
+  public MarkupMultiline getRemark() {
+    return _remark;
   }
 
-  public void setValue(MarkupMultiline value) {
-    _value = value;
+  public void setRemark(MarkupMultiline value) {
+    _remark = value;
   }
 
   public String getClazz() {

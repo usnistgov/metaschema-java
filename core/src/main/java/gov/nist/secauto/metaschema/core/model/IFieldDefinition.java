@@ -48,7 +48,7 @@ public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IFi
   default Object getJsonValueKey() {
     Object retval = getJsonValueKeyFlagInstance();
     if (retval == null) {
-      retval = getJsonValueKeyName();
+      retval = getEffectiveJsonValueKeyName();
     }
     return retval;
   }
@@ -78,8 +78,23 @@ public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IFi
    *
    * @return the value key label
    */
-  @NonNull
+  @Nullable
   String getJsonValueKeyName();
+
+  /**
+   * Retrieves the configured static label to use as the value key, or the type
+   * specific name if a label is not configured.
+   *
+   * @return the value key label
+   */
+  @NonNull
+  default String getEffectiveJsonValueKeyName() {
+    String retval = getJsonValueKeyName();
+    if (retval == null || retval.isEmpty()) {
+      retval = getJavaTypeAdapter().getDefaultJsonValueKey();
+    }
+    return retval;
+  }
 
   /**
    * Get the value of the field's value from the field item object.

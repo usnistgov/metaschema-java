@@ -46,7 +46,7 @@ public class ConstraintValueEnum {
       valueKeyName = "remark",
       typeAdapter = MarkupLineAdapter.class
   )
-  private MarkupLine _value;
+  private MarkupLine _remark;
 
   @BoundFlag(
       formalName = "Allowed Value Enumeration Value",
@@ -54,25 +54,40 @@ public class ConstraintValueEnum {
       required = true,
       typeAdapter = StringAdapter.class
   )
-  private String _value1;
+  private String _value;
+
+  @BoundFlag(
+      formalName = "Allowed Value Deprecation Version",
+      useName = "deprecated",
+      typeAdapter = StringAdapter.class
+  )
+  private String _deprecated;
 
   public ConstraintValueEnum() {
   }
 
-  public MarkupLine getValue() {
+  public MarkupLine getRemark() {
+    return _remark;
+  }
+
+  public void setRemark(MarkupLine value) {
+    _remark = value;
+  }
+
+  public String getValue() {
     return _value;
   }
 
-  public void setValue(MarkupLine value) {
+  public void setValue(String value) {
     _value = value;
   }
 
-  public String getValue1() {
-    return _value1;
+  public String getDeprecated() {
+    return _deprecated;
   }
 
-  public void setValue1(String value) {
-    _value1 = value;
+  public void setDeprecated(String value) {
+    _deprecated = value;
   }
 
   @Override
