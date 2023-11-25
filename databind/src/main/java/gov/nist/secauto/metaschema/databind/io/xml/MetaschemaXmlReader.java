@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundGroupedNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
@@ -565,7 +566,7 @@ public class MetaschemaXmlReader
 
     @Override
     public Object readChoiceGroupItem(Object parent, IBoundChoiceGroupInstance instance) throws IOException {
-      Map<QName, IBoundNamedModelInstance> qnameToInstanceMap = instance.getQNameToInstanceMap();
+      Map<QName, IBoundGroupedNamedModelInstance> qnameToInstanceMap = instance.getQNameToInstanceMap();
 
       try {
         XMLEventReader2 eventReader = getReader();

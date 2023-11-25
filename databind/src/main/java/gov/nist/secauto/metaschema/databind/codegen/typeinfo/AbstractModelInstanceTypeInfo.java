@@ -41,6 +41,7 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,7 +65,8 @@ abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance, PA
   public @NonNull TypeName getJavaFieldType() {
     TypeName item = getJavaItemType();
 
-    @NonNull TypeName retval;
+    @NonNull
+    TypeName retval;
     IModelInstance instance = getInstance();
     int maxOccurance = instance.getMaxOccurs();
     if (maxOccurance == -1 || maxOccurance > 1) {
@@ -86,9 +88,11 @@ abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance, PA
 
   @Override
   public Set<IFlagContainer> buildField(FieldSpec.Builder builder) {
-    Set<IFlagContainer> retval = super.buildField(builder);
+    Set<IFlagContainer> retval = new HashSet<>(super.buildField(builder));
 
-    AnnotationSpec.Builder annotation = buildBindingAnnotation();
+    AnnotationSpec.Builder annotation = newBindingAnnotation();
+
+    retval.addAll(buildBindingAnnotation(annotation));
 
     builder.addAnnotation(annotation.build());
 

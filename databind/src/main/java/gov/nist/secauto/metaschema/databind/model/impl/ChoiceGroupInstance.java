@@ -27,20 +27,15 @@
 package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundGroupedNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
@@ -71,7 +66,9 @@ public class ChoiceGroupInstance
   @NonNull
   private final Lazy<ChoiceGroupModelContainerSupport> modelContainer;
   @NonNull
-  private final Lazy<Map<QName, IBoundNamedModelInstance>> qnameToInstanceMap;
+  private final Lazy<Map<Class<?>, IBoundGroupedNamedModelInstance>> classToInstanceMap;
+  @NonNull
+  private final Lazy<Map<QName, IBoundGroupedNamedModelInstance>> qnameToInstanceMap;
 
   public ChoiceGroupInstance(
       @NonNull Field field,
@@ -110,27 +107,32 @@ public class ChoiceGroupInstance
         annotation.assemblies(),
         annotation.fields(),
         this)));
+    this.classToInstanceMap = ObjectUtils.notNull(Lazy.lazy(() -> Collections.unmodifiableMap(
+        getModelInstances().stream()
+            .collect(CustomCollectors.toMap(item -> item.getDefinition().getBoundClass(), CustomCollectors.identity(),
+                (key, vOld, vNew) -> vNew)))));
     this.qnameToInstanceMap = ObjectUtils.notNull(Lazy.lazy(() -> Collections.unmodifiableMap(
-        getNamedModelInstances().stream()
+        getModelInstances().stream()
             .collect(CustomCollectors.toMap(item -> item.getXmlQName(), CustomCollectors.identity(),
                 (key, vOld, vNew) -> vNew)))));
+
   }
 
   @SuppressWarnings("null")
   @Override
-  public Map<QName, IBoundNamedModelInstance> getQNameToInstanceMap() {
+  public Map<QName, IBoundGroupedNamedModelInstance> getQNameToInstanceMap() {
     return qnameToInstanceMap.get();
   }
 
   @SuppressWarnings("null")
   @Override
-  public IModelContainerSupport<
-      IBoundModelInstance,
-      IBoundNamedModelInstance,
-      IBoundFieldInstance,
-      IBoundAssemblyInstance,
-      IChoiceInstance,
-      IBoundChoiceGroupInstance> getModelContainer() {
+  public Map<Class<?>, IBoundGroupedNamedModelInstance> getClassToInstanceMap() {
+    return classToInstanceMap.get();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public ChoiceGroupModelContainerSupport getModelContainer() {
     return modelContainer.get();
   }
 
@@ -220,11 +222,6 @@ public class ChoiceGroupInstance
   }
 
   @Override
-  public IClassBinding getItemInstance(Object item) {
-    return ObjectUtils.requireNonNull(getBindingContext().getClassBinding(item.getClass()));
-  }
-
-  @Override
   public IBoundFlagInstance getItemJsonKey(Object item) {
     String jsonKeyFlagName = getJsonKeyFlagName();
     IBoundFlagInstance retval = null;
@@ -245,7 +242,8 @@ public class ChoiceGroupInstance
 
   @Override
   public void writeItem(Object item, IItemWriteHandler handler) throws IOException {
-    handler.writeChoiceGroupItem(item, this);
+    IBoundGroupedNamedModelInstance itemInstance = getItemInstance(item);
+    handler.writeChoiceGroupItem(item, this, itemInstance);
   }
 
   @Override

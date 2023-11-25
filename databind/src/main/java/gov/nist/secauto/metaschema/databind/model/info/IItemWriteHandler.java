@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundGroupedNamedModelInstance;
 
 import java.io.IOException;
 
@@ -59,5 +60,8 @@ public interface IItemWriteHandler {
   void writeComplexItem(@NonNull Object item, @NonNull IFeatureComplexItemValueHandler handler)
       throws IOException;
 
-  void writeChoiceGroupItem(@NonNull Object item, @NonNull IBoundChoiceGroupInstance instance) throws IOException;
+  void writeChoiceGroupItem(
+      @NonNull Object item,
+      @NonNull IBoundChoiceGroupInstance instance,
+      @NonNull IBoundGroupedNamedModelInstance itemInstance) throws IOException;
 }

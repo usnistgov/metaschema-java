@@ -54,7 +54,7 @@ public interface IFeatureModelContainer<
 
   @SuppressWarnings("null")
   @Override
-  default Collection<? extends NMI> getNamedModelInstances() {
+  default Collection<NMI> getNamedModelInstances() {
     return getModelContainer().getNamedModelInstanceMap().values();
   }
 
@@ -65,7 +65,7 @@ public interface IFeatureModelContainer<
 
   @SuppressWarnings("null")
   @Override
-  default Collection<? extends FI> getFieldInstances() {
+  default Collection<FI> getFieldInstances() {
     return getModelContainer().getFieldInstanceMap().values();
   }
 
@@ -76,22 +76,22 @@ public interface IFeatureModelContainer<
 
   @SuppressWarnings("null")
   @Override
-  default Collection<? extends AI> getAssemblyInstances() {
+  default Collection<AI> getAssemblyInstances() {
     return getModelContainer().getAssemblyInstanceMap().values();
   }
 
   @Override
-  default List<? extends CI> getChoiceInstances() {
+  default List<CI> getChoiceInstances() {
     return getModelContainer().getChoiceInstances();
   }
 
   @Override
-  default List<? extends CG> getChoiceGroupInstances() {
+  default List<CG> getChoiceGroupInstances() {
     return getModelContainer().getChoiceGroupInstances();
   }
 
   @Override
-  default Collection<? extends MI> getModelInstances() {
+  default Collection<MI> getModelInstances() {
     return getModelContainer().getModelInstances();
   }
 }

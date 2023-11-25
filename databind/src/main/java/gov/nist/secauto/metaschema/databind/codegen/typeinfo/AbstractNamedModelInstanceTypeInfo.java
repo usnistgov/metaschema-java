@@ -135,7 +135,6 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
     if (remarks != null) {
       annotation.addMember("remarks", "$S", remarks.toMarkdown());
     }
-
   }
 
   @Override
@@ -150,8 +149,7 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
   }
 
   @Override
-  public AnnotationSpec.Builder buildBindingAnnotation() {
-    AnnotationSpec.Builder annotation = newBindingAnnotation();
+  public Set<IFlagContainer> buildBindingAnnotation(AnnotationSpec.Builder annotation) {
 
     buildBindingAnnotationCommon(annotation);
 
@@ -171,7 +169,7 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
       annotation.addMember("groupAs", "$L", generateGroupAsAnnotation().build());
     }
 
-    return annotation;
+    return CollectionUtil.emptySet();
   }
 
   @Override

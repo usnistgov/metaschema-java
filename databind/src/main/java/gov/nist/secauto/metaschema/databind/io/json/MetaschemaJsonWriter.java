@@ -45,9 +45,6 @@ import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHa
 import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -56,8 +53,6 @@ import java.util.Map;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHandler {
-  private static final Logger LOGGER = LogManager.getLogger(MetaschemaJsonWriter.class);
-
   @NonNull
   private final JsonGenerator writer;
 
@@ -113,15 +108,6 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
       IClassBinding targetDefinition,
       Object targetObject,
       Map<String, ? extends IBoundInstance> instances) throws IOException {
-    if (targetDefinition instanceof IBoundGroupedNamedModelInstance) {
-      IBoundGroupedNamedModelInstance groupedInstance = (IBoundGroupedNamedModelInstance) targetDefinition;
-
-      String discriminatorProperty = groupedInstance.getParentContainer().getJsonDiscriminatorProperty();
-      String discriminatorValue = groupedInstance.getEffectiveDisciminatorValue();
-
-      writer.writeStringField(discriminatorProperty, discriminatorValue);
-    }
-
     for (IBoundInstance instance : instances.values()) {
       assert instance != null;
       writeInstance(instance, targetObject);
@@ -280,19 +266,8 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
 
     writer.writeStartObject();
 
+    IBoundFlagInstance jsonKey = handleJsonKey(item, handler);
     IClassBinding definition = handler.getClassBinding();
-    IBoundFlagInstance jsonKey = handler.getJsonKey();
-    if (jsonKey != null) {
-      // the field will be the JSON key
-      String key = jsonKey.toStringFromItem(item);
-      if (key == null) {
-        throw new IOException(new NullPointerException("Null key value"));
-      }
-      writer.writeFieldName(key);
-
-      // next the value will be a start object
-      writer.writeStartObject();
-    }
 
     writeDefinitionValue(
         definition,
@@ -306,10 +281,58 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
     writer.writeEndObject();
   }
 
+  // REFACTOR: combine with writeComplexItem using a common implementation
+  @SuppressWarnings("resource") // not owned
   @Override
-  public void writeChoiceGroupItem(Object item, IBoundChoiceGroupInstance instance) throws IOException {
-    IClassBinding itemInstance = instance.getItemInstance(item);
-    itemInstance.writeItem(item, this);
+  public void writeChoiceGroupItem(
+      Object item,
+      IBoundChoiceGroupInstance instance,
+      IBoundGroupedNamedModelInstance itemInstance) throws IOException {
+
+    JsonGenerator writer = getWriter();
+
+    writer.writeStartObject();
+
+    IBoundFlagInstance jsonKey = handleJsonKey(item, itemInstance);
+
+    IClassBinding definition = itemInstance.getDefinition();
+
+    // write JSON object discriminator
+    String discriminatorProperty = instance.getJsonDiscriminatorProperty();
+    String discriminatorValue = itemInstance.getEffectiveDisciminatorValue();
+
+    writer.writeStringField(discriminatorProperty, discriminatorValue);
+
+    writeDefinitionValue(
+        definition,
+        item,
+        MetaschemaJsonUtil.getJsonInstanceMap(definition, jsonKey));
+
+    if (jsonKey != null) {
+      writer.writeEndObject();
+    }
+
+    writer.writeEndObject();
+  }
+
+  @SuppressWarnings("resource") // not owned
+  private IBoundFlagInstance handleJsonKey(@NonNull Object item, IFeatureComplexItemValueHandler handler)
+      throws IOException {
+    JsonGenerator writer = getWriter();
+
+    IBoundFlagInstance jsonKey = handler.getJsonKey();
+    if (jsonKey != null) {
+      // the field will be the JSON key
+      String key = jsonKey.toStringFromItem(item);
+      if (key == null) {
+        throw new IOException(new NullPointerException("Null key value"));
+      }
+      writer.writeFieldName(key);
+
+      // next the value will be a start object
+      writer.writeStartObject();
+    }
+    return jsonKey;
   }
 
   private class ModelInstanceWriteHandler

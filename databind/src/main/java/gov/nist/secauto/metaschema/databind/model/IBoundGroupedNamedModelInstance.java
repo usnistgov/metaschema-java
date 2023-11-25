@@ -28,9 +28,14 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
 public interface IBoundGroupedNamedModelInstance
-    extends IGroupedNamedModelInstance, IBoundNamedModelInstance {
+    extends IGroupedNamedModelInstance, IBoundNamedModelInstance, IFeatureComplexItemValueHandler {
+
+  @Override
+  IClassBinding getDefinition();
+
   @Override
   IBoundChoiceGroupInstance getParentContainer();
 

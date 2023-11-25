@@ -52,6 +52,5 @@ public interface IBoundGroupedFieldInstance extends IBoundGroupedNamedModelInsta
   }
 
   @Override
-  IBoundFieldDefinition getDefinition();
-
+  IFieldClassBinding getDefinition();
 }

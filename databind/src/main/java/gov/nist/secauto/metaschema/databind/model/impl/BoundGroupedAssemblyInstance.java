@@ -36,12 +36,11 @@ import gov.nist.secauto.metaschema.databind.model.IBoundGroupedAssemblyInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class BoundGroupedAssemblyInstance
-    implements IBoundGroupedAssemblyInstance, IFeatureComplexItemValueHandler {
+    implements IBoundGroupedAssemblyInstance {
   @NonNull
   private final BoundGroupedAssembly annotation;
   @NonNull

@@ -34,11 +34,14 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.impl.AnnotationGenerator;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
+
+import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -72,8 +75,8 @@ public class FieldInstanceTypeInfoImpl
   }
 
   @Override
-  public AnnotationSpec.Builder buildBindingAnnotation() {
-    AnnotationSpec.Builder annotation = super.buildBindingAnnotation();
+  public Set<IFlagContainer> buildBindingAnnotation(AnnotationSpec.Builder annotation) {
+    Set<IFlagContainer> retval = super.buildBindingAnnotation(annotation);
 
     IFieldInstance instance = getInstance();
 
@@ -98,6 +101,6 @@ public class FieldInstanceTypeInfoImpl
     if (definition.isSimple()) {
       AnnotationGenerator.buildValueConstraints(annotation, definition);
     }
-    return annotation;
+    return retval;
   }
 }

@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.impl.ChoiceGroupInstance;
 
 import java.lang.reflect.Field;
@@ -37,7 +38,8 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundChoiceGroupInstance
-    extends IFeatureCollectionModelInstance, IFeatureBoundModelContainer<IBoundModelInstance>, IChoiceGroupInstance {
+    extends IFeatureCollectionModelInstance, IFeatureBoundModelContainer<IBoundGroupedNamedModelInstance>,
+    IChoiceGroupInstance {
   static IFeatureCollectionModelInstance newInstance(
       @NonNull Field field,
       @NonNull IAssemblyClassBinding containingDefinition) {
@@ -47,9 +49,13 @@ public interface IBoundChoiceGroupInstance
   @Override
   IAssemblyClassBinding getOwningDefinition();
 
-  @NonNull
-  Map<QName, IBoundNamedModelInstance> getQNameToInstanceMap();
+  Map<Class<?>, IBoundGroupedNamedModelInstance> getClassToInstanceMap();
 
   @NonNull
-  IClassBinding getItemInstance(Object item);
+  Map<QName, IBoundGroupedNamedModelInstance> getQNameToInstanceMap();
+
+  @NonNull
+  default IBoundGroupedNamedModelInstance getItemInstance(Object item) {
+    return ObjectUtils.requireNonNull(getClassToInstanceMap().get(item.getClass()));
+  }
 }

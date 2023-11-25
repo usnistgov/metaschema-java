@@ -28,7 +28,10 @@ package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.AnnotationSpec;
 
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IModelInstance;
+
+import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -47,5 +50,5 @@ public interface IModelInstanceTypeInfo extends IInstanceTypeInfo {
    * @return a builder for the annotation
    */
   @NonNull
-  AnnotationSpec.Builder buildBindingAnnotation();
+  Set<IFlagContainer> buildBindingAnnotation(@NonNull AnnotationSpec.Builder annotation);
 }

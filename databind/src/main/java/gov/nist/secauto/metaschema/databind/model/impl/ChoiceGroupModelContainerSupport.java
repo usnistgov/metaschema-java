@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundGroupedAssemblyInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundGroupedFieldInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundGroupedNamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
 
@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class ChoiceGroupModelContainerSupport
-    extends AbstractModelContainerSupport<IBoundModelInstance> {
+    extends AbstractModelContainerSupport<IBoundGroupedNamedModelInstance> {
 
   public ChoiceGroupModelContainerSupport(
       @NonNull BoundGroupedAssembly[] assemblies,
@@ -50,12 +50,12 @@ public class ChoiceGroupModelContainerSupport
         Arrays.stream(assemblies)
             .map(instance -> {
               assert instance != null;
-              return (IBoundModelInstance) IBoundGroupedAssemblyInstance.newInstance(instance, container);
+              return IBoundGroupedAssemblyInstance.newInstance(instance, container);
             }),
         Arrays.stream(fields)
             .map(instance -> {
               assert instance != null;
-              return (IBoundModelInstance) IBoundGroupedFieldInstance.newInstance(instance, container);
+              return IBoundGroupedFieldInstance.newInstance(instance, container);
             }))));
   }
 }

@@ -30,13 +30,12 @@ import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+// REFACTOR: combine with abstract parent class
 public class BoundGroupedComplexFieldInstance
-    extends AbstractBoundGroupedFieldInstance
-    implements IFeatureComplexItemValueHandler {
+    extends AbstractBoundGroupedFieldInstance {
   @NonNull
   private final IFieldClassBinding definition;
 

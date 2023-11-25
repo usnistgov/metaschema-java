@@ -32,13 +32,17 @@ import com.squareup.javapoet.TypeName;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
+
+import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -63,29 +67,27 @@ public class ChoiceGroupTypeInfoImpl
   }
 
   @Override
-  public AnnotationSpec.Builder buildBindingAnnotation() {
-    AnnotationSpec.Builder retval = newBindingAnnotation();
-
+  public Set<IFlagContainer> buildBindingAnnotation(AnnotationSpec.Builder annotation) {
     IChoiceGroupInstance choiceGroup = getInstance();
 
     String discriminator = choiceGroup.getJsonDiscriminatorProperty();
     if (!MetaschemaModelConstants.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME.equals(discriminator)) {
-      retval.addMember("discriminator", "$S", discriminator);
+      annotation.addMember("discriminator", "$S", discriminator);
     }
 
     int minOccurs = choiceGroup.getMinOccurs();
     if (minOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
-      retval.addMember("minOccurs", "$L", minOccurs);
+      annotation.addMember("minOccurs", "$L", minOccurs);
     }
 
     int maxOccurs = choiceGroup.getMaxOccurs();
     if (maxOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS) {
-      retval.addMember("maxOccurs", "$L", maxOccurs);
+      annotation.addMember("maxOccurs", "$L", maxOccurs);
     }
 
     String jsonKeyName = choiceGroup.getJsonKeyFlagName();
     if (jsonKeyName != null) {
-      retval.addMember("jsonKey", "$S", jsonKeyName);
+      annotation.addMember("jsonKey", "$S", jsonKeyName);
     }
 
     IAssemblyDefinitionTypeInfo parentTypeInfo = getParentDefinitionTypeInfo();
@@ -94,27 +96,27 @@ public class ChoiceGroupTypeInfoImpl
       assert modelInstance != null;
       INamedModelInstanceTypeInfo instanceTypeInfo = typeResolver.getTypeInfo(modelInstance, parentTypeInfo);
 
-      AnnotationSpec.Builder annotation;
+      AnnotationSpec.Builder memberAnnotation;
       if (modelInstance instanceof IFieldInstance) {
-        annotation = instanceTypeInfo.buildGroupedBindingAnnotation(BoundGroupedField.class);
+        memberAnnotation = instanceTypeInfo.buildGroupedBindingAnnotation(BoundGroupedField.class);
       } else if (modelInstance instanceof IAssemblyInstance) {
-        annotation = instanceTypeInfo.buildGroupedBindingAnnotation(BoundGroupedAssembly.class);
+        memberAnnotation = instanceTypeInfo.buildGroupedBindingAnnotation(BoundGroupedAssembly.class);
       } else {
         throw new UnsupportedOperationException(String.format("Unsuported named model instance type '%s'.",
             instanceTypeInfo.getClass().getName()));
       }
 
       if (modelInstance instanceof IFieldInstance) {
-        retval.addMember("fields", "$L", annotation.build());
+        annotation.addMember("fields", "$L", memberAnnotation.build());
       } else if (modelInstance instanceof IAssemblyInstance) {
-        retval.addMember("assemblies", "$L", annotation.build());
+        annotation.addMember("assemblies", "$L", memberAnnotation.build());
       }
     }
 
     if (maxOccurs == -1 || maxOccurs > 1) {
       // requires a group-as
-      retval.addMember("groupAs", "$L", generateGroupAsAnnotation().build());
+      annotation.addMember("groupAs", "$L", generateGroupAsAnnotation().build());
     }
-    return retval;
+    return CollectionUtil.emptySet();
   }
 }
