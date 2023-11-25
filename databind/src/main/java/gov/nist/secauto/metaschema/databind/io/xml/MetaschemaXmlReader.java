@@ -220,7 +220,9 @@ public class MetaschemaXmlReader
       @NonNull StartElement start) throws IOException, XMLStreamException {
 
     Map<QName, IBoundFlagInstance> flagInstanceMap = targetDefinition.getFlagInstances().stream()
-        .collect(Collectors.toMap(IBoundFlagInstance::getXmlQName, Function.identity()));
+        .collect(Collectors.toMap(
+            IBoundFlagInstance::getXmlQName,
+            Function.identity()));
 
     for (Attribute attribute : CollectionUtil.toIterable(ObjectUtils.notNull(start.getAttributes()))) {
       QName qname = attribute.getName();

@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IClassBinding;
@@ -36,6 +37,7 @@ import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -76,11 +78,13 @@ class FlagContainerSupport implements IFlagContainerSupport<IBoundFlagInstance> 
       intermediate = intermediate.andThen(peeker);
     }
 
-    this.flagInstances = ObjectUtils.notNull(instances
+    this.flagInstances = CollectionUtil.unmodifiableMap(ObjectUtils.notNull(instances
         .peek(intermediate)
-        .collect(Collectors.toUnmodifiableMap(
+        .collect(Collectors.toMap(
             IBoundFlagInstance::getEffectiveName,
-            Function.identity())));
+            Function.identity(),
+            (v1, v2) -> v2,
+            LinkedHashMap::new))));
   }
 
   private void handle(IBoundFlagInstance instance) {

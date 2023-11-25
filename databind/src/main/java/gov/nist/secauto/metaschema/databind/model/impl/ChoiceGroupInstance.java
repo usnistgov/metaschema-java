@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.xml.namespace.QName;
 
@@ -109,12 +110,14 @@ public class ChoiceGroupInstance
         this)));
     this.classToInstanceMap = ObjectUtils.notNull(Lazy.lazy(() -> Collections.unmodifiableMap(
         getModelInstances().stream()
-            .collect(CustomCollectors.toMap(item -> item.getDefinition().getBoundClass(), CustomCollectors.identity(),
-                (key, vOld, vNew) -> vNew)))));
+            .collect(Collectors.toMap(
+                item -> (Class<?>) item.getDefinition().getBoundClass(),
+                CustomCollectors.identity())))));
     this.qnameToInstanceMap = ObjectUtils.notNull(Lazy.lazy(() -> Collections.unmodifiableMap(
         getModelInstances().stream()
-            .collect(CustomCollectors.toMap(item -> item.getXmlQName(), CustomCollectors.identity(),
-                (key, vOld, vNew) -> vNew)))));
+            .collect(Collectors.toMap(
+                item -> item.getXmlQName(),
+                CustomCollectors.identity())))));
 
   }
 

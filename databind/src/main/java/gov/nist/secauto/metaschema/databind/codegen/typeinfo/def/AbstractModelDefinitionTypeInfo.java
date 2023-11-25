@@ -35,6 +35,8 @@ import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IFlagInstanceTypeIn
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -74,12 +76,16 @@ class AbstractModelDefinitionTypeInfo<DEF extends IFlagContainer>
       boolean retval;
       if (flagTypeInfos == null) {
         // create Java properties for the definition's flags
-        flagTypeInfos = getDefinition().getFlagInstances().stream()
+        flagTypeInfos = Collections.unmodifiableMap(getDefinition().getFlagInstances().stream()
             .map(instance -> {
               assert instance != null;
               return newFlagTypeInfo(instance);
             })
-            .collect(Collectors.toUnmodifiableMap(IFlagInstanceTypeInfo::getPropertyName, Function.identity()));
+            .collect(Collectors.toMap(
+                IFlagInstanceTypeInfo::getPropertyName,
+                Function.identity(),
+                (v1, v2) -> v2,
+                LinkedHashMap::new)));
         retval = true;
       } else {
         retval = false;
