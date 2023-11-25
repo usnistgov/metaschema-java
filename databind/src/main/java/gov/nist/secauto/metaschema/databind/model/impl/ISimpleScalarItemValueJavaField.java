@@ -24,24 +24,22 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.impl;
 
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-import java.lang.Override;
-import java.lang.String;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import gov.nist.secauto.metaschema.databind.model.IFeatureJavaField;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
 
-@MetaschemaAssembly(
-    formalName = "Any Additional Content",
-    name = "any",
-    moduleClass = MetaschemaModule.class)
-public class Any {
-  public Any() {
+// Needed to combine the value operations of both extended interfaces
+// This is due to compiler errors based on https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.12.3
+public interface ISimpleScalarItemValueJavaField extends IFeatureScalarItemValueHandler, IFeatureJavaField {
+
+  @Override
+  default Object getValue(Object parent) {
+    return IFeatureJavaField.super.getValue(parent);
   }
 
   @Override
-  public String toString() {
-    return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();
+  default void setValue(Object parent, Object value) {
+    IFeatureJavaField.super.setValue(parent, value);
   }
 }

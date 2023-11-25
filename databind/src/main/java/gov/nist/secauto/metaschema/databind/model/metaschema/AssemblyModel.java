@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
@@ -40,27 +41,27 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 @MetaschemaAssembly(
     name = "assembly-model",
-    moduleClass = MetaschemaModule.class
-)
+    moduleClass = MetaschemaModule.class)
 public class AssemblyModel {
   @BoundChoiceGroup(
       maxOccurs = -1,
       assemblies = {
-          @BoundGroupedAssembly(formalName = "Assembly Reference", useName = "assembly", binding = AssemblyReference.class),
-          @BoundGroupedAssembly(formalName = "Inline Assembly Definition", useName = "define-assembly", binding = InlineDefineAssembly.class),
+          @BoundGroupedAssembly(formalName = "Assembly Reference", useName = "assembly",
+              binding = AssemblyReference.class),
+          @BoundGroupedAssembly(formalName = "Inline Assembly Definition", useName = "define-assembly",
+              binding = InlineDefineAssembly.class),
           @BoundGroupedAssembly(formalName = "Field Reference", useName = "field", binding = FieldReference.class),
-          @BoundGroupedAssembly(formalName = "Inline Field Definition", useName = "define-field", binding = InlineDefineField.class),
+          @BoundGroupedAssembly(formalName = "Inline Field Definition", useName = "define-field",
+              binding = InlineDefineField.class),
           @BoundGroupedAssembly(formalName = "Choice", useName = "choice", binding = Choice.class),
           @BoundGroupedAssembly(formalName = "Choice Grouping", useName = "choice-group", binding = ChoiceGroup.class)
       },
-      groupAs = @GroupAs(name = "instances", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "instances", inJson = JsonGroupAsBehavior.LIST))
   private List<Object> _instances;
 
   @BoundAssembly(
       formalName = "Any Additional Content",
-      useName = "any"
-  )
+      useName = "any")
   private Any _any;
 
   public AssemblyModel() {

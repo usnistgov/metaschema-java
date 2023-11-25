@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
@@ -39,28 +40,24 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @MetaschemaField(
     formalName = "Allowed Value Enumeration",
     name = "constraint-value-enum",
-    moduleClass = MetaschemaModule.class
-)
+    moduleClass = MetaschemaModule.class)
 public class ConstraintValueEnum {
   @BoundFieldValue(
       valueKeyName = "remark",
-      typeAdapter = MarkupLineAdapter.class
-  )
+      typeAdapter = MarkupLineAdapter.class)
   private MarkupLine _remark;
 
   @BoundFlag(
       formalName = "Allowed Value Enumeration Value",
       useName = "value",
       required = true,
-      typeAdapter = StringAdapter.class
-  )
+      typeAdapter = StringAdapter.class)
   private String _value;
 
   @BoundFlag(
       formalName = "Allowed Value Deprecation Version",
       useName = "deprecated",
-      typeAdapter = StringAdapter.class
-  )
+      typeAdapter = StringAdapter.class)
   private String _deprecated;
 
   public ConstraintValueEnum() {

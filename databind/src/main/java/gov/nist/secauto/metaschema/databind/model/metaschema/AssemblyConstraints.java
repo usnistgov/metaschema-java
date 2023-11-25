@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
@@ -42,31 +43,35 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 @MetaschemaAssembly(
     name = "assembly-constraints",
-    moduleClass = MetaschemaModule.class
-)
+    moduleClass = MetaschemaModule.class)
 public class AssemblyConstraints {
   @BoundAssembly(
       formalName = "Constraint Let Expression",
       useName = "let",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "lets", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "lets", inJson = JsonGroupAsBehavior.LIST))
   private List<ConstraintLetExpression> _lets;
 
   @BoundChoiceGroup(
       minOccurs = 1,
       maxOccurs = -1,
       assemblies = {
-          @BoundGroupedAssembly(formalName = "Allowed Values Constraint", useName = "allowed-values", binding = TargetedAllowedValuesConstraint.class),
-          @BoundGroupedAssembly(formalName = "Expect Condition Constraint", useName = "expect", binding = TargetedExpectConstraint.class),
-          @BoundGroupedAssembly(formalName = "Targeted Index Has Key Constraint", useName = "index-has-key", binding = TargetedIndexHasKeyConstraint.class),
-          @BoundGroupedAssembly(formalName = "Value Matches Constraint", useName = "matches", binding = TargetedMatchesConstraint.class),
-          @BoundGroupedAssembly(formalName = "Targeted Unique Constraint", useName = "unique", binding = TargetedUniqueConstraint.class),
-          @BoundGroupedAssembly(formalName = "Targeted Index Constraint", useName = "index", binding = TargetedIndexConstraint.class),
-          @BoundGroupedAssembly(formalName = "Targeted Index Constraint", useName = "targeted-cardinality-constraint", binding = TargetedCardinalityConstraint.class)
+          @BoundGroupedAssembly(formalName = "Allowed Values Constraint", useName = "allowed-values",
+              binding = TargetedAllowedValuesConstraint.class),
+          @BoundGroupedAssembly(formalName = "Expect Condition Constraint", useName = "expect",
+              binding = TargetedExpectConstraint.class),
+          @BoundGroupedAssembly(formalName = "Targeted Index Has Key Constraint", useName = "index-has-key",
+              binding = TargetedIndexHasKeyConstraint.class),
+          @BoundGroupedAssembly(formalName = "Value Matches Constraint", useName = "matches",
+              binding = TargetedMatchesConstraint.class),
+          @BoundGroupedAssembly(formalName = "Targeted Unique Constraint", useName = "unique",
+              binding = TargetedUniqueConstraint.class),
+          @BoundGroupedAssembly(formalName = "Targeted Index Constraint", useName = "index",
+              binding = TargetedIndexConstraint.class),
+          @BoundGroupedAssembly(formalName = "Targeted Index Constraint", useName = "targeted-cardinality-constraint",
+              binding = TargetedCardinalityConstraint.class)
       },
-      groupAs = @GroupAs(name = "rules", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "rules", inJson = JsonGroupAsBehavior.LIST))
   private List<Object> _rules;
 
   public AssemblyConstraints() {
@@ -82,11 +87,13 @@ public class AssemblyConstraints {
 
   /**
    * Add a new {@link ConstraintLetExpression} item to the underlying collection.
-   * @param item the item to add
+   *
+   * @param item
+   *          the item to add
    * @return {@code true}
    */
   public boolean addLet(ConstraintLetExpression item) {
-    ConstraintLetExpression value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    ConstraintLetExpression value = ObjectUtils.requireNonNull(item, "item cannot be null");
     if (_lets == null) {
       _lets = new LinkedList<>();
     }
@@ -94,12 +101,15 @@ public class AssemblyConstraints {
   }
 
   /**
-   * Remove the first matching {@link ConstraintLetExpression} item from the underlying collection.
-   * @param item the item to remove
+   * Remove the first matching {@link ConstraintLetExpression} item from the
+   * underlying collection.
+   *
+   * @param item
+   *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeLet(ConstraintLetExpression item) {
-    ConstraintLetExpression value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    ConstraintLetExpression value = ObjectUtils.requireNonNull(item, "item cannot be null");
     return _lets == null ? false : _lets.remove(value);
   }
 

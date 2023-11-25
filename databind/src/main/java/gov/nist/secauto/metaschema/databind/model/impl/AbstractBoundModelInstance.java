@@ -30,7 +30,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IFeatureJavaField;
 import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import java.lang.reflect.Field;
@@ -41,7 +40,7 @@ import nl.talsmasoftware.lazy4j.Lazy;
 
 public abstract class AbstractBoundModelInstance
     extends AbstractProperty<IAssemblyClassBinding>
-    implements IFeatureCollectionModelInstance, IFeatureJavaField {
+    implements IFeatureCollectionModelInstance {
   // private static final Logger logger =
   // LogManager.getLogger(AbstractBoundModelInstance.class);
 

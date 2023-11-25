@@ -31,13 +31,11 @@ import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
 import java.lang.reflect.Field;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class ClassBindingFieldInstance
     extends AbstractBoundFieldInstance
@@ -45,8 +43,6 @@ public class ClassBindingFieldInstance
 
   @NonNull
   private final IFieldClassBinding definition;
-  @Nullable
-  private final Object defaultValue;
 
   /**
    * Construct a new bound flag instance based on a Java property. The name of the
@@ -82,8 +78,6 @@ public class ClassBindingFieldInstance
                 getDefinition().getJavaTypeAdapter().getPreferredName()));
       }
     }
-    this.defaultValue
-        = ModelUtil.resolveDefaultValue(getAnnotation().defaultValue(), this.getDefinition().getJavaTypeAdapter());
   }
 
   @Override

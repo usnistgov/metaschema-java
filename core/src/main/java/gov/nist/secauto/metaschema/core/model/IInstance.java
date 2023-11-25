@@ -60,11 +60,11 @@ public interface IInstance extends IModelElement {
    * The provided object must be of the type associated with the definition
    * containing this instance.
    *
-   * @param parentInstance
+   * @param parent
    *          the object associated with the definition containing this property
    * @return the value if available, or {@code null} otherwise
    */
-  default Object getValue(@NonNull Object parentInstance) {
+  default Object getValue(@NonNull Object parent) {
     return getDefaultValue();
   }
 

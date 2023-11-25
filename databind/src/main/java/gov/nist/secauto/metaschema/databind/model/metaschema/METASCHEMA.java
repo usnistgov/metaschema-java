@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
@@ -59,11 +60,11 @@ import org.apache.commons.lang3.builder.ToStringStyle;
     description = "A declaration of the Metaschema module.",
     name = "METASCHEMA",
     moduleClass = MetaschemaModule.class,
-    rootName = "METASCHEMA"
-)
+    rootName = "METASCHEMA")
 public class METASCHEMA {
   /**
-   * "Determines if the Metaschema module is abstract (&lsquo;yes&rsquo;) or not (&lsquo;no&rsquo;)."
+   * "Determines if the Metaschema module is abstract (&lsquo;yes&rsquo;) or not
+   * (&lsquo;no&rsquo;)."
    */
   @BoundFlag(
       formalName = "Is Abstract?",
@@ -71,8 +72,8 @@ public class METASCHEMA {
       useName = "abstract",
       defaultValue = "no",
       typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "yes", description = ""), @AllowedValue(value = "no", description = "")}))
-  )
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
+          values = { @AllowedValue(value = "yes", description = ""), @AllowedValue(value = "no", description = "") })))
   private String _abstract;
 
   @BoundField(
@@ -80,15 +81,13 @@ public class METASCHEMA {
       description = "The name of the information model represented by this Metaschema definition.",
       useName = "schema-name",
       minOccurs = 1,
-      typeAdapter = MarkupLineAdapter.class
-  )
+      typeAdapter = MarkupLineAdapter.class)
   private MarkupLine _schemaName;
 
   @BoundField(
       description = "A version string used to distinguish between multiple revisions of the same Metaschema module.",
       useName = "schema-version",
-      minOccurs = 1
-  )
+      minOccurs = 1)
   private String _schemaVersion;
 
   @BoundField(
@@ -96,8 +95,7 @@ public class METASCHEMA {
       description = "A short (code) name to be used for the Metaschema module. This name may be used as a constituent of names assigned to derived artifacts, such as schemas and conversion utilities.",
       useName = "short-name",
       minOccurs = 1,
-      typeAdapter = MarkupLineAdapter.class
-  )
+      typeAdapter = MarkupLineAdapter.class)
   private MarkupLine _shortName;
 
   @BoundField(
@@ -105,8 +103,7 @@ public class METASCHEMA {
       description = "The namespace for the collection of Metaschema module this Metaschema module belongs to. This value is also used as the XML namespace governing the names of elements in XML documents. By using this namespace, documents and document fragments used in mixed-format environments may be distinguished from neighbor XML formats using another namespaces. This value is not reflected in Metaschema JSON.",
       useName = "namespace",
       minOccurs = 1,
-      typeAdapter = UriAdapter.class
-  )
+      typeAdapter = UriAdapter.class)
   private URI _namespace;
 
   @BoundField(
@@ -114,15 +111,13 @@ public class METASCHEMA {
       description = "The JSON Base URI is the nominal base URI assigned to a JSON Schema instance expressing the model defined by this Metaschema module.",
       useName = "json-base-uri",
       minOccurs = 1,
-      typeAdapter = UriAdapter.class
-  )
+      typeAdapter = UriAdapter.class)
   private URI _jsonBaseUri;
 
   @BoundField(
       formalName = "Remarks",
       description = "Any explanatory or helpful information to be provided about the remarks parent.",
-      useName = "remarks"
-  )
+      useName = "remarks")
   private Remarks _remarks;
 
   @BoundAssembly(
@@ -130,19 +125,21 @@ public class METASCHEMA {
       description = "Imports a set of Metaschema modules contained in another resource. Imports support the reuse of common information structures.",
       useName = "import",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "imports", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "imports", inJson = JsonGroupAsBehavior.LIST))
   private List<Import> _imports;
 
   @BoundChoiceGroup(
       maxOccurs = -1,
       assemblies = {
-          @BoundGroupedAssembly(formalName = "Global Assembly Definition", description = "In XML, an element with structured element content. In JSON, an object with properties. Defined globally, an assembly can be assigned to appear in the `model` of any assembly (another assembly type, or itself), by `assembly` reference.", useName = "define-assembly", binding = GlobalDefineAssembly.class),
-          @BoundGroupedAssembly(formalName = "Global Field Definition", useName = "define-field", binding = GlobalDefineField.class),
-          @BoundGroupedAssembly(formalName = "Global Flag Definition", useName = "define-flag", binding = GlobalDefineFlag.class)
+          @BoundGroupedAssembly(formalName = "Global Assembly Definition",
+              description = "In XML, an element with structured element content. In JSON, an object with properties. Defined globally, an assembly can be assigned to appear in the `model` of any assembly (another assembly type, or itself), by `assembly` reference.",
+              useName = "define-assembly", binding = GlobalDefineAssembly.class),
+          @BoundGroupedAssembly(formalName = "Global Field Definition", useName = "define-field",
+              binding = GlobalDefineField.class),
+          @BoundGroupedAssembly(formalName = "Global Flag Definition", useName = "define-flag",
+              binding = GlobalDefineFlag.class)
       },
-      groupAs = @GroupAs(name = "definitions", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "definitions", inJson = JsonGroupAsBehavior.LIST))
   private List<Object> _definitions;
 
   public METASCHEMA() {
@@ -214,11 +211,13 @@ public class METASCHEMA {
 
   /**
    * Add a new {@link Import} item to the underlying collection.
-   * @param item the item to add
+   *
+   * @param item
+   *          the item to add
    * @return {@code true}
    */
   public boolean addImport(Import item) {
-    Import value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    Import value = ObjectUtils.requireNonNull(item, "item cannot be null");
     if (_imports == null) {
       _imports = new LinkedList<>();
     }
@@ -227,11 +226,13 @@ public class METASCHEMA {
 
   /**
    * Remove the first matching {@link Import} item from the underlying collection.
-   * @param item the item to remove
+   *
+   * @param item
+   *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeImport(Import item) {
-    Import value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    Import value = ObjectUtils.requireNonNull(item, "item cannot be null");
     return _imports == null ? false : _imports.remove(value);
   }
 
@@ -249,14 +250,14 @@ public class METASCHEMA {
   }
 
   /**
-   * Imports a set of Metaschema modules contained in another resource. Imports support the reuse of common information structures.
+   * Imports a set of Metaschema modules contained in another resource. Imports
+   * support the reuse of common information structures.
    */
   @MetaschemaAssembly(
       formalName = "Module Import",
       description = "Imports a set of Metaschema modules contained in another resource. Imports support the reuse of common information structures.",
       name = "import",
-      moduleClass = MetaschemaModule.class
-  )
+      moduleClass = MetaschemaModule.class)
   public static class Import {
     public Import() {
     }

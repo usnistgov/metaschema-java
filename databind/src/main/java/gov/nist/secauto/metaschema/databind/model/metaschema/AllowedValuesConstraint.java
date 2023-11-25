@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
@@ -49,65 +50,71 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @MetaschemaAssembly(
     formalName = "Allowed Values Constraint",
     name = "allowed-values-constraint",
-    moduleClass = MetaschemaModule.class
-)
+    moduleClass = MetaschemaModule.class)
 public class AllowedValuesConstraint {
   @BoundFlag(
       formalName = "Constraint Identifier",
       useName = "id",
-      typeAdapter = TokenAdapter.class
-  )
+      typeAdapter = TokenAdapter.class)
   private String _id;
 
   @BoundFlag(
       formalName = "Constraint Severity Level",
       useName = "level",
       typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "CRITICAL", description = "A violation of the constraint represents a serious fault in the content that will prevent typical use of the content."), @AllowedValue(value = "ERROR", description = "A violation of the constraint represents a fault in the content. This may include issues around compatibility, integrity, consistency, etc."), @AllowedValue(value = "WARNING", description = "A violation of the constraint represents a potential issue with the content."), @AllowedValue(value = "INFORMATIONAL", description = "A violation of the constraint represents a point of interest.")}))
-  )
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
+          @AllowedValue(value = "CRITICAL",
+              description = "A violation of the constraint represents a serious fault in the content that will prevent typical use of the content."),
+          @AllowedValue(value = "ERROR",
+              description = "A violation of the constraint represents a fault in the content. This may include issues around compatibility, integrity, consistency, etc."),
+          @AllowedValue(value = "WARNING",
+              description = "A violation of the constraint represents a potential issue with the content."),
+          @AllowedValue(value = "INFORMATIONAL",
+              description = "A violation of the constraint represents a point of interest.") })))
   private String _level;
 
   @BoundFlag(
       formalName = "Allow Non-Enumerated Values?",
       useName = "allow-other",
       typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "no", description = ""), @AllowedValue(value = "yes", description = "")}))
-  )
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
+          values = { @AllowedValue(value = "no", description = ""), @AllowedValue(value = "yes", description = "") })))
   private String _allowOther;
 
   /**
-   * "Determines if the given enumerated values may be extended by other allowed value constraints."
+   * "Determines if the given enumerated values may be extended by other allowed
+   * value constraints."
    */
   @BoundFlag(
       formalName = "Allow Extension?",
       description = "Determines if the given enumerated values may be extended by other allowed value constraints.",
       useName = "extensible",
       typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "model", description = "Can be extended by constraints within the same module."), @AllowedValue(value = "external", description = "Can be extended by external constraints."), @AllowedValue(value = "none", description = "Cannot be extended.")}))
-  )
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
+          values = {
+              @AllowedValue(value = "model", description = "Can be extended by constraints within the same module."),
+              @AllowedValue(value = "external", description = "Can be extended by external constraints."),
+              @AllowedValue(value = "none", description = "Cannot be extended.") })))
   private String _extensible;
 
   @BoundField(
       formalName = "Formal Name",
       description = "A formal name for the data construct, to be presented in documentation.",
-      useName = "formal-name"
-  )
+      useName = "formal-name")
   private String _formalName;
 
   @BoundField(
       formalName = "Description",
       description = "A short description of the data construct's purpose, describing the constructs semantics.",
       useName = "description",
-      typeAdapter = MarkupLineAdapter.class
-  )
+      typeAdapter = MarkupLineAdapter.class)
   private MarkupLine _description;
 
   @BoundAssembly(
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
   private List<Property> _props;
 
   @BoundField(
@@ -115,15 +122,13 @@ public class AllowedValuesConstraint {
       useName = "enum",
       minOccurs = 1,
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "enums", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "enums", inJson = JsonGroupAsBehavior.LIST))
   private List<ConstraintValueEnum> _enums;
 
   @BoundField(
       formalName = "Remarks",
       description = "Any explanatory or helpful information to be provided about the remarks parent.",
-      useName = "remarks"
-  )
+      useName = "remarks")
   private Remarks _remarks;
 
   public AllowedValuesConstraint() {
@@ -187,11 +192,13 @@ public class AllowedValuesConstraint {
 
   /**
    * Add a new {@link Property} item to the underlying collection.
-   * @param item the item to add
+   *
+   * @param item
+   *          the item to add
    * @return {@code true}
    */
   public boolean addProp(Property item) {
-    Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
     if (_props == null) {
       _props = new LinkedList<>();
     }
@@ -199,12 +206,15 @@ public class AllowedValuesConstraint {
   }
 
   /**
-   * Remove the first matching {@link Property} item from the underlying collection.
-   * @param item the item to remove
+   * Remove the first matching {@link Property} item from the underlying
+   * collection.
+   *
+   * @param item
+   *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeProp(Property item) {
-    Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
     return _props == null ? false : _props.remove(value);
   }
 
@@ -218,11 +228,13 @@ public class AllowedValuesConstraint {
 
   /**
    * Add a new {@link ConstraintValueEnum} item to the underlying collection.
-   * @param item the item to add
+   *
+   * @param item
+   *          the item to add
    * @return {@code true}
    */
   public boolean addEnum(ConstraintValueEnum item) {
-    ConstraintValueEnum value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    ConstraintValueEnum value = ObjectUtils.requireNonNull(item, "item cannot be null");
     if (_enums == null) {
       _enums = new LinkedList<>();
     }
@@ -230,12 +242,15 @@ public class AllowedValuesConstraint {
   }
 
   /**
-   * Remove the first matching {@link ConstraintValueEnum} item from the underlying collection.
-   * @param item the item to remove
+   * Remove the first matching {@link ConstraintValueEnum} item from the
+   * underlying collection.
+   *
+   * @param item
+   *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeEnum(ConstraintValueEnum item) {
-    ConstraintValueEnum value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    ConstraintValueEnum value = ObjectUtils.requireNonNull(item, "item cannot be null");
     return _enums == null ? false : _enums.remove(value);
   }
 

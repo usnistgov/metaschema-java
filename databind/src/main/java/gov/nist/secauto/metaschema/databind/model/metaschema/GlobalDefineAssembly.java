@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.PositiveIntegerAdapter;
@@ -53,123 +54,115 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * In XML, an element with structured element content. In JSON, an object with properties. Defined globally, an assembly can be assigned to appear in the <code>model</code> of any assembly (another assembly type, or itself), by <code>assembly</code> reference.
+ * In XML, an element with structured element content. In JSON, an object with
+ * properties. Defined globally, an assembly can be assigned to appear in the
+ * <code>model</code> of any assembly (another assembly type, or itself), by
+ * <code>assembly</code> reference.
  */
 @MetaschemaAssembly(
     formalName = "Global Assembly Definition",
     description = "In XML, an element with structured element content. In JSON, an object with properties. Defined globally, an assembly can be assigned to appear in the `model` of any assembly (another assembly type, or itself), by `assembly` reference.",
     name = "global-define-assembly",
-    moduleClass = MetaschemaModule.class
-)
+    moduleClass = MetaschemaModule.class)
 public class GlobalDefineAssembly {
   @BoundFlag(
       formalName = "Global Assembly Name",
       useName = "name",
       required = true,
-      typeAdapter = TokenAdapter.class
-  )
+      typeAdapter = TokenAdapter.class)
   private String _name;
 
   @BoundFlag(
       formalName = "Global Assembly Binary Name",
       useName = "index",
-      typeAdapter = PositiveIntegerAdapter.class
-  )
+      typeAdapter = PositiveIntegerAdapter.class)
   private BigInteger _index;
 
   @BoundFlag(
       formalName = "Definition Scope",
       useName = "scope",
       typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "local", description = "This definition is only available in the context of the current Metaschema module."), @AllowedValue(value = "global", description = "This definition will be made available to any Metaschema module that includes this one either directly or indirectly through a chain of imported Metaschemas.")}))
-  )
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
+          @AllowedValue(value = "local",
+              description = "This definition is only available in the context of the current Metaschema module."),
+          @AllowedValue(value = "global",
+              description = "This definition will be made available to any Metaschema module that includes this one either directly or indirectly through a chain of imported Metaschemas.") })))
   private String _scope;
 
   @BoundFlag(
       formalName = "Deprecated Version",
       useName = "deprecated",
-      typeAdapter = StringAdapter.class
-  )
+      typeAdapter = StringAdapter.class)
   private String _deprecated;
 
   @BoundField(
       formalName = "Formal Name",
       description = "A formal name for the data construct, to be presented in documentation.",
-      useName = "formal-name"
-  )
+      useName = "formal-name")
   private String _formalName;
 
   @BoundField(
       formalName = "Description",
       description = "A short description of the data construct's purpose, describing the constructs semantics.",
       useName = "description",
-      typeAdapter = MarkupLineAdapter.class
-  )
+      typeAdapter = MarkupLineAdapter.class)
   private MarkupLine _description;
 
   @BoundAssembly(
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
   private List<Property> _props;
 
   @BoundField(
       formalName = "Use Name",
       description = "Allows the name of the definition to be overridden.",
-      useName = "use-name"
-  )
+      useName = "use-name")
   private UseName _useName;
 
   @BoundField(
       formalName = "Root Name",
       description = "Provides a root name, for when the definition is used as the root of a node hierarchy.",
       useName = "root-name",
-      minOccurs = 1
-  )
+      minOccurs = 1)
   private RootName _rootName;
 
   @BoundAssembly(
       formalName = "JSON Key",
       description = "Used in JSON (and similar formats) to identify a flag that will be used as the property name in an object hold a collection of sibling objects. Requires that siblings must never share `json-key` values.",
-      useName = "json-key"
-  )
+      useName = "json-key")
   private JsonKey _jsonKey;
 
   @BoundChoiceGroup(
       maxOccurs = -1,
       assemblies = {
-          @BoundGroupedAssembly(formalName = "Inline Flag Definition", useName = "define-flag", binding = InlineDefineFlag.class),
+          @BoundGroupedAssembly(formalName = "Inline Flag Definition", useName = "define-flag",
+              binding = InlineDefineFlag.class),
           @BoundGroupedAssembly(formalName = "Flag Reference", useName = "flag", binding = FlagReference.class)
       },
-      groupAs = @GroupAs(name = "flags", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "flags", inJson = JsonGroupAsBehavior.LIST))
   private List<Object> _flags;
 
   @BoundAssembly(
-      useName = "model"
-  )
+      useName = "model")
   private AssemblyModel _model;
 
   @BoundAssembly(
-      useName = "constraint"
-  )
+      useName = "constraint")
   private AssemblyConstraints _constraint;
 
   @BoundField(
       formalName = "Remarks",
       description = "Any explanatory or helpful information to be provided about the remarks parent.",
-      useName = "remarks"
-  )
+      useName = "remarks")
   private Remarks _remarks;
 
   @BoundAssembly(
       formalName = "Example",
       useName = "example",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST))
   private List<Example> _examples;
 
   public GlobalDefineAssembly() {
@@ -233,11 +226,13 @@ public class GlobalDefineAssembly {
 
   /**
    * Add a new {@link Property} item to the underlying collection.
-   * @param item the item to add
+   *
+   * @param item
+   *          the item to add
    * @return {@code true}
    */
   public boolean addProp(Property item) {
-    Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
     if (_props == null) {
       _props = new LinkedList<>();
     }
@@ -245,12 +240,15 @@ public class GlobalDefineAssembly {
   }
 
   /**
-   * Remove the first matching {@link Property} item from the underlying collection.
-   * @param item the item to remove
+   * Remove the first matching {@link Property} item from the underlying
+   * collection.
+   *
+   * @param item
+   *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeProp(Property item) {
-    Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
     return _props == null ? false : _props.remove(value);
   }
 
@@ -320,11 +318,13 @@ public class GlobalDefineAssembly {
 
   /**
    * Add a new {@link Example} item to the underlying collection.
-   * @param item the item to add
+   *
+   * @param item
+   *          the item to add
    * @return {@code true}
    */
   public boolean addExample(Example item) {
-    Example value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
     if (_examples == null) {
       _examples = new LinkedList<>();
     }
@@ -332,12 +332,15 @@ public class GlobalDefineAssembly {
   }
 
   /**
-   * Remove the first matching {@link Example} item from the underlying collection.
-   * @param item the item to remove
+   * Remove the first matching {@link Example} item from the underlying
+   * collection.
+   *
+   * @param item
+   *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeExample(Example item) {
-    Example value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
     return _examples == null ? false : _examples.remove(value);
   }
 

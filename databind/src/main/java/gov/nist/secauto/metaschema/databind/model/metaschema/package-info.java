@@ -1,3 +1,4 @@
+
 /*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
@@ -24,6 +25,10 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 @gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaPackage(moduleClass = {
-  gov.nist.secauto.metaschema.databind.model.metaschema.MetaschemaModule.class})
-@gov.nist.secauto.metaschema.databind.model.annotations.XmlSchema(namespace = "http://csrc.nist.gov/ns/oscal/metaschema/1.0", xmlns = {@gov.nist.secauto.metaschema.databind.model.annotations.XmlNs(prefix = "", namespace = "http://csrc.nist.gov/ns/oscal/metaschema/1.0")}, xmlElementFormDefault = gov.nist.secauto.metaschema.databind.model.annotations.XmlNsForm.QUALIFIED)
+    gov.nist.secauto.metaschema.databind.model.metaschema.MetaschemaModule.class })
+@gov.nist.secauto.metaschema.databind.model.annotations.XmlSchema(
+    namespace = "http://csrc.nist.gov/ns/oscal/metaschema/1.0",
+    xmlns = { @gov.nist.secauto.metaschema.databind.model.annotations.XmlNs(prefix = "",
+        namespace = "http://csrc.nist.gov/ns/oscal/metaschema/1.0") },
+    xmlElementFormDefault = gov.nist.secauto.metaschema.databind.model.annotations.XmlNsForm.QUALIFIED)
 package gov.nist.secauto.metaschema.databind.model.metaschema;

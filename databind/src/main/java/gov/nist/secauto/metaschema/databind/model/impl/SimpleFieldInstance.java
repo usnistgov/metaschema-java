@@ -42,11 +42,9 @@ import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldDefinition;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IFeatureJavaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
 
 import java.lang.reflect.Field;
 
@@ -56,7 +54,7 @@ import nl.talsmasoftware.lazy4j.Lazy;
 
 public class SimpleFieldInstance
     extends AbstractBoundFieldInstance
-    implements IFeatureScalarItemValueHandler, IFeatureJavaField {
+    implements ISimpleScalarItemValueJavaField {
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   @Nullable
@@ -122,16 +120,6 @@ public class SimpleFieldInstance
   @Override
   public Object getDefaultValue() {
     return instanceDefaultValue;
-  }
-
-  @Override
-  public Object getValue(Object parent) {
-    return IFeatureJavaField.super.getValue(parent);
-  }
-
-  @Override
-  public void setValue(Object parent, Object value) {
-    IFeatureJavaField.super.setValue(parent, value);
   }
 
   // REFACTOR: Cleanup interfaces and methods to use IFeatureInline, etc. Remove

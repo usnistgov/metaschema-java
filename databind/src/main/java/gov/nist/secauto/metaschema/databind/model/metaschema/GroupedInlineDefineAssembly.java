@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.PositiveIntegerAdapter;
@@ -51,94 +52,82 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @MetaschemaAssembly(
     formalName = "Inline Assembly Definition",
     name = "grouped-inline-define-assembly",
-    moduleClass = MetaschemaModule.class
-)
+    moduleClass = MetaschemaModule.class)
 public class GroupedInlineDefineAssembly {
   @BoundFlag(
       formalName = "Inline Assembly Name",
       useName = "name",
       required = true,
-      typeAdapter = TokenAdapter.class
-  )
+      typeAdapter = TokenAdapter.class)
   private String _name;
 
   @BoundFlag(
       formalName = "Inline Assembly Binary Name",
       useName = "index",
-      typeAdapter = PositiveIntegerAdapter.class
-  )
+      typeAdapter = PositiveIntegerAdapter.class)
   private BigInteger _index;
 
   @BoundFlag(
       formalName = "Deprecated Version",
       useName = "deprecated",
-      typeAdapter = StringAdapter.class
-  )
+      typeAdapter = StringAdapter.class)
   private String _deprecated;
 
   @BoundField(
       formalName = "Formal Name",
       description = "A formal name for the data construct, to be presented in documentation.",
-      useName = "formal-name"
-  )
+      useName = "formal-name")
   private String _formalName;
 
   @BoundField(
       formalName = "Description",
       description = "A short description of the data construct's purpose, describing the constructs semantics.",
       useName = "description",
-      typeAdapter = MarkupLineAdapter.class
-  )
+      typeAdapter = MarkupLineAdapter.class)
   private MarkupLine _description;
 
   @BoundAssembly(
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
   private List<Property> _props;
 
   @BoundChoiceGroup(
       maxOccurs = -1,
       assemblies = {
-          @BoundGroupedAssembly(formalName = "Inline Flag Definition", useName = "define-flag", binding = InlineDefineFlag.class),
+          @BoundGroupedAssembly(formalName = "Inline Flag Definition", useName = "define-flag",
+              binding = InlineDefineFlag.class),
           @BoundGroupedAssembly(formalName = "Flag Reference", useName = "flag", binding = FlagReference.class)
       },
-      groupAs = @GroupAs(name = "flags", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "flags", inJson = JsonGroupAsBehavior.LIST))
   private List<Object> _flags;
 
   @BoundField(
       formalName = "Grouping Discriminator Value",
       useName = "discriminator-value",
-      typeAdapter = TokenAdapter.class
-  )
+      typeAdapter = TokenAdapter.class)
   private String _discriminatorValue;
 
   @BoundAssembly(
-      useName = "model"
-  )
+      useName = "model")
   private AssemblyModel _model;
 
   @BoundAssembly(
-      useName = "constraint"
-  )
+      useName = "constraint")
   private AssemblyConstraints _constraint;
 
   @BoundField(
       formalName = "Remarks",
       description = "Any explanatory or helpful information to be provided about the remarks parent.",
-      useName = "remarks"
-  )
+      useName = "remarks")
   private Remarks _remarks;
 
   @BoundAssembly(
       formalName = "Example",
       useName = "example",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST))
   private List<Example> _examples;
 
   public GroupedInlineDefineAssembly() {
@@ -194,11 +183,13 @@ public class GroupedInlineDefineAssembly {
 
   /**
    * Add a new {@link Property} item to the underlying collection.
-   * @param item the item to add
+   *
+   * @param item
+   *          the item to add
    * @return {@code true}
    */
   public boolean addProp(Property item) {
-    Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
     if (_props == null) {
       _props = new LinkedList<>();
     }
@@ -206,12 +197,15 @@ public class GroupedInlineDefineAssembly {
   }
 
   /**
-   * Remove the first matching {@link Property} item from the underlying collection.
-   * @param item the item to remove
+   * Remove the first matching {@link Property} item from the underlying
+   * collection.
+   *
+   * @param item
+   *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeProp(Property item) {
-    Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
     return _props == null ? false : _props.remove(value);
   }
 
@@ -265,11 +259,13 @@ public class GroupedInlineDefineAssembly {
 
   /**
    * Add a new {@link Example} item to the underlying collection.
-   * @param item the item to add
+   *
+   * @param item
+   *          the item to add
    * @return {@code true}
    */
   public boolean addExample(Example item) {
-    Example value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
     if (_examples == null) {
       _examples = new LinkedList<>();
     }
@@ -277,12 +273,15 @@ public class GroupedInlineDefineAssembly {
   }
 
   /**
-   * Remove the first matching {@link Example} item from the underlying collection.
-   * @param item the item to remove
+   * Remove the first matching {@link Example} item from the underlying
+   * collection.
+   *
+   * @param item
+   *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeExample(Example item) {
-    Example value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
     return _examples == null ? false : _examples.remove(value);
   }
 

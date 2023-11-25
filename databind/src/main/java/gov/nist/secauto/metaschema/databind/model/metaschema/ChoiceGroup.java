@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.NonNegativeIntegerAdapter;
@@ -49,15 +50,13 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @MetaschemaAssembly(
     formalName = "Choice Grouping",
     name = "choice-group",
-    moduleClass = MetaschemaModule.class
-)
+    moduleClass = MetaschemaModule.class)
 public class ChoiceGroup {
   @BoundFlag(
       formalName = "Minimum Occurrence",
       useName = "min-occurs",
       defaultValue = "0",
-      typeAdapter = NonNegativeIntegerAdapter.class
-  )
+      typeAdapter = NonNegativeIntegerAdapter.class)
   private BigInteger _minOccurs;
 
   @BoundFlag(
@@ -65,50 +64,50 @@ public class ChoiceGroup {
       useName = "max-occurs",
       defaultValue = "unbounded",
       typeAdapter = StringAdapter.class,
-      valueConstraints = @ValueConstraints(matches = @Matches(level = IConstraint.Level.ERROR, pattern = "^[1-9][0-9]*|unbounded$"))
-  )
+      valueConstraints = @ValueConstraints(
+          matches = @Matches(level = IConstraint.Level.ERROR, pattern = "^[1-9][0-9]*|unbounded$")))
   private String _maxOccurs;
 
   @BoundAssembly(
       formalName = "JSON Key",
       description = "Used in JSON (and similar formats) to identify a flag that will be used as the property name in an object hold a collection of sibling objects. Requires that siblings must never share `json-key` values.",
-      useName = "json-key"
-  )
+      useName = "json-key")
   private JsonKey _jsonKey;
 
   @BoundAssembly(
       formalName = "Group As",
       useName = "group-as",
-      minOccurs = 1
-  )
+      minOccurs = 1)
   private GroupAs _groupAs;
 
   @BoundField(
       formalName = "Discriminator JSON Property",
       useName = "discriminator",
       defaultValue = "object-type",
-      typeAdapter = TokenAdapter.class
-  )
+      typeAdapter = TokenAdapter.class)
   private String _discriminator;
 
   @BoundChoiceGroup(
       minOccurs = 1,
       maxOccurs = -1,
       assemblies = {
-          @BoundGroupedAssembly(formalName = "Grouping Assembly Reference", useName = "assembly", binding = GroupedAssemblyReference.class),
-          @BoundGroupedAssembly(formalName = "Inline Assembly Definition", useName = "define-assembly", binding = GroupedInlineDefineAssembly.class),
-          @BoundGroupedAssembly(formalName = "Grouping Field Reference", useName = "field", binding = GroupedFieldReference.class),
-          @BoundGroupedAssembly(formalName = "Inline Field Definition", useName = "define-field", binding = GroupedInlineDefineField.class)
+          @BoundGroupedAssembly(formalName = "Grouping Assembly Reference", useName = "assembly",
+              binding = GroupedAssemblyReference.class),
+          @BoundGroupedAssembly(formalName = "Inline Assembly Definition", useName = "define-assembly",
+              binding = GroupedInlineDefineAssembly.class),
+          @BoundGroupedAssembly(formalName = "Grouping Field Reference", useName = "field",
+              binding = GroupedFieldReference.class),
+          @BoundGroupedAssembly(formalName = "Inline Field Definition", useName = "define-field",
+              binding = GroupedInlineDefineField.class)
       },
-      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "choices", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "choices",
+          inJson = JsonGroupAsBehavior.LIST))
   private List<Object> _choices;
 
   @BoundField(
       formalName = "Remarks",
       description = "Any explanatory or helpful information to be provided about the remarks parent.",
-      useName = "remarks"
-  )
+      useName = "remarks")
   private Remarks _remarks;
 
   public ChoiceGroup() {

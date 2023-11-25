@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.PositiveIntegerAdapter;
@@ -52,88 +53,81 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @MetaschemaAssembly(
     formalName = "Grouping Field Reference",
     name = "grouped-field-reference",
-    moduleClass = MetaschemaModule.class
-)
+    moduleClass = MetaschemaModule.class)
 public class GroupedFieldReference {
   @BoundFlag(
       formalName = "Global Field Reference",
       useName = "ref",
       required = true,
-      typeAdapter = TokenAdapter.class
-  )
+      typeAdapter = TokenAdapter.class)
   private String _ref;
 
   @BoundFlag(
       formalName = "Field Reference Binary Name",
       useName = "index",
-      typeAdapter = PositiveIntegerAdapter.class
-  )
+      typeAdapter = PositiveIntegerAdapter.class)
   private BigInteger _index;
 
   @BoundFlag(
       formalName = "Deprecated Version",
       useName = "deprecated",
-      typeAdapter = StringAdapter.class
-  )
+      typeAdapter = StringAdapter.class)
   private String _deprecated;
 
   @BoundFlag(
       formalName = "Default Field Value",
       useName = "default",
-      typeAdapter = StringAdapter.class
-  )
+      typeAdapter = StringAdapter.class)
   private String _default;
 
   @BoundFlag(
       formalName = "Field In XML",
       useName = "in-xml",
       typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "WRAPPED", description = "Block contents of a markup-multiline field will be represented with a containing (wrapper) element in the XML."), @AllowedValue(value = "UNWRAPPED", description = "Block contents of a markup-multiline will be represented in the XML with no wrapper, making the field implicit. Among sibling fields in a given model, only one of them may be designated as UNWRAPPED."), @AllowedValue(value = "WITH_WRAPPER", description = "Alias for WRAPPED.")}))
-  )
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
+          @AllowedValue(value = "WRAPPED",
+              description = "Block contents of a markup-multiline field will be represented with a containing (wrapper) element in the XML."),
+          @AllowedValue(value = "UNWRAPPED",
+              description = "Block contents of a markup-multiline will be represented in the XML with no wrapper, making the field implicit. Among sibling fields in a given model, only one of them may be designated as UNWRAPPED."),
+          @AllowedValue(value = "WITH_WRAPPER", description = "Alias for WRAPPED.") })))
   private String _inXml;
 
   @BoundField(
       formalName = "Formal Name",
       description = "A formal name for the data construct, to be presented in documentation.",
-      useName = "formal-name"
-  )
+      useName = "formal-name")
   private String _formalName;
 
   @BoundField(
       formalName = "Description",
       description = "A short description of the data construct's purpose, describing the constructs semantics.",
       useName = "description",
-      typeAdapter = MarkupLineAdapter.class
-  )
+      typeAdapter = MarkupLineAdapter.class)
   private MarkupLine _description;
 
   @BoundAssembly(
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
   private List<Property> _props;
 
   @BoundField(
       formalName = "Use Name",
       description = "Allows the name of the definition to be overridden.",
-      useName = "use-name"
-  )
+      useName = "use-name")
   private UseName _useName;
 
   @BoundField(
       formalName = "Grouping Discriminator Value",
       useName = "discriminator-value",
-      typeAdapter = TokenAdapter.class
-  )
+      typeAdapter = TokenAdapter.class)
   private String _discriminatorValue;
 
   @BoundField(
       formalName = "Remarks",
       description = "Any explanatory or helpful information to be provided about the remarks parent.",
-      useName = "remarks"
-  )
+      useName = "remarks")
   private Remarks _remarks;
 
   public GroupedFieldReference() {
@@ -205,11 +199,13 @@ public class GroupedFieldReference {
 
   /**
    * Add a new {@link Property} item to the underlying collection.
-   * @param item the item to add
+   *
+   * @param item
+   *          the item to add
    * @return {@code true}
    */
   public boolean addProp(Property item) {
-    Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
     if (_props == null) {
       _props = new LinkedList<>();
     }
@@ -217,12 +213,15 @@ public class GroupedFieldReference {
   }
 
   /**
-   * Remove the first matching {@link Property} item from the underlying collection.
-   * @param item the item to remove
+   * Remove the first matching {@link Property} item from the underlying
+   * collection.
+   *
+   * @param item
+   *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeProp(Property item) {
-    Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
     return _props == null ? false : _props.remove(value);
   }
 

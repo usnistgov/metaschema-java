@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
@@ -38,23 +39,20 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @MetaschemaAssembly(
     formalName = "Property",
     name = "property",
-    moduleClass = MetaschemaModule.class
-)
+    moduleClass = MetaschemaModule.class)
 public class Property {
   @BoundFlag(
       formalName = "Property Namespace",
       useName = "name",
       defaultValue = "http://csrc.nist.gov/ns/oscal/metaschema/1.0",
-      typeAdapter = UriAdapter.class
-  )
+      typeAdapter = UriAdapter.class)
   private URI _name;
 
   @BoundFlag(
       formalName = "Property Value",
       useName = "value",
       required = true,
-      typeAdapter = TokenAdapter.class
-  )
+      typeAdapter = TokenAdapter.class)
   private String _value;
 
   public Property() {

@@ -123,7 +123,8 @@ public interface IFeatureJavaField extends IBoundInstance {
     } catch (IllegalArgumentException | IllegalAccessException ex) {
       throw new IllegalArgumentException(
           String.format(
-              "Unable to set the value of field '%s' in class '%s'. Perhaps this is a data type adapter problem on the declared class?",
+              "Unable to set the value of field '%s' in class '%s'." +
+                  " Perhaps this is a data type adapter problem on the declared class?",
               field.getName(),
               field.getDeclaringClass().getName()),
           ex);

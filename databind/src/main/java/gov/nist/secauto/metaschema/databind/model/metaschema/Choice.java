@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
@@ -41,26 +42,26 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @MetaschemaAssembly(
     formalName = "Choice",
     name = "choice",
-    moduleClass = MetaschemaModule.class
-)
+    moduleClass = MetaschemaModule.class)
 public class Choice {
   @BoundChoiceGroup(
       minOccurs = 1,
       maxOccurs = -1,
       assemblies = {
-          @BoundGroupedAssembly(formalName = "Assembly Reference", useName = "assembly", binding = AssemblyReference.class),
-          @BoundGroupedAssembly(formalName = "Inline Assembly Definition", useName = "define-assembly", binding = InlineDefineAssembly.class),
+          @BoundGroupedAssembly(formalName = "Assembly Reference", useName = "assembly",
+              binding = AssemblyReference.class),
+          @BoundGroupedAssembly(formalName = "Inline Assembly Definition", useName = "define-assembly",
+              binding = InlineDefineAssembly.class),
           @BoundGroupedAssembly(formalName = "Field Reference", useName = "field", binding = FieldReference.class),
-          @BoundGroupedAssembly(formalName = "Inline Field Definition", useName = "define-field", binding = InlineDefineField.class)
+          @BoundGroupedAssembly(formalName = "Inline Field Definition", useName = "define-field",
+              binding = InlineDefineField.class)
       },
-      groupAs = @GroupAs(name = "choices", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "choices", inJson = JsonGroupAsBehavior.LIST))
   private List<Object> _choices;
 
   @BoundAssembly(
       formalName = "Any Additional Content",
-      useName = "any"
-  )
+      useName = "any")
   private Any _any;
 
   public Choice() {

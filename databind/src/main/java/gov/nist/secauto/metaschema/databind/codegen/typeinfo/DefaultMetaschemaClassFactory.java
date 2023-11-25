@@ -519,7 +519,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
     buildCommonProperties(typeInfo, metaschemaField);
 
     IFieldDefinition definition = typeInfo.getDefinition();
-    AnnotationGenerator.buildValueConstraints(metaschemaField, (IFlagContainer) definition);
+    AnnotationGenerator.buildValueConstraints(metaschemaField, definition);
 
     builder.addAnnotation(metaschemaField.build());
     return retval;
