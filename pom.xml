@@ -141,7 +141,7 @@
 		<dependency.moxy.version>3.0.3</dependency.moxy.version>
 		<dependency.plexus-utils.version>4.0.0</dependency.plexus-utils.version>
 		<dependency.plexus-build-api.version>1.2.0</dependency.plexus-build-api.version>
-		<dependency.saxon.version>12.3</dependency.saxon.version>
+		<dependency.saxon.version>12.4</dependency.saxon.version>
 		<dependency.spotbugs-annotations.version>4.7.3</dependency.spotbugs-annotations.version>
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
 		<dependency.thymeleaf.version>3.0.15.RELEASE</dependency.thymeleaf.version>
