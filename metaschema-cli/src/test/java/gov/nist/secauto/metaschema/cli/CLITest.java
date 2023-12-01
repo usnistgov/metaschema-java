@@ -26,10 +26,12 @@
 
 package gov.nist.secauto.metaschema.cli;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import gov.nist.secauto.metaschema.cli.commands.QueryCommand;
 import gov.nist.secauto.metaschema.cli.processor.ExitCode;
 import gov.nist.secauto.metaschema.cli.processor.ExitStatus;
 
@@ -42,6 +44,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.altindag.log.LogCaptor;
 
 /**
  * Unit test for simple CLI.
@@ -161,4 +164,16 @@ public class CLITest {
       evaluateResult(CLI.runCli(fullArgs), expectedExitCode, expectedThrownClass);
     }
   }
+
+  @Test
+  void testQueryCommand() {
+    LogCaptor logCaptor = LogCaptor.forClass(QueryCommand.class);
+    String[] args
+        = new String[] { "query", "-m", "../databind/src/test/resources/metaschema/fields_with_flags/metaschema.xml",
+            "-i",
+            "../databind/src/test/resources/metaschema/fields_with_flags/example.json", "3 + 4 + 5",
+            "--show-stack-trace" };
+    CLI.runCli(args);
+    assertThat(logCaptor.getInfoLogs()).containsExactly("[12]");
+  };
 }
