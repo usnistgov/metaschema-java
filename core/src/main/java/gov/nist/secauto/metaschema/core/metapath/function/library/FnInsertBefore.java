@@ -77,18 +77,6 @@ public final class FnInsertBefore {
     // disable construction
   }
 
-  /**
-   * An implementation of XPath 3.1 <a href=
-   * "https://www.w3.org/TR/xpath-functions-31/#insert-before">fn:insert-before</a>.
-   *
-   * @param target
-   *          the sequence of Metapath items that is the target of insertion
-   * @param position
-   *          the integer position of the item to insert before
-   * @param inserts
-   *          the sequence of Metapath items to be inserted into the target
-   * @return the sequence of Metapath items with insertions
-   */
   @SuppressWarnings("unused")
   @NonNull
   private static ISequence<?> execute(@NonNull IFunction function,
@@ -103,11 +91,14 @@ public final class FnInsertBefore {
   }
 
   /**
-   * Insert sequence of Metapath items into an existing target sequence.
+   * An implementation of XPath 3.1 <a href=
+   * "https://www.w3.org/TR/xpath-functions-31/#insert-before">fn:insert-before</a>.
    *
+   * @param <T>
+   *          the type for the given Metapath sequence
    * @param target
    *          the sequence of Metapath items that is the target of insertion
-   * @param position
+   * @param positionItem
    *          the integer position of the item to insert before
    * @param inserts
    *          the sequence of Metapath items to be inserted into the target

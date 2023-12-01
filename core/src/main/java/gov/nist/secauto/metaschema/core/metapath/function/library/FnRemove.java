@@ -87,10 +87,12 @@ public final class FnRemove {
   /**
    * Remove the specified item at {@code position} from the {@code sequence}.
    *
-   * @param sequence
-   *          the sequence to check
+   * @param <T>
+   *          the type for the given Metapath sequence
+   * @param target
+   *          the sequence of Metapath items from which we will remove the item
    * @param positionItem
-   *          the position of the item in the sequence
+   *          the position of the item in the sequence to be removed
    * @return {@code sequence} the new sequence with the item removed
    */
   public static <T extends IItem> List<T> fnRemove(List<T> target, IIntegerItem positionItem) {
@@ -105,7 +107,7 @@ public final class FnRemove {
     }
 
     List<T> newSequence = new ArrayList<>(target);
-    newSequence.remove(position-1);
+    newSequence.remove(position - 1);
     return newSequence;
   }
 }

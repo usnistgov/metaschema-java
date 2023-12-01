@@ -79,9 +79,11 @@ public final class FnReverse {
 
   /**
    * Reverse the order of items in the {@code sequence}.
-   *
-   * @param sequence
-   *          the sequence to check
+
+   * @param <T>
+   *          the type for the given Metapath sequence
+   * @param target
+   *          the sequence to check for reversal
    * @return {@code sequence} the new sequence with items in reverse order.
    *
    */
