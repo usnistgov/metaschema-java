@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IBindingInstanceModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -45,11 +46,12 @@ public interface IModelInstanceCollectionInfo {
 
   @NonNull
   static IModelInstanceCollectionInfo of(
-      @NonNull IFeatureCollectionModelInstance instance) {
+      @NonNull IBindingInstanceModel binding) {
 
+    IBoundInstanceModel instance = binding.getInstance();
     // create the collection info
-    Type type = instance.getType();
-    Field field = instance.getField();
+    Type type = binding.getType();
+    Field field = binding.getField();
 
     IModelInstanceCollectionInfo retval;
     if (instance.getMaxOccurs() == -1 || instance.getMaxOccurs() > 1) {
@@ -88,7 +90,7 @@ public interface IModelInstanceCollectionInfo {
               field.getType().getName(),
               Map.class.getName()));
         }
-        retval = new MapCollectionInfo(instance);
+        retval = new MapCollectionInfo(binding);
       } else {
         if (!List.class.isAssignableFrom(rawType)) {
           throw new IllegalArgumentException(String.format(
@@ -98,7 +100,7 @@ public interface IModelInstanceCollectionInfo {
               field.getType().getName(),
               List.class.getName()));
         }
-        retval = new ListCollectionInfo(instance);
+        retval = new ListCollectionInfo(binding);
       }
     } else {
       // single value case
@@ -110,18 +112,18 @@ public interface IModelInstanceCollectionInfo {
             field.getDeclaringClass().getName(),
             field.getType().getName()));
       }
-      retval = new SingletonCollectionInfo(instance);
+      retval = new SingletonCollectionInfo(binding);
     }
     return retval;
   }
 
   /**
-   * Get the associated instance for which this info is for.
+   * Get the associated instance binding for which this info is for.
    *
-   * @return the instance
+   * @return the instance binding
    */
   @NonNull
-  IFeatureCollectionModelInstance getInstance();
+  IBindingInstanceModel getBinding();
 
   /**
    * Get the number of items associated with the value.
@@ -142,7 +144,7 @@ public interface IModelInstanceCollectionInfo {
 
   @NonNull
   default Collection<? extends Object> getItemsFromParentInstance(@NonNull Object parentInstance) {
-    Object value = getInstance().getValue(parentInstance);
+    Object value = getBinding().getValue(parentInstance);
     return getItemsFromValue(value);
   }
 

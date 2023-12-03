@@ -71,7 +71,7 @@ public interface IModelElement {
    * @return the Metaschema module
    */
   @NonNull
-  IModule getContainingModule();
+  IModule<?, ?, ?, ?, ?> getContainingModule();
 
   /**
    * Retrieves the default data value for this model construct.

@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-public interface IAssemblyInstance extends INamedModelInstance, IAssembly {
-
-  @Override
-  IAssemblyDefinition getDefinition();
+public interface IAssemblyInstance extends IAssemblyInstanceBase, INamedModelInstance {
+  // no additional methods
 }

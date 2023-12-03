@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.core.util.AutoCloser;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.AbstractDeserializer;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
@@ -54,23 +54,23 @@ public class DefaultXmlDeserializer<CLASS>
   private XMLInputFactory2 xmlInputFactory;
 
   @NonNull
-  private final IAssemblyClassBinding rootDefinition;
+  private final IBoundDefinitionAssembly rootDefinition;
 
   /**
    * Construct a new Module binding-based deserializer that reads XML-based Module
    * content.
    *
-   * @param classBinding
+   * @param definition
    *          the assembly class binding describing the Java objects this
    *          deserializer parses data into
    */
-  public DefaultXmlDeserializer(@NonNull IAssemblyClassBinding classBinding) {
-    super(classBinding);
-    if (!classBinding.isRoot()) {
+  public DefaultXmlDeserializer(@NonNull IBoundDefinitionAssembly definition) {
+    super(definition);
+    if (!definition.isRoot()) {
       throw new UnsupportedOperationException(
-          String.format("The assembly '%s' is not a root assembly.", classBinding.getBoundClass().getName()));
+          String.format("The assembly '%s' is not a root assembly.", definition.getBoundClass().getName()));
     }
-    this.rootDefinition = classBinding;
+    this.rootDefinition = definition;
   }
 
   /**

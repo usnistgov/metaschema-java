@@ -27,32 +27,35 @@
 package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.AbstractModelInstance;
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.IGroupedAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IGroupedFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedChoiceType;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 class XmlChoiceGroupInstance
-    extends AbstractModelInstance
-    implements IFeatureStandardModelContainer, IChoiceGroupInstance {
+    extends AbstractModelInstance<IAssemblyDefinition>
+    implements IChoiceGroupInstance,
+    IFeatureGroupedModelContainer<
+        IGroupedNamedModelInstance,
+        IGroupedFieldInstance,
+        IGroupedAssemblyInstance> {
   @NonNull
   private final GroupedChoiceType xmlObject;
   @NonNull
-  private final Lazy<IStandardModelContainerSupport> modelContainer;
+  private final Lazy<ModelContainerSupport> modelContainer;
 
   /**
    * Constructs a mutually exclusive choice between two possible objects.
@@ -64,19 +67,24 @@ class XmlChoiceGroupInstance
    */
   public XmlChoiceGroupInstance(
       @NonNull GroupedChoiceType xmlObject,
-      @NonNull IModelContainer parent) {
+      @NonNull IAssemblyDefinition parent) {
     super(parent);
     this.xmlObject = xmlObject;
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-      IStandardModelContainerSupport retval = new ModelContainerSupport();
-      XmlModelParser.parseChoiceGroup(xmlObject, parent, retval);
+      ModelContainerSupport retval = new ModelContainerSupport();
+      XmlModelParser.parseChoiceGroup(xmlObject, this, retval);
       return retval;
     }));
   }
 
   @Override
-  public IStandardModelContainerSupport getModelContainer() {
+  public ModelContainerSupport getModelContainer() {
     return ObjectUtils.notNull(modelContainer.get());
+  }
+
+  @Override
+  public IAssemblyDefinition getOwningDefinition() {
+    return getParentContainer();
   }
 
   // ----------------------------------------
@@ -131,6 +139,11 @@ class XmlChoiceGroupInstance
   }
 
   @Override
+  public String getGroupAsXmlNamespace() {
+    return getContainingModule().getXmlNamespace().toASCIIString();
+  }
+
+  @Override
   public MarkupMultiline getRemarks() {
     // remarks not supported
     return null;
@@ -140,14 +153,49 @@ class XmlChoiceGroupInstance
   // - End XmlBeans driven code - CPD-ON -
   // -------------------------------------
   private static class ModelContainerSupport
-      extends AbstractModelContainerSupport<
-          IModelInstance,
-          INamedModelInstance,
-          IFieldInstance,
-          IAssemblyInstance,
-          IChoiceInstance,
-          IChoiceGroupInstance>
-      implements IStandardModelContainerSupport {
-    // no other methods
+      implements IStandardGroupedModelContainerSupport {
+
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    @NonNull
+    private final Map<String, IGroupedNamedModelInstance> namedModelInstances = new LinkedHashMap<>();
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    @NonNull
+    private final Map<String, IGroupedFieldInstance> fieldInstances = new LinkedHashMap<>();
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    @NonNull
+    private final Map<String, IGroupedAssemblyInstance> assemblyInstances = new LinkedHashMap<>();
+
+    /**
+     * Get a mapping of all named model instances, mapped from their effective name
+     * to the instance.
+     *
+     * @return the mapping
+     */
+    @Override
+    public Map<String, IGroupedNamedModelInstance> getNamedModelInstanceMap() {
+      return namedModelInstances;
+    }
+
+    /**
+     * Get a mapping of all field instances, mapped from their effective name to the
+     * instance.
+     *
+     * @return the mapping
+     */
+    @Override
+    public Map<String, IGroupedFieldInstance> getFieldInstanceMap() {
+      return fieldInstances;
+    }
+
+    /**
+     * Get a mapping of all assembly instances, mapped from their effective name to
+     * the instance.
+     *
+     * @return the mapping
+     */
+    @Override
+    public Map<String, IGroupedAssemblyInstance> getAssemblyInstanceMap() {
+      return assemblyInstances;
+    }
   }
 }

@@ -29,8 +29,7 @@ package gov.nist.secauto.metaschema.databind.model.info;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IBindingInstanceModel;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -43,20 +42,20 @@ class ListCollectionInfo
     extends AbstractModelInstanceCollectionInfo {
 
   public ListCollectionInfo(
-      @NonNull IFeatureCollectionModelInstance instance) {
-    super(instance);
+      @NonNull IBindingInstanceModel binding) {
+    super(binding);
   }
 
   @Override
   public Class<?> getItemType() {
-    ParameterizedType actualType = (ParameterizedType) getInstance().getType();
+    ParameterizedType actualType = (ParameterizedType) getBinding().getType();
     // this is a List so there is only a single generic type
     return ObjectUtils.notNull((Class<?>) actualType.getActualTypeArguments()[0]);
   }
 
   @Override
   public List<? extends Object> getItemsFromParentInstance(Object parentInstance) {
-    Object value = getInstance().getValue(parentInstance);
+    Object value = getBinding().getValue(parentInstance);
     return getItemsFromValue(value);
   }
 
@@ -73,11 +72,11 @@ class ListCollectionInfo
   @Override
   public List<?> deepCopyItems(@NonNull Object fromInstance, @NonNull Object toInstance)
       throws BindingException {
-    IBoundModelInstance instance = getInstance();
+    IBindingInstanceModel binding = getBinding();
 
     List<Object> copy = emptyValue();
     for (Object item : getItemsFromParentInstance(fromInstance)) {
-      copy.add(instance.deepCopyItem(ObjectUtils.requireNonNull(item), toInstance));
+      copy.add(binding.deepCopyItem(ObjectUtils.requireNonNull(item), toInstance));
     }
     return copy;
   }

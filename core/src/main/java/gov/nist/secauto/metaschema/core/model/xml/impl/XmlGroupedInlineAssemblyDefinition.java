@@ -28,15 +28,11 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractGroupedNamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFeatureGroupedModelInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
-import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IGroupedAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
@@ -53,12 +49,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class XmlGroupedInlineAssemblyDefinition
-    extends AbstractAssemblyInstance
-    implements IAssemblyDefinition,
+    extends AbstractGroupedNamedModelInstance
+    implements IGroupedAssemblyInstance, IAssemblyDefinition,
     IFeatureStandardModelContainer,
     IFeatureFlagContainer<IFlagInstance>,
-    IFeatureInlinedDefinition<IAssemblyDefinition, IAssemblyInstance>,
-    IFeatureGroupedModelInstance {
+    IFeatureInlinedDefinition<IAssemblyDefinition, IGroupedAssemblyInstance> {
 
   @NonNull
   private final GroupedInlineAssemblyDefinitionType xmlObject;
@@ -81,7 +76,7 @@ public class XmlGroupedInlineAssemblyDefinition
   @SuppressWarnings("PMD.NullAssignment")
   public XmlGroupedInlineAssemblyDefinition(
       @NonNull GroupedInlineAssemblyDefinitionType xmlObject,
-      @NonNull IModelContainer parent) {
+      @NonNull IChoiceGroupInstance parent) {
     super(parent);
     this.xmlObject = xmlObject;
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this)));
@@ -108,7 +103,7 @@ public class XmlGroupedInlineAssemblyDefinition
   }
 
   @Override
-  public IAssemblyInstance getInlineInstance() {
+  public IGroupedAssemblyInstance getInlineInstance() {
     return this;
   }
 

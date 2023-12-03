@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureGroupedModelInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractGroupedNamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IGroupedFieldInstance;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedFieldReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
@@ -45,8 +45,8 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class XmlGroupedFieldInstance
-    extends AbstractFieldInstance
-    implements IFeatureGroupedModelInstance {
+    extends AbstractGroupedNamedModelInstance
+    implements IGroupedFieldInstance {
   @NonNull
   private final GroupedFieldReferenceType xmlObject;
 
@@ -62,7 +62,7 @@ public class XmlGroupedFieldInstance
   @SuppressWarnings("PMD.NullAssignment")
   public XmlGroupedFieldInstance(
       @NonNull GroupedFieldReferenceType xmlObject,
-      @NonNull IModelContainer parent) {
+      @NonNull IChoiceGroupInstance parent) {
     super(parent);
     this.xmlObject = xmlObject;
   }

@@ -28,8 +28,7 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ChoiceType;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -54,12 +53,12 @@ class XmlChoiceInstance
    */
   public XmlChoiceInstance(
       @NonNull ChoiceType xmlChoice,
-      @NonNull IModelContainer parent) {
+      @NonNull IAssemblyDefinition parent) {
     super(parent);
     this.xmlChoice = xmlChoice;
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
       IStandardModelContainerSupport retval = new AssemblyModelContainerSupportImpl();
-      XmlModelParser.parseChoice(xmlChoice, parent, retval);
+      XmlModelParser.parseChoice(xmlChoice, this, retval);
       return retval;
     }));
   }
@@ -72,6 +71,12 @@ class XmlChoiceInstance
   @Override
   public String getGroupAsName() {
     // a choice does not have a groups-as name
+    return null;
+  }
+
+  @Override
+  public String getJsonKeyFlagName() {
+    // choices do not have a JSON key flag
     return null;
   }
 

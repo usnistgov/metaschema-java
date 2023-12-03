@@ -28,12 +28,9 @@ package gov.nist.secauto.metaschema.databind;
 
 import gov.nist.secauto.metaschema.core.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.xml.IModulePostProcessor;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.codegen.IGeneratedDefinitionClass;
 import gov.nist.secauto.metaschema.databind.codegen.IProduction;
 import gov.nist.secauto.metaschema.databind.codegen.ModuleCompilerHelper;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
@@ -48,13 +45,15 @@ import gov.nist.secauto.metaschema.databind.io.xml.DefaultXmlDeserializer;
 import gov.nist.secauto.metaschema.databind.io.xml.DefaultXmlSerializer;
 import gov.nist.secauto.metaschema.databind.io.yaml.DefaultYamlDeserializer;
 import gov.nist.secauto.metaschema.databind.io.yaml.DefaultYamlSerializer;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundModule;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -83,9 +82,9 @@ public class DefaultBindingContext implements IBindingContext {
   @NonNull
   private final IModuleLoaderStrategy moduleLoaderStrategy;
   @NonNull
-  private final Map<Class<?>, IClassBinding> boundClassToStrategyMap = new ConcurrentHashMap<>();
+  private final Map<Class<?>, IBoundDefinitionModelComplex> boundClassToStrategyMap = new ConcurrentHashMap<>();
   @NonNull
-  private final List<IBindingMatcher> bindingMatchers = new LinkedList<>();
+  private final Map<IBoundDefinitionAssembly, IBindingMatcher> bindingMatchers = new ConcurrentHashMap<>();
 
   /**
    * Get the singleton instance of this binding context.
@@ -130,40 +129,47 @@ public class DefaultBindingContext implements IBindingContext {
    * Get the binding matchers that are associated with this class.
    *
    * @return the list of matchers
-   * @see #registerBindingMatcher(IBindingMatcher)
+   * @see #registerBindingMatcher(Class)
+   * @see #registerBindingMatcher(IBoundDefinitionAssembly)
    */
   @NonNull
-  protected List<IBindingMatcher> getBindingMatchers() {
-    return bindingMatchers;
+  protected Collection<IBindingMatcher> getBindingMatchers() {
+    return ObjectUtils.notNull(bindingMatchers.values());
   }
 
   @Override
-  public IBindingContext registerBindingMatcher(IBindingMatcher matcher) {
-    synchronized (this) {
-      bindingMatchers.add(matcher);
+  @NonNull
+  public IBindingMatcher registerBindingMatcher(@NonNull IBoundDefinitionAssembly definition) {
+    return ObjectUtils.notNull(bindingMatchers.computeIfAbsent(definition, (key) -> IBindingMatcher.of(definition)));
+  }
+
+  @Override
+  public IBindingMatcher registerBindingMatcher(@NonNull Class<?> clazz) {
+    IBoundDefinitionModelComplex definition = getBoundDefinitionForClass(clazz);
+
+    try {
+      IBoundDefinitionAssembly assemblyDefinition = IBoundDefinitionAssembly.class.cast(definition);
+      return registerBindingMatcher(ObjectUtils.requireNonNull(assemblyDefinition));
+    } catch (ClassCastException ex) {
+      throw new IllegalArgumentException(
+          String.format("The provided class '%s' is not a root assembly.", clazz.getName()));
     }
-    return this;
   }
 
   @Override
-  public IClassBinding registerClassBinding(IClassBinding classBinding) {
-    Class<?> clazz = classBinding.getBoundClass();
-    return boundClassToStrategyMap.computeIfAbsent(clazz, k -> classBinding);
+  public IBoundDefinitionModelComplex registerClassBinding(IBoundDefinitionModelComplex definition) {
+    Class<?> clazz = definition.getBoundClass();
+    return boundClassToStrategyMap.computeIfAbsent(clazz, k -> definition);
   }
 
   @Override
-  public IClassBinding getClassBinding(@NonNull Class<?> clazz) {
-    return moduleLoaderStrategy.getClassBinding(clazz);
+  public IBoundDefinitionModelComplex getBoundDefinitionForClass(@NonNull Class<?> clazz) {
+    return moduleLoaderStrategy.getBoundDefinitionForClass(clazz);
   }
 
   @Override
   public <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NonNull Class<TYPE> clazz) {
     return DataTypeService.getInstance().getJavaTypeAdapterByClass(clazz);
-  }
-
-  @Override
-  public IModule loadModule(Class<? extends IModule> clazz) {
-    return getModuleLoaderStrategy().loadModule(clazz);
   }
 
   /**
@@ -174,20 +180,25 @@ public class DefaultBindingContext implements IBindingContext {
   @Override
   public <CLASS> ISerializer<CLASS> newSerializer(@NonNull Format format, @NonNull Class<CLASS> clazz) {
     Objects.requireNonNull(format, "format");
-    IAssemblyClassBinding classBinding = (IAssemblyClassBinding) getClassBinding(clazz);
-    if (classBinding == null) {
+    IBoundDefinitionAssembly definition;
+    try {
+      definition = IBoundDefinitionAssembly.class.cast(getBoundDefinitionForClass(clazz));
+    } catch (ClassCastException ex) {
+      throw new IllegalStateException(String.format("Class '%s' is not a bound assembly.", clazz.getClass().getName()));
+    }
+    if (definition == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", clazz.getClass().getName()));
     }
     ISerializer<CLASS> retval;
     switch (format) {
     case JSON:
-      retval = new DefaultJsonSerializer<>(classBinding);
+      retval = new DefaultJsonSerializer<>(definition);
       break;
     case XML:
-      retval = new DefaultXmlSerializer<>(classBinding);
+      retval = new DefaultXmlSerializer<>(definition);
       break;
     case YAML:
-      retval = new DefaultYamlSerializer<>(classBinding);
+      retval = new DefaultYamlSerializer<>(definition);
       break;
     default:
       throw new UnsupportedOperationException(String.format("Unsupported format '%s'", format));
@@ -202,20 +213,25 @@ public class DefaultBindingContext implements IBindingContext {
    */
   @Override
   public <CLASS> IDeserializer<CLASS> newDeserializer(@NonNull Format format, @NonNull Class<CLASS> clazz) {
-    IAssemblyClassBinding classBinding = (IAssemblyClassBinding) getClassBinding(clazz);
-    if (classBinding == null) {
+    IBoundDefinitionAssembly definition;
+    try {
+      definition = IBoundDefinitionAssembly.class.cast(getBoundDefinitionForClass(clazz));
+    } catch (ClassCastException ex) {
+      throw new IllegalStateException(String.format("Class '%s' is not a bound assembly.", clazz.getClass().getName()));
+    }
+    if (definition == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", clazz.getName()));
     }
     IDeserializer<CLASS> retval;
     switch (format) {
     case JSON:
-      retval = new DefaultJsonDeserializer<>(classBinding);
+      retval = new DefaultJsonDeserializer<>(definition);
       break;
     case XML:
-      retval = new DefaultXmlDeserializer<>(classBinding);
+      retval = new DefaultXmlDeserializer<>(definition);
       break;
     case YAML:
-      retval = new DefaultYamlDeserializer<>(classBinding);
+      retval = new DefaultYamlDeserializer<>(definition);
       break;
     default:
       throw new UnsupportedOperationException(String.format("Unsupported format '%s'", format));
@@ -224,43 +240,45 @@ public class DefaultBindingContext implements IBindingContext {
     return retval;
   }
 
-  private static boolean filterRootDefinitions(IGeneratedDefinitionClass definitionInfo) {
-    IFlagContainer definition = definitionInfo.getDefinition();
-    return definition instanceof IAssemblyDefinition
-        && ((IAssemblyDefinition) definition).isRoot();
-  }
+  @Override
+  @SuppressWarnings({ "PMD.UseProperClassLoader", "unchecked" }) // false positive
+  @NonNull
+  public IBindingContext registerModule(
+      @NonNull IModule<?, ?, ?, ?, ?> module,
+      @NonNull Path compilePath) throws IOException {
+    if (!(module instanceof IBoundModule)) {
+      Files.createDirectories(compilePath);
 
-  private IBindingMatcher newBindingMatcher(IGeneratedDefinitionClass definitionInfo, ClassLoader classLoader) {
-    try {
-      return registerBindingMatcher(ObjectUtils.notNull(classLoader.loadClass(
-          definitionInfo.getClassName().reflectionName())));
-    } catch (ClassNotFoundException ex) {
-      throw new IllegalStateException(ex);
+      ClassLoader classLoader = ModuleCompilerHelper.newClassLoader(
+          compilePath,
+          ObjectUtils.notNull(Thread.currentThread().getContextClassLoader()));
+
+      IProduction production = ModuleCompilerHelper.compileMetaschema(module, compilePath);
+      production.getModuleProductions().stream()
+          .map(item -> {
+            try {
+              return (Class<? extends IBoundModule>) classLoader.loadClass(item.getClassName().reflectionName());
+            } catch (ClassNotFoundException ex) {
+              throw new IllegalStateException(ex);
+            }
+          })
+          .forEachOrdered(clazz -> {
+            IBoundModule boundModule = registerModule(ObjectUtils.requireNonNull(clazz));
+            // force the binding matchers to load
+            boundModule.getRootAssemblyDefinitions();
+          });
     }
+    return this;
   }
 
   @Override
-  @SuppressWarnings("PMD.UseProperClassLoader") // false positive
-  @NonNull
-  public IBindingContext registerModule(
-      @NonNull IModule module,
-      @NonNull Path compilePath) throws IOException {
-    Files.createDirectories(compilePath);
-
-    ClassLoader classLoader = ModuleCompilerHelper.newClassLoader(
-        compilePath,
-        ObjectUtils.notNull(Thread.currentThread().getContextClassLoader()));
-
-    IProduction production = ModuleCompilerHelper.compileMetaschema(module, compilePath);
-
-    production.getGlobalDefinitionClasses().stream()
-        .filter(DefaultBindingContext::filterRootDefinitions)
-        .map(generatedClass -> newBindingMatcher(generatedClass, classLoader))
-        .forEachOrdered(
-            matcher -> registerBindingMatcher(
-                ObjectUtils.notNull(
-                    matcher)));
-    return this;
+  public IBoundModule registerModule(Class<? extends IBoundModule> clazz) {
+    IBoundModule retval = getModuleLoaderStrategy().loadModule(clazz);
+    // retval.getExportedAssemblyDefinitions().stream()
+    // .map(def -> (IBoundDefinitionAssembly) def)
+    // .filter(def -> def.isRoot())
+    // .forEachOrdered(def -> registerBindingMatcher(ObjectUtils.notNull(def)));
+    return retval;
   }
 
   @Override
@@ -294,11 +312,12 @@ public class DefaultBindingContext implements IBindingContext {
 
   @Override
   public <CLASS> CLASS deepCopy(@NonNull CLASS other, Object parentInstance) throws BindingException {
-    IClassBinding classBinding = getClassBinding(other.getClass());
-    if (classBinding == null) {
+    IBoundDefinitionModel definition = getBoundDefinitionForClass(other.getClass());
+    if (definition == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", other.getClass().getName()));
     }
-    @SuppressWarnings("unchecked") CLASS retval = (CLASS) classBinding.deepCopyItem(other, parentInstance);
+    @SuppressWarnings("unchecked")
+    CLASS retval = (CLASS) definition.getDefinitionBinding().deepCopyItem(other, parentInstance);
     return retval;
   }
 }

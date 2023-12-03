@@ -49,6 +49,7 @@ public final class DeserializationFeature<V>
    * node is expected to be an object containing the data of the
    * {@link IAssemblyDefinition}.
    */
+  @NonNull
   public static final DeserializationFeature<Boolean> DESERIALIZE_JSON_ROOT_PROPERTY
       = new DeserializationFeature<>(Boolean.class, true);
 

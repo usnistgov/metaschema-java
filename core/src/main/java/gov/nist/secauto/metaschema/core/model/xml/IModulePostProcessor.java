@@ -31,5 +31,5 @@ import gov.nist.secauto.metaschema.core.model.IModule;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IModulePostProcessor {
-  void processModule(@NonNull IModule module);
+  void processModule(@NonNull IModule<?, ?, ?, ?, ?> module);
 }

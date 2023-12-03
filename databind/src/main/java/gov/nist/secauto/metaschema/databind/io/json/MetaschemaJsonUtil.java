@@ -29,12 +29,12 @@ package gov.nist.secauto.metaschema.databind.io.json;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBindingFieldValue;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionField;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
+import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -70,23 +70,25 @@ final class MetaschemaJsonUtil {
    * @return a mapping of JSON property to related Module instance
    */
   @NonNull
-  public static Map<String, ? extends IBoundInstance> getJsonInstanceMap(
-      @NonNull IClassBinding targetDefinition,
-      @Nullable IBoundFlagInstance jsonKey) {
-    Collection<? extends IBoundFlagInstance> flags = targetDefinition.getFlagInstances();
+  public static Map<String, ? extends IBoundProperty> getJsonInstanceMap(
+      @NonNull IBoundDefinitionModel targetDefinition,
+      @Nullable IBoundInstanceFlag jsonKey) {
+    Collection<? extends IBoundInstanceFlag> flags = targetDefinition.getFlagInstances();
     int flagCount = flags.size() - (jsonKey == null ? 0 : 1);
 
-    @SuppressWarnings("resource") Stream<? extends IBoundInstance> instanceStream;
-    if (targetDefinition instanceof IAssemblyClassBinding) {
+    @SuppressWarnings("resource")
+    Stream<? extends IBoundProperty> instanceStream;
+    if (targetDefinition instanceof IBoundDefinitionAssembly) {
       // use all child instances
-      instanceStream = ((IAssemblyClassBinding) targetDefinition).getModelInstances().stream();
-    } else if (targetDefinition instanceof IFieldClassBinding) {
-      IFieldClassBinding targetFieldDefinition = (IFieldClassBinding) targetDefinition;
+      instanceStream = ((IBoundDefinitionAssembly) targetDefinition).getModelInstances().stream()
+          .map(instance -> (IBoundProperty) instance);
+    } else if (targetDefinition instanceof IBoundDefinitionField) {
+      IBoundDefinitionField targetFieldDefinition = (IBoundDefinitionField) targetDefinition;
 
-      IBoundFlagInstance jsonValueKeyFlag = targetFieldDefinition.getJsonValueKeyFlagInstance();
+      IBoundInstanceFlag jsonValueKeyFlag = targetFieldDefinition.getJsonValueKeyFlagInstance();
       if (jsonValueKeyFlag == null && flagCount > 0) {
         // the field value is handled as named field
-        IBoundFieldValueInstance fieldValue = targetFieldDefinition.getFieldValueInstance();
+        IBindingFieldValue fieldValue = targetFieldDefinition.getFieldValueBinding();
         instanceStream = Stream.of(fieldValue);
       } else {
         // only the value, with no flags or a JSON value key flag
@@ -108,7 +110,7 @@ final class MetaschemaJsonUtil {
     }
     return CollectionUtil.unmodifiableMap(ObjectUtils.notNull(instanceStream.collect(
         Collectors.toMap(
-            IBoundInstance::getJsonName,
+            IBoundProperty::getJsonName,
             Function.identity(),
             (v1, v2) -> v2,
             LinkedHashMap::new))));

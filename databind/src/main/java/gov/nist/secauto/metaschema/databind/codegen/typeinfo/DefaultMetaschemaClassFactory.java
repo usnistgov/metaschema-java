@@ -63,6 +63,7 @@ import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefini
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IFieldDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IModelDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.AbstractBoundModule;
+import gov.nist.secauto.metaschema.databind.model.IBoundModule;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaPackage;
@@ -138,7 +139,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
 
   @Override
   public IGeneratedModuleClass generateClass(
-      IModule module,
+      IModule<?, ?, ?, ?, ?> module,
       Path targetDirectory) throws IOException {
 
     // Generate the Module module class
@@ -269,7 +270,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
    */
   @NonNull
   protected TypeSpec.Builder newClassBuilder(
-      @NonNull IModule module,
+      @NonNull IModule<?, ?, ?, ?, ?> module,
       @NonNull ClassName className) { // NOPMD - long, but readable
 
     // create the class
@@ -293,7 +294,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
           typeResolver.getClassName(ObjectUtils.notNull(definition)));
     }
 
-    for (IModule moduleImport : module.getImportedModules()) {
+    for (IModule<?, ?, ?, ?, ?> moduleImport : module.getImportedModules()) {
       moduleAnnotation.addMember(
           "imports",
           "$T.class",
@@ -347,7 +348,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
             .addModifiers(Modifier.PUBLIC)
             .addParameter(
                 ParameterizedTypeName.get(ClassName.get(List.class),
-                    WildcardTypeName.subtypeOf(IModule.class).box()),
+                    WildcardTypeName.subtypeOf(IBoundModule.class).box()),
                 "importedModules")
             .addParameter(IBindingContext.class, "bindingContext")
             .addStatement("super($N, $N)", "importedModules", "bindingContext")
@@ -599,7 +600,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
     }
 
     builder.addMember("name", "$S", definition.getName());
-    IModule module = definition.getContainingModule();
+    IModule<?, ?, ?, ?, ?> module = definition.getContainingModule();
     builder.addMember("moduleClass", "$T.class", getTypeResolver().getClassName(module));
   }
 

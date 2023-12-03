@@ -31,6 +31,7 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IModelInstance;
@@ -38,7 +39,7 @@ import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 
 import java.util.HashSet;
@@ -48,11 +49,13 @@ import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance, PARENT extends IDefinitionTypeInfo>
-    extends AbstractInstanceTypeInfo<INSTANCE, PARENT>
+abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance>
+    extends AbstractInstanceTypeInfo<INSTANCE, IAssemblyDefinitionTypeInfo>
     implements IModelInstanceTypeInfo {
 
-  protected AbstractModelInstanceTypeInfo(@NonNull INSTANCE instance, @NonNull PARENT parentDefinition) {
+  protected AbstractModelInstanceTypeInfo(
+      @NonNull INSTANCE instance,
+      @NonNull IAssemblyDefinitionTypeInfo parentDefinition) {
     super(instance, parentDefinition);
   }
 
@@ -65,7 +68,8 @@ abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance, PA
   public @NonNull TypeName getJavaFieldType() {
     TypeName item = getJavaItemType();
 
-    @NonNull TypeName retval;
+    @NonNull
+    TypeName retval;
     IModelInstance instance = getInstance();
     int maxOccurance = instance.getMaxOccurs();
     if (maxOccurance == -1 || maxOccurance > 1) {
@@ -86,14 +90,16 @@ abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance, PA
   protected abstract AnnotationSpec.Builder newBindingAnnotation();
 
   @Override
-  public Set<IFlagContainer> buildField(FieldSpec.Builder builder) {
-    Set<IFlagContainer> retval = new HashSet<>(super.buildField(builder));
+  public Set<IFlagContainer> buildField(
+      TypeSpec.Builder typeBuilder,
+      FieldSpec.Builder fieldBuilder) {
+    Set<IFlagContainer> retval = new HashSet<>(super.buildField(typeBuilder, fieldBuilder));
 
     AnnotationSpec.Builder annotation = newBindingAnnotation();
 
-    retval.addAll(buildBindingAnnotation(annotation));
+    retval.addAll(buildBindingAnnotation(typeBuilder, fieldBuilder, annotation));
 
-    builder.addAnnotation(annotation.build());
+    fieldBuilder.addAnnotation(annotation.build());
 
     return retval;
   }

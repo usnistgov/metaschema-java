@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.databind.io.json;
 import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.databind.io.IParsingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 
 import java.io.IOException;
 import java.util.Map;
@@ -53,7 +53,7 @@ public interface IJsonParsingContext extends IParsingContext<JsonParser, IJsonPr
    *           if an error occurred while parsing the JSON
    */
   void readDefinitionValue(
-      @NonNull IClassBinding targetDefinition,
+      @NonNull IBoundDefinitionModel targetDefinition,
       @NonNull Object targetObject,
-      @NonNull Map<String, ? extends IBoundInstance> instances) throws IOException;
+      @NonNull Map<String, ? extends IBoundProperty> instances) throws IOException;
 }

@@ -42,7 +42,7 @@ public interface IBindingConfiguration {
    * @return a Java package name
    */
   @NonNull
-  String getPackageNameForModule(@NonNull IModule module);
+  String getPackageNameForModule(@NonNull IModule<?, ?, ?, ?, ?> module);
 
   /**
    * Get the Java class name for the provided field or assembly definition.
@@ -62,7 +62,7 @@ public interface IBindingConfiguration {
    * @return a Java class name
    */
   @NonNull
-  String getClassName(@NonNull IModule module);
+  String getClassName(@NonNull IModule<?, ?, ?, ?, ?> module);
 
   /**
    * Get the Java class name of the base class to use for the class associated

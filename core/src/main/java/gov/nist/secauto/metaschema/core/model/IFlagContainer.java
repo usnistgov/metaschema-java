@@ -34,10 +34,11 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 /**
  * This marker interface identifies a type of definition that contains flags,
  * either a field or assembly.
+ *
  */
 public interface IFlagContainer extends IDefinition, IContainer {
   @Override
-  INamedModelInstance getInlineInstance();
+  INamedModelInstanceBase getInlineInstance();
 
   /**
    * Identifies if the field has flags or not, or if it has a complex structure

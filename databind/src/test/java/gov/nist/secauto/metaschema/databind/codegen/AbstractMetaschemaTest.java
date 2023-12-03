@@ -28,10 +28,11 @@ package gov.nist.secauto.metaschema.databind.codegen;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.model.xml.IXmlModule;
 import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.DefaultBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.codegen.config.DefaultBindingConfiguration;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
@@ -61,14 +62,14 @@ abstract class AbstractMetaschemaTest {
   Path generationDir = ObjectUtils.notNull(Paths.get("target/generated-test-sources/metaschema"));
 
   @NonNull
-  private static IModule loadModule(@NonNull Path moduleFile) throws MetaschemaException, IOException {
+  private static IXmlModule loadModule(@NonNull Path moduleFile) throws MetaschemaException, IOException {
     return LOADER.load(moduleFile);
   }
 
   public static Class<?> compileModule(@NonNull Path moduleFile, @Nullable Path bindingFile,
       @NonNull String rootClassName, @NonNull Path classDir)
       throws IOException, ClassNotFoundException, MetaschemaException {
-    IModule module = loadModule(moduleFile);
+    IXmlModule module = loadModule(moduleFile);
 
     DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
     if (bindingFile != null && Files.exists(bindingFile) && Files.isRegularFile(bindingFile)) {
@@ -84,19 +85,25 @@ abstract class AbstractMetaschemaTest {
         .loadClass(rootClassName);
   }
 
-  private static Object read(@NonNull Format format, @NonNull Path file, @NonNull Class<?> rootClass)
+  private static Object read(
+      @NonNull Format format,
+      @NonNull Path file,
+      @NonNull Class<?> rootClass,
+      @NonNull IBindingContext context)
       throws IOException {
-    IBindingContext context = IBindingContext.instance();
-
     IDeserializer<?> deserializer = context.newDeserializer(format, rootClass);
     LOGGER.info("Reading content: {}", file);
     Object value = deserializer.deserialize(file);
     return value;
   }
 
-  private static <CLASS> void write(@NonNull Format format, @NonNull Path file, CLASS rootObject) throws IOException {
-    IBindingContext context = IBindingContext.instance();
-    @SuppressWarnings("unchecked") Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
+  private static <CLASS> void write(
+      @NonNull Format format,
+      @NonNull Path file,
+      @NonNull CLASS rootObject,
+      @NonNull IBindingContext context) throws IOException {
+    @SuppressWarnings("unchecked")
+    Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
 
     try (Writer writer = Files.newBufferedWriter(file, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
         StandardOpenOption.TRUNCATE_EXISTING)) {
@@ -144,10 +151,12 @@ abstract class AbstractMetaschemaTest {
     assert rootClass != null;
 
     if (examplePath != null && Files.exists(examplePath)) {
+      IBindingContext context = new DefaultBindingContext();
       LOGGER.info("Testing XML file: {}", examplePath.toString());
       String xml;
       {
-        Object root = read(Format.XML, examplePath, rootClass);
+
+        Object root = read(Format.XML, examplePath, rootClass, context);
         LOGGER.atDebug().log("Read XML: Object: {}", root.toString());
         if (assertions != null) {
           assertAll("Deserialize XML", () -> {
@@ -156,13 +165,13 @@ abstract class AbstractMetaschemaTest {
         }
 
         LOGGER.atDebug().log("Write XML:");
-        write(Format.XML, ObjectUtils.notNull(Paths.get("target/out.xml")), root);
+        write(Format.XML, ObjectUtils.notNull(Paths.get("target/out.xml")), root, context);
 
         LOGGER.atDebug().log("Write JSON:");
-        write(Format.XML, ObjectUtils.notNull(Paths.get("target/out.json")), root);
+        write(Format.XML, ObjectUtils.notNull(Paths.get("target/out.json")), root, context);
       }
 
-      Object root = read(Format.XML, ObjectUtils.notNull(Paths.get("target/out.xml")), rootClass);
+      Object root = read(Format.XML, ObjectUtils.notNull(Paths.get("target/out.xml")), rootClass, context);
       if (assertions != null) {
         assertAll("Deserialize XML (roundtrip)", () -> assertions.accept(root));
       }

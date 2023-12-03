@@ -30,6 +30,7 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
@@ -52,7 +53,7 @@ class FieldValueTypeInfoImpl
 
   @Override
   public String getBaseName() {
-    String valueKeyName = getParentDefinitionTypeInfo().getDefinition().getJsonValueKeyName();
+    String valueKeyName = getParentTypeInfo().getDefinition().getJsonValueKeyName();
     return valueKeyName == null ? "value" : valueKeyName;
   }
 
@@ -60,13 +61,15 @@ class FieldValueTypeInfoImpl
   @Override
   public TypeName getJavaFieldType() {
     return ClassName.get(
-        getParentDefinitionTypeInfo().getDefinition().getJavaTypeAdapter().getJavaClass());
+        getParentTypeInfo().getDefinition().getJavaTypeAdapter().getJavaClass());
   }
 
   @Override
-  protected Set<IFlagContainer> buildField(FieldSpec.Builder builder) {
+  protected Set<IFlagContainer> buildField(
+      TypeSpec.Builder typeBuilder,
+      FieldSpec.Builder fieldBuilder) {
 
-    IFieldDefinition definition = getParentDefinitionTypeInfo().getDefinition();
+    IFieldDefinition definition = getParentTypeInfo().getDefinition();
     AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(BoundFieldValue.class);
 
     IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
@@ -85,9 +88,9 @@ class FieldValueTypeInfoImpl
       fieldValue.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
     }
 
-    Set<IFlagContainer> retval = super.buildField(builder);
+    Set<IFlagContainer> retval = super.buildField(typeBuilder, fieldBuilder);
 
-    builder.addAnnotation(fieldValue.build());
+    fieldBuilder.addAnnotation(fieldValue.build());
     return retval;
   }
 }

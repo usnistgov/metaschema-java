@@ -32,15 +32,15 @@ import com.fasterxml.jackson.core.JsonToken;
 import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBindingFieldValue;
+import gov.nist.secauto.metaschema.databind.model.IBindingInstanceModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionField;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
+import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
@@ -108,7 +108,7 @@ public class MetaschemaJsonReader
 
   /**
    * Parses JSON into a bound object. This assembly must be a root assembly for
-   * which a call to {@link IAssemblyClassBinding#isRoot()} will return
+   * which a call to {@link IBoundDefinitionAssembly#isRoot()} will return
    * {@code true}.
    * <p>
    * This method expects the parser's current token to be:
@@ -120,7 +120,7 @@ public class MetaschemaJsonReader
    * <li>a {@link JsonToken#FIELD_NAME} representing the root field to parse,
    * or</li>
    * <li>a peer field to the root field that will be handled by the
-   * {@link IJsonProblemHandler#handleUnknownProperty(IClassBinding, Object, String, IJsonParsingContext)}
+   * {@link IJsonProblemHandler#handleUnknownProperty(gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel, Object, String, IJsonParsingContext)}
    * method.</li>
    * </ul>
    * <p>
@@ -149,7 +149,7 @@ public class MetaschemaJsonReader
       "PMD.CyclomaticComplexity", "PMD.NPathComplexity" // acceptable
   })
   @Nullable
-  public <T> T read(@NonNull IAssemblyClassBinding targetDefinition) throws IOException {
+  public <T> T read(@NonNull IBoundDefinitionAssembly targetDefinition) throws IOException {
     if (!targetDefinition.isRoot()) {
       throw new UnsupportedOperationException(
           String.format("The assembly '%s' is not a root assembly.", targetDefinition.getBoundClass().getName()));
@@ -157,6 +157,7 @@ public class MetaschemaJsonReader
 
     boolean objectWrapper = false;
     if (parser.currentToken() == null) {
+      // advance to the first token
       parser.nextToken();
     }
 
@@ -180,7 +181,7 @@ public class MetaschemaJsonReader
         JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
 
         // read the top-level definition
-        instance = targetDefinition.readItem(null, this);
+        instance = targetDefinition.getDefinitionBinding().readItem(null, this);
 
         // stop now, since we found the root field
         break;
@@ -222,7 +223,7 @@ public class MetaschemaJsonReader
    *           if an error occurred while parsing the data
    */
   protected boolean readInstance(
-      @NonNull IBoundInstance targetInstance,
+      @NonNull IBoundProperty targetInstance,
       @NonNull Object parentObject) throws IOException {
     // the parser's current token should be the JSON field name
     JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
@@ -232,17 +233,17 @@ public class MetaschemaJsonReader
       LOGGER.trace("reading property {}", propertyName);
     }
 
-    boolean handled = targetInstance.canHandleJsonPropertyName(propertyName);
+    boolean handled = targetInstance.getInstanceBinding().canHandleJsonPropertyName(propertyName);
     if (handled) {
       // advance past the field name
       parser.nextToken();
 
       Object value;
-      if (targetInstance instanceof IBoundFlagInstance) {
-        value = ((IBoundFlagInstance) targetInstance).readItem(parentObject, this);
-      } else if (targetInstance instanceof IFeatureCollectionModelInstance) {
-        IFeatureCollectionModelInstance instance = (IFeatureCollectionModelInstance) targetInstance;
-        IModelInstanceCollectionInfo collectionInfo = instance.getCollectionInfo();
+      if (targetInstance instanceof IBoundInstanceFlag) {
+        value = ((IBoundInstanceFlag) targetInstance).getInstanceBinding().readItem(parentObject, this);
+      } else if (targetInstance instanceof IBoundInstanceModel) {
+        IBoundInstanceModel instance = (IBoundInstanceModel) targetInstance;
+        IModelInstanceCollectionInfo collectionInfo = instance.getInstanceBinding().getCollectionInfo();
 
         ModelInstanceReadHandler handler = new ModelInstanceReadHandler(
             collectionInfo,
@@ -250,15 +251,15 @@ public class MetaschemaJsonReader
 
         // let the property info decide how to parse the value
         value = collectionInfo.readItems(handler);
-      } else if (targetInstance instanceof IBoundFieldValueInstance) {
-        value = ((IBoundFieldValueInstance) targetInstance).readItem(parentObject, this);
+      } else if (targetInstance instanceof IBindingFieldValue) {
+        value = ((IBindingFieldValue) targetInstance).readItem(parentObject, this);
       } else {
         throw new UnsupportedOperationException(
             String.format("Unsupported instance type: %s", targetInstance.getClass().getName()));
       }
 
       if (value != null) {
-        targetInstance.setValue(parentObject, value);
+        targetInstance.getInstanceBinding().setValue(parentObject, value);
       }
     }
 
@@ -270,22 +271,23 @@ public class MetaschemaJsonReader
 
   // @SuppressFBWarnings(value = "UC_USELESS_CONDITION", justification = "false
   // positive")
+  // REFACTOR: rename to readItem
   @SuppressWarnings({
       "PMD.CyclomaticComplexity", "PMD.CognitiveComplexity" // acceptable
   })
   @Override
   public void readDefinitionValue(
-      IClassBinding targetDefinition,
+      IBoundDefinitionModel targetDefinition,
       Object targetObject,
-      Map<String, ? extends IBoundInstance> instances) throws IOException {
-    IBoundFlagInstance valueKeyFlag = null;
-    if (targetDefinition instanceof IFieldClassBinding) {
-      IFieldClassBinding targetFieldDefinition = (IFieldClassBinding) targetDefinition;
+      Map<String, ? extends IBoundProperty> instances) throws IOException {
+    IBoundInstanceFlag valueKeyFlag = null;
+    if (targetDefinition instanceof IBoundDefinitionField) {
+      IBoundDefinitionField targetFieldDefinition = (IBoundDefinitionField) targetDefinition;
       valueKeyFlag = targetFieldDefinition.getJsonValueKeyFlagInstance();
     }
 
     // make a copy, since we use the remaining values to initialize default values
-    Map<String, ? extends IBoundInstance> remainingInstances = new HashMap<>(instances); // NOPMD not concurrent
+    Map<String, ? extends IBoundProperty> remainingInstances = new HashMap<>(instances); // NOPMD not concurrent
 
     // handle each property
     while (!JsonToken.END_OBJECT.equals(parser.currentToken())) {
@@ -295,7 +297,7 @@ public class MetaschemaJsonReader
 
       if (JsonToken.FIELD_NAME.equals(parser.currentToken())) {
         // found a matching property
-        IBoundInstance instance = remainingInstances.get(propertyName);
+        IBoundProperty instance = remainingInstances.get(propertyName);
         if (instance != null) {
           handled = readInstance(instance, targetObject);
           remainingInstances.remove(propertyName);
@@ -308,14 +310,15 @@ public class MetaschemaJsonReader
       if (!handled) {
         if (valueKeyFlag != null) {
           // Handle JSON value key flag case
-          IFieldClassBinding targetFieldDefinition = (IFieldClassBinding) targetDefinition;
-          valueKeyFlag.setValue(targetObject,
+          valueKeyFlag.getInstanceBinding().setValue(targetObject,
               valueKeyFlag.getDefinition().getJavaTypeAdapter().parse(propertyName));
+          remainingInstances.remove(valueKeyFlag.getEffectiveName());
 
           // advance past the FIELD_NAME to get the value
           JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
 
-          IBoundFieldValueInstance fieldValue = targetFieldDefinition.getFieldValueInstance();
+          IBoundDefinitionField targetFieldDefinition = (IBoundDefinitionField) targetDefinition;
+          IBindingFieldValue fieldValue = targetFieldDefinition.getFieldValueBinding();
           fieldValue.setValue(
               targetObject,
               fieldValue.getJavaTypeAdapter().parse(parser));
@@ -372,23 +375,25 @@ public class MetaschemaJsonReader
       JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
     }
 
-    IClassBinding definition = handler.getClassBinding();
+    IBoundDefinitionModel definition = handler.getDefinition();
     Object targetObject;
     try {
-      targetObject = definition.newInstance();
-      definition.callBeforeDeserialize(targetObject, parent);
+      targetObject = handler.newInstance();
+      handler.callBeforeDeserialize(targetObject, parent);
     } catch (BindingException ex) {
       throw new IOException(ex);
     }
 
-    IBoundFlagInstance jsonKey = handler.getJsonKey();
+    String jsonKeyFlagName = handler.getJsonKeyFlagName();
+    IBoundInstanceFlag jsonKey = jsonKeyFlagName == null ? null : definition.getFlagInstanceByName(jsonKeyFlagName);
+
     boolean keyObjectWrapper = false;
     if (jsonKey != null) {
       // the field will be the JSON key
       String key = ObjectUtils.notNull(parser.getCurrentName());
 
       Object value = jsonKey.getDefinition().getJavaTypeAdapter().parse(key);
-      jsonKey.setValue(targetObject, value.toString());
+      jsonKey.getInstanceBinding().setValue(targetObject, value.toString());
 
       // advance past the FIELD_NAME
       JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
@@ -404,13 +409,21 @@ public class MetaschemaJsonReader
     } else if (parser.currentToken().isScalarValue()) {
       // REFACTOR: need to figure out why this special case exists
       // this is just a value
-      IFieldClassBinding fieldDefinition = (IFieldClassBinding) definition;
+      IBoundDefinitionField fieldDefinition = (IBoundDefinitionField) definition;
       Object fieldValue = fieldDefinition.getJavaTypeAdapter().parse(parser);
-      fieldDefinition.getFieldValueInstance().setValue(targetObject, fieldValue);
+      fieldDefinition.getFieldValueBinding().setValue(targetObject, fieldValue);
+    } else {
+      Map<String, ? extends IBoundProperty> remainingInstances = MetaschemaJsonUtil.getJsonInstanceMap(
+          definition,
+          jsonKey);
+      getProblemHandler().handleMissingInstances(
+          definition,
+          targetObject,
+          ObjectUtils.notNull(remainingInstances.values()));
     }
 
     try {
-      definition.callAfterDeserialize(targetObject, parent);
+      handler.callAfterDeserialize(targetObject, parent);
     } catch (BindingException ex) {
       throw new IOException(ex);
     }
@@ -427,7 +440,7 @@ public class MetaschemaJsonReader
   }
 
   @Override
-  public Object readChoiceGroupItem(Object parent, IBoundChoiceGroupInstance instance) {
+  public Object readChoiceGroupItem(Object parent, IBoundInstanceModelChoiceGroup instance) {
     throw new UnsupportedOperationException("implement");
   }
 
@@ -476,7 +489,7 @@ public class MetaschemaJsonReader
     public Map<String, ?> readMap() throws IOException {
       JsonParser parser = getReader();
 
-      IFeatureCollectionModelInstance instance = getCollectionInfo().getInstance();
+      IBindingInstanceModel instance = getCollectionInfo().getBinding();
 
       Map<String, Object> items = new LinkedHashMap<>();
 
@@ -493,7 +506,7 @@ public class MetaschemaJsonReader
         Object item = readItem();
 
         // lookup the key
-        IBoundFlagInstance jsonKey = instance.getItemJsonKey(item);
+        IBoundInstanceFlag jsonKey = instance.getItemJsonKey(item);
         assert jsonKey != null;
 
         String key = jsonKey.getValue(item).toString();
@@ -514,7 +527,7 @@ public class MetaschemaJsonReader
     @Override
     @NonNull
     public Object readItem() throws IOException {
-      IBoundModelInstance instance = getCollectionInfo().getInstance();
+      IBindingInstanceModel instance = getCollectionInfo().getBinding();
       return instance.readItem(getParentObject(), MetaschemaJsonReader.this);
     }
   }

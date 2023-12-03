@@ -65,7 +65,7 @@ public final class JavaGenerator {
    *           if an error occurred while generating the class
    */
   public static IProduction generate(
-      @NonNull IModule module,
+      @NonNull IModule<?, ?, ?, ?, ?> module,
       @NonNull Path targetDir,
       @NonNull IBindingConfiguration bindingConfiguration) throws IOException {
     return generate(CollectionUtil.singletonList(module), targetDir, bindingConfiguration);
@@ -87,7 +87,7 @@ public final class JavaGenerator {
    */
   @NonNull
   public static IProduction generate(
-      @NonNull Collection<? extends IModule> modules,
+      @NonNull Collection<? extends IModule<?, ?, ?, ?, ?>> modules,
       @NonNull Path targetDirectory,
       @NonNull IBindingConfiguration bindingConfiguration) throws IOException {
     Objects.requireNonNull(modules, "metaschemas");

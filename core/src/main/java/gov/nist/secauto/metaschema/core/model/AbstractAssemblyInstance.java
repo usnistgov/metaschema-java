@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.core.model;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractAssemblyInstance
-    extends AbstractModelInstance
+    extends AbstractModelInstance<IModelContainer>
     implements IAssemblyInstance {
   /**
    * Create a new assembly instance.

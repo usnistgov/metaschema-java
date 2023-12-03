@@ -65,8 +65,24 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * can be accessed using {@link #getAssemblyDefinitions()},
  * {@link #getFieldDefinitions()}, and {@link #getFlagDefinitions()}, along with
  * similarly named access methods.
+ *
+ * @param <M>
+ *          the imported module Java type
+ * @param <C>
+ *          the flag container Java type
+ * @param <FL>
+ *          the flag definition Java type
+ * @param <FI>
+ *          the field definition Java type
+ * @param <A>
+ *          the assembly definition Java type
  */
-public interface IModule {
+public interface IModule<
+    M extends IModule<M, C, FL, FI, A>,
+    C extends IFlagContainer,
+    FL extends IFlagDefinition,
+    FI extends IFieldDefinition,
+    A extends IAssemblyDefinition> {
   String METASCHEMA_XML_NS = "http://csrc.nist.gov/ns/oscal/metaschema/1.0";
 
   /**
@@ -167,7 +183,7 @@ public interface IModule {
    * @return a list of imported Metaschema modules
    */
   @NonNull
-  List<? extends IModule> getImportedModules();
+  List<? extends M> getImportedModules();
 
   /**
    * Retrieve the imported Metaschema module with the specified name, if it
@@ -178,7 +194,7 @@ public interface IModule {
    * @return the imported Metaschema module or {@code null} if it doesn't exist
    */
   @Nullable
-  IModule getImportedModuleByShortName(String name);
+  M getImportedModuleByShortName(String name);
 
   /**
    * Retrieves the top-level assembly definitions in this Metaschema module.
@@ -186,7 +202,7 @@ public interface IModule {
    * @return the collection of assembly definitions
    */
   @NonNull
-  Collection<? extends IAssemblyDefinition> getAssemblyDefinitions();
+  Collection<? extends A> getAssemblyDefinitions();
 
   /**
    * Retrieves the top-level assembly definition in this Metaschema module with
@@ -198,7 +214,7 @@ public interface IModule {
    * @return the matching assembly definition, or {@code null} if none match
    */
   @Nullable
-  IAssemblyDefinition getAssemblyDefinitionByName(@NonNull String name);
+  A getAssemblyDefinitionByName(@NonNull String name);
 
   /**
    * Retrieves the top-level field definitions in this Metaschema module.
@@ -206,7 +222,7 @@ public interface IModule {
    * @return the collection of field definitions
    */
   @NonNull
-  Collection<? extends IFieldDefinition> getFieldDefinitions();
+  Collection<? extends FI> getFieldDefinitions();
 
   /**
    * Retrieves the top-level field definition in this Metaschema module with the
@@ -218,7 +234,7 @@ public interface IModule {
    * @return the matching field definition, or {@code null} if none match
    */
   @Nullable
-  IFieldDefinition getFieldDefinitionByName(@NonNull String name);
+  FI getFieldDefinitionByName(@NonNull String name);
 
   /**
    * Retrieves the top-level assembly and field definitions in this Metaschema
@@ -226,10 +242,13 @@ public interface IModule {
    *
    * @return a listing of assembly and field definitions
    */
+  @SuppressWarnings("unchecked")
   @NonNull
-  default List<? extends IFlagContainer> getAssemblyAndFieldDefinitions() {
+  default List<? extends C> getAssemblyAndFieldDefinitions() {
     return ObjectUtils.notNull(
-        Stream.concat(getAssemblyDefinitions().stream(), getFieldDefinitions().stream())
+        Stream.concat(
+            (Stream<? extends C>) getAssemblyDefinitions().stream(),
+            (Stream<? extends C>) getFieldDefinitions().stream())
             .collect(Collectors.toList()));
   }
 
@@ -239,7 +258,7 @@ public interface IModule {
    * @return the collection of flag definitions
    */
   @NonNull
-  Collection<? extends IFlagDefinition> getFlagDefinitions();
+  Collection<? extends FL> getFlagDefinitions();
 
   /**
    * Retrieves the top-level flag definition in this Metaschema module with the
@@ -251,7 +270,7 @@ public interface IModule {
    * @return the matching flag definition, or {@code null} if none match
    */
   @Nullable
-  IFlagDefinition getFlagDefinitionByName(@NonNull String name);
+  FL getFlagDefinitionByName(@NonNull String name);
 
   // /**
   // * Retrieves the information elements matching the path.
@@ -275,9 +294,9 @@ public interface IModule {
    * @return the assembly definition
    */
   @Nullable
-  default IAssemblyDefinition getScopedAssemblyDefinitionByName(@NonNull String name) {
+  default A getScopedAssemblyDefinitionByName(@NonNull String name) {
     // first try local/global top-level definitions from current metaschema module
-    IAssemblyDefinition retval = getAssemblyDefinitionByName(name);
+    A retval = getAssemblyDefinitionByName(name);
     if (retval == null) {
       // try global definitions from imported Metaschema modules
       retval = getExportedAssemblyDefinitionByName(name);
@@ -295,9 +314,9 @@ public interface IModule {
    * @return the field definition
    */
   @Nullable
-  default IFieldDefinition getScopedFieldDefinitionByName(@NonNull String name) {
+  default FI getScopedFieldDefinitionByName(@NonNull String name) {
     // first try local/global top-level definitions from current metaschema module
-    IFieldDefinition retval = getFieldDefinitionByName(name);
+    FI retval = getFieldDefinitionByName(name);
     if (retval == null) {
       // try global definitions from imported metaschema modules
       retval = getExportedFieldDefinitionByName(name);
@@ -315,9 +334,9 @@ public interface IModule {
    * @return the flag definition
    */
   @Nullable
-  default IFlagDefinition getScopedFlagDefinitionByName(@NonNull String name) {
+  default FL getScopedFlagDefinitionByName(@NonNull String name) {
     // first try local/global top-level definitions from current metaschema module
-    IFlagDefinition retval = getFlagDefinitionByName(name);
+    FL retval = getFlagDefinitionByName(name);
     if (retval == null) {
       // try global definitions from imported metaschema modules
       retval = getExportedFlagDefinitionByName(name);
@@ -332,7 +351,7 @@ public interface IModule {
    * @return a listing of assembly definitions marked as root
    */
   @NonNull
-  default Collection<? extends IAssemblyDefinition> getExportedRootAssemblyDefinitions() {
+  default Collection<? extends A> getExportedRootAssemblyDefinitions() {
     return ObjectUtils.notNull(getExportedAssemblyDefinitions().stream()
         .filter(allRootAssemblyDefinitions())
         .collect(Collectors.toList()));
@@ -345,7 +364,7 @@ public interface IModule {
    * @return a listing of assembly definitions marked as root
    */
   @NonNull
-  default Collection<? extends IAssemblyDefinition> getRootAssemblyDefinitions() {
+  default Collection<? extends A> getRootAssemblyDefinitions() {
     return ObjectUtils.notNull(getAssemblyDefinitions().stream()
         .filter(allRootAssemblyDefinitions())
         .collect(Collectors.toList()));
@@ -363,7 +382,7 @@ public interface IModule {
    * @return the collection of exported flag definitions
    */
   @NonNull
-  Collection<? extends IFlagDefinition> getExportedFlagDefinitions();
+  Collection<? extends FL> getExportedFlagDefinitions();
 
   /**
    * Retrieves the exported named flag definition, if it exists.
@@ -376,7 +395,7 @@ public interface IModule {
    * @return the flag definition, or {@code null} if it doesn't exist.
    */
   @Nullable
-  IFlagDefinition getExportedFlagDefinitionByName(String name);
+  FL getExportedFlagDefinitionByName(String name);
 
   /**
    * Retrieve the top-level field definitions that are marked global in this
@@ -390,7 +409,7 @@ public interface IModule {
    * @return the collection of exported field definitions
    */
   @NonNull
-  Collection<? extends IFieldDefinition> getExportedFieldDefinitions();
+  Collection<? extends FI> getExportedFieldDefinitions();
 
   /**
    * Retrieves the exported named field definition, if it exists.
@@ -403,7 +422,7 @@ public interface IModule {
    * @return the field definition, or {@code null} if it doesn't exist.
    */
   @Nullable
-  IFieldDefinition getExportedFieldDefinitionByName(String name);
+  FI getExportedFieldDefinitionByName(String name);
 
   /**
    * Retrieve the top-level assembly definitions that are marked global in this
@@ -417,7 +436,7 @@ public interface IModule {
    * @return the collection of exported assembly definitions
    */
   @NonNull
-  Collection<? extends IAssemblyDefinition> getExportedAssemblyDefinitions();
+  Collection<? extends A> getExportedAssemblyDefinitions();
 
   /**
    * Retrieves the exported named assembly definition, if it exists.
@@ -430,5 +449,5 @@ public interface IModule {
    * @return the assembly definition, or {@code null} if it doesn't exist.
    */
   @Nullable
-  IAssemblyDefinition getExportedAssemblyDefinitionByName(String name);
+  A getExportedAssemblyDefinitionByName(String name);
 }

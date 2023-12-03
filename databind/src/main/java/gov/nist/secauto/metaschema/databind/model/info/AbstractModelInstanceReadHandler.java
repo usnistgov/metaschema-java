@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.databind.model.info;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public abstract class AbstractModelInstanceReadHandler implements IModelInstanceReadHandler {
   @NonNull
@@ -57,4 +58,9 @@ public abstract class AbstractModelInstanceReadHandler implements IModelInstance
     return parentObject;
   }
 
+  @Override
+  @Nullable
+  public String getJsonKeyFlagName() {
+    return getCollectionInfo().getBinding().getJsonKeyFlagName();
+  }
 }

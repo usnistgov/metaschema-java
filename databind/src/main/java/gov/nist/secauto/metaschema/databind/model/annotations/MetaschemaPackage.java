@@ -30,6 +30,7 @@ import static java.lang.annotation.ElementType.PACKAGE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.databind.model.IBoundModule;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -43,5 +44,5 @@ public @interface MetaschemaPackage {
    * @return the classes that extend {@link IModule} or an empty array if no
    *         metaschemas are defined
    */
-  Class<? extends IModule>[] moduleClass() default {};
+  Class<? extends IBoundModule>[] moduleClass() default {};
 }

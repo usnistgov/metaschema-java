@@ -130,7 +130,8 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
 
       // trim leading and trailing whitespace
       @SuppressWarnings("null")
-      @NonNull String value = builder.toString().trim();
+      @NonNull
+      String value = builder.toString().trim();
       return parse(value);
     } catch (XMLStreamException ex) {
       throw new IOException(ex);
@@ -197,7 +198,8 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
     if (item == null) {
       throw new InvalidValueForCastFunctionException("item is null");
     } else if (getItemClass().isAssignableFrom(item.getClass())) {
-      @SuppressWarnings("unchecked") ITEM_TYPE typedItem = (ITEM_TYPE) item;
+      @SuppressWarnings("unchecked")
+      ITEM_TYPE typedItem = (ITEM_TYPE) item;
       retval = typedItem;
     } else {
       retval = castInternal(item);

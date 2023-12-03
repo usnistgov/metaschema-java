@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
-import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 
 import java.io.IOException;
 
@@ -63,9 +63,11 @@ public interface IItemReadHandler {
    *           if an error occurred while parsing
    */
   @NonNull
-  Object readComplexItem(@Nullable Object parent, @NonNull IFeatureComplexItemValueHandler handler)
+  Object readComplexItem(
+      @Nullable Object parent,
+      @NonNull IFeatureComplexItemValueHandler handler)
       throws IOException;
 
   @NonNull
-  Object readChoiceGroupItem(Object parent, IBoundChoiceGroupInstance instance) throws IOException;
+  Object readChoiceGroupItem(Object parent, IBoundInstanceModelChoiceGroup instance) throws IOException;
 }

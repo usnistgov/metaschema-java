@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.databind.model.annotations;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.databind.model.IBoundModule;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -103,9 +103,10 @@ public @interface MetaschemaField {
    * Get the metaschema class that "owns" this assembly, which is the concrete
    * implementation of the metaschema containing the assembly.
    *
-   * @return the class that extends {@link IModule}
+   * @return the class that extends {@link IBoundModule}
    */
-  Class<? extends IModule> moduleClass();
+  @NonNull
+  Class<? extends IBoundModule> moduleClass();
 
   /**
    * If the data type allows it, determines if the field's value must be wrapped

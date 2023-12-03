@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.core.model;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractFieldInstance
-    extends AbstractModelInstance
+    extends AbstractModelInstance<IModelContainer>
     implements IFieldInstance {
 
   /**
@@ -41,4 +41,10 @@ public abstract class AbstractFieldInstance
   public AbstractFieldInstance(@NonNull IModelContainer parent) {
     super(parent);
   }
+
+  @Override
+  public String getGroupAsXmlNamespace() {
+    return getContainingModule().getXmlNamespace().toASCIIString();
+  }
+
 }

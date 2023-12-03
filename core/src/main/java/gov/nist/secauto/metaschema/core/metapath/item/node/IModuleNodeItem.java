@@ -49,7 +49,7 @@ public interface IModuleNodeItem extends IDocumentNodeItem {
    * @return the Metaschema module
    */
   @NonNull
-  IModule getModule();
+  IModule<?, ?, ?, ?, ?> getModule();
 
   @Override
   default URI getDocumentUri() {

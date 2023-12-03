@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractGroupedNamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IFeatureGroupedModelInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IGroupedAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedAssemblyReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
@@ -45,8 +45,8 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class XmlGroupedAssemblyInstance
-    extends AbstractAssemblyInstance
-    implements IFeatureGroupedModelInstance {
+    extends AbstractGroupedNamedModelInstance
+    implements IGroupedAssemblyInstance {
   @NonNull
   private final GroupedAssemblyReferenceType xmlObject;
 
@@ -61,7 +61,7 @@ public class XmlGroupedAssemblyInstance
    */
   public XmlGroupedAssemblyInstance(
       @NonNull GroupedAssemblyReferenceType xmlObject,
-      @NonNull IModelContainer parent) {
+      @NonNull IChoiceGroupInstance parent) {
     super(parent);
     this.xmlObject = xmlObject;
   }

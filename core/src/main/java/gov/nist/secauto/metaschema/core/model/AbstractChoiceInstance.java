@@ -28,8 +28,9 @@ package gov.nist.secauto.metaschema.core.model;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+// REFACTOR: flatten
 public abstract class AbstractChoiceInstance
-    extends AbstractModelInstance
+    extends AbstractModelInstance<IAssemblyDefinition>
     implements IChoiceInstance {
 
   /**
@@ -38,7 +39,7 @@ public abstract class AbstractChoiceInstance
    * @param parent
    *          the containing assembly definition
    */
-  public AbstractChoiceInstance(@NonNull IModelContainer parent) {
+  public AbstractChoiceInstance(@NonNull IAssemblyDefinition parent) {
     super(parent);
   }
 

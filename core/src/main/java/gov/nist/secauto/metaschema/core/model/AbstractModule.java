@@ -44,20 +44,36 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 /**
  * Provides a common, abstract implementation of a {@link IModule}.
+ *
+ * @param <M>
+ *          the imported module Java type
+ * @param <C>
+ *          the flag container Java type
+ * @param <FL>
+ *          the flag definition Java type
+ * @param <FI>
+ *          the field definition Java type
+ * @param <A>
+ *          the assembly definition Java type
  */
 @SuppressWarnings("PMD.CouplingBetweenObjects")
-public abstract class AbstractModule
-    implements IModule {
+public abstract class AbstractModule<
+    M extends IModule<M, C, FL, FI, A>,
+    C extends IFlagContainer,
+    FL extends IFlagDefinition,
+    FI extends IFieldDefinition,
+    A extends IAssemblyDefinition>
+    implements IModule<M, C, FL, FI, A> {
   private static final Logger LOGGER = LogManager.getLogger(AbstractModule.class);
 
   @NonNull
-  private final List<? extends IModule> importedModules;
-  private Map<String, IFlagDefinition> exportedFlagDefinitions;
-  private Map<String, IFieldDefinition> exportedFieldDefinitions;
-  private Map<String, IAssemblyDefinition> exportedAssemblyDefinitions;
+  private final List<? extends M> importedModules;
+  @NonNull
+  private final Lazy<Exports> exports;
 
   /**
    * Construct a new Metaschema module object.
@@ -66,138 +82,93 @@ public abstract class AbstractModule
    *          the collection of Metaschema module objects this Metaschema module
    *          imports
    */
-  public AbstractModule(@NonNull List<? extends IModule> importedModules) {
+  public AbstractModule(@NonNull List<? extends M> importedModules) {
     this.importedModules
         = CollectionUtil.unmodifiableList(ObjectUtils.requireNonNull(importedModules, "importedModules"));
+    this.exports = ObjectUtils.notNull(Lazy.lazy(() -> new Exports(importedModules)));
   }
 
   @Override
   @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "interface doesn't allow modification")
-  public List<? extends IModule> getImportedModules() {
+  public List<? extends M> getImportedModules() {
     return importedModules;
   }
 
-  private Map<String, ? extends IModule> getImportedModulesByShortName() {
+  @SuppressWarnings("null")
+  @NonNull
+  private Exports getExports() {
+    return exports.get();
+  }
+
+  private Map<String, ? extends M> getImportedModulesByShortName() {
     return importedModules.stream().collect(Collectors.toMap(IModule::getShortName, Function.identity()));
   }
 
   @Override
-  public IModule getImportedModuleByShortName(String name) {
+  public M getImportedModuleByShortName(String name) {
     return getImportedModulesByShortName().get(name);
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Collection<? extends IFlagDefinition> getExportedFlagDefinitions() {
-    return getExportedFlagDefinitionMap().values();
-  }
+  public abstract Collection<A> getAssemblyDefinitions();
 
   @Override
-  public IFlagDefinition getExportedFlagDefinitionByName(String name) {
-    return getExportedFlagDefinitionMap().get(name);
-  }
-
-  private Map<String, ? extends IFlagDefinition> getExportedFlagDefinitionMap() {
-    initExports();
-    return exportedFlagDefinitions;
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public Collection<? extends IFieldDefinition> getExportedFieldDefinitions() {
-    return getExportedFieldDefinitionMap().values();
-  }
+  public abstract A getAssemblyDefinitionByName(String name);
 
   @Override
-  public IFieldDefinition getExportedFieldDefinitionByName(String name) {
-    return getExportedFieldDefinitionMap().get(name);
+  public abstract Collection<FI> getFieldDefinitions();
+
+  @Override
+  public abstract FI getFieldDefinitionByName(String name);
+
+  @Override
+  public List<? extends C> getAssemblyAndFieldDefinitions() {
+    @SuppressWarnings("unchecked")
+    Stream<? extends C> assemblies = (Stream<? extends C>) getAssemblyDefinitions().stream();
+    @SuppressWarnings("unchecked")
+    Stream<? extends C> fields = (Stream<? extends C>) getFieldDefinitions().stream();
+    return ObjectUtils.notNull(
+        Stream.concat(assemblies, fields)
+            .collect(Collectors.toList()));
   }
 
-  private Map<String, ? extends IFieldDefinition> getExportedFieldDefinitionMap() {
-    initExports();
-    return exportedFieldDefinitions;
-  }
+  @Override
+  public abstract Collection<FL> getFlagDefinitions();
+
+  @Override
+  public abstract FL getFlagDefinitionByName(String name);
 
   @SuppressWarnings("null")
   @Override
-  public Collection<? extends IAssemblyDefinition> getExportedAssemblyDefinitions() {
-    return getExportedAssemblyDefinitionMap().values();
+  public Collection<FL> getExportedFlagDefinitions() {
+    return getExports().getExportedFlagDefinitionMap().values();
   }
 
   @Override
-  public IAssemblyDefinition getExportedAssemblyDefinitionByName(String name) {
-    return getExportedAssemblyDefinitionMap().get(name);
+  public FL getExportedFlagDefinitionByName(String name) {
+    return getExports().getExportedFlagDefinitionMap().get(name);
   }
 
-  private Map<String, ? extends IAssemblyDefinition> getExportedAssemblyDefinitionMap() {
-    initExports();
-    return exportedAssemblyDefinitions;
+  @SuppressWarnings("null")
+  @Override
+  public Collection<FI> getExportedFieldDefinitions() {
+    return getExports().getExportedFieldDefinitionMap().values();
   }
 
-  /**
-   * Processes the definitions exported by the Metaschema, saving a list of all
-   * exported by specific model types.
-   */
-  protected void initExports() {
-    synchronized (this) {
-      if (exportedFlagDefinitions == null) {
-        // Populate the stream with the definitions from this module
-        Predicate<IDefinition> filter = IModule.allNonLocalDefinitions();
-        Stream<? extends IFlagDefinition> flags = getFlagDefinitions().stream()
-            .filter(filter);
-        Stream<? extends IFieldDefinition> fields = getFieldDefinitions().stream()
-            .filter(filter);
-        Stream<? extends IAssemblyDefinition> assemblies = getAssemblyDefinitions().stream()
-            .filter(filter);
+  @Override
+  public FI getExportedFieldDefinitionByName(String name) {
+    return getExports().getExportedFieldDefinitionMap().get(name);
+  }
 
-        // handle definitions from any included module
-        if (!getImportedModules().isEmpty()) {
-          Stream<? extends IFlagDefinition> importedFlags = Stream.empty();
-          Stream<? extends IFieldDefinition> importedFields = Stream.empty();
-          Stream<? extends IAssemblyDefinition> importedAssemblies = Stream.empty();
+  @SuppressWarnings("null")
+  @Override
+  public Collection<A> getExportedAssemblyDefinitions() {
+    return getExports().getExportedAssemblyDefinitionMap().values();
+  }
 
-          for (IModule module : getImportedModules()) {
-            importedFlags = Stream.concat(importedFlags, module.getExportedFlagDefinitions().stream());
-            importedFields = Stream.concat(importedFields, module.getExportedFieldDefinitions().stream());
-            importedAssemblies
-                = Stream.concat(importedAssemblies, module.getExportedAssemblyDefinitions().stream());
-          }
-
-          flags = Stream.concat(importedFlags, flags);
-          fields = Stream.concat(importedFields, fields);
-          assemblies = Stream.concat(importedAssemblies, assemblies);
-        }
-
-        // Build the maps. Definitions from this module will take priority, with
-        // shadowing being reported when a definition from this module has the same name
-        // as an imported one
-        Map<String, IFlagDefinition> exportedFlagDefinitions = flags.collect(
-            CustomCollectors.toMap(
-                IFlagDefinition::getName,
-                CustomCollectors.identity(),
-                AbstractModule::handleShadowedDefinitions));
-        Map<String, IFieldDefinition> exportedFieldDefinitions = fields.collect(
-            CustomCollectors.toMap(
-                IFieldDefinition::getName,
-                CustomCollectors.identity(),
-                AbstractModule::handleShadowedDefinitions));
-        Map<String, IAssemblyDefinition> exportedAssemblyDefinitions = assemblies.collect(
-            CustomCollectors.toMap(
-                IAssemblyDefinition::getName,
-                CustomCollectors.identity(),
-                AbstractModule::handleShadowedDefinitions));
-
-        this.exportedFlagDefinitions = exportedFlagDefinitions.isEmpty()
-            ? CollectionUtil.emptyMap()
-            : CollectionUtil.unmodifiableMap(exportedFlagDefinitions);
-        this.exportedFieldDefinitions = exportedFieldDefinitions.isEmpty()
-            ? CollectionUtil.emptyMap()
-            : CollectionUtil.unmodifiableMap(exportedFieldDefinitions);
-        this.exportedAssemblyDefinitions = exportedAssemblyDefinitions.isEmpty()
-            ? CollectionUtil.emptyMap()
-            : CollectionUtil.unmodifiableMap(exportedAssemblyDefinitions);
-      }
-    }
+  @Override
+  public A getExportedAssemblyDefinitionByName(String name) {
+    return getExports().getExportedAssemblyDefinitionMap().get(name);
   }
 
   @SuppressWarnings({ "unused", "PMD.UnusedPrivateMethod" }) // used by lambda
@@ -212,5 +183,89 @@ public abstract class AbstractModule
           oldDef.getContainingModule().getShortName());
     }
     return newDef;
+  }
+
+  private class Exports {
+    @NonNull
+    private final Map<String, FL> exportedFlagDefinitions;
+    @NonNull
+    private final Map<String, FI> exportedFieldDefinitions;
+    @NonNull
+    private final Map<String, A> exportedAssemblyDefinitions;
+
+    public Exports(
+        @NonNull List<? extends M> importedModules) {
+      // Populate the stream with the definitions from this module
+      Predicate<IDefinition> filter = IModule.allNonLocalDefinitions();
+      Stream<FL> flags = getFlagDefinitions().stream()
+          .filter(filter);
+      Stream<FI> fields = getFieldDefinitions().stream()
+          .filter(filter);
+      Stream<A> assemblies = getAssemblyDefinitions().stream()
+          .filter(filter);
+
+      // handle definitions from any included module
+      if (!importedModules.isEmpty()) {
+        Stream<FL> importedFlags = Stream.empty();
+        Stream<FI> importedFields = Stream.empty();
+        Stream<A> importedAssemblies = Stream.empty();
+
+        for (M module : importedModules) {
+          importedFlags = Stream.concat(importedFlags, module.getExportedFlagDefinitions().stream());
+          importedFields = Stream.concat(importedFields, module.getExportedFieldDefinitions().stream());
+          importedAssemblies
+              = Stream.concat(importedAssemblies, module.getExportedAssemblyDefinitions().stream());
+        }
+
+        flags = Stream.concat(importedFlags, flags);
+        fields = Stream.concat(importedFields, fields);
+        assemblies = Stream.concat(importedAssemblies, assemblies);
+      }
+
+      // Build the maps. Definitions from this module will take priority, with
+      // shadowing being reported when a definition from this module has the same name
+      // as an imported one
+      Map<String, FL> exportedFlagDefinitions = flags.collect(
+          CustomCollectors.toMap(
+              IFlagDefinition::getName,
+              CustomCollectors.identity(),
+              AbstractModule::handleShadowedDefinitions));
+      Map<String, FI> exportedFieldDefinitions = fields.collect(
+          CustomCollectors.toMap(
+              IFieldDefinition::getName,
+              CustomCollectors.identity(),
+              AbstractModule::handleShadowedDefinitions));
+      Map<String, A> exportedAssemblyDefinitions = assemblies.collect(
+          CustomCollectors.toMap(
+              IAssemblyDefinition::getName,
+              CustomCollectors.identity(),
+              AbstractModule::handleShadowedDefinitions));
+
+      this.exportedFlagDefinitions = exportedFlagDefinitions.isEmpty()
+          ? CollectionUtil.emptyMap()
+          : CollectionUtil.unmodifiableMap(exportedFlagDefinitions);
+      this.exportedFieldDefinitions = exportedFieldDefinitions.isEmpty()
+          ? CollectionUtil.emptyMap()
+          : CollectionUtil.unmodifiableMap(exportedFieldDefinitions);
+      this.exportedAssemblyDefinitions = exportedAssemblyDefinitions.isEmpty()
+          ? CollectionUtil.emptyMap()
+          : CollectionUtil.unmodifiableMap(exportedAssemblyDefinitions);
+
+    }
+
+    @NonNull
+    public Map<String, FL> getExportedFlagDefinitionMap() {
+      return exportedFlagDefinitions;
+    }
+
+    @NonNull
+    public Map<String, FI> getExportedFieldDefinitionMap() {
+      return exportedFieldDefinitions;
+    }
+
+    @NonNull
+    public Map<String, A> getExportedAssemblyDefinitionMap() {
+      return exportedAssemblyDefinitions;
+    }
   }
 }

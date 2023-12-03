@@ -26,10 +26,12 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 
-public interface IChoiceGroupInstance extends IModelInstance, IModelContainer {
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public interface IChoiceGroupInstance
+    extends IModelInstance, IGroupedModelContainer {
 
   /**
    * Provides the Metaschema model type of "CHOICE".
@@ -39,16 +41,6 @@ public interface IChoiceGroupInstance extends IModelInstance, IModelContainer {
   @Override
   default ModelType getModelType() {
     return ModelType.CHOICE_GROUP;
-  }
-
-  @Override
-  default IAssemblyDefinition getOwningDefinition() {
-    return getParentContainer().getOwningDefinition();
-  }
-
-  @Override
-  default String getGroupAsXmlNamespace() {
-    return getContainingModule().getXmlNamespace().toASCIIString();
   }
 
   /**
@@ -64,6 +56,12 @@ public interface IChoiceGroupInstance extends IModelInstance, IModelContainer {
    *
    * @return the JSON key flag name or {@code null} if no JSON key is configured
    */
-  @Nullable
+  @Override
   String getJsonKeyFlagName();
+
+  @Override
+  default MarkupMultiline getRemarks() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

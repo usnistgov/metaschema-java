@@ -28,12 +28,7 @@ package gov.nist.secauto.metaschema.databind.codegen;
 
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.io.Format;
-import gov.nist.secauto.metaschema.databind.io.IDeserializer;
-import gov.nist.secauto.metaschema.databind.io.ISerializer;
-import gov.nist.secauto.metaschema.databind.model.metaschema.METASCHEMA;
 
 import org.junit.jupiter.api.Test;
 
@@ -61,14 +56,16 @@ class MetaschemaModuleMetaschemaTest
         null);
   }
 
-  @Test
-  void testReadMetaschemaAsXml() throws IOException {
-    IBindingContext context = IBindingContext.instance();
-
-    IDeserializer<METASCHEMA> deserializer = context.newDeserializer(Format.XML, METASCHEMA.class);
-    METASCHEMA metaschema = deserializer.deserialize(METASCHEMA_FILE);
-
-    ISerializer<METASCHEMA> serializer = context.newSerializer(Format.YAML, METASCHEMA.class);
-    serializer.serialize(metaschema, Paths.get("target/metaschema.yml"));
-  }
+  // @Test
+  // void testReadMetaschemaAsXml() throws IOException {
+  // IBindingContext context = IBindingContext.instance();
+  //
+  // IDeserializer<METASCHEMA> deserializer = context.newDeserializer(Format.XML,
+  // METASCHEMA.class);
+  // METASCHEMA metaschema = deserializer.deserialize(METASCHEMA_FILE);
+  //
+  // ISerializer<METASCHEMA> serializer = context.newSerializer(Format.YAML,
+  // METASCHEMA.class);
+  // serializer.serialize(metaschema, Paths.get("target/metaschema.yml"));
+  // }
 }

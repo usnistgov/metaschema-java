@@ -48,8 +48,10 @@ import gov.nist.secauto.metaschema.databind.io.IBoundLoader;
 import gov.nist.secauto.metaschema.databind.io.IDeserializer;
 import gov.nist.secauto.metaschema.databind.io.ISerializer;
 import gov.nist.secauto.metaschema.databind.io.yaml.YamlOperations;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundModule;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 
@@ -86,43 +88,42 @@ public interface IBindingContext {
   }
 
   /**
-   * Register a matcher used to identify a bound class by the content's root name.
+   * Register a matcher used to identify a bound class by the definition's root
+   * name.
    *
-   * @param matcher
-   *          the matcher implementation
-   * @return this instance
+   * @param definition
+   *          the definition to match for
+   * @return the matcher
    */
   @NonNull
-  IBindingContext registerBindingMatcher(@NonNull IBindingMatcher matcher);
-
-  @NonNull
-  default IBindingMatcher registerBindingMatcher(@NonNull Class<?> clazz) {
-    IClassBinding classBinding = getClassBinding(clazz);
-
-    if (classBinding instanceof IAssemblyClassBinding) {
-      IAssemblyClassBinding assemblyClassBinding = (IAssemblyClassBinding) classBinding;
-      IBindingMatcher matcher = IBindingMatcher.of(assemblyClassBinding);
-      registerBindingMatcher(matcher);
-      return matcher;
-    }
-    throw new IllegalArgumentException(
-        String.format("The provided class '%s' is not a root assembly.", clazz.getName()));
-  }
+  IBindingMatcher registerBindingMatcher(@NonNull IBoundDefinitionAssembly definition);
 
   /**
-   * Register a class binding strategy for a given bound class.
+   * Register a matcher used to identify a bound class by the definition's root
+   * name.
    *
-   * @param classBinding
+   * @param clazz
+   *          the definition class to match for, which must represent a root
+   *          assembly definition
+   * @return the matcher
+   */
+  @NonNull
+  IBindingMatcher registerBindingMatcher(@NonNull Class<?> clazz);
+
+  /**
+   * Register a class binding for a given bound class.
+   *
+   * @param definition
    *          the bound class information to register
    * @return the old bound class information or {@code null} if no binding existed
    *         for the associated class
    */
   @Nullable
-  IClassBinding registerClassBinding(@NonNull IClassBinding classBinding);
+  IBoundDefinitionModelComplex registerClassBinding(@NonNull IBoundDefinitionModelComplex definition);
 
   /**
-   * Get the {@link IClassBinding} instance associated with the provided Java
-   * class.
+   * Get the {@link IBoundDefinitionModel} instance associated with the provided
+   * Java class.
    * <p>
    * Typically the class will have a {@link MetaschemaAssembly} or
    * {@link MetaschemaField} annotation.
@@ -133,22 +134,7 @@ public interface IBindingContext {
    *         not bound
    */
   @Nullable
-  IClassBinding getClassBinding(@NonNull Class<?> clazz);
-
-  /**
-   * Load a bound Metaschema module implemented by the provided class.
-   * <p>
-   * Also registers any associated bound classes.
-   * <p>
-   * Implementations are expected to return the same IModule instance for multiple
-   * calls to this method with the same class argument.
-   *
-   * @param clazz
-   *          the class implementing a bound Metaschema module
-   * @return the loaded module
-   */
-  @NonNull
-  IModule loadModule(@NonNull Class<? extends IModule> clazz);
+  IBoundDefinitionModelComplex getBoundDefinitionForClass(@NonNull Class<?> clazz);
 
   /**
    * Determine the bound class for the provided XML {@link QName}.
@@ -156,7 +142,7 @@ public interface IBindingContext {
    * @param rootQName
    *          the root XML element's QName
    * @return the bound class or {@code null} if not recognized
-   * @see IBindingContext#registerBindingMatcher(IBindingMatcher)
+   * @see IBindingContext#registerBindingMatcher(Class)
    */
   @Nullable
   Class<?> getBoundClassForRootXmlQName(@NonNull QName rootQName);
@@ -168,7 +154,7 @@ public interface IBindingContext {
    * @param rootName
    *          the JSON/YAML property/item name
    * @return the bound class or {@code null} if not recognized
-   * @see IBindingContext#registerBindingMatcher(IBindingMatcher)
+   * @see IBindingContext#registerBindingMatcher(Class)
    */
   @Nullable
   Class<?> getBoundClassForRootJsonName(@NonNull String rootName);
@@ -192,6 +178,21 @@ public interface IBindingContext {
   <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NonNull Class<TYPE> clazz);
 
   /**
+   * Load a bound Metaschema module implemented by the provided class.
+   * <p>
+   * Also registers any associated bound classes.
+   * <p>
+   * Implementations are expected to return the same IModule instance for multiple
+   * calls to this method with the same class argument.
+   *
+   * @param clazz
+   *          the class implementing a bound Metaschema module
+   * @return the loaded module
+   */
+  @NonNull
+  IBoundModule registerModule(@NonNull Class<? extends IBoundModule> clazz);
+
+  /**
    * Generate, compile, and load a set of generated Module annotated Java classes
    * based on the provided Module {@code module}.
    *
@@ -205,7 +206,7 @@ public interface IBindingContext {
    */
   @NonNull
   IBindingContext registerModule(
-      @NonNull IModule module,
+      @NonNull IModule<?, ?, ?, ?, ?> module,
       @NonNull Path compilePath) throws IOException;
 
   /**
@@ -214,7 +215,7 @@ public interface IBindingContext {
    * <p>
    * The provided class must be a bound Java class with a
    * {@link MetaschemaAssembly} or {@link MetaschemaField} annotation for which a
-   * {@link IClassBinding} exists.
+   * {@link IBoundDefinitionModel} exists.
    *
    * @param <CLASS>
    *          the Java type this serializer can write data from
@@ -230,7 +231,7 @@ public interface IBindingContext {
    *           if the provided class is not bound to a Module assembly or field
    * @throws UnsupportedOperationException
    *           if the requested format is not supported by the implementation
-   * @see #getClassBinding(Class)
+   * @see #getBoundDefinitionForClass(Class)
    */
   @NonNull
   <CLASS> ISerializer<CLASS> newSerializer(@NonNull Format format, @NonNull Class<CLASS> clazz);
@@ -241,7 +242,7 @@ public interface IBindingContext {
    * <p>
    * The provided class must be a bound Java class with a
    * {@link MetaschemaAssembly} or {@link MetaschemaField} annotation for which a
-   * {@link IClassBinding} exists.
+   * {@link IBoundDefinitionModel} exists.
    *
    * @param <CLASS>
    *          the Java type this deserializer can read data into
@@ -257,7 +258,7 @@ public interface IBindingContext {
    *           if the provided class is not bound to a Module assembly or field
    * @throws UnsupportedOperationException
    *           if the requested format is not supported by the implementation
-   * @see #getClassBinding(Class)
+   * @see #getBoundDefinitionForClass(Class)
    */
   @NonNull
   <CLASS> IDeserializer<CLASS> newDeserializer(@NonNull Format format, @NonNull Class<CLASS> clazz);
@@ -410,11 +411,11 @@ public interface IBindingContext {
      *           information
      */
     @NonNull
-    IModule loadModule(@NonNull Class<? extends IModule> clazz);
+    IBoundModule loadModule(@NonNull Class<? extends IBoundModule> clazz);
 
     /**
-     * Get the {@link IClassBinding} instance associated with the provided Java
-     * class.
+     * Get the {@link IBoundDefinitionModel} instance associated with the provided
+     * Java class.
      * <p>
      * Typically the class will have a {@link MetaschemaAssembly} or
      * {@link MetaschemaField} annotation.
@@ -425,7 +426,7 @@ public interface IBindingContext {
      *         not bound
      */
     @Nullable
-    IClassBinding getClassBinding(@NonNull Class<?> clazz);
+    IBoundDefinitionModelComplex getBoundDefinitionForClass(@NonNull Class<?> clazz);
   }
 
   interface IValidationSchemaProvider {
@@ -457,12 +458,12 @@ public interface IBindingContext {
    */
   interface IBindingMatcher {
     @NonNull
-    static IBindingMatcher of(IAssemblyClassBinding classBinding) {
-      if (!classBinding.isRoot()) {
+    static IBindingMatcher of(IBoundDefinitionAssembly assembly) {
+      if (!assembly.isRoot()) {
         throw new IllegalArgumentException(
-            String.format("The provided class '%s' is not a root assembly.", classBinding.getBoundClass().getName()));
+            String.format("The provided class '%s' is not a root assembly.", assembly.getBoundClass().getName()));
       }
-      return new RootAssemblyBindingMatcher(classBinding);
+      return new RootAssemblyBindingMatcher(assembly);
     }
 
     /**

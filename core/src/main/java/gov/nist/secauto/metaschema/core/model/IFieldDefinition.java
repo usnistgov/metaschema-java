@@ -37,7 +37,7 @@ public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IFi
   }
 
   @Override
-  IFieldInstance getInlineInstance();
+  IFieldInstanceBase getInlineInstance();
 
   /**
    * Retrieves the key to use as the field name for this field's value in JSON.

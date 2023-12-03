@@ -56,9 +56,9 @@ class DefaultFieldPropertyTest {
   JUnit5Mockery context = new JUnit5Mockery();
 
   @Mock
-  private IModule module; // NOPMD - it's injected
+  private IModule<?, ?, ?, ?, ?> module; // NOPMD - it's injected
   @Mock
-  private IAssemblyClassBinding classBinding; // NOPMD - it's injected
+  private IBoundDefinitionAssembly classBinding; // NOPMD - it's injected
   @Mock
   private IBindingContext bindingContext; // NOPMD - it's injected
 
@@ -71,7 +71,8 @@ class DefaultFieldPropertyTest {
       assert jsonParser != null;
 
       IBindingContext bindingContext = IBindingContext.instance();
-      IAssemblyClassBinding classBinding = (IAssemblyClassBinding) bindingContext.getClassBinding(SimpleAssembly.class);
+      IBoundDefinitionAssembly classBinding
+          = (IBoundDefinitionAssembly) bindingContext.getBoundDefinitionForClass(SimpleAssembly.class);
       assert classBinding != null;
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
@@ -96,13 +97,13 @@ class DefaultFieldPropertyTest {
       jsonParser.nextToken();
 
       IBindingContext bindingContext = IBindingContext.instance();
-      IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
+      IBoundDefinitionModel classBinding = bindingContext.getBoundDefinitionForClass(MultiFieldAssembly.class);
       assert classBinding != null;
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
       // read the top-level definition
-      MultiFieldAssembly obj = (MultiFieldAssembly) classBinding.readItem(null, parser);
+      MultiFieldAssembly obj = (MultiFieldAssembly) classBinding.getDefinitionBinding().readItem(null, parser);
 
       assertAll(
           () -> assertEquals("field1value", obj.getField1()),
@@ -129,13 +130,13 @@ class DefaultFieldPropertyTest {
       jsonParser.nextToken();
 
       IBindingContext bindingContext = IBindingContext.instance();
-      IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
+      IBoundDefinitionModel classBinding = bindingContext.getBoundDefinitionForClass(MultiFieldAssembly.class);
       assert classBinding != null;
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
       // read the top-level definition
-      MultiFieldAssembly obj = (MultiFieldAssembly) classBinding.readItem(null, parser);
+      MultiFieldAssembly obj = (MultiFieldAssembly) classBinding.getDefinitionBinding().readItem(null, parser);
 
       assertAll(
           () -> assertNull(obj.getField1()),
@@ -155,13 +156,13 @@ class DefaultFieldPropertyTest {
       jsonParser.nextToken();
 
       IBindingContext bindingContext = IBindingContext.instance();
-      IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
+      IBoundDefinitionModel classBinding = bindingContext.getBoundDefinitionForClass(MultiFieldAssembly.class);
       assert classBinding != null;
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
       // read the top-level definition
-      MultiFieldAssembly obj = (MultiFieldAssembly) classBinding.readItem(null, parser);
+      MultiFieldAssembly obj = (MultiFieldAssembly) classBinding.getDefinitionBinding().readItem(null, parser);
 
       assertAll(
           () -> assertEquals("theValue", obj.getField3().getValue()));
@@ -179,13 +180,13 @@ class DefaultFieldPropertyTest {
       jsonParser.nextToken();
 
       IBindingContext bindingContext = IBindingContext.instance();
-      IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
+      IBoundDefinitionModel classBinding = bindingContext.getBoundDefinitionForClass(MultiFieldAssembly.class);
       assert classBinding != null;
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
       // read the top-level definition
-      MultiFieldAssembly obj = (MultiFieldAssembly) classBinding.readItem(null, parser);
+      MultiFieldAssembly obj = (MultiFieldAssembly) classBinding.getDefinitionBinding().readItem(null, parser);
 
       assertAll(
           () -> assertEquals("theValue", obj.getField4().getValue()));

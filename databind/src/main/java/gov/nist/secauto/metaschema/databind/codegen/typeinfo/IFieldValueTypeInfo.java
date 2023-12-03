@@ -53,5 +53,6 @@ public interface IFieldValueTypeInfo extends IPropertyTypeInfo {
    *
    * @return the containing field's type information
    */
-  IFieldDefinitionTypeInfo getParentDefinitionTypeInfo();
+  @Override
+  IFieldDefinitionTypeInfo getParentTypeInfo();
 }

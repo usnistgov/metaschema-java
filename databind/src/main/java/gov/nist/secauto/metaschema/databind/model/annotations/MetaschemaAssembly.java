@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind.model.annotations;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.databind.model.IBoundModule;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -70,10 +70,10 @@ public @interface MetaschemaAssembly {
    * Get the Metaschema module class that "owns" this assembly, which is the
    * concrete implementation of the module containing the assembly.
    *
-   * @return the {@link IModule} class
+   * @return the {@link IBoundModule} class
    */
   @NonNull
-  Class<? extends IModule> moduleClass();
+  Class<? extends IBoundModule> moduleClass();
 
   /**
    * Name of the assembly.

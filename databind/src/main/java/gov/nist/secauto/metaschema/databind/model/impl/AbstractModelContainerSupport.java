@@ -26,16 +26,14 @@
 
 package gov.nist.secauto.metaschema.databind.model.impl;
 
-import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainerSupport;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelField;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelNamed;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -47,26 +45,34 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractModelContainerSupport<MI extends IBoundModelInstance>
-    implements IModelContainerSupport<MI, IBoundNamedModelInstance, IBoundFieldInstance,
-        IBoundAssemblyInstance, IChoiceInstance, IBoundChoiceGroupInstance> {
+public abstract class AbstractModelContainerSupport<
+    MI extends IBoundInstanceModel,
+    NMI extends IBoundInstanceModelNamed,
+    FI extends IBoundInstanceModelField,
+    AI extends IBoundInstanceModelAssembly,
+    CGI extends IBoundInstanceModelChoiceGroup>
+    implements IBoundDefinitionModelContainerSupport<MI, NMI, FI, AI, CGI> {
   @NonNull
   private final List<MI> modelInstances;
   @NonNull
-  private final Map<String, IBoundNamedModelInstance> namedModelInstances;
+  private final Map<String, NMI> namedModelInstances;
   @NonNull
-  private final Map<String, IBoundFieldInstance> fieldInstances;
+  private final Map<String, FI> fieldInstances;
   @NonNull
-  private final Map<String, IBoundAssemblyInstance> assemblyInstances;
+  private final Map<String, AI> assemblyInstances;
 
-  public AbstractModelContainerSupport(@NonNull Stream<MI> instances) {
+  public AbstractModelContainerSupport(
+      @NonNull Stream<? extends MI> instances,
+      @NonNull Class<? extends NMI> namedModelInstanceClass,
+      @NonNull Class<? extends FI> fieldInstanceClass,
+      @NonNull Class<? extends AI> assemblyInstanceClass) {
     this.modelInstances = CollectionUtil.unmodifiableList(ObjectUtils.notNull(instances
         .collect(Collectors.toUnmodifiableList())));
 
     this.namedModelInstances = CollectionUtil.unmodifiableMap(ObjectUtils.notNull(
         getModelInstances().stream()
-            .filter(instance -> instance instanceof IBoundNamedModelInstance)
-            .map(instance -> (IBoundNamedModelInstance) instance)
+            .filter(instance -> namedModelInstanceClass.isInstance(instance))
+            .map(instance -> namedModelInstanceClass.cast(instance))
             .map(ObjectUtils::notNull)
             .collect(Collectors.toMap(
                 instance -> instance.getEffectiveName(),
@@ -76,22 +82,22 @@ public abstract class AbstractModelContainerSupport<MI extends IBoundModelInstan
 
     this.fieldInstances = CollectionUtil.unmodifiableMap(ObjectUtils.notNull(
         getNamedModelInstanceMap().values().stream()
-            .filter(instance -> instance instanceof IBoundFieldInstance)
-            .map(instance -> (IBoundFieldInstance) instance)
+            .filter(instance -> fieldInstanceClass.isInstance(instance))
+            .map(instance -> fieldInstanceClass.cast(instance))
             .map(ObjectUtils::notNull)
             .collect(Collectors.toMap(
-                IBoundFieldInstance::getEffectiveName,
+                instance -> instance.getEffectiveName(),
                 Function.identity(),
                 CustomCollectors.useLastMapper(),
                 LinkedHashMap::new))));
 
     this.assemblyInstances = CollectionUtil.unmodifiableMap(ObjectUtils.notNull(
         getNamedModelInstanceMap().values().stream()
-            .filter(instance -> instance instanceof IBoundAssemblyInstance)
-            .map(instance -> (IBoundAssemblyInstance) instance)
+            .filter(instance -> assemblyInstanceClass.isInstance(instance))
+            .map(instance -> assemblyInstanceClass.cast(instance))
             .map(ObjectUtils::notNull)
             .collect(Collectors.toMap(
-                IBoundAssemblyInstance::getEffectiveName,
+                instance -> instance.getEffectiveName(),
                 Function.identity(),
                 CustomCollectors.useLastMapper(),
                 LinkedHashMap::new))));
@@ -103,28 +109,22 @@ public abstract class AbstractModelContainerSupport<MI extends IBoundModelInstan
   }
 
   @Override
-  public Map<String, IBoundNamedModelInstance> getNamedModelInstanceMap() {
+  public Map<String, NMI> getNamedModelInstanceMap() {
     return namedModelInstances;
   }
 
   @Override
-  public Map<String, IBoundFieldInstance> getFieldInstanceMap() {
+  public Map<String, FI> getFieldInstanceMap() {
     return fieldInstances;
   }
 
   @Override
-  public Map<String, IBoundAssemblyInstance> getAssemblyInstanceMap() {
+  public Map<String, AI> getAssemblyInstanceMap() {
     return assemblyInstances;
   }
 
   @Override
-  public List<IChoiceInstance> getChoiceInstances() {
-    // choices are not exposed by this API
-    return CollectionUtil.emptyList();
-  }
-
-  @Override
-  public List<IBoundChoiceGroupInstance> getChoiceGroupInstances() {
+  public List<CGI> getChoiceGroupInstances() {
     return CollectionUtil.emptyList();
   }
 }

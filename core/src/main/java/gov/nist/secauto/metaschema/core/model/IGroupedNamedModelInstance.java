@@ -32,7 +32,10 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 /**
  * Represents an arbitrary grouping of Metaschema model instances.
  */
-public interface IGroupedNamedModelInstance extends INamedModelInstance {
+public interface IGroupedNamedModelInstance extends INamedModelInstanceBase {
+  @Override
+  IChoiceGroupInstance getParentContainer();
+
   /**
    * Get the discriminator JSON property name to use to identify the type of a
    * given instance object.

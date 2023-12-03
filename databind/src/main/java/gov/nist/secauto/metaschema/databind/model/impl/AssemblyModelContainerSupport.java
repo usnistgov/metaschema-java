@@ -28,11 +28,12 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelField;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelNamed;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
@@ -48,48 +49,57 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class AssemblyModelContainerSupport
-    extends AbstractModelContainerSupport<IFeatureCollectionModelInstance> {
+    extends AbstractModelContainerSupport<
+        IBoundInstanceModel,
+        IBoundInstanceModelNamed,
+        IBoundInstanceModelField,
+        IBoundInstanceModelAssembly,
+        IBoundInstanceModelChoiceGroup> {
   @NonNull
-  private final List<IBoundChoiceGroupInstance> choiceGroupInstances;
+  private final List<IBoundInstanceModelChoiceGroup> choiceGroupInstances;
 
   public AssemblyModelContainerSupport(
-      @NonNull IAssemblyClassBinding containingDefinition) {
-    super(getModelInstanceStream(containingDefinition, containingDefinition.getBoundClass()));
+      @NonNull DefinitionAssembly containingDefinition) {
+    super(
+        getModelInstanceStream(containingDefinition, containingDefinition.getBoundClass()),
+        IBoundInstanceModelNamed.class,
+        IBoundInstanceModelField.class,
+        IBoundInstanceModelAssembly.class);
 
     this.choiceGroupInstances = CollectionUtil.unmodifiableList(ObjectUtils.notNull(
         getModelInstances().stream()
-            .filter(instance -> instance instanceof IBoundChoiceGroupInstance)
-            .map(instance -> (IBoundChoiceGroupInstance) instance)
+            .filter(instance -> instance instanceof IBoundInstanceModelChoiceGroup)
+            .map(instance -> (IBoundInstanceModelChoiceGroup) instance)
             .map(ObjectUtils::notNull)
             .collect(Collectors.toUnmodifiableList())));
   }
 
-  protected static IFeatureCollectionModelInstance newBoundModelInstance(
+  protected static IBoundInstanceModel newBoundModelInstance(
       @NonNull Field field,
-      @NonNull IAssemblyClassBinding classBinding) {
-    IFeatureCollectionModelInstance retval = null;
+      @NonNull IBoundDefinitionAssembly definition) {
+    IBoundInstanceModel retval = null;
     if (field.isAnnotationPresent(BoundAssembly.class)) {
-      retval = IBoundAssemblyInstance.newInstance(field, classBinding);
+      retval = IBoundInstanceModelAssembly.newInstance(field, definition);
     } else if (field.isAnnotationPresent(BoundField.class)) {
-      retval = IBoundFieldInstance.newInstance(field, classBinding);
+      retval = IBoundInstanceModelField.newInstance(field, definition);
     } else if (field.isAnnotationPresent(BoundChoiceGroup.class)) {
-      retval = IBoundChoiceGroupInstance.newInstance(field, classBinding);
+      retval = IBoundInstanceModelChoiceGroup.newInstance(field, definition);
     }
     return retval;
   }
 
   @NonNull
-  protected static Stream<IFeatureCollectionModelInstance> getModelInstanceStream(
-      @NonNull IAssemblyClassBinding classBinding,
+  protected static Stream<IBoundInstanceModel> getModelInstanceStream(
+      @NonNull IBoundDefinitionAssembly definition,
       @NonNull Class<?> clazz) {
 
-    Stream<IFeatureCollectionModelInstance> superInstances;
+    Stream<IBoundInstanceModel> superInstances;
     Class<?> superClass = clazz.getSuperclass();
     if (superClass == null) {
       superInstances = Stream.empty();
     } else {
       // get instances from superclass
-      superInstances = getModelInstanceStream(classBinding, superClass);
+      superInstances = getModelInstanceStream(definition, superClass);
     }
 
     return ObjectUtils.notNull(Stream.concat(superInstances, Arrays.stream(clazz.getDeclaredFields())
@@ -102,7 +112,7 @@ class AssemblyModelContainerSupport
         .map(field -> {
           assert field != null;
 
-          IFeatureCollectionModelInstance retval = newBoundModelInstance(field, classBinding);
+          IBoundInstanceModel retval = newBoundModelInstance(field, definition);
           if (retval == null) {
             throw new IllegalStateException(
                 String.format("The field '%s' on class '%s' is not bound", field.getName(), clazz.getName()));
@@ -113,7 +123,7 @@ class AssemblyModelContainerSupport
   }
 
   @Override
-  public List<IBoundChoiceGroupInstance> getChoiceGroupInstances() {
+  public List<IBoundInstanceModelChoiceGroup> getChoiceGroupInstances() {
     return choiceGroupInstances;
   }
 }

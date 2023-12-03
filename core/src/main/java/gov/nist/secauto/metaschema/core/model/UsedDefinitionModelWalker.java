@@ -78,9 +78,9 @@ public class UsedDefinitionModelWalker
    */
   @NonNull
   public static Collection<? extends IDefinition> collectUsedDefinitionsFromModule(
-      @NonNull Collection<? extends IModule> modules) {
+      @NonNull Collection<? extends IModule<?, ?, ?, ?, ?>> modules) {
     Set<IAssemblyDefinition> definitions = new HashSet<>();
-    for (IModule module : modules) {
+    for (IModule<?, ?, ?, ?, ?> module : modules) {
       // get local roots in case they are scope=local
       for (IAssemblyDefinition rootDef : module.getRootAssemblyDefinitions()) {
         definitions.add(rootDef);
@@ -107,7 +107,7 @@ public class UsedDefinitionModelWalker
    */
   @NonNull
   public static Collection<? extends IDefinition> collectUsedDefinitionsFromModule(
-      @NonNull IModule module) {
+      @NonNull IModule<?, ?, ?, ?, ?> module) {
     return collectUsedDefinitionsFromModule(CollectionUtil.singleton(module));
   }
 

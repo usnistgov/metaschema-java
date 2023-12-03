@@ -32,7 +32,7 @@ import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IFlagInstance extends IFlag, IValuedInstance {
+public interface IFlagInstance extends IFlag, IValuedInstance, INamedInstance {
 
   @Override
   IFlagContainer getParentContainer();

@@ -47,16 +47,12 @@ public interface IModelContainer extends IContainer {
   IAssemblyDefinition getOwningDefinition();
 
   /**
-   * Get the model instance contained within the model with the associated use
-   * name.
+   * Get all model instances within the container.
    *
-   * @param name
-   *          the use name of the model instance
-   * @return the matching model instance, or {@code null} if no match was found
-   * @see INamedModelInstance#getUseName()
+   * @return an ordered collection of model instances
    */
-  @Nullable
-  INamedModelInstance getModelInstanceByName(String name);
+  @NonNull
+  Collection<? extends IModelInstance> getModelInstances();
 
   /**
    * Get all named model instances within the container.
@@ -65,6 +61,18 @@ public interface IModelContainer extends IContainer {
    */
   @NonNull
   Collection<? extends INamedModelInstance> getNamedModelInstances();
+
+  /**
+   * Get the model instance contained within the model with the associated use
+   * name.
+   *
+   * @param name
+   *          the effective name of the model instance
+   * @return the matching model instance, or {@code null} if no match was found
+   * @see INamedModelInstanceBase#getEffectiveName()
+   */
+  @Nullable
+  INamedModelInstance getNamedModelInstanceByName(String name);
 
   /**
    * Get all field instances within the container.
@@ -99,9 +107,9 @@ public interface IModelContainer extends IContainer {
    * name.
    *
    * @param name
-   *          the use name of the assembly instance
+   *          the effective name of the assembly instance
    * @return the matching assembly instance, or {@code null} if no match was found
-   * @see IAssemblyInstance#getUseName()
+   * @see INamedModelInstanceBase#getEffectiveName()
    */
   @Nullable
   IAssemblyInstance getAssemblyInstanceByName(String name);
@@ -120,12 +128,4 @@ public interface IModelContainer extends IContainer {
    * @return a list of choice instances
    */
   List<? extends IChoiceGroupInstance> getChoiceGroupInstances();
-
-  /**
-   * Get all model instances within the container.
-   *
-   * @return an ordered collection of model instances
-   */
-  @NonNull
-  Collection<? extends IModelInstance> getModelInstances();
 }

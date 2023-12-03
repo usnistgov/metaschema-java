@@ -26,18 +26,29 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
   @NonNull
-  IClassBinding getClassBinding();
+  IBoundDefinitionModel getDefinition();
+
+  /**
+   * Get the name of the JSON key, if a JSON key is configured.
+   *
+   * @return the name of the JSON key flag if configured, or {@code null}
+   *         otherwise
+   */
+  @Nullable
+  String getJsonKeyFlagName();
 
   @Override
   default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
@@ -50,10 +61,50 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
   }
 
   @Override
-  default Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
-    return getClassBinding().deepCopyItem(item, parentInstance);
+  @NonNull
+  Object deepCopyItem(
+      @NonNull Object item,
+      @Nullable Object parentInstance) throws BindingException;
+
+  /**
+   * The class this binding is to.
+   *
+   * @return the bound class
+   */
+  @NonNull
+  Class<?> getBoundClass();
+
+  /**
+   * Gets a new instance of the bound class.
+   *
+   * @param <CLASS>
+   *          the type of the bound class
+   * @return a Java object for the class
+   * @throws RuntimeException
+   *           if the instance cannot be created due to a binding error
+   */
+  @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
+  @NonNull
+  default <CLASS> CLASS newInstance() {
+    Class<?> clazz = getBoundClass();
+    try {
+      @SuppressWarnings("unchecked")
+      Constructor<CLASS> constructor
+          = (Constructor<CLASS>) clazz.getDeclaredConstructor();
+      return ObjectUtils.notNull(constructor.newInstance());
+    } catch (NoSuchMethodException ex) {
+      String msg = String.format("Class '%s' does not have a required no-arg constructor.", clazz.getName());
+      throw new RuntimeException(msg, ex);
+    } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+      throw new RuntimeException(ex);
+    }
   }
 
-  @Nullable
-  IBoundFlagInstance getJsonKey();
+  void callBeforeDeserialize(
+      @NonNull Object targetObject,
+      @Nullable Object parentObject) throws BindingException;
+
+  void callAfterDeserialize(
+      @NonNull Object targetObject,
+      @Nullable Object parentObject) throws BindingException;
 }

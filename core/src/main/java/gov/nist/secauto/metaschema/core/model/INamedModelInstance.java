@@ -30,16 +30,14 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface INamedModelInstance extends INamedInstance, IModelInstance {
-  @Override
-  @NonNull
-  IFlagContainer getDefinition();
-
+public interface INamedModelInstance extends INamedModelInstanceBase, INamedInstance, IModelInstance {
   @Override
   default String getJsonName() {
-    @NonNull String retval;
+    @NonNull
+    String retval;
     if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-      @NonNull String groupAsName = ObjectUtils.requireNonNull(getGroupAsName(),
+      @NonNull
+      String groupAsName = ObjectUtils.requireNonNull(getGroupAsName(),
           ObjectUtils.notNull(String.format("null group-as name in instance '%s' on definition '%s' in '%s'",
               this.getName(),
               this.getContainingDefinition().getName(),
@@ -47,6 +45,18 @@ public interface INamedModelInstance extends INamedInstance, IModelInstance {
       retval = groupAsName;
     } else {
       retval = getEffectiveName();
+    }
+    return retval;
+  }
+
+  @Override
+  default String getJsonKeyFlagName() {
+    String retval = null;
+    if (JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())) {
+      IFlagInstance jsonKeyFlag = getDefinition().getJsonKeyFlagInstance();
+      if (jsonKeyFlag != null) {
+        retval = jsonKeyFlag.getEffectiveName();
+      }
     }
     return retval;
   }

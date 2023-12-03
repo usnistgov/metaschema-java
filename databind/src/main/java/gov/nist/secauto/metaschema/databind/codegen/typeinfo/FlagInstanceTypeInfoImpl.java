@@ -30,6 +30,7 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
@@ -70,8 +71,10 @@ public class FlagInstanceTypeInfoImpl
 
   @SuppressWarnings("PMD.CyclomaticComplexity") // acceptable
   @Override
-  public Set<IFlagContainer> buildField(FieldSpec.Builder builder) {
-    super.buildField(builder);
+  public Set<IFlagContainer> buildField(
+      TypeSpec.Builder typeBuilder,
+      FieldSpec.Builder fieldBuilder) {
+    super.buildField(typeBuilder, fieldBuilder);
 
     AnnotationSpec.Builder annotation = AnnotationSpec.builder(BoundFlag.class);
 
@@ -122,18 +125,18 @@ public class FlagInstanceTypeInfoImpl
 
     AnnotationGenerator.buildValueConstraints(annotation, definition);
 
-    builder.addAnnotation(annotation.build());
+    fieldBuilder.addAnnotation(annotation.build());
 
     IFlagContainer parent = instance.getContainingDefinition();
     if (parent.hasJsonKey() && instance.equals(parent.getJsonKeyFlagInstance())) {
-      builder.addAnnotation(JsonKey.class);
+      fieldBuilder.addAnnotation(JsonKey.class);
     }
 
     if (parent instanceof IFieldDefinition) {
       IFieldDefinition parentField = (IFieldDefinition) parent;
 
       if (parentField.hasJsonValueKeyFlagInstance() && instance.equals(parentField.getJsonValueKeyFlagInstance())) {
-        builder.addAnnotation(JsonFieldValueKeyFlag.class);
+        fieldBuilder.addAnnotation(JsonFieldValueKeyFlag.class);
       }
     }
     return CollectionUtil.emptySet();

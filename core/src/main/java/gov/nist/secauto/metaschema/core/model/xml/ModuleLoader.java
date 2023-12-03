@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.core.model.xml;
 
 import gov.nist.secauto.metaschema.core.model.AbstractLoader;
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.xml.impl.XmlModule;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.METASCHEMADocument;
@@ -66,7 +65,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * every use. Any Metaschema imported is also loaded and cached automatically.
  */
 public class ModuleLoader
-    extends AbstractLoader<IModule> {
+    extends AbstractLoader<IXmlModule> {
   private boolean resolveEntities; // = false;
 
   @NonNull
@@ -124,11 +123,11 @@ public class ModuleLoader
    * @throws MetaschemaException
    *           if an error occurred while parsing the XML beans object
    */
-  protected IModule newXmlMetaschema(
+  protected IXmlModule newXmlMetaschema(
       @NonNull URI resource,
       @NonNull METASCHEMADocument xmlObject,
-      @NonNull List<IModule> importedModules) throws MetaschemaException {
-    IModule retval = new XmlModule(resource, xmlObject, importedModules);
+      @NonNull List<IXmlModule> importedModules) throws MetaschemaException {
+    IXmlModule retval = new XmlModule(resource, xmlObject, importedModules);
 
     for (IModulePostProcessor postProcessor : getModulePostProcessors()) {
       postProcessor.processModule(retval);
@@ -137,14 +136,15 @@ public class ModuleLoader
   }
 
   @Override
-  protected IModule parseResource(@NonNull URI resource, @NonNull Deque<URI> visitedResources)
+  protected IXmlModule parseResource(@NonNull URI resource, @NonNull Deque<URI> visitedResources)
       throws IOException {
     // parse this Metaschema module
     METASCHEMADocument xmlObject = parseModule(resource);
 
     // now check if this Metaschema imports other metaschema
     int size = xmlObject.getMETASCHEMA().sizeOfImportArray();
-    @NonNull Map<URI, IModule> importedModules;
+    @NonNull
+    Map<URI, IXmlModule> importedModules;
     if (size == 0) {
       importedModules = ObjectUtils.notNull(Collections.emptyMap());
     } else {
@@ -161,7 +161,7 @@ public class ModuleLoader
     }
 
     // now create this metaschema
-    Collection<IModule> values = importedModules.values();
+    Collection<IXmlModule> values = importedModules.values();
     try {
       return newXmlMetaschema(resource, xmlObject, new ArrayList<>(values));
     } catch (MetaschemaException ex) {

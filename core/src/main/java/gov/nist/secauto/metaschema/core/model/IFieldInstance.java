@@ -28,24 +28,12 @@ package gov.nist.secauto.metaschema.core.model;
 
 import javax.xml.namespace.QName;
 
-public interface IFieldInstance extends IField, INamedModelInstance, IValuedInstance {
-  @Override
-  default String getXmlNamespace() {
-    return INamedModelInstance.super.getXmlNamespace();
-  }
+public interface IFieldInstance extends IFieldInstanceBase, INamedModelInstance {
 
   @Override
   default QName getXmlQName() {
     return isInXmlWrapped() ? INamedModelInstance.super.getXmlQName() : null;
   }
-
-  @Override
-  default String getGroupAsXmlNamespace() {
-    return getContainingModule().getXmlNamespace().toASCIIString();
-  }
-
-  @Override
-  IFieldDefinition getDefinition();
 
   /**
    * Determines if the field is configured to have a wrapper in XML.

@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.core.model;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IValuedInstance extends INamedInstance {
+public interface IValuedInstance extends INamedInstanceBase {
   @Override
   @NonNull
   IValuedDefinition getDefinition();

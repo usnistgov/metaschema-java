@@ -26,9 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.io;
 
-import gov.nist.secauto.metaschema.databind.model.IBoundInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -39,9 +38,9 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
 
   @Override
   public void handleMissingInstances(
-      IClassBinding parentDefinition,
+      IBoundDefinitionModel parentDefinition,
       Object targetObject,
-      Collection<? extends IBoundInstance> unhandledInstances) throws IOException {
+      Collection<? extends IBoundProperty> unhandledInstances) throws IOException {
     applyDefaults(targetObject, unhandledInstances);
   }
 
@@ -59,19 +58,20 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
    */
   protected static void applyDefaults(
       @NonNull Object targetObject,
-      @NonNull Collection<? extends IBoundInstance> unhandledInstances) throws IOException {
-    for (IBoundInstance instance : unhandledInstances) {
-
-      Object value;
-      if (instance instanceof IFeatureCollectionModelInstance
-          && ((IFeatureCollectionModelInstance) instance).getMaxOccurs() != 1) {
-        value = ((IFeatureCollectionModelInstance) instance).getCollectionInfo().emptyValue();
-      } else {
-        value = instance.getEffectiveDefaultValue();
-      }
-      if (value != null) {
-        instance.setValue(targetObject, value);
-      }
+      @NonNull Collection<? extends IBoundProperty> unhandledInstances) throws IOException {
+    for (IBoundProperty instance : unhandledInstances) {
+      instance.getInstanceBinding().applyDefaultValue(targetObject);
+      //
+      // Object value;
+      // if (instance instanceof IFeatureCollectionModelInstance
+      // && ((IFeatureCollectionModelInstance) instance).getMaxOccurs() != 1) {
+      // value = ((IFeatureCollectionModelInstance)
+      // instance).getCollectionInfo().emptyValue();
+      // } else {
+      // value = instance.getEffectiveDefaultValue();
+      // }
+      // if (value != null) {
+      // }
     }
   }
 }

@@ -152,7 +152,7 @@ final class DefaultNodeItemFactory
   @Override
   public Supplier<ModelContainer> newMetaschemaModelSupplier(@NonNull IModuleNodeItem item) {
     return () -> {
-      IModule module = item.getModule();
+      IModule<?, ?, ?, ?, ?> module = item.getModule();
 
       // build flags from Metaschema definitions
       Map<String, IFlagNodeItem> flags = ObjectUtils.notNull(

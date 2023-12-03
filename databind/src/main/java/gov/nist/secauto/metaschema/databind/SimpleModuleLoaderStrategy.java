@@ -26,14 +26,14 @@
 
 package gov.nist.secauto.metaschema.databind;
 
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.AbstractBoundModule;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundModule;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.databind.model.impl.DefaultAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.impl.DefaultFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.model.impl.DefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.impl.DefinitionField;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,9 +45,9 @@ public class SimpleModuleLoaderStrategy implements IBindingContext.IModuleLoader
   @NonNull
   private final IBindingContext bindingContext;
   @NonNull
-  private final Map<Class<?>, IModule> modulesByClass = new HashMap<>(); // NOPMD - intentional
+  private final Map<Class<?>, IBoundModule> modulesByClass = new HashMap<>(); // NOPMD - intentional
   @NonNull
-  private final Map<Class<?>, IClassBinding> classBindingsByClass = new HashMap<>(); // NOPMD - intentional
+  private final Map<Class<?>, IBoundDefinitionModelComplex> definitionsByClass = new HashMap<>();
 
   protected SimpleModuleLoaderStrategy(@NonNull IBindingContext bindingContext) {
     this.bindingContext = bindingContext;
@@ -59,8 +59,8 @@ public class SimpleModuleLoaderStrategy implements IBindingContext.IModuleLoader
   }
 
   @Override
-  public IModule loadModule(@NonNull Class<? extends IModule> clazz) {
-    IModule retval;
+  public IBoundModule loadModule(@NonNull Class<? extends IBoundModule> clazz) {
+    IBoundModule retval;
     synchronized (this) {
       retval = modulesByClass.get(clazz);
       if (retval == null) {
@@ -72,14 +72,14 @@ public class SimpleModuleLoaderStrategy implements IBindingContext.IModuleLoader
   }
 
   @Override
-  public IClassBinding getClassBinding(@NonNull Class<?> clazz) {
-    IClassBinding retval;
+  public IBoundDefinitionModelComplex getBoundDefinitionForClass(@NonNull Class<?> clazz) {
+    IBoundDefinitionModelComplex retval;
     synchronized (this) {
-      retval = classBindingsByClass.get(clazz);
+      retval = definitionsByClass.get(clazz);
       if (retval == null) {
-        retval = newClassBinding(clazz);
+        retval = newBoundDefinition(clazz);
         if (retval != null) {
-          classBindingsByClass.put(clazz, retval);
+          definitionsByClass.put(clazz, retval);
         }
       }
     }
@@ -87,12 +87,12 @@ public class SimpleModuleLoaderStrategy implements IBindingContext.IModuleLoader
   }
 
   @Nullable
-  private IClassBinding newClassBinding(@NonNull Class<?> clazz) {
-    IClassBinding retval = null;
+  private IBoundDefinitionModelComplex newBoundDefinition(@NonNull Class<?> clazz) {
+    IBoundDefinitionModelComplex retval = null;
     if (clazz.isAnnotationPresent(MetaschemaAssembly.class)) {
-      retval = DefaultAssemblyClassBinding.createInstance(clazz, getBindingContext());
+      retval = new DefinitionAssembly(clazz, getBindingContext());
     } else if (clazz.isAnnotationPresent(MetaschemaField.class)) {
-      retval = DefaultFieldClassBinding.createInstance(clazz, getBindingContext());
+      retval = new DefinitionField(clazz, getBindingContext());
     }
     return retval;
   }

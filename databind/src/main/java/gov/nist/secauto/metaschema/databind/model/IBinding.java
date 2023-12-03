@@ -26,22 +26,32 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.model.info.IItemValueHandler;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-/**
- * Represents a method of binding a type of Metaschema model construct.
- *
- */
-public interface IBinding {
+public interface IBinding extends IItemValueHandler {
+  /**
+   * Determine if the provided JSON property or YAML key name is associated with
+   * this instance.
+   *
+   * @param name
+   *          the name of the property/key being parsed
+   * @return {@code true} if the instance will handle this name, or {@code false}
+   *         otherwise
+   */
+  boolean canHandleJsonPropertyName(String name);
 
   /**
-   * The Metaschema module binding context used to generate and cache Metaschema
-   * module definition bindings to Java classes.
+   * Determine if the provided XML qualified name is associated with this
+   * property.
    *
-   * @return the binding context used to generate this class binding
+   * @param qname
+   *          the XML qualified name of the property being parsed
+   * @return {@code true} if the instance will handle this name, or {@code false}
+   *         otherwise
    */
-  @NonNull
-  IBindingContext getBindingContext();
+  boolean canHandleXmlQName(@NonNull QName qname);
 }

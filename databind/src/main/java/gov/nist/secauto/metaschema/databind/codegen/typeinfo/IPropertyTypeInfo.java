@@ -36,7 +36,6 @@ import java.util.Set;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IPropertyTypeInfo extends ITypeInfo {
-
   /**
    * Generate the Java field associated with this property.
    *

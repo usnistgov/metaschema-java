@@ -27,10 +27,6 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.AbstractModule;
-import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
@@ -38,7 +34,6 @@ import gov.nist.secauto.metaschema.databind.model.annotations.Module;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -52,13 +47,19 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public abstract class AbstractBoundModule
-    extends AbstractModule {
+    extends AbstractModule<
+        IBoundModule,
+        IBoundDefinitionModelComplex,
+        IBoundDefinitionFlag,
+        IBoundDefinitionField,
+        IBoundDefinitionAssembly>
+    implements IBoundModule {
   @NonNull
   private final IBindingContext bindingContext;
   @NonNull
-  private Lazy<Map<String, IAssemblyClassBinding>> assemblyDefinitions;
+  private Lazy<Map<String, IBoundDefinitionAssembly>> assemblyDefinitions;
   @NonNull
-  private Lazy<Map<String, IFieldClassBinding>> fieldDefinitions;
+  private Lazy<Map<String, IBoundDefinitionField>> fieldDefinitions;
 
   /**
    * Create a new Module instance for a given class annotated by the
@@ -74,8 +75,8 @@ public abstract class AbstractBoundModule
    * @return the new Module instance
    */
   @NonNull
-  public static IModule createInstance(
-      @NonNull Class<? extends IModule> clazz,
+  public static IBoundModule createInstance(
+      @NonNull Class<? extends IBoundModule> clazz,
       @NonNull IBindingContext bindingContext) {
 
     if (!clazz.isAnnotationPresent(Module.class)) {
@@ -85,12 +86,12 @@ public abstract class AbstractBoundModule
 
     Module moduleAnnotation = clazz.getAnnotation(Module.class);
 
-    List<IModule> importedModules;
+    List<IBoundModule> importedModules;
     if (moduleAnnotation.imports().length > 0) {
       importedModules = new ArrayList<>(moduleAnnotation.imports().length);
-      for (Class<? extends IModule> importClass : moduleAnnotation.imports()) {
+      for (Class<? extends IBoundModule> importClass : moduleAnnotation.imports()) {
         assert importClass != null;
-        IModule moduleImport = bindingContext.loadModule(importClass);
+        IBoundModule moduleImport = bindingContext.registerModule(importClass);
         importedModules.add(moduleImport);
       }
     } else {
@@ -100,12 +101,12 @@ public abstract class AbstractBoundModule
   }
 
   @NonNull
-  private static IModule createInstance(
-      @NonNull Class<? extends IModule> clazz,
+  private static IBoundModule createInstance(
+      @NonNull Class<? extends IBoundModule> clazz,
       @NonNull IBindingContext bindingContext,
-      @NonNull List<? extends IModule> importedModules) {
+      @NonNull List<? extends IBoundModule> importedModules) {
 
-    Constructor<? extends IModule> constructor;
+    Constructor<? extends IBoundModule> constructor;
     try {
       constructor = clazz.getDeclaredConstructor(List.class, IBindingContext.class);
     } catch (NoSuchMethodException ex) {
@@ -128,42 +129,33 @@ public abstract class AbstractBoundModule
    *          the Module binding context
    */
   protected AbstractBoundModule(
-      @NonNull List<? extends IModule> importedModules,
+      @NonNull List<? extends IBoundModule> importedModules,
       @NonNull IBindingContext bindingContext) {
     super(importedModules);
     this.bindingContext = bindingContext;
     this.assemblyDefinitions = ObjectUtils.notNull(Lazy.lazy(() -> Arrays.stream(getAssemblyClasses())
         .map(clazz -> {
           assert clazz != null;
-          return (IAssemblyClassBinding) ObjectUtils.requireNonNull(bindingContext.getClassBinding(clazz));
+          return (IBoundDefinitionAssembly) ObjectUtils
+              .requireNonNull(bindingContext.getBoundDefinitionForClass(clazz));
         })
         .collect(Collectors.toUnmodifiableMap(
-            IAssemblyClassBinding::getName,
+            IBoundDefinitionAssembly::getName,
             Function.identity()))));
     this.fieldDefinitions = ObjectUtils.notNull(Lazy.lazy(() -> Arrays.stream(getFieldClasses())
         .map(clazz -> {
           assert clazz != null;
-          return (IFieldClassBinding) ObjectUtils.requireNonNull(bindingContext.getClassBinding(clazz));
+          return (IBoundDefinitionField) ObjectUtils.requireNonNull(bindingContext.getBoundDefinitionForClass(clazz));
         })
         .collect(Collectors.toUnmodifiableMap(
-            IFieldClassBinding::getName,
+            IBoundDefinitionField::getName,
             Function.identity()))));
   }
 
-  /**
-   * Get the Module binding context.
-   *
-   * @return the context
-   */
-  @NonNull
-  protected IBindingContext getBindingContext() {
-    return bindingContext;
-  }
-
   @Override
-  public URI getLocation() { // NOPMD - intentional
-    // not known
-    return null;
+  @NonNull
+  public IBindingContext getBindingContext() {
+    return bindingContext;
   }
 
   @NonNull
@@ -190,51 +182,51 @@ public abstract class AbstractBoundModule
     return retval;
   }
 
-  protected Map<String, IAssemblyClassBinding> getAssemblyDefinitionMap() {
+  protected Map<String, IBoundDefinitionAssembly> getAssemblyDefinitionMap() {
     return assemblyDefinitions.get();
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<? extends IAssemblyDefinition> getAssemblyDefinitions() {
+  public Collection<IBoundDefinitionAssembly> getAssemblyDefinitions() {
     return getAssemblyDefinitionMap().values();
   }
 
   @Override
-  public IAssemblyClassBinding getAssemblyDefinitionByName(@NonNull String name) {
+  public IBoundDefinitionAssembly getAssemblyDefinitionByName(@NonNull String name) {
     return getAssemblyDefinitionMap().get(name);
   }
 
-  protected Map<String, IFieldClassBinding> getFieldDefinitionMap() {
+  protected Map<String, IBoundDefinitionField> getFieldDefinitionMap() {
     return fieldDefinitions.get();
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<? extends IFieldDefinition> getFieldDefinitions() {
+  public Collection<IBoundDefinitionField> getFieldDefinitions() {
     return getFieldDefinitionMap().values();
   }
 
   @Override
-  public IFieldDefinition getFieldDefinitionByName(@NonNull String name) {
+  public IBoundDefinitionField getFieldDefinitionByName(@NonNull String name) {
     return getFieldDefinitionMap().get(name);
   }
 
   @NonNull
-  public Map<String, ? extends IFlagDefinition> getFlagDefinitionMap() {
-    // FlagContainer are always inline
+  public Map<String, IBoundDefinitionFlag> getFlagDefinitionMap() {
+    // Flags are always inline
     return CollectionUtil.emptyMap();
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<? extends IFlagDefinition> getFlagDefinitions() {
+  public Collection<IBoundDefinitionFlag> getFlagDefinitions() {
     // FlagContainer are always inline
     return Collections.emptyList();
   }
 
   @Override
-  public IFlagDefinition getFlagDefinitionByName(@NonNull String name) { // NOPMD - intentional
+  public IBoundDefinitionFlag getFlagDefinitionByName(@NonNull String name) { // NOPMD - intentional
     // FlagContainer are always inline
     return null;
   }

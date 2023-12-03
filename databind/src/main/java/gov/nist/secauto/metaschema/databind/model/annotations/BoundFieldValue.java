@@ -42,6 +42,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * Identifies a field on a class annotated with the {@link MetaschemaField}
  * annotation as the Module field's value.
  */
+// TODO: how are index names handled here?
 @Documented
 @Retention(RUNTIME)
 @Target({ FIELD, METHOD })
@@ -51,6 +52,7 @@ public @interface BoundFieldValue {
    *
    * @return the data type adapter
    */
+  @NonNull
   Class<? extends IDataTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
 
   /**

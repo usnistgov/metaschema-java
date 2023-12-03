@@ -54,4 +54,7 @@ public interface IModelInstanceReadHandler {
    *           if an error occurred while parsing the input
    */
   Object readItem() throws IOException;
+
+  @Nullable
+  String getJsonKeyFlagName();
 }

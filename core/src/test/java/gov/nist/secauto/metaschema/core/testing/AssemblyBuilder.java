@@ -126,7 +126,7 @@ public final class AssemblyBuilder
         allowing(retval).getModelInstances();
         will(returnValue(modelInstances.values()));
         modelInstances.forEach((key, value) -> {
-          allowing(retval).getModelInstanceByName(with(key));
+          allowing(retval).getNamedModelInstanceByName(with(key));
           will(returnValue(value));
         });
       }

@@ -58,7 +58,7 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
 
   @Override
   public IModuleNodeItem newModuleNodeItem(
-      IModule module) {
+      IModule<?, ?, ?, ?, ?> module) {
     return new ModuleNodeItemImpl(
         module,
         this);
@@ -202,7 +202,8 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
       @NonNull IAssemblyNodeItem parent,
       int position,
       @NonNull Object value) {
-    @NonNull IModelNodeItem<?, ?> item;
+    @NonNull
+    IModelNodeItem<?, ?> item;
     if (instance instanceof IAssemblyInstance) {
       item = newAssemblyNodeItem((IAssemblyInstance) instance, parent, position, value);
     } else if (instance instanceof IFieldInstance) {
@@ -228,7 +229,8 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
   protected IModelNodeItem<?, ?> newModelItem(
       @NonNull INamedModelInstance instance,
       @NonNull IAssemblyNodeItem parent) {
-    @NonNull IModelNodeItem<?, ?> item;
+    @NonNull
+    IModelNodeItem<?, ?> item;
     if (instance instanceof IAssemblyInstance) {
       item = newAssemblyNodeItem((IAssemblyInstance) instance, parent);
     } else if (instance instanceof IFieldInstance) {
@@ -258,7 +260,8 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
             retval = getNamedModelInstances((IChoiceInstance) instance);
           } else if (instance instanceof IChoiceGroupInstance) {
             // descend into the choice group
-            retval = getNamedModelInstances((IChoiceGroupInstance) instance);
+            throw new UnsupportedOperationException("implement");
+            // retval = getNamedModelInstances((IChoiceGroupInstance) instance);
           } else {
             throw new UnsupportedOperationException("unsupported instance type: " + instance.getClass().getName());
           }

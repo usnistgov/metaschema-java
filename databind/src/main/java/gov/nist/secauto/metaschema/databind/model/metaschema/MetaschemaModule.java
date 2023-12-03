@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.databind.model.metaschema;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.AbstractBoundModule;
+import gov.nist.secauto.metaschema.databind.model.IBoundModule;
 import gov.nist.secauto.metaschema.databind.model.annotations.Module;
 import java.lang.Override;
 import java.lang.String;
@@ -40,29 +40,20 @@ import java.util.List;
 @Module(
     fields = {
         UseName.class,
-        RootName.class,
         Remarks.class,
         ConstraintValueEnum.class
     },
     assemblies = {
         METASCHEMA.class,
-        GlobalDefineAssembly.class,
-        GlobalDefineField.class,
-        GlobalDefineFlag.class,
         InlineDefineAssembly.class,
         InlineDefineField.class,
         InlineDefineFlag.class,
-        Choice.class,
-        ChoiceGroup.class,
         Any.class,
         AssemblyReference.class,
         FieldReference.class,
         FlagReference.class,
-        GroupedAssemblyReference.class,
-        GroupedFieldReference.class,
-        GroupedInlineDefineAssembly.class,
-        GroupedInlineDefineField.class,
         AssemblyModel.class,
+        JsonValueKeyFlag.class,
         GroupAs.class,
         Example.class,
         Property.class,
@@ -71,18 +62,11 @@ import java.util.List;
         FieldConstraints.class,
         FlagConstraints.class,
         ConstraintLetExpression.class,
-        AllowedValuesConstraint.class,
         TargetedAllowedValuesConstraint.class,
-        MatchesConstraint.class,
         TargetedMatchesConstraint.class,
-        ExpectConstraint.class,
         TargetedExpectConstraint.class,
-        IndexHasKeyConstraint.class,
         TargetedIndexHasKeyConstraint.class,
-        TargetedUniqueConstraint.class,
-        TargetedIndexConstraint.class,
-        KeyConstraintField.class,
-        TargetedCardinalityConstraint.class
+        KeyConstraintField.class
     })
 public final class MetaschemaModule
     extends AbstractBoundModule {
@@ -96,7 +80,8 @@ public final class MetaschemaModule
 
   private static final URI JSON_BASE_URI = URI.create("http://csrc.nist.gov/ns/oscal/metaschema/1.0");
 
-  public MetaschemaModule(List<? extends IModule> importedModules, IBindingContext bindingContext) {
+  public MetaschemaModule(List<? extends IBoundModule> importedModules,
+      IBindingContext bindingContext) {
     super(importedModules, bindingContext);
   }
 

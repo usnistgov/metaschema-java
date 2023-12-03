@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.core.model;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractModelInstance
-    extends AbstractInstance<IModelContainer>
+public abstract class AbstractModelInstance<P extends IModelContainer>
+    extends AbstractInstance<P>
     implements IModelInstance {
 
   /**
@@ -38,7 +38,7 @@ public abstract class AbstractModelInstance
    * @param parent
    *          the parent containing the instance.
    */
-  public AbstractModelInstance(@NonNull IModelContainer parent) {
+  public AbstractModelInstance(@NonNull P parent) {
     super(parent);
   }
 

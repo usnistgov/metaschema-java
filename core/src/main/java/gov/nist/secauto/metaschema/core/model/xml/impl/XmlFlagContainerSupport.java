@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.FlagReferenceType;
@@ -232,7 +231,7 @@ class XmlFlagContainerSupport implements IFlagContainerSupport<IFlagInstance> {
    */
   @Override
   @NonNull
-  public Map<String, ? extends IFlagInstance> getFlagInstanceMap() {
+  public Map<String, IFlagInstance> getFlagInstanceMap() {
     return flagInstances;
   }
 

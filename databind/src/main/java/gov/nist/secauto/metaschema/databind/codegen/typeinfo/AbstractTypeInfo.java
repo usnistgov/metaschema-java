@@ -42,8 +42,9 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
     this.parentDefinition = parentDefinition;
   }
 
+  @Override
   @NonNull
-  public PARENT getParentDefinitionTypeInfo() {
+  public PARENT getParentTypeInfo() {
     return parentDefinition;
   }
 
@@ -58,7 +59,7 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
     synchronized (this) {
       if (this.propertyName == null) {
         String name = ClassUtils.toPropertyName(getBaseName());
-        IDefinitionTypeInfo parent = getParentDefinitionTypeInfo();
+        IDefinitionTypeInfo parent = getParentTypeInfo();
 
         // first check if a property already exists with the same name
 

@@ -26,11 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.model.impl;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
 
@@ -49,30 +47,30 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-class FlagContainerSupport implements IFlagContainerSupport<IBoundFlagInstance> {
+public class FlagContainerSupport implements IBoundDefinitionFlagContainerSupport {
   @NonNull
-  private final Map<String, IBoundFlagInstance> flagInstances;
+  private final Map<String, IBoundInstanceFlag> flagInstances;
   @Nullable
-  private IBoundFlagInstance jsonKeyFlag;
+  private IBoundInstanceFlag jsonKeyFlag;
 
   @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   public FlagContainerSupport(
-      @NonNull IClassBinding classBinding,
-      @Nullable Consumer<IBoundFlagInstance> peeker) {
-    Class<?> clazz = classBinding.getBoundClass();
+      @NonNull AbstractBoundDefinitionFlagContainer<?> definition,
+      @Nullable Consumer<IBoundInstanceFlag> peeker) {
+    Class<?> clazz = definition.getBoundClass();
 
-    Stream<IBoundFlagInstance> instances = getFlagInstanceFields(clazz).stream()
+    Stream<IBoundInstanceFlag> instances = getFlagInstanceFields(clazz).stream()
         .flatMap(field -> {
-          Stream<IBoundFlagInstance> stream;
+          Stream<IBoundInstanceFlag> stream;
           if (field.isAnnotationPresent(BoundFlag.class)) {
-            stream = Stream.of(new DefaultFlagInstance(field, classBinding));
+            stream = Stream.of(IBoundInstanceFlag.newInstance(field, definition));
           } else {
             stream = Stream.empty();
           }
           return stream;
         });
 
-    Consumer<IBoundFlagInstance> intermediate = this::handle;
+    Consumer<IBoundInstanceFlag> intermediate = this::handleFlagInstance;
 
     if (peeker != null) {
       intermediate = intermediate.andThen(peeker);
@@ -81,16 +79,10 @@ class FlagContainerSupport implements IFlagContainerSupport<IBoundFlagInstance> 
     this.flagInstances = CollectionUtil.unmodifiableMap(ObjectUtils.notNull(instances
         .peek(intermediate)
         .collect(Collectors.toMap(
-            IBoundFlagInstance::getEffectiveName,
+            IBoundInstanceFlag::getEffectiveName,
             Function.identity(),
             (v1, v2) -> v2,
             LinkedHashMap::new))));
-  }
-
-  private void handle(IBoundFlagInstance instance) {
-    if (instance.isJsonKey()) {
-      this.jsonKeyFlag = instance;
-    }
   }
 
   /**
@@ -135,7 +127,7 @@ class FlagContainerSupport implements IFlagContainerSupport<IBoundFlagInstance> 
    * @param instance
    *          the flag instance to process
    */
-  protected void handleFlagInstance(IBoundFlagInstance instance) {
+  protected void handleFlagInstance(IBoundInstanceFlag instance) {
     if (instance.isJsonKey()) {
       this.jsonKeyFlag = instance;
     }
@@ -143,12 +135,13 @@ class FlagContainerSupport implements IFlagContainerSupport<IBoundFlagInstance> 
 
   @Override
   @NonNull
-  public Map<String, IBoundFlagInstance> getFlagInstanceMap() {
+  public Map<String, IBoundInstanceFlag> getFlagInstanceMap() {
     return flagInstances;
   }
 
   @Override
-  public IBoundFlagInstance getJsonKeyFlagInstance() {
+  public IBoundInstanceFlag getJsonKeyFlagInstance() {
     return jsonKeyFlag;
   }
+
 }

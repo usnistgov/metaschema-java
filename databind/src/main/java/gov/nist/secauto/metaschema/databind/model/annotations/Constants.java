@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model.annotations;
 
+// REFACTOR:combine with ModelUtil
 public final class Constants {
   // TODO: replace NO_STRING_VALUE with NULL_VALUE where possible. URIs will not
   // allow NULL_VALUE.

@@ -171,7 +171,7 @@ public class InlineDefineField {
   private String _jsonValueKey;
 
   @BoundAssembly(
-      formalName = "Field Value JSON Property Use Flag",
+      formalName = "Flag Used as the Field Value's JSON Property Name",
       useName = "json-value-key-flag")
   private JsonValueKeyFlag _jsonValueKeyFlag;
 
@@ -302,7 +302,7 @@ public class InlineDefineField {
 
   /**
    * Add a new {@link Property} item to the underlying collection.
-   *
+   * 
    * @param item
    *          the item to add
    * @return {@code true}
@@ -318,7 +318,7 @@ public class InlineDefineField {
   /**
    * Remove the first matching {@link Property} item from the underlying
    * collection.
-   *
+   * 
    * @param item
    *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
@@ -394,7 +394,7 @@ public class InlineDefineField {
 
   /**
    * Add a new {@link Example} item to the underlying collection.
-   *
+   * 
    * @param item
    *          the item to add
    * @return {@code true}
@@ -410,7 +410,7 @@ public class InlineDefineField {
   /**
    * Remove the first matching {@link Example} item from the underlying
    * collection.
-   *
+   * 
    * @param item
    *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
@@ -423,34 +423,5 @@ public class InlineDefineField {
   @Override
   public String toString() {
     return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();
-  }
-
-  @MetaschemaAssembly(
-      formalName = "Field Value JSON Property Use Flag",
-      name = "json-value-key-flag",
-      moduleClass = MetaschemaModule.class)
-  public static class JsonValueKeyFlag {
-    @BoundFlag(
-        formalName = "Flag Reference",
-        useName = "flag-ref",
-        required = true,
-        typeAdapter = TokenAdapter.class)
-    private String _flagRef;
-
-    public JsonValueKeyFlag() {
-    }
-
-    public String getFlagRef() {
-      return _flagRef;
-    }
-
-    public void setFlagRef(String value) {
-      _flagRef = value;
-    }
-
-    @Override
-    public String toString() {
-      return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();
-    }
   }
 }

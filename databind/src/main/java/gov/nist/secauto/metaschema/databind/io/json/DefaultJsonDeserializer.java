@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -51,12 +51,12 @@ public class DefaultJsonDeserializer<CLASS>
    * Construct a new JSON deserializer that will parse the bound class identified
    * by the {@code classBinding}.
    *
-   * @param classBinding
+   * @param definition
    *          the bound class information for the Java type this deserializer is
    *          operating on
    */
-  public DefaultJsonDeserializer(@NonNull IAssemblyClassBinding classBinding) {
-    super(classBinding);
+  public DefaultJsonDeserializer(@NonNull IBoundDefinitionAssembly definition) {
+    super(definition);
   }
 
   /**
@@ -111,14 +111,14 @@ public class DefaultJsonDeserializer<CLASS>
     INodeItem retval;
     try (JsonParser jsonParser = newJsonParser(reader)) {
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
-      IAssemblyClassBinding classBinding = getClassBinding();
+      IBoundDefinitionAssembly definition = getDefinition();
       IConfiguration<DeserializationFeature<?>> configuration = getConfiguration();
 
-      if (classBinding.isRoot()
+      if (definition.isRoot()
           && configuration.isFeatureEnabled(DeserializationFeature.DESERIALIZE_JSON_ROOT_PROPERTY)) {
 
         // now parse the root property
-        CLASS value = ObjectUtils.requireNonNull(parser.read(classBinding));
+        CLASS value = ObjectUtils.requireNonNull(parser.read(definition));
 
         // // we should be at the end object
         // JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
@@ -126,12 +126,12 @@ public class DefaultJsonDeserializer<CLASS>
         // // advance past the end object
         // JsonToken end = parser.nextToken();
 
-        retval = INodeItemFactory.instance().newDocumentNodeItem(classBinding, documentUri, value);
+        retval = INodeItemFactory.instance().newDocumentNodeItem(definition, documentUri, value);
       } else {
         // read the top-level definition
-        @SuppressWarnings("unchecked") CLASS value = (CLASS) classBinding.readItem(null, parser);
+        CLASS value = ObjectUtils.asType(definition.getDefinitionBinding().readItem(null, parser));
 
-        retval = INodeItemFactory.instance().newAssemblyNodeItem(classBinding, documentUri, value);
+        retval = INodeItemFactory.instance().newAssemblyNodeItem(definition, documentUri, value);
       }
       return retval;
     }
@@ -139,6 +139,29 @@ public class DefaultJsonDeserializer<CLASS>
 
   @Override
   public CLASS deserializeToValue(@NonNull Reader reader, @NonNull URI documentUri) throws IOException {
-    return INodeItem.toValue(deserializeToNodeItemInternal(reader, documentUri));
+    try (JsonParser jsonParser = newJsonParser(reader)) {
+      MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
+      IBoundDefinitionAssembly definition = getDefinition();
+      IConfiguration<DeserializationFeature<?>> configuration = getConfiguration();
+
+      CLASS retval;
+      if (definition.isRoot()
+          && configuration.isFeatureEnabled(DeserializationFeature.DESERIALIZE_JSON_ROOT_PROPERTY)) {
+
+        // now parse the root property
+        retval = ObjectUtils.requireNonNull(parser.read(definition));
+
+        // // we should be at the end object
+        // JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
+        //
+        // // advance past the end object
+        // JsonToken end = parser.nextToken();
+      } else {
+        // read the top-level definition
+        retval = ObjectUtils.asType(ObjectUtils.requireNonNull(
+            definition.getDefinitionBinding().readItem(null, parser)));
+      }
+      return retval;
+    }
   }
 }

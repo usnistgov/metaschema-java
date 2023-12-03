@@ -27,14 +27,16 @@
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeName;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IGroupedAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IGroupedFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceBase;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
 import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration;
@@ -59,7 +61,7 @@ class DefaultTypeResolver implements ITypeResolver {
 
   private final Map<String, Set<String>> packageToClassNamesMap = new ConcurrentHashMap<>();
   private final Map<IFlagContainer, ClassName> definitionToTypeMap = new ConcurrentHashMap<>();
-  private final Map<IModule, ClassName> moduleToTypeMap = new ConcurrentHashMap<>();
+  private final Map<IModule<?, ?, ?, ?, ?>, ClassName> moduleToTypeMap = new ConcurrentHashMap<>();
   private final Map<IAssemblyDefinition, IAssemblyDefinitionTypeInfo> assemblyDefinitionToTypeInfoMap
       = new ConcurrentHashMap<>();
   private final Map<IFieldDefinition, IFieldDefinitionTypeInfo> fieldDefinitionToTypeInfoMap
@@ -107,25 +109,73 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
+  public IGroupedNamedModelInstanceTypeInfo getTypeInfo(
+      @NonNull IGroupedNamedModelInstance modelInstance,
+      @NonNull IChoiceGroupTypeInfo choiceGroupTypeInfo) {
+    IGroupedNamedModelInstanceTypeInfo retval;
+    if (modelInstance instanceof IGroupedAssemblyInstance) {
+      retval = getTypeInfo((IGroupedAssemblyInstance) modelInstance, choiceGroupTypeInfo);
+    } else if (modelInstance instanceof IGroupedFieldInstance) {
+      retval = getTypeInfo((IGroupedFieldInstance) modelInstance, choiceGroupTypeInfo);
+    } else {
+      throw new IllegalStateException(String.format("Unknown type '%s'",
+          modelInstance.getClass().getName()));
+    }
+    return retval;
+  }
+
+  private IGroupedAssemblyInstanceTypeInfo getTypeInfo(
+      @NonNull IGroupedAssemblyInstance modelInstance,
+      @NonNull IChoiceGroupTypeInfo choiceGroupTypeInfo) {
+    return new GroupedAssemblyInstanceTypeInfo(modelInstance, choiceGroupTypeInfo);
+  }
+
+  private IGroupedFieldInstanceTypeInfo getTypeInfo(
+      @NonNull IGroupedFieldInstance modelInstance,
+      @NonNull IChoiceGroupTypeInfo choiceGroupTypeInfo) {
+    return new GroupedFieldInstanceTypeInfo(modelInstance, choiceGroupTypeInfo);
+  }
+
+  @NonNull
+  private ClassName getFlagContainerClassName(
+      @NonNull IFlagContainer definition,
+      @NonNull String packageName,
+      @NonNull String suggestedClassName) {
+    ClassName retval;
+    if (definition.isInline()) {
+      // this is a local definition, which means a child class needs to be generated
+      INamedModelInstanceBase inlineInstance = definition.getInlineInstance();
+      IFlagContainer parentDefinition = inlineInstance.getContainingDefinition();
+      ClassName parentClassName = getClassName(parentDefinition);
+      retval = getSubclassName(parentClassName, suggestedClassName, definition);
+    } else {
+      String className = generateClassName(packageName, suggestedClassName, definition);
+      retval = ObjectUtils.notNull(ClassName.get(packageName, className));
+    }
+    return retval;
+  }
+
+  @Override
+  public ClassName getSubclassName(
+      @NonNull ClassName parentClass,
+      @NonNull String suggestedClassName,
+      @NonNull IFlagContainer definition) {
+    String name = generateClassName(
+        ObjectUtils.notNull(parentClass.canonicalName()),
+        ClassUtils.toClassName(suggestedClassName),
+        definition);
+    return ObjectUtils.notNull(parentClass.nestedClass(name));
+  }
+
+  @Override
   @NonNull
   public ClassName getClassName(@NonNull IFlagContainer definition) {
     return ObjectUtils.notNull(definitionToTypeMap.computeIfAbsent(
         definition,
         (def) -> {
-          ClassName retval;
           String packageName = getBindingConfiguration().getPackageNameForModule(def.getContainingModule());
-          if (def.isInline()) {
-            // this is a local definition, which means a child class needs to be generated
-            INamedModelInstance inlineInstance = def.getInlineInstance();
-            IFlagContainer parentDefinition = inlineInstance.getContainingDefinition();
-            ClassName parentClassName = getClassName(parentDefinition);
-            String name = generateClassName(ObjectUtils.notNull(parentClassName.canonicalName()), def);
-            retval = parentClassName.nestedClass(name);
-          } else {
-            String className = generateClassName(packageName, def);
-            retval = ClassName.get(packageName, className);
-          }
-          return retval;
+          String suggestedClassName = getBindingConfiguration().getClassName(definition);
+          return getFlagContainerClassName(def, packageName, suggestedClassName);
         }));
   }
 
@@ -135,20 +185,19 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public TypeName getClassName(IChoiceGroupInstance instance) {
+  public ClassName getClassName(IChoiceGroupInstance instance) {
     // TODO: Support some form of binding override for a common interface type
     return ObjectUtils.notNull(ClassName.get(Object.class));
   }
 
   @Override
-  public ClassName getClassName(IModule module) {
+  public ClassName getClassName(IModule<?, ?, ?, ?, ?> module) {
     return ObjectUtils.notNull(moduleToTypeMap.computeIfAbsent(
         module,
-        (meta) -> {
-          assert meta != null;
-          String packageName = getBindingConfiguration().getPackageNameForModule(meta);
-
-          String className = getBindingConfiguration().getClassName(meta);
+        (mod) -> {
+          assert mod != null;
+          String packageName = getBindingConfiguration().getPackageNameForModule(mod);
+          String className = getBindingConfiguration().getClassName(mod);
           String classNameBase = className;
           int index = 1;
           while (isClassNameClash(packageName, className)) {
@@ -174,18 +223,20 @@ class DefaultTypeResolver implements ITypeResolver {
     return getClassNamesFor(packageOrTypeName).add(className);
   }
 
-  private String generateClassName(@NonNull String packageOrTypeName, @NonNull IFlagContainer definition) {
-    @NonNull String className = getBindingConfiguration().getClassName(definition);
-
-    @NonNull String retval = className;
+  private String generateClassName(
+      @NonNull String packageOrTypeName,
+      @NonNull String suggestedClassName,
+      @NonNull IFlagContainer definition) {
+    @NonNull
+    String retval = suggestedClassName;
     Set<String> classNames = getClassNamesFor(packageOrTypeName);
     synchronized (classNames) {
       boolean clash = false;
-      if (classNames.contains(className)) {
+      if (classNames.contains(suggestedClassName)) {
         clash = true;
         // first try to append the metaschema's short name
         String metaschemaShortName = definition.getContainingModule().getShortName();
-        retval = ClassUtils.toClassName(className + StringUtils.capitalize(metaschemaShortName));
+        retval = ClassUtils.toClassName(suggestedClassName + StringUtils.capitalize(metaschemaShortName));
       }
 
       String classNameBase = retval;
@@ -198,7 +249,7 @@ class DefaultTypeResolver implements ITypeResolver {
       if (clash && LOGGER.isWarnEnabled()) {
         LOGGER.warn(String.format(
             "Class name '%s', based on '%s' in '%s', clashes with another bound class. Using '%s' instead.",
-            className,
+            suggestedClassName,
             definition.getName(),
             definition.getContainingModule().getLocation(),
             retval));
@@ -218,7 +269,7 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public String getPackageName(@NonNull IModule module) {
+  public String getPackageName(@NonNull IModule<?, ?, ?, ?, ?> module) {
     return bindingConfiguration.getPackageNameForModule(module);
   }
 }

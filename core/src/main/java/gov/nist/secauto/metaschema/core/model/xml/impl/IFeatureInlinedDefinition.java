@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.INamedInstance;
+import gov.nist.secauto.metaschema.core.model.INamedInstanceBase;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -41,8 +41,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * @param <INSTANCE>
  *          the associated instance Java type
  */
-public interface IFeatureInlinedDefinition<DEFINITION extends IDefinition, INSTANCE extends INamedInstance>
-    extends IDefinition, INamedInstance {
+public interface IFeatureInlinedDefinition<DEFINITION extends IDefinition, INSTANCE extends INamedInstanceBase>
+    extends IDefinition, INamedInstanceBase {
   @Override
   default boolean isInline() {
     return true;
@@ -79,7 +79,7 @@ public interface IFeatureInlinedDefinition<DEFINITION extends IDefinition, INSTA
   @Override
   default String toCoordinates() {
     // Ensure classes that implement INamedInstance and IDefinition use this
-    return INamedInstance.super.toCoordinates();
+    return INamedInstanceBase.super.toCoordinates();
   }
 
 }

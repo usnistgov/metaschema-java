@@ -36,5 +36,5 @@ public interface INamedModelInstanceTypeInfo extends IModelInstanceTypeInfo {
   @Override
   INamedModelInstance getInstance();
 
-  AnnotationSpec.Builder buildGroupedBindingAnnotation(@NonNull Class<?> annotationClass);
+  void buildBindingAnnotationCommon(@NonNull AnnotationSpec.Builder annotation);
 }

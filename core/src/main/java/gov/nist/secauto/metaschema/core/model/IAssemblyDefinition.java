@@ -84,7 +84,7 @@ public interface IAssemblyDefinition
   }
 
   @Override
-  IAssemblyInstance getInlineInstance();
+  IAssemblyInstanceBase getInlineInstance();
 
   @Override
   default IAssemblyDefinition getOwningDefinition() {

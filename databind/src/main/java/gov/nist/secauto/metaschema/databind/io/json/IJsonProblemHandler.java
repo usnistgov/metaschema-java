@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.databind.io.json;
 
 import gov.nist.secauto.metaschema.databind.io.IProblemHandler;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
 
 import java.io.IOException;
 
@@ -54,7 +54,7 @@ public interface IJsonProblemHandler extends IProblemHandler {
    *           if an error occurred while handling the unrecognized data
    */
   boolean handleUnknownProperty(
-      @NonNull IClassBinding classBinding,
+      @NonNull IBoundDefinitionModel classBinding,
       @Nullable Object targetObject,
       @NonNull String fieldName,
       @NonNull IJsonParsingContext parsingContext) throws IOException;

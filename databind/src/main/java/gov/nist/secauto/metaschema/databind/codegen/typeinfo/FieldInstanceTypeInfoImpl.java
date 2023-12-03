@@ -28,7 +28,9 @@ package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
@@ -74,12 +76,18 @@ public class FieldInstanceTypeInfoImpl
     return ObjectUtils.notNull(AnnotationSpec.builder(BoundField.class));
   }
 
+  @SuppressWarnings("checkstyle:methodlength")
   @Override
-  public Set<IFlagContainer> buildBindingAnnotation(AnnotationSpec.Builder annotation) {
-    Set<IFlagContainer> retval = super.buildBindingAnnotation(annotation);
+  public Set<IFlagContainer> buildBindingAnnotation(
+      TypeSpec.Builder typeBuilder,
+      FieldSpec.Builder fieldBuilder,
+      AnnotationSpec.Builder annotation) {
+    // first build the core attributes
+    final Set<IFlagContainer> retval = super.buildBindingAnnotation(typeBuilder, fieldBuilder, annotation);
 
     IFieldInstance instance = getInstance();
 
+    // next build the field-specific attributes
     if (MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != instance.isInXmlWrapped()) {
       annotation.addMember("inXmlWrapped", "$L", instance.isInXmlWrapped());
     }

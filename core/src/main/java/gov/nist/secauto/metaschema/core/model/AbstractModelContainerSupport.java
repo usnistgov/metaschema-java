@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
+import gov.nist.secauto.metaschema.core.model.xml.impl.IModelContainerSupport;
+
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,8 +41,8 @@ public abstract class AbstractModelContainerSupport<
     FI extends IFieldInstance,
     AI extends IAssemblyInstance,
     CI extends IChoiceInstance,
-    CG extends IChoiceGroupInstance>
-    implements IModelContainerSupport<MI, NMI, FI, AI, CI, CG> {
+    CGI extends IChoiceGroupInstance>
+    implements IModelContainerSupport<MI, NMI, FI, AI, CI, CGI> {
 
   @NonNull
   private final List<MI> modelInstances = new LinkedList<>();
@@ -113,7 +115,7 @@ public abstract class AbstractModelContainerSupport<
    * @return the listing
    */
   @Override
-  public List<CG> getChoiceGroupInstances() {
+  public List<CGI> getChoiceGroupInstances() {
     throw new UnsupportedOperationException();
   }
 }

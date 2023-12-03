@@ -68,7 +68,7 @@ public class ExternalConstraintsModulePostProcessor implements IModulePostProces
   }
 
   @Override
-  public void processModule(IModule module) {
+  public void processModule(IModule<?, ?, ?, ?, ?> module) {
     ConstraintComposingVisitor visitor = new ConstraintComposingVisitor();
     IModuleNodeItem moduleItem = INodeItemFactory.instance().newModuleNodeItem(module);
 

@@ -28,16 +28,15 @@ package gov.nist.secauto.metaschema.databind.io.xml;
 
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.databind.io.json.DefaultJsonProblemHandler;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundChoiceGroupInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundGroupedNamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBindingFieldValue;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionField;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelNamed;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceWriteHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
@@ -77,7 +76,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
   /**
    * Writes data in a bound object to XML. This assembly must be a root assembly
-   * for which a call to {@link IAssemblyClassBinding#isRoot()} will return
+   * for which a call to {@link IBoundDefinitionAssembly#isRoot()} will return
    * {@code true}.
    *
    * @param targetDefinition
@@ -90,7 +89,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
    *           if an error occurred while writing the output
    */
   public void write(
-      @NonNull IAssemblyClassBinding targetDefinition,
+      @NonNull IBoundDefinitionAssembly targetDefinition,
       @NonNull Object targetObject) throws XMLStreamException, IOException {
     writer.writeStartDocument("UTF-8", "1.0");
 
@@ -104,30 +103,30 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
     writer.writeStartElement(prefix, rootQName.getLocalPart(), rootQName.getNamespaceURI());
 
-    writeDefinitionValue(targetDefinition, targetObject, rootQName);
+    targetDefinition.getDefinitionBinding().writeItem(targetObject, new ItemWriteHandler(rootQName));
 
     writer.writeEndElement();
   }
 
   @Override
   public void writeDefinitionValue(
-      @NonNull IClassBinding targetDefinition,
+      @NonNull IBoundDefinitionModel targetDefinition,
       @NonNull Object targetObject,
       @NonNull QName parentName) throws IOException {
     // write flags
-    for (IBoundFlagInstance flag : targetDefinition.getFlagInstances()) {
+    for (IBoundInstanceFlag flag : targetDefinition.getFlagInstances()) {
       assert flag != null;
       writeFlagInstance(flag, targetObject);
     }
 
-    if (targetDefinition instanceof IAssemblyClassBinding) {
-      for (IFeatureCollectionModelInstance modelInstance : ((IAssemblyClassBinding) targetDefinition)
+    if (targetDefinition instanceof IBoundDefinitionAssembly) {
+      for (IBoundInstanceModel modelInstance : ((IBoundDefinitionAssembly) targetDefinition)
           .getModelInstances()) {
         assert modelInstance != null;
         writeModelInstanceValues(modelInstance, targetObject, parentName);
       }
-    } else if (targetDefinition instanceof IFieldClassBinding) {
-      IBoundFieldValueInstance fieldValueInstance = ((IFieldClassBinding) targetDefinition).getFieldValueInstance();
+    } else if (targetDefinition instanceof IBoundDefinitionField) {
+      IBindingFieldValue fieldValueInstance = ((IBoundDefinitionField) targetDefinition).getFieldValueBinding();
 
       Object value = fieldValueInstance.getValue(targetObject);
       if (value != null) {
@@ -155,7 +154,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
    *           if an error occurred while writing the XML
    */
   protected void writeFlagInstance(
-      @NonNull IBoundFlagInstance targetInstance,
+      @NonNull IBoundInstanceFlag targetInstance,
       @NonNull Object parentObject)
       throws IOException {
     Object objectValue = targetInstance.getValue(parentObject);
@@ -191,7 +190,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
    *           if an error occurred while writing the XML
    */
   protected boolean writeModelInstanceValues(
-      @NonNull IFeatureCollectionModelInstance targetInstance,
+      @NonNull IBoundInstanceModel targetInstance,
       @NonNull Object parentObject,
       @NonNull QName parentName)
       throws IOException {
@@ -200,7 +199,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
       return false; // NOPMD - intentional
     }
 
-    IModelInstanceCollectionInfo collectionInfo = targetInstance.getCollectionInfo();
+    IModelInstanceCollectionInfo collectionInfo = targetInstance.getInstanceBinding().getCollectionInfo();
 
     if (targetInstance.getMinOccurs() > 0 || collectionInfo.getItemCount(value) > 0) {
       // only write the instance if the wrapper is required or if it has contents
@@ -235,18 +234,18 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
   @Override
   public void writeInstanceValue(
-      @NonNull IBoundModelInstance targetInstance,
+      @NonNull IBoundInstanceModel targetInstance,
       @NonNull Object targetObject,
       @NonNull QName parentName) throws IOException {
 
-    if (targetInstance instanceof IBoundChoiceGroupInstance) {
+    if (targetInstance instanceof IBoundInstanceModelChoiceGroup) {
       writeChoiceGroupInstanceValue(
-          (IBoundChoiceGroupInstance) targetInstance,
+          (IBoundInstanceModelChoiceGroup) targetInstance,
           targetObject,
           parentName);
-    } else if (targetInstance instanceof IBoundNamedModelInstance) {
+    } else if (targetInstance instanceof IBoundInstanceModelNamed) {
       writeNamedModelInstanceValue(
-          (IBoundNamedModelInstance) targetInstance,
+          (IBoundInstanceModelNamed) targetInstance,
           targetObject,
           parentName);
     } else {
@@ -257,14 +256,14 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
   @SuppressWarnings({ "static-method", "unused" })
   private void writeChoiceGroupInstanceValue(
-      @NonNull IBoundChoiceGroupInstance instance,
+      @NonNull IBoundInstanceModelChoiceGroup instance,
       @NonNull Object targetObject,
       @NonNull QName parentName) {
     throw new UnsupportedOperationException("implement");
   }
 
   private void writeNamedModelInstanceValue(
-      @NonNull IBoundNamedModelInstance instance,
+      @NonNull IBoundInstanceModelNamed instance,
       @NonNull Object targetObject,
       @NonNull QName parentName) throws IOException {
 
@@ -281,7 +280,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
       }
 
       // write the value
-      instance.writeItem(targetObject, new ItemWriteHandler(currentParentName));
+      instance.getInstanceBinding().writeItem(targetObject, new ItemWriteHandler(currentParentName));
 
       if (writeWrapper) {
         writer.writeEndElement();
@@ -315,7 +314,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
     @Override
     public void writeItem(Object item) throws IOException {
-      writeInstanceValue(getCollectionInfo().getInstance(), item, getParentQName());
+      writeInstanceValue(getCollectionInfo().getBinding().getInstance(), item, getParentQName());
     }
   }
 
@@ -346,14 +345,14 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
     @Override
     public void writeComplexItem(Object item, IFeatureComplexItemValueHandler handler) throws IOException {
-      writeDefinitionValue(handler.getClassBinding(), item, getParentQName());
+      writeDefinitionValue(handler.getDefinition(), item, getParentQName());
     }
 
     @Override
     public void writeChoiceGroupItem(
         Object item,
-        IBoundChoiceGroupInstance instance,
-        IBoundGroupedNamedModelInstance itemInstance) {
+        IBoundInstanceModelChoiceGroup instance,
+        IBoundInstanceModelGroupedNamed itemInstance) {
       throw new UnsupportedOperationException("implement");
     }
   }

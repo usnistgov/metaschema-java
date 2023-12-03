@@ -33,7 +33,6 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
@@ -56,7 +55,7 @@ class XmlGlobalFlagDefinition implements IFlagDefinition, IFeatureGlobalDefiniti
   @NonNull
   private final GlobalFlagDefinitionType xmlFlag;
   @NonNull
-  private final IModule module;
+  private final XmlModule module;
   @Nullable
   private final Object defaultValue;
   private final Lazy<IValueConstrained> constraints;
@@ -72,7 +71,7 @@ class XmlGlobalFlagDefinition implements IFlagDefinition, IFeatureGlobalDefiniti
    */
   public XmlGlobalFlagDefinition(
       @NonNull GlobalFlagDefinitionType xmlFlag,
-      @NonNull IModule module) {
+      @NonNull XmlModule module) {
     this.xmlFlag = xmlFlag;
     this.module = module;
 
@@ -104,7 +103,7 @@ class XmlGlobalFlagDefinition implements IFlagDefinition, IFeatureGlobalDefiniti
   }
 
   @Override
-  public IModule getContainingModule() {
+  public XmlModule getContainingModule() {
     return module;
   }
 

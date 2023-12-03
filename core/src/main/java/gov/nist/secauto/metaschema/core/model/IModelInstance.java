@@ -39,18 +39,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * This marker interface is used to identify a field or assembly instance that
  * is a member of an assembly's model.
  */
-public interface IModelInstance extends IInstance {
+public interface IModelInstance extends IModelInstanceBase, IInstance {
   @Override
   IModelContainer getParentContainer();
-
-  /**
-   * Retrieve the Metaschema assembly definition on which this instance is
-   * declared.
-   *
-   * @return the parent Metaschema assembly definition
-   */
-  @Override
-  IAssemblyDefinition getContainingDefinition();
 
   /**
    * Get the name used for the associated element wrapping a collection of

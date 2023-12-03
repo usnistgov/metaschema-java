@@ -32,7 +32,10 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinition;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -40,6 +43,34 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public final class ModelUtil {
   private ModelUtil() {
     // disable construction
+  }
+
+  @NonNull
+  public static <A extends Annotation> A getAnnotation(
+      @NonNull Class<?> clazz,
+      Class<A> annotationClass) {
+    A annotation = clazz.getAnnotation(annotationClass);
+    if (annotation == null) {
+      throw new IllegalArgumentException(
+          String.format("Class '%s' is missing the '%s' annotation.",
+              clazz.getName(),
+              annotationClass.getName()));
+    }
+    return annotation;
+  }
+
+  @NonNull
+  public static <A extends Annotation> A getAnnotation(
+      @NonNull Field javaField,
+      Class<A> annotationClass) {
+    A annotation = javaField.getAnnotation(annotationClass);
+    if (annotation == null) {
+      throw new IllegalArgumentException(
+          String.format("Field '%s' is missing the '%s' annotation.",
+              javaField.toGenericString(),
+              annotationClass.getName()));
+    }
+    return annotation;
   }
 
   /**
@@ -67,13 +98,13 @@ public final class ModelUtil {
   }
 
   @Nullable
-  public static String resolveOptionalNamespace(String annotationValue, IClassBinding classBinding) {
-    return resolveNamespace(annotationValue, classBinding, true);
+  public static String resolveOptionalNamespace(String annotationValue, IBoundDefinition definition) {
+    return resolveNamespace(annotationValue, definition, true);
   }
 
   @NonNull
-  public static String resolveNamespace(String annotationValue, IClassBinding classBinding) {
-    return ObjectUtils.notNull(resolveNamespace(annotationValue, classBinding, false));
+  public static String resolveNamespace(String annotationValue, IBoundDefinition definition) {
+    return ObjectUtils.notNull(resolveNamespace(annotationValue, definition, false));
   }
 
   /**
@@ -84,17 +115,17 @@ public final class ModelUtil {
    *
    * @param value
    *          the requested value
-   * @param classBinding
+   * @param definition
    *          a class with the {@link XmlSchema} annotation
    * @param allowNone
    *          if the "##none" value is honored
    * @return the resolved value or {@code null} if no namespace is defined
    */
-  private static String resolveNamespace(String value, IClassBinding classBinding, boolean allowNone) {
+  private static String resolveNamespace(String value, IBoundDefinition definition, boolean allowNone) {
     String retval;
     if (value == null || Constants.DEFAULT_STRING_VALUE.equals(value)) {
       // get namespace from the metaschema
-      retval = classBinding.getContainingModule().getXmlNamespace().toASCIIString();
+      retval = definition.getContainingModule().getXmlNamespace().toASCIIString();
     } else if (allowNone && Constants.NO_STRING_VALUE.equals(value)) {
       retval = null; // NOPMD - intentional
     } else {
@@ -143,8 +174,9 @@ public final class ModelUtil {
   }
 
   @NonNull
-  public static IDataTypeAdapter<?> getDataTypeAdapter(@NonNull Class<? extends IDataTypeAdapter<?>> adapterClass,
-      IBindingContext bindingContext) {
+  public static IDataTypeAdapter<?> getDataTypeAdapter(
+      @NonNull Class<? extends IDataTypeAdapter<?>> adapterClass,
+      @NonNull IBindingContext bindingContext) {
     IDataTypeAdapter<?> retval;
     if (NullJavaTypeAdapter.class.equals(adapterClass)) {
       retval = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
@@ -161,6 +193,18 @@ public final class ModelUtil {
       retval = adapter.parse(defaultValue);
     }
     return retval;
+  }
+
+  public static Integer resolveNullOrInteger(int value) {
+    return value == Integer.MIN_VALUE ? null : value;
+  }
+
+  public static Object resolveNullOrValue(
+      @NonNull String defaultValue,
+      @NonNull IDataTypeAdapter<?> javaTypeAdapter) {
+    return Constants.NULL_VALUE.equals(defaultValue)
+        ? null
+        : javaTypeAdapter.parse(defaultValue);
   }
 
 }

@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.databind.io.SerializationFeature;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -49,12 +49,12 @@ public class DefaultJsonSerializer<CLASS>
    * Construct a new Module binding-based deserializer that reads JSON-based
    * Module content.
    *
-   * @param classBinding
+   * @param definition
    *          the assembly class binding describing the Java objects this
    *          deserializer parses data into
    */
-  public DefaultJsonSerializer(@NonNull IAssemblyClassBinding classBinding) {
-    super(classBinding);
+  public DefaultJsonSerializer(@NonNull IBoundDefinitionAssembly definition) {
+    super(definition);
   }
 
   /**
@@ -100,11 +100,11 @@ public class DefaultJsonSerializer<CLASS>
   @Override
   public void serialize(CLASS data, Writer writer) throws IOException {
     try (JsonGenerator generator = newJsonGenerator(writer)) {
-      IAssemblyClassBinding classBinding = getClassBinding();
+      IBoundDefinitionAssembly definition = getDefinition();
 
       MetaschemaJsonWriter jsonWriter = new MetaschemaJsonWriter(generator);
 
-      jsonWriter.write(classBinding, data);
+      jsonWriter.write(definition, data);
     }
   }
 

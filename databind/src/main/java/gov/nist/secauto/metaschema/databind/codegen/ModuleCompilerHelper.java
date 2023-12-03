@@ -84,7 +84,7 @@ public final class ModuleCompilerHelper {
    */
   @NonNull
   public static IProduction compileMetaschema(
-      @NonNull IModule module,
+      @NonNull IModule<?, ?, ?, ?, ?> module,
       @NonNull Path classDir)
       throws IOException {
     return compileModule(module, classDir, new DefaultBindingConfiguration());
@@ -108,7 +108,7 @@ public final class ModuleCompilerHelper {
    */
   @NonNull
   public static IProduction compileModule(
-      @NonNull IModule module,
+      @NonNull IModule<?, ?, ?, ?, ?> module,
       @NonNull Path classDir,
       @NonNull IBindingConfiguration bindingConfiguration) throws IOException {
     IProduction production = JavaGenerator.generate(module, classDir, bindingConfiguration);

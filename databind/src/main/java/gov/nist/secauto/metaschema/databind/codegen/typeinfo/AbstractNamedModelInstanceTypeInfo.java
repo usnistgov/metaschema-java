@@ -28,18 +28,16 @@ package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.FieldSpec.Builder;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceBase;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
@@ -47,7 +45,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IModelDefinitionTypeInfo;
-import gov.nist.secauto.metaschema.databind.model.annotations.Constants;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -59,7 +56,7 @@ import javax.lang.model.element.Modifier;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelInstance>
-    extends AbstractModelInstanceTypeInfo<INSTANCE, IAssemblyDefinitionTypeInfo>
+    extends AbstractModelInstanceTypeInfo<INSTANCE>
     implements INamedModelInstanceTypeInfo {
   public AbstractNamedModelInstanceTypeInfo(
       @NonNull INSTANCE instance,
@@ -86,12 +83,14 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
 
   @Override
   public TypeName getJavaItemType() {
-    return getParentDefinitionTypeInfo().getTypeResolver().getClassName(this);
+    return getParentTypeInfo().getTypeResolver().getClassName(this);
   }
 
   @Override
-  public Set<IFlagContainer> buildField(Builder builder) {
-    Set<IFlagContainer> retval = super.buildField(builder);
+  public Set<IFlagContainer> buildField(
+      TypeSpec.Builder typeBuilder,
+      FieldSpec.Builder fieldBuilder) {
+    Set<IFlagContainer> retval = super.buildField(typeBuilder, fieldBuilder);
 
     IFlagContainer definition = getInstance().getDefinition();
     if (definition.isInline() && !(definition instanceof IFieldDefinition && definition.isSimple())) {
@@ -103,53 +102,18 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
     return retval.isEmpty() ? CollectionUtil.emptySet() : CollectionUtil.unmodifiableSet(retval);
   }
 
-  protected void buildBindingAnnotationCommon(@NonNull AnnotationSpec.Builder annotation) {
+  @Override
+  public void buildBindingAnnotationCommon(@NonNull AnnotationSpec.Builder annotation) {
 
-    INamedModelInstance instance = getInstance();
-
-    String formalName = instance.getEffectiveFormalName();
-    if (formalName != null) {
-      annotation.addMember("formalName", "$S", formalName);
-    }
-
-    MarkupLine description = instance.getEffectiveDescription();
-    if (description != null) {
-      annotation.addMember("description", "$S", description.toMarkdown());
-    }
-
-    annotation.addMember("useName", "$S", instance.getEffectiveName());
-
-    Integer index = instance.getEffectiveIndex();
-    if (index != null) {
-      annotation.addMember("useIndex", "$L", index);
-    }
-
-    String namespace = instance.getXmlNamespace();
-    if (namespace == null) {
-      annotation.addMember("namespace", "$S", Constants.NO_STRING_VALUE);
-    } else if (!instance.getContainingModule().getXmlNamespace().toASCIIString().equals(namespace)) {
-      annotation.addMember("namespace", "$S", namespace);
-    } // otherwise use the ##default
-
-    MarkupMultiline remarks = instance.getRemarks();
-    if (remarks != null) {
-      annotation.addMember("remarks", "$S", remarks.toMarkdown());
-    }
+    INamedModelInstanceBase instance = getInstance();
+    TypeInfoUtils.buildConnonBindingAnnotationValues(instance, annotation);
   }
 
   @Override
-  public AnnotationSpec.Builder buildGroupedBindingAnnotation(Class<?> annotationClass) {
-    AnnotationSpec.Builder annotation = ObjectUtils.notNull(AnnotationSpec.builder(annotationClass));
-
-    buildBindingAnnotationCommon(annotation);
-
-    annotation.addMember("binding", "$T.class", getJavaItemType());
-
-    return annotation;
-  }
-
-  @Override
-  public Set<IFlagContainer> buildBindingAnnotation(AnnotationSpec.Builder annotation) {
+  public Set<IFlagContainer> buildBindingAnnotation(
+      TypeSpec.Builder typeBuilder,
+      FieldSpec.Builder fieldBuilder,
+      AnnotationSpec.Builder annotation) {
 
     buildBindingAnnotationCommon(annotation);
 
@@ -192,7 +156,7 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
         }
 
         // get the json key property on the instance's definition
-        ITypeResolver typeResolver = getParentDefinitionTypeInfo().getTypeResolver();
+        ITypeResolver typeResolver = getParentTypeInfo().getTypeResolver();
         IModelDefinitionTypeInfo instanceTypeInfo = typeResolver.getTypeInfo(instance.getDefinition());
         IFlagInstanceTypeInfo jsonKeyTypeInfo = instanceTypeInfo.getFlagInstanceTypeInfo(jsonKey);
 

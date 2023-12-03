@@ -30,14 +30,11 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFeatureGroupedModelInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractGroupedNamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IGroupedFieldInstance;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
@@ -54,10 +51,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class XmlGroupedInlineFieldDefinition
-    extends AbstractFieldInstance
-    implements IFieldDefinition,
-    IFeatureInlinedDefinition<IFieldDefinition, IFieldInstance>,
-    IFeatureFlagContainer<IFlagInstance>, IFeatureGroupedModelInstance {
+    extends AbstractGroupedNamedModelInstance
+    implements IGroupedFieldInstance, IFieldDefinition,
+    IFeatureInlinedDefinition<IFieldDefinition, IGroupedFieldInstance>,
+    IFeatureFlagContainer<IFlagInstance> {
 
   @NonNull
   private final GroupedInlineFieldDefinitionType xmlObject;
@@ -78,7 +75,7 @@ public class XmlGroupedInlineFieldDefinition
   @SuppressWarnings("PMD.NullAssignment")
   public XmlGroupedInlineFieldDefinition(
       @NonNull GroupedInlineFieldDefinitionType xmlObject,
-      @NonNull IModelContainer parent) {
+      @NonNull IChoiceGroupInstance parent) {
     super(parent);
     this.xmlObject = xmlObject;
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this)));
@@ -98,7 +95,7 @@ public class XmlGroupedInlineFieldDefinition
   }
 
   @Override
-  public IFieldInstance getInlineInstance() {
+  public XmlGroupedInlineFieldDefinition getInlineInstance() {
     return this;
   }
 

@@ -34,7 +34,7 @@ import java.lang.reflect.Type;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IFeatureJavaField extends IBoundInstance {
+public interface IFeatureJavaField {
 
   /**
    * Gets the bound Java field associated with this instance.
@@ -83,7 +83,6 @@ public interface IFeatureJavaField extends IBoundInstance {
    *          the object associated with the definition containing this instance
    * @return the value if available, or {@code null} otherwise
    */
-  @Override
   default Object getValue(@NonNull Object parent) {
     Field field = getField();
     boolean accessable = field.canAccess(parent);
@@ -107,13 +106,12 @@ public interface IFeatureJavaField extends IBoundInstance {
    * Set the provided value on the provided object. The provided object must be of
    * the item's type associated with this instance.
    *
-   * @param parentInstance
+   * @param parentObject
    *          the object
    * @param value
    *          a value, which may be a simple {@link Type} or a
    *          {@link ParameterizedType} for a collection
    */
-  @Override
   default void setValue(@NonNull Object parentObject, Object value) {
     Field field = getField();
     boolean accessable = field.canAccess(parentObject);

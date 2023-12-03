@@ -28,8 +28,7 @@ package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBoundModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IFeatureCollectionModelInstance;
+import gov.nist.secauto.metaschema.databind.model.IBindingInstanceModel;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,8 +38,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 class SingletonCollectionInfo
     extends AbstractModelInstanceCollectionInfo {
 
-  public SingletonCollectionInfo(@NonNull IFeatureCollectionModelInstance instance) {
-    super(instance);
+  public SingletonCollectionInfo(@NonNull IBindingInstanceModel binding) {
+    super(binding);
   }
 
   @SuppressWarnings("null")
@@ -56,22 +55,22 @@ class SingletonCollectionInfo
 
   @Override
   public Class<?> getItemType() {
-    return getInstance().getItemType();
+    return getBinding().getItemType();
   }
 
   @Override
   public Object deepCopyItems(@NonNull Object fromObject, @NonNull Object toObject)
       throws BindingException {
-    IBoundModelInstance instance = getInstance();
+    IBindingInstanceModel binding = getBinding();
 
-    Object value = instance.getValue(fromObject);
+    Object value = binding.getValue(fromObject);
 
-    return value == null ? null : instance.deepCopyItem(ObjectUtils.requireNonNull(value), toObject);
+    return value == null ? null : binding.deepCopyItem(ObjectUtils.requireNonNull(value), toObject);
   }
 
   @Override
   public Object emptyValue() {
-    return getInstance().getDefaultValue();
+    return getBinding().getInstance().getDefaultValue();
   }
 
   @Override

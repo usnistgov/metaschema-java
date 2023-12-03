@@ -31,11 +31,9 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvi
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
@@ -62,7 +60,7 @@ class XmlGlobalFieldDefinition
   @NonNull
   private final GlobalFieldDefinitionType xmlObject;
   @NonNull
-  private final IModule module;
+  private final XmlModule module;
   @Nullable
   private final Object defaultValue;
   private final Lazy<XmlFlagContainerSupport> flagContainer;
@@ -77,7 +75,7 @@ class XmlGlobalFieldDefinition
    * @param module
    *          the containing Metaschema module
    */
-  public XmlGlobalFieldDefinition(@NonNull GlobalFieldDefinitionType xmlObject, @NonNull IModule module) {
+  public XmlGlobalFieldDefinition(@NonNull GlobalFieldDefinitionType xmlObject, @NonNull XmlModule module) {
     this.xmlObject = xmlObject;
     this.module = module;
     Object defaultValue = null;
@@ -120,7 +118,7 @@ class XmlGlobalFieldDefinition
   }
 
   @Override
-  public IModule getContainingModule() {
+  public XmlModule getContainingModule() {
     return module;
   }
 

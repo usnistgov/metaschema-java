@@ -73,6 +73,17 @@ public interface IFeatureScalarItemValueHandler
   default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
     handler.writeScalarItem(item, this);
   }
+  // @Override
+  // default Object readItem(Object parent, IItemReadHandler handler) throws
+  // IOException {
+  // return handler.readScalarItem(parent, this);
+  // }
+  //
+  // @Override
+  // default void writeItem(Object item, IItemWriteHandler handler) throws
+  // IOException {
+  // handler.writeScalarItem(item, this);
+  // }
 
   @Override
   default Object deepCopyItem(Object source, Object parentInstance) throws BindingException {

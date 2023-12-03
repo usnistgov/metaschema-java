@@ -34,7 +34,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IConstraintSet {
   @NonNull
-  Iterable<ITargetedConstaints> getTargetedConstraintsForModule(@NonNull IModule module);
+  Iterable<ITargetedConstaints> getTargetedConstraintsForModule(@NonNull IModule<?, ?, ?, ?, ?> module);
 
   @NonNull
   Collection<IConstraintSet> getImportedConstraintSets();

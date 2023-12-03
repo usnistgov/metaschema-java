@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.databind.io.json;
 
 import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.databind.io.AbstractProblemHandler;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -48,7 +48,7 @@ public class DefaultJsonProblemHandler
   @SuppressWarnings("resource")
   @Override
   public boolean handleUnknownProperty(
-      IClassBinding classBinding,
+      IBoundDefinitionModel classBinding,
       Object targetObject,
       String fieldName,
       IJsonParsingContext parsingContext) throws IOException {

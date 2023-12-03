@@ -45,17 +45,17 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 class ProductionImpl implements IProduction {
 
   @NonNull
-  private final Map<IModule, IGeneratedModuleClass> moduleToProductionMap // NOPMD - immutable
+  private final Map<IModule<?, ?, ?, ?, ?>, IGeneratedModuleClass> moduleToProductionMap // NOPMD - immutable
       = new HashMap<>();
   @NonNull
   private final Map<String, IPackageProduction> packageNameToProductionMap // NOPMD - immutable
       = new HashMap<>();
 
   public void addModule(
-      @NonNull IModule module,
+      @NonNull IModule<?, ?, ?, ?, ?> module,
       @NonNull IMetaschemaClassFactory classFactory,
       @NonNull Path targetDirectory) throws IOException {
-    for (IModule importedModule : module.getImportedModules()) {
+    for (IModule<?, ?, ?, ?, ?> importedModule : module.getImportedModules()) {
       assert importedModule != null;
       addModule(importedModule, classFactory, targetDirectory);
     }
@@ -95,7 +95,7 @@ class ProductionImpl implements IProduction {
   }
 
   @Override
-  public IGeneratedModuleClass getModuleProduction(IModule module) {
+  public IGeneratedModuleClass getModuleProduction(IModule<?, ?, ?, ?, ?> module) {
     return moduleToProductionMap.get(module);
   }
 

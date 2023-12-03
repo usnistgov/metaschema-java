@@ -65,7 +65,7 @@ public abstract class AbstractPropertyTypeInfo<PARENT extends IDefinitionTypeInf
         .addModifiers(Modifier.PRIVATE);
     assert field != null;
 
-    final Set<IFlagContainer> retval = buildField(field);
+    final Set<IFlagContainer> retval = buildField(builder, field);
 
     FieldSpec valueField = ObjectUtils.notNull(field.build());
     builder.addField(valueField);
@@ -74,7 +74,9 @@ public abstract class AbstractPropertyTypeInfo<PARENT extends IDefinitionTypeInf
     return retval;
   }
 
-  protected void buildExtraMethods(TypeSpec.Builder builder, FieldSpec valueField) {
+  protected void buildExtraMethods(
+      @NonNull TypeSpec.Builder typeBuilder,
+      @NonNull FieldSpec fieldBuilder) {
 
     TypeName javaFieldType = getJavaFieldType();
     String propertyName = getPropertyName();
@@ -83,8 +85,8 @@ public abstract class AbstractPropertyTypeInfo<PARENT extends IDefinitionTypeInf
           .returns(javaFieldType)
           .addModifiers(Modifier.PUBLIC);
       assert method != null;
-      method.addStatement("return $N", valueField);
-      builder.addMethod(method.build());
+      method.addStatement("return $N", fieldBuilder);
+      typeBuilder.addMethod(method.build());
     }
 
     {
@@ -93,20 +95,24 @@ public abstract class AbstractPropertyTypeInfo<PARENT extends IDefinitionTypeInf
           .addModifiers(Modifier.PUBLIC)
           .addParameter(valueParam);
       assert method != null;
-      method.addStatement("$N = $N", valueField, valueParam);
-      builder.addMethod(method.build());
+      method.addStatement("$N = $N", fieldBuilder, valueParam);
+      typeBuilder.addMethod(method.build());
     }
   }
 
   /**
    * Generate the Java field associated with this property.
    *
-   * @param builder
+   * @param typeBuilder
+   *          the class builder the field is on
+   * @param fieldBuilder
    *          the field builder
    * @return the set of definitions used by this field
    */
-  protected Set<IFlagContainer> buildField(@NonNull FieldSpec.Builder builder) {
-    buildFieldJavadoc(builder);
+  protected Set<IFlagContainer> buildField(
+      @NonNull TypeSpec.Builder typeBuilder,
+      @NonNull FieldSpec.Builder fieldBuilder) {
+    buildFieldJavadoc(fieldBuilder);
     return CollectionUtil.emptySet();
   }
 }

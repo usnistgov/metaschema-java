@@ -35,20 +35,20 @@ import nl.talsmasoftware.lazy4j.Lazy;
 class ModuleNodeItemImpl
     implements IModuleNodeItem, IFeatureModelContainerItem {
   @NonNull
-  private final IModule module;
+  private final IModule<?, ?, ?, ?, ?> module;
 
   @NonNull
   private final Lazy<ModelContainer> model;
 
   public ModuleNodeItemImpl(
-      @NonNull IModule module,
+      @NonNull IModule<?, ?, ?, ?, ?> module,
       @NonNull INodeItemGenerator generator) {
     this.module = module;
     this.model = ObjectUtils.notNull(Lazy.lazy(generator.newMetaschemaModelSupplier(this)));
   }
 
   @Override
-  public IModule getModule() {
+  public IModule<?, ?, ?, ?, ?> getModule() {
     return module;
   }
 
