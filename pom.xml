@@ -592,7 +592,7 @@
 				<plugin>
 					<groupId>gov.nist.secauto</groupId>
 					<artifactId>oss-build-support</artifactId>
-					<version>26</version>
+					<version>27</version>
 					<configuration>
 						<!-- <noUpa>false</noUpa> -->
 						<!-- <javaSource>1.5</javaSource> -->
