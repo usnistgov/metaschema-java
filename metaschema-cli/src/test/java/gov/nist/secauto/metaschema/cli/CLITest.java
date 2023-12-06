@@ -41,6 +41,23 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * Unit test for simple CLI.
  */
 public class CLITest {
+  void evaluateResult(@NonNull ExitStatus status, @NonNull ExitCode expectedCode) {
+	    status.generateMessage(true);
+	    assertAll(
+	        () -> assertEquals(expectedCode, status.getExitCode(), "exit code mismatch"),
+        () -> assertNull(status.getThrowable(), "expected null Throwable"));
+  }
+
+  void evaluateResult(@NonNull ExitStatus status, @NonNull ExitCode expectedCode,
+      @NonNull Class<? extends Throwable> thrownClass) {
+    status.generateMessage(true);
+    Throwable thrown = status.getThrowable();
+    assert thrown != null;
+    assertAll(
+        () -> assertEquals(expectedCode, status.getExitCode(), "exit code mismatch"),
+        () -> assertEquals(thrownClass, thrown.getClass(), "expected Throwable mismatch"));
+  }
+
   @Test
   void testHelp() {
     String[] args = {};
@@ -66,22 +83,5 @@ public class CLITest {
         "../databind/src/test/resources/metaschema/fields_with_flags/metaschema.xml",
         "target/schema-test.json" };
     evaluateResult(CLI.runCli(args), ExitCode.OK);
-  }
-
-  void evaluateResult(@NonNull ExitStatus status, @NonNull ExitCode expectedCode) {
-    status.generateMessage(true);
-    assertAll(
-        () -> assertEquals(expectedCode, status.getExitCode(), "exit code mismatch"),
-        () -> assertNull(status.getThrowable(), "expected null Throwable"));
-  }
-
-  void evaluateResult(@NonNull ExitStatus status, @NonNull ExitCode expectedCode,
-      @NonNull Class<? extends Throwable> thrownClass) {
-    status.generateMessage(true);
-    Throwable thrown = status.getThrowable();
-    assert thrown != null;
-    assertAll(
-        () -> assertEquals(expectedCode, status.getExitCode(), "exit code mismatch"),
-        () -> assertEquals(thrownClass, thrown.getClass(), "expected Throwable mismatch"));
   }
 }
