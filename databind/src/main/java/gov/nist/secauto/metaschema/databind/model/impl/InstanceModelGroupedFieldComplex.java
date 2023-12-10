@@ -26,15 +26,21 @@
 
 package gov.nist.secauto.metaschema.databind.model.impl;
 
-import gov.nist.secauto.metaschema.databind.model.IBindingInstanceModel;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionField;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
+import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
+
+import java.io.IOException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class InstanceModelGroupedFieldComplex
-    extends AbstractBoundInstanceModelGroupedField {
+    extends AbstractBoundInstanceModelGroupedNamed<BoundGroupedField>
+    implements IBoundInstanceModelGroupedField {
   @NonNull
   private final DefinitionField definition;
 
@@ -47,12 +53,57 @@ public class InstanceModelGroupedFieldComplex
   }
 
   @Override
-  public IBoundDefinitionField getDefinition() {
+  public InstanceModelGroupedFieldComplex getInstanceBinding() {
+    return this;
+  }
+
+  @Override
+  public InstanceModelGroupedFieldComplex getInstance() {
+    return this;
+  }
+
+  @Override
+  public DefinitionField getDefinition() {
     return definition;
   }
 
   @Override
-  public IBindingInstanceModel getInstanceBinding() {
-    throw new UnsupportedOperationException("implement?");
+  public String getFormalName() {
+    return ModelUtil.resolveNoneOrValue(getAnnotation().formalName());
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+    return ModelUtil.resolveToMarkupLine(getAnnotation().description());
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    return ModelUtil.resolveToMarkupMultiline(getAnnotation().remarks());
+  }
+
+  @Override
+  public String getDiscriminatorValue() {
+    return ModelUtil.resolveNoneOrValue(getAnnotation().formalName());
+  }
+
+  @Override
+  public String getUseName() {
+    return ModelUtil.resolveNoneOrValue(getAnnotation().useName());
+  }
+
+  @Override
+  public Integer getUseIndex() {
+    return ModelUtil.resolveNullOrInteger(getAnnotation().useIndex());
+  }
+
+  @Override
+  public Class<?> getBoundClass() {
+    return getAnnotation().binding();
+  }
+
+  @Override
+  public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+    return getDefinition().readItem(parent, handler);
   }
 }

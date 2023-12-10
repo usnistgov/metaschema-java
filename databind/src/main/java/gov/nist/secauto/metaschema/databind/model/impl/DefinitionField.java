@@ -37,11 +37,10 @@ import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBindingDefinitionField;
 import gov.nist.secauto.metaschema.databind.model.IBindingFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBindingInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionField;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelField;
 import gov.nist.secauto.metaschema.databind.model.IBoundModule;
@@ -51,7 +50,9 @@ import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,7 @@ import nl.talsmasoftware.lazy4j.Lazy;
 
 public class DefinitionField
     extends AbstractBoundDefinitionFlagContainer<MetaschemaField>
-    implements IBoundDefinitionField, IBoundDefinitionModelComplex {
+    implements IBoundDefinitionFieldComplex {
   @NonNull
   private final FieldValue fieldValue;
   @Nullable
@@ -76,7 +77,7 @@ public class DefinitionField
   @NonNull
   private final Lazy<IValueConstrained> constraints;
   @NonNull
-  private final Lazy<BindingDefinitionField> binding;
+  private final Lazy<List<IBindingInstanceFlag>> flagInstanceBindings;
 
   /**
    * Collect all fields that are part of the model for this class.
@@ -117,8 +118,6 @@ public class DefinitionField
       @NonNull Class<?> clazz,
       @NonNull IBindingContext bindingContext) {
     super(clazz, MetaschemaField.class, bindingContext);
-    this.binding = ObjectUtils.notNull(Lazy.lazy(() -> new BindingDefinitionField()));
-
     Field field = getFieldValueField(getBoundClass());
     if (field == null) {
       throw new IllegalArgumentException(
@@ -128,6 +127,9 @@ public class DefinitionField
     }
     this.fieldValue = new FieldValue(field, BoundFieldValue.class);
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new FlagContainerSupport(this, this::handleFlagInstance)));
+    this.flagInstanceBindings = ObjectUtils.notNull(Lazy.lazy(() -> getFlagInstances().stream()
+        .map(instance -> instance.getInstanceBinding())
+        .collect(Collectors.toUnmodifiableList())));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IModelConstrained retval = new AssemblyConstraintSet();
       ValueConstraints valueAnnotation = getAnnotation().valueConstraints();
@@ -146,11 +148,16 @@ public class DefinitionField
   // - Start annotation driven code - CPD-OFF -
   // ------------------------------------------
 
-  @SuppressWarnings("null")
   @Override
   @NonNull
-  public BindingDefinitionField getDefinitionBinding() {
-    return binding.get();
+  public DefinitionField getDefinition() {
+    return this;
+  }
+
+  @Override
+  @NonNull
+  public DefinitionField getDefinitionBinding() {
+    return this;
   }
 
   @Override
@@ -243,6 +250,37 @@ public class DefinitionField
     return getFieldValueBinding().getValue(item);
   }
 
+  @SuppressWarnings("null")
+  @Override
+  @NonNull
+  public List<IBindingInstanceFlag> getFlagInstanceBindings() {
+    return flagInstanceBindings.get();
+  }
+
+  @Override
+  public boolean canHandleJsonPropertyName(String name) {
+    // not handled, since not root
+    return false;
+  }
+
+  @Override
+  public boolean canHandleXmlQName(QName qname) {
+    // not handled, since not root
+    return false;
+  }
+
+  @Override
+  public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+    return handler.readItemField(parent, this);
+  }
+
+  @Override
+  protected void deepCopyItemInternal(Object fromObject, Object toObject) throws BindingException {
+    super.deepCopyItemInternal(fromObject, toObject);
+
+    getFieldValueBinding().deepCopy(fromObject, toObject);
+  }
+
   protected class FieldValue
       extends AbstractBoundAnnotatedJavaField<BoundFieldValue>
       implements IBindingFieldValue, IFeatureJavaField {
@@ -261,7 +299,7 @@ public class DefinitionField
     }
 
     @Override
-    public DefinitionField getContainingDefinition() {
+    public IBoundDefinitionField getParentFieldDefinition() {
       return DefinitionField.this;
     }
 
@@ -327,62 +365,15 @@ public class DefinitionField
     }
 
     @Override
+    public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+      return handler.readItemFieldValue(parent, this);
+    }
+
+    @Override
     public void deepCopy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException {
       Object value = getValue(fromInstance);
       setValue(toInstance, value);
     }
-  }
-
-  protected class BindingDefinitionField
-      extends AbstractBindingFlagContainerDefinition
-      implements IBindingDefinitionField {
-    @NonNull
-    private final Lazy<List<IBindingInstanceFlag>> flagInstanceBindings;
-
-    private BindingDefinitionField() {
-      this.flagInstanceBindings = ObjectUtils.notNull(Lazy.lazy(() -> getFlagInstances().stream()
-          .map(instance -> instance.getInstanceBinding())
-          .collect(Collectors.toUnmodifiableList())));
-    }
-
-    @Override
-    @NonNull
-    public DefinitionField getDefinition() {
-      return DefinitionField.this;
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    @NonNull
-    public List<IBindingInstanceFlag> getFlagInstanceBindings() {
-      return flagInstanceBindings.get();
-    }
-
-    @Override
-    @NonNull
-    public Class<?> getBoundClass() {
-      return DefinitionField.this.getBoundClass();
-    }
-
-    @Override
-    public boolean canHandleJsonPropertyName(String name) {
-      // not handled, since not root
-      return false;
-    }
-
-    @Override
-    public boolean canHandleXmlQName(QName qname) {
-      // not handled, since not root
-      return false;
-    }
-
-    @Override
-    protected void deepCopyItemInternal(Object fromObject, Object toObject) throws BindingException {
-      super.deepCopyItemInternal(fromObject, toObject);
-
-      getFieldValueBinding().deepCopy(fromObject, toObject);
-    }
-
   }
 
   // ----------------------------------------

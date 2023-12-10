@@ -36,7 +36,7 @@ import java.lang.reflect.Field;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundInstanceModelGroupedAssembly
-    extends IBoundInstanceModelGroupedNamed, IBoundInstanceModelAssembly, IGroupedAssemblyInstance {
+    extends IBoundInstanceModelGroupedNamed, IGroupedAssemblyInstance {
 
   static IBoundInstanceModelGroupedAssembly newInstance(
       @NonNull BoundGroupedAssembly annotation,

@@ -36,10 +36,14 @@ import gov.nist.secauto.metaschema.databind.model.IBindingFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBindingInstanceModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionField;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldScalar;
 import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
@@ -181,7 +185,7 @@ public class MetaschemaJsonReader
         JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
 
         // read the top-level definition
-        instance = targetDefinition.getDefinitionBinding().readItem(null, this);
+        instance = targetDefinition.readItem(null, this);
 
         // stop now, since we found the root field
         break;
@@ -347,28 +351,53 @@ public class MetaschemaJsonReader
     }
   }
 
-  /**
-   * {@inheritDoc}
-   * <p>
-   * The item value is associated with a JSON value token.
-   */
-  @SuppressWarnings("resource")
   @Override
-  public Object readScalarItem(Object parent, IFeatureScalarItemValueHandler handler) throws IOException {
+  public Object readItemFlag(Object parent, IBoundInstanceFlag flag) throws IOException {
+    return readScalarItem(flag);
+  }
+
+  @Override
+  public Object readItemField(Object parent, IBoundInstanceModelFieldScalar field) throws IOException {
+    return readScalarItem(field);
+  }
+
+  @Override
+  public Object readItemField(Object parent, IBoundInstanceModelFieldComplex field) throws IOException {
+    return readComplexItem(parent, field);
+  }
+
+  @Override
+  public Object readItemField(Object parent, IBoundDefinitionFieldComplex field) throws IOException {
+    return readComplexItem(parent, field);
+  }
+
+  @Override
+  public Object readItemFieldValue(Object parent, IBindingFieldValue fieldValue) throws IOException {
+    return readScalarItem(fieldValue);
+  }
+
+  @Override
+  public Object readItemAssembly(Object parent, IBoundInstanceModelAssembly assembly) throws IOException {
+    return readComplexItem(parent, assembly);
+  }
+
+  @Override
+  public Object readItemAssembly(Object parent, IBoundDefinitionAssembly assembly) throws IOException {
+    return readComplexItem(parent, assembly);
+  }
+
+  @SuppressWarnings("resource")
+  @NonNull
+  private Object readScalarItem(IFeatureScalarItemValueHandler handler) throws IOException {
     return handler.getJavaTypeAdapter().parse(getReader());
   }
 
-  /**
-   * {@inheritDoc}
-   * <p>
-   * The item value is associated with a JSON {@link JsonToken#START_OBJECT}.
-   */
   @SuppressWarnings({
       "resource", // not owned
       "PMD.NPathComplexity", "PMD.CyclomaticComplexity" // ok
   })
-  @Override
-  public Object readComplexItem(Object parent, IFeatureComplexItemValueHandler handler) throws IOException {
+  @NonNull
+  private Object readComplexItem(Object parent, IFeatureComplexItemValueHandler handler) throws IOException {
     JsonParser parser = getReader(); // NOPMD - intentional
     boolean objectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
     if (objectWrapper) {

@@ -28,12 +28,14 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.databind.model.IBindingInstanceModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
+
+import java.io.IOException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -57,8 +59,13 @@ public class InstanceModelGroupedAssembly
   }
 
   @Override
-  public IBindingInstanceModel getInstanceBinding() {
-    throw new UnsupportedOperationException("implement?");
+  public InstanceModelGroupedAssembly getInstance() {
+    return this;
+  }
+
+  @Override
+  public InstanceModelGroupedAssembly getInstanceBinding() {
+    return this;
   }
 
   @Override
@@ -80,4 +87,25 @@ public class InstanceModelGroupedAssembly
   public String getDiscriminatorValue() {
     return ModelUtil.resolveNoneOrValue(getAnnotation().discriminatorValue());
   }
+
+  @Override
+  public String getUseName() {
+    return ModelUtil.resolveNoneOrValue(getAnnotation().useName());
+  }
+
+  @Override
+  public Integer getUseIndex() {
+    return ModelUtil.resolveNullOrInteger(getAnnotation().useIndex());
+  }
+
+  @Override
+  public Class<?> getBoundClass() {
+    return getAnnotation().binding();
+  }
+
+  @Override
+  public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+    return getDefinition().readItem(parent, handler);
+  }
+
 }

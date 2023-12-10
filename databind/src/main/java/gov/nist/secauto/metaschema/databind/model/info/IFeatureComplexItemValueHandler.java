@@ -51,11 +51,6 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
   String getJsonKeyFlagName();
 
   @Override
-  default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
-    return handler.readComplexItem(parent, this);
-  }
-
-  @Override
   default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
     handler.writeComplexItem(item, this);
   }

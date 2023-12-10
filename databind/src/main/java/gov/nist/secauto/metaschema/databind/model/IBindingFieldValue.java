@@ -41,7 +41,7 @@ public interface IBindingFieldValue extends IBindingProperty, IBoundProperty, IF
   Object getDefaultValue();
 
   @NonNull
-  IBoundDefinitionField getContainingDefinition();
+  IBoundDefinitionField getParentFieldDefinition();
 
   @Nullable
   String getJsonValueKeyFlagName();

@@ -55,4 +55,9 @@ public interface IChoiceInstance extends IModelInstance, IModelContainer {
   default int getMaxOccurs() {
     return 1;
   }
+
+  @Override
+  default boolean isValueWrappedInXml() {
+    throw new UnsupportedOperationException("not applicable");
+  }
 }

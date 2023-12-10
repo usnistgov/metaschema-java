@@ -27,11 +27,14 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.databind.model.impl.IFeatureBindingInstanceNamed;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 //REFACTOR: flatten this once bindings are removed
-public interface IBindingInstanceModelAssembly extends IBindingInstanceModel, IFeatureBindingInstanceNamed {
+public interface IBindingInstanceModelAssembly
+    extends IBindingInstanceModel, IFeatureBindingInstanceNamed,
+    IFeatureComplexItemValueHandler {
   @Override
   @NonNull
   IBoundInstanceModelAssembly getInstance();

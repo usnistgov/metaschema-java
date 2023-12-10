@@ -46,6 +46,7 @@ public interface IItemValueHandler {
    * @throws IOException
    *           if an error occurred while parsing
    */
+  @NonNull
   Object readItem(
       @Nullable Object parent,
       @NonNull IItemReadHandler handler) throws IOException;

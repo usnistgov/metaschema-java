@@ -27,5 +27,6 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 public interface IBoundDefinitionModelComplex extends IBoundDefinitionModel, IFeatureBoundClass {
-  // no addional methods
+  @Override
+  IBindingDefinitionModelComplex getDefinitionBinding();
 }

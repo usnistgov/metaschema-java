@@ -34,10 +34,24 @@ import java.lang.reflect.Field;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundInstanceModelAssembly extends IBoundInstanceModelNamed, IAssemblyInstance {
+public interface IBoundInstanceModelAssembly
+    extends IBoundInstanceModelNamed, IAssemblyInstance, IBindingInstanceModelAssembly {
   @Override
   @NonNull
   IBoundDefinitionAssembly getDefinition();
+
+  @Override
+  IBindingInstanceModelAssembly getInstanceBinding();
+
+  @Override
+  default Object getValue(Object parent) {
+    return IBindingInstanceModelAssembly.super.getValue(parent);
+  }
+
+  @Override
+  default String getJsonKeyFlagName() {
+    return IBoundInstanceModelNamed.super.getJsonKeyFlagName();
+  }
 
   static IBoundInstanceModelAssembly newInstance(
       @NonNull Field field,

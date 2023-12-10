@@ -38,12 +38,18 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundInstanceModelChoiceGroup
-    extends IBoundInstanceModel, IBoundContainerModelChoiceGroup, IChoiceGroupInstance {
+    extends IBoundInstanceModel, IBoundContainerModelChoiceGroup, IChoiceGroupInstance,
+    IBindingInstanceModelChoiceGroup {
 
   static IBoundInstanceModelChoiceGroup newInstance(
       @NonNull Field field,
       @NonNull IBoundDefinitionAssembly containingDefinition) {
     return new InstanceModelChoiceGroup(field, containingDefinition);
+  }
+
+  @Override
+  default Object getValue(Object parent) {
+    return IBindingInstanceModelChoiceGroup.super.getValue(parent);
   }
 
   @Override

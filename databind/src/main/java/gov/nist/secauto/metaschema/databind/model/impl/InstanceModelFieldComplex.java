@@ -30,26 +30,25 @@ import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBindingFieldValue;
-import gov.nist.secauto.metaschema.databind.model.IBindingInstanceModelField;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceModelFieldComplex
-    extends AbstractBoundInstanceField {
+    extends AbstractBoundInstanceField
+    implements IBoundInstanceModelFieldComplex {
   @NonNull
   private final DefinitionField definition;
   @NonNull
   private final Lazy<Object> defaultValue;
-  @NonNull
-  private final BindingInstanceField binding;
 
   public InstanceModelFieldComplex(
       @NonNull Field javaField,
@@ -93,17 +92,21 @@ public class InstanceModelFieldComplex
       }
       return retval;
     }));
-    this.binding = new BindingInstanceField();
   }
 
   @Override
-  public BindingInstanceField getInstanceBinding() {
-    return binding;
+  public InstanceModelFieldComplex getInstance() {
+    return this;
   }
 
   @Override
   public DefinitionField getDefinition() {
     return definition;
+  }
+
+  @Override
+  public InstanceModelFieldComplex getInstanceBinding() {
+    return this;
   }
 
   @Override
@@ -116,57 +119,37 @@ public class InstanceModelFieldComplex
     return defaultValue.get();
   }
 
-  private class BindingInstanceField
-      extends AbstractBindingInstanceModel
-      implements IBindingInstanceModelField,
-      IFeatureComplexItemValueHandler {
+  // TODO: integrate
 
-    @Override
-    public Field getField() {
-      return InstanceModelFieldComplex.this.getField();
-    }
+  @Override
+  public IBoundInstanceFlag getItemJsonKey(Object item) {
+    return JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())
+        ? getDefinition().getJsonKeyFlagInstance()
+        : null;
+  }
 
-    @Override
-    public InstanceModelFieldComplex getInstance() {
-      return InstanceModelFieldComplex.this;
-    }
+  @Override
+  public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+    return handler.readItemField(parent, this);
+  }
 
-    @Override
-    @Nullable
-    public String getJsonKeyFlagName() {
-      return getInstance().getJsonKeyFlagName();
-    }
+  @Override
+  public Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
+    return getDefinition().getDefinitionBinding().deepCopyItem(item, parentInstance);
+  }
 
-    @Override
-    public IBoundInstanceFlag getItemJsonKey(Object item) {
-      return JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())
-          ? getDefinition().getJsonKeyFlagInstance()
-          : null;
-    }
+  @Override
+  public Class<?> getBoundClass() {
+    return getDefinition().getBoundClass();
+  }
 
-    @Override
-    public Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
-      return getDefinition().getDefinitionBinding().deepCopyItem(item, parentInstance);
-    }
+  @Override
+  public void callBeforeDeserialize(Object targetObject, Object parentObject) throws BindingException {
+    getDefinition().getDefinitionBinding().callBeforeDeserialize(targetObject, parentObject);
+  }
 
-    @Override
-    public DefinitionField getDefinition() {
-      return InstanceModelFieldComplex.this.getDefinition();
-    }
-
-    @Override
-    public Class<?> getBoundClass() {
-      return getDefinition().getBoundClass();
-    }
-
-    @Override
-    public void callBeforeDeserialize(Object targetObject, Object parentObject) throws BindingException {
-      getDefinition().getDefinitionBinding().callBeforeDeserialize(targetObject, parentObject);
-    }
-
-    @Override
-    public void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
-      getDefinition().getDefinitionBinding().callAfterDeserialize(targetObject, parentObject);
-    }
+  @Override
+  public void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
+    getDefinition().getDefinitionBinding().callAfterDeserialize(targetObject, parentObject);
   }
 }

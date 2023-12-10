@@ -26,24 +26,32 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.impl.IFeatureInlineDefinition;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
-public interface IBoundInstanceModelGroupedNamed
-    extends IGroupedNamedModelInstance, IBindingInstanceModelGrouped, IFeatureComplexItemValueHandler {
-  @Override
-  IBoundInstanceModelChoiceGroup getParentContainer();
+public interface IBoundInstanceModelFieldScalar
+    extends IBoundInstanceModelField, IBindingInstanceModelField, IBindingDefinitionField, IBindingFieldValue,
+    IBoundDefinitionField,
+    IFeatureInlineDefinition {
 
   @Override
-  IBoundDefinitionModelComplex getDefinition();
-
-  @NonNull
-  IBindingInstanceModelGrouped getInstanceBinding();
+  IBoundDefinitionAssembly getContainingDefinition();
 
   @Override
-  default boolean isValueWrappedInXml() {
-    return true;
+  default Object getValue(Object parent) {
+    return IBindingInstanceModelField.super.getValue(parent);
+  }
+
+  @Override
+  default void setValue(Object parentObject, Object value) {
+    IBindingInstanceModelField.super.setValue(parentObject, value);
+  }
+
+  @Override
+  Object getDefaultValue();
+
+  @Override
+  default String getJsonKeyFlagName() {
+    // no flags
+    return null;
   }
 }

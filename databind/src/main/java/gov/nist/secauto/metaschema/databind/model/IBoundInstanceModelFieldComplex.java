@@ -24,45 +24,20 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.impl;
+package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
-import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
-import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+public interface IBoundInstanceModelFieldComplex
+    extends IBoundInstanceModelField,
+    IBindingInstanceModelField,
+    IFeatureComplexItemValueHandler {
 
-public abstract class AbstractBoundInstanceModelGroupedField
-    extends AbstractBoundInstanceModelGroupedNamed<BoundGroupedField>
-    implements IBoundInstanceModelGroupedField {
-
-  protected AbstractBoundInstanceModelGroupedField(
-      @NonNull BoundGroupedField annotation,
-      @NonNull IBoundInstanceModelChoiceGroup choiceGroupInstance) {
-    super(annotation, choiceGroupInstance);
+  @Override
+  default Object getValue(Object parent) {
+    return IBindingInstanceModelField.super.getValue(parent);
   }
 
   @Override
-  public String getFormalName() {
-    return ModelUtil.resolveNoneOrValue(getAnnotation().formalName());
-  }
-
-  @Override
-  public MarkupLine getDescription() {
-    return ModelUtil.resolveToMarkupLine(getAnnotation().description());
-  }
-
-  @Override
-  public MarkupMultiline getRemarks() {
-    return ModelUtil.resolveToMarkupMultiline(getAnnotation().remarks());
-  }
-
-  @Override
-  public String getDiscriminatorValue() {
-    return ModelUtil.resolveNoneOrValue(getAnnotation().formalName());
-  }
-
+  String getJsonKeyFlagName();
 }

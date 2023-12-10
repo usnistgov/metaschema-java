@@ -31,14 +31,13 @@ import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
 import gov.nist.secauto.metaschema.databind.model.impl.DefinitionField;
 import gov.nist.secauto.metaschema.databind.model.impl.InstanceModelGroupedFieldComplex;
-import gov.nist.secauto.metaschema.databind.model.impl.InstanceModelGroupedFieldScalar;
 
 import java.lang.reflect.Field;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundInstanceModelGroupedField
-    extends IBoundInstanceModelGroupedNamed, IBoundInstanceModelField, IGroupedFieldInstance {
+    extends IBoundInstanceModelGroupedNamed, IGroupedFieldInstance {
 
   @NonNull
   static IBoundInstanceModelGroupedField newInstance(
@@ -49,9 +48,7 @@ public interface IBoundInstanceModelGroupedField
     IBoundDefinitionModel definition = bindingContext.getBoundDefinitionForClass(clazz);
 
     IBoundInstanceModelGroupedField retval;
-    if (definition == null) {
-      retval = new InstanceModelGroupedFieldScalar(annotation, container);
-    } else if (definition instanceof DefinitionField) {
+    if (definition instanceof DefinitionField) {
       retval = new InstanceModelGroupedFieldComplex(annotation, (DefinitionField) definition, container);
     } else {
       Field field = container.getInstanceBinding().getField();
@@ -66,5 +63,5 @@ public interface IBoundInstanceModelGroupedField
   }
 
   @Override
-  IBoundDefinitionField getDefinition();
+  IBoundDefinitionFieldComplex getDefinition();
 }

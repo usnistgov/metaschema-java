@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundDefinitionAssembly
-    extends IAssemblyDefinition, IBoundDefinitionModelComplex, IBoundContainerModel {
+    extends IBoundDefinitionModelComplex, IBoundContainerModel, IAssemblyDefinition, IBindingDefinitionAssembly {
   @Override
   @NonNull
   IBoundDefinitionAssembly getOwningDefinition();

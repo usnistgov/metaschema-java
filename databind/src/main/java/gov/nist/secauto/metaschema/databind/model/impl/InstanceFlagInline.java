@@ -47,8 +47,9 @@ import gov.nist.secauto.metaschema.databind.model.annotations.JsonFieldValueKeyF
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
@@ -61,16 +62,14 @@ import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceFlagInline
     extends AbstractBoundInstanceJavaField<BoundFlag, IBoundDefinitionModel>
-    implements IBoundInstanceFlag, IBoundDefinitionFlag,
-    IFeatureInlineDefinition {
+    implements IBoundInstanceFlag, IBoundDefinitionFlag, IBindingInstanceFlag, IBindingDefinitionFlag,
+    IFeatureJavaField {
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   @Nullable
   private final Object defaultValue;
   @NonNull
   private final Lazy<IValueConstrained> constraints;
-  @NonNull
-  private final BindingInstanceFlag binding;
 
   public InstanceFlagInline(
       @NonNull Field javaField,
@@ -87,8 +86,6 @@ public class InstanceFlagInline
       ConstraintSupport.parse(valueAnnotation, ISource.modelSource(), retval);
       return retval;
     }));
-
-    this.binding = new BindingInstanceFlag();
   }
 
   // ------------------------------------------
@@ -96,7 +93,12 @@ public class InstanceFlagInline
   // ------------------------------------------
 
   @Override
-  public IBoundDefinitionFlag getDefinition() {
+  public InstanceFlagInline getInstance() {
+    return this;
+  }
+
+  @Override
+  public InstanceFlagInline getDefinition() {
     return this;
   }
 
@@ -106,18 +108,23 @@ public class InstanceFlagInline
   }
 
   @Override
-  public BindingInstanceFlag getDefinitionBinding() {
-    return binding;
+  public InstanceFlagInline getDefinitionBinding() {
+    return this;
   }
 
   @Override
-  public BindingInstanceFlag getInstanceBinding() {
-    return binding;
+  public InstanceFlagInline getInstanceBinding() {
+    return this;
   }
 
   @Override
   public Object getValue(Object parent) {
-    return getInstanceBinding().getValue(parent);
+    return IFeatureJavaField.super.getValue(parent);
+  }
+
+  @Override
+  public void setValue(Object parentObject, Object value) {
+    IFeatureJavaField.super.setValue(parentObject, value);
   }
 
   @Override
@@ -197,62 +204,31 @@ public class InstanceFlagInline
     return ModelUtil.resolveToMarkupMultiline(getAnnotation().remarks());
   }
 
+  @Override
+  public IBindingContext getBindingContext() {
+    return getContainingDefinition().getDefinitionBinding().getBindingContext();
+  }
+
+  @Override
+  public void deepCopy(Object fromInstance, Object toInstance) throws BindingException {
+    Object value = getValue(fromInstance);
+    if (value != null) {
+      setValue(toInstance, deepCopyItem(value, toInstance));
+    }
+  }
+
+  @Override
+  public String toString(Object parent) {
+    Object value = getValue(parent);
+    return getJavaTypeAdapter().asString(value);
+  }
+
+  @Override
+  public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+    return handler.readItemFlag(parent, this);
+  }
+
   // ----------------------------------------
   // - End annotation driven code - CPD-OFF -
   // ----------------------------------------
-
-  private class BindingInstanceFlag
-      implements IBindingInstanceFlag, IBindingDefinitionFlag,
-      IFeatureJavaField,
-      IFeatureScalarItemValueHandler {
-
-    @Override
-    public IBindingContext getBindingContext() {
-      return getContainingDefinition().getDefinitionBinding().getBindingContext();
-    }
-
-    @Override
-    public Object getValue(Object parent) {
-      return IFeatureJavaField.super.getValue(parent);
-    }
-
-    @Override
-    public void setValue(Object parentObject, Object value) {
-      IFeatureJavaField.super.setValue(parentObject, value);
-    }
-
-    @Override
-    public Field getField() {
-      return InstanceFlagInline.this.getField();
-    }
-
-    @Override
-    public InstanceFlagInline getInstance() {
-      return InstanceFlagInline.this;
-    }
-
-    @Override
-    public InstanceFlagInline getDefinition() {
-      return InstanceFlagInline.this;
-    }
-
-    @Override
-    public IDataTypeAdapter<?> getJavaTypeAdapter() {
-      return InstanceFlagInline.this.getJavaTypeAdapter();
-    }
-
-    @Override
-    public void deepCopy(Object fromInstance, Object toInstance) throws BindingException {
-      Object value = getValue(fromInstance);
-      if (value != null) {
-        setValue(toInstance, deepCopyItem(value, toInstance));
-      }
-    }
-
-    @Override
-    public String toString(Object parent) {
-      Object value = getValue(parent);
-      return getJavaTypeAdapter().asString(value);
-    }
-  }
 }

@@ -238,14 +238,14 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
       // There are two modes:
       // 1) use of a JSON value key, or
       // 2) a simple value named "value"
-      IBoundInstanceFlag jsonValueKey = targetInstance.getContainingDefinition().getJsonValueKeyFlagInstance();
+      IBoundInstanceFlag jsonValueKey = targetInstance.getParentFieldDefinition().getJsonValueKeyFlagInstance();
 
       String valueKeyName;
       if (jsonValueKey != null) {
         // this is the JSON value key case
         valueKeyName = jsonValueKey.getValue(parentObject).toString();
       } else {
-        valueKeyName = targetInstance.getContainingDefinition().getEffectiveJsonValueKeyName();
+        valueKeyName = targetInstance.getParentFieldDefinition().getEffectiveJsonValueKeyName();
       }
       writer.writeFieldName(valueKeyName);
       // LOGGER.info("FIELD: {}", valueKeyName);

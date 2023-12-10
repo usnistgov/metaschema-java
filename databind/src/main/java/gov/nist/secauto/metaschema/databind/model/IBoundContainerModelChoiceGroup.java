@@ -27,20 +27,13 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IGroupedModelContainer;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
 import java.util.Collection;
-import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IBoundContainerModelChoiceGroup extends IBoundContainerModel, IGroupedModelContainer {
-
-  @Override
-  @NonNull
-  Collection<? extends IBoundInstanceModelGroupedNamed> getModelInstances();
-
+public interface IBoundContainerModelChoiceGroup extends IGroupedModelContainer {
   @Override
   @NonNull
   Collection<? extends IBoundInstanceModelGroupedNamed> getNamedModelInstances();
@@ -63,10 +56,4 @@ public interface IBoundContainerModelChoiceGroup extends IBoundContainerModel, I
   @Override
   @Nullable
   IBoundInstanceModelGroupedAssembly getAssemblyInstanceByName(String name);
-
-  @Override
-  default List<? extends IBoundInstanceModelChoiceGroup> getChoiceGroupInstances() {
-    // not supported
-    return CollectionUtil.emptyList();
-  }
 }

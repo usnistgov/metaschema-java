@@ -30,20 +30,19 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBindingInstanceModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class InstanceModelAssemblyComplex
     extends AbstractBoundInstanceModelJavaField<BoundAssembly>
@@ -52,8 +51,6 @@ public class InstanceModelAssemblyComplex
   private final IBoundDefinitionAssembly definition;
   @NonNull
   private final IGroupAs groupAs;
-  @NonNull
-  private final BindingInstanceAssembly binding;
 
   public InstanceModelAssemblyComplex(
       @NonNull Field javaField,
@@ -78,7 +75,6 @@ public class InstanceModelAssemblyComplex
               containingDefinition.getBoundClass().getName(),
               GroupAs.class.getName()));
     }
-    this.binding = new BindingInstanceAssembly();
   }
 
   // ------------------------------------------
@@ -86,13 +82,18 @@ public class InstanceModelAssemblyComplex
   // ------------------------------------------
 
   @Override
-  public BindingInstanceAssembly getInstanceBinding() {
-    return binding;
+  public InstanceModelAssemblyComplex getInstance() {
+    return this;
   }
 
   @Override
   public IBoundDefinitionAssembly getDefinition() {
     return definition;
+  }
+
+  @Override
+  public InstanceModelAssemblyComplex getInstanceBinding() {
+    return this;
   }
 
   @Override
@@ -141,57 +142,35 @@ public class InstanceModelAssemblyComplex
     return getInstanceBinding().getCollectionInfo().getItemsFromValue(value);
   }
 
-  private class BindingInstanceAssembly
-      extends AbstractBindingInstanceModel
-      implements IBindingInstanceModelAssembly,
-      IFeatureComplexItemValueHandler {
+  @Override
+  public IBoundInstanceFlag getItemJsonKey(Object item) {
+    return JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())
+        ? getDefinition().getJsonKeyFlagInstance()
+        : null;
+  }
 
-    @Override
-    public Field getField() {
-      return InstanceModelAssemblyComplex.this.getField();
-    }
+  @Override
+  public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+    return handler.readItemAssembly(parent, this);
+  }
 
-    @Override
-    public InstanceModelAssemblyComplex getInstance() {
-      return InstanceModelAssemblyComplex.this;
-    }
+  @Override
+  public Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
+    return getDefinition().getDefinitionBinding().deepCopyItem(item, parentInstance);
+  }
 
-    @Override
-    @Nullable
-    public String getJsonKeyFlagName() {
-      return getInstance().getJsonKeyFlagName();
-    }
+  @Override
+  public Class<?> getBoundClass() {
+    return getDefinition().getBoundClass();
+  }
 
-    @Override
-    public IBoundInstanceFlag getItemJsonKey(Object item) {
-      return JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())
-          ? getDefinition().getJsonKeyFlagInstance()
-          : null;
-    }
+  @Override
+  public void callBeforeDeserialize(Object targetObject, Object parentObject) throws BindingException {
+    getDefinition().getDefinitionBinding().callBeforeDeserialize(targetObject, parentObject);
+  }
 
-    @Override
-    public Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
-      return getDefinition().getDefinitionBinding().deepCopyItem(item, parentInstance);
-    }
-
-    @Override
-    public IBoundDefinitionAssembly getDefinition() {
-      return InstanceModelAssemblyComplex.this.getDefinition();
-    }
-
-    @Override
-    public Class<?> getBoundClass() {
-      return getDefinition().getBoundClass();
-    }
-
-    @Override
-    public void callBeforeDeserialize(Object targetObject, Object parentObject) throws BindingException {
-      getDefinition().getDefinitionBinding().callBeforeDeserialize(targetObject, parentObject);
-    }
-
-    @Override
-    public void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
-      getDefinition().getDefinitionBinding().callAfterDeserialize(targetObject, parentObject);
-    }
+  @Override
+  public void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
+    getDefinition().getDefinitionBinding().callAfterDeserialize(targetObject, parentObject);
   }
 }

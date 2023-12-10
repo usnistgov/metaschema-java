@@ -26,11 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBindingDefinitionAssembly extends IBindingDefinitionFlagContainer, IFeatureComplexItemValueHandler {
+public interface IBindingDefinitionAssembly extends IBindingDefinitionModelComplex {
   @Override
   @NonNull
   IBoundDefinitionAssembly getDefinition();

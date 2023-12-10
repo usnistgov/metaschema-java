@@ -73,11 +73,6 @@ public abstract class AbstractBoundInstanceField
   // ------------------------------------------
 
   @Override
-  public Object getValue(Object parent) {
-    return getInstanceBinding().getValue(parent);
-  }
-
-  @Override
   public String getName() {
     return ObjectUtils.notNull(getField().getName());
   }
@@ -126,5 +121,10 @@ public abstract class AbstractBoundInstanceField
   @Override
   public MarkupMultiline getRemarks() {
     return ModelUtil.resolveToMarkupMultiline(getAnnotation().remarks());
+  }
+
+  @Override
+  public String getJsonKeyFlagName() {
+    return IBoundInstanceModelField.super.getJsonKeyFlagName();
   }
 }

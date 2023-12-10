@@ -30,6 +30,7 @@ import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+// REFACTOR: rename to IBindingDefinitionModel
 public interface IBindingDefinitionFlagContainer extends IBindingDefinition {
   @Override
   @NonNull

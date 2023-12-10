@@ -26,24 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-
-public interface IBoundInstanceModelGroupedNamed
-    extends IGroupedNamedModelInstance, IBindingInstanceModelGrouped, IFeatureComplexItemValueHandler {
+public interface IBoundDefinitionFieldComplex
+    extends IBoundDefinitionField, IBoundDefinitionModelComplex, IBindingDefinitionFieldComplex {
   @Override
-  IBoundInstanceModelChoiceGroup getParentContainer();
-
-  @Override
-  IBoundDefinitionModelComplex getDefinition();
-
-  @NonNull
-  IBindingInstanceModelGrouped getInstanceBinding();
-
-  @Override
-  default boolean isValueWrappedInXml() {
-    return true;
-  }
+  IBindingDefinitionFieldComplex getDefinitionBinding();
 }

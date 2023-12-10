@@ -40,13 +40,17 @@ import nl.talsmasoftware.lazy4j.Lazy;
 
 public abstract class AbstractBoundInstanceModelJavaField<A extends Annotation>
     extends AbstractBoundInstanceJavaField<A, IBoundDefinitionAssembly>
-    implements IFeatureInstanceModelGroupAs {
+    implements IFeatureInstanceModelGroupAs, IBindingInstanceModel {
+
+  @NonNull
+  private final Lazy<IModelInstanceCollectionInfo> collectionInfo;
 
   public AbstractBoundInstanceModelJavaField(
       @NonNull Field javaField,
       @NonNull Class<A> annotationClass,
       @NonNull IBoundDefinitionAssembly containingDefinition) {
     super(javaField, annotationClass, containingDefinition);
+    this.collectionInfo = ObjectUtils.notNull(Lazy.lazy(() -> IModelInstanceCollectionInfo.of(this)));
   }
 
   @Override
@@ -56,35 +60,29 @@ public abstract class AbstractBoundInstanceModelJavaField<A extends Annotation>
         : getDefaultValue();
   }
 
-  protected abstract class AbstractBindingInstanceModel
-      implements IBindingInstanceModel {
+  /**
+   * Gets information about the bound property.
+   *
+   * @return the collection information for the bound property
+   */
+  @SuppressWarnings("null")
+  @Override
+  @NonNull
+  public IModelInstanceCollectionInfo getCollectionInfo() {
+    return collectionInfo.get();
+  }
 
-    @NonNull
-    private final Lazy<IModelInstanceCollectionInfo> collectionInfo;
+  @Override
+  public Object getValue(Object parent) {
+    return IBindingInstanceModel.super.getValue(parent);
+  }
 
-    protected AbstractBindingInstanceModel() {
-      this.collectionInfo = ObjectUtils.notNull(Lazy.lazy(() -> IModelInstanceCollectionInfo.of(this)));
+  @Override
+  public void deepCopy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException {
+    Object value = getValue(fromInstance);
+    if (value != null) {
+      value = getCollectionInfo().deepCopyItems(fromInstance, toInstance);
     }
-
-    /**
-     * Gets information about the bound property.
-     *
-     * @return the collection information for the bound property
-     */
-    @SuppressWarnings("null")
-    @Override
-    @NonNull
-    public IModelInstanceCollectionInfo getCollectionInfo() {
-      return collectionInfo.get();
-    }
-
-    @Override
-    public void deepCopy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException {
-      Object value = getValue(fromInstance);
-      if (value != null) {
-        value = getCollectionInfo().deepCopyItems(fromInstance, toInstance);
-      }
-      setValue(toInstance, value);
-    }
+    setValue(toInstance, value);
   }
 }

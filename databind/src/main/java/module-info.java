@@ -52,7 +52,6 @@ module gov.nist.secauto.metaschema.databind {
   exports gov.nist.secauto.metaschema.databind.io.xml;
   exports gov.nist.secauto.metaschema.databind.io.yaml;
   exports gov.nist.secauto.metaschema.databind.model;
-  exports gov.nist.secauto.metaschema.databind.model.revised;
   exports gov.nist.secauto.metaschema.databind.model.info;
   exports gov.nist.secauto.metaschema.databind.model.annotations;
 

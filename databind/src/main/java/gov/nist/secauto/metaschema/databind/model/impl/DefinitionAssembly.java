@@ -35,7 +35,6 @@ import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBindingDefinitionAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBindingInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBindingInstanceModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
@@ -50,7 +49,9 @@ import gov.nist.secauto.metaschema.databind.model.annotations.AssemblyConstraint
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +82,7 @@ public class DefinitionAssembly
   @Nullable
   private final QName xmlRootQName;
   @NonNull
-  private final Lazy<BindingDefinitionAssembly> binding;
+  private final Lazy<List<IBindingInstanceFlag>> flagInstanceBindings;
 
   @NonNull
   static InstanceModelAssemblyComplex newInstance(
@@ -121,7 +122,9 @@ public class DefinitionAssembly
       ConstraintSupport.parse(assemblyAnnotation, ISource.modelSource(), retval);
       return retval;
     }));
-    this.binding = ObjectUtils.notNull(Lazy.lazy(() -> new BindingDefinitionAssembly()));
+    this.flagInstanceBindings = ObjectUtils.notNull(Lazy.lazy(() -> getFlagInstances().stream()
+        .map(instance -> instance.getInstanceBinding())
+        .collect(Collectors.toUnmodifiableList())));
 
     if (isRoot()) {
       bindingContext.registerBindingMatcher(this);
@@ -132,11 +135,16 @@ public class DefinitionAssembly
   // - Start annotation driven code - CPD-OFF -
   // ------------------------------------------
 
-  @SuppressWarnings("null")
   @Override
   @NonNull
-  public BindingDefinitionAssembly getDefinitionBinding() {
-    return binding.get();
+  public DefinitionAssembly getDefinition() {
+    return this;
+  }
+
+  @Override
+  @NonNull
+  public DefinitionAssembly getDefinitionBinding() {
+    return this;
   }
 
   @Override
@@ -242,54 +250,34 @@ public class DefinitionAssembly
     return xmlRootQName;
   }
 
-  protected class BindingDefinitionAssembly
-      extends AbstractBindingFlagContainerDefinition
-      implements IBindingDefinitionAssembly {
-    @NonNull
-    private final Lazy<List<IBindingInstanceFlag>> flagInstanceBindings;
+  @SuppressWarnings("null")
+  @Override
+  @NonNull
+  public List<IBindingInstanceFlag> getFlagInstanceBindings() {
+    return flagInstanceBindings.get();
+  }
 
-    private BindingDefinitionAssembly() {
-      this.flagInstanceBindings = ObjectUtils.notNull(Lazy.lazy(() -> getFlagInstances().stream()
-          .map(instance -> instance.getInstanceBinding())
-          .collect(Collectors.toUnmodifiableList())));
-    }
+  @Override
+  public boolean canHandleJsonPropertyName(String name) {
+    return name.equals(getRootJsonName());
+  }
 
-    @Override
-    @NonNull
-    public DefinitionAssembly getDefinition() {
-      return DefinitionAssembly.this;
-    }
+  @Override
+  public boolean canHandleXmlQName(QName qname) {
+    return qname.equals(getRootXmlQName());
+  }
 
-    @SuppressWarnings("null")
-    @Override
-    @NonNull
-    public List<IBindingInstanceFlag> getFlagInstanceBindings() {
-      return flagInstanceBindings.get();
-    }
+  @Override
+  public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+    return handler.readItemAssembly(parent, this);
+  }
 
-    @Override
-    @NonNull
-    public Class<?> getBoundClass() {
-      return DefinitionAssembly.this.getBoundClass();
-    }
+  @Override
+  protected void deepCopyItemInternal(Object fromObject, Object toObject) throws BindingException {
+    super.deepCopyItemInternal(fromObject, toObject);
 
-    @Override
-    public boolean canHandleJsonPropertyName(String name) {
-      return name.equals(getRootJsonName());
-    }
-
-    @Override
-    public boolean canHandleXmlQName(QName qname) {
-      return qname.equals(getRootXmlQName());
-    }
-
-    @Override
-    protected void deepCopyItemInternal(Object fromObject, Object toObject) throws BindingException {
-      super.deepCopyItemInternal(fromObject, toObject);
-
-      for (IBoundInstanceModel instance : getModelInstances()) {
-        instance.getInstanceBinding().deepCopy(fromObject, toObject);
-      }
+    for (IBoundInstanceModel instance : getModelInstances()) {
+      instance.getInstanceBinding().deepCopy(fromObject, toObject);
     }
   }
 

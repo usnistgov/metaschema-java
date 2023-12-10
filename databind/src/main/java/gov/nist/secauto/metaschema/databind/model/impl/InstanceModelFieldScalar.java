@@ -33,16 +33,16 @@ import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.model.IBindingDefinitionField;
-import gov.nist.secauto.metaschema.databind.model.IBindingFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBindingInstanceFlag;
-import gov.nist.secauto.metaschema.databind.model.IBindingInstanceModelField;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionField;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldScalar;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
@@ -52,8 +52,7 @@ import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceModelFieldScalar
     extends AbstractBoundInstanceField
-    implements IBoundDefinitionField,
-    IFeatureInlineDefinition,
+    implements IBoundInstanceModelFieldScalar,
     IFeatureBoundDefinitionFlagContainer {
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
@@ -61,8 +60,6 @@ public class InstanceModelFieldScalar
   private final Object defaultValue;
   @NonNull
   private final Lazy<IValueConstrained> constraints;
-  @NonNull
-  private final BindingInstanceField binding;
 
   public InstanceModelFieldScalar(
       @NonNull Field field,
@@ -79,13 +76,16 @@ public class InstanceModelFieldScalar
       ConstraintSupport.parse(valueAnnotation, ISource.modelSource(), retval);
       return retval;
     }));
-
-    this.binding = new BindingInstanceField();
   }
 
   // ------------------------------------------
   // - Start annotation driven code - CPD-OFF -
   // ------------------------------------------
+
+  @Override
+  public InstanceModelFieldScalar getInstance() {
+    return this;
+  }
 
   @Override
   public InstanceModelFieldScalar getDefinition() {
@@ -98,18 +98,18 @@ public class InstanceModelFieldScalar
   }
 
   @Override
-  public BindingInstanceField getDefinitionBinding() {
-    return binding;
+  public InstanceModelFieldScalar getInstanceBinding() {
+    return this;
   }
 
   @Override
-  public BindingInstanceField getInstanceBinding() {
-    return binding;
+  public InstanceModelFieldScalar getDefinitionBinding() {
+    return this;
   }
 
   @Override
-  public IBindingFieldValue getFieldValueBinding() {
-    return binding;
+  public InstanceModelFieldScalar getFieldValueBinding() {
+    return this;
   }
 
   @Override
@@ -137,6 +137,12 @@ public class InstanceModelFieldScalar
   @Override
   public Object getDefaultValue() {
     return defaultValue;
+  }
+
+  @Override
+  public String getJsonValueKeyFlagName() {
+    // no flags, no JSON value key
+    return null;
   }
 
   @Override
@@ -174,94 +180,31 @@ public class InstanceModelFieldScalar
     return null;
   }
 
-  private class BindingInstanceField
-      extends AbstractBindingInstanceModel
-      implements IBindingInstanceModelField, IBindingDefinitionField, IBindingFieldValue {
+  @Override
+  public IBoundInstanceFlag getItemJsonKey(Object item) {
+    // no flags, no JSON key
+    return null;
+  }
 
-    @Override
-    public InstanceModelFieldScalar getContainingDefinition() {
-      return InstanceModelFieldScalar.this;
-    }
+  @Override
+  public IBoundDefinitionField getParentFieldDefinition() {
+    return this;
+  }
 
-    @Override
-    public IBindingContext getBindingContext() {
-      return getContainingDefinition().getDefinitionBinding().getBindingContext();
-    }
+  @Override
+  public IBindingContext getBindingContext() {
+    return getContainingDefinition().getDefinitionBinding().getBindingContext();
+  }
 
-    @Override
-    public BindingInstanceField getInstanceBinding() {
-      return this;
-    }
+  @Override
+  public Collection<IBindingInstanceFlag> getFlagInstanceBindings() {
+    // no flags
+    return CollectionUtil.emptyList();
+  }
 
-    @Override
-    public Field getField() {
-      return InstanceModelFieldScalar.this.getField();
-    }
-
-    @Override
-    public InstanceModelFieldScalar getInstance() {
-      return InstanceModelFieldScalar.this;
-    }
-
-    @Override
-    public InstanceModelFieldScalar getDefinition() {
-      return InstanceModelFieldScalar.this;
-    }
-
-    @Override
-    public String getJsonKeyFlagName() {
-      // no flags
-      return null;
-    }
-
-    @Override
-    public Object getValue(Object parent) {
-      return IBindingInstanceModelField.super.getValue(parent);
-    }
-
-    @Override
-    public void setValue(Object parentObject, Object value) {
-      IBindingInstanceModelField.super.setValue(parentObject, value);
-    }
-
-    @Override
-    public IDataTypeAdapter<?> getJavaTypeAdapter() {
-      return InstanceModelFieldScalar.this.getJavaTypeAdapter();
-    }
-
-    @Override
-    public IBoundInstanceFlag getItemJsonKey(Object item) {
-      // no flags, no JSON key
-      return null;
-    }
-
-    @Override
-    public String getJsonValueKeyFlagName() {
-      // no flags, no JSON value key
-      return null;
-    }
-
-    @Override
-    public Collection<IBindingInstanceFlag> getFlagInstanceBindings() {
-      // no flags
-      return CollectionUtil.emptyList();
-    }
-
-    @Override
-    public Object getDefaultValue() {
-      return InstanceModelFieldScalar.this.getDefaultValue();
-    }
-
-    @Override
-    public Object getEffectiveDefaultValue() {
-      return getDefaultValue();
-    }
-
-    @Override
-    @NonNull
-    public String getJsonName() {
-      return InstanceModelFieldScalar.this.getJsonName();
-    }
+  @Override
+  public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+    return handler.readItemField(parent, this);
   }
 
   // ----------------------------------------

@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.databind.model.IBoundContainerModelChoiceGroup;
-import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
@@ -40,17 +39,7 @@ public interface IFeatureBoundContainerModelChoiceGroup
     extends IBoundContainerModelChoiceGroup {
 
   @NonNull
-  IBoundDefinitionModelContainerSupport<
-      IBoundInstanceModelGroupedNamed,
-      IBoundInstanceModelGroupedNamed,
-      IBoundInstanceModelGroupedField,
-      IBoundInstanceModelGroupedAssembly,
-      IBoundInstanceModelChoiceGroup> getModelContainer();
-
-  @Override
-  default Collection<IBoundInstanceModelGroupedNamed> getModelInstances() {
-    return getModelContainer().getModelInstances();
-  }
+  IBoundInstanceModelChoiceGroupModelContainerSupport getModelContainer();
 
   @Override
   default IBoundInstanceModelGroupedNamed getNamedModelInstanceByName(String name) {

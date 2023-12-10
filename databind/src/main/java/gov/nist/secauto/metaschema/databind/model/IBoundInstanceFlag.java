@@ -27,13 +27,18 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.databind.model.impl.IFeatureInlineDefinition;
 import gov.nist.secauto.metaschema.databind.model.impl.InstanceFlagInline;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
 
 import java.lang.reflect.Field;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundInstanceFlag extends IFlagInstance, IBoundInstanceNamed {
+public interface IBoundInstanceFlag
+    extends IFlagInstance,
+    IFeatureInlineDefinition,
+    IFeatureScalarItemValueHandler {
 
   static IBoundInstanceFlag newInstance(
       @NonNull Field field,
@@ -58,4 +63,7 @@ public interface IBoundInstanceFlag extends IFlagInstance, IBoundInstanceNamed {
   @Override
   @NonNull
   IBoundDefinitionFlag getDefinition();
+
+  @Override
+  Object getValue(Object parent);
 }

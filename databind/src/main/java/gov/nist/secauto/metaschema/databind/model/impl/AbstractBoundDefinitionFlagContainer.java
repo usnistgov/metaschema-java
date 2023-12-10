@@ -29,10 +29,9 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBindingDefinitionFlagContainer;
+import gov.nist.secauto.metaschema.databind.model.IBindingDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBindingInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundModule;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -46,11 +45,15 @@ import nl.talsmasoftware.lazy4j.Lazy;
 
 public abstract class AbstractBoundDefinitionFlagContainer<A extends Annotation>
     extends AbstractBoundAnnotatedClass<A>
-    implements IFeatureBoundDefinitionFlagContainer {
+    implements IFeatureBoundDefinitionFlagContainer, IBindingDefinitionModelComplex {
   @NonNull
   private final IBindingContext bindingContext;
   @NonNull
   private Lazy<IBoundModule> module;
+  @Nullable
+  private final Method beforeDeserializeMethod;
+  @Nullable
+  private final Method afterDeserializeMethod;
 
   protected AbstractBoundDefinitionFlagContainer(
       @NonNull Class<?> clazz,
@@ -59,6 +62,14 @@ public abstract class AbstractBoundDefinitionFlagContainer<A extends Annotation>
     super(clazz, annotationClass);
     this.bindingContext = bindingContext;
     this.module = ObjectUtils.notNull(Lazy.lazy(() -> bindingContext.registerModule(getModuleClass())));
+    this.beforeDeserializeMethod = ClassIntrospector.getMatchingMethod(
+        getBoundClass(),
+        "beforeDeserialize",
+        Object.class);
+    this.afterDeserializeMethod = ClassIntrospector.getMatchingMethod(
+        getBoundClass(),
+        "afterDeserialize",
+        Object.class);
   }
 
   @NonNull
@@ -84,134 +95,114 @@ public abstract class AbstractBoundDefinitionFlagContainer<A extends Annotation>
         getBoundClass().getName()));
   }
 
-  protected abstract class AbstractBindingFlagContainerDefinition
-      implements IBindingDefinitionFlagContainer, IFeatureComplexItemValueHandler {
+  @Override
+  @NonNull
+  public IBindingContext getBindingContext() {
+    return bindingContext;
+  }
 
-    @Nullable
-    private final Method beforeDeserializeMethod;
-    @Nullable
-    private final Method afterDeserializeMethod;
-
-    protected AbstractBindingFlagContainerDefinition() {
-      this.beforeDeserializeMethod = ClassIntrospector.getMatchingMethod(
-          getBoundClass(),
-          "beforeDeserialize",
-          Object.class);
-      this.afterDeserializeMethod = ClassIntrospector.getMatchingMethod(
-          getBoundClass(),
-          "afterDeserialize",
-          Object.class);
+  /**
+   * Gets a new instance of the bound class.
+   *
+   * @param <CLASS>
+   *          the type of the bound class
+   * @return a Java object for the class
+   * @throws RuntimeException
+   *           if the instance cannot be created due to a binding error
+   */
+  @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
+  @Override
+  @NonNull
+  public <CLASS> CLASS newInstance() {
+    Class<?> clazz = getBoundClass();
+    try {
+      @SuppressWarnings("unchecked")
+      Constructor<CLASS> constructor
+          = (Constructor<CLASS>) clazz.getDeclaredConstructor();
+      return ObjectUtils.notNull(constructor.newInstance());
+    } catch (NoSuchMethodException ex) {
+      String msg = String.format("Class '%s' does not have a required no-arg constructor.", clazz.getName());
+      throw new RuntimeException(msg, ex);
+    } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+      throw new RuntimeException(ex);
     }
+  }
 
-    @Override
-    @NonNull
-    public IBindingContext getBindingContext() {
-      return bindingContext;
-    }
-
-    /**
-     * Gets a new instance of the bound class.
-     *
-     * @param <CLASS>
-     *          the type of the bound class
-     * @return a Java object for the class
-     * @throws RuntimeException
-     *           if the instance cannot be created due to a binding error
-     */
-    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
-    @Override
-    @NonNull
-    public <CLASS> CLASS newInstance() {
-      Class<?> clazz = getBoundClass();
+  /**
+   * Calls the method named "beforeDeserialize" on each class in the object's
+   * hierarchy if the method exists on the class.
+   * <p>
+   * These methods can be used to set the initial state of the target bound object
+   * before data is read and applied during deserialization.
+   *
+   * @param targetObject
+   *          the data object target to call the method(s) on
+   * @param parentObject
+   *          the object target's parent object, which is used as the method
+   *          argument
+   * @throws BindingException
+   *           if an error occurs while calling the method
+   */
+  @Override
+  public void callBeforeDeserialize(Object targetObject, Object parentObject) throws BindingException {
+    if (beforeDeserializeMethod != null) {
       try {
-        @SuppressWarnings("unchecked")
-        Constructor<CLASS> constructor
-            = (Constructor<CLASS>) clazz.getDeclaredConstructor();
-        return ObjectUtils.notNull(constructor.newInstance());
-      } catch (NoSuchMethodException ex) {
-        String msg = String.format("Class '%s' does not have a required no-arg constructor.", clazz.getName());
-        throw new RuntimeException(msg, ex);
-      } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
-        throw new RuntimeException(ex);
+        beforeDeserializeMethod.invoke(targetObject, parentObject);
+      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+        throw new BindingException(ex);
       }
     }
+  }
 
-    /**
-     * Calls the method named "beforeDeserialize" on each class in the object's
-     * hierarchy if the method exists on the class.
-     * <p>
-     * These methods can be used to set the initial state of the target bound object
-     * before data is read and applied during deserialization.
-     *
-     * @param targetObject
-     *          the data object target to call the method(s) on
-     * @param parentObject
-     *          the object target's parent object, which is used as the method
-     *          argument
-     * @throws BindingException
-     *           if an error occurs while calling the method
-     */
-    @Override
-    public void callBeforeDeserialize(Object targetObject, Object parentObject) throws BindingException {
-      if (beforeDeserializeMethod != null) {
-        try {
-          beforeDeserializeMethod.invoke(targetObject, parentObject);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-          throw new BindingException(ex);
-        }
+  /**
+   * Calls the method named "afterDeserialize" on each class in the object's
+   * hierarchy if the method exists.
+   * <p>
+   * These methods can be used to modify the state of the target bound object
+   * after data is read and applied during deserialization.
+   *
+   * @param targetObject
+   *          the data object target to call the method(s) on
+   * @param parentObject
+   *          the object target's parent object, which is used as the method
+   *          argument
+   * @throws BindingException
+   *           if an error occurs while calling the method
+   */
+  @Override
+  public void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
+    if (afterDeserializeMethod != null) {
+      try {
+        afterDeserializeMethod.invoke(targetObject, parentObject);
+      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+        throw new BindingException(ex);
       }
     }
+  }
 
-    /**
-     * Calls the method named "afterDeserialize" on each class in the object's
-     * hierarchy if the method exists.
-     * <p>
-     * These methods can be used to modify the state of the target bound object
-     * after data is read and applied during deserialization.
-     *
-     * @param targetObject
-     *          the data object target to call the method(s) on
-     * @param parentObject
-     *          the object target's parent object, which is used as the method
-     *          argument
-     * @throws BindingException
-     *           if an error occurs while calling the method
-     */
-    @Override
-    public void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
-      if (afterDeserializeMethod != null) {
-        try {
-          afterDeserializeMethod.invoke(targetObject, parentObject);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-          throw new BindingException(ex);
-        }
-      }
-    }
+  @Override
+  public String getJsonKeyFlagName() {
+    // definition items never have a JSON key
+    return null;
+  }
 
-    @Override
-    public String getJsonKeyFlagName() {
-      // definition items never have a JSON key
-      return null;
-    }
+  @Override
+  public Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
+    Object instance = newInstance();
 
-    @Override
-    public Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
-      Object instance = newInstance();
+    callBeforeDeserialize(instance, parentInstance);
 
-      callBeforeDeserialize(instance, parentInstance);
+    deepCopyItemInternal(item, instance);
 
-      deepCopyItemInternal(item, instance);
+    callAfterDeserialize(instance, parentInstance);
 
-      callAfterDeserialize(instance, parentInstance);
+    return instance;
+  }
 
-      return instance;
-    }
-
-    protected void deepCopyItemInternal(@NonNull Object fromObject, @NonNull Object toObject)
-        throws BindingException {
-      for (IBindingInstanceFlag instance : getFlagInstanceBindings()) {
-        instance.deepCopy(fromObject, toObject);
-      }
+  protected void deepCopyItemInternal(@NonNull Object fromObject, @NonNull Object toObject)
+      throws BindingException {
+    for (IBindingInstanceFlag instance : getFlagInstanceBindings()) {
+      instance.deepCopy(fromObject, toObject);
     }
   }
 }

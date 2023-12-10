@@ -65,11 +65,6 @@ public interface IFeatureScalarItemValueHandler
   IDataTypeAdapter<?> getJavaTypeAdapter();
 
   @Override
-  default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
-    return handler.readScalarItem(parent, this);
-  }
-
-  @Override
   default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
     handler.writeScalarItem(item, this);
   }

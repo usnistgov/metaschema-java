@@ -26,12 +26,18 @@
 
 package gov.nist.secauto.metaschema.databind.model.impl;
 
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
 
 import java.lang.annotation.Annotation;
-import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -65,7 +71,39 @@ public abstract class AbstractBoundInstanceModelGroupedNamed<
   }
 
   @Override
-  public Collection<? extends Object> getItemValues(Object value) {
-    throw new UnsupportedOperationException("not needed");
+  public String getJsonKeyFlagName() {
+    return getParentContainer().getJsonKeyFlagName();
   }
+
+  @Override
+  public Map<QName, Set<String>> getProperties() {
+    // TODO: implement
+    return CollectionUtil.emptyMap();
+  }
+
+  @Override
+  public String getName() {
+    return getDefinition().getName();
+  }
+
+  @Override
+  public IBoundDefinitionModelComplex getDefinition() {
+    return getInstance().getDefinition();
+  }
+
+  @Override
+  public Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
+    return getDefinition().getDefinitionBinding().deepCopyItem(item, parentInstance);
+  }
+
+  @Override
+  public void callBeforeDeserialize(Object targetObject, Object parentObject) throws BindingException {
+    getDefinition().getDefinitionBinding().callBeforeDeserialize(targetObject, parentObject);
+  }
+
+  @Override
+  public void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
+    getDefinition().getDefinitionBinding().callAfterDeserialize(targetObject, parentObject);
+  }
+
 }

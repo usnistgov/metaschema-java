@@ -24,26 +24,44 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model;
+package gov.nist.secauto.metaschema.databind.model.impl;
 
-import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
+
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundInstanceModelGroupedNamed
-    extends IGroupedNamedModelInstance, IBindingInstanceModelGrouped, IFeatureComplexItemValueHandler {
-  @Override
-  IBoundInstanceModelChoiceGroup getParentContainer();
-
-  @Override
-  IBoundDefinitionModelComplex getDefinition();
-
+/**
+ * Common interface for model container support classes.
+ */
+public interface IBoundInstanceModelChoiceGroupModelContainerSupport {
+  /**
+   * Get a mapping of all named model instances, mapped from their effective name
+   * to the instance.
+   *
+   * @return the mapping
+   */
   @NonNull
-  IBindingInstanceModelGrouped getInstanceBinding();
+  Map<String, IBoundInstanceModelGroupedNamed> getNamedModelInstanceMap();
 
-  @Override
-  default boolean isValueWrappedInXml() {
-    return true;
-  }
+  /**
+   * Get a mapping of all field instances, mapped from their effective name to the
+   * instance.
+   *
+   * @return the mapping
+   */
+  @NonNull
+  Map<String, IBoundInstanceModelGroupedField> getFieldInstanceMap();
+
+  /**
+   * Get a mapping of all assembly instances, mapped from their effective name to
+   * the instance.
+   *
+   * @return the mapping
+   */
+  @NonNull
+  Map<String, IBoundInstanceModelGroupedAssembly> getAssemblyInstanceMap();
 }

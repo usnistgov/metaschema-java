@@ -60,4 +60,9 @@ public interface IGroupedNamedModelInstance extends INamedModelInstanceBase {
     }
     return retval;
   }
+
+  @Override
+  default boolean isValueWrappedInXml() {
+    return true;
+  }
 }

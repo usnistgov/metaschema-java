@@ -60,6 +60,11 @@ public interface IChoiceGroupInstance
   String getJsonKeyFlagName();
 
   @Override
+  default boolean isValueWrappedInXml() {
+    return true;
+  }
+
+  @Override
   default MarkupMultiline getRemarks() {
     // TODO Auto-generated method stub
     return null;

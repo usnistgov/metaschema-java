@@ -27,5 +27,10 @@
 package gov.nist.secauto.metaschema.core.model;
 
 public interface IAssemblyInstance extends IAssemblyInstanceBase, INamedModelInstance {
-  // no additional methods
+
+  @Override
+  default boolean isValueWrappedInXml() {
+    // assembly instances are always wrapped
+    return true;
+  }
 }

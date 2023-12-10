@@ -26,7 +26,14 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
+import gov.nist.secauto.metaschema.databind.model.IBindingFieldValue;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldScalar;
 
 import java.io.IOException;
 
@@ -40,14 +47,14 @@ public interface IItemReadHandler {
    * @param parent
    *          the parent Java object to use for serialization callbacks, or
    *          {@code null} if there is no parent
-   * @param handler
-   *          the item handler
+   * @param flag
+   *          the flag instance
    * @return the Java object representing the parsed item
    * @throws IOException
    *           if an error occurred while parsing
    */
   @NonNull
-  Object readScalarItem(@Nullable Object parent, @NonNull IFeatureScalarItemValueHandler handler)
+  Object readItemFlag(@Nullable Object parent, @NonNull IBoundInstanceFlag flag)
       throws IOException;
 
   /**
@@ -56,6 +63,76 @@ public interface IItemReadHandler {
    * @param parent
    *          the parent Java object to use for serialization callbacks, or
    *          {@code null} if there is no parent
+   * @param field
+   *          the field instance
+   * @return the Java object representing the parsed item
+   * @throws IOException
+   *           if an error occurred while parsing
+   */
+  @NonNull
+  Object readItemField(
+      @Nullable Object parent,
+      @NonNull IBoundInstanceModelFieldScalar field) throws IOException;
+
+  /**
+   * Parse and return an item.
+   *
+   * @param parent
+   *          the parent Java object to use for serialization callbacks, or
+   *          {@code null} if there is no parent
+   * @param field
+   *          the field instance
+   * @return the Java object representing the parsed item
+   * @throws IOException
+   *           if an error occurred while parsing
+   */
+  @NonNull
+  Object readItemField(
+      @Nullable Object parent,
+      @NonNull IBoundInstanceModelFieldComplex field) throws IOException;
+
+  /**
+   * Parse and return an item.
+   *
+   * @param parent
+   *          the parent Java object to use for serialization callbacks, or
+   *          {@code null} if there is no parent
+   * @param field
+   *          the field instance
+   * @return the Java object representing the parsed item
+   * @throws IOException
+   *           if an error occurred while parsing
+   */
+  @NonNull
+  Object readItemField(
+      @Nullable Object parent,
+      @NonNull IBoundDefinitionFieldComplex field) throws IOException;
+
+  /**
+   * Parse and return an item.
+   *
+   * @param parent
+   *          the parent Java object to use for serialization callbacks, or
+   *          {@code null} if there is no parent
+   * @param fieldValue
+   *          the field value instance
+   * @return the Java object representing the parsed item
+   * @throws IOException
+   *           if an error occurred while parsing
+   */
+  @NonNull
+  Object readItemFieldValue(
+      @Nullable Object parent,
+      @NonNull IBindingFieldValue fieldValue) throws IOException;
+
+  /**
+   * Parse and return an item.
+   *
+   * @param parent
+   *          the parent Java object to use for serialization callbacks, or
+   *          {@code null} if there is no parent
+   * @param assembly
+   *          the assembly instance
    * @param handler
    *          the item handler
    * @return the Java object representing the parsed item
@@ -63,10 +140,28 @@ public interface IItemReadHandler {
    *           if an error occurred while parsing
    */
   @NonNull
-  Object readComplexItem(
+  Object readItemAssembly(
       @Nullable Object parent,
-      @NonNull IFeatureComplexItemValueHandler handler)
-      throws IOException;
+      @NonNull IBoundInstanceModelAssembly assembly) throws IOException;
+
+  /**
+   * Parse and return an item.
+   *
+   * @param parent
+   *          the parent Java object to use for serialization callbacks, or
+   *          {@code null} if there is no parent
+   * @param assembly
+   *          the assembly instance
+   * @param handler
+   *          the item handler
+   * @return the Java object representing the parsed item
+   * @throws IOException
+   *           if an error occurred while parsing
+   */
+  @NonNull
+  Object readItemAssembly(
+      @Nullable Object parent,
+      @NonNull IBoundDefinitionAssembly assembly) throws IOException;
 
   @NonNull
   Object readChoiceGroupItem(Object parent, IBoundInstanceModelChoiceGroup instance) throws IOException;

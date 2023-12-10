@@ -46,4 +46,6 @@ public interface IModelInstanceBase extends IInstanceBase {
    */
   @Nullable
   String getJsonKeyFlagName();
+
+  boolean isValueWrappedInXml();
 }

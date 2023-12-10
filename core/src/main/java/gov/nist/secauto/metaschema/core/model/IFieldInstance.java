@@ -51,6 +51,7 @@ public interface IFieldInstance extends IFieldInstanceBase, INamedModelInstance 
    * @return {@code true} if the underlying data type is allowed to be unwrapped,
    *         or {@code false} otherwise
    */
+  @Override
   default boolean isValueWrappedInXml() {
     return isInXmlWrapped() || !getDefinition().getJavaTypeAdapter().isUnrappedValueAllowedInXml();
   }
