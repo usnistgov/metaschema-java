@@ -27,20 +27,64 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
+
+import java.util.Collection;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundInstanceModelNamed extends IBoundInstanceModel, IBoundInstanceNamed, INamedModelInstance {
-  @Override
-  IBoundDefinitionModel getDefinition();
+public interface IBoundInstanceModelNamed extends IBoundInstanceModel, INamedModelInstance {
 
   @Override
   @NonNull
-  // choices are not supported, so we can use this
-  IBoundContainerModel getParentContainer();
+  IBoundDefinitionModel getDefinition();
+
+  @Override
+  default String getName() {
+    // delegate to the definition
+    return getDefinition().getName();
+  }
+
+  @Override
+  default Integer getIndex() {
+    // delegate to the definition
+    return getDefinition().getIndex();
+  }
 
   @Override
   default String getJsonName() {
     return INamedModelInstance.super.getJsonName();
+  }
+
+  @Override
+  default Object getEffectiveDefaultValue() {
+    return IBoundInstanceModel.super.getEffectiveDefaultValue();
+  }
+
+  @Override
+  default IBoundInstanceFlag getItemJsonKey(Object item) {
+    return JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())
+        ? getDefinition().getJsonKeyFlagInstance()
+        : null;
+  }
+
+  @Override
+  default Collection<? extends Object> getItemValues(Object value) {
+    return getCollectionInfo().getItemsFromValue(value);
+  }
+
+  @Override
+  default boolean canHandleXmlQName(QName qname) {
+    return XmlGroupAsBehavior.GROUPED.equals(getXmlGroupAsBehavior())
+        ? qname.equals(getXmlGroupAsQName())
+        : qname.equals(getXmlQName());
+  }
+
+  @Override
+  default boolean canHandleJsonPropertyName(@NonNull String name) {
+    return name.equals(getJsonName());
   }
 }

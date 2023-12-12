@@ -33,14 +33,14 @@ import java.util.Collection;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+/**
+ * Represents a field or assembly instance bound to Java data.
+ */
+// REFACTOR: rename to IBoundDefinitionModelNamed
 public interface IBoundDefinitionModel
-    extends IBoundDefinition,
-    IFlagContainer {
+    extends IBoundDefinition, IFlagContainer {
   // @NonNull
   // Class<?> getBoundClass();
-
-  @Override
-  IBindingDefinitionFlagContainer getDefinitionBinding();
 
   @Override
   IBoundInstanceModelNamed getInlineInstance();

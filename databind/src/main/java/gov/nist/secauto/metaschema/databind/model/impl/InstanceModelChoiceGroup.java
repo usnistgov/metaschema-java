@@ -28,25 +28,19 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
-import gov.nist.secauto.metaschema.databind.model.IFeatureBoundClass;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
-import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
-import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -57,8 +51,12 @@ import java.util.stream.Stream;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
+/**
+ * Implements a Metaschema module choice group instance bound to a Java field.
+ */
 public class InstanceModelChoiceGroup
     extends AbstractBoundInstanceModelJavaField<BoundChoiceGroup>
     implements IBoundInstanceModelChoiceGroup,
@@ -72,6 +70,14 @@ public class InstanceModelChoiceGroup
   @NonNull
   private final Lazy<Map<QName, IBoundInstanceModelGroupedNamed>> qnameToInstanceMap;
 
+  /**
+   * Construct a new Metaschema module choice group instance.
+   *
+   * @param javaField
+   *          the Java field bound to this instance
+   * @param containingDefinition
+   *          the definition containing this instance
+   */
   public InstanceModelChoiceGroup(
       @NonNull Field javaField,
       @NonNull IBoundDefinitionAssembly containingDefinition) {
@@ -101,7 +107,7 @@ public class InstanceModelChoiceGroup
         getNamedModelInstances().stream()
             .map(instance -> instance)
             .collect(Collectors.toMap(
-                item -> (Class<?>) ((IFeatureBoundClass) item.getDefinition()).getBoundClass(),
+                item -> (Class<?>) item.getDefinition().getBoundClass(),
                 CustomCollectors.identity())))));
     this.qnameToInstanceMap = ObjectUtils.notNull(Lazy.lazy(() -> Collections.unmodifiableMap(
         getNamedModelInstances().stream()
@@ -114,26 +120,39 @@ public class InstanceModelChoiceGroup
   // - Start annotation driven code - CPD-OFF -
   // ------------------------------------------
 
-  @Override
-  public InstanceModelChoiceGroup getInstance() {
-    return this;
-  }
-
-  @Override
-  public InstanceModelChoiceGroup getInstanceBinding() {
-    return this;
-  }
-
+  /**
+   * Get the mapping of XML qualified names bound to a distinct grouped model
+   * instance.
+   *
+   * @return the mapping
+   */
   @SuppressWarnings("null")
-  @Override
-  public Map<QName, IBoundInstanceModelGroupedNamed> getQNameToInstanceMap() {
+  @NonNull
+  protected Map<QName, IBoundInstanceModelGroupedNamed> getQNameToInstanceMap() {
     return qnameToInstanceMap.get();
   }
 
+  /**
+   * Get the mapping of Java classes bound to a distinct grouped model instance.
+   *
+   * @return the mapping
+   */
   @SuppressWarnings("null")
-  @Override
-  public Map<Class<?>, IBoundInstanceModelGroupedNamed> getClassToInstanceMap() {
+  @NonNull
+  protected Map<Class<?>, IBoundInstanceModelGroupedNamed> getClassToInstanceMap() {
     return classToInstanceMap.get();
+  }
+
+  @Override
+  @Nullable
+  public IBoundInstanceModelGroupedNamed getGroupedModelInstance(@NonNull Class<?> clazz) {
+    return getClassToInstanceMap().get(clazz);
+  }
+
+  @Override
+  @Nullable
+  public IBoundInstanceModelGroupedNamed getGroupedModelInstance(@NonNull QName name) {
+    return getQNameToInstanceMap().get(name);
   }
 
   @Override
@@ -153,11 +172,6 @@ public class InstanceModelChoiceGroup
   }
 
   @Override
-  public Collection<? extends Object> getItemValues(Object value) {
-    return getInstanceBinding().getCollectionInfo().getItemsFromValue(value);
-  }
-
-  @Override
   public final int getMinOccurs() {
     return getAnnotation().minOccurs();
   }
@@ -165,12 +179,6 @@ public class InstanceModelChoiceGroup
   @Override
   public final int getMaxOccurs() {
     return getAnnotation().maxOccurs();
-  }
-
-  @Override
-  public String getJsonName() {
-    // always the group-as name
-    return ObjectUtils.notNull(getGroupAsName());
   }
 
   @Override
@@ -195,34 +203,6 @@ public class InstanceModelChoiceGroup
       retval = itemInstance.getDefinition().getFlagInstanceByName(jsonKeyFlagName);
     }
     return retval;
-  }
-
-  @Override
-  public boolean canHandleJsonPropertyName(String name) {
-    return name.equals(getJsonName());
-  }
-
-  @Override
-  public boolean canHandleXmlQName(QName qname) {
-    return qnameToInstanceMap.get().containsKey(qname);
-  }
-
-  @Override
-  public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
-    return handler.readChoiceGroupItem(parent, InstanceModelChoiceGroup.this);
-  }
-
-  @Override
-  public void writeItem(Object item, IItemWriteHandler handler) throws IOException {
-    IBoundInstanceModelGroupedNamed itemInstance = getItemInstance(item);
-    handler.writeChoiceGroupItem(item, InstanceModelChoiceGroup.this, itemInstance);
-
-  }
-
-  @Override
-  public Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
-    IBoundInstanceModelGroupedNamed itemInstance = getItemInstance(item);
-    return itemInstance.getInstanceBinding().deepCopyItem(itemInstance, parentInstance);
   }
 
   private static class ChoiceGroupModelContainerSupport

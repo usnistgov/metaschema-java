@@ -27,31 +27,49 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IGroupedFieldInstance;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
 import gov.nist.secauto.metaschema.databind.model.impl.DefinitionField;
 import gov.nist.secauto.metaschema.databind.model.impl.InstanceModelGroupedFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
+/**
+ * Represents a field model instance that is a member of a choice group
+ * instance.
+ */
 public interface IBoundInstanceModelGroupedField
     extends IBoundInstanceModelGroupedNamed, IGroupedFieldInstance {
 
+  /**
+   * Create a new field model instance instance that is a member of a choice group
+   * instance.
+   *
+   * @param annotation
+   *          the Java annotation the instance is bound to
+   * @param container
+   *          the choice group instance containing the instance
+   * @return the new instance
+   */
   @NonNull
   static IBoundInstanceModelGroupedField newInstance(
       @NonNull BoundGroupedField annotation,
       @NonNull IBoundInstanceModelChoiceGroup container) {
     Class<?> clazz = annotation.binding();
-    IBindingContext bindingContext = container.getContainingDefinition().getDefinitionBinding().getBindingContext();
+    IBindingContext bindingContext = container.getContainingDefinition().getBindingContext();
     IBoundDefinitionModel definition = bindingContext.getBoundDefinitionForClass(clazz);
 
     IBoundInstanceModelGroupedField retval;
     if (definition instanceof DefinitionField) {
       retval = new InstanceModelGroupedFieldComplex(annotation, (DefinitionField) definition, container);
     } else {
-      Field field = container.getInstanceBinding().getField();
+      Field field = container.getField();
       throw new IllegalStateException(String.format(
           "The '%s' annotation, bound to '%s', field '%s' on class '%s' is not bound to a Metaschema field",
           annotation.getClass(),
@@ -64,4 +82,9 @@ public interface IBoundInstanceModelGroupedField
 
   @Override
   IBoundDefinitionFieldComplex getDefinition();
+
+  @Override
+  default Object readItem(@Nullable Object parent, @NonNull IItemReadHandler handler) throws IOException {
+    return handler.readItemField(ObjectUtils.requireNonNull(parent, "parent"), this);
+  }
 }

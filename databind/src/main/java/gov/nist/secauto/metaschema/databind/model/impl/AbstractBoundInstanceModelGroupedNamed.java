@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
 
@@ -87,23 +86,18 @@ public abstract class AbstractBoundInstanceModelGroupedNamed<
   }
 
   @Override
-  public IBoundDefinitionModelComplex getDefinition() {
-    return getInstance().getDefinition();
-  }
-
-  @Override
   public Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
-    return getDefinition().getDefinitionBinding().deepCopyItem(item, parentInstance);
+    return getDefinition().deepCopyItem(item, parentInstance);
   }
 
   @Override
   public void callBeforeDeserialize(Object targetObject, Object parentObject) throws BindingException {
-    getDefinition().getDefinitionBinding().callBeforeDeserialize(targetObject, parentObject);
+    getDefinition().callBeforeDeserialize(targetObject, parentObject);
   }
 
   @Override
   public void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
-    getDefinition().getDefinitionBinding().callAfterDeserialize(targetObject, parentObject);
+    getDefinition().callAfterDeserialize(targetObject, parentObject);
   }
 
 }

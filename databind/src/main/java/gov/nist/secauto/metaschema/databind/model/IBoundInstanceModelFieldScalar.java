@@ -26,32 +26,175 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.databind.model.impl.IFeatureInlineDefinition;
+import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
+
+import java.io.IOException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IBoundInstanceModelFieldScalar
-    extends IBoundInstanceModelField, IBindingInstanceModelField, IBindingDefinitionField, IBindingFieldValue,
-    IBoundDefinitionField,
-    IFeatureInlineDefinition {
+    extends IBoundInstanceModelField,
+    IBoundDefinitionField, IFeatureScalarItemValueHandler {
+
+  // integrate above
 
   @Override
   IBoundDefinitionAssembly getContainingDefinition();
 
   @Override
-  default Object getValue(Object parent) {
-    return IBindingInstanceModelField.super.getValue(parent);
+  default IBoundInstanceModelFieldScalar getInstance() {
+    return this;
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * For an inline instance, this instance is the definition.
+   */
+  @Override
+  default IBoundInstanceModelFieldScalar getDefinition() {
+    return this;
   }
 
   @Override
-  default void setValue(Object parentObject, Object value) {
-    IBindingInstanceModelField.super.setValue(parentObject, value);
+  default boolean isInline() {
+    return true;
   }
 
   @Override
-  Object getDefaultValue();
+  default IBoundInstanceModelFieldScalar getInlineInstance() {
+    return this;
+  }
+
+  @Override
+  default IBindingContext getBindingContext() {
+    return getContainingDefinition().getBindingContext();
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * This is an inline instance that is both a definition and an instance. Don't
+   * delegate to the definition, since this would be redundant.
+   */
+  @Override
+  @NonNull
+  default String getEffectiveName() {
+    String useName = getUseName();
+    return useName == null ? getName() : useName;
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Use the effective name of the instance.
+   */
+  @Override
+  @NonNull
+  default String getJsonName() {
+    return IBoundInstanceModelField.super.getJsonName();
+  }
+
+  @Override
+  @NonNull
+  default IBoundModule getContainingModule() {
+    return IBoundInstanceModelField.super.getContainingModule();
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * This is an inline instance that is both a definition and an instance. Don't
+   * delegate to the definition, since this would be redundant.
+   */
+  @Override
+  @Nullable
+  default Object getEffectiveDefaultValue() {
+    return getDefaultValue();
+  }
 
   @Override
   default String getJsonKeyFlagName() {
     // no flags
     return null;
+  }
+
+  @Override
+  IBoundInstanceFlag getJsonKeyFlagInstance();
+
+  @Override
+  default IBoundInstanceFlag getItemJsonKey(Object item) {
+    // no flags, no JSON key
+    return null;
+  }
+
+  @Override
+  default Object getFieldValue(Object item) {
+    // the item is the field value
+    return item;
+  }
+
+  @Override
+  default String getJsonValueKeyName() {
+    // no bound value, no value key name
+    return null;
+  }
+
+  @Override
+  default IBoundInstanceFlag getJsonValueKeyFlagInstance() {
+    // no bound value, no value key name
+    return null;
+  }
+
+  /**
+   * Generates a "coordinate" string for the inline field instance.
+   *
+   * The coordinates consist of the:
+   * <ul>
+   * <li>containing Metaschema module's short name</li>
+   * <li>name</li>
+   * <li>hash code</li>
+   * </ul>
+   *
+   * @return the coordinate
+   */
+  @Override
+  @NonNull
+  default String toCoordinates() {
+    IDefinition definition = getDefinition();
+    return ObjectUtils.notNull(String.format("Inline Field(%s:%s:%d)",
+        getContainingDefinition().getContainingModule().getShortName(),
+        definition.getName(),
+        hashCode()));
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Always bound to a field.
+   */
+  @Override
+  default Object getValue(Object parent) {
+    return IBoundInstanceModelField.super.getValue(parent);
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Always bound to a field.
+   */
+  @Override
+  default void setValue(Object parentObject, Object value) {
+    IBoundInstanceModelField.super.setValue(parentObject, value);
+  }
+
+  @Override
+  default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+    return handler.readItemField(ObjectUtils.requireNonNull(parent, "parent"), this);
   }
 }

@@ -104,7 +104,6 @@ public class DefaultJsonDeserializer<CLASS>
     return ObjectUtils.notNull(getJsonFactory().createParser(reader));
   }
 
-  @SuppressWarnings("null")
   @Override
   protected INodeItem deserializeToNodeItemInternal(@NonNull Reader reader, @NonNull URI documentUri)
       throws IOException {
@@ -129,7 +128,7 @@ public class DefaultJsonDeserializer<CLASS>
         retval = INodeItemFactory.instance().newDocumentNodeItem(definition, documentUri, value);
       } else {
         // read the top-level definition
-        CLASS value = ObjectUtils.asType(definition.getDefinitionBinding().readItem(null, parser));
+        CLASS value = ObjectUtils.asType(definition.readItem(null, parser));
 
         retval = INodeItemFactory.instance().newAssemblyNodeItem(definition, documentUri, value);
       }
@@ -159,7 +158,7 @@ public class DefaultJsonDeserializer<CLASS>
       } else {
         // read the top-level definition
         retval = ObjectUtils.asType(ObjectUtils.requireNonNull(
-            definition.getDefinitionBinding().readItem(null, parser)));
+            definition.readItem(null, parser)));
       }
       return retval;
     }

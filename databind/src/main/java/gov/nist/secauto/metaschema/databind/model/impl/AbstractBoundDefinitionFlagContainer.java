@@ -29,9 +29,10 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBindingDefinitionModelComplex;
-import gov.nist.secauto.metaschema.databind.model.IBindingInstanceFlag;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundModule;
+import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -44,8 +45,11 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public abstract class AbstractBoundDefinitionFlagContainer<A extends Annotation>
-    extends AbstractBoundAnnotatedClass<A>
-    implements IFeatureBoundDefinitionFlagContainer, IBindingDefinitionModelComplex {
+    implements IFeatureBoundDefinitionFlagContainer, IBoundDefinitionModelComplex {
+  @NonNull
+  private final Class<?> clazz;
+  @NonNull
+  private final A annotation;
   @NonNull
   private final IBindingContext bindingContext;
   @NonNull
@@ -59,7 +63,8 @@ public abstract class AbstractBoundDefinitionFlagContainer<A extends Annotation>
       @NonNull Class<?> clazz,
       @NonNull Class<A> annotationClass,
       @NonNull IBindingContext bindingContext) {
-    super(clazz, annotationClass);
+    this.clazz = clazz;
+    this.annotation = ModelUtil.getAnnotation(clazz, annotationClass);
     this.bindingContext = bindingContext;
     this.module = ObjectUtils.notNull(Lazy.lazy(() -> bindingContext.registerModule(getModuleClass())));
     this.beforeDeserializeMethod = ClassIntrospector.getMatchingMethod(
@@ -74,6 +79,15 @@ public abstract class AbstractBoundDefinitionFlagContainer<A extends Annotation>
 
   @NonNull
   protected abstract Class<? extends IBoundModule> getModuleClass();
+
+  @Override
+  public Class<?> getBoundClass() {
+    return clazz;
+  }
+
+  public A getAnnotation() {
+    return annotation;
+  }
 
   @Override
   public boolean isInline() {
@@ -201,7 +215,7 @@ public abstract class AbstractBoundDefinitionFlagContainer<A extends Annotation>
 
   protected void deepCopyItemInternal(@NonNull Object fromObject, @NonNull Object toObject)
       throws BindingException {
-    for (IBindingInstanceFlag instance : getFlagInstanceBindings()) {
+    for (IBoundInstanceFlag instance : getFlagInstances()) {
       instance.deepCopy(fromObject, toObject);
     }
   }

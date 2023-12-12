@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBindingInstanceModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
@@ -40,7 +39,7 @@ import nl.talsmasoftware.lazy4j.Lazy;
 
 public abstract class AbstractBoundInstanceModelJavaField<A extends Annotation>
     extends AbstractBoundInstanceJavaField<A, IBoundDefinitionAssembly>
-    implements IFeatureInstanceModelGroupAs, IBindingInstanceModel {
+    implements IFeatureInstanceModelGroupAs {
 
   @NonNull
   private final Lazy<IModelInstanceCollectionInfo> collectionInfo;
@@ -51,13 +50,6 @@ public abstract class AbstractBoundInstanceModelJavaField<A extends Annotation>
       @NonNull IBoundDefinitionAssembly containingDefinition) {
     super(javaField, annotationClass, containingDefinition);
     this.collectionInfo = ObjectUtils.notNull(Lazy.lazy(() -> IModelInstanceCollectionInfo.of(this)));
-  }
-
-  @Override
-  public Object getEffectiveDefaultValue() {
-    return (getMaxOccurs() == -1 || getMaxOccurs() > 1)
-        ? getInstanceBinding().getCollectionInfo().emptyValue()
-        : getDefaultValue();
   }
 
   /**
@@ -74,7 +66,12 @@ public abstract class AbstractBoundInstanceModelJavaField<A extends Annotation>
 
   @Override
   public Object getValue(Object parent) {
-    return IBindingInstanceModel.super.getValue(parent);
+    return IFeatureInstanceModelGroupAs.super.getValue(parent);
+  }
+
+  @Override
+  public void setValue(Object parentObject, Object value) {
+    IFeatureInstanceModelGroupAs.super.setValue(parentObject, value);
   }
 
   @Override

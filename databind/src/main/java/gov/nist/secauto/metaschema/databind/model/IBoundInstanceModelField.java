@@ -26,13 +26,17 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.impl.DefinitionField;
 import gov.nist.secauto.metaschema.databind.model.impl.InstanceModelFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.impl.InstanceModelFieldScalar;
 
 import java.lang.reflect.Field;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -41,12 +45,21 @@ public interface IBoundInstanceModelField extends IBoundInstanceModelNamed, IFie
   @Override
   IBoundDefinitionField getDefinition();
 
+  /**
+   * Create a new bound field instance.
+   *
+   * @param field
+   *          the Java field the instance is bound to
+   * @param containingDefinition
+   *          the definition containing the instance
+   * @return the new instance
+   */
   @NonNull
   static IBoundInstanceModelField newInstance(
       @NonNull Field field,
       @NonNull IBoundDefinitionAssembly containingDefinition) {
-    Class<?> itemType = IBindingInstanceModel.getItemType(field);
-    IBindingContext bindingContext = containingDefinition.getDefinitionBinding().getBindingContext();
+    Class<?> itemType = IBoundInstanceModel.getItemType(field);
+    IBindingContext bindingContext = containingDefinition.getBindingContext();
     IBoundDefinitionModel definition = bindingContext.getBoundDefinitionForClass(itemType);
 
     IBoundInstanceModelField retval;
@@ -59,6 +72,21 @@ public interface IBoundInstanceModelField extends IBoundInstanceModelNamed, IFie
           "The field '%s' on class '%s' is not bound to a Metaschema field",
           field.toString(),
           field.getDeclaringClass().getName()));
+    }
+    return retval;
+  }
+
+  @Override
+  default boolean canHandleXmlQName(QName qname) {
+    boolean retval;
+    if (XmlGroupAsBehavior.GROUPED.equals(getXmlGroupAsBehavior())) {
+      retval = qname.equals(getXmlGroupAsQName());
+    } else if (isValueWrappedInXml()) {
+      retval = qname.equals(getXmlQName());
+    } else {
+      IDataTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();
+      // we are to parse the data type
+      retval = adapter.canHandleQName(qname);
     }
     return retval;
   }

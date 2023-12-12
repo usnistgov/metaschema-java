@@ -27,57 +27,68 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IBindingInstanceModel
-    extends IBindingInstance, IFeatureJavaField {
-  @NonNull
-  static Class<?> getItemType(@NonNull Field field) {
-    Type fieldType = field.getGenericType();
-    Class<?> rawType = ObjectUtils.notNull(
-        (Class<?>) (fieldType instanceof ParameterizedType ? ((ParameterizedType) fieldType).getRawType() : fieldType));
-
-    Class<?> itemType;
-    if (Map.class.isAssignableFrom(rawType)) {
-      // this is a Map so the second generic type is the value
-      itemType = ObjectUtils.notNull((Class<?>) ((ParameterizedType) fieldType).getActualTypeArguments()[1]);
-    } else if (List.class.isAssignableFrom(rawType)) {
-      // this is a List so there is only a single generic type
-      itemType = ObjectUtils.notNull((Class<?>) ((ParameterizedType) fieldType).getActualTypeArguments()[0]);
-    } else {
-      // non-collection
-      itemType = rawType;
-    }
-    return itemType;
-  }
+public interface IBoundFieldValue extends IBoundProperty, IFeatureScalarItemValueHandler, IFeatureJavaField {
 
   @Override
-  @NonNull
-  IBoundInstanceModel getInstance();
-
-  @NonNull
-  IModelInstanceCollectionInfo getCollectionInfo();
+  default IBoundFieldValue getInstance() {
+    return this;
+  }
 
   /**
-   * Get the name of the JSON key, if a JSON key is configured.
+   * Retrieves the default data value for this model construct.
    *
-   * @return the name of the JSON key flag if configured, or {@code null}
-   *         otherwise
+   * @return the default value or {@code null} if there is no default
    */
   @Nullable
-  String getJsonKeyFlagName();
+  Object getDefaultValue();
 
-  // REFACTOR: Is this needed? Can we get the JSON key from the instance?
-  IBoundInstanceFlag getItemJsonKey(@NonNull Object item);
+  /**
+   * Get the field definition that contain's the field value.
+   *
+   * @return the parent field definition
+   */
+  @NonNull
+  IBoundDefinitionFieldComplex getParentFieldDefinition();
+
+  /**
+   * Get the name of the JSON value key flag.
+   * <p>
+   * Note: if a JSON value key flag is specified, then the JSON value key name is
+   * expected to be ignored.
+   *
+   * @return the flag name or {@code null} if no JSON value key flag is configured
+   * @see #getJsonValueKeyName()
+   */
+  @Nullable
+  String getJsonValueKeyFlagName();
+
+  /**
+   * Get the name of the JSON value key.
+   * <p>
+   * Note: if a JSON value key flag is specified, then this value is expected to
+   * be ignored.
+   *
+   * @return the name
+   * @see #getJsonValueKeyFlagName()
+   */
+  @NonNull
+  String getJsonValueKeyName();
+
+  @Override
+  default Object getEffectiveDefaultValue() {
+    return getDefaultValue();
+  }
 
   @Override
   default Object getValue(Object parent) {
@@ -88,4 +99,28 @@ public interface IBindingInstanceModel
   default void setValue(Object parentObject, Object value) {
     IFeatureJavaField.super.setValue(parentObject, value);
   }
+
+  @Override
+  default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+    return handler.readItemFieldValue(ObjectUtils.requireNonNull(parent, "parent"), this);
+  }
+
+  @Override
+  default void deepCopy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException {
+    Object value = getValue(fromInstance);
+    setValue(toInstance, value);
+  }
+
+  @Override
+  default boolean canHandleJsonPropertyName(String name) {
+    // REFACTOR: Is this correct?
+    return name.equals(getJsonValueKeyName());
+  }
+
+  @Override
+  default boolean canHandleXmlQName(QName qname) {
+    // REFACTOR: Is this correct?
+    return getJavaTypeAdapter().canHandleQName(qname);
+  }
+
 }

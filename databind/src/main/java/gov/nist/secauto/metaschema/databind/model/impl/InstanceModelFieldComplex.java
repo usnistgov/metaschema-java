@@ -26,22 +26,21 @@
 
 package gov.nist.secauto.metaschema.databind.model.impl;
 
-import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBindingFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldComplex;
-import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
+/**
+ * Implements a Metaschema module field instance bound to a Java field,
+ * supported by a bound definition class.
+ */
 public class InstanceModelFieldComplex
     extends AbstractBoundInstanceField
     implements IBoundInstanceModelFieldComplex {
@@ -50,6 +49,17 @@ public class InstanceModelFieldComplex
   @NonNull
   private final Lazy<Object> defaultValue;
 
+  /**
+   * Construct a new field instance bound to a Java field, supported by a bound
+   * definition class.
+   *
+   * @param javaField
+   *          the Java field bound to this instance
+   * @param definition
+   *          the assembly definition this instance is bound to
+   * @param containingDefinition
+   *          the definition containing this instance
+   */
   public InstanceModelFieldComplex(
       @NonNull Field javaField,
       @NonNull DefinitionField definition,
@@ -75,17 +85,17 @@ public class InstanceModelFieldComplex
     this.defaultValue = ObjectUtils.notNull(Lazy.lazy(() -> {
       Object retval = null;
       if (getMaxOccurs() == 1) {
-        IBindingFieldValue fieldValue = definition.getFieldValueBinding();
+        IBoundFieldValue fieldValue = definition.getFieldValue();
 
         Object fieldValueDefault = fieldValue.getDefaultValue();
         if (fieldValueDefault != null) {
-          retval = getInstanceBinding().newInstance();
+          retval = newInstance();
           fieldValue.setValue(retval, fieldValueDefault);
 
           for (IBoundInstanceFlag flag : definition.getFlagInstances()) {
             Object flagDefault = flag.getEffectiveDefaultValue();
             if (flagDefault != null) {
-              flag.getInstanceBinding().setValue(retval, flagDefault);
+              flag.setValue(retval, flagDefault);
             }
           }
         }
@@ -95,61 +105,12 @@ public class InstanceModelFieldComplex
   }
 
   @Override
-  public InstanceModelFieldComplex getInstance() {
-    return this;
-  }
-
-  @Override
   public DefinitionField getDefinition() {
     return definition;
   }
 
   @Override
-  public InstanceModelFieldComplex getInstanceBinding() {
-    return this;
-  }
-
-  @Override
-  public Collection<? extends Object> getItemValues(Object value) {
-    return getInstanceBinding().getCollectionInfo().getItemsFromValue(value);
-  }
-
-  @Override
   public Object getDefaultValue() {
     return defaultValue.get();
-  }
-
-  // TODO: integrate
-
-  @Override
-  public IBoundInstanceFlag getItemJsonKey(Object item) {
-    return JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())
-        ? getDefinition().getJsonKeyFlagInstance()
-        : null;
-  }
-
-  @Override
-  public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
-    return handler.readItemField(parent, this);
-  }
-
-  @Override
-  public Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
-    return getDefinition().getDefinitionBinding().deepCopyItem(item, parentInstance);
-  }
-
-  @Override
-  public Class<?> getBoundClass() {
-    return getDefinition().getBoundClass();
-  }
-
-  @Override
-  public void callBeforeDeserialize(Object targetObject, Object parentObject) throws BindingException {
-    getDefinition().getDefinitionBinding().callBeforeDeserialize(targetObject, parentObject);
-  }
-
-  @Override
-  public void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
-    getDefinition().getDefinitionBinding().callAfterDeserialize(targetObject, parentObject);
   }
 }

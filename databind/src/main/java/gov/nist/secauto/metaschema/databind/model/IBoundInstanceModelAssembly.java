@@ -27,37 +27,40 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.impl.InstanceModelAssemblyComplex;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Represents an assembly instance bound to Java field.
+ */
 public interface IBoundInstanceModelAssembly
-    extends IBoundInstanceModelNamed, IAssemblyInstance, IBindingInstanceModelAssembly {
-  @Override
+    extends IBoundInstanceModelNamed, IAssemblyInstance,
+    IFeatureComplexItemValueHandler {
+
+  /**
+   * Create a new bound assembly instance.
+   *
+   * @param field
+   *          the Java field the instance is bound to
+   * @param containingDefinition
+   *          the definition containing the instance
+   * @return the new instance
+   */
   @NonNull
-  IBoundDefinitionAssembly getDefinition();
-
-  @Override
-  IBindingInstanceModelAssembly getInstanceBinding();
-
-  @Override
-  default Object getValue(Object parent) {
-    return IBindingInstanceModelAssembly.super.getValue(parent);
-  }
-
-  @Override
-  default String getJsonKeyFlagName() {
-    return IBoundInstanceModelNamed.super.getJsonKeyFlagName();
-  }
-
   static IBoundInstanceModelAssembly newInstance(
       @NonNull Field field,
       @NonNull IBoundDefinitionAssembly containingDefinition) {
-    Class<?> itemType = IBindingInstanceModel.getItemType(field);
-    IBindingContext bindingContext = containingDefinition.getDefinitionBinding().getBindingContext();
+    Class<?> itemType = IBoundInstanceModel.getItemType(field);
+    IBindingContext bindingContext = containingDefinition.getBindingContext();
     IBoundDefinitionModel definition = bindingContext.getBoundDefinitionForClass(itemType);
     if (definition instanceof IBoundDefinitionAssembly) {
       return new InstanceModelAssemblyComplex(field, (IBoundDefinitionAssembly) definition, containingDefinition);
@@ -67,5 +70,54 @@ public interface IBoundInstanceModelAssembly
         "The field '%s' on class '%s' is not bound to a Metaschema field",
         field.toString(),
         field.getDeclaringClass().getName()));
+  }
+
+  @Override
+  default IBoundInstanceModelAssembly getInstance() {
+    return this;
+  }
+
+  @Override
+  @NonNull
+  IBoundDefinitionAssembly getDefinition();
+
+  // @Override
+  // default Object getValue(Object parent) {
+  // return IBoundInstanceModelNamed.super.getValue(parent);
+  // }
+
+  // @Override
+  // default void setValue(Object parentObject, Object value) {
+  // IBoundInstanceModelNamed.super.setValue(parentObject, value);
+  // }
+
+  @Override
+  default String getJsonKeyFlagName() {
+    return IBoundInstanceModelNamed.super.getJsonKeyFlagName();
+  }
+
+  @Override
+  default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+    return handler.readItemAssembly(ObjectUtils.requireNonNull(parent, "parent"), this);
+  }
+
+  @Override
+  default Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
+    return getDefinition().deepCopyItem(item, parentInstance);
+  }
+
+  @Override
+  default Class<?> getBoundClass() {
+    return getDefinition().getBoundClass();
+  }
+
+  @Override
+  default void callBeforeDeserialize(Object targetObject, Object parentObject) throws BindingException {
+    getDefinition().callBeforeDeserialize(targetObject, parentObject);
+  }
+
+  @Override
+  default void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
+    getDefinition().callAfterDeserialize(targetObject, parentObject);
   }
 }

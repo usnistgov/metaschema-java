@@ -26,7 +26,16 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-public interface IBoundDefinitionModelComplex extends IBoundDefinitionModel, IFeatureBoundClass {
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+/**
+ * Represents a field or assembly instance bound to Java class.
+ */
+public interface IBoundDefinitionModelComplex
+    extends IBoundDefinitionModel, IFeatureComplexItemValueHandler {
   @Override
-  IBindingDefinitionModelComplex getDefinitionBinding();
+  @NonNull
+  Class<?> getBoundClass();
 }

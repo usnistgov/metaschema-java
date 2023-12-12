@@ -35,21 +35,14 @@ import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBindingDefinitionFlag;
-import gov.nist.secauto.metaschema.databind.model.IBindingInstanceFlag;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
-import gov.nist.secauto.metaschema.databind.model.IFeatureJavaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
@@ -60,10 +53,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
+/**
+ * Implements a Metaschema module inline flag instance/definition bound to a
+ * Java field.
+ */
 public class InstanceFlagInline
     extends AbstractBoundInstanceJavaField<BoundFlag, IBoundDefinitionModel>
-    implements IBoundInstanceFlag, IBoundDefinitionFlag, IBindingInstanceFlag, IBindingDefinitionFlag,
-    IFeatureJavaField {
+    implements IBoundInstanceFlag {
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   @Nullable
@@ -71,13 +67,21 @@ public class InstanceFlagInline
   @NonNull
   private final Lazy<IValueConstrained> constraints;
 
+  /**
+   * Construct a new inline field instance/definition.
+   *
+   * @param javaField
+   *          the Java field bound to this instance
+   * @param containingDefinition
+   *          the definition containing this instance
+   */
   public InstanceFlagInline(
       @NonNull Field javaField,
       @NonNull IBoundDefinitionModel containingDefinition) {
     super(javaField, BoundFlag.class, containingDefinition);
     Class<? extends IDataTypeAdapter<?>> adapterClass = ObjectUtils.notNull(getAnnotation().typeAdapter());
     this.javaTypeAdapter
-        = ModelUtil.getDataTypeAdapter(adapterClass, containingDefinition.getDefinitionBinding().getBindingContext());
+        = ModelUtil.getDataTypeAdapter(adapterClass, containingDefinition.getBindingContext());
     this.defaultValue = ModelUtil.resolveNullOrValue(getAnnotation().defaultValue(), getJavaTypeAdapter());
 
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
@@ -92,39 +96,11 @@ public class InstanceFlagInline
   // - Start annotation driven code - CPD-OFF -
   // ------------------------------------------
 
+  @SuppressWarnings("null")
   @Override
-  public InstanceFlagInline getInstance() {
-    return this;
-  }
-
-  @Override
-  public InstanceFlagInline getDefinition() {
-    return this;
-  }
-
-  @Override
-  public InstanceFlagInline getInlineInstance() {
-    return this;
-  }
-
-  @Override
-  public InstanceFlagInline getDefinitionBinding() {
-    return this;
-  }
-
-  @Override
-  public InstanceFlagInline getInstanceBinding() {
-    return this;
-  }
-
-  @Override
-  public Object getValue(Object parent) {
-    return IFeatureJavaField.super.getValue(parent);
-  }
-
-  @Override
-  public void setValue(Object parentObject, Object value) {
-    IFeatureJavaField.super.setValue(parentObject, value);
+  @NonNull
+  public IValueConstrained getConstraintSupport() {
+    return constraints.get();
   }
 
   @Override
@@ -145,13 +121,6 @@ public class InstanceFlagInline
   @Override
   public boolean isJsonValueKey() {
     return getField().isAnnotationPresent(JsonFieldValueKeyFlag.class);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  @NonNull
-  public IValueConstrained getConstraintSupport() {
-    return constraints.get();
   }
 
   @Override
@@ -180,7 +149,7 @@ public class InstanceFlagInline
 
   @Override
   public String getName() {
-    return getField().getName();
+    return ObjectUtils.notNull(getField().getName());
   }
 
   @Override
@@ -206,26 +175,7 @@ public class InstanceFlagInline
 
   @Override
   public IBindingContext getBindingContext() {
-    return getContainingDefinition().getDefinitionBinding().getBindingContext();
-  }
-
-  @Override
-  public void deepCopy(Object fromInstance, Object toInstance) throws BindingException {
-    Object value = getValue(fromInstance);
-    if (value != null) {
-      setValue(toInstance, deepCopyItem(value, toInstance));
-    }
-  }
-
-  @Override
-  public String toString(Object parent) {
-    Object value = getValue(parent);
-    return getJavaTypeAdapter().asString(value);
-  }
-
-  @Override
-  public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
-    return handler.readItemFlag(parent, this);
+    return getContainingDefinition().getBindingContext();
   }
 
   // ----------------------------------------

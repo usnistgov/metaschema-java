@@ -158,6 +158,12 @@ public abstract class AbstractBoundModule
     return bindingContext;
   }
 
+  /**
+   * Get the assembly instance annotations associated with this bound choice
+   * group.
+   *
+   * @return the annotations
+   */
   @NonNull
   protected Class<?>[] getAssemblyClasses() {
     Class<?>[] retval;
@@ -170,6 +176,11 @@ public abstract class AbstractBoundModule
     return retval;
   }
 
+  /**
+   * Get the field instance annotations associated with this bound choice group.
+   *
+   * @return the annotations
+   */
   @NonNull
   protected Class<?>[] getFieldClasses() {
     Class<?>[] retval;

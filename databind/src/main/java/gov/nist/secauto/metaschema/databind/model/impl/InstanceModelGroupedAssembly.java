@@ -33,39 +33,41 @@ import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
-import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
-
-import java.io.IOException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Represents an assembly model instance that is a member of a choice group
+ * instance.
+ */
 public class InstanceModelGroupedAssembly
     extends AbstractBoundInstanceModelGroupedNamed<BoundGroupedAssembly>
     implements IBoundInstanceModelGroupedAssembly {
   @NonNull
   private final IBoundDefinitionAssembly definition;
 
+  /**
+   * Construct a new field model instance instance that is a member of a choice
+   * group instance.
+   *
+   * @param annotation
+   *          the Java annotation the instance is bound to
+   * @param definition
+   *          the assembly definition this instance is bound to
+   * @param container
+   *          the choice group instance containing the instance
+   */
   public InstanceModelGroupedAssembly(
       @NonNull BoundGroupedAssembly annotation,
       @NonNull IBoundDefinitionAssembly definition,
-      @NonNull IBoundInstanceModelChoiceGroup choiceGroupInstance) {
-    super(annotation, choiceGroupInstance);
+      @NonNull IBoundInstanceModelChoiceGroup container) {
+    super(annotation, container);
     this.definition = definition;
   }
 
   @Override
   public IBoundDefinitionAssembly getDefinition() {
     return definition;
-  }
-
-  @Override
-  public InstanceModelGroupedAssembly getInstance() {
-    return this;
-  }
-
-  @Override
-  public InstanceModelGroupedAssembly getInstanceBinding() {
-    return this;
   }
 
   @Override
@@ -102,10 +104,4 @@ public class InstanceModelGroupedAssembly
   public Class<?> getBoundClass() {
     return getAnnotation().binding();
   }
-
-  @Override
-  public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
-    return getDefinition().readItem(parent, handler);
-  }
-
 }

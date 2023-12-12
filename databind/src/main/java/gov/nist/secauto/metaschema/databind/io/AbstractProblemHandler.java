@@ -60,18 +60,10 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
       @NonNull Object targetObject,
       @NonNull Collection<? extends IBoundProperty> unhandledInstances) throws IOException {
     for (IBoundProperty instance : unhandledInstances) {
-      instance.getInstanceBinding().applyDefaultValue(targetObject);
-      //
-      // Object value;
-      // if (instance instanceof IFeatureCollectionModelInstance
-      // && ((IFeatureCollectionModelInstance) instance).getMaxOccurs() != 1) {
-      // value = ((IFeatureCollectionModelInstance)
-      // instance).getCollectionInfo().emptyValue();
-      // } else {
-      // value = instance.getEffectiveDefaultValue();
-      // }
-      // if (value != null) {
-      // }
+      Object value = instance.getEffectiveDefaultValue();
+      if (value != null) {
+        instance.setValue(targetObject, value);
+      }
     }
   }
 }

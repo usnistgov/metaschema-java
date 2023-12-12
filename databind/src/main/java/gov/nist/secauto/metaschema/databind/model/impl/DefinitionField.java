@@ -37,27 +37,19 @@ import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBindingFieldValue;
-import gov.nist.secauto.metaschema.databind.model.IBindingInstanceFlag;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionField;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
-import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelField;
 import gov.nist.secauto.metaschema.databind.model.IBoundModule;
-import gov.nist.secauto.metaschema.databind.model.IFeatureJavaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.xml.namespace.QName;
 
@@ -76,8 +68,6 @@ public class DefinitionField
   private final Lazy<FlagContainerSupport> flagContainer;
   @NonNull
   private final Lazy<IValueConstrained> constraints;
-  @NonNull
-  private final Lazy<List<IBindingInstanceFlag>> flagInstanceBindings;
 
   /**
    * Collect all fields that are part of the model for this class.
@@ -114,6 +104,14 @@ public class DefinitionField
     return retval;
   }
 
+  /**
+   * Construct a new Metaschema module field definition.
+   *
+   * @param clazz
+   *          the Java class the definition is bound to
+   * @param bindingContext
+   *          the Metaschema binding context managing this class
+   */
   public DefinitionField(
       @NonNull Class<?> clazz,
       @NonNull IBindingContext bindingContext) {
@@ -127,9 +125,6 @@ public class DefinitionField
     }
     this.fieldValue = new FieldValue(field, BoundFieldValue.class);
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new FlagContainerSupport(this, this::handleFlagInstance)));
-    this.flagInstanceBindings = ObjectUtils.notNull(Lazy.lazy(() -> getFlagInstances().stream()
-        .map(instance -> instance.getInstanceBinding())
-        .collect(Collectors.toUnmodifiableList())));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IModelConstrained retval = new AssemblyConstraintSet();
       ValueConstraints valueAnnotation = getAnnotation().valueConstraints();
@@ -138,34 +133,42 @@ public class DefinitionField
     }));
   }
 
-  protected void handleFlagInstance(IBoundInstanceFlag instance) {
+  /**
+   * A callback used to identify the JSON value key flag.
+   *
+   * @param instance
+   *          a flag instance
+   */
+  protected void handleFlagInstance(@NonNull IBoundInstanceFlag instance) {
     if (instance.isJsonValueKey()) {
       this.jsonValueKeyFlagInstance = instance;
     }
   }
 
+  @Override
+  @NonNull
+  public FieldValue getFieldValue() {
+    return fieldValue;
+  }
+
+  @Override
+  public IBoundInstanceFlag getJsonValueKeyFlagInstance() {
+    // lazy load flags
+    getFlagContainer();
+    return jsonValueKeyFlagInstance;
+  }
+
+  @Override
+  protected void deepCopyItemInternal(Object fromObject, Object toObject) throws BindingException {
+    // copy the flags
+    super.deepCopyItemInternal(fromObject, toObject);
+
+    getFieldValue().deepCopy(fromObject, toObject);
+  }
+
   // ------------------------------------------
   // - Start annotation driven code - CPD-OFF -
   // ------------------------------------------
-
-  @Override
-  @NonNull
-  public DefinitionField getDefinition() {
-    return this;
-  }
-
-  @Override
-  @NonNull
-  public DefinitionField getDefinitionBinding() {
-    return this;
-  }
-
-  @Override
-  @Nullable
-  public IBoundInstanceModelField getInlineInstance() {
-    // never inline
-    return null;
-  }
 
   @Override
   @SuppressWarnings("null")
@@ -178,11 +181,6 @@ public class DefinitionField
   @NonNull
   public IValueConstrained getConstraintSupport() {
     return ObjectUtils.notNull(constraints.get());
-  }
-
-  @Override
-  public FieldValue getFieldValueBinding() {
-    return fieldValue;
   }
 
   @Override
@@ -228,96 +226,37 @@ public class DefinitionField
     return getAnnotation().moduleClass();
   }
 
-  @Override
-  public IBoundInstanceFlag getJsonValueKeyFlagInstance() {
-    // lazy load flags
-    getFlagContainer();
-    return jsonValueKeyFlagInstance;
-  }
-
-  @Override
-  public String getJsonValueKeyName() {
-    return getFieldValueBinding().getJsonValueKeyName();
-  }
-
-  @Override
-  public IDataTypeAdapter<?> getJavaTypeAdapter() {
-    return getFieldValueBinding().getJavaTypeAdapter();
-  }
-
-  @Override
-  public Object getFieldValue(Object item) {
-    return getFieldValueBinding().getValue(item);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  @NonNull
-  public List<IBindingInstanceFlag> getFlagInstanceBindings() {
-    return flagInstanceBindings.get();
-  }
-
-  @Override
-  public boolean canHandleJsonPropertyName(String name) {
-    // not handled, since not root
-    return false;
-  }
-
-  @Override
-  public boolean canHandleXmlQName(QName qname) {
-    // not handled, since not root
-    return false;
-  }
-
-  @Override
-  public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
-    return handler.readItemField(parent, this);
-  }
-
-  @Override
-  protected void deepCopyItemInternal(Object fromObject, Object toObject) throws BindingException {
-    super.deepCopyItemInternal(fromObject, toObject);
-
-    getFieldValueBinding().deepCopy(fromObject, toObject);
-  }
-
   protected class FieldValue
       extends AbstractBoundAnnotatedJavaField<BoundFieldValue>
-      implements IBindingFieldValue, IFeatureJavaField {
+      implements IBoundFieldValue {
     @NonNull
     private final IDataTypeAdapter<?> javaTypeAdapter;
     @Nullable
     private final Object defaultValue;
 
+    /**
+     * Construct a new field value binding.
+     *
+     * @param javaField
+     *          the Java field the field value is bound to
+     * @param annotationClass
+     *          the field value binding annotation Java class
+     */
     protected FieldValue(
         @NonNull Field javaField,
         @NonNull Class<BoundFieldValue> annotationClass) {
       super(javaField, annotationClass);
       this.javaTypeAdapter
-          = ModelUtil.getDataTypeAdapter(getAnnotation().typeAdapter(), getDefinitionBinding().getBindingContext());
+          = ModelUtil.getDataTypeAdapter(getAnnotation().typeAdapter(), getBindingContext());
       this.defaultValue = ModelUtil.resolveNullOrValue(getAnnotation().defaultValue(), getJavaTypeAdapter());
     }
 
     @Override
-    public IBoundDefinitionField getParentFieldDefinition() {
+    public IBoundDefinitionFieldComplex getParentFieldDefinition() {
       return DefinitionField.this;
     }
 
     @Override
-    public FieldValue getInstanceBinding() {
-      return this;
-    }
-
-    @Override
-    public Object getValue(Object parent) {
-      return IFeatureJavaField.super.getValue(parent);
-    }
-
-    @Override
-    public void setValue(Object parentObject, Object value) {
-      IFeatureJavaField.super.setValue(parentObject, value);
-    }
-
     public String getJsonValueKeyName() {
       String name = ModelUtil.resolveNoneOrValue(getAnnotation().valueKeyName());
       return name == null ? getJavaTypeAdapter().getDefaultJsonValueKey() : name;
@@ -339,43 +278,16 @@ public class DefinitionField
     }
 
     @Override
-    public boolean canHandleJsonPropertyName(String name) {
-      return name.equals(getJsonValueKeyName());
-    }
-
-    @Override
-    public boolean canHandleXmlQName(QName qname) {
-      return getJavaTypeAdapter().canHandleQName(qname);
-    }
-
-    @Override
     public Object getEffectiveDefaultValue() {
-      // TODO Auto-generated method stub
-      return null;
+      return getDefaultValue();
     }
 
     @Override
     public String getJsonName() {
+      // REFACTOR: Is this correct?
       return getEffectiveJsonValueKeyName();
     }
-
-    @Override
-    public FieldValue getInstance() {
-      return this;
-    }
-
-    @Override
-    public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
-      return handler.readItemFieldValue(parent, this);
-    }
-
-    @Override
-    public void deepCopy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException {
-      Object value = getValue(fromInstance);
-      setValue(toInstance, value);
-    }
   }
-
   // ----------------------------------------
   // - End annotation driven code - CPD-OFF -
   // ----------------------------------------

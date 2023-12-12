@@ -30,10 +30,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBindingFieldValue;
-import gov.nist.secauto.metaschema.databind.model.IBindingInstanceModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
@@ -97,7 +96,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
 
     writer.writeFieldName(targetDefinition.getRootJsonName());
 
-    targetDefinition.getDefinitionBinding().writeItem(targetObject, this);
+    targetDefinition.writeItem(targetObject, this);
 
     // end of root object
     writer.writeEndObject();
@@ -153,8 +152,8 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
       writeFlagInstanceValue((IBoundInstanceFlag) targetInstance, parentObject);
     } else if (targetInstance instanceof IBoundInstanceModel) {
       writeModelInstanceValues((IBoundInstanceModel) targetInstance, parentObject);
-    } else if (targetInstance instanceof IBindingFieldValue) {
-      writeFieldValueInstanceValue((IBindingFieldValue) targetInstance, parentObject);
+    } else if (targetInstance instanceof IBoundFieldValue) {
+      writeFieldValueInstanceValue((IBoundFieldValue) targetInstance, parentObject);
     } else {
       throw new UnsupportedOperationException(
           String.format("Unsupported class binding type: %s", targetInstance.getClass().getName()));
@@ -209,7 +208,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
         // write the field name
         writer.writeFieldName(targetInstance.getJsonName());
 
-        IModelInstanceCollectionInfo collectionInfo = targetInstance.getInstanceBinding().getCollectionInfo();
+        IModelInstanceCollectionInfo collectionInfo = targetInstance.getCollectionInfo();
 
         ModelInstanceWriteHandler handler = new ModelInstanceWriteHandler(collectionInfo);
 
@@ -231,7 +230,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
    *           if an error occurred while writing the data
    */
   protected void writeFieldValueInstanceValue(
-      @NonNull IBindingFieldValue targetInstance,
+      @NonNull IBoundFieldValue targetInstance,
       @NonNull Object parentObject) throws IOException {
     Object value = targetInstance.getValue(parentObject);
     if (value != null && !value.equals(targetInstance.getDefaultValue())) {
@@ -338,7 +337,8 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
     JsonGenerator writer = getWriter();
 
     // the field will be the JSON key
-    String key = jsonKey.getDefinition().getDefinitionBinding().toString(item);
+
+    String key = jsonKey.getJavaTypeAdapter().asString(ObjectUtils.requireNonNull(jsonKey.getValue(item)));
     writer.writeFieldName(key);
 
     // next the value will be a start object
@@ -358,8 +358,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
     public void writeList(List<?> items) throws IOException {
       @SuppressWarnings("resource") // not owned
       JsonGenerator writer = getWriter();
-      IBindingInstanceModel binding = getCollectionInfo().getBinding();
-      IBoundInstanceModel instance = binding.getInstance();
+      IBoundInstanceModel instance = getCollectionInfo().getInstance();
 
       boolean writeArray = false;
       if (JsonGroupAsBehavior.LIST.equals(instance.getJsonGroupAsBehavior())
@@ -380,8 +379,8 @@ public class MetaschemaJsonWriter implements IJsonWritingContext, IItemWriteHand
 
     @Override
     public void writeItem(Object item) throws IOException {
-      IBindingInstanceModel binding = getCollectionInfo().getBinding();
-      binding.writeItem(item, MetaschemaJsonWriter.this);
+      IBoundInstanceModel instance = getCollectionInfo().getInstance();
+      instance.writeItem(item, MetaschemaJsonWriter.this);
     }
   }
 }

@@ -35,10 +35,7 @@ import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBindingInstanceFlag;
-import gov.nist.secauto.metaschema.databind.model.IBindingInstanceModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
@@ -49,14 +46,9 @@ import gov.nist.secauto.metaschema.databind.model.annotations.AssemblyConstraint
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.xml.namespace.QName;
 
@@ -81,25 +73,6 @@ public class DefinitionAssembly
   private final Lazy<IModelConstrained> constraints;
   @Nullable
   private final QName xmlRootQName;
-  @NonNull
-  private final Lazy<List<IBindingInstanceFlag>> flagInstanceBindings;
-
-  @NonNull
-  static InstanceModelAssemblyComplex newInstance(
-      @NonNull Field field,
-      @NonNull DefinitionAssembly containingDefinition) {
-    Class<?> itemType = IBindingInstanceModel.getItemType(field);
-    IBindingContext bindingContext = containingDefinition.getDefinitionBinding().getBindingContext();
-    IBoundDefinitionModel definition = bindingContext.getBoundDefinitionForClass(itemType);
-    if (definition instanceof IBoundDefinitionAssembly) {
-      return new InstanceModelAssemblyComplex(field, (DefinitionAssembly) definition, containingDefinition);
-    }
-
-    throw new IllegalStateException(String.format(
-        "The field '%s' on class '%s' is not bound to a Metaschema field",
-        field.toString(),
-        field.getDeclaringClass().getName()));
-  }
 
   public DefinitionAssembly(
       @NonNull Class<?> clazz,
@@ -122,37 +95,25 @@ public class DefinitionAssembly
       ConstraintSupport.parse(assemblyAnnotation, ISource.modelSource(), retval);
       return retval;
     }));
-    this.flagInstanceBindings = ObjectUtils.notNull(Lazy.lazy(() -> getFlagInstances().stream()
-        .map(instance -> instance.getInstanceBinding())
-        .collect(Collectors.toUnmodifiableList())));
 
     if (isRoot()) {
       bindingContext.registerBindingMatcher(this);
     }
   }
 
+  @Override
+  protected void deepCopyItemInternal(Object fromObject, Object toObject) throws BindingException {
+    // copy the flags
+    super.deepCopyItemInternal(fromObject, toObject);
+
+    for (IBoundInstanceModel instance : getModelInstances()) {
+      instance.deepCopy(fromObject, toObject);
+    }
+  }
+
   // ------------------------------------------
   // - Start annotation driven code - CPD-OFF -
   // ------------------------------------------
-
-  @Override
-  @NonNull
-  public DefinitionAssembly getDefinition() {
-    return this;
-  }
-
-  @Override
-  @NonNull
-  public DefinitionAssembly getDefinitionBinding() {
-    return this;
-  }
-
-  @Override
-  @Nullable
-  public IBoundInstanceModelAssembly getInlineInstance() {
-    // never inline
-    return null;
-  }
 
   @Override
   @SuppressWarnings("null")
@@ -166,11 +127,6 @@ public class DefinitionAssembly
   @NonNull
   public AssemblyModelContainerSupport getModelContainer() {
     return modelContainer.get();
-  }
-
-  @Override
-  public DefinitionAssembly getOwningDefinition() {
-    return this;
   }
 
   @Override
@@ -223,6 +179,13 @@ public class DefinitionAssembly
   }
 
   @Override
+  @Nullable
+  public QName getRootXmlQName() {
+    // Overriding this is more efficient, since it is already built
+    return xmlRootQName;
+  }
+
+  @Override
   public boolean isRoot() {
     // Overriding this is more efficient, since the root name is derived from the
     // XML QName
@@ -241,44 +204,6 @@ public class DefinitionAssembly
   @Nullable
   public Integer getRootIndex() {
     return ModelUtil.resolveNullOrInteger(getAnnotation().rootIndex());
-  }
-
-  @Override
-  @Nullable
-  public QName getRootXmlQName() {
-    // Overriding this is more efficient, since it is already built
-    return xmlRootQName;
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  @NonNull
-  public List<IBindingInstanceFlag> getFlagInstanceBindings() {
-    return flagInstanceBindings.get();
-  }
-
-  @Override
-  public boolean canHandleJsonPropertyName(String name) {
-    return name.equals(getRootJsonName());
-  }
-
-  @Override
-  public boolean canHandleXmlQName(QName qname) {
-    return qname.equals(getRootXmlQName());
-  }
-
-  @Override
-  public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
-    return handler.readItemAssembly(parent, this);
-  }
-
-  @Override
-  protected void deepCopyItemInternal(Object fromObject, Object toObject) throws BindingException {
-    super.deepCopyItemInternal(fromObject, toObject);
-
-    for (IBoundInstanceModel instance : getModelInstances()) {
-      instance.getInstanceBinding().deepCopy(fromObject, toObject);
-    }
   }
 
   // ----------------------------------------

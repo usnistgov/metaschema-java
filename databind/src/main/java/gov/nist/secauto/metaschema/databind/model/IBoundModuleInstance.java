@@ -28,22 +28,26 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IInstance;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 public interface IBoundModuleInstance extends IBoundInstance, IInstance {
-  @Override
-  @NonNull
-  IBindingInstance getInstanceBinding();
-
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Don't delegate to the definition, since this is an inline instance that is
+   * both a definition and an instance.
+   */
   @Override
   default Object getEffectiveDefaultValue() {
-    // TODO Auto-generated method stub
     return IInstance.super.getEffectiveDefaultValue();
   }
 
   @Override
   IBoundDefinitionModel getContainingDefinition();
 
+  /**
+   * {@inheritDoc}
+   * <p>
+   * An instance is contained in the parent definition's module.
+   */
   @Override
   default IBoundModule getContainingModule() {
     return getContainingDefinition().getContainingModule();

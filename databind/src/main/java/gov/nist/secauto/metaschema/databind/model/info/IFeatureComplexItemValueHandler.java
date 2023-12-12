@@ -38,6 +38,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
+  /**
+   * Get the Metaschema definition representing the bound complex data.
+   *
+   * @return the definition
+   */
   @NonNull
   IBoundDefinitionModel getDefinition();
 
@@ -55,6 +60,7 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
     handler.writeComplexItem(item, this);
   }
 
+  // REFACTOR: flatten implementations?
   @Override
   @NonNull
   Object deepCopyItem(

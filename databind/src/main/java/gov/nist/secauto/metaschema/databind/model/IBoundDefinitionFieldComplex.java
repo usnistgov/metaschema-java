@@ -26,8 +26,109 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
+
+import java.io.IOException;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+/**
+ * Represents a field definition bound to a Java class.
+ * <p>
+ * This definition is considered "complex", since it is bound to a Java class.
+ */
 public interface IBoundDefinitionFieldComplex
-    extends IBoundDefinitionField, IBoundDefinitionModelComplex, IBindingDefinitionFieldComplex {
+    extends IBoundDefinitionField, IBoundDefinitionModelComplex {
+
+  // Complex Field Definition Features
+  // =================================
+
   @Override
-  IBindingDefinitionFieldComplex getDefinitionBinding();
+  @NonNull
+  default IBoundDefinitionFieldComplex getDefinition() {
+    return this;
+  }
+
+  @Override
+  default boolean isInline() {
+    return false;
+  }
+
+  @Override
+  @Nullable
+  default IBoundInstanceModelField getInlineInstance() {
+    // never inline
+    return null;
+  }
+
+  @Override
+  default Object getDefaultValue() {
+    Object retval = null;
+    IBoundDefinitionFieldComplex definition = getDefinition();
+    IBoundFieldValue fieldValue = definition.getFieldValue();
+
+    Object fieldValueDefault = fieldValue.getDefaultValue();
+    if (fieldValueDefault != null) {
+      retval = definition.newInstance();
+      fieldValue.setValue(retval, fieldValueDefault);
+
+      // since the field value is non-null, populate the flags
+      for (IBoundInstanceFlag flag : definition.getFlagInstances()) {
+        Object flagDefault = flag.getEffectiveDefaultValue();
+        if (flagDefault != null) {
+          flag.setValue(retval, flagDefault);
+        }
+      }
+    }
+    return retval;
+  }
+
+  /**
+   * Get the bound field value associated with this field.
+   *
+   * @return the field's value binding
+   */
+  @NonNull
+  IBoundFieldValue getFieldValue();
+
+  @Override
+  @NonNull
+  default Object getFieldValue(@NonNull Object item) {
+    return ObjectUtils.requireNonNull(getFieldValue().getValue(item));
+  }
+
+  @Override
+  @NonNull
+  default String getJsonValueKeyName() {
+    return getFieldValue().getJsonValueKeyName();
+  }
+
+  @Override
+  @NonNull
+  default IDataTypeAdapter<?> getJavaTypeAdapter() {
+    return getFieldValue().getJavaTypeAdapter();
+  }
+
+  @Override
+  @NonNull
+  default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+    return handler.readItemField(parent, this);
+  }
+
+  @Override
+  default boolean canHandleJsonPropertyName(String name) {
+    // not handled, since not root
+    return false;
+  }
+
+  @Override
+  default boolean canHandleXmlQName(QName qname) {
+    // not handled, since not root
+    return false;
+  }
 }

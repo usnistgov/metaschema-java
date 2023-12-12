@@ -27,18 +27,61 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
+
+import java.io.IOException;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
+/**
+ * Represents an assembly definition bound to a Java class.
+ */
 public interface IBoundDefinitionAssembly
-    extends IBoundDefinitionModelComplex, IBoundContainerModel, IAssemblyDefinition, IBindingDefinitionAssembly {
+    extends IBoundDefinitionModelComplex, IBoundContainerModel, IAssemblyDefinition {
+
+  // Assembly Definition Features
+  // ============================
+
   @Override
   @NonNull
-  IBoundDefinitionAssembly getOwningDefinition();
+  default IBoundDefinitionAssembly getOwningDefinition() {
+    return this;
+  }
 
   @Override
-  IBoundInstanceModelAssembly getInlineInstance();
+  @NonNull
+  default IBoundDefinitionAssembly getDefinition() {
+    return this;
+  }
 
   @Override
-  IBindingDefinitionAssembly getDefinitionBinding();
+  default boolean isInline() {
+    return false;
+  }
+
+  @Override
+  @Nullable
+  default IBoundInstanceModelAssembly getInlineInstance() {
+    // never inline
+    return null;
+  }
+
+  @Override
+  @NonNull
+  default Object readItem(@Nullable Object parent, @NonNull IItemReadHandler handler) throws IOException {
+    return handler.readItemAssembly(parent, this);
+  }
+
+  @Override
+  default boolean canHandleJsonPropertyName(@NonNull String name) {
+    return name.equals(getRootJsonName());
+  }
+
+  @Override
+  default boolean canHandleXmlQName(@NonNull QName qname) {
+    return qname.equals(getRootXmlQName());
+  }
 }

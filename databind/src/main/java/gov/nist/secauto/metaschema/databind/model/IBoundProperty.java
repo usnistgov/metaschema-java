@@ -26,21 +26,63 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.databind.io.BindingException;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IBoundProperty {
+public interface IBoundProperty extends IBinding {
   /**
-   * Get the binding information for this instance.
+   * Get the Metaschema module instance associated with this binding.
    *
-   * @return the binding information
+   * @return the instance
    */
   @NonNull
-  IBindingProperty getInstanceBinding();
+  IBoundProperty getInstance();
 
+  /**
+   * Get the default value for the bound property, considering defaults in any
+   * related elements as needed.
+   *
+   * @return the effective default value
+   */
   @Nullable
   Object getEffectiveDefaultValue();
 
+  /**
+   * Get the JSON/YAML property/key name to use for serialization-related
+   * operations.
+   *
+   * @return the JSON name
+   */
+  // REFACTOR: rename to getEffectiveJsonName
   @NonNull
   String getJsonName();
+
+  /**
+   * Set the provided value on the provided object. The provided object must be of
+   * the item's type associated with this instance.
+   *
+   * @param parentObject
+   *          the object
+   * @param value
+   *          a value, which may be a simple {@link Type} or a
+   *          {@link ParameterizedType} for a collection
+   */
+  void setValue(@NonNull Object parentObject, Object value);
+
+  /**
+   * Copy this instance from one parent object to another.
+   *
+   * @param fromInstance
+   *          the object to copy from
+   * @param toInstance
+   *          the object to copy to
+   * @throws BindingException
+   *           if an error occurred while processing the object bindings
+   */
+  void deepCopy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException;
 }

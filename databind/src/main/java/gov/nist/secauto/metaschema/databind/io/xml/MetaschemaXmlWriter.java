@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.databind.io.xml;
 
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.databind.io.json.DefaultJsonProblemHandler;
-import gov.nist.secauto.metaschema.databind.model.IBindingFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionField;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
@@ -103,7 +103,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
     writer.writeStartElement(prefix, rootQName.getLocalPart(), rootQName.getNamespaceURI());
 
-    targetDefinition.getDefinitionBinding().writeItem(targetObject, new ItemWriteHandler(rootQName));
+    targetDefinition.writeItem(targetObject, new ItemWriteHandler(rootQName));
 
     writer.writeEndElement();
   }
@@ -126,7 +126,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
         writeModelInstanceValues(modelInstance, targetObject, parentName);
       }
     } else if (targetDefinition instanceof IBoundDefinitionField) {
-      IBindingFieldValue fieldValueInstance = ((IBoundDefinitionField) targetDefinition).getFieldValueBinding();
+      IBoundFieldValue fieldValueInstance = ((IBoundDefinitionField) targetDefinition).getFieldValue();
 
       Object value = fieldValueInstance.getValue(targetObject);
       if (value != null) {
@@ -199,7 +199,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
       return false; // NOPMD - intentional
     }
 
-    IModelInstanceCollectionInfo collectionInfo = targetInstance.getInstanceBinding().getCollectionInfo();
+    IModelInstanceCollectionInfo collectionInfo = targetInstance.getCollectionInfo();
 
     if (targetInstance.getMinOccurs() > 0 || collectionInfo.getItemCount(value) > 0) {
       // only write the instance if the wrapper is required or if it has contents
@@ -280,7 +280,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
       }
 
       // write the value
-      instance.getInstanceBinding().writeItem(targetObject, new ItemWriteHandler(currentParentName));
+      instance.writeItem(targetObject, new ItemWriteHandler(currentParentName));
 
       if (writeWrapper) {
         writer.writeEndElement();
@@ -314,7 +314,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
     @Override
     public void writeItem(Object item) throws IOException {
-      writeInstanceValue(getCollectionInfo().getBinding().getInstance(), item, getParentQName());
+      writeInstanceValue(getCollectionInfo().getInstance(), item, getParentQName());
     }
   }
 

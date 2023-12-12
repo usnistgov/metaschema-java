@@ -37,6 +37,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IBoundContainerModel extends IModelContainer {
+  // REFACTOR: is this needed?
   @Override
   @NonNull
   IBoundDefinitionAssembly getOwningDefinition();

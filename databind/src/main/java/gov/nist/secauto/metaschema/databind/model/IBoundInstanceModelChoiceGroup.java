@@ -28,19 +28,35 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.impl.InstanceModelChoiceGroup;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
+/**
+ * Represents a choice group instance bound to Java field.
+ */
 public interface IBoundInstanceModelChoiceGroup
-    extends IBoundInstanceModel, IBoundContainerModelChoiceGroup, IChoiceGroupInstance,
-    IBindingInstanceModelChoiceGroup {
+    extends IBoundInstanceModel, IBoundContainerModelChoiceGroup, IChoiceGroupInstance {
 
+  /**
+   * Create a new bound choice group instance.
+   *
+   * @param field
+   *          the Java field the instance is bound to
+   * @param containingDefinition
+   *          the definition containing the instance
+   * @return the new instance
+   */
+  @NonNull
   static IBoundInstanceModelChoiceGroup newInstance(
       @NonNull Field field,
       @NonNull IBoundDefinitionAssembly containingDefinition) {
@@ -48,25 +64,84 @@ public interface IBoundInstanceModelChoiceGroup
   }
 
   @Override
-  default Object getValue(Object parent) {
-    return IBindingInstanceModelChoiceGroup.super.getValue(parent);
+  default IBoundInstanceModelChoiceGroup getInstance() {
+    return this;
   }
+
+  @Override
+  default String getJsonName() {
+    // always the group-as name
+    return ObjectUtils.notNull(getGroupAsName());
+  }
+
+  @Override
+  String getJsonKeyFlagName();
 
   @Override
   @NonNull
   IBoundDefinitionAssembly getOwningDefinition();
 
-  @Override
-  IBindingInstanceModelChoiceGroup getInstanceBinding();
+  /**
+   * Get the bound grouped model instance associated with the provided Java class.
+   *
+   * @param clazz
+   *          the Java class which should be bound to a grouped model instance
+   * @return the grouped model instance or {code null} if no instance was bound to
+   *         the requested class
+   */
+  @Nullable
+  IBoundInstanceModelGroupedNamed getGroupedModelInstance(@NonNull Class<?> clazz);
 
-  @NonNull
-  Map<Class<?>, IBoundInstanceModelGroupedNamed> getClassToInstanceMap();
+  /**
+   * Get the bound grouped model instance associated with the provided XML
+   * qualified name.
+   *
+   * @param name
+   *          the XML qualified name which should be bound to a grouped model
+   *          instance
+   * @return the grouped model instance or {code null} if no instance was bound to
+   *         the requested XML qualified name
+   */
+  @Nullable
+  IBoundInstanceModelGroupedNamed getGroupedModelInstance(@NonNull QName name);
 
-  @NonNull
-  Map<QName, IBoundInstanceModelGroupedNamed> getQNameToInstanceMap();
-
+  /**
+   * Get the bound grouped model instance associated with the provided item.
+   *
+   * @param item
+   *          the item which should be bound to a grouped model instance
+   * @return the grouped model instance or {code null} if no instance was bound to
+   *         the requested item
+   */
   @NonNull
   default IBoundInstanceModelGroupedNamed getItemInstance(Object item) {
-    return ObjectUtils.requireNonNull(getClassToInstanceMap().get(item.getClass()));
+    return ObjectUtils.requireNonNull(getGroupedModelInstance(item.getClass()));
+  }
+
+  @Override
+  default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+    return handler.readChoiceGroupItem(ObjectUtils.requireNonNull(parent, "parent"), this);
+  }
+
+  @Override
+  default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
+    IBoundInstanceModelGroupedNamed itemInstance = getItemInstance(item);
+    handler.writeChoiceGroupItem(item, this, itemInstance);
+  }
+
+  @Override
+  default Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
+    IBoundInstanceModelGroupedNamed itemInstance = getItemInstance(item);
+    return itemInstance.deepCopyItem(itemInstance, parentInstance);
+  }
+
+  @Override
+  default boolean canHandleJsonPropertyName(@NonNull String name) {
+    return name.equals(getJsonName());
+  }
+
+  @Override
+  default boolean canHandleXmlQName(@NonNull QName qname) {
+    return getGroupedModelInstance(qname) != null;
   }
 }

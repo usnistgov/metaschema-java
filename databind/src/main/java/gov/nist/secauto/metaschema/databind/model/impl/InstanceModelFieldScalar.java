@@ -30,21 +30,14 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.model.IBindingInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionField;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldScalar;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -61,13 +54,21 @@ public class InstanceModelFieldScalar
   @NonNull
   private final Lazy<IValueConstrained> constraints;
 
+  /**
+   * Construct a new field instance bound to a Java field.
+   *
+   * @param javaField
+   *          the Java field bound to this instance
+   * @param containingDefinition
+   *          the definition containing this instance
+   */
   public InstanceModelFieldScalar(
-      @NonNull Field field,
+      @NonNull Field javaField,
       @NonNull IBoundDefinitionAssembly containingDefinition) {
-    super(field, containingDefinition);
+    super(javaField, containingDefinition);
     this.javaTypeAdapter = ModelUtil.getDataTypeAdapter(
         getAnnotation().typeAdapter(),
-        containingDefinition.getDefinitionBinding().getBindingContext());
+        containingDefinition.getBindingContext());
     this.defaultValue = ModelUtil.resolveDefaultValue(getAnnotation().defaultValue(), this.javaTypeAdapter);
 
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
@@ -78,39 +79,15 @@ public class InstanceModelFieldScalar
     }));
   }
 
+  @Override
+  public IBoundInstanceFlag getJsonKeyFlagInstance() {
+    // no flags
+    return null;
+  }
+
   // ------------------------------------------
   // - Start annotation driven code - CPD-OFF -
   // ------------------------------------------
-
-  @Override
-  public InstanceModelFieldScalar getInstance() {
-    return this;
-  }
-
-  @Override
-  public InstanceModelFieldScalar getDefinition() {
-    return this;
-  }
-
-  @Override
-  public InstanceModelFieldScalar getInlineInstance() {
-    return this;
-  }
-
-  @Override
-  public InstanceModelFieldScalar getInstanceBinding() {
-    return this;
-  }
-
-  @Override
-  public InstanceModelFieldScalar getDefinitionBinding() {
-    return this;
-  }
-
-  @Override
-  public InstanceModelFieldScalar getFieldValueBinding() {
-    return this;
-  }
 
   @Override
   public IBoundDefinitionFlagContainerSupport getFlagContainer() {
@@ -137,74 +114,6 @@ public class InstanceModelFieldScalar
   @Override
   public Object getDefaultValue() {
     return defaultValue;
-  }
-
-  @Override
-  public String getJsonValueKeyFlagName() {
-    // no flags, no JSON value key
-    return null;
-  }
-
-  @Override
-  public IBoundInstanceFlag getJsonValueKeyFlagInstance() {
-    // no flags, no value key flag
-    return null;
-  }
-
-  @Override
-  public String getJsonValueKeyName() {
-    // no bound value, no value key name
-    return null;
-  }
-
-  @Override
-  public Object getFieldValue(Object item) {
-    // the item is the field value
-    return item;
-  }
-
-  @Override
-  public Collection<? extends Object> getItemValues(Object value) {
-    return getInstanceBinding().getCollectionInfo().getItemsFromValue(value);
-  }
-
-  @Override
-  public String getJsonKeyFlagName() {
-    // no flags
-    return null;
-  }
-
-  @Override
-  public IBoundInstanceFlag getJsonKeyFlagInstance() {
-    // no flags
-    return null;
-  }
-
-  @Override
-  public IBoundInstanceFlag getItemJsonKey(Object item) {
-    // no flags, no JSON key
-    return null;
-  }
-
-  @Override
-  public IBoundDefinitionField getParentFieldDefinition() {
-    return this;
-  }
-
-  @Override
-  public IBindingContext getBindingContext() {
-    return getContainingDefinition().getDefinitionBinding().getBindingContext();
-  }
-
-  @Override
-  public Collection<IBindingInstanceFlag> getFlagInstanceBindings() {
-    // no flags
-    return CollectionUtil.emptyList();
-  }
-
-  @Override
-  public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
-    return handler.readItemField(parent, this);
   }
 
   // ----------------------------------------

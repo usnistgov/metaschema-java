@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
-import gov.nist.secauto.metaschema.databind.model.IBindingInstanceModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -34,15 +34,15 @@ public abstract class AbstractModelInstanceCollectionInfo
     implements IModelInstanceCollectionInfo {
 
   @NonNull
-  private final IBindingInstanceModel binding;
+  private final IBoundInstanceModel instance;
 
   public AbstractModelInstanceCollectionInfo(
-      @NonNull IBindingInstanceModel binding) {
-    this.binding = binding;
+      @NonNull IBoundInstanceModel instance) {
+    this.instance = instance;
   }
 
   @Override
-  public IBindingInstanceModel getBinding() {
-    return binding;
+  public IBoundInstanceModel getInstance() {
+    return instance;
   }
 }

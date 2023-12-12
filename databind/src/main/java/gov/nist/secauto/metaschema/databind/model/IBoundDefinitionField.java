@@ -28,26 +28,27 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+/**
+ * Represents a field definition bound to Java data.
+ * <p>
+ * Classes and interfaces implementing this interface can be:
+ * <ul>
+ * <li>"scalar", meaning they have only a scalar field value, or</li>
+ * <li>"complex", meaning they allow flags and are bound to a Java class.
+ * </ul>
+ */
 public interface IBoundDefinitionField
     extends IFieldDefinition, IBoundDefinitionModel {
+
+  // Field Definition Features
+  // =========================
 
   @Override
   IBoundInstanceModelField getInlineInstance();
 
   @Override
-  IBindingDefinitionField getDefinitionBinding();
-
-  @NonNull
-  IBindingFieldValue getFieldValueBinding();
-
-  @Override
   @Nullable
   IBoundInstanceFlag getJsonValueKeyFlagInstance();
-
-  @Override
-  @NonNull
-  Object getFieldValue(@NonNull Object item);
 }

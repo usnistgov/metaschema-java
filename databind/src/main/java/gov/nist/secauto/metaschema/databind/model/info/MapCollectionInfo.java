@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBindingInstanceModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -54,14 +54,14 @@ class MapCollectionInfo
     return value == null ? 0 : ((Map<?, ?>) value).size();
   }
 
-  public MapCollectionInfo(@NonNull IBindingInstanceModel binding) {
-    super(binding);
+  public MapCollectionInfo(@NonNull IBoundInstanceModel instance) {
+    super(instance);
   }
 
   @SuppressWarnings("null")
   @NonNull
   public Class<?> getKeyType() {
-    ParameterizedType actualType = (ParameterizedType) getBinding().getType();
+    ParameterizedType actualType = (ParameterizedType) getInstance().getType();
     // this is a Map so the first generic type is the key
     return (Class<?>) actualType.getActualTypeArguments()[0];
   }
@@ -74,7 +74,7 @@ class MapCollectionInfo
   @SuppressWarnings("null")
   @NonNull
   public Class<?> getValueType() {
-    ParameterizedType actualType = (ParameterizedType) getBinding().getType();
+    ParameterizedType actualType = (ParameterizedType) getInstance().getType();
     // this is a Map so the second generic type is the value
     return (Class<?>) actualType.getActualTypeArguments()[1];
   }
@@ -83,16 +83,16 @@ class MapCollectionInfo
   public Map<String, ?> deepCopyItems(@NonNull Object fromInstance, @NonNull Object toInstance)
       throws BindingException {
 
-    IBindingInstanceModel binding = getBinding();
+    IBoundInstanceModel instance = getInstance();
     Map<String, Object> copy = emptyValue();
     for (Object item : getItemsFromParentInstance(fromInstance)) {
       assert item != null;
 
-      IBoundInstanceFlag jsonKey = binding.getItemJsonKey(item);
+      IBoundInstanceFlag jsonKey = instance.getItemJsonKey(item);
       assert jsonKey != null;
 
-      Object itemCopy = binding.deepCopyItem(ObjectUtils.requireNonNull(item), toInstance);
-      String key = jsonKey.getValue(itemCopy).toString();
+      Object itemCopy = instance.deepCopyItem(ObjectUtils.requireNonNull(item), toInstance);
+      String key = ObjectUtils.requireNonNull(jsonKey.getValue(itemCopy)).toString();
       copy.put(key, itemCopy);
     }
     return copy;

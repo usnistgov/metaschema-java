@@ -29,10 +29,10 @@ package gov.nist.secauto.metaschema.databind.io.json;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBindingFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionField;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 
@@ -82,13 +82,13 @@ final class MetaschemaJsonUtil {
       // use all child instances
       instanceStream = ((IBoundDefinitionAssembly) targetDefinition).getModelInstances().stream()
           .map(instance -> (IBoundProperty) instance);
-    } else if (targetDefinition instanceof IBoundDefinitionField) {
-      IBoundDefinitionField targetFieldDefinition = (IBoundDefinitionField) targetDefinition;
+    } else if (targetDefinition instanceof IBoundDefinitionFieldComplex) {
+      IBoundDefinitionFieldComplex targetFieldDefinition = (IBoundDefinitionFieldComplex) targetDefinition;
 
       IBoundInstanceFlag jsonValueKeyFlag = targetFieldDefinition.getJsonValueKeyFlagInstance();
       if (jsonValueKeyFlag == null && flagCount > 0) {
         // the field value is handled as named field
-        IBindingFieldValue fieldValue = targetFieldDefinition.getFieldValueBinding();
+        IBoundFieldValue fieldValue = targetFieldDefinition.getFieldValue();
         instanceStream = Stream.of(fieldValue);
       } else {
         // only the value, with no flags or a JSON value key flag

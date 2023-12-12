@@ -43,7 +43,9 @@ public abstract class AbstractModelInstanceReadHandler implements IModelInstance
   }
 
   /**
-   * @return the collectionInfo
+   * Get the collection Java type information associated with this handler.
+   *
+   * @return the collection information
    */
   @NonNull
   public IModelInstanceCollectionInfo getCollectionInfo() {
@@ -61,6 +63,6 @@ public abstract class AbstractModelInstanceReadHandler implements IModelInstance
   @Override
   @Nullable
   public String getJsonKeyFlagName() {
-    return getCollectionInfo().getBinding().getJsonKeyFlagName();
+    return getCollectionInfo().getInstance().getJsonKeyFlagName();
   }
 }

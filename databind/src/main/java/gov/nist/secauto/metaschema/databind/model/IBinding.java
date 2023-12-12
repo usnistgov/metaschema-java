@@ -32,6 +32,10 @@ import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Represents a binding of Java data to a Metaschema module construct, i.e.
+ * definition, instance, field value.
+ */
 public interface IBinding extends IItemValueHandler {
   /**
    * Determine if the provided JSON property or YAML key name is associated with
@@ -42,7 +46,7 @@ public interface IBinding extends IItemValueHandler {
    * @return {@code true} if the instance will handle this name, or {@code false}
    *         otherwise
    */
-  boolean canHandleJsonPropertyName(String name);
+  boolean canHandleJsonPropertyName(@NonNull String name);
 
   /**
    * Determine if the provided XML qualified name is associated with this

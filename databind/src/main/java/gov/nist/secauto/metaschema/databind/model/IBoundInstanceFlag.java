@@ -26,29 +26,48 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.impl.IFeatureInlineDefinition;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.impl.InstanceFlagInline;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
+/**
+ * Represents a flag instance bound to Java data.
+ */
 public interface IBoundInstanceFlag
-    extends IFlagInstance,
-    IFeatureInlineDefinition,
-    IFeatureScalarItemValueHandler {
+    extends IFlagInstance, IBoundDefinitionFlag, IBoundModuleInstance,
+    IFeatureScalarItemValueHandler,
+    IFeatureJavaField {
 
+  /**
+   * Create a new bound flag instance.
+   *
+   * @param field
+   *          the Java field the instance is bound to
+   * @param containingDefinition
+   *          the definition containing the instance
+   * @return the new instance
+   */
+  @NonNull
   static IBoundInstanceFlag newInstance(
       @NonNull Field field,
-      @NonNull IBoundDefinitionModel definition) {
-    return new InstanceFlagInline(field, definition);
+      @NonNull IBoundDefinitionModel containingDefinition) {
+    return new InstanceFlagInline(field, containingDefinition);
   }
 
-  @Override
-  @NonNull
-  IBindingInstanceFlag getInstanceBinding();
+  // Flag Instance Features
+  // ======================
 
   @Override
   @NonNull
@@ -62,8 +81,138 @@ public interface IBoundInstanceFlag
 
   @Override
   @NonNull
-  IBoundDefinitionFlag getDefinition();
+  default IBoundInstanceFlag getInstance() {
+    return this;
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * For an inline instance, this instance is the definition.
+   */
+  @Override
+  @NonNull
+  default IBoundInstanceFlag getDefinition() {
+    return this;
+  }
 
   @Override
-  Object getValue(Object parent);
+  default boolean isInline() {
+    return true;
+  }
+
+  @Override
+  @NonNull
+  default IBoundInstanceFlag getInlineInstance() {
+    return this;
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * This is an inline instance that is both a definition and an instance. Don't
+   * delegate to the definition, since this would be redundant.
+   */
+  @Override
+  @NonNull
+  default String getEffectiveName() {
+    String useName = getUseName();
+    return useName == null ? getName() : useName;
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Use the effective name of the instance.
+   */
+  @Override
+  @NonNull
+  default String getJsonName() {
+    return IFlagInstance.super.getJsonName();
+  }
+
+  @Override
+  @NonNull
+  default IBoundModule getContainingModule() {
+    return IBoundModuleInstance.super.getContainingModule();
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * This is an inline instance that is both a definition and an instance. Don't
+   * delegate to the definition, since this would be redundant.
+   */
+  @Override
+  @Nullable
+  default Object getEffectiveDefaultValue() {
+    return getDefaultValue();
+  }
+
+  /**
+   * Generates a "coordinate" string for the inline flag instance.
+   *
+   * The coordinates consist of the:
+   * <ul>
+   * <li>containing Metaschema module's short name</li>
+   * <li>name</li>
+   * <li>hash code</li>
+   * </ul>
+   *
+   * @return the coordinate
+   */
+  @Override
+  @NonNull
+  default String toCoordinates() {
+    IDefinition definition = getDefinition();
+    return ObjectUtils.notNull(String.format("Inline Flag(%s:%s:%d)",
+        getContainingDefinition().getContainingModule().getShortName(),
+        definition.getName(),
+        hashCode()));
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Always bound to a field.
+   */
+  @Override
+  @Nullable
+  default Object getValue(@NonNull Object parent) {
+    return IFeatureJavaField.super.getValue(parent);
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Always bound to a field.
+   */
+  @Override
+  default void setValue(@NonNull Object parentObject, @Nullable Object value) {
+    IFeatureJavaField.super.setValue(parentObject, value);
+  }
+
+  @Override
+  default void deepCopy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException {
+    Object value = getValue(fromInstance);
+    if (value != null) {
+      setValue(toInstance, deepCopyItem(value, toInstance));
+    }
+  }
+
+  @Override
+  @NonNull
+  default Object readItem(@Nullable Object parent, @NonNull IItemReadHandler handler) throws IOException {
+    return handler.readItemFlag(ObjectUtils.requireNonNull(parent, "parent"), this);
+  }
+
+  @Override
+  default boolean canHandleJsonPropertyName(@NonNull String name) {
+    return name.equals(getJsonName());
+  }
+
+  @Override
+  default boolean canHandleXmlQName(@NonNull QName qname) {
+    return qname.equals(getXmlQName());
+  }
 }

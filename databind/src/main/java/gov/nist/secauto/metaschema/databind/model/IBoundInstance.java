@@ -26,10 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
+/**
+ * Represents a Metaschema module instance bound to Java data.
+ */
 public interface IBoundInstance extends IBoundProperty {
-  @Override
-  @NonNull
-  IBindingInstance getInstanceBinding();
+  // no additional methods
 }

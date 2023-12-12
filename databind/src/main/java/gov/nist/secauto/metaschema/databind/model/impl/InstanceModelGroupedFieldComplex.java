@@ -32,9 +32,6 @@ import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
-import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
-
-import java.io.IOException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -52,15 +49,9 @@ public class InstanceModelGroupedFieldComplex
     this.definition = definition;
   }
 
-  @Override
-  public InstanceModelGroupedFieldComplex getInstanceBinding() {
-    return this;
-  }
-
-  @Override
-  public InstanceModelGroupedFieldComplex getInstance() {
-    return this;
-  }
+  // ------------------------------------------
+  // - Start annotation driven code - CPD-OFF -
+  // ------------------------------------------
 
   @Override
   public DefinitionField getDefinition() {
@@ -102,8 +93,7 @@ public class InstanceModelGroupedFieldComplex
     return getAnnotation().binding();
   }
 
-  @Override
-  public Object readItem(Object parent, IItemReadHandler handler) throws IOException {
-    return getDefinition().readItem(parent, handler);
-  }
+  // ----------------------------------------
+  // - End annotation driven code - CPD-OFF -
+  // ----------------------------------------
 }

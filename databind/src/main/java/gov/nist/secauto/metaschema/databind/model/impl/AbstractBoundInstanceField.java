@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelField;
@@ -36,6 +37,10 @@ import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
 import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -45,6 +50,14 @@ public abstract class AbstractBoundInstanceField
   @NonNull
   private final IGroupAs groupAs;
 
+  /**
+   * Construct a new field instance bound to a Java field.
+   *
+   * @param javaField
+   *          the Java field bound to this instance
+   * @param containingDefinition
+   *          the definition containing this instance
+   */
   protected AbstractBoundInstanceField(
       @NonNull Field javaField,
       @NonNull IBoundDefinitionAssembly containingDefinition) {
@@ -119,12 +132,18 @@ public abstract class AbstractBoundInstanceField
   }
 
   @Override
+  public Map<QName, Set<String>> getProperties() {
+    // TODO: implement
+    return CollectionUtil.emptyMap();
+  }
+
+  @Override
   public MarkupMultiline getRemarks() {
     return ModelUtil.resolveToMarkupMultiline(getAnnotation().remarks());
   }
 
-  @Override
-  public String getJsonKeyFlagName() {
-    return IBoundInstanceModelField.super.getJsonKeyFlagName();
-  }
+  // @Override
+  // public String getJsonKeyFlagName() {
+  // return IBoundInstanceModelField.super.getJsonKeyFlagName();
+  // }
 }

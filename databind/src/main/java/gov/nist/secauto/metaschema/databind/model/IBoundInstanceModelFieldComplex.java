@@ -26,18 +26,62 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
+
+import java.io.IOException;
 
 public interface IBoundInstanceModelFieldComplex
     extends IBoundInstanceModelField,
-    IBindingInstanceModelField,
     IFeatureComplexItemValueHandler {
 
   @Override
-  default Object getValue(Object parent) {
-    return IBindingInstanceModelField.super.getValue(parent);
+  default IBoundInstanceModelFieldComplex getInstance() {
+    return this;
   }
 
   @Override
-  String getJsonKeyFlagName();
+  IBoundDefinitionFieldComplex getDefinition();
+
+  @Override
+  default String getJsonKeyFlagName() {
+    return IBoundInstanceModelField.super.getJsonKeyFlagName();
+  }
+
+  @Override
+  default Object getValue(Object parent) {
+    return IBoundInstanceModelField.super.getValue(parent);
+  }
+
+  @Override
+  default void setValue(Object parentObject, Object value) {
+    IBoundInstanceModelField.super.setValue(parentObject, value);
+  }
+
+  @Override
+  default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+    return handler.readItemField(ObjectUtils.requireNonNull(parent, "parent"), this);
+  }
+
+  @Override
+  default Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
+    return getDefinition().deepCopyItem(item, parentInstance);
+  }
+
+  @Override
+  default Class<?> getBoundClass() {
+    return getDefinition().getBoundClass();
+  }
+
+  @Override
+  default void callBeforeDeserialize(Object targetObject, Object parentObject) throws BindingException {
+    getDefinition().callBeforeDeserialize(targetObject, parentObject);
+  }
+
+  @Override
+  default void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
+    getDefinition().callAfterDeserialize(targetObject, parentObject);
+  }
 }

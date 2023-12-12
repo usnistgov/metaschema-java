@@ -56,7 +56,7 @@ abstract class AbstractSerializationBase<T extends IConfigurationFeature<?>>
    */
   @NonNull
   protected IBindingContext getBindingContext() {
-    return getDefinition().getDefinitionBinding().getBindingContext();
+    return getDefinition().getBindingContext();
   }
 
   /**

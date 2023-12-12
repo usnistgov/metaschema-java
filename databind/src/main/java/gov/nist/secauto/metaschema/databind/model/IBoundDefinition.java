@@ -27,13 +27,25 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundDefinition extends IDefinition {
+/**
+ * Represents a Metaschema module definition bound to Java data.
+ */
+public interface IBoundDefinition extends IDefinition, IBinding {
+  /**
+   * Get the binding context used for the definition.
+   *
+   * @return the binding context
+   */
   @NonNull
-  IBindingDefinition getDefinitionBinding();
+  IBindingContext getBindingContext();
 
+  /**
+   * Get the Metaschema module containing this definition.
+   */
   @Override
   IBoundModule getContainingModule();
 }
