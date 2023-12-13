@@ -193,6 +193,11 @@ public abstract class AbstractBoundModule
     return retval;
   }
 
+  /**
+   * Get the mapping of assembly definition effective name to definition.
+   *
+   * @return the mapping
+   */
   protected Map<String, IBoundDefinitionAssembly> getAssemblyDefinitionMap() {
     return assemblyDefinitions.get();
   }
@@ -208,6 +213,11 @@ public abstract class AbstractBoundModule
     return getAssemblyDefinitionMap().get(name);
   }
 
+  /**
+   * Get the mapping of field definition effective name to definition.
+   *
+   * @return the mapping
+   */
   protected Map<String, IBoundDefinitionField> getFieldDefinitionMap() {
     return fieldDefinitions.get();
   }
@@ -223,22 +233,16 @@ public abstract class AbstractBoundModule
     return getFieldDefinitionMap().get(name);
   }
 
-  @NonNull
-  public Map<String, IBoundDefinitionFlag> getFlagDefinitionMap() {
-    // Flags are always inline
-    return CollectionUtil.emptyMap();
-  }
-
   @SuppressWarnings("null")
   @Override
   public Collection<IBoundDefinitionFlag> getFlagDefinitions() {
-    // FlagContainer are always inline
+    // Flags are always inline, so they do not have separate definitions
     return Collections.emptyList();
   }
 
   @Override
-  public IBoundDefinitionFlag getFlagDefinitionByName(@NonNull String name) { // NOPMD - intentional
-    // FlagContainer are always inline
+  public IBoundDefinitionFlag getFlagDefinitionByName(@NonNull String name) {
+    // Flags are always inline, so they do not have separate definitions
     return null;
   }
 }

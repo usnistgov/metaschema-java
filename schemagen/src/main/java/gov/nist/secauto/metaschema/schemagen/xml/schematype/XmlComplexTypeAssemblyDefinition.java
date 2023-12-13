@@ -119,11 +119,10 @@ public class XmlComplexTypeAssemblyDefinition
       break;
     case FIELD: {
       IFieldInstance fieldInstance = (IFieldInstance) modelInstance;
-      if (!fieldInstance.isInXmlWrapped()
-          && fieldInstance.getDefinition().getJavaTypeAdapter().isUnrappedValueAllowedInXml()) {
-        generateUnwrappedFieldInstance(fieldInstance, grouped, state);
-      } else {
+      if (fieldInstance.isValueWrappedInXml()) {
         generateNamedModelInstance(fieldInstance, grouped, state);
+      } else {
+        generateUnwrappedFieldInstance(fieldInstance, grouped, state);
       }
       break;
     }

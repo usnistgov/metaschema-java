@@ -33,6 +33,10 @@ import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 
 import java.io.IOException;
 
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IBoundInstanceModelFieldComplex
     extends IBoundInstanceModelField,
     IFeatureComplexItemValueHandler {
@@ -44,6 +48,18 @@ public interface IBoundInstanceModelFieldComplex
 
   @Override
   IBoundDefinitionFieldComplex getDefinition();
+
+  @Override
+  default boolean isValueWrappedInXml() {
+    // always wrapped
+    return true;
+  }
+
+  @Override
+  @NonNull
+  default QName getXmlQName() {
+    return ObjectUtils.notNull(IBoundInstanceModelField.super.getXmlQName());
+  }
 
   @Override
   default String getJsonKeyFlagName() {

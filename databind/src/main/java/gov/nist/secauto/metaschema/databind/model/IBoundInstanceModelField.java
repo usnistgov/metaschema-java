@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.impl.DefinitionField;
 import gov.nist.secauto.metaschema.databind.model.impl.InstanceModelFieldComplex;
@@ -79,9 +78,7 @@ public interface IBoundInstanceModelField extends IBoundInstanceModelNamed, IFie
   @Override
   default boolean canHandleXmlQName(QName qname) {
     boolean retval;
-    if (XmlGroupAsBehavior.GROUPED.equals(getXmlGroupAsBehavior())) {
-      retval = qname.equals(getXmlGroupAsQName());
-    } else if (isValueWrappedInXml()) {
+    if (isValueWrappedInXml()) {
       retval = qname.equals(getXmlQName());
     } else {
       IDataTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();

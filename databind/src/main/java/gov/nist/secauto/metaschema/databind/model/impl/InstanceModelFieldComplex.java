@@ -67,7 +67,7 @@ public class InstanceModelFieldComplex
     super(javaField, containingDefinition);
     this.definition = definition;
 
-    if (!isInXmlWrapped()) {
+    if (!isValueWrappedInXml()) {
       if (!definition.isSimple()) { // NOPMD efficiency
         throw new IllegalStateException(
             String.format("Field '%s' on class '%s' is requested to be unwrapped, but it has flags preventing this.",

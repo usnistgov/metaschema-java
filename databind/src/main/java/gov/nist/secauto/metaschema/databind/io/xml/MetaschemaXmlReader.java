@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
@@ -40,9 +41,10 @@ import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldScalar;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
@@ -70,7 +72,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class MetaschemaXmlReader
-    implements IXmlParsingContext, IItemReadHandler {
+    implements IXmlParsingContext {
   @NonNull
   private final XMLEventReader2 reader;
   @NonNull
@@ -138,6 +140,7 @@ public class MetaschemaXmlReader
       XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.START_DOCUMENT);
     }
 
+    // advance past any other info to get to next start element
     XmlEventUtil.skipEvents(reader, XMLStreamConstants.CHARACTERS, XMLStreamConstants.PROCESSING_INSTRUCTION);
 
     XMLEvent event = ObjectUtils.requireNonNull(reader.peek());
@@ -150,9 +153,6 @@ public class MetaschemaXmlReader
     } else if (XmlEventUtil.isEventStartElement(event, rootQName) && targetDefinition.canHandleXmlQName(rootQName)) {
       ItemReadHandler handler = new ItemReadHandler(ObjectUtils.notNull(event.asStartElement()));
       retval = ObjectUtils.asType(targetDefinition.readItem(null, handler));
-
-      // consume the end element
-      XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, rootQName);
     } else {
       throw new IOException(
           String.format("XML element not '%s'%s.",
@@ -225,45 +225,25 @@ public class MetaschemaXmlReader
    *          the Java object that data parsed by this method will be stored in
    * @throws IOException
    *           if an error occurred while parsing the input
-   * @throws XMLStreamException
-   *           if an error occurred while parsing XML events
    */
   protected void readModelInstances(
       @NonNull IBoundDefinitionAssembly targetDefinition,
       @NonNull Object targetObject)
-      throws IOException, XMLStreamException {
+      throws IOException {
     Set<IBoundInstanceModel> unhandledProperties = new HashSet<>();
     for (IBoundInstanceModel modelInstance : targetDefinition.getModelInstances()) {
       assert modelInstance != null;
-      if (!readModelInstanceItems(modelInstance, targetObject)) {
-        unhandledProperties.add(modelInstance);
+      try {
+        if (!readModelInstanceItems(modelInstance, targetObject)) {
+          unhandledProperties.add(modelInstance);
+        }
+      } catch (XMLStreamException ex) {
+        throw new IOException(ex);
       }
     }
 
     // process all properties that did not get a value
     getProblemHandler().handleMissingModelInstances(targetDefinition, targetObject, unhandledProperties);
-  }
-
-  /**
-   * Read the XML element and text data described by the {@code targetDefinition}
-   * and apply it to the provided {@code targetObject}.
-   *
-   * @param targetDefinition
-   *          the Module definition that describes the syntax of the data to read
-   * @param targetObject
-   *          the Java object that data parsed by this method will be stored in
-   * @throws IOException
-   *           if an error occurred while parsing the input
-   */
-  protected void readFieldValue(
-      @NonNull IBoundDefinitionFieldComplex targetDefinition,
-      @NonNull Object targetObject)
-      throws IOException {
-    IBoundFieldValue fieldValue = targetDefinition.getFieldValue();
-
-    // parse the value
-    Object value = fieldValue.getJavaTypeAdapter().parse(reader);
-    fieldValue.setValue(targetObject, value);
   }
 
   /**
@@ -317,13 +297,12 @@ public class MetaschemaXmlReader
     if (handled) {
       // XmlEventUtil.skipWhitespace(reader);
 
-      StartElement currentStart = reader.peek().asStartElement();
-
+      StartElement start = ObjectUtils.notNull(reader.peek().asStartElement());
       QName groupQName = instance.getXmlGroupAsQName();
       if (groupQName != null) {
-        // we are to parse the grouping element, if the next token matches
-        XMLEvent groupEvent = XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.START_ELEMENT, groupQName);
-        currentStart = ObjectUtils.notNull(groupEvent.asStartElement());
+        // we need to parse the grouping element, if the next token matches
+        XMLEvent groupEvent = XmlEventUtil.requireStartElement(reader, groupQName);
+        start = ObjectUtils.notNull(groupEvent.asStartElement());
       }
 
       IModelInstanceCollectionInfo collectionInfo = instance.getCollectionInfo();
@@ -331,7 +310,7 @@ public class MetaschemaXmlReader
       ModelInstanceReadHandler handler = new ModelInstanceReadHandler(
           collectionInfo,
           parentObject,
-          currentStart);
+          start);
 
       // let the property info decide how to parse the value
       Object value = collectionInfo.readItems(handler);
@@ -344,64 +323,10 @@ public class MetaschemaXmlReader
 
       if (groupQName != null) {
         // consume the end of the group
-        XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, groupQName);
+        XmlEventUtil.requireEndElement(reader, groupQName);
       }
     }
     return handled;
-  }
-
-  /**
-   * Read the XML data associated with the {@code instance} and apply it to the
-   * provided {@code parentObject}.
-   *
-   * @param instance
-   *          the instance to parse data for
-   * @param parentObject
-   *          the Java object that data parsed by this method will be stored in
-   * @param start
-   *          the XML element start and attribute data previously parsed
-   * @return the Java object read, or {@code null} if no data was read
-   * @throws IOException
-   *           if an error occurred while parsing the input
-   */
-  @Override
-  public <T> T readModelInstanceValueDispatch(
-      IBoundInstanceModel instance,
-      Object parentObject,
-      StartElement start) throws IOException {
-    // figure out if we need to parse the wrapper or not
-
-    try {
-      XMLEvent event;
-      StartElement wrapper = null;
-      if (instance.isValueWrappedInXml() && instance.canHandleXmlQName(start.getName())) {
-        // Consume the start element
-        reader.nextEvent();
-        wrapper = start;
-        event = reader.peek();
-
-        // consume extra whitespace between elements
-        XmlEventUtil.skipWhitespace(reader);
-      } else {
-        event = start;
-      }
-
-      Object retval = null;
-      if (wrapper != null
-          || ((event.isStartElement() && instance.canHandleXmlQName(event.asStartElement().getName())))) {
-        // consume the value
-        ItemReadHandler handler = new ItemReadHandler(reader.nextEvent().asStartElement());
-        retval = instance.readItem(parentObject, handler);
-      }
-
-      if (wrapper != null) {
-        // consume the end element
-        XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, wrapper.getName());
-      }
-      return ObjectUtils.asNullableType(retval);
-    } catch (XMLStreamException ex) {
-      throw new IOException(ex);
-    }
   }
 
   private class ModelInstanceReadHandler
@@ -443,7 +368,7 @@ public class MetaschemaXmlReader
 
                 IBoundInstanceFlag jsonKey = instance.getItemJsonKey(item);
                 assert jsonKey != null;
-                return jsonKey.getValue(item).toString();
+                return ObjectUtils.requireNonNull(jsonKey.getValue(item)).toString();
               },
               Function.identity(),
               (t, u) -> u,
@@ -456,7 +381,6 @@ public class MetaschemaXmlReader
 
       List<Object> retval = new LinkedList<>();
       try {
-        // TODO: is this needed?
         // consume extra whitespace between elements
         XmlEventUtil.skipWhitespace(eventReader);
 
@@ -467,9 +391,7 @@ public class MetaschemaXmlReader
 
           // Consume the start element
           Object value = readItem();
-          if (value != null) {
-            retval.add(value);
-          }
+          retval.add(value);
 
           // consume extra whitespace between elements
           XmlEventUtil.skipWhitespace(eventReader);
@@ -482,10 +404,14 @@ public class MetaschemaXmlReader
 
     @Override
     public Object readItem() throws IOException {
-      IBoundInstanceModel instance = getCollectionInfo().getInstance();
-      Object parentObject = getParentObject();
-      StartElement start = getStartElement();
-      return readModelInstanceValueDispatch(instance, parentObject, start);
+      try {
+        StartElement startElement = getReader().peek().asStartElement();
+        ItemReadHandler handler = new ItemReadHandler(startElement);
+        IBoundInstanceModel instance = getCollectionInfo().getInstance();
+        return instance.readItem(getParentObject(), handler);
+      } catch (XMLStreamException ex) {
+        throw new IOException(ex);
+      }
     }
   }
 
@@ -505,6 +431,42 @@ public class MetaschemaXmlReader
       return startElement;
     }
 
+    @NonNull
+    private <DEF extends IBoundDefinitionModelComplex> Object readDefinitionElement(
+        @NonNull DEF definition,
+        @NonNull StartElement start,
+        @NonNull QName expectedQName,
+        @Nullable Object parent,
+        @NonNull DefinitionBodyHandler<DEF> bodyHandler) throws IOException {
+      try {
+        // consume the start element
+        XmlEventUtil.requireStartElement(reader, expectedQName);
+
+        // construct the item
+        Object item = definition.newInstance();
+
+        // call pre-parse initialization hook
+        definition.callBeforeDeserialize(item, parent);
+
+        // read the flags
+        readFlagInstances(definition, item, start);
+
+        // read the body
+        bodyHandler.accept(definition, item);
+
+        XmlEventUtil.skipWhitespace(reader);
+
+        // call post-parse initialization hook
+        definition.callAfterDeserialize(item, parent);
+
+        // consume the end element
+        XmlEventUtil.requireEndElement(reader, expectedQName);
+        return ObjectUtils.asType(item);
+      } catch (BindingException | XMLStreamException ex) {
+        throw new IOException(ex);
+      }
+    }
+
     @Override
     public Object readItemFlag(
         Object parent,
@@ -512,27 +474,77 @@ public class MetaschemaXmlReader
       throw new UnsupportedOperationException("handled by readFlagInstances()");
     }
 
-    @Override
-    public Object readItemField(
-        Object parent,
-        IBoundInstanceModelFieldScalar field)
-        throws IOException {
-      return readScalarItem(field);
+    private void handleFieldDefinitionBody(
+        @NonNull IBoundDefinitionFieldComplex definition,
+        @NonNull Object item) throws IOException {
+      IBoundFieldValue fieldValue = definition.getFieldValue();
+
+      // parse the value
+      Object value = fieldValue.readItem(item, this);
+      fieldValue.setValue(item, value);
     }
 
     @Override
     public Object readItemField(
         Object parent,
-        IBoundInstanceModelFieldComplex field)
+        IBoundInstanceModelFieldScalar instance)
         throws IOException {
-      return readComplexItem(parent, field);
+
+      try {
+        QName wrapper = null;
+        if (instance.isValueWrappedInXml()) {
+          wrapper = new QName(instance.getXmlNamespace(), instance.getEffectiveName());
+
+          XmlEventUtil.skipWhitespace(getReader());
+          XmlEventUtil.requireStartElement(getReader(), wrapper);
+        }
+
+        Object retval = readScalarItem(instance);
+
+        if (wrapper != null) {
+          XmlEventUtil.skipWhitespace(getReader());
+
+          XmlEventUtil.requireEndElement(getReader(), wrapper);
+        }
+        return retval;
+      } catch (XMLStreamException ex) {
+        throw new IOException(ex);
+      }
     }
 
     @Override
     public Object readItemField(
         Object parent,
-        IBoundDefinitionFieldComplex field) throws IOException {
-      return readComplexItem(parent, field);
+        IBoundInstanceModelFieldComplex instance)
+        throws IOException {
+      return readDefinitionElement(
+          instance.getDefinition(),
+          getStartElement(),
+          instance.getXmlQName(),
+          parent,
+          this::handleFieldDefinitionBody);
+    }
+
+    @Override
+    public Object readItemField(Object parent, IBoundInstanceModelGroupedField instance) throws IOException {
+      return readDefinitionElement(
+          instance.getDefinition(),
+          getStartElement(),
+          instance.getXmlQName(),
+          parent,
+          this::handleFieldDefinitionBody);
+    }
+
+    @Override
+    public Object readItemField(
+        Object parent,
+        IBoundDefinitionFieldComplex definition) throws IOException {
+      return readDefinitionElement(
+          definition,
+          getStartElement(),
+          definition.getXmlQName(),
+          parent,
+          this::handleFieldDefinitionBody);
     }
 
     @Override
@@ -542,18 +554,44 @@ public class MetaschemaXmlReader
       return readScalarItem(fieldValue);
     }
 
-    @Override
-    public Object readItemAssembly(
-        Object parent,
-        IBoundInstanceModelAssembly assembly) throws IOException {
-      return readComplexItem(parent, assembly);
+    private void handleAssemblyDefinitionBody(
+        @NonNull IBoundDefinitionAssembly definition,
+        @NonNull Object item) throws IOException {
+      readModelInstances(definition, item);
     }
 
     @Override
     public Object readItemAssembly(
         Object parent,
-        IBoundDefinitionAssembly assembly) throws IOException {
-      return readComplexItem(parent, assembly);
+        IBoundInstanceModelAssembly instance) throws IOException {
+      return readDefinitionElement(
+          instance.getDefinition(),
+          getStartElement(),
+          instance.getXmlQName(),
+          parent,
+          this::handleAssemblyDefinitionBody);
+    }
+
+    @Override
+    public Object readItemAssembly(Object parent, IBoundInstanceModelGroupedAssembly instance) throws IOException {
+      return readDefinitionElement(
+          instance.getDefinition(),
+          getStartElement(),
+          instance.getXmlQName(),
+          parent,
+          this::handleAssemblyDefinitionBody);
+    }
+
+    @Override
+    public Object readItemAssembly(
+        Object parent,
+        IBoundDefinitionAssembly definition) throws IOException {
+      return readDefinitionElement(
+          definition,
+          getStartElement(),
+          ObjectUtils.requireNonNull(definition.getRootXmlQName()),
+          parent,
+          this::handleAssemblyDefinitionBody);
     }
 
     @NonNull
@@ -562,80 +600,28 @@ public class MetaschemaXmlReader
       return handler.getJavaTypeAdapter().parse(getReader());
     }
 
-    @NonNull
-    private Object readComplexItem(
-        @Nullable Object parent,
-        @NonNull IFeatureComplexItemValueHandler handler)
-        throws IOException {
-
-      StartElement start = getStartElement();
-      IBoundDefinitionModel definition = handler.getDefinition();
-
-      Object targetObject;
-      try {
-        targetObject = handler.newInstance();
-        handler.callBeforeDeserialize(targetObject, parent);
-      } catch (BindingException ex) {
-        throw new IOException(ex);
-      }
-
-      try {
-        readFlagInstances(definition, targetObject, start);
-
-        if (definition instanceof IBoundDefinitionAssembly) {
-          readModelInstances((IBoundDefinitionAssembly) definition, targetObject);
-        } else if (definition instanceof IBoundDefinitionFieldComplex) {
-          IBoundFieldValue fieldValue = ((IBoundDefinitionFieldComplex) definition).getFieldValue();
-
-          // parse the value
-          Object value = fieldValue.readItem(parent, this);
-          fieldValue.setValue(targetObject, value);
-        } else {
-          throw new UnsupportedOperationException(
-              String.format("Unsupported class binding type: %s", definition.getClass().getName()));
-        }
-
-        XmlEventUtil.skipWhitespace(reader);
-
-        // XMLEvent nextEvent = ObjectUtils.notNull(reader.peek());
-        // if (!XmlEventUtil.isEventEndElement(nextEvent,
-        // ObjectUtils.notNull(start.getName()))) {
-        // throw new IOException(
-        // String.format("Unrecognized content %s.",
-        // XmlEventUtil.toString(nextEvent)));
-        // }
-      } catch (XMLStreamException ex) {
-        throw new IOException(ex);
-      }
-
-      try {
-        handler.callAfterDeserialize(targetObject, parent);
-      } catch (BindingException ex) {
-        throw new IOException(ex);
-      }
-      return ObjectUtils.asType(targetObject);
-    }
-
     @Override
     public Object readChoiceGroupItem(Object parent, IBoundInstanceModelChoiceGroup instance) throws IOException {
-      Map<QName, IBoundInstanceModelGroupedNamed> qnameToInstanceMap = instance.getQNameToInstanceMap();
-
       try {
         XMLEventReader2 eventReader = getReader();
         // consume extra whitespace between elements
         XmlEventUtil.skipWhitespace(eventReader);
 
         XMLEvent event = eventReader.peek();
-        QName nextQName = event.asStartElement().getName();
-        IBoundInstanceModelGroupedNamed actualInstance = qnameToInstanceMap.get(nextQName);
+        QName nextQName = ObjectUtils.notNull(event.asStartElement().getName());
+        IBoundInstanceModelGroupedNamed actualInstance = instance.getGroupedModelInstance(nextQName);
+        assert actualInstance != null;
         return actualInstance.readItem(parent, this);
-        // return
-        // ObjectUtils.requireNonNull(readModelInstanceValueDispatch(actualInstance,
-        // parent, startElement));
       } catch (XMLStreamException ex) {
         throw new IOException(ex);
       }
     }
   }
 
+  @FunctionalInterface
+  private interface DefinitionBodyHandler<DEF extends IBoundDefinitionModelComplex> {
+    void accept(
+        @NonNull DEF definition,
+        @NonNull Object item) throws IOException;
+  }
 }

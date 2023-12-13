@@ -26,8 +26,20 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IAssemblyInstanceBase extends INamedModelInstanceBase, IAssembly {
 
   @Override
   IAssemblyDefinition getDefinition();
+
+  @Override
+  @NonNull
+  default QName getXmlQName() {
+    return ObjectUtils.notNull(INamedModelInstanceBase.super.getXmlQName());
+  }
 }

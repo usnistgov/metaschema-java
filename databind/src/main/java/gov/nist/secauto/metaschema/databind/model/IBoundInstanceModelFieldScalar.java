@@ -35,7 +35,6 @@ import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 import java.io.IOException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IBoundInstanceModelFieldScalar
     extends IBoundInstanceModelField,
@@ -104,18 +103,6 @@ public interface IBoundInstanceModelFieldScalar
   @NonNull
   default IBoundModule getContainingModule() {
     return IBoundInstanceModelField.super.getContainingModule();
-  }
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * This is an inline instance that is both a definition and an instance. Don't
-   * delegate to the definition, since this would be redundant.
-   */
-  @Override
-  @Nullable
-  default Object getEffectiveDefaultValue() {
-    return getDefaultValue();
   }
 
   @Override

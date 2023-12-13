@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -43,11 +41,6 @@ public interface IFeatureJavaField {
    */
   @NonNull
   Field getField();
-
-  @NonNull
-  default String getJavaFieldName() {
-    return ObjectUtils.notNull(getField().getName());
-  }
 
   /**
    * Get the actual Java type of the underlying bound object.

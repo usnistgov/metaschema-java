@@ -32,7 +32,7 @@ public interface IFieldInstance extends IFieldInstanceBase, INamedModelInstance 
 
   @Override
   default QName getXmlQName() {
-    return isInXmlWrapped() ? INamedModelInstance.super.getXmlQName() : null;
+    return isValueWrappedInXml() ? INamedModelInstance.super.getXmlQName() : null;
   }
 
   /**

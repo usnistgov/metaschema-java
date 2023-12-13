@@ -75,7 +75,8 @@ class SingletonCollectionInfo
 
   @Override
   public Object readItems(IModelInstanceReadHandler handler) throws IOException {
-    return handler.readSingleton();
+    Object value = handler.readSingleton();
+    return value == null ? emptyValue() : value;
   }
 
   @Override

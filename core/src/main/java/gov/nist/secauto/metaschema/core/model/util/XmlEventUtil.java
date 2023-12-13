@@ -26,9 +26,12 @@
 
 package gov.nist.secauto.metaschema.core.model.util;
 
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamReader2;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -117,7 +120,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
       retval = "EOF";
     } else {
       @SuppressWarnings("null")
-      @NonNull StringBuilder builder = new StringBuilder()
+      @NonNull
+      StringBuilder builder = new StringBuilder()
           .append(toEventName(xmlEvent));
       QName name = toQName(xmlEvent);
       if (name != null) {
@@ -168,7 +172,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
     int type = reader.getEventType();
 
     @SuppressWarnings("null")
-    @NonNull StringBuilder builder = new StringBuilder().append(toEventName(type));
+    @NonNull
+    StringBuilder builder = new StringBuilder().append(toEventName(type));
     QName name = reader.getName();
     if (name != null) {
       builder.append(": ").append(name.toString());
@@ -326,7 +331,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   @SuppressWarnings("null")
   @NonNull
   public static XMLEvent skipWhitespace(@NonNull XMLEventReader2 reader) throws XMLStreamException {
-    @NonNull XMLEvent nextEvent;
+    @NonNull
+    XMLEvent nextEvent;
     while ((nextEvent = reader.peek()).isCharacters()) {
       Characters characters = nextEvent.asCharacters();
       String data = characters.getData();
@@ -431,6 +437,34 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
                 presumedEventType,
                 presumedName);
     return retval;
+  }
+
+  @NonNull
+  public static StartElement requireStartElement(
+      @NonNull XMLEventReader2 reader,
+      @NonNull QName presumedName) throws IOException, XMLStreamException {
+    XMLEvent retval = reader.nextEvent();
+    if (!(retval.isStartElement() && presumedName.equals(retval.asStartElement().getName()))) {
+      throw new IOException(generateExpectedMessage(
+          retval,
+          XMLStreamConstants.START_ELEMENT,
+          presumedName).toString());
+    }
+    return ObjectUtils.notNull(retval.asStartElement());
+  }
+
+  @NonNull
+  public static EndElement requireEndElement(
+      @NonNull XMLEventReader2 reader,
+      @NonNull QName presumedName) throws IOException, XMLStreamException {
+    XMLEvent retval = reader.nextEvent();
+    if (!(retval.isEndElement() && presumedName.equals(retval.asEndElement().getName()))) {
+      throw new IOException(generateExpectedMessage(
+          retval,
+          XMLStreamConstants.END_ELEMENT,
+          presumedName).toString());
+    }
+    return ObjectUtils.notNull(retval.asEndElement());
   }
 
   /**

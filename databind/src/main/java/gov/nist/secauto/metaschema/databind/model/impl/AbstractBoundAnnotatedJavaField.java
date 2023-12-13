@@ -33,12 +33,20 @@ import java.lang.reflect.Field;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractBoundAnnotatedJavaField<A extends Annotation> implements IFeatureBoundField {
+public abstract class AbstractBoundAnnotatedJavaField<A extends Annotation> {
   @NonNull
   private final Field javaField;
   @NonNull
   private final A annotation;
 
+  /**
+   * Construct a new binding between a Java field and a binding Java annotation.
+   *
+   * @param javaField
+   *          the bound Java field
+   * @param annotationClass
+   *          the binding annotation Java class
+   */
   protected AbstractBoundAnnotatedJavaField(
       @NonNull Field javaField,
       @NonNull Class<A> annotationClass) {
@@ -46,11 +54,22 @@ public abstract class AbstractBoundAnnotatedJavaField<A extends Annotation> impl
     this.annotation = ModelUtil.getAnnotation(javaField, annotationClass);
   }
 
-  @Override
+  /**
+   * Get the bound Java field.
+   *
+   * @return the bound Java field
+   */
+  @NonNull
   public Field getField() {
     return javaField;
   }
 
+  /**
+   * Get the binding Java annotation.
+   *
+   * @return the binding Java annotation
+   */
+  @NonNull
   public A getAnnotation() {
     return annotation;
   }

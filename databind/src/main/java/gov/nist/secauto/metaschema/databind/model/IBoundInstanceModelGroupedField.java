@@ -37,6 +37,8 @@ import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -82,6 +84,12 @@ public interface IBoundInstanceModelGroupedField
 
   @Override
   IBoundDefinitionFieldComplex getDefinition();
+
+  @Override
+  @NonNull
+  default QName getXmlQName() {
+    return ObjectUtils.notNull(IBoundInstanceModelGroupedNamed.super.getXmlQName());
+  }
 
   @Override
   default Object readItem(@Nullable Object parent, @NonNull IItemReadHandler handler) throws IOException {

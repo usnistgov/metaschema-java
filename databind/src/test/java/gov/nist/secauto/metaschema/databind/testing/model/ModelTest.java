@@ -228,17 +228,17 @@ class ModelTest
       IBindingContext context = new DefaultBindingContext();
 
       String xml = new StringBuilder()
-          .append("<root-assembly-with-fields xmlns='https://csrc.nist.gov/ns/test/xml'>")
-          .append("  <defaultField>value1</defaultField>")
-          .append("  <fields2>")
-          .append("    <field2>value2</field2>")
-          .append("    <field2>value3</field2>")
-          .append("  </fields2>")
-          .append("  <field-value-key>value4</field-value-key>")
-          .append("  <field-default-value-key>value5</field-default-value-key>")
-          .append("  <field-flag-value-key flag='flag-value3'>value6</field-flag-value-key>")
-          .append("  <field-json-key key='flag-value4' valueKey='flag-value5'>value7</field-json-key>")
-          .append("</root-assembly-with-fields>")
+          .append("<root-assembly-with-fields xmlns='https://csrc.nist.gov/ns/test/xml'>\n")
+          .append("  <defaultField>value1</defaultField>\n")
+          .append("  <fields2>\n")
+          .append("    <field2>value2</field2>\n")
+          .append("    <field2>value3</field2>\n")
+          .append("  </fields2>\n")
+          .append("  <field-value-key>value4</field-value-key>\n")
+          .append("  <field-default-value-key>value5</field-default-value-key>\n")
+          .append("  <field-flag-value-key flag='flag-value3'>value6</field-flag-value-key>\n")
+          .append("  <field-json-key key='flag-value4' valueKey='flag-value5'>value7</field-json-key>\n")
+          .append("</root-assembly-with-fields>\n")
           .toString();
 
       try (InputStream is = new ByteArrayInputStream(xml.getBytes())) {
