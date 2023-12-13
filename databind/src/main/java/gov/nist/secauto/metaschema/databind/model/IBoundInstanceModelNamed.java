@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 
 import java.util.Collection;
 
@@ -78,9 +77,7 @@ public interface IBoundInstanceModelNamed extends IBoundInstanceModel, INamedMod
 
   @Override
   default boolean canHandleXmlQName(QName qname) {
-    return XmlGroupAsBehavior.GROUPED.equals(getXmlGroupAsBehavior())
-        ? qname.equals(getXmlGroupAsQName())
-        : qname.equals(getXmlQName());
+    return qname.equals(getXmlQName());
   }
 
   @Override

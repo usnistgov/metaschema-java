@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly
 import java.math.BigInteger;
 
 // Used
-@MetaschemaAssembly(name = "flagged-assembly", moduleClass = TestMetaschema.class)
+@MetaschemaAssembly(name = "flagged-assembly", rootName = "flagged-assembly", moduleClass = TestMetaschema.class)
 public class FlaggedAssembly {
   @BoundFlag(useName = "id")
   private String id;

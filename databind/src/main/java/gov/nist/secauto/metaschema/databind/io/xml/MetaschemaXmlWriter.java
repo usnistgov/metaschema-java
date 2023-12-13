@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind.io.xml;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.databind.io.json.DefaultJsonProblemHandler;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionField;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
@@ -125,8 +125,8 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
         assert modelInstance != null;
         writeModelInstanceValues(modelInstance, targetObject, parentName);
       }
-    } else if (targetDefinition instanceof IBoundDefinitionField) {
-      IBoundFieldValue fieldValueInstance = ((IBoundDefinitionField) targetDefinition).getFieldValue();
+    } else if (targetDefinition instanceof IBoundDefinitionFieldComplex) {
+      IBoundFieldValue fieldValueInstance = ((IBoundDefinitionFieldComplex) targetDefinition).getFieldValue();
 
       Object value = fieldValueInstance.getValue(targetObject);
       if (value != null) {

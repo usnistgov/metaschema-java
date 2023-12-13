@@ -38,7 +38,9 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.AbstractBoundModelTestSupport;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelField;
+import gov.nist.secauto.metaschema.databind.model.test.FlaggedAssembly;
 import gov.nist.secauto.metaschema.databind.model.test.MultiFieldAssembly;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -53,6 +55,8 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 class XmlParserTest
     extends AbstractBoundModelTestSupport {
@@ -88,46 +92,39 @@ class XmlParserTest
 
     MultiFieldAssembly obj = new MultiFieldAssembly();
 
-    assertTrue(parser.readModelInstanceItems(field1Instance, obj, start));
-    assertFalse(parser.readModelInstanceItems(field2Instance, obj, start));
+    assertTrue(parser.readItems(field1Instance, obj, true));
+    assertFalse(parser.readItems(field2Instance, obj, true));
 
     assertEquals("field1value", obj.getField1());
     assertEquals(null, obj.getField2());
   }
 
-  // @Test
-  // @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
-  // void testXmlReadFlagProperty() throws JsonParseException, IOException,
-  // XMLStreamException {
-  // String xml = "<flagged-assembly xmlns='https://csrc.nist.gov/ns/test/xml'
-  // id='theId' number='1'/>";
-  // XMLInputFactory factory = XMLInputFactory.newInstance();
-  // assert factory instanceof WstxInputFactory;
-  // XMLEventReader2 eventReader = (XMLEventReader2)
-  // factory.createXMLEventReader(new StringReader(xml));
-  //
-  // IBindingContext bindingContext = getBindingContext();
-  // IBoundDefinitionAssembly assembly
-  // = ObjectUtils
-  // .requireNonNull(
-  // (IBoundDefinitionAssembly)
-  // bindingContext.getBoundDefinitionForClass(FlaggedAssembly.class));
-  //
-  // IBoundInstanceFlag idProperty = assembly.getFlagInstanceByName("id");
-  // assert idProperty != null;
-  //
-  // assertEquals(XMLStreamConstants.START_DOCUMENT,
-  // eventReader.nextEvent().getEventType());
-  // XMLEvent event = eventReader.nextEvent();
-  // assertEquals(XMLStreamConstants.START_ELEMENT, event.getEventType());
-  // StartElement start = event.asStartElement();
-  // assert start != null;
-  //
-  // MetaschemaXmlReader parser = new MetaschemaXmlReader(eventReader);
-  // FlaggedAssembly obj = parser.readDefinitionValue(assembly, null, start);
-  //
-  // assertEquals("theId", obj.getId());
-  // }
+  @Test
+  @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
+  void testXmlReadFlagProperty() throws JsonParseException, IOException,
+      XMLStreamException {
+    String xml = "<flagged-assembly xmlns='https://csrc.nist.gov/ns/test/xml' id='theId' number='1'/>";
+    XMLInputFactory factory = XMLInputFactory.newInstance();
+    assert factory instanceof WstxInputFactory;
+    XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
+
+    IBindingContext bindingContext = getBindingContext();
+    IBoundDefinitionAssembly assembly
+        = ObjectUtils
+            .requireNonNull(
+                (IBoundDefinitionAssembly) bindingContext.getBoundDefinitionForClass(FlaggedAssembly.class));
+
+    IBoundInstanceFlag idProperty = assembly.getFlagInstanceByName("id");
+    assert idProperty != null;
+
+    assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
+
+    MetaschemaXmlReader parser = new MetaschemaXmlReader(eventReader);
+    FlaggedAssembly obj = parser.read(assembly);
+
+    assertEquals("theId", obj.getId());
+    assertEquals(XMLStreamConstants.END_DOCUMENT, eventReader.nextEvent().getEventType());
+  }
 
   @Test
   void testXmlReadGroupedField() throws JsonParseException, IOException, XMLStreamException {
@@ -169,45 +166,11 @@ class XmlParserTest
 
     MultiFieldAssembly obj = new MultiFieldAssembly();
 
-    assertFalse(parser.readModelInstanceItems(field1Instance, obj, start));
-    assertTrue(parser.readModelInstanceItems(field2Instance, obj, start));
+    assertFalse(parser.readItems(field1Instance, obj, true));
+    assertTrue(parser.readItems(field2Instance, obj, true));
 
     assertEquals(null, obj.getField1());
     assertIterableEquals(Collections.singleton("field2value"),
         obj.getField2());
   }
-
-  // @Test
-  // void testReadField() throws JsonParseException, IOException,
-  // XMLStreamException {
-  // String xml = "<simple-field
-  // xmlns='http://example.com/ns'>theValue</simple-field>";
-  // XMLInputFactory factory = XMLInputFactory.newInstance();
-  // assert factory instanceof WstxInputFactory;
-  // XMLEventReader2 eventReader = (XMLEventReader2)
-  // factory.createXMLEventReader(new StringReader(xml));
-  //
-  // assertEquals(XMLStreamConstants.START_DOCUMENT,
-  // eventReader.nextEvent().getEventType());
-  // XMLEvent event = eventReader.nextEvent();
-  // assertEquals(XMLStreamConstants.START_ELEMENT, event.getEventType());
-  // StartElement start = event.asStartElement();
-  // // assertEquals("test", jsonParser.nextFieldName());
-  // // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-  // // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
-  // assert start != null;
-  //
-  // MetaschemaXmlReader parser = new MetaschemaXmlReader(eventReader);
-  //
-  // IBindingContext bindingContext = getBindingContext();
-  //
-  // IBoundDefinitionModelComplex field = ObjectUtils.requireNonNull(
-  // bindingContext.getBoundDefinitionForClass(ValueKeyField.class));
-  //
-  // ValueKeyField obj = (ValueKeyField) parser.readDefinitionValue(field, null,
-  // start);
-  //
-  // assertNotNull(obj);
-  // assertEquals("theValue", obj.getValue());
-  // }
 }

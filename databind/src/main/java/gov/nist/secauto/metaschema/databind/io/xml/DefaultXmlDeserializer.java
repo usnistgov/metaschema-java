@@ -140,7 +140,7 @@ public class DefaultXmlDeserializer<CLASS>
 
     try {
       return parser.read(rootDefinition);
-    } catch (IOException | XMLStreamException | AssertionError ex) {
+    } catch (IOException | AssertionError ex) {
       throw new IOException(
           String.format("An unexpected error occured during parsing: %s", ex.getMessage()),
           ex);
