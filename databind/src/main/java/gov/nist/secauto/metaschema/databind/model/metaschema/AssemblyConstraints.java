@@ -138,10 +138,10 @@ public class AssemblyConstraints {
   }
 
   @MetaschemaAssembly(
-      formalName = "Targeted Unique Constraint",
-      name = "unique",
+      formalName = "Targeted Index Constraint",
+      name = "index",
       moduleClass = MetaschemaModule.class)
-  public static class Unique {
+  public static class Index {
     @BoundFlag(
         formalName = "Constraint Identifier",
         useName = "id",
@@ -162,6 +162,13 @@ public class AssemblyConstraints {
             @AllowedValue(value = "INFORMATIONAL",
                 description = "A violation of the constraint represents a point of interest.") })))
     private String _level;
+
+    @BoundFlag(
+        formalName = "Index Name",
+        useName = "name",
+        required = true,
+        typeAdapter = TokenAdapter.class)
+    private String _name;
 
     @BoundFlag(
         formalName = "Constraint Target Metapath Expression",
@@ -204,7 +211,7 @@ public class AssemblyConstraints {
         useName = "remarks")
     private Remarks _remarks;
 
-    public Unique() {
+    public Index() {
     }
 
     public String getId() {
@@ -221,6 +228,14 @@ public class AssemblyConstraints {
 
     public void setLevel(String value) {
       _level = value;
+    }
+
+    public String getName() {
+      return _name;
+    }
+
+    public void setName(String value) {
+      _name = value;
     }
 
     public String getTarget() {
@@ -516,10 +531,10 @@ public class AssemblyConstraints {
   }
 
   @MetaschemaAssembly(
-      formalName = "Targeted Index Constraint",
-      name = "index",
+      formalName = "Targeted Unique Constraint",
+      name = "unique",
       moduleClass = MetaschemaModule.class)
-  public static class Index {
+  public static class Unique {
     @BoundFlag(
         formalName = "Constraint Identifier",
         useName = "id",
@@ -540,13 +555,6 @@ public class AssemblyConstraints {
             @AllowedValue(value = "INFORMATIONAL",
                 description = "A violation of the constraint represents a point of interest.") })))
     private String _level;
-
-    @BoundFlag(
-        formalName = "Index Name",
-        useName = "name",
-        required = true,
-        typeAdapter = TokenAdapter.class)
-    private String _name;
 
     @BoundFlag(
         formalName = "Constraint Target Metapath Expression",
@@ -589,7 +597,7 @@ public class AssemblyConstraints {
         useName = "remarks")
     private Remarks _remarks;
 
-    public Index() {
+    public Unique() {
     }
 
     public String getId() {
@@ -606,14 +614,6 @@ public class AssemblyConstraints {
 
     public void setLevel(String value) {
       _level = value;
-    }
-
-    public String getName() {
-      return _name;
-    }
-
-    public void setName(String value) {
-      _name = value;
     }
 
     public String getTarget() {

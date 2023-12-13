@@ -105,57 +105,6 @@ public class AssemblyModel {
   }
 
   @MetaschemaAssembly(
-      formalName = "Choice",
-      name = "choice",
-      moduleClass = MetaschemaModule.class)
-  public static class Choice {
-    @BoundChoiceGroup(
-        minOccurs = 1,
-        maxOccurs = -1,
-        assemblies = {
-            @BoundGroupedAssembly(formalName = "Assembly Reference", useName = "assembly",
-                binding = AssemblyReference.class),
-            @BoundGroupedAssembly(formalName = "Inline Assembly Definition", useName = "define-assembly",
-                binding = InlineDefineAssembly.class),
-            @BoundGroupedAssembly(formalName = "Field Reference", useName = "field", binding = FieldReference.class),
-            @BoundGroupedAssembly(formalName = "Inline Field Definition", useName = "define-field",
-                binding = InlineDefineField.class)
-        },
-        groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "choices",
-            inJson = JsonGroupAsBehavior.LIST))
-    private List<Object> _choices;
-
-    @BoundAssembly(
-        formalName = "Any Additional Content",
-        useName = "any")
-    private Any _any;
-
-    public Choice() {
-    }
-
-    public List<Object> getChoices() {
-      return _choices;
-    }
-
-    public void setChoices(List<Object> value) {
-      _choices = value;
-    }
-
-    public Any getAny() {
-      return _any;
-    }
-
-    public void setAny(Any value) {
-      _any = value;
-    }
-
-    @Override
-    public String toString() {
-      return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();
-    }
-  }
-
-  @MetaschemaAssembly(
       formalName = "Choice Grouping",
       name = "choice-group",
       moduleClass = MetaschemaModule.class)
@@ -369,457 +318,6 @@ public class AssemblyModel {
 
       public void setDeprecated(String value) {
         _deprecated = value;
-      }
-
-      public String getFormalName() {
-        return _formalName;
-      }
-
-      public void setFormalName(String value) {
-        _formalName = value;
-      }
-
-      public MarkupLine getDescription() {
-        return _description;
-      }
-
-      public void setDescription(MarkupLine value) {
-        _description = value;
-      }
-
-      public List<Property> getProps() {
-        return _props;
-      }
-
-      public void setProps(List<Property> value) {
-        _props = value;
-      }
-
-      /**
-       * Add a new {@link Property} item to the underlying collection.
-       * 
-       * @param item
-       *          the item to add
-       * @return {@code true}
-       */
-      public boolean addProp(Property item) {
-        Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
-        if (_props == null) {
-          _props = new LinkedList<>();
-        }
-        return _props.add(value);
-      }
-
-      /**
-       * Remove the first matching {@link Property} item from the underlying
-       * collection.
-       * 
-       * @param item
-       *          the item to remove
-       * @return {@code true} if the item was removed or {@code false} otherwise
-       */
-      public boolean removeProp(Property item) {
-        Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
-        return _props == null ? false : _props.remove(value);
-      }
-
-      public UseName getUseName() {
-        return _useName;
-      }
-
-      public void setUseName(UseName value) {
-        _useName = value;
-      }
-
-      public String getDiscriminatorValue() {
-        return _discriminatorValue;
-      }
-
-      public void setDiscriminatorValue(String value) {
-        _discriminatorValue = value;
-      }
-
-      public Remarks getRemarks() {
-        return _remarks;
-      }
-
-      public void setRemarks(Remarks value) {
-        _remarks = value;
-      }
-
-      @Override
-      public String toString() {
-        return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();
-      }
-    }
-
-    @MetaschemaAssembly(
-        formalName = "Inline Assembly Definition",
-        name = "define-assembly",
-        moduleClass = MetaschemaModule.class)
-    public static class DefineAssembly {
-      @BoundFlag(
-          formalName = "Inline Assembly Name",
-          useName = "name",
-          required = true,
-          typeAdapter = TokenAdapter.class)
-      private String _name;
-
-      @BoundFlag(
-          formalName = "Inline Assembly Binary Name",
-          useName = "index",
-          typeAdapter = PositiveIntegerAdapter.class)
-      private BigInteger _index;
-
-      @BoundFlag(
-          formalName = "Deprecated Version",
-          useName = "deprecated",
-          typeAdapter = StringAdapter.class)
-      private String _deprecated;
-
-      @BoundField(
-          formalName = "Formal Name",
-          description = "A formal name for the data construct, to be presented in documentation.",
-          useName = "formal-name")
-      private String _formalName;
-
-      @BoundField(
-          formalName = "Description",
-          description = "A short description of the data construct's purpose, describing the constructs semantics.",
-          useName = "description",
-          typeAdapter = MarkupLineAdapter.class)
-      private MarkupLine _description;
-
-      @BoundAssembly(
-          formalName = "Property",
-          useName = "prop",
-          maxOccurs = -1,
-          groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props",
-              inJson = JsonGroupAsBehavior.LIST))
-      private List<Property> _props;
-
-      @BoundChoiceGroup(
-          maxOccurs = -1,
-          assemblies = {
-              @BoundGroupedAssembly(formalName = "Inline Flag Definition", useName = "define-flag",
-                  binding = InlineDefineFlag.class),
-              @BoundGroupedAssembly(formalName = "Flag Reference", useName = "flag", binding = FlagReference.class)
-          },
-          groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "flags",
-              inJson = JsonGroupAsBehavior.LIST))
-      private List<Object> _flags;
-
-      @BoundField(
-          formalName = "Grouping Discriminator Value",
-          useName = "discriminator-value",
-          typeAdapter = TokenAdapter.class)
-      private String _discriminatorValue;
-
-      @BoundAssembly(
-          useName = "model")
-      private AssemblyModel _model;
-
-      @BoundAssembly(
-          useName = "constraint")
-      private AssemblyConstraints _constraint;
-
-      @BoundField(
-          formalName = "Remarks",
-          description = "Any explanatory or helpful information to be provided about the remarks parent.",
-          useName = "remarks")
-      private Remarks _remarks;
-
-      @BoundAssembly(
-          formalName = "Example",
-          useName = "example",
-          maxOccurs = -1,
-          groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "examples",
-              inJson = JsonGroupAsBehavior.LIST))
-      private List<Example> _examples;
-
-      public DefineAssembly() {
-      }
-
-      public String getName() {
-        return _name;
-      }
-
-      public void setName(String value) {
-        _name = value;
-      }
-
-      public BigInteger getIndex() {
-        return _index;
-      }
-
-      public void setIndex(BigInteger value) {
-        _index = value;
-      }
-
-      public String getDeprecated() {
-        return _deprecated;
-      }
-
-      public void setDeprecated(String value) {
-        _deprecated = value;
-      }
-
-      public String getFormalName() {
-        return _formalName;
-      }
-
-      public void setFormalName(String value) {
-        _formalName = value;
-      }
-
-      public MarkupLine getDescription() {
-        return _description;
-      }
-
-      public void setDescription(MarkupLine value) {
-        _description = value;
-      }
-
-      public List<Property> getProps() {
-        return _props;
-      }
-
-      public void setProps(List<Property> value) {
-        _props = value;
-      }
-
-      /**
-       * Add a new {@link Property} item to the underlying collection.
-       * 
-       * @param item
-       *          the item to add
-       * @return {@code true}
-       */
-      public boolean addProp(Property item) {
-        Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
-        if (_props == null) {
-          _props = new LinkedList<>();
-        }
-        return _props.add(value);
-      }
-
-      /**
-       * Remove the first matching {@link Property} item from the underlying
-       * collection.
-       * 
-       * @param item
-       *          the item to remove
-       * @return {@code true} if the item was removed or {@code false} otherwise
-       */
-      public boolean removeProp(Property item) {
-        Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
-        return _props == null ? false : _props.remove(value);
-      }
-
-      public List<Object> getFlags() {
-        return _flags;
-      }
-
-      public void setFlags(List<Object> value) {
-        _flags = value;
-      }
-
-      public String getDiscriminatorValue() {
-        return _discriminatorValue;
-      }
-
-      public void setDiscriminatorValue(String value) {
-        _discriminatorValue = value;
-      }
-
-      public AssemblyModel getModel() {
-        return _model;
-      }
-
-      public void setModel(AssemblyModel value) {
-        _model = value;
-      }
-
-      public AssemblyConstraints getConstraint() {
-        return _constraint;
-      }
-
-      public void setConstraint(AssemblyConstraints value) {
-        _constraint = value;
-      }
-
-      public Remarks getRemarks() {
-        return _remarks;
-      }
-
-      public void setRemarks(Remarks value) {
-        _remarks = value;
-      }
-
-      public List<Example> getExamples() {
-        return _examples;
-      }
-
-      public void setExamples(List<Example> value) {
-        _examples = value;
-      }
-
-      /**
-       * Add a new {@link Example} item to the underlying collection.
-       * 
-       * @param item
-       *          the item to add
-       * @return {@code true}
-       */
-      public boolean addExample(Example item) {
-        Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
-        if (_examples == null) {
-          _examples = new LinkedList<>();
-        }
-        return _examples.add(value);
-      }
-
-      /**
-       * Remove the first matching {@link Example} item from the underlying
-       * collection.
-       * 
-       * @param item
-       *          the item to remove
-       * @return {@code true} if the item was removed or {@code false} otherwise
-       */
-      public boolean removeExample(Example item) {
-        Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
-        return _examples == null ? false : _examples.remove(value);
-      }
-
-      @Override
-      public String toString() {
-        return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();
-      }
-    }
-
-    @MetaschemaAssembly(
-        formalName = "Grouping Field Reference",
-        name = "field",
-        moduleClass = MetaschemaModule.class)
-    public static class Field {
-      @BoundFlag(
-          formalName = "Global Field Reference",
-          useName = "ref",
-          required = true,
-          typeAdapter = TokenAdapter.class)
-      private String _ref;
-
-      @BoundFlag(
-          formalName = "Field Reference Binary Name",
-          useName = "index",
-          typeAdapter = PositiveIntegerAdapter.class)
-      private BigInteger _index;
-
-      @BoundFlag(
-          formalName = "Deprecated Version",
-          useName = "deprecated",
-          typeAdapter = StringAdapter.class)
-      private String _deprecated;
-
-      @BoundFlag(
-          formalName = "Default Field Value",
-          useName = "default",
-          typeAdapter = StringAdapter.class)
-      private String _default;
-
-      @BoundFlag(
-          formalName = "Field In XML",
-          useName = "in-xml",
-          typeAdapter = TokenAdapter.class,
-          valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
-              values = { @AllowedValue(value = "WRAPPED",
-                  description = "Block contents of a markup-multiline field will be represented with a containing (wrapper) element in the XML."),
-                  @AllowedValue(value = "UNWRAPPED",
-                      description = "Block contents of a markup-multiline will be represented in the XML with no wrapper, making the field implicit. Among sibling fields in a given model, only one of them may be designated as UNWRAPPED."),
-                  @AllowedValue(value = "WITH_WRAPPER", description = "Alias for WRAPPED.") })))
-      private String _inXml;
-
-      @BoundField(
-          formalName = "Formal Name",
-          description = "A formal name for the data construct, to be presented in documentation.",
-          useName = "formal-name")
-      private String _formalName;
-
-      @BoundField(
-          formalName = "Description",
-          description = "A short description of the data construct's purpose, describing the constructs semantics.",
-          useName = "description",
-          typeAdapter = MarkupLineAdapter.class)
-      private MarkupLine _description;
-
-      @BoundAssembly(
-          formalName = "Property",
-          useName = "prop",
-          maxOccurs = -1,
-          groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props",
-              inJson = JsonGroupAsBehavior.LIST))
-      private List<Property> _props;
-
-      @BoundField(
-          formalName = "Use Name",
-          description = "Allows the name of the definition to be overridden.",
-          useName = "use-name")
-      private UseName _useName;
-
-      @BoundField(
-          formalName = "Grouping Discriminator Value",
-          useName = "discriminator-value",
-          typeAdapter = TokenAdapter.class)
-      private String _discriminatorValue;
-
-      @BoundField(
-          formalName = "Remarks",
-          description = "Any explanatory or helpful information to be provided about the remarks parent.",
-          useName = "remarks")
-      private Remarks _remarks;
-
-      public Field() {
-      }
-
-      public String getRef() {
-        return _ref;
-      }
-
-      public void setRef(String value) {
-        _ref = value;
-      }
-
-      public BigInteger getIndex() {
-        return _index;
-      }
-
-      public void setIndex(BigInteger value) {
-        _index = value;
-      }
-
-      public String getDeprecated() {
-        return _deprecated;
-      }
-
-      public void setDeprecated(String value) {
-        _deprecated = value;
-      }
-
-      public String getDefault() {
-        return _default;
-      }
-
-      public void setDefault(String value) {
-        _default = value;
-      }
-
-      public String getInXml() {
-        return _inXml;
-      }
-
-      public void setInXml(String value) {
-        _inXml = value;
       }
 
       public String getFormalName() {
@@ -1211,6 +709,508 @@ public class AssemblyModel {
       public String toString() {
         return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();
       }
+    }
+
+    @MetaschemaAssembly(
+        formalName = "Grouping Field Reference",
+        name = "field",
+        moduleClass = MetaschemaModule.class)
+    public static class Field {
+      @BoundFlag(
+          formalName = "Global Field Reference",
+          useName = "ref",
+          required = true,
+          typeAdapter = TokenAdapter.class)
+      private String _ref;
+
+      @BoundFlag(
+          formalName = "Field Reference Binary Name",
+          useName = "index",
+          typeAdapter = PositiveIntegerAdapter.class)
+      private BigInteger _index;
+
+      @BoundFlag(
+          formalName = "Deprecated Version",
+          useName = "deprecated",
+          typeAdapter = StringAdapter.class)
+      private String _deprecated;
+
+      @BoundFlag(
+          formalName = "Default Field Value",
+          useName = "default",
+          typeAdapter = StringAdapter.class)
+      private String _default;
+
+      @BoundFlag(
+          formalName = "Field In XML",
+          useName = "in-xml",
+          typeAdapter = TokenAdapter.class,
+          valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
+              values = { @AllowedValue(value = "WRAPPED",
+                  description = "Block contents of a markup-multiline field will be represented with a containing (wrapper) element in the XML."),
+                  @AllowedValue(value = "UNWRAPPED",
+                      description = "Block contents of a markup-multiline will be represented in the XML with no wrapper, making the field implicit. Among sibling fields in a given model, only one of them may be designated as UNWRAPPED."),
+                  @AllowedValue(value = "WITH_WRAPPER", description = "Alias for WRAPPED.") })))
+      private String _inXml;
+
+      @BoundField(
+          formalName = "Formal Name",
+          description = "A formal name for the data construct, to be presented in documentation.",
+          useName = "formal-name")
+      private String _formalName;
+
+      @BoundField(
+          formalName = "Description",
+          description = "A short description of the data construct's purpose, describing the constructs semantics.",
+          useName = "description",
+          typeAdapter = MarkupLineAdapter.class)
+      private MarkupLine _description;
+
+      @BoundAssembly(
+          formalName = "Property",
+          useName = "prop",
+          maxOccurs = -1,
+          groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props",
+              inJson = JsonGroupAsBehavior.LIST))
+      private List<Property> _props;
+
+      @BoundField(
+          formalName = "Use Name",
+          description = "Allows the name of the definition to be overridden.",
+          useName = "use-name")
+      private UseName _useName;
+
+      @BoundField(
+          formalName = "Grouping Discriminator Value",
+          useName = "discriminator-value",
+          typeAdapter = TokenAdapter.class)
+      private String _discriminatorValue;
+
+      @BoundField(
+          formalName = "Remarks",
+          description = "Any explanatory or helpful information to be provided about the remarks parent.",
+          useName = "remarks")
+      private Remarks _remarks;
+
+      public Field() {
+      }
+
+      public String getRef() {
+        return _ref;
+      }
+
+      public void setRef(String value) {
+        _ref = value;
+      }
+
+      public BigInteger getIndex() {
+        return _index;
+      }
+
+      public void setIndex(BigInteger value) {
+        _index = value;
+      }
+
+      public String getDeprecated() {
+        return _deprecated;
+      }
+
+      public void setDeprecated(String value) {
+        _deprecated = value;
+      }
+
+      public String getDefault() {
+        return _default;
+      }
+
+      public void setDefault(String value) {
+        _default = value;
+      }
+
+      public String getInXml() {
+        return _inXml;
+      }
+
+      public void setInXml(String value) {
+        _inXml = value;
+      }
+
+      public String getFormalName() {
+        return _formalName;
+      }
+
+      public void setFormalName(String value) {
+        _formalName = value;
+      }
+
+      public MarkupLine getDescription() {
+        return _description;
+      }
+
+      public void setDescription(MarkupLine value) {
+        _description = value;
+      }
+
+      public List<Property> getProps() {
+        return _props;
+      }
+
+      public void setProps(List<Property> value) {
+        _props = value;
+      }
+
+      /**
+       * Add a new {@link Property} item to the underlying collection.
+       * 
+       * @param item
+       *          the item to add
+       * @return {@code true}
+       */
+      public boolean addProp(Property item) {
+        Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
+        if (_props == null) {
+          _props = new LinkedList<>();
+        }
+        return _props.add(value);
+      }
+
+      /**
+       * Remove the first matching {@link Property} item from the underlying
+       * collection.
+       * 
+       * @param item
+       *          the item to remove
+       * @return {@code true} if the item was removed or {@code false} otherwise
+       */
+      public boolean removeProp(Property item) {
+        Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
+        return _props == null ? false : _props.remove(value);
+      }
+
+      public UseName getUseName() {
+        return _useName;
+      }
+
+      public void setUseName(UseName value) {
+        _useName = value;
+      }
+
+      public String getDiscriminatorValue() {
+        return _discriminatorValue;
+      }
+
+      public void setDiscriminatorValue(String value) {
+        _discriminatorValue = value;
+      }
+
+      public Remarks getRemarks() {
+        return _remarks;
+      }
+
+      public void setRemarks(Remarks value) {
+        _remarks = value;
+      }
+
+      @Override
+      public String toString() {
+        return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();
+      }
+    }
+
+    @MetaschemaAssembly(
+        formalName = "Inline Assembly Definition",
+        name = "define-assembly",
+        moduleClass = MetaschemaModule.class)
+    public static class DefineAssembly {
+      @BoundFlag(
+          formalName = "Inline Assembly Name",
+          useName = "name",
+          required = true,
+          typeAdapter = TokenAdapter.class)
+      private String _name;
+
+      @BoundFlag(
+          formalName = "Inline Assembly Binary Name",
+          useName = "index",
+          typeAdapter = PositiveIntegerAdapter.class)
+      private BigInteger _index;
+
+      @BoundFlag(
+          formalName = "Deprecated Version",
+          useName = "deprecated",
+          typeAdapter = StringAdapter.class)
+      private String _deprecated;
+
+      @BoundField(
+          formalName = "Formal Name",
+          description = "A formal name for the data construct, to be presented in documentation.",
+          useName = "formal-name")
+      private String _formalName;
+
+      @BoundField(
+          formalName = "Description",
+          description = "A short description of the data construct's purpose, describing the constructs semantics.",
+          useName = "description",
+          typeAdapter = MarkupLineAdapter.class)
+      private MarkupLine _description;
+
+      @BoundAssembly(
+          formalName = "Property",
+          useName = "prop",
+          maxOccurs = -1,
+          groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props",
+              inJson = JsonGroupAsBehavior.LIST))
+      private List<Property> _props;
+
+      @BoundField(
+          formalName = "Grouping Discriminator Value",
+          useName = "discriminator-value",
+          typeAdapter = TokenAdapter.class)
+      private String _discriminatorValue;
+
+      @BoundChoiceGroup(
+          maxOccurs = -1,
+          assemblies = {
+              @BoundGroupedAssembly(formalName = "Inline Flag Definition", useName = "define-flag",
+                  binding = InlineDefineFlag.class),
+              @BoundGroupedAssembly(formalName = "Flag Reference", useName = "flag", binding = FlagReference.class)
+          },
+          groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "flags",
+              inJson = JsonGroupAsBehavior.LIST))
+      private List<Object> _flags;
+
+      @BoundAssembly(
+          useName = "model")
+      private AssemblyModel _model;
+
+      @BoundAssembly(
+          useName = "constraint")
+      private AssemblyConstraints _constraint;
+
+      @BoundField(
+          formalName = "Remarks",
+          description = "Any explanatory or helpful information to be provided about the remarks parent.",
+          useName = "remarks")
+      private Remarks _remarks;
+
+      @BoundAssembly(
+          formalName = "Example",
+          useName = "example",
+          maxOccurs = -1,
+          groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "examples",
+              inJson = JsonGroupAsBehavior.LIST))
+      private List<Example> _examples;
+
+      public DefineAssembly() {
+      }
+
+      public String getName() {
+        return _name;
+      }
+
+      public void setName(String value) {
+        _name = value;
+      }
+
+      public BigInteger getIndex() {
+        return _index;
+      }
+
+      public void setIndex(BigInteger value) {
+        _index = value;
+      }
+
+      public String getDeprecated() {
+        return _deprecated;
+      }
+
+      public void setDeprecated(String value) {
+        _deprecated = value;
+      }
+
+      public String getFormalName() {
+        return _formalName;
+      }
+
+      public void setFormalName(String value) {
+        _formalName = value;
+      }
+
+      public MarkupLine getDescription() {
+        return _description;
+      }
+
+      public void setDescription(MarkupLine value) {
+        _description = value;
+      }
+
+      public List<Property> getProps() {
+        return _props;
+      }
+
+      public void setProps(List<Property> value) {
+        _props = value;
+      }
+
+      /**
+       * Add a new {@link Property} item to the underlying collection.
+       * 
+       * @param item
+       *          the item to add
+       * @return {@code true}
+       */
+      public boolean addProp(Property item) {
+        Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
+        if (_props == null) {
+          _props = new LinkedList<>();
+        }
+        return _props.add(value);
+      }
+
+      /**
+       * Remove the first matching {@link Property} item from the underlying
+       * collection.
+       * 
+       * @param item
+       *          the item to remove
+       * @return {@code true} if the item was removed or {@code false} otherwise
+       */
+      public boolean removeProp(Property item) {
+        Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
+        return _props == null ? false : _props.remove(value);
+      }
+
+      public String getDiscriminatorValue() {
+        return _discriminatorValue;
+      }
+
+      public void setDiscriminatorValue(String value) {
+        _discriminatorValue = value;
+      }
+
+      public List<Object> getFlags() {
+        return _flags;
+      }
+
+      public void setFlags(List<Object> value) {
+        _flags = value;
+      }
+
+      public AssemblyModel getModel() {
+        return _model;
+      }
+
+      public void setModel(AssemblyModel value) {
+        _model = value;
+      }
+
+      public AssemblyConstraints getConstraint() {
+        return _constraint;
+      }
+
+      public void setConstraint(AssemblyConstraints value) {
+        _constraint = value;
+      }
+
+      public Remarks getRemarks() {
+        return _remarks;
+      }
+
+      public void setRemarks(Remarks value) {
+        _remarks = value;
+      }
+
+      public List<Example> getExamples() {
+        return _examples;
+      }
+
+      public void setExamples(List<Example> value) {
+        _examples = value;
+      }
+
+      /**
+       * Add a new {@link Example} item to the underlying collection.
+       * 
+       * @param item
+       *          the item to add
+       * @return {@code true}
+       */
+      public boolean addExample(Example item) {
+        Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
+        if (_examples == null) {
+          _examples = new LinkedList<>();
+        }
+        return _examples.add(value);
+      }
+
+      /**
+       * Remove the first matching {@link Example} item from the underlying
+       * collection.
+       * 
+       * @param item
+       *          the item to remove
+       * @return {@code true} if the item was removed or {@code false} otherwise
+       */
+      public boolean removeExample(Example item) {
+        Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
+        return _examples == null ? false : _examples.remove(value);
+      }
+
+      @Override
+      public String toString() {
+        return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();
+      }
+    }
+  }
+
+  @MetaschemaAssembly(
+      formalName = "Choice",
+      name = "choice",
+      moduleClass = MetaschemaModule.class)
+  public static class Choice {
+    @BoundChoiceGroup(
+        minOccurs = 1,
+        maxOccurs = -1,
+        assemblies = {
+            @BoundGroupedAssembly(formalName = "Assembly Reference", useName = "assembly",
+                binding = AssemblyReference.class),
+            @BoundGroupedAssembly(formalName = "Inline Assembly Definition", useName = "define-assembly",
+                binding = InlineDefineAssembly.class),
+            @BoundGroupedAssembly(formalName = "Field Reference", useName = "field", binding = FieldReference.class),
+            @BoundGroupedAssembly(formalName = "Inline Field Definition", useName = "define-field",
+                binding = InlineDefineField.class)
+        },
+        groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "choices",
+            inJson = JsonGroupAsBehavior.LIST))
+    private List<Object> _choices;
+
+    @BoundAssembly(
+        formalName = "Any Additional Content",
+        useName = "any")
+    private Any _any;
+
+    public Choice() {
+    }
+
+    public List<Object> getChoices() {
+      return _choices;
+    }
+
+    public void setChoices(List<Object> value) {
+      _choices = value;
+    }
+
+    public Any getAny() {
+      return _any;
+    }
+
+    public void setAny(Any value) {
+      _any = value;
+    }
+
+    @Override
+    public String toString() {
+      return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();
     }
   }
 }
