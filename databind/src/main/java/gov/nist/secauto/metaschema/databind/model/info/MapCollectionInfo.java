@@ -39,9 +39,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class MapCollectionInfo
     extends AbstractModelInstanceCollectionInfo {
+
+  public MapCollectionInfo(@NonNull IBoundInstanceModel instance) {
+    super(instance);
+  }
 
   @Override
   public Collection<?> getItemsFromValue(Object value) {
@@ -49,12 +54,13 @@ class MapCollectionInfo
   }
 
   @Override
-  public int getItemCount(Object value) {
+  public int size(Object value) {
     return value == null ? 0 : ((Map<?, ?>) value).size();
   }
 
-  public MapCollectionInfo(@NonNull IBoundInstanceModel instance) {
-    super(instance);
+  @Override
+  public boolean isEmpty(@Nullable Object value) {
+    return value == null || ((Map<?, ?>) value).isEmpty();
   }
 
   @SuppressWarnings("null")

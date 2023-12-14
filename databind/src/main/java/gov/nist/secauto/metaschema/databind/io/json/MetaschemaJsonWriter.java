@@ -81,20 +81,19 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
     return itemWriter;
   }
 
-  @SuppressWarnings("resource")
   @Override
   public void writeItemFlag(Object value, IBoundInstanceFlag instance) throws IOException {
-    writeProperty(instance, value);
+    writeInstance(instance, value);
   }
 
   @Override
   public void writeItemField(Object value, IBoundInstanceModelFieldScalar instance) throws IOException {
-    writeModelProperty(instance, value);
+    writeModelInstance(instance, value);
   }
 
   @Override
   public void writeItemField(Object value, IBoundInstanceModelFieldComplex instance) throws IOException {
-    writeModelProperty(instance, value);
+    writeModelInstance(instance, value);
   }
 
   @Override
@@ -102,7 +101,6 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
     throw new UnsupportedOperationException("not needed");
   }
 
-  @SuppressWarnings("resource")
   @Override
   public void writeItemField(Object item, IBoundDefinitionFieldComplex definition) throws IOException {
     definition.writeItem(item, getItemWriter());
@@ -115,7 +113,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
 
   @Override
   public void writeItemAssembly(Object value, IBoundInstanceModelAssembly instance) throws IOException {
-    writeModelProperty(instance, value);
+    writeModelInstance(instance, value);
   }
 
   @Override
@@ -123,7 +121,6 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
     throw new UnsupportedOperationException("not needed");
   }
 
-  @SuppressWarnings("resource")
   @Override
   public void writeItemAssembly(Object item, IBoundDefinitionAssembly definition) throws IOException {
     definition.writeItem(item, getItemWriter());
@@ -131,48 +128,24 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
 
   @Override
   public void writeChoiceGroupItem(Object value, IBoundInstanceModelChoiceGroup instance) throws IOException {
-    writeModelProperty(instance, value);
+    writeModelInstance(instance, value);
   }
 
-  @SuppressWarnings("resource")
-  private void writeProperty(
+  private void writeInstance(
       @NonNull IBoundProperty instance,
       @NonNull Object value) throws IOException {
-    getWriter().writeFieldName(instance.getJsonName());
+    writer.writeFieldName(instance.getJsonName());
     instance.writeItem(value, getItemWriter());
   }
 
-  @SuppressWarnings("resource")
-  private void writeModelProperty(
+  private void writeModelInstance(
       @NonNull IBoundInstanceModel instance,
       @NonNull Object value) throws IOException {
-    if (!instance.getItemValues(value).isEmpty()) {
-      getWriter().writeFieldName(instance.getJsonName());
+    IModelInstanceCollectionInfo collectionInfo = instance.getCollectionInfo();
+    if (!collectionInfo.isEmpty(value)) {
+      writer.writeFieldName(instance.getJsonName());
 
-      IModelInstanceCollectionInfo collectionInfo = instance.getCollectionInfo();
-      collectionInfo.writeItems(new ModelInstanceWriteHandler(instance, getItemWriter()), value);
-    }
-  }
-
-  @FunctionalInterface
-  private interface ObjectPropertyWriter<T extends IFeatureComplexItemValueHandler> {
-
-    void accept(@NonNull Object parentItem, @NonNull T handler) throws IOException;
-
-    /**
-     * Perform a series of property write operations, starting first with this
-     * operation and followed bu the {@code after} operation.
-     *
-     * @param after
-     *          the secondary property write operation to perform
-     * @return an aggregate property write operation
-     */
-    @NonNull
-    default ObjectPropertyWriter<T> andThen(@NonNull ObjectPropertyWriter<? super T> after) {
-      return (parentItem, handler) -> {
-        accept(parentItem, handler);
-        after.accept(parentItem, handler);
-      };
+      collectionInfo.writeItems(new ModelInstanceWriteHandler(instance), value);
     }
   }
 
@@ -192,7 +165,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       writeModelObject(
           instance,
           item,
-          ((ObjectPropertyWriter<IBoundInstanceModelFieldComplex>) this::writeObjectProperties)
+          ((ObjectWriter<IBoundInstanceModelFieldComplex>) this::writeObjectProperties)
               .andThen((parentItem, handler) -> {
                 IBoundFieldValue fieldValue = handler.getDefinition().getFieldValue();
                 writeItemFieldValue(item, fieldValue);
@@ -204,7 +177,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       writeGroupedModelObject(
           instance,
           item,
-          ((ObjectPropertyWriter<IBoundInstanceModelGroupedField>) this::writeDiscriminatorProperty)
+          ((ObjectWriter<IBoundInstanceModelGroupedField>) this::writeDiscriminatorProperty)
               .andThen(this::writeObjectProperties)
               .andThen((parentItem, handler) -> {
                 IBoundFieldValue fieldValue = handler.getDefinition().getFieldValue();
@@ -217,7 +190,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       writeDefinitionObject(
           definition,
           item,
-          ((ObjectPropertyWriter<IBoundDefinitionFieldComplex>) this::writeObjectProperties)
+          ((ObjectWriter<IBoundDefinitionFieldComplex>) this::writeObjectProperties)
               .andThen((parentItem, handler) -> {
                 IBoundFieldValue fieldValue = handler.getDefinition().getFieldValue();
                 writeItemFieldValue(item, fieldValue);
@@ -260,7 +233,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       writeGroupedModelObject(
           instance,
           item,
-          ((ObjectPropertyWriter<IBoundInstanceModelGroupedAssembly>) this::writeDiscriminatorProperty)
+          ((ObjectWriter<IBoundInstanceModelGroupedAssembly>) this::writeDiscriminatorProperty)
               .andThen(this::writeObjectProperties));
     }
 
@@ -276,9 +249,8 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       actualInstance.writeItem(item, this);
     }
 
-    @SuppressWarnings("resource") // not owned
     private void writeScalarItem(Object item, IFeatureScalarItemValueHandler handler) throws IOException {
-      handler.getJavaTypeAdapter().writeJsonValue(ObjectUtils.requireNonNull(item), getWriter());
+      handler.getJavaTypeAdapter().writeJsonValue(ObjectUtils.requireNonNull(item), writer);
     }
 
     private <T extends IBoundInstanceModelGroupedNamed> void writeDiscriminatorProperty(
@@ -303,9 +275,9 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
         Object value = instance.getValue(parentItem);
         if (value != null) {
           if (instance instanceof IBoundInstanceModel) {
-            writeModelProperty((IBoundInstanceModel) instance, value);
+            writeModelInstance((IBoundInstanceModel) instance, value);
           } else if (!value.equals(instance.getEffectiveDefaultValue())) {
-            writeProperty(instance, value);
+            writeInstance(instance, value);
           }
         }
       }
@@ -314,7 +286,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
     private <T extends IFeatureComplexItemValueHandler> void writeDefinitionObject(
         @NonNull T handler,
         @NonNull Object parentItem,
-        @NonNull ObjectPropertyWriter<T> propertyWriter) throws IOException {
+        @NonNull ObjectWriter<T> propertyWriter) throws IOException {
       writer.writeStartObject();
 
       propertyWriter.accept(parentItem, handler);
@@ -324,7 +296,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
     private <T extends IFeatureComplexItemValueHandler & IBoundInstanceModel> void writeModelObject(
         @NonNull T handler,
         @NonNull Object parentItem,
-        @NonNull ObjectPropertyWriter<T> propertyWriter) throws IOException {
+        @NonNull ObjectWriter<T> propertyWriter) throws IOException {
       writer.writeStartObject();
 
       IBoundInstanceFlag jsonKey = handler.getItemJsonKey(parentItem);
@@ -343,14 +315,13 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
         // next the value will be a start object
         writer.writeEndObject();
       }
-      writer.flush();
       writer.writeEndObject();
     }
 
     private <T extends IFeatureComplexItemValueHandler & IBoundInstanceModelGroupedNamed> void writeGroupedModelObject(
         @NonNull T handler,
         @NonNull Object parentItem,
-        @NonNull ObjectPropertyWriter<T> propertyWriter) throws IOException {
+        @NonNull ObjectWriter<T> propertyWriter) throws IOException {
       writer.writeStartObject();
 
       IBoundInstanceModelChoiceGroup choiceGroup = handler.getParentContainer();
@@ -376,25 +347,13 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
 
   private class ModelInstanceWriteHandler
       extends AbstractModelInstanceWriteHandler {
-    @NonNull
-    private final ItemWriter itemWriter;
-
     public ModelInstanceWriteHandler(
-        @NonNull IBoundInstanceModel instance,
-        @NonNull ItemWriter itemWriter) {
+        @NonNull IBoundInstanceModel instance) {
       super(instance);
-      this.itemWriter = itemWriter;
-    }
-
-    @NonNull
-    protected ItemWriter getItemWriter() {
-      return itemWriter;
     }
 
     @Override
     public void writeList(List<?> items) throws IOException {
-      @SuppressWarnings("resource") // not owned
-      JsonGenerator writer = getWriter();
       IBoundInstanceModel instance = getCollectionInfo().getInstance();
 
       boolean writeArray = false;

@@ -130,7 +130,17 @@ public interface IModelInstanceCollectionInfo {
    *          the value to identify items for
    * @return the number of items, which will be {@code 0} if value is {@code null}
    */
-  int getItemCount(@Nullable Object value);
+  int size(@Nullable Object value);
+
+  /**
+   * Determine if the value is empty.
+   *
+   * @param value
+   *          the value representing a collection
+   * @return {@code true} if the value represents a collection with no items or
+   *         {@code false} otherwise
+   */
+  boolean isEmpty(@Nullable Object value);
 
   /**
    * Get the type of the bound object.

@@ -133,5 +133,4 @@ public interface IBoundInstanceModel
   default void setValue(Object parentObject, Object value) {
     IFeatureJavaField.super.setValue(parentObject, value);
   }
-
 }

@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.INamedInstance;
+import gov.nist.secauto.metaschema.core.model.INamedInstanceBase;
 import gov.nist.secauto.metaschema.core.model.IValuedDefinition;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
@@ -49,7 +49,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends IDatatypeManager>
     implements IGenerationState<WRITER> {
   @NonNull
-  private final IModule module;
+  private final IModule<?, ?, ?, ?, ?> module;
   @NonNull
   private final WRITER writer;
   @NonNull
@@ -61,7 +61,7 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
   private final ModuleIndex moduleIndex;
 
   public AbstractGenerationState(
-      @NonNull IModule module,
+      @NonNull IModule<?, ?, ?, ?, ?> module,
       @NonNull WRITER writer,
       @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration,
       @NonNull DATATYPE_MANAGER datatypeManager) {
@@ -73,7 +73,7 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
   }
 
   @Override
-  public IModule getModule() {
+  public IModule<?, ?, ?, ?, ?> getModule() {
     return module;
   }
 
@@ -137,10 +137,10 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
    */
   private CharSequence getTypeContext(
       @NonNull IDefinition definition,
-      @NonNull IModule childModule) {
+      @NonNull IModule<?, ?, ?, ?, ?> childModule) {
     StringBuilder builder = new StringBuilder();
     if (definition.isInline()) {
-      INamedInstance inlineInstance = definition.getInlineInstance();
+      INamedInstanceBase inlineInstance = definition.getInlineInstance();
       IDefinition parentDefinition = inlineInstance.getContainingDefinition();
 
       builder

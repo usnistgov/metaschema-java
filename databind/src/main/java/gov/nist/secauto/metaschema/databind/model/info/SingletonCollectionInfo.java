@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class SingletonCollectionInfo
     extends AbstractModelInstanceCollectionInfo {
@@ -49,8 +50,13 @@ class SingletonCollectionInfo
   }
 
   @Override
-  public int getItemCount(Object value) {
+  public int size(Object value) {
     return value == null ? 0 : 1;
+  }
+
+  @Override
+  public boolean isEmpty(@Nullable Object value) {
+    return value == null;
   }
 
   @Override

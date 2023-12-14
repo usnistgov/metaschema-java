@@ -26,10 +26,13 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
 import java.util.List;
 import java.util.function.Predicate;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -42,6 +45,26 @@ public interface IBoundDefinitionModelComplex
   @Override
   @NonNull
   Class<?> getBoundClass();
+
+  /**
+   * Retrieve the XML namespace for this definition.
+   *
+   * @return the XML namespace or {@code null} if no namespace is defined
+   */
+  @NonNull
+  default String getXmlNamespace() {
+    return ObjectUtils.notNull(getContainingModule().getXmlNamespace().toASCIIString());
+  }
+
+  /**
+   * Get the XML qualified name to use in XML.
+   *
+   * @return the XML qualified name, or {@code null} if there isn't one
+   */
+  @NonNull
+  default QName getXmlQName() {
+    return new QName(getXmlNamespace(), getEffectiveName());
+  }
 
   @NonNull
   List<IBoundProperty> getJsonProperties(@Nullable Predicate<IBoundInstanceFlag> flagFilter);

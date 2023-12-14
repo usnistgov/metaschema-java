@@ -31,6 +31,7 @@ import com.ctc.wstx.stax.WstxOutputFactory;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.AbstractSerializer;
+import gov.nist.secauto.metaschema.databind.io.SerializationFeature;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 
 import org.codehaus.stax2.XMLOutputFactory2;
@@ -120,9 +121,18 @@ public class DefaultXmlSerializer<CLASS>
 
     MetaschemaXmlWriter xmlGenerator = new MetaschemaXmlWriter(streamWriter);
 
+    boolean serializeRoot = get(SerializationFeature.SERIALIZE_ROOT);
     try {
+      if (serializeRoot) {
+        streamWriter.writeStartDocument("UTF-8", "1.0");
+      }
+
       xmlGenerator.write(definition, data);
       streamWriter.flush();
+
+      if (serializeRoot) {
+        streamWriter.writeEndDocument();
+      }
     } catch (XMLStreamException ex) {
       caughtException = new IOException(ex);
       throw caughtException;

@@ -104,7 +104,7 @@ public class GenerateSourcesMojo
    * @throws MojoExecutionException
    *           if an error occurred while generating sources
    */
-  protected void generate(@NonNull Set<IModule> modules) throws MojoExecutionException {
+  protected void generate(@NonNull Set<IModule<?, ?, ?, ?, ?>> modules) throws MojoExecutionException {
     DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
     for (File config : getConfigs()) {
       try {
@@ -159,10 +159,10 @@ public class GenerateSourcesMojo
       // generate Java sources based on provided metaschema sources
       final ModuleLoader loader = new ModuleLoader();
       loader.allowEntityResolution();
-      final Set<IModule> modules = new HashSet<>();
+      final Set<IModule<?, ?, ?, ?, ?>> modules = new HashSet<>();
       for (File source : getSources().collect(Collectors.toList())) {
         getLog().info("Using metaschema source: " + source.getPath());
-        IModule module;
+        IModule<?, ?, ?, ?, ?> module;
         try {
           module = loader.load(source);
         } catch (MetaschemaException | IOException ex) {

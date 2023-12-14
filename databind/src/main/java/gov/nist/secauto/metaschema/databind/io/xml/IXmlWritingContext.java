@@ -27,14 +27,11 @@
 package gov.nist.secauto.metaschema.databind.io.xml;
 
 import gov.nist.secauto.metaschema.databind.io.IWritingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
-import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import java.io.IOException;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -43,36 +40,35 @@ public interface IXmlWritingContext extends IWritingContext<XMLStreamWriter2> {
    * Write the data described by the provided {@code targetDefinition} as an XML
    * element.
    *
-   * @param targetDefinition
+   * @param definition
    *          the bound Module definition describing the structure of the XML data
    *          to write
    * @param targetObject
    *          the Java object data to write
-   * @param parentName
-   *          the qualified name of the XML element to write
    * @throws IOException
    *           if an error occurred while writing the XML
    */
-  void writeDefinitionValue(
-      @NonNull IBoundDefinitionModel targetDefinition,
-      @NonNull Object targetObject,
-      @NonNull QName parentName) throws IOException;
-
-  /**
-   * Write the data described by the provided {@code targetDefinition} as an XML
-   * element.
-   *
-   * @param targetInstance
-   *          the model instance that describes the syntax of the data to write
-   * @param targetObject
-   *          the Java object data to write
-   * @param parentName
-   *          the qualified name of the XML element to write
-   * @throws IOException
-   *           if an error occurred while writing the XML
-   */
-  void writeInstanceValue(
-      @NonNull IBoundInstanceModel targetInstance,
-      @NonNull Object targetObject,
-      @NonNull QName parentName) throws IOException;
+  // * @param parentName
+  // * the qualified name of the XML element to write
+  void write(
+      @NonNull IBoundDefinitionModelComplex definition,
+      @NonNull Object targetObject) throws IOException;
+  //
+  // /**
+  // * Write the data described by the provided {@code targetDefinition} as an XML
+  // * element.
+  // *
+  // * @param targetInstance
+  // * the model instance that describes the syntax of the data to write
+  // * @param targetObject
+  // * the Java object data to write
+  // * @param parentName
+  // * the qualified name of the XML element to write
+  // * @throws IOException
+  // * if an error occurred while writing the XML
+  // */
+  // void writeInstanceValue(
+  // @NonNull IBoundInstanceModel targetInstance,
+  // @NonNull Object targetObject,
+  // @NonNull QName parentName) throws IOException;
 }

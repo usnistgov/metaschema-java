@@ -26,6 +26,10 @@
 
 package gov.nist.secauto.metaschema.databind.io;
 
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
+
+import java.io.IOException;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IWritingContext<WRITER> {
@@ -36,4 +40,26 @@ public interface IWritingContext<WRITER> {
    */
   @NonNull
   WRITER getWriter();
+
+  @FunctionalInterface
+  interface ObjectWriter<T extends IFeatureComplexItemValueHandler> {
+
+    void accept(@NonNull Object parentItem, @NonNull T handler) throws IOException;
+
+    /**
+     * Perform a series of property write operations, starting first with this
+     * operation and followed bu the {@code after} operation.
+     *
+     * @param after
+     *          the secondary property write operation to perform
+     * @return an aggregate property write operation
+     */
+    @NonNull
+    default ObjectWriter<T> andThen(@NonNull ObjectWriter<? super T> after) {
+      return (parentItem, handler) -> {
+        accept(parentItem, handler);
+        after.accept(parentItem, handler);
+      };
+    }
+  }
 }

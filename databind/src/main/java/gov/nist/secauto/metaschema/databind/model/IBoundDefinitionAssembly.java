@@ -76,6 +76,11 @@ public interface IBoundDefinitionAssembly
   }
 
   @Override
+  default QName getXmlQName() {
+    return getRootXmlQName();
+  }
+
+  @Override
   @NonNull
   default List<IBoundProperty> getJsonProperties(@Nullable Predicate<IBoundInstanceFlag> flagFilter) {
     Stream<? extends IBoundInstanceFlag> flagStream = getFlagInstances().stream();
