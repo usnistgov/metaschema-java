@@ -52,4 +52,7 @@ public interface IBoundModuleInstance extends IBoundInstance, IInstance {
   default IBoundModule getContainingModule() {
     return getContainingDefinition().getContainingModule();
   }
+
+  @Override
+  Object getValue(Object parentItem);
 }

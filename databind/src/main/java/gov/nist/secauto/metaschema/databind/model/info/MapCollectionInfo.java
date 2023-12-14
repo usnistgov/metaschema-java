@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
@@ -35,7 +36,6 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -43,10 +43,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 class MapCollectionInfo
     extends AbstractModelInstanceCollectionInfo {
 
-  @SuppressWarnings("null")
   @Override
   public Collection<?> getItemsFromValue(Object value) {
-    return value == null ? List.of() : ((Map<?, ?>) value).values();
+    return value == null ? CollectionUtil.emptyList() : ObjectUtils.notNull(((Map<?, ?>) value).values());
   }
 
   @Override

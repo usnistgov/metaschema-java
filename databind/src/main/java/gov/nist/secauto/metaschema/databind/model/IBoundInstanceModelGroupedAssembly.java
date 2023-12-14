@@ -32,6 +32,7 @@ import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.impl.InstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -81,5 +82,10 @@ public interface IBoundInstanceModelGroupedAssembly
   @Override
   default Object readItem(@Nullable Object parent, @NonNull IItemReadHandler handler) throws IOException {
     return handler.readItemAssembly(ObjectUtils.requireNonNull(parent, "parent"), this);
+  }
+
+  @Override
+  default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
+    handler.writeItemAssembly(item, this);
   }
 }

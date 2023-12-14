@@ -41,6 +41,7 @@ import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundModule;
+import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
@@ -48,8 +49,10 @@ import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.xml.namespace.QName;
 
@@ -68,6 +71,8 @@ public class DefinitionField
   private final Lazy<FlagContainerSupport> flagContainer;
   @NonNull
   private final Lazy<IValueConstrained> constraints;
+  @NonNull
+  private final Lazy<List<IBoundProperty>> jsonProperties;
 
   /**
    * Collect all fields that are part of the model for this class.
@@ -131,6 +136,11 @@ public class DefinitionField
       ConstraintSupport.parse(valueAnnotation, ISource.modelSource(), retval);
       return retval;
     }));
+    this.jsonProperties = ObjectUtils.notNull(Lazy.lazy(() -> {
+      IBoundInstanceFlag jsonValueKey = getJsonValueKeyFlagInstance();
+      Predicate<IBoundInstanceFlag> flagFilter = jsonValueKey == null ? null : (flag) -> flag.equals(jsonValueKey);
+      return getJsonProperties(flagFilter);
+    }));
   }
 
   /**
@@ -181,6 +191,11 @@ public class DefinitionField
   @NonNull
   public IValueConstrained getConstraintSupport() {
     return ObjectUtils.notNull(constraints.get());
+  }
+
+  @Override
+  public List<IBoundProperty> getJsonProperties() {
+    return ObjectUtils.notNull(jsonProperties.get());
   }
 
   @Override

@@ -28,18 +28,27 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
+import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
+import java.util.List;
+import java.util.function.Predicate;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceModelGroupedFieldComplex
     extends AbstractBoundInstanceModelGroupedNamed<BoundGroupedField>
     implements IBoundInstanceModelGroupedField {
   @NonNull
   private final DefinitionField definition;
+  @NonNull
+  private final Lazy<List<IBoundProperty>> jsonProperties;
 
   public InstanceModelGroupedFieldComplex(
       @NonNull BoundGroupedField annotation,
@@ -47,11 +56,30 @@ public class InstanceModelGroupedFieldComplex
       @NonNull IBoundInstanceModelChoiceGroup container) {
     super(annotation, container);
     this.definition = definition;
+    this.jsonProperties = ObjectUtils.notNull(Lazy.lazy(() -> {
+      Predicate<IBoundInstanceFlag> flagFilter = null;
+      IBoundInstanceFlag jsonKey = getJsonKey();
+      if (jsonKey != null) {
+        flagFilter = (flag) -> jsonKey.equals(flag);
+      }
+
+      IBoundInstanceFlag jsonValueKey = getDefinition().getJsonValueKeyFlagInstance();
+      if (jsonValueKey != null) {
+        Predicate<IBoundInstanceFlag> jsonValueKeyFilter = (flag) -> flag.equals(jsonValueKey);
+        flagFilter = flagFilter == null ? jsonValueKeyFilter : flagFilter.and(jsonValueKeyFilter);
+      }
+      return getDefinition().getJsonProperties(flagFilter);
+    }));
   }
 
   // ------------------------------------------
   // - Start annotation driven code - CPD-OFF -
   // ------------------------------------------
+
+  @Override
+  public List<IBoundProperty> getJsonProperties() {
+    return ObjectUtils.notNull(jsonProperties.get());
+  }
 
   @Override
   public DefinitionField getDefinition() {

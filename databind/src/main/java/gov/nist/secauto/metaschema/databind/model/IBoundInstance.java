@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.databind.model;
 /**
  * Represents a Metaschema module instance bound to Java data.
  */
+// REFACTOR: combine with IBoundModuleInstance
 public interface IBoundInstance extends IBoundProperty {
   // no additional methods
 }

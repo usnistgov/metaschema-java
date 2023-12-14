@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.databind.io.BindingException;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -62,6 +63,9 @@ public interface IBoundProperty extends IBinding {
   @NonNull
   String getJsonName();
 
+  @Nullable
+  Object getValue(@NonNull Object parentItem);
+
   /**
    * Set the provided value on the provided object. The provided object must be of
    * the item's type associated with this instance.
@@ -73,6 +77,8 @@ public interface IBoundProperty extends IBinding {
    *          {@link ParameterizedType} for a collection
    */
   void setValue(@NonNull Object parentObject, Object value);
+
+  Collection<? extends Object> getItemValues(Object value);
 
   /**
    * Copy this instance from one parent object to another.

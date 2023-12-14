@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
@@ -42,10 +43,9 @@ class SingletonCollectionInfo
     super(instance);
   }
 
-  @SuppressWarnings("null")
   @Override
   public List<?> getItemsFromValue(Object value) {
-    return value == null ? List.of() : List.of(value);
+    return value == null ? CollectionUtil.emptyList() : CollectionUtil.singletonList(value);
   }
 
   @Override

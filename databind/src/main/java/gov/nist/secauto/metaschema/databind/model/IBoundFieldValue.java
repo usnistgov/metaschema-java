@@ -26,12 +26,15 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.xml.namespace.QName;
 
@@ -101,8 +104,18 @@ public interface IBoundFieldValue extends IBoundProperty, IFeatureScalarItemValu
   }
 
   @Override
+  default Collection<? extends Object> getItemValues(Object value) {
+    return value == null ? CollectionUtil.emptyList() : CollectionUtil.singleton(value);
+  }
+
+  @Override
   default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
     return handler.readItemFieldValue(ObjectUtils.requireNonNull(parent, "parent"), this);
+  }
+
+  @Override
+  default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
+    handler.writeItemFieldValue(item, this);
   }
 
   @Override

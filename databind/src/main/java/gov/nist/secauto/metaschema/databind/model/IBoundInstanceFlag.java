@@ -28,14 +28,17 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.impl.InstanceFlagInline;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Collection;
 
 import javax.xml.namespace.QName;
 
@@ -171,6 +174,11 @@ public interface IBoundInstanceFlag
         hashCode()));
   }
 
+  @Override
+  default Collection<? extends Object> getItemValues(Object value) {
+    return value == null ? CollectionUtil.emptyList() : CollectionUtil.singleton(value);
+  }
+
   /**
    * {@inheritDoc}
    * <p>
@@ -204,6 +212,11 @@ public interface IBoundInstanceFlag
   @NonNull
   default Object readItem(@Nullable Object parent, @NonNull IItemReadHandler handler) throws IOException {
     return handler.readItemFlag(ObjectUtils.requireNonNull(parent, "parent"), this);
+  }
+
+  @Override
+  default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
+    handler.writeItemFlag(item, this);
   }
 
   @Override

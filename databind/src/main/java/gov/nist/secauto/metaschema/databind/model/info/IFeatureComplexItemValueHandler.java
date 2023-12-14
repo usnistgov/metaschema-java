@@ -29,10 +29,11 @@ package gov.nist.secauto.metaschema.databind.model.info;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -55,10 +56,7 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
   @Nullable
   String getJsonKeyFlagName();
 
-  @Override
-  default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
-    handler.writeComplexItem(item, this);
-  }
+  List<IBoundProperty> getJsonProperties();
 
   // REFACTOR: flatten implementations?
   @Override

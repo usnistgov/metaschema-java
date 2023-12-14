@@ -29,8 +29,6 @@ package gov.nist.secauto.metaschema.databind.model.info;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 
-import java.io.IOException;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -63,22 +61,6 @@ public interface IFeatureScalarItemValueHandler
    */
   @NonNull
   IDataTypeAdapter<?> getJavaTypeAdapter();
-
-  @Override
-  default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
-    handler.writeScalarItem(item, this);
-  }
-  // @Override
-  // default Object readItem(Object parent, IItemReadHandler handler) throws
-  // IOException {
-  // return handler.readScalarItem(parent, this);
-  // }
-  //
-  // @Override
-  // default void writeItem(Object item, IItemWriteHandler handler) throws
-  // IOException {
-  // handler.writeScalarItem(item, this);
-  // }
 
   @Override
   default Object deepCopyItem(Object source, Object parentInstance) throws BindingException {

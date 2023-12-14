@@ -125,8 +125,7 @@ public interface IBoundInstanceModelChoiceGroup
 
   @Override
   default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
-    IBoundInstanceModelGroupedNamed itemInstance = getItemInstance(item);
-    handler.writeChoiceGroupItem(item, this, itemInstance);
+    handler.writeChoiceGroupItem(item, this);
   }
 
   @Override

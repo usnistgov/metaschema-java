@@ -42,11 +42,13 @@ import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelField;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelNamed;
 import gov.nist.secauto.metaschema.databind.model.IBoundModule;
+import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 import gov.nist.secauto.metaschema.databind.model.annotations.AssemblyConstraints;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -73,6 +75,8 @@ public class DefinitionAssembly
   private final Lazy<IModelConstrained> constraints;
   @Nullable
   private final QName xmlRootQName;
+  @NonNull
+  private final Lazy<List<IBoundProperty>> jsonProperties;
 
   public DefinitionAssembly(
       @NonNull Class<?> clazz,
@@ -95,6 +99,7 @@ public class DefinitionAssembly
       ConstraintSupport.parse(assemblyAnnotation, ISource.modelSource(), retval);
       return retval;
     }));
+    this.jsonProperties = ObjectUtils.notNull(Lazy.lazy(() -> getJsonProperties(null)));
 
     if (isRoot()) {
       bindingContext.registerBindingMatcher(this);
@@ -133,6 +138,11 @@ public class DefinitionAssembly
   @NonNull
   public IModelConstrained getConstraintSupport() {
     return ObjectUtils.notNull(constraints.get());
+  }
+
+  @Override
+  public List<IBoundProperty> getJsonProperties() {
+    return ObjectUtils.notNull(jsonProperties.get());
   }
 
   @Override

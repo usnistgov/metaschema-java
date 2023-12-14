@@ -34,12 +34,14 @@ import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
-import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldScalar;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelNamed;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceWriteHandler;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
@@ -200,8 +202,8 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     }
 
     IModelInstanceCollectionInfo collectionInfo = targetInstance.getCollectionInfo();
-
-    if (targetInstance.getMinOccurs() > 0 || collectionInfo.getItemCount(value) > 0) {
+    if (!targetInstance.getItemValues(value).isEmpty()
+        && (targetInstance.getMinOccurs() > 0 || collectionInfo.getItemCount(value) > 0)) {
       // only write the instance if the wrapper is required or if it has contents
       QName currentStart = parentName;
 
@@ -214,7 +216,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
         }
 
         ModelInstanceWriteHandler handler = new ModelInstanceWriteHandler(
-            collectionInfo,
+            targetInstance,
             currentStart);
 
         // There are one or more named values based on cardinality
@@ -296,9 +298,9 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     private final QName parentQName;
 
     public ModelInstanceWriteHandler(
-        @NonNull IModelInstanceCollectionInfo collectionInfo,
+        @NonNull IBoundInstanceModel instance,
         @NonNull QName parentQName) {
-      super(collectionInfo);
+      super(instance);
       this.parentQName = parentQName;
     }
 
@@ -334,26 +336,89 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
       return parentQName;
     }
 
+    // @Override
+    // public void writeScalarItem(Object item, IFeatureScalarItemValueHandler
+    // handler) throws IOException {
+    // try {
+    // handler.getJavaTypeAdapter().writeXmlValue(item, getParentQName(),
+    // getWriter());
+    // } catch (XMLStreamException ex) {
+    // throw new IOException(ex);
+    // }
+    // }
+    //
+    // @Override
+    // public void writeComplexItem(Object item, IFeatureComplexItemValueHandler
+    // handler) throws IOException {
+    // writeDefinitionValue(handler.getDefinition(), item, getParentQName());
+    // }
+    //
+    // @Override
+    // public void writeChoiceGroupItem(
+    // Object item,
+    // IBoundInstanceModelChoiceGroup instance,
+    // IBoundInstanceModelGroupedNamed itemInstance) {
+    // throw new UnsupportedOperationException("implement");
+    // }
+
     @Override
-    public void writeScalarItem(Object item, IFeatureScalarItemValueHandler handler) throws IOException {
-      try {
-        handler.getJavaTypeAdapter().writeXmlValue(item, getParentQName(), getWriter());
-      } catch (XMLStreamException ex) {
-        throw new IOException(ex);
-      }
+    public void writeItemFlag(Object item, IBoundInstanceFlag instance) throws IOException {
+      // TODO Auto-generated method stub
+
     }
 
     @Override
-    public void writeComplexItem(Object item, IFeatureComplexItemValueHandler handler) throws IOException {
-      writeDefinitionValue(handler.getDefinition(), item, getParentQName());
+    public void writeItemField(Object item, IBoundInstanceModelFieldScalar instance) throws IOException {
+      // TODO Auto-generated method stub
+
     }
 
     @Override
-    public void writeChoiceGroupItem(
-        Object item,
-        IBoundInstanceModelChoiceGroup instance,
-        IBoundInstanceModelGroupedNamed itemInstance) {
-      throw new UnsupportedOperationException("implement");
+    public void writeItemField(Object item, IBoundInstanceModelFieldComplex instance) throws IOException {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void writeItemField(Object item, IBoundInstanceModelGroupedField instance) throws IOException {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void writeItemField(Object item, IBoundDefinitionFieldComplex definition) throws IOException {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void writeItemFieldValue(Object item, IBoundFieldValue fieldValue) throws IOException {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void writeItemAssembly(Object item, IBoundInstanceModelAssembly instance) throws IOException {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void writeItemAssembly(Object item, IBoundInstanceModelGroupedAssembly instance) throws IOException {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void writeItemAssembly(Object item, IBoundDefinitionAssembly definition) throws IOException {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void writeChoiceGroupItem(Object item, IBoundInstanceModelChoiceGroup instance) throws IOException {
+      // TODO Auto-generated method stub
+
     }
   }
 }

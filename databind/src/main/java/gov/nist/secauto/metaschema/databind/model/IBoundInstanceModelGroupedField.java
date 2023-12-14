@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
 import gov.nist.secauto.metaschema.databind.model.impl.DefinitionField;
 import gov.nist.secauto.metaschema.databind.model.impl.InstanceModelGroupedFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -94,5 +95,10 @@ public interface IBoundInstanceModelGroupedField
   @Override
   default Object readItem(@Nullable Object parent, @NonNull IItemReadHandler handler) throws IOException {
     return handler.readItemField(ObjectUtils.requireNonNull(parent, "parent"), this);
+  }
+
+  @Override
+  default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
+    handler.writeItemField(item, this);
   }
 }

@@ -102,9 +102,20 @@ public class DefaultJsonSerializer<CLASS>
     try (JsonGenerator generator = newJsonGenerator(writer)) {
       IBoundDefinitionAssembly definition = getDefinition();
 
-      MetaschemaJsonWriter jsonWriter = new MetaschemaJsonWriter(generator);
+      boolean serializeRoot = get(SerializationFeature.SERIALIZE_ROOT);
+      if (serializeRoot) {
+        // first write the initial START_OBJECT
+        generator.writeStartObject();
 
-      jsonWriter.write(definition, data);
+        generator.writeFieldName(definition.getRootJsonName());
+      }
+
+      MetaschemaJsonWriter jsonWriter = new MetaschemaJsonWriter(generator);
+      definition.writeItem(data, jsonWriter);
+
+      if (serializeRoot) {
+        generator.writeEndObject();
+      }
     }
   }
 

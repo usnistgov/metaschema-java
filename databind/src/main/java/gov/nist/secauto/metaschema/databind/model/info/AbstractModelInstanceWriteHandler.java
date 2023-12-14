@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -35,21 +36,32 @@ import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractModelInstanceWriteHandler implements IModelInstanceWriteHandler {
+public abstract class AbstractModelInstanceWriteHandler
+    implements IModelInstanceWriteHandler {
   @NonNull
-  private final IModelInstanceCollectionInfo collectionInfo;
+  private final IBoundInstanceModel instance;
 
-  public AbstractModelInstanceWriteHandler(
-      @NonNull IModelInstanceCollectionInfo collectionInfo) {
-    this.collectionInfo = collectionInfo;
+  public AbstractModelInstanceWriteHandler(@NonNull IBoundInstanceModel instance) {
+    this.instance = instance;
   }
 
   /**
-   * @return the collectionInfo
+   * Get the associated instance.
+   *
+   * @return the instance
+   */
+  public IBoundInstanceModel getInstance() {
+    return instance;
+  }
+
+  /**
+   * Get the collection information.
+   *
+   * @return the info
    */
   @NonNull
   public IModelInstanceCollectionInfo getCollectionInfo() {
-    return collectionInfo;
+    return instance.getCollectionInfo();
   }
 
   @Override

@@ -29,8 +29,13 @@ package gov.nist.secauto.metaschema.databind.model;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 
@@ -136,8 +141,29 @@ public interface IBoundDefinitionFieldComplex
 
   @Override
   @NonNull
+  default List<IBoundProperty> getJsonProperties(@Nullable Predicate<IBoundInstanceFlag> flagFilter) {
+    Stream<? extends IBoundInstanceFlag> flagStream = getFlagInstances().stream();
+
+    if (flagFilter != null) {
+      flagStream = flagStream.filter(flagFilter);
+    }
+
+    // return ObjectUtils.notNull(Stream.concat(flagStream,
+    // Stream.of(getFieldValue()))
+    // .collect(Collectors.toUnmodifiableList()));
+    return ObjectUtils.notNull(flagStream
+        .collect(Collectors.toUnmodifiableList()));
+  }
+
+  @Override
+  @NonNull
   default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
     return handler.readItemField(parent, this);
+  }
+
+  @Override
+  default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
+    handler.writeItemField(item, this);
   }
 
   @Override

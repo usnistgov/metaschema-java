@@ -26,8 +26,16 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
-import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldScalar;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
 
 import java.io.IOException;
 
@@ -35,33 +43,143 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IItemWriteHandler {
   /**
-   * Parse and return an item.
+   * Write an item.
    *
    * @param item
-   *          the Java object representing the parsed item
-   * @param handler
-   *          the item handler
+   *          the Java object representing the item to write
+   * @param instance
+   *          the flag instance
    * @throws IOException
    *           if an error occurred while parsing
    */
-  void writeScalarItem(@NonNull Object item, @NonNull IFeatureScalarItemValueHandler handler)
-      throws IOException;
+  void writeItemFlag(
+      @NonNull Object item,
+      @NonNull IBoundInstanceFlag instance) throws IOException;
 
   /**
-   * Parse and return an item.
+   * Write an item.
    *
    * @param item
-   *          the Java object representing the parsed item
-   * @param handler
-   *          the item handler
+   *          the Java object representing the item to write
+   * @param instance
+   *          the field instance
    * @throws IOException
    *           if an error occurred while parsing
    */
-  void writeComplexItem(@NonNull Object item, @NonNull IFeatureComplexItemValueHandler handler)
-      throws IOException;
+  void writeItemField(
+      @NonNull Object item,
+      @NonNull IBoundInstanceModelFieldScalar instance) throws IOException;
 
+  /**
+   * Write an item.
+   *
+   * @param item
+   *          the Java object representing the item to write
+   * @param instance
+   *          the field instance
+   * @throws IOException
+   *           if an error occurred while parsing
+   */
+  void writeItemField(
+      @NonNull Object item,
+      @NonNull IBoundInstanceModelFieldComplex instance) throws IOException;
+
+  /**
+   * Write an item.
+   *
+   * @param item
+   *          the Java object representing the item to write
+   * @param instance
+   *          the field instance
+   * @throws IOException
+   *           if an error occurred while parsing
+   */
+  void writeItemField(
+      @NonNull Object item,
+      @NonNull IBoundInstanceModelGroupedField instance) throws IOException;
+
+  /**
+   * Write an item.
+   *
+   * @param item
+   *          the Java object representing the item to write
+   * @param definition
+   *          the field instance
+   * @throws IOException
+   *           if an error occurred while parsing
+   */
+  void writeItemField(
+      @NonNull Object item,
+      @NonNull IBoundDefinitionFieldComplex definition) throws IOException;
+
+  /**
+   * Write an item.
+   *
+   * @param item
+   *          the Java object representing the item to write
+   * @param fieldValue
+   *          the field value instance
+   * @throws IOException
+   *           if an error occurred while parsing
+   */
+  void writeItemFieldValue(
+      @NonNull Object item,
+      @NonNull IBoundFieldValue fieldValue) throws IOException;
+
+  /**
+   * Write an item.
+   *
+   * @param item
+   *          the Java object representing the item to write
+   * @param instance
+   *          the assembly instance
+   * @throws IOException
+   *           if an error occurred while parsing
+   */
+  void writeItemAssembly(
+      @NonNull Object item,
+      @NonNull IBoundInstanceModelAssembly instance) throws IOException;
+
+  /**
+   * Write an item.
+   *
+   * @param item
+   *          the Java object representing the item to write
+   * @param instance
+   *          the assembly instance
+   * @throws IOException
+   *           if an error occurred while parsing
+   */
+  void writeItemAssembly(
+      @NonNull Object item,
+      @NonNull IBoundInstanceModelGroupedAssembly instance) throws IOException;
+
+  /**
+   * Write an item.
+   *
+   * @param item
+   *          the Java object representing the item to write
+   * @param definition
+   *          the assembly instance
+   * @throws IOException
+   *           if an error occurred while parsing
+   */
+  void writeItemAssembly(
+      @NonNull Object item,
+      @NonNull IBoundDefinitionAssembly definition) throws IOException;
+
+  /**
+   * Write an item.
+   *
+   * @param item
+   *          the Java object representing the item to write
+   * @param instance
+   *          the choice group instance
+   * @throws IOException
+   *           if an error occurred while parsing
+   */
   void writeChoiceGroupItem(
       @NonNull Object item,
-      @NonNull IBoundInstanceModelChoiceGroup instance,
-      @NonNull IBoundInstanceModelGroupedNamed itemInstance) throws IOException;
+      @NonNull IBoundInstanceModelChoiceGroup instance) throws IOException;
+
 }

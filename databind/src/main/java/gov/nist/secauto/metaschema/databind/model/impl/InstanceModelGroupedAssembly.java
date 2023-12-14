@@ -28,13 +28,20 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
+import java.util.List;
+import java.util.function.Predicate;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 /**
  * Represents an assembly model instance that is a member of a choice group
@@ -45,6 +52,8 @@ public class InstanceModelGroupedAssembly
     implements IBoundInstanceModelGroupedAssembly {
   @NonNull
   private final IBoundDefinitionAssembly definition;
+  @NonNull
+  private final Lazy<List<IBoundProperty>> jsonProperties;
 
   /**
    * Construct a new field model instance instance that is a member of a choice
@@ -63,6 +72,20 @@ public class InstanceModelGroupedAssembly
       @NonNull IBoundInstanceModelChoiceGroup container) {
     super(annotation, container);
     this.definition = definition;
+    this.jsonProperties = ObjectUtils.notNull(Lazy.lazy(() -> {
+      IBoundInstanceFlag jsonKey = getJsonKey();
+      Predicate<IBoundInstanceFlag> flagFilter = jsonKey == null ? null : (flag) -> jsonKey.equals(flag);
+      return getDefinition().getJsonProperties(flagFilter);
+    }));
+  }
+
+  // ------------------------------------------
+  // - Start annotation driven code - CPD-OFF -
+  // ------------------------------------------
+
+  @Override
+  public List<IBoundProperty> getJsonProperties() {
+    return ObjectUtils.notNull(jsonProperties.get());
   }
 
   @Override

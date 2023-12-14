@@ -28,7 +28,11 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
+import java.util.List;
+import java.util.function.Predicate;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Represents a field or assembly instance bound to Java class.
@@ -38,4 +42,7 @@ public interface IBoundDefinitionModelComplex
   @Override
   @NonNull
   Class<?> getBoundClass();
+
+  @NonNull
+  List<IBoundProperty> getJsonProperties(@Nullable Predicate<IBoundInstanceFlag> flagFilter);
 }

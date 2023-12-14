@@ -42,6 +42,8 @@ import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldScalar;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
 import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
@@ -471,6 +473,16 @@ public class MetaschemaJsonReader
     throw new UnsupportedOperationException("implement");
   }
 
+  @Override
+  public Object readItemField(Object parent, IBoundInstanceModelGroupedField instance) throws IOException {
+    throw new UnsupportedOperationException("implement");
+  }
+
+  @Override
+  public Object readItemAssembly(Object parent, IBoundInstanceModelGroupedAssembly instance) throws IOException {
+    throw new UnsupportedOperationException("implement");
+  }
+
   private class ModelInstanceReadHandler
       extends AbstractModelInstanceReadHandler {
 
@@ -536,7 +548,7 @@ public class MetaschemaJsonReader
         IBoundInstanceFlag jsonKey = instance.getItemJsonKey(item);
         assert jsonKey != null;
 
-        String key = jsonKey.getValue(item).toString();
+        String key = ObjectUtils.requireNonNull(jsonKey.getValue(item)).toString();
         items.put(key, item);
 
         // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all

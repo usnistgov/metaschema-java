@@ -29,19 +29,25 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 /**
  * Implements a Metaschema module assembly instance bound to a Java field,
@@ -54,6 +60,8 @@ public class InstanceModelAssemblyComplex
   private final IBoundDefinitionAssembly definition;
   @NonNull
   private final IGroupAs groupAs;
+  @NonNull
+  private final Lazy<List<IBoundProperty>> jsonProperties;
 
   /**
    * Construct a new field instance bound to a Java field, supported by a bound
@@ -89,11 +97,21 @@ public class InstanceModelAssemblyComplex
               containingDefinition.getBoundClass().getName(),
               GroupAs.class.getName()));
     }
+    this.jsonProperties = ObjectUtils.notNull(Lazy.lazy(() -> {
+      IBoundInstanceFlag jsonKey = getJsonKey();
+      Predicate<IBoundInstanceFlag> flagFilter = jsonKey == null ? null : (flag) -> jsonKey.equals(flag);
+      return getDefinition().getJsonProperties(flagFilter);
+    }));
   }
 
   // ------------------------------------------
   // - Start annotation driven code - CPD-OFF -
   // ------------------------------------------
+
+  @Override
+  public List<IBoundProperty> getJsonProperties() {
+    return ObjectUtils.notNull(jsonProperties.get());
+  }
 
   @Override
   public IBoundDefinitionAssembly getDefinition() {

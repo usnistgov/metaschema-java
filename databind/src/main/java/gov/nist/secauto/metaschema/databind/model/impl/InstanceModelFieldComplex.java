@@ -31,8 +31,11 @@ import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 
 import java.lang.reflect.Field;
+import java.util.List;
+import java.util.function.Predicate;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
@@ -48,6 +51,8 @@ public class InstanceModelFieldComplex
   private final DefinitionField definition;
   @NonNull
   private final Lazy<Object> defaultValue;
+  @NonNull
+  private final Lazy<List<IBoundProperty>> jsonProperties;
 
   /**
    * Construct a new field instance bound to a Java field, supported by a bound
@@ -102,7 +107,25 @@ public class InstanceModelFieldComplex
       }
       return retval;
     }));
+    this.jsonProperties = ObjectUtils.notNull(Lazy.lazy(() -> {
+      Predicate<IBoundInstanceFlag> flagFilter = null;
+      IBoundInstanceFlag jsonKey = getJsonKey();
+      if (jsonKey != null) {
+        flagFilter = (flag) -> jsonKey.equals(flag);
+      }
+
+      IBoundInstanceFlag jsonValueKey = getDefinition().getJsonValueKeyFlagInstance();
+      if (jsonValueKey != null) {
+        Predicate<IBoundInstanceFlag> jsonValueKeyFilter = (flag) -> flag.equals(jsonValueKey);
+        flagFilter = flagFilter == null ? jsonValueKeyFilter : flagFilter.and(jsonValueKeyFilter);
+      }
+      return getDefinition().getJsonProperties(flagFilter);
+    }));
   }
+
+  // ------------------------------------------
+  // - Start annotation driven code - CPD-OFF -
+  // ------------------------------------------
 
   @Override
   public DefinitionField getDefinition() {
@@ -112,5 +135,10 @@ public class InstanceModelFieldComplex
   @Override
   public Object getDefaultValue() {
     return defaultValue.get();
+  }
+
+  @Override
+  public List<IBoundProperty> getJsonProperties() {
+    return ObjectUtils.notNull(jsonProperties.get());
   }
 }

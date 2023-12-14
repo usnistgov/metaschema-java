@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
 import java.io.IOException;
 
@@ -79,6 +80,11 @@ public interface IBoundInstanceModelFieldComplex
   @Override
   default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
     return handler.readItemField(ObjectUtils.requireNonNull(parent, "parent"), this);
+  }
+
+  @Override
+  default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
+    handler.writeItemField(item, this);
   }
 
   @Override
