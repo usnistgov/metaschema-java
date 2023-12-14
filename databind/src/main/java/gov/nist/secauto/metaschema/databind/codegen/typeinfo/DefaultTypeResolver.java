@@ -227,8 +227,7 @@ class DefaultTypeResolver implements ITypeResolver {
       @NonNull String packageOrTypeName,
       @NonNull String suggestedClassName,
       @NonNull IFlagContainer definition) {
-    @NonNull
-    String retval = suggestedClassName;
+    @NonNull String retval = suggestedClassName;
     Set<String> classNames = getClassNamesFor(packageOrTypeName);
     synchronized (classNames) {
       boolean clash = false;

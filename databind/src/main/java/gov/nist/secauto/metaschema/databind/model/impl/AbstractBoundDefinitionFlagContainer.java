@@ -130,8 +130,7 @@ public abstract class AbstractBoundDefinitionFlagContainer<A extends Annotation>
   public <CLASS> CLASS newInstance() {
     Class<?> clazz = getBoundClass();
     try {
-      @SuppressWarnings("unchecked")
-      Constructor<CLASS> constructor
+      @SuppressWarnings("unchecked") Constructor<CLASS> constructor
           = (Constructor<CLASS>) clazz.getDeclaredConstructor();
       return ObjectUtils.notNull(constructor.newInstance());
     } catch (NoSuchMethodException ex) {
@@ -194,11 +193,11 @@ public abstract class AbstractBoundDefinitionFlagContainer<A extends Annotation>
     }
   }
 
-  @Override
-  public String getJsonKeyFlagName() {
-    // definition items never have a JSON key
-    return null;
-  }
+  // @Override
+  // public String getJsonKeyFlagName() {
+  // // definition items never have a JSON key
+  // return null;
+  // }
 
   @Override
   public Object deepCopyItem(Object item, Object parentInstance) throws BindingException {

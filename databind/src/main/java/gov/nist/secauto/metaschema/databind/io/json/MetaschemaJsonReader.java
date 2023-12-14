@@ -413,9 +413,11 @@ public class MetaschemaJsonReader
       throw new IOException(ex);
     }
 
-    String jsonKeyFlagName = handler.getJsonKeyFlagName();
-    IBoundInstanceFlag jsonKey = jsonKeyFlagName == null ? null : definition.getFlagInstanceByName(jsonKeyFlagName);
+    // String jsonKeyFlagName = handler.getJsonKeyFlagName();
+    // IBoundInstanceFlag jsonKey = jsonKeyFlagName == null ? null :
+    // definition.getFlagInstanceByName(jsonKeyFlagName);
 
+    IBoundInstanceFlag jsonKey = definition.getJsonKeyFlagInstance();
     boolean keyObjectWrapper = false;
     if (jsonKey != null) {
       // the field will be the JSON key

@@ -71,26 +71,6 @@ public interface IBoundDefinitionFieldComplex
     return null;
   }
 
-  /**
-   * Get the XML qualified name to use in XML.
-   *
-   * @return the XML qualified name
-   */
-  @NonNull
-  default QName getXmlQName() {
-    return new QName(getXmlNamespace(), getEffectiveName());
-  }
-
-  /**
-   * Retrieve the XML namespace for this instance.
-   *
-   * @return the XML namespace
-   */
-  @NonNull
-  default String getXmlNamespace() {
-    return ObjectUtils.notNull(getContainingModule().getXmlNamespace().toASCIIString());
-  }
-
   @Override
   default Object getDefaultValue() {
     Object retval = null;

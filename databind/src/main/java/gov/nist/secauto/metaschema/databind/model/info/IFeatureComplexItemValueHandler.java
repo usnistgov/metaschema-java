@@ -47,14 +47,14 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
   @NonNull
   IBoundDefinitionModel getDefinition();
 
-  /**
-   * Get the name of the JSON key, if a JSON key is configured.
-   *
-   * @return the name of the JSON key flag if configured, or {@code null}
-   *         otherwise
-   */
-  @Nullable
-  String getJsonKeyFlagName();
+  // /**
+  // * Get the name of the JSON key, if a JSON key is configured.
+  // *
+  // * @return the name of the JSON key flag if configured, or {@code null}
+  // * otherwise
+  // */
+  // @Nullable
+  // String getJsonKeyFlagName();
 
   List<IBoundProperty> getJsonProperties();
 
@@ -87,8 +87,7 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
   default <CLASS> CLASS newInstance() {
     Class<?> clazz = getBoundClass();
     try {
-      @SuppressWarnings("unchecked")
-      Constructor<CLASS> constructor
+      @SuppressWarnings("unchecked") Constructor<CLASS> constructor
           = (Constructor<CLASS>) clazz.getDeclaredConstructor();
       return ObjectUtils.notNull(constructor.newInstance());
     } catch (NoSuchMethodException ex) {

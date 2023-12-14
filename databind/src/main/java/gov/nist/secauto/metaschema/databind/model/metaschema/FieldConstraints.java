@@ -81,7 +81,7 @@ public class FieldConstraints {
 
   /**
    * Add a new {@link ConstraintLetExpression} item to the underlying collection.
-   * 
+   *
    * @param item
    *          the item to add
    * @return {@code true}
@@ -97,7 +97,7 @@ public class FieldConstraints {
   /**
    * Remove the first matching {@link ConstraintLetExpression} item from the
    * underlying collection.
-   * 
+   *
    * @param item
    *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise

@@ -123,10 +123,9 @@ public abstract class AbstractModule<
 
   @Override
   public List<? extends C> getAssemblyAndFieldDefinitions() {
-    @SuppressWarnings("unchecked")
-    Stream<? extends C> assemblies = (Stream<? extends C>) getAssemblyDefinitions().stream();
-    @SuppressWarnings("unchecked")
-    Stream<? extends C> fields = (Stream<? extends C>) getFieldDefinitions().stream();
+    @SuppressWarnings("unchecked") Stream<? extends C> assemblies
+        = (Stream<? extends C>) getAssemblyDefinitions().stream();
+    @SuppressWarnings("unchecked") Stream<? extends C> fields = (Stream<? extends C>) getFieldDefinitions().stream();
     return ObjectUtils.notNull(
         Stream.concat(assemblies, fields)
             .collect(Collectors.toList()));

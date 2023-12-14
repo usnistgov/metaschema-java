@@ -40,6 +40,7 @@ import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldComple
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldScalar;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelNamed;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceWriteHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
@@ -204,6 +205,12 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
       writeFlags(parentItem, instance.getDefinition());
     }
 
+    private <T extends IBoundInstanceModelGroupedNamed & IFeatureComplexItemValueHandler> void writeFlags(
+        @NonNull Object parentItem,
+        @NonNull T instance) throws IOException {
+      writeFlags(parentItem, instance.getDefinition());
+    }
+
     private void writeFlags(
         @NonNull Object parentItem,
         @NonNull IBoundDefinitionModel definition) throws IOException {
@@ -218,6 +225,12 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     }
 
     private <T extends IBoundInstanceModelAssembly & IFeatureComplexItemValueHandler> void writeAssemblyModel(
+        @NonNull Object parentItem,
+        @NonNull T instance) throws IOException {
+      writeAssemblyModel(parentItem, instance.getDefinition());
+    }
+
+    private <T extends IBoundInstanceModelGroupedAssembly & IFeatureComplexItemValueHandler> void writeAssemblyModel(
         @NonNull Object parentItem,
         @NonNull T instance) throws IOException {
       writeAssemblyModel(parentItem, instance.getDefinition());
@@ -244,11 +257,33 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
     private void writeFieldValue(
         @NonNull Object parentItem,
+        @NonNull IBoundInstanceModelGroupedField instance) throws IOException {
+      writeFieldValue(parentItem, instance.getDefinition());
+    }
+
+    private void writeFieldValue(
+        @NonNull Object parentItem,
         @NonNull IBoundDefinitionFieldComplex definition) throws IOException {
       definition.getFieldValue().writeItem(parentItem, this);
     }
 
     private <T extends IFeatureComplexItemValueHandler & IBoundInstanceModelNamed> void writeModelObject(
+        @NonNull T instance,
+        @NonNull Object parentItem,
+        @NonNull ObjectWriter<T> propertyWriter) throws IOException {
+      try {
+        QName wrapperQName = instance.getXmlQName();
+        writer.writeStartElement(wrapperQName.getNamespaceURI(), wrapperQName.getLocalPart());
+
+        propertyWriter.accept(parentItem, instance);
+
+        writer.writeEndElement();
+      } catch (XMLStreamException ex) {
+        throw new IOException(ex);
+      }
+    }
+
+    private <T extends IFeatureComplexItemValueHandler & IBoundInstanceModelGroupedNamed> void writeGroupedModelObject(
         @NonNull T instance,
         @NonNull Object parentItem,
         @NonNull ObjectWriter<T> propertyWriter) throws IOException {
@@ -330,8 +365,12 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
     @Override
     public void writeItemField(Object item, IBoundInstanceModelGroupedField instance) throws IOException {
-      // TODO Auto-generated method stub
-
+      ItemWriter itemWriter = new ItemWriter(instance.getXmlQName());
+      writeGroupedModelObject(
+          instance,
+          item,
+          ((ObjectWriter<IBoundInstanceModelGroupedField>) this::writeFlags)
+              .andThen(itemWriter::writeFieldValue));
     }
 
     @Override
@@ -368,8 +407,12 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
     @Override
     public void writeItemAssembly(Object item, IBoundInstanceModelGroupedAssembly instance) throws IOException {
-      // TODO Auto-generated method stub
-
+      ItemWriter itemWriter = new ItemWriter(instance.getXmlQName());
+      writeGroupedModelObject(
+          instance,
+          item,
+          ((ObjectWriter<IBoundInstanceModelGroupedAssembly>) this::writeFlags)
+              .andThen(itemWriter::writeAssemblyModel));
     }
 
     @Override
@@ -384,8 +427,9 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
     @Override
     public void writeChoiceGroupItem(Object item, IBoundInstanceModelChoiceGroup instance) throws IOException {
-      // TODO Auto-generated method stub
-
+      IBoundInstanceModelGroupedNamed actualInstance = instance.getItemInstance(item);
+      assert actualInstance != null;
+      actualInstance.writeItem(item, this);
     }
   }
 

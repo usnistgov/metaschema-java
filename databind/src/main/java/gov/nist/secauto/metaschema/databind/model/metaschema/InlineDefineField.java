@@ -302,7 +302,7 @@ public class InlineDefineField {
 
   /**
    * Add a new {@link Property} item to the underlying collection.
-   * 
+   *
    * @param item
    *          the item to add
    * @return {@code true}
@@ -318,7 +318,7 @@ public class InlineDefineField {
   /**
    * Remove the first matching {@link Property} item from the underlying
    * collection.
-   * 
+   *
    * @param item
    *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
@@ -394,7 +394,7 @@ public class InlineDefineField {
 
   /**
    * Add a new {@link Example} item to the underlying collection.
-   * 
+   *
    * @param item
    *          the item to add
    * @return {@code true}
@@ -410,7 +410,7 @@ public class InlineDefineField {
   /**
    * Remove the first matching {@link Example} item from the underlying
    * collection.
-   * 
+   *
    * @param item
    *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise

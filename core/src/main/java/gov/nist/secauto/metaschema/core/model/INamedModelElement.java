@@ -199,8 +199,7 @@ public interface INamedModelElement extends IModelElement {
    */
   @NonNull
   default String getEffectiveName() {
-    @Nullable
-    String useName = getUseName();
+    @Nullable String useName = getUseName();
     return useName == null ? getName() : useName;
   }
 
@@ -227,8 +226,7 @@ public interface INamedModelElement extends IModelElement {
    */
   @Nullable
   default Integer getEffectiveIndex() {
-    @Nullable
-    Integer useIndex = getUseIndex();
+    @Nullable Integer useIndex = getUseIndex();
     return useIndex == null ? getIndex() : useIndex;
   }
 }

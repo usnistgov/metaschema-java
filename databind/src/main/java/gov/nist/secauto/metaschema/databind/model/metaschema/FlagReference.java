@@ -189,7 +189,7 @@ public class FlagReference {
 
   /**
    * Add a new {@link Property} item to the underlying collection.
-   * 
+   *
    * @param item
    *          the item to add
    * @return {@code true}
@@ -205,7 +205,7 @@ public class FlagReference {
   /**
    * Remove the first matching {@link Property} item from the underlying
    * collection.
-   * 
+   *
    * @param item
    *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise

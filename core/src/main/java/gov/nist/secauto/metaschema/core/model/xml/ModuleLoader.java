@@ -143,8 +143,7 @@ public class ModuleLoader
 
     // now check if this Metaschema imports other metaschema
     int size = xmlObject.getMETASCHEMA().sizeOfImportArray();
-    @NonNull
-    Map<URI, IXmlModule> importedModules;
+    @NonNull Map<URI, IXmlModule> importedModules;
     if (size == 0) {
       importedModules = ObjectUtils.notNull(Collections.emptyMap());
     } else {
